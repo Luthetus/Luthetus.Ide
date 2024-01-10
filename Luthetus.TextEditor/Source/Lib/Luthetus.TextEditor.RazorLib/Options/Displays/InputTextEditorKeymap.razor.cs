@@ -25,13 +25,13 @@ public partial class InputTextEditorKeymap : FluxorComponent
 
     private void SelectedKeymapChanged(ChangeEventArgs changeEventArgs)
     {
-        var allKeymapDefinitionsBag = TextEditorKeymapFacts.AllKeymapsBag;
+        var allKeymapDefinitionsList = TextEditorKeymapFacts.AllKeymapsList;
         var chosenKeymapGuidString = changeEventArgs.Value?.ToString() ?? string.Empty;
 
         if (Guid.TryParse(chosenKeymapGuidString, out var chosenKeymapKeyGuid))
         {
             var chosenKeymapKey = new Key<Keymap>(chosenKeymapKeyGuid);
-            var foundKeymap = allKeymapDefinitionsBag.FirstOrDefault(x => x.Key == chosenKeymapKey);
+            var foundKeymap = allKeymapDefinitionsList.FirstOrDefault(x => x.Key == chosenKeymapKey);
 
             if (foundKeymap is not null)
                 TextEditorService.OptionsApi.SetKeymap(foundKeymap);

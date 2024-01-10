@@ -101,7 +101,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
             cSharpProjectToProjectReferences.Add(cSharpProjectToProjectReference);
         }
 
-        var newChildBag = cSharpProjectToProjectReferences
+        var newChildList = cSharpProjectToProjectReferences
             .Select(x => (TreeViewNoType)new TreeViewCSharpProjectToProjectReference(
                 x,
                 IdeComponentRenderers,
@@ -114,7 +114,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
             })
             .ToList();
 
-        ChildList = newChildBag;
+        ChildList = newChildList;
         LinkChildren(previousChildren, ChildList);
         TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
     }

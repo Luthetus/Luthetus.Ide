@@ -101,7 +101,7 @@ public partial class TextEditorService
                 {
                     cursorModifierBag = new TextEditorCursorModifierBag(
                         viewModel.ViewModelKey,
-                        viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
+                        viewModel.CursorList.Select(x => new TextEditorCursorModifier(x)).ToList());
 
                     CursorModifierBagCache.Add(viewModel.ViewModelKey, cursorModifierBag);
                 }
@@ -117,7 +117,7 @@ public partial class TextEditorService
             var primaryCursor = (TextEditorCursorModifier?)null;
 
             if (cursorModifierBag is not null)
-                primaryCursor = cursorModifierBag.CursorModifierBag.FirstOrDefault(x => x.IsPrimaryCursor);
+                primaryCursor = cursorModifierBag.List.FirstOrDefault(x => x.IsPrimaryCursor);
 
             return primaryCursor;
         }

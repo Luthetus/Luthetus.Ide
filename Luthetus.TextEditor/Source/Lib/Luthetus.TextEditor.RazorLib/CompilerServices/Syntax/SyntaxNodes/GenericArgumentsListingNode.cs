@@ -10,11 +10,11 @@ public sealed record GenericArgumentsListingNode : ISyntaxNode
 {
     public GenericArgumentsListingNode(
         OpenAngleBracketToken openAngleBracketToken,
-        ImmutableArray<GenericArgumentEntryNode> genericArgumentEntryNodeBag,
+        ImmutableArray<GenericArgumentEntryNode> genericArgumentEntryNodeList,
         CloseAngleBracketToken closeAngleBracketToken)
     {
         OpenAngleBracketToken = openAngleBracketToken;
-        GenericArgumentEntryNodeBag = genericArgumentEntryNodeBag;
+        GenericArgumentEntryNodeList = genericArgumentEntryNodeList;
         CloseAngleBracketToken = closeAngleBracketToken;
 
         var children = new List<ISyntax>
@@ -22,18 +22,18 @@ public sealed record GenericArgumentsListingNode : ISyntaxNode
             OpenAngleBracketToken,
         };
 
-        children.AddRange(GenericArgumentEntryNodeBag);
+        children.AddRange(GenericArgumentEntryNodeList);
 
         children.Add(CloseAngleBracketToken);
 
-        ChildBag = children.ToImmutableArray();
+        ChildList = children.ToImmutableArray();
     }
 
     public OpenAngleBracketToken OpenAngleBracketToken { get; }
-    public ImmutableArray<GenericArgumentEntryNode> GenericArgumentEntryNodeBag { get; }
+    public ImmutableArray<GenericArgumentEntryNode> GenericArgumentEntryNodeList { get; }
     public CloseAngleBracketToken CloseAngleBracketToken { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.GenericArgumentsListingNode;

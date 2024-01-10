@@ -19,8 +19,8 @@ public class CompilationUnitTests
     /// <see cref="CompilationUnit.Binder"/>
 	/// <see cref="CompilationUnit.SyntaxKind"/>
 	/// <see cref="CompilationUnit.IsFabricated"/>
-	/// <see cref="CompilationUnit.DiagnosticsBag"/>
-	/// <see cref="CompilationUnit.ChildBag"/>
+	/// <see cref="CompilationUnit.DiagnosticsList"/>
+	/// <see cref="CompilationUnit.ChildList"/>
     /// </summary>
     [Fact]
 	public void Constructor()
@@ -44,9 +44,9 @@ public class CompilationUnitTests
 		Assert.Equal(SyntaxKind.CompilationUnit, compilationUnit.SyntaxKind);
 		Assert.False(compilationUnit.IsFabricated);
 
-		Assert.Empty(compilationUnit.DiagnosticsBag);
+		Assert.Empty(compilationUnit.DiagnosticsList);
 
-		Assert.Single(compilationUnit.ChildBag);
-		Assert.Equal(codeBlockNode, compilationUnit.ChildBag.Single());
+		Assert.Single(compilationUnit.ChildList);
+		Assert.Equal(codeBlockNode, compilationUnit.ChildList.Single());
 	}
 }

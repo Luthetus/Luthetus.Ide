@@ -18,10 +18,10 @@ public record LuthetusTextEditorOptionsTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusTextEditorOptions.CustomThemeRecordBag"/>
+	/// <see cref="LuthetusTextEditorOptions.CustomThemeRecordList"/>
 	/// </summary>
 	[Fact]
-	public void CustomThemeRecordBag()
+	public void CustomThemeRecordList()
 	{
 		throw new NotImplementedException();
 	}
@@ -90,10 +90,10 @@ public record LuthetusTextEditorOptionsTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusTextEditorOptions.SearchEngineBag"/>
+	/// <see cref="LuthetusTextEditorOptions.SearchEngineList"/>
 	/// </summary>
 	[Fact]
-	public void SearchEngineBag()
+	public void SearchEngineList()
 	{
 		throw new NotImplementedException();
 	}

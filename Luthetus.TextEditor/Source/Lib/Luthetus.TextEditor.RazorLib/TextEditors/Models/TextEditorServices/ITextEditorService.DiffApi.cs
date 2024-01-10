@@ -53,7 +53,7 @@ public partial interface ITextEditorService
 
         public TextEditorDiffModel? GetOrDefault(Key<TextEditorDiffModel> diffKey)
         {
-            return _textEditorService.DiffStateWrap.Value.DiffModelBag.FirstOrDefault(x => x.DiffKey == diffKey);
+            return _textEditorService.DiffStateWrap.Value.DiffModelList.FirstOrDefault(x => x.DiffKey == diffKey);
         }
 
         public void Dispose(Key<TextEditorDiffModel> diffKey)
@@ -94,7 +94,7 @@ public partial interface ITextEditorService
 
             // inModel Diff Presentation Model
             {
-                var presentationModel = inModel.PresentationModelsBag.FirstOrDefault(x =>
+                var presentationModel = inModel.PresentationModelsList.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == DiffPresentationFacts.InPresentationKey);
 
                 if (presentationModel is not null)
@@ -102,8 +102,8 @@ public partial interface ITextEditorService
                     if (presentationModel.PendingCalculation is null)
                         presentationModel.PendingCalculation = new(inModel.GetAllText());
 
-                    presentationModel.PendingCalculation.TextEditorTextSpanBag =
-                        diffResult.InResultTextSpanBag.ToImmutableArray();
+                    presentationModel.PendingCalculation.TextEditorTextSpanList =
+                        diffResult.InResultTextSpanList.ToImmutableArray();
 
                     (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
                         (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
@@ -112,7 +112,7 @@ public partial interface ITextEditorService
 
             // outModel Diff Presentation Model
             {
-                var presentationModel = outModel.PresentationModelsBag.FirstOrDefault(x =>
+                var presentationModel = outModel.PresentationModelsList.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == DiffPresentationFacts.OutPresentationKey);
 
                 if (presentationModel is not null)
@@ -120,8 +120,8 @@ public partial interface ITextEditorService
                     if (presentationModel.PendingCalculation is null)
                         presentationModel.PendingCalculation = new(outModel.GetAllText());
 
-                    presentationModel.PendingCalculation.TextEditorTextSpanBag =
-                        diffResult.OutResultTextSpanBag.ToImmutableArray();
+                    presentationModel.PendingCalculation.TextEditorTextSpanList =
+                        diffResult.OutResultTextSpanList.ToImmutableArray();
 
                     (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
                         (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
@@ -133,7 +133,7 @@ public partial interface ITextEditorService
 
         public ImmutableList<TextEditorDiffModel> GetDiffs()
         {
-            return _textEditorService.DiffStateWrap.Value.DiffModelBag;
+            return _textEditorService.DiffStateWrap.Value.DiffModelList;
         }
     }
 }

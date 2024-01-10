@@ -91,12 +91,12 @@
                                 {
                                     <div class="luth_ide_graphical-project-template-container">
                                         @{
-                                            var filteredProjectTemplateBag = _viewModel.ProjectTemplateBag;
+                                            var filteredProjectTemplateList = _viewModel.ProjectTemplateList;
                                             var localSearchInput = _viewModel.SearchInput;
 
                                             if (!string.IsNullOrWhiteSpace(localSearchInput))
                                             {
-                                                filteredProjectTemplateBag = _viewModel.ProjectTemplateBag.Where(pt =>
+                                                filteredProjectTemplateList = _viewModel.ProjectTemplateList.Where(pt =>
                                                 pt.TemplateName!.Contains(localSearchInput, StringComparison.InvariantCultureIgnoreCase) ||
                                                 pt.ShortName!.Contains(localSearchInput, StringComparison.InvariantCultureIgnoreCase) ||
                                                 pt.Language!.Contains(localSearchInput, StringComparison.InvariantCultureIgnoreCase) ||
@@ -104,7 +104,7 @@
                                                 .ToList();
                                             }
 
-                                            foreach (var projectTemplate in filteredProjectTemplateBag)
+                                            foreach (var projectTemplate in filteredProjectTemplateList)
                                             {
                                                 <ProjectTemplateDisplay ProjectTemplate="projectTemplate"
                                                                         ShortNameOfSelectedProjectTemplate="@_viewModel.ProjectTemplateShortNameValue"

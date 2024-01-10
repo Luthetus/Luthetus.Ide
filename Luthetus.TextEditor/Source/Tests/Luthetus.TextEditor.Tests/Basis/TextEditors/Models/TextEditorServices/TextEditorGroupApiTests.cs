@@ -67,17 +67,17 @@ public class TextEditorGroupApiTests
             out var inGroup,
             out var serviceProvider);
 
-        Assert.Empty(inGroup.ViewModelKeyBag);
+        Assert.Empty(inGroup.ViewModelKeyList);
 
         textEditorService.GroupApi.AddViewModel(inGroup.GroupKey, inViewModel.ViewModelKey);
         var refGroup = textEditorService.GroupApi.GetOrDefault(inGroup.GroupKey)!;
 
-        Assert.NotEmpty(refGroup.ViewModelKeyBag);
+        Assert.NotEmpty(refGroup.ViewModelKeyList);
 
         textEditorService.GroupApi.RemoveViewModel(inGroup.GroupKey, inViewModel.ViewModelKey);
         var outGroup = textEditorService.GroupApi.GetOrDefault(inGroup.GroupKey)!;
         
-        Assert.Empty(outGroup.ViewModelKeyBag);
+        Assert.Empty(outGroup.ViewModelKeyList);
     }
 
     /// <summary>
@@ -163,12 +163,12 @@ public class TextEditorGroupApiTests
             out var inGroup,
             out var serviceProvider);
 
-        Assert.Empty(inGroup.ViewModelKeyBag);
+        Assert.Empty(inGroup.ViewModelKeyList);
 
         textEditorService.GroupApi.AddViewModel(inGroup.GroupKey, inViewModel.ViewModelKey);
         var outGroup = textEditorService.GroupApi.GetOrDefault(inGroup.GroupKey)!;
 
-        Assert.Single(outGroup.ViewModelKeyBag);
+        Assert.Single(outGroup.ViewModelKeyList);
     }
 
     private void InitializeTextEditorGroupApiTests(

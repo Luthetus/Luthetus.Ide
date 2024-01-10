@@ -61,7 +61,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         if (commandArgs.TargetNode is null)
             return MenuRecord.Empty;
 
-        var menuRecordsBag = new List<MenuOptionRecord>();
+        var menuRecordsList = new List<MenuOptionRecord>();
         var treeViewModel = commandArgs.TargetNode;
         var parentTreeViewModel = treeViewModel.Parent;
         var parentTreeViewNamespacePath = parentTreeViewModel as TreeViewNamespacePath;
@@ -70,7 +70,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         {
             if (treeViewNamespacePath.Item.AbsolutePath.IsDirectory)
             {
-                menuRecordsBag.AddRange(GetFileMenuOptions(treeViewNamespacePath, parentTreeViewNamespacePath)
+                menuRecordsList.AddRange(GetFileMenuOptions(treeViewNamespacePath, parentTreeViewNamespacePath)
                     .Union(GetDirectoryMenuOptions(treeViewNamespacePath))
                     .Union(GetDebugMenuOptions(treeViewNamespacePath)));
             }
@@ -79,11 +79,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 switch (treeViewNamespacePath.Item.AbsolutePath.ExtensionNoPeriod)
                 {
                     case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                        menuRecordsBag.AddRange(GetCSharpProjectMenuOptions(treeViewNamespacePath)
+                        menuRecordsList.AddRange(GetCSharpProjectMenuOptions(treeViewNamespacePath)
                             .Union(GetDebugMenuOptions(treeViewNamespacePath)));
                         break;
                     default:
-                        menuRecordsBag.AddRange(GetFileMenuOptions(treeViewNamespacePath, parentTreeViewNamespacePath)
+                        menuRecordsList.AddRange(GetFileMenuOptions(treeViewNamespacePath, parentTreeViewNamespacePath)
                             .Union(GetDebugMenuOptions(treeViewNamespacePath)));
                         break;
                 }
@@ -94,24 +94,24 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             if (ExtensionNoPeriodFacts.DOT_NET_SOLUTION == treeViewSolution.Item.NamespacePath.AbsolutePath.ExtensionNoPeriod)
             {
                 if (treeViewSolution.Parent is null || treeViewSolution.Parent is TreeViewAdhoc)
-                    menuRecordsBag.AddRange(GetDotNetSolutionMenuOptions(treeViewSolution));
+                    menuRecordsList.AddRange(GetDotNetSolutionMenuOptions(treeViewSolution));
             }
         }
         else if (treeViewModel is TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference)
         {
-            menuRecordsBag.AddRange(GetCSharpProjectToProjectReferenceMenuOptions(
+            menuRecordsList.AddRange(GetCSharpProjectToProjectReferenceMenuOptions(
                 treeViewCSharpProjectToProjectReference));
         }
         else if (treeViewModel is TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference)
         {
-            menuRecordsBag.AddRange(GetTreeViewLightWeightNugetPackageRecordMenuOptions(
+            menuRecordsList.AddRange(GetTreeViewLightWeightNugetPackageRecordMenuOptions(
                 treeViewCSharpProjectNugetPackageReference));
         }
 
-        if (!menuRecordsBag.Any())
+        if (!menuRecordsList.Any())
             return MenuRecord.Empty;
 
-        return new MenuRecord(menuRecordsBag.ToImmutableArray());
+        return new MenuRecord(menuRecordsList.ToImmutableArray());
     }
 
     private MenuOptionRecord[] GetDotNetSolutionMenuOptions(TreeViewSolution treeViewSolution)

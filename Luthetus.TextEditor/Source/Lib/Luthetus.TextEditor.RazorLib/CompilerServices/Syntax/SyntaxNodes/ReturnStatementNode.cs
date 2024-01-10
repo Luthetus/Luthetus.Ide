@@ -11,7 +11,7 @@ public sealed record ReturnStatementNode : ISyntaxNode
         KeywordToken = keywordToken;
         ExpressionNode = expressionNode;
 
-        ChildBag = new ISyntax[]
+        ChildList = new ISyntax[]
         {
             KeywordToken,
             ExpressionNode
@@ -21,7 +21,7 @@ public sealed record ReturnStatementNode : ISyntaxNode
     public KeywordToken KeywordToken { get; }
     public IExpressionNode ExpressionNode { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ReturnStatementNode;

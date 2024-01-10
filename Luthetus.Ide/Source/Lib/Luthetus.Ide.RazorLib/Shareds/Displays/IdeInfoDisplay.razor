@@ -68,12 +68,12 @@
         </div>
 
         @{
-            var referencedLuthetusAssembliesBag = ideAssembly
+            var referencedLuthetusAssembliesList = ideAssembly
                 .GetReferencedAssemblies()
                 .Where(x => x.Name is not null && x.Name.StartsWith("Luthetus"));
         }
 
-        @foreach (var referencedLuthetusAssembly in referencedLuthetusAssembliesBag)
+        @foreach (var referencedLuthetusAssembly in referencedLuthetusAssembliesList)
         {
             if (referencedLuthetusAssembly.Name is null)
                 continue;

@@ -20,7 +20,7 @@ public class IfStatementNodeTests
     /// <see cref="IfStatementNode.KeywordToken"/>
     /// <see cref="IfStatementNode.ExpressionNode"/>
     /// <see cref="IfStatementNode.IfStatementBodyCodeBlockNode"/>
-    /// <see cref="IfStatementNode.ChildBag"/>
+    /// <see cref="IfStatementNode.ChildList"/>
     /// <see cref="IfStatementNode.IsFabricated"/>
     /// <see cref="IfStatementNode.SyntaxKind"/>
     /// </summary>
@@ -85,10 +85,10 @@ public class IfStatementNodeTests
         Assert.Equal(expressionNode, ifStatementNode.ExpressionNode);
         Assert.Equal(ifStatementBodyCodeBlockNode, ifStatementNode.IfStatementBodyCodeBlockNode);
 
-        Assert.Equal(3, ifStatementNode.ChildBag.Length);
-        Assert.Equal(ifKeywordToken, ifStatementNode.ChildBag[0]);
-        Assert.Equal(expressionNode, ifStatementNode.ChildBag[1]);
-        Assert.Equal(ifStatementBodyCodeBlockNode, ifStatementNode.ChildBag[2]);
+        Assert.Equal(3, ifStatementNode.ChildList.Length);
+        Assert.Equal(ifKeywordToken, ifStatementNode.ChildList[0]);
+        Assert.Equal(expressionNode, ifStatementNode.ChildList[1]);
+        Assert.Equal(ifStatementBodyCodeBlockNode, ifStatementNode.ChildList[2]);
 
         Assert.False(ifStatementNode.IsFabricated);
 

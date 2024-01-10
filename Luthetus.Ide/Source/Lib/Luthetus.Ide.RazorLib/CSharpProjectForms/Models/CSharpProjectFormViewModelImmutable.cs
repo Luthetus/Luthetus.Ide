@@ -15,7 +15,7 @@ public record CSharpProjectFormViewModelImmutable(
     string CSharpProjectNameValue,
     string OptionalParametersValue,
     string ParentDirectoryNameValue,
-    List<ProjectTemplate> ProjectTemplateBag,
+    List<ProjectTemplate> ProjectTemplateList,
     CSharpProjectFormPanelKind ActivePanelKind,
     string SearchInput,
     ProjectTemplate? SelectedProjectTemplate,

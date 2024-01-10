@@ -9,7 +9,7 @@ namespace Luthetus.TextEditor.Tests.Basis.Lexes.Models;
 public interface TextEditorLexerResultTests
 {
 	/// <summary>
-	/// <see cref="TextEditorLexerResult.TextSpanBag"/>
+	/// <see cref="TextEditorLexerResult.TextSpanList"/>
 	/// </summary>
 	[Fact]
 	public void Constructor()

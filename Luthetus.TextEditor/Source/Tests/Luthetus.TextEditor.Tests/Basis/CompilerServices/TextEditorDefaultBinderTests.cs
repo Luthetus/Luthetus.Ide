@@ -11,19 +11,19 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 public class TextEditorDefaultBinderTests
 {
     /// <summary>
-    /// <see cref="TextEditorDefaultBinder.DiagnosticsBag"/>
+    /// <see cref="TextEditorDefaultBinder.DiagnosticsList"/>
     /// <br/>----<br/>
-    /// <see cref="TextEditorDefaultBinder.SymbolsBag"/>
+    /// <see cref="TextEditorDefaultBinder.SymbolsList"/>
 	/// <see cref="TextEditorDefaultBinder.GetDefinition(TextEditorTextSpan)"/>
 	/// <see cref="TextEditorDefaultBinder.GetBoundScope(TextEditorTextSpan)"/>
     /// </summary>
     [Fact]
-	public void DiagnosticsBag()
+	public void DiagnosticsList()
 	{
         var defaultBinder = new TextEditorDefaultBinder();
 
-        Assert.Equal(ImmutableArray<TextEditorDiagnostic>.Empty, defaultBinder.DiagnosticsBag);
-        Assert.Equal(ImmutableArray<ITextEditorSymbol>.Empty, defaultBinder.SymbolsBag);
+        Assert.Equal(ImmutableArray<TextEditorDiagnostic>.Empty, defaultBinder.DiagnosticsList);
+        Assert.Equal(ImmutableArray<ITextEditorSymbol>.Empty, defaultBinder.SymbolsList);
         Assert.Null(defaultBinder.GetDefinition(TextEditorTextSpan.FabricateTextSpan("unit-test")));
         Assert.Null(defaultBinder.GetBoundScope(TextEditorTextSpan.FabricateTextSpan("unit-test")));
     }

@@ -24,7 +24,7 @@ public class TextEditorCommandArgsTests
     /// <br/>----<br/>
 	/// <see cref="TextEditorCommandArgs.ModelResourceUri"/>
     /// <see cref="TextEditorCommandArgs.PrimaryCursor"/>
-    /// <see cref="TextEditorCommandArgs.CursorBag"/>
+    /// <see cref="TextEditorCommandArgs.CursorList"/>
     /// <see cref="TextEditorCommandArgs.ClipboardService"/>
     /// <see cref="TextEditorCommandArgs.TextEditorService"/>
     /// <see cref="TextEditorCommandArgs.ViewModelKey"/>

@@ -50,15 +50,15 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
         {
             var previousChildren = new List<TreeViewNoType>(ChildList);
 
-            var newChildBag = Item.Map.Select(kvp => (TreeViewNoType)new TreeViewStringFragment(
+            var newChildList = Item.Map.Select(kvp => (TreeViewNoType)new TreeViewStringFragment(
 				kvp.Value,
 				CommonComponentRenderers,
 				true,
 				false)).ToList();
 
-			for (var i = 0; i < newChildBag.Count; i++)
+			for (var i = 0; i < newChildList.Count; i++)
 			{
-				var child = (TreeViewStringFragment)newChildBag[i];
+				var child = (TreeViewStringFragment)newChildList[i];
 				await child.LoadChildListAsync();
 
 				if (child.ChildList.Count == 0)
@@ -68,20 +68,20 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
 				}
 			}
 	
-			if (newChildBag.Count == 1)
+			if (newChildList.Count == 1)
 			{
 				// Merge parent and child
 
-				var child = (TreeViewStringFragment)newChildBag.Single();
+				var child = (TreeViewStringFragment)newChildList.Single();
 
 				Item.Value = $"{Item.Value}.{child.Item.Value}";
 				Item.Map = child.Item.Map;
 				Item.IsEndpoint = child.Item.IsEndpoint;
 
-				newChildBag = child.ChildList;
+				newChildList = child.ChildList;
 			}
 
-            ChildList = newChildBag;
+            ChildList = newChildList;
             LinkChildren(previousChildren, ChildList);
         }
         catch (Exception exception)

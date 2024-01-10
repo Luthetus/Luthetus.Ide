@@ -137,7 +137,7 @@ public class CSharpProjectCompilerService : ICompilerService
                         CompilerServiceDiagnosticPresentationFacts.PresentationKey)
                     .Invoke(editContext);
 
-                var pendingCalculation = modelModifier.PresentationModelsBag.FirstOrDefault<TextEditor.RazorLib.Decorations.Models.TextEditorPresentationModel>((Func<TextEditor.RazorLib.Decorations.Models.TextEditorPresentationModel, bool>)(x =>
+                var pendingCalculation = modelModifier.PresentationModelsList.FirstOrDefault<TextEditor.RazorLib.Decorations.Models.TextEditorPresentationModel>((Func<TextEditor.RazorLib.Decorations.Models.TextEditorPresentationModel, bool>)(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey))
                     ?.PendingCalculation;
 

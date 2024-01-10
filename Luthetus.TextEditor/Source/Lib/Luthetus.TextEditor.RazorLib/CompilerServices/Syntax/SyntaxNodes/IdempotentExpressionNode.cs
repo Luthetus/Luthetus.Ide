@@ -18,12 +18,12 @@ public sealed record IdempotentExpressionNode : IExpressionNode
             ResultTypeClauseNode
         };
 
-        ChildBag = children.ToImmutableArray();
+        ChildList = children.ToImmutableArray();
     }
 
     public TypeClauseNode ResultTypeClauseNode { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.IdempotentExpressionNode;

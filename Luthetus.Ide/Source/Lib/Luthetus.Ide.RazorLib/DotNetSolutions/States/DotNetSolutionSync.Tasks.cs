@@ -23,7 +23,7 @@ public partial class DotNetSolutionSync
         IAbsolutePath cSharpProjectAbsolutePath,
         IEnvironmentProvider environmentProvider)
     {
-        var inDotNetSolutionModel = _dotNetSolutionStateWrap.Value.DotNetSolutionsBag.FirstOrDefault(
+        var inDotNetSolutionModel = _dotNetSolutionStateWrap.Value.DotNetSolutionsList.FirstOrDefault(
             x => x.Key == dotNetSolutionModelKey);
 
         if (inDotNetSolutionModel is null)
@@ -107,7 +107,7 @@ public partial class DotNetSolutionSync
 
         var compilationUnit = parser.Parse();
 
-        foreach (var project in parser.DotNetProjectBag)
+        foreach (var project in parser.DotNetProjectList)
         {
             var relativePathFromSolutionFileString = project.RelativePathFromSolutionFileString;
             
@@ -124,16 +124,16 @@ public partial class DotNetSolutionSync
             project.AbsolutePath = new AbsolutePath(absolutePathString, false, _environmentProvider);
         }
 
-        var solutionFolderBag = parser.DotNetProjectBag
+        var solutionFolderList = parser.DotNetProjectList
             .Where(x => x.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
             .Select(x => (SolutionFolder)x).ToImmutableArray();
 
         var dotNetSolutionModel = new DotNetSolutionModel(
             solutionAbsolutePath,
             parser.DotNetSolutionHeader,
-            parser.DotNetProjectBag.ToImmutableArray(),
-            solutionFolderBag,
-            parser.NestedProjectEntryBag.ToImmutableArray(),
+            parser.DotNetProjectList.ToImmutableArray(),
+            solutionFolderList,
+            parser.NestedProjectEntryList.ToImmutableArray(),
             parser.DotNetSolutionGlobal,
             content);
 
@@ -164,7 +164,7 @@ public partial class DotNetSolutionSync
     {
         var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
 
-        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionsBag.FirstOrDefault(
+        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionsList.FirstOrDefault(
             x => x.Key == dotNetSolutionModelKey);
 
         if (dotNetSolutionModel is null)

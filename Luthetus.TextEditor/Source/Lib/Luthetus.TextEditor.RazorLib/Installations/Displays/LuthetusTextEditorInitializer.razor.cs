@@ -28,9 +28,9 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
     {
 		if (firstRender)
 		{
-			if (LuthetusTextEditorOptions.CustomThemeRecordBag is not null)
+			if (LuthetusTextEditorOptions.CustomThemeRecordList is not null)
 	        {
-	            foreach (var themeRecord in LuthetusTextEditorOptions.CustomThemeRecordBag)
+	            foreach (var themeRecord in LuthetusTextEditorOptions.CustomThemeRecordList)
 	            {
 	                Dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
 	            }
@@ -42,7 +42,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
 	        if (initialThemeRecord is not null)
 	            Dispatcher.Dispatch(new TextEditorOptionsState.SetThemeAction(initialThemeRecord));
 	
-	        foreach (var searchEngine in LuthetusTextEditorOptions.SearchEngineBag)
+	        foreach (var searchEngine in LuthetusTextEditorOptions.SearchEngineList)
 	        {
 	            Dispatcher.Dispatch(new TextEditorSearchEngineState.RegisterAction(searchEngine));
 	        }

@@ -11,17 +11,17 @@ public record DotNetSolutionModel : IDotNetSolution
     public DotNetSolutionModel(
         IAbsolutePath absolutePath,
         DotNetSolutionHeader dotNetSolutionHeader,
-        ImmutableArray<IDotNetProject> dotNetProjectBag,
-        ImmutableArray<SolutionFolder> solutionFolderBag,
-        ImmutableArray<NestedProjectEntry> nestedProjectEntryBag,
+        ImmutableArray<IDotNetProject> dotNetProjectList,
+        ImmutableArray<SolutionFolder> solutionFolderList,
+        ImmutableArray<NestedProjectEntry> nestedProjectEntryList,
         DotNetSolutionGlobal dotNetSolutionGlobal,
         string solutionFileContents)
     {
         AbsolutePath = absolutePath;
         DotNetSolutionHeader = dotNetSolutionHeader;
-        DotNetProjectBag = dotNetProjectBag;
-        SolutionFolderBag = solutionFolderBag;
-        NestedProjectEntryBag = nestedProjectEntryBag;
+        DotNetProjectList = dotNetProjectList;
+        SolutionFolderList = solutionFolderList;
+        NestedProjectEntryList = nestedProjectEntryList;
         DotNetSolutionGlobal = dotNetSolutionGlobal;
         SolutionFileContents = solutionFileContents;
     }
@@ -29,9 +29,9 @@ public record DotNetSolutionModel : IDotNetSolution
     public Key<DotNetSolutionModel> Key { get; init; }
     public IAbsolutePath AbsolutePath { get; init; }
     public DotNetSolutionHeader DotNetSolutionHeader { get; init; }
-    public ImmutableArray<IDotNetProject> DotNetProjectBag { get; init; }
-    public ImmutableArray<SolutionFolder> SolutionFolderBag { get; init; }
-    public ImmutableArray<NestedProjectEntry> NestedProjectEntryBag { get; init; }
+    public ImmutableArray<IDotNetProject> DotNetProjectList { get; init; }
+    public ImmutableArray<SolutionFolder> SolutionFolderList { get; init; }
+    public ImmutableArray<NestedProjectEntry> NestedProjectEntryList { get; init; }
     public DotNetSolutionGlobal DotNetSolutionGlobal { get; init; }
     public string SolutionFileContents { get; init; }
 

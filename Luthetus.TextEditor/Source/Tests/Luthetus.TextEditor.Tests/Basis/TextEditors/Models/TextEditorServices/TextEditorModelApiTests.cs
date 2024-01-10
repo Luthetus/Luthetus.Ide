@@ -47,11 +47,11 @@ public class TextEditorModelApiTests
             out var serviceProvider);
 
         var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
-        var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
+        var cursorList = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
         var insertedText = "I have something to say: ";
 
-        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorBag);
+        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorList);
 
         textEditorService.Post(
             nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
@@ -245,11 +245,11 @@ public class TextEditorModelApiTests
             out var serviceProvider);
 
         var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
-        var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
+        var cursorList = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
         var insertedText = "I have something to say: ";
 
-        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorBag);
+        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorList);
 
         textEditorService.Post(
             nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
@@ -292,11 +292,11 @@ public class TextEditorModelApiTests
             out var serviceProvider);
 
         var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
-        var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
+        var cursorList = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
         var insertedText = "I have something to say: ";
 
-        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorBag);
+        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorList);
 
         textEditorService.Post(
             nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
@@ -323,7 +323,7 @@ public class TextEditorModelApiTests
             out var serviceProvider);
 
         var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
-        var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
+        var cursorList = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
         var key = "a";
 
@@ -332,7 +332,7 @@ public class TextEditorModelApiTests
             Key = key
         };
 
-        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorBag);
+        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorList);
 
         textEditorService.Post(
             nameof(textEditorService.ModelApi.HandleKeyboardEventUnsafeFactory),
@@ -447,9 +447,9 @@ public class TextEditorModelApiTests
         var columnIndex = inModel.GetAllText().IndexOf(textToDelete);
 
         var cursor = new TextEditorCursor(0, columnIndex, columnIndex, true, TextEditorSelection.Empty);
-        var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
+        var cursorList = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
-        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorBag);
+        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorList);
 
         textEditorService.Post(
             nameof(textEditorService.ModelApi.DeleteTextByRangeUnsafeFactory),
@@ -482,9 +482,9 @@ public class TextEditorModelApiTests
         var columnIndex = inModel.GetAllText().IndexOf(wordToJoin);
 
         var cursor = new TextEditorCursor(0, columnIndex, columnIndex, true, TextEditorSelection.Empty);
-        var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
+        var cursorList = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
-        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorBag);
+        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorList);
 
         textEditorService.Post(
             nameof(textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory),
@@ -517,9 +517,9 @@ public class TextEditorModelApiTests
         var columnIndex = inModel.GetAllText().IndexOf(spaceText);
 
         var cursor = new TextEditorCursor(0, columnIndex, columnIndex, true, TextEditorSelection.Empty);
-        var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
+        var cursorList = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
-        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorBag);
+        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorList);
 
         textEditorService.Post(
             nameof(textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory),
@@ -545,11 +545,11 @@ public class TextEditorModelApiTests
             out var inViewModel,
             out var serviceProvider);
 
-        Assert.Empty(inModel!.PresentationModelsBag);
+        Assert.Empty(inModel!.PresentationModelsList);
         
         textEditorService.ModelApi.RegisterPresentationModel(inModel.ResourceUri, DiffPresentationFacts.EmptyOutPresentationModel);
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
-        Assert.NotEmpty(outModel!.PresentationModelsBag);
+        Assert.NotEmpty(outModel!.PresentationModelsList);
     }
 }

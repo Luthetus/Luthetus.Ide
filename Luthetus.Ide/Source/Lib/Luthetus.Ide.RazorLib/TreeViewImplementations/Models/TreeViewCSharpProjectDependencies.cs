@@ -69,13 +69,13 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
             TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
         };
 
-        var newChildBag = new List<TreeViewNoType>
+        var newChildList = new List<TreeViewNoType>
         {
             treeViewCSharpProjectNugetPackageReferences,
             treeViewCSharpProjectToProjectReferences
         };
 
-        ChildList = newChildBag;
+        ChildList = newChildList;
         LinkChildren(previousChildren, ChildList);
 
         TreeViewChangedKey = Key<TreeViewChanged>.NewKey();

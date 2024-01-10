@@ -23,7 +23,7 @@ public sealed record ParenthesizedExpressionNode : IExpressionNode
             ResultTypeClauseNode,
         };
 
-        ChildBag = children.ToImmutableArray();
+        ChildList = children.ToImmutableArray();
     }
 
     public OpenParenthesisToken OpenParenthesisToken { get; }
@@ -31,7 +31,7 @@ public sealed record ParenthesizedExpressionNode : IExpressionNode
     public CloseParenthesisToken CloseParenthesisToken { get; }
     public TypeClauseNode ResultTypeClauseNode => InnerExpression.ResultTypeClauseNode;
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ParenthesizedExpressionNode;

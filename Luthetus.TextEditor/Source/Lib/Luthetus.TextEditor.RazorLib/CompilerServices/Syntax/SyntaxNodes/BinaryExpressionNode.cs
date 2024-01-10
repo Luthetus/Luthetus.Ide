@@ -14,7 +14,7 @@ public sealed record BinaryExpressionNode : IExpressionNode
         BinaryOperatorNode = binaryOperatorNode;
         RightExpressionNode = rightExpressionNode;
 
-        ChildBag = new ISyntax[]
+        ChildList = new ISyntax[]
         {
             LeftExpressionNode,
             BinaryOperatorNode,
@@ -27,7 +27,7 @@ public sealed record BinaryExpressionNode : IExpressionNode
     public IExpressionNode RightExpressionNode { get; }
     public TypeClauseNode ResultTypeClauseNode => BinaryOperatorNode.ResultTypeClauseNode;
 
-    public ImmutableArray<ISyntax> ChildBag { get; init; }
+    public ImmutableArray<ISyntax> ChildList { get; init; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionNode;

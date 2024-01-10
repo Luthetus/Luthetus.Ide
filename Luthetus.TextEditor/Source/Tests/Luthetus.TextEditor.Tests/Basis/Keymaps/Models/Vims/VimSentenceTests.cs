@@ -9,10 +9,10 @@ namespace Luthetus.TextEditor.Tests.Basis.Keymaps.Models.Vims;
 public class VimSentenceTests
 {
 	/// <summary>
-	/// <see cref="VimSentence.PendingSentenceBag"/>
+	/// <see cref="VimSentence.PendingSentenceList"/>
 	/// </summary>
 	[Fact]
-	public void PendingSentenceBag()
+	public void PendingSentenceList()
 	{
 		throw new NotImplementedException();
 	}

@@ -226,7 +226,7 @@ public class TextEditorModelHelperTests
         // rowIndex > document.Rows.Count
         {
             // Explanation of result: large out of bounds index gets changed to
-            // index of 'model.RowEndingPositionsBag.Count - 1'
+            // index of 'model.RowEndingPositionsList.Count - 1'
             var lengthOfRow = model.GetLengthOfRow(TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX);
             Assert.Equal(TestConstants.LENGTH_OF_LAST_ROW, lengthOfRow);
         }
@@ -496,24 +496,24 @@ public class TextEditorModelHelperTests
                 null,
                 null);
 
-            var richCharacterBag = model.GetAllRichCharacters();
+            var richCharacterList = model.GetAllRichCharacters();
 
             Assert.Empty(sourceText);
-            Assert.Empty(richCharacterBag);
+            Assert.Empty(richCharacterList);
         }
 
         // NotEmpty
         {
             TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var model);
 
-            var richCharacterBag = model.GetAllRichCharacters();
+            var richCharacterList = model.GetAllRichCharacters();
 
-            Assert.Equal(TestConstants.SOURCE_TEXT.Length, richCharacterBag.Length);
+            Assert.Equal(TestConstants.SOURCE_TEXT.Length, richCharacterList.Length);
 
-            for (int i = 0; i < richCharacterBag.Length; i++)
+            for (int i = 0; i < richCharacterList.Length; i++)
             {
                 var character = TestConstants.SOURCE_TEXT[i];
-                var richCharacter = richCharacterBag[i];
+                var richCharacter = richCharacterList[i];
 
                 Assert.Equal(character, richCharacter.Value);
                 Assert.Equal((byte)GenericDecorationKind.None, richCharacter.DecorationByte);

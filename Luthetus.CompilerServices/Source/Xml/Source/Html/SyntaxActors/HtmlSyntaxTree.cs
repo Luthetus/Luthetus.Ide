@@ -92,7 +92,7 @@ public static class HtmlSyntaxTree
                 // Skip Whitespace
                 while (!stringWalker.IsEof)
                 {
-                    if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+                    if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
                         _ = stringWalker.ReadCharacter();
                     else
                         break;
@@ -392,7 +392,7 @@ public static class HtmlSyntaxTree
                 attributeValueSyntax);
         }
 
-        /// <summary>currentCharacterIn:<br/> -Any character that can start an attribute name<br/> currentCharacterOut:<br/> -<see cref="WhitespaceFacts.ALL_BAG"/> (whitespace)<br/> -<see cref="HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE"/><br/> -<see cref="HtmlFacts.OPEN_TAG_ENDING_OPTIONS"/></summary>
+        /// <summary>currentCharacterIn:<br/> -Any character that can start an attribute name<br/> currentCharacterOut:<br/> -<see cref="WhitespaceFacts.ALL_LIST"/> (whitespace)<br/> -<see cref="HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE"/><br/> -<see cref="HtmlFacts.OPEN_TAG_ENDING_OPTIONS"/></summary>
         public static AttributeNameNode ParseAttributeName(
             StringWalker stringWalker,
             LuthetusDiagnosticBag diagnosticBag,
@@ -425,7 +425,7 @@ public static class HtmlSyntaxTree
                     }
                 }
 
-                if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter) ||
+                if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter) ||
                     HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE == stringWalker.CurrentCharacter ||
                     stringWalker.PeekForSubstringRange(HtmlFacts.OPEN_TAG_ENDING_OPTIONS, out var matchedOn))
                 {
@@ -443,21 +443,21 @@ public static class HtmlSyntaxTree
             return new AttributeNameNode(attributeNameTextSpan);
         }
 
-        /// <summary>Returns placeholder match attribute value if fails to read an attribute value<br/> <br/> currentCharacterIn:<br/> -<see cref="WhitespaceFacts.ALL_BAG"/> (whitespace)<br/> -<see cref="HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE"/><br/> -<see cref="HtmlFacts.OPEN_TAG_ENDING_OPTIONS"/><br/> currentCharacterOut:<br/> -<see cref="HtmlFacts.ATTRIBUTE_VALUE_ENDING"/><br/> -<see cref="HtmlFacts.OPEN_TAG_ENDING_OPTIONS"/></summary>
+        /// <summary>Returns placeholder match attribute value if fails to read an attribute value<br/> <br/> currentCharacterIn:<br/> -<see cref="WhitespaceFacts.ALL_LIST"/> (whitespace)<br/> -<see cref="HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE"/><br/> -<see cref="HtmlFacts.OPEN_TAG_ENDING_OPTIONS"/><br/> currentCharacterOut:<br/> -<see cref="HtmlFacts.ATTRIBUTE_VALUE_ENDING"/><br/> -<see cref="HtmlFacts.OPEN_TAG_ENDING_OPTIONS"/></summary>
         private static bool TryReadAttributeValue(
             StringWalker stringWalker,
             LuthetusDiagnosticBag diagnosticBag,
             InjectedLanguageDefinition? injectedLanguageDefinition,
             out AttributeValueNode attributeValueSyntax)
         {
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
             {
                 // Move to the first non-whitespace
                 while (!stringWalker.IsEof)
                 {
                     _ = stringWalker.ReadCharacter();
 
-                    if (!WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+                    if (!WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
                         break;
                 }
             }
@@ -502,7 +502,7 @@ public static class HtmlSyntaxTree
             {
                 _ = stringWalker.ReadCharacter();
 
-                if (!WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+                if (!WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
                     break;
             }
 
@@ -537,7 +537,7 @@ public static class HtmlSyntaxTree
                     _ = stringWalker.ReadCharacter();
 
                     if (!beganWithAttributeValueStarting &&
-                        WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+                        WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
                     {
                         break;
                     }

@@ -12,7 +12,7 @@ public sealed record AttributeNode : ISyntaxNode
         OpenSquareBracketToken = openSquareBracketToken;
         CloseSquareBracketToken = closeSquareBracketToken;
 
-        ChildBag = new ISyntax[]
+        ChildList = new ISyntax[]
         {
             OpenSquareBracketToken,
             CloseSquareBracketToken,
@@ -22,7 +22,7 @@ public sealed record AttributeNode : ISyntaxNode
     public OpenSquareBracketToken OpenSquareBracketToken { get; }
     public CloseSquareBracketToken CloseSquareBracketToken { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.AttributeNode;

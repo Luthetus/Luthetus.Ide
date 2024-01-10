@@ -6,7 +6,7 @@
     @{
         var viewModelState = TextEditorViewModelStateWrap.Value;
 
-        var viewModel = viewModelState.ViewModelBag.FirstOrDefault(
+        var viewModel = viewModelState.ViewModelList.FirstOrDefault(
             x => x.ViewModelKey == TextEditorViewModelKey);
         
         if (viewModel is null)
@@ -17,8 +17,8 @@
         {
             var textEditorModelsCollectionWrap = TextEditorModelStateWrap.Value;
 
-            var textEditorModel = textEditorModelsCollectionWrap.ModelBag.FirstOrDefault(
-            x => x.ResourceUri == viewModel.ResourceUri);
+            var textEditorModel = textEditorModelsCollectionWrap.ModelList.FirstOrDefault(
+                x => x.ResourceUri == viewModel.ResourceUri);
 
             if (textEditorModel is null)
             {

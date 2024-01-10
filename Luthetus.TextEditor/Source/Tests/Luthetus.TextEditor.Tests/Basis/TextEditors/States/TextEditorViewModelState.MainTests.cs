@@ -22,14 +22,14 @@ public class TextEditorViewModelStateMainTests
 	public void Constructor()
 	{
 		var viewModelState = new TextEditorViewModelState();
-		Assert.Equal(ImmutableList<TextEditorViewModel>.Empty, viewModelState.ViewModelBag);
+		Assert.Equal(ImmutableList<TextEditorViewModel>.Empty, viewModelState.ViewModelList);
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorViewModelState.ViewModelBag"/>
+	/// <see cref="TextEditorViewModelState.ViewModelList"/>
 	/// </summary>
 	[Fact]
-	public void ViewModelBag()
+	public void ViewModelList()
 	{
         TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
@@ -38,7 +38,7 @@ public class TextEditorViewModelStateMainTests
             out var serviceProvider);
 
         var viewModelState = new TextEditorViewModelState();
-        Assert.Equal(ImmutableList<TextEditorViewModel>.Empty, viewModelState.ViewModelBag);
+        Assert.Equal(ImmutableList<TextEditorViewModel>.Empty, viewModelState.ViewModelList);
 
 		var viewModel = new TextEditorViewModel(
             Key<TextEditorViewModel>.NewKey(),
@@ -47,14 +47,14 @@ public class TextEditorViewModelStateMainTests
             VirtualizationResult<List<RichCharacter>>.GetEmptyRichCharacters(),
             false);
 
-		var outViewModelBag = viewModelState.ViewModelBag.Add(viewModel);
-        Assert.NotEqual(ImmutableList<TextEditorViewModel>.Empty, outViewModelBag);
+		var outViewModelList = viewModelState.ViewModelList.Add(viewModel);
+        Assert.NotEqual(ImmutableList<TextEditorViewModel>.Empty, outViewModelList);
 
 		var outViewModelState = new TextEditorViewModelState
 		{
-			ViewModelBag = outViewModelBag
+			ViewModelList = outViewModelList
         };
 
-		Assert.Equal(outViewModelBag, outViewModelState.ViewModelBag);
+		Assert.Equal(outViewModelList, outViewModelState.ViewModelList);
 	}
 }

@@ -16,13 +16,13 @@ public sealed record LiteralExpressionNode : IExpressionNode
             ResultTypeClauseNode
         };
 
-        ChildBag = children.ToImmutableArray();
+        ChildList = children.ToImmutableArray();
     }
 
     public ISyntaxToken LiteralSyntaxToken { get; }
     public TypeClauseNode ResultTypeClauseNode { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.LiteralExpressionNode;

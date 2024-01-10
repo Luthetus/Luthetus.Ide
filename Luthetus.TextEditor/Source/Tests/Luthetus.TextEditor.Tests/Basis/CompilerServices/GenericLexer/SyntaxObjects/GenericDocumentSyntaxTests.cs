@@ -27,10 +27,10 @@ public class GenericDocumentSyntaxTests
 	}
 
 	/// <summary>
-	/// <see cref="GenericDocumentSyntax.ChildBag"/>
+	/// <see cref="GenericDocumentSyntax.ChildList"/>
 	/// </summary>
 	[Fact]
-	public void ChildBag()
+	public void ChildList()
 	{
 		throw new NotImplementedException();
 	}

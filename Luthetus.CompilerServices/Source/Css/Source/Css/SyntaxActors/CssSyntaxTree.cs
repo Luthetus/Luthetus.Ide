@@ -149,7 +149,7 @@ public class CssSyntaxTree
 
             // Skip preceding and trailing whitespace
             // relative to the child's text
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter) &&
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter) &&
                 pendingChildStartingPositionIndex == -1)
             {
                 continue;
@@ -253,7 +253,7 @@ public class CssSyntaxTree
         {
             _ = stringWalker.ReadCharacter();
 
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter) ||
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter) ||
                 CssFacts.STYLE_BLOCK_START == stringWalker.CurrentCharacter)
             {
                 break;

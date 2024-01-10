@@ -17,7 +17,7 @@ public sealed record VariableDeclarationNode : ISyntaxNode
         VariableKind = variableKind;
         IsInitialized = isInitialized;
 
-        ChildBag = new ISyntax[]
+        ChildList = new ISyntax[]
         {
             TypeClauseNode,
             IdentifierToken,
@@ -45,7 +45,7 @@ public sealed record VariableDeclarationNode : ISyntaxNode
     /// </summary>
     public bool SetterIsAutoImplemented { get; set; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;

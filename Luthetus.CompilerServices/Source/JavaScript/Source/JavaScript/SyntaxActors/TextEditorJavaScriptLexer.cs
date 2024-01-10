@@ -59,23 +59,23 @@ public class TextEditorJavaScriptLexer
         var textEditorTextSpans = new List<TextEditorTextSpan>();
 
         textEditorTextSpans
-            .AddRange(javaScriptSyntaxWalker.StringSyntaxBag
+            .AddRange(javaScriptSyntaxWalker.StringSyntaxList
                 .Select(x => x.TextSpan));
 
         textEditorTextSpans
-            .AddRange(javaScriptSyntaxWalker.CommentSingleLineSyntaxBag
+            .AddRange(javaScriptSyntaxWalker.CommentSingleLineSyntaxList
                 .Select(x => x.TextSpan));
 
         textEditorTextSpans
-            .AddRange(javaScriptSyntaxWalker.CommentMultiLineSyntaxBag
+            .AddRange(javaScriptSyntaxWalker.CommentMultiLineSyntaxList
                 .Select(x => x.TextSpan));
 
         textEditorTextSpans
-            .AddRange(javaScriptSyntaxWalker.KeywordSyntaxBag
+            .AddRange(javaScriptSyntaxWalker.KeywordSyntaxList
                 .Select(x => x.TextSpan));
 
         textEditorTextSpans
-            .AddRange(javaScriptSyntaxWalker.FunctionSyntaxBag
+            .AddRange(javaScriptSyntaxWalker.FunctionSyntaxList
                 .Select(x => x.TextSpan));
 
         return Task.FromResult(textEditorTextSpans.ToImmutableArray());

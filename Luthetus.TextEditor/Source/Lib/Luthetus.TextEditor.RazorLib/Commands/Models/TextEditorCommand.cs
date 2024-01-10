@@ -34,7 +34,7 @@ public class TextEditorCommand : CommandWithType<TextEditorCommandArgs>
         TextEditorCommandArgs commandArgs,
         TextEditorModel model,
         TextEditorViewModel viewModel,
-        TextEditorCursorModifierBag refreshCursorsRequest,
+        TextEditorCursorModifierBag cursorModifierBag,
         TextEditorCursorModifier primaryCursor);
 
     public static ApplicationException ThrowOtherTextEditKindIdentifierWasExpectedException(TextEditKind textEditKind)

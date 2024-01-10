@@ -240,13 +240,13 @@ public static class SyntaxTextObjectVim
     }
 
     public static bool TryParse(TextEditorKeymapVim textEditorKeymapVim,
-        ImmutableArray<VimGrammarToken> sentenceSnapshotBag,
+        ImmutableArray<VimGrammarToken> sentenceSnapshotList,
         int indexInSentence,
         KeymapArgument keymapArgument,
         bool hasTextSelection,
         out TextEditorCommand? textEditorCommand)
     {
-        var currentToken = sentenceSnapshotBag[indexInSentence];
+        var currentToken = sentenceSnapshotList[indexInSentence];
 
         var shiftKey = textEditorKeymapVim.ActiveVimMode == VimMode.Visual ||
             textEditorKeymapVim.ActiveVimMode == VimMode.VisualLine;

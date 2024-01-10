@@ -18,7 +18,7 @@ public class TokenWalkerTests
 	}
 
 	/// <summary>
-	/// <see cref="TokenWalker.Tokens"/>
+	/// <see cref="TokenWalker.TokenList"/>
 	/// </summary>
 	[Fact]
 	public void Tokens()

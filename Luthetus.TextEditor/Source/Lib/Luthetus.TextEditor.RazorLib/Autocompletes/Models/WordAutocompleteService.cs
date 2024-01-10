@@ -11,7 +11,7 @@ public class WordAutocompleteService : IAutocompleteService
 
     public List<string> GetAutocompleteOptions(string word)
     {
-        var indexedStrings = _wordAutocompleteIndexer.IndexedStringsBag;
+        var indexedStrings = _wordAutocompleteIndexer.IndexedStringsList;
         return new List<string>(indexedStrings.Where(x => x.StartsWith(word)).Take(5));
     }
 }

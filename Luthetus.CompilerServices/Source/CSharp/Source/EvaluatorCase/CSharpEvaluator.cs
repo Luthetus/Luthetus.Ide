@@ -20,17 +20,17 @@ public class CSharpEvaluator
         _sourceText = sourceText;
     }
 
-    public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
+    public ImmutableArray<TextEditorDiagnostic> DiagnosticList => _diagnosticBag.ToImmutableArray();
 
     public EvaluatorResult Evaluate()
     {
-        if (_compilationUnit.DiagnosticsBag.Any(x =>
+        if (_compilationUnit.DiagnosticsList.Any(x =>
                 x.DiagnosticLevel == TextEditorDiagnosticLevel.Error))
         {
             throw new NotImplementedException("TODO: What should be done when there are error diagnostics?");
         }
 
-        var expressionNode = (IExpressionNode)_compilationUnit.RootCodeBlockNode.ChildBag
+        var expressionNode = (IExpressionNode)_compilationUnit.RootCodeBlockNode.ChildList
             .Single();
         
         return EvaluateExpression(expressionNode);

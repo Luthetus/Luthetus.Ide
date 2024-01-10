@@ -29,7 +29,7 @@ public class CSharpProjectFormViewModel
     public string CSharpProjectNameValue { get; set; } = string.Empty;
     public string OptionalParametersValue { get; set; } = string.Empty;
     public string ParentDirectoryNameValue { get; set; } = string.Empty;
-    public List<ProjectTemplate> ProjectTemplateBag { get; set; } = new List<ProjectTemplate>();
+    public List<ProjectTemplate> ProjectTemplateList { get; set; } = new List<ProjectTemplate>();
     public CSharpProjectFormPanelKind ActivePanelKind { get; set; } = CSharpProjectFormPanelKind.Graphical;
     public string SearchInput { get; set; } = string.Empty;
     public ProjectTemplate? SelectedProjectTemplate { get; set; } = null;
@@ -77,7 +77,7 @@ public class CSharpProjectFormViewModel
             CSharpProjectNameValue,
             OptionalParametersValue,
             ParentDirectoryNameValue,
-            ProjectTemplateBag,
+            ProjectTemplateList,
             ActivePanelKind,
             SearchInput,
             SelectedProjectTemplate,

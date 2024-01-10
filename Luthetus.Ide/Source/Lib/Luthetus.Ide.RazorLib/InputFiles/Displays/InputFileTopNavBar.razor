@@ -29,7 +29,7 @@
         <div class="luth_ide_input-file-display-top-nav-bar-address-hierarchy"
              @onclick="() => _showInputTextEditForAddress = true">
             
-            @if (InputFileState.IndexInHistory < InputFileState.OpenedTreeViewModelHistoryBag.Count)
+            @if (InputFileState.IndexInHistory < InputFileState.OpenedTreeViewModelHistoryList.Count)
             {
                 var openedTreeView = InputFileState.GetOpenedTreeView();
 

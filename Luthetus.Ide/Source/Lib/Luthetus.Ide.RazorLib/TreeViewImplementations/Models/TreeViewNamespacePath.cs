@@ -62,11 +62,11 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
         {
             var previousChildren = new List<TreeViewNoType>(ChildList);
 
-            var newChildBag = new List<TreeViewNoType>();
+            var newChildList = new List<TreeViewNoType>();
 
             if (Item.AbsolutePath.IsDirectory)
             {
-                newChildBag = await this.DirectoryLoadChildrenAsync();
+                newChildList = await this.DirectoryLoadChildrenAsync();
             }
             else
             {
@@ -75,15 +75,15 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                     case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
                         return;
                     case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                        newChildBag = await this.CSharpProjectLoadChildrenAsync();
+                        newChildList = await this.CSharpProjectLoadChildrenAsync();
                         break;
                     case ExtensionNoPeriodFacts.RAZOR_MARKUP:
-                        newChildBag = await this.RazorMarkupLoadChildrenAsync();
+                        newChildList = await this.RazorMarkupLoadChildrenAsync();
                         break;
                 }
             }
 
-            ChildList = newChildBag;
+            ChildList = newChildList;
             LinkChildren(previousChildren, ChildList);
         }
         catch (Exception exception)

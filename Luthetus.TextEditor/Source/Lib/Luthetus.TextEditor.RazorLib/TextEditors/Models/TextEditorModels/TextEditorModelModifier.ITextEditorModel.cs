@@ -11,12 +11,12 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 public partial class TextEditorModelModifier : ITextEditorModel
 {
-	public IList<RichCharacter> ContentBag => _contentBag is null ? _textEditorModel.ContentBag : _contentBag;
-	public IList<EditBlock> EditBlocksBag => _editBlocksBag is null ? _textEditorModel.EditBlocksBag : _editBlocksBag;
-	public IList<RowEnding> RowEndingPositionsBag => _rowEndingPositionsBag is null ? _textEditorModel.RowEndingPositionsBag : _rowEndingPositionsBag;
-	public IList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsBag => _rowEndingKindCountsBag is null ? _textEditorModel.RowEndingKindCountsBag : _rowEndingKindCountsBag;
-	public IList<TextEditorPresentationModel> PresentationModelsBag => _presentationModelsBag is null ? _textEditorModel.PresentationModelsBag : _presentationModelsBag;
-	public IList<int> TabKeyPositionsBag => _tabKeyPositionsBag is null ? _textEditorModel.TabKeyPositionsBag : _tabKeyPositionsBag;
+	public IList<RichCharacter> ContentList => _contentList is null ? _textEditorModel.ContentList : _contentList;
+	public IList<EditBlock> EditBlocksList => _editBlocksList is null ? _textEditorModel.EditBlocksList : _editBlocksList;
+	public IList<RowEnding> RowEndingPositionsList => _rowEndingPositionsList is null ? _textEditorModel.RowEndingPositionsList : _rowEndingPositionsList;
+	public IList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsList => _rowEndingKindCountsList is null ? _textEditorModel.RowEndingKindCountsList : _rowEndingKindCountsList;
+	public IList<TextEditorPresentationModel> PresentationModelsList => _presentationModelsList is null ? _textEditorModel.PresentationModelsList : _presentationModelsList;
+	public IList<int> TabKeyPositionsList => _tabKeyPositionsList is null ? _textEditorModel.TabKeyPositionsList : _tabKeyPositionsList;
 	public RowEndingKind? OnlyRowEndingKind => _onlyRowEndingKindWasModified ? _onlyRowEndingKind : _textEditorModel.OnlyRowEndingKind;
 	public RowEndingKind UsingRowEndingKind => _usingRowEndingKind ?? _textEditorModel.UsingRowEndingKind;
 	public ResourceUri ResourceUri => _resourceUri ?? _textEditorModel.ResourceUri;
@@ -29,6 +29,6 @@ public partial class TextEditorModelModifier : ITextEditorModel
 	public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple => _mostCharactersOnASingleRowTuple ?? _textEditorModel.MostCharactersOnASingleRowTuple;
 	public Key<RenderState> RenderStateKey => _renderStateKey ?? _textEditorModel.RenderStateKey;
 
-    public int RowCount => RowEndingPositionsBag.Count;
-    public int DocumentLength => ContentBag.Count;
+    public int RowCount => RowEndingPositionsList.Count;
+    public int DocumentLength => ContentList.Count;
 }

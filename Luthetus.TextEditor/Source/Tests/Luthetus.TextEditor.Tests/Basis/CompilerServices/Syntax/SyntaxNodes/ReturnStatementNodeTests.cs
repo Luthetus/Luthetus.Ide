@@ -16,7 +16,7 @@ public class ReturnStatementNodeTests
     /// <br/>----<br/>
     /// <see cref="ReturnStatementNode.KeywordToken"/>
     /// <see cref="ReturnStatementNode.ExpressionNode"/>
-    /// <see cref="ReturnStatementNode.ChildBag"/>
+    /// <see cref="ReturnStatementNode.ChildList"/>
     /// <see cref="ReturnStatementNode.IsFabricated"/>
     /// <see cref="ReturnStatementNode.SyntaxKind"/>
     /// </summary>
@@ -75,9 +75,9 @@ public class ReturnStatementNodeTests
         Assert.Equal(returnKeywordToken, returnStatementNode.KeywordToken);
         Assert.Equal(expressionNode, returnStatementNode.ExpressionNode);
 
-        Assert.Equal(2, returnStatementNode.ChildBag.Length);
-        Assert.Equal(returnKeywordToken, returnStatementNode.ChildBag[0]);
-        Assert.Equal(expressionNode, returnStatementNode.ChildBag[1]);
+        Assert.Equal(2, returnStatementNode.ChildList.Length);
+        Assert.Equal(returnKeywordToken, returnStatementNode.ChildList[0]);
+        Assert.Equal(expressionNode, returnStatementNode.ChildList[1]);
 
         Assert.False(returnStatementNode.IsFabricated);
 

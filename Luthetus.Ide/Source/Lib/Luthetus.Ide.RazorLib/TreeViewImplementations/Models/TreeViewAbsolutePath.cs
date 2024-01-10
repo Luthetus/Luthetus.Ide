@@ -56,12 +56,12 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
         {
             var previousChildren = new List<TreeViewNoType>(ChildList);
 
-            var newChildBag = new List<TreeViewNoType>();
+            var newChildList = new List<TreeViewNoType>();
 
             if (Item.IsDirectory)
-                newChildBag = await TreeViewHelper.LoadChildrenForDirectoryAsync(this);
+                newChildList = await TreeViewHelper.LoadChildrenForDirectoryAsync(this);
 
-            ChildList = newChildBag;
+            ChildList = newChildList;
             LinkChildren(previousChildren, ChildList);
         }
         catch (Exception exception)

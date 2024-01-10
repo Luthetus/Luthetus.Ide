@@ -17,7 +17,7 @@ public class TextEditorGroupTests
 	/// <br/>----<br/>
     /// <see cref="TextEditorGroup.GroupKey"/>
     /// <see cref="TextEditorGroup.ActiveViewModelKey"/>
-    /// <see cref="TextEditorGroup.ViewModelKeyBag"/>
+    /// <see cref="TextEditorGroup.ViewModelKeyList"/>
     /// <see cref="TextEditorGroup.RenderStateKey"/>
     /// </summary>
     [Fact]
@@ -25,20 +25,20 @@ public class TextEditorGroupTests
 	{
 		var groupKey = Key<TextEditorGroup>.NewKey();
 		var activeViewModelKey = Key<TextEditorViewModel>.NewKey();
-		var viewModelKeyBag = new Key<TextEditorViewModel>[] { activeViewModelKey }.ToImmutableList();
+		var viewModelKeyList = new Key<TextEditorViewModel>[] { activeViewModelKey }.ToImmutableList();
         var renderStateKey = Key<RenderState>.NewKey();
 
         var group = new TextEditorGroup(
             groupKey,
             activeViewModelKey,
-			viewModelKeyBag)
+			viewModelKeyList)
 		{
 			RenderStateKey = renderStateKey
         };
 
 		Assert.Equal(groupKey, group.GroupKey);
 		Assert.Equal(activeViewModelKey, group.ActiveViewModelKey);
-		Assert.Equal(viewModelKeyBag, group.ViewModelKeyBag);
+		Assert.Equal(viewModelKeyList, group.ViewModelKeyList);
 		Assert.Equal(renderStateKey, group.RenderStateKey);
 
         // Assert that the default value for TextEditorGroup.RenderStateKey
@@ -46,7 +46,7 @@ public class TextEditorGroupTests
         {
             Assert.NotEqual(
                 Key<RenderState>.Empty,
-                new TextEditorGroup(groupKey, activeViewModelKey, viewModelKeyBag).RenderStateKey);
+                new TextEditorGroup(groupKey, activeViewModelKey, viewModelKeyList).RenderStateKey);
         }
 	}
 }

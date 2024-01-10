@@ -58,7 +58,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                         InViewModelKey,
                         textEditorViewModel => textEditorViewModel with
                         {
-                            FirstPresentationLayerKeysBag = presentationKeys.ToImmutableList()
+                            FirstPresentationLayerKeysList = presentationKeys.ToImmutableList()
                         }));
             }
             
@@ -94,7 +94,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                         OutViewModelKey,
                         textEditorViewModel => textEditorViewModel with
                         {
-                            FirstPresentationLayerKeysBag = presentationKeys.ToImmutableList()
+                            FirstPresentationLayerKeysList = presentationKeys.ToImmutableList()
                         }));
             }
 

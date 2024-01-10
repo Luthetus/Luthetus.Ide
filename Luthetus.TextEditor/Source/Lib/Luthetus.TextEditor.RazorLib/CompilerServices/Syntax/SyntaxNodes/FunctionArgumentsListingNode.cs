@@ -14,7 +14,7 @@ public sealed record FunctionArgumentsListingNode : ISyntaxNode
         CloseParenthesisToken closeParenthesisToken)
     {
         OpenParenthesisToken = openParenthesisToken;
-        FunctionArgumentEntryNodeBag = functionArgumentEntryNodes;
+        FunctionArgumentEntryNodeList = functionArgumentEntryNodes;
         CloseParenthesisToken = closeParenthesisToken;
 
         var children = new List<ISyntax>
@@ -22,18 +22,18 @@ public sealed record FunctionArgumentsListingNode : ISyntaxNode
             OpenParenthesisToken
         };
 
-        children.AddRange(FunctionArgumentEntryNodeBag);
+        children.AddRange(FunctionArgumentEntryNodeList);
 
         children.Add(CloseParenthesisToken);
 
-        ChildBag = children.ToImmutableArray();
+        ChildList = children.ToImmutableArray();
     }
 
     public OpenParenthesisToken OpenParenthesisToken { get; }
-    public ImmutableArray<FunctionArgumentEntryNode> FunctionArgumentEntryNodeBag { get; }
+    public ImmutableArray<FunctionArgumentEntryNode> FunctionArgumentEntryNodeList { get; }
     public CloseParenthesisToken CloseParenthesisToken { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionArgumentsListingNode;

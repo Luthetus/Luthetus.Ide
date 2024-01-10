@@ -127,7 +127,7 @@ public class RazorSyntaxTree
         // current character is '@'
         _ = stringWalker.ReadCharacter();
 
-        if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+        if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
         {
             diagnosticBag.ReportRazorWhitespaceImmediatelyFollowingTransitionCharacterIsUnexpected(
                 new TextEditorTextSpan(
@@ -260,7 +260,7 @@ public class RazorSyntaxTree
         {
             _ = stringWalker.ReadCharacter();
 
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter) ||
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter) ||
                 HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE == stringWalker.CurrentCharacter ||
                 stringWalker.PeekForSubstringRange(HtmlFacts.OPEN_TAG_ENDING_OPTIONS, out var matchedOn))
             {
@@ -1011,7 +1011,7 @@ public class RazorSyntaxTree
         {
             _ = stringWalker.ReadCharacter();
 
-            if (WhitespaceFacts.LINE_ENDING_CHARACTER_BAG.Contains(stringWalker.CurrentCharacter))
+            if (WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
             {
                 break;
             }
@@ -1047,7 +1047,7 @@ public class RazorSyntaxTree
                 return true;
             }
 
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
                 continue;
 
             diagnosticBag.ReportRazorCodeBlockWasExpectedToFollowRazorKeyword(
@@ -1089,7 +1089,7 @@ public class RazorSyntaxTree
                 return true;
             }
 
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
                 continue;
 
             diagnosticBag.ReportRazorExplicitExpressionPredicateWasExpected(
@@ -1173,7 +1173,7 @@ public class RazorSyntaxTree
                 break;
             }
 
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
                 continue;
 
             break;
@@ -1234,7 +1234,7 @@ public class RazorSyntaxTree
                 break;
             }
 
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
                 continue;
 
             break;
@@ -1292,7 +1292,7 @@ public class RazorSyntaxTree
                 break;
             }
 
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
                 continue;
 
             break;

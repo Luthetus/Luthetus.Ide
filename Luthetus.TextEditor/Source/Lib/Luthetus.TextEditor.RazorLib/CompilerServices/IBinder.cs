@@ -5,8 +5,8 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
 public interface IBinder
 {
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag { get; }
-    public ImmutableArray<ITextEditorSymbol> SymbolsBag { get; }
+    public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; }
+    public ImmutableArray<ITextEditorSymbol> SymbolsList { get; }
 
     public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan);
     public IBoundScope? GetBoundScope(TextEditorTextSpan textSpan);

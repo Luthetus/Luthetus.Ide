@@ -20,10 +20,10 @@ public class GenericLanguageDefinitionTests
     /// <see cref="GenericLanguageDefinition.FunctionInvocationEnd"/>
     /// <see cref="GenericLanguageDefinition.MemberAccessToken"/>
     /// <see cref="GenericLanguageDefinition.CommentSingleLineStart"/>
-    /// <see cref="GenericLanguageDefinition.CommentSingleLineEndingsBag"/>
+    /// <see cref="GenericLanguageDefinition.CommentSingleLineEndingsList"/>
     /// <see cref="GenericLanguageDefinition.CommentMultiLineStart"/>
     /// <see cref="GenericLanguageDefinition.CommentMultiLineEnd"/>
-    /// <see cref="GenericLanguageDefinition.KeywordsBag"/>
+    /// <see cref="GenericLanguageDefinition.KeywordsList"/>
     /// <see cref="GenericLanguageDefinition.PreprocessorDefinition"/>
     /// </summary>
     [Fact]
@@ -40,7 +40,7 @@ public class GenericLanguageDefinitionTests
 		var memberAccessToken = ".";
 		var commentSingleLineStart = "//";
 
-		var commentSingleLineEndingsBag = new[]
+		var commentSingleLineEndingsList = new[]
             {
                 WhitespaceFacts.CARRIAGE_RETURN.ToString(),
                 WhitespaceFacts.LINE_FEED.ToString()
@@ -48,7 +48,7 @@ public class GenericLanguageDefinitionTests
 
 		var commentMultiLineStart = "(*";
 		var commentMultiLineEnd = "*)";
-		var keywordsBag = FSharpKeywords.ALL;
+		var keywordsList = FSharpKeywords.ALL;
 		var preprocessorDefinition = fSharpPreprocessorDefinition;
 
         GenericLanguageDefinition fSharpLanguageDefinition = new(
@@ -58,10 +58,10 @@ public class GenericLanguageDefinitionTests
 			functionInvocationEnd,
 			memberAccessToken,
 			commentSingleLineStart,
-            commentSingleLineEndingsBag,
+            commentSingleLineEndingsList,
             commentMultiLineStart,
 			commentMultiLineEnd,
-			keywordsBag,
+			keywordsList,
 			preprocessorDefinition);
 
 		Assert.Equal(stringStart, fSharpLanguageDefinition.StringStart);
@@ -70,10 +70,10 @@ public class GenericLanguageDefinitionTests
         Assert.Equal(functionInvocationEnd, fSharpLanguageDefinition.FunctionInvocationEnd);
         Assert.Equal(memberAccessToken, fSharpLanguageDefinition.MemberAccessToken);
         Assert.Equal(commentSingleLineStart, fSharpLanguageDefinition.CommentSingleLineStart);
-        Assert.Equal(commentSingleLineEndingsBag, fSharpLanguageDefinition.CommentSingleLineEndingsBag);
+        Assert.Equal(commentSingleLineEndingsList, fSharpLanguageDefinition.CommentSingleLineEndingsList);
         Assert.Equal(commentMultiLineStart, fSharpLanguageDefinition.CommentMultiLineStart);
         Assert.Equal(commentMultiLineEnd, fSharpLanguageDefinition.CommentMultiLineEnd);
-        Assert.Equal(keywordsBag, fSharpLanguageDefinition.KeywordsBag);
+        Assert.Equal(keywordsList, fSharpLanguageDefinition.KeywordsList);
         Assert.Equal(preprocessorDefinition, fSharpLanguageDefinition.PreprocessorDefinition);
 	}
 }

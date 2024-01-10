@@ -36,10 +36,10 @@ public sealed record NamespaceEntryNodeTests
 	}
 
 	/// <summary>
-	/// <see cref="NamespaceEntryNode.ChildBag"/>
+	/// <see cref="NamespaceEntryNode.ChildList"/>
 	/// </summary>
 	[Fact]
-	public void ChildBag()
+	public void ChildList()
 	{
 		throw new NotImplementedException();
 	}

@@ -44,7 +44,7 @@ public class CSharpResource : ICompilerServiceResource
         if (localCompilationUnit is null)
             return ImmutableArray<ITextEditorSymbol>.Empty;
 
-        return localCompilationUnit.Binder.SymbolsBag
+        return localCompilationUnit.Binder.SymbolsList
             .Where(s => s.TextSpan.ResourceUri == ResourceUri)
             .ToImmutableArray();
     }
@@ -60,7 +60,7 @@ public class CSharpResource : ICompilerServiceResource
         if (localCompilationUnit is null)
             return ImmutableArray<TextEditorDiagnostic>.Empty;
 
-        return localCompilationUnit.DiagnosticsBag
+        return localCompilationUnit.DiagnosticsList
             .Where(s => s.TextSpan.ResourceUri == ResourceUri)
             .ToImmutableArray();
     }

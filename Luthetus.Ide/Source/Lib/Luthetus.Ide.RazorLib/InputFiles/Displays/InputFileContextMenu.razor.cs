@@ -42,7 +42,7 @@ public partial class InputFileContextMenu : ComponentBase
         if (commandArgs.TargetNode is null)
             return MenuRecord.Empty;
 
-        var menuRecordsBag = new List<MenuOptionRecord>();
+        var menuRecordsList = new List<MenuOptionRecord>();
 
         var treeViewModel = commandArgs.TargetNode;
         var parentTreeViewModel = treeViewModel.Parent;
@@ -54,17 +54,17 @@ public partial class InputFileContextMenu : ComponentBase
 
         if (treeViewAbsolutePath.Item.IsDirectory)
         {
-            menuRecordsBag.AddRange(GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
+            menuRecordsList.AddRange(GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
                 .Union(GetDirectoryMenuOptions(treeViewAbsolutePath))
                 .Union(GetDebugMenuOptions(treeViewAbsolutePath)));
         }
         else
         {
-            menuRecordsBag.AddRange(GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
+            menuRecordsList.AddRange(GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
                 .Union(GetDebugMenuOptions(treeViewAbsolutePath)));
         }
 
-        return new MenuRecord(menuRecordsBag.ToImmutableArray());
+        return new MenuRecord(menuRecordsList.ToImmutableArray());
     }
 
     private MenuOptionRecord[] GetDirectoryMenuOptions(TreeViewAbsolutePath treeViewModel)

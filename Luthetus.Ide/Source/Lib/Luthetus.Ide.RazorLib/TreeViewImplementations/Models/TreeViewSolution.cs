@@ -61,9 +61,9 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
         {
             var previousChildren = new List<TreeViewNoType>(ChildList);
 
-            var newChildBag = await this.DotNetSolutionLoadChildrenAsync();
+            var newChildList = await this.DotNetSolutionLoadChildrenAsync();
 
-            ChildList = newChildBag;
+            ChildList = newChildList;
             LinkChildren(previousChildren, ChildList);
         }
         catch (Exception exception)

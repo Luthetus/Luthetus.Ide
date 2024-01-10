@@ -16,12 +16,12 @@ public sealed record GenericParameterEntryNode : ISyntaxNode
             TypeClauseNode
         };
 
-        ChildBag = children.ToImmutableArray();
+        ChildList = children.ToImmutableArray();
     }
 
     public TypeClauseNode TypeClauseNode { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.GenericParameterEntryNode;

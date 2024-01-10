@@ -13,7 +13,7 @@ public sealed record VariableReferenceNode : IExpressionNode
         VariableIdentifierToken = variableIdentifierToken;
         VariableDeclarationNode = variableDeclarationNode;
 
-        ChildBag = new ISyntax[]
+        ChildList = new ISyntax[]
         {
             VariableIdentifierToken,
             VariableDeclarationNode,
@@ -27,7 +27,7 @@ public sealed record VariableReferenceNode : IExpressionNode
     public VariableDeclarationNode VariableDeclarationNode { get; }
     public TypeClauseNode ResultTypeClauseNode => VariableDeclarationNode.TypeClauseNode;
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableReferenceNode;

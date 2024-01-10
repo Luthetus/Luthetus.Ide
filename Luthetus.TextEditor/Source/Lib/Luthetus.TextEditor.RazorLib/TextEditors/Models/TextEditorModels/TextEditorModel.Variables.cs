@@ -18,15 +18,15 @@ public partial class TextEditorModel
     public const int MAXIMUM_EDIT_BLOCKS = 10;
     public const int MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN = 5;
 
-    /// <inheritdoc cref="ITextEditorModel.ContentBag"/>
-    public ImmutableList<RichCharacter> ContentBag = ImmutableList<RichCharacter>.Empty;
-	public ImmutableList<EditBlock> EditBlocksBag { get; init; } = ImmutableList<EditBlock>.Empty;
-    /// <inheritdoc cref="ITextEditorModel.RowEndingPositionsBag"/>
-	public ImmutableList<RowEnding> RowEndingPositionsBag { get; init; } = ImmutableList<RowEnding>.Empty;
-	public ImmutableList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsBag { get; init; } = ImmutableList<(RowEndingKind rowEndingKind, int count)>.Empty;
-	public ImmutableList<TextEditorPresentationModel> PresentationModelsBag { get; init; } = ImmutableList<TextEditorPresentationModel>.Empty;
-    /// <inheritdoc cref="ITextEditorModel.TabKeyPositionsBag"/>
-	public ImmutableList<int> TabKeyPositionsBag = ImmutableList<int>.Empty;
+    /// <inheritdoc cref="ITextEditorModel.ContentList"/>
+    public ImmutableList<RichCharacter> ContentList = ImmutableList<RichCharacter>.Empty;
+	public ImmutableList<EditBlock> EditBlocksList { get; init; } = ImmutableList<EditBlock>.Empty;
+    /// <inheritdoc cref="ITextEditorModel.RowEndingPositionsList"/>
+	public ImmutableList<RowEnding> RowEndingPositionsList { get; init; } = ImmutableList<RowEnding>.Empty;
+	public ImmutableList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsList { get; init; } = ImmutableList<(RowEndingKind rowEndingKind, int count)>.Empty;
+	public ImmutableList<TextEditorPresentationModel> PresentationModelsList { get; init; } = ImmutableList<TextEditorPresentationModel>.Empty;
+    /// <inheritdoc cref="ITextEditorModel.TabKeyPositionsList"/>
+	public ImmutableList<int> TabKeyPositionsList = ImmutableList<int>.Empty;
     /// <inheritdoc cref="ITextEditorModel.OnlyRowEndingKind"/>
     public RowEndingKind? OnlyRowEndingKind { get; init; }
     public RowEndingKind UsingRowEndingKind { get; init; }

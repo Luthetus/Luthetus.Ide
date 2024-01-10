@@ -7,7 +7,7 @@
 
 <div class="luth_te_find">
     <div class="luth_te_find-tabs">
-        @foreach (var searchEngine in searchEngineState.SearchEngineBag)
+        @foreach (var searchEngine in searchEngineState.SearchEngineList)
         {
             <SearchEngineTabDisplay SearchEngine="searchEngine"
                                     IsActive="searchEngine.SearchEngineKey == searchEngineState.ActiveSearchEngineKey" />

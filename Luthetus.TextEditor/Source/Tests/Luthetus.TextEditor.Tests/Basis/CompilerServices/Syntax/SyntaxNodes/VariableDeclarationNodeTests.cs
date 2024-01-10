@@ -23,7 +23,7 @@ public class VariableDeclarationNodeTests
     /// <see cref="VariableDeclarationNode.GetterIsAutoImplemented"/>
     /// <see cref="VariableDeclarationNode.HasSetter"/>
     /// <see cref="VariableDeclarationNode.SetterIsAutoImplemented"/>
-    /// <see cref="VariableDeclarationNode.ChildBag"/>
+    /// <see cref="VariableDeclarationNode.ChildList"/>
     /// <see cref="VariableDeclarationNode.IsFabricated"/>
     /// <see cref="VariableDeclarationNode.SyntaxKind"/>
     /// </summary>
@@ -72,9 +72,9 @@ public class VariableDeclarationNodeTests
         Assert.Equal(variableKind, variableDeclarationNode.VariableKind);
         Assert.Equal(isInitialized, variableDeclarationNode.IsInitialized);
 
-        Assert.Equal(2, variableDeclarationNode.ChildBag.Length);
-        Assert.Equal(intTypeClauseNode, variableDeclarationNode.ChildBag[0]);
-        Assert.Equal(variableIdentifierToken, variableDeclarationNode.ChildBag[1]);
+        Assert.Equal(2, variableDeclarationNode.ChildList.Length);
+        Assert.Equal(intTypeClauseNode, variableDeclarationNode.ChildList[0]);
+        Assert.Equal(variableIdentifierToken, variableDeclarationNode.ChildList[1]);
 
         Assert.False(variableDeclarationNode.IsFabricated);
 

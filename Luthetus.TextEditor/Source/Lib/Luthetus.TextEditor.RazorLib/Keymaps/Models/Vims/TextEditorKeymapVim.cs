@@ -222,7 +222,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             primaryCursorModifier.SelectionAnchorPositionIndex =
                                 startOfRowPositionIndexInclusive;
 
-                            var endOfRowPositionIndexExclusive = modelModifier.RowEndingPositionsBag[
+                            var endOfRowPositionIndexExclusive = modelModifier.RowEndingPositionsList[
                                     primaryCursorModifier.RowIndex]
                                 .EndPositionIndexExclusive;
 

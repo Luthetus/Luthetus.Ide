@@ -9,56 +9,55 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 public partial class TextEditorModelModifierTests
 {
 	/// <summary>
-	/// <see cref="TextEditorModelModifier.ContentBag"/>
+	/// <see cref="TextEditorModelModifier.ContentList"/>
 	/// </summary>
 	[Fact]
-	public void ContentBag()
+	public void ContentList()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModelModifier.EditBlocksBag"/>
+	/// <see cref="TextEditorModelModifier.EditBlocksList"/>
 	/// </summary>
 	[Fact]
-	public void EditBlocksBag()
+	public void EditBlocksList()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModelModifier.RowEndingPositionsBag"/>
+	/// <see cref="TextEditorModelModifier.RowEndingPositionsList"/>
 	/// </summary>
 	[Fact]
-	public void RowEndingPositionsBag()
+	public void RowEndingPositionsList()
 	{
-		//public IList<(int positionIndex, RowEndingKind rowEndingKind)>  => _rowEndingPositionsBag is null ? _textEditorModel.RowEndingPositionsBag : _rowEndingPositionsBag;
-		throw new NotImplementedException();
+        throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModelModifier.RowEndingKindCountsBag"/>
+	/// <see cref="TextEditorModelModifier.RowEndingKindCountsList"/>
 	/// </summary>
 	[Fact]
-	public void RowEndingKindCountsBag()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.PresentationModelsBag"/>
-	/// </summary>
-	[Fact]
-	public void PresentationModelsBag()
+	public void RowEndingKindCountsList()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModelModifier.TabKeyPositionsBag"/>
+	/// <see cref="TextEditorModelModifier.PresentationModelsList"/>
 	/// </summary>
 	[Fact]
-	public void TabKeyPositionsBag()
+	public void PresentationModelsList()
+	{
+		throw new NotImplementedException();
+	}
+
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.TabKeyPositionsList"/>
+	/// </summary>
+	[Fact]
+	public void TabKeyPositionsList()
 	{
 		throw new NotImplementedException();
 	}

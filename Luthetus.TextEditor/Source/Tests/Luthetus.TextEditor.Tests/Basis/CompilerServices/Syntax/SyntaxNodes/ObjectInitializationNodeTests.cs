@@ -36,10 +36,10 @@ public class ObjectInitializationNodeTests
 	}
 
 	/// <summary>
-	/// <see cref="ObjectInitializationNode.ChildBag"/>
+	/// <see cref="ObjectInitializationNode.ChildList"/>
 	/// </summary>
 	[Fact]
-	public void ChildBag()
+	public void ChildList()
 	{
 		throw new NotImplementedException();
 	}

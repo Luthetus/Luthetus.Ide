@@ -27,10 +27,10 @@ public class GenericPreprocessorDirectiveSyntaxTests
 	}
 
 	/// <summary>
-	/// <see cref="GenericPreprocessorDirectiveSyntax.ChildBag"/>
+	/// <see cref="GenericPreprocessorDirectiveSyntax.ChildList"/>
 	/// </summary>
 	[Fact]
-	public void ChildBag()
+	public void ChildList()
 	{
 		throw new NotImplementedException();
 	}

@@ -14,13 +14,13 @@ public partial record InputFileSync
         string message,
         Func<IAbsolutePath?, Task> onAfterSubmitFunc,
         Func<IAbsolutePath?, Task<bool>> selectionIsValidFunc,
-        ImmutableArray<InputFilePattern> inputFilePatternsBag)
+        ImmutableArray<InputFilePattern> inputFilePatternsList)
     {
         Dispatcher.Dispatch(new StartInputFileStateFormAction(
             message,
             onAfterSubmitFunc,
             selectionIsValidFunc,
-            inputFilePatternsBag));
+            inputFilePatternsList));
 
         var inputFileDialog = new DialogRecord(
             DialogFacts.InputFileDialogKey,

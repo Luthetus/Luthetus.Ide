@@ -57,12 +57,12 @@ public partial class TextEditorDiffStateReducerTests
         var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
         var textEditorDiffStateWrap = serviceProvider.GetRequiredService<IState<TextEditorDiffState>>();
 
-        Assert.Empty(textEditorDiffStateWrap.Value.DiffModelBag);
+        Assert.Empty(textEditorDiffStateWrap.Value.DiffModelList);
 
         dispatcher.Dispatch(registerAction);
-        Assert.Single(textEditorDiffStateWrap.Value.DiffModelBag);
+        Assert.Single(textEditorDiffStateWrap.Value.DiffModelList);
 
-        var diffModel = textEditorDiffStateWrap.Value.DiffModelBag.Single(x => x.DiffKey == diffKey);
+        var diffModel = textEditorDiffStateWrap.Value.DiffModelList.Single(x => x.DiffKey == diffKey);
         Assert.Equal(diffModel.DiffKey, registerAction.DiffKey);
         Assert.Equal(diffModel.InViewModelKey, registerAction.InViewModelKey);
         Assert.Equal(diffModel.OutViewModelKey, registerAction.OutViewModelKey);
@@ -111,9 +111,9 @@ public partial class TextEditorDiffStateReducerTests
         var textEditorDiffStateWrap = serviceProvider.GetRequiredService<IState<TextEditorDiffState>>();
 
         dispatcher.Dispatch(registerAction);
-        Assert.Single(textEditorDiffStateWrap.Value.DiffModelBag);
+        Assert.Single(textEditorDiffStateWrap.Value.DiffModelList);
 
         dispatcher.Dispatch(new TextEditorDiffState.DisposeAction(diffKey));
-        Assert.Empty(textEditorDiffStateWrap.Value.DiffModelBag);
+        Assert.Empty(textEditorDiffStateWrap.Value.DiffModelList);
     }
 }

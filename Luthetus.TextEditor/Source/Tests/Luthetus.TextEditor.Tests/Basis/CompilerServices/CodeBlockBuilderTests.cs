@@ -16,7 +16,7 @@ public class CodeBlockBuilderTests
     /// <summary>
     /// <see cref="CodeBlockBuilder(CodeBlockBuilder?, RazorLib.CompilerServices.Syntax.ISyntaxNode?)"/>
     /// <br/>----<br/>
-	/// <see cref="CodeBlockBuilder.ChildBag"/>
+	/// <see cref="CodeBlockBuilder.ChildList"/>
     /// <see cref="CodeBlockBuilder.Parent"/>
     /// <see cref="CodeBlockBuilder.CodeBlockOwner"/>
     /// <see cref="CodeBlockBuilder.Build()"/>
@@ -27,21 +27,21 @@ public class CodeBlockBuilderTests
 	{
 		var globalCodeBlockBuilder = new CodeBlockBuilder(null, null);
 
-		Assert.Empty(globalCodeBlockBuilder.ChildBag);
+		Assert.Empty(globalCodeBlockBuilder.ChildList);
 		Assert.Null(globalCodeBlockBuilder.Parent);
 		Assert.Null(globalCodeBlockBuilder.CodeBlockOwner);
 
 		var typeDefinitionNode = ConstructTypeDefinitionNode();
-        globalCodeBlockBuilder.ChildBag.Add(typeDefinitionNode);
-        Assert.Single(globalCodeBlockBuilder.ChildBag);
+        globalCodeBlockBuilder.ChildList.Add(typeDefinitionNode);
+        Assert.Single(globalCodeBlockBuilder.ChildList);
 
         // No Diagnostics
         {
             var codeBlockNoDiagnostics = globalCodeBlockBuilder.Build();
 
-            Assert.Empty(codeBlockNoDiagnostics.DiagnosticsBag);
-            Assert.Single(codeBlockNoDiagnostics.ChildBag);
-            Assert.Equal(typeDefinitionNode, codeBlockNoDiagnostics.ChildBag.Single());
+            Assert.Empty(codeBlockNoDiagnostics.DiagnosticsList);
+            Assert.Single(codeBlockNoDiagnostics.ChildList);
+            Assert.Equal(typeDefinitionNode, codeBlockNoDiagnostics.ChildList.Single());
             Assert.Equal(SyntaxKind.CodeBlockNode, codeBlockNoDiagnostics.SyntaxKind);
             Assert.False(codeBlockNoDiagnostics.IsFabricated);
         }
@@ -54,16 +54,16 @@ public class CodeBlockBuilderTests
 				TextEditorTextSpan.FabricateTextSpan("Hello World!"),
 				Guid.NewGuid());
 
-            var diagnosticBag = new TextEditorDiagnostic[]
+            var diagnosticList = new TextEditorDiagnostic[]
             {
 				diagnostic
             }.ToImmutableArray();
 
-            var codeBlockWithDiagnostics = globalCodeBlockBuilder.Build(diagnosticBag);
+            var codeBlockWithDiagnostics = globalCodeBlockBuilder.Build(diagnosticList);
 
-            Assert.Single(codeBlockWithDiagnostics.DiagnosticsBag);
-            Assert.Single(codeBlockWithDiagnostics.ChildBag);
-            Assert.Equal(typeDefinitionNode, codeBlockWithDiagnostics.ChildBag.Single());
+            Assert.Single(codeBlockWithDiagnostics.DiagnosticsList);
+            Assert.Single(codeBlockWithDiagnostics.ChildList);
+            Assert.Equal(typeDefinitionNode, codeBlockWithDiagnostics.ChildList.Single());
             Assert.Equal(SyntaxKind.CodeBlockNode, codeBlockWithDiagnostics.SyntaxKind);
             Assert.False(codeBlockWithDiagnostics.IsFabricated);
         }

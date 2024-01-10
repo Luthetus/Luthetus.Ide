@@ -39,7 +39,7 @@ public partial class IdeHeader : FluxorComponent
 
     private void InitializeMenuFile()
     {
-        var menuOptionsBag = new List<MenuOptionRecord>();
+        var menuOptionsList = new List<MenuOptionRecord>();
 
         // Menu Option New
         {
@@ -53,7 +53,7 @@ public partial class IdeHeader : FluxorComponent
                 MenuOptionKind.Other,
                 SubMenu: new MenuRecord(new[] { menuOptionNewDotNetSolution }.ToImmutableArray()));
 
-            menuOptionsBag.Add(menuOptionNew);
+            menuOptionsList.Add(menuOptionNew);
         }
 
         // Menu Option Open
@@ -89,10 +89,10 @@ public partial class IdeHeader : FluxorComponent
                     menuOptionOpenDotNetSolution
                 }.ToImmutableArray()));
 
-            menuOptionsBag.Add(menuOptionOpen);
+            menuOptionsList.Add(menuOptionOpen);
         }
 
-        _menuFile = new MenuRecord(menuOptionsBag.ToImmutableArray());
+        _menuFile = new MenuRecord(menuOptionsList.ToImmutableArray());
     }
 
     private void AddActiveDropdownKey(Key<DropdownRecord> dropdownKey)

@@ -5,7 +5,7 @@ namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
 public partial class IdeDevelopmentDisplay : ComponentBase
 {
-    private readonly List<Type> _componentTypeBag = new()
+    private readonly List<Type> _componentTypeList = new()
     {
         typeof(PersonDisplay),
         typeof(PersonSimpleDisplay),

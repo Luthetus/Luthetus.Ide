@@ -94,13 +94,13 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
         if (currentNode is not TreeViewSolution treeViewSolution)
             return;
 
-        var nestedProjectEntries = treeViewSolution.Item.NestedProjectEntryBag
+        var nestedProjectEntries = treeViewSolution.Item.NestedProjectEntryList
                 .Where(x => x.SolutionFolderIdGuid == Item.ProjectIdGuid)
                 .ToArray();
 
         var childProjectIds = nestedProjectEntries.Select(x => x.ChildProjectIdGuid).ToArray();
 
-        var childProjects = treeViewSolution.Item.DotNetProjectBag
+        var childProjects = treeViewSolution.Item.DotNetProjectList
             .Where(x => childProjectIds.Contains(x.ProjectIdGuid))
             .ToArray();
 

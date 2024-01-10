@@ -35,7 +35,7 @@ public sealed record TypeDefinitionNode : ISyntaxNode
         if (TypeBodyCodeBlockNode is not null)
             children.Add(TypeBodyCodeBlockNode);
 
-        ChildBag = children.ToImmutableArray();
+        ChildList = children.ToImmutableArray();
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ public sealed record TypeDefinitionNode : ISyntaxNode
     public CodeBlockNode? TypeBodyCodeBlockNode { get; }
     public bool IsInterface { get; init; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TypeDefinitionNode;
@@ -70,7 +70,7 @@ public sealed record TypeDefinitionNode : ISyntaxNode
         if (TypeBodyCodeBlockNode is null)
             return ImmutableArray<FunctionDefinitionNode>.Empty;
 
-        return TypeBodyCodeBlockNode.ChildBag
+        return TypeBodyCodeBlockNode.ChildList
             .Where(child => child.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             .Select(fd => (FunctionDefinitionNode)fd)
             .ToImmutableArray();

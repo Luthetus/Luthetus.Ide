@@ -15,9 +15,9 @@ public class GenericParametersListingNodeTests
     /// <see cref="GenericParametersListingNode(OpenAngleBracketToken, ImmutableArray{GenericParameterEntryNode}, CloseAngleBracketToken)"/>
     /// <br/>----<br/>
     /// <see cref="GenericParametersListingNode.OpenAngleBracketToken"/>
-    /// <see cref="GenericParametersListingNode.GenericParameterEntryNodeBag"/>
+    /// <see cref="GenericParametersListingNode.GenericParameterEntryNodeList"/>
     /// <see cref="GenericParametersListingNode.CloseAngleBracketToken"/>
-    /// <see cref="GenericParametersListingNode.ChildBag"/>
+    /// <see cref="GenericParametersListingNode.ChildList"/>
     /// <see cref="GenericParametersListingNode.IsFabricated"/>
     /// <see cref="GenericParametersListingNode.SyntaxKind"/>
     /// </summary>
@@ -57,11 +57,11 @@ public class GenericParametersListingNodeTests
                 sourceText));
         }
 
-        ImmutableArray<GenericParameterEntryNode> genericParameterEntryNodeBag;
+        ImmutableArray<GenericParameterEntryNode> genericParameterEntryNodeList;
         {
             var genericParameterEntryNode = new GenericParameterEntryNode(genericTypeClauseNode);
 
-            genericParameterEntryNodeBag = new GenericParameterEntryNode[]
+            genericParameterEntryNodeList = new GenericParameterEntryNode[]
             {
                 genericParameterEntryNode
             }.ToImmutableArray();
@@ -81,17 +81,17 @@ public class GenericParametersListingNodeTests
 
         var genericParametersListingNode = new GenericParametersListingNode(
             openAngleBracketToken,
-            genericParameterEntryNodeBag,
+            genericParameterEntryNodeList,
             closeAngleBracketToken);
 
         Assert.Equal(openAngleBracketToken, genericParametersListingNode.OpenAngleBracketToken);
-        Assert.Equal(genericParameterEntryNodeBag, genericParametersListingNode.GenericParameterEntryNodeBag);
+        Assert.Equal(genericParameterEntryNodeList, genericParametersListingNode.GenericParameterEntryNodeList);
         Assert.Equal(closeAngleBracketToken, genericParametersListingNode.CloseAngleBracketToken);
 
-        Assert.Equal(3, genericParametersListingNode.ChildBag.Length);
-        Assert.Equal(openAngleBracketToken, genericParametersListingNode.ChildBag[0]);
-        Assert.Equal(genericParameterEntryNodeBag.Single(), genericParametersListingNode.ChildBag[1]);
-        Assert.Equal(closeAngleBracketToken, genericParametersListingNode.ChildBag[2]);
+        Assert.Equal(3, genericParametersListingNode.ChildList.Length);
+        Assert.Equal(openAngleBracketToken, genericParametersListingNode.ChildList[0]);
+        Assert.Equal(genericParameterEntryNodeList.Single(), genericParametersListingNode.ChildList[1]);
+        Assert.Equal(closeAngleBracketToken, genericParametersListingNode.ChildList[2]);
 
         Assert.False(genericParametersListingNode.IsFabricated);
 

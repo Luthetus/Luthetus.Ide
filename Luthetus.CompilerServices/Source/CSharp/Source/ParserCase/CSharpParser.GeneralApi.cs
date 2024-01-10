@@ -67,7 +67,7 @@ public partial class CSharpParser : IParser
                 null,
                 null);
 
-            CurrentCodeBlockBuilder.ChildBag.Add(completeExpression);
+            CurrentCodeBlockBuilder.ChildList.Add(completeExpression);
         }
 
         public void ParseStringLiteralToken(StringLiteralToken stringLiteralToken)
@@ -82,7 +82,7 @@ public partial class CSharpParser : IParser
                 null,
                 null);
 
-            CurrentCodeBlockBuilder.ChildBag.Add(completeExpression);
+            CurrentCodeBlockBuilder.ChildList.Add(completeExpression);
         }
 
         public IStatementNode ParsePreprocessorDirectiveToken(PreprocessorDirectiveToken preprocessorDirectiveToken)
@@ -95,7 +95,7 @@ public partial class CSharpParser : IParser
                     preprocessorDirectiveToken,
                     consumedToken);
 
-                CurrentCodeBlockBuilder.ChildBag.Add(preprocessorLibraryReferenceStatement);
+                CurrentCodeBlockBuilder.ChildList.Add(preprocessorLibraryReferenceStatement);
 
                 return preprocessorLibraryReferenceStatement;
             }
@@ -321,7 +321,7 @@ public partial class CSharpParser : IParser
                     variableReferenceNode,
                     unaryOperatorNode);
 
-                CurrentCodeBlockBuilder.ChildBag.Add(unaryExpressionNode);
+                CurrentCodeBlockBuilder.ChildList.Add(unaryExpressionNode);
             }
         }
 
@@ -359,7 +359,7 @@ public partial class CSharpParser : IParser
                 null,
                 null);
 
-            CurrentCodeBlockBuilder.ChildBag.Add(completeExpression);
+            CurrentCodeBlockBuilder.ChildList.Add(completeExpression);
         }
 
         public void ParseColonToken(ColonToken colonToken)
@@ -402,7 +402,7 @@ public partial class CSharpParser : IParser
                         boundNamespaceStatementNode,
                         codeBlockNode);
 
-                    closureCurrentCodeBlockBuilder.ChildBag.Add(boundNamespaceStatementNode);
+                    closureCurrentCodeBlockBuilder.ChildList.Add(boundNamespaceStatementNode);
                 });
             }
             else if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.TypeDefinitionNode)
@@ -421,7 +421,7 @@ public partial class CSharpParser : IParser
 
                     Binder.BindTypeDefinitionNode(typeDefinitionNode, true);
 
-                    closureCurrentCodeBlockBuilder.ChildBag.Add(typeDefinitionNode);
+                    closureCurrentCodeBlockBuilder.ChildList.Add(typeDefinitionNode);
                 });
             }
             else if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
@@ -441,7 +441,7 @@ public partial class CSharpParser : IParser
                         codeBlockNode,
                         functionDefinitionNode.ConstraintNode);
 
-                    closureCurrentCodeBlockBuilder.ChildBag.Add(functionDefinitionNode);
+                    closureCurrentCodeBlockBuilder.ChildList.Add(functionDefinitionNode);
                 });
             }
             else if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
@@ -461,7 +461,7 @@ public partial class CSharpParser : IParser
                         codeBlockNode,
                         constructorDefinitionNode.ConstraintNode);
 
-                    closureCurrentCodeBlockBuilder.ChildBag.Add(constructorDefinitionNode);
+                    closureCurrentCodeBlockBuilder.ChildList.Add(constructorDefinitionNode);
                 });
             }
             else if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.IfStatementNode)
@@ -476,7 +476,7 @@ public partial class CSharpParser : IParser
                         ifStatementNode.ExpressionNode,
                         codeBlockNode);
 
-                    closureCurrentCodeBlockBuilder.ChildBag.Add(ifStatementNode);
+                    closureCurrentCodeBlockBuilder.ChildList.Add(ifStatementNode);
                 });
             }
             else
@@ -485,7 +485,7 @@ public partial class CSharpParser : IParser
 
                 _parser._finalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
                 {
-                    closureCurrentCodeBlockBuilder.ChildBag
+                    closureCurrentCodeBlockBuilder.ChildList
                         .Add(codeBlockNode);
                 });
             }
@@ -537,7 +537,7 @@ public partial class CSharpParser : IParser
                 null,
                 null);
 
-            CurrentCodeBlockBuilder.ChildBag.Add(completeExpression);
+            CurrentCodeBlockBuilder.ChildList.Add(completeExpression);
         }
 
         public void ParseCloseParenthesisToken(CloseParenthesisToken closeParenthesisToken)
@@ -647,7 +647,7 @@ public partial class CSharpParser : IParser
                         boundNamespaceStatementNode,
                         codeBlockNode);
 
-                    closureCurrentCompilationUnitBuilder.ChildBag.Add(boundNamespaceStatementNode);
+                    closureCurrentCompilationUnitBuilder.ChildList.Add(boundNamespaceStatementNode);
                 };
 
                 Binder.RegisterBoundScope(

@@ -59,23 +59,23 @@ public class TextEditorFSharpLexer
         var textEditorTextSpans = new List<TextEditorTextSpan>();
 
         textEditorTextSpans
-            .AddRange(fSharpSyntaxWalker.StringSyntaxBag
+            .AddRange(fSharpSyntaxWalker.StringSyntaxList
                 .Select(x => x.TextSpan));
 
         textEditorTextSpans
-            .AddRange(fSharpSyntaxWalker.CommentSingleLineSyntaxBag
+            .AddRange(fSharpSyntaxWalker.CommentSingleLineSyntaxList
                 .Select(x => x.TextSpan));
 
         textEditorTextSpans
-            .AddRange(fSharpSyntaxWalker.CommentMultiLineSyntaxBag
+            .AddRange(fSharpSyntaxWalker.CommentMultiLineSyntaxList
                 .Select(x => x.TextSpan));
 
         textEditorTextSpans
-            .AddRange(fSharpSyntaxWalker.KeywordSyntaxBag
+            .AddRange(fSharpSyntaxWalker.KeywordSyntaxList
                 .Select(x => x.TextSpan));
 
         textEditorTextSpans
-            .AddRange(fSharpSyntaxWalker.FunctionSyntaxBag
+            .AddRange(fSharpSyntaxWalker.FunctionSyntaxList
                 .Select(x => x.TextSpan));
 
         return Task.FromResult(textEditorTextSpans.ToImmutableArray());

@@ -9,64 +9,64 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.SyntaxAc
 public class GenericSyntaxWalkerTests
 {
 	/// <summary>
-	/// <see cref="GenericSyntaxWalker.StringSyntaxBag"/>
+	/// <see cref="GenericSyntaxWalker.StringSyntaxList"/>
 	/// </summary>
 	[Fact]
-    public void StringSyntaxBag()
+    public void StringSyntaxList()
     {
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="GenericSyntaxWalker.CommentSingleLineSyntaxBag"/>
+	/// <see cref="GenericSyntaxWalker.CommentSingleLineSyntaxList"/>
 	/// </summary>
 	[Fact]
-    public void CommentSingleLineSyntaxBag()
+    public void CommentSingleLineSyntaxList()
     {
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="GenericSyntaxWalker.CommentMultiLineSyntaxBag"/>
+	/// <see cref="GenericSyntaxWalker.CommentMultiLineSyntaxList"/>
 	/// </summary>
 	[Fact]
-    public void CommentMultiLineSyntaxBag()
+    public void CommentMultiLineSyntaxList()
     {
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="GenericSyntaxWalker.KeywordSyntaxBag"/>
+	/// <see cref="GenericSyntaxWalker.KeywordSyntaxList"/>
 	/// </summary>
 	[Fact]
-    public void KeywordSyntaxBag()
+    public void KeywordSyntaxList()
     {
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="GenericSyntaxWalker.FunctionSyntaxBag"/>
+	/// <see cref="GenericSyntaxWalker.FunctionSyntaxList"/>
 	/// </summary>
 	[Fact]
-    public void FunctionSyntaxBag()
+    public void FunctionSyntaxList()
     {
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="GenericSyntaxWalker.PreprocessorDirectiveSyntaxBag"/>
+	/// <see cref="GenericSyntaxWalker.PreprocessorDirectiveSyntaxList"/>
 	/// </summary>
 	[Fact]
-    public void PreprocessorDirectiveSyntaxBag()
+    public void PreprocessorDirectiveSyntaxList()
     {
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="GenericSyntaxWalker.DeliminationExtendedSyntaxBag"/>
+	/// <see cref="GenericSyntaxWalker.DeliminationExtendedSyntaxList"/>
 	/// </summary>
 	[Fact]
-	public void DeliminationExtendedSyntaxBag()
+	public void DeliminationExtendedSyntaxList()
 	{
 		throw new NotImplementedException();
 	}

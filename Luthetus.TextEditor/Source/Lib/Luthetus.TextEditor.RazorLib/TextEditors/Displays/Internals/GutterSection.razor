@@ -16,7 +16,7 @@
                            UseIntersectionObserver="false"
                            ItemsProviderFunc="_ => {}"/>
     
-    @foreach (var virtualizedRow in RenderBatch.ViewModel!.VirtualizationResult.EntryBag)
+    @foreach (var virtualizedRow in RenderBatch.ViewModel!.VirtualizationResult.EntryList)
     {
         <div class="luth_te_gutter"
              style="@GetGutterStyleCss(virtualizedRow.Index)">
@@ -25,7 +25,7 @@
     }
     
     @{
-        var heightOfGutter = RenderBatch.ViewModel!.VirtualizationResult.EntryBag.Length *
+        var heightOfGutter = RenderBatch.ViewModel!.VirtualizationResult.EntryList.Length *
                              RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements.RowHeight;
 
         if (heightOfGutter < RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements.Height)
@@ -36,7 +36,7 @@
             
             var remainingHeightToFillInvariantCulture = remainingHeightToFill.ToCssValue();
 
-            var imaginaryNextIndex = (RenderBatch.ViewModel!.VirtualizationResult.EntryBag.LastOrDefault()?.Index ?? -1) + 
+            var imaginaryNextIndex = (RenderBatch.ViewModel!.VirtualizationResult.EntryList.LastOrDefault()?.Index ?? -1) + 
                 1;
             
             <div class="luth_te_gutter"

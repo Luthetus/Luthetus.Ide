@@ -19,31 +19,31 @@ public class TextEditorGroupStateMainTests
 	public void Constructor()
 	{
 		var groupState = new TextEditorGroupState();
-		Assert.Equal(ImmutableList<TextEditorGroup>.Empty, groupState.GroupBag);
+		Assert.Equal(ImmutableList<TextEditorGroup>.Empty, groupState.GroupList);
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorGroupState.GroupBag"/>
+	/// <see cref="TextEditorGroupState.GroupList"/>
 	/// </summary>
 	[Fact]
-	public void GroupBag()
+	public void GroupList()
 	{
         var groupState = new TextEditorGroupState();
-        Assert.Equal(ImmutableList<TextEditorGroup>.Empty, groupState.GroupBag);
+        Assert.Equal(ImmutableList<TextEditorGroup>.Empty, groupState.GroupList);
 
 		var group = new TextEditorGroup(
 			Key<TextEditorGroup>.NewKey(),
 			Key<TextEditorViewModel>.Empty,
 			new Key<TextEditorViewModel>[0].ToImmutableList());
 
-		var outGroupBag = groupState.GroupBag.Add(group);
-        Assert.NotEqual(ImmutableList<TextEditorGroup>.Empty, outGroupBag);
+		var outGroupList = groupState.GroupList.Add(group);
+        Assert.NotEqual(ImmutableList<TextEditorGroup>.Empty, outGroupList);
 
 		var outGroupState = new TextEditorGroupState
         {
-			GroupBag = outGroupBag
+			GroupList = outGroupList
 		};
 
-        Assert.Equal(outGroupBag, outGroupState.GroupBag);
+        Assert.Equal(outGroupList, outGroupState.GroupList);
 	}
 }

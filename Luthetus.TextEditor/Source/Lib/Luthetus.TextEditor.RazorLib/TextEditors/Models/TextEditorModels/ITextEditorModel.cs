@@ -25,19 +25,19 @@ public interface ITextEditorModel
     /// <summary>
     /// TODO: Divide the content into partitions for optimization.
     /// </summary>
-    public IList<RichCharacter> ContentBag { get; }
-	public IList<EditBlock> EditBlocksBag { get; }
+    public IList<RichCharacter> ContentList { get; }
+	public IList<EditBlock> EditBlocksList { get; }
     /// <summary>
     /// To get the ending position of RowIndex _rowEndingPositions[RowIndex]<br /><br />
     /// _rowEndingPositions returns the start of the NEXT row
     /// </summary>
-    public IList<RowEnding> RowEndingPositionsBag { get; }
-	public IList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsBag { get; }
-	public IList<TextEditorPresentationModel> PresentationModelsBag { get; }
+    public IList<RowEnding> RowEndingPositionsList { get; }
+	public IList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsList { get; }
+	public IList<TextEditorPresentationModel> PresentationModelsList { get; }
     /// <summary>
     /// Provides exact position index of a tab character
     /// </summary>
-    public IList<int> TabKeyPositionsBag { get; }
+    public IList<int> TabKeyPositionsList { get; }
     /// <summary>
 	/// If there is a mixture of<br/>-Carriage Return<br/>-Linefeed<br/>-CRLF<br/>
 	/// Then this will be null.<br/><br/>

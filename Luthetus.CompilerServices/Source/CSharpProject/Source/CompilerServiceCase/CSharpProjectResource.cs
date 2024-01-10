@@ -35,7 +35,7 @@ public class CSharpProjectResource : ICompilerServiceResource
         if (localCompilationUnit is null)
             return ImmutableArray<ITextEditorSymbol>.Empty;
 
-        return localCompilationUnit.Binder.SymbolsBag;
+        return localCompilationUnit.Binder.SymbolsList;
     }
 
     /// <returns>

@@ -16,9 +16,9 @@ public class FunctionArgumentsListingNodeTests
     /// <see cref="FunctionArgumentsListingNode(OpenParenthesisToken, ImmutableArray{FunctionArgumentEntryNode}, CloseParenthesisToken)"/>
     /// <br/>----<br/>
     /// <see cref="FunctionArgumentsListingNode.OpenParenthesisToken"/>
-    /// <see cref="FunctionArgumentsListingNode.FunctionArgumentEntryNodeBag"/>
+    /// <see cref="FunctionArgumentsListingNode.FunctionArgumentEntryNodeList"/>
     /// <see cref="FunctionArgumentsListingNode.CloseParenthesisToken"/>
-    /// <see cref="FunctionArgumentsListingNode.ChildBag"/>
+    /// <see cref="FunctionArgumentsListingNode.ChildList"/>
     /// <see cref="FunctionArgumentsListingNode.IsFabricated"/>
     /// <see cref="FunctionArgumentsListingNode.SyntaxKind"/>
     /// </summary>
@@ -41,7 +41,7 @@ public class FunctionArgumentsListingNodeTests
                 sourceText));
         }
 
-        ImmutableArray<FunctionArgumentEntryNode> functionArgumentEntryNodeBag;
+        ImmutableArray<FunctionArgumentEntryNode> functionArgumentEntryNodeList;
         {
             TypeClauseNode intTypeClauseNode;
             {
@@ -77,7 +77,7 @@ public class FunctionArgumentsListingNodeTests
                 false,
                 false);
 
-            functionArgumentEntryNodeBag = new FunctionArgumentEntryNode[]
+            functionArgumentEntryNodeList = new FunctionArgumentEntryNode[]
             {
                     functionArgumentEntryNode
             }.ToImmutableArray();
@@ -97,17 +97,17 @@ public class FunctionArgumentsListingNodeTests
 
         var functionArgumentsListingNode = new FunctionArgumentsListingNode(
             openParenthesisToken,
-            functionArgumentEntryNodeBag,
+            functionArgumentEntryNodeList,
             closeParenthesisToken);
 
         Assert.Equal(openParenthesisToken, functionArgumentsListingNode.OpenParenthesisToken);
-        Assert.Equal(functionArgumentEntryNodeBag, functionArgumentsListingNode.FunctionArgumentEntryNodeBag);
+        Assert.Equal(functionArgumentEntryNodeList, functionArgumentsListingNode.FunctionArgumentEntryNodeList);
         Assert.Equal(closeParenthesisToken, functionArgumentsListingNode.CloseParenthesisToken);
 
-        Assert.Equal(3, functionArgumentsListingNode.ChildBag.Length);
-        Assert.Equal(openParenthesisToken, functionArgumentsListingNode.ChildBag[0]);
-        Assert.Equal(functionArgumentEntryNodeBag.Single(), functionArgumentsListingNode.ChildBag[1]);
-        Assert.Equal(closeParenthesisToken, functionArgumentsListingNode.ChildBag[2]);
+        Assert.Equal(3, functionArgumentsListingNode.ChildList.Length);
+        Assert.Equal(openParenthesisToken, functionArgumentsListingNode.ChildList[0]);
+        Assert.Equal(functionArgumentEntryNodeList.Single(), functionArgumentsListingNode.ChildList[1]);
+        Assert.Equal(closeParenthesisToken, functionArgumentsListingNode.ChildList[2]);
 
         Assert.False(functionArgumentsListingNode.IsFabricated);
 

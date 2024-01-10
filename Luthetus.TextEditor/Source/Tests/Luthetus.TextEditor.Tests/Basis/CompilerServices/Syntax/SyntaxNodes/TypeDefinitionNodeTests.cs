@@ -22,7 +22,7 @@ public class TypeDefinitionNodeTests
     /// <see cref="TypeDefinitionNode.InheritedTypeClauseNode"/>
     /// <see cref="TypeDefinitionNode.TypeBodyCodeBlockNode"/>
     /// <see cref="TypeDefinitionNode.IsInterface"/>
-    /// <see cref="TypeDefinitionNode.ChildBag"/>
+    /// <see cref="TypeDefinitionNode.ChildList"/>
     /// <see cref="TypeDefinitionNode.IsFabricated"/>
     /// <see cref="TypeDefinitionNode.SyntaxKind"/>
     /// <see cref="TypeDefinitionNode.GetFunctionDefinitionNodes()"/>
@@ -73,9 +73,9 @@ public class TypeDefinitionNodeTests
         Assert.Equal(valueType, typeDefinitionNode.ToTypeClause().ValueType);
         Assert.Null(typeDefinitionNode.ToTypeClause().GenericParametersListingNode);
 
-        Assert.Equal(2, typeDefinitionNode.ChildBag.Length);
-        Assert.Equal(typeIdentifier, typeDefinitionNode.ChildBag[0]);
-        Assert.Equal(typeBodyCodeBlockNode, typeDefinitionNode.ChildBag[1]);
+        Assert.Equal(2, typeDefinitionNode.ChildList.Length);
+        Assert.Equal(typeIdentifier, typeDefinitionNode.ChildList[0]);
+        Assert.Equal(typeBodyCodeBlockNode, typeDefinitionNode.ChildList[1]);
 
         Assert.False(typeDefinitionNode.IsFabricated);
 

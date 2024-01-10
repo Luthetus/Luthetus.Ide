@@ -14,17 +14,17 @@ public class VariableExpressionNode : IExpressionNode
     {
         ResultTypeClauseNode = typeClauseNode;
 
-        var childBag = new List<ISyntax>
+        var childList = new List<ISyntax>
         {
             ResultTypeClauseNode
         };
 
-        ChildBag = childBag.ToImmutableArray();
+        ChildList = childList.ToImmutableArray();
     }
 
     public TypeClauseNode ResultTypeClauseNode { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableExpressionNode;

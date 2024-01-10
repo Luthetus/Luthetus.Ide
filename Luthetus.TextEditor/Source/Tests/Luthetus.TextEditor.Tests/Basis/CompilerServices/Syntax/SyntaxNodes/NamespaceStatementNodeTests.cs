@@ -36,19 +36,19 @@ public class NamespaceStatementNodeTests
 	}
 
 	/// <summary>
-	/// <see cref="NamespaceStatementNode.NamespaceEntryNodeBag"/>
+	/// <see cref="NamespaceStatementNode.NamespaceEntryNodeList"/>
 	/// </summary>
 	[Fact]
-	public void NamespaceEntryNodeBag()
+	public void NamespaceEntryNodeList()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="NamespaceStatementNode.ChildBag"/>
+	/// <see cref="NamespaceStatementNode.ChildList"/>
 	/// </summary>
 	[Fact]
-	public void ChildBag()
+	public void ChildList()
 	{
 		throw new NotImplementedException();
 	}

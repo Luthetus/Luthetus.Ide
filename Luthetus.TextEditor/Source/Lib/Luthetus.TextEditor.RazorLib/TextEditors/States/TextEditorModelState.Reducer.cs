@@ -11,12 +11,12 @@ public partial class TextEditorModelState
             TextEditorModelState inState,
             RegisterAction registerAction)
         {
-            if (inState.ModelBag.Any(x => x.ResourceUri == registerAction.Model.ResourceUri))
+            if (inState.ModelList.Any(x => x.ResourceUri == registerAction.Model.ResourceUri))
                 return inState;
 
-            var outModelBag = inState.ModelBag.Add(registerAction.Model);
+            var outModelList = inState.ModelList.Add(registerAction.Model);
 
-            return new TextEditorModelState { ModelBag = outModelBag };
+            return new TextEditorModelState { ModelList = outModelList };
         }
 
         [ReducerMethod]
@@ -24,15 +24,15 @@ public partial class TextEditorModelState
             TextEditorModelState inState,
             DisposeAction disposeAction)
         {
-            var inModel = inState.ModelBag.SingleOrDefault(
+            var inModel = inState.ModelList.SingleOrDefault(
                 x => x.ResourceUri == disposeAction.ResourceUri);
 
             if (inModel is null)
                 return inState;
 
-            var outModelBag = inState.ModelBag.Remove(inModel);
+            var outModelList = inState.ModelList.Remove(inModel);
 
-            return new TextEditorModelState { ModelBag = outModelBag };
+            return new TextEditorModelState { ModelList = outModelList };
         }
 
         [ReducerMethod]
@@ -40,17 +40,17 @@ public partial class TextEditorModelState
             TextEditorModelState inState,
             SetAction setAction)
         {
-            var inModel = inState.ModelBag.FirstOrDefault(
+            var inModel = inState.ModelList.FirstOrDefault(
                 x => x.ResourceUri == setAction.ModelModifier.ResourceUri);
 
             if (inModel is null)
                 return inState;
 
-            var outViewModelBag = inState.ModelBag.Replace(
+            var outViewModelList = inState.ModelList.Replace(
                 inModel,
                 setAction.ModelModifier.ToModel());
 
-            return new TextEditorModelState { ModelBag = outViewModelBag };
+            return new TextEditorModelState { ModelList = outViewModelList };
         }
     }
 }

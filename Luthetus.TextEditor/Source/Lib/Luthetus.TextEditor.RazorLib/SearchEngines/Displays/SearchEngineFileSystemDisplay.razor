@@ -18,9 +18,9 @@
 
 	<div class="luth_te_search-engine-file-system-results">
 
-		@{ var localFilePathBag = SearchEngineFileSystem.FilePathBag.ToArray(); }
+		@{ var localFilePathList = SearchEngineFileSystem.FilePathList.ToArray(); }
 
-		@foreach (var filePath in localFilePathBag)
+		@foreach (var filePath in localFilePathList)
 		{
 			<div style="cursor: pointer;"
 				 @onclick="() => OpenInEditorOnClick(filePath)">

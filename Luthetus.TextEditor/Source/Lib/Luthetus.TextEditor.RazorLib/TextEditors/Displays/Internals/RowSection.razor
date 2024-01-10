@@ -14,15 +14,15 @@
 
     <PresentationLayerGroup PrimaryCursor="PrimaryCursor"
                             CssClassString="luth_te_first-presentation-layer-group"
-                            TextEditorPresentationKeys="RenderBatch.ViewModel!.FirstPresentationLayerKeysBag" />
+                            TextEditorPresentationKeys="RenderBatch.ViewModel!.FirstPresentationLayerKeysList" />
 
     <TextSelectionGroup PrimaryCursor="PrimaryCursor"/>
 
     <PresentationLayerGroup PrimaryCursor="PrimaryCursor"
                             CssClassString="luth_te_last-presentation-layer-group"
-                            TextEditorPresentationKeys="RenderBatch.ViewModel.LastPresentationLayerKeysBag" />
+                            TextEditorPresentationKeys="RenderBatch.ViewModel.LastPresentationLayerKeysList" />
 
-    @foreach (var virtualizedRow in RenderBatch.ViewModel!.VirtualizationResult.EntryBag)
+    @foreach (var virtualizedRow in RenderBatch.ViewModel!.VirtualizationResult.EntryList)
     {
         <div class="luth_te_row"
              style="@GetRowStyleCss(virtualizedRow.Index, virtualizedRow.LeftInPixels)">
@@ -66,7 +66,7 @@
 
                 if (amountOfLeftInCharacterWidthUnits < lengthOfRow)
                 {
-                    var rowEndingTuple = RenderBatch.Model!.RowEndingPositionsBag[virtualizedRow.Index];
+                    var rowEndingTuple = RenderBatch.Model!.RowEndingPositionsList[virtualizedRow.Index];
 
                     <span class="luth_te_newline">
                         @rowEndingTuple.RowEndingKind.AsCharactersHtmlEscaped()

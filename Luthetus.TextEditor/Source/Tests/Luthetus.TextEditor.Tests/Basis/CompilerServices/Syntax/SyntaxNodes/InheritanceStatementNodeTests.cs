@@ -15,7 +15,7 @@ public class InheritanceStatementNodeTests
     /// <see cref="InheritanceStatementNode(TypeClauseNode)"/>
     /// <br/>----<br/>
     /// <see cref="InheritanceStatementNode.ParentTypeClauseNode"/>
-    /// <see cref="InheritanceStatementNode.ChildBag"/>
+    /// <see cref="InheritanceStatementNode.ChildList"/>
     /// <see cref="InheritanceStatementNode.IsFabricated"/>
     /// <see cref="InheritanceStatementNode.SyntaxKind"/>
     /// </summary>
@@ -43,8 +43,8 @@ public class InheritanceStatementNodeTests
 
         Assert.Equal(componentBaseTypeClauseNode, inheritanceStatementNode.ParentTypeClauseNode);
 
-        Assert.Single(inheritanceStatementNode.ChildBag);
-        Assert.Equal(componentBaseTypeClauseNode, inheritanceStatementNode.ChildBag[0]);
+        Assert.Single(inheritanceStatementNode.ChildList);
+        Assert.Equal(componentBaseTypeClauseNode, inheritanceStatementNode.ChildList[0]);
 
         Assert.False(inheritanceStatementNode.IsFabricated);
 

@@ -13,7 +13,7 @@ public sealed record UnaryOperatorNode : ISyntaxNode
         OperatorToken = operatorToken;
         ResultTypeClauseNode = resultTypeClauseNode;
 
-        ChildBag = new ISyntax[]
+        ChildList = new ISyntax[]
         {
             OperandTypeClauseNode,
             OperatorToken,
@@ -26,7 +26,7 @@ public sealed record UnaryOperatorNode : ISyntaxNode
     public ISyntaxToken OperatorToken { get; }
     public TypeClauseNode ResultTypeClauseNode { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UnaryOperatorNode;

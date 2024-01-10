@@ -23,7 +23,7 @@ public partial class EditorDisplay : ComponentBase
     [Parameter, EditorRequired]
     public ElementDimensions EditorElementDimensions { get; set; } = null!;
 
-    private static readonly ImmutableArray<TextEditorHeaderButtonKind> TextEditorHeaderButtonKindsBag =
+    private static readonly ImmutableArray<TextEditorHeaderButtonKind> TextEditorHeaderButtonKindsList =
         Enum.GetValues(typeof(TextEditorHeaderButtonKind))
             .Cast<TextEditorHeaderButtonKind>()
             .ToImmutableArray();
@@ -36,7 +36,7 @@ public partial class EditorDisplay : ComponentBase
         {
             WrapperClassCssString = "luth_te_demo-text-editor",
             TabIndex = 0,
-            HeaderButtonKinds = TextEditorHeaderButtonKindsBag,
+            HeaderButtonKinds = TextEditorHeaderButtonKindsList,
             RegisterModelAction = RegisterModelAction,
             ShowViewModelAction = ShowViewModelAction,
         };

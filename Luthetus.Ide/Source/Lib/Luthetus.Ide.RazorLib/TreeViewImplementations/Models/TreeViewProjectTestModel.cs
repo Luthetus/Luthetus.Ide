@@ -72,7 +72,7 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 					var rootStringFragment = new StringFragment(string.Empty);
 					rootStringFragment.Map = rootStringFragmentMap;
 			
-					var newChildBag = rootStringFragment.Map.Select(kvp => 
+					var newChildList = rootStringFragment.Map.Select(kvp => 
 						(TreeViewNoType)new TreeViewStringFragment(
 				            kvp.Value,
 				            CommonComponentRenderers,
@@ -80,13 +80,13 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 				            true))
 						.ToArray();
 		
-					for (var i = 0; i < newChildBag.Length; i++)
+					for (var i = 0; i < newChildList.Length; i++)
 					{
-						var node = (TreeViewStringFragment)newChildBag[i];
+						var node = (TreeViewStringFragment)newChildList[i];
 						await node.LoadChildListAsync();
 					}
 		
-		            ChildList = newChildBag.ToList();
+		            ChildList = newChildList.ToList();
 				}
 				else
 				{

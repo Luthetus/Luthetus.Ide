@@ -14,7 +14,7 @@ public sealed record AmbiguousIdentifierNode : ISyntaxNode
     {
         IdentifierToken = identifierToken;
 
-        ChildBag = new ISyntax[]
+        ChildList = new ISyntax[]
         {
             IdentifierToken,
         }.ToImmutableArray();
@@ -22,7 +22,7 @@ public sealed record AmbiguousIdentifierNode : ISyntaxNode
 
     public IdentifierToken IdentifierToken { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierNode;

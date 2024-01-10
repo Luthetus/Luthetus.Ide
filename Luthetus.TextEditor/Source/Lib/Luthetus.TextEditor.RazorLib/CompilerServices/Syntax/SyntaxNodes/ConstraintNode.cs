@@ -21,7 +21,7 @@ public sealed record ConstraintNode : ISyntaxNode
         var children = new List<ISyntax>();
         children.AddRange(InnerTokens);
 
-        ChildBag = children.ToImmutableArray();
+        ChildList = children.ToImmutableArray();
     }
 
     /// <summary>
@@ -30,7 +30,7 @@ public sealed record ConstraintNode : ISyntaxNode
     /// </summary>
     public ImmutableArray<ISyntaxToken> InnerTokens { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ConstraintNode;

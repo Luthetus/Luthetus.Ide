@@ -45,24 +45,24 @@ public class WhitespaceFactsTests
     }
 
 	/// <summary>
-	/// <see cref="WhitespaceFacts.ALL_BAG"/>
+	/// <see cref="WhitespaceFacts.ALL_LIST"/>
 	/// </summary>
 	[Fact]
-	public void ALL_BAG()
+	public void ALL_LIST()
 	{
-        Assert.Contains(WhitespaceFacts.SPACE, WhitespaceFacts.ALL_BAG);
-        Assert.Contains(WhitespaceFacts.TAB, WhitespaceFacts.ALL_BAG);
-        Assert.Contains(WhitespaceFacts.CARRIAGE_RETURN, WhitespaceFacts.ALL_BAG);
-        Assert.Contains(WhitespaceFacts.LINE_FEED, WhitespaceFacts.ALL_BAG);
+        Assert.Contains(WhitespaceFacts.SPACE, WhitespaceFacts.ALL_LIST);
+        Assert.Contains(WhitespaceFacts.TAB, WhitespaceFacts.ALL_LIST);
+        Assert.Contains(WhitespaceFacts.CARRIAGE_RETURN, WhitespaceFacts.ALL_LIST);
+        Assert.Contains(WhitespaceFacts.LINE_FEED, WhitespaceFacts.ALL_LIST);
 	}
 
 	/// <summary>
-	/// <see cref="WhitespaceFacts.LINE_ENDING_CHARACTER_BAG"/>
+	/// <see cref="WhitespaceFacts.LINE_ENDING_CHARACTER_LIST"/>
 	/// </summary>
 	[Fact]
-	public void LINE_ENDING_CHARACTER_BAG()
+	public void LINE_ENDING_CHARACTER_LIST()
 	{
-        Assert.Contains(WhitespaceFacts.CARRIAGE_RETURN, WhitespaceFacts.LINE_ENDING_CHARACTER_BAG);
-        Assert.Contains(WhitespaceFacts.LINE_FEED, WhitespaceFacts.LINE_ENDING_CHARACTER_BAG);
+        Assert.Contains(WhitespaceFacts.CARRIAGE_RETURN, WhitespaceFacts.LINE_ENDING_CHARACTER_LIST);
+        Assert.Contains(WhitespaceFacts.LINE_FEED, WhitespaceFacts.LINE_ENDING_CHARACTER_LIST);
 	}
 }

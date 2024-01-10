@@ -50,7 +50,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
 
         if (projectIdGuid != Guid.Empty)
         {
-            selectedProject = dotNetSolutionState.DotNetSolutionModel.DotNetProjectBag
+            selectedProject = dotNetSolutionState.DotNetSolutionModel.DotNetProjectList
                 .SingleOrDefault(x => x.ProjectIdGuid == projectIdGuid);
         }
 
@@ -70,7 +70,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
         if (dotNetSolutionState.DotNetSolutionModel is null || nuGetPackageManagerState.SelectedProjectToModify is null)
             return false;
 
-        return dotNetSolutionState.DotNetSolutionModel.DotNetProjectBag.Any(
+        return dotNetSolutionState.DotNetSolutionModel.DotNetProjectList.Any(
             x => x.ProjectIdGuid == nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid);
     }
 

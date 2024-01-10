@@ -43,15 +43,15 @@ public partial class LuthetusIdeInitializer : ComponentBase
     {
         if (firstRender)
         {
-            if (LuthetusTextEditorOptions.CustomThemeRecordBag is not null)
+            if (LuthetusTextEditorOptions.CustomThemeRecordList is not null)
             {
-                foreach (var themeRecord in LuthetusTextEditorOptions.CustomThemeRecordBag)
+                foreach (var themeRecord in LuthetusTextEditorOptions.CustomThemeRecordList)
                 {
                     Dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
                 }
             }
 
-            foreach (var searchEngine in LuthetusTextEditorOptions.SearchEngineBag)
+            foreach (var searchEngine in LuthetusTextEditorOptions.SearchEngineList)
             {
                 Dispatcher.Dispatch(new TextEditorSearchEngineState.RegisterAction(searchEngine));
             }

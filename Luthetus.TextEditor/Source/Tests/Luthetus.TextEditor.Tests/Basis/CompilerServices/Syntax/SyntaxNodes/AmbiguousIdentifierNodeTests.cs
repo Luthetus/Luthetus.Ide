@@ -14,7 +14,7 @@ public class AmbiguousIdentifierNodeTests
     /// <see cref="AmbiguousIdentifierNode(IdentifierToken)"/>
     /// <br/>----<br/>
     /// <see cref="AmbiguousIdentifierNode.IdentifierToken"/>
-	/// <see cref="AmbiguousIdentifierNode.ChildBag"/>
+	/// <see cref="AmbiguousIdentifierNode.ChildList"/>
 	/// <see cref="AmbiguousIdentifierNode.IsFabricated"/>
 	/// <see cref="AmbiguousIdentifierNode.SyntaxKind"/>
     /// </summary>
@@ -39,8 +39,8 @@ public class AmbiguousIdentifierNodeTests
 
 		Assert.Equal(identifierToken, ambiguousIdentifierNode.IdentifierToken);
 		
-		Assert.Single(ambiguousIdentifierNode.ChildBag);
-		Assert.Equal(identifierToken, ambiguousIdentifierNode.ChildBag.Single());
+		Assert.Single(ambiguousIdentifierNode.ChildList);
+		Assert.Equal(identifierToken, ambiguousIdentifierNode.ChildList.Single());
 
 		Assert.False(ambiguousIdentifierNode.IsFabricated);
 

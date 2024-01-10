@@ -21,7 +21,7 @@ public class ConstructorDefinitionNodeTests
     /// <see cref="ConstructorDefinitionNode.FunctionArgumentsListingNode"/>
     /// <see cref="ConstructorDefinitionNode.FunctionBodyCodeBlockNode"/>
     /// <see cref="ConstructorDefinitionNode.ConstraintNode"/>
-    /// <see cref="ConstructorDefinitionNode.ChildBag"/>
+    /// <see cref="ConstructorDefinitionNode.ChildList"/>
     /// <see cref="ConstructorDefinitionNode.IsFabricated"/>
     /// <see cref="ConstructorDefinitionNode.SyntaxKind"/>
     /// </summary>
@@ -105,11 +105,11 @@ public class ConstructorDefinitionNodeTests
         Assert.Equal(functionBodyCodeBlockNode, constructorDefinitionNode.FunctionBodyCodeBlockNode);
         Assert.Equal(constraintNode, constructorDefinitionNode.ConstraintNode);
 
-        Assert.Equal(4, constructorDefinitionNode.ChildBag.Length);
-        Assert.Equal(myClassTypeClauseNode, constructorDefinitionNode.ChildBag[0]);
-        Assert.Equal(functionIdentifierToken, constructorDefinitionNode.ChildBag[1]);
-        Assert.Equal(functionArgumentsListingNode, constructorDefinitionNode.ChildBag[2]);
-        Assert.Equal(functionBodyCodeBlockNode, constructorDefinitionNode.ChildBag[3]);
+        Assert.Equal(4, constructorDefinitionNode.ChildList.Length);
+        Assert.Equal(myClassTypeClauseNode, constructorDefinitionNode.ChildList[0]);
+        Assert.Equal(functionIdentifierToken, constructorDefinitionNode.ChildList[1]);
+        Assert.Equal(functionArgumentsListingNode, constructorDefinitionNode.ChildList[2]);
+        Assert.Equal(functionBodyCodeBlockNode, constructorDefinitionNode.ChildList[3]);
 
         Assert.False(constructorDefinitionNode.IsFabricated);
 

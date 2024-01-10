@@ -147,7 +147,7 @@ public partial class TextEditorService : ITextEditorService
                         {
                             viewModelModifier.ViewModel = viewModelModifier.ViewModel with
                             {
-                                CursorBag = cursorModifierBag.CursorModifierBag
+                                CursorList = cursorModifierBag.List
                                     .Select(x => x.ToCursor())
                                     .ToImmutableArray()
                             };

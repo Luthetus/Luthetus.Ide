@@ -37,11 +37,11 @@ public class DotNetSolutionResource : ICompilerServiceResource
     public ResourceUri ResourceUri { get; }
     public DotNetSolutionCompilerService DotNetSolutionCompilerService { get; }
     public CompilationUnit? CompilationUnit { get; internal set; }
-    public ImmutableArray<ISyntaxToken>? SyntaxTokenBag { get; internal set; }
+    public ImmutableArray<ISyntaxToken>? SyntaxTokenList { get; internal set; }
     public DotNetSolutionModel? DotNetSolutionModel { get; set; }
 
-    public ImmutableArray<TextEditorTextSpan> SyntacticTextSpanBag => GetSyntacticTextSpans();
-    public ImmutableArray<ITextEditorSymbol> SymbolBag => GetSymbols();
+    public ImmutableArray<TextEditorTextSpan> SyntacticTextSpanList => GetSyntacticTextSpans();
+    public ImmutableArray<ITextEditorSymbol> SymbolList => GetSymbols();
 
     /// <summary>
     /// TODO: It might be a useful optimization to evaluate these linq expressions
@@ -49,7 +49,7 @@ public class DotNetSolutionResource : ICompilerServiceResource
     /// </summary>
     private ImmutableArray<TextEditorTextSpan> GetSyntacticTextSpans()
     {
-        var localSyntaxTokens = SyntaxTokenBag;
+        var localSyntaxTokens = SyntaxTokenList;
 
         if (localSyntaxTokens is null)
             return ImmutableArray<TextEditorTextSpan>.Empty;
@@ -68,7 +68,7 @@ public class DotNetSolutionResource : ICompilerServiceResource
         if (localCompilationUnit?.Binder is null)
             return ImmutableArray<ITextEditorSymbol>.Empty;
 
-        return localCompilationUnit.Binder.SymbolsBag;
+        return localCompilationUnit.Binder.SymbolsList;
     }
 
     /// <returns>

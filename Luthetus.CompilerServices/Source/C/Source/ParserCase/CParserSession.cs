@@ -22,7 +22,7 @@
 //         _currentCodeBlockBuilder = _globalCodeBlockBuilder;
 //     }
 //
-//     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
+//     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList => _diagnosticBag.ToImmutableArray();
 //     public CLexerSession Lexer { get; }
 //     public CBinderSession Binder { get; }
 //

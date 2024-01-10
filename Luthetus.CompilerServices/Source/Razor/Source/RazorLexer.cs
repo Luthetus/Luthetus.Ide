@@ -41,7 +41,7 @@ public class RazorLexer : ILexer
     public RazorSyntaxTree RazorSyntaxTree { get; private set; }
 
     public ImmutableArray<ISyntaxToken> SyntaxTokens => _syntaxTokens.ToImmutableArray();
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag => _diagnosticBag.ToImmutableArray();
+    public ImmutableArray<TextEditorDiagnostic> DiagnosticList => _diagnosticBag.ToImmutableArray();
 
     public ImmutableArray<TextEditorTextSpan> TextEditorTextSpans { get; private set; }
 

@@ -4,5 +4,5 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 public interface ISyntaxNode : ISyntax
 {
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 }

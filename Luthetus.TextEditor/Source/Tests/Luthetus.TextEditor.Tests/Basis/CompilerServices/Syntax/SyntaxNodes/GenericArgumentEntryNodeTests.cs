@@ -14,7 +14,7 @@ public class GenericArgumentEntryNodeTests
     /// <see cref="GenericArgumentEntryNode(TypeClauseNode)"/>
     /// <br/>----<br/>
     /// <see cref="GenericArgumentEntryNode.TypeClauseNode"/>
-    /// <see cref="GenericArgumentEntryNode.ChildBag"/>
+    /// <see cref="GenericArgumentEntryNode.ChildList"/>
     /// <see cref="GenericArgumentEntryNode.IsFabricated"/>
     /// <see cref="GenericArgumentEntryNode.SyntaxKind"/>
     /// </summary>
@@ -46,8 +46,8 @@ public class GenericArgumentEntryNodeTests
 
         Assert.Equal(genericTypeClauseNode, genericArgumentEntryNode.TypeClauseNode);
 
-        Assert.Single(genericArgumentEntryNode.ChildBag);
-        Assert.Equal(genericTypeClauseNode, genericArgumentEntryNode.ChildBag.Single());
+        Assert.Single(genericArgumentEntryNode.ChildList);
+        Assert.Equal(genericTypeClauseNode, genericArgumentEntryNode.ChildList.Single());
 
         Assert.False(genericArgumentEntryNode.IsFabricated);
 

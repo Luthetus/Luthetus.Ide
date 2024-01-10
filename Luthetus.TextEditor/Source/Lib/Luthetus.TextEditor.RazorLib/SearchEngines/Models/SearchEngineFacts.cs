@@ -4,7 +4,7 @@ namespace Luthetus.TextEditor.RazorLib.SearchEngines.Models;
 
 public static class SearchEngineFacts
 {
-    public static readonly ImmutableArray<ITextEditorSearchEngine> DefaultSearchEngineBag = new ITextEditorSearchEngine[]
+    public static readonly ImmutableArray<ITextEditorSearchEngine> DefaultSearchEngineList = new ITextEditorSearchEngine[]
     {
         new SearchEngineOverRegisteredViewModels(),
         new SearchEngineOverRenderLinkedViewModels(),

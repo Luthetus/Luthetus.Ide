@@ -19,10 +19,10 @@ public partial class TestExplorerSync
 		if (dotNetSolutionModel is null)
             return Task.CompletedTask;
 
-        var localDotNetProjectBag = dotNetSolutionModel.DotNetProjectBag
+        var localDotNetProjectList = dotNetSolutionModel.DotNetProjectList
 			.Where(x => x.DotNetProjectKind == DotNetProjectKind.CSharpProject);
 
-		var localProjectTestModelBag = localDotNetProjectBag.Select(x => new ProjectTestModel(
+		var localProjectTestModelList = localDotNetProjectList.Select(x => new ProjectTestModel(
 			x.ProjectIdGuid,
 			x.AbsolutePath,
 			callback => Task.CompletedTask,
@@ -30,7 +30,7 @@ public partial class TestExplorerSync
 
 		var localFormattedCommand = DotNetCliCommandFormatter.FormatDotNetTestListTests();
 
-		var localTreeViewProjectTestModelBag = localProjectTestModelBag.Select(x =>
+		var localTreeViewProjectTestModelList = localProjectTestModelList.Select(x =>
 				(TreeViewNoType)new TreeViewProjectTestModel(
 					x,
 					_commonComponentRenderers,
@@ -38,7 +38,7 @@ public partial class TestExplorerSync
 					false))
 			.ToArray();
 
-		foreach (var entry in localTreeViewProjectTestModelBag)
+		foreach (var entry in localTreeViewProjectTestModelList)
 		{
 			var treeViewProjectTestModel = (TreeViewProjectTestModel)entry;
 			
@@ -68,12 +68,12 @@ public partial class TestExplorerSync
 			
 			    			// THINKING_ABOUT_TREE_VIEW();
 							{
-								var splitOutputBag = treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput
+								var splitOutputList = treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput
 									.Select(x => x.Split('.'));
 						
 								var rootMap = new Dictionary<string, StringFragment>();
 
-								foreach (var splitOutput in splitOutputBag)
+								foreach (var splitOutput in splitOutputList)
 								{
 									var targetMap = rootMap;
 									var lastSeenStringFragment = (StringFragment?)null;
@@ -112,8 +112,8 @@ public partial class TestExplorerSync
 			};				
 		}
 
-		var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(localTreeViewProjectTestModelBag);
-		var firstNode = localTreeViewProjectTestModelBag.FirstOrDefault();
+		var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(localTreeViewProjectTestModelList);
+		var firstNode = localTreeViewProjectTestModelList.FirstOrDefault();
 
 		var activeNodes = firstNode is null
 			? Array.Empty<TreeViewNoType>()
@@ -134,7 +134,7 @@ public partial class TestExplorerSync
 
 		_dispatcher.Dispatch(new WithAction(inState => inState with
 		{
-			ProjectTestModelBag = localProjectTestModelBag.ToImmutableList()
+			ProjectTestModelList = localProjectTestModelList.ToImmutableList()
 		}));
 
         return Task.CompletedTask;

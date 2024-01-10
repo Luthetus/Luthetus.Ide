@@ -11,9 +11,9 @@ public interface IDotNetSolution
     public Key<DotNetSolutionModel> Key { get; init; }
     public IAbsolutePath AbsolutePath { get; init; }
     public DotNetSolutionHeader DotNetSolutionHeader { get; init; }
-    public ImmutableArray<IDotNetProject> DotNetProjectBag { get; }
-    public ImmutableArray<SolutionFolder> SolutionFolderBag { get; init; }
-    public ImmutableArray<NestedProjectEntry> NestedProjectEntryBag { get; init; }
+    public ImmutableArray<IDotNetProject> DotNetProjectList { get; }
+    public ImmutableArray<SolutionFolder> SolutionFolderList { get; init; }
+    public ImmutableArray<NestedProjectEntry> NestedProjectEntryList { get; init; }
     public DotNetSolutionGlobal DotNetSolutionGlobal { get; init; }
     public string SolutionFileContents { get; }
 

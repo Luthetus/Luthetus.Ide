@@ -96,7 +96,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 
         var cSharpProjectAbsolutePathString = Item.CSharpProjectNamespacePath.AbsolutePath.Value;
 
-        var newChildBag = lightWeightNugetPackageRecords.Select(
+        var newChildList = lightWeightNugetPackageRecords.Select(
             npr => (TreeViewNoType)new TreeViewCSharpProjectNugetPackageReference(
                 new(cSharpProjectAbsolutePathString, npr),
                 IdeComponentRenderers,
@@ -110,7 +110,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
             .ToList();
 
 
-        ChildList = newChildBag;
+        ChildList = newChildList;
         LinkChildren(previousChildren, ChildList);
         TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
     }

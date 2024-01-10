@@ -30,7 +30,7 @@ public class ParserTests
 		var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.ChildBag.Single();
+		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.ChildList.Single();
 
 		throw new NotImplementedException();
 	}
@@ -46,7 +46,7 @@ public class ParserTests
 		var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.ChildBag.Single();
+		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.ChildList.Single();
 
 		var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
 		var binaryOperatorNode = (BinaryOperatorNode)binaryExpressionNode.BinaryOperatorNode;
@@ -72,7 +72,7 @@ public class ParserTests
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var binaryOperatorNode = 
-			((BinaryExpressionNode)topCodeBlock.ChildBag.Single())
+			((BinaryExpressionNode)topCodeBlock.ChildList.Single())
 			.BinaryOperatorNode;
 
 		Assert.Equal(typeof(int), binaryOperatorNode.LeftOperandTypeClauseNode.ValueType);
@@ -107,8 +107,8 @@ public class ParserTests
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var constructorDefinitionNode = (ConstructorDefinitionNode)(
-			((TypeDefinitionNode)topCodeBlock.ChildBag.Single())
-			.TypeBodyCodeBlockNode.ChildBag.Single());
+			((TypeDefinitionNode)topCodeBlock.ChildList.Single())
+			.TypeBodyCodeBlockNode.ChildList.Single());
 
 		Assert.Equal(className,
 			constructorDefinitionNode.ReturnTypeClauseNode.TypeIdentifier.TextSpan.GetText());
@@ -118,9 +118,9 @@ public class ParserTests
 
 		Assert.Empty(constructorDefinitionNode
 			.FunctionArgumentsListingNode
-			.FunctionArgumentEntryNodeBag);
+			.FunctionArgumentEntryNodeList);
 
-		Assert.Empty(constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildBag);
+		Assert.Empty(constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList);
 		Assert.Null(constructorDefinitionNode.ConstraintNode);
 		Assert.False(constructorDefinitionNode.IsFabricated);
 		Assert.Equal(SyntaxKind.ConstructorDefinitionNode, constructorDefinitionNode.SyntaxKind);
@@ -144,12 +144,12 @@ public class ParserTests
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var functionDefinitionNode = 
-			(FunctionDefinitionNode)topCodeBlock.ChildBag.Single();
+			(FunctionDefinitionNode)topCodeBlock.ChildList.Single();
 
 		Assert.Single(
-			functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeBag);
+			functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
 		
-		var functionArgumentEntryNode = functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeBag.Single();
+		var functionArgumentEntryNode = functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList.Single();
 		
 		Assert.False(functionArgumentEntryNode.IsOptional);
 		Assert.False(functionArgumentEntryNode.HasOutKeyword);
@@ -195,9 +195,9 @@ public class ParserTests
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var functionDefinitionNode = 
-			(FunctionDefinitionNode)topCodeBlock.ChildBag.Single();
+			(FunctionDefinitionNode)topCodeBlock.ChildList.Single();
 
-		Assert.Equal(2, functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeBag.Length);
+		Assert.Equal(2, functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList.Length);
 	}
 	
 	[Fact]
@@ -218,7 +218,7 @@ public class ParserTests
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var functionDefinitionNode = 
-			(FunctionDefinitionNode)topCodeBlock.ChildBag.Single();
+			(FunctionDefinitionNode)topCodeBlock.ChildList.Single();
 
 		Assert.Equal(returnTypeText,
 			functionDefinitionNode.ReturnTypeClauseNode.TypeIdentifier.TextSpan.GetText());
@@ -231,7 +231,7 @@ public class ParserTests
 
 		Assert.Null(functionDefinitionNode.GenericArgumentsListingNode);
 		Assert.NotNull(functionDefinitionNode.FunctionArgumentsListingNode);
-		Assert.Empty(functionDefinitionNode.FunctionBodyCodeBlockNode.ChildBag);
+		Assert.Empty(functionDefinitionNode.FunctionBodyCodeBlockNode.ChildList);
 		Assert.Null(functionDefinitionNode.ConstraintNode);
 
 		Assert.False(functionDefinitionNode.IsFabricated);
@@ -252,7 +252,7 @@ public class ParserTests
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var functionInvocationNode = 
-			(FunctionInvocationNode)topCodeBlock.ChildBag.Single();
+			(FunctionInvocationNode)topCodeBlock.ChildList.Single();
 		
 		Assert.Equal(functionName,
 			functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.GetText());
@@ -262,7 +262,7 @@ public class ParserTests
 		Assert.Null(functionInvocationNode.FunctionDefinitionNode);
 
 		Assert.Null(functionInvocationNode.GenericParametersListingNode);
-		Assert.Empty(functionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeBag);
+		Assert.Empty(functionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeList);
 		
 		Assert.False(functionInvocationNode.IsFabricated);
 		Assert.Equal(SyntaxKind.FunctionInvocationNode, functionInvocationNode.SyntaxKind);
@@ -282,9 +282,9 @@ public class ParserTests
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var functionParameterEntryNode = 
-			((FunctionInvocationNode)topCodeBlock.ChildBag.Single())
+			((FunctionInvocationNode)topCodeBlock.ChildList.Single())
 			.FunctionParametersListingNode
-			.FunctionParameterEntryNodeBag.Single();
+			.FunctionParameterEntryNodeList.Single();
 
 	    Assert.False(functionParameterEntryNode.HasOutKeyword);
 	    Assert.False(functionParameterEntryNode.HasInKeyword);
@@ -316,11 +316,11 @@ Actual:   Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Paren
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var functionParameterEntryNode = 
-			((FunctionInvocationNode)topCodeBlock.ChildBag.Single())
+			((FunctionInvocationNode)topCodeBlock.ChildList.Single())
 			.FunctionParametersListingNode;
 
 		Assert.NotNull(functionParameterEntryNode.OpenParenthesisToken);
-		Assert.Equal(2, functionParameterEntryNode.FunctionParameterEntryNodeBag.Length);
+		Assert.Equal(2, functionParameterEntryNode.FunctionParameterEntryNodeList.Length);
 		Assert.NotNull(functionParameterEntryNode.CloseParenthesisToken);
 
 		Assert.False(functionParameterEntryNode.IsFabricated);
@@ -347,10 +347,10 @@ Actual:   1");
 		var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildBag[0];
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
 		
 		var genericArgumentEntryNode = variableDeclarationNode
-			.TypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeBag.Single();
+			.TypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList.Single();
 
 		Assert.False(genericArgumentEntryNode.IsFabricated);
 		Assert.Equal(SyntaxKind.GenericArgumentEntryNode, genericArgumentEntryNode.SyntaxKind);
@@ -385,12 +385,12 @@ Actual:   1");
 		var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildBag[0];
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
 		
 		var genericParametersListingNode = variableDeclarationNode
 			.TypeClauseNode.GenericParametersListingNode;
 
-		Assert.Equal(2, genericParametersListingNode.GenericParameterEntryNodeBag.Length);
+		Assert.Equal(2, genericParametersListingNode.GenericParameterEntryNodeList.Length);
 		Assert.False(genericParametersListingNode.IsFabricated);
 		Assert.Equal(SyntaxKind.GenericParametersListingNode, genericParametersListingNode.SyntaxKind);
 
@@ -411,7 +411,7 @@ Actual:   1");
 		var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildBag[0];
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
 
 		throw new NotImplementedException();
 	}
@@ -451,7 +451,7 @@ Actual:   1");
 		var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var literalExpressionNode = (LiteralExpressionNode)topCodeBlock.ChildBag.Single();
+		var literalExpressionNode = (LiteralExpressionNode)topCodeBlock.ChildList.Single();
 		Assert.Equal(typeof(int), literalExpressionNode.ResultTypeClauseNode.ValueType);
 	}
 	
@@ -472,7 +472,7 @@ Actual:   1");
 		var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildBag.Single();
+		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
 		Assert.Equal(SyntaxKind.NamespaceStatementNode, namespaceStatementNode.SyntaxKind);
 	}
 	
@@ -535,7 +535,7 @@ Actual:   1");
 		var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var usingStatementNode = (UsingStatementNode)topCodeBlock.ChildBag.Single();
+		var usingStatementNode = (UsingStatementNode)topCodeBlock.ChildList.Single();
 		Assert.Equal(SyntaxKind.UsingStatementNode, usingStatementNode.SyntaxKind);
 	}
 	

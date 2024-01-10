@@ -332,9 +332,9 @@ public class TextEditorCommandDefaultFunctions
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            if (viewModelModifier.ViewModel.VirtualizationResult?.EntryBag.Any() ?? false)
+            if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
             {
-                var lastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryBag.Last();
+                var lastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.Last();
                 var lastEntriesRowLength = modelModifier.GetLengthOfRow(lastEntry.Index);
 
                 primaryCursorModifier.RowIndex = lastEntry.Index;
@@ -364,9 +364,9 @@ public class TextEditorCommandDefaultFunctions
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            if (viewModelModifier.ViewModel.VirtualizationResult?.EntryBag.Any() ?? false)
+            if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
             {
-                var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryBag.First();
+                var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.First();
 
                 primaryCursorModifier.RowIndex = firstEntry.Index;
                 primaryCursorModifier.ColumnIndex = 0;
@@ -942,11 +942,11 @@ public class TextEditorCommandDefaultFunctions
                 firstDefinitionInViewModel =>
                 {
                     var outCursor = firstDefinitionViewModelCursorModifier.ToCursor();
-                    var outCursorBag = firstDefinitionInViewModel.CursorBag.Replace(firstDefinitionInViewModel.PrimaryCursor, outCursor);
+                    var outCursorBag = firstDefinitionInViewModel.CursorList.Replace(firstDefinitionInViewModel.PrimaryCursor, outCursor);
 
                     return firstDefinitionInViewModel with
                     {
-                        CursorBag = outCursorBag
+                        CursorList = outCursorBag
                     };
                 }).Invoke(editContext);
 

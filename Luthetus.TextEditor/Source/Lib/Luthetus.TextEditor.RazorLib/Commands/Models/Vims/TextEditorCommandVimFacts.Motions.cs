@@ -30,14 +30,14 @@ public static partial class TextEditorCommandVimFacts
 
                         var cursorModifierBag = new TextEditorCursorModifierBag(
                             commandArgs.ViewModelKey,
-                            viewModelModifier.ViewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
+                            viewModelModifier.ViewModel.CursorList.Select(x => new TextEditorCursorModifier(x)).ToList());
 
                         await WordAsync(
                             commandArgs,
                             modelModifier,
                             viewModelModifier.ViewModel,
                             cursorModifierBag,
-                            cursorModifierBag.CursorModifierBag.First(x => x.IsPrimaryCursor));
+                            cursorModifierBag.List.First(x => x.IsPrimaryCursor));
                     });
                 return Task.CompletedTask;
             });
@@ -46,7 +46,7 @@ public static partial class TextEditorCommandVimFacts
             TextEditorCommandArgs commandArgs,
             ITextEditorModel model,
             TextEditorViewModel viewModel,
-            TextEditorCursorModifierBag refreshCursorsRequest,
+            TextEditorCursorModifierBag cursorModifierBag,
             TextEditorCursorModifier primaryCursor) 
         {
             void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
@@ -106,14 +106,14 @@ public static partial class TextEditorCommandVimFacts
 
                         var cursorModifierBag = new TextEditorCursorModifierBag(
                             commandArgs.ViewModelKey,
-                            viewModelModifier.ViewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
+                            viewModelModifier.ViewModel.CursorList.Select(x => new TextEditorCursorModifier(x)).ToList());
 
                         await EndAsync(
                             commandArgs,
                             modelModifier,
                             viewModelModifier.ViewModel,
                             cursorModifierBag,
-                            cursorModifierBag.CursorModifierBag.First(x => x.IsPrimaryCursor));
+                            cursorModifierBag.List.First(x => x.IsPrimaryCursor));
                     });
 
                 return Task.CompletedTask;
@@ -123,14 +123,14 @@ public static partial class TextEditorCommandVimFacts
             TextEditorCommandArgs commandArgs,
             ITextEditorModel model,
             TextEditorViewModel viewModel,
-            TextEditorCursorModifierBag refreshCursorsRequest,
+            TextEditorCursorModifierBag cursorModifierBag,
             TextEditorCursorModifier primaryCursor)
         {
             return PerformEndAsync(
                 commandArgs,
                 model,
                 viewModel,
-                refreshCursorsRequest,
+                cursorModifierBag,
                 primaryCursor);
         }
 
@@ -138,7 +138,7 @@ public static partial class TextEditorCommandVimFacts
             TextEditorCommandArgs commandArgs,
             ITextEditorModel model,
             TextEditorViewModel viewModel,
-            TextEditorCursorModifierBag refreshCursorsRequest,
+            TextEditorCursorModifierBag cursorModifierBag,
             TextEditorCursorModifier primaryCursor,
             bool isRecursiveCall = false)
         {
@@ -199,7 +199,7 @@ public static partial class TextEditorCommandVimFacts
                                 commandArgs,
                                 model,
                                 viewModel,
-                                refreshCursorsRequest,
+                                cursorModifierBag,
                                 primaryCursor,
                                 isRecursiveCall: true);
 
@@ -232,14 +232,14 @@ public static partial class TextEditorCommandVimFacts
 
                         var cursorModifierBag = new TextEditorCursorModifierBag(
                             commandArgs.ViewModelKey,
-                            viewModelModifier.ViewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
+                            viewModelModifier.ViewModel.CursorList.Select(x => new TextEditorCursorModifier(x)).ToList());
 
                         await BackAsync(
                             commandArgs,
                             modelModifier,
                             viewModelModifier.ViewModel,
                             cursorModifierBag,
-                            cursorModifierBag.CursorModifierBag.First(x => x.IsPrimaryCursor));
+                            cursorModifierBag.List.First(x => x.IsPrimaryCursor));
                     });
                 return Task.CompletedTask;
             });
@@ -248,7 +248,7 @@ public static partial class TextEditorCommandVimFacts
             TextEditorCommandArgs commandArgs,
             ITextEditorModel model,
             TextEditorViewModel viewModel,
-            TextEditorCursorModifierBag refreshCursorsRequest,
+            TextEditorCursorModifierBag cursorModifierBag,
             TextEditorCursorModifier primaryCursor)
         {
             void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
@@ -315,14 +315,14 @@ public static partial class TextEditorCommandVimFacts
 
                             var cursorModifierBag = new TextEditorCursorModifierBag(
                                 commandArgs.ViewModelKey,
-                                viewModelModifier.ViewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
+                                viewModelModifier.ViewModel.CursorList.Select(x => new TextEditorCursorModifier(x)).ToList());
 
                             await VisualAsync(
                                 commandArgs,
                                 modelModifier,
                                 viewModelModifier.ViewModel,
                                 cursorModifierBag,
-                                cursorModifierBag.CursorModifierBag.First(x => x.IsPrimaryCursor));
+                                cursorModifierBag.List.First(x => x.IsPrimaryCursor));
                         });
                     return Task.CompletedTask;
                 });
@@ -332,7 +332,7 @@ public static partial class TextEditorCommandVimFacts
             TextEditorCommandArgs commandArgs,
             ITextEditorModel model,
             TextEditorViewModel viewModel,
-            TextEditorCursorModifierBag refreshCursorsRequest,
+            TextEditorCursorModifierBag cursorModifierBag,
             TextEditorCursorModifier primaryCursor)
         {
             var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
@@ -390,14 +390,14 @@ public static partial class TextEditorCommandVimFacts
 
                             var cursorModifierBag = new TextEditorCursorModifierBag(
                                 commandArgs.ViewModelKey,
-                                viewModelModifier.ViewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
+                                viewModelModifier.ViewModel.CursorList.Select(x => new TextEditorCursorModifier(x)).ToList());
 
                             await VisualLineAsync(
                                 commandArgs,
                                 modelModifier,
                                 viewModelModifier.ViewModel,
                                 cursorModifierBag,
-                                cursorModifierBag.CursorModifierBag.First(x => x.IsPrimaryCursor));
+                                cursorModifierBag.List.First(x => x.IsPrimaryCursor));
                         });
 
                     return Task.CompletedTask;
@@ -408,7 +408,7 @@ public static partial class TextEditorCommandVimFacts
             TextEditorCommandArgs commandArgs,
             ITextEditorModel model,
             TextEditorViewModel viewModel,
-            TextEditorCursorModifierBag refreshCursorsRequest,
+            TextEditorCursorModifierBag cursorModifierBag,
             TextEditorCursorModifier primaryCursor)
         {
             var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
@@ -431,7 +431,7 @@ public static partial class TextEditorCommandVimFacts
                     // Anchor went from being the lower bound to the upper bound.
                     var rowDataAnchorIsOn = model.GetRowInformation(previousAnchorPositionIndex.Value);
 
-                    primaryCursor.SelectionAnchorPositionIndex = model.RowEndingPositionsBag[
+                    primaryCursor.SelectionAnchorPositionIndex = model.RowEndingPositionsList[
                         rowDataAnchorIsOn.RowIndex].EndPositionIndexExclusive;
                 }
 
@@ -451,7 +451,7 @@ public static partial class TextEditorCommandVimFacts
                         .EndPositionIndexExclusive;
                 }
 
-                var endingPositionOfRow = model.RowEndingPositionsBag[primaryCursor.RowIndex]
+                var endingPositionOfRow = model.RowEndingPositionsList[primaryCursor.RowIndex]
                     .EndPositionIndexExclusive;
 
                 primaryCursor.SelectionEndingPositionIndex = endingPositionOfRow;

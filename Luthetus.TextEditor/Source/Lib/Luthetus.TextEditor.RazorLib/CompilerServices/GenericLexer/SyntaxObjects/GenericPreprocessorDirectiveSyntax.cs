@@ -8,13 +8,13 @@ public class GenericPreprocessorDirectiveSyntax : IGenericSyntax
 {
     public GenericPreprocessorDirectiveSyntax(
         TextEditorTextSpan textSpan,
-        ImmutableArray<IGenericSyntax> childBag)
+        ImmutableArray<IGenericSyntax> childList)
     {
         TextSpan = textSpan;
-        ChildBag = childBag;
+        ChildList = childList;
     }
 
     public TextEditorTextSpan TextSpan { get; }
-    public ImmutableArray<IGenericSyntax> ChildBag { get; }
+    public ImmutableArray<IGenericSyntax> ChildList { get; }
     public GenericSyntaxKind GenericSyntaxKind => GenericSyntaxKind.PreprocessorDirective;
 }

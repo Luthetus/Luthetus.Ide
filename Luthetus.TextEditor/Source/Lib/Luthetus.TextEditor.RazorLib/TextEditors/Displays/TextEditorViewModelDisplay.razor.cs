@@ -167,7 +167,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     public TextEditorModel? GetModel() => TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey);
 
-    public TextEditorViewModel? GetViewModel() => TextEditorViewModelsStateWrap.Value.ViewModelBag.FirstOrDefault(
+    public TextEditorViewModel? GetViewModel() => TextEditorViewModelsStateWrap.Value.ViewModelList.FirstOrDefault(
         x => x.ViewModelKey == TextEditorViewModelKey);
 
     public TextEditorOptions? GetOptions() => TextEditorOptionsStateWrap.Value.Options;
@@ -211,7 +211,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             var localTextEditorViewModelKey = TextEditorViewModelKey;
 
             // Don't use the method 'GetViewModel()'. The logic here needs to be transactional, the TextEditorViewModelKey must not change.
-            var nextViewModel = TextEditorViewModelsStateWrap.Value.ViewModelBag.FirstOrDefault(
+            var nextViewModel = TextEditorViewModelsStateWrap.Value.ViewModelList.FirstOrDefault(
                 x => x.ViewModelKey == localTextEditorViewModelKey);
 
             Key<TextEditorViewModel> nextViewModelKey;

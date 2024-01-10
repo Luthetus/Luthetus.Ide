@@ -44,7 +44,7 @@ public partial class CSharpParser : IParser
     /// <summary>When parsing the body of a function this is used in order to keep the function definition node itself in the syntax tree immutable.<br/><br/>That is to say, this action would create the function definition node and then append it.</summary>
     private Stack<Action<CodeBlockNode>> _finalizeCodeBlockNodeActionStack = new();
 
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag => _diagnosticBag.ToImmutableArray();
+    public ImmutableArray<TextEditorDiagnostic> DiagnosticsList => _diagnosticBag.ToImmutableArray();
     public CSharpBinder Binder { get; private set; }
     public CSharpLexer Lexer { get; }
 
@@ -134,7 +134,7 @@ public partial class CSharpParser : IParser
                 case SyntaxKind.EndOfFileToken:
                     if (_nodeRecent is IExpressionNode)
                     {
-                        _currentCodeBlockBuilder.ChildBag.Add(_nodeRecent);
+                        _currentCodeBlockBuilder.ChildList.Add(_nodeRecent);
                     }
                     break;
                 default:
@@ -162,9 +162,9 @@ public partial class CSharpParser : IParser
         }
 
         var topLevelStatementsCodeBlock = _currentCodeBlockBuilder.Build(
-            DiagnosticsBag
-                .Union(Binder.DiagnosticsBag)
-                .Union(Lexer.DiagnosticsBag)
+            DiagnosticsList
+                .Union(Binder.DiagnosticsList)
+                .Union(Lexer.DiagnosticList)
                 .ToImmutableArray());
 
         return new CompilationUnit(

@@ -36,10 +36,10 @@ public class UsingStatementNodeTests
 	}
 
 	/// <summary>
-	/// <see cref="UsingStatementNode.ChildBag"/>
+	/// <see cref="UsingStatementNode.ChildList"/>
 	/// </summary>
 	[Fact]
-	public void ChildBag()
+	public void ChildList()
 	{
 		throw new NotImplementedException();
 	}

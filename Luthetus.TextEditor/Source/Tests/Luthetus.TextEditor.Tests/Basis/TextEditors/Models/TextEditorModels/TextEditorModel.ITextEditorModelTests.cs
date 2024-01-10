@@ -9,55 +9,55 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 public class TextEditorModelITextEditorModelTests
 {
 	/// <summary>
-	/// <see cref="TextEditorModel.ContentBag"/>
+	/// <see cref="TextEditorModel.ContentList"/>
 	/// </summary>
 	[Fact]
-	public void ContentBag_InterfaceImplementation()
+	public void ContentList_InterfaceImplementation()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.EditBlocksBag"/>
+	/// <see cref="TextEditorModel.EditBlocksList"/>
 	/// </summary>
 	[Fact]
-	public void EditBlocksBag_InterfaceImplementation()
+	public void EditBlocksList_InterfaceImplementation()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.RowEndingPositionsBag "/>
+	/// <see cref="TextEditorModel.RowEndingPositionsList "/>
 	/// </summary>
 	[Fact]
-	public void RowEndingPositionsBag_InterfaceImplementation()
+	public void RowEndingPositionsList_InterfaceImplementation()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.RowEndingKindCountsBag"/>
+	/// <see cref="TextEditorModel.RowEndingKindCountsList"/>
 	/// </summary>
 	[Fact]
-	public void RowEndingKindCountsBag_InterfaceImplementation()
+	public void RowEndingKindCountsList_InterfaceImplementation()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.PresentationModelsBag"/>
+	/// <see cref="TextEditorModel.PresentationModelsList"/>
 	/// </summary>
 	[Fact]
-	public void PresentationModelsBag_InterfaceImplementation()
+	public void PresentationModelsList_InterfaceImplementation()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.TabKeyPositionsBag"/>
+	/// <see cref="TextEditorModel.TabKeyPositionsList"/>
 	/// </summary>
 	[Fact]
-	public void TabKeyPositionsBag_InterfaceImplementation()
+	public void TabKeyPositionsList_InterfaceImplementation()
 	{
 		throw new NotImplementedException();
 	}

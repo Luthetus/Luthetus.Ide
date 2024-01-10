@@ -47,7 +47,7 @@ public static class ServiceCollectionExtensions
         {
             services.AddLuthetusTextEditor(hostingInformation, inTextEditorOptions => inTextEditorOptions with
             {
-                CustomThemeRecordBag = LuthetusTextEditorCustomThemeFacts.AllCustomThemesBag,
+                CustomThemeRecordList = LuthetusTextEditorCustomThemeFacts.AllCustomThemesList,
                 InitialThemeKey = ThemeFacts.VisualStudioDarkThemeClone.Key,
 				OpenInEditorAsyncFunc = (absolutePath, serviceProvider) =>
 				{

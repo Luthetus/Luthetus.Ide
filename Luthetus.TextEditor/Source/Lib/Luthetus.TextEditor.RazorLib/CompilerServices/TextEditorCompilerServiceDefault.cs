@@ -44,7 +44,7 @@ public class TextEditorCompilerServiceDefault : ICompilerService
         return ImmutableArray<TextEditorDiagnostic>.Empty;
     }
 
-    public void ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpansBag)
+    public void ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpansList)
     {
         ResourceParsed?.Invoke();
     }

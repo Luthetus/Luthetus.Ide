@@ -141,7 +141,7 @@ public class StringWalker
         {
             peekedChar = PeekCharacter(i++);
 
-            if (WhitespaceFacts.ALL_BAG.Contains(peekedChar) ||
+            if (WhitespaceFacts.ALL_LIST.Contains(peekedChar) ||
                 KeyboardKeyFacts.IsPunctuationCharacter(peekedChar))
             {
                 break;
@@ -159,9 +159,9 @@ public class StringWalker
         return PeekRange(0, substring.Length) == substring;
     }
 
-    public bool PeekForSubstringRange(ImmutableArray<string> substringsBag, out string? matchedOn)
+    public bool PeekForSubstringRange(ImmutableArray<string> substringsList, out string? matchedOn)
     {
-        foreach (var substring in substringsBag)
+        foreach (var substring in substringsList)
         {
             if (PeekForSubstring(substring))
             {
@@ -175,17 +175,17 @@ public class StringWalker
     }
 
     /// <summary>
-    /// Provide <see cref="whitespaceOverride"/> to override the
+    /// Provide <see cref="whitespaceOverrideList"/> to override the
     /// default of what qualifies as whitespace.
-    /// The default whitespace chars are: <see cref="WhitespaceFacts.ALL_BAG"/>
+    /// The default whitespace chars are: <see cref="WhitespaceFacts.ALL_LIST"/>
     /// </summary>
-    public string ReadWhitespace(IEnumerable<char>? whitespaceOverrideBag = null)
+    public string ReadWhitespace(IEnumerable<char>? whitespaceOverrideList = null)
     {
-        var whitespaceCharacterBag = whitespaceOverrideBag ?? WhitespaceFacts.ALL_BAG;
+        var whitespaceCharacterList = whitespaceOverrideList ?? WhitespaceFacts.ALL_LIST;
 
         var whitespaceBuilder = new StringBuilder();
 
-        while (whitespaceCharacterBag.Contains(CurrentCharacter))
+        while (whitespaceCharacterList.Contains(CurrentCharacter))
         {
             var currentCharacter = ReadCharacter();
 
@@ -248,7 +248,7 @@ public class StringWalker
 
         while (!IsEof)
         {
-            if (WhitespaceFacts.LINE_ENDING_CHARACTER_BAG.Contains(CurrentCharacter))
+            if (WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(CurrentCharacter))
                 break;
 
             textBuilder.Append(ReadCharacter());
@@ -258,9 +258,9 @@ public class StringWalker
     }
 
     /// <summary><see cref="ReadWordTuple"/> will return immediately upon encountering whitespace.</summary>
-    public (TextEditorTextSpan textSpan, string value) ReadWordTuple(ImmutableArray<char>? additionalCharactersToBreakOnBag = null)
+    public (TextEditorTextSpan textSpan, string value) ReadWordTuple(ImmutableArray<char>? additionalCharactersToBreakOnList = null)
     {
-        additionalCharactersToBreakOnBag ??= ImmutableArray<char>.Empty;
+        additionalCharactersToBreakOnList ??= ImmutableArray<char>.Empty;
 
         // The wordBuilder is appended to everytime a character is consumed.
         var wordBuilder = new StringBuilder();
@@ -270,8 +270,8 @@ public class StringWalker
 
         while (!IsEof)
         {
-            if (WhitespaceFacts.ALL_BAG.Contains(CurrentCharacter) ||
-                additionalCharactersToBreakOnBag.Value.Contains(CurrentCharacter))
+            if (WhitespaceFacts.ALL_LIST.Contains(CurrentCharacter) ||
+                additionalCharactersToBreakOnList.Value.Contains(CurrentCharacter))
             {
                 break;
             }

@@ -1,6 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using System.Collections;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -8,9 +7,9 @@ public class TextEditorCursorModifierBag
 {
     public TextEditorCursorModifierBag(
         Key<TextEditorViewModel> viewModelKey,
-        List<TextEditorCursorModifier> cursorModifierBag)
+        List<TextEditorCursorModifier> cursorModifierList)
     {
-        CursorModifierBag = cursorModifierBag;
+        List = cursorModifierList;
         ViewModelKey = viewModelKey;
     }
 
@@ -18,10 +17,5 @@ public class TextEditorCursorModifierBag
     /// The Key of the view model on which the cursors are being rendered.
     /// </summary>
     public Key<TextEditorViewModel> ViewModelKey { get; }
-    public List<TextEditorCursorModifier> CursorModifierBag { get; }
-
-    public IEnumerator GetEnumerator()
-    {
-        return CursorModifierBag.GetEnumerator();
-    }
+    public List<TextEditorCursorModifier> List { get; }
 }

@@ -14,8 +14,8 @@ public partial class TextEditorModelState
 {
     public TextEditorModelState()
     {
-        ModelBag = ImmutableList<TextEditorModel>.Empty;
+        ModelList = ImmutableList<TextEditorModel>.Empty;
     }
 
-    public ImmutableList<TextEditorModel> ModelBag { get; init; }
+    public ImmutableList<TextEditorModel> ModelList { get; init; }
 }

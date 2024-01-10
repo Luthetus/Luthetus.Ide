@@ -12,17 +12,17 @@ public partial class TextEditorDiffState
             TextEditorDiffState inState,
             DisposeAction disposeAction)
         {
-            var inDiff = inState.DiffModelBag.FirstOrDefault(
+            var inDiff = inState.DiffModelList.FirstOrDefault(
                 x => x.DiffKey == disposeAction.DiffKey);
 
             if (inDiff is null)
                 return inState;
 
-            var outDiffModelBag = inState.DiffModelBag.Remove(inDiff);
+            var outDiffModelList = inState.DiffModelList.Remove(inDiff);
 
             return new TextEditorDiffState
             {
-                DiffModelBag = outDiffModelBag
+                DiffModelList = outDiffModelList
             };
         }
 
@@ -31,7 +31,7 @@ public partial class TextEditorDiffState
             TextEditorDiffState inState,
             RegisterAction registerAction)
         {
-            var inDiff = inState.DiffModelBag.FirstOrDefault(
+            var inDiff = inState.DiffModelList.FirstOrDefault(
                 x => x.DiffKey == registerAction.DiffKey);
 
             if (inDiff is not null)
@@ -42,11 +42,11 @@ public partial class TextEditorDiffState
                 registerAction.InViewModelKey,
                 registerAction.OutViewModelKey);
 
-            var outDiffModelBag = inState.DiffModelBag.Add(diff);
+            var outDiffModelList = inState.DiffModelList.Add(diff);
 
             return new TextEditorDiffState
             {
-                DiffModelBag = outDiffModelBag
+                DiffModelList = outDiffModelList
             };
         }
     }

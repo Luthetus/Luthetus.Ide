@@ -15,7 +15,7 @@ public class LiteralExpressionNodeTests
     /// <br/>----<br/>
     /// <see cref="LiteralExpressionNode.LiteralSyntaxToken"/>
     /// <see cref="LiteralExpressionNode.ResultTypeClauseNode"/>
-    /// <see cref="LiteralExpressionNode.ChildBag"/>
+    /// <see cref="LiteralExpressionNode.ChildList"/>
     /// <see cref="LiteralExpressionNode.IsFabricated"/>
     /// <see cref="LiteralExpressionNode.SyntaxKind"/>
     /// </summary>
@@ -52,9 +52,9 @@ public class LiteralExpressionNodeTests
         Assert.Equal(numericLiteralToken, literalExpressionNode.LiteralSyntaxToken);
         Assert.Equal(intTypeClauseNode, literalExpressionNode.ResultTypeClauseNode);
 
-        Assert.Equal(2, literalExpressionNode.ChildBag.Length);
-        Assert.Equal(numericLiteralToken, literalExpressionNode.ChildBag[0]);
-        Assert.Equal(intTypeClauseNode, literalExpressionNode.ChildBag[1]);
+        Assert.Equal(2, literalExpressionNode.ChildList.Length);
+        Assert.Equal(numericLiteralToken, literalExpressionNode.ChildList[0]);
+        Assert.Equal(intTypeClauseNode, literalExpressionNode.ChildList[1]);
 
         Assert.False(literalExpressionNode.IsFabricated);
 

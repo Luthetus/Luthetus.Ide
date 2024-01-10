@@ -10,12 +10,12 @@
     <select @onchange="SelectedThemeChanged"
             class="@InputElementCssClassString">
         @{
-            var themesBag = ThemeStateWrap.Value.ThemeList;
+            var themesList = ThemeStateWrap.Value.ThemeList;
 
             var chosenThemeKey = TextEditorOptionsStateWrap.Value.Options.CommonOptions?.ThemeKey
                 ?? ThemeFacts.VisualStudioDarkThemeClone.Key;
             
-            foreach (var theme in themesBag)
+            foreach (var theme in themesList)
             {
                 <option value="@theme.Key.Guid.ToString()"
                         selected="@(chosenThemeKey == theme.Key)">

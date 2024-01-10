@@ -22,7 +22,7 @@ public class LuthetusTextEditorCustomThemeFacts
         ThemeColorKind.Dark,
         new[] { ThemeScope.TextEditor }.ToImmutableList());
 
-    public static readonly ImmutableArray<ThemeRecord> AllCustomThemesBag = new[]
+    public static readonly ImmutableArray<ThemeRecord> AllCustomThemesList = new[]
     {
         LightTheme,
         DarkTheme

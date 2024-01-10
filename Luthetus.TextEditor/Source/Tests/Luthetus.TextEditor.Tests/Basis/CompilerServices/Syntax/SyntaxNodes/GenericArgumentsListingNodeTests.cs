@@ -15,9 +15,9 @@ public class GenericArgumentsListingNodeTests
     /// <see cref="GenericArgumentsListingNode(OpenAngleBracketToken, ImmutableArray{GenericArgumentEntryNode}, CloseAngleBracketToken)"/>
     /// <br/>----<br/>
     /// <see cref="GenericArgumentsListingNode.OpenAngleBracketToken"/>
-    /// <see cref="GenericArgumentsListingNode.GenericArgumentEntryNodeBag"/>
+    /// <see cref="GenericArgumentsListingNode.GenericArgumentEntryNodeList"/>
     /// <see cref="GenericArgumentsListingNode.CloseAngleBracketToken"/>
-    /// <see cref="GenericArgumentsListingNode.ChildBag"/>
+    /// <see cref="GenericArgumentsListingNode.ChildList"/>
     /// <see cref="GenericArgumentsListingNode.IsFabricated"/>
     /// <see cref="GenericArgumentsListingNode.SyntaxKind"/>
     /// </summary>
@@ -57,11 +57,11 @@ public class GenericArgumentsListingNodeTests
                 sourceText));
         }
 
-        ImmutableArray<GenericArgumentEntryNode> genericArgumentEntryNodeBag;
+        ImmutableArray<GenericArgumentEntryNode> genericArgumentEntryNodeList;
         {
             var genericArgumentEntryNode = new GenericArgumentEntryNode(genericTypeClauseNode);
 
-            genericArgumentEntryNodeBag = new GenericArgumentEntryNode[]
+            genericArgumentEntryNodeList = new GenericArgumentEntryNode[]
             {
                     genericArgumentEntryNode
             }.ToImmutableArray();
@@ -81,17 +81,17 @@ public class GenericArgumentsListingNodeTests
 
         var genericArgumentsListingNode = new GenericArgumentsListingNode(
             openAngleBracketToken,
-            genericArgumentEntryNodeBag,
+            genericArgumentEntryNodeList,
             closeAngleBracketToken);
 
         Assert.Equal(openAngleBracketToken, genericArgumentsListingNode.OpenAngleBracketToken);
-        Assert.Equal(genericArgumentEntryNodeBag, genericArgumentsListingNode.GenericArgumentEntryNodeBag);
+        Assert.Equal(genericArgumentEntryNodeList, genericArgumentsListingNode.GenericArgumentEntryNodeList);
         Assert.Equal(closeAngleBracketToken, genericArgumentsListingNode.CloseAngleBracketToken);
 
-        Assert.Equal(3, genericArgumentsListingNode.ChildBag.Length);
-        Assert.Equal(openAngleBracketToken, genericArgumentsListingNode.ChildBag[0]);
-        Assert.Equal(genericArgumentEntryNodeBag.Single(), genericArgumentsListingNode.ChildBag[1]);
-        Assert.Equal(closeAngleBracketToken, genericArgumentsListingNode.ChildBag[2]);
+        Assert.Equal(3, genericArgumentsListingNode.ChildList.Length);
+        Assert.Equal(openAngleBracketToken, genericArgumentsListingNode.ChildList[0]);
+        Assert.Equal(genericArgumentEntryNodeList.Single(), genericArgumentsListingNode.ChildList[1]);
+        Assert.Equal(closeAngleBracketToken, genericArgumentsListingNode.ChildList[2]);
 
         Assert.False(genericArgumentsListingNode.IsFabricated);
 

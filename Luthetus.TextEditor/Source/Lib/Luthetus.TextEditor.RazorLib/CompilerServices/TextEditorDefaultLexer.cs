@@ -4,5 +4,5 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
 public class TextEditorDefaultLexer : ILexer
 {
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag { get; } = ImmutableArray<TextEditorDiagnostic>.Empty;
+    public ImmutableArray<TextEditorDiagnostic> DiagnosticList { get; } = ImmutableArray<TextEditorDiagnostic>.Empty;
 }

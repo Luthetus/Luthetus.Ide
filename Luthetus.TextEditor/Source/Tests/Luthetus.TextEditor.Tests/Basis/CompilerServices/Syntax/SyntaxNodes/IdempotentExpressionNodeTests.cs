@@ -14,7 +14,7 @@ public class IdempotentExpressionNodeTests
     /// <see cref="IdempotentExpressionNode.IdempotentExpressionNode"/>
     /// <br/>----<br/>
     /// <see cref="IdempotentExpressionNode.ResultTypeClauseNode"/>
-    /// <see cref="IdempotentExpressionNode.ChildBag"/>
+    /// <see cref="IdempotentExpressionNode.ChildList"/>
     /// <see cref="IdempotentExpressionNode.IsFabricated"/>
     /// <see cref="IdempotentExpressionNode.SyntaxKind"/>
     /// </summary>
@@ -37,8 +37,8 @@ public class IdempotentExpressionNodeTests
 
         Assert.Equal(voidTypeClauseNode, idempotentExpressionNode.ResultTypeClauseNode);
 
-        Assert.Single(idempotentExpressionNode.ChildBag);
-        Assert.Equal(voidTypeClauseNode, idempotentExpressionNode.ChildBag.Single());
+        Assert.Single(idempotentExpressionNode.ChildList);
+        Assert.Equal(voidTypeClauseNode, idempotentExpressionNode.ChildList.Single());
 
         Assert.False(idempotentExpressionNode.IsFabricated);
 

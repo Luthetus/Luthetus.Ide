@@ -24,7 +24,7 @@
 //        _sourceText = sourceText;
 //    }
 
-//    public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
+//    public ImmutableArray<TextEditorDiagnostic> DiagnosticsList => _diagnosticBag.ToImmutableArray();
 
 //    public EvaluatorResult Evaluate()
 //    {

@@ -202,7 +202,7 @@ public static class RuntimeAssembliesLoaderFactory
                                     null,
                                     null);
 
-                                typeBodyCodeBlockNodeBuilder.ChildBag.Add(functionDefinitionNode);
+                                typeBodyCodeBlockNodeBuilder.ChildList.Add(functionDefinitionNode);
                             }
 
                             typeDefinitionNode = new TypeDefinitionNode(

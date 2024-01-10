@@ -67,7 +67,7 @@ public partial interface ITextEditorService
 
         public TextEditorGroup? GetOrDefault(Key<TextEditorGroup> textEditorGroupKey)
         {
-            return _textEditorService.GroupStateWrap.Value.GroupBag.FirstOrDefault(
+            return _textEditorService.GroupStateWrap.Value.GroupList.FirstOrDefault(
                 x => x.GroupKey == textEditorGroupKey);
         }
 
@@ -80,7 +80,7 @@ public partial interface ITextEditorService
 
         public ImmutableList<TextEditorGroup> GetGroups()
         {
-            return _textEditorService.GroupStateWrap.Value.GroupBag;
+            return _textEditorService.GroupStateWrap.Value.GroupList;
         }
     }
 }

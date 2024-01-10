@@ -12,7 +12,7 @@ public sealed record NamespaceStatementNode : ISyntaxNode
     {
         KeywordToken = keywordToken;
         IdentifierToken = identifierToken;
-        NamespaceEntryNodeBag = namespaceEntryNodes;
+        NamespaceEntryNodeList = namespaceEntryNodes;
 
         var children = new List<ISyntax>
         {
@@ -22,14 +22,14 @@ public sealed record NamespaceStatementNode : ISyntaxNode
 
         children.AddRange(namespaceEntryNodes);
 
-        ChildBag = children.ToImmutableArray();
+        ChildList = children.ToImmutableArray();
     }
 
     public KeywordToken KeywordToken { get; }
     public IdentifierToken IdentifierToken { get; }
-    public ImmutableArray<NamespaceEntryNode> NamespaceEntryNodeBag { get; }
+    public ImmutableArray<NamespaceEntryNode> NamespaceEntryNodeList { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.NamespaceStatementNode;
@@ -43,8 +43,8 @@ public sealed record NamespaceStatementNode : ISyntaxNode
     /// </summary>
     public ImmutableArray<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes()
     {
-        return NamespaceEntryNodeBag
-            .SelectMany(bne => bne.CodeBlockNode.ChildBag)
+        return NamespaceEntryNodeList
+            .SelectMany(bne => bne.CodeBlockNode.ChildList)
             .Where(innerC => innerC.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             .Select(td => (TypeDefinitionNode)td)
             .ToImmutableArray();

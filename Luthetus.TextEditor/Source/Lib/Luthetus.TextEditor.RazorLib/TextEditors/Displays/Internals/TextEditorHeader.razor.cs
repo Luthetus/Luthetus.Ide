@@ -35,8 +35,8 @@ public partial class TextEditorHeader : ComponentBase
         TextEditorModel textEditorModel,
         TextEditorViewModel viewModel)
     {
-        var cursorSnapshotsBag = new TextEditorCursor[] { viewModel.PrimaryCursor }.ToImmutableArray();
-        var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsBag.First(x => x.IsPrimaryCursor).Selection);
+        var cursorSnapshotsList = new TextEditorCursor[] { viewModel.PrimaryCursor }.ToImmutableArray();
+        var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsList.First(x => x.IsPrimaryCursor).Selection);
 
         return new TextEditorCommandArgs(
             textEditorModel.ResourceUri,

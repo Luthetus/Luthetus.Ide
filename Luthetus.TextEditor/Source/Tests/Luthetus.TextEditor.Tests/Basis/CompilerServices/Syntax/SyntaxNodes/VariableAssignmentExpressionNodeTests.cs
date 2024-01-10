@@ -17,7 +17,7 @@ public class VariableAssignmentExpressionNodeTests
     /// <see cref="VariableAssignmentExpressionNode.VariableIdentifierToken"/>
     /// <see cref="VariableAssignmentExpressionNode.EqualsToken"/>
     /// <see cref="VariableAssignmentExpressionNode.ExpressionNode"/>
-    /// <see cref="VariableAssignmentExpressionNode.ChildBag"/>
+    /// <see cref="VariableAssignmentExpressionNode.ChildList"/>
     /// <see cref="VariableAssignmentExpressionNode.IsFabricated"/>
     /// <see cref="VariableAssignmentExpressionNode.SyntaxKind"/>
     /// </summary>
@@ -89,10 +89,10 @@ public class VariableAssignmentExpressionNodeTests
         Assert.Equal(equalsToken, variableAssignmentExpressionNode.EqualsToken);
         Assert.Equal(expressionNode, variableAssignmentExpressionNode.ExpressionNode);
 
-        Assert.Equal(3, variableAssignmentExpressionNode.ChildBag.Length);
-        Assert.Equal(variableIdentifierToken, variableAssignmentExpressionNode.ChildBag[0]);
-        Assert.Equal(equalsToken, variableAssignmentExpressionNode.ChildBag[1]);
-        Assert.Equal(expressionNode, variableAssignmentExpressionNode.ChildBag[2]);
+        Assert.Equal(3, variableAssignmentExpressionNode.ChildList.Length);
+        Assert.Equal(variableIdentifierToken, variableAssignmentExpressionNode.ChildList[0]);
+        Assert.Equal(equalsToken, variableAssignmentExpressionNode.ChildList[1]);
+        Assert.Equal(expressionNode, variableAssignmentExpressionNode.ChildList[2]);
 
         Assert.False(variableAssignmentExpressionNode.IsFabricated);
 

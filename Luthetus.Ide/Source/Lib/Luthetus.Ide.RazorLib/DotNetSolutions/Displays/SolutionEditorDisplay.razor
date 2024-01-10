@@ -63,7 +63,7 @@
                 <hr/>
 
                 <div>
-                    @foreach (var project in solutionParser.DotNetProjectBag)
+                    @foreach (var project in solutionParser.DotNetProjectList)
                     {
                         <div class="luth_te_keyword">
                             @Luthetus.CompilerServices.Lang.DotNetSolution.Facts.LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN
@@ -148,7 +148,7 @@
                     <div style="padding-left: 10px;">
                         <div style="padding-left: 10px; border-left: 2px solid var(--luth_primary-border-color);">
                             
-                            @foreach (var globalSection in solutionParser.DotNetSolutionGlobal.DotNetSolutionGlobalSectionBag)
+                            @foreach (var globalSection in solutionParser.DotNetSolutionGlobal.DotNetSolutionGlobalSectionList)
                             {
                                 <div>
                                     <span class="luth_te_keyword">
@@ -164,7 +164,7 @@
                                     </span>
                                     <div style="padding-left: 10px;">
                                         <div style="padding-left: 10px; border-left: 2px solid var(--luth_primary-border-color);">
-                                            @foreach (var associatedEntry in globalSection.AssociatedEntryGroup.AssociatedEntryBag)
+                                            @foreach (var associatedEntry in globalSection.AssociatedEntryGroup.AssociatedEntryList)
                                             {
                                                 var associatedPair = associatedEntry as AssociatedEntryPair;
 

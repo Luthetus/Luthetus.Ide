@@ -203,7 +203,7 @@ public class StringWalkerTests
 
 		// Peek for a range of substrings
 		{
-			var substringsBag = new List<string> 
+			var substringsList = new List<string> 
 			{
                 "AlphabetSoup",
 				"Abc123",
@@ -213,7 +213,7 @@ public class StringWalkerTests
 			// A false result
 			{
                 Assert.False(stringWalker.PeekForSubstringRange(
-					substringsBag.ToImmutableArray(),
+					substringsList.ToImmutableArray(),
 					out var matchedOn));
 
                 Assert.Null(matchedOn);
@@ -221,10 +221,10 @@ public class StringWalkerTests
 
 			// A true result
 			{
-				substringsBag.Add("Hello");
+				substringsList.Add("Hello");
 
                 Assert.True(stringWalker.PeekForSubstringRange(
-                    substringsBag.ToImmutableArray(),
+                    substringsList.ToImmutableArray(),
                     out var matchedOn));
 
                 Assert.Equal("Hello", matchedOn);
@@ -352,7 +352,7 @@ public class StringWalkerTests
     [Fact]
 	public void ReadWhitespace()
 	{
-        // No whitespaceOverrideBag
+        // No whitespaceOverrideList
         {
             var resourceUri = new ResourceUri("/unitTesting.txt");
             var sourceText = ' ' + "\t\r\n\n\rApple";
@@ -366,7 +366,7 @@ public class StringWalkerTests
             Assert.Equal('A', stringWalker.CurrentCharacter);
         }
 
-        // With whitespaceOverrideBag
+        // With whitespaceOverrideList
         {
             var resourceUri = new ResourceUri("/unitTesting.txt");
             var sourceText = ' ' + "\t\r\n\n\rApple";
@@ -375,12 +375,12 @@ public class StringWalkerTests
                 resourceUri,
                 sourceText);
 
-            List<char> whitespaceOverrideBag = new List<char>
+            List<char> whitespaceOverrideList = new List<char>
             {
                 WhitespaceFacts.SPACE,
             };
 
-            var whitespace = stringWalker.ReadWhitespace(whitespaceOverrideBag);
+            var whitespace = stringWalker.ReadWhitespace(whitespaceOverrideList);
             Assert.Equal(" ", whitespace);
             Assert.Equal('\t', stringWalker.CurrentCharacter);
         }

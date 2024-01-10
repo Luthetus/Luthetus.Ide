@@ -4,5 +4,5 @@ namespace Luthetus.Ide.RazorLib.FileSystems.Models;
 
 public interface IFileTemplateProvider
 {
-    public ImmutableArray<IFileTemplate> FileTemplatesBag { get; }
+    public ImmutableArray<IFileTemplate> FileTemplatesList { get; }
 }

@@ -19,7 +19,7 @@ public static class SyntaxReader
         {
             var textBuilder = new StringBuilder();
 
-            foreach (var child in node.ChildBag)
+            foreach (var child in node.ChildList)
             {
                 textBuilder.Append(child.GetTextRecursively());
             }

@@ -11,7 +11,7 @@ public static class TextEditorKeymapFacts
 
     public static readonly Keymap VimKeymap = new TextEditorKeymapVim();
 
-    public static ImmutableArray<Keymap> AllKeymapsBag =>
+    public static ImmutableArray<Keymap> AllKeymapsList =>
         new Keymap[]
         {
             DefaultKeymap,

@@ -50,11 +50,11 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
         {
             if (UseIntersectionObserver)
             {
-                var boundaryIdsBag = new List<object>();
+                var boundaryIdsList = new List<object>();
 
                 if (UseHorizontalVirtualization)
                 {
-                    boundaryIdsBag.AddRange(new[]
+                    boundaryIdsList.AddRange(new[]
                     {
                         LeftBoundaryElementId,
                         RightBoundaryElementId,
@@ -63,7 +63,7 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
 
                 if (UseVerticalVirtualization)
                 {
-                    boundaryIdsBag.AddRange(new[]
+                    boundaryIdsList.AddRange(new[]
                     {
                         TopBoundaryElementId,
                         BottomBoundaryElementId,
@@ -74,7 +74,7 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
                     _virtualizationDisplayGuid.ToString(),
                     DotNetObjectReference.Create(this),
                     _scrollableParentFinder,
-                    boundaryIdsBag);
+                    boundaryIdsList);
             }
         }
 

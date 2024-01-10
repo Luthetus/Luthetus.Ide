@@ -17,10 +17,10 @@ public partial class TreeViewHelper
         var parentAbsolutePathString = parentDirectoryOfCSharpProject.Value;
         var hiddenFiles = HiddenFileFacts.GetHiddenFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
 
-        var directoryPathStringsBag = await cSharpProjectTreeView.FileSystemProvider.Directory
+        var directoryPathStringsList = await cSharpProjectTreeView.FileSystemProvider.Directory
             .GetDirectoriesAsync(parentAbsolutePathString);
 
-        var childDirectoryTreeViewModelsBag = directoryPathStringsBag
+        var childDirectoryTreeViewModelsList = directoryPathStringsList
             .OrderBy(pathString => pathString)
             .Where(x => hiddenFiles.All(hidden => !x.EndsWith(hidden)))
             .Select(x =>
@@ -47,7 +47,7 @@ public partial class TreeViewHelper
         var foundUniqueDirectories = new List<TreeViewNamespacePath>();
         var foundDefaultDirectories = new List<TreeViewNamespacePath>();
 
-        foreach (var directoryTreeViewModel in childDirectoryTreeViewModelsBag)
+        foreach (var directoryTreeViewModel in childDirectoryTreeViewModelsList)
         {
             if (uniqueDirectories.Any(unique => directoryTreeViewModel.Item.AbsolutePath.NameNoExtension == unique))
                 foundUniqueDirectories.Add(directoryTreeViewModel);
@@ -58,10 +58,10 @@ public partial class TreeViewHelper
         foundUniqueDirectories = foundUniqueDirectories.OrderBy(x => x.Item.AbsolutePath.NameNoExtension).ToList();
         foundDefaultDirectories = foundDefaultDirectories.OrderBy(x => x.Item.AbsolutePath.NameNoExtension).ToList();
 
-        var filePathStringsBag = await cSharpProjectTreeView.FileSystemProvider.Directory
+        var filePathStringsList = await cSharpProjectTreeView.FileSystemProvider.Directory
             .GetFilesAsync(parentAbsolutePathString);
 
-        var childFileTreeViewModels = filePathStringsBag
+        var childFileTreeViewModels = filePathStringsList
             .OrderBy(pathString => pathString)
             .Where(x => !x.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
             .Select(x =>

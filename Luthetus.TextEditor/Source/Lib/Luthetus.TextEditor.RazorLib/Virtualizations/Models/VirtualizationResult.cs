@@ -15,7 +15,7 @@ public record VirtualizationResult<T> : IVirtualizationResultWithoutTypeMask
         TextEditorMeasurements textEditorMeasurements,
         CharAndRowMeasurements charAndRowMeasurements)
     {
-        EntryBag = entries;
+        EntryList = entries;
         LeftVirtualizationBoundary = leftVirtualizationBoundary;
         RightVirtualizationBoundary = rightVirtualizationBoundary;
         TopVirtualizationBoundary = topVirtualizationBoundary;
@@ -33,7 +33,7 @@ public record VirtualizationResult<T> : IVirtualizationResultWithoutTypeMask
         new TextEditorMeasurements(0, 0, 0, 0, 0, 0, 0, CancellationToken.None),
         new CharAndRowMeasurements(0, 0));
 
-    public ImmutableArray<VirtualizationEntry<T>> EntryBag { get; init; }
+    public ImmutableArray<VirtualizationEntry<T>> EntryList { get; init; }
     public VirtualizationBoundary LeftVirtualizationBoundary { get; init; }
     public VirtualizationBoundary RightVirtualizationBoundary { get; init; }
     public VirtualizationBoundary TopVirtualizationBoundary { get; init; }

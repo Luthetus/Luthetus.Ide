@@ -18,7 +18,7 @@ public class FunctionParameterEntryNodeTests
     /// <see cref="FunctionParameterEntryNode.HasOutKeyword"/>
     /// <see cref="FunctionParameterEntryNode.HasInKeyword"/>
     /// <see cref="FunctionParameterEntryNode.HasRefKeyword"/>
-    /// <see cref="FunctionParameterEntryNode.ChildBag"/>
+    /// <see cref="FunctionParameterEntryNode.ChildList"/>
     /// <see cref="FunctionParameterEntryNode.IsFabricated"/>
     /// <see cref="FunctionParameterEntryNode.SyntaxKind.FunctionParameterEntryNode"/>
     /// </summary>
@@ -67,8 +67,8 @@ public class FunctionParameterEntryNodeTests
         Assert.Equal(hasInKeyword, functionParameterEntryNode.HasInKeyword);
         Assert.Equal(hasRefKeyword, functionParameterEntryNode.HasRefKeyword);
 
-        Assert.Single(functionParameterEntryNode.ChildBag);
-        Assert.Equal(expressionNode, functionParameterEntryNode.ChildBag.Single());
+        Assert.Single(functionParameterEntryNode.ChildList);
+        Assert.Equal(expressionNode, functionParameterEntryNode.ChildList.Single());
 
         Assert.False(functionParameterEntryNode.IsFabricated);
 

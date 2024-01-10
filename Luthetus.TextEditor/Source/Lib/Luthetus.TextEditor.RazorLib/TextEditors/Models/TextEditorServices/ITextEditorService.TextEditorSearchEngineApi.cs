@@ -41,7 +41,7 @@ public partial interface ITextEditorService
 
         public ITextEditorSearchEngine? GetOrDefault(Key<ITextEditorSearchEngine> searchEngineKey)
         {
-            return _textEditorService.SearchEngineStateWrap.Value.SearchEngineBag.FirstOrDefault(
+            return _textEditorService.SearchEngineStateWrap.Value.SearchEngineList.FirstOrDefault(
                 x => x.SearchEngineKey == searchEngineKey);
         }
 
@@ -57,7 +57,7 @@ public partial interface ITextEditorService
 
         public ImmutableList<ITextEditorSearchEngine> GetSearchEngines()
         {
-            return _textEditorService.SearchEngineStateWrap.Value.SearchEngineBag;
+            return _textEditorService.SearchEngineStateWrap.Value.SearchEngineList;
         }
     }
 }

@@ -9,55 +9,55 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 public partial class TextEditorModelVariablesTests
 {
 	/// <summary>
-	/// <see cref="TextEditorModel.ContentBag"/>
+	/// <see cref="TextEditorModel.ContentList"/>
 	/// </summary>
 	[Fact]
-	public void ContentBag()
+	public void ContentList()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.EditBlocksBag"/>
+	/// <see cref="TextEditorModel.EditBlocksList"/>
 	/// </summary>
 	[Fact]
-	public void EditBlocksBag()
+	public void EditBlocksList()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.RowEndingPositionsBag"/>
+	/// <see cref="TextEditorModel.RowEndingPositionsList"/>
 	/// </summary>
 	[Fact]
-	public void RowEndingPositionsBag()
+	public void RowEndingPositionsList()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.RowEndingKindCountsBag"/>
+	/// <see cref="TextEditorModel.RowEndingKindCountsList"/>
 	/// </summary>
 	[Fact]
-	public void RowEndingKindCountsBag()
+	public void RowEndingKindCountsList()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.PresentationModelsBag"/>
+	/// <see cref="TextEditorModel.PresentationModelsList"/>
 	/// </summary>
 	[Fact]
-	public void PresentationModelsBag()
+	public void PresentationModelsList()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.TabKeyPositionsBag"/>
+	/// <see cref="TextEditorModel.TabKeyPositionsList"/>
 	/// </summary>
 	[Fact]
-	public void TabKeyPositionsBag()
+	public void TabKeyPositionsList()
 	{
 		throw new NotImplementedException();
 	}

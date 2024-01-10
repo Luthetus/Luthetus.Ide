@@ -172,7 +172,7 @@ public partial interface ITextEditorService
 
             if (optionsJson.Keymap is not null)
             {
-                var matchedKeymap = TextEditorKeymapFacts.AllKeymapsBag.FirstOrDefault(
+                var matchedKeymap = TextEditorKeymapFacts.AllKeymapsList.FirstOrDefault(
                     x => x.Key == optionsJson.Keymap.Key);
 
                 SetKeymap(matchedKeymap ?? TextEditorKeymapFacts.DefaultKeymap);

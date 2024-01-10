@@ -27,10 +27,10 @@ public class GenericStringSyntaxTests
 	}
 
 	/// <summary>
-	/// <see cref="GenericStringSyntax.ChildBag"/>
+	/// <see cref="GenericStringSyntax.ChildList"/>
 	/// </summary>
 	[Fact]
-	public void ChildBag()
+	public void ChildList()
 	{
 		throw new NotImplementedException();
 	}

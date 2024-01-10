@@ -14,8 +14,8 @@ public partial class TextEditorDiffState
 {
     public TextEditorDiffState()
     {
-        DiffModelBag = ImmutableList<TextEditorDiffModel>.Empty;
+        DiffModelList = ImmutableList<TextEditorDiffModel>.Empty;
     }
 
-    public ImmutableList<TextEditorDiffModel> DiffModelBag { get; init; }
+    public ImmutableList<TextEditorDiffModel> DiffModelList { get; init; }
 }

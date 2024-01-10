@@ -10,15 +10,15 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 public class TextEditorDefaultParserTests
 {
 	/// <summary>
-	/// <see cref="TextEditorDefaultParser.DiagnosticsBag"/>
+	/// <see cref="TextEditorDefaultParser.DiagnosticsList"/>
 	/// </summary>
 	[Fact]
-	public void DiagnosticsBag()
+	public void DiagnosticsList()
 	{
         var defaultParser = new TextEditorDefaultParser();
 
         Assert.Equal(
             ImmutableArray<TextEditorDiagnostic>.Empty,
-            defaultParser.DiagnosticsBag);
+            defaultParser.DiagnosticsList);
 	}
 }

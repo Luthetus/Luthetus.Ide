@@ -6,26 +6,26 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
 public class TokenWalker
 {
-    private readonly ImmutableArray<ISyntaxToken> _tokenBag;
+    private readonly ImmutableArray<ISyntaxToken> _tokenList;
     private readonly LuthetusDiagnosticBag _diagnosticBag;
 
     private int _index;
 
-    public TokenWalker(ImmutableArray<ISyntaxToken> tokens, LuthetusDiagnosticBag diagnosticBag)
+    public TokenWalker(ImmutableArray<ISyntaxToken> tokenList, LuthetusDiagnosticBag diagnosticBag)
     {
-        _tokenBag = tokens;
+        _tokenList = tokenList;
         _diagnosticBag = diagnosticBag;
     }
 
-    public ImmutableArray<ISyntaxToken> Tokens => _tokenBag;
+    public ImmutableArray<ISyntaxToken> TokenList => _tokenList;
     public ISyntaxToken Current => Peek(0);
     public ISyntaxToken Next => Peek(1);
     public ISyntaxToken Previous => Peek(-1);
     public bool IsEof => Current.SyntaxKind == SyntaxKind.EndOfFileToken;
 
     /// <summary>If there are any tokens, then assume the final token is the end of file token. Otherwise, fabricate an end of file token.</summary>
-    private ISyntaxToken EOF => _tokenBag.Length > 0
-        ? _tokenBag[_tokenBag.Length - 1]
+    private ISyntaxToken EOF => _tokenList.Length > 0
+        ? _tokenList[_tokenList.Length - 1]
         : new EndOfFileToken(new(0, 0, 0, new(string.Empty), string.Empty));
 
     /// <summary>The input to this method can be positive OR negative.<br/><br/>Returns <see cref="BadToken"/> when an index out of bounds error would've occurred.</summary>
@@ -35,18 +35,18 @@ public class TokenWalker
 
         if (index < 0)
             return GetBadToken();
-        else if (index >= _tokenBag.Length)
+        else if (index >= _tokenList.Length)
             return EOF; // Return the end of file token (the last token)
 
-        return _tokenBag[index];
+        return _tokenList[index];
     }
 
     public ISyntaxToken Consume()
     {
-        if (_index >= _tokenBag.Length)
+        if (_index >= _tokenList.Length)
             return EOF; // Return the end of file token (the last token)
 
-        var consumedToken = _tokenBag[_index++];
+        var consumedToken = _tokenList[_index++];
 
         return consumedToken;
     }

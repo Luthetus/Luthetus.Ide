@@ -21,7 +21,7 @@ public class SearchEngineFileSystem : ITextEditorSearchEngine
     public Type IconComponentRendererType { get; } = typeof(IconCopy);
     public string DisplayName { get; } = "FileSystem";
 	public string StartingDirectoryPath = "C:\\Users\\hunte\\Repos\\Luthetus.Ide_Fork\\";
-	public List<string> FilePathBag = new List<string>();
+	public List<string> FilePathList = new List<string>();
 	public event Action? ProgressOccurred;
 	public bool IsSearching;
 
@@ -34,7 +34,7 @@ public class SearchEngineFileSystem : ITextEditorSearchEngine
 
 		_ =  Task.Run(async () => 
 		{
-			FilePathBag.Clear();
+			FilePathList.Clear();
 			IsSearching = true;
 			ProgressOccurred?.Invoke();
 			
@@ -51,10 +51,10 @@ public class SearchEngineFileSystem : ITextEditorSearchEngine
 
 		// Search Files
 		{
-			var childFileBag = await _fileSystemProvider.Directory.GetFilesAsync(
+			var childFileList = await _fileSystemProvider.Directory.GetFilesAsync(
 				directoryPath);
 
-			foreach (var childFile in childFileBag)
+			foreach (var childFile in childFileList)
 			{
 				await PerformSearchFileAsync(childFile, searchQuery, cancellationToken);
 			}
@@ -67,10 +67,10 @@ public class SearchEngineFileSystem : ITextEditorSearchEngine
 
 		// Recurse into subdirectories
 		{
-			var subdirectoryBag = await _fileSystemProvider.Directory.GetDirectoriesAsync(
+			var subdirectoryList = await _fileSystemProvider.Directory.GetDirectoriesAsync(
 				directoryPath);
 
-			foreach (var subdirectory in subdirectoryBag)
+			foreach (var subdirectory in subdirectoryList)
 			{
 				if (subdirectory.Contains(".git")  || subdirectory.Contains("bin") || subdirectory.Contains("obj"))
 					continue;
@@ -85,6 +85,6 @@ public class SearchEngineFileSystem : ITextEditorSearchEngine
 		var contents = await _fileSystemProvider.File.ReadAllTextAsync(filePath);
 
 		if (contents.Contains(searchQuery))
-			FilePathBag.Add(filePath);
+			FilePathList.Add(filePath);
 	}
 }
