@@ -10,6 +10,7 @@ using Luthetus.Ide.RazorLib.LocalStorages.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Displays;
 using Luthetus.Ide.RazorLib.Nugets.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
@@ -48,6 +49,17 @@ public static class ServiceCollectionExtensions
             {
                 CustomThemeRecordBag = LuthetusTextEditorCustomThemeFacts.AllCustomThemesBag,
                 InitialThemeKey = ThemeFacts.VisualStudioDarkThemeClone.Key,
+				OpenInEditorAsyncFunc = (absolutePath, serviceProvider) =>
+				{
+					var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
+					var editorSync = serviceProvider.GetRequiredService<EditorSync>();
+
+					editorSync.OpenInEditor(
+						new AbsolutePath(absolutePath, false, environmentProvider),
+						false);
+
+					return Task.CompletedTask;
+				}
             });
         }
 

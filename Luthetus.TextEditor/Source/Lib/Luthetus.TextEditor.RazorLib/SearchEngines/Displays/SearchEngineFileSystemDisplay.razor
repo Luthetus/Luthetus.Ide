@@ -22,7 +22,11 @@
 
 		@foreach (var filePath in localFilePathBag)
 		{
-			<div>@filePath</div>
+			<div style="cursor: pointer;"
+				 @onclick="() => OpenInEditorOnClick(filePath)">
+
+				@filePath
+			</div>
 		}
 	</div>
 </div>
