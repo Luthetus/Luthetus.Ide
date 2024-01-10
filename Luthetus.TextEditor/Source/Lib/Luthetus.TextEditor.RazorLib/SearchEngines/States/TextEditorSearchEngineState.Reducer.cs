@@ -21,7 +21,6 @@ public partial class TextEditorSearchEngineState
 
             return new TextEditorSearchEngineState(
                 outSearchEngineList,
-                inState.ActiveSearchEngineKey,
                 inState.SearchQuery);
         }
 
@@ -40,18 +39,6 @@ public partial class TextEditorSearchEngineState
 
             return new TextEditorSearchEngineState(
                 outSearchEngineList,
-                inState.ActiveSearchEngineKey,
-                inState.SearchQuery);
-        }
-
-        [ReducerMethod]
-        public static TextEditorSearchEngineState ReduceSetActiveSearchEngineAction(
-            TextEditorSearchEngineState inState,
-            SetActiveSearchEngineAction setActiveSearchEngineAction)
-        {
-            return new TextEditorSearchEngineState(
-                inState.SearchEngineList,
-                setActiveSearchEngineAction.SearchEngineKey,
                 inState.SearchQuery);
         }
 
@@ -62,7 +49,6 @@ public partial class TextEditorSearchEngineState
         {
             return new TextEditorSearchEngineState(
                 inState.SearchEngineList,
-                inState.ActiveSearchEngineKey,
                 setSearchQueryAction.SearchQuery);
         }
     }

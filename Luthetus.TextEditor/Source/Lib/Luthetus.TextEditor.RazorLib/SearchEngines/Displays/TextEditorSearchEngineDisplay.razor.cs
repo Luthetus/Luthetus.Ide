@@ -90,13 +90,10 @@ public partial class TextEditorSearchEngineDisplay : FluxorComponent
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private async Task DoSearchOnClickAsync(TextEditorSearchEngineState searchEngineState)
+    private async Task DoSearchOnClickAsync(
+        TextEditorSearchEngineState searchEngineState,
+        ITextEditorSearchEngine activeSearchEngine)
     {
-        var activeSearchEngine = searchEngineState.GetActiveSearchEngineOrDefault();
-
-        if (activeSearchEngine is null)
-            return;
-
         try
         {
             _isSearching = true;

@@ -52,7 +52,11 @@ public partial interface ITextEditorService
 
         public void SetActiveSearchEngine(Key<ITextEditorSearchEngine> searchEngineKey)
         {
-            _dispatcher.Dispatch(new TextEditorSearchEngineState.SetActiveSearchEngineAction(searchEngineKey));
+            // (2024-01-10) Any UI which renders 'tabs' is being changed to all use a generic tab component.
+            //              This method broke and needs revisited.
+            //
+            // _dispatcher.Dispatch(new TextEditorSearchEngineState.SetActiveSearchEngineAction(searchEngineKey));
+            throw new NotImplementedException();
         }
 
         public ImmutableList<ITextEditorSearchEngine> GetSearchEngines()

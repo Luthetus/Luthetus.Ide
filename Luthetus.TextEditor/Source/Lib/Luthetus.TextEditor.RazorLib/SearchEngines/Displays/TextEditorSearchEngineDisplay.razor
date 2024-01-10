@@ -10,58 +10,68 @@
 }
 
 <div class="luth_te_find">
-    <div class="luth_te_find-tabs">
-        @foreach (var searchEngine in searchEngineState.SearchEngineList)
-        {
-            <SearchEngineTabDisplay SearchEngine="searchEngine"
-                                    IsActive="searchEngine.SearchEngineKey == searchEngineState.ActiveSearchEngineKey" />
-        }
-    </div>
-
-    <hr/>
-
+    
     <TabGroupDisplay TabGroupKey="SelectedSearchEngineTabGroupKey"/>
 
     <hr />
 
     <div class="luth_te_find-body">
-
-        SearchQuery:&nbsp;
-
-        <input class="luth_input"
-               @bind="SearchQuery"
-               @bind:event="oninput"/>
-
-        <button class="luth_button"
-                @onclick="() => DoSearchOnClickAsync(searchEngineState)">
-            Do Search
-        </button>
-
-        @{ var activeSearchEngine = searchEngineState.GetActiveSearchEngineOrDefault(); }
-
-        @if (activeSearchEngine is null)
+        @if (tabGroup is null)
         {
-            @: null active find provider
+            <div>@nameof(tabGroup) is null</div>
         }
         else
         {
-            @: @activeSearchEngine.DisplayName
-        }
+            var tabEntryNoType = tabGroup.GetActiveEntryNoType();
 
-        @if (_isSearching)
-        {
-            <IconLoading/>
-        }
-        else
-        {
-            <div>
-                Not Searching
-            </div>
-        }
+            if (tabEntryNoType is null)
+            {
+                <div>@nameof(tabEntryNoType) is null</div>
+            }
+            else
+            {
+                var activeSearchEngine = (ITextEditorSearchEngine)tabEntryNoType.UntypedItem;
 
-		@if (activeSearchEngine is SearchEngineFileSystem searchEngineFileSystem)
-		{
-			<SearchEngineFileSystemDisplay SearchEngineFileSystem="searchEngineFileSystem"/>
-		}
+                <div>
+                    SearchQuery:&nbsp;
+
+                    <input class="luth_input"
+                           @bind="SearchQuery"
+                           @bind:event="oninput" />
+
+                    <button class="luth_button"
+                            @onclick="() => DoSearchOnClickAsync(searchEngineState, activeSearchEngine)">
+                        Do Search
+                    </button>
+
+
+
+                    @if (activeSearchEngine is null)
+                    {
+                        @: null active find provider
+                    }
+                    else
+                    {
+                        @: @activeSearchEngine.DisplayName
+                    }
+
+                    @if (_isSearching)
+                    {
+                        <IconLoading />
+                    }
+                    else
+                    {
+                        <div>
+                            Not Searching
+                        </div>
+                    }
+
+                    @if (activeSearchEngine is SearchEngineFileSystem searchEngineFileSystem)
+                    {
+                        <SearchEngineFileSystemDisplay SearchEngineFileSystem="searchEngineFileSystem" />
+                    }
+                </div>
+            }
+        }
     </div>
 </div>
