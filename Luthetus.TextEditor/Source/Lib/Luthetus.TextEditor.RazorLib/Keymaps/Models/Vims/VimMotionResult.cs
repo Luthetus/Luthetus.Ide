@@ -14,8 +14,6 @@ public record VimMotionResult(
 {
     public static async Task<VimMotionResult> GetResultAsync(
         ITextEditorModel model,
-        TextEditorViewModel viewModel,
-        TextEditorCommandArgs commandArgs,
         TextEditorCursorModifier cursorModifier,
         Func<Task> motionCommand)
     {

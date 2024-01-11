@@ -249,7 +249,11 @@ public static partial class TextEditorCommandVimFacts
                 var previousAnchorPositionIndex = primaryCursorModifier.SelectionAnchorPositionIndex;
                 var previousEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
 
-                await commandArgs.InnerCommand.CommandFunc.Invoke(commandArgs);
+                if (commandArgs.InnerCommand.TextEditorEditFactory is null)
+                    return;
+
+                var textEditorEdit = commandArgs.InnerCommand.TextEditorEditFactory.Invoke(commandArgs);
+                await textEditorEdit.Invoke(editContext);
 
                 var nextEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
 
@@ -299,7 +303,11 @@ public static partial class TextEditorCommandVimFacts
                 var previousAnchorPositionIndex = primaryCursorModifier.SelectionAnchorPositionIndex;
                 var previousEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
 
-                await commandArgs.InnerCommand.CommandFunc.Invoke(commandArgs);
+                if (commandArgs.InnerCommand.TextEditorEditFactory is null)
+                    return;
+
+                var textEditorEdit = commandArgs.InnerCommand.TextEditorEditFactory.Invoke(commandArgs);
+                await textEditorEdit.Invoke(editContext);
 
                 var nextEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
 

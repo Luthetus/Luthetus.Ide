@@ -17,7 +17,14 @@ public static partial class TextEditorCommandVimFacts
                     DeleteLineFactory(commandArgs));
 
                 return Task.CompletedTask;
-            });
+            })
+        {
+            TextEditorEditFactory = interfaceCommandArgs =>
+            {
+                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                return DeleteLineFactory(commandArgs);
+            }
+        };
 
         public static readonly TextEditorCommand ChangeLineCommand = new(
             "Vim::Change(Line)", "Vim::Change(Line)", false, true, TextEditKind.None, null,
@@ -30,7 +37,14 @@ public static partial class TextEditorCommandVimFacts
                     ChangeLineFactory(commandArgs));
 
                 return Task.CompletedTask;
-            });
+            })
+        {
+            TextEditorEditFactory = interfaceCommandArgs =>
+            {
+                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                return ChangeLineFactory(commandArgs);
+            }
+        };
 
         public static TextEditorCommand DeleteMotionCommandConstructor(TextEditorCommand innerTextEditorCommand) => new(
             $"Vim::Delete({innerTextEditorCommand.DisplayName})", $"Vim::Delete({innerTextEditorCommand.DisplayName})", false, true, TextEditKind.None, null,
@@ -45,7 +59,17 @@ public static partial class TextEditorCommandVimFacts
                     DeleteMotionFactory(commandArgs));
 
                 return Task.CompletedTask;
-            });
+            })
+        {
+            TextEditorEditFactory = interfaceCommandArgs =>
+            {
+                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+                commandArgs.InnerCommand = innerTextEditorCommand;
+
+                return DeleteMotionFactory(commandArgs);
+            }
+        };
 
         public static TextEditorCommand ChangeMotionCommandConstructor(TextEditorCommand innerTextEditorCommand) => new(
             $"Vim::Change({innerTextEditorCommand.DisplayName})", $"Vim::Change({innerTextEditorCommand.DisplayName})", false, true, TextEditKind.None, null,
@@ -60,7 +84,17 @@ public static partial class TextEditorCommandVimFacts
                     GetChangeMotionFactory(commandArgs));
 
                 return Task.CompletedTask;
-            });
+            })
+        {
+            TextEditorEditFactory = interfaceCommandArgs =>
+            {
+                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                
+                commandArgs.InnerCommand = innerTextEditorCommand;
+
+                return GetChangeMotionFactory(commandArgs);
+            }
+        };
 
         public static readonly TextEditorCommand ChangeSelectionCommand = new(
             "Vim::Change(Selection)", "Vim::Change(Selection)", false, true, TextEditKind.None, null,
@@ -73,7 +107,14 @@ public static partial class TextEditorCommandVimFacts
                     ChangeSelectionFactory(commandArgs));
 
                 return Task.CompletedTask;
-            });
+            })
+        {
+            TextEditorEditFactory = interfaceCommandArgs =>
+            {
+                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                return ChangeSelectionFactory(commandArgs);
+            }
+        };
 
         public static readonly TextEditorCommand YankCommand = new(
             "Vim::Change(Selection)", "Vim::Change(Selection)", false, true, TextEditKind.None, null,
@@ -86,7 +127,14 @@ public static partial class TextEditorCommandVimFacts
                     YankFactory(commandArgs));
 
                 return Task.CompletedTask;
-            });
+            })
+        {
+            TextEditorEditFactory = interfaceCommandArgs =>
+            {
+                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                return YankFactory(commandArgs);
+            }
+        };
 
         public static readonly TextEditorCommand NewLineBelowCommand = new(
             "Vim::NewLineBelow()", "Vim::NewLineBelow()", false, true, TextEditKind.None, null,
@@ -99,7 +147,14 @@ public static partial class TextEditorCommandVimFacts
                     NewLineBelowFactory(commandArgs));
 
                 return Task.CompletedTask;
-            });
+            })
+        {
+            TextEditorEditFactory = interfaceCommandArgs =>
+            {
+                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                return NewLineBelowFactory(commandArgs);
+            }
+        };
 
         public static readonly TextEditorCommand NewLineAboveCommand = new(
             "Vim::NewLineAbove()", "Vim::NewLineAbove()", false, true, TextEditKind.None, null,
@@ -112,6 +167,13 @@ public static partial class TextEditorCommandVimFacts
                     NewLineAboveFactory(commandArgs));
 
                 return Task.CompletedTask;
-            });
+            })
+        {
+            TextEditorEditFactory = interfaceCommandArgs =>
+            {
+                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                return NewLineAboveFactory(commandArgs);
+            }
+        };
     }
 }

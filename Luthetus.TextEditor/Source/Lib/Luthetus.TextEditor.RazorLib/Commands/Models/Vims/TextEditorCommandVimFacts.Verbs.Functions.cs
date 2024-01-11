@@ -69,11 +69,15 @@ public static partial class TextEditorCommandVimFacts
 
                 var motionResult = await VimMotionResult.GetResultAsync(
                     modelModifier,
-                    viewModelModifier.ViewModel,
-                    commandArgs,
                     primaryCursorModifier,
-                    async () => await commandArgs.InnerCommand.CommandFunc
-                        .Invoke(textEditorCommandArgsForMotion));
+                    async () => 
+                    {
+                        if (commandArgs.InnerCommand.TextEditorEditFactory is null)
+                            return;
+
+                        var textEditorEdit = commandArgs.InnerCommand.TextEditorEditFactory.Invoke(textEditorCommandArgsForMotion);
+                        await textEditorEdit.Invoke(editContext);
+                    });
 
                 var cursorForDeletion = new TextEditorCursor(
                     motionResult.LowerPositionIndexCursor.RowIndex,

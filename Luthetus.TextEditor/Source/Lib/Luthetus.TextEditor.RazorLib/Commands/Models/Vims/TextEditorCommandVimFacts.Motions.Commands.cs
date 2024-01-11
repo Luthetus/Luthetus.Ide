@@ -25,7 +25,14 @@ public static partial class TextEditorCommandVimFacts
                     WordFactory(commandArgs));
 
                 return Task.CompletedTask;
-            });
+            })
+        {
+            TextEditorEditFactory = interfaceCommandArgs =>
+            {
+                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                return WordFactory(commandArgs);
+            }
+        };
 
         public static readonly TextEditorCommand End = new(
             "Vim::End()", "Vim::End()", false, true, TextEditKind.None, null,
@@ -38,8 +45,15 @@ public static partial class TextEditorCommandVimFacts
                     EndFactory(commandArgs));
 
                 return Task.CompletedTask;
-            });
-        
+            })
+        {
+            TextEditorEditFactory = interfaceCommandArgs =>
+            {
+                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                return EndFactory(commandArgs);
+            }
+        };
+
         public static readonly TextEditorCommand Back = new(
             "Vim::Back()", "Vim::Back()", false, true, TextEditKind.None, null,
             interfaceCommandArgs =>
@@ -51,8 +65,15 @@ public static partial class TextEditorCommandVimFacts
                     BackFactory(commandArgs));
 
                 return Task.CompletedTask;
-            });
-        
+            })
+        {
+            TextEditorEditFactory = interfaceCommandArgs =>
+            {
+                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                return BackFactory(commandArgs);
+            }
+        };
+
         public static TextEditorCommand GetVisualFactory(
             TextEditorCommand textEditorCommandMotion,
             string displayName)
@@ -68,7 +89,14 @@ public static partial class TextEditorCommandVimFacts
                         VisualFactory(commandArgs));
 
                     return Task.CompletedTask;
-                });
+                })
+            {
+                TextEditorEditFactory = interfaceCommandArgs =>
+                {
+                    var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                    return VisualFactory(commandArgs);
+                }
+            };
         }
         
         public static TextEditorCommand GetVisualLineFactory(
@@ -86,7 +114,14 @@ public static partial class TextEditorCommandVimFacts
                         VisualLineFactory(commandArgs));
 
                     return Task.CompletedTask;
-                });
+                })
+            {
+                TextEditorEditFactory = interfaceCommandArgs =>
+                {
+                    var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                    return VisualLineFactory(commandArgs);
+                }
+            };
         }
     }
 }
