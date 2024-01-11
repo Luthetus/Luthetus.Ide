@@ -12,12 +12,8 @@
 }
 
 <div class="luth_te_find">
-    
-    <TabGroupDisplay TabGroupKey="SelectedSearchEngineTabGroupKey"/>
-
-    <hr />
-
     <div class="luth_te_find-body">
+
         @if (tabGroup is null)
         {
             <div>@nameof(tabGroup) is null</div>
@@ -41,44 +37,126 @@
                 }
                 else
                 {
-                    <div>
-                        SearchQuery:&nbsp;
+                    <div class="luth_te_find-top-bottom-section">
+                        <div class="luth_te_find-top">
+                            <div class="luth_te_find-search-input">
+                                SearchQuery:&nbsp;
 
-                        <input class="luth_ide_input luth_ide_input-text"
-                               placeholder="@nameof(SearchQuery)"
-                               @bind="SearchQuery"
-                               @bind:event="oninput" />
-
-                        <button class="luth_button"
-                                @onclick="() => DoSearchOnClickAsync(searchEngineState, activeSearchEngine)">
-                            Do Search
-                        </button>
-
-                        @if (activeSearchEngine is null)
-                        {
-                            @: null active find provider
-                        }
-                        else
-                        {
-                            @: @activeSearchEngine.DisplayName
-                        }
-
-                        @if (_isSearching)
-                        {
-                            <IconLoading />
-                        }
-                        else
-                        {
-                            <div>
-                                Not Searching
+                                <input class="luth_ide_input luth_ide_input-text"
+                                       placeholder="@nameof(SearchQuery)"
+                                @bind="SearchQuery"
+                                @bind:event="oninput" />
                             </div>
-                        }
+                            <div class="luth_te_find-vertical-list">
+                                <div class="luth_te_find-checkbox-input">
+                                    Match case:&nbsp;
 
-                        @if (activeSearchEngine is SearchEngineFileSystem searchEngineFileSystem)
-                        {
-                            <SearchEngineFileSystemDisplay SearchEngineFileSystem="searchEngineFileSystem" />
-                        }
+                                    <input type="checkbox" />
+                                </div>
+                                <div class="luth_te_find-checkbox-input">
+                                    Match whole word:&nbsp;
+
+                                    <input type="checkbox" />
+                                </div>
+                                <div class="luth_te_find-checkbox-input">
+                                    Use regular expressions:&nbsp;
+
+                                    <input type="checkbox" />
+                                </div>
+                            </div>
+                            <div class="luth_te_find-left-right-section">
+                                <div class="luth_te_find-left">
+                                    Look in
+                                </div>
+                                <div class="luth_te_find-right">
+                                    <div class="luth_te_find-vertical-list">
+                                        <TabGroupDisplay TabGroupKey="SelectedSearchEngineTabGroupKey" />
+                                        <div class="luth_te_find-checkbox-input">
+                                            Include external items:&nbsp;
+
+                                            <input type="checkbox" />
+                                        </div>
+                                        <div class="luth_te_find-checkbox-input">
+                                            Include miscellaneous files:&nbsp;
+
+                                            <input type="checkbox" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="luth_te_find-left-right-section">
+                                <div class="luth_te_find-left">
+                                    File types
+                                </div>
+                                <div class="luth_te_find-right">
+                                    <div class="luth_te_find-vertical-list">
+                                        <div class="luth_te_find-dropdown">
+                                            <select>
+                                                <option selected>!*\bin\*;!*\obj\*;!*\.*\*</option>
+                                                <option>Aaa</option>
+                                                <option>Bbb</option>
+                                                <option>Ccc</option>
+                                            </select>
+
+                                            <span>OR provide string</span>
+                                        </div>
+                                        <div class="luth_te_find-checkbox-input">
+                                            Append Results:&nbsp;
+
+                                            <input type="checkbox" />
+                                        </div>
+                                        <div class="luth_te_find-dropdown">
+                                            <select>
+                                                <option selected>New Window</option>
+                                                <option>Aaa</option>
+                                                <option>Bbb</option>
+                                                <option>Ccc</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="luth_te_find-bottom">
+                            <div class="luth_te_find-horizontal-list">
+                                <button class="luth_button">Find Previous</button>
+                                <button class="luth_button">Find Next</button>
+                                <button class="luth_button">Skip File</button>
+                            </div>
+
+                            <div class="luth_te_find-horizontal-list">
+                                <button class="luth_button"
+                                @onclick="() => DoSearchOnClickAsync(searchEngineState, activeSearchEngine)">
+                                    Find All
+                                </button>
+                            </div>
+                        </div>
                     </div>
+
+                    @if (activeSearchEngine is null)
+                    {
+                        @: null active find provider
+                    }
+                    else
+                    {
+                        @: @activeSearchEngine.DisplayName
+                    }
+
+                    @if (_isSearching)
+                    {
+                        <IconLoading />
+                    }
+                    else
+                    {
+                        <div>
+                            Not Searching
+                        </div>
+                    }
+
+                    @if (activeSearchEngine is SearchEngineFileSystem searchEngineFileSystem)
+                    {
+                        <SearchEngineFileSystemDisplay SearchEngineFileSystem="searchEngineFileSystem" />
+                    }
                 }
             }
         }
