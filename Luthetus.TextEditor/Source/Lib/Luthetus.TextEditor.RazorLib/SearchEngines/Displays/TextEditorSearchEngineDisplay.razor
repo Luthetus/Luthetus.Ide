@@ -44,24 +44,24 @@
 
                                 <input class="luth_ide_input luth_ide_input-text"
                                        placeholder="@nameof(SearchQuery)"
-                                @bind="SearchQuery"
-                                @bind:event="oninput" />
+                                       @bind="SearchQuery"
+                                       @bind:event="oninput" />
                             </div>
                             <div class="luth_te_find-vertical-list">
                                 <div class="luth_te_find-checkbox-input">
                                     Match case:&nbsp;
 
-                                    <input type="checkbox" />
+                                    <input type="checkbox" @bind="MatchCase" />
                                 </div>
                                 <div class="luth_te_find-checkbox-input">
                                     Match whole word:&nbsp;
 
-                                    <input type="checkbox" />
+                                    <input type="checkbox" @bind="MatchWholeWord" />
                                 </div>
                                 <div class="luth_te_find-checkbox-input">
                                     Use regular expressions:&nbsp;
 
-                                    <input type="checkbox" />
+                                    <input type="checkbox" @bind="UseRegularExpressions" />
                                 </div>
                             </div>
                             <div class="luth_te_find-left-right-section">
@@ -74,12 +74,12 @@
                                         <div class="luth_te_find-checkbox-input">
                                             Include external items:&nbsp;
 
-                                            <input type="checkbox" />
+                                            <input type="checkbox" @bind="IncludeExternalItems" />
                                         </div>
                                         <div class="luth_te_find-checkbox-input">
                                             Include miscellaneous files:&nbsp;
 
-                                            <input type="checkbox" />
+                                            <input type="checkbox" @bind="IncludeMiscellaneousFiles" />
                                         </div>
                                     </div>
                                 </div>
@@ -103,7 +103,7 @@
                                         <div class="luth_te_find-checkbox-input">
                                             Append Results:&nbsp;
 
-                                            <input type="checkbox" />
+                                            <input type="checkbox" @bind="AppendResults" />
                                         </div>
                                         <div class="luth_te_find-dropdown">
                                             <select>
@@ -126,7 +126,7 @@
 
                             <div class="luth_te_find-horizontal-list">
                                 <button class="luth_button"
-                                @onclick="() => DoSearchOnClickAsync(searchEngineState, activeSearchEngine)">
+                                        @onclick="() => DoSearchOnClickAsync(searchEngineState, activeSearchEngine)">
                                     Find All
                                 </button>
                             </div>

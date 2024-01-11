@@ -38,6 +38,60 @@ public partial class TextEditorSearchEngineDisplay : FluxorComponent
         }
     }
 
+    private bool MatchCase
+    {
+        get => TextEditorSearchEngineStateWrap.Value.Options.MatchCase.Value;
+        set
+        {
+            TextEditorSearchEngineStateWrap.Value.Options.MatchCase.Value = value;
+        }
+    }
+
+    private bool MatchWholeWord
+    {
+        get => TextEditorSearchEngineStateWrap.Value.Options.MatchWholeWord.Value;
+        set
+        {
+            TextEditorSearchEngineStateWrap.Value.Options.MatchWholeWord.Value = value;
+        }
+    }
+
+    private bool UseRegularExpressions
+    {
+        get => TextEditorSearchEngineStateWrap.Value.Options.UseRegularExpressions.Value;
+        set
+        {
+            TextEditorSearchEngineStateWrap.Value.Options.UseRegularExpressions.Value = value;
+        }
+    }
+
+    private bool IncludeExternalItems
+    {
+        get => TextEditorSearchEngineStateWrap.Value.Options.IncludeExternalItems.Value;
+        set
+        {
+            TextEditorSearchEngineStateWrap.Value.Options.IncludeExternalItems.Value = value;
+        }
+    }
+
+    private bool IncludeMiscellaneousFiles
+    {
+        get => TextEditorSearchEngineStateWrap.Value.Options.IncludeMiscellaneousFiles.Value;
+        set
+        {
+            TextEditorSearchEngineStateWrap.Value.Options.IncludeMiscellaneousFiles.Value = value;
+        }
+    }
+
+    private bool AppendResults
+    {
+        get => TextEditorSearchEngineStateWrap.Value.Options.AppendResults.Value;
+        set
+        {
+            TextEditorSearchEngineStateWrap.Value.Options.AppendResults.Value = value;
+        }
+    }
+
     protected override void OnInitialized()
     {
         TabStateGroupSelection.Select(tabState => tabState.TabGroupList.FirstOrDefault(
@@ -66,7 +120,7 @@ public partial class TextEditorSearchEngineDisplay : FluxorComponent
                         {
                             var tabEntryWithType = new TabEntryWithType<Key<ITextEditorSearchEngine>>(
                                 searchEngine.Key,
-                                tabEntryNoType => 
+                                tabEntryNoType =>
                                 {
                                     var tabEntryWithType = (TabEntryWithType<Key<ITextEditorSearchEngine>>)tabEntryNoType;
                                     var searchEngineState = TextEditorSearchEngineStateWrap.Value;

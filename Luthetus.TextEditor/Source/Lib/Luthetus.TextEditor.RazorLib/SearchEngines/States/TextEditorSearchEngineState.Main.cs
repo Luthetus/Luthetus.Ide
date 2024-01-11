@@ -17,16 +17,20 @@ public partial class TextEditorSearchEngineState
     {
         SearchEngineList = ImmutableList<ITextEditorSearchEngine>.Empty;
         SearchQuery = string.Empty;
+        Options = new();
     }
 
 	public TextEditorSearchEngineState(
         ImmutableList<ITextEditorSearchEngine> searchEngineList,
-        string searchQuery)
+        string searchQuery,
+        TextEditorSearchEngineOptions textEditorSearchEngineOptions)
     {
         SearchEngineList = searchEngineList;
         SearchQuery = searchQuery;
+        Options = textEditorSearchEngineOptions;
     }
 
     public ImmutableList<ITextEditorSearchEngine> SearchEngineList { get; init; }
     public string SearchQuery { get; init; }
+    public TextEditorSearchEngineOptions Options { get; init; }
 }
