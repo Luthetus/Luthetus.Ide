@@ -33,18 +33,6 @@ public class TextEditorSearchEngineStateActionsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorSearchEngineState.SetActiveSearchEngineAction"/>
-	/// </summary>
-	[Fact]
-	public void SetActiveSearchEngineAction()
-	{
-        var searchEngine = new SearchEngineOverRegisteredViewModels();
-        var searchEngineKey = searchEngine.Key;
-        var setActiveSearchEngineAction = new TextEditorSearchEngineState.SetActiveSearchEngineAction(searchEngineKey);
-        Assert.Equal(searchEngineKey, setActiveSearchEngineAction.SearchEngineKey);
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorSearchEngineState.SetSearchQueryAction"/>
 	/// </summary>
 	[Fact]

@@ -1,6 +1,5 @@
 ﻿using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
@@ -9,32 +8,15 @@ namespace Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
 
 public static partial class TextEditorCommandVimFacts
 {
-    public static class Verbs
+    public static partial class Verbs
     {
-        public static TextEditorCommand DeleteLineCommand = new(
-            "Vim::Delete(Line)", "Vim::Delete(Line)", false, true, TextEditKind.None, null,
-            interfaceCommandArgs =>
-            {
-                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                commandArgs.TextEditorService.Post(
-                    nameof(DeleteLineCommand),
-                    TextEditorCommandDefaultFunctions.CutFactory(
-                        commandArgs.ModelResourceUri,
-                        commandArgs.ViewModelKey,
-                        commandArgs));
-
-                return Task.CompletedTask;
-            });
-
-        public static readonly TextEditorCommand ChangeLineCommand = new(
-            "Vim::Change(Line)", "Vim::Change(Line)", false, true, TextEditKind.None, null,
-            interfaceCommandArgs =>
-            {
-                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                commandArgs.TextEditorService.Post(nameof(ChangeLineCommand), ChangeLineFactory(commandArgs));
-                return Task.CompletedTask;
-            });
+        public static TextEditorEdit DeleteLineFactory(TextEditorCommandArgs commandArgs)
+        {
+            return TextEditorCommandDefaultFunctions.CutFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs);
+        }
 
         public static TextEditorEdit ChangeLineFactory(TextEditorCommandArgs commandArgs)
         {
@@ -53,19 +35,6 @@ public static partial class TextEditorCommandVimFacts
                 vimKeymap.ActiveVimMode = VimMode.Insert;
             };
         }
-
-        public static TextEditorCommand DeleteMotionCommandFactory(TextEditorCommand innerTextEditorCommand) => new(
-            $"Vim::Delete({innerTextEditorCommand.DisplayName})", $"Vim::Delete({innerTextEditorCommand.DisplayName})", false, true, TextEditKind.None, null,
-            interfaceCommandArgs =>
-            {
-                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                
-                commandArgs.TextEditorService.Post(
-                    nameof(DeleteMotionCommandFactory),
-                    DeleteMotionFactory(commandArgs));
-
-                return Task.CompletedTask;
-            });
 
         public static TextEditorEdit DeleteMotionFactory(TextEditorCommandArgs commandArgs)
         {
@@ -123,19 +92,6 @@ public static partial class TextEditorCommandVimFacts
             };
         }
 
-        public static TextEditorCommand ChangeMotionCommandFactory(TextEditorCommand innerTextEditorCommand) => new(
-            $"Vim::Change({innerTextEditorCommand.DisplayName})", $"Vim::Change({innerTextEditorCommand.DisplayName})", false, true, TextEditKind.None, null,
-            interfaceCommandArgs =>
-            {
-                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                commandArgs.TextEditorService.Post(
-                    nameof(ChangeMotionCommandFactory),
-                    GetChangeMotionFactory(commandArgs));
-
-                return Task.CompletedTask;
-            });
-
         public static TextEditorEdit GetChangeMotionFactory(TextEditorCommandArgs commandArgs)
         {
             return async editContext =>
@@ -146,21 +102,12 @@ public static partial class TextEditorCommandVimFacts
                 if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
                     return;
 
-                var deleteMotion = DeleteMotionCommandFactory(commandArgs.InnerCommand);
+                var deleteMotion = DeleteMotionCommandConstructor(commandArgs.InnerCommand);
 
                 await deleteMotion.CommandFunc.Invoke(commandArgs);
                 textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
             };
         }
-
-        public static readonly TextEditorCommand ChangeSelectionCommand = new(
-            "Vim::Change(Selection)", "Vim::Change(Selection)", false, true, TextEditKind.None, null,
-            interfaceCommandArgs =>
-            {
-                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                commandArgs.TextEditorService.Post(nameof(ChangeSelectionCommand), ChangeSelectionFactory(commandArgs));
-                return Task.CompletedTask;
-            });
 
         public static TextEditorEdit ChangeSelectionFactory(TextEditorCommandArgs commandArgs)
         {
@@ -177,15 +124,6 @@ public static partial class TextEditorCommandVimFacts
             };
         }
 
-        public static readonly TextEditorCommand YankCommand = new(
-            "Vim::Change(Selection)", "Vim::Change(Selection)", false, true, TextEditKind.None, null,
-            interfaceCommandArgs =>
-            {
-                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                commandArgs.TextEditorService.Post(nameof(YankCommand), YankFactory(commandArgs));
-                return Task.CompletedTask;
-            });
-
         public static TextEditorEdit YankFactory(TextEditorCommandArgs commandArgs)
         {
             return async editContext =>
@@ -194,15 +132,6 @@ public static partial class TextEditorCommandVimFacts
                 await TextEditorCommandDefaultFacts.ClearTextSelection.CommandFunc.Invoke(commandArgs);
             };
         }
-
-        public static readonly TextEditorCommand NewLineBelowCommand = new(
-            "Vim::NewLineBelow()", "Vim::NewLineBelow()", false, true, TextEditKind.None, null,
-            interfaceCommandArgs =>
-            {
-                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                commandArgs.TextEditorService.Post(nameof(NewLineBelowCommand), NewLineBelowFactory(commandArgs));
-                return Task.CompletedTask;
-            });
 
         public static TextEditorEdit NewLineBelowFactory(TextEditorCommandArgs commandArgs)
         {
@@ -218,15 +147,6 @@ public static partial class TextEditorCommandVimFacts
                 textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
             };
         }
-
-        public static readonly TextEditorCommand NewLineAboveCommand = new(
-            "Vim::NewLineAbove()", "Vim::NewLineAbove()", false, true, TextEditKind.None, null,
-            interfaceCommandArgs =>
-            {
-                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                commandArgs.TextEditorService.Post(nameof(NewLineAboveCommand), NewLineAboveFactory(commandArgs));
-                return Task.CompletedTask;
-            });
 
         public static TextEditorEdit NewLineAboveFactory(TextEditorCommandArgs commandArgs)
         {
