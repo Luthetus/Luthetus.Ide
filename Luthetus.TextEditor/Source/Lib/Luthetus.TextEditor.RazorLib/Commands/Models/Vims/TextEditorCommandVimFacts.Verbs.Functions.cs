@@ -1,7 +1,9 @@
-﻿using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
+﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
@@ -52,11 +54,6 @@ public static partial class TextEditorCommandVimFacts
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return;
 
-                var cursorForMotion = new TextEditorCursor(
-                    primaryCursorModifier.RowIndex,
-                    primaryCursorModifier.ColumnIndex,
-                    true);
-
                 var textEditorCommandArgsForMotion = new TextEditorCommandArgs(
                     modelModifier.ResourceUri,
                     viewModelModifier.ViewModel.ViewModelKey,
@@ -74,7 +71,7 @@ public static partial class TextEditorCommandVimFacts
                     modelModifier,
                     viewModelModifier.ViewModel,
                     commandArgs,
-                    cursorForMotion,
+                    primaryCursorModifier,
                     async () => await commandArgs.InnerCommand.CommandFunc
                         .Invoke(textEditorCommandArgsForMotion));
 
@@ -83,9 +80,13 @@ public static partial class TextEditorCommandVimFacts
                     motionResult.LowerPositionIndexCursor.ColumnIndex,
                     true);
 
-                await editContext.TextEditorService.ModelApi.DeleteTextByRangeFactory(
+                var cursorModifierBagForDeletion = new TextEditorCursorModifierBag(
+                    Key<TextEditorViewModel>.Empty,
+                    new List<TextEditorCursorModifier> { new(cursorForDeletion) });
+
+                await editContext.TextEditorService.ModelApi.DeleteTextByRangeUnsafeFactory(
                         modelModifier.ResourceUri,
-                        viewModelModifier.ViewModel.ViewModelKey,
+                        cursorModifierBagForDeletion,
                         motionResult.PositionIndexDisplacement,
                         CancellationToken.None)
                     .Invoke(editContext);
