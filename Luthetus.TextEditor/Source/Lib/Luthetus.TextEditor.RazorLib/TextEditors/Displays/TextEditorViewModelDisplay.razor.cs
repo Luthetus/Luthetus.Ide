@@ -512,8 +512,12 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None, false);
 
-                var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
+                // Remember the current cursor position prior to doing anything
+                var inRowIndex = primaryCursorModifier.RowIndex;
+                var inColumnIndex = primaryCursorModifier.ColumnIndex;
 
+                // Move the cursor position
+                var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
                 primaryCursorModifier.RowIndex = rowAndColumnIndex.rowIndex;
                 primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
                 primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
@@ -530,12 +534,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                     if (!hasSelectedText)
                     {
                         // If user does not yet have a selection then place the text selection anchor were they were
-
-                        var cursorPositionPriorToMovementOccurring = modelModifier.GetPositionIndex(
-                            primaryCursorModifier.RowIndex,
-                            primaryCursorModifier.ColumnIndex);
-
-                        primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionPriorToMovementOccurring;
+                        primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier
+                            .GetPositionIndex(inRowIndex, inColumnIndex);
                     }
 
                     // If user ALREADY has a selection then do not modify the text selection anchor
