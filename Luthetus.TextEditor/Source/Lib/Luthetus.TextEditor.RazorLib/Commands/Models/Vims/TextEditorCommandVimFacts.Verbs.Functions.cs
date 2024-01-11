@@ -67,6 +67,8 @@ public static partial class TextEditorCommandVimFacts
                     commandArgs.RegisterViewModelAction,
                     commandArgs.ShowViewModelAction);
 
+                var inCursor = primaryCursorModifier.ToCursor();
+
                 var motionResult = await VimMotionResult.GetResultAsync(
                     modelModifier,
                     primaryCursorModifier,
@@ -78,6 +80,10 @@ public static partial class TextEditorCommandVimFacts
                         var textEditorEdit = commandArgs.InnerCommand.TextEditorEditFactory.Invoke(textEditorCommandArgsForMotion);
                         await textEditorEdit.Invoke(editContext);
                     });
+
+                primaryCursorModifier.RowIndex = inCursor.RowIndex;
+                primaryCursorModifier.ColumnIndex = inCursor.ColumnIndex;
+                primaryCursorModifier.PreferredColumnIndex = inCursor.ColumnIndex;
 
                 var cursorForDeletion = new TextEditorCursor(
                     motionResult.LowerPositionIndexCursor.RowIndex,
