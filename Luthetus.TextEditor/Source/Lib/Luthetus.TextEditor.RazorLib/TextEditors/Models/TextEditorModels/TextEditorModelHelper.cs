@@ -246,7 +246,7 @@ public static class TextEditorModelHelper
 		var previousCharacterKind = CharacterKindHelper.CharToCharacterKind(previousCharacter);
 		var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(currentCharacter);
 
-		var rowInformation = model.GetRowInformation(positionIndex);
+		var rowInformation = model.GetRowInformationFromPositionIndex(positionIndex);
 
 		var columnIndex = positionIndex - rowInformation.RowStartPositionIndexInclusive;
 
@@ -313,7 +313,9 @@ public static class TextEditorModelHelper
 		return null;
 	}
 
-	public static RowInformation GetRowInformation(this ITextEditorModel model, int positionIndex)
+	public static RowInformation GetRowInformationFromPositionIndex(
+		this ITextEditorModel model,
+		int positionIndex)
 	{
 		for (var i = model.RowEndingPositionsList.Count - 1; i >= 0; i--)
 		{

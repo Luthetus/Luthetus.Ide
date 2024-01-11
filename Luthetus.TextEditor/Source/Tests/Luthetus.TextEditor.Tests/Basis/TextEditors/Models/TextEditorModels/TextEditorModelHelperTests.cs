@@ -1269,7 +1269,7 @@ public class TextEditorModelHelperTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetRowInformation(ITextEditorModel, int)"/>
+	/// <see cref="TextEditorModelHelper.GetRowInformationFromPositionIndex(ITextEditorModel, int)"/>
 	/// </summary>
 	[Fact]
 	public void FindRowInformation()

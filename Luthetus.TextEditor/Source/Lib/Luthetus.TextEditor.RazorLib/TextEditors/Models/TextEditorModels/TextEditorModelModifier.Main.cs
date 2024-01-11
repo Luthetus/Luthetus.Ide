@@ -194,7 +194,7 @@ public partial class TextEditorModelModifier
             {
                 var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-                var lowerRowData = this.GetRowInformation(selectionBounds.lowerPositionIndexInclusive);
+                var lowerRowData = this.GetRowInformationFromPositionIndex(selectionBounds.lowerPositionIndexInclusive);
                 var lowerColumnIndex = selectionBounds.lowerPositionIndexInclusive - lowerRowData.RowStartPositionIndexInclusive;
 
                 PerformDeletions(
@@ -398,8 +398,8 @@ public partial class TextEditorModelModifier
                 if (lowerPositionIndexInclusiveBound > upperPositionIndexExclusive)
                     (lowerPositionIndexInclusiveBound, upperPositionIndexExclusive) = (upperPositionIndexExclusive, lowerPositionIndexInclusiveBound);
 
-                var lowerRowMetaData = this.GetRowInformation(lowerPositionIndexInclusiveBound);
-                var upperRowMetaData = this.GetRowInformation(upperPositionIndexExclusive);
+                var lowerRowMetaData = this.GetRowInformationFromPositionIndex(lowerPositionIndexInclusiveBound);
+                var upperRowMetaData = this.GetRowInformationFromPositionIndex(upperPositionIndexExclusive);
 
                 // Value is needed when knowing what row ending positions to update after deletion is done
                 selectionUpperBoundRowIndex = upperRowMetaData.RowIndex;

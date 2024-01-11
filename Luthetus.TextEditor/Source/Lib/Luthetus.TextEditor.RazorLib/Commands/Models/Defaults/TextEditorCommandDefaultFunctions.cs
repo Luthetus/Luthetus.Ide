@@ -76,7 +76,8 @@ public class TextEditorCommandDefaultFunctions
 
             if (!TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
             {
-                var rowInformation = modelModifier.GetRowInformation(primaryCursorModifier.RowIndex);
+                var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+                var rowInformation = modelModifier.GetRowInformationFromPositionIndex(positionIndex);
 
                 primaryCursorModifier.SelectionAnchorPositionIndex = rowInformation.RowStartPositionIndexInclusive;
                 primaryCursorModifier.SelectionEndingPositionIndex = rowInformation.RowEnding.EndPositionIndexExclusive;
@@ -928,7 +929,7 @@ public class TextEditorCommandDefaultFunctions
             }
 
             var firstDefinitionViewModel = definitionViewModels.First();
-            var rowData = definitionModel.GetRowInformation(definitionTextSpan.StartingIndexInclusive);
+            var rowData = definitionModel.GetRowInformationFromPositionIndex(definitionTextSpan.StartingIndexInclusive);
             var columnIndex = definitionTextSpan.StartingIndexInclusive - rowData.RowStartPositionIndexInclusive;
 
             var firstDefinitionViewModelCursorModifier = new TextEditorCursorModifier(firstDefinitionViewModel.PrimaryCursor);

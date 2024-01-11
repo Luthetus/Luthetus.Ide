@@ -21,11 +21,11 @@
                 {
                     var boundsInPositionIndexUnits = (textSpan.StartingIndexInclusive, textSpan.EndingIndexExclusive);
 
-                    var firstRowToSelectDataInclusive = RenderBatch.Model!.GetRowInformation(
+                    var firstRowToSelectDataInclusive = RenderBatch.Model!.GetRowInformationFromPositionIndex(
                             boundsInPositionIndexUnits.StartingIndexInclusive)
                         .RowIndex;
 
-                    var lastRowToSelectDataExclusive = RenderBatch.Model!.GetRowInformation(
+                    var lastRowToSelectDataExclusive = RenderBatch.Model!.GetRowInformationFromPositionIndex(
                             boundsInPositionIndexUnits.EndingIndexExclusive)
                         .RowIndex +
                         1;

@@ -474,7 +474,7 @@ public partial interface ITextEditorService
                         {
                             var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-                            var lowerRowMetaData = modelModifier.GetRowInformation(
+                            var lowerRowMetaData = modelModifier.GetRowInformationFromPositionIndex(
                                 selectionBounds.lowerPositionIndexInclusive);
 
                             cursorModifier.RowIndex = lowerRowMetaData.RowIndex;
@@ -552,7 +552,7 @@ public partial interface ITextEditorService
                         {
                             var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-                            var upperRowMetaData = modelModifier.GetRowInformation(selectionBounds.upperPositionIndexExclusive);
+                            var upperRowMetaData = modelModifier.GetRowInformationFromPositionIndex(selectionBounds.upperPositionIndexExclusive);
 
                             cursorModifier.RowIndex = upperRowMetaData.RowIndex;
 
