@@ -254,6 +254,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             return;
         }
 
+        if (keyboardEventArgs.CtrlKey && keyboardEventArgs.AltKey)
+        {
+            // TODO: This if is a hack to fix the keybind: { Ctrl + Alt + S } causing...
+            // ...an 's' to be written out when using Vim keymap.
+            return;
+        }
+
         // TODO: I need to figure out how to ensure a TextEditorModel which is available from...
         // ...within a 'TextEditorService.Post' invocation via closure is not used when one...
         // ...actually meant to use their 'modelModifier'.
