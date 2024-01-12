@@ -219,6 +219,58 @@ public static class KeyboardKeyFacts
                 return "8";
             case "Digit9":
                 return "9";
+            case "KeyA":
+                return "a";
+            case "KeyB":
+                return "b";
+            case "KeyC":
+                return "c";
+            case "KeyD":
+                return "d";
+            case "KeyE":
+                return "e";
+            case "KeyF":
+                return "f";
+            case "KeyG":
+                return "g";
+            case "KeyH":
+                return "h";
+            case "KeyI":
+                return "i";
+            case "KeyJ":
+                return "j";
+            case "KeyK":
+                return "k";
+            case "KeyL":
+                return "l";
+            case "KeyM":
+                return "m";
+            case "KeyN":
+                return "n";
+            case "KeyO":
+                return "o";
+            case "KeyP":
+                return "p";
+            case "KeyQ":
+                return "q";
+            case "KeyR":
+                return "r";
+            case "KeyS":
+                return "s";
+            case "KeyT":
+                return "t";
+            case "KeyU":
+                return "u";
+            case "KeyV":
+                return "v";
+            case "KeyW":
+                return "w";
+            case "KeyX":
+                return "x";
+            case "KeyY":
+                return "y";
+            case "KeyZ":
+                return "z";
             default:
                 return code;
         }
