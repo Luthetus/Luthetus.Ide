@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.States;
 
@@ -15,7 +15,7 @@ public interface ITreeViewService
     public bool TryGetTreeViewContainer(Key<TreeViewContainer> containerKey, out TreeViewContainer? container);
     public void ReRenderNode(Key<TreeViewContainer> containerKey, TreeViewNoType node);
     public void AddChildNode(Key<TreeViewContainer> containerKey, TreeViewNoType parent, TreeViewNoType child);
-    public void SetActiveNode(Key<TreeViewContainer> containerKey, TreeViewNoType? nextActiveNode);
+    public void SetActiveNode(Key<TreeViewContainer> containerKey, TreeViewNoType? nextActiveNode, bool shouldClearSelectedNodes);
     public void AddSelectedNode(Key<TreeViewContainer> containerKey, TreeViewNoType nodeSelection);
     public void RemoveSelectedNode(Key<TreeViewContainer> containerKey, Key<TreeViewNoType> nodeKey);
     public void ClearSelectedNodes(Key<TreeViewContainer> containerKey);

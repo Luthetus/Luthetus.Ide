@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using static Luthetus.Ide.RazorLib.DotNetSolutions.States.DotNetSolutionState;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
@@ -191,7 +191,7 @@ public partial class DotNetSolutionSync
         else
         {
             _treeViewService.SetRoot(TreeViewSolutionExplorerStateKey, rootNode);
-            _treeViewService.SetActiveNode(TreeViewSolutionExplorerStateKey, rootNode);
+            _treeViewService.SetActiveNode(TreeViewSolutionExplorerStateKey, rootNode, true);
         }
 
         if (dotNetSolutionModel is null)

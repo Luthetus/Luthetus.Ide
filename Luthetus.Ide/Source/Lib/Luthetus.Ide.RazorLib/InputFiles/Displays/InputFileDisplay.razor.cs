@@ -203,7 +203,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
         else
         {
             TreeViewService.SetRoot(InputFileContent.TreeViewStateKey, adhocRootNode);
-            TreeViewService.SetActiveNode(InputFileContent.TreeViewStateKey, activeNode);
+            TreeViewService.SetActiveNode(InputFileContent.TreeViewStateKey, activeNode, true);
         }
 
         await pseudoRootNode.LoadChildListAsync();

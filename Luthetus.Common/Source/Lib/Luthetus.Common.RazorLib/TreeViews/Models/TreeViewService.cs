@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.States;
@@ -76,11 +76,15 @@ public class TreeViewService : ITreeViewService
         _dispatcher.Dispatch(addChildNodeAction);
     }
 
-    public void SetActiveNode(Key<TreeViewContainer> containerKey, TreeViewNoType? nextActiveNode)
+    public void SetActiveNode(
+		Key<TreeViewContainer> containerKey,
+		TreeViewNoType? nextActiveNode,
+		bool shouldClearSelectedNodes)
     {
         var setActiveNodeAction = new TreeViewState.SetActiveNodeAction(
             containerKey,
-            nextActiveNode);
+            nextActiveNode,
+			shouldClearSelectedNodes);
 
         _dispatcher.Dispatch(setActiveNodeAction);
     }

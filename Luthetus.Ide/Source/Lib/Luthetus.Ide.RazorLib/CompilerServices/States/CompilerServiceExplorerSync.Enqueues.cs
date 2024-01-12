@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
@@ -79,7 +79,8 @@ public partial class CompilerServiceExplorerSync
 
                     _treeViewService.SetActiveNode(
                         TreeViewCompilerServiceExplorerContentStateKey,
-                        rootNode);
+                        rootNode,
+						true);
                 }
 
                 Dispatcher.Dispatch(new NewAction(inCompilerServiceExplorerState =>

@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 
 namespace Luthetus.Common.RazorLib.TreeViews.States;
@@ -15,7 +15,7 @@ public partial record TreeViewState
         Key<TreeViewContainer> ContainerKey, TreeViewNoType ParentNode, TreeViewNoType ChildNode);
 
     public record ReRenderNodeAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType Node);
-    public record SetActiveNodeAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType? NextActiveNode);
+    public record SetActiveNodeAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType? NextActiveNode, bool ShouldClearSelectedNodes);
     public record AddSelectedNodeAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType SelectedNode);
     public record RemoveSelectedNodeAction(Key<TreeViewContainer> ContainerKey, Key<TreeViewNoType> NodeKey);
 

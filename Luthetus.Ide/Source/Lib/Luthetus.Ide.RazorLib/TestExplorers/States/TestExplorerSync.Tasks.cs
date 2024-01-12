@@ -129,7 +129,7 @@ public partial class TestExplorerSync
         else
         {
             _treeViewService.SetRoot(TreeViewTestExplorerKey, adhocRoot);
-            _treeViewService.SetActiveNode(TreeViewTestExplorerKey, firstNode);
+            _treeViewService.SetActiveNode(TreeViewTestExplorerKey, firstNode, true);
         }
 
 		_dispatcher.Dispatch(new WithAction(inState => inState with

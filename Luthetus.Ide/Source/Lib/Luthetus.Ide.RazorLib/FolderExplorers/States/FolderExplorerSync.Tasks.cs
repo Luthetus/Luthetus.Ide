@@ -49,7 +49,7 @@ public partial class FolderExplorerSync
         else
         {
             _treeViewService.SetRoot(TreeViewContentStateKey, rootNode);
-            _treeViewService.SetActiveNode(TreeViewContentStateKey, rootNode);
+            _treeViewService.SetActiveNode(TreeViewContentStateKey, rootNode, true);
         }
 
         Dispatcher.Dispatch(new WithAction(inFolderExplorerState => inFolderExplorerState with
