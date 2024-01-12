@@ -1,15 +1,71 @@
-﻿@using Luthetus.TextEditor.RazorLib.Rows.Models;
+﻿@using Luthetus.Common.RazorLib.Keyboards.Models;
+@using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
+@using Luthetus.TextEditor.RazorLib.Rows.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+@using Luthetus.TextEditor.RazorLib.Htmls.Models;
+@using System.Text;
 
 <div class="luth_te_text-editor-footer @TextEditorService.ThemeCssClassString">
     <div class="luth_te_text-editor-footer-listing">
         @{
             var model = RenderBatch.Model;
             var viewModel = RenderBatch.ViewModel;
+            var options = RenderBatch.Options;
 
             if (model is not null && viewModel is not null)
             {
+                if (options is not null && options.Keymap is TextEditorKeymapVim keymapVim)
+                {
+                    var activeVimMode = keymapVim.ActiveVimMode;
+                    var pendingSentenceList = keymapVim.VimSentence.PendingSentenceList;
+
+                    <div class="luth_te_text-editor-footer-entry">
+                        <div class="luth_te_text-editor-footer-name-value-pair">
+                            <div class="luth_te_text-editor-footer-name">
+                                Vim:
+                            </div>
+                            <div class="luth_te_text-editor-footer-value" title="Mode: @activeVimMode">
+                                @activeVimMode,&nbsp;
+                            </div>
+                        </div>
+
+                        <div class="luth_te_text-editor-footer-name-value-pair">
+                            <div class="luth_te_text-editor-footer-value">
+                                @{
+                                    var sentenceBuilder = new StringBuilder();
+
+                                    foreach (var vimToken in pendingSentenceList)
+                                    {
+                                        sentenceBuilder.Append(KeyboardKeyFacts.ConvertCodeToKey(
+                                            vimToken.KeymapArgument.Code));
+                                    }
+
+                                    var minAndMaxCharacters = 9;
+                                    for (int i = minAndMaxCharacters - sentenceBuilder.Length; i > 0; i--)
+                                    {
+                                        sentenceBuilder.Append(' ');
+                                    }
+
+                                    var sentence = sentenceBuilder.ToString();
+
+                                    if (sentence.Length > minAndMaxCharacters)
+                                    {
+                                        var elipsisString = "...";
+
+                                        sentence = sentence[..(minAndMaxCharacters - elipsisString.Length)];
+                                        sentence += elipsisString;
+                                    }
+
+                                    sentence = sentence.EscapeHtml();
+                                }
+
+                                @((MarkupString)('{' + sentence + '}'))
+                            </div>
+                        </div>
+                    </div>
+                }
+
                 if (!string.IsNullOrWhiteSpace(model.FileExtension))
                 {
                     <div class="luth_te_text-editor-footer-entry">

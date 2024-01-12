@@ -75,7 +75,7 @@ public static partial class TextEditorCommandVimFacts
         };
 
         public static TextEditorCommand GetVisualFactory(
-            TextEditorCommand textEditorCommandMotion,
+            TextEditorCommand innerCommand,
             string displayName)
         {
             return new TextEditorCommand(
@@ -83,6 +83,7 @@ public static partial class TextEditorCommandVimFacts
                 interfaceCommandArgs =>
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                    commandArgs.InnerCommand = innerCommand;
 
                     commandArgs.TextEditorService.Post(
                         nameof(GetVisualFactory),
@@ -94,13 +95,15 @@ public static partial class TextEditorCommandVimFacts
                 TextEditorEditFactory = interfaceCommandArgs =>
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                    commandArgs.InnerCommand = innerCommand;
+
                     return VisualFactory(commandArgs);
                 }
             };
         }
         
         public static TextEditorCommand GetVisualLineFactory(
-            TextEditorCommand textEditorCommandMotion,
+            TextEditorCommand innerCommand,
             string displayName)
         {
             return new TextEditorCommand(
@@ -108,6 +111,7 @@ public static partial class TextEditorCommandVimFacts
                 interfaceCommandArgs =>
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                    commandArgs.InnerCommand = innerCommand;
 
                     commandArgs.TextEditorService.Post(
                         nameof(GetVisualLineFactory),
@@ -119,6 +123,8 @@ public static partial class TextEditorCommandVimFacts
                 TextEditorEditFactory = interfaceCommandArgs =>
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                    commandArgs.InnerCommand = innerCommand;
+
                     return VisualLineFactory(commandArgs);
                 }
             };
