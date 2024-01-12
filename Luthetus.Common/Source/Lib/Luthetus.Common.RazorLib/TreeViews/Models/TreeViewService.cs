@@ -89,30 +89,6 @@ public class TreeViewService : ITreeViewService
         _dispatcher.Dispatch(setActiveNodeAction);
     }
 
-    public void AddSelectedNode(Key<TreeViewContainer> containerKey, TreeViewNoType nodeSelection)
-    {
-        var addSelectedNodeAction = new TreeViewState.AddSelectedNodeAction(
-            containerKey,
-            nodeSelection);
-
-        _dispatcher.Dispatch(addSelectedNodeAction);
-    }
-
-    public void RemoveSelectedNode(Key<TreeViewContainer> containerKey, Key<TreeViewNoType> nodeKey)
-    {
-        var removeSelectedNodeAction = new TreeViewState.RemoveSelectedNodeAction(
-            containerKey,
-            nodeKey);
-
-        _dispatcher.Dispatch(removeSelectedNodeAction);
-    }
-
-    public void ClearSelectedNodes(Key<TreeViewContainer> containerKey)
-    {
-        var clearSelectedNodeListAction = new TreeViewState.ClearSelectedNodeListAction(containerKey);
-        _dispatcher.Dispatch(clearSelectedNodeListAction);
-    }
-
     public void MoveLeft(Key<TreeViewContainer> containerKey, bool shiftKey)
     {
         var moveLeftAction = new TreeViewState.MoveLeftAction(containerKey, shiftKey);

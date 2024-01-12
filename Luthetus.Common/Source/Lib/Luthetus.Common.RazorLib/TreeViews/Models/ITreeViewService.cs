@@ -16,9 +16,6 @@ public interface ITreeViewService
     public void ReRenderNode(Key<TreeViewContainer> containerKey, TreeViewNoType node);
     public void AddChildNode(Key<TreeViewContainer> containerKey, TreeViewNoType parent, TreeViewNoType child);
     public void SetActiveNode(Key<TreeViewContainer> containerKey, TreeViewNoType? nextActiveNode, bool shouldClearSelectedNodes);
-    public void AddSelectedNode(Key<TreeViewContainer> containerKey, TreeViewNoType nodeSelection);
-    public void RemoveSelectedNode(Key<TreeViewContainer> containerKey, Key<TreeViewNoType> nodeKey);
-    public void ClearSelectedNodes(Key<TreeViewContainer> containerKey);
     public void MoveLeft(Key<TreeViewContainer> containerKey, bool shiftKey);
     public void MoveDown(Key<TreeViewContainer> containerKey, bool shiftKey);
     public void MoveUp(Key<TreeViewContainer> containerKey, bool shiftKey);
