@@ -11,6 +11,7 @@ public class VimSentence
     private readonly List<VimGrammarToken> _pendingSentenceList = new();
 
     public ImmutableArray<VimGrammarToken> PendingSentenceList => _pendingSentenceList.ToImmutableArray();
+    public ImmutableArray<VimGrammarToken> MostRecentSyntacticallyCompleteSentence { get; set; } = ImmutableArray<VimGrammarToken>.Empty;
 
     public bool TryLex(
         TextEditorKeymapVim textEditorKeymapVim,
@@ -41,6 +42,7 @@ public class VimSentence
         if (sentenceIsSyntacticallyComplete)
         {
             var sentenceSnapshot = PendingSentenceList;
+            MostRecentSyntacticallyCompleteSentence = sentenceSnapshot;
             _pendingSentenceList.Clear();
 
             return TryParseNextToken(

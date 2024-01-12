@@ -19,6 +19,11 @@
                 {
                     var activeVimMode = keymapVim.ActiveVimMode;
                     var pendingSentenceList = keymapVim.VimSentence.PendingSentenceList;
+                    var mostRecentSyntacticallyCompleteSentence = keymapVim.VimSentence.MostRecentSyntacticallyCompleteSentence;
+
+                    var sentenceToDisplay = pendingSentenceList.Length == 0
+                        ? mostRecentSyntacticallyCompleteSentence
+                        : pendingSentenceList;
 
                     <div class="luth_te_text-editor-footer-entry">
                         <div class="luth_te_text-editor-footer-name-value-pair">
@@ -35,7 +40,7 @@
                                 @{
                                     var sentenceBuilder = new StringBuilder();
 
-                                    foreach (var vimToken in pendingSentenceList)
+                                    foreach (var vimToken in sentenceToDisplay)
                                     {
                                         sentenceBuilder.Append(KeyboardKeyFacts.ConvertCodeToKey(
                                             vimToken.KeymapArgument.Code));
