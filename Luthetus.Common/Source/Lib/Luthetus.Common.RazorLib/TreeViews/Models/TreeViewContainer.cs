@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.TreeViews.Models;
@@ -30,7 +30,7 @@ public record TreeViewContainer
     /// <summary>
     /// The <see cref="ActiveNode"/> is the last or default entry in <see cref="SelectedNodeList"/>
     /// </summary>
-    public TreeViewNoType? ActiveNode => SelectedNodeList.LastOrDefault();
+    public TreeViewNoType? ActiveNode => SelectedNodeList.FirstOrDefault();
     public ImmutableList<TreeViewNoType> SelectedNodeList { get; init; }
     public Guid StateId { get; init; } = Guid.NewGuid();
 }
