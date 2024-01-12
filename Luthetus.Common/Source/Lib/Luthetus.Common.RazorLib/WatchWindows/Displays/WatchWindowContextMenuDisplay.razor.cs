@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
@@ -47,7 +47,7 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
                             await treeViewCommandArgs.TargetNode.LoadChildListAsync();
 
                             TreeViewService.ReRenderNode(
-                                WatchWindowDisplay.TreeViewStateKey,
+                                WatchWindowDisplay.TreeViewContainerKey,
                                 treeViewCommandArgs.TargetNode);
 
                             await InvokeAsync(StateHasChanged);

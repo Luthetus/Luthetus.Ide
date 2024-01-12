@@ -30,7 +30,7 @@ public partial class WatchWindowDisplay : FluxorComponent
     [Parameter, EditorRequired]
     public WatchWindowObject WatchWindowObject { get; set; } = null!;
 
-    public static Key<TreeViewContainer> TreeViewStateKey { get; } = Key<TreeViewContainer>.NewKey();
+    public static Key<TreeViewContainer> TreeViewContainerKey { get; } = Key<TreeViewContainer>.NewKey();
     public static Key<DropdownRecord> WatchWindowContextMenuDropdownKey { get; } = Key<DropdownRecord>.NewKey();
 
     private TreeViewCommandArgs? _mostRecentTreeViewContextMenuCommandArgs;
@@ -49,7 +49,7 @@ public partial class WatchWindowDisplay : FluxorComponent
     {
         if (firstRender)
         {
-            if (!TreeViewService.TryGetTreeViewContainer(TreeViewStateKey, out var treeViewState))
+            if (!TreeViewService.TryGetTreeViewContainer(TreeViewContainerKey, out var treeViewContainer))
             {
                 var rootNode = new TreeViewReflection(
                     WatchWindowObject,
@@ -58,7 +58,7 @@ public partial class WatchWindowDisplay : FluxorComponent
                     LuthetusCommonComponentRenderers);
 
                 TreeViewService.RegisterTreeViewContainer(new TreeViewContainer(
-                    TreeViewStateKey,
+                    TreeViewContainerKey,
                     rootNode,
                     new TreeViewNoType[] { rootNode }.ToImmutableList()));
             }
@@ -87,7 +87,7 @@ public partial class WatchWindowDisplay : FluxorComponent
         {
             _disposed = true;
 
-            TreeViewService.DisposeTreeViewContainer(TreeViewStateKey);
+            TreeViewService.DisposeTreeViewContainer(TreeViewContainerKey);
         }
 
         base.Dispose(disposing);

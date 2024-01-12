@@ -86,7 +86,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     /// A presumption that any mutations to the HashSet are done
     /// via the UI thread. Therefore concurrency is not an issue.
     /// </summary>
-    private List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)> _searchMatchTuples = new();
+    private List<(Key<TreeViewContainer> treeViewContainerKey, TreeViewAbsolutePath treeViewAbsolutePath)> _searchMatchTuples = new();
 
     public ElementReference? SearchElementReference => _inputFileTopNavBarComponent?.SearchElementReference;
 
@@ -191,10 +191,10 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
         var activeNode = adhocRootNode.ChildList.FirstOrDefault();
 
-        if (!TreeViewService.TryGetTreeViewContainer(InputFileContent.TreeViewStateKey, out var treeViewState))
+        if (!TreeViewService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
         {
             TreeViewService.RegisterTreeViewContainer(new TreeViewContainer(
-                InputFileContent.TreeViewStateKey,
+                InputFileContent.TreeViewContainerKey,
                 adhocRootNode,
                 activeNode is null
                     ? ImmutableList<TreeViewNoType>.Empty
@@ -202,8 +202,8 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
         }
         else
         {
-            TreeViewService.SetRoot(InputFileContent.TreeViewStateKey, adhocRootNode);
-            TreeViewService.SetActiveNode(InputFileContent.TreeViewStateKey, activeNode, true);
+            TreeViewService.SetRoot(InputFileContent.TreeViewContainerKey, adhocRootNode);
+            TreeViewService.SetActiveNode(InputFileContent.TreeViewContainerKey, activeNode, true);
         }
 
         await pseudoRootNode.LoadChildListAsync();

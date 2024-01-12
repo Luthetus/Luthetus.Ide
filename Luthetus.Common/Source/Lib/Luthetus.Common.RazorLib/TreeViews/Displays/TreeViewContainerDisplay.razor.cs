@@ -29,7 +29,7 @@ public partial class TreeViewContainerDisplay : FluxorComponent
     private IJSRuntime JsRuntime { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public Key<TreeViewContainer> TreeViewStateKey { get; set; } = Key<TreeViewContainer>.Empty;
+    public Key<TreeViewContainer> TreeViewContainerKey { get; set; } = Key<TreeViewContainer>.Empty;
     [Parameter, EditorRequired]
     public TreeViewMouseEventHandler TreeViewMouseEventHandler { get; set; } = null!;
     [Parameter, EditorRequired]
@@ -54,8 +54,8 @@ public partial class TreeViewContainerDisplay : FluxorComponent
     protected override void OnInitialized()
     {
         TreeViewStateSelection
-            .Select(treeViewState => treeViewState.ContainerList
-                .FirstOrDefault(x => x.Key == TreeViewStateKey));
+            .Select(treeViewContainer => treeViewContainer.ContainerList
+                .FirstOrDefault(x => x.Key == TreeViewContainerKey));
 
         base.OnInitialized();
     }
@@ -67,14 +67,14 @@ public partial class TreeViewContainerDisplay : FluxorComponent
 
     private void HandleTreeViewOnKeyDownWithPreventScroll(
         KeyboardEventArgs keyboardEventArgs,
-        TreeViewContainer? treeViewState)
+        TreeViewContainer? treeViewContainer)
     {
-        if (treeViewState is null)
+        if (treeViewContainer is null)
             return;
 
         var treeViewCommandArgs = new TreeViewCommandArgs(
             TreeViewService,
-            treeViewState,
+            treeViewContainer,
             null,
             async () =>
             {
@@ -105,10 +105,10 @@ public partial class TreeViewContainerDisplay : FluxorComponent
 
     private async Task HandleTreeViewOnContextMenu(
         MouseEventArgs? mouseEventArgs,
-        TreeViewContainer? treeViewState,
+        TreeViewContainer? treeViewContainer,
         TreeViewNoType? treeViewMouseWasOver)
     {
-        if (treeViewState is null || mouseEventArgs is null)
+        if (treeViewContainer is null || mouseEventArgs is null)
             return;
 
         ContextMenuFixedPosition contextMenuFixedPosition;
@@ -116,17 +116,17 @@ public partial class TreeViewContainerDisplay : FluxorComponent
 
         if (mouseEventArgs.Button == -1)
         {
-            if (treeViewState.ActiveNode is null)
+            if (treeViewContainer.ActiveNode is null)
                 return;
 
             // If dedicated context menu button or shift + F10 was pressed as opposed to
             // a mouse RightClick then use JavaScript to determine the ContextMenu position.
             contextMenuFixedPosition = await JsRuntime.InvokeAsync<ContextMenuFixedPosition>(
                 "luthetusCommon.getTreeViewContextMenuFixedPosition",
-                TreeViewService.GetTreeContainerElementId(treeViewState.Key),
-                TreeViewService.GetNodeElementId(treeViewState.ActiveNode));
+                TreeViewService.GetTreeContainerElementId(treeViewContainer.Key),
+                TreeViewService.GetNodeElementId(treeViewContainer.ActiveNode));
 
-            contextMenuTargetTreeViewNoType = treeViewState.ActiveNode;
+            contextMenuTargetTreeViewNoType = treeViewContainer.ActiveNode;
         }
         else
         {
@@ -149,7 +149,7 @@ public partial class TreeViewContainerDisplay : FluxorComponent
 
         _treeViewContextMenuCommandArgs = new TreeViewCommandArgs(
             TreeViewService,
-            treeViewState,
+            treeViewContainer,
             contextMenuTargetTreeViewNoType,
             async () =>
             {
@@ -186,9 +186,9 @@ public partial class TreeViewContainerDisplay : FluxorComponent
         await InvokeAsync(StateHasChanged);
     }
 
-    private string GetHasActiveNodeCssClass(TreeViewContainer? treeViewState)
+    private string GetHasActiveNodeCssClass(TreeViewContainer? treeViewContainer)
     {
-        if (treeViewState is null || treeViewState.ActiveNode is null)
+        if (treeViewContainer?.ActiveNode is null)
             return string.Empty;
 
         return "luth_active";

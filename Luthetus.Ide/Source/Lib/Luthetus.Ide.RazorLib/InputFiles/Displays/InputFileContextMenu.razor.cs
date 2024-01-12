@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -133,8 +133,8 @@ public partial class InputFileContextMenu : ComponentBase
 
         await treeViewModel.LoadChildListAsync();
 
-        TreeViewService.ReRenderNode(InputFileSidebar.TreeViewStateKey, treeViewModel);
-        TreeViewService.MoveUp(InputFileSidebar.TreeViewStateKey, false);
+        TreeViewService.ReRenderNode(InputFileSidebar.TreeViewContainerKey, treeViewModel);
+        TreeViewService.MoveUp(InputFileSidebar.TreeViewContainerKey, false);
     }
 
     public static string GetContextMenuCssStyleString(

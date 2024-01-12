@@ -1,4 +1,4 @@
-﻿@using Luthetus.Common.RazorLib.Dimensions;
+@using Luthetus.Common.RazorLib.Dimensions;
 @using Luthetus.Common.RazorLib.Dimensions.Models;
 
 <div class="luth_tree-view">
@@ -16,7 +16,7 @@
              @onmousedown="HandleOnMouseDown"
              @oncontextmenu:preventDefault="true"
              @oncontextmenu:stopPropagation="true"
-             @oncontextmenu="e => ManuallyPropagateOnContextMenu(e, TreeViewState, TreeViewNoType)"
+             @oncontextmenu="e => ManuallyPropagateOnContextMenu(e, TreeViewContainer, TreeViewNoType)"
              @onkeydown="e => HandleOnKeyDown(e)"
              @ref="_treeViewTitleElementReference">
             
