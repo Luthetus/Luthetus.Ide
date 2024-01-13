@@ -479,9 +479,78 @@ public partial record TreeViewState
 			// ...and DRY the code after. (2024-01-13)
 			if (setActiveNodeAction.ShouldSelectNodesBetweenCurrentAndNextActiveNode)
 			{
-				// Avoid "Use of unassigned local variable 'outContainer'"
-				// while implementing code.
-				outContainer = inContainer;
+				// TODO: This code block contains the code from 'ReduceMoveDownAction(...)'...
+				// ...and should be DRY'd. (2024-01-13)
+				var outContainer = inContainer;
+
+				// Step 1: Determine the selection's direction.
+				//
+				// That is to say, on the UI, which node appears
+				// vertically closer to the root node.
+				//
+				// Process: -Discover the closest common ancestor node.
+				//          -Then backtrack one node depth.
+				//          -One now has the two nodes at which
+				//              they differ.
+				//	      -Compare the 'TreeViewNoType.IndexAmongSiblings'
+				//          -Next.IndexAmongSiblings - Current.IndexAmongSiblings
+				//          	if (difference > 0)
+				//              	then: direction is towards end
+				//          	if (difference < 0)
+				//              	then: direction is towards home (AKA root)
+				{
+					
+				}
+	
+	            if (outContainer.ActiveNode.IsExpanded &&
+	                outContainer.ActiveNode.ChildList.Any())
+	            {
+	                var nextActiveNode = outContainer.ActiveNode.ChildList[0];
+	
+	                var setActiveNodeAction = new SetActiveNodeAction(
+	                    outContainer.Key,
+	                    nextActiveNode,
+						shouldClearSelectedNodes,
+						false);
+	
+	                outContainer = PerformSetActiveNode(
+	                    outContainer,
+	                    setActiveNodeAction);
+	            }
+	            else
+	            {
+	                var target = outContainer.ActiveNode;
+	
+	                while (target.Parent is not null &&
+	                       target.IndexAmongSiblings == target.Parent.ChildList.Count - 1)
+	                {
+	                    target = target.Parent;
+	                }
+	
+	                if (target.Parent is null ||
+	                    target.IndexAmongSiblings == target.Parent.ChildList.Count - 1)
+	                {
+	                    return inState;
+	                }
+	
+	                var nextActiveNode = target.Parent.ChildList[
+	                    target.IndexAmongSiblings +
+	                    1];
+	
+	                var setActiveNodeAction = new SetActiveNodeAction(
+	                    outContainer.Key,
+	                    nextActiveNode,
+						shouldClearSelectedNodes,
+						false);
+	
+	                outContainer = PerformSetActiveNode(
+	                    outContainer,
+	                    setActiveNodeAction);
+	            }
+	
+	            var outContainerList = inState.ContainerList.Replace(inContainer, outContainer);
+	
+	            return inState with { ContainerList = outContainerList };
 			}
 			else
 			{
