@@ -79,65 +79,65 @@ public class TreeViewService : ITreeViewService
     public void SetActiveNode(
 		Key<TreeViewContainer> containerKey,
 		TreeViewNoType? nextActiveNode,
-		bool shouldClearSelectedNodes,
-		bool shouldSelectNodesBetweenCurrentAndNextActiveNode)
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode)
     {
         var setActiveNodeAction = new TreeViewState.SetActiveNodeAction(
             containerKey,
             nextActiveNode,
-			shouldClearSelectedNodes,
-			shouldSelectNodesBetweenCurrentAndNextActiveNode);
+			addSelectedNodes,
+			selectNodesBetweenCurrentAndNextActiveNode);
 
         _dispatcher.Dispatch(setActiveNodeAction);
     }
 
     public void MoveLeft(
 		Key<TreeViewContainer> containerKey,
-		bool shouldClearSelectedNodes,
-		bool shouldSelectNodesBetweenCurrentAndNextActiveNode)
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode)
     {
         var moveLeftAction = new TreeViewState.MoveLeftAction(
 			containerKey,
-			shouldClearSelectedNodes,
-			shouldSelectNodesBetweenCurrentAndNextActiveNode);
+			addSelectedNodes,
+			selectNodesBetweenCurrentAndNextActiveNode);
         _dispatcher.Dispatch(moveLeftAction);
     }
 
     public void MoveDown(
 		Key<TreeViewContainer> containerKey,
-		bool shouldClearSelectedNodes,
-		bool shouldSelectNodesBetweenCurrentAndNextActiveNode)
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode)
     {
         var moveDownAction = new TreeViewState.MoveDownAction(
 			containerKey,
-			shouldClearSelectedNodes,
-			shouldSelectNodesBetweenCurrentAndNextActiveNode);
+			addSelectedNodes,
+			selectNodesBetweenCurrentAndNextActiveNode);
 
         _dispatcher.Dispatch(moveDownAction);
     }
 
     public void MoveUp(
 		Key<TreeViewContainer> containerKey,
-		bool shouldClearSelectedNodes,
-		bool shouldSelectNodesBetweenCurrentAndNextActiveNode)
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode)
     {
         var moveUpAction = new TreeViewState.MoveUpAction(
 			containerKey,
-			shouldClearSelectedNodes,
-			shouldSelectNodesBetweenCurrentAndNextActiveNode);
+			addSelectedNodes,
+			selectNodesBetweenCurrentAndNextActiveNode);
 
         _dispatcher.Dispatch(moveUpAction);
     }
 
     public void MoveRight(
 		Key<TreeViewContainer> containerKey,
-		bool shouldClearSelectedNodes,
-		bool shouldSelectNodesBetweenCurrentAndNextActiveNode)
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode)
     {
         var moveRightAction = new TreeViewState.MoveRightAction(
             containerKey,
-			shouldClearSelectedNodes,
-			shouldSelectNodesBetweenCurrentAndNextActiveNode,
+			addSelectedNodes,
+			selectNodesBetweenCurrentAndNextActiveNode,
             treeViewNoType =>
             {
                 var backgroundTask = new BackgroundTask(
@@ -171,26 +171,26 @@ public class TreeViewService : ITreeViewService
 
     public void MoveHome(
 		Key<TreeViewContainer> containerKey,
-		bool shouldClearSelectedNodes,
-		bool shouldSelectNodesBetweenCurrentAndNextActiveNode)
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode)
     {
         var moveHomeAction = new TreeViewState.MoveHomeAction(
 			containerKey,
-			shouldClearSelectedNodes,
-			shouldSelectNodesBetweenCurrentAndNextActiveNode);
+			addSelectedNodes,
+			selectNodesBetweenCurrentAndNextActiveNode);
 
         _dispatcher.Dispatch(moveHomeAction);
     }
 
     public void MoveEnd(
 		Key<TreeViewContainer> containerKey,
-		bool shouldClearSelectedNodes,
-		bool shouldSelectNodesBetweenCurrentAndNextActiveNode)
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode)
     {
         var moveEndAction = new TreeViewState.MoveEndAction(
 			containerKey,
-			shouldClearSelectedNodes,
-			shouldSelectNodesBetweenCurrentAndNextActiveNode);
+			addSelectedNodes,
+			selectNodesBetweenCurrentAndNextActiveNode);
 
         _dispatcher.Dispatch(moveEndAction);
     }

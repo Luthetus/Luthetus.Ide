@@ -19,39 +19,39 @@ public partial record TreeViewState
 	public record SetActiveNodeAction(
 		Key<TreeViewContainer> ContainerKey,
 		TreeViewNoType? NextActiveNode,
-		bool ShouldClearSelectedNodes,
-		bool ShouldSelectNodesBetweenCurrentAndNextActiveNode);
+		bool AddSelectedNodes,
+		bool SelectNodesBetweenCurrentAndNextActiveNode);
 
     public record MoveLeftAction(
 		Key<TreeViewContainer> ContainerKey,
-		bool ShouldClearSelectedNodes,
-		bool ShouldSelectNodesBetweenCurrentAndNextActiveNode);
+		bool AddSelectedNodes,
+		bool SelectNodesBetweenCurrentAndNextActiveNode);
 
     public record MoveDownAction(
 		Key<TreeViewContainer> ContainerKey,
-		bool ShouldClearSelectedNodes,
-		bool ShouldSelectNodesBetweenCurrentAndNextActiveNode);
+		bool AddSelectedNodes,
+		bool SelectNodesBetweenCurrentAndNextActiveNode);
 
     public record MoveUpAction(
 		Key<TreeViewContainer> ContainerKey,
-		bool ShouldClearSelectedNodes,
-		bool ShouldSelectNodesBetweenCurrentAndNextActiveNode);
+		bool AddSelectedNodes,
+		bool SelectNodesBetweenCurrentAndNextActiveNode);
 
     public record MoveRightAction(
         Key<TreeViewContainer> ContainerKey,
-		bool ShouldClearSelectedNodes,
-		bool ShouldSelectNodesBetweenCurrentAndNextActiveNode,
+		bool AddSelectedNodes,
+		bool SelectNodesBetweenCurrentAndNextActiveNode,
 		Action<TreeViewNoType> LoadChildListAction);
 
     public record MoveHomeAction(
 		Key<TreeViewContainer> ContainerKey,
-		bool ShouldClearSelectedNodes,
-		bool ShouldSelectNodesBetweenCurrentAndNextActiveNode);
+		bool AddSelectedNodes,
+		bool SelectNodesBetweenCurrentAndNextActiveNode);
 
     public record MoveEndAction(
 		Key<TreeViewContainer> ContainerKey,
-		bool ShouldClearSelectedNodes,
-		bool ShouldSelectNodesBetweenCurrentAndNextActiveNode);
+		bool AddSelectedNodes,
+		bool SelectNodesBetweenCurrentAndNextActiveNode);
 
     public record LoadChildListAction(
 		Key<TreeViewContainer> ContainerKey,

@@ -51,7 +51,7 @@ public class TreeViewMouseEventHandler
         TreeViewService.SetActiveNode(
             commandArgs.TreeViewContainer.Key,
             commandArgs.TargetNode,
-			!commandArgs.MouseEventArgs.CtrlKey && !commandArgs.MouseEventArgs.ShiftKey,
+			commandArgs.MouseEventArgs.CtrlKey || commandArgs.MouseEventArgs.ShiftKey,
 			commandArgs.MouseEventArgs.ShiftKey);
 
         // Cases where one should not clear the selected nodes
