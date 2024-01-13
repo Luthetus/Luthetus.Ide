@@ -117,55 +117,11 @@ public partial record TreeViewState
             if (inContainer is null)
                 return inState;
 
-            if (inContainer.ActiveNode is not null)
-                PerformMarkForRerender(inContainer.ActiveNode);
+			var outContainer = PerformSetActiveNode(inContainer, setActiveNodeAction);
 
-            if (setActiveNodeAction.NextActiveNode is not null)
-                PerformMarkForRerender(setActiveNodeAction.NextActiveNode);
-
-			ImmutableList<TreeViewContainer> outContainerList;
-
-			var inSelectedNodeList = inContainer.SelectedNodeList;
-			var selectedNodeListWasCleared = false;
-
-			if (setActiveNodeAction.NextActiveNode is null)
-			{
-				selectedNodeListWasCleared = true;
-
-				outContainerList = inState.ContainerList.Replace(inContainer, inContainer with
-	            {
-	                SelectedNodeList = ImmutableList<TreeViewNoType>.Empty
-	            });
-			}
-			else if (setActiveNodeAction.ShouldClearSelectedNodes)
-			{
-				selectedNodeListWasCleared = true;
-
-				outContainerList = inState.ContainerList.Replace(inContainer, inContainer with
-	            {
-	                SelectedNodeList = new TreeViewNoType[] 
-					{
-						setActiveNodeAction.NextActiveNode
-					}.ToImmutableList()
-	            });
-			}
-			else
-			{
-				outContainerList = inState.ContainerList.Replace(inContainer, inContainer with
-	            {
-	                SelectedNodeList = inContainer.SelectedNodeList.Insert(
-						0,
-						setActiveNodeAction.NextActiveNode)
-	            });
-			}
-			
-			if (selectedNodeListWasCleared)
-			{
-				foreach (var node in inSelectedNodeList)
-				{
-					PerformMarkForRerender(node);
-				}
-			}
+			var outContainerList = inState.ContainerList.Replace(
+				inContainer,
+				outContainer);
 
             return inState with { ContainerList = outContainerList };
         }
@@ -184,8 +140,6 @@ public partial record TreeViewState
 
             if (moveLeftAction.ShiftKey)
                 return inState;
-
-            outContainer = PerformClearSelectedNodes(outContainer);
 
             if (outContainer.ActiveNode is null)
                 return inState;
@@ -209,7 +163,8 @@ public partial record TreeViewState
                 var setActiveNodeAction = new SetActiveNodeAction(
                     outContainer.Key,
                     outContainer.ActiveNode.Parent,
-					true);
+					true,
+					false);
 
                 outContainer = PerformSetActiveNode(
                     outContainer,
@@ -247,7 +202,8 @@ public partial record TreeViewState
                 var setActiveNodeAction = new SetActiveNodeAction(
                     outContainer.Key,
                     nextActiveNode,
-					shouldClearSelectedNodes);
+					shouldClearSelectedNodes,
+					false);
 
                 outContainer = PerformSetActiveNode(
                     outContainer,
@@ -276,7 +232,8 @@ public partial record TreeViewState
                 var setActiveNodeAction = new SetActiveNodeAction(
                     outContainer.Key,
                     nextActiveNode,
-					shouldClearSelectedNodes);
+					shouldClearSelectedNodes,
+					false);
 
                 outContainer = PerformSetActiveNode(
                     outContainer,
@@ -315,7 +272,8 @@ public partial record TreeViewState
                 var setActiveNodeAction = new SetActiveNodeAction(
                     refContainer.Key,
                     refContainer.ActiveNode!.Parent,
-					shouldClearSelectedNodes);
+					shouldClearSelectedNodes,
+					false);
 
                 refContainer = PerformSetActiveNode(
                     refContainer,
@@ -342,7 +300,8 @@ public partial record TreeViewState
                 var setActiveNodeAction = new SetActiveNodeAction(
                     refContainer.Key,
                     target,
-					shouldClearSelectedNodes);
+					shouldClearSelectedNodes,
+					false);
 
                 refContainer = PerformSetActiveNode(
                     refContainer,
@@ -373,8 +332,6 @@ public partial record TreeViewState
             if (moveRightAction.ShiftKey)
                 return inState;
 
-            outContainer = PerformClearSelectedNodes(outContainer);
-
             if (outContainer.ActiveNode is null)
                 return inState;
 
@@ -385,7 +342,8 @@ public partial record TreeViewState
                     var setActiveNodeAction = new SetActiveNodeAction(
                         outContainer.Key,
                         outContainer.ActiveNode.ChildList[0],
-						true);
+						true,
+						false);
 
                     outContainer = PerformSetActiveNode(
                         outContainer,
@@ -439,7 +397,8 @@ public partial record TreeViewState
             var setActiveNodeAction = new SetActiveNodeAction(
                 outContainer.Key,
                 target,
-				shouldClearSelectedNodes);
+				shouldClearSelectedNodes,
+				false);
 
             outContainer = PerformSetActiveNode(
                 outContainer,
@@ -477,7 +436,8 @@ public partial record TreeViewState
             var setActiveNodeAction = new SetActiveNodeAction(
                 outContainer.Key,
                 target,
-				shouldClearSelectedNodes);
+				shouldClearSelectedNodes,
+				false);
 
             outContainer = PerformSetActiveNode(
                 outContainer,
@@ -499,41 +459,73 @@ public partial record TreeViewState
             }
         }
 
-        private static TreeViewContainer PerformSetActiveNode(
-            TreeViewContainer inContainer, SetActiveNodeAction setActiveNodeAction)
-        {
-            if (inContainer.ActiveNode is not null)
+		private static TreeViewContainer PerformSetActiveNode(
+			TreeViewContainer inContainer,
+			SetActiveNodeAction setActiveNodeAction)
+		{
+			if (inContainer.ActiveNode is not null)
                 PerformMarkForRerender(inContainer.ActiveNode);
 
             if (setActiveNodeAction.NextActiveNode is not null)
                 PerformMarkForRerender(setActiveNodeAction.NextActiveNode);
 
-            return inContainer with
-            {
-                SelectedNodeList = setActiveNodeAction.NextActiveNode is null
-                    ? ImmutableList<TreeViewNoType>.Empty
-                    : new TreeViewNoType[] { setActiveNodeAction.NextActiveNode }.ToImmutableList()
-            };
-        }
+			var inSelectedNodeList = inContainer.SelectedNodeList;
+			var selectedNodeListWasCleared = false;
 
-        private static TreeViewContainer PerformClearSelectedNodes(TreeViewContainer inContainer)
-        {
-            if (!inContainer.SelectedNodeList.Any())
-                return inContainer;
+			TreeViewContainer outContainer;
 
-            foreach (var node in inContainer.SelectedNodeList)
-            {
-                PerformMarkForRerender(node);
-            }
+			// TODO: I'm adding multi-select. I'd like to single out the...
+			// ...ShouldSelectNodesBetweenCurrentAndNextActiveNode case for now...
+			// ...and DRY the code after. (2024-01-13)
+			if (setActiveNodeAction.ShouldSelectNodesBetweenCurrentAndNextActiveNode)
+			{
+				// Avoid "Use of unassigned local variable 'outContainer'"
+				// while implementing code.
+				outContainer = inContainer;
+			}
+			else
+			{
+				if (setActiveNodeAction.NextActiveNode is null)
+				{
+					selectedNodeListWasCleared = true;
+	
+					outContainer = inContainer with
+		            {
+		                SelectedNodeList = ImmutableList<TreeViewNoType>.Empty
+		            };
+				}
+				else if (setActiveNodeAction.ShouldClearSelectedNodes)
+				{
+					selectedNodeListWasCleared = true;
+	
+					outContainer = inContainer with
+		            {
+		                SelectedNodeList = new TreeViewNoType[] 
+						{
+							setActiveNodeAction.NextActiveNode
+						}.ToImmutableList()
+		            };
+				}
+				else
+				{
+					outContainer = inContainer with
+		            {
+		                SelectedNodeList = inContainer.SelectedNodeList.Insert(
+							0,
+							setActiveNodeAction.NextActiveNode)
+		            };
+				}
+			}
+			
+			if (selectedNodeListWasCleared)
+			{
+				foreach (var node in inSelectedNodeList)
+				{
+					PerformMarkForRerender(node);
+				}
+			}
 
-            var outSelectedNodeList = inContainer.ActiveNode is null
-                ? ImmutableList<TreeViewNoType>.Empty
-                : new TreeViewNoType[] { inContainer.ActiveNode }.ToImmutableList();
-
-            return inContainer with
-            {
-                SelectedNodeList = outSelectedNodeList
-            };
-        }
+            return outContainer;
+		}
     }
 }

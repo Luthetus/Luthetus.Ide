@@ -15,7 +15,12 @@ public partial record TreeViewState
         Key<TreeViewContainer> ContainerKey, TreeViewNoType ParentNode, TreeViewNoType ChildNode);
 
     public record ReRenderNodeAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType Node);
-    public record SetActiveNodeAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType? NextActiveNode, bool ShouldClearSelectedNodes);
+    
+	public record SetActiveNodeAction(
+		Key<TreeViewContainer> ContainerKey,
+		TreeViewNoType? NextActiveNode,
+		bool ShouldClearSelectedNodes,
+		bool ShouldSelectNodesBetweenCurrentAndNextActiveNode);
 
     public record MoveLeftAction(Key<TreeViewContainer> ContainerKey, bool ShiftKey);
     public record MoveDownAction(Key<TreeViewContainer> ContainerKey, bool ShiftKey);

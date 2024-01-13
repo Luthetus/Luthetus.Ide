@@ -191,7 +191,12 @@ public partial class DotNetSolutionSync
         else
         {
             _treeViewService.SetRoot(TreeViewSolutionExplorerStateKey, rootNode);
-            _treeViewService.SetActiveNode(TreeViewSolutionExplorerStateKey, rootNode, true);
+
+            _treeViewService.SetActiveNode(
+				TreeViewSolutionExplorerStateKey,
+				rootNode,
+				true,
+				false);
         }
 
         if (dotNetSolutionModel is null)

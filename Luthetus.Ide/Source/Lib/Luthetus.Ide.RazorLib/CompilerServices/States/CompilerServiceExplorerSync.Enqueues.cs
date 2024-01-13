@@ -80,7 +80,8 @@ public partial class CompilerServiceExplorerSync
                     _treeViewService.SetActiveNode(
                         TreeViewCompilerServiceExplorerContentStateKey,
                         rootNode,
-						true);
+						true,
+						false);
                 }
 
                 Dispatcher.Dispatch(new NewAction(inCompilerServiceExplorerState =>

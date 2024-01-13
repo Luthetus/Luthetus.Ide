@@ -79,12 +79,14 @@ public class TreeViewService : ITreeViewService
     public void SetActiveNode(
 		Key<TreeViewContainer> containerKey,
 		TreeViewNoType? nextActiveNode,
-		bool shouldClearSelectedNodes)
+		bool shouldClearSelectedNodes,
+		bool shouldSelectNodesBetweenCurrentAndNextActiveNode)
     {
         var setActiveNodeAction = new TreeViewState.SetActiveNodeAction(
             containerKey,
             nextActiveNode,
-			shouldClearSelectedNodes);
+			shouldClearSelectedNodes,
+			shouldSelectNodesBetweenCurrentAndNextActiveNode);
 
         _dispatcher.Dispatch(setActiveNodeAction);
     }
