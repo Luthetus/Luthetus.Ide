@@ -20,7 +20,6 @@ public partial record TreeViewState
                 return inState;
 
             var outContainerList = inState.ContainerList.Add(registerContainerAction.Container);
-
             return inState with { ContainerList = outContainerList };
         }
 
@@ -35,7 +34,6 @@ public partial record TreeViewState
                 return inState;
 
             var outContainerList = inState.ContainerList.Remove(inContainer);
-
             return inState with { ContainerList = outContainerList };
         }
 
@@ -56,7 +54,6 @@ public partial record TreeViewState
             };
 
             var outContainerList = inState.ContainerList.Replace(inContainer, outContainer);
-
             return inState with { ContainerList = outContainerList };
         }
 
@@ -98,12 +95,9 @@ public partial record TreeViewState
             if (inContainer is null)
                 return inState;
 
-            PerformMarkForRerender(reRenderNodeAction.Node);
-
-            var outContainer = inContainer with { StateId = Guid.NewGuid() };
+            var outContainer = PerformReRenderNode(inContainer, reRenderNodeAction);
 
             var outContainerList = inState.ContainerList.Replace(inContainer, outContainer);
-
             return inState with { ContainerList = outContainerList };
         }
 
@@ -136,40 +130,7 @@ public partial record TreeViewState
             if (inContainer is null || inContainer.ActiveNode is null)
                 return inState;
 
-            var outContainer = inContainer;
-
-            if (moveLeftAction.ShiftKey)
-                return inState;
-
-            if (outContainer.ActiveNode is null)
-                return inState;
-
-            if (outContainer.ActiveNode.IsExpanded &&
-                outContainer.ActiveNode.IsExpandable)
-            {
-                outContainer.ActiveNode.IsExpanded = false;
-
-                var reRenderNodeAction = new ReRenderNodeAction(
-                    outContainer.Key,
-                    outContainer.ActiveNode);
-
-                return ReduceReRenderNodeAction(
-                    inState,
-                    reRenderNodeAction);
-            }
-
-            if (outContainer.ActiveNode.Parent is not null)
-            {
-                var setActiveNodeAction = new SetActiveNodeAction(
-                    outContainer.Key,
-                    outContainer.ActiveNode.Parent,
-					true,
-					false);
-
-                outContainer = PerformSetActiveNode(
-                    outContainer,
-                    setActiveNodeAction);
-            }
+            var outContainer = PerformMoveLeft(inContainer, moveLeftAction);
 
             var outContainerList = inState.ContainerList.Replace(
                 inContainer,
@@ -188,60 +149,9 @@ public partial record TreeViewState
             if (inContainer is null || inContainer.ActiveNode is null)
                 return inState;
 
-            var outContainer = inContainer;
-			var shouldClearSelectedNodes = false;
-
-            if (!moveDownAction.ShiftKey)
-				shouldClearSelectedNodes = true;
-
-            if (outContainer.ActiveNode.IsExpanded &&
-                outContainer.ActiveNode.ChildList.Any())
-            {
-                var nextActiveNode = outContainer.ActiveNode.ChildList[0];
-
-                var setActiveNodeAction = new SetActiveNodeAction(
-                    outContainer.Key,
-                    nextActiveNode,
-					shouldClearSelectedNodes,
-					false);
-
-                outContainer = PerformSetActiveNode(
-                    outContainer,
-                    setActiveNodeAction);
-            }
-            else
-            {
-                var target = outContainer.ActiveNode;
-
-                while (target.Parent is not null &&
-                       target.IndexAmongSiblings == target.Parent.ChildList.Count - 1)
-                {
-                    target = target.Parent;
-                }
-
-                if (target.Parent is null ||
-                    target.IndexAmongSiblings == target.Parent.ChildList.Count - 1)
-                {
-                    return inState;
-                }
-
-                var nextActiveNode = target.Parent.ChildList[
-                    target.IndexAmongSiblings +
-                    1];
-
-                var setActiveNodeAction = new SetActiveNodeAction(
-                    outContainer.Key,
-                    nextActiveNode,
-					shouldClearSelectedNodes,
-					false);
-
-                outContainer = PerformSetActiveNode(
-                    outContainer,
-                    setActiveNodeAction);
-            }
+            var outContainer = PerformMoveDown(inContainer, moveDownAction);
 
             var outContainerList = inState.ContainerList.Replace(inContainer, outContainer);
-
             return inState with { ContainerList = outContainerList };
         }
 
@@ -255,61 +165,9 @@ public partial record TreeViewState
             if (inContainer is null)
                 return inState;
 
-            var refContainer = inContainer;
+            var outContainer = PerformMoveUp(inContainer, moveUpAction);
 
-            if (refContainer?.ActiveNode?.Parent is null)
-                return inState;
-
-			var shouldClearSelectedNodes = false;
-
-            if (!moveUpAction.ShiftKey)
-				shouldClearSelectedNodes = true;
-
-            if (refContainer.ActiveNode.IndexAmongSiblings == 0)
-            {
-                var nextActiveNode = refContainer.ActiveNode.Parent;
-
-                var setActiveNodeAction = new SetActiveNodeAction(
-                    refContainer.Key,
-                    refContainer.ActiveNode!.Parent,
-					shouldClearSelectedNodes,
-					false);
-
-                refContainer = PerformSetActiveNode(
-                    refContainer,
-                    setActiveNodeAction);
-            }
-            else
-            {
-                var target = refContainer.ActiveNode.Parent.ChildList[
-                    refContainer.ActiveNode.IndexAmongSiblings - 1];
-
-                while (true)
-                {
-                    if (target.IsExpanded &&
-                        target.ChildList.Any())
-                    {
-                        target = target.ChildList.Last();
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-
-                var setActiveNodeAction = new SetActiveNodeAction(
-                    refContainer.Key,
-                    target,
-					shouldClearSelectedNodes,
-					false);
-
-                refContainer = PerformSetActiveNode(
-                    refContainer,
-                    setActiveNodeAction);
-            }
-
-            var outContainerList = inState.ContainerList.Replace(inContainer, refContainer);
-
+            var outContainerList = inState.ContainerList.Replace(inContainer, outContainer);
             return inState with { ContainerList = outContainerList };
         }
 
@@ -323,43 +181,9 @@ public partial record TreeViewState
             if (inContainer is null || inContainer.ActiveNode is null)
                 return inState;
 
-            var outContainer = inState.ContainerList.FirstOrDefault(
-                x => x.Key == moveRightAction.ContainerKey);
-
-            if (outContainer is null || outContainer.ActiveNode is null)
-                return inState;
-
-            if (moveRightAction.ShiftKey)
-                return inState;
-
-            if (outContainer.ActiveNode is null)
-                return inState;
-
-            if (outContainer.ActiveNode.IsExpanded)
-            {
-                if (outContainer.ActiveNode.ChildList.Any())
-                {
-                    var setActiveNodeAction = new SetActiveNodeAction(
-                        outContainer.Key,
-                        outContainer.ActiveNode.ChildList[0],
-						true,
-						false);
-
-                    outContainer = PerformSetActiveNode(
-                        outContainer,
-                        setActiveNodeAction);
-                }
-            }
-            else if (outContainer.ActiveNode.IsExpandable)
-            {
-                outContainer.ActiveNode.IsExpanded = true;
-
-                moveRightAction.LoadChildListAction.Invoke(
-                    outContainer.ActiveNode);
-            }
+            var outContainer = PerformMoveRight(inContainer, moveRightAction);
 
             var outContainerList = inState.ContainerList.Replace(inContainer, outContainer);
-
             return inState with { ContainerList = outContainerList };
         }
 
@@ -373,39 +197,9 @@ public partial record TreeViewState
             if (inContainer is null || inContainer.ActiveNode is null)
                 return inState;
 
-            var outContainer = inContainer;
-
-           var shouldClearSelectedNodes = false;
-
-            if (!moveHomeAction.ShiftKey)
-				shouldClearSelectedNodes = true;
-
-            TreeViewNoType target;
-
-            if (outContainer.RootNode is TreeViewAdhoc)
-            {
-                if (outContainer.RootNode.ChildList.Any())
-                    target = outContainer.RootNode.ChildList[0];
-                else
-                    target = outContainer.RootNode;
-            }
-            else
-            {
-                target = outContainer.RootNode;
-            }
-
-            var setActiveNodeAction = new SetActiveNodeAction(
-                outContainer.Key,
-                target,
-				shouldClearSelectedNodes,
-				false);
-
-            outContainer = PerformSetActiveNode(
-                outContainer,
-                setActiveNodeAction);
+            var outContainer = PerformMoveHome(inContainer, moveHomeAction);
 
             var outContainerList = inState.ContainerList.Replace(inContainer, outContainer);
-
             return inState with { ContainerList = outContainerList };
         }
 
@@ -419,36 +213,13 @@ public partial record TreeViewState
             if (inContainer is null || inContainer.ActiveNode is null)
                 return inState;
 
-            var outContainer = inContainer;
-
-            var shouldClearSelectedNodes = false;
-
-            if (!moveEndAction.ShiftKey)
-				shouldClearSelectedNodes = true;
-
-            var target = outContainer.RootNode;
-
-            while (target.IsExpanded && target.ChildList.Any())
-            {
-                target = target.ChildList.Last();
-            }
-
-            var setActiveNodeAction = new SetActiveNodeAction(
-                outContainer.Key,
-                target,
-				shouldClearSelectedNodes,
-				false);
-
-            outContainer = PerformSetActiveNode(
-                outContainer,
-                setActiveNodeAction);
+            var outContainer = PerformMoveEnd(inContainer, moveEndAction);
 
             var outContainerList = inState.ContainerList.Replace(inContainer, outContainer);
-
             return inState with { ContainerList = outContainerList };
         }
 
-        private static void PerformMarkForRerender(TreeViewNoType node)
+		private static void PerformMarkForRerender(TreeViewNoType node)
         {
             var markForRerenderTarget = node;
 
@@ -458,6 +229,14 @@ public partial record TreeViewState
                 markForRerenderTarget = markForRerenderTarget.Parent;
             }
         }
+
+		private static TreeViewContainer PerformReRenderNode(
+			TreeViewContainer inContainer,
+			ReRenderNodeAction reRenderNodeAction)
+		{
+			PerformMarkForRerender(reRenderNodeAction.Node);
+            return inContainer with { StateId = Guid.NewGuid() };
+		}
 
 		private static TreeViewContainer PerformSetActiveNode(
 			TreeViewContainer inContainer,
@@ -479,9 +258,8 @@ public partial record TreeViewState
 			// ...and DRY the code after. (2024-01-13)
 			if (setActiveNodeAction.ShouldSelectNodesBetweenCurrentAndNextActiveNode)
 			{
-				// TODO: This code block contains the code from 'ReduceMoveDownAction(...)'...
-				// ...and should be DRY'd. (2024-01-13)
-				var outContainer = inContainer;
+				outContainer = inContainer;
+				int direction;
 
 				// Step 1: Determine the selection's direction.
 				//
@@ -499,58 +277,94 @@ public partial record TreeViewState
 				//          	if (difference < 0)
 				//              	then: direction is towards home (AKA root)
 				{
+					var currentTarget = inContainer.ActiveNode;
+					var nextTarget = setActiveNodeAction.NextActiveNode;
+
+					while (currentTarget.Parent != nextTarget.Parent)
+					{
+						if (currentTarget.Parent is null || nextTarget.Parent is null)
+							break;
+
+						currentTarget = currentTarget.Parent;
+						nextTarget = nextTarget.Parent;
+					}
 					
+					direction = nextTarget.IndexAmongSiblings - currentTarget.IndexAmongSiblings;
 				}
-	
-	            if (outContainer.ActiveNode.IsExpanded &&
-	                outContainer.ActiveNode.ChildList.Any())
-	            {
-	                var nextActiveNode = outContainer.ActiveNode.ChildList[0];
-	
-	                var setActiveNodeAction = new SetActiveNodeAction(
-	                    outContainer.Key,
-	                    nextActiveNode,
-						shouldClearSelectedNodes,
-						false);
-	
-	                outContainer = PerformSetActiveNode(
-	                    outContainer,
-	                    setActiveNodeAction);
-	            }
-	            else
-	            {
-	                var target = outContainer.ActiveNode;
-	
-	                while (target.Parent is not null &&
-	                       target.IndexAmongSiblings == target.Parent.ChildList.Count - 1)
-	                {
-	                    target = target.Parent;
-	                }
-	
-	                if (target.Parent is null ||
-	                    target.IndexAmongSiblings == target.Parent.ChildList.Count - 1)
-	                {
-	                    return inState;
-	                }
-	
-	                var nextActiveNode = target.Parent.ChildList[
-	                    target.IndexAmongSiblings +
-	                    1];
-	
-	                var setActiveNodeAction = new SetActiveNodeAction(
-	                    outContainer.Key,
-	                    nextActiveNode,
-						shouldClearSelectedNodes,
-						false);
-	
-	                outContainer = PerformSetActiveNode(
-	                    outContainer,
-	                    setActiveNodeAction);
-	            }
-	
-	            var outContainerList = inState.ContainerList.Replace(inContainer, outContainer);
-	
-	            return inState with { ContainerList = outContainerList };
+
+				if (direction > 0)
+				{
+					// Move down
+
+					var moveDownAction = new MoveDownAction(
+						setActiveNodeAction.ContainerKey,
+						true);
+
+					var previousNode = outContainer.ActiveNode;
+
+					while (true)
+					{
+						outContainer = PerformMoveDown(
+							outContainer,
+							moveDownAction);
+
+						if (previousNode.Key == outContainer.ActiveNode.Key)
+						{
+							// No change occurred, avoid an infinite loop and break
+							break;
+						}
+						else
+						{
+							previousNode = outContainer.ActiveNode;
+						}
+
+						if (setActiveNodeAction.NextActiveNode.Key ==
+								outContainer.ActiveNode.Key)
+						{
+							// Target acquired
+							break;
+						}
+					}
+				}
+				else if (direction < 0)
+				{
+					// Move up
+
+					var moveUpAction = new MoveUpAction(
+						setActiveNodeAction.ContainerKey,
+						true);
+
+					var previousNode = outContainer.ActiveNode;
+
+					while (true)
+					{
+						outContainer = PerformMoveUp(
+							outContainer,
+							moveUpAction);
+
+						if (previousNode.Key == outContainer.ActiveNode.Key)
+						{
+							// No change occurred, avoid an infinite loop and break
+							break;
+						}
+						else
+						{
+							previousNode = outContainer.ActiveNode;
+						}
+
+						if (setActiveNodeAction.NextActiveNode.Key ==
+								outContainer.ActiveNode.Key)
+						{
+							// Target acquired
+							break;
+						}
+					}
+				}
+				else
+				{
+					// The next target is the same as the current target.
+					return outContainer;
+				}
 			}
 			else
 			{
@@ -595,6 +409,271 @@ public partial record TreeViewState
 			}
 
             return outContainer;
+		}
+
+		private static TreeViewContainer PerformMoveLeft(
+			TreeViewContainer inContainer,
+			MoveLeftAction moveLeftAction)
+		{
+			var outContainer = inContainer;
+
+			if (moveLeftAction.ShiftKey)
+                return outContainer;
+
+            if (outContainer.ActiveNode is null)
+                return outContainer;
+
+            if (outContainer.ActiveNode.IsExpanded &&
+                outContainer.ActiveNode.IsExpandable)
+            {
+                outContainer.ActiveNode.IsExpanded = false;
+
+                var reRenderNodeAction = new ReRenderNodeAction(
+                    outContainer.Key,
+                    outContainer.ActiveNode);
+
+                return PerformReRenderNode(outContainer, reRenderNodeAction);
+            }
+
+            if (outContainer.ActiveNode.Parent is not null)
+            {
+                var setActiveNodeAction = new SetActiveNodeAction(
+                    outContainer.Key,
+                    outContainer.ActiveNode.Parent,
+					true,
+					false);
+
+                outContainer = PerformSetActiveNode(
+                    outContainer,
+                    setActiveNodeAction);
+            }
+
+			return outContainer;
+		}
+
+		private static TreeViewContainer PerformMoveDown(
+			TreeViewContainer inContainer,
+			MoveDownAction moveDownAction)
+		{
+			var outContainer = inContainer;
+
+			var shouldClearSelectedNodes = false;
+
+            if (!moveDownAction.ShiftKey)
+				shouldClearSelectedNodes = true;
+
+            if (outContainer.ActiveNode.IsExpanded &&
+                outContainer.ActiveNode.ChildList.Any())
+            {
+                var nextActiveNode = outContainer.ActiveNode.ChildList[0];
+
+                var setActiveNodeAction = new SetActiveNodeAction(
+                    outContainer.Key,
+                    nextActiveNode,
+					shouldClearSelectedNodes,
+					false);
+
+                outContainer = PerformSetActiveNode(
+                    outContainer,
+                    setActiveNodeAction);
+            }
+            else
+            {
+                var target = outContainer.ActiveNode;
+
+                while (target.Parent is not null &&
+                       target.IndexAmongSiblings == target.Parent.ChildList.Count - 1)
+                {
+                    target = target.Parent;
+                }
+
+                if (target.Parent is null ||
+                    target.IndexAmongSiblings == target.Parent.ChildList.Count - 1)
+                {
+                    return outContainer;
+                }
+
+                var nextActiveNode = target.Parent.ChildList[
+                    target.IndexAmongSiblings +
+                    1];
+
+                var setActiveNodeAction = new SetActiveNodeAction(
+                    outContainer.Key,
+                    nextActiveNode,
+					shouldClearSelectedNodes,
+					false);
+
+                outContainer = PerformSetActiveNode(
+                    outContainer,
+                    setActiveNodeAction);
+            }
+
+			return outContainer;
+		}
+
+		private static TreeViewContainer PerformMoveUp(
+			TreeViewContainer inContainer,
+			MoveUpAction moveUpAction)
+		{
+			var outContainer = inContainer;
+
+			if (outContainer?.ActiveNode?.Parent is null)
+                return outContainer;
+
+			var shouldClearSelectedNodes = false;
+
+            if (!moveUpAction.ShiftKey)
+				shouldClearSelectedNodes = true;
+
+            if (outContainer.ActiveNode.IndexAmongSiblings == 0)
+            {
+                var nextActiveNode = outContainer.ActiveNode.Parent;
+
+                var setActiveNodeAction = new SetActiveNodeAction(
+                    outContainer.Key,
+                    outContainer.ActiveNode!.Parent,
+					shouldClearSelectedNodes,
+					false);
+
+                outContainer = PerformSetActiveNode(
+                    outContainer,
+                    setActiveNodeAction);
+            }
+            else
+            {
+                var target = outContainer.ActiveNode.Parent.ChildList[
+                    outContainer.ActiveNode.IndexAmongSiblings - 1];
+
+                while (true)
+                {
+                    if (target.IsExpanded &&
+                        target.ChildList.Any())
+                    {
+                        target = target.ChildList.Last();
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                var setActiveNodeAction = new SetActiveNodeAction(
+                    outContainer.Key,
+                    target,
+					shouldClearSelectedNodes,
+					false);
+
+                outContainer = PerformSetActiveNode(
+                    outContainer,
+                    setActiveNodeAction);
+            }
+
+			return outContainer;
+		}
+
+		private static TreeViewContainer PerformMoveRight(
+			TreeViewContainer inContainer,
+			MoveRightAction moveRightAction)
+		{
+			var outContainer = inContainer;
+
+			if (outContainer is null || outContainer.ActiveNode is null)
+                return outContainer;
+
+            if (moveRightAction.ShiftKey)
+                return outContainer;
+
+            if (outContainer.ActiveNode is null)
+                return outContainer;
+
+            if (outContainer.ActiveNode.IsExpanded)
+            {
+                if (outContainer.ActiveNode.ChildList.Any())
+                {
+                    var setActiveNodeAction = new SetActiveNodeAction(
+                        outContainer.Key,
+                        outContainer.ActiveNode.ChildList[0],
+						true,
+						false);
+
+                    outContainer = PerformSetActiveNode(
+                        outContainer,
+                        setActiveNodeAction);
+                }
+            }
+            else if (outContainer.ActiveNode.IsExpandable)
+            {
+                outContainer.ActiveNode.IsExpanded = true;
+
+                moveRightAction.LoadChildListAction.Invoke(
+                    outContainer.ActiveNode);
+            }
+
+			return outContainer;
+		}
+
+		private static TreeViewContainer PerformMoveHome(
+			TreeViewContainer inContainer,
+			MoveHomeAction moveHomeAction)
+		{
+			var outContainer = inContainer;
+
+			var shouldClearSelectedNodes = false;
+
+            if (!moveHomeAction.ShiftKey)
+				shouldClearSelectedNodes = true;
+
+            TreeViewNoType target;
+
+            if (outContainer.RootNode is TreeViewAdhoc)
+            {
+                if (outContainer.RootNode.ChildList.Any())
+                    target = outContainer.RootNode.ChildList[0];
+                else
+                    target = outContainer.RootNode;
+            }
+            else
+            {
+                target = outContainer.RootNode;
+            }
+
+            var setActiveNodeAction = new SetActiveNodeAction(
+                outContainer.Key,
+                target,
+				shouldClearSelectedNodes,
+				false);
+
+            return PerformSetActiveNode(
+                outContainer,
+                setActiveNodeAction);
+		}
+
+		private static TreeViewContainer PerformMoveEnd(
+			TreeViewContainer inContainer,
+			MoveEndAction moveEndAction)
+		{
+			var outContainer = inContainer;
+			var shouldClearSelectedNodes = false;
+
+            if (!moveEndAction.ShiftKey)
+				shouldClearSelectedNodes = true;
+
+            var target = outContainer.RootNode;
+
+            while (target.IsExpanded && target.ChildList.Any())
+            {
+                target = target.ChildList.Last();
+            }
+
+            var setActiveNodeAction = new SetActiveNodeAction(
+                outContainer.Key,
+                target,
+				shouldClearSelectedNodes,
+				false);
+
+            return PerformSetActiveNode(
+                outContainer,
+                setActiveNodeAction);
 		}
     }
 }
