@@ -213,6 +213,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 
         _treeViewService.MoveUp(
             DotNetSolutionState.TreeViewSolutionExplorerStateKey,
+            false,
             false);
     }
 }

@@ -298,7 +298,8 @@ public partial record TreeViewState
 
 					var moveDownAction = new MoveDownAction(
 						setActiveNodeAction.ContainerKey,
-						true);
+						true,
+						false);
 
 					var previousNode = outContainer.ActiveNode;
 
@@ -332,7 +333,8 @@ public partial record TreeViewState
 
 					var moveUpAction = new MoveUpAction(
 						setActiveNodeAction.ContainerKey,
-						true);
+						true,
+						false);
 
 					var previousNode = outContainer.ActiveNode;
 
@@ -417,7 +419,7 @@ public partial record TreeViewState
 		{
 			var outContainer = inContainer;
 
-			if (moveLeftAction.ShiftKey)
+			if (!moveLeftAction.ShouldClearSelectedNodes)
                 return outContainer;
 
             if (outContainer.ActiveNode is null)
@@ -457,11 +459,6 @@ public partial record TreeViewState
 		{
 			var outContainer = inContainer;
 
-			var shouldClearSelectedNodes = false;
-
-            if (!moveDownAction.ShiftKey)
-				shouldClearSelectedNodes = true;
-
             if (outContainer.ActiveNode.IsExpanded &&
                 outContainer.ActiveNode.ChildList.Any())
             {
@@ -470,8 +467,8 @@ public partial record TreeViewState
                 var setActiveNodeAction = new SetActiveNodeAction(
                     outContainer.Key,
                     nextActiveNode,
-					shouldClearSelectedNodes,
-					false);
+					moveDownAction.ShouldClearSelectedNodes,
+					moveDownAction.ShouldSelectNodesBetweenCurrentAndNextActiveNode);
 
                 outContainer = PerformSetActiveNode(
                     outContainer,
@@ -500,8 +497,8 @@ public partial record TreeViewState
                 var setActiveNodeAction = new SetActiveNodeAction(
                     outContainer.Key,
                     nextActiveNode,
-					shouldClearSelectedNodes,
-					false);
+					moveDownAction.ShouldClearSelectedNodes,
+					moveDownAction.ShouldSelectNodesBetweenCurrentAndNextActiveNode);
 
                 outContainer = PerformSetActiveNode(
                     outContainer,
@@ -520,11 +517,6 @@ public partial record TreeViewState
 			if (outContainer?.ActiveNode?.Parent is null)
                 return outContainer;
 
-			var shouldClearSelectedNodes = false;
-
-            if (!moveUpAction.ShiftKey)
-				shouldClearSelectedNodes = true;
-
             if (outContainer.ActiveNode.IndexAmongSiblings == 0)
             {
                 var nextActiveNode = outContainer.ActiveNode.Parent;
@@ -532,8 +524,8 @@ public partial record TreeViewState
                 var setActiveNodeAction = new SetActiveNodeAction(
                     outContainer.Key,
                     outContainer.ActiveNode!.Parent,
-					shouldClearSelectedNodes,
-					false);
+					moveUpAction.ShouldClearSelectedNodes,
+					moveUpAction.ShouldSelectNodesBetweenCurrentAndNextActiveNode);
 
                 outContainer = PerformSetActiveNode(
                     outContainer,
@@ -560,8 +552,8 @@ public partial record TreeViewState
                 var setActiveNodeAction = new SetActiveNodeAction(
                     outContainer.Key,
                     target,
-					shouldClearSelectedNodes,
-					false);
+					moveUpAction.ShouldClearSelectedNodes,
+					moveUpAction.ShouldSelectNodesBetweenCurrentAndNextActiveNode);
 
                 outContainer = PerformSetActiveNode(
                     outContainer,
@@ -580,7 +572,7 @@ public partial record TreeViewState
 			if (outContainer is null || outContainer.ActiveNode is null)
                 return outContainer;
 
-            if (moveRightAction.ShiftKey)
+            if (moveRightAction.ShouldClearSelectedNodes)
                 return outContainer;
 
             if (outContainer.ActiveNode is null)
@@ -593,8 +585,8 @@ public partial record TreeViewState
                     var setActiveNodeAction = new SetActiveNodeAction(
                         outContainer.Key,
                         outContainer.ActiveNode.ChildList[0],
-						true,
-						false);
+						moveRightAction.ShouldClearSelectedNodes,
+						moveRightAction.ShouldSelectNodesBetweenCurrentAndNextActiveNode);
 
                     outContainer = PerformSetActiveNode(
                         outContainer,
@@ -618,11 +610,6 @@ public partial record TreeViewState
 		{
 			var outContainer = inContainer;
 
-			var shouldClearSelectedNodes = false;
-
-            if (!moveHomeAction.ShiftKey)
-				shouldClearSelectedNodes = true;
-
             TreeViewNoType target;
 
             if (outContainer.RootNode is TreeViewAdhoc)
@@ -640,8 +627,8 @@ public partial record TreeViewState
             var setActiveNodeAction = new SetActiveNodeAction(
                 outContainer.Key,
                 target,
-				shouldClearSelectedNodes,
-				false);
+				moveHomeAction.ShouldClearSelectedNodes,
+				moveHomeAction.ShouldSelectNodesBetweenCurrentAndNextActiveNode);
 
             return PerformSetActiveNode(
                 outContainer,
@@ -653,10 +640,6 @@ public partial record TreeViewState
 			MoveEndAction moveEndAction)
 		{
 			var outContainer = inContainer;
-			var shouldClearSelectedNodes = false;
-
-            if (!moveEndAction.ShiftKey)
-				shouldClearSelectedNodes = true;
 
             var target = outContainer.RootNode;
 
@@ -668,8 +651,8 @@ public partial record TreeViewState
             var setActiveNodeAction = new SetActiveNodeAction(
                 outContainer.Key,
                 target,
-				shouldClearSelectedNodes,
-				false);
+				moveEndAction.ShouldClearSelectedNodes,
+				moveEndAction.ShouldSelectNodesBetweenCurrentAndNextActiveNode);
 
             return PerformSetActiveNode(
                 outContainer,

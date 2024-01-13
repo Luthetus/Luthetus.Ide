@@ -134,7 +134,11 @@ public partial class InputFileContextMenu : ComponentBase
         await treeViewModel.LoadChildListAsync();
 
         TreeViewService.ReRenderNode(InputFileSidebar.TreeViewContainerKey, treeViewModel);
-        TreeViewService.MoveUp(InputFileSidebar.TreeViewContainerKey, false);
+        
+		TreeViewService.MoveUp(
+			InputFileSidebar.TreeViewContainerKey,
+			false,
+			false);
     }
 
     public static string GetContextMenuCssStyleString(

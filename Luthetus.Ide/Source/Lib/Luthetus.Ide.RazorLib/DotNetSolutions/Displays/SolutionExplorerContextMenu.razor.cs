@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
@@ -405,7 +405,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         await treeViewModel.LoadChildListAsync();
 
         TreeViewService.ReRenderNode(DotNetSolutionState.TreeViewSolutionExplorerStateKey, treeViewModel);
-        TreeViewService.MoveUp(DotNetSolutionState.TreeViewSolutionExplorerStateKey, false);
+        
+		TreeViewService.MoveUp(
+			DotNetSolutionState.TreeViewSolutionExplorerStateKey,
+			false,
+			false);
     }
 
     public static string GetContextMenuCssStyleString(TreeViewCommandArgs? commandArgs)

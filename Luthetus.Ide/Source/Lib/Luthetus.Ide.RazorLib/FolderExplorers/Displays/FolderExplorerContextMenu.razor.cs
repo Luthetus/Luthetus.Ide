@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.FolderExplorers.States;
@@ -139,7 +139,8 @@ public partial class FolderExplorerContextMenu : ComponentBase
 
         TreeViewService.MoveUp(
             FolderExplorerState.TreeViewContentStateKey,
-            false);
+            false,
+			false);
     }
 
     public static string GetContextMenuCssStyleString(TreeViewCommandArgs? treeViewCommandArgs)

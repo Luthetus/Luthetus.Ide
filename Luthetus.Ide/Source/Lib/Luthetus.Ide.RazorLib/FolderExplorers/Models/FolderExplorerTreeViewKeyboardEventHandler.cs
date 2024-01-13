@@ -211,6 +211,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
         _treeViewService.MoveUp(
             FolderExplorerState.TreeViewContentStateKey,
-            false);
+            false,
+			false);
     }
 }

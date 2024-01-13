@@ -22,12 +22,36 @@ public interface ITreeViewService
 		bool shouldClearSelectedNodes,
 		bool shouldSelectNodesBetweenCurrentAndNextActiveNode);
 
-    public void MoveLeft(Key<TreeViewContainer> containerKey, bool shiftKey);
-    public void MoveDown(Key<TreeViewContainer> containerKey, bool shiftKey);
-    public void MoveUp(Key<TreeViewContainer> containerKey, bool shiftKey);
-    public void MoveRight(Key<TreeViewContainer> containerKey, bool shiftKey);
-    public void MoveHome(Key<TreeViewContainer> containerKey, bool shiftKey);
-    public void MoveEnd(Key<TreeViewContainer> containerKey, bool shiftKey);
+    public void MoveLeft(
+		Key<TreeViewContainer> containerKey,
+		bool shouldClearSelectedNodes,
+		bool shouldSelectNodesBetweenCurrentAndNextActiveNode);
+
+    public void MoveDown(
+		Key<TreeViewContainer> containerKey,
+		bool shouldClearSelectedNodes,
+		bool shouldSelectNodesBetweenCurrentAndNextActiveNode);
+
+    public void MoveUp(
+		Key<TreeViewContainer> containerKey,
+		bool shouldClearSelectedNodes,
+		bool shouldSelectNodesBetweenCurrentAndNextActiveNode);
+
+    public void MoveRight(
+		Key<TreeViewContainer> containerKey,
+		bool shouldClearSelectedNodes,
+		bool shouldSelectNodesBetweenCurrentAndNextActiveNode);
+
+    public void MoveHome(
+		Key<TreeViewContainer> containerKey,
+		bool shouldClearSelectedNodes,
+		bool shouldSelectNodesBetweenCurrentAndNextActiveNode);
+
+    public void MoveEnd(
+		Key<TreeViewContainer> containerKey,
+		bool shouldClearSelectedNodes,
+		bool shouldSelectNodesBetweenCurrentAndNextActiveNode);
+
     public string GetNodeElementId(TreeViewNoType node);
     public string GetTreeContainerElementId(Key<TreeViewContainer> containerKey);
 }
