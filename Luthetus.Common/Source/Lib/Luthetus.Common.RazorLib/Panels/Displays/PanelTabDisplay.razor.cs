@@ -101,23 +101,23 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
     {
         if (_thinksLeftMouseButtonIsDown && PanelsStateWrap.Value.DragEventArgs is null)
         {
-            var leftDimensionAttribute = PanelTab.BeingDraggedDimensions.DimensionAttributeBag.First(
+            var leftDimensionAttribute = PanelTab.BeingDraggedDimensions.DimensionAttributeList.First(
                 x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
 
-            leftDimensionAttribute.DimensionUnitBag.Clear();
+            leftDimensionAttribute.DimensionUnitList.Clear();
 
-            leftDimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+            leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
             {
                 Value = mouseEventArgs.ClientX,
                 DimensionUnitKind = DimensionUnitKind.Pixels
             });
 
-            var topDimensionAttribute = PanelTab.BeingDraggedDimensions.DimensionAttributeBag.First(
+            var topDimensionAttribute = PanelTab.BeingDraggedDimensions.DimensionAttributeList.First(
                 x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
 
-            topDimensionAttribute.DimensionUnitBag.Clear();
+            topDimensionAttribute.DimensionUnitList.Clear();
 
-            topDimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+            topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
             {
                 Value = mouseEventArgs.ClientY,
                 DimensionUnitKind = DimensionUnitKind.Pixels

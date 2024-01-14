@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
@@ -60,7 +60,7 @@ public partial class CompilerServiceExplorerSync
                     new TreeViewReflectionWithView(typeScriptCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
                     new TreeViewReflectionWithView(jsonCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers));
 
-                await rootNode.LoadChildBagAsync();
+                await rootNode.LoadChildListAsync();
 
                 if (!_treeViewService.TryGetTreeViewContainer(
                         TreeViewCompilerServiceExplorerContentStateKey,
@@ -79,7 +79,9 @@ public partial class CompilerServiceExplorerSync
 
                     _treeViewService.SetActiveNode(
                         TreeViewCompilerServiceExplorerContentStateKey,
-                        rootNode);
+                        rootNode,
+						true,
+						false);
                 }
 
                 Dispatcher.Dispatch(new NewAction(inCompilerServiceExplorerState =>

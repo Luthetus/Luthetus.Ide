@@ -44,13 +44,13 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObject>
             });
     }
 
-    public override Task LoadChildBagAsync()
+    public override Task LoadChildListAsync()
     {
-        var previousChildren = new List<TreeViewNoType>(ChildBag);
+        var previousChildren = new List<TreeViewNoType>(ChildList);
 
         try
         {
-            ChildBag.Clear();
+            ChildList.Clear();
 
             if (Item.Item is IEnumerable enumerable)
             {
@@ -68,7 +68,7 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObject>
                         genericArgument.Name,
                         Item.IsPubliclyReadable);
 
-                    ChildBag.Add(new TreeViewReflection(
+                    ChildList.Add(new TreeViewReflection(
                         childNode,
                         true,
                         false,
@@ -80,9 +80,9 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObject>
                 throw new ApplicationException($"Unexpected failed cast to the Type {nameof(IEnumerable)}. {nameof(TreeViewEnumerable)} are to have a {nameof(Item.Item)} which is castable as {nameof(IEnumerable)}");
             }
 
-            if (ChildBag.Count == 0)
+            if (ChildList.Count == 0)
             {
-                ChildBag.Add(new TreeViewText(
+                ChildList.Add(new TreeViewText(
                     "Enumeration returned no results.",
                     false,
                     false,
@@ -91,16 +91,16 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObject>
         }
         catch (Exception e)
         {
-            ChildBag.Clear();
+            ChildList.Clear();
 
-            ChildBag.Add(new TreeViewException(
+            ChildList.Add(new TreeViewException(
                 e,
                 false,
                 false,
                 _luthetusCommonComponentRenderers));
         }
 
-        LinkChildren(previousChildren, ChildBag);
+        LinkChildren(previousChildren, ChildList);
 
         return Task.CompletedTask;
     }

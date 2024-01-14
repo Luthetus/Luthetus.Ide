@@ -75,6 +75,6 @@ public class KeymapTests
         Assert.Equal(inCommand.DisplayName, outCommand.DisplayName);
         Assert.Equal(inCommand.InternalIdentifier, outCommand.InternalIdentifier);
         Assert.Equal(inCommand.ShouldBubble, outCommand.ShouldBubble);
-        Assert.Equal(inCommand.DoAsyncFunc, outCommand.DoAsyncFunc);
+        Assert.Equal(inCommand.CommandFunc, outCommand.CommandFunc);
     }
 }

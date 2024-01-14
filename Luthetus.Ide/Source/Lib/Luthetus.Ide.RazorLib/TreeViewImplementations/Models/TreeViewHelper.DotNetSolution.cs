@@ -10,7 +10,7 @@ public partial class TreeViewHelper
     public static Task<List<TreeViewNoType>> DotNetSolutionLoadChildrenAsync(
         this TreeViewSolution treeViewSolution)
     {
-        var childSolutionFolders = treeViewSolution.Item.SolutionFolderBag.Select(
+        var childSolutionFolders = treeViewSolution.Item.SolutionFolderList.Select(
             x => (TreeViewNoType)new TreeViewSolutionFolder(
                 x,
                 treeViewSolution.IdeComponentRenderers,
@@ -25,7 +25,7 @@ public partial class TreeViewHelper
             .OrderBy(x => ((TreeViewSolutionFolder)x).Item.AbsolutePath.NameNoExtension)
             .ToList();
 
-        var childProjects = treeViewSolution.Item.DotNetProjectBag
+        var childProjects = treeViewSolution.Item.DotNetProjectList
             .Where(x => x.ProjectTypeGuid != SolutionFolder.SolutionFolderProjectTypeGuid)
             .Select(x =>
             {

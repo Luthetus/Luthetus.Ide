@@ -19,7 +19,7 @@ public record TreeViewContainerTests
     /// <see cref="TreeViewContainer.Key"/>
     /// <see cref="TreeViewContainer.RootNode"/>
     /// <see cref="TreeViewContainer.ActiveNode"/>
-    /// <see cref="TreeViewContainer.SelectedNodeBag"/>
+    /// <see cref="TreeViewContainer.SelectedNodeList"/>
     /// <see cref="TreeViewContainer.StateId"/>
     /// </summary>
     [Fact]
@@ -27,67 +27,67 @@ public record TreeViewContainerTests
     {
         InitializeTreeViewContainerTests(out var commonTreeViews, out var commonComponentRenderers);
 
-        // rootNode=Null, selectedNodeBag=Empty
+        // rootNode=Null, selectedNodeList=Empty
         {
             var key = Key<TreeViewContainer>.NewKey();
-            var selectedNodeBag = ImmutableList<TreeViewNoType>.Empty;
+            var selectedNodeList = ImmutableList<TreeViewNoType>.Empty;
             var stateId = Guid.NewGuid();
 
             var treeViewContainer = new TreeViewContainer(
                 key,
                 null,
-                selectedNodeBag)
+                selectedNodeList)
             {
                 StateId = stateId
             };
 
             Assert.Equal(key, treeViewContainer.Key);
             Assert.IsType<TreeViewAdhoc>(treeViewContainer.RootNode);
-            Assert.Equal(selectedNodeBag, treeViewContainer.SelectedNodeBag);
+            Assert.Equal(selectedNodeList, treeViewContainer.SelectedNodeList);
             Assert.Null(treeViewContainer.ActiveNode);
             Assert.Equal(stateId, treeViewContainer.StateId);
         }
 
-        // rootNode=treeViewText, selectedNodeBag=Empty
+        // rootNode=treeViewText, selectedNodeList=Empty
         {
             var key = Key<TreeViewContainer>.NewKey();
             var rootNode = new TreeViewText("Hello World!", true, false, commonComponentRenderers);
-            var selectedNodeBag = ImmutableList<TreeViewNoType>.Empty;
+            var selectedNodeList = ImmutableList<TreeViewNoType>.Empty;
             var stateId = Guid.NewGuid();
             
             var treeViewContainer = new TreeViewContainer(
                 key,
                 rootNode,
-                selectedNodeBag)
+                selectedNodeList)
             {
                 StateId = stateId
             };
 
             Assert.Equal(key, treeViewContainer.Key);
             Assert.Equal(rootNode, treeViewContainer.RootNode);
-            Assert.Equal(selectedNodeBag, treeViewContainer.SelectedNodeBag);
+            Assert.Equal(selectedNodeList, treeViewContainer.SelectedNodeList);
             Assert.Null(treeViewContainer.ActiveNode);
             Assert.Equal(stateId, treeViewContainer.StateId);
         }
 
-        // rootNode=treeViewText, selectedNodeBag={ treeViewText }
+        // rootNode=treeViewText, selectedNodeList={ treeViewText }
         {
             var key = Key<TreeViewContainer>.NewKey();
             var rootNode = new TreeViewText("Hello World!", true, false, commonComponentRenderers);
-            var selectedNodeBag = new TreeViewNoType[] { rootNode }.ToImmutableList();
+            var selectedNodeList = new TreeViewNoType[] { rootNode }.ToImmutableList();
             var stateId = Guid.NewGuid();
             
             var treeViewContainer = new TreeViewContainer(
                 key,
                 rootNode,
-                selectedNodeBag)
+                selectedNodeList)
             {
                 StateId = stateId
             };
 
             Assert.Equal(key, treeViewContainer.Key);
             Assert.Equal(rootNode, treeViewContainer.RootNode);
-            Assert.Equal(selectedNodeBag, treeViewContainer.SelectedNodeBag);
+            Assert.Equal(selectedNodeList, treeViewContainer.SelectedNodeList);
             Assert.Equal(rootNode, treeViewContainer.ActiveNode);
             Assert.Equal(stateId, treeViewContainer.StateId);
         }

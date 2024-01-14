@@ -14,7 +14,7 @@ public sealed record GenericParametersListingNode : ISyntaxNode
         CloseAngleBracketToken closeAngleBracketToken)
     {
         OpenAngleBracketToken = openAngleBracketToken;
-        GenericParameterEntryNodeBag = genericParameterEntryNodes;
+        GenericParameterEntryNodeList = genericParameterEntryNodes;
         CloseAngleBracketToken = closeAngleBracketToken;
 
         var children = new List<ISyntax>
@@ -22,18 +22,18 @@ public sealed record GenericParametersListingNode : ISyntaxNode
             OpenAngleBracketToken,
         };
 
-        children.AddRange(GenericParameterEntryNodeBag);
+        children.AddRange(GenericParameterEntryNodeList);
 
         children.Add(CloseAngleBracketToken);
 
-        ChildBag = children.ToImmutableArray();
+        ChildList = children.ToImmutableArray();
     }
 
     public OpenAngleBracketToken OpenAngleBracketToken { get; }
-    public ImmutableArray<GenericParameterEntryNode> GenericParameterEntryNodeBag { get; }
+    public ImmutableArray<GenericParameterEntryNode> GenericParameterEntryNodeList { get; }
     public CloseAngleBracketToken CloseAngleBracketToken { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.GenericParametersListingNode;

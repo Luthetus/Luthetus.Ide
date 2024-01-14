@@ -12,6 +12,6 @@ public class GenericCommentMultiLineSyntax : IGenericSyntax
     }
 
     public TextEditorTextSpan TextSpan { get; }
-    public ImmutableArray<IGenericSyntax> ChildBag => ImmutableArray<IGenericSyntax>.Empty;
+    public ImmutableArray<IGenericSyntax> ChildList => ImmutableArray<IGenericSyntax>.Empty;
     public GenericSyntaxKind GenericSyntaxKind => GenericSyntaxKind.CommentMultiLine;
 }

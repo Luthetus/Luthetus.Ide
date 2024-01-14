@@ -10,7 +10,7 @@ public sealed record UsingStatementNode : ISyntaxNode
         KeywordToken = keywordToken;
         NamespaceIdentifier = namespaceIdentifier;
 
-        ChildBag = new ISyntax[]
+        ChildList = new ISyntax[]
         {
             KeywordToken,
             NamespaceIdentifier
@@ -20,7 +20,7 @@ public sealed record UsingStatementNode : ISyntaxNode
     public KeywordToken KeywordToken { get; }
     public IdentifierToken NamespaceIdentifier { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UsingStatementNode;

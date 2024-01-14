@@ -83,14 +83,14 @@ public class TreeViewStateActionsTests
             out var websiteServerTreeView,
             out var websiteServerTreeViewContainer);
 
-        await websiteServerTreeView.LoadChildBagAsync();
+        await websiteServerTreeView.LoadChildListAsync();
 
         var withRootNodeAction = new TreeViewState.WithRootNodeAction(
             websiteServerTreeViewContainer.Key,
-            websiteServerTreeView.ChildBag.First());
+            websiteServerTreeView.ChildList.First());
 
         Assert.Equal(websiteServerTreeViewContainer.Key, withRootNodeAction.ContainerKey);
-        Assert.Equal(websiteServerTreeView.ChildBag.First(), withRootNodeAction.Node);
+        Assert.Equal(websiteServerTreeView.ChildList.First(), withRootNodeAction.Node);
     }
 
     /// <summary>
@@ -161,16 +161,16 @@ public class TreeViewStateActionsTests
             out var websiteServerTreeView,
             out var websiteServerTreeViewContainer);
 
-        await websiteServerTreeView.LoadChildBagAsync();
+        await websiteServerTreeView.LoadChildListAsync();
 
         var addChildNodeAction = new TreeViewState.AddChildNodeAction(
             websiteServerTreeViewContainer.Key,
             websiteServerTreeView,
-            websiteServerTreeView.ChildBag.First());
+            websiteServerTreeView.ChildList.First());
 
         Assert.Equal(websiteServerTreeViewContainer.Key, addChildNodeAction.ContainerKey);
         Assert.Equal(websiteServerTreeView, addChildNodeAction.ParentNode);
-        Assert.Equal(websiteServerTreeView.ChildBag.First(), addChildNodeAction.ChildNode);
+        Assert.Equal(websiteServerTreeView.ChildList.First(), addChildNodeAction.ChildNode);
     }
 
     /// <summary>
@@ -278,10 +278,10 @@ public class TreeViewStateActionsTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewState.ClearSelectedNodeBagAction"/>
+    /// <see cref="TreeViewState.ClearSelectedNodeListAction"/>
     /// </summary>
     [Fact]
-    public void ClearSelectedNodeBagAction()
+    public void ClearSelectedNodeListAction()
     {
         InitializeTreeViewStateActionsTests(
             out var dispatcher,
@@ -295,10 +295,10 @@ public class TreeViewStateActionsTests
             out var websiteServerTreeView,
             out var websiteServerTreeViewContainer);
 
-        var clearSelectedNodeBagAction = new TreeViewState.ClearSelectedNodeBagAction(
+        var clearSelectedNodeListAction = new TreeViewState.ClearSelectedNodeListAction(
             websiteServerTreeViewContainer.Key);
 
-        Assert.Equal(websiteServerTreeViewContainer.Key, clearSelectedNodeBagAction.ContainerKey);
+        Assert.Equal(websiteServerTreeViewContainer.Key, clearSelectedNodeListAction.ContainerKey);
     }
 
     /// <summary>
@@ -455,7 +455,7 @@ public class TreeViewStateActionsTests
             out var websiteServerTreeViewContainer);
 
         bool shiftKey;
-        Action<TreeViewNoType> loadChildBagAction = _ => { };
+        Action<TreeViewNoType> loadChildListAction = _ => { };
 
         // ShiftKey = false
         {
@@ -464,7 +464,7 @@ public class TreeViewStateActionsTests
             var moveRightAction = new TreeViewState.MoveRightAction(
                 websiteServerTreeViewContainer.Key,
                 shiftKey,
-                loadChildBagAction);
+                loadChildListAction);
 
             Assert.Equal(websiteServerTreeViewContainer.Key, moveRightAction.ContainerKey);
             Assert.Equal(shiftKey, moveRightAction.ShiftKey);
@@ -477,7 +477,7 @@ public class TreeViewStateActionsTests
             var moveRightAction = new TreeViewState.MoveRightAction(
                 websiteServerTreeViewContainer.Key,
                 shiftKey,
-                loadChildBagAction);
+                loadChildListAction);
 
             Assert.Equal(websiteServerTreeViewContainer.Key, moveRightAction.ContainerKey);
             Assert.Equal(shiftKey, moveRightAction.ShiftKey);
@@ -575,10 +575,10 @@ public class TreeViewStateActionsTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewState.LoadChildBagAction"/>
+    /// <see cref="TreeViewState.LoadChildListAction"/>
     /// </summary>
     [Fact]
-    public void LoadChildBagAction()
+    public void LoadChildListAction()
     {
         throw new NotImplementedException();
     }

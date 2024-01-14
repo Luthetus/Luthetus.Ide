@@ -128,37 +128,19 @@ public class TextEditorViewModelTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorViewModel.FirstPresentationLayerKeysBag"/>
+	/// <see cref="TextEditorViewModel.FirstPresentationLayerKeysList"/>
 	/// </summary>
 	[Fact]
-	public void FirstPresentationLayerKeysBag()
+	public void FirstPresentationLayerKeysList()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorViewModel.LastPresentationLayerKeysBag"/>
+	/// <see cref="TextEditorViewModel.LastPresentationLayerKeysList"/>
 	/// </summary>
 	[Fact]
-	public void LastPresentationLayerKeysBag()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorViewModel.SeenModelRenderStateKeysBag"/>
-	/// </summary>
-	[Fact]
-	public void SeenModelRenderStateKeysBag()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorViewModel.SeenOptionsRenderStateKeysBag"/>
-	/// </summary>
-	[Fact]
-	public void SeenOptionsRenderStateKeysBag()
+	public void LastPresentationLayerKeysList()
 	{
 		throw new NotImplementedException();
 	}

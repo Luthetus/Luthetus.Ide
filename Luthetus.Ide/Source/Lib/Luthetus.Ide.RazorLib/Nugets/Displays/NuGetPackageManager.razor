@@ -42,7 +42,7 @@
                                     Select a project to modify
                                 </option>
 
-                                @foreach (var project in dotNetSolutionStateWrap.DotNetSolutionModel.DotNetProjectBag)
+                                @foreach (var project in dotNetSolutionStateWrap.DotNetSolutionModel.DotNetProjectList)
                                 {
                                     <option value="@project.ProjectIdGuid.ToString()"
                                             selected="@CheckIfProjectIsSelected(project, nuGetPackageManagerState)">
@@ -153,9 +153,9 @@
 
                 <hr/>
 
-                @{ var nugetResult = NuGetPackageManagerStateWrap.Value.QueryResultBag; }
+                @{ var nugetResult = NuGetPackageManagerStateWrap.Value.QueryResultList; }
 
-                @if (NuGetPackageManagerStateWrap.Value.QueryResultBag.Any())
+                @if (NuGetPackageManagerStateWrap.Value.QueryResultList.Any())
                 {
                     foreach (var entry in nugetResult)
                     {

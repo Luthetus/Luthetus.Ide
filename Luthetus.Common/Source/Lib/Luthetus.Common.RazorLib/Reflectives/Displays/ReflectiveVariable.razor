@@ -14,9 +14,9 @@
     }
     else
     {
-        var constructorBag = VariableType.GetConstructors();
+        var constructorList = VariableType.GetConstructors();
 
-        if (constructorBag.Length == 0)
+        if (constructorList.Length == 0)
         {
             <span>The type '@VariableType.Name' is not supported.</span>
         }
@@ -39,7 +39,7 @@
                     }
                     else
                     {
-                        foreach (var constructor in constructorBag)
+                        foreach (var constructor in constructorList)
                         {
                             <ReflectiveConstructor ConstructorInfo="constructor"
                                                    IsChosenConstructor="false"

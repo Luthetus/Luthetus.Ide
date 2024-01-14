@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.States;
 
@@ -15,16 +15,43 @@ public interface ITreeViewService
     public bool TryGetTreeViewContainer(Key<TreeViewContainer> containerKey, out TreeViewContainer? container);
     public void ReRenderNode(Key<TreeViewContainer> containerKey, TreeViewNoType node);
     public void AddChildNode(Key<TreeViewContainer> containerKey, TreeViewNoType parent, TreeViewNoType child);
-    public void SetActiveNode(Key<TreeViewContainer> containerKey, TreeViewNoType? nextActiveNode);
-    public void AddSelectedNode(Key<TreeViewContainer> containerKey, TreeViewNoType nodeSelection);
-    public void RemoveSelectedNode(Key<TreeViewContainer> containerKey, Key<TreeViewNoType> nodeKey);
-    public void ClearSelectedNodes(Key<TreeViewContainer> containerKey);
-    public void MoveLeft(Key<TreeViewContainer> containerKey, bool shiftKey);
-    public void MoveDown(Key<TreeViewContainer> containerKey, bool shiftKey);
-    public void MoveUp(Key<TreeViewContainer> containerKey, bool shiftKey);
-    public void MoveRight(Key<TreeViewContainer> containerKey, bool shiftKey);
-    public void MoveHome(Key<TreeViewContainer> containerKey, bool shiftKey);
-    public void MoveEnd(Key<TreeViewContainer> containerKey, bool shiftKey);
+
+    public void SetActiveNode(
+		Key<TreeViewContainer> containerKey,
+		TreeViewNoType? nextActiveNode,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode);
+
+    public void MoveLeft(
+		Key<TreeViewContainer> containerKey,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode);
+
+    public void MoveDown(
+		Key<TreeViewContainer> containerKey,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode);
+
+    public void MoveUp(
+		Key<TreeViewContainer> containerKey,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode);
+
+    public void MoveRight(
+		Key<TreeViewContainer> containerKey,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode);
+
+    public void MoveHome(
+		Key<TreeViewContainer> containerKey,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode);
+
+    public void MoveEnd(
+		Key<TreeViewContainer> containerKey,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode);
+
     public string GetNodeElementId(TreeViewNoType node);
     public string GetTreeContainerElementId(Key<TreeViewContainer> containerKey);
 }

@@ -14,7 +14,7 @@ public class VariableExpressionNodeTests
     /// <see cref="VariableExpressionNode(TypeClauseNode)"/>
     /// <br/>----<br/>
     /// <see cref="VariableExpressionNode.ResultTypeClauseNode"/>
-    /// <see cref="VariableExpressionNode.ChildBag"/>
+    /// <see cref="VariableExpressionNode.ChildList"/>
     /// <see cref="VariableExpressionNode.IsFabricated"/>
     /// <see cref="VariableExpressionNode.SyntaxKind"/>
     /// </summary>
@@ -42,8 +42,8 @@ MyMethod(x)";
 
         Assert.Equal(intTypeClauseNode, variableExpressionNode.ResultTypeClauseNode);
 
-        Assert.Single(variableExpressionNode.ChildBag);
-        Assert.Equal(intTypeClauseNode, variableExpressionNode.ChildBag.Single());
+        Assert.Single(variableExpressionNode.ChildList);
+        Assert.Equal(intTypeClauseNode, variableExpressionNode.ChildList.Single());
 
         Assert.False(variableExpressionNode.IsFabricated);
 

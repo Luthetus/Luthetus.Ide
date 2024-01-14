@@ -17,7 +17,7 @@ public class BinaryOperatorNodeTests
     /// <see cref="BinaryOperatorNode.OperatorToken"/>
     /// <see cref="BinaryOperatorNode.RightOperandTypeClauseNode"/>
     /// <see cref="BinaryOperatorNode.ResultTypeClauseNode"/>
-    /// <see cref="BinaryOperatorNode.ChildBag"/>
+    /// <see cref="BinaryOperatorNode.ChildList"/>
     /// <see cref="BinaryOperatorNode.IsFabricated"/>
     /// <see cref="BinaryOperatorNode.SyntaxKind"/>
     /// </summary>
@@ -62,8 +62,8 @@ public class BinaryOperatorNodeTests
         Assert.Equal(intTypeClauseNode, binaryOperatorNode.RightOperandTypeClauseNode);
         Assert.Equal(intTypeClauseNode, binaryOperatorNode.ResultTypeClauseNode);
 
-        Assert.Single(binaryOperatorNode.ChildBag);
-        Assert.Equal(plusToken, binaryOperatorNode.ChildBag.Single());
+        Assert.Single(binaryOperatorNode.ChildList);
+        Assert.Equal(plusToken, binaryOperatorNode.ChildList.Single());
 
         Assert.False(binaryOperatorNode.IsFabricated);
 

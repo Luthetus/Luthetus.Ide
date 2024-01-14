@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.InputFiles.States;
@@ -47,7 +47,7 @@ public partial class InputFileSidebar : ComponentBase
     [Parameter, EditorRequired]
     public Action<IAbsolutePath?> SetSelectedAbsolutePath { get; set; } = null!;
 
-    public static readonly Key<TreeViewContainer> TreeViewStateKey = Key<TreeViewContainer>.NewKey();
+    public static readonly Key<TreeViewContainer> TreeViewContainerKey = Key<TreeViewContainer>.NewKey();
 
     private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
 
@@ -75,10 +75,10 @@ public partial class InputFileSidebar : ComponentBase
 
             var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(directoryHomeNode, directoryRootNode);
 
-            if (!TreeViewService.TryGetTreeViewContainer(TreeViewStateKey, out var treeViewState))
+            if (!TreeViewService.TryGetTreeViewContainer(TreeViewContainerKey, out var treeViewContainer))
             {
                 TreeViewService.RegisterTreeViewContainer(new TreeViewContainer(
-                    TreeViewStateKey,
+                    TreeViewContainerKey,
                     adhocRootNode,
                     directoryHomeNode is null
                         ? ImmutableList<TreeViewNoType>.Empty

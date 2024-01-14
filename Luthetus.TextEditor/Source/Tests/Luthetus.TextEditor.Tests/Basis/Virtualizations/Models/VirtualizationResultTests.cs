@@ -27,10 +27,10 @@ public record VirtualizationResultTests
 	}
 
 	/// <summary>
-	/// <see cref="VirtualizationResult{T}.EntryBag"/>
+	/// <see cref="VirtualizationResult{T}.EntryList"/>
 	/// </summary>
 	[Fact]
-	public void EntryBag()
+	public void EntryList()
 	{
 		throw new NotImplementedException();
 	}

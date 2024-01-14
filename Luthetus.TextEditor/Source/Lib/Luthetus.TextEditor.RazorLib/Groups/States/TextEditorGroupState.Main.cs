@@ -14,8 +14,8 @@ public partial class TextEditorGroupState
 {
     public TextEditorGroupState()
     {
-        GroupBag = ImmutableList<TextEditorGroup>.Empty;
+        GroupList = ImmutableList<TextEditorGroup>.Empty;
     }
 
-    public ImmutableList<TextEditorGroup> GroupBag { get; init; }
+    public ImmutableList<TextEditorGroup> GroupList { get; init; }
 }

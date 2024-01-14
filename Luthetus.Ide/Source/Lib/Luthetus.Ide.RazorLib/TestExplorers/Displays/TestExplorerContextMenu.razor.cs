@@ -37,7 +37,7 @@ public partial class TestExplorerContextMenu : ComponentBase
         if (commandArgs.TargetNode is null)
             return MenuRecord.Empty;
 
-        var menuRecordsBag = new List<MenuOptionRecord>();
+        var menuRecordsList = new List<MenuOptionRecord>();
 
 		if (commandArgs.TargetNode is TreeViewStringFragment treeViewStringFragment)
 		{
@@ -68,7 +68,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 								treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory?.Value));
 					});
 	
-				menuRecordsBag.Add(menuOptionRecord);
+				menuRecordsList.Add(menuOptionRecord);
 			}
 			else
 			{
@@ -76,14 +76,14 @@ public partial class TestExplorerContextMenu : ComponentBase
 					$"Namespace: {treeViewStringFragment.Item.Value}",
 					MenuOptionKind.Other);
 
-				menuRecordsBag.Add(menuOptionRecord);
+				menuRecordsList.Add(menuOptionRecord);
 			}
 		}
 
-        if (!menuRecordsBag.Any())
+        if (!menuRecordsList.Any())
             return MenuRecord.Empty;
 
-        return new MenuRecord(menuRecordsBag.ToImmutableArray());
+        return new MenuRecord(menuRecordsList.ToImmutableArray());
     }
 
 	private async Task RunTestByFullyQualifiedName(

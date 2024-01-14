@@ -27,10 +27,10 @@ public class GenericPreprocessorDefinitionTests
 	}
 
 	/// <summary>
-	/// <see cref="GenericPreprocessorDefinition.DeliminationExtendedSyntaxBag"/>
+	/// <see cref="GenericPreprocessorDefinition.DeliminationExtendedSyntaxList"/>
 	/// </summary>
 	[Fact]
-	public void DeliminationExtendedSyntaxBag()
+	public void DeliminationExtendedSyntaxList()
 	{
 		throw new NotImplementedException();
 	}

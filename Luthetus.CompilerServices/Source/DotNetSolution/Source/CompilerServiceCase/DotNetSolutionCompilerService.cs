@@ -84,7 +84,7 @@ public class DotNetSolutionCompilerService : ICompilerService
             if (!_dotNetSolutionResourceMap.ContainsKey(resourceUri))
                 return ImmutableArray<TextEditorTextSpan>.Empty;
 
-            return _dotNetSolutionResourceMap[resourceUri].SyntacticTextSpanBag;
+            return _dotNetSolutionResourceMap[resourceUri].SyntacticTextSpanList;
         }
     }
 
@@ -95,7 +95,7 @@ public class DotNetSolutionCompilerService : ICompilerService
             if (!_dotNetSolutionResourceMap.ContainsKey(resourceUri))
                 return ImmutableArray<ITextEditorSymbol>.Empty;
 
-            return _dotNetSolutionResourceMap[resourceUri].SymbolBag;
+            return _dotNetSolutionResourceMap[resourceUri].SymbolList;
         }
     }
 
@@ -149,7 +149,7 @@ public class DotNetSolutionCompilerService : ICompilerService
                         CompilerServiceDiagnosticPresentationFacts.PresentationKey)
                     .Invoke(editContext);
 
-                var pendingCalculation = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
+                var pendingCalculation = modelModifier.PresentationModelsList.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
                     ?.PendingCalculation;
 
@@ -169,7 +169,7 @@ public class DotNetSolutionCompilerService : ICompilerService
                         return;
 
                     var dotNetSolutionResource = _dotNetSolutionResourceMap[resourceUri];
-                    dotNetSolutionResource.SyntaxTokenBag = lexer.SyntaxTokens;
+                    dotNetSolutionResource.SyntaxTokenList = lexer.SyntaxTokens;
                     dotNetSolutionResource.CompilationUnit = compilationUnit;
                 }
 
@@ -177,12 +177,12 @@ public class DotNetSolutionCompilerService : ICompilerService
 
                 ResourceParsed?.Invoke();
 
-                var presentationModel = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
+                var presentationModel = modelModifier.PresentationModelsList.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
                 if (presentationModel?.PendingCalculation is not null)
                 {
-                    presentationModel.PendingCalculation.TextEditorTextSpanBag =
+                    presentationModel.PendingCalculation.TextEditorTextSpanList =
                         GetDiagnosticsFor(modelModifier.ResourceUri)
                             .Select(x => x.TextSpan)
                             .ToImmutableArray();

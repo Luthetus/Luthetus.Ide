@@ -4,14 +4,14 @@ namespace Luthetus.Ide.RazorLib.CommandLines.Models;
 
 public class FormattedCommand
 {
-    public FormattedCommand(string targetFileName, IEnumerable<string> argumentsBag)
+    public FormattedCommand(string targetFileName, IEnumerable<string> argumentsList)
     {
         TargetFileName = targetFileName;
-        ArgumentsBag = argumentsBag;
+        ArgumentsList = argumentsList;
     }
 
     public string TargetFileName { get; }
-    public IEnumerable<string> ArgumentsBag { get; }
+    public IEnumerable<string> ArgumentsList { get; }
 
     /// <summary>The command in string form.</summary>
     public string Value => FormattedCommandToStringHelper();
@@ -20,7 +20,7 @@ public class FormattedCommand
     {
         var interpolatedCommandBuilder = new StringBuilder(TargetFileName);
 
-        foreach (var argument in ArgumentsBag)
+        foreach (var argument in ArgumentsList)
         {
             interpolatedCommandBuilder.Append($" {argument}");
         }

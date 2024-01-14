@@ -46,7 +46,7 @@ public class RazorResource : ICompilerServiceResource
             .SemanticResultRazor
             .CompilationUnit
             .Binder
-            .SymbolsBag;
+            .SymbolsList;
 
         var originalText = _textEditorService.ModelApi.GetAllText(ResourceUri);
 

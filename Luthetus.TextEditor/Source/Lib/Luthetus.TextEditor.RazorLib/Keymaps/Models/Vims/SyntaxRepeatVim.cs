@@ -1,6 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using System.Collections.Immutable;
 using System.Text;
 
@@ -32,7 +33,7 @@ public static class SyntaxRepeatVim
     }
 
     public static bool TryParse(TextEditorKeymapVim textEditorKeymapVim,
-        ImmutableArray<VimGrammarToken> sentenceSnapshotBag,
+        ImmutableArray<VimGrammarToken> sentenceSnapshotList,
         int indexInSentence,
         KeymapArgument keymapArgument,
         bool hasTextSelection,
@@ -42,9 +43,9 @@ public static class SyntaxRepeatVim
 
         var numberBuilder = new StringBuilder();
 
-        for (int i = indexInSentence; i < sentenceSnapshotBag.Length; i++)
+        for (int i = indexInSentence; i < sentenceSnapshotList.Length; i++)
         {
-            var currentToken = sentenceSnapshotBag[i];
+            var currentToken = sentenceSnapshotList[i];
 
             if (currentToken.VimGrammarKind == VimGrammarKind.Repeat)
             {
@@ -57,7 +58,7 @@ public static class SyntaxRepeatVim
 
         var success = VimSentence.TryParseNextToken(
             textEditorKeymapVim,
-            sentenceSnapshotBag,
+            sentenceSnapshotList,
             modifiedIndexInSentence,
             keymapArgument,
             hasTextSelection,
@@ -74,9 +75,23 @@ public static class SyntaxRepeatVim
                 {
                     for (int index = 0; index < intValue; index++)
                     {
-                        await innerTextEditorCommand.DoAsyncFunc.Invoke(textEditorCommandArgs);
+                        await innerTextEditorCommand.CommandFunc.Invoke(textEditorCommandArgs);
                     }
-                });
+                })
+            {
+                TextEditorEditFactory = interfaceCommandArgs =>
+                {
+                    var textEditorCommandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+                    return async editContext  =>
+                    {
+                        for (int index = 0; index < intValue; index++)
+                        {
+                            await innerTextEditorCommand.CommandFunc.Invoke(textEditorCommandArgs);
+                        }
+                    };
+                }
+            };
         }
         else
         {

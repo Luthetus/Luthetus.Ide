@@ -24,7 +24,7 @@ public sealed record TypeClauseNode : ISyntaxNode
         if (GenericParametersListingNode is not null)
             children.Add(GenericParametersListingNode);
 
-        ChildBag = children.ToImmutableArray();
+        ChildList = children.ToImmutableArray();
     }
 
     /// <summary>
@@ -49,7 +49,7 @@ public sealed record TypeClauseNode : ISyntaxNode
     /// </summary>
     public GenericParametersListingNode? GenericParametersListingNode { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TypeClauseNode;

@@ -11,19 +11,19 @@ public partial record ReflectiveState
             ReflectiveState inState,
             RegisterAction registerAction)
         {
-            if (inState.ReflectiveModelBag.Any(x => x.Key == registerAction.Entry.Key))
+            if (inState.ReflectiveModelList.Any(x => x.Key == registerAction.Entry.Key))
                 return inState;
 
             var insertionIndex = 0;
 
-            if (registerAction.InsertionIndex >= 0 && registerAction.InsertionIndex < 1 + inState.ReflectiveModelBag.Count)
+            if (registerAction.InsertionIndex >= 0 && registerAction.InsertionIndex < 1 + inState.ReflectiveModelList.Count)
                 insertionIndex = registerAction.InsertionIndex;
 
-            var outDisplayStateBag = inState.ReflectiveModelBag.Insert(
+            var outDisplayStateList = inState.ReflectiveModelList.Insert(
                 insertionIndex,
                 registerAction.Entry);
 
-            return new ReflectiveState { ReflectiveModelBag = outDisplayStateBag };
+            return new ReflectiveState { ReflectiveModelList = outDisplayStateList };
         }
 
         [ReducerMethod]
@@ -31,17 +31,17 @@ public partial record ReflectiveState
             ReflectiveState inState,
             WithAction withAction)
         {
-            var inDisplayState = inState.ReflectiveModelBag.FirstOrDefault(
+            var inDisplayState = inState.ReflectiveModelList.FirstOrDefault(
                 x => x.Key == withAction.Key);
 
             if (inDisplayState is null)
                 return inState;
 
-            var outDisplayStateBag = inState.ReflectiveModelBag.Replace(
+            var outDisplayStateList = inState.ReflectiveModelList.Replace(
                 inDisplayState,
                 withAction.WithFunc.Invoke(inDisplayState));
 
-            return new ReflectiveState { ReflectiveModelBag = outDisplayStateBag };
+            return new ReflectiveState { ReflectiveModelList = outDisplayStateList };
         }
 
         [ReducerMethod]
@@ -49,17 +49,17 @@ public partial record ReflectiveState
             ReflectiveState inState,
             DisposeAction disposeAction)
         {
-            var inDisplayState = inState.ReflectiveModelBag.FirstOrDefault(
+            var inDisplayState = inState.ReflectiveModelList.FirstOrDefault(
                 x => x.Key == disposeAction.Key);
 
             if (inDisplayState is null)
                 return inState;
 
-            var outDisplayStateBag = inState.ReflectiveModelBag.Remove(inDisplayState);
+            var outDisplayStateList = inState.ReflectiveModelList.Remove(inDisplayState);
 
             return new ReflectiveState
             {
-                ReflectiveModelBag = outDisplayStateBag
+                ReflectiveModelList = outDisplayStateList
             };
         }
     }

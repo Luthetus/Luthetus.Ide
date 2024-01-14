@@ -17,17 +17,17 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
     public DotNetSolutionModelBuilder(
         IAbsolutePath absolutePath,
         DotNetSolutionHeader dotNetSolutionHeader,
-        ImmutableArray<IDotNetProject> dotNetProjectBag,
-        ImmutableArray<SolutionFolder> solutionFolderBag,
-        ImmutableArray<NestedProjectEntry> nestedProjectEntryBag,
+        ImmutableArray<IDotNetProject> dotNetProjectList,
+        ImmutableArray<SolutionFolder> solutionFolderList,
+        ImmutableArray<NestedProjectEntry> nestedProjectEntryList,
         DotNetSolutionGlobal dotNetSolutionGlobal,
         string solutionFileContents)
     {
         AbsolutePath = absolutePath;
         DotNetSolutionHeader = dotNetSolutionHeader;
-        DotNetProjectBag = dotNetProjectBag;
-        SolutionFolderBag = solutionFolderBag;
-        NestedProjectEntryBag = nestedProjectEntryBag;
+        DotNetProjectList = dotNetProjectList;
+        SolutionFolderList = solutionFolderList;
+        NestedProjectEntryList = nestedProjectEntryList;
         DotNetSolutionGlobal = dotNetSolutionGlobal;
         SolutionFileContents = solutionFileContents;
     }
@@ -36,9 +36,9 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
     {
         AbsolutePath = dotNetSolutionModel.AbsolutePath;
         DotNetSolutionHeader = dotNetSolutionModel.DotNetSolutionHeader;
-        DotNetProjectBag = dotNetSolutionModel.DotNetProjectBag;
-        SolutionFolderBag = dotNetSolutionModel.SolutionFolderBag;
-        NestedProjectEntryBag = dotNetSolutionModel.NestedProjectEntryBag;
+        DotNetProjectList = dotNetSolutionModel.DotNetProjectList;
+        SolutionFolderList = dotNetSolutionModel.SolutionFolderList;
+        NestedProjectEntryList = dotNetSolutionModel.NestedProjectEntryList;
         DotNetSolutionGlobal = dotNetSolutionModel.DotNetSolutionGlobal;
         SolutionFileContents = dotNetSolutionModel.SolutionFileContents;
     }
@@ -46,9 +46,9 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
     public Key<DotNetSolutionModel> Key { get; init; }
     public IAbsolutePath AbsolutePath { get; init; }
     public DotNetSolutionHeader DotNetSolutionHeader { get; init; }
-    public ImmutableArray<IDotNetProject> DotNetProjectBag { get; private set; }
-    public ImmutableArray<SolutionFolder> SolutionFolderBag { get; init; }
-    public ImmutableArray<NestedProjectEntry> NestedProjectEntryBag { get; init; }
+    public ImmutableArray<IDotNetProject> DotNetProjectList { get; private set; }
+    public ImmutableArray<SolutionFolder> SolutionFolderList { get; init; }
+    public ImmutableArray<NestedProjectEntry> NestedProjectEntryList { get; init; }
     public DotNetSolutionGlobal DotNetSolutionGlobal { get; init; }
     public string SolutionFileContents { get; private set; }
 
@@ -59,9 +59,9 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
         return new DotNetSolutionModel(
             AbsolutePath,
             DotNetSolutionHeader,
-            DotNetProjectBag,
-            SolutionFolderBag,
-            NestedProjectEntryBag,
+            DotNetProjectList,
+            SolutionFolderList,
+            NestedProjectEntryList,
             DotNetSolutionGlobal,
             SolutionFileContents);
     }
@@ -79,7 +79,7 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
             IDotNetProject? newProjectToken = null;
             var allTokens = GetAllTokens();
 
-            if (DotNetProjectBag.Any())
+            if (DotNetProjectList.Any())
             {
                 // If there is an existing project token, then insert the new
                 // project token immediately after the project token.
@@ -89,9 +89,9 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
 
                 IDotNetProject? lastValidProjectToken = null;
 
-                for (var i = DotNetProjectBag.Length - 1; i >= 0; i--)
+                for (var i = DotNetProjectList.Length - 1; i >= 0; i--)
                 {
-                    var entry = DotNetProjectBag[i];
+                    var entry = DotNetProjectList[i];
 
                     if (entry.CloseAssociatedGroupToken is not null)
                     {
@@ -155,7 +155,7 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
                 newProjectToken = dotNetProject;
             }
 
-            DotNetProjectBag = DotNetProjectBag.Add(newProjectToken);
+            DotNetProjectList = DotNetProjectList.Add(newProjectToken);
 
             SolutionFileContents = SolutionFileContents.Insert(
                 newProjectToken.OpenAssociatedGroupToken.TextSpan.StartingIndexInclusive,
@@ -208,7 +208,7 @@ EndProject
     {
         var tokens = new List<(ISyntaxToken token, Func<ISyntaxToken, TextEditorTextSpan, ISyntaxToken?> withFunc)>();
 
-        foreach (var dotNetProject in DotNetProjectBag)
+        foreach (var dotNetProject in DotNetProjectList)
         {
             tokens.Add((
                 dotNetProject.OpenAssociatedGroupToken,

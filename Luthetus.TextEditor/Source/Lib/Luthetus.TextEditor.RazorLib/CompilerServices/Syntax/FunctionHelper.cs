@@ -12,18 +12,18 @@ public static class FunctionHelper
         this FunctionParametersListingNode functionParametersListingNode,
         FunctionArgumentsListingNode functionArgumentsListingNode)
     {
-        if (functionParametersListingNode.FunctionParameterEntryNodeBag.Length !=
-            functionArgumentsListingNode.FunctionArgumentEntryNodeBag.Length)
+        if (functionParametersListingNode.FunctionParameterEntryNodeList.Length !=
+            functionArgumentsListingNode.FunctionArgumentEntryNodeList.Length)
         {
             return false;
         }
 
         var isValid = true;
 
-        for (int i = 0; i < functionParametersListingNode.FunctionParameterEntryNodeBag.Length; i++)
+        for (int i = 0; i < functionParametersListingNode.FunctionParameterEntryNodeList.Length; i++)
         {
-            var parameter = functionParametersListingNode.FunctionParameterEntryNodeBag[i];
-            var argument = functionArgumentsListingNode.FunctionArgumentEntryNodeBag[i];
+            var parameter = functionParametersListingNode.FunctionParameterEntryNodeList[i];
+            var argument = functionArgumentsListingNode.FunctionArgumentEntryNodeList[i];
 
             // TODO: Check that the Types align
             /*

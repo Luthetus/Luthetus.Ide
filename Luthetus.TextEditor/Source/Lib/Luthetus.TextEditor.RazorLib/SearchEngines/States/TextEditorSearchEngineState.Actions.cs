@@ -7,6 +7,5 @@ public partial class TextEditorSearchEngineState
 {
     public record RegisterAction(ITextEditorSearchEngine SearchEngine);
     public record DisposeAction(Key<ITextEditorSearchEngine> SearchEngineKey);
-    public record SetActiveSearchEngineAction(Key<ITextEditorSearchEngine> SearchEngineKey);
     public record SetSearchQueryAction(string SearchQuery);
 }

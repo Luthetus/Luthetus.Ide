@@ -4,5 +4,5 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
 public interface ILexer
 {
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag { get; }
+    public ImmutableArray<TextEditorDiagnostic> DiagnosticList { get; }
 }

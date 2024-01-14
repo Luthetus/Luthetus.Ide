@@ -13,17 +13,17 @@ public partial class TextEditorGroupState
             TextEditorGroupState inState,
             RegisterAction registerAction)
         {
-            var inGroup = inState.GroupBag.FirstOrDefault(
+            var inGroup = inState.GroupList.FirstOrDefault(
                 x => x.GroupKey == registerAction.Group.GroupKey);
 
             if (inGroup is not null)
                 return inState;
 
-            var outGroupBag = inState.GroupBag.Add(registerAction.Group);
+            var outGroupList = inState.GroupList.Add(registerAction.Group);
 
             return new TextEditorGroupState
             {
-                GroupBag = outGroupBag
+                GroupList = outGroupList
             };
         }
 
@@ -32,24 +32,24 @@ public partial class TextEditorGroupState
             TextEditorGroupState inState,
             AddViewModelToGroupAction addViewModelToGroupAction)
         {
-            var inGroup = inState.GroupBag.FirstOrDefault(
+            var inGroup = inState.GroupList.FirstOrDefault(
                 x => x.GroupKey == addViewModelToGroupAction.GroupKey);
 
             if (inGroup is null)
                 return inState;
 
-            if (inGroup.ViewModelKeyBag.Contains(addViewModelToGroupAction.ViewModelKey))
+            if (inGroup.ViewModelKeyList.Contains(addViewModelToGroupAction.ViewModelKey))
                 return inState;
 
-            var outViewModelKeyBag = inGroup.ViewModelKeyBag.Add(
+            var outViewModelKeyList = inGroup.ViewModelKeyList.Add(
                 addViewModelToGroupAction.ViewModelKey);
 
             var outGroup = inGroup with
             {
-                ViewModelKeyBag = outViewModelKeyBag
+                ViewModelKeyList = outViewModelKeyList
             };
 
-            if (outGroup.ViewModelKeyBag.Count == 1)
+            if (outGroup.ViewModelKeyList.Count == 1)
             {
                 outGroup = outGroup with
                 {
@@ -57,11 +57,11 @@ public partial class TextEditorGroupState
                 };
             }
 
-            var outGroupBag = inState.GroupBag.Replace(inGroup, outGroup);
+            var outGroupList = inState.GroupList.Replace(inGroup, outGroup);
 
             return new TextEditorGroupState
             {
-                GroupBag = outGroupBag
+                GroupList = outGroupList
             };
         }
 
@@ -70,26 +70,26 @@ public partial class TextEditorGroupState
             TextEditorGroupState inState,
             RemoveViewModelFromGroupAction removeViewModelFromGroupAction)
         {
-            var inGroup = inState.GroupBag.FirstOrDefault(
+            var inGroup = inState.GroupList.FirstOrDefault(
                 x => x.GroupKey == removeViewModelFromGroupAction.GroupKey);
 
             if (inGroup is null)
                 return inState;
 
-            var indexOfViewModelKeyToRemove = inGroup.ViewModelKeyBag.FindIndex(
+            var indexOfViewModelKeyToRemove = inGroup.ViewModelKeyList.FindIndex(
                 x => x == removeViewModelFromGroupAction.ViewModelKey);
 
             if (indexOfViewModelKeyToRemove == -1)
                 return inState;
 
-            var nextViewModelKeyBag = inGroup.ViewModelKeyBag.Remove(
+            var nextViewModelKeyList = inGroup.ViewModelKeyList.Remove(
                 removeViewModelFromGroupAction.ViewModelKey);
 
             // This variable is done for renaming
             var activeViewModelKeyIndex = indexOfViewModelKeyToRemove;
 
             // If last item in list
-            if (activeViewModelKeyIndex >= inGroup.ViewModelKeyBag.Count - 1)
+            if (activeViewModelKeyIndex >= inGroup.ViewModelKeyList.Count - 1)
             {
                 activeViewModelKeyIndex--;
             }
@@ -103,20 +103,20 @@ public partial class TextEditorGroupState
             Key<TextEditorViewModel> nextActiveTextEditorModelKey;
 
             // If removing the active will result in empty list set the active as an Empty TextEditorViewModelKey
-            if (inGroup.ViewModelKeyBag.Count - 1 == 0)
+            if (inGroup.ViewModelKeyList.Count - 1 == 0)
                 nextActiveTextEditorModelKey = Key<TextEditorViewModel>.Empty;
             else
-                nextActiveTextEditorModelKey = inGroup.ViewModelKeyBag[activeViewModelKeyIndex];
+                nextActiveTextEditorModelKey = inGroup.ViewModelKeyList[activeViewModelKeyIndex];
             
-            var outGroupBag = inState.GroupBag.Replace(inGroup, inGroup with
+            var outGroupList = inState.GroupList.Replace(inGroup, inGroup with
             {
-                ViewModelKeyBag = nextViewModelKeyBag,
+                ViewModelKeyList = nextViewModelKeyList,
                 ActiveViewModelKey = nextActiveTextEditorModelKey
             });
 
             return new TextEditorGroupState
             {
-                GroupBag = outGroupBag
+                GroupList = outGroupList
             };
         }
 
@@ -125,20 +125,20 @@ public partial class TextEditorGroupState
             TextEditorGroupState inState,
             SetActiveViewModelOfGroupAction setActiveViewModelOfGroupAction)
         {
-            var inGroup = inState.GroupBag.FirstOrDefault(
+            var inGroup = inState.GroupList.FirstOrDefault(
                 x => x.GroupKey == setActiveViewModelOfGroupAction.GroupKey);
 
             if (inGroup is null)
                 return inState;
 
-            var outGroupBag = inState.GroupBag.Replace(inGroup, inGroup with
+            var outGroupList = inState.GroupList.Replace(inGroup, inGroup with
             {
                 ActiveViewModelKey = setActiveViewModelOfGroupAction.ViewModelKey
             });
 
             return new TextEditorGroupState
             {
-                GroupBag = outGroupBag
+                GroupList = outGroupList
             };
         }
 
@@ -147,17 +147,17 @@ public partial class TextEditorGroupState
             TextEditorGroupState inState,
             DisposeAction disposeAction)
         {
-            var inGroup = inState.GroupBag.FirstOrDefault(
+            var inGroup = inState.GroupList.FirstOrDefault(
                 x => x.GroupKey == disposeAction.GroupKey);
 
             if (inGroup is null)
                 return inState;
 
-            var outGroupBag = inState.GroupBag.Remove(inGroup);
+            var outGroupList = inState.GroupList.Remove(inGroup);
 
             return new TextEditorGroupState
             {
-                GroupBag = outGroupBag
+                GroupList = outGroupList
             };
         }
     }

@@ -8,14 +8,14 @@ namespace Luthetus.Common.RazorLib.Reflectives.Models;
 
 public record ReflectiveModel(
     Key<ReflectiveModel> Key,
-    List<Type> ComponentTypeBag,
+    List<Type> ComponentTypeList,
     Guid ChosenTypeGuid,
     Guid PreviousTypeGuid,
-    PropertyInfo[] ComponentPropertyInfoBag,
+    PropertyInfo[] ComponentPropertyInfoList,
     Dictionary<string, IReflectiveParameter> ReflectiveParameterMap,
     IDispatcher Dispatcher) // This is gonna be a hack for re-rendering temporarily
 {
-    public Type? ChosenType => ComponentTypeBag
+    public Type? ChosenType => ComponentTypeList
         .FirstOrDefault(x => x.GUID == ChosenTypeGuid);
 
     private readonly object _parametersLock = new();
@@ -55,7 +55,7 @@ public record ReflectiveModel(
     {
         var blazorParameters = new Dictionary<string, object?>();
 
-        foreach (var parameterInfo in ComponentPropertyInfoBag)
+        foreach (var parameterInfo in ComponentPropertyInfoList)
         {
             var parameterKey = parameterInfo.Name;
 
@@ -94,7 +94,7 @@ public record ReflectiveModel(
         return blazorParameters;
     }
 
-    public void CalculateComponentPropertyInfoBag(string? chosenTypeGuidString, ref int chosenComponentChangeCounter)
+    public void CalculateComponentPropertyInfoList(string? chosenTypeGuidString, ref int chosenComponentChangeCounter)
     {
         var refDisplayState = this;
 
@@ -130,7 +130,7 @@ public record ReflectiveModel(
             {
                 refDisplayState = refDisplayState with
                 {
-                    ComponentPropertyInfoBag = type
+                    ComponentPropertyInfoList = type
                         .GetProperties()
                         .Where(x => Attribute.IsDefined(x, typeof(ParameterAttribute)))
                         .ToArray()
@@ -140,7 +140,7 @@ public record ReflectiveModel(
             {
                 refDisplayState = refDisplayState with
                 {
-                    ComponentPropertyInfoBag = Array.Empty<PropertyInfo>()
+                    ComponentPropertyInfoList = Array.Empty<PropertyInfo>()
                 };
             }
         }
@@ -150,7 +150,7 @@ public record ReflectiveModel(
             {
                 ChosenTypeGuid = refDisplayState.ChosenTypeGuid,
                 PreviousTypeGuid = refDisplayState.PreviousTypeGuid,
-                ComponentPropertyInfoBag = refDisplayState.ComponentPropertyInfoBag,
+                ComponentPropertyInfoList = refDisplayState.ComponentPropertyInfoList,
                 ReflectiveParameterMap = new(),
             }));
     }

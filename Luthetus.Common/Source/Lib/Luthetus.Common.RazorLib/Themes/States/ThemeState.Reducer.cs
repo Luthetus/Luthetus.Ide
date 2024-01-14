@@ -11,15 +11,15 @@ public partial record ThemeState
             ThemeState inState,
             RegisterAction registerAction)
         {
-            var inTheme = inState.ThemeBag.FirstOrDefault(
+            var inTheme = inState.ThemeList.FirstOrDefault(
                 x => x.Key == registerAction.Theme.Key);
 
             if (inTheme is not null)
                 return inState;
 
-            var outThemeBag = inState.ThemeBag.Add(registerAction.Theme);
+            var outThemeList = inState.ThemeList.Add(registerAction.Theme);
 
-            return new ThemeState { ThemeBag = outThemeBag };
+            return new ThemeState { ThemeList = outThemeList };
         }
 
         [ReducerMethod]
@@ -27,15 +27,15 @@ public partial record ThemeState
             ThemeState inState,
             DisposeAction disposeAction)
         {
-            var inTheme = inState.ThemeBag.FirstOrDefault(
+            var inTheme = inState.ThemeList.FirstOrDefault(
                 x => x.Key == disposeAction.ThemeKey);
 
             if (inTheme is null)
                 return inState;
 
-            var outThemeBag = inState.ThemeBag.Remove(inTheme);
+            var outThemeList = inState.ThemeList.Remove(inTheme);
 
-            return new ThemeState { ThemeBag = outThemeBag };
+            return new ThemeState { ThemeList = outThemeList };
         }
     }
 }

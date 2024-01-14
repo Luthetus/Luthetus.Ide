@@ -9,4 +9,4 @@ public record ThemeRecord(
     string CssClassString,
     ThemeContrastKind ThemeContrastKind,
     ThemeColorKind ThemeColorKind,
-    ImmutableList<ThemeScope> ThemeScopeBag);
+    ImmutableList<ThemeScope> ThemeScopeList);

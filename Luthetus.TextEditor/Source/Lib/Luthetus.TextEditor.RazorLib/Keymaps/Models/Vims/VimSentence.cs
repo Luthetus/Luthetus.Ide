@@ -8,9 +8,10 @@ namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
 public class VimSentence
 {
-    private readonly List<VimGrammarToken> _pendingSentenceBag = new();
+    private readonly List<VimGrammarToken> _pendingSentenceList = new();
 
-    public ImmutableArray<VimGrammarToken> PendingSentenceBag => _pendingSentenceBag.ToImmutableArray();
+    public ImmutableArray<VimGrammarToken> PendingSentenceList => _pendingSentenceList.ToImmutableArray();
+    public ImmutableArray<VimGrammarToken> MostRecentSyntacticallyCompleteSentence { get; set; } = ImmutableArray<VimGrammarToken>.Empty;
 
     public bool TryLex(
         TextEditorKeymapVim textEditorKeymapVim,
@@ -20,7 +21,7 @@ public class VimSentence
     {
         bool sentenceIsSyntacticallyComplete;
 
-        var mostRecentToken = _pendingSentenceBag.LastOrDefault();
+        var mostRecentToken = _pendingSentenceList.LastOrDefault();
 
         if (mostRecentToken is null)
         {
@@ -34,14 +35,15 @@ public class VimSentence
                 VimGrammarKind.Modifier => ContinueFromModifier(keymapArgument, hasTextSelection),
                 VimGrammarKind.TextObject => ContinueFromTextObject(keymapArgument, hasTextSelection),
                 VimGrammarKind.Repeat => ContinueFromRepeat(keymapArgument, hasTextSelection),
-                _ => throw new ApplicationException($"The {nameof(VimGrammarKind)}: {_pendingSentenceBag.Last().VimGrammarKind} was not recognized."),
+                _ => throw new ApplicationException($"The {nameof(VimGrammarKind)}: {_pendingSentenceList.Last().VimGrammarKind} was not recognized."),
             };
         }
 
         if (sentenceIsSyntacticallyComplete)
         {
-            var sentenceSnapshot = PendingSentenceBag;
-            _pendingSentenceBag.Clear();
+            var sentenceSnapshot = PendingSentenceList;
+            MostRecentSyntacticallyCompleteSentence = sentenceSnapshot;
+            _pendingSentenceList.Clear();
 
             return TryParseNextToken(
                 textEditorKeymapVim,
@@ -64,37 +66,37 @@ public class VimSentence
             {
                 // This if case relates to 'Ctrl + e' which does not get
                 // double tapped instead it only takes one press of the keymap
-                _pendingSentenceBag.Clear();
-                _pendingSentenceBag.Add(verbToken);
+                _pendingSentenceList.Clear();
+                _pendingSentenceList.Add(verbToken);
 
                 return true;
             }
 
             if (hasTextSelection)
             {
-                _pendingSentenceBag.Clear();
-                _pendingSentenceBag.Add(verbToken);
+                _pendingSentenceList.Clear();
+                _pendingSentenceList.Add(verbToken);
 
                 return true;
             }
 
-            _pendingSentenceBag.Add(verbToken);
+            _pendingSentenceList.Add(verbToken);
             return false;
         }
 
         if (SyntaxTextObjectVim.TryLex(keymapArgument, hasTextSelection, out var textObjectToken) && textObjectToken is not null)
         {
-            _pendingSentenceBag.Add(textObjectToken);
+            _pendingSentenceList.Add(textObjectToken);
             return true;
         }
 
         if (SyntaxRepeatVim.TryLex(keymapArgument, hasTextSelection, out var repeatToken) && repeatToken is not null)
         {
-            _pendingSentenceBag.Add(repeatToken);
+            _pendingSentenceList.Add(repeatToken);
             return false;
         }
 
-        _pendingSentenceBag.Clear();
+        _pendingSentenceList.Clear();
         return false;
     }
 
@@ -102,9 +104,9 @@ public class VimSentence
     {
         if (SyntaxVerbVim.TryLex(keymapArgument, hasTextSelection, out var verbToken) && verbToken is not null)
         {
-            if (_pendingSentenceBag.Last().KeymapArgument.Code == verbToken.KeymapArgument.Code)
+            if (_pendingSentenceList.Last().KeymapArgument.Code == verbToken.KeymapArgument.Code)
             {
-                _pendingSentenceBag.Add(verbToken);
+                _pendingSentenceList.Add(verbToken);
                 return true;
             }
 
@@ -112,37 +114,37 @@ public class VimSentence
             {
                 // This if case relates to 'Ctrl + e' which does not get
                 // double tapped instead it only takes one press of the keymap
-                _pendingSentenceBag.Clear();
-                _pendingSentenceBag.Add(verbToken);
+                _pendingSentenceList.Clear();
+                _pendingSentenceList.Add(verbToken);
 
                 return true;
             }
 
             // The verb was overriden so restart sentence
-            _pendingSentenceBag.Clear();
+            _pendingSentenceList.Clear();
 
             return ContinueFromStart(keymapArgument, hasTextSelection);
         }
         
         if (SyntaxModifierVim.TryLex(keymapArgument, hasTextSelection, out var modifierToken) && modifierToken is not null)
         {
-            _pendingSentenceBag.Add(modifierToken);
+            _pendingSentenceList.Add(modifierToken);
             return false;
         }
         
         if (SyntaxTextObjectVim.TryLex(keymapArgument, hasTextSelection, out var textObjectToken) && textObjectToken is not null)
         {
-            _pendingSentenceBag.Add(textObjectToken);
+            _pendingSentenceList.Add(textObjectToken);
             return true;
         }
         
         if (SyntaxRepeatVim.TryLex(keymapArgument, hasTextSelection, out var repeatToken) && repeatToken is not null)
         {
-            _pendingSentenceBag.Add(repeatToken);
+            _pendingSentenceList.Add(repeatToken);
             return false;
         }
 
-        _pendingSentenceBag.Clear();
+        _pendingSentenceList.Clear();
         return false;
     }
 
@@ -150,11 +152,11 @@ public class VimSentence
     {
         if (SyntaxTextObjectVim.TryLex(keymapArgument, hasTextSelection, out var textObjectToken) && textObjectToken is not null)
         {
-            _pendingSentenceBag.Add(textObjectToken);
+            _pendingSentenceList.Add(textObjectToken);
             return true;
         }
 
-        _pendingSentenceBag.Clear();
+        _pendingSentenceList.Clear();
         return false;
     }
 
@@ -165,7 +167,7 @@ public class VimSentence
         _ = hasTextSelection;
 
         // This state should not occur as a TextObject always ends a sentence if it is there.
-        _pendingSentenceBag.Clear();
+        _pendingSentenceList.Clear();
         return false;
     }
 
@@ -173,55 +175,55 @@ public class VimSentence
     {
         if (SyntaxVerbVim.TryLex(keymapArgument, hasTextSelection, out var verbToken) && verbToken is not null)
         {
-            _pendingSentenceBag.Add(verbToken);
+            _pendingSentenceList.Add(verbToken);
             return false;
         }
         
         if (SyntaxTextObjectVim.TryLex(keymapArgument, hasTextSelection, out var textObjectToken) && textObjectToken is not null)
         {
-            _pendingSentenceBag.Add(textObjectToken);
+            _pendingSentenceList.Add(textObjectToken);
             return true;
         }
         
         if (SyntaxRepeatVim.TryLex(keymapArgument, hasTextSelection, out var repeatToken) && repeatToken is not null)
         {
-            _pendingSentenceBag.Add(repeatToken);
+            _pendingSentenceList.Add(repeatToken);
             return false;
         }
 
-        _pendingSentenceBag.Clear();
+        _pendingSentenceList.Clear();
         return false;
     }
 
     public static bool TryParseNextToken(
         TextEditorKeymapVim textEditorKeymapVim,
-        ImmutableArray<VimGrammarToken> sentenceSnapshotBag,
+        ImmutableArray<VimGrammarToken> sentenceSnapshotList,
         int indexInSentence,
         KeymapArgument keymapArgument,
         bool hasTextSelection,
         out TextEditorCommand? command)
     {
-        if (indexInSentence >= sentenceSnapshotBag.Length)
+        if (indexInSentence >= sentenceSnapshotList.Length)
         {
             command = null;
             return false;
         }
 
-        var currentToken = sentenceSnapshotBag[indexInSentence];
+        var currentToken = sentenceSnapshotList[indexInSentence];
 
         var success = false;
 
         success = currentToken.VimGrammarKind switch
         {
             VimGrammarKind.Verb => SyntaxVerbVim.TryParse(
-                textEditorKeymapVim, sentenceSnapshotBag, indexInSentence, keymapArgument, hasTextSelection, out command),
+                textEditorKeymapVim, sentenceSnapshotList, indexInSentence, keymapArgument, hasTextSelection, out command),
             VimGrammarKind.Modifier => SyntaxModifierVim.TryParse(
-                textEditorKeymapVim, sentenceSnapshotBag, indexInSentence, keymapArgument, hasTextSelection, out command),
+                textEditorKeymapVim, sentenceSnapshotList, indexInSentence, keymapArgument, hasTextSelection, out command),
             VimGrammarKind.TextObject => SyntaxTextObjectVim.TryParse(
-                textEditorKeymapVim, sentenceSnapshotBag, indexInSentence, keymapArgument, hasTextSelection, out command),
+                textEditorKeymapVim, sentenceSnapshotList, indexInSentence, keymapArgument, hasTextSelection, out command),
             VimGrammarKind.Repeat => SyntaxRepeatVim.TryParse(
-                textEditorKeymapVim, sentenceSnapshotBag, indexInSentence, keymapArgument, hasTextSelection, out command),
-            _ => throw new ApplicationException($"The {nameof(VimGrammarKind)}: {sentenceSnapshotBag.Last().VimGrammarKind} was not recognized."),
+                textEditorKeymapVim, sentenceSnapshotList, indexInSentence, keymapArgument, hasTextSelection, out command),
+            _ => throw new ApplicationException($"The {nameof(VimGrammarKind)}: {sentenceSnapshotList.Last().VimGrammarKind} was not recognized."),
         };
 
         if (success && command is not null)

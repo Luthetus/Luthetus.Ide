@@ -5,22 +5,22 @@ namespace Luthetus.Common.RazorLib.Dimensions.Models;
 
 public class DimensionAttribute
 {
-    public List<DimensionUnit> DimensionUnitBag { get; } = new();
+    public List<DimensionUnit> DimensionUnitList { get; } = new();
     public DimensionAttributeKind DimensionAttributeKind { get; set; }
     public string StyleString => GetStyleString();
 
     private string GetStyleString()
     {
-        var immutableDimensionUnits = DimensionUnitBag.ToImmutableArray();
+        var immutableDimensionUnits = DimensionUnitList.ToImmutableArray();
 
         if (!immutableDimensionUnits.Any())
             return string.Empty;
 
         var styleBuilder = new StringBuilder($"{DimensionAttributeKind.ToString().ToLower()}: calc(");
 
-        for (var index = 0; index < DimensionUnitBag.Count; index++)
+        for (var index = 0; index < DimensionUnitList.Count; index++)
         {
-            var dimensionUnit = DimensionUnitBag[index];
+            var dimensionUnit = DimensionUnitList[index];
 
             if (index != 0)
             {

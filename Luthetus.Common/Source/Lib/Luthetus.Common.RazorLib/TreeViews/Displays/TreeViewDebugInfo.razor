@@ -1,0 +1,34 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@{ var treeViewContainer = TreeViewStateSelection.Value; }
+
+<div class="luth_tree-view-debug-info">
+	<div>
+		@{ var rootNodeTreeViewRenderer = treeViewContainer.RootNode.GetTreeViewRenderer(); }
+
+		Root:&nbsp;
+		<DynamicComponent Type="rootNodeTreeViewRenderer.DynamicComponentType"
+                          Parameters="rootNodeTreeViewRenderer.DynamicComponentParameters"/>
+	</div>
+	<div>
+		@{ var activeNodeTreeViewRenderer = treeViewContainer.ActiveNode.GetTreeViewRenderer(); }
+
+		Active:&nbsp;
+		<DynamicComponent Type="activeNodeTreeViewRenderer.DynamicComponentType"
+                          Parameters="activeNodeTreeViewRenderer.DynamicComponentParameters"/>
+	</div>
+	<div>@treeViewContainer.StateId</div>
+
+	<div>
+		Selected:
+		@foreach (var node in treeViewContainer.SelectedNodeList)
+		{
+            var loopNodeTreeViewRenderer = node.GetTreeViewRenderer();
+
+			<div style="margin-left:20px;">
+				<DynamicComponent Type="loopNodeTreeViewRenderer.DynamicComponentType"
+                                  Parameters="loopNodeTreeViewRenderer.DynamicComponentParameters"/>
+			</div>
+		}
+	</div>
+</div>

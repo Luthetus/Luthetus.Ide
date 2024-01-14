@@ -240,13 +240,13 @@ public static class SyntaxTextObjectVim
     }
 
     public static bool TryParse(TextEditorKeymapVim textEditorKeymapVim,
-        ImmutableArray<VimGrammarToken> sentenceSnapshotBag,
+        ImmutableArray<VimGrammarToken> sentenceSnapshotList,
         int indexInSentence,
         KeymapArgument keymapArgument,
         bool hasTextSelection,
         out TextEditorCommand? textEditorCommand)
     {
-        var currentToken = sentenceSnapshotBag[indexInSentence];
+        var currentToken = sentenceSnapshotList[indexInSentence];
 
         var shiftKey = textEditorKeymapVim.ActiveVimMode == VimMode.Visual ||
             textEditorKeymapVim.ActiveVimMode == VimMode.VisualLine;
@@ -282,7 +282,19 @@ public static class SyntaxTextObjectVim
                                         commandArgs));
 
                                 return Task.CompletedTask;
-                            });
+                            })
+                        {
+                            TextEditorEditFactory = interfaceCommandArgs =>
+                            {
+                                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                                commandArgs.ShiftKey = shiftKey;
+
+                                return MoveCursorOneColumnLeftFactory(
+                                    commandArgs.ModelResourceUri,
+                                    commandArgs.ViewModelKey,
+                                    commandArgs);
+                            }
+                        };
 
                         return true;
                     }
@@ -304,7 +316,19 @@ public static class SyntaxTextObjectVim
                                         commandArgs));
 
                                 return Task.CompletedTask;
-                            });
+                            })
+                        {
+                            TextEditorEditFactory = interfaceCommandArgs =>
+                            {
+                                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                                commandArgs.ShiftKey = shiftKey;
+
+                                return MoveCursorOneRowDownFactory(
+                                    commandArgs.ModelResourceUri,
+                                    commandArgs.ViewModelKey,
+                                    commandArgs);
+                            }
+                        };
 
                         return true;
                     }
@@ -326,7 +350,19 @@ public static class SyntaxTextObjectVim
                                         commandArgs));
 
                                 return Task.CompletedTask;
-                            });
+                            })
+                        {
+                            TextEditorEditFactory = interfaceCommandArgs =>
+                            {
+                                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                                commandArgs.ShiftKey = shiftKey;
+
+                                return MoveCursorOneRowUpFactory(
+                                    commandArgs.ModelResourceUri,
+                                    commandArgs.ViewModelKey,
+                                    commandArgs);
+                            }
+                        };
 
                         return true;
                     }
@@ -348,7 +384,19 @@ public static class SyntaxTextObjectVim
                                         commandArgs));
 
                                 return Task.CompletedTask;
-                            });
+                            })
+                        {
+                            TextEditorEditFactory = interfaceCommandArgs =>
+                            {
+                                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                                commandArgs.ShiftKey = shiftKey;
+
+                                return MoveCursorOneColumnRightFactory(
+                                    commandArgs.ModelResourceUri,
+                                    commandArgs.ViewModelKey,
+                                    commandArgs);
+                            }
+                        };
 
                         return true;
                     }
@@ -376,7 +424,19 @@ public static class SyntaxTextObjectVim
                                         commandArgs));
 
                                 return Task.CompletedTask;
-                            });
+                            })
+                        {
+                            TextEditorEditFactory = interfaceCommandArgs =>
+                            {
+                                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                                commandArgs.ShiftKey = shiftKey;
+
+                                return MoveCursorEndCurrentLineFactory(
+                                    commandArgs.ModelResourceUri,
+                                    commandArgs.ViewModelKey,
+                                    commandArgs);
+                            }
+                        };
 
                         return true;
                     }
@@ -398,7 +458,19 @@ public static class SyntaxTextObjectVim
                                         commandArgs));
 
                                 return Task.CompletedTask;
-                            });
+                            })
+                        {
+                            TextEditorEditFactory = interfaceCommandArgs =>
+                            {
+                                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                                commandArgs.ShiftKey = shiftKey;
+
+                                return MoveCursorStartCurrentLineFactory(
+                                    commandArgs.ModelResourceUri,
+                                    commandArgs.ViewModelKey,
+                                    commandArgs);
+                            }
+                        };
 
                         return true;
                     }

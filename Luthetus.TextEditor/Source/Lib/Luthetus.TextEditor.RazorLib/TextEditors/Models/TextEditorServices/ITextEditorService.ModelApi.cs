@@ -199,27 +199,15 @@ public partial interface ITextEditorService
                 TextEditorService.AuthenticatedActionKey,
                 model));
 
-            _ = Task.Run(async () =>
-            {
-                try
+            // TODO: Do not immediately apply syntax highlighting. Wait until the file is viewed first.
+            _textEditorService.Post(
+                nameof(RegisterTemplated),
+                async editContext =>
                 {
+                    // Getting a model modifier marks it to be reloaded (2023-12-28)
+                    _ = editContext.GetModelModifier(model.ResourceUri);
                     await model.ApplySyntaxHighlightingAsync();
-
-                    _textEditorService.Post(
-                        nameof(RegisterCustom),
-                        editContext =>
-                        {
-                            // Getting a model modifier marks it to be reloaded (2023-12-28)
-                            _ = editContext.GetModelModifier(model.ResourceUri);
-                            return Task.CompletedTask;
-                        });
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    throw;
-                }
-            }, CancellationToken.None);
+                });
         }
 
         public void RegisterTemplated(
@@ -241,54 +229,42 @@ public partial interface ITextEditorService
                 TextEditorService.AuthenticatedActionKey,
                 model));
 
-            _ = Task.Run(async () =>
-            {
-                try
+            // TODO: Do not immediately apply syntax highlighting. Wait until the file is viewed first.
+            _textEditorService.Post(
+                nameof(RegisterTemplated),
+                async editContext =>
                 {
+                    // Getting a model modifier marks it to be reloaded (2023-12-28)
+                    _ = editContext.GetModelModifier(model.ResourceUri);
                     await model.ApplySyntaxHighlightingAsync();
-
-                    _textEditorService.Post(
-                        nameof(RegisterTemplated),
-                        editContext =>
-                        {
-                            // Getting a model modifier marks it to be reloaded (2023-12-28)
-                            _ = editContext.GetModelModifier(model.ResourceUri);
-                            return Task.CompletedTask;
-                        });
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    throw;
-                }
-            }, CancellationToken.None);
+                });
         }
         #endregion
 
         #region READ_METHODS
         public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri)
         {
-            return _textEditorService.ViewModelStateWrap.Value.ViewModelBag
+            return _textEditorService.ViewModelStateWrap.Value.ViewModelList
                 .Where(x => x.ResourceUri == resourceUri)
                 .ToImmutableArray();
         }
 
         public string? GetAllText(ResourceUri resourceUri)
         {
-            return _textEditorService.ModelStateWrap.Value.ModelBag
+            return _textEditorService.ModelStateWrap.Value.ModelList
                 .FirstOrDefault(x => x.ResourceUri == resourceUri)
                 ?.GetAllText();
         }
 
         public TextEditorModel? GetOrDefault(ResourceUri resourceUri)
         {
-            return _textEditorService.ModelStateWrap.Value.ModelBag
+            return _textEditorService.ModelStateWrap.Value.ModelList
                 .FirstOrDefault(x => x.ResourceUri == resourceUri);
         }
 
         public ImmutableList<TextEditorModel> GetModels()
         {
-            return _textEditorService.ModelStateWrap.Value.ModelBag;
+            return _textEditorService.ModelStateWrap.Value.ModelList;
         }
         #endregion
 

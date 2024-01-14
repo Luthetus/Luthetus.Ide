@@ -1063,10 +1063,10 @@ public class ResizeHelperTests
 
         // Width
         {
-            var width = elementDimensions.DimensionAttributeBag.Single(
+            var width = elementDimensions.DimensionAttributeList.Single(
                 da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
 
-            var widthOffsetInPixels = width.DimensionUnitBag.FirstOrDefault(
+            var widthOffsetInPixels = width.DimensionUnitList.FirstOrDefault(
                 du => du.DimensionUnitKind == DimensionUnitKind.Pixels);
 
             if (widthOffsetInPixels is null)
@@ -1078,16 +1078,16 @@ public class ResizeHelperTests
                     DimensionUnitKind = DimensionUnitKind.Pixels
                 };
 
-                width.DimensionUnitBag.Add(widthOffsetInPixels);
+                width.DimensionUnitList.Add(widthOffsetInPixels);
             }
         }
 
         // Height
         {
-            var height = elementDimensions.DimensionAttributeBag.Single(
+            var height = elementDimensions.DimensionAttributeList.Single(
                 da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
 
-            var heightOffsetInPixels = height.DimensionUnitBag.FirstOrDefault(
+            var heightOffsetInPixels = height.DimensionUnitList.FirstOrDefault(
                 du => du.DimensionUnitKind == DimensionUnitKind.Pixels);
 
             if (heightOffsetInPixels is null)
@@ -1099,16 +1099,16 @@ public class ResizeHelperTests
                     DimensionUnitKind = DimensionUnitKind.Pixels
                 };
 
-                height.DimensionUnitBag.Add(heightOffsetInPixels);
+                height.DimensionUnitList.Add(heightOffsetInPixels);
             }
         }
 
         // Left
         {
-            var left = elementDimensions.DimensionAttributeBag.Single(
+            var left = elementDimensions.DimensionAttributeList.Single(
                 da => da.DimensionAttributeKind == DimensionAttributeKind.Left);
 
-            var leftOffsetInPixels = left.DimensionUnitBag.FirstOrDefault(
+            var leftOffsetInPixels = left.DimensionUnitList.FirstOrDefault(
                 du => du.DimensionUnitKind == DimensionUnitKind.Pixels);
 
             if (leftOffsetInPixels is null)
@@ -1120,16 +1120,16 @@ public class ResizeHelperTests
                     DimensionUnitKind = DimensionUnitKind.Pixels
                 };
 
-                left.DimensionUnitBag.Add(leftOffsetInPixels);
+                left.DimensionUnitList.Add(leftOffsetInPixels);
             }
         }
 
         // Top
         {
-            var top = elementDimensions.DimensionAttributeBag.Single(
+            var top = elementDimensions.DimensionAttributeList.Single(
                 da => da.DimensionAttributeKind == DimensionAttributeKind.Top);
 
-            var topOffsetInPixels = top.DimensionUnitBag.FirstOrDefault(
+            var topOffsetInPixels = top.DimensionUnitList.FirstOrDefault(
                 du => du.DimensionUnitKind == DimensionUnitKind.Pixels);
 
             if (topOffsetInPixels is null)
@@ -1141,34 +1141,34 @@ public class ResizeHelperTests
                     DimensionUnitKind = DimensionUnitKind.Pixels
                 };
 
-                top.DimensionUnitBag.Add(topOffsetInPixels);
+                top.DimensionUnitList.Add(topOffsetInPixels);
             }
         }
     }
 
     public (double width, double height, double left, double top) GetPixelMeasurementsTuple(ElementDimensions elementDimensions)
     {
-        var width = elementDimensions.DimensionAttributeBag
+        var width = elementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width)
-            .DimensionUnitBag
+            .DimensionUnitList
             .First(du => du.DimensionUnitKind == DimensionUnitKind.Pixels)
             .Value;
 
-        var height = elementDimensions.DimensionAttributeBag
+        var height = elementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Height)
-            .DimensionUnitBag
+            .DimensionUnitList
             .First(du => du.DimensionUnitKind == DimensionUnitKind.Pixels)
             .Value;
 
-        var left = elementDimensions.DimensionAttributeBag
+        var left = elementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Left)
-            .DimensionUnitBag
+            .DimensionUnitList
             .First(du => du.DimensionUnitKind == DimensionUnitKind.Pixels)
             .Value;
 
-        var top = elementDimensions.DimensionAttributeBag
+        var top = elementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Top)
-            .DimensionUnitBag
+            .DimensionUnitList
             .First(du => du.DimensionUnitKind == DimensionUnitKind.Pixels)
             .Value;
 

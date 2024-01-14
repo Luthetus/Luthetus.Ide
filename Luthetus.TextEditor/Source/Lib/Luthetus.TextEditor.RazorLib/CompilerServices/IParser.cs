@@ -4,5 +4,5 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
 public interface IParser
 {
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag { get; }
+    public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; }
 }

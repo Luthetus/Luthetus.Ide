@@ -29,12 +29,12 @@ public class ReflectiveStateReducerTests
 
         var registerAction = new ReflectiveState.RegisterAction(model, insertionIndex);
 
-        Assert.DoesNotContain(reflectiveStateWrap.Value.ReflectiveModelBag,
+        Assert.DoesNotContain(reflectiveStateWrap.Value.ReflectiveModelList,
             x => x == model);
 
         dispatcher.Dispatch(registerAction);
 
-        Assert.Contains(reflectiveStateWrap.Value.ReflectiveModelBag,
+        Assert.Contains(reflectiveStateWrap.Value.ReflectiveModelList,
             x => x == model);
     }
 
@@ -48,7 +48,7 @@ public class ReflectiveStateReducerTests
             out var dispatcher,
             out var reflectiveStateWrap,
             out var model,
-            out var componentTypeBag);
+            out var componentTypeList);
 
         var insertionIndex = 0;
 
@@ -58,9 +58,9 @@ public class ReflectiveStateReducerTests
             dispatcher.Dispatch(registerAction);
         }
 
-        var type = componentTypeBag.Last();
+        var type = componentTypeList.Last();
 
-        model = reflectiveStateWrap.Value.ReflectiveModelBag.Single(
+        model = reflectiveStateWrap.Value.ReflectiveModelList.Single(
             x => x.Key == model.Key);
 
         Assert.NotEqual(type.GUID, model.ChosenTypeGuid);
@@ -77,7 +77,7 @@ public class ReflectiveStateReducerTests
 
         dispatcher.Dispatch(withAction);
 
-        model = reflectiveStateWrap.Value.ReflectiveModelBag.Single(
+        model = reflectiveStateWrap.Value.ReflectiveModelList.Single(
             x => x.Key == model.Key);
 
         Assert.Equal(type.GUID, model.ChosenTypeGuid);
@@ -105,12 +105,12 @@ public class ReflectiveStateReducerTests
 
         var disposeAction = new ReflectiveState.DisposeAction(model.Key);
 
-        Assert.Contains(reflectiveStateWrap.Value.ReflectiveModelBag,
+        Assert.Contains(reflectiveStateWrap.Value.ReflectiveModelList,
             x => x == model);
 
         dispatcher.Dispatch(disposeAction);
 
-        Assert.DoesNotContain(reflectiveStateWrap.Value.ReflectiveModelBag,
+        Assert.DoesNotContain(reflectiveStateWrap.Value.ReflectiveModelList,
             x => x == model);
     }
 
@@ -118,7 +118,7 @@ public class ReflectiveStateReducerTests
         out IDispatcher dispatcher,
         out IState<ReflectiveState> reflectiveStateWrap,
         out ReflectiveModel model,
-        out List<Type> componentTypeBag)
+        out List<Type> componentTypeList)
     {
         var services = new ServiceCollection()
             .AddFluxor(options => options.ScanAssemblies(typeof(ReflectiveState).Assembly));
@@ -132,7 +132,7 @@ public class ReflectiveStateReducerTests
 
         dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
 
-        componentTypeBag = new List<Type>
+        componentTypeList = new List<Type>
         {
             typeof(IconArrowDown),
             typeof(IconArrowLeft),
@@ -142,7 +142,7 @@ public class ReflectiveStateReducerTests
 
         model = new ReflectiveModel(
             Key<ReflectiveModel>.NewKey(),
-            componentTypeBag,
+            componentTypeList,
             Guid.Empty,
             Guid.Empty,
             Array.Empty<PropertyInfo>(),

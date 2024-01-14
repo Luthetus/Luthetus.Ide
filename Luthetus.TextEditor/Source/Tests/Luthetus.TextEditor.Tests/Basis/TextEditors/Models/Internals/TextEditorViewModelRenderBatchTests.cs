@@ -1,5 +1,15 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.Options.States;
+using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
+using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+using System.Reflection;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.Internals;
 
@@ -8,84 +18,87 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.Internals;
 /// </summary>
 public class TextEditorRenderBatchTests
 {
-	/// <summary>
-	/// <see cref="TextEditorRenderBatch(RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel?, RazorLib.TextEditors.Models.TextEditorViewModel?, RazorLib.Options.Models.TextEditorOptions?, string, int)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorRenderBatch(TextEditorModel?, TextEditorViewModel?, TextEditorOptions?, string, int)"/>
+	/// <br/>----<br/>
+    /// <see cref="TextEditorRenderBatch.Model"/>
+    /// <see cref="TextEditorRenderBatch.ViewModel"/>
+    /// <see cref="TextEditorRenderBatch.Options"/>
+    /// <see cref="TextEditorRenderBatch.FontFamily"/>
+    /// <see cref="TextEditorRenderBatch.FontSizeInPixels"/>
+    /// <see cref="TextEditorRenderBatch.FontFamilyCssStyleString"/>
+    /// <see cref="TextEditorRenderBatch.FontSizeInPixelsCssStyleString"/>
+    /// <see cref="TextEditorRenderBatch.IsValid"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
 
-	/// <summary>
-	/// <see cref="TextEditorRenderBatch.Model"/>
-	/// </summary>
-	[Fact]
-	public void Model()
-	{
-		throw new NotImplementedException();
-	}
+		var options = new TextEditorOptions(
+            new CommonOptions(
+                TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS,
+                TextEditorOptionsState.DEFAULT_ICON_SIZE_IN_PIXELS,
+                ThemeFacts.VisualStudioDarkThemeClone.Key,
+                null),
+            false,
+            false,
+            null,
+            TextEditorOptionsState.DEFAULT_CURSOR_WIDTH_IN_PIXELS,
+            TextEditorKeymapFacts.DefaultKeymap,
+            true);
 
-	/// <summary>
-	/// <see cref="TextEditorRenderBatch.ViewModel"/>
-	/// </summary>
-	[Fact]
-	public void ViewModel()
-	{
-		throw new NotImplementedException();
-	}
+		var fontFamily = "monospace";
+		var fontSizeInPixels = 20;
 
-	/// <summary>
-	/// <see cref="TextEditorRenderBatch.Options"/>
-	/// </summary>
-	[Fact]
-	public void Options()
-	{
-		throw new NotImplementedException();
-	}
+        var renderBatch = new TextEditorRenderBatch(
+            inModel,
+            inViewModel,
+            options,
+            fontFamily,
+            fontSizeInPixels);
 
-	/// <summary>
-	/// <see cref="TextEditorRenderBatch.FontFamily"/>
-	/// </summary>
-	[Fact]
-	public void FontFamily()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(inModel, renderBatch.Model);
+		Assert.Equal(inViewModel, renderBatch.ViewModel);
+		Assert.Equal(options, renderBatch.Options);
+		Assert.Equal(fontFamily, renderBatch.FontFamily);
+		Assert.Equal(fontSizeInPixels, renderBatch.FontSizeInPixels);
+		Assert.Equal($"font-family: {fontFamily};", renderBatch.FontFamilyCssStyleString);
+		Assert.Equal($"font-size: {fontSizeInPixels.ToCssValue()}px;", renderBatch.FontSizeInPixelsCssStyleString);
+		Assert.True(renderBatch.IsValid);
 
-	/// <summary>
-	/// <see cref="TextEditorRenderBatch.FontSizeInPixels"/>
-	/// </summary>
-	[Fact]
-	public void FontSizeInPixels()
-	{
-		throw new NotImplementedException();
-	}
+        // Assert case(s) where renderBatch.IsValid should be false
+        {
+            // Model is null
+            Assert.False(new TextEditorRenderBatch(
+					null,
+					inViewModel,
+					options,
+					fontFamily,
+					fontSizeInPixels)
+				.IsValid);
 
-	/// <summary>
-	/// <see cref="TextEditorRenderBatch.FontFamilyCssStyleString"/>
-	/// </summary>
-	[Fact]
-	public void FontFamilyCssStyleString()
-	{
-		throw new NotImplementedException();
-	}
+            // ViewModel is null
+            Assert.False(new TextEditorRenderBatch(
+                    inModel,
+                    null,
+                    options,
+                    fontFamily,
+                    fontSizeInPixels)
+                .IsValid);
 
-	/// <summary>
-	/// <see cref="TextEditorRenderBatch.FontSizeInPixelsCssStyleString"/>
-	/// </summary>
-	[Fact]
-	public void FontSizeInPixelsCssStyleString()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorRenderBatch.IsValid"/>
-	/// </summary>
-	[Fact]
-	public void IsValid()
-	{
-		throw new NotImplementedException();
+            // Options is null
+            Assert.False(new TextEditorRenderBatch(
+                    inModel,
+                    inViewModel,
+                    null,
+                    fontFamily,
+                    fontSizeInPixels)
+                .IsValid);
+        }
 	}
 }

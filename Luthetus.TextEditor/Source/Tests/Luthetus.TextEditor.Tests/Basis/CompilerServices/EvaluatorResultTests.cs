@@ -8,30 +8,21 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 /// </summary>
 public class EvaluatorResultTests
 {
-	/// <summary>
-	/// <see cref="EvaluatorResult(System.Type, object)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="EvaluatorResult(Type, object)"/>
+	/// <br/>----<br/>
+    /// <see cref="EvaluatorResult.Type"/>
+    /// <see cref="EvaluatorResult.Result"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var type = typeof(string);
+        var result = "Hello World!";
 
-	/// <summary>
-	/// <see cref="EvaluatorResult.Type"/>
-	/// </summary>
-	[Fact]
-	public void Type()
-	{
-		throw new NotImplementedException();
-	}
+        var evaluatorResult = new EvaluatorResult(type, result);
 
-	/// <summary>
-	/// <see cref="EvaluatorResult.Result"/>
-	/// </summary>
-	[Fact]
-	public void Result()
-	{
-		throw new NotImplementedException();
+        Assert.Equal(type, evaluatorResult.Type);
+        Assert.Equal(result, evaluatorResult.Result);
 	}
 }

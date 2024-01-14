@@ -44,49 +44,49 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
             });
     }
 
-    public override async Task LoadChildBagAsync()
+    public override async Task LoadChildListAsync()
     {
         try
         {
-            var previousChildren = new List<TreeViewNoType>(ChildBag);
+            var previousChildren = new List<TreeViewNoType>(ChildList);
 
-            var newChildBag = Item.Map.Select(kvp => (TreeViewNoType)new TreeViewStringFragment(
+            var newChildList = Item.Map.Select(kvp => (TreeViewNoType)new TreeViewStringFragment(
 				kvp.Value,
 				CommonComponentRenderers,
 				true,
 				false)).ToList();
 
-			for (var i = 0; i < newChildBag.Count; i++)
+			for (var i = 0; i < newChildList.Count; i++)
 			{
-				var child = (TreeViewStringFragment)newChildBag[i];
-				await child.LoadChildBagAsync();
+				var child = (TreeViewStringFragment)newChildList[i];
+				await child.LoadChildListAsync();
 
-				if (child.ChildBag.Count == 0)
+				if (child.ChildList.Count == 0)
 				{
 					child.IsExpandable = false;
 					child.IsExpanded = false;
 				}
 			}
 	
-			if (newChildBag.Count == 1)
+			if (newChildList.Count == 1)
 			{
 				// Merge parent and child
 
-				var child = (TreeViewStringFragment)newChildBag.Single();
+				var child = (TreeViewStringFragment)newChildList.Single();
 
 				Item.Value = $"{Item.Value}.{child.Item.Value}";
 				Item.Map = child.Item.Map;
 				Item.IsEndpoint = child.Item.IsEndpoint;
 
-				newChildBag = child.ChildBag;
+				newChildList = child.ChildList;
 			}
 
-            ChildBag = newChildBag;
-            LinkChildren(previousChildren, ChildBag);
+            ChildList = newChildList;
+            LinkChildren(previousChildren, ChildList);
         }
         catch (Exception exception)
         {
-            ChildBag = new List<TreeViewNoType>
+            ChildList = new List<TreeViewNoType>
             {
                 new TreeViewException(exception, false, false, CommonComponentRenderers)
                 {

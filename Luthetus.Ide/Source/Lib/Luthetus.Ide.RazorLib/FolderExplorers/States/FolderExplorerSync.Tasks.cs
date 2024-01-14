@@ -35,7 +35,7 @@ public partial class FolderExplorerSync
             true,
             true);
 
-        await rootNode.LoadChildBagAsync();
+        await rootNode.LoadChildListAsync();
 
         if (!_treeViewService.TryGetTreeViewContainer(
                 TreeViewContentStateKey,
@@ -49,7 +49,12 @@ public partial class FolderExplorerSync
         else
         {
             _treeViewService.SetRoot(TreeViewContentStateKey, rootNode);
-            _treeViewService.SetActiveNode(TreeViewContentStateKey, rootNode);
+            
+			_treeViewService.SetActiveNode(
+				TreeViewContentStateKey,
+				rootNode,
+				true,
+				false);
         }
 
         Dispatcher.Dispatch(new WithAction(inFolderExplorerState => inFolderExplorerState with

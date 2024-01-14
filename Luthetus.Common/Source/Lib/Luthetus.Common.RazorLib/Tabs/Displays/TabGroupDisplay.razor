@@ -5,7 +5,7 @@
 <div class="luth_tab-group">
     @if (tabGroup is not null)
     {
-        foreach (var tabEntry in tabGroup.EntryBag)
+        foreach (var tabEntry in tabGroup.EntryList)
         {
             <TabEntryDisplay @key="tabEntry.TabEntryKey"
                              TabEntryNoType="tabEntry"

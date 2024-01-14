@@ -9,8 +9,8 @@ public partial record DialogState
 {
     public DialogState()
     {
-        DialogBag = ImmutableList<DialogRecord>.Empty;
+        DialogList = ImmutableList<DialogRecord>.Empty;
     }
 
-    public ImmutableList<DialogRecord> DialogBag { get; init; }
+    public ImmutableList<DialogRecord> DialogList { get; init; }
 }

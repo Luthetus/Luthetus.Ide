@@ -15,7 +15,7 @@ public sealed record BinaryOperatorNode : ISyntaxNode
         RightOperandTypeClauseNode = rightOperandTypeClauseNode;
         ResultTypeClauseNode = resultTypeClauseNode;
 
-        ChildBag = new ISyntax[]
+        ChildList = new ISyntax[]
         {
             OperatorToken
         }
@@ -27,7 +27,7 @@ public sealed record BinaryOperatorNode : ISyntaxNode
     public TypeClauseNode RightOperandTypeClauseNode { get; }
 	public TypeClauseNode ResultTypeClauseNode { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BinaryOperatorNode;

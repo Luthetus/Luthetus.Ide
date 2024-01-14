@@ -24,18 +24,18 @@ public partial class PresentationLayerGroup : ComponentBase
 
     private List<TextEditorPresentationModel> GetTextEditorPresentationModels()
     {
-        var textEditorPresentationModelBag = new List<TextEditorPresentationModel>();
+        var textEditorPresentationModelList = new List<TextEditorPresentationModel>();
 
         foreach (var presentationKey in TextEditorPresentationKeys)
         {
-            var textEditorPresentationModel = RenderBatch.Model!.PresentationModelsBag.FirstOrDefault(x =>
+            var textEditorPresentationModel = RenderBatch.Model!.PresentationModelsList.FirstOrDefault(x =>
                 x.TextEditorPresentationKey == presentationKey);
 
             if (textEditorPresentationModel is not null)
-                textEditorPresentationModelBag.Add(textEditorPresentationModel);
+                textEditorPresentationModelList.Add(textEditorPresentationModel);
         }
 
-        return textEditorPresentationModelBag;
+        return textEditorPresentationModelList;
     }
 
     private string GetPresentationCssStyleString(
@@ -46,11 +46,11 @@ public partial class PresentationLayerGroup : ComponentBase
         var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements;
         var elementMeasurements = RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements;
 
-        if (rowIndex >= RenderBatch.Model!.RowEndingPositionsBag.Count)
+        if (rowIndex >= RenderBatch.Model!.RowEndingPositionsList.Count)
             return string.Empty;
 
         var startOfRowTuple = RenderBatch.Model!.GetRowEndingThatCreatedRow(rowIndex);
-        var endOfRowTuple = RenderBatch.Model!.RowEndingPositionsBag[rowIndex];
+        var endOfRowTuple = RenderBatch.Model!.RowEndingPositionsList[rowIndex];
 
         var startingColumnIndex = 0;
         var endingColumnIndex = endOfRowTuple.EndPositionIndexExclusive - 1;
@@ -141,7 +141,7 @@ public partial class PresentationLayerGroup : ComponentBase
         List<TextEditorTextModification> textModifications,
         ImmutableArray<TextEditorTextSpan> textSpans)
     {
-        var outTextSpansBag = new List<TextEditorTextSpan>();
+        var outTextSpansList = new List<TextEditorTextSpan>();
 
         foreach (var textSpan in textSpans)
         {
@@ -168,13 +168,13 @@ public partial class PresentationLayerGroup : ComponentBase
                 }
             }
 
-            outTextSpansBag.Add(textSpan with
+            outTextSpansList.Add(textSpan with
             {
                 StartingIndexInclusive = startingIndexInclusive,
                 EndingIndexExclusive = endingIndexExclusive
             });
         }
 
-        return outTextSpansBag.ToImmutableArray();
+        return outTextSpansList.ToImmutableArray();
     }
 }

@@ -8,4 +8,4 @@ public record PanelGroup(
     Key<PanelGroup> Key,
     Key<PanelTab> ActiveTabKey,
     ElementDimensions ElementDimensions,
-    ImmutableArray<PanelTab> TabBag);
+    ImmutableArray<PanelTab> TabList);

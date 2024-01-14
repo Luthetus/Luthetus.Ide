@@ -29,9 +29,9 @@ public partial record DotNetSolutionState(
     {
     }
 
-    public ImmutableList<DotNetSolutionModel> DotNetSolutionsBag { get; init; } = ImmutableList<DotNetSolutionModel>.Empty;
+    public ImmutableList<DotNetSolutionModel> DotNetSolutionsList { get; init; } = ImmutableList<DotNetSolutionModel>.Empty;
 
-    public DotNetSolutionModel? DotNetSolutionModel => DotNetSolutionsBag.FirstOrDefault(x =>
+    public DotNetSolutionModel? DotNetSolutionModel => DotNetSolutionsList.FirstOrDefault(x =>
         x.Key == DotNetSolutionModelKey);
 
     public static void ShowInputFile(DotNetSolutionSync sync)

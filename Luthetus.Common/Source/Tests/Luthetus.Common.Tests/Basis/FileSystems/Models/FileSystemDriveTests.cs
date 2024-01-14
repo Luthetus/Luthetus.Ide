@@ -23,13 +23,13 @@ public class FileSystemDriveTests
             out InMemoryFileSystemProvider fileSystemProvider,
             out ServiceProvider serviceProvider);
 
-        var directorySeparatorCharBag = new[]
+        var directorySeparatorCharList = new[]
         {
             environmentProvider.DirectorySeparatorChar,
             environmentProvider.AltDirectorySeparatorChar,
         };
 
-        foreach (var dsc in directorySeparatorCharBag)
+        foreach (var dsc in directorySeparatorCharList)
         {
             // Root
             {

@@ -8,7 +8,7 @@ public sealed record InheritanceStatementNode : ISyntaxNode
     {
         ParentTypeClauseNode = parentTypeClauseNode;
 
-        ChildBag = new ISyntax[]
+        ChildList = new ISyntax[]
         {
             ParentTypeClauseNode
         }.ToImmutableArray();
@@ -16,7 +16,7 @@ public sealed record InheritanceStatementNode : ISyntaxNode
 
     public TypeClauseNode ParentTypeClauseNode { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.InheritanceStatementNode;

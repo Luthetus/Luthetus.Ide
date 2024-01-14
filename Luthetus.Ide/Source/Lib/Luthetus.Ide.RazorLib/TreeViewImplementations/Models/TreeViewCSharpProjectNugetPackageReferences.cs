@@ -45,9 +45,9 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
             null);
     }
 
-    public override async Task LoadChildBagAsync()
+    public override async Task LoadChildListAsync()
     {
-        var previousChildren = new List<TreeViewNoType>(ChildBag);
+        var previousChildren = new List<TreeViewNoType>(ChildList);
 
         var content = await FileSystemProvider.File.ReadAllTextAsync(
             Item.CSharpProjectNamespacePath.AbsolutePath.Value);
@@ -96,7 +96,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 
         var cSharpProjectAbsolutePathString = Item.CSharpProjectNamespacePath.AbsolutePath.Value;
 
-        var newChildBag = lightWeightNugetPackageRecords.Select(
+        var newChildList = lightWeightNugetPackageRecords.Select(
             npr => (TreeViewNoType)new TreeViewCSharpProjectNugetPackageReference(
                 new(cSharpProjectAbsolutePathString, npr),
                 IdeComponentRenderers,
@@ -110,8 +110,8 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
             .ToList();
 
 
-        ChildBag = newChildBag;
-        LinkChildren(previousChildren, ChildBag);
+        ChildList = newChildList;
+        LinkChildren(previousChildren, ChildList);
         TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
     }
 

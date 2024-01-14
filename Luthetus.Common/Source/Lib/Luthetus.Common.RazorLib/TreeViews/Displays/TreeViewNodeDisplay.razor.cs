@@ -15,7 +15,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     [CascadingParameter]
-    public TreeViewContainer TreeViewState { get; set; } = null!;
+    public TreeViewContainer TreeViewContainer { get; set; } = null!;
     [CascadingParameter(Name = "HandleTreeViewOnContextMenu")]
     public Func<MouseEventArgs, TreeViewContainer?, TreeViewNoType?, Task> HandleTreeViewOnContextMenu { get; set; } = null!;
     [CascadingParameter(Name = "TreeViewMouseEventHandler")]
@@ -38,10 +38,10 @@ public partial class TreeViewNodeDisplay : ComponentBase
 
     private int OffsetInPixels => OffsetPerDepthInPixels * Depth;
 
-    private bool IsSelected => TreeViewState.SelectedNodeBag.Any(x => x.Key == TreeViewNoType.Key);
+    private bool IsSelected => TreeViewContainer.SelectedNodeList.Any(x => x.Key == TreeViewNoType.Key);
 
-    private bool IsActive => TreeViewState.ActiveNode is not null &&
-                             TreeViewState.ActiveNode.Key == TreeViewNoType.Key;
+    private bool IsActive => TreeViewContainer.ActiveNode is not null &&
+                             TreeViewContainer.ActiveNode.Key == TreeViewNoType.Key;
 
     private string IsSelectedCssClass => IsSelected ? "luth_selected" : string.Empty;
     private string IsActiveCssClass => IsActive ? "luth_active" : string.Empty;
@@ -103,13 +103,13 @@ public partial class TreeViewNodeDisplay : ComponentBase
             	"TreeView.HandleExpansionChevronOnMouseDown",
 				async () => 
 				{
-					await localTreeViewNoType.LoadChildBagAsync();
-	                TreeViewService.ReRenderNode(TreeViewState.Key, localTreeViewNoType);
+					await localTreeViewNoType.LoadChildListAsync();
+	                TreeViewService.ReRenderNode(TreeViewContainer.Key, localTreeViewNoType);
 				});
         }
         else
         {
-            TreeViewService.ReRenderNode(TreeViewState.Key, localTreeViewNoType);
+            TreeViewService.ReRenderNode(TreeViewContainer.Key, localTreeViewNoType);
         }
     }
 
@@ -120,7 +120,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
             TreeViewService,
-            TreeViewState,
+            TreeViewContainer,
             TreeViewNoType,
             FocusAsync,
             null,
@@ -141,7 +141,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
             TreeViewService,
-            TreeViewState,
+            TreeViewContainer,
             TreeViewNoType,
             FocusAsync,
             null,
@@ -155,7 +155,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
             TreeViewService,
-            TreeViewState,
+            TreeViewContainer,
             TreeViewNoType,
             FocusAsync,
             null,
@@ -169,7 +169,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
             TreeViewService,
-            TreeViewState,
+            TreeViewContainer,
             TreeViewNoType,
             FocusAsync,
             null,
@@ -184,7 +184,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
         if (keyboardEventArgs.Key == "ContextMenu")
         {
             var mouseEventArgs = new MouseEventArgs { Button = -1 };
-            ManuallyPropagateOnContextMenu(mouseEventArgs, TreeViewState, TreeViewNoType);
+            ManuallyPropagateOnContextMenu(mouseEventArgs, TreeViewContainer, TreeViewNoType);
         }
     }
 }

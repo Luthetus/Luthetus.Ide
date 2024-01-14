@@ -11,7 +11,7 @@ public class CodeBlockBuilder
         CodeBlockOwner = codeBlockOwner;
     }
 
-    public List<ISyntax> ChildBag { get; } = new();
+    public List<ISyntax> ChildList { get; } = new();
     public CodeBlockBuilder? Parent { get; }
     /// <summary>
     /// Given: "public class MyClass { ... }"<br/><br/>Then: The 'MyClass' body-code-block would
@@ -24,11 +24,11 @@ public class CodeBlockBuilder
 
     public CodeBlockNode Build()
     {
-        return new CodeBlockNode(ChildBag.ToImmutableArray());
+        return new CodeBlockNode(ChildList.ToImmutableArray());
     }
 
     public CodeBlockNode Build(ImmutableArray<TextEditorDiagnostic> diagnostics)
     {
-        return new CodeBlockNode(ChildBag.ToImmutableArray(), diagnostics);
+        return new CodeBlockNode(ChildList.ToImmutableArray(), diagnostics);
     }
 }

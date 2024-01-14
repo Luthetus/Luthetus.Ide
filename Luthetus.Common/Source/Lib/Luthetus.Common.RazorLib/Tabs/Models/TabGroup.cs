@@ -10,29 +10,29 @@ namespace Luthetus.Common.RazorLib.Tabs.Models;
 /// </summary>
 public record TabGroup(
 
-    Func<TabGroupLoadTabEntriesArgs, Task<TabGroupLoadTabEntriesOutput>> LoadEntryBagAsyncFunc)
+    Func<TabGroupLoadTabEntriesArgs, Task<TabGroupLoadTabEntriesOutput>> LoadEntryListAsyncFunc)
 {
     public TabGroup(
-            Func<TabGroupLoadTabEntriesArgs, Task<TabGroupLoadTabEntriesOutput>> loadEntryBagAsyncFunc,
+            Func<TabGroupLoadTabEntriesArgs, Task<TabGroupLoadTabEntriesOutput>> loadEntryListAsyncFunc,
             Key<TabGroup> groupKey)
-        : this(loadEntryBagAsyncFunc)
+        : this(loadEntryListAsyncFunc)
     {
         Key = groupKey;
     }
 
-    public ImmutableList<TabEntryNoType> EntryBag { get; init; } = ImmutableList<TabEntryNoType>.Empty;
+    public ImmutableList<TabEntryNoType> EntryList { get; init; } = ImmutableList<TabEntryNoType>.Empty;
     public Key<TabEntryNoType> ActiveEntryKey { get; init; } = Key<TabEntryNoType>.Empty;
     public Key<TabGroup> Key { get; } = Key<TabGroup>.NewKey();
 
-    public async Task<TabGroupLoadTabEntriesOutput> LoadEntryBagAsync()
+    public async Task<TabGroupLoadTabEntriesOutput> LoadEntryListAsync()
     {
-        var tabGroupLoadTabEntriesArgs = new TabGroupLoadTabEntriesArgs(EntryBag);
+        var tabGroupLoadTabEntriesArgs = new TabGroupLoadTabEntriesArgs(EntryList);
 
-        return await LoadEntryBagAsyncFunc.Invoke(tabGroupLoadTabEntriesArgs);
+        return await LoadEntryListAsyncFunc.Invoke(tabGroupLoadTabEntriesArgs);
     }
 
     public TabEntryNoType? GetActiveEntryNoType()
     {
-        return EntryBag.SingleOrDefault(x => x.TabEntryKey == ActiveEntryKey);
+        return EntryList.SingleOrDefault(x => x.TabEntryKey == ActiveEntryKey);
     }
 }

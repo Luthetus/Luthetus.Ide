@@ -1,5 +1,8 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
+using Luthetus.CompilerServices.Lang.FSharp.FSharp.Facts;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer;
 
@@ -8,111 +11,69 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer;
 /// </summary>
 public class GenericLanguageDefinitionTests
 {
-	/// <summary>
-	/// <see cref="GenericLanguageDefinition(string, string, string, string, string, string, System.Collections.Immutable.ImmutableArray{string}, string, string, System.Collections.Immutable.ImmutableArray{string}, GenericPreprocessorDefinition)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="GenericLanguageDefinition(string, string, string, string, string, string, ImmutableArray{string}, string, string, ImmutableArray{string}, GenericPreprocessorDefinition)"/>
+	/// <br/>----<br/>
+    /// <see cref="GenericLanguageDefinition.StringStart"/>
+    /// <see cref="GenericLanguageDefinition.StringEnd"/>
+	/// <see cref="GenericLanguageDefinition.FunctionInvocationStart"/>
+    /// <see cref="GenericLanguageDefinition.FunctionInvocationEnd"/>
+    /// <see cref="GenericLanguageDefinition.MemberAccessToken"/>
+    /// <see cref="GenericLanguageDefinition.CommentSingleLineStart"/>
+    /// <see cref="GenericLanguageDefinition.CommentSingleLineEndingsList"/>
+    /// <see cref="GenericLanguageDefinition.CommentMultiLineStart"/>
+    /// <see cref="GenericLanguageDefinition.CommentMultiLineEnd"/>
+    /// <see cref="GenericLanguageDefinition.KeywordsList"/>
+    /// <see cref="GenericLanguageDefinition.PreprocessorDefinition"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var fSharpPreprocessorDefinition = new GenericPreprocessorDefinition(
+			"#",
+			ImmutableArray<DeliminationExtendedSyntaxDefinition>.Empty);
 
-	/// <summary>
-	/// <see cref="GenericLanguageDefinition.StringStart"/>
-	/// </summary>
-	[Fact]
-	public void StringStart()
-	{
-		throw new NotImplementedException();
-	}
+        var stringStart = "\"";
+		var stringEnd = "\"";
+		var functionInvocationStart = "(";
+		var functionInvocationEnd = ")";
+		var memberAccessToken = ".";
+		var commentSingleLineStart = "//";
 
-	/// <summary>
-	/// <see cref="GenericLanguageDefinition.StringEnd"/>
-	/// </summary>
-	[Fact]
-	public void StringEnd()
-	{
-		throw new NotImplementedException();
-	}
+		var commentSingleLineEndingsList = new[]
+            {
+                WhitespaceFacts.CARRIAGE_RETURN.ToString(),
+                WhitespaceFacts.LINE_FEED.ToString()
+            }.ToImmutableArray();
 
-	/// <summary>
-	/// <see cref="GenericLanguageDefinition.FunctionInvocationStart"/>
-	/// </summary>
-	[Fact]
-	public void FunctionInvocationStart()
-	{
-		throw new NotImplementedException();
-	}
+		var commentMultiLineStart = "(*";
+		var commentMultiLineEnd = "*)";
+		var keywordsList = FSharpKeywords.ALL;
+		var preprocessorDefinition = fSharpPreprocessorDefinition;
 
-	/// <summary>
-	/// <see cref="GenericLanguageDefinition.FunctionInvocationEnd"/>
-	/// </summary>
-	[Fact]
-	public void FunctionInvocationEnd()
-	{
-		throw new NotImplementedException();
-	}
+        GenericLanguageDefinition fSharpLanguageDefinition = new(
+            stringStart,
+			stringEnd,
+			functionInvocationStart,
+			functionInvocationEnd,
+			memberAccessToken,
+			commentSingleLineStart,
+            commentSingleLineEndingsList,
+            commentMultiLineStart,
+			commentMultiLineEnd,
+			keywordsList,
+			preprocessorDefinition);
 
-	/// <summary>
-	/// <see cref="GenericLanguageDefinition.MemberAccessToken"/>
-	/// </summary>
-	[Fact]
-	public void MemberAccessToken()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="GenericLanguageDefinition.CommentSingleLineStart"/>
-	/// </summary>
-	[Fact]
-	public void CommentSingleLineStart()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="GenericLanguageDefinition.CommentSingleLineEndingsBag"/>
-	/// </summary>
-	[Fact]
-	public void CommentSingleLineEndingsBag()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="GenericLanguageDefinition.CommentMultiLineStart"/>
-	/// </summary>
-	[Fact]
-	public void CommentMultiLineStart()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="GenericLanguageDefinition.CommentMultiLineEnd"/>
-	/// </summary>
-	[Fact]
-	public void CommentMultiLineEnd()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="GenericLanguageDefinition.KeywordsBag"/>
-	/// </summary>
-	[Fact]
-	public void KeywordsBag()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="GenericLanguageDefinition.PreprocessorDefinition"/>
-	/// </summary>
-	[Fact]
-	public void PreprocessorDefinition()
-	{
-		throw new NotImplementedException();
+		Assert.Equal(stringStart, fSharpLanguageDefinition.StringStart);
+		Assert.Equal(stringEnd, fSharpLanguageDefinition.StringEnd);
+		Assert.Equal(functionInvocationStart, fSharpLanguageDefinition.FunctionInvocationStart);
+        Assert.Equal(functionInvocationEnd, fSharpLanguageDefinition.FunctionInvocationEnd);
+        Assert.Equal(memberAccessToken, fSharpLanguageDefinition.MemberAccessToken);
+        Assert.Equal(commentSingleLineStart, fSharpLanguageDefinition.CommentSingleLineStart);
+        Assert.Equal(commentSingleLineEndingsList, fSharpLanguageDefinition.CommentSingleLineEndingsList);
+        Assert.Equal(commentMultiLineStart, fSharpLanguageDefinition.CommentMultiLineStart);
+        Assert.Equal(commentMultiLineEnd, fSharpLanguageDefinition.CommentMultiLineEnd);
+        Assert.Equal(keywordsList, fSharpLanguageDefinition.KeywordsList);
+        Assert.Equal(preprocessorDefinition, fSharpLanguageDefinition.PreprocessorDefinition);
 	}
 }

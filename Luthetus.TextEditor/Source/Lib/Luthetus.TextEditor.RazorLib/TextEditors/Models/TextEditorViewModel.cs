@@ -1,14 +1,11 @@
 ﻿using System.Collections.Immutable;
-using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
-using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
@@ -32,7 +29,7 @@ public record TextEditorViewModel : IDisposable
 
         var primaryCursor = new TextEditorCursor(true);
 
-        CursorBag = new TextEditorCursor[]
+        CursorList = new TextEditorCursor[]
         {
             primaryCursor
         }.ToImmutableArray();
@@ -45,9 +42,9 @@ public record TextEditorViewModel : IDisposable
 
 
     /// <summary>The first entry of CursorBag should be the PrimaryCursor</summary>
-    public TextEditorCursor PrimaryCursor => CursorBag.First();
+    public TextEditorCursor PrimaryCursor => CursorList.First();
     /// <summary>The first entry of CursorBag should be the PrimaryCursor</summary>
-    public ImmutableArray<TextEditorCursor> CursorBag { get; init; }
+    public ImmutableArray<TextEditorCursor> CursorList { get; init; }
 
     public DisplayTracker DisplayTracker { get; }
 
@@ -58,10 +55,10 @@ public record TextEditorViewModel : IDisposable
     public bool DisplayCommandBar { get; init; }
     public Action<ITextEditorModel>? OnSaveRequested { get; init; }
     public Func<TextEditorModel, string>? GetTabDisplayNameFunc { get; init; }
-    /// <summary><see cref="FirstPresentationLayerKeysBag"/> is painted prior to any internal workings of the text editor.<br/><br/>Therefore the selected text background is rendered after anything in the <see cref="FirstPresentationLayerKeysBag"/>.<br/><br/>When using the <see cref="FirstPresentationLayerKeysBag"/> one might find their css overriden by for example, text being selected.</summary>
-    public ImmutableList<Key<TextEditorPresentationModel>> FirstPresentationLayerKeysBag { get; init; } = ImmutableList<Key<TextEditorPresentationModel>>.Empty;
-    /// <summary><see cref="LastPresentationLayerKeysBag"/> is painted after any internal workings of the text editor.<br/><br/>Therefore the selected text background is rendered before anything in the <see cref="LastPresentationLayerKeysBag"/>.<br/><br/>When using the <see cref="LastPresentationLayerKeysBag"/> one might find the selected text background not being rendered with the text selection css if it were overriden by something in the <see cref="LastPresentationLayerKeysBag"/>.</summary>
-    public ImmutableList<Key<TextEditorPresentationModel>> LastPresentationLayerKeysBag { get; init; } = ImmutableList<Key<TextEditorPresentationModel>>.Empty;
+    /// <summary><see cref="FirstPresentationLayerKeysList"/> is painted prior to any internal workings of the text editor.<br/><br/>Therefore the selected text background is rendered after anything in the <see cref="FirstPresentationLayerKeysList"/>.<br/><br/>When using the <see cref="FirstPresentationLayerKeysList"/> one might find their css overriden by for example, text being selected.</summary>
+    public ImmutableList<Key<TextEditorPresentationModel>> FirstPresentationLayerKeysList { get; init; } = ImmutableList<Key<TextEditorPresentationModel>>.Empty;
+    /// <summary><see cref="LastPresentationLayerKeysList"/> is painted after any internal workings of the text editor.<br/><br/>Therefore the selected text background is rendered before anything in the <see cref="LastPresentationLayerKeysList"/>.<br/><br/>When using the <see cref="LastPresentationLayerKeysList"/> one might find the selected text background not being rendered with the text selection css if it were overriden by something in the <see cref="LastPresentationLayerKeysList"/>.</summary>
+    public ImmutableList<Key<TextEditorPresentationModel>> LastPresentationLayerKeysList { get; init; } = ImmutableList<Key<TextEditorPresentationModel>>.Empty;
 
     public string CommandBarValue { get; set; } = string.Empty;
     public bool ShouldSetFocusAfterNextRender { get; set; }

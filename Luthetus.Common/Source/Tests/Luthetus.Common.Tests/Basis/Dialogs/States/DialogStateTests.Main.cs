@@ -18,17 +18,17 @@ public class DialogStateMainTests
     public void Constructor()
     {
         var dialogState = new DialogState();
-        Assert.Equal(ImmutableList<DialogRecord>.Empty, dialogState.DialogBag);
+        Assert.Equal(ImmutableList<DialogRecord>.Empty, dialogState.DialogList);
     }
 
     /// <summary>
-    /// <see cref="DialogState.DialogBag"/>
+    /// <see cref="DialogState.DialogList"/>
     /// </summary>
     [Fact]
-    public void DialogBag()
+    public void DialogList()
     {
         var dialogState = new DialogState();
-        Assert.Equal(ImmutableList<DialogRecord>.Empty, dialogState.DialogBag);
+        Assert.Equal(ImmutableList<DialogRecord>.Empty, dialogState.DialogList);
 
         var sampleDialogRecord = new DialogRecord(Key<DialogRecord>.NewKey(), "Test title",
             typeof(CommonInformativeNotificationDisplay),
@@ -41,13 +41,13 @@ public class DialogStateMainTests
             },
             null);
 
-        var outDialogBag = dialogState.DialogBag.Add(sampleDialogRecord);
+        var outDialogList = dialogState.DialogList.Add(sampleDialogRecord);
 
         dialogState = dialogState with
         {
-            DialogBag = outDialogBag
+            DialogList = outDialogList
         };
 
-        Assert.Contains(dialogState.DialogBag, x => x == sampleDialogRecord);
+        Assert.Contains(dialogState.DialogList, x => x == sampleDialogRecord);
     }
 }

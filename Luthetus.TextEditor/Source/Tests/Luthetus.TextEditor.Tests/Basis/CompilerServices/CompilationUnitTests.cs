@@ -1,5 +1,7 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
@@ -8,84 +10,43 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 /// </summary>
 public class CompilationUnitTests
 {
-	/// <summary>
-	/// <see cref="CompilationUnit(CodeBlockNode?, ILexer?, IParser?, IBinder?)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="CompilationUnit(CodeBlockNode?, ILexer?, IParser?, IBinder?)"/>
+	/// <br/>----<br/>
+    /// <see cref="CompilationUnit.RootCodeBlockNode"/>
+    /// <see cref="CompilationUnit.Lexer"/>
+    /// <see cref="CompilationUnit.Parser"/>
+    /// <see cref="CompilationUnit.Binder"/>
+	/// <see cref="CompilationUnit.SyntaxKind"/>
+	/// <see cref="CompilationUnit.IsFabricated"/>
+	/// <see cref="CompilationUnit.DiagnosticsList"/>
+	/// <see cref="CompilationUnit.ChildList"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+		var codeBlockNode = new CodeBlockNode(ImmutableArray<ISyntax>.Empty);
+		var lexer = new TextEditorDefaultLexer();
+		var parser = new TextEditorDefaultParser();
+		var binder = new TextEditorDefaultBinder();
 
-	/// <summary>
-	/// <see cref="CompilationUnit.TopLevelStatementsCodeBlockNode"/>
-	/// </summary>
-	[Fact]
-	public void TopLevelStatementsCodeBlockNode()
-	{
-		throw new NotImplementedException();
-	}
+		var compilationUnit = new CompilationUnit(
+            codeBlockNode,
+            lexer,
+            parser,
+            binder);
 
-	/// <summary>
-	/// <see cref="CompilationUnit.Lexer"/>
-	/// </summary>
-	[Fact]
-	public void Lexer()
-	{
-		throw new NotImplementedException();
-	}
+		Assert.Equal(codeBlockNode, compilationUnit.RootCodeBlockNode);
+		Assert.Equal(lexer, compilationUnit.Lexer);
+		Assert.Equal(parser, compilationUnit.Parser);
+		Assert.Equal(binder, compilationUnit.Binder);
 
-	/// <summary>
-	/// <see cref="CompilationUnit.Parser"/>
-	/// </summary>
-	[Fact]
-	public void Parser()
-	{
-		throw new NotImplementedException();
-	}
+		Assert.Equal(SyntaxKind.CompilationUnit, compilationUnit.SyntaxKind);
+		Assert.False(compilationUnit.IsFabricated);
 
-	/// <summary>
-	/// <see cref="CompilationUnit.Binder"/>
-	/// </summary>
-	[Fact]
-	public void Binder()
-	{
-		throw new NotImplementedException();
-	}
+		Assert.Empty(compilationUnit.DiagnosticsList);
 
-	/// <summary>
-	/// <see cref="CompilationUnit.DiagnosticsBag"/>
-	/// </summary>
-	[Fact]
-	public void DiagnosticsBag()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="CompilationUnit.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="CompilationUnit.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="CompilationUnit.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
+		Assert.Single(compilationUnit.ChildList);
+		Assert.Equal(codeBlockNode, compilationUnit.ChildList.Single());
 	}
 }

@@ -16,7 +16,7 @@ public class ConstraintNodeTests
     /// <see cref="ConstraintNode(ImmutableArray{ISyntaxToken})"/>
     /// <br/>----<br/>
     /// <see cref="ConstraintNode.InnerTokens"/>
-    /// <see cref="ConstraintNode.ChildBag"/>
+    /// <see cref="ConstraintNode.ChildList"/>
     /// <see cref="ConstraintNode.IsFabricated"/>
     /// <see cref="ConstraintNode.SyntaxKind"/>
     /// </summary>
@@ -94,11 +94,11 @@ public class ConstraintNodeTests
 
         Assert.Equal(innerTokens, constraintNode.InnerTokens);
 
-        Assert.Equal(innerTokens.Length, constraintNode.ChildBag.Length);
-        Assert.Equal(whereKeywordToken, constraintNode.ChildBag[0]);
-        Assert.Equal(identifierToken, constraintNode.ChildBag[1]);
-        Assert.Equal(colonToken, constraintNode.ChildBag[2]);
-        Assert.Equal(notnullKeywordToken, constraintNode.ChildBag[3]);
+        Assert.Equal(innerTokens.Length, constraintNode.ChildList.Length);
+        Assert.Equal(whereKeywordToken, constraintNode.ChildList[0]);
+        Assert.Equal(identifierToken, constraintNode.ChildList[1]);
+        Assert.Equal(colonToken, constraintNode.ChildList[2]);
+        Assert.Equal(notnullKeywordToken, constraintNode.ChildList[3]);
 
         Assert.False(constraintNode.IsFabricated);
 

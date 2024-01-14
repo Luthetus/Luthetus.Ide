@@ -12,16 +12,16 @@ public class TextEditorDiffResult
         TextEditorDiffCell[,] diffMatrix,
         (int sourceWeight, int inIndex, int outIndex) highestSourceWeightTuple,
         string longestCommonSubsequence,
-        ImmutableList<TextEditorTextSpan> inLongestCommonSubsequenceTextSpanBag,
-        ImmutableList<TextEditorTextSpan> outLongestCommonSubsequenceTextSpanBag)
+        ImmutableList<TextEditorTextSpan> inLongestCommonSubsequenceTextSpanList,
+        ImmutableList<TextEditorTextSpan> outLongestCommonSubsequenceTextSpanList)
     {
         InText = inText;
         OutText = outText;
         DiffMatrix = diffMatrix;
         HighestSourceWeightTuple = highestSourceWeightTuple;
         LongestCommonSubsequence = longestCommonSubsequence;
-        InResultTextSpanBag = inLongestCommonSubsequenceTextSpanBag;
-        OutResultTextSpanBag = outLongestCommonSubsequenceTextSpanBag;
+        InResultTextSpanList = inLongestCommonSubsequenceTextSpanList;
+        OutResultTextSpanList = outLongestCommonSubsequenceTextSpanList;
     }
 
     public string InText { get; }
@@ -29,8 +29,8 @@ public class TextEditorDiffResult
     public TextEditorDiffCell[,] DiffMatrix { get; }
     public (int sourceWeight, int beforeIndex, int afterIndex) HighestSourceWeightTuple { get; }
     public string LongestCommonSubsequence { get; }
-    public ImmutableList<TextEditorTextSpan> InResultTextSpanBag { get; }
-    public ImmutableList<TextEditorTextSpan> OutResultTextSpanBag { get; }
+    public ImmutableList<TextEditorTextSpan> InResultTextSpanList { get; }
+    public ImmutableList<TextEditorTextSpan> OutResultTextSpanList { get; }
 
     /// <summary>
     /// This method aims to implement the "An O(ND) Difference Algorithm"

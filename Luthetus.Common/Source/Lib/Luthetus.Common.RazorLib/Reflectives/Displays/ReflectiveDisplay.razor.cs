@@ -20,7 +20,7 @@ public partial class ReflectiveDisplay : ComponentBase
     [Parameter, EditorRequired]
     public int Index { get; set; }
     [Parameter, EditorRequired]
-    public List<Type> ComponentTypeBag { get; set; } = null!;
+    public List<Type> ComponentTypeList { get; set; } = null!;
 
     private ErrorBoundary _errorBoundaryComponent = null!;
     private ElementReference _selectElementReference;
@@ -29,7 +29,7 @@ public partial class ReflectiveDisplay : ComponentBase
     protected override void OnInitialized()
     {
         ReflectiveStateSelection
-            .Select(x => x.ReflectiveModelBag
+            .Select(x => x.ReflectiveModelList
                 .FirstOrDefault(y => y.Key == ReflectiveModelKey));
 
         base.OnInitialized();
@@ -59,7 +59,7 @@ public partial class ReflectiveDisplay : ComponentBase
 
         var chosenTypeGuidString = changeEventArgs.Value as string;
 
-        model.CalculateComponentPropertyInfoBag(chosenTypeGuidString, ref _chosenComponentChangeCounter);
+        model.CalculateComponentPropertyInfoList(chosenTypeGuidString, ref _chosenComponentChangeCounter);
     }
 
     private void WrapRecover()
@@ -84,7 +84,7 @@ public partial class ReflectiveDisplay : ComponentBase
     {
         var model = new ReflectiveModel(
                 Key<ReflectiveModel>.NewKey(),
-                ComponentTypeBag,
+                ComponentTypeList,
                 Guid.Empty,
                 Guid.Empty,
                 Array.Empty<PropertyInfo>(),

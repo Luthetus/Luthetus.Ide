@@ -60,9 +60,9 @@ public partial class AutocompleteMenu : ComponentBase
 
     private MenuRecord GetMenuRecord()
     {
-        var cursorBag = new TextEditorCursor[] { RenderBatch.ViewModel!.PrimaryCursor }.ToImmutableArray();
+        var cursorList = new TextEditorCursor[] { RenderBatch.ViewModel!.PrimaryCursor }.ToImmutableArray();
 
-        var primaryCursor = cursorBag.First(x => x.IsPrimaryCursor);
+        var primaryCursor = cursorList.First(x => x.IsPrimaryCursor);
 
         if (primaryCursor.ColumnIndex > 0)
         {
@@ -70,13 +70,13 @@ public partial class AutocompleteMenu : ComponentBase
                 primaryCursor.RowIndex,
                 primaryCursor.ColumnIndex);
 
-            List<MenuOptionRecord> menuOptionRecordsBag = new();
+            List<MenuOptionRecord> menuOptionRecordsList = new();
 
             if (word is not null)
             {
-                var autocompleteWordsBag = AutocompleteService.GetAutocompleteOptions(word);
+                var autocompleteWordsList = AutocompleteService.GetAutocompleteOptions(word);
 
-                var autocompleteEntryBag = autocompleteWordsBag
+                var autocompleteEntryList = autocompleteWordsList
                     .Select(aw => new AutocompleteEntry(aw, AutocompleteEntryKind.Word))
                     .ToArray();
 
@@ -92,19 +92,19 @@ public partial class AutocompleteMenu : ComponentBase
                         // TODO: RenderBatch.Model.GetAllText() probably isn't needed here. Maybe a useful optimization is to remove it somehow?
                         RenderBatch.Model.GetAllText());
 
-                    var compilerServiceAutocompleteEntryBag = RenderBatch.Model!.CompilerService.GetAutocompleteEntries(
+                    var compilerServiceAutocompleteEntryList = RenderBatch.Model!.CompilerService.GetAutocompleteEntries(
                         word,
                         textSpan);
 
-                    if (compilerServiceAutocompleteEntryBag.Any())
+                    if (compilerServiceAutocompleteEntryList.Any())
                     {
-                        autocompleteEntryBag = compilerServiceAutocompleteEntryBag
-                            .AddRange(autocompleteEntryBag)
+                        autocompleteEntryList = compilerServiceAutocompleteEntryList
+                            .AddRange(autocompleteEntryList)
                             .ToArray();
                     }
                 }
 
-                menuOptionRecordsBag = autocompleteEntryBag.Select(entry => new MenuOptionRecord(
+                menuOptionRecordsList = autocompleteEntryList.Select(entry => new MenuOptionRecord(
                     entry.DisplayName,
                     MenuOptionKind.Other,
                     () => SelectMenuOption(
@@ -119,10 +119,10 @@ public partial class AutocompleteMenu : ComponentBase
                 .ToList();
             }
 
-            if (!menuOptionRecordsBag.Any())
-                menuOptionRecordsBag.Add(new MenuOptionRecord("No results", MenuOptionKind.Other));
+            if (!menuOptionRecordsList.Any())
+                menuOptionRecordsList.Add(new MenuOptionRecord("No results", MenuOptionKind.Other));
 
-            return new MenuRecord(menuOptionRecordsBag.ToImmutableArray());
+            return new MenuRecord(menuOptionRecordsList.ToImmutableArray());
         }
 
         return new MenuRecord(new MenuOptionRecord[]

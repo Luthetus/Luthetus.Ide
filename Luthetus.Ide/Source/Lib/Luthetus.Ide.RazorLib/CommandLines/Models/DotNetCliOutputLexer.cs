@@ -30,7 +30,7 @@ public static class DotNetCliOutputLexer
         int? columnLength = null;
 
         var projectTemplate = new ProjectTemplate(null, null, null, null);
-        var projectTemplateBag = new List<ProjectTemplate>();
+        var projectTemplateList = new List<ProjectTemplate>();
 
         while (!stringWalker.IsEof)
         {
@@ -39,7 +39,7 @@ public static class DotNetCliOutputLexer
                 switch (stringWalker.CurrentCharacter)
                 {
                     case 'T':
-                        if (stringWalker.CheckForSubstring(keywordTags))
+                        if (stringWalker.PeekForSubstring(keywordTags))
                         {
                             // The '-1' is due to the while loop always reading a character at the end.
                             _ = stringWalker.ReadRange(keywordTags.Length - 1);
@@ -143,7 +143,7 @@ public static class DotNetCliOutputLexer
                         Tags = columnBuilder.ToString().Trim()
                     };
 
-                    projectTemplateBag.Add(projectTemplate);
+                    projectTemplateList.Add(projectTemplate);
 
                     projectTemplate = new(null, null, null, null);
                     columnLength = lengthOfTemplateNameColumn;
@@ -155,7 +155,7 @@ public static class DotNetCliOutputLexer
             _ = stringWalker.ReadCharacter();
         }
 
-        return projectTemplateBag;
+        return projectTemplateList;
     }
 
 	public static List<string> LexDotNetTestListTestsTerminalOutput(string output)
@@ -167,7 +167,7 @@ public static class DotNetCliOutputLexer
 		var indicatorIndex = output.IndexOf(textIndicatorForTheList);
 		var remainingText = output[indicatorIndex..];
 
-		var lineBag = new List<string>();
+		var lineList = new List<string>();
 
 		using (var reader = new StringReader(remainingText))
         {
@@ -176,10 +176,10 @@ public static class DotNetCliOutputLexer
 			while ((line = reader.ReadLine()) is not null)
 			{
 				if (line.StartsWith("\t") || line.StartsWith(" "))
-					lineBag.Add(line);
+					lineList.Add(line);
 			}
         }
 	
-		return lineBag;
+		return lineList;
 	}
 }

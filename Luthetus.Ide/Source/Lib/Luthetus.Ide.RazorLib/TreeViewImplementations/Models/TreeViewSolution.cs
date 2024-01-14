@@ -55,20 +55,20 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
             });
     }
 
-    public override async Task LoadChildBagAsync()
+    public override async Task LoadChildListAsync()
     {
         try
         {
-            var previousChildren = new List<TreeViewNoType>(ChildBag);
+            var previousChildren = new List<TreeViewNoType>(ChildList);
 
-            var newChildBag = await this.DotNetSolutionLoadChildrenAsync();
+            var newChildList = await this.DotNetSolutionLoadChildrenAsync();
 
-            ChildBag = newChildBag;
-            LinkChildren(previousChildren, ChildBag);
+            ChildList = newChildList;
+            LinkChildren(previousChildren, ChildList);
         }
         catch (Exception exception)
         {
-            ChildBag = new List<TreeViewNoType>
+            ChildList = new List<TreeViewNoType>
             {
                 new TreeViewException(exception, false, false, CommonComponentRenderers)
                 {

@@ -10,7 +10,7 @@ public partial record NuGetPackageManagerState(
     IDotNetProject? SelectedProjectToModify,
     string NugetQuery,
     bool IncludePrerelease,
-    ImmutableArray<NugetPackageRecord> QueryResultBag)
+    ImmutableArray<NugetPackageRecord> QueryResultList)
 {
     public NuGetPackageManagerState() : this(null, string.Empty, false, ImmutableArray<NugetPackageRecord>.Empty)
     {

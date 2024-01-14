@@ -127,7 +127,7 @@ public class RazorSyntaxTree
         // current character is '@'
         _ = stringWalker.ReadCharacter();
 
-        if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+        if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
         {
             diagnosticBag.ReportRazorWhitespaceImmediatelyFollowingTransitionCharacterIsUnexpected(
                 new TextEditorTextSpan(
@@ -260,9 +260,9 @@ public class RazorSyntaxTree
         {
             _ = stringWalker.ReadCharacter();
 
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter) ||
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter) ||
                 HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE == stringWalker.CurrentCharacter ||
-                stringWalker.CheckForSubstringRange(HtmlFacts.OPEN_TAG_ENDING_OPTIONS, out var matchedOn))
+                stringWalker.PeekForSubstringRange(HtmlFacts.OPEN_TAG_ENDING_OPTIONS, out var matchedOn))
             {
                 break;
             }
@@ -353,7 +353,7 @@ public class RazorSyntaxTree
                 var singleLineTextOutputText =
                     $"{RazorFacts.TRANSITION_SUBSTRING}{RazorFacts.SINGLE_LINE_TEXT_OUTPUT_WITHOUT_ADDING_HTML_ELEMENT}";
 
-                if (stringWalker.CheckForSubstring(singleLineTextOutputText))
+                if (stringWalker.PeekForSubstring(singleLineTextOutputText))
                 {
                     var positionIndexPriorReadingLine = stringWalker.PositionIndex;
 
@@ -1011,7 +1011,7 @@ public class RazorSyntaxTree
         {
             _ = stringWalker.ReadCharacter();
 
-            if (WhitespaceFacts.LINE_ENDING_CHARACTERS.Contains(stringWalker.CurrentCharacter))
+            if (WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
             {
                 break;
             }
@@ -1047,7 +1047,7 @@ public class RazorSyntaxTree
                 return true;
             }
 
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
                 continue;
 
             diagnosticBag.ReportRazorCodeBlockWasExpectedToFollowRazorKeyword(
@@ -1089,7 +1089,7 @@ public class RazorSyntaxTree
                 return true;
             }
 
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
                 continue;
 
             diagnosticBag.ReportRazorExplicitExpressionPredicateWasExpected(
@@ -1125,7 +1125,7 @@ public class RazorSyntaxTree
             var elseIfKeywordCombo =
                 $"{CSharpRazorKeywords.ELSE_KEYWORD} {CSharpRazorKeywords.IF_KEYWORD}";
 
-            if (stringWalker.CheckForSubstring(elseIfKeywordCombo))
+            if (stringWalker.PeekForSubstring(elseIfKeywordCombo))
             {
                 // Syntax highlight the keyword as a razor keyword specifically
                 {
@@ -1173,7 +1173,7 @@ public class RazorSyntaxTree
                 break;
             }
 
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
                 continue;
 
             break;
@@ -1199,7 +1199,7 @@ public class RazorSyntaxTree
         {
             _ = stringWalker.ReadCharacter();
 
-            if (stringWalker.CheckForSubstring(CSharpRazorKeywords.ELSE_KEYWORD))
+            if (stringWalker.PeekForSubstring(CSharpRazorKeywords.ELSE_KEYWORD))
             {
                 // Syntax highlight the keyword as a razor keyword specifically
                 {
@@ -1234,7 +1234,7 @@ public class RazorSyntaxTree
                 break;
             }
 
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
                 continue;
 
             break;
@@ -1257,7 +1257,7 @@ public class RazorSyntaxTree
         {
             _ = stringWalker.ReadCharacter();
 
-            if (stringWalker.CheckForSubstring(CSharpRazorKeywords.WHILE_KEYWORD))
+            if (stringWalker.PeekForSubstring(CSharpRazorKeywords.WHILE_KEYWORD))
             {
                 // Syntax highlight the keyword as a razor keyword specifically
                 {
@@ -1292,7 +1292,7 @@ public class RazorSyntaxTree
                 break;
             }
 
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
                 continue;
 
             break;

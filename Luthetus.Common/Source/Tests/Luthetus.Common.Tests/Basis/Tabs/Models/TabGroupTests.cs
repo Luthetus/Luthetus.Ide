@@ -13,8 +13,8 @@ public class TabGroupTests
     /// <summary>
     /// <see cref="TabGroup(Func{TabGroupLoadTabEntriesArgs, Task{TabGroupLoadTabEntriesOutput}}, RazorLib.Keys.Models.Key{TabGroup})"/>
     /// <br/>----<br/>
-    /// <see cref="TabGroup.EntryBag"/>
-    /// <see cref="TabGroup.LoadEntryBagAsync()"/>
+    /// <see cref="TabGroup.EntryList"/>
+    /// <see cref="TabGroup.LoadEntryListAsync()"/>
     /// <see cref="TabGroup.ActiveEntryKey"/>
     /// <see cref="TabGroup.GetActiveEntryNoType()"/>
     /// <see cref="TabGroup.Key"/>
@@ -43,16 +43,16 @@ public class TabGroupTests
             loadTabEntriesArgs => Task.FromResult(new TabGroupLoadTabEntriesOutput(tabEntries)),
             Key<TabGroup>.NewKey());
 
-        // Assert EntryBag
+        // Assert EntryList
         {
-            Assert.Empty(tabGroup.EntryBag);
+            Assert.Empty(tabGroup.EntryList);
 
             tabGroup = tabGroup with
             {
-                EntryBag = (await tabGroup.LoadEntryBagAsync()).OutTabEntries
+                EntryList = (await tabGroup.LoadEntryListAsync()).OutTabEntries
             };
 
-            Assert.Equal(tabEntries, tabGroup.EntryBag);
+            Assert.Equal(tabEntries, tabGroup.EntryList);
         }
 
         Assert.Equal(Key<TabEntryNoType>.Empty, tabGroup.ActiveEntryKey);
@@ -63,7 +63,7 @@ public class TabGroupTests
         // Do this by setting the ActiveEntryKey twice. Since the objects with
         // those keys are different, then the two objects should not be equal.
         {
-            var itemIndexOne = tabGroup.EntryBag[1];
+            var itemIndexOne = tabGroup.EntryList[1];
             tabGroup = tabGroup with
             {
                 ActiveEntryKey = itemIndexOne.TabEntryKey
@@ -73,7 +73,7 @@ public class TabGroupTests
             var getActiveEntryNoTypeResult = tabGroup.GetActiveEntryNoType();
             Assert.Equal(itemIndexOne, getActiveEntryNoTypeResult);
 
-            var itemIndexTwo = tabGroup.EntryBag[2];
+            var itemIndexTwo = tabGroup.EntryList[2];
             tabGroup = tabGroup with
             {
                 ActiveEntryKey = itemIndexTwo.TabEntryKey

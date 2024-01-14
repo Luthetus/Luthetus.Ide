@@ -8,30 +8,23 @@ namespace Luthetus.TextEditor.Tests.Basis.JavaScriptObjects.Models;
 /// </summary>
 public class CharAndRowMeasurementsTests
 {
-	/// <summary>
-	/// <see cref="CharAndRowMeasurements(double, double)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="CharAndRowMeasurements(double, double)"/>
+	/// <br/>----<br/>
+    /// <see cref="CharAndRowMeasurements.CharacterWidth"/>
+    /// <see cref="CharAndRowMeasurements.RowHeight"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+		var characterWidth = 10.14;
+		var rowHeight = 33.77;
 
-	/// <summary>
-	/// <see cref="CharAndRowMeasurements.CharacterWidth"/>
-	/// </summary>
-	[Fact]
-	public void CharacterWidth()
-	{
-		throw new NotImplementedException();
-	}
+        var charAndRowMeasurements = new CharAndRowMeasurements(
+            characterWidth,
+            rowHeight);
 
-	/// <summary>
-	/// <see cref="CharAndRowMeasurements.RowHeight"/>
-	/// </summary>
-	[Fact]
-	public void RowHeight()
-	{
-		throw new NotImplementedException();
+		Assert.Equal(characterWidth, charAndRowMeasurements.CharacterWidth);
+		Assert.Equal(rowHeight, charAndRowMeasurements.RowHeight);
 	}
 }

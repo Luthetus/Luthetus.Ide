@@ -28,7 +28,7 @@ public class ContextStateReducerTests
             out var contextHeirarchy);
         
         Assert.Equal(
-            contextStateWrap.Value.FocusedContextHeirarchy.KeyBag.Single(),
+            contextStateWrap.Value.FocusedContextHeirarchy.KeyList.Single(),
             ContextFacts.GlobalContext.ContextKey);
 
         var setFocusedContextHeirarchyAction = new ContextState.SetFocusedContextHeirarchyAction(
@@ -37,11 +37,11 @@ public class ContextStateReducerTests
         dispatcher.Dispatch(setFocusedContextHeirarchyAction);
 
         Assert.Equal(
-            contextStateWrap.Value.FocusedContextHeirarchy.KeyBag[0],
+            contextStateWrap.Value.FocusedContextHeirarchy.KeyList[0],
             ContextFacts.ActiveContextsContext.ContextKey);
         
         Assert.Equal(
-            contextStateWrap.Value.FocusedContextHeirarchy.KeyBag[1],
+            contextStateWrap.Value.FocusedContextHeirarchy.KeyList[1],
             ContextFacts.GlobalContext.ContextKey);
     }
 
@@ -129,7 +129,7 @@ public class ContextStateReducerTests
             out var dispatcher,
             out var contextHeirarchy);
 
-        Assert.Empty(contextStateWrap.Value.InspectableContextBag);
+        Assert.Empty(contextStateWrap.Value.InspectableContextList);
 
         var inspectableContext = new InspectableContext(
             contextHeirarchy,
@@ -142,7 +142,7 @@ public class ContextStateReducerTests
 
         Assert.Equal(
             addInspectableContextAction.InspectableContext, 
-            contextStateWrap.Value.InspectableContextBag.Single());
+            contextStateWrap.Value.InspectableContextList.Single());
     }
 
 
@@ -158,7 +158,7 @@ public class ContextStateReducerTests
             out var dispatcher,
             out var contextHeirarchy);
 
-        var globalContext = contextStateWrap.Value.AllContextsBag.Single(
+        var globalContext = contextStateWrap.Value.AllContextsList.Single(
             x => x.ContextKey == ContextFacts.GlobalContext.ContextKey);
 
         Assert.Equal(Keymap.Empty, globalContext.Keymap);
@@ -179,7 +179,7 @@ public class ContextStateReducerTests
 
         dispatcher.Dispatch(setContextKeymapAction);
 
-        globalContext = contextStateWrap.Value.AllContextsBag.Single(
+        globalContext = contextStateWrap.Value.AllContextsList.Single(
             x => x.ContextKey == ContextFacts.GlobalContext.ContextKey);
 
         Assert.NotEqual(Keymap.Empty, globalContext.Keymap);

@@ -164,7 +164,7 @@ public partial interface ITextEditorService
 
             if (optionsJson.CommonOptionsJsonDto?.ThemeKey is not null)
             {
-                var matchedTheme = _textEditorService.ThemeStateWrap.Value.ThemeBag.FirstOrDefault(
+                var matchedTheme = _textEditorService.ThemeStateWrap.Value.ThemeList.FirstOrDefault(
                     x => x.Key == optionsJson.CommonOptionsJsonDto.ThemeKey);
 
                 SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone);
@@ -172,7 +172,7 @@ public partial interface ITextEditorService
 
             if (optionsJson.Keymap is not null)
             {
-                var matchedKeymap = TextEditorKeymapFacts.AllKeymapsBag.FirstOrDefault(
+                var matchedKeymap = TextEditorKeymapFacts.AllKeymapsList.FirstOrDefault(
                     x => x.Key == optionsJson.Keymap.Key);
 
                 SetKeymap(matchedKeymap ?? TextEditorKeymapFacts.DefaultKeymap);

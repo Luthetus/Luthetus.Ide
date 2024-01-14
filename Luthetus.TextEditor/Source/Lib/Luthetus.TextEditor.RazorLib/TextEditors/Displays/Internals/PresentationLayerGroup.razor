@@ -2,32 +2,32 @@
 <div class="@CssClassString">
 
     @{
-        var presentationModelsBag = GetTextEditorPresentationModels();
+        var presentationModelsList = GetTextEditorPresentationModels();
 
-        var presentationLayerOrderedByRankAscending = presentationModelsBag.OrderBy(x => x.Rank).ToList();
+        var presentationLayerOrderedByRankAscending = presentationModelsList.OrderBy(x => x.Rank).ToList();
     }
 
     @foreach (var presentationLayer in presentationLayerOrderedByRankAscending)
     {
         var completedCalculation = presentationLayer.CompletedCalculation;
-        var textSpansBag = completedCalculation?.TextEditorTextSpanBag;
+        var textSpansList = completedCalculation?.TextEditorTextSpanList;
 
-        @if (completedCalculation is not null && textSpansBag is not null)
+        @if (completedCalculation is not null && textSpansList is not null)
         {
-            textSpansBag = ShiftTextSpans(completedCalculation.TextModificationsSinceRequestBag, textSpansBag.Value);
+            textSpansList = ShiftTextSpans(completedCalculation.TextModificationsSinceRequestList, textSpansList.Value);
 
             <div class="@presentationLayer.CssClassString">
-                @foreach (var textSpan in textSpansBag)
+                @foreach (var textSpan in textSpansList)
                 {
                     var boundsInPositionIndexUnits = (textSpan.StartingIndexInclusive, textSpan.EndingIndexExclusive);
 
-                    var firstRowToSelectDataInclusive = RenderBatch.Model!.FindRowInformation(
+                    var firstRowToSelectDataInclusive = RenderBatch.Model!.GetRowInformationFromPositionIndex(
                             boundsInPositionIndexUnits.StartingIndexInclusive)
-                        .rowIndex;
+                        .RowIndex;
 
-                    var lastRowToSelectDataExclusive = RenderBatch.Model!.FindRowInformation(
+                    var lastRowToSelectDataExclusive = RenderBatch.Model!.GetRowInformationFromPositionIndex(
                             boundsInPositionIndexUnits.EndingIndexExclusive)
-                        .rowIndex +
+                        .RowIndex +
                         1;
 
                     var boundsInRowIndexUnits = (firstRowToSelectDataInclusive, lastRowToSelectDataExclusive);

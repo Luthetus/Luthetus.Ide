@@ -2,4 +2,4 @@
 
 namespace Luthetus.Common.RazorLib.Reflectives.Models;
 
-public record ReflectiveOptions(params Assembly[] AssembliesToScanBag);
+public record ReflectiveOptions(params Assembly[] AssembliesToScanList);

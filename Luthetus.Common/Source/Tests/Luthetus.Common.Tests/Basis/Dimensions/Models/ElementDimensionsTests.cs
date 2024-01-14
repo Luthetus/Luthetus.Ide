@@ -10,7 +10,7 @@ public class ElementDimensionsTests
     /// <summary>
     /// <see cref="ElementDimensions()"/>
     /// <br/>----<br/>
-    /// <see cref="ElementDimensions.DimensionAttributeBag"/>
+    /// <see cref="ElementDimensions.DimensionAttributeList"/>
     /// <see cref="ElementDimensions.ElementPositionKind"/>
     /// <see cref="ElementDimensions.StyleString"/>
     /// </summary>
@@ -19,12 +19,12 @@ public class ElementDimensionsTests
     {
         var elementDimensions = new ElementDimensions();
 
-        Assert.Single(elementDimensions.DimensionAttributeBag, x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
-        Assert.Single(elementDimensions.DimensionAttributeBag, x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
-        Assert.Single(elementDimensions.DimensionAttributeBag, x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
-        Assert.Single(elementDimensions.DimensionAttributeBag, x => x.DimensionAttributeKind == DimensionAttributeKind.Right);
-        Assert.Single(elementDimensions.DimensionAttributeBag, x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
-        Assert.Single(elementDimensions.DimensionAttributeBag, x => x.DimensionAttributeKind == DimensionAttributeKind.Bottom);
+        Assert.Single(elementDimensions.DimensionAttributeList, x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
+        Assert.Single(elementDimensions.DimensionAttributeList, x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
+        Assert.Single(elementDimensions.DimensionAttributeList, x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
+        Assert.Single(elementDimensions.DimensionAttributeList, x => x.DimensionAttributeKind == DimensionAttributeKind.Right);
+        Assert.Single(elementDimensions.DimensionAttributeList, x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
+        Assert.Single(elementDimensions.DimensionAttributeList, x => x.DimensionAttributeKind == DimensionAttributeKind.Bottom);
 
         Assert.Equal(ElementPositionKind.Static, elementDimensions.ElementPositionKind);
         Assert.Equal("position: static; ", elementDimensions.StyleString);
@@ -37,19 +37,19 @@ public class ElementDimensionsTests
             Assert.Equal("position: fixed; ", elementDimensions.StyleString);
         }
 
-        var widthDimensionAttribute = elementDimensions.DimensionAttributeBag.Single(x =>
+        var widthDimensionAttribute = elementDimensions.DimensionAttributeList.Single(x =>
             x.DimensionAttributeKind == DimensionAttributeKind.Width);
 
-        widthDimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+        widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
         {
             Value = 60,
             DimensionUnitKind = DimensionUnitKind.ViewportWidth,
         });
 
-        var heightDimensionAttribute = elementDimensions.DimensionAttributeBag.Single(x =>
+        var heightDimensionAttribute = elementDimensions.DimensionAttributeList.Single(x =>
             x.DimensionAttributeKind == DimensionAttributeKind.Height);
 
-        widthDimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+        widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
         {
             Value = 60,
             DimensionUnitKind = DimensionUnitKind.ViewportHeight,

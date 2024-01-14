@@ -15,7 +15,7 @@ public sealed record VariableAssignmentExpressionNode : ISyntaxNode
         EqualsToken = equalsToken;
         ExpressionNode = expressionNode;
 
-        ChildBag = new ISyntax[]
+        ChildList = new ISyntax[]
         {
             VariableIdentifierToken,
             EqualsToken,
@@ -27,7 +27,7 @@ public sealed record VariableAssignmentExpressionNode : ISyntaxNode
     public EqualsToken EqualsToken { get; }
     public IExpressionNode ExpressionNode { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableAssignmentExpressionNode;

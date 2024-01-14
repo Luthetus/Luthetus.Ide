@@ -31,22 +31,22 @@ public partial class TextEditorModel
 
 		modifier.ModifyContent(content);
 		
-		ContentBag = modifier.ContentBag.ToImmutableList();
-		RowEndingKindCountsBag = modifier.RowEndingKindCountsBag.ToImmutableList();
-		RowEndingPositionsBag = modifier.RowEndingPositionsBag.ToImmutableList();
-		TabKeyPositionsBag = modifier.TabKeyPositionsBag.ToImmutableList();
+		ContentList = modifier.ContentList.ToImmutableList();
+		RowEndingKindCountsList = modifier.RowEndingKindCountsList.ToImmutableList();
+		RowEndingPositionsList = modifier.RowEndingPositionsList.ToImmutableList();
+		TabKeyPositionsList = modifier.TabKeyPositionsList.ToImmutableList();
 		OnlyRowEndingKind = modifier.OnlyRowEndingKind;
 		UsingRowEndingKind = modifier.UsingRowEndingKind;
 		MostCharactersOnASingleRowTuple = modifier.MostCharactersOnASingleRowTuple;
 	}
 
 	public TextEditorModel(
-		ImmutableList<RichCharacter> contentBag,
-		ImmutableList<EditBlock> editBlocksBag,
-		ImmutableList<RowEnding> rowEndingPositionsBag,
-		ImmutableList<(RowEndingKind rowEndingKind, int count)> rowEndingKindCountsBag,
-		ImmutableList<TextEditorPresentationModel> presentationModelsBag,
-		ImmutableList<int> tabKeyPositionsBag,
+		ImmutableList<RichCharacter> contentList,
+		ImmutableList<EditBlock> editBlocksList,
+		ImmutableList<RowEnding> rowEndingPositionsList,
+		ImmutableList<(RowEndingKind rowEndingKind, int count)> rowEndingKindCountsList,
+		ImmutableList<TextEditorPresentationModel> presentationModelsList,
+		ImmutableList<int> tabKeyPositionsList,
 		RowEndingKind? onlyRowEndingKind,
 		RowEndingKind usingRowEndingKind,
 		ResourceUri resourceUri,
@@ -60,12 +60,12 @@ public partial class TextEditorModel
 		Key<RenderState>  renderStateKey)
 	{
 
-		ContentBag = contentBag;
-		EditBlocksBag = editBlocksBag;
-		RowEndingPositionsBag = rowEndingPositionsBag;
-		RowEndingKindCountsBag = rowEndingKindCountsBag;
-		PresentationModelsBag = presentationModelsBag;
-		TabKeyPositionsBag = tabKeyPositionsBag;
+		ContentList = contentList;
+		EditBlocksList = editBlocksList;
+		RowEndingPositionsList = rowEndingPositionsList;
+		RowEndingKindCountsList = rowEndingKindCountsList;
+		PresentationModelsList = presentationModelsList;
+		TabKeyPositionsList = tabKeyPositionsList;
 		OnlyRowEndingKind = onlyRowEndingKind;
 		UsingRowEndingKind = usingRowEndingKind;
 		ResourceUri = resourceUri;

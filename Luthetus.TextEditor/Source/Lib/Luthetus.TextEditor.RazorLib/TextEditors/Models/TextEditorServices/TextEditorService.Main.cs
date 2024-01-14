@@ -90,7 +90,7 @@ public partial class TextEditorService : ITextEditorService
     public string StorageKey => "luth_te_text-editor-options";
 #endif
 
-    public string ThemeCssClassString => ThemeStateWrap.Value.ThemeBag.FirstOrDefault(
+    public string ThemeCssClassString => ThemeStateWrap.Value.ThemeList.FirstOrDefault(
         x => x.Key == OptionsStateWrap.Value.Options.CommonOptions.ThemeKey)
         ?.CssClassString
             ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
@@ -147,7 +147,7 @@ public partial class TextEditorService : ITextEditorService
                         {
                             viewModelModifier.ViewModel = viewModelModifier.ViewModel with
                             {
-                                CursorBag = cursorModifierBag.CursorModifierBag
+                                CursorList = cursorModifierBag.List
                                     .Select(x => x.ToCursor())
                                     .ToImmutableArray()
                             };

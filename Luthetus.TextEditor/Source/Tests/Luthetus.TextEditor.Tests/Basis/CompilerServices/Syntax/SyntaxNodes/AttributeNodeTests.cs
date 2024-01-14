@@ -15,7 +15,7 @@ public class AttributeNodeTests
     /// <br/>----<br/>
 	/// <see cref="AttributeNode.OpenSquareBracketToken"/>
 	/// <see cref="AttributeNode.CloseSquareBracketToken"/>
-	/// <see cref="AttributeNode.ChildBag"/>
+	/// <see cref="AttributeNode.ChildList"/>
 	/// <see cref="AttributeNode.IsFabricated"/>
 	/// <see cref="AttributeNode.SyntaxKind"/>
     /// </summary>
@@ -62,9 +62,9 @@ public class AttributeNodeTests
         Assert.Equal(openSquareBracketToken, attributeNode.OpenSquareBracketToken);
         Assert.Equal(closeSquareBracketToken, attributeNode.CloseSquareBracketToken);
 
-        Assert.Equal(2, attributeNode.ChildBag.Length);
-        Assert.Equal(openSquareBracketToken, attributeNode.ChildBag[0]);
-        Assert.Equal(closeSquareBracketToken, attributeNode.ChildBag[1]);
+        Assert.Equal(2, attributeNode.ChildList.Length);
+        Assert.Equal(openSquareBracketToken, attributeNode.ChildList[0]);
+        Assert.Equal(closeSquareBracketToken, attributeNode.ChildList[1]);
 
         Assert.False(attributeNode.IsFabricated);
 

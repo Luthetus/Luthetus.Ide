@@ -5,17 +5,17 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActor
 
 public class GenericSyntaxWalker
 {
-    public List<GenericStringSyntax> StringSyntaxBag { get; } = new();
-    public List<GenericCommentSingleLineSyntax> CommentSingleLineSyntaxBag { get; } = new();
-    public List<GenericCommentMultiLineSyntax> CommentMultiLineSyntaxBag { get; } = new();
-    public List<GenericKeywordSyntax> KeywordSyntaxBag { get; } = new();
-    public List<GenericFunctionSyntax> FunctionSyntaxBag { get; } = new();
-    public List<GenericPreprocessorDirectiveSyntax> PreprocessorDirectiveSyntaxBag { get; } = new();
-    public List<GenericDeliminationExtendedSyntax> DeliminationExtendedSyntaxBag { get; } = new();
+    public List<GenericStringSyntax> StringSyntaxList { get; } = new();
+    public List<GenericCommentSingleLineSyntax> CommentSingleLineSyntaxList { get; } = new();
+    public List<GenericCommentMultiLineSyntax> CommentMultiLineSyntaxList { get; } = new();
+    public List<GenericKeywordSyntax> KeywordSyntaxList { get; } = new();
+    public List<GenericFunctionSyntax> FunctionSyntaxList { get; } = new();
+    public List<GenericPreprocessorDirectiveSyntax> PreprocessorDirectiveSyntaxList { get; } = new();
+    public List<GenericDeliminationExtendedSyntax> DeliminationExtendedSyntaxList { get; } = new();
 
     public void Visit(IGenericSyntax node)
     {
-        foreach (var child in node.ChildBag)
+        foreach (var child in node.ChildList)
         {
             Visit(child);
         }
@@ -48,36 +48,36 @@ public class GenericSyntaxWalker
 
     private void VisitStringSyntax(GenericStringSyntax node)
     {
-        StringSyntaxBag.Add(node);
+        StringSyntaxList.Add(node);
     }
 
     private void VisitCommentSingleLineSyntax(GenericCommentSingleLineSyntax node)
     {
-        CommentSingleLineSyntaxBag.Add(node);
+        CommentSingleLineSyntaxList.Add(node);
     }
 
     private void VisitCommentMultiLineSyntax(GenericCommentMultiLineSyntax node)
     {
-        CommentMultiLineSyntaxBag.Add(node);
+        CommentMultiLineSyntaxList.Add(node);
     }
 
     private void VisitKeywordSyntax(GenericKeywordSyntax node)
     {
-        KeywordSyntaxBag.Add(node);
+        KeywordSyntaxList.Add(node);
     }
 
     private void VisitFunctionSyntax(GenericFunctionSyntax node)
     {
-        FunctionSyntaxBag.Add(node);
+        FunctionSyntaxList.Add(node);
     }
 
     private void VisitPreprocessorDirectiveSyntax(GenericPreprocessorDirectiveSyntax node)
     {
-        PreprocessorDirectiveSyntaxBag.Add(node);
+        PreprocessorDirectiveSyntaxList.Add(node);
     }
 
     private void VisitDeliminationExtendedSyntax(GenericDeliminationExtendedSyntax node)
     {
-        DeliminationExtendedSyntaxBag.Add(node);
+        DeliminationExtendedSyntaxList.Add(node);
     }
 }

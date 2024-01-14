@@ -194,6 +194,88 @@ public static class KeyboardKeyFacts
         }
     }
 
+    /// <summary>
+    /// TODO: This method is not fully implemented.
+    /// </summary>
+    public static string ConvertCodeToKey(string code)
+    {
+        switch (code)
+        {
+            case "Digit1":
+                return "1";
+            case "Digit2":
+                return "2";
+            case "Digit3":
+                return "3";
+            case "Digit4":
+                return "4";
+            case "Digit5":
+                return "5";
+            case "Digit6":
+                return "6";
+            case "Digit7":
+                return "7";
+            case "Digit8":
+                return "8";
+            case "Digit9":
+                return "9";
+            case "KeyA":
+                return "a";
+            case "KeyB":
+                return "b";
+            case "KeyC":
+                return "c";
+            case "KeyD":
+                return "d";
+            case "KeyE":
+                return "e";
+            case "KeyF":
+                return "f";
+            case "KeyG":
+                return "g";
+            case "KeyH":
+                return "h";
+            case "KeyI":
+                return "i";
+            case "KeyJ":
+                return "j";
+            case "KeyK":
+                return "k";
+            case "KeyL":
+                return "l";
+            case "KeyM":
+                return "m";
+            case "KeyN":
+                return "n";
+            case "KeyO":
+                return "o";
+            case "KeyP":
+                return "p";
+            case "KeyQ":
+                return "q";
+            case "KeyR":
+                return "r";
+            case "KeyS":
+                return "s";
+            case "KeyT":
+                return "t";
+            case "KeyU":
+                return "u";
+            case "KeyV":
+                return "v";
+            case "KeyW":
+                return "w";
+            case "KeyX":
+                return "x";
+            case "KeyY":
+                return "y";
+            case "KeyZ":
+                return "z";
+            default:
+                return code;
+        }
+    }
+
     public static bool IsLineEndingCharacter(char character)
     {
         return character switch
@@ -213,7 +295,7 @@ public static class KeyboardKeyFacts
         public const string PAGE_UP = "PageUp";
         public const string PAGE_DOWN = "PageDown";
 
-        public static readonly ImmutableArray<string> AllBag = new string[]
+        public static readonly ImmutableArray<string> AllList = new string[]
         {
             BACKSPACE,
             ESCAPE,
@@ -231,7 +313,7 @@ public static class KeyboardKeyFacts
         public const char NEW_LINE = '\n';
         public const char SPACE = ' ';
 
-        public static readonly ImmutableArray<char> AllBag = new char[]
+        public static readonly ImmutableArray<char> AllList = new char[]
         {
             TAB,
             CARRIAGE_RETURN,
@@ -250,7 +332,7 @@ public static class KeyboardKeyFacts
         public const string ENTER_CODE = "Enter";
         public const string SPACE_CODE = "Space";
 
-        public static readonly ImmutableArray<string> AllBag = new string[]
+        public static readonly ImmutableArray<string> AllList = new string[]
         {
             TAB_CODE,
             ENTER_CODE,
@@ -298,7 +380,7 @@ public static class KeyboardKeyFacts
         public const char FORWARD_SLASH = '/';
         public const char BACK_SLASH = '\\';
 
-        public static readonly ImmutableArray<char> AllBag = new char[]
+        public static readonly ImmutableArray<char> AllList = new char[]
         {
             OPEN_CURLY_BRACE,
             CLOSE_CURLY_BRACE,
@@ -345,7 +427,7 @@ public static class KeyboardKeyFacts
         public const string HOME = "Home";
         public const string END = "End";
 
-        public static readonly ImmutableArray<string> AllBag = new string[]
+        public static readonly ImmutableArray<string> AllList = new string[]
         {
             ARROW_LEFT,
             ARROW_DOWN,
@@ -363,7 +445,7 @@ public static class KeyboardKeyFacts
         public const string ARROW_UP = "k";
         public const string ARROW_RIGHT = "l";
 
-        public static readonly ImmutableArray<string> AllBag = new string[]
+        public static readonly ImmutableArray<string> AllList = new string[]
         {
             ARROW_LEFT,
             ARROW_DOWN,

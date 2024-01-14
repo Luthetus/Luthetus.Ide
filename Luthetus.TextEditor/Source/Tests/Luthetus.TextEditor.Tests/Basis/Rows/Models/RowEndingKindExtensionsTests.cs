@@ -14,7 +14,12 @@ public class RowEndingKindExtensionsTests
 	[Fact]
 	public void AsCharacters()
 	{
-		throw new NotImplementedException();
+		Assert.Equal("\r", RowEndingKind.CarriageReturn.AsCharacters());
+		Assert.Equal("\n", RowEndingKind.Linefeed.AsCharacters());
+		Assert.Equal("\r\n", RowEndingKind.CarriageReturnLinefeed.AsCharacters());
+		Assert.Equal(string.Empty, RowEndingKind.StartOfFile.AsCharacters());
+		Assert.Equal(string.Empty, RowEndingKind.EndOfFile.AsCharacters());
+		Assert.Equal(string.Empty, RowEndingKind.Unset.AsCharacters());
 	}
 
 	/// <summary>
@@ -23,7 +28,11 @@ public class RowEndingKindExtensionsTests
 	[Fact]
 	public void AsCharactersHtmlEscaped()
 	{
-		throw new NotImplementedException();
+		Assert.Equal("\\r", RowEndingKind.CarriageReturn.AsCharactersHtmlEscaped());
+		Assert.Equal("\\n", RowEndingKind.Linefeed.AsCharactersHtmlEscaped());
+		Assert.Equal("\\r\\n", RowEndingKind.CarriageReturnLinefeed.AsCharactersHtmlEscaped());
+		Assert.Equal("SOF", RowEndingKind.StartOfFile.AsCharactersHtmlEscaped());
+		Assert.Equal("EOF", RowEndingKind.EndOfFile.AsCharactersHtmlEscaped());
 	}
 
 	/// <summary>
@@ -32,7 +41,12 @@ public class RowEndingKindExtensionsTests
 	[Fact]
 	public void AsFriendlyName()
 	{
-		throw new NotImplementedException();
+		Assert.Equal("CR", RowEndingKind.CarriageReturn.AsFriendlyName());
+		Assert.Equal("LF", RowEndingKind.Linefeed.AsFriendlyName());
+		Assert.Equal("CRLF", RowEndingKind.CarriageReturnLinefeed.AsFriendlyName());
+		Assert.Equal("Unset", RowEndingKind.Unset.AsFriendlyName());
+		Assert.Equal("SOF", RowEndingKind.StartOfFile.AsFriendlyName());
+		Assert.Equal("EOF", RowEndingKind.EndOfFile.AsFriendlyName());
 	}
 
 	/// <summary>
@@ -41,6 +55,11 @@ public class RowEndingKindExtensionsTests
 	[Fact]
 	public void GetRowEndingsUserAllowedToUse()
 	{
-		throw new NotImplementedException();
+		var rowEndingsUserAllowedToUse = RowEndingKind.Unset.GetRowEndingsUserAllowedToUse();
+
+		Assert.Equal(3, rowEndingsUserAllowedToUse.Length);
+		Assert.Contains(rowEndingsUserAllowedToUse, x => x == RowEndingKind.CarriageReturn);
+		Assert.Contains(rowEndingsUserAllowedToUse, x => x == RowEndingKind.Linefeed);
+		Assert.Contains(rowEndingsUserAllowedToUse, x => x == RowEndingKind.CarriageReturnLinefeed);
 	}
 }

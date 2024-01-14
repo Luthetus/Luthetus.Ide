@@ -55,12 +55,12 @@ public class TextEditorModelConstructorsTests
             new TextEditorCompilerServiceDefault());
 
 		var cloneModel = new TextEditorModel(
-			originalModel.ContentBag,
-			originalModel.EditBlocksBag,
-            originalModel.RowEndingPositionsBag,
-            originalModel.RowEndingKindCountsBag,
-            originalModel.PresentationModelsBag,
-            originalModel.TabKeyPositionsBag,
+			originalModel.ContentList,
+			originalModel.EditBlocksList,
+            originalModel.RowEndingPositionsList,
+            originalModel.RowEndingKindCountsList,
+            originalModel.PresentationModelsList,
+            originalModel.TabKeyPositionsList,
             originalModel.OnlyRowEndingKind,
 			originalModel.UsingRowEndingKind,
 			originalModel.ResourceUri,
@@ -73,12 +73,12 @@ public class TextEditorModelConstructorsTests
 			originalModel.MostCharactersOnASingleRowTuple,
 			originalModel.RenderStateKey);
 
-        Assert.Equal(originalModel.ContentBag, cloneModel.ContentBag);
-		Assert.Equal(originalModel.EditBlocksBag, cloneModel.EditBlocksBag);
-        Assert.Equal(originalModel.RowEndingPositionsBag, cloneModel.RowEndingPositionsBag);
-        Assert.Equal(originalModel.RowEndingKindCountsBag, cloneModel.RowEndingKindCountsBag);
-        Assert.Equal(originalModel.PresentationModelsBag, cloneModel.PresentationModelsBag);
-        Assert.Equal(originalModel.TabKeyPositionsBag, cloneModel.TabKeyPositionsBag);
+        Assert.Equal(originalModel.ContentList, cloneModel.ContentList);
+		Assert.Equal(originalModel.EditBlocksList, cloneModel.EditBlocksList);
+        Assert.Equal(originalModel.RowEndingPositionsList, cloneModel.RowEndingPositionsList);
+        Assert.Equal(originalModel.RowEndingKindCountsList, cloneModel.RowEndingKindCountsList);
+        Assert.Equal(originalModel.PresentationModelsList, cloneModel.PresentationModelsList);
+        Assert.Equal(originalModel.TabKeyPositionsList, cloneModel.TabKeyPositionsList);
         Assert.Equal(originalModel.OnlyRowEndingKind, cloneModel.OnlyRowEndingKind);
 		Assert.Equal(originalModel.UsingRowEndingKind, cloneModel.UsingRowEndingKind);
 		Assert.Equal(originalModel.ResourceUri, cloneModel.ResourceUri);

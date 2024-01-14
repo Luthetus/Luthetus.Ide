@@ -1,10 +1,10 @@
 ﻿@{
-    _exactMatchWrapper = _fileTemplatesFormWrappersBag.FirstOrDefault(
+    _exactMatchWrapper = _fileTemplatesFormWrappersList.FirstOrDefault(
         x => x.FileTemplate.IsExactTemplate.Invoke(FileName));
 
     GetRelatedFileTemplates();
     
-    foreach (var relatedMatchWrapper in _relatedMatchWrappersBag)
+    foreach (var relatedMatchWrapper in _relatedMatchWrappersList)
     {
         <div @key="relatedMatchWrapper.FileTemplate.Id">
             <input type="checkbox" @bind="@relatedMatchWrapper.IsChecked" />

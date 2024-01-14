@@ -11,16 +11,16 @@ public static class PanelFacts
 
     public static PanelGroup GetLeftPanelRecord(PanelsState panelsState)
     {
-        return panelsState.PanelGroupBag.First(x => x.Key == LeftPanelRecordKey);
+        return panelsState.PanelGroupList.First(x => x.Key == LeftPanelRecordKey);
     }
 
     public static PanelGroup GetRightPanelRecord(PanelsState panelsState)
     {
-        return panelsState.PanelGroupBag.First(x => x.Key == RightPanelRecordKey);
+        return panelsState.PanelGroupList.First(x => x.Key == RightPanelRecordKey);
     }
 
     public static PanelGroup GetBottomPanelRecord(PanelsState panelsState)
     {
-        return panelsState.PanelGroupBag.First(x => x.Key == BottomPanelRecordKey);
+        return panelsState.PanelGroupList.First(x => x.Key == BottomPanelRecordKey);
     }
 }

@@ -16,32 +16,32 @@ public sealed record CompilationUnit : ISyntaxNode
         IParser? parser,
         IBinder? binder)
     {
-        TopLevelStatementsCodeBlockNode = rootCodeBlockNode ?? new CodeBlockNode(ImmutableArray<ISyntax>.Empty);
+        RootCodeBlockNode = rootCodeBlockNode ?? new CodeBlockNode(ImmutableArray<ISyntax>.Empty);
         Lexer = lexer ?? new TextEditorDefaultLexer();
         Parser = parser ?? new TextEditorDefaultParser();
         Binder = binder ?? new TextEditorDefaultBinder();
 
-        var diagnosticsBagBuilder = new List<TextEditorDiagnostic>();
+        var diagnosticsListBuilder = new List<TextEditorDiagnostic>();
         
-        diagnosticsBagBuilder.AddRange(Lexer.DiagnosticsBag);
-        diagnosticsBagBuilder.AddRange(Parser.DiagnosticsBag);
-        diagnosticsBagBuilder.AddRange(Binder.DiagnosticsBag);
+        diagnosticsListBuilder.AddRange(Lexer.DiagnosticList);
+        diagnosticsListBuilder.AddRange(Parser.DiagnosticsList);
+        diagnosticsListBuilder.AddRange(Binder.DiagnosticsList);
 
-        DiagnosticsBag = diagnosticsBagBuilder.ToImmutableArray();
+        DiagnosticsList = diagnosticsListBuilder.ToImmutableArray();
 
-        ChildBag = new ISyntax[]
+        ChildList = new ISyntax[]
         {
-            TopLevelStatementsCodeBlockNode
+            RootCodeBlockNode
         }.ToImmutableArray();
     }
 
-    public CodeBlockNode TopLevelStatementsCodeBlockNode { get; }
+    public CodeBlockNode RootCodeBlockNode { get; }
     public ILexer Lexer { get; }
     public IParser Parser { get; }
     public IBinder Binder { get; }
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag { get; init; }
+    public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; init; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; init; }
+    public ImmutableArray<ISyntax> ChildList { get; init; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.CompilationUnit;
 }

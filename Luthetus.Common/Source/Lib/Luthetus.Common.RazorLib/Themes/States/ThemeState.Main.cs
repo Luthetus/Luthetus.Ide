@@ -5,14 +5,14 @@ using Luthetus.Common.RazorLib.Themes.Models;
 namespace Luthetus.Common.RazorLib.Themes.States;
 
 [FeatureState]
-public partial record ThemeState(ImmutableList<ThemeRecord> ThemeBag)
+public partial record ThemeState(ImmutableList<ThemeRecord> ThemeList)
 {
-    public ThemeState() : this(DefaultThemeRecordsBag)
+    public ThemeState() : this(DefaultThemeRecordsList)
     {
         
     }
 
-    public static readonly ImmutableList<ThemeRecord> DefaultThemeRecordsBag = new[]
+    public static readonly ImmutableList<ThemeRecord> DefaultThemeRecordsList = new[]
     {
         ThemeFacts.VisualStudioDarkThemeClone,
         ThemeFacts.VisualStudioLightThemeClone,

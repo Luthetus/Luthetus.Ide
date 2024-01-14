@@ -6,16 +6,16 @@ public abstract class CommandNoType
         string displayName,
         string internalIdentifier,
         bool shouldBubble,
-        Func<ICommandArgs, Task> doAsyncFunc)
+        Func<ICommandArgs, Task> commandFunc)
     {
         DisplayName = displayName;
         InternalIdentifier = internalIdentifier;
         ShouldBubble = shouldBubble;
-        DoAsyncFunc = doAsyncFunc;
+        CommandFunc = commandFunc;
     }
 
     public string DisplayName { get; }
     public string InternalIdentifier { get; }
     public bool ShouldBubble { get; }
-    public Func<ICommandArgs, Task> DoAsyncFunc { get; }
+    public Func<ICommandArgs, Task> CommandFunc { get; }
 }

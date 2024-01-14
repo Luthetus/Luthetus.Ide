@@ -25,19 +25,19 @@ public partial record ContextState
         {
             var outIsSelectingInspectionTarget = !inContextStates.IsSelectingInspectionTarget;
 
-            var outInspectableContextBag = inContextStates.InspectableContextBag;
+            var outInspectableContextList = inContextStates.InspectableContextList;
             var outInspectedContextHeirarchy = inContextStates.InspectedContextHeirarchy;
 
             if (!outIsSelectingInspectionTarget)
             {
-                outInspectableContextBag = ImmutableArray<InspectableContext>.Empty;
+                outInspectableContextList = ImmutableArray<InspectableContext>.Empty;
                 outInspectedContextHeirarchy = null;
             }
 
             return inContextStates with
             {
                 IsSelectingInspectionTarget = !inContextStates.IsSelectingInspectionTarget,
-                InspectableContextBag = outInspectableContextBag,
+                InspectableContextList = outInspectableContextList,
                 InspectedContextHeirarchy = outInspectedContextHeirarchy,
             };
         }
@@ -59,7 +59,7 @@ public partial record ContextState
                 return inContextStates with
                 {
                     IsSelectingInspectionTarget = false,
-                    InspectableContextBag = ImmutableArray<InspectableContext>.Empty,
+                    InspectableContextList = ImmutableArray<InspectableContext>.Empty,
                     InspectedContextHeirarchy = null,
                 };
             }
@@ -73,7 +73,7 @@ public partial record ContextState
             return inContextStates with
             {
                 IsSelectingInspectionTarget = false,
-                InspectableContextBag = ImmutableArray<InspectableContext>.Empty,
+                InspectableContextList = ImmutableArray<InspectableContext>.Empty,
                 InspectedContextHeirarchy = setInspectedContextHeirarchyAction.InspectedContextHeirarchy,
             };
         }
@@ -83,12 +83,12 @@ public partial record ContextState
             ContextState inContextStates,
             AddInspectableContextAction addInspectableContextAction)
         {
-            var outList = inContextStates.InspectableContextBag.Add(
+            var outList = inContextStates.InspectableContextList.Add(
                 addInspectableContextAction.InspectableContext);
 
             return inContextStates with
             {
-                InspectableContextBag = outList,
+                InspectableContextList = outList,
             };
         }
         
@@ -97,20 +97,20 @@ public partial record ContextState
             ContextState inContextStates,
             SetContextKeymapAction setContextKeymapAction)
         {
-            var inContextRecord = inContextStates.AllContextsBag.FirstOrDefault(
+            var inContextRecord = inContextStates.AllContextsList.FirstOrDefault(
                 x => x.ContextKey == setContextKeymapAction.ContextKey);
 
             if (inContextRecord is null)
                 return inContextStates;
 
-            var outList = inContextStates.AllContextsBag.Replace(inContextRecord, inContextRecord with
+            var outList = inContextStates.AllContextsList.Replace(inContextRecord, inContextRecord with
             {
                 Keymap = setContextKeymapAction.Keymap
             });
 
             return inContextStates with
             {
-                AllContextsBag = outList,
+                AllContextsList = outList,
             };
         }
     }

@@ -54,7 +54,7 @@ public class TreeViewMarkupString : TreeViewWithType<MarkupString>
             });
     }
 
-    public override Task LoadChildBagAsync()
+    public override Task LoadChildListAsync()
     {
         return Task.CompletedTask;
     }

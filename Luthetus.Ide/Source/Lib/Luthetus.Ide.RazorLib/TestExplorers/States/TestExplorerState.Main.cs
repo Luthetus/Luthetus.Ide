@@ -15,5 +15,5 @@ public partial record TestExplorerState
     {
     }
 	
-	public ImmutableList<ProjectTestModel> ProjectTestModelBag { get; init; } = ImmutableList<ProjectTestModel>.Empty;
+	public ImmutableList<ProjectTestModel> ProjectTestModelList { get; init; } = ImmutableList<ProjectTestModel>.Empty;
 }

@@ -8,14 +8,14 @@ namespace Luthetus.Ide.RazorLib.InputFiles.States;
 public partial record InputFileState
 {
     public bool CanMoveBackwardsInHistory => IndexInHistory > 0;
-    public bool CanMoveForwardsInHistory => IndexInHistory < OpenedTreeViewModelHistoryBag.Count - 1;
+    public bool CanMoveForwardsInHistory => IndexInHistory < OpenedTreeViewModelHistoryList.Count - 1;
 
     public TreeViewAbsolutePath? GetOpenedTreeView()
     {
-        if (IndexInHistory == -1 || IndexInHistory >= OpenedTreeViewModelHistoryBag.Count)
+        if (IndexInHistory == -1 || IndexInHistory >= OpenedTreeViewModelHistoryList.Count)
             return null;
 
-        return OpenedTreeViewModelHistoryBag[IndexInHistory];
+        return OpenedTreeViewModelHistoryList[IndexInHistory];
     }
 
     private static InputFileState NewOpenedTreeViewModelHistory(
@@ -36,19 +36,19 @@ public partial record InputFileState
             true);
 
         selectionClone.IsExpanded = true;
-        selectionClone.ChildBag = selectedTreeViewModel.ChildBag;
+        selectionClone.ChildList = selectedTreeViewModel.ChildList;
         
-        var nextHistory = inInputFileState.OpenedTreeViewModelHistoryBag;
+        var nextHistory = inInputFileState.OpenedTreeViewModelHistoryList;
 
         // If not at end of history the more recent history is
         // replaced by the to be selected TreeViewModel
-        if (inInputFileState.IndexInHistory != inInputFileState.OpenedTreeViewModelHistoryBag.Count - 1)
+        if (inInputFileState.IndexInHistory != inInputFileState.OpenedTreeViewModelHistoryList.Count - 1)
         {
-            var historyCount = inInputFileState.OpenedTreeViewModelHistoryBag.Count;
+            var historyCount = inInputFileState.OpenedTreeViewModelHistoryList.Count;
             var startingIndexToRemove = inInputFileState.IndexInHistory + 1;
             var countToRemove = historyCount - startingIndexToRemove;
 
-            nextHistory = inInputFileState.OpenedTreeViewModelHistoryBag.RemoveRange(
+            nextHistory = inInputFileState.OpenedTreeViewModelHistoryList.RemoveRange(
                 startingIndexToRemove,
                 countToRemove);
         }
@@ -58,7 +58,7 @@ public partial record InputFileState
         return inInputFileState with
         {
             IndexInHistory = inInputFileState.IndexInHistory + 1,
-            OpenedTreeViewModelHistoryBag = nextHistory,
+            OpenedTreeViewModelHistoryList = nextHistory,
         };
     }
 }

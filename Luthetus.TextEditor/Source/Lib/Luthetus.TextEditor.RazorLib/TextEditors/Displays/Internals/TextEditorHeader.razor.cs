@@ -35,8 +35,8 @@ public partial class TextEditorHeader : ComponentBase
         TextEditorModel textEditorModel,
         TextEditorViewModel viewModel)
     {
-        var cursorSnapshotsBag = new TextEditorCursor[] { viewModel.PrimaryCursor }.ToImmutableArray();
-        var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsBag.First(x => x.IsPrimaryCursor).Selection);
+        var cursorSnapshotsList = new TextEditorCursor[] { viewModel.PrimaryCursor }.ToImmutableArray();
+        var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsList.First(x => x.IsPrimaryCursor).Selection);
 
         return new TextEditorCommandArgs(
             textEditorModel.ResourceUri,
@@ -61,7 +61,7 @@ public partial class TextEditorHeader : ComponentBase
             return;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.Copy.DoAsyncFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.Copy.CommandFunc.Invoke(commandArgs);
     }
 
     private async Task DoCutOnClick(MouseEventArgs arg)
@@ -73,7 +73,7 @@ public partial class TextEditorHeader : ComponentBase
             return;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.Cut.DoAsyncFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.Cut.CommandFunc.Invoke(commandArgs);
     }
 
     private async Task DoPasteOnClick(MouseEventArgs arg)
@@ -85,7 +85,7 @@ public partial class TextEditorHeader : ComponentBase
             return;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.PasteCommand.DoAsyncFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.PasteCommand.CommandFunc.Invoke(commandArgs);
     }
 
     private async Task DoRedoOnClick(MouseEventArgs arg)
@@ -97,7 +97,7 @@ public partial class TextEditorHeader : ComponentBase
             return;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.Redo.DoAsyncFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.Redo.CommandFunc.Invoke(commandArgs);
     }
 
     private async Task DoSaveOnClick(MouseEventArgs arg)
@@ -109,7 +109,7 @@ public partial class TextEditorHeader : ComponentBase
             return;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.Save.DoAsyncFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.Save.CommandFunc.Invoke(commandArgs);
     }
 
     private async Task DoUndoOnClick(MouseEventArgs arg)
@@ -121,7 +121,7 @@ public partial class TextEditorHeader : ComponentBase
             return;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.Undo.DoAsyncFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.Undo.CommandFunc.Invoke(commandArgs);
     }
 
     private async Task DoSelectAllOnClick(MouseEventArgs arg)
@@ -133,7 +133,7 @@ public partial class TextEditorHeader : ComponentBase
             return;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.SelectAll.DoAsyncFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.SelectAll.CommandFunc.Invoke(commandArgs);
     }
 
     private async Task DoRemeasureOnClick(MouseEventArgs arg)
@@ -145,7 +145,7 @@ public partial class TextEditorHeader : ComponentBase
             return;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.Remeasure.DoAsyncFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.Remeasure.CommandFunc.Invoke(commandArgs);
     }
 
     private void ShowWatchWindowDisplayDialogOnClick()
@@ -189,7 +189,7 @@ public partial class TextEditorHeader : ComponentBase
             return;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.Remeasure.DoAsyncFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.Remeasure.CommandFunc.Invoke(commandArgs);
     }
 
     /// <summary>

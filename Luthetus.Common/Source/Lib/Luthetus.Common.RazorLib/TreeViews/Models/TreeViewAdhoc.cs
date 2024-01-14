@@ -42,21 +42,21 @@ public class TreeViewAdhoc : TreeViewWithType<byte>
         };
     }
 
-    public static TreeViewAdhoc ConstructTreeViewAdhoc(params TreeViewNoType[] treeViewBag)
+    public static TreeViewAdhoc ConstructTreeViewAdhoc(params TreeViewNoType[] treeViewList)
     {
         var treeViewAdhoc = ConstructTreeViewAdhoc();
 
-        var childBag = treeViewBag.ToList();
+        var childList = treeViewList.ToList();
 
-        for (int i = 0; i < childBag.Count; i++)
+        for (int i = 0; i < childList.Count; i++)
         {
-            var child = childBag[i];
+            var child = childList[i];
 
             child.IndexAmongSiblings = i;
             child.Parent = treeViewAdhoc;
         }
 
-        treeViewAdhoc.ChildBag = childBag;
+        treeViewAdhoc.ChildList = childList;
 
         return treeViewAdhoc;
     }
@@ -74,7 +74,7 @@ public class TreeViewAdhoc : TreeViewWithType<byte>
             });
     }
 
-    public override Task LoadChildBagAsync()
+    public override Task LoadChildListAsync()
     {
         return Task.CompletedTask;
     }

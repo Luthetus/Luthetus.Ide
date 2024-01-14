@@ -14,13 +14,13 @@ public partial class TreeViewHelper
         if (razorMarkupTreeView.Item is null)
             return new();
 
-        var parentDirectoryOfRazorMarkup = razorMarkupTreeView.Item.AbsolutePath.AncestorDirectoryBag.Last();
+        var parentDirectoryOfRazorMarkup = razorMarkupTreeView.Item.AbsolutePath.AncestorDirectoryList.Last();
         var parentAbsolutePathString = parentDirectoryOfRazorMarkup.Value;
 
-        var filePathStringsBag = await razorMarkupTreeView.FileSystemProvider.Directory
+        var filePathStringsList = await razorMarkupTreeView.FileSystemProvider.Directory
             .GetFilesAsync(parentAbsolutePathString);
 
-        var childFileTreeViewModels = filePathStringsBag
+        var childFileTreeViewModels = filePathStringsList
             .Select(x =>
             {
                 var absolutePath = new AbsolutePath(x, false, razorMarkupTreeView.EnvironmentProvider);
@@ -40,14 +40,14 @@ public partial class TreeViewHelper
             }).ToList();
 
         RazorMarkupFindRelatedFiles(razorMarkupTreeView, childFileTreeViewModels);
-        return razorMarkupTreeView.ChildBag;
+        return razorMarkupTreeView.ChildList;
     }
 
     public static void RazorMarkupFindRelatedFiles(
         TreeViewNamespacePath razorMarkupTreeView,
         List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
-        razorMarkupTreeView.ChildBag.Clear();
+        razorMarkupTreeView.ChildList.Clear();
 
         // .razor files look to remove .razor.cs and .razor.css files
         var matches = new[]
@@ -74,7 +74,7 @@ public partial class TreeViewHelper
             relatedFile.IndexAmongSiblings = index;
             relatedFile.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
 
-            razorMarkupTreeView.ChildBag.Add(relatedFile);
+            razorMarkupTreeView.ChildList.Add(relatedFile);
         }
 
         razorMarkupTreeView.IsExpandable = true;

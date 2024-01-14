@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.TreeViews.Models;
@@ -16,21 +16,21 @@ public record TreeViewContainer
     public TreeViewContainer(
         Key<TreeViewContainer> key,
         TreeViewNoType? rootNode,
-        ImmutableList<TreeViewNoType> selectedNodeBag)
+        ImmutableList<TreeViewNoType> selectedNodeList)
     {
         rootNode ??= TreeViewAdhoc.ConstructTreeViewAdhoc();
 
         Key = key;
         RootNode = rootNode;
-        SelectedNodeBag = selectedNodeBag;
+        SelectedNodeList = selectedNodeList;
     }
 
     public Key<TreeViewContainer> Key { get; init; }
     public TreeViewNoType RootNode { get; init; }
     /// <summary>
-    /// The <see cref="ActiveNode"/> is the last or default entry in <see cref="SelectedNodeBag"/>
+    /// The <see cref="ActiveNode"/> is the last or default entry in <see cref="SelectedNodeList"/>
     /// </summary>
-    public TreeViewNoType? ActiveNode => SelectedNodeBag.LastOrDefault();
-    public ImmutableList<TreeViewNoType> SelectedNodeBag { get; init; }
+    public TreeViewNoType? ActiveNode => SelectedNodeList.FirstOrDefault();
+    public ImmutableList<TreeViewNoType> SelectedNodeList { get; init; }
     public Guid StateId { get; init; } = Guid.NewGuid();
 }

@@ -13,7 +13,7 @@ public sealed record NamespaceEntryNode : ISyntaxNode
         ResourceUri = resourceUri;
         CodeBlockNode = codeBlockNode;
 
-        ChildBag = (new ISyntax[]
+        ChildList = (new ISyntax[]
         {
             CodeBlockNode
         }).ToImmutableArray();
@@ -22,7 +22,7 @@ public sealed record NamespaceEntryNode : ISyntaxNode
     public ResourceUri ResourceUri { get; }
     public CodeBlockNode CodeBlockNode { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.NamespaceEntryNode;

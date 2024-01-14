@@ -39,10 +39,10 @@ public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRende
 
             if (AbsolutePath.IsDirectory)
             {
-                var fileSystemEntryBag = await FileSystemProvider.Directory
+                var fileSystemEntryList = await FileSystemProvider.Directory
                     .EnumerateFileSystemEntriesAsync(AbsolutePath.Value);
 
-                _countOfImmediateChildren = fileSystemEntryBag.Count();
+                _countOfImmediateChildren = fileSystemEntryList.Count();
             }
         }
 

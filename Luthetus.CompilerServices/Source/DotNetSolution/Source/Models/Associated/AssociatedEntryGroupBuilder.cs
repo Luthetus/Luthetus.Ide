@@ -15,14 +15,14 @@ public class AssociatedEntryGroupBuilder
 
     public Action<AssociatedEntryGroup> OnAfterBuildAction { get; }
     public OpenAssociatedGroupToken OpenAssociatedGroupToken { get; set; }
-    public List<IAssociatedEntry> AssociatedEntryBag { get; } = new();
+    public List<IAssociatedEntry> AssociatedEntryList { get; } = new();
     public CloseAssociatedGroupToken? CloseAssociatedGroupToken { get; set; }
 
     public AssociatedEntryGroup Build()
     {
         var group = new AssociatedEntryGroup(
             OpenAssociatedGroupToken,
-            AssociatedEntryBag.ToImmutableArray(),
+            AssociatedEntryList.ToImmutableArray(),
             CloseAssociatedGroupToken);
 
         OnAfterBuildAction.Invoke(group);

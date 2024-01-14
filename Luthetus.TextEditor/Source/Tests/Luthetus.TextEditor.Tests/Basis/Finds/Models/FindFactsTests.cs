@@ -9,10 +9,10 @@ namespace Luthetus.TextEditor.Tests.Basis.SearchEngines.Models;
 public class FindFactsTests
 {
 	/// <summary>
-	/// <see cref="SearchEngineFacts.DefaultSearchEngineBag"/>
+	/// <see cref="SearchEngineFacts.DefaultSearchEngineList"/>
 	/// </summary>
 	[Fact]
-	public void DefaultSearchEngineBag()
+	public void DefaultSearchEngineList()
 	{
 		throw new NotImplementedException();
 	}

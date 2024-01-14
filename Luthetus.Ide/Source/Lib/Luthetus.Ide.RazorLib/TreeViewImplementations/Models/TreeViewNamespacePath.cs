@@ -56,17 +56,17 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
             });
     }
 
-    public override async Task LoadChildBagAsync()
+    public override async Task LoadChildListAsync()
     {
         try
         {
-            var previousChildren = new List<TreeViewNoType>(ChildBag);
+            var previousChildren = new List<TreeViewNoType>(ChildList);
 
-            var newChildBag = new List<TreeViewNoType>();
+            var newChildList = new List<TreeViewNoType>();
 
             if (Item.AbsolutePath.IsDirectory)
             {
-                newChildBag = await this.DirectoryLoadChildrenAsync();
+                newChildList = await this.DirectoryLoadChildrenAsync();
             }
             else
             {
@@ -75,20 +75,20 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                     case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
                         return;
                     case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                        newChildBag = await this.CSharpProjectLoadChildrenAsync();
+                        newChildList = await this.CSharpProjectLoadChildrenAsync();
                         break;
                     case ExtensionNoPeriodFacts.RAZOR_MARKUP:
-                        newChildBag = await this.RazorMarkupLoadChildrenAsync();
+                        newChildList = await this.RazorMarkupLoadChildrenAsync();
                         break;
                 }
             }
 
-            ChildBag = newChildBag;
-            LinkChildren(previousChildren, ChildBag);
+            ChildList = newChildList;
+            LinkChildren(previousChildren, ChildList);
         }
         catch (Exception exception)
         {
-            ChildBag = new List<TreeViewNoType>
+            ChildList = new List<TreeViewNoType>
             {
                 new TreeViewException(exception, false, false, CommonComponentRenderers)
                 {

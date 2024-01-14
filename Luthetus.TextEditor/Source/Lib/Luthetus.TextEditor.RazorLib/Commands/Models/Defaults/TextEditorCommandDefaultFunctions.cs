@@ -46,7 +46,7 @@ public class TextEditorCommandDefaultFunctions
                 primaryCursorModifier,
                 modelModifier);
 
-            selectedText ??= modelModifier.GetLinesRange(
+            selectedText ??= modelModifier.GetLineRange(
                 primaryCursorModifier.RowIndex,
                 1);
 
@@ -74,12 +74,21 @@ public class TextEditorCommandDefaultFunctions
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
+            if (!TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
+            {
+                var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+                var rowInformation = modelModifier.GetRowInformationFromPositionIndex(positionIndex);
+
+                primaryCursorModifier.SelectionAnchorPositionIndex = rowInformation.RowStartPositionIndexInclusive;
+                primaryCursorModifier.SelectionEndingPositionIndex = rowInformation.RowEnding.EndPositionIndexExclusive;
+            }
+
             var selectedText = TextEditorSelectionHelper.GetSelectedText(
                 primaryCursorModifier,
                 modelModifier);
 
             if (selectedText is null)
-                return; // Should never occur
+                return; // This should never occur
 
             await commandArgs.ClipboardService.SetClipboard(selectedText);
             viewModelModifier.ViewModel.Focus();
@@ -324,9 +333,9 @@ public class TextEditorCommandDefaultFunctions
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            if (viewModelModifier.ViewModel.VirtualizationResult?.EntryBag.Any() ?? false)
+            if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
             {
-                var lastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryBag.Last();
+                var lastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.Last();
                 var lastEntriesRowLength = modelModifier.GetLengthOfRow(lastEntry.Index);
 
                 primaryCursorModifier.RowIndex = lastEntry.Index;
@@ -356,9 +365,9 @@ public class TextEditorCommandDefaultFunctions
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            if (viewModelModifier.ViewModel.VirtualizationResult?.EntryBag.Any() ?? false)
+            if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
             {
-                var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryBag.First();
+                var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.First();
 
                 primaryCursorModifier.RowIndex = firstEntry.Index;
                 primaryCursorModifier.ColumnIndex = 0;
@@ -396,7 +405,7 @@ public class TextEditorCommandDefaultFunctions
             if (selectedText is null)
             {
                 // Select line
-                selectedText = modelModifier.GetLinesRange(primaryCursorModifier.RowIndex, 1);
+                selectedText = modelModifier.GetLineRange(primaryCursorModifier.RowIndex, 1);
 
                 cursorForInsertion = new TextEditorCursor(
                     primaryCursorModifier.RowIndex,
@@ -438,8 +447,12 @@ public class TextEditorCommandDefaultFunctions
             var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (cursorModifierBag is null ||
+                primaryCursorModifier is null ||
+                !TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
+            {
                 return Task.CompletedTask;
+            }
 
             var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
                 primaryCursorModifier);
@@ -452,11 +465,15 @@ public class TextEditorCommandDefaultFunctions
                  i < selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
                  i++)
             {
-                var cursorForInsertion = new TextEditorCursor(i, 0, true);
+                var insertionCursor = new TextEditorCursor(i, 0, true);
+
+                var insertionCursorModifierBag = new TextEditorCursorModifierBag(
+                    Key<TextEditorViewModel>.Empty,
+                    new List<TextEditorCursorModifier> { new TextEditorCursorModifier(insertionCursor) });
 
                 modelModifier.EditByInsertion(
                     KeyboardKeyFacts.WhitespaceCharacters.TAB.ToString(),
-                    cursorModifierBag,
+                    insertionCursorModifierBag,
                     CancellationToken.None);
             }
 
@@ -483,11 +500,7 @@ public class TextEditorCommandDefaultFunctions
                     lowerBoundPositionIndexChange;
             }
 
-            var userCursorRowIndex = primaryCursorModifier.RowIndex;
-            var userCursorColumnIndex = primaryCursorModifier.ColumnIndex;
-
-            primaryCursorModifier.RowIndex = userCursorRowIndex;
-            primaryCursorModifier.ColumnIndex = userCursorColumnIndex + 1;
+            primaryCursorModifier.SetColumnIndexAndPreferred(1 + primaryCursorModifier.ColumnIndex);
 
             return Task.CompletedTask;
         };
@@ -868,7 +881,7 @@ public class TextEditorCommandDefaultFunctions
                 return Task.CompletedTask;
 
             var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
-            var wordTextSpan = modelModifier.GetWordAt(positionIndex);
+            var wordTextSpan = modelModifier.GetWordTextSpan(positionIndex);
 
             if (wordTextSpan is null)
                 return Task.CompletedTask;
@@ -916,12 +929,12 @@ public class TextEditorCommandDefaultFunctions
             }
 
             var firstDefinitionViewModel = definitionViewModels.First();
-            var rowData = definitionModel.FindRowInformation(definitionTextSpan.StartingIndexInclusive);
-            var columnIndex = definitionTextSpan.StartingIndexInclusive - rowData.rowStartPositionIndex;
+            var rowData = definitionModel.GetRowInformationFromPositionIndex(definitionTextSpan.StartingIndexInclusive);
+            var columnIndex = definitionTextSpan.StartingIndexInclusive - rowData.RowStartPositionIndexInclusive;
 
             var firstDefinitionViewModelCursorModifier = new TextEditorCursorModifier(firstDefinitionViewModel.PrimaryCursor);
 
-            firstDefinitionViewModelCursorModifier.RowIndex = rowData.rowIndex;
+            firstDefinitionViewModelCursorModifier.RowIndex = rowData.RowIndex;
             firstDefinitionViewModelCursorModifier.ColumnIndex = columnIndex;
             firstDefinitionViewModelCursorModifier.PreferredColumnIndex = columnIndex;
 
@@ -930,11 +943,11 @@ public class TextEditorCommandDefaultFunctions
                 firstDefinitionInViewModel =>
                 {
                     var outCursor = firstDefinitionViewModelCursorModifier.ToCursor();
-                    var outCursorBag = firstDefinitionInViewModel.CursorBag.Replace(firstDefinitionInViewModel.PrimaryCursor, outCursor);
+                    var outCursorBag = firstDefinitionInViewModel.CursorList.Replace(firstDefinitionInViewModel.PrimaryCursor, outCursor);
 
                     return firstDefinitionInViewModel with
                     {
-                        CursorBag = outCursorBag
+                        CursorList = outCursorBag
                     };
                 }).Invoke(editContext);
 

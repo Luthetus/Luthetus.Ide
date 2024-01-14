@@ -29,7 +29,7 @@ public class TextEditorCommandVimFactsVerbsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorCommandVimFacts.Verbs.DeleteMotionCommandFactory(TextEditorCommand)"/>
+	/// <see cref="TextEditorCommandVimFacts.Verbs.DeleteMotionCommandConstructor(TextEditorCommand)"/>
 	/// </summary>
 	[Fact]
 	public void GetDeleteMotion()
@@ -38,7 +38,7 @@ public class TextEditorCommandVimFactsVerbsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorCommandVimFacts.Verbs.ChangeMotionCommandFactory(TextEditorCommand)"/>
+	/// <see cref="TextEditorCommandVimFacts.Verbs.ChangeMotionCommandConstructor(TextEditorCommand)"/>
 	/// </summary>
 	[Fact]
 	public void GetChangeMotion()

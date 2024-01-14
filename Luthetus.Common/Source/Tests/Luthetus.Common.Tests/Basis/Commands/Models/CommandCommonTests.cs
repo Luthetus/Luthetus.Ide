@@ -29,7 +29,7 @@ public class CommandCommonTests
                 return Task.CompletedTask;
             });
 
-        await commandCommon.DoAsyncFunc.Invoke(new CommonCommandArgs());
+        await commandCommon.CommandFunc.Invoke(new CommonCommandArgs());
 
         Assert.Equal(1, number);
         Assert.Equal(displayName, commandCommon.DisplayName);

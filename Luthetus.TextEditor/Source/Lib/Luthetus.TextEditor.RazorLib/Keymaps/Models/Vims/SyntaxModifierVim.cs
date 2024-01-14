@@ -23,7 +23,7 @@ public static class SyntaxModifierVim
     }
 
     public static bool TryParse(TextEditorKeymapVim textEditorKeymapVim,
-        ImmutableArray<VimGrammarToken> sentenceSnapshotBag,
+        ImmutableArray<VimGrammarToken> sentenceSnapshotList,
         int indexInSentence,
         KeymapArgument keymapArgument,
         bool hasTextSelection,

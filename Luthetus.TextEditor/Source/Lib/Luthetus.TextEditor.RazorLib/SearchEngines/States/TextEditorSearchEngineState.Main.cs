@@ -15,27 +15,22 @@ public partial class TextEditorSearchEngineState
 {
     public TextEditorSearchEngineState()
     {
-        SearchEngineBag = ImmutableList<ITextEditorSearchEngine>.Empty;
-        ActiveSearchEngineKey = Key<ITextEditorSearchEngine>.Empty;
+        SearchEngineList = ImmutableList<ITextEditorSearchEngine>.Empty;
         SearchQuery = string.Empty;
+        Options = new();
     }
 
 	public TextEditorSearchEngineState(
-        ImmutableList<ITextEditorSearchEngine> searchEngineBag,
-        Key<ITextEditorSearchEngine> activeSearchEngineKey,
-        string searchQuery)
+        ImmutableList<ITextEditorSearchEngine> searchEngineList,
+        string searchQuery,
+        TextEditorSearchEngineOptions textEditorSearchEngineOptions)
     {
-        SearchEngineBag = searchEngineBag;
-        ActiveSearchEngineKey = activeSearchEngineKey;
+        SearchEngineList = searchEngineList;
         SearchQuery = searchQuery;
+        Options = textEditorSearchEngineOptions;
     }
 
-    public ImmutableList<ITextEditorSearchEngine> SearchEngineBag { get; init; }
-    public Key<ITextEditorSearchEngine> ActiveSearchEngineKey { get; init; }
+    public ImmutableList<ITextEditorSearchEngine> SearchEngineList { get; init; }
     public string SearchQuery { get; init; }
-
-    public ITextEditorSearchEngine? GetActiveSearchEngineOrDefault()
-    {
-        return SearchEngineBag.FirstOrDefault(x => x.SearchEngineKey == ActiveSearchEngineKey);
-    }
+    public TextEditorSearchEngineOptions Options { get; init; }
 }

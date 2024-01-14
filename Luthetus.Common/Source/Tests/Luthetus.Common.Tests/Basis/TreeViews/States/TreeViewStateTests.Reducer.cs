@@ -80,10 +80,10 @@ public class TreeViewStateReducerTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewState.Reducer.ReduceClearSelectedNodeBagAction(TreeViewState, TreeViewState.ClearSelectedNodeBagAction)"/>
+    /// <see cref="TreeViewState.Reducer.ReduceClearSelectedNodeListAction(TreeViewState, TreeViewState.ClearSelectedNodeListAction)"/>
     /// </summary>
     [Fact]
-    public void ReduceClearSelectedNodeBagAction()
+    public void ReduceClearSelectedNodeListAction()
     {
         throw new NotImplementedException();
     }

@@ -27,7 +27,7 @@ public class TextEditorCommandTests
         bool shouldScrollCursorIntoView = true;
         TextEditKind textEditKind = TextEditKind.Other;
         string? otherTextEditKindIdentifier = "defaults_paste";
-        Func<ICommandArgs, Task> doAsyncFunc = commandArgs => Task.CompletedTask;
+        Func<ICommandArgs, Task> commandFunc = commandArgs => Task.CompletedTask;
 
         var command = new TextEditorCommand(
             displayName,
@@ -36,7 +36,7 @@ public class TextEditorCommandTests
             shouldScrollCursorIntoView,
             textEditKind,
             otherTextEditKindIdentifier,
-            doAsyncFunc);
+            commandFunc);
 
 		Assert.Equal(displayName, command.DisplayName);
 		Assert.Equal(internalIdentifier, command.InternalIdentifier);
@@ -44,7 +44,7 @@ public class TextEditorCommandTests
         Assert.Equal(shouldScrollCursorIntoView, command.ShouldScrollCursorIntoView);
         Assert.Equal(textEditKind, command.TextEditKind);
         Assert.Equal(otherTextEditKindIdentifier, command.OtherTextEditKindIdentifier);
-        Assert.Equal(doAsyncFunc, command.DoAsyncFunc);
+        Assert.Equal(commandFunc, command.CommandFunc);
 
         // ThrowOtherTextEditKindIdentifierWasExpectedException(TextEditKind)
         Assert.Throws<ApplicationException>(() =>
@@ -56,7 +56,7 @@ public class TextEditorCommandTests
                 shouldScrollCursorIntoView,
                 textEditKind,
                 null,
-                doAsyncFunc);
+                commandFunc);
         });
 	}
 }

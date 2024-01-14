@@ -132,7 +132,7 @@ public class FSharpCompilerService : ICompilerService
                         CompilerServiceDiagnosticPresentationFacts.PresentationKey)
                     .Invoke(editContext);
 
-                var pendingCalculation = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
+                var pendingCalculation = modelModifier.PresentationModelsList.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
                     ?.PendingCalculation;
 
@@ -155,12 +155,12 @@ public class FSharpCompilerService : ICompilerService
 
                 ResourceParsed?.Invoke();
 
-                var presentationModel = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
+                var presentationModel = modelModifier.PresentationModelsList.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
                 if (presentationModel?.PendingCalculation is not null)
                 {
-                    presentationModel.PendingCalculation.TextEditorTextSpanBag =
+                    presentationModel.PendingCalculation.TextEditorTextSpanList =
                         GetDiagnosticsFor(modelModifier.ResourceUri)
                             .Select(x => x.TextSpan)
                             .ToImmutableArray();

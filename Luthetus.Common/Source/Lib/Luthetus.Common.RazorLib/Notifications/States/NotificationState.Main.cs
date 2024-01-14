@@ -11,10 +11,10 @@ namespace Luthetus.Common.RazorLib.Notifications.States;
 /// </summary>
 [FeatureState]
 public partial record NotificationState(
-    ImmutableList<NotificationRecord> DefaultBag,
-    ImmutableList<NotificationRecord> ReadBag,
-    ImmutableList<NotificationRecord> ArchivedBag,
-    ImmutableList<NotificationRecord> DeletedBag)
+    ImmutableList<NotificationRecord> DefaultList,
+    ImmutableList<NotificationRecord> ReadList,
+    ImmutableList<NotificationRecord> ArchivedList,
+    ImmutableList<NotificationRecord> DeletedList)
 {
     public NotificationState() : this(
         ImmutableList<NotificationRecord>.Empty,

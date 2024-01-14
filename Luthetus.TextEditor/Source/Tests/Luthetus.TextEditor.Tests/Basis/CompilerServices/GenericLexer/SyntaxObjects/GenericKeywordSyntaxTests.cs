@@ -27,10 +27,10 @@ public class GenericKeywordSyntaxTests
 	}
 
 	/// <summary>
-	/// <see cref="GenericKeywordSyntax.ChildBag"/>
+	/// <see cref="GenericKeywordSyntax.ChildList"/>
 	/// </summary>
 	[Fact]
-	public void ChildBag()
+	public void ChildList()
 	{
 		throw new NotImplementedException();
 	}

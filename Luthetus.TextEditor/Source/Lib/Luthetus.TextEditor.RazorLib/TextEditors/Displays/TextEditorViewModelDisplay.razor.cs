@@ -29,7 +29,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
-using Microsoft.AspNetCore.Components.Forms;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -168,7 +167,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     public TextEditorModel? GetModel() => TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey);
 
-    public TextEditorViewModel? GetViewModel() => TextEditorViewModelsStateWrap.Value.ViewModelBag.FirstOrDefault(
+    public TextEditorViewModel? GetViewModel() => TextEditorViewModelsStateWrap.Value.ViewModelList.FirstOrDefault(
         x => x.ViewModelKey == TextEditorViewModelKey);
 
     public TextEditorOptions? GetOptions() => TextEditorOptionsStateWrap.Value.Options;
@@ -212,7 +211,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             var localTextEditorViewModelKey = TextEditorViewModelKey;
 
             // Don't use the method 'GetViewModel()'. The logic here needs to be transactional, the TextEditorViewModelKey must not change.
-            var nextViewModel = TextEditorViewModelsStateWrap.Value.ViewModelBag.FirstOrDefault(
+            var nextViewModel = TextEditorViewModelsStateWrap.Value.ViewModelList.FirstOrDefault(
                 x => x.ViewModelKey == localTextEditorViewModelKey);
 
             Key<TextEditorViewModel> nextViewModelKey;
@@ -252,6 +251,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             keyboardEventArgs.Key == "Alt" ||
             keyboardEventArgs.Key == "Meta")
         {
+            return;
+        }
+
+        if (keyboardEventArgs.CtrlKey && keyboardEventArgs.AltKey)
+        {
+            // TODO: This if is a hack to fix the keybind: { Ctrl + Alt + S } causing...
+            // ...an 's' to be written out when using Vim keymap.
             return;
         }
 
@@ -333,7 +339,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 {
                     if (command is not null)
                     {
-                        await command.DoAsyncFunc.Invoke(new TextEditorCommandArgs(
+                        await command.CommandFunc.Invoke(new TextEditorCommandArgs(
                             modelModifier.ResourceUri,
                             viewModelModifier.ViewModel.ViewModelKey,
                             hasSelection,
@@ -513,8 +519,12 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None, false);
 
-                var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
+                // Remember the current cursor position prior to doing anything
+                var inRowIndex = primaryCursorModifier.RowIndex;
+                var inColumnIndex = primaryCursorModifier.ColumnIndex;
 
+                // Move the cursor position
+                var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
                 primaryCursorModifier.RowIndex = rowAndColumnIndex.rowIndex;
                 primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
                 primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
@@ -531,12 +541,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                     if (!hasSelectedText)
                     {
                         // If user does not yet have a selection then place the text selection anchor were they were
-
-                        var cursorPositionPriorToMovementOccurring = modelModifier.GetPositionIndex(
-                            primaryCursorModifier.RowIndex,
-                            primaryCursorModifier.ColumnIndex);
-
-                        primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionPriorToMovementOccurring;
+                        primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier
+                            .GetPositionIndex(inRowIndex, inColumnIndex);
                     }
 
                     // If user ALREADY has a selection then do not modify the text selection anchor
@@ -686,7 +692,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 $"luth_te_proportional-font-measurement-cursor_{_textEditorHtmlElementId}_{guid}",
                 positionX,
                 charMeasurements.CharacterWidth,
-                model.GetTextOnRow(rowIndex));
+                model.GetLine(rowIndex));
 
             if (columnIndexInt == -1)
             {

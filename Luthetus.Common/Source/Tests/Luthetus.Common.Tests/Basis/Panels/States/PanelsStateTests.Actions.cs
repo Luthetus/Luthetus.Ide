@@ -154,10 +154,10 @@ public class PanelsStateActionsTests
                 new ElementDimensions(),
                 ImmutableArray<PanelTab>.Empty);
 
-        var leftPanelGroupWidth = samplePanelGroup.ElementDimensions.DimensionAttributeBag
+        var leftPanelGroupWidth = samplePanelGroup.ElementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
 
-        leftPanelGroupWidth.DimensionUnitBag.AddRange(new[]
+        leftPanelGroupWidth.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit
             {

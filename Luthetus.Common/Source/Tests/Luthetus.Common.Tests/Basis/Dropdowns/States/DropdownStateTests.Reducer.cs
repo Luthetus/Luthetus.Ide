@@ -23,15 +23,15 @@ public class DropdownStateReducerTests
             out var dispatcher,
             out var dropdownKey);
 
-        Assert.Empty(dropdownStateWrap.Value.ActiveKeyBag);
+        Assert.Empty(dropdownStateWrap.Value.ActiveKeyList);
 
         dispatcher.Dispatch(new DropdownState.AddActiveAction(dropdownKey));
 
-        Assert.NotEmpty(dropdownStateWrap.Value.ActiveKeyBag);
-        Assert.Single(dropdownStateWrap.Value.ActiveKeyBag);
+        Assert.NotEmpty(dropdownStateWrap.Value.ActiveKeyList);
+        Assert.Single(dropdownStateWrap.Value.ActiveKeyList);
 
         Assert.Contains(
-            dropdownStateWrap.Value.ActiveKeyBag,
+            dropdownStateWrap.Value.ActiveKeyList,
             x => x == dropdownKey);
     }
 
@@ -47,19 +47,19 @@ public class DropdownStateReducerTests
             out var dispatcher,
             out var dropdownKey);
 
-        Assert.Empty(dropdownStateWrap.Value.ActiveKeyBag);
+        Assert.Empty(dropdownStateWrap.Value.ActiveKeyList);
 
         dispatcher.Dispatch(new DropdownState.AddActiveAction(dropdownKey));
 
-        Assert.Single(dropdownStateWrap.Value.ActiveKeyBag);
+        Assert.Single(dropdownStateWrap.Value.ActiveKeyList);
 
         Assert.Contains(
-            dropdownStateWrap.Value.ActiveKeyBag,
+            dropdownStateWrap.Value.ActiveKeyList,
             x => x == dropdownKey);
 
         dispatcher.Dispatch(new DropdownState.RemoveActiveAction(dropdownKey));
 
-        Assert.Empty(dropdownStateWrap.Value.ActiveKeyBag);
+        Assert.Empty(dropdownStateWrap.Value.ActiveKeyList);
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ public class DropdownStateReducerTests
             out var dispatcher,
             out var dropdownKey);
 
-        Assert.Empty(dropdownStateWrap.Value.ActiveKeyBag);
+        Assert.Empty(dropdownStateWrap.Value.ActiveKeyList);
 
         var keyCount = 3;
 
@@ -83,12 +83,12 @@ public class DropdownStateReducerTests
             dispatcher.Dispatch(new DropdownState.AddActiveAction(Key<DropdownRecord>.NewKey()));
         }
 
-        Assert.NotEmpty(dropdownStateWrap.Value.ActiveKeyBag);
-        Assert.Equal(3, dropdownStateWrap.Value.ActiveKeyBag.Count);
+        Assert.NotEmpty(dropdownStateWrap.Value.ActiveKeyList);
+        Assert.Equal(3, dropdownStateWrap.Value.ActiveKeyList.Count);
 
         dispatcher.Dispatch(new DropdownState.ClearActivesAction());
 
-        Assert.Empty(dropdownStateWrap.Value.ActiveKeyBag);
+        Assert.Empty(dropdownStateWrap.Value.ActiveKeyList);
     }
 
     private void InitializeDropdownStateReducerTests(

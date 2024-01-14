@@ -70,9 +70,20 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
 
                     // This code block is hacky. I want the Solution Explorer to from the get-go be fully expanded, so the user can see 'Program.cs'
                     {
-                        TreeViewService.MoveRight(DotNetSolutionState.TreeViewSolutionExplorerStateKey, false);
-                        TreeViewService.MoveRight(DotNetSolutionState.TreeViewSolutionExplorerStateKey, false);
-                        TreeViewService.MoveRight(DotNetSolutionState.TreeViewSolutionExplorerStateKey, false);
+                        TreeViewService.MoveRight(
+							DotNetSolutionState.TreeViewSolutionExplorerStateKey,
+							false,
+							false);
+
+                        TreeViewService.MoveRight(
+							DotNetSolutionState.TreeViewSolutionExplorerStateKey,
+							false,
+							false);
+                        
+						TreeViewService.MoveRight(
+							DotNetSolutionState.TreeViewSolutionExplorerStateKey,
+							false,
+							false);
                     }
                 });
         }

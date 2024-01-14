@@ -121,7 +121,7 @@ public partial class CSharpParser : IParser
 
             Binder.BindFunctionInvocationNode(functionInvocationNode);
 
-            CurrentCodeBlockBuilder.ChildBag.Add(functionInvocationNode);
+            CurrentCodeBlockBuilder.ChildList.Add(functionInvocationNode);
             NodeRecent = null;
 
             return functionInvocationNode;
@@ -154,7 +154,7 @@ public partial class CSharpParser : IParser
 
             Binder.BindVariableDeclarationStatementNode(variableDeclarationNode);
 
-            CurrentCodeBlockBuilder.ChildBag.Add(variableDeclarationNode);
+            CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
 
             if (TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
             {
@@ -479,7 +479,7 @@ public partial class CSharpParser : IParser
                     _ = TokenWalker.Consume();
 
                     NodeRecent = null;
-                    CurrentCodeBlockBuilder.ChildBag.Add(functionInvocationNode);
+                    CurrentCodeBlockBuilder.ChildList.Add(functionInvocationNode);
                 }
                 else
                 {
@@ -508,7 +508,7 @@ public partial class CSharpParser : IParser
 
             Binder.BindVariableAssignmentExpressionNode(variableAssignmentExpressionNode);
 
-            CurrentCodeBlockBuilder.ChildBag.Add(variableAssignmentExpressionNode);
+            CurrentCodeBlockBuilder.ChildList.Add(variableAssignmentExpressionNode);
             return variableAssignmentExpressionNode;
         }
 
@@ -1660,7 +1660,7 @@ public partial class CSharpParser : IParser
                 keywordToken,
                 namespaceIdentifier);
 
-            CurrentCodeBlockBuilder.ChildBag.Add(boundUsingStatementNode);
+            CurrentCodeBlockBuilder.ChildList.Add(boundUsingStatementNode);
 
             NodeRecent = boundUsingStatementNode;
         }
@@ -1750,7 +1750,7 @@ public partial class CSharpParser : IParser
                 keywordToken,
                 returnExpression);
 
-            CurrentCodeBlockBuilder.ChildBag.Add(boundReturnStatementNode);
+            CurrentCodeBlockBuilder.ChildList.Add(boundReturnStatementNode);
 
             NodeRecent = boundReturnStatementNode;
         }

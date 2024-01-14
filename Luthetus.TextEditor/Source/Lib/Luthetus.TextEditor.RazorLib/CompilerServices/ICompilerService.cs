@@ -17,7 +17,7 @@ public interface ICompilerService
     public void RegisterResource(ResourceUri resourceUri);
 
     /// <summary>Expected to be an <see cref="Microsoft.Extensions.Hosting.IHostedService"/> (or anything which performs background task work)</summary>
-    public void ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpansBag);
+    public void ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpansList);
 
     public ICompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri);
 

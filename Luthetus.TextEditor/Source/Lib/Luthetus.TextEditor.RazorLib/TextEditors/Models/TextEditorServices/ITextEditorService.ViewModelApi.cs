@@ -252,20 +252,20 @@ public partial interface ITextEditorService
         #region READ_METHODS
         public TextEditorViewModel? GetOrDefault(Key<TextEditorViewModel> textEditorViewModelKey)
         {
-            return _textEditorService.ViewModelStateWrap.Value.ViewModelBag.FirstOrDefault(
+            return _textEditorService.ViewModelStateWrap.Value.ViewModelList.FirstOrDefault(
                 x => x.ViewModelKey == textEditorViewModelKey);
         }
 
         public ImmutableList<TextEditorViewModel> GetViewModels()
         {
-            return _textEditorService.ViewModelStateWrap.Value.ViewModelBag;
+            return _textEditorService.ViewModelStateWrap.Value.ViewModelList;
         }
 
         public TextEditorModel? GetModelOrDefault(Key<TextEditorViewModel> textEditorViewModelKey)
         {
             var viewModelState = _textEditorService.ViewModelStateWrap.Value;
 
-            var viewModel = viewModelState.ViewModelBag.FirstOrDefault(
+            var viewModel = viewModelState.ViewModelList.FirstOrDefault(
                 x => x.ViewModelKey == textEditorViewModelKey);
 
             if (viewModel is null)
@@ -474,13 +474,13 @@ public partial interface ITextEditorService
                         {
                             var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-                            var lowerRowMetaData = modelModifier.FindRowInformation(
+                            var lowerRowMetaData = modelModifier.GetRowInformationFromPositionIndex(
                                 selectionBounds.lowerPositionIndexInclusive);
 
-                            cursorModifier.RowIndex = lowerRowMetaData.rowIndex;
+                            cursorModifier.RowIndex = lowerRowMetaData.RowIndex;
 
                             cursorModifier.ColumnIndex = selectionBounds.lowerPositionIndexInclusive -
-                                lowerRowMetaData.rowStartPositionIndex;
+                                lowerRowMetaData.RowStartPositionIndexInclusive;
                         }
                         else
                         {
@@ -552,9 +552,9 @@ public partial interface ITextEditorService
                         {
                             var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-                            var upperRowMetaData = modelModifier.FindRowInformation(selectionBounds.upperPositionIndexExclusive);
+                            var upperRowMetaData = modelModifier.GetRowInformationFromPositionIndex(selectionBounds.upperPositionIndexExclusive);
 
-                            cursorModifier.RowIndex = upperRowMetaData.rowIndex;
+                            cursorModifier.RowIndex = upperRowMetaData.RowIndex;
 
                             if (cursorModifier.RowIndex >= modelModifier.RowCount)
                             {
@@ -567,7 +567,7 @@ public partial interface ITextEditorService
                             else
                             {
                                 cursorModifier.ColumnIndex =
-                                    selectionBounds.upperPositionIndexExclusive - upperRowMetaData.rowStartPositionIndex;
+                                    selectionBounds.upperPositionIndexExclusive - upperRowMetaData.RowStartPositionIndexInclusive;
                             }
                         }
                         else
@@ -670,9 +670,9 @@ public partial interface ITextEditorService
                 if (modelModifier is null || viewModelModifier is null)
                     return Task.CompletedTask;
 
-                if (viewModelModifier.ViewModel.VirtualizationResult?.EntryBag.Any() ?? false)
+                if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
                 {
-                    var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryBag.First();
+                    var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.First();
 
                     cursorModifier.RowIndex = firstEntry.Index;
                     cursorModifier.ColumnIndex = 0;
@@ -718,9 +718,9 @@ public partial interface ITextEditorService
                 if (modelModifier is null || viewModelModifier is null)
                     return Task.CompletedTask;
 
-                if ((viewModelModifier.ViewModel.VirtualizationResult?.EntryBag.Any() ?? false))
+                if ((viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false))
                 {
-                    var lastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryBag.Last();
+                    var lastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.Last();
                     var lastEntriesRowLength = modelModifier.GetLengthOfRow(lastEntry.Index);
 
                     cursorModifier.RowIndex = lastEntry.Index;
@@ -756,6 +756,9 @@ public partial interface ITextEditorService
                 var textEditorMeasurements = await _textEditorService.ViewModelApi.GetTextEditorMeasurementsAsync(
                     viewModelModifier.ViewModel.BodyElementId);
 
+                if (textEditorMeasurements is null)
+                    return;
+
                 var virtualizationResult = viewModelModifier.ViewModel.VirtualizationResult with 
                 { 
                     TextEditorMeasurements = textEditorMeasurements
@@ -783,8 +786,8 @@ public partial interface ITextEditorService
                 {
                     verticalStartingIndex = Math.Max(0, verticalStartingIndex);
 
-                    if (verticalStartingIndex + verticalTake > modelModifier.RowEndingPositionsBag.Count)
-                        verticalTake = modelModifier.RowEndingPositionsBag.Count - verticalStartingIndex;
+                    if (verticalStartingIndex + verticalTake > modelModifier.RowEndingPositionsList.Count)
+                        verticalTake = modelModifier.RowEndingPositionsList.Count - verticalStartingIndex;
 
                     verticalTake = Math.Max(0, verticalTake);
                 }
@@ -880,7 +883,7 @@ public partial interface ITextEditorService
                 var totalWidth = modelModifier.MostCharactersOnASingleRowTuple.rowLength *
                     virtualizationResult.CharAndRowMeasurements.CharacterWidth;
 
-                var totalHeight = modelModifier.RowEndingPositionsBag.Count *
+                var totalHeight = modelModifier.RowEndingPositionsList.Count *
                     virtualizationResult.CharAndRowMeasurements.RowHeight;
 
                 // Add vertical margin so the user can scroll beyond the final row of content

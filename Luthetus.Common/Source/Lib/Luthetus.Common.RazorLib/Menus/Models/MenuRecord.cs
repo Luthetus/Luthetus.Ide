@@ -7,7 +7,7 @@ namespace Luthetus.Common.RazorLib.Menus.Models;
 /// from a keyboard event, then focus is not properly set on the menu.
 /// Any opening from a keyboard event after the first will properly set focus. (2023-09-19)
 /// </summary>
-public record MenuRecord(ImmutableArray<MenuOptionRecord> MenuOptionBag)
+public record MenuRecord(ImmutableArray<MenuOptionRecord> MenuOptionList)
 {
     public static readonly MenuRecord Empty = new MenuRecord(
         new MenuOptionRecord[]

@@ -14,24 +14,24 @@
         @{
             if (GroupByMenuOptionKind)
             {
-                var menuOptionsGroupedByKindBag = MenuRecord.MenuOptionBag
+                var menuOptionsGroupedByKindList = MenuRecord.MenuOptionList
                     .GroupBy(x => x.MenuOptionKind)
                     .ToList();
 
                 var cumulativeIndex = 0;
                 
-                for (int i = 0; i < menuOptionsGroupedByKindBag.Count; i++)
+                for (int i = 0; i < menuOptionsGroupedByKindList.Count; i++)
                 {
                     var groupIndex = i;
                     
-                    var group = menuOptionsGroupedByKindBag[groupIndex];
+                    var group = menuOptionsGroupedByKindList[groupIndex];
                     
-                    var menuOptionBag = group.ToList();
+                    var menuOptionList = group.ToList();
                     
-                    for (var j = 0; j < menuOptionBag.Count; j++)
+                    for (var j = 0; j < menuOptionList.Count; j++)
                     {
                         var menuOptionIndex = j;
-                        var menuOption = menuOptionBag[menuOptionIndex];
+                        var menuOption = menuOptionList[menuOptionIndex];
 
                         <MenuOptionDisplay MenuOptionRecord="@menuOption"
                                            ActiveMenuOptionRecordIndex="@_activeMenuOptionRecordIndex"
@@ -39,7 +39,7 @@
                                            IconRenderFragment="IconRenderFragment"/>
                     }
 
-                    if (groupIndex != menuOptionsGroupedByKindBag.Count - 1)
+                    if (groupIndex != menuOptionsGroupedByKindList.Count - 1)
                     {
                         <hr class="luth_hr"/>
                     }
@@ -47,10 +47,10 @@
             }
             else
             {
-                for (var i = 0; i < MenuRecord.MenuOptionBag.Length; i++)
+                for (var i = 0; i < MenuRecord.MenuOptionList.Length; i++)
                 {
                     var index = i;
-                    var menuOption = MenuRecord.MenuOptionBag[index];
+                    var menuOption = MenuRecord.MenuOptionList[index];
 
                     <MenuOptionDisplay MenuOptionRecord="@menuOption"
                                        ActiveMenuOptionRecordIndex="@_activeMenuOptionRecordIndex"

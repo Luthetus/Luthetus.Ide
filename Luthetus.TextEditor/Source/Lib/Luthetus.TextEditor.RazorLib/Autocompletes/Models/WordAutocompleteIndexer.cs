@@ -6,9 +6,9 @@ namespace Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 
 public class WordAutocompleteIndexer : IAutocompleteIndexer
 {
-    private readonly ConcurrentBag<string> _indexedStringsBag = new();
+    private readonly ConcurrentBag<string> _indexedStringsList = new();
 
-    public ImmutableArray<string> IndexedStringsBag => _indexedStringsBag.ToImmutableArray();
+    public ImmutableArray<string> IndexedStringsList => _indexedStringsList.ToImmutableArray();
 
     public Task IndexTextEditorAsync(TextEditorModel textEditorModel)
     {
@@ -17,8 +17,8 @@ public class WordAutocompleteIndexer : IAutocompleteIndexer
 
     public Task IndexWordAsync(string word)
     {
-        if (!_indexedStringsBag.Contains(word))
-            _indexedStringsBag.Add(word);
+        if (!_indexedStringsList.Contains(word))
+            _indexedStringsList.Add(word);
 
         return Task.CompletedTask;
     }

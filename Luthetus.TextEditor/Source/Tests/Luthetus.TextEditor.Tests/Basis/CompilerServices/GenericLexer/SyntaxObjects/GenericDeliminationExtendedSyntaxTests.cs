@@ -27,10 +27,10 @@ public class GenericDeliminationExtendedSyntaxTests
 	}
 
 	/// <summary>
-	/// <see cref="GenericDeliminationExtendedSyntax.ChildBag"/>
+	/// <see cref="GenericDeliminationExtendedSyntax.ChildList"/>
 	/// </summary>
 	[Fact]
-	public void ChildBag()
+	public void ChildList()
 	{
 		throw new NotImplementedException();
 	}

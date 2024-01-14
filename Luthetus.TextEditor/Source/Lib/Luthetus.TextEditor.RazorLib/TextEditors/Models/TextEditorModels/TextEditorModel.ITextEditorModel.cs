@@ -7,13 +7,13 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 public partial class TextEditorModel : ITextEditorModel
 {
-    IList<RichCharacter> ITextEditorModel.ContentBag => ContentBag;
-	IList<EditBlock> ITextEditorModel.EditBlocksBag => EditBlocksBag;
-	IList<RowEnding> ITextEditorModel.RowEndingPositionsBag => RowEndingPositionsBag;
-	IList<(RowEndingKind rowEndingKind, int count)> ITextEditorModel.RowEndingKindCountsBag => RowEndingKindCountsBag;
-	IList<TextEditorPresentationModel> ITextEditorModel.PresentationModelsBag => PresentationModelsBag;
-	IList<int> ITextEditorModel.TabKeyPositionsBag => TabKeyPositionsBag;
+    IList<RichCharacter> ITextEditorModel.ContentList => ContentList;
+	IList<EditBlock> ITextEditorModel.EditBlocksList => EditBlocksList;
+	IList<RowEnding> ITextEditorModel.RowEndingPositionsList => RowEndingPositionsList;
+	IList<(RowEndingKind rowEndingKind, int count)> ITextEditorModel.RowEndingKindCountsList => RowEndingKindCountsList;
+	IList<TextEditorPresentationModel> ITextEditorModel.PresentationModelsList => PresentationModelsList;
+	IList<int> ITextEditorModel.TabKeyPositionsList => TabKeyPositionsList;
 
-    public int RowCount => RowEndingPositionsBag.Count;
-    public int DocumentLength => ContentBag.Count;
+    public int RowCount => RowEndingPositionsList.Count;
+    public int DocumentLength => ContentList.Count;
 }

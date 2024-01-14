@@ -27,7 +27,7 @@ public partial class InputTextEditorTheme : FluxorComponent
 
     private void SelectedThemeChanged(ChangeEventArgs changeEventArgs)
     {
-        var themeBag = ThemeStateWrap.Value.ThemeBag;
+        var themeList = ThemeStateWrap.Value.ThemeList;
 
         var chosenThemeKeyGuidString = changeEventArgs.Value?.ToString() ?? string.Empty;
 
@@ -35,7 +35,7 @@ public partial class InputTextEditorTheme : FluxorComponent
                 out var chosenThemeKeyGuid))
         {
             var chosenThemeKey = new Key<ThemeRecord>(chosenThemeKeyGuid);
-            var foundTheme = themeBag.FirstOrDefault(x => x.Key == chosenThemeKey);
+            var foundTheme = themeList.FirstOrDefault(x => x.Key == chosenThemeKey);
 
             if (foundTheme is not null)
                 TextEditorService.OptionsApi.SetTheme(foundTheme);

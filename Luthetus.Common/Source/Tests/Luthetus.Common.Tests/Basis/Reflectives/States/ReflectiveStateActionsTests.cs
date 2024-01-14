@@ -73,7 +73,7 @@ public class ReflectiveStateActionsTests
 
         var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
 
-        var componentTypeBag = new List<Type>
+        var componentTypeList = new List<Type>
         {
             typeof(IconArrowDown),
             typeof(IconArrowLeft),
@@ -83,7 +83,7 @@ public class ReflectiveStateActionsTests
 
         model = new ReflectiveModel(
                 Key<ReflectiveModel>.NewKey(),
-                componentTypeBag,
+                componentTypeList,
                 Guid.Empty,
                 Guid.Empty,
                 Array.Empty<PropertyInfo>(),

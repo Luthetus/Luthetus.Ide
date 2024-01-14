@@ -41,8 +41,8 @@ public partial interface ITextEditorService
 
         public ITextEditorSearchEngine? GetOrDefault(Key<ITextEditorSearchEngine> searchEngineKey)
         {
-            return _textEditorService.SearchEngineStateWrap.Value.SearchEngineBag.FirstOrDefault(
-                x => x.SearchEngineKey == searchEngineKey);
+            return _textEditorService.SearchEngineStateWrap.Value.SearchEngineList.FirstOrDefault(
+                x => x.Key == searchEngineKey);
         }
 
         public void Register(ITextEditorSearchEngine searchEngine)
@@ -52,12 +52,16 @@ public partial interface ITextEditorService
 
         public void SetActiveSearchEngine(Key<ITextEditorSearchEngine> searchEngineKey)
         {
-            _dispatcher.Dispatch(new TextEditorSearchEngineState.SetActiveSearchEngineAction(searchEngineKey));
+            // (2024-01-10) Any UI which renders 'tabs' is being changed to all use a generic tab component.
+            //              This method broke and needs revisited.
+            //
+            // _dispatcher.Dispatch(new TextEditorSearchEngineState.SetActiveSearchEngineAction(searchEngineKey));
+            throw new NotImplementedException();
         }
 
         public ImmutableList<ITextEditorSearchEngine> GetSearchEngines()
         {
-            return _textEditorService.SearchEngineStateWrap.Value.SearchEngineBag;
+            return _textEditorService.SearchEngineStateWrap.Value.SearchEngineList;
         }
     }
 }

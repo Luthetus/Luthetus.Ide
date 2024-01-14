@@ -37,7 +37,7 @@ public sealed record ConstructorDefinitionNode : ISyntaxNode
         if (ConstraintNode is not null)
             children.Add(ConstraintNode);
 
-        ChildBag = children.ToImmutableArray();
+        ChildList = children.ToImmutableArray();
     }
 
     public TypeClauseNode ReturnTypeClauseNode { get; }
@@ -47,7 +47,7 @@ public sealed record ConstructorDefinitionNode : ISyntaxNode
     public CodeBlockNode? FunctionBodyCodeBlockNode { get; }
     public ConstraintNode? ConstraintNode { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ConstructorDefinitionNode;

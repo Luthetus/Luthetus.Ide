@@ -45,10 +45,10 @@ public sealed record UnaryOperatorNodeTests
 	}
 
 	/// <summary>
-	/// <see cref="UnaryOperatorNode.ChildBag"/>
+	/// <see cref="UnaryOperatorNode.ChildList"/>
 	/// </summary>
 	[Fact]
-	public void ChildBag()
+	public void ChildList()
 	{
 		throw new NotImplementedException();
 	}

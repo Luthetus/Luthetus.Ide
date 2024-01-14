@@ -17,17 +17,17 @@ public class ThemeStateMainTests
     public void Constructor()
     {
         var themeState = new ThemeState();
-        Assert.Equal(ThemeState.DefaultThemeRecordsBag, themeState.ThemeBag);
+        Assert.Equal(ThemeState.DefaultThemeRecordsList, themeState.ThemeList);
     }
 
     /// <summary>
-    /// <see cref="ThemeState.DefaultThemeRecordsBag"/>
+    /// <see cref="ThemeState.DefaultThemeRecordsList"/>
     /// </summary>
     [Fact]
-    public void DefaultThemeRecordsBag()
+    public void DefaultThemeRecordsList()
     {
         var themeState = new ThemeState();
-        Assert.Equal(ThemeState.DefaultThemeRecordsBag, themeState.ThemeBag);
+        Assert.Equal(ThemeState.DefaultThemeRecordsList, themeState.ThemeList);
 
         var sampleThemeRecord = new ThemeRecord(
             Key<ThemeRecord>.NewKey(),
@@ -37,13 +37,13 @@ public class ThemeStateMainTests
             ThemeColorKind.Dark,
             new ThemeScope[] { ThemeScope.App, ThemeScope.TextEditor }.ToImmutableList());
 
-        var outThemeBag = themeState.ThemeBag.Add(sampleThemeRecord);
+        var outThemeList = themeState.ThemeList.Add(sampleThemeRecord);
 
         themeState = themeState with
         {
-            ThemeBag = outThemeBag
+            ThemeList = outThemeList
         };
 
-        Assert.Contains(themeState.ThemeBag, x => x == sampleThemeRecord);
+        Assert.Contains(themeState.ThemeList, x => x == sampleThemeRecord);
     }
 }

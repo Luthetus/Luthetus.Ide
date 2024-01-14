@@ -21,12 +21,12 @@ public class DialogStateReducerTests
         InitializeDialogStateReducerTests(
             out var _, out var dialogStateWrap, out var dispatcher, out var dialogRecord);
 
-        Assert.Empty(dialogStateWrap.Value.DialogBag);
+        Assert.Empty(dialogStateWrap.Value.DialogList);
 
         dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
 
-        Assert.NotEmpty(dialogStateWrap.Value.DialogBag);
-        Assert.Contains(dialogStateWrap.Value.DialogBag, x => x == dialogRecord);
+        Assert.NotEmpty(dialogStateWrap.Value.DialogList);
+        Assert.Contains(dialogStateWrap.Value.DialogList, x => x == dialogRecord);
     }
 
     /// <summary>
@@ -38,17 +38,17 @@ public class DialogStateReducerTests
         InitializeDialogStateReducerTests(
             out var _, out var dialogStateWrap, out var dispatcher, out var dialogRecord);
 
-        Assert.Empty(dialogStateWrap.Value.DialogBag);
+        Assert.Empty(dialogStateWrap.Value.DialogList);
 
         dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
 
-        Assert.NotEmpty(dialogStateWrap.Value.DialogBag);
-        Assert.Single(dialogStateWrap.Value.DialogBag);
+        Assert.NotEmpty(dialogStateWrap.Value.DialogList);
+        Assert.Single(dialogStateWrap.Value.DialogList);
 
         Assert.False(dialogRecord.IsMaximized);
         dispatcher.Dispatch(new DialogState.SetIsMaximizedAction(dialogRecord.Key, true));
 
-        dialogRecord = dialogStateWrap.Value.DialogBag.Single();
+        dialogRecord = dialogStateWrap.Value.DialogList.Single();
         Assert.True(dialogRecord.IsMaximized);
     }
 
@@ -61,16 +61,16 @@ public class DialogStateReducerTests
         InitializeDialogStateReducerTests(
             out var _, out var dialogStateWrap, out var dispatcher, out var dialogRecord);
 
-        Assert.Empty(dialogStateWrap.Value.DialogBag);
+        Assert.Empty(dialogStateWrap.Value.DialogList);
 
         dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
 
-        Assert.NotEmpty(dialogStateWrap.Value.DialogBag);
-        Assert.Contains(dialogStateWrap.Value.DialogBag, x => x == dialogRecord);
+        Assert.NotEmpty(dialogStateWrap.Value.DialogList);
+        Assert.Contains(dialogStateWrap.Value.DialogList, x => x == dialogRecord);
 
         dispatcher.Dispatch(new DialogState.DisposeAction(dialogRecord.Key));
 
-        Assert.Empty(dialogStateWrap.Value.DialogBag);
+        Assert.Empty(dialogStateWrap.Value.DialogList);
     }
 
     private void InitializeDialogStateReducerTests(

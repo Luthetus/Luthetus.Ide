@@ -1,5 +1,9 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.RenderStates.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Groups.Models;
 
@@ -8,48 +12,41 @@ namespace Luthetus.TextEditor.Tests.Basis.Groups.Models;
 /// </summary>
 public class TextEditorGroupTests
 {
-	/// <summary>
-	/// <see cref="TextEditorGroup(Common.RazorLib.Keys.Models.Key{TextEditorGroup}, Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, System.Collections.Immutable.ImmutableList{Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}})"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorGroup(Key{TextEditorGroup}, Key{TextEditorViewModel}, ImmutableList{Key{TextEditorViewModel}})"/>
+	/// <br/>----<br/>
+    /// <see cref="TextEditorGroup.GroupKey"/>
+    /// <see cref="TextEditorGroup.ActiveViewModelKey"/>
+    /// <see cref="TextEditorGroup.ViewModelKeyList"/>
+    /// <see cref="TextEditorGroup.RenderStateKey"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+		var groupKey = Key<TextEditorGroup>.NewKey();
+		var activeViewModelKey = Key<TextEditorViewModel>.NewKey();
+		var viewModelKeyList = new Key<TextEditorViewModel>[] { activeViewModelKey }.ToImmutableList();
+        var renderStateKey = Key<RenderState>.NewKey();
 
-	/// <summary>
-	/// <see cref="TextEditorGroup.GroupKey"/>
-	/// </summary>
-	[Fact]
-	public void GroupKey()
-	{
-		throw new NotImplementedException();
-	}
+        var group = new TextEditorGroup(
+            groupKey,
+            activeViewModelKey,
+			viewModelKeyList)
+		{
+			RenderStateKey = renderStateKey
+        };
 
-	/// <summary>
-	/// <see cref="TextEditorGroup.ActiveViewModelKey"/>
-	/// </summary>
-	[Fact]
-	public void ActiveViewModelKey()
-	{
-		throw new NotImplementedException();
-	}
+		Assert.Equal(groupKey, group.GroupKey);
+		Assert.Equal(activeViewModelKey, group.ActiveViewModelKey);
+		Assert.Equal(viewModelKeyList, group.ViewModelKeyList);
+		Assert.Equal(renderStateKey, group.RenderStateKey);
 
-	/// <summary>
-	/// <see cref="TextEditorGroup.ViewModelKeyBag"/>
-	/// </summary>
-	[Fact]
-	public void ViewModelKeyBag()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorGroup.RenderStateKey"/>
-	/// </summary>
-	[Fact]
-	public void RenderStateKey()
-	{
-		throw new NotImplementedException();
+        // Assert that the default value for TextEditorGroup.RenderStateKey
+        // is NOT Key<RenderState>.Empty
+        {
+            Assert.NotEqual(
+                Key<RenderState>.Empty,
+                new TextEditorGroup(groupKey, activeViewModelKey, viewModelKeyList).RenderStateKey);
+        }
 	}
 }

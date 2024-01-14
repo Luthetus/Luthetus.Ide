@@ -33,7 +33,7 @@ public static class HtmlFacts
         {
         ParserFacts.END_OF_FILE.ToString(),
     }
-        .Union(WhitespaceFacts.ALL_BAG.Select(x => x.ToString()))
+        .Union(WhitespaceFacts.ALL_LIST.Select(x => x.ToString()))
         .Union(OPEN_TAG_ENDING_OPTIONS)
         .ToImmutableArray();
 }

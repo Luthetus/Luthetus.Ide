@@ -17,7 +17,7 @@ public class PanelsStateMainTests
     {
         var panelState = new PanelsState();
 
-        Assert.Equal(3, panelState.PanelGroupBag.Length);
+        Assert.Equal(3, panelState.PanelGroupList.Length);
         Assert.Null(panelState.DragEventArgs);
     }
 }

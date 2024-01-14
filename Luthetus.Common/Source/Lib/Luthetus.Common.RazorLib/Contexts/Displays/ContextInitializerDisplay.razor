@@ -8,7 +8,7 @@
 
     @if (contextStates.IsSelectingInspectionTarget)
     {
-        foreach (var inspectableContext in contextStates.InspectableContextBag)
+        foreach (var inspectableContext in contextStates.InspectableContextList)
         {
             // TODO: App crashes when using: @key="inspectableContext.ContextHeirarchy.NearestAncestorKey"
             <ContextBoundaryOverlay InspectableContext="inspectableContext" />

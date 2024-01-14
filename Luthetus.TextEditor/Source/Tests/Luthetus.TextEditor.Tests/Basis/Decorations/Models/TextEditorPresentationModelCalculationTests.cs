@@ -27,19 +27,19 @@ public class TextEditorPresentationModelCalculationTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorPresentationModelCalculation.TextModificationsSinceRequestBag"/>
+	/// <see cref="TextEditorPresentationModelCalculation.TextModificationsSinceRequestList"/>
 	/// </summary>
 	[Fact]
-	public void TextModificationsSinceRequestBag()
+	public void TextModificationsSinceRequestList()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorPresentationModelCalculation.TextEditorTextSpanBag"/>
+	/// <see cref="TextEditorPresentationModelCalculation.TextEditorTextSpanList"/>
 	/// </summary>
 	[Fact]
-	public void TextEditorTextSpanBag()
+	public void TextEditorTextSpanList()
 	{
 		throw new NotImplementedException();
 	}

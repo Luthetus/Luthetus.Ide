@@ -40,7 +40,7 @@
 //    public List<BoundScope> BoundScopes { get; private set; } = new();
 //    public List<ISymbol> Symbols { get; private set; } = new();
 
-//    public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
+//    public ImmutableArray<TextEditorDiagnostic> DiagnosticsList => _diagnosticBag.ToImmutableArray();
 
 //    ImmutableArray<ITextEditorSymbol> IBinder.Symbols => Symbols
 //        .Select(s => (ITextEditorSymbol)s)

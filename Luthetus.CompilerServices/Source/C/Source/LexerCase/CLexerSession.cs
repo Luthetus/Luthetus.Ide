@@ -18,7 +18,7 @@
 //     }
 //
 //     public ImmutableArray<ISyntaxToken> SyntaxTokens => _syntaxTokens.ToImmutableArray();
-//     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
+//     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList => _diagnosticBag.ToImmutableArray();
 //
 //     /// <summary>General idea for this Lex method is to use a switch statement to invoke a method which returns the specific token.<br/><br/>The method also moves the position in the content forward.</summary>
 //     public void Lex()

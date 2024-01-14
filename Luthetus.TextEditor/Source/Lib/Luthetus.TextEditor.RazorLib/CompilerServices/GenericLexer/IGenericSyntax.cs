@@ -7,6 +7,6 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
 public interface IGenericSyntax
 {
     public TextEditorTextSpan TextSpan { get; }
-    public ImmutableArray<IGenericSyntax> ChildBag { get; }
+    public ImmutableArray<IGenericSyntax> ChildList { get; }
     public GenericSyntaxKind GenericSyntaxKind { get; }
 }

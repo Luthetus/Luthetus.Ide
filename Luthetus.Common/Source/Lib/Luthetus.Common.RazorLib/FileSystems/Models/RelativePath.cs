@@ -154,7 +154,7 @@ public class RelativePath : IRelativePath
         bool isDirectory,
         IEnvironmentProvider environmentProvider)
     {
-        AncestorDirectoryBag = directories;
+        AncestorDirectoryList = directories;
         NameNoExtension = nameNoExtension;
         ExtensionNoPeriod = extensionNoPeriod;
         IsDirectory = isDirectory;
@@ -164,7 +164,7 @@ public class RelativePath : IRelativePath
     public PathType PathType { get; } = PathType.RelativePath;
     public bool IsDirectory { get; protected set; }
     public IEnvironmentProvider EnvironmentProvider { get; }
-    public List<IRelativePath> AncestorDirectoryBag { get; } = new();
+    public List<IRelativePath> AncestorDirectoryList { get; } = new();
     public string NameNoExtension { get; protected set; }
     public string ExtensionNoPeriod { get; protected set; }
     public int UpDirDirectiveCount { get; }
@@ -175,13 +175,13 @@ public class RelativePath : IRelativePath
     private void ConsumeTokenAsDirectory()
     {
         var directoryPath = new RelativePath(
-            new List<IRelativePath>(AncestorDirectoryBag),
+            new List<IRelativePath>(AncestorDirectoryList),
             _tokenBuilder.ToString(),
             EnvironmentProvider.DirectorySeparatorChar.ToString(),
             true,
             EnvironmentProvider);
 
-        AncestorDirectoryBag.Add(directoryPath);
+        AncestorDirectoryList.Add(directoryPath);
         _tokenBuilder.Clear();
     }
 
@@ -204,7 +204,7 @@ public class RelativePath : IRelativePath
             relativePathStringBuilder.Append(currentDirectoryToken);
         }
 
-        foreach (var directory in AncestorDirectoryBag)
+        foreach (var directory in AncestorDirectoryList)
         {
             relativePathStringBuilder.Append(directory.NameWithExtension);
         }

@@ -132,10 +132,10 @@ public class TreeViewExceptionTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewException.LoadChildBagAsync()"/>
+    /// <see cref="TreeViewException.LoadChildListAsync()"/>
     /// </summary>
     [Fact]
-    public void LoadChildBagAsync()
+    public void LoadChildListAsync()
     {
         throw new NotImplementedException();
     }

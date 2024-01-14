@@ -18,7 +18,7 @@ public class FunctionInvocationNodeTests
     /// <see cref="FunctionInvocationNode.FunctionDefinitionNode"/>
     /// <see cref="FunctionInvocationNode.GenericParametersListingNode"/>
     /// <see cref="FunctionInvocationNode.FunctionParametersListingNode"/>
-    /// <see cref="FunctionInvocationNode.ChildBag"/>
+    /// <see cref="FunctionInvocationNode.ChildList"/>
     /// <see cref="FunctionInvocationNode.IsFabricated"/>
     /// <see cref="FunctionInvocationNode.SyntaxKind"/>
     /// </summary>
@@ -126,9 +126,9 @@ public class FunctionInvocationNodeTests
         Assert.Equal(genericParametersListingNode, functionInvocationNode.GenericParametersListingNode);
         Assert.Equal(functionParametersListingNode, functionInvocationNode.FunctionParametersListingNode);
 
-        Assert.Equal(2, functionInvocationNode.ChildBag.Length);
-        Assert.Equal(functionInvocationIdentifierToken, functionInvocationNode.ChildBag[0]);
-        Assert.Equal(functionParametersListingNode, functionInvocationNode.ChildBag[1]);
+        Assert.Equal(2, functionInvocationNode.ChildList.Length);
+        Assert.Equal(functionInvocationIdentifierToken, functionInvocationNode.ChildList[0]);
+        Assert.Equal(functionParametersListingNode, functionInvocationNode.ChildList[1]);
 
         Assert.False(functionInvocationNode.IsFabricated);
 

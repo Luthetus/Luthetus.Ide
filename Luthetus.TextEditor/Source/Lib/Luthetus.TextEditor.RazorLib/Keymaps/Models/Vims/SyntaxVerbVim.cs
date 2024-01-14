@@ -49,7 +49,7 @@ public static class SyntaxVerbVim
     }
 
     public static bool TryParse(TextEditorKeymapVim textEditorKeymapVim,
-        ImmutableArray<VimGrammarToken> sentenceSnapshotBag,
+        ImmutableArray<VimGrammarToken> sentenceSnapshotList,
         int indexInSentence,
         KeymapArgument keymapArgument,
         bool hasTextSelection,
@@ -57,11 +57,11 @@ public static class SyntaxVerbVim
     {
         bool verbWasTypedTwoTimesInARow = false;
 
-        var currentToken = sentenceSnapshotBag[indexInSentence];
+        var currentToken = sentenceSnapshotList[indexInSentence];
 
-        if (indexInSentence + 1 < sentenceSnapshotBag.Length)
+        if (indexInSentence + 1 < sentenceSnapshotList.Length)
         {
-            var nextToken = sentenceSnapshotBag[indexInSentence + 1];
+            var nextToken = sentenceSnapshotList[indexInSentence + 1];
 
             if (nextToken.VimGrammarKind == VimGrammarKind.Verb &&
                 nextToken.KeymapArgument == currentToken.KeymapArgument)
@@ -102,14 +102,14 @@ public static class SyntaxVerbVim
                     return true;
             }
         }
-        else if (indexInSentence + 1 < sentenceSnapshotBag.Length)
+        else if (indexInSentence + 1 < sentenceSnapshotList.Length)
         {
             // Track locally the displacement of the user's cursor after the
             // inner text editor command is invoked.
 
             if (VimSentence.TryParseNextToken(
                     textEditorKeymapVim,
-                    sentenceSnapshotBag,
+                    sentenceSnapshotList,
                     indexInSentence + 1,
                     keymapArgument,
                     hasTextSelection,
@@ -119,10 +119,10 @@ public static class SyntaxVerbVim
                 switch (currentToken.KeymapArgument.Code)
                 {
                     case "KeyD":
-                        textEditorCommand = TextEditorCommandVimFacts.Verbs.DeleteMotionCommandFactory(innerCommand);
+                        textEditorCommand = TextEditorCommandVimFacts.Verbs.DeleteMotionCommandConstructor(innerCommand);
                         return true;
                     case "KeyC":
-                        textEditorCommand = TextEditorCommandVimFacts.Verbs.ChangeMotionCommandFactory(innerCommand);
+                        textEditorCommand = TextEditorCommandVimFacts.Verbs.ChangeMotionCommandConstructor(innerCommand);
                         return true;
                     case "KeyY":
                         textEditorCommand = TextEditorCommandDefaultFacts.Copy;
@@ -135,7 +135,7 @@ public static class SyntaxVerbVim
         }
         else if (hasTextSelection)
         {
-            if (sentenceSnapshotBag.Any(x => x.VimGrammarKind == VimGrammarKind.Repeat))
+            if (sentenceSnapshotList.Any(x => x.VimGrammarKind == VimGrammarKind.Repeat))
             {
                 switch (currentToken.KeymapArgument.Code)
                 {

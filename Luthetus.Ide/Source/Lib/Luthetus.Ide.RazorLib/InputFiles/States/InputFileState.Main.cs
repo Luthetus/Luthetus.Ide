@@ -9,11 +9,11 @@ namespace Luthetus.Ide.RazorLib.InputFiles.States;
 [FeatureState]
 public partial record InputFileState(
     int IndexInHistory,
-    ImmutableList<TreeViewAbsolutePath> OpenedTreeViewModelHistoryBag,
+    ImmutableList<TreeViewAbsolutePath> OpenedTreeViewModelHistoryList,
     TreeViewAbsolutePath? SelectedTreeViewModel,
     Func<IAbsolutePath?, Task> OnAfterSubmitFunc,
     Func<IAbsolutePath?, Task<bool>> SelectionIsValidFunc,
-    ImmutableArray<InputFilePattern> InputFilePatternsBag,
+    ImmutableArray<InputFilePattern> InputFilePatternsList,
     InputFilePattern? SelectedInputFilePattern,
     string SearchQuery,
     string Message)

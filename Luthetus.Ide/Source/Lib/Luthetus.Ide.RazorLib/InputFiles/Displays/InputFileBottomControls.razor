@@ -10,7 +10,7 @@
     <div class="luth_ide_input-file-display-bottom-controls-non-text">
         <div>
             <select @onchange="SelectInputFilePatternOnChange">
-                @foreach (var inputFilePattern in InputFileState.InputFilePatternsBag)
+                @foreach (var inputFilePattern in InputFileState.InputFilePatternsList)
                 {
                     <option value="@inputFilePattern.PatternName"
                             selected="@GetInputFilePatternIsSelected(inputFilePattern, InputFileState)">

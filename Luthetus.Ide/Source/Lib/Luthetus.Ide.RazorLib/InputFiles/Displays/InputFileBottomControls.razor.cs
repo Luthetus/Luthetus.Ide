@@ -23,7 +23,7 @@ public partial class InputFileBottomControls : ComponentBase
     {
         var patternName = (string)(changeEventArgs.Value ?? string.Empty);
 
-        var pattern = InputFileState.InputFilePatternsBag
+        var pattern = InputFileState.InputFilePatternsList
             .FirstOrDefault(x => x.PatternName == patternName);
 
         if (pattern is not null)

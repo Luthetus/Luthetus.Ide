@@ -10,15 +10,15 @@
         Add Component
     </button>
 
-    @for (var i = 0; i < reflectiveState.ReflectiveModelBag.Count; i++)
+    @for (var i = 0; i < reflectiveState.ReflectiveModelList.Count; i++)
     {
         var index = i;
-        var model = reflectiveState.ReflectiveModelBag[index];
+        var model = reflectiveState.ReflectiveModelList[index];
 
         <ReflectiveDisplay @key="model.Key"
                                 ReflectiveModelKey="model.Key"
                                 Index="index"
-                                ComponentTypeBag="ComponentTypeBag" />
+                                ComponentTypeList="ComponentTypeList" />
 
         <hr/>
     }

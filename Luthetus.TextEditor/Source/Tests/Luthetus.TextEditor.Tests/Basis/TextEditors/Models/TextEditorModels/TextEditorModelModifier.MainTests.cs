@@ -32,12 +32,12 @@ public partial class TextEditorModelModifierTests
         var modelModifier = new TextEditorModelModifier(inModel);
 
         var outModel = modelModifier.ToModel();
-        Assert.Equal(inModel.ContentBag, outModel.ContentBag);
-        Assert.Equal(inModel.EditBlocksBag, outModel.EditBlocksBag);
-        Assert.Equal(inModel.RowEndingPositionsBag, outModel.RowEndingPositionsBag);
-        Assert.Equal(inModel.RowEndingKindCountsBag, outModel.RowEndingKindCountsBag);
-        Assert.Equal(inModel.PresentationModelsBag, outModel.PresentationModelsBag);
-        Assert.Equal(inModel.TabKeyPositionsBag, outModel.TabKeyPositionsBag);
+        Assert.Equal(inModel.ContentList, outModel.ContentList);
+        Assert.Equal(inModel.EditBlocksList, outModel.EditBlocksList);
+        Assert.Equal(inModel.RowEndingPositionsList, outModel.RowEndingPositionsList);
+        Assert.Equal(inModel.RowEndingKindCountsList, outModel.RowEndingKindCountsList);
+        Assert.Equal(inModel.PresentationModelsList, outModel.PresentationModelsList);
+        Assert.Equal(inModel.TabKeyPositionsList, outModel.TabKeyPositionsList);
         Assert.Equal(inModel.OnlyRowEndingKind, outModel.OnlyRowEndingKind);
         Assert.Equal(inModel.UsingRowEndingKind, outModel.UsingRowEndingKind);
         Assert.Equal(inModel.ResourceUri, outModel.ResourceUri);
@@ -51,58 +51,58 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ClearContentBag()"/>
+    /// <see cref="TextEditorModelModifier.ClearContentList()"/>
     /// </summary>
     [Fact]
-    public void ClearContentBag()
+    public void ClearContentList()
     {
         TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
         var modelModifier = new TextEditorModelModifier(inModel);
 
-        modelModifier.ClearContentBag();
+        modelModifier.ClearContentList();
 
         var outModel = modelModifier.ToModel();
-        Assert.NotEqual(inModel.ContentBag, outModel.ContentBag);
-        Assert.Equal(ImmutableList<RichCharacter>.Empty, outModel.ContentBag);
+        Assert.NotEqual(inModel.ContentList, outModel.ContentList);
+        Assert.Equal(ImmutableList<RichCharacter>.Empty, outModel.ContentList);
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ClearRowEndingPositionsBag()"/>
+    /// <see cref="TextEditorModelModifier.ClearRowEndingPositionsList()"/>
     /// </summary>
     [Fact]
-    public void ClearRowEndingPositionsBag()
+    public void ClearRowEndingPositionsList()
     {
         TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
         var modelModifier = new TextEditorModelModifier(inModel);
 
-        modelModifier.ClearRowEndingPositionsBag();
+        modelModifier.ClearRowEndingPositionsList();
 
         var outModel = modelModifier.ToModel();
-        Assert.NotEqual(inModel.RowEndingPositionsBag, outModel.RowEndingPositionsBag);
-        Assert.Equal(ImmutableList<RowEnding>.Empty, outModel.RowEndingPositionsBag);
+        Assert.NotEqual(inModel.RowEndingPositionsList, outModel.RowEndingPositionsList);
+        Assert.Equal(ImmutableList<RowEnding>.Empty, outModel.RowEndingPositionsList);
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ClearRowEndingKindCountsBag()"/>
+    /// <see cref="TextEditorModelModifier.ClearRowEndingKindCountsList()"/>
     /// </summary>
     [Fact]
-    public void ClearRowEndingKindCountsBag()
+    public void ClearRowEndingKindCountsList()
     {
         TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
         var modelModifier = new TextEditorModelModifier(inModel);
 
-        modelModifier.ClearRowEndingKindCountsBag();
+        modelModifier.ClearRowEndingKindCountsList();
 
         var outModel = modelModifier.ToModel();
-        Assert.NotEqual(inModel.RowEndingKindCountsBag, outModel.RowEndingKindCountsBag);
-        Assert.Equal(ImmutableList<(RowEndingKind rowEndingKind, int count)>.Empty, outModel.RowEndingKindCountsBag);
+        Assert.NotEqual(inModel.RowEndingKindCountsList, outModel.RowEndingKindCountsList);
+        Assert.Equal(ImmutableList<(RowEndingKind rowEndingKind, int count)>.Empty, outModel.RowEndingKindCountsList);
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ClearTabKeyPositionsBag()"/>
+    /// <see cref="TextEditorModelModifier.ClearTabKeyPositionsList()"/>
     /// </summary>
     [Fact]
-    public void ClearTabKeyPositionsBag()
+    public void ClearTabKeyPositionsList()
     {
         throw new NotImplementedException();
     }

@@ -5,7 +5,7 @@ namespace Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 
 public interface IAutocompleteIndexer : IDisposable
 {
-    public ImmutableArray<string> IndexedStringsBag { get; }
+    public ImmutableArray<string> IndexedStringsList { get; }
 
     public Task IndexTextEditorAsync(TextEditorModel textEditorModel);
     public Task IndexWordAsync(string word);

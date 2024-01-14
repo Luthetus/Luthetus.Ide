@@ -56,7 +56,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     private CSharpProjectFormViewModel _viewModel = null!;
 
-    private DotNetSolutionModel? DotNetSolutionModel => DotNetSolutionStateWrap.Value.DotNetSolutionsBag.FirstOrDefault(
+    private DotNetSolutionModel? DotNetSolutionModel => DotNetSolutionStateWrap.Value.DotNetSolutionsList.FirstOrDefault(
         x => x.Key == DotNetSolutionModelKey);
 
     protected override void OnInitialized()
@@ -106,7 +106,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     {
         if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.Photino)
         {
-            _viewModel.ProjectTemplateBag = WebsiteProjectTemplateFacts.WebsiteProjectTemplatesContainer.ToList();
+            _viewModel.ProjectTemplateList = WebsiteProjectTemplateFacts.WebsiteProjectTemplatesContainer.ToList();
             await InvokeAsync(StateHasChanged);
         }
         else
@@ -138,7 +138,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
                     if (output is not null)
                     {
-                        _viewModel.ProjectTemplateBag = DotNetCliOutputLexer.LexDotNetNewListTerminalOutput(output);
+                        _viewModel.ProjectTemplateList = DotNetCliOutputLexer.LexDotNetNewListTerminalOutput(output);
                         await InvokeAsync(StateHasChanged);
                     }
                     else
@@ -180,7 +180,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
                     if (output is not null)
                     {
-                        _viewModel.ProjectTemplateBag = DotNetCliOutputLexer.LexDotNetNewListTerminalOutput(output);
+                        _viewModel.ProjectTemplateList = DotNetCliOutputLexer.LexDotNetNewListTerminalOutput(output);
                         await InvokeAsync(StateHasChanged);
                     }
                     else

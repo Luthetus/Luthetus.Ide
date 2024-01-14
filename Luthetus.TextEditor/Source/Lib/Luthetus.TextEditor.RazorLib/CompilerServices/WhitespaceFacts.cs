@@ -9,7 +9,7 @@ public static class WhitespaceFacts
     public const char CARRIAGE_RETURN = '\r';
     public const char LINE_FEED = '\n';
 
-    public static readonly ImmutableArray<char> ALL_BAG = new[]
+    public static readonly ImmutableArray<char> ALL_LIST = new[]
     {
         SPACE,
         TAB,
@@ -17,7 +17,7 @@ public static class WhitespaceFacts
         LINE_FEED,
     }.ToImmutableArray();
 
-    public static readonly ImmutableArray<char> LINE_ENDING_CHARACTERS = new[]
+    public static readonly ImmutableArray<char> LINE_ENDING_CHARACTER_LIST = new[]
     {
         CARRIAGE_RETURN,
         LINE_FEED,

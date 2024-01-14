@@ -18,6 +18,6 @@ public class DropdownStateMainTests
     {
         var dropdownState = new DropdownState();
 
-        Assert.Equal(ImmutableList<Key<DropdownRecord>>.Empty, dropdownState.ActiveKeyBag);
+        Assert.Equal(ImmutableList<Key<DropdownRecord>>.Empty, dropdownState.ActiveKeyList);
     }
 }

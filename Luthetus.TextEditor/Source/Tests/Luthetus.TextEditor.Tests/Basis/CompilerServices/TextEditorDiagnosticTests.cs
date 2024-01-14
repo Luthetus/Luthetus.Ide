@@ -1,5 +1,7 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
@@ -8,48 +10,38 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 /// </summary>
 public class TextEditorDiagnosticTests
 {
-	/// <summary>
-	/// <see cref="TextEditorDiagnostic(TextEditorDiagnosticLevel, string, RazorLib.Lexes.Models.TextEditorTextSpan, Guid)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorDiagnostic(TextEditorDiagnosticLevel, string, TextEditorTextSpan, Guid)"/>
+	/// <br/>----<br/>
+    /// <see cref="TextEditorDiagnostic.DiagnosticLevel"/>
+    /// <see cref="TextEditorDiagnostic.Message"/>
+    /// <see cref="TextEditorDiagnostic.TextSpan"/>
+    /// <see cref="TextEditorDiagnostic.Id"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var diagnosticLevel = TextEditorDiagnosticLevel.Error;
+		var message = "ERROR: There was an error.";
 
-	/// <summary>
-	/// <see cref="TextEditorDiagnostic.DiagnosticLevel"/>
-	/// </summary>
-	[Fact]
-	public void DiagnosticLevel()
-	{
-		throw new NotImplementedException();
-	}
+		var textSpan = new TextEditorTextSpan(
+			0,
+			5,
+			(byte)GenericDecorationKind.Error,
+			new ResourceUri("/unitTesting.txt"),
+			"Hello World!");
 
-	/// <summary>
-	/// <see cref="TextEditorDiagnostic.Message"/>
-	/// </summary>
-	[Fact]
-	public void Message()
-	{
-		throw new NotImplementedException();
-	}
+		var id = Guid.NewGuid();
 
-	/// <summary>
-	/// <see cref="TextEditorDiagnostic.TextSpan"/>
-	/// </summary>
-	[Fact]
-	public void TextSpan()
-	{
-		throw new NotImplementedException();
-	}
+        var diagnostic = new TextEditorDiagnostic(
+            diagnosticLevel,
+			message,
+			textSpan,
+			id);
 
-	/// <summary>
-	/// <see cref="TextEditorDiagnostic.Id"/>
-	/// </summary>
-	[Fact]
-	public void Id()
-	{
-		throw new NotImplementedException();
+		Assert.Equal(diagnosticLevel, diagnostic.DiagnosticLevel);
+		Assert.Equal(message, diagnostic.Message);
+		Assert.Equal(textSpan, diagnostic.TextSpan);
+		Assert.Equal(id, diagnostic.Id);
 	}
 }

@@ -29,7 +29,7 @@ public sealed record FunctionInvocationNode : ISyntaxNode
 
         children.Add(FunctionParametersListingNode);
 
-        ChildBag = children.ToImmutableArray();
+        ChildList = children.ToImmutableArray();
     }
 
     public IdentifierToken FunctionInvocationIdentifierToken { get; }
@@ -37,7 +37,7 @@ public sealed record FunctionInvocationNode : ISyntaxNode
     public GenericParametersListingNode? GenericParametersListingNode { get; }
     public FunctionParametersListingNode FunctionParametersListingNode { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionInvocationNode;

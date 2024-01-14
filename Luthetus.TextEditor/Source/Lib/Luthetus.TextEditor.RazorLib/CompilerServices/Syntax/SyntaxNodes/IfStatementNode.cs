@@ -24,14 +24,14 @@ public sealed record IfStatementNode : ISyntaxNode
         if (IfStatementBodyCodeBlockNode is not null)
             childrenList.Add(IfStatementBodyCodeBlockNode);
 
-        ChildBag = childrenList.ToImmutableArray();
+        ChildList = childrenList.ToImmutableArray();
     }
 
     public KeywordToken KeywordToken { get; }
     public IExpressionNode ExpressionNode { get; }
     public CodeBlockNode? IfStatementBodyCodeBlockNode { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.IfStatementNode;

@@ -6,7 +6,7 @@ namespace Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 public interface TextEditorLexerResult
 {
-    public ImmutableArray<TextEditorTextSpan> TextSpanBag { get; }
+    public ImmutableArray<TextEditorTextSpan> TextSpanList { get; }
     public string ResourceUri { get; }
     public Key<RenderState> ModelRenderStateKey { get; }
 }

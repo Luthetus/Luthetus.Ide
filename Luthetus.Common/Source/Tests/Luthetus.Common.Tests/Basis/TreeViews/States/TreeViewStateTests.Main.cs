@@ -17,31 +17,31 @@ public class TreeViewStateMainTests
     public void Constructor()
     {
         var treeViewState = new TreeViewState();
-        Assert.Equal(ImmutableList<TreeViewContainer>.Empty, treeViewState.ContainerBag);
+        Assert.Equal(ImmutableList<TreeViewContainer>.Empty, treeViewState.ContainerList);
     }
     
     /// <summary>
-    /// <see cref="TreeViewState.ContainerBag"/>
+    /// <see cref="TreeViewState.ContainerList"/>
     /// </summary>
     [Fact]
-    public void ContainerBag()
+    public void ContainerList()
     {
         var treeViewState = new TreeViewState();
-        Assert.Equal(ImmutableList<TreeViewContainer>.Empty, treeViewState.ContainerBag);
+        Assert.Equal(ImmutableList<TreeViewContainer>.Empty, treeViewState.ContainerList);
 
         var treeViewContainer = new TreeViewContainer(
             Key<TreeViewContainer>.NewKey(),
             null,
             ImmutableList<TreeViewNoType>.Empty);
 
-        var outContainerBag = treeViewState.ContainerBag.Add(treeViewContainer);
-        Assert.NotEqual(ImmutableList<TreeViewContainer>.Empty, outContainerBag);
+        var outContainerList = treeViewState.ContainerList.Add(treeViewContainer);
+        Assert.NotEqual(ImmutableList<TreeViewContainer>.Empty, outContainerList);
 
         var outTreeViewState = treeViewState with
         {
-            ContainerBag = outContainerBag
+            ContainerList = outContainerList
         };
 
-        Assert.Equal(outContainerBag, outTreeViewState.ContainerBag);
+        Assert.Equal(outContainerList, outTreeViewState.ContainerList);
     }
 }

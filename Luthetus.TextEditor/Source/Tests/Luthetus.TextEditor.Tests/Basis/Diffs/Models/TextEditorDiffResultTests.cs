@@ -63,19 +63,19 @@ public class TextEditorDiffResultTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorDiffResult.InResultTextSpanBag"/>
+	/// <see cref="TextEditorDiffResult.InResultTextSpanList"/>
 	/// </summary>
 	[Fact]
-	public void InResultTextSpanBag()
+	public void InResultTextSpanList()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorDiffResult.OutResultTextSpanBag"/>
+	/// <see cref="TextEditorDiffResult.OutResultTextSpanList"/>
 	/// </summary>
 	[Fact]
-	public void OutResultTextSpanBag()
+	public void OutResultTextSpanList()
 	{
 		throw new NotImplementedException();
 	}

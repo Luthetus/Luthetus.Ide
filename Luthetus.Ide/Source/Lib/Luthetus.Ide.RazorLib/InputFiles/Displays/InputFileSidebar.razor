@@ -1,4 +1,4 @@
-﻿@using Luthetus.Common.RazorLib.Dropdowns.Displays
+@using Luthetus.Common.RazorLib.Dropdowns.Displays
 @using Luthetus.Common.RazorLib.Dropdowns.Models;
 @using Luthetus.Common.RazorLib.TreeViews.Displays
 
@@ -6,7 +6,7 @@
      style="@ElementDimensions.StyleString">
 
     <CascadingValue Name="SearchQuery" Value="InputFileState.SearchQuery">
-        <TreeViewContainerDisplay TreeViewStateKey="TreeViewStateKey"
+        <TreeViewContainerDisplay TreeViewContainerKey="TreeViewContainerKey"
                                   CssStyleString="height: 100%;"
                                   OnContextMenuFunc="OnTreeViewContextMenuFunc"
                                   TreeViewMouseEventHandler="InputFileTreeViewMouseEventHandler"

@@ -99,7 +99,7 @@ public class TreeViewKeyboardEventHandlerTests
             websiteServerTreeViewContainer.Key,
             out websiteServerTreeViewContainer!));
         
-        Assert.Equal(websiteServerTreeView.ChildBag.First(), websiteServerTreeViewContainer.ActiveNode);
+        Assert.Equal(websiteServerTreeView.ChildList.First(), websiteServerTreeViewContainer.ActiveNode);
 
         // Move to parent of active node. (this results in root being the active node)
         keyboardEventHandler.OnKeyDown(new TreeViewCommandArgs(
@@ -196,7 +196,7 @@ public class TreeViewKeyboardEventHandlerTests
             out websiteServerTreeViewContainer));
 
         Assert.NotNull(websiteServerTreeViewContainer);
-        Assert.Equal(websiteServerTreeView.ChildBag.First(), websiteServerTreeViewContainer!.ActiveNode);
+        Assert.Equal(websiteServerTreeView.ChildList.First(), websiteServerTreeViewContainer!.ActiveNode);
     }
 
     /// <summary>
@@ -254,7 +254,7 @@ public class TreeViewKeyboardEventHandlerTests
                 out websiteServerTreeViewContainer));
         }
 
-        Assert.Equal(websiteServerTreeView.ChildBag.First(), websiteServerTreeViewContainer!.ActiveNode);
+        Assert.Equal(websiteServerTreeView.ChildList.First(), websiteServerTreeViewContainer!.ActiveNode);
 
         keyboardEventHandler.OnKeyDown(new TreeViewCommandArgs(
             treeViewService,
@@ -299,7 +299,7 @@ public class TreeViewKeyboardEventHandlerTests
             out var keyboardEventHandler);
 
         Assert.Equal(websiteServerTreeViewContainer.ActiveNode, websiteServerTreeView);
-        Assert.Empty(websiteServerTreeView.ChildBag);
+        Assert.Empty(websiteServerTreeView.ChildList);
         Assert.True(websiteServerTreeView.IsExpandable);
         Assert.False(websiteServerTreeView.IsExpanded);
 
@@ -316,7 +316,7 @@ public class TreeViewKeyboardEventHandlerTests
                 Code = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
             }));
 
-        Assert.Single(websiteServerTreeView.ChildBag);
+        Assert.Single(websiteServerTreeView.ChildList);
         Assert.Equal(websiteServerTreeViewContainer.ActiveNode, websiteServerTreeView);
     }
 
@@ -378,7 +378,7 @@ public class TreeViewKeyboardEventHandlerTests
             out websiteServerTreeViewContainer));
 
         Assert.NotNull(websiteServerTreeViewContainer);
-        Assert.Equal(websiteServerTreeView.ChildBag.First(), websiteServerTreeViewContainer!.ActiveNode);
+        Assert.Equal(websiteServerTreeView.ChildList.First(), websiteServerTreeViewContainer!.ActiveNode);
     }
 
     /// <summary>
@@ -436,7 +436,7 @@ public class TreeViewKeyboardEventHandlerTests
                 out websiteServerTreeViewContainer));
         }
 
-        Assert.Equal(websiteServerTreeView.ChildBag.First(), websiteServerTreeViewContainer!.ActiveNode);
+        Assert.Equal(websiteServerTreeView.ChildList.First(), websiteServerTreeViewContainer!.ActiveNode);
 
         keyboardEventHandler.OnKeyDown(new TreeViewCommandArgs(
             treeViewService,
@@ -519,7 +519,7 @@ public class TreeViewKeyboardEventHandlerTests
             out websiteServerTreeViewContainer));
 
         Assert.NotNull(websiteServerTreeViewContainer);
-        Assert.Equal(websiteServerTreeView.ChildBag.First(), websiteServerTreeViewContainer!.ActiveNode);
+        Assert.Equal(websiteServerTreeView.ChildList.First(), websiteServerTreeViewContainer!.ActiveNode);
     }
 
     /// <summary>

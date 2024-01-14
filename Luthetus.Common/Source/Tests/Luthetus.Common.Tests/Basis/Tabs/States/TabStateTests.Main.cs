@@ -17,6 +17,6 @@ public class TabStateMainTests
     {
         var tabState = new TabState();
 
-        Assert.Equal(ImmutableList<TabGroup>.Empty, tabState.TabGroupBag);
+        Assert.Equal(ImmutableList<TabGroup>.Empty, tabState.TabGroupList);
     }
 }

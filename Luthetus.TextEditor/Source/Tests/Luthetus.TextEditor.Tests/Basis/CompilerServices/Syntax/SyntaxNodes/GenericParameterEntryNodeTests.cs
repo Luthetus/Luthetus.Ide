@@ -14,7 +14,7 @@ public class GenericParameterEntryNodeTests
     /// <see cref="GenericParameterEntryNode(TypeClauseNode)"/>
     /// <br/>----<br/>
 	/// <see cref="GenericParameterEntryNode.TypeClauseNode"/>
-    /// <see cref="GenericParameterEntryNode.ChildBag"/>
+    /// <see cref="GenericParameterEntryNode.ChildList"/>
     /// <see cref="GenericParameterEntryNode.IsFabricated"/>
     /// <see cref="GenericParameterEntryNode.SyntaxKind"/>
     /// </summary>
@@ -46,8 +46,8 @@ public class GenericParameterEntryNodeTests
 
         Assert.Equal(genericTypeClauseNode, genericParameterEntryNode.TypeClauseNode);
 
-        Assert.Single(genericParameterEntryNode.ChildBag);
-        Assert.Equal(genericTypeClauseNode, genericParameterEntryNode.ChildBag.Single());
+        Assert.Single(genericParameterEntryNode.ChildList);
+        Assert.Equal(genericTypeClauseNode, genericParameterEntryNode.ChildList.Single());
 
         Assert.False(genericParameterEntryNode.IsFabricated);
 

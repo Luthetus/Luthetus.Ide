@@ -9,7 +9,7 @@ namespace Luthetus.TextEditor.Tests.Basis.SearchEngines.Models;
 public class SearchEngineOverRegisteredViewModelsTests
 {
 	/// <summary>
-	/// <see cref="SearchEngineOverRegisteredViewModels.SearchEngineKey"/>
+	/// <see cref="SearchEngineOverRegisteredViewModels.Key"/>
 	/// </summary>
 	[Fact]
 	public void SearchEngineKey()

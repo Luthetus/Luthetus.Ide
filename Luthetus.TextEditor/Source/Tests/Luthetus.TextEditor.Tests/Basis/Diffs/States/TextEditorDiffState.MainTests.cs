@@ -19,31 +19,31 @@ public class TextEditorDiffStateMainTests
 	public void Constructor()
 	{
 		var diffState = new TextEditorDiffState();
-		Assert.Equal(ImmutableList<TextEditorDiffModel>.Empty, diffState.DiffModelBag);
+		Assert.Equal(ImmutableList<TextEditorDiffModel>.Empty, diffState.DiffModelList);
     }
 
 	/// <summary>
-	/// <see cref="TextEditorDiffState.DiffModelBag"/>
+	/// <see cref="TextEditorDiffState.DiffModelList"/>
 	/// </summary>
 	[Fact]
-	public void DiffModelBag()
+	public void DiffModelList()
 	{
         var diffState = new TextEditorDiffState();
-        Assert.Equal(ImmutableList<TextEditorDiffModel>.Empty, diffState.DiffModelBag);
+        Assert.Equal(ImmutableList<TextEditorDiffModel>.Empty, diffState.DiffModelList);
         
         var diffModel = new TextEditorDiffModel(
 			Key<TextEditorDiffModel>.NewKey(),
 			Key<TextEditorViewModel>.NewKey(),
 			Key<TextEditorViewModel>.NewKey());
 
-		var outDiffModelBag = diffState.DiffModelBag.Add(diffModel);
-		Assert.NotEqual(ImmutableList<TextEditorDiffModel>.Empty, outDiffModelBag);
+		var outDiffModelList = diffState.DiffModelList.Add(diffModel);
+		Assert.NotEqual(ImmutableList<TextEditorDiffModel>.Empty, outDiffModelList);
 
 		var outDiffState = new TextEditorDiffState
         {
-            DiffModelBag = outDiffModelBag
+            DiffModelList = outDiffModelList
         };
 
-        Assert.Equal(outDiffModelBag, outDiffState.DiffModelBag);
+        Assert.Equal(outDiffModelList, outDiffState.DiffModelList);
 	}
 }

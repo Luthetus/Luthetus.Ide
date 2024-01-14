@@ -18,7 +18,7 @@ public partial record InputFileState
             {
                 SelectionIsValidFunc = startInputFileStateFormAction.SelectionIsValidFunc,
                 OnAfterSubmitFunc = startInputFileStateFormAction.OnAfterSubmitFunc,
-                InputFilePatternsBag = startInputFileStateFormAction.InputFilePatterns,
+                InputFilePatternsList = startInputFileStateFormAction.InputFilePatterns,
                 SelectedInputFilePattern = startInputFileStateFormAction.InputFilePatterns.First(),
                 Message = startInputFileStateFormAction.Message
             };
@@ -88,14 +88,14 @@ public partial record InputFileState
             InputFileState inState,
             OpenParentDirectoryAction openParentDirectoryAction)
         {
-            var currentSelection = inState.OpenedTreeViewModelHistoryBag[inState.IndexInHistory];
+            var currentSelection = inState.OpenedTreeViewModelHistoryList[inState.IndexInHistory];
 
             TreeViewAbsolutePath? parentDirectoryTreeViewModel = null;
 
             // If has a ParentDirectory select it
-            if (currentSelection.Item.AncestorDirectoryBag.Any())
+            if (currentSelection.Item.AncestorDirectoryList.Any())
             {
-                var parentDirectoryAbsolutePath = currentSelection.Item.AncestorDirectoryBag.Last();
+                var parentDirectoryAbsolutePath = currentSelection.Item.AncestorDirectoryList.Last();
 
                 parentDirectoryTreeViewModel = new TreeViewAbsolutePath(
                     parentDirectoryAbsolutePath,
@@ -110,7 +110,7 @@ public partial record InputFileState
                     "Open Parent Directory",
                     async () =>
                     {
-                        await parentDirectoryTreeViewModel.LoadChildBagAsync();
+                        await parentDirectoryTreeViewModel.LoadChildListAsync();
                     });
             }
 
@@ -133,14 +133,14 @@ public partial record InputFileState
             InputFileState inState,
             RefreshCurrentSelectionAction refreshCurrentSelectionAction)
         {
-            var currentSelection = inState.OpenedTreeViewModelHistoryBag[inState.IndexInHistory];
-            currentSelection.ChildBag.Clear();
+            var currentSelection = inState.OpenedTreeViewModelHistoryList[inState.IndexInHistory];
+            currentSelection.ChildList.Clear();
 
             refreshCurrentSelectionAction.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
                 "Refresh Current Selection",
                 async () =>
                 {
-                    await currentSelection.LoadChildBagAsync();
+                    await currentSelection.LoadChildListAsync();
                 });
 
             return inState;
@@ -151,9 +151,9 @@ public partial record InputFileState
             InputFileState inState,
             SetSearchQueryAction setSearchQueryAction)
         {
-            var openedTreeViewModel = inState.OpenedTreeViewModelHistoryBag[inState.IndexInHistory];
+            var openedTreeViewModel = inState.OpenedTreeViewModelHistoryList[inState.IndexInHistory];
 
-            foreach (var treeViewModel in openedTreeViewModel.ChildBag)
+            foreach (var treeViewModel in openedTreeViewModel.ChildList)
             {
                 var treeViewAbsolutePath = (TreeViewAbsolutePath)treeViewModel;
 

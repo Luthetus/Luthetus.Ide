@@ -36,10 +36,10 @@ public class PreprocessorLibraryReferenceStatementNodeTests
 	}
 
 	/// <summary>
-	/// <see cref="PreprocessorLibraryReferenceStatementNode.ChildBag"/>
+	/// <see cref="PreprocessorLibraryReferenceStatementNode.ChildList"/>
 	/// </summary>
 	[Fact]
-	public void ChildBag()
+	public void ChildList()
 	{
 		throw new NotImplementedException();
 	}

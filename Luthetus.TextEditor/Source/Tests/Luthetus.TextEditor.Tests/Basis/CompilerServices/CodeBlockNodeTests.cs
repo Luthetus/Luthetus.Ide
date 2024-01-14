@@ -17,8 +17,8 @@ public class CodeBlockNodeTests
     /// <see cref="CodeBlockNode(ImmutableArray{ISyntax})"/>
     /// <br/>----<br/>
     /// <see cref="CodeBlockNode(ImmutableArray{ISyntax}, ImmutableArray{TextEditorDiagnostic})"/>
-    /// <see cref="CodeBlockNode.DiagnosticsBag"/>
-    /// <see cref="CodeBlockNode.ChildBag"/>
+    /// <see cref="CodeBlockNode.DiagnosticsList"/>
+    /// <see cref="CodeBlockNode.ChildList"/>
     /// <see cref="CodeBlockNode.IsFabricated"/>
     /// <see cref="CodeBlockNode.SyntaxKind"/>
     /// </summary>
@@ -26,15 +26,15 @@ public class CodeBlockNodeTests
 	public void Constructor()
 	{
         var typeDefinitionNode = ConstructTypeDefinitionNode();
-        var childBag = new List<ISyntax> { typeDefinitionNode }.ToImmutableArray();
+        var childList = new List<ISyntax> { typeDefinitionNode }.ToImmutableArray();
 
         // No Diagnostics
         {
-            var codeBlockNoDiagnostics = new CodeBlockNode(childBag);
+            var codeBlockNoDiagnostics = new CodeBlockNode(childList);
 
-            Assert.Empty(codeBlockNoDiagnostics.DiagnosticsBag);
-            Assert.Single(codeBlockNoDiagnostics.ChildBag);
-            Assert.Equal(typeDefinitionNode, codeBlockNoDiagnostics.ChildBag.Single());
+            Assert.Empty(codeBlockNoDiagnostics.DiagnosticsList);
+            Assert.Single(codeBlockNoDiagnostics.ChildList);
+            Assert.Equal(typeDefinitionNode, codeBlockNoDiagnostics.ChildList.Single());
             Assert.Equal(SyntaxKind.CodeBlockNode, codeBlockNoDiagnostics.SyntaxKind);
             Assert.False(codeBlockNoDiagnostics.IsFabricated);
         }
@@ -47,16 +47,16 @@ public class CodeBlockNodeTests
                 TextEditorTextSpan.FabricateTextSpan("Hello World!"),
                 Guid.NewGuid());
 
-            var diagnosticBag = new TextEditorDiagnostic[]
+            var diagnosticList = new TextEditorDiagnostic[]
             {
                 diagnostic
             }.ToImmutableArray();
 
-            var codeBlockWithDiagnostics = new CodeBlockNode(childBag, diagnosticBag);
+            var codeBlockWithDiagnostics = new CodeBlockNode(childList, diagnosticList);
 
-            Assert.Single(codeBlockWithDiagnostics.DiagnosticsBag);
-            Assert.Single(codeBlockWithDiagnostics.ChildBag);
-            Assert.Equal(typeDefinitionNode, codeBlockWithDiagnostics.ChildBag.Single());
+            Assert.Single(codeBlockWithDiagnostics.DiagnosticsList);
+            Assert.Single(codeBlockWithDiagnostics.ChildList);
+            Assert.Equal(typeDefinitionNode, codeBlockWithDiagnostics.ChildList.Single());
             Assert.Equal(SyntaxKind.CodeBlockNode, codeBlockWithDiagnostics.SyntaxKind);
             Assert.False(codeBlockWithDiagnostics.IsFabricated);
         }

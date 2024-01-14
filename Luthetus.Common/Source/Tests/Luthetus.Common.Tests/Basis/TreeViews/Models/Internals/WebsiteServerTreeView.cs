@@ -17,15 +17,15 @@ public class WebsiteServerTreeView : TreeViewWithType<WebsiteServer>
         throw new NotImplementedException();
     }
 
-    public override Task LoadChildBagAsync()
+    public override Task LoadChildListAsync()
     {
         var rootRoute = Item.Routes.Single(x => x.Split('/').Length == 2);
 
-        var routeWrapperBag = new List<RouteWrapper>();
+        var routeWrapperList = new List<RouteWrapper>();
 
-        var previousChildren = ChildBag;
+        var previousChildren = ChildList;
 
-        ChildBag = new()
+        ChildList = new()
         {
             new RouteTreeView(
                 new RouteWrapper(
@@ -36,7 +36,7 @@ public class WebsiteServerTreeView : TreeViewWithType<WebsiteServer>
                 false)
         };
 
-        LinkChildren(previousChildren, ChildBag);
+        LinkChildren(previousChildren, ChildList);
 
         return Task.CompletedTask;
     }

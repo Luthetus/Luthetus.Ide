@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -42,7 +42,7 @@ public partial class InputFileContextMenu : ComponentBase
         if (commandArgs.TargetNode is null)
             return MenuRecord.Empty;
 
-        var menuRecordsBag = new List<MenuOptionRecord>();
+        var menuRecordsList = new List<MenuOptionRecord>();
 
         var treeViewModel = commandArgs.TargetNode;
         var parentTreeViewModel = treeViewModel.Parent;
@@ -54,17 +54,17 @@ public partial class InputFileContextMenu : ComponentBase
 
         if (treeViewAbsolutePath.Item.IsDirectory)
         {
-            menuRecordsBag.AddRange(GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
+            menuRecordsList.AddRange(GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
                 .Union(GetDirectoryMenuOptions(treeViewAbsolutePath))
                 .Union(GetDebugMenuOptions(treeViewAbsolutePath)));
         }
         else
         {
-            menuRecordsBag.AddRange(GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
+            menuRecordsList.AddRange(GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
                 .Union(GetDebugMenuOptions(treeViewAbsolutePath)));
         }
 
-        return new MenuRecord(menuRecordsBag.ToImmutableArray());
+        return new MenuRecord(menuRecordsList.ToImmutableArray());
     }
 
     private MenuOptionRecord[] GetDirectoryMenuOptions(TreeViewAbsolutePath treeViewModel)
@@ -131,10 +131,14 @@ public partial class InputFileContextMenu : ComponentBase
         if (treeViewModel is null)
             return;
 
-        await treeViewModel.LoadChildBagAsync();
+        await treeViewModel.LoadChildListAsync();
 
-        TreeViewService.ReRenderNode(InputFileSidebar.TreeViewStateKey, treeViewModel);
-        TreeViewService.MoveUp(InputFileSidebar.TreeViewStateKey, false);
+        TreeViewService.ReRenderNode(InputFileSidebar.TreeViewContainerKey, treeViewModel);
+        
+		TreeViewService.MoveUp(
+			InputFileSidebar.TreeViewContainerKey,
+			false,
+			false);
     }
 
     public static string GetContextMenuCssStyleString(
@@ -154,7 +158,7 @@ public partial class InputFileContextMenu : ComponentBase
             
         var dialogLeftDimensionAttribute = dialogRecord
             .ElementDimensions
-            .DimensionAttributeBag
+            .DimensionAttributeList
             .First(x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
 
         var contextMenuLeftDimensionAttribute = new DimensionAttribute
@@ -162,15 +166,15 @@ public partial class InputFileContextMenu : ComponentBase
             DimensionAttributeKind = DimensionAttributeKind.Left
         };
 
-        contextMenuLeftDimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+        contextMenuLeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
         {
             DimensionUnitKind = DimensionUnitKind.Pixels,
             Value = commandArgs.ContextMenuFixedPosition.LeftPositionInPixels
         });
 
-        foreach (var dimensionUnit in dialogLeftDimensionAttribute.DimensionUnitBag)
+        foreach (var dimensionUnit in dialogLeftDimensionAttribute.DimensionUnitList)
         {
-            contextMenuLeftDimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+            contextMenuLeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
             {
                 Purpose = dimensionUnit.Purpose,
                 Value = dimensionUnit.Value,
@@ -181,7 +185,7 @@ public partial class InputFileContextMenu : ComponentBase
 
         var dialogTopDimensionAttribute = dialogRecord
             .ElementDimensions
-            .DimensionAttributeBag
+            .DimensionAttributeList
             .First(x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
 
         var contextMenuTopDimensionAttribute = new DimensionAttribute
@@ -189,15 +193,15 @@ public partial class InputFileContextMenu : ComponentBase
             DimensionAttributeKind = DimensionAttributeKind.Top
         };
 
-        contextMenuTopDimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+        contextMenuTopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
         {
             DimensionUnitKind = DimensionUnitKind.Pixels,
             Value = commandArgs.ContextMenuFixedPosition.TopPositionInPixels
         });
 
-        foreach (var dimensionUnit in dialogTopDimensionAttribute.DimensionUnitBag)
+        foreach (var dimensionUnit in dialogTopDimensionAttribute.DimensionUnitList)
         {
-            contextMenuTopDimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+            contextMenuTopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
             {
                 Purpose = dimensionUnit.Purpose,
                 Value = dimensionUnit.Value,

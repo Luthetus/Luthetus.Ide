@@ -18,49 +18,49 @@ public class GenericSyntaxTree
 
     public virtual GenericSyntaxUnit ParseText(ResourceUri resourceUri, string content)
     {
-        var documentChildBag = new List<IGenericSyntax>();
+        var documentChildList = new List<IGenericSyntax>();
         var diagnosticBag = new LuthetusDiagnosticBag();
 
         var stringWalker = new StringWalker(resourceUri, content);
 
         while (!stringWalker.IsEof)
         {
-            if (stringWalker.CheckForSubstring(GenericLanguageDefinition.StringStart))
+            if (stringWalker.PeekForSubstring(GenericLanguageDefinition.StringStart))
             {
                 var genericStringSyntax = ParseString(stringWalker, diagnosticBag);
-                documentChildBag.Add(genericStringSyntax);
+                documentChildList.Add(genericStringSyntax);
             }
-            else if (stringWalker.CheckForSubstring(GenericLanguageDefinition.CommentSingleLineStart))
+            else if (stringWalker.PeekForSubstring(GenericLanguageDefinition.CommentSingleLineStart))
             {
                 var genericCommentSingleLineSyntax = ParseCommentSingleLine(stringWalker, diagnosticBag);
-                documentChildBag.Add(genericCommentSingleLineSyntax);
+                documentChildList.Add(genericCommentSingleLineSyntax);
             }
-            else if (stringWalker.CheckForSubstring(GenericLanguageDefinition.CommentMultiLineStart))
+            else if (stringWalker.PeekForSubstring(GenericLanguageDefinition.CommentMultiLineStart))
             {
                 var genericCommentMultiLineSyntax = ParseCommentMultiLine(stringWalker, diagnosticBag);
-                documentChildBag.Add(genericCommentMultiLineSyntax);
+                documentChildList.Add(genericCommentMultiLineSyntax);
             }
-            else if (stringWalker.CheckForSubstring(GenericLanguageDefinition.FunctionInvocationStart))
+            else if (stringWalker.PeekForSubstring(GenericLanguageDefinition.FunctionInvocationStart))
             {
                 if (TryParseFunctionIdentifier(stringWalker, diagnosticBag, out var genericFunctionSyntax) &&
                     genericFunctionSyntax is not null)
                 {
-                    documentChildBag.Add(genericFunctionSyntax);
+                    documentChildList.Add(genericFunctionSyntax);
                 }
             }
-            else if (!WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter) &&
-                     !KeyboardKeyFacts.PunctuationCharacters.AllBag.Contains(stringWalker.CurrentCharacter))
+            else if (!WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter) &&
+                     !KeyboardKeyFacts.PunctuationCharacters.AllList.Contains(stringWalker.CurrentCharacter))
             {
                 if (TryParseKeyword(stringWalker, diagnosticBag, out var genericKeywordSyntax) &&
                     genericKeywordSyntax is not null)
                 {
-                    documentChildBag.Add(genericKeywordSyntax);
+                    documentChildList.Add(genericKeywordSyntax);
                 }
             }
-            else if (stringWalker.CheckForSubstring(GenericLanguageDefinition.PreprocessorDefinition.TransitionSubstring))
+            else if (stringWalker.PeekForSubstring(GenericLanguageDefinition.PreprocessorDefinition.TransitionSubstring))
             {
                 var genericCommentMultiLineSyntax = ParsePreprocessorDirective(stringWalker, diagnosticBag);
-                documentChildBag.Add(genericCommentMultiLineSyntax);
+                documentChildList.Add(genericCommentMultiLineSyntax);
             }
 
             _ = stringWalker.ReadCharacter();
@@ -72,7 +72,7 @@ public class GenericSyntaxTree
                 (byte)GenericDecorationKind.None,
                 stringWalker.ResourceUri,
                 stringWalker.SourceText),
-            documentChildBag.ToImmutableArray());
+            documentChildList.ToImmutableArray());
 
         return new GenericSyntaxUnit(genericDocumentSyntax, diagnosticBag);
     }
@@ -87,8 +87,8 @@ public class GenericSyntaxTree
         {
             _ = stringWalker.ReadCharacter();
 
-            if (stringWalker.CheckForSubstringRange(
-                    GenericLanguageDefinition.CommentSingleLineEndingsBag,
+            if (stringWalker.PeekForSubstringRange(
+                    GenericLanguageDefinition.CommentSingleLineEndingsList,
                     out _))
             {
                 break;
@@ -126,7 +126,7 @@ public class GenericSyntaxTree
         {
             _ = stringWalker.ReadCharacter();
 
-            if (stringWalker.CheckForSubstring(GenericLanguageDefinition.CommentMultiLineEnd))
+            if (stringWalker.PeekForSubstring(GenericLanguageDefinition.CommentMultiLineEnd))
                 break;
         }
 
@@ -161,7 +161,7 @@ public class GenericSyntaxTree
         {
             _ = stringWalker.ReadCharacter();
 
-            if (stringWalker.CheckForSubstring(GenericLanguageDefinition.StringEnd))
+            if (stringWalker.PeekForSubstring(GenericLanguageDefinition.StringEnd))
                 break;
         }
 
@@ -203,17 +203,17 @@ public class GenericSyntaxTree
             if (backtrackedToCharacter == ParserFacts.END_OF_FILE)
                 break;
 
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter) ||
-                KeyboardKeyFacts.PunctuationCharacters.AllBag.Contains(stringWalker.CurrentCharacter))
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter) ||
+                KeyboardKeyFacts.PunctuationCharacters.AllList.Contains(stringWalker.CurrentCharacter))
             {
                 _ = stringWalker.ReadCharacter();
                 break;
             }
         }
 
-        var wordTuple = stringWalker.ReadWordTuple(KeyboardKeyFacts.PunctuationCharacters.AllBag);
+        var wordTuple = stringWalker.ReadWordTuple(KeyboardKeyFacts.PunctuationCharacters.AllList);
 
-        var foundKeyword = GenericLanguageDefinition.KeywordsBag.FirstOrDefault(
+        var foundKeyword = GenericLanguageDefinition.KeywordsList.FirstOrDefault(
             keyword => keyword == wordTuple.value);
 
         if (foundKeyword is not null)
@@ -257,14 +257,14 @@ public class GenericSyntaxTree
             if (backtrackedToCharacter == ParserFacts.END_OF_FILE)
                 break;
 
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
             {
                 if (startedReadingWord)
                     break;
             }
             else if (KeyboardKeyFacts.IsPunctuationCharacter(stringWalker.CurrentCharacter) ||
-                     stringWalker.CheckForSubstring(GenericLanguageDefinition.MemberAccessToken) ||
-                     stringWalker.CheckForSubstring(GenericLanguageDefinition.FunctionInvocationEnd))
+                     stringWalker.PeekForSubstring(GenericLanguageDefinition.MemberAccessToken) ||
+                     stringWalker.PeekForSubstring(GenericLanguageDefinition.FunctionInvocationEnd))
             {
                 break;
             }
@@ -308,7 +308,7 @@ public class GenericSyntaxTree
 
         while (!stringWalker.IsEof)
         {
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
             {
                 _ = stringWalker.ReadCharacter();
                 continue;
@@ -321,7 +321,7 @@ public class GenericSyntaxTree
 
         while (!stringWalker.IsEof)
         {
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
                 break;
 
             identifierBuilder.Append(stringWalker.CurrentCharacter);
@@ -357,7 +357,7 @@ public class GenericSyntaxTree
 
         while (!stringWalker.IsEof)
         {
-            if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+            if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
             {
                 _ = stringWalker.ReadCharacter();
                 continue;
@@ -368,9 +368,9 @@ public class GenericSyntaxTree
 
         DeliminationExtendedSyntaxDefinition? matchedDeliminationExtendedSyntax = null;
 
-        foreach (var deliminationExtendedSyntax in GenericLanguageDefinition.PreprocessorDefinition.DeliminationExtendedSyntaxBag)
+        foreach (var deliminationExtendedSyntax in GenericLanguageDefinition.PreprocessorDefinition.DeliminationExtendedSyntaxList)
         {
-            if (stringWalker.CheckForSubstring(deliminationExtendedSyntax.SyntaxStart))
+            if (stringWalker.PeekForSubstring(deliminationExtendedSyntax.SyntaxStart))
             {
                 matchedDeliminationExtendedSyntax = deliminationExtendedSyntax;
                 break;
@@ -384,7 +384,7 @@ public class GenericSyntaxTree
 
             while (!stringWalker.IsEof)
             {
-                if (stringWalker.CheckForSubstring(matchedDeliminationExtendedSyntax.SyntaxEnd))
+                if (stringWalker.PeekForSubstring(matchedDeliminationExtendedSyntax.SyntaxEnd))
                 {
                     _ = stringWalker.ReadCharacter();
                     break;

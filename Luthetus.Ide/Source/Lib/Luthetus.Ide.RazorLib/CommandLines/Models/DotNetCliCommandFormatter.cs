@@ -41,7 +41,7 @@ public static class DotNetCliCommandFormatter
         string cSharpProjectName,
         string optionalParameters)
     {
-        var argumentsBag = new List<string>
+        var argumentsList = new List<string>
         {
             "new",
             projectTemplateName,
@@ -50,9 +50,9 @@ public static class DotNetCliCommandFormatter
         };
 
         if (!string.IsNullOrWhiteSpace(optionalParameters))
-            argumentsBag.Add(optionalParameters);
+            argumentsList.Add(optionalParameters);
 
-        return new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, argumentsBag);
+        return new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, argumentsList);
     }
 
     public static FormattedCommand FormatAddExistingProjectToSolution(

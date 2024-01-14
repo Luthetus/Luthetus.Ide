@@ -9,8 +9,8 @@ public partial record ReflectiveState
 {
     public ReflectiveState()
     {
-        ReflectiveModelBag = ImmutableList<ReflectiveModel>.Empty;
+        ReflectiveModelList = ImmutableList<ReflectiveModel>.Empty;
     }
 
-    public ImmutableList<ReflectiveModel> ReflectiveModelBag { get; init; }
+    public ImmutableList<ReflectiveModel> ReflectiveModelList { get; init; }
 }

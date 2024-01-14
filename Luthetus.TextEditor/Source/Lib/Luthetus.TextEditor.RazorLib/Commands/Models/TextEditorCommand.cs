@@ -1,8 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Commands.Models;
-using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models;
 
@@ -15,8 +13,8 @@ public class TextEditorCommand : CommandWithType<TextEditorCommandArgs>
             bool shouldScrollCursorIntoView,
             TextEditKind textEditKind,
             string? otherTextEditKindIdentifier,
-            Func<ICommandArgs, Task> doAsyncFunc)
-        : base(displayName, internalIdentifier, shouldBubble, doAsyncFunc)
+            Func<ICommandArgs, Task> commandFunc)
+        : base(displayName, internalIdentifier, shouldBubble, commandFunc)
     {
         if (textEditKind == TextEditKind.Other && otherTextEditKindIdentifier is null)
             ThrowOtherTextEditKindIdentifierWasExpectedException(textEditKind);
@@ -29,13 +27,21 @@ public class TextEditorCommand : CommandWithType<TextEditorCommandArgs>
     public bool ShouldScrollCursorIntoView { get; }
     public TextEditKind TextEditKind { get; }
     public string? OtherTextEditKindIdentifier { get; }
-
-    public delegate Task ModificationTask(
-        TextEditorCommandArgs commandArgs,
-        TextEditorModel model,
-        TextEditorViewModel viewModel,
-        TextEditorCursorModifierBag refreshCursorsRequest,
-        TextEditorCursorModifier primaryCursor);
+    /// <summary>
+    /// In order to avoid multiple invocations of <see cref="ITextEditorService.Post(string, TextEditorEdit)"/>
+    /// one can continue on the current Post by invoking this TextEditorEdit directly.
+    /// <br/><br/>
+    /// If one invokes the <see cref="CommandNoType.CommandFunc"/> then a post will occur.
+    /// <br/><br/>
+    /// This is sphagetti code and needs to be changed. Vim's inner command logic
+    /// has me writing this. But what I'm doing here is probably bad long term.
+    /// One has to duplicate their <see cref="CommandNoType.CommandFunc"/> but
+    /// without the Post invocation.
+    /// <br/><br/>
+    /// I think going down this path will reveal the true solution so I'm going to
+    /// write out the bad code version for now. (2024-01-11)
+    /// </summary>
+    public Func<ICommandArgs, TextEditorEdit>? TextEditorEditFactory { get; set; }
 
     public static ApplicationException ThrowOtherTextEditKindIdentifierWasExpectedException(TextEditKind textEditKind)
     {

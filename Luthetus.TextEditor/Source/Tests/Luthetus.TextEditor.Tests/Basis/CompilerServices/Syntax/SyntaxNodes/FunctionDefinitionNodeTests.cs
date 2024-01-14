@@ -22,7 +22,7 @@ public class FunctionDefinitionNodeTests
     /// <see cref="FunctionDefinitionNode.FunctionArgumentsListingNode"/>
     /// <see cref="FunctionDefinitionNode.FunctionBodyCodeBlockNode"/>
     /// <see cref="FunctionDefinitionNode.ConstraintNode"/>
-    /// <see cref="FunctionDefinitionNode.ChildBag"/>
+    /// <see cref="FunctionDefinitionNode.ChildList"/>
     /// <see cref="FunctionDefinitionNode.IsFabricated"/>
     /// <see cref="FunctionDefinitionNode.SyntaxKind"/>
     /// </summary>
@@ -75,7 +75,7 @@ public class FunctionDefinitionNodeTests
                 sourceText));
         }
 
-        ImmutableArray<FunctionArgumentEntryNode> functionArgumentEntryNodeBag;
+        ImmutableArray<FunctionArgumentEntryNode> functionArgumentEntryNodeList;
         {
             TypeClauseNode intTypeClauseNode;
             {
@@ -111,7 +111,7 @@ public class FunctionDefinitionNodeTests
                 false,
                 false);
 
-            functionArgumentEntryNodeBag = new FunctionArgumentEntryNode[]
+            functionArgumentEntryNodeList = new FunctionArgumentEntryNode[]
             {
                     functionArgumentEntryNode
             }.ToImmutableArray();
@@ -133,7 +133,7 @@ public class FunctionDefinitionNodeTests
         {
             functionArgumentsListingNode = new FunctionArgumentsListingNode(
                 openParenthesisToken,
-                functionArgumentEntryNodeBag,
+                functionArgumentEntryNodeList,
                 closeParenthesisToken);
         }
 
@@ -157,11 +157,11 @@ public class FunctionDefinitionNodeTests
         Assert.Equal(codeBlockNode, functionDefinitionNode.FunctionBodyCodeBlockNode);
         Assert.Equal(constraintNode, functionDefinitionNode.ConstraintNode);
 
-        Assert.Equal(4, functionDefinitionNode.ChildBag.Length);
-        Assert.Equal(returnTypeClauseNode, functionDefinitionNode.ChildBag[0]);
-        Assert.Equal(functionIdentifierToken, functionDefinitionNode.ChildBag[1]);
-        Assert.Equal(functionArgumentsListingNode, functionDefinitionNode.ChildBag[2]);
-        Assert.Equal(codeBlockNode, functionDefinitionNode.ChildBag[3]);
+        Assert.Equal(4, functionDefinitionNode.ChildList.Length);
+        Assert.Equal(returnTypeClauseNode, functionDefinitionNode.ChildList[0]);
+        Assert.Equal(functionIdentifierToken, functionDefinitionNode.ChildList[1]);
+        Assert.Equal(functionArgumentsListingNode, functionDefinitionNode.ChildList[2]);
+        Assert.Equal(codeBlockNode, functionDefinitionNode.ChildList[3]);
 
         Assert.False(functionDefinitionNode.IsFabricated);
 

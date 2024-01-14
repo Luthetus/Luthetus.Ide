@@ -51,8 +51,8 @@ public partial class ContextMenu : ComponentBase
 
     private TextEditorCommandArgs ConstructCommandArgs()
     {
-        var cursorSnapshotsBag = new TextEditorCursor[] { RenderBatch.ViewModel!.PrimaryCursor }.ToImmutableArray();
-        var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsBag.First(x => x.IsPrimaryCursor).Selection);
+        var cursorSnapshotsList = new TextEditorCursor[] { RenderBatch.ViewModel!.PrimaryCursor }.ToImmutableArray();
+        var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsList.First(x => x.IsPrimaryCursor).Selection);
 
         return new TextEditorCommandArgs(
             RenderBatch.Model!.ResourceUri,
@@ -89,21 +89,21 @@ public partial class ContextMenu : ComponentBase
 
     private MenuRecord GetMenuRecord()
     {
-        List<MenuOptionRecord> menuOptionRecordsBag = new();
+        List<MenuOptionRecord> menuOptionRecordsList = new();
 
         var cut = new MenuOptionRecord("Cut", MenuOptionKind.Other, () => SelectMenuOption(CutMenuOption));
-        menuOptionRecordsBag.Add(cut);
+        menuOptionRecordsList.Add(cut);
 
         var copy = new MenuOptionRecord("Copy", MenuOptionKind.Other, () => SelectMenuOption(CopyMenuOption));
-        menuOptionRecordsBag.Add(copy);
+        menuOptionRecordsList.Add(copy);
 
         var paste = new MenuOptionRecord("Paste", MenuOptionKind.Other, () => SelectMenuOption(PasteMenuOption));
-        menuOptionRecordsBag.Add(paste);
+        menuOptionRecordsList.Add(paste);
 
-        if (!menuOptionRecordsBag.Any())
-            menuOptionRecordsBag.Add(new MenuOptionRecord("No Context Menu Options for this item", MenuOptionKind.Other));
+        if (!menuOptionRecordsList.Any())
+            menuOptionRecordsList.Add(new MenuOptionRecord("No Context Menu Options for this item", MenuOptionKind.Other));
 
-        return new MenuRecord(menuOptionRecordsBag.ToImmutableArray());
+        return new MenuRecord(menuOptionRecordsList.ToImmutableArray());
     }
 
     private void SelectMenuOption(Func<Task> menuOptionAction)
@@ -126,18 +126,18 @@ public partial class ContextMenu : ComponentBase
     private async Task CutMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.Cut.DoAsyncFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.Cut.CommandFunc.Invoke(commandArgs);
     }
 
     private async Task CopyMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.Copy.DoAsyncFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.Copy.CommandFunc.Invoke(commandArgs);
     }
 
     private async Task PasteMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.PasteCommand.DoAsyncFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.PasteCommand.CommandFunc.Invoke(commandArgs);
     }
 }

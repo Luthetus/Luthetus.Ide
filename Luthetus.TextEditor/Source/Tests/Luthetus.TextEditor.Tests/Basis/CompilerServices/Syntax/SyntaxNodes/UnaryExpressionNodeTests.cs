@@ -45,10 +45,10 @@ public class UnaryExpressionNodeTests
 	}
 
 	/// <summary>
-	/// <see cref="UnaryExpressionNode.ChildBag"/>
+	/// <see cref="UnaryExpressionNode.ChildList"/>
 	/// </summary>
 	[Fact]
-	public void ChildBag()
+	public void ChildList()
 	{
 		throw new NotImplementedException();
 	}

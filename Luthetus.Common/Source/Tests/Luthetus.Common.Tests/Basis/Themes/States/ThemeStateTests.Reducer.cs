@@ -21,11 +21,11 @@ public class ThemeStateReducerTests
         InitializeThemeStateReducerTests(
             out var _, out var themeStateWrap, out var dispatcher, out var themeRecord);
 
-        Assert.DoesNotContain(themeStateWrap.Value.ThemeBag, x => x == themeRecord);
+        Assert.DoesNotContain(themeStateWrap.Value.ThemeList, x => x == themeRecord);
 
         dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
 
-        Assert.Contains(themeStateWrap.Value.ThemeBag, x => x == themeRecord);
+        Assert.Contains(themeStateWrap.Value.ThemeList, x => x == themeRecord);
     }
 
     /// <summary>
@@ -37,13 +37,13 @@ public class ThemeStateReducerTests
         InitializeThemeStateReducerTests(
             out var _, out var themeStateWrap, out var dispatcher, out var themeRecord);
 
-        Assert.DoesNotContain(themeStateWrap.Value.ThemeBag, x => x == themeRecord);
+        Assert.DoesNotContain(themeStateWrap.Value.ThemeList, x => x == themeRecord);
         
         dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
-        Assert.Contains(themeStateWrap.Value.ThemeBag, x => x == themeRecord);
+        Assert.Contains(themeStateWrap.Value.ThemeList, x => x == themeRecord);
 
         dispatcher.Dispatch(new ThemeState.DisposeAction(themeRecord.Key));
-        Assert.DoesNotContain(themeStateWrap.Value.ThemeBag, x => x == themeRecord);
+        Assert.DoesNotContain(themeStateWrap.Value.ThemeList, x => x == themeRecord);
     }
 
     private void InitializeThemeStateReducerTests(

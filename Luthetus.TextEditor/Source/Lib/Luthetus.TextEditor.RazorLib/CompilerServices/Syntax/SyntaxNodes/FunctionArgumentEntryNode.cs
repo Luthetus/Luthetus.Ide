@@ -25,7 +25,7 @@ public sealed record FunctionArgumentEntryNode : ISyntaxNode
             VariableDeclarationNode
         };
 
-        ChildBag = children.ToImmutableArray();
+        ChildList = children.ToImmutableArray();
     }
 
     public VariableDeclarationNode VariableDeclarationNode { get; }
@@ -34,7 +34,7 @@ public sealed record FunctionArgumentEntryNode : ISyntaxNode
     public bool HasInKeyword { get; }
     public bool HasRefKeyword { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionArgumentEntryNode;

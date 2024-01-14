@@ -12,10 +12,10 @@
     <select @onchange="SelectedKeymapChanged"
             class="@InputElementCssClassString">
         @{
-            var keymapsBag = TextEditorKeymapFacts.AllKeymapsBag;
+            var keymapsList = TextEditorKeymapFacts.AllKeymapsList;
             var chosenKeymap = TextEditorOptionsStateWrap.Value.Options.Keymap;
             
-            foreach (var keymap in keymapsBag)
+            foreach (var keymap in keymapsList)
             {
                 <option value="@keymap.Key.Guid.ToString()"
                         selected="@((chosenKeymap?.Key ?? Key<Keymap>.Empty) == keymap.Key)">

@@ -31,7 +31,7 @@ public partial class TextEditorGroupDisplay : IDisposable
     public string CssStyleString { get; set; } = string.Empty;
     [Parameter]
     public string CssClassString { get; set; } = string.Empty;
-    /// <summary><see cref="HeaderButtonKindBag"/> contains the enum value that represents a button displayed in the optional component: <see cref="TextEditorHeader"/>.</summary>
+    /// <summary><see cref="HeaderButtonKindList"/> contains the enum value that represents a button displayed in the optional component: <see cref="TextEditorHeader"/>.</summary>
     [Parameter]
     public TextEditorViewModelDisplayOptions ViewModelDisplayOptions { get; set; } = new();
 

@@ -12,7 +12,7 @@ public sealed record PreprocessorLibraryReferenceStatementNode : IStatementNode
         IncludeDirectiveSyntaxToken = includeDirectiveSyntaxToken;
         LibraryReferenceSyntaxToken = libraryReferenceSyntaxToken;
 
-        ChildBag = new ISyntax[]
+        ChildList = new ISyntax[]
         {
             IncludeDirectiveSyntaxToken,
             LibraryReferenceSyntaxToken,
@@ -22,7 +22,7 @@ public sealed record PreprocessorLibraryReferenceStatementNode : IStatementNode
     public ISyntaxToken IncludeDirectiveSyntaxToken { get; }
     public ISyntaxToken LibraryReferenceSyntaxToken { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorLibraryReferenceStatementNode;

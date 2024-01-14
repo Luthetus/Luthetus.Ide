@@ -4,14 +4,14 @@
      style="@CssStyleString">
 
     @{
-        var textEditorGroup = TextEditorGroupStateWrap.Value.GroupBag.FirstOrDefault(
+        var textEditorGroup = TextEditorGroupStateWrap.Value.GroupList.FirstOrDefault(
             x => x.GroupKey == TextEditorGroupKey);
     }
     
     @if (textEditorGroup is not null)
     {
         <div class="luth_te_text-editor-group-tabs-list">
-            @foreach (var viewModelKey in textEditorGroup.ViewModelKeyBag)
+            @foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
             {
                 <TextEditorGroupTabDisplay @key="viewModelKey"
                                            TextEditorGroup="textEditorGroup"

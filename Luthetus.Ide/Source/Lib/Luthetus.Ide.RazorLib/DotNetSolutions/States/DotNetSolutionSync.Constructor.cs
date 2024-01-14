@@ -69,19 +69,19 @@ public partial class DotNetSolutionSync
     {
         return new WithAction(dotNetSolutionState =>
         {
-            var indexOfSln = dotNetSolutionState.DotNetSolutionsBag.FindIndex(
+            var indexOfSln = dotNetSolutionState.DotNetSolutionsList.FindIndex(
                 sln => sln.Key == dotNetSolutionModelKey);
 
             if (indexOfSln == -1)
                 return dotNetSolutionState;
 
-            var outDotNetSolutions = dotNetSolutionState.DotNetSolutionsBag.SetItem(
+            var outDotNetSolutions = dotNetSolutionState.DotNetSolutionsList.SetItem(
                 indexOfSln,
                 outDotNetSolutionModel);
 
             return dotNetSolutionState with
             {
-                DotNetSolutionsBag = outDotNetSolutions
+                DotNetSolutionsList = outDotNetSolutions
             };
         });
     }

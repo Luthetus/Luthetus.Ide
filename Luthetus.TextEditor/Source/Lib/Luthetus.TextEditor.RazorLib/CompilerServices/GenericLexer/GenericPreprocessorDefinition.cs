@@ -6,12 +6,12 @@ public class GenericPreprocessorDefinition
 {
     public GenericPreprocessorDefinition(
         string transitionSubstring,
-        ImmutableArray<DeliminationExtendedSyntaxDefinition> deliminationExtendedSyntaxBag)
+        ImmutableArray<DeliminationExtendedSyntaxDefinition> deliminationExtendedSyntaxList)
     {
         TransitionSubstring = transitionSubstring;
-        DeliminationExtendedSyntaxBag = deliminationExtendedSyntaxBag;
+        DeliminationExtendedSyntaxList = deliminationExtendedSyntaxList;
     }
 
     public string TransitionSubstring { get; }
-    public ImmutableArray<DeliminationExtendedSyntaxDefinition> DeliminationExtendedSyntaxBag { get; }
+    public ImmutableArray<DeliminationExtendedSyntaxDefinition> DeliminationExtendedSyntaxList { get; }
 }

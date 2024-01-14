@@ -18,7 +18,7 @@ public partial class LexSolutionFacts
         public const string MINIMUM_VISUAL_STUDIO_VERSION_START_TOKEN =
             @"MinimumVisualStudioVersion =";
 
-        public static readonly ImmutableArray<string> WellKnownAssociatedNamesBag = new[]
+        public static readonly ImmutableArray<string> WellKnownAssociatedNamesList = new[]
         {
             FORMAT_VERSION_START_TOKEN,
             HASHTAG_VISUAL_STUDIO_VERSION_START_TOKEN,

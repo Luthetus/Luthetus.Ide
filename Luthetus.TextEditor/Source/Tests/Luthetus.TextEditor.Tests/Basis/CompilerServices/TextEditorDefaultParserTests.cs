@@ -1,5 +1,6 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
@@ -9,11 +10,15 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 public class TextEditorDefaultParserTests
 {
 	/// <summary>
-	/// <see cref="TextEditorDefaultParser.DiagnosticsBag"/>
+	/// <see cref="TextEditorDefaultParser.DiagnosticsList"/>
 	/// </summary>
 	[Fact]
-	public void DiagnosticsBag()
+	public void DiagnosticsList()
 	{
-		throw new NotImplementedException();
+        var defaultParser = new TextEditorDefaultParser();
+
+        Assert.Equal(
+            ImmutableArray<TextEditorDiagnostic>.Empty,
+            defaultParser.DiagnosticsList);
 	}
 }

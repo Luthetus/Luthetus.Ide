@@ -33,11 +33,11 @@ public class ThemeServiceTests
     {
         InitializeThemeServiceTests(out var themeService, out var themeRecord, out _);
 
-        Assert.DoesNotContain(themeService.ThemeStateWrap.Value.ThemeBag, x => x == themeRecord);
+        Assert.DoesNotContain(themeService.ThemeStateWrap.Value.ThemeList, x => x == themeRecord);
 
         themeService.RegisterThemeRecord(themeRecord);
-        Assert.NotEmpty(themeService.ThemeStateWrap.Value.ThemeBag);
-        Assert.Contains(themeService.ThemeStateWrap.Value.ThemeBag, x => x == themeRecord);
+        Assert.NotEmpty(themeService.ThemeStateWrap.Value.ThemeList);
+        Assert.Contains(themeService.ThemeStateWrap.Value.ThemeList, x => x == themeRecord);
     }
 
     /// <summary>
@@ -48,13 +48,13 @@ public class ThemeServiceTests
     {
         InitializeThemeServiceTests(out var themeService, out var themeRecord, out _);
 
-        Assert.DoesNotContain(themeService.ThemeStateWrap.Value.ThemeBag, x => x == themeRecord);
+        Assert.DoesNotContain(themeService.ThemeStateWrap.Value.ThemeList, x => x == themeRecord);
 
         themeService.RegisterThemeRecord(themeRecord);
-        Assert.Contains(themeService.ThemeStateWrap.Value.ThemeBag, x => x == themeRecord);
+        Assert.Contains(themeService.ThemeStateWrap.Value.ThemeList, x => x == themeRecord);
 
         themeService.DisposeThemeRecord(themeRecord.Key);
-        Assert.DoesNotContain(themeService.ThemeStateWrap.Value.ThemeBag, x => x == themeRecord);
+        Assert.DoesNotContain(themeService.ThemeStateWrap.Value.ThemeList, x => x == themeRecord);
     }
 
     private void InitializeThemeServiceTests(

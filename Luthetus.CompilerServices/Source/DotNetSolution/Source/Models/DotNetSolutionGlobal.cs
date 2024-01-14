@@ -10,7 +10,7 @@ public record DotNetSolutionGlobal
     /// modified. (2023-10-10))
     /// </summary>
     public OpenAssociatedGroupToken? OpenAssociatedGroupToken { get; set; }
-    public ImmutableArray<DotNetSolutionGlobalSection> DotNetSolutionGlobalSectionBag { get; init; } = ImmutableArray<DotNetSolutionGlobalSection>.Empty;
+    public ImmutableArray<DotNetSolutionGlobalSection> DotNetSolutionGlobalSectionList { get; init; } = ImmutableArray<DotNetSolutionGlobalSection>.Empty;
     /// <summary>
     /// TODO: Remove the "set;" hack. Added so one can shift text spans when the .sln content is
     /// modified. (2023-10-10))

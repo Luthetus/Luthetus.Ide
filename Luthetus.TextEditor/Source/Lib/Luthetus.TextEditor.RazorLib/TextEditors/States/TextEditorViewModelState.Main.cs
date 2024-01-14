@@ -14,8 +14,8 @@ public partial class TextEditorViewModelState
 {
     public TextEditorViewModelState()
     {
-        ViewModelBag = ImmutableList<TextEditorViewModel>.Empty;
+        ViewModelList = ImmutableList<TextEditorViewModel>.Empty;
     }
 
-    public ImmutableList<TextEditorViewModel> ViewModelBag { get; init; }
+    public ImmutableList<TextEditorViewModel> ViewModelList { get; init; }
 }

@@ -38,7 +38,7 @@ public partial record NuGetPackageManagerState
             NuGetPackageManagerState inState,
             SetMostRecentQueryResultAction setMostRecentQueryResultAction)
         {
-            return inState with { QueryResultBag = setMostRecentQueryResultAction.QueryResultBag };
+            return inState with { QueryResultList = setMostRecentQueryResultAction.QueryResultList };
         }
     }
 }

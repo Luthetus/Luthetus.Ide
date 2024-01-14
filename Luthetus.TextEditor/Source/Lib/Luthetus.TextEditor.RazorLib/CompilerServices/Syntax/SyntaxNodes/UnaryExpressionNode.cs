@@ -12,7 +12,7 @@ public sealed record UnaryExpressionNode : IExpressionNode
         Expression = expression;
         UnaryOperatorNode = unaryOperatorNode;
 
-        ChildBag = new ISyntax[]
+        ChildList = new ISyntax[]
         {
             Expression,
             UnaryOperatorNode,
@@ -23,7 +23,7 @@ public sealed record UnaryExpressionNode : IExpressionNode
     public UnaryOperatorNode UnaryOperatorNode { get; }
     public TypeClauseNode ResultTypeClauseNode => UnaryOperatorNode.ResultTypeClauseNode;
 
-    public ImmutableArray<ISyntax> ChildBag { get; init; }
+    public ImmutableArray<ISyntax> ChildList { get; init; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UnaryExpressionNode;

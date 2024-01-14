@@ -2,7 +2,7 @@
 
 <div class="luth_ide_keymap">
     @{
-        var keymapKvpsBag = Keymap.Map
+        var keymapKvpsList = Keymap.Map
             .OrderBy(x => x.Value.DisplayName)
             .ToArray();
     }
@@ -19,7 +19,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var kvp in keymapKvpsBag)
+            @foreach (var kvp in keymapKvpsList)
             {
                 if (kvp.Value.InternalIdentifier == "defaults_do-nothing-discard")
                 {
@@ -30,7 +30,7 @@
                 var keymapArgument = kvp.Key;
                 var commandNoType = kvp.Value;
 
-                var keybindingDisplayStringsBag = new List<string>();
+                var keybindingDisplayStringsList = new List<string>();
                 var keybindingTitleBuilder = new StringBuilder();
 
                 @if (keymapArgument.CtrlKey)
@@ -38,7 +38,7 @@
                     if (keybindingTitleBuilder.Length != 0)
                         keybindingTitleBuilder.Append("+");
 
-                    keybindingDisplayStringsBag.Add("Ctrl");
+                    keybindingDisplayStringsList.Add("Ctrl");
                     keybindingTitleBuilder.Append("Control");
                 }
 
@@ -47,7 +47,7 @@
                     if (keybindingTitleBuilder.Length != 0)
                         keybindingTitleBuilder.Append("+");
 
-                    keybindingDisplayStringsBag.Add("Shift");
+                    keybindingDisplayStringsList.Add("Shift");
                     keybindingTitleBuilder.Append("Shift");
                 }
 
@@ -56,7 +56,7 @@
                     if (keybindingTitleBuilder.Length != 0)
                         keybindingTitleBuilder.Append("+");
 
-                    keybindingDisplayStringsBag.Add("Alt");
+                    keybindingDisplayStringsList.Add("Alt");
                     keybindingTitleBuilder.Append("Alt");
                 }
 
@@ -65,7 +65,7 @@
                     if (keybindingTitleBuilder.Length != 0)
                         keybindingTitleBuilder.Append("+");
 
-                    keybindingDisplayStringsBag.Add(keymapArgument.Code);
+                    keybindingDisplayStringsList.Add(keymapArgument.Code);
                     keybindingTitleBuilder.Append(keymapArgument.Code);
                 }
 
@@ -79,7 +79,7 @@
                     <td class="luth_ide_keymap-entry-command"
                         title="@keybindingTitleBuilder.ToString()">
 
-                        @for (int i = 0; i < keybindingDisplayStringsBag.Count; i++)
+                        @for (int i = 0; i < keybindingDisplayStringsList.Count; i++)
                         {
                             var index = i;
 
@@ -89,7 +89,7 @@
                             }
 
                             <em class="luth_em">
-                                @keybindingDisplayStringsBag[index]
+                                @keybindingDisplayStringsList[index]
                             </em>
                         }
                     </td>

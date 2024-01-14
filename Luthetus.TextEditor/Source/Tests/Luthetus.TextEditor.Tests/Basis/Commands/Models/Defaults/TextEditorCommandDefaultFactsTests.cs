@@ -1,5 +1,27 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Microsoft.JSInterop;
+using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Misc;
+using Luthetus.Common.RazorLib.Storages.Models;
+using Luthetus.Common.RazorLib.Storages.States;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Microsoft.Extensions.DependencyInjection;
+using Luthetus.Common.RazorLib.Clipboards.Models;
+using Microsoft.AspNetCore.Components.Web;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using System.Linq;
 
 namespace Luthetus.TextEditor.Tests.Basis.Commands.Models.Defaults;
 
@@ -8,201 +30,1519 @@ namespace Luthetus.TextEditor.Tests.Basis.Commands.Models.Defaults;
 /// </summary>
 public class TextEditorCommandDefaultFactsTests
 {
-
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.DoNothingDiscard"/>
 	/// </summary>
 	[Fact]
-    public void DoNothingDiscard()
+    public async Task DoNothingDiscard()
     {
-		throw new NotImplementedException();
+        InitializeTextEditorCommandDefaultFactsTests(
+            out var textEditorService, out var inModel, out var inViewModel,
+            out var textEditorCommandArgs, out var serviceProvider);
+
+		await TextEditorCommandDefaultFacts.DoNothingDiscard.CommandFunc.Invoke(
+            textEditorCommandArgs);
 	}
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.Copy"/>
 	/// </summary>
 	[Fact]
-    public void Copy()
+    public async Task Copy()
     {
-		throw new NotImplementedException();
+        InitializeTextEditorCommandDefaultFactsTests(
+            out var textEditorService, out var inModel, out var inViewModel,
+            out var textEditorCommandArgs, out var serviceProvider);
+
+        var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
+
+        // No selection
+        {
+            await clipboardService.SetClipboard(string.Empty);
+            var inClipboard = await clipboardService.ReadClipboard();
+            Assert.Empty(inClipboard);
+
+            await TextEditorCommandDefaultFacts.Copy.CommandFunc.Invoke(textEditorCommandArgs);
+
+            var outClipboard = await clipboardService.ReadClipboard();
+            Assert.Equal("Hello World!\n", outClipboard);
+        }
+
+
+        // With selection
+        {
+            await clipboardService.SetClipboard(string.Empty);
+            var inClipboard = await clipboardService.ReadClipboard();
+            Assert.Empty(inClipboard);
+
+            textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
+				editContext =>
+				{
+					var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+					var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+					if (modelModifier is null || viewModelModifier is null)
+						return Task.CompletedTask;
+
+					var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+					var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+					if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+					primaryCursorModifier.RowIndex = 1;
+					primaryCursorModifier.SetColumnIndexAndPreferred(9);
+					primaryCursorModifier.SelectionAnchorPositionIndex = 15;
+					primaryCursorModifier.SelectionEndingPositionIndex = 22;
+
+                    return Task.CompletedTask;
+                });
+
+            await TextEditorCommandDefaultFacts.Copy.CommandFunc.Invoke(textEditorCommandArgs);
+
+            var outClipboard = await clipboardService.ReadClipboard();
+            Assert.Equal("Pillows", outClipboard);
+        }
 	}
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.Cut"/>
 	/// </summary>
 	[Fact]
-	public void Cut()
+	public async Task Cut()
 	{
-		throw new NotImplementedException();
+        // No selection
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
+            await clipboardService.SetClipboard(string.Empty);
+            var inClipboard = await clipboardService.ReadClipboard();
+            Assert.Empty(inClipboard);
+
+            await TextEditorCommandDefaultFacts.Cut.CommandFunc.Invoke(textEditorCommandArgs);
+
+            var outClipboard = await clipboardService.ReadClipboard();
+            Assert.Equal("Hello World!\n", outClipboard);
+
+            // Assert text was deleted
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+
+                var outText = outModel!.GetAllText();
+                Assert.Equal("7 Pillows\n \n,abc123", outText);
+            }
+        }
+
+        // With selection
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
+            await clipboardService.SetClipboard(string.Empty);
+            var inClipboard = await clipboardService.ReadClipboard();
+            Assert.Empty(inClipboard);
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(9);
+                    primaryCursorModifier.SelectionAnchorPositionIndex = 15;
+                    primaryCursorModifier.SelectionEndingPositionIndex = 22;
+
+                    return Task.CompletedTask;
+                });
+
+            await TextEditorCommandDefaultFacts.Cut.CommandFunc.Invoke(textEditorCommandArgs);
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                async editContext =>
+                {
+                    var outClipboard = await clipboardService.ReadClipboard();
+                    Assert.Equal("Pillows", outClipboard);
+
+                    // Assert text was deleted
+                    {
+                        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                        Assert.NotNull(outModel);
+
+                        var outText = outModel!.GetAllText();
+                        Assert.Equal("Hello World!\n7 \n \n,abc123", outText);
+                    }
+                });
+        }
 	}
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.PasteCommand"/>
 	/// </summary>
 	[Fact]
-    public void Paste()
+    public async Task Paste()
     {
-		throw new NotImplementedException();
+        // No selection
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                async editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return;
+
+                    var stringToPaste = "Alphabet Soup\n";
+                    await clipboardService.SetClipboard(stringToPaste);
+                    Assert.Equal(stringToPaste, await clipboardService.ReadClipboard());
+
+                    primaryCursorModifier.RowIndex = 0;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(0);
+
+                    return;
+                });
+
+            await TextEditorCommandDefaultFacts.PasteCommand.CommandFunc.Invoke(textEditorCommandArgs);
+
+            // Assert text was pasted
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+
+                var outText = outModel!.GetAllText();
+                Assert.Equal("Alphabet Soup\nHello World!\n7 Pillows\n \n,abc123", outText);
+            }
+        }
+
+        // With selection
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                async editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return;
+
+                    var stringToPaste = "Alphabet Soup\n";
+                    await clipboardService.SetClipboard(stringToPaste);
+                    Assert.Equal(stringToPaste, await clipboardService.ReadClipboard());
+
+                    primaryCursorModifier.RowIndex = 0;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(0);
+
+                    // Select the first row in its entirety (including line ending)
+                    {
+                        primaryCursorModifier.SelectionAnchorPositionIndex = 0;
+                        primaryCursorModifier.SelectionEndingPositionIndex = 13;
+                    }
+
+                    return;
+                });
+
+            await TextEditorCommandDefaultFacts.PasteCommand.CommandFunc.Invoke(textEditorCommandArgs);
+
+            // Assert text was pasted
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+
+                var outText = outModel!.GetAllText();
+                Assert.Equal("Alphabet Soup\n7 Pillows\n \n,abc123", outText);
+            }
+        }
 	}
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.Save"/>
 	/// </summary>
 	[Fact]
-    public void Save()
+    public async Task Save()
     {
-		throw new NotImplementedException();
+        // ViewModel.OnSaveRequested is NOT null
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            var savedContent = (string?)null;
+            Assert.Null(savedContent);
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                    {
+                        OnSaveRequested = model => savedContent = model.GetAllText()
+                    };
+
+                    return Task.CompletedTask;
+                });
+
+            await TextEditorCommandDefaultFacts.Save.CommandFunc.Invoke(textEditorCommandArgs);
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    Assert.Equal(TestConstants.SOURCE_TEXT, savedContent);
+                    return Task.CompletedTask;
+                });
+        }
+
+        // ViewModel.OnSaveRequested is null
+        {
+                InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+                var savedContent = (string?)null;
+
+                Assert.Null(savedContent);
+                await TextEditorCommandDefaultFacts.Save.CommandFunc.Invoke(textEditorCommandArgs);
+
+                textEditorService.Post(
+                    nameof(TextEditorCommandDefaultFactsTests),
+                    editContext =>
+                    {
+                        Assert.Null(savedContent);
+                        return Task.CompletedTask;
+                    });
+        }
 	}
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.SelectAll"/>
 	/// </summary>
 	[Fact]
-    public void SelectAll()
+    public async Task SelectAll()
     {
-		throw new NotImplementedException();
-	}
+        // No already existing selection
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.SelectAll.CommandFunc.Invoke(textEditorCommandArgs);
+
+            var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+            Assert.NotNull(outViewModel);
+
+            Assert.Equal(0, outViewModel!.PrimaryCursor.Selection.AnchorPositionIndex);
+            Assert.Equal(inModel.DocumentLength, outViewModel!.PrimaryCursor.Selection.EndingPositionIndex);
+
+            // Assert that 'SelectAll' does not move the cursor itself, it only should move the selection
+            {
+                Assert.Equal(inViewModel.PrimaryCursor.RowIndex, outViewModel!.PrimaryCursor.RowIndex);
+                Assert.Equal(inViewModel.PrimaryCursor.ColumnIndex, outViewModel!.PrimaryCursor.ColumnIndex);
+            }
+        }
+
+        // With an already existing selection
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    // Select the "Hello" text on the first row
+                    {
+                        primaryCursorModifier.SelectionAnchorPositionIndex = 0;
+                        primaryCursorModifier.SelectionEndingPositionIndex = 5;
+                    }
+
+                    // SetColumnIndexAndPreferred is unnecessary, but the user is likely
+                    // to have their ColumnIndex == SelectionEndingPositionIndex
+                    primaryCursorModifier.SetColumnIndexAndPreferred(
+                        primaryCursorModifier.SelectionEndingPositionIndex);
+
+                    return Task.CompletedTask;
+                });
+
+            await TextEditorCommandDefaultFacts.SelectAll.CommandFunc.Invoke(textEditorCommandArgs);
+
+            var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+            Assert.NotNull(outViewModel);
+
+            Assert.Equal(0, outViewModel!.PrimaryCursor.Selection.AnchorPositionIndex);
+            Assert.Equal(inModel.DocumentLength, outViewModel!.PrimaryCursor.Selection.EndingPositionIndex);
+        }
+    }
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.Undo"/>
 	/// </summary>
 	[Fact]
-    public void Undo()
+    public async Task Undo()
     {
-		throw new NotImplementedException();
+        // Able to undo
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            // Modify text, as to create an edit which one can then undo
+            {
+                var cursor = new TextEditorCursor(0, 0, true);
+
+                var cursorModificationBag = new TextEditorCursorModifierBag(
+                    Key<TextEditorViewModel>.Empty,
+                    new List<TextEditorCursorModifier> { new TextEditorCursorModifier(cursor) });
+
+                textEditorService.Post(
+                    nameof(TextEditorCommandDefaultFactsTests),
+                    textEditorService.ModelApi.InsertTextUnsafeFactory(
+                        inModel.ResourceUri,
+                        cursorModificationBag,
+                        "zyx",
+                        CancellationToken.None));
+            }
+
+
+            // Assert that the new text is different from the original
+            {
+                var refModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(refModel);
+
+                var inText = inModel.GetAllText();
+                var refText = refModel!.GetAllText();
+                Assert.NotEqual(inText, refText);
+            }
+            
+            // Invoke the command
+            await TextEditorCommandDefaultFacts.Undo.CommandFunc.Invoke(textEditorCommandArgs);
+
+            // Assert that the text was reverted to the original
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+
+                var inText = inModel.GetAllText();
+                var outText = outModel!.GetAllText();
+                Assert.Equal(inText, outText);
+            }
+        }
+
+        // Cannot undo
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            // Capture the current text, as to later be used after the
+            // Undo invocation to Assert the text had not changed.
+            var refModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(refModel);
+            var refText = refModel!.GetAllText();
+
+            // Invoke the command
+            await TextEditorCommandDefaultFacts.Undo.CommandFunc.Invoke(textEditorCommandArgs);
+
+            // Capture the text, now that the Undo command was invoked.
+            var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(outModel);
+            var outText = outModel!.GetAllText();
+
+            // Assert that the text immediately BEFORE invoking the 'Undo' command
+            // is equal to the text which one gets AFTER invoking 'Undo'
+            //
+            // This asserts that the 'cannot undo' case does not modify the text in any way.
+            Assert.Equal(refText, outText);
+        }
 	}
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.Redo"/>
 	/// </summary>
 	[Fact]
-    public void Redo()
+    public async Task Redo()
     {
-		throw new NotImplementedException();
-	}
+        // Able to redo
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
 
-	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.Remeasure"/>
-	/// </summary>
-	[Fact]
-    public void Remeasure()
-    {
-		throw new NotImplementedException();
-	}
+            // Modify text, as to create an edit which one can then undo
+            {
+                var cursor = new TextEditorCursor(0, 0, true);
 
-	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.ScrollLineDown"/>
-	/// </summary>
-	[Fact]
-    public void ScrollLineDown()
-    {
-		throw new NotImplementedException();
-	}
+                var cursorModificationBag = new TextEditorCursorModifierBag(
+                    Key<TextEditorViewModel>.Empty,
+                    new List<TextEditorCursorModifier> { new TextEditorCursorModifier(cursor) });
 
-	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.ScrollLineUp"/>
-	/// </summary>
-	[Fact]
-    public void ScrollLineUp()
-    {
-		throw new NotImplementedException();
-	}
+                textEditorService.Post(
+                    nameof(TextEditorCommandDefaultFactsTests),
+                    textEditorService.ModelApi.InsertTextUnsafeFactory(
+                        inModel.ResourceUri,
+                        cursorModificationBag,
+                        "zyx",
+                        CancellationToken.None));
+            }
 
-	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.ScrollPageDown"/>
-	/// </summary>
-	[Fact]
-    public void ScrollPageDown()
-    {
-		throw new NotImplementedException();
-	}
+            // Capture the current text, as to later be used after the
+            // Redo invocation to Assert the text has been re-edited.
+            var refModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(refModel);
+            var refText = refModel!.GetAllText();
 
-	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.ScrollPageUp"/>
-	/// </summary>
-	[Fact]
-    public void ScrollPageUp()
-    {
-		throw new NotImplementedException();
-	}
+            // Undo the previous edit, as to be able to redo an edit
+            {
+                await TextEditorCommandDefaultFacts.Undo.CommandFunc.Invoke(textEditorCommandArgs);
+            }
+            
+            // Redo the previous edit
+            {
+                await TextEditorCommandDefaultFacts.Redo.CommandFunc.Invoke(textEditorCommandArgs);
+            }
 
-	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.CursorMovePageBottom"/>
-	/// </summary>
-	[Fact]
-    public void CursorMovePageBottom()
-    {
-		throw new NotImplementedException();
-	}
+            // Assert that the text was re-edited
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
 
-	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.CursorMovePageTop"/>
-	/// </summary>
-	[Fact]
-    public void CursorMovePageTop()
-    {
-		throw new NotImplementedException();
+                var outText = outModel!.GetAllText();
+                Assert.Equal(refText, outText);
+            }
+        }
+
+        // Cannot redo
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            // Capture the current text, as to later be used after the
+            // Redo invocation to Assert the text had not changed.
+            var refModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(refModel);
+            var refText = refModel!.GetAllText();
+
+            // Invoke the command
+            await TextEditorCommandDefaultFacts.Redo.CommandFunc.Invoke(textEditorCommandArgs);
+
+            // Capture the text, now that the Redo command was invoked.
+            var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(outModel);
+            var outText = outModel!.GetAllText();
+
+            // Assert that the text immediately BEFORE invoking the 'Redo' command
+            // is equal to the text which one gets AFTER invoking 'Redo'
+            //
+            // This asserts that the 'cannot redo' case does not modify the text in any way.
+            Assert.Equal(refText, outText);
+        }
 	}
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.Duplicate"/>
 	/// </summary>
 	[Fact]
-    public void Duplicate()
+    public async Task Duplicate()
     {
-		throw new NotImplementedException();
+        // No selection
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            // Duplicate with the default Cursor position. This should duplicate the
+            // first row, including its line endings.
+            await TextEditorCommandDefaultFacts.Duplicate.CommandFunc.Invoke(textEditorCommandArgs);
+
+            var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(outModel);
+            var outText = outModel!.GetAllText();
+            Assert.Equal("Hello World!\n" + TestConstants.SOURCE_TEXT, outText);
+        }
+
+        // With selection
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(9);
+                    primaryCursorModifier.SelectionAnchorPositionIndex = 15;
+                    primaryCursorModifier.SelectionEndingPositionIndex = 22;
+
+                    return Task.CompletedTask;
+                });
+
+            // Duplicate with the text selected.
+            // This should duplicate the text 'Pillows' on the second row.
+            await TextEditorCommandDefaultFacts.Duplicate.CommandFunc.Invoke(textEditorCommandArgs);
+
+            var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(outModel);
+            var outText = outModel!.GetAllText();
+            Assert.Equal(TestConstants.SOURCE_TEXT.Insert(22, "Pillows"), outText);
+        }
 	}
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.IndentMore"/>
 	/// </summary>
 	[Fact]
-    public void IndentMore()
+    public async Task IndentMore()
     {
-		throw new NotImplementedException();
-	}
+        // Invoke IndentMore on 1 row, by selecting a single character,
+        // where the character is NOT at the start or end of the row
+        //
+        // Reasoning: In Luthetus.Ide, this should IndentMore the line on which the selection lies.
+        //            This behavior is not universal however.
+        //            In Visual Studio this will delete the user's selected text, and
+        //            then insert a single tab character.
+        //            
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(3);
+                    primaryCursorModifier.SelectionAnchorPositionIndex = 15;
+                    primaryCursorModifier.SelectionEndingPositionIndex = 16;
+
+                    // Assert that the text selected, is what was planned
+                    {
+                        var selectedText = TextEditorSelectionHelper.GetSelectedText(
+                            primaryCursorModifier,
+                            modelModifier);
+
+                        Assert.Equal("P", selectedText);
+                    }
+
+                    return Task.CompletedTask;
+                });
+
+            await TextEditorCommandDefaultFacts.IndentMore.CommandFunc.Invoke(textEditorCommandArgs);
+
+            // Assert that the row(s) were indented: "7 Pillows\n" -> "\t7 Pillows\n"
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+
+                var textOnRow = new string(outModel!
+                    .GetRows(1, 1)
+                    .Single()
+                    .Select(x => x.Value)
+                    .ToArray());
+
+                Assert.Equal("\t7 Pillows\n", textOnRow);
+            }
+
+            // Assert that the viewModel's cursor was moved properly (including its selection)
+            {
+                var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+                Assert.NotNull(outViewModel);
+                var primaryCursor = outViewModel!.PrimaryCursor;
+
+                // The row index should be unchanged
+                Assert.Equal(1, primaryCursor.RowIndex);
+
+                Assert.Equal(4, primaryCursor.ColumnIndex);
+                // Assert column and preferred indices to ensure both were set,
+                // as opposed to only ColumnIndex and forgetting to also change PreferredColumnIndex.
+                Assert.Equal(primaryCursor.ColumnIndex, primaryCursor.PreferredColumnIndex);
+
+                // Due to the insertion of a '\t' character, the selection should move 1 character further
+                Assert.Equal(16, primaryCursor.Selection.AnchorPositionIndex);
+                Assert.Equal(17, primaryCursor.Selection.EndingPositionIndex);
+            }
+        }
+
+        // Invoke IndentMore on 1 row, by selecting the entire row, including its line ending.
+        //
+        // Reasoning: This should IndentMore a single row.
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(0);
+                    primaryCursorModifier.SelectionAnchorPositionIndex = 13;
+                    primaryCursorModifier.SelectionEndingPositionIndex = 23;
+
+                    // Assert that the text selected, is what was planned
+                    {
+                        var selectedText = TextEditorSelectionHelper.GetSelectedText(
+                            primaryCursorModifier,
+                            modelModifier);
+
+                        Assert.Equal("7 Pillows\n", selectedText);
+                    }
+
+                    return Task.CompletedTask;
+                });
+
+            await TextEditorCommandDefaultFacts.IndentMore.CommandFunc.Invoke(textEditorCommandArgs);
+
+            // Assert that the row(s) were indented: "7 Pillows\n" -> "\t7 Pillows\n"
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+
+                var textOnRow = new string(outModel!
+                    .GetRows(1, 1)
+                    .Single()
+                    .Select(x => x.Value)
+                    .ToArray());
+
+                Assert.Equal("\t7 Pillows\n", textOnRow);
+            }
+
+            // Assert that the viewModel's cursor was moved properly (including its selection)
+            {
+                var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+                Assert.NotNull(outViewModel);
+                var primaryCursor = outViewModel!.PrimaryCursor;
+
+                // The row index should be unchanged
+                Assert.Equal(1, primaryCursor.RowIndex);
+
+                Assert.Equal(1, primaryCursor.ColumnIndex);
+                // Assert column and preferred indices to ensure both were set,
+                // as opposed to only ColumnIndex and forgetting to also change PreferredColumnIndex.
+                Assert.Equal(primaryCursor.ColumnIndex, primaryCursor.PreferredColumnIndex);
+
+                // Due to the insertion of a '\t' character, the selection should move 1 character further
+                Assert.Equal(14, primaryCursor.Selection.AnchorPositionIndex);
+                Assert.Equal(24, primaryCursor.Selection.EndingPositionIndex);
+            }
+        }
+
+        // Invoke IndentMore on 2 rows, by selecting the entirety of one row (including its line ending),
+        // and some but NOT all of another row.
+        //
+        // Reasoning: This should IndentMore a 2 rows.
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    primaryCursorModifier.RowIndex = 0;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(0);
+                    primaryCursorModifier.SelectionAnchorPositionIndex = 0;
+                    primaryCursorModifier.SelectionEndingPositionIndex = 16;
+
+                    // Assert that the text selected, is what was planned
+                    {
+                        var selectedText = TextEditorSelectionHelper.GetSelectedText(
+                            primaryCursorModifier,
+                            modelModifier);
+
+                        Assert.Equal("Hello World!\n7 P", selectedText);
+                    }
+
+                    return Task.CompletedTask;
+                });
+
+            await TextEditorCommandDefaultFacts.IndentMore.CommandFunc.Invoke(textEditorCommandArgs);
+
+            // Assert that the row(s) were indented:
+            //     "Hello World!\n7 Pillows\n" -> "\tHello World!\n\t7 Pillows\n"
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+
+                var textOnRow = string.Join(string.Empty, outModel!
+                    .GetRows(0, 2)
+                    .SelectMany(x => new string(x.Select(y => y.Value).ToArray()))
+                    .ToArray());
+
+                Assert.Equal("\tHello World!\n\t7 Pillows\n", textOnRow);
+            }
+
+            // Assert that the viewModel's cursor was moved properly (including its selection)
+            {
+                var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+                Assert.NotNull(outViewModel);
+                var primaryCursor = outViewModel!.PrimaryCursor;
+
+                // The row index should be unchanged
+                Assert.Equal(0, primaryCursor.RowIndex);
+
+                Assert.Equal(1, primaryCursor.ColumnIndex);
+                // Assert column and preferred indices to ensure both were set,
+                // as opposed to only ColumnIndex and forgetting to also change PreferredColumnIndex.
+                Assert.Equal(primaryCursor.ColumnIndex, primaryCursor.PreferredColumnIndex);
+
+                // Due to the insertion of a '\t' character, the selection should move 1 character further
+                Assert.Equal(1, primaryCursor.Selection.AnchorPositionIndex);
+                Assert.Equal(18, primaryCursor.Selection.EndingPositionIndex);
+            }
+        }
+
+        // Invoke IndentMore on 2 rows, by selecting the entirety of one row (including its line ending),
+        // and the entirety of another row (including its line ending).
+        //
+        // Reasoning: This should IndentMore a 2 rows.
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    primaryCursorModifier.RowIndex = 0;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(0);
+                    primaryCursorModifier.SelectionAnchorPositionIndex = 0;
+                    primaryCursorModifier.SelectionEndingPositionIndex = 23;
+
+                    // Assert that the text selected, is what was planned
+                    {
+                        var selectedText = TextEditorSelectionHelper.GetSelectedText(
+                            primaryCursorModifier,
+                            modelModifier);
+
+                        Assert.Equal("Hello World!\n7 Pillows\n", selectedText);
+                    }
+
+                    return Task.CompletedTask;
+                });
+
+            await TextEditorCommandDefaultFacts.IndentMore.CommandFunc.Invoke(textEditorCommandArgs);
+
+            // Assert that the row(s) were indented:
+            //     "Hello World!\n7 Pillows\n" -> "\tHello World!\n\t7 Pillows\n"
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+
+                var textOnRow = string.Join(string.Empty, outModel!
+                    .GetRows(0, 2)
+                    .SelectMany(x => new string(x.Select(y => y.Value).ToArray()))
+                    .ToArray());
+
+                Assert.Equal("\tHello World!\n\t7 Pillows\n", textOnRow);
+            }
+
+            // Assert that the viewModel's cursor was moved properly (including its selection)
+            {
+                var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+                Assert.NotNull(outViewModel);
+                var primaryCursor = outViewModel!.PrimaryCursor;
+
+                // The row index should be unchanged
+                Assert.Equal(0, primaryCursor.RowIndex);
+
+                Assert.Equal(1, primaryCursor.ColumnIndex);
+                // Assert column and preferred indices to ensure both were set,
+                // as opposed to only ColumnIndex and forgetting to also change PreferredColumnIndex.
+                Assert.Equal(primaryCursor.ColumnIndex, primaryCursor.PreferredColumnIndex);
+
+                // Due to the insertion of a '\t' character, the selection should move 1 character further
+                Assert.Equal(1, primaryCursor.Selection.AnchorPositionIndex);
+                Assert.Equal(25, primaryCursor.Selection.EndingPositionIndex);
+            }
+        }
+
+        // Invoke IndentMore without a selection.
+        //
+        // Reasoning: This should NOT IndentMore.
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.IndentMore.CommandFunc.Invoke(textEditorCommandArgs);
+
+            // Assert that the row(s) were NOT indented
+            {
+                var inText = inModel.GetAllText();
+
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+                var outText = outModel!.GetAllText();
+
+                Assert.Equal(inText, outText);
+            }
+
+            // Assert that the viewModel's cursor was moved properly (including its selection)
+            {
+                var inPrimaryCursor = inViewModel.PrimaryCursor;
+
+                var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+                Assert.NotNull(outViewModel);
+                var outPrimaryCursor = outViewModel!.PrimaryCursor;
+
+                Assert.True(inPrimaryCursor == outPrimaryCursor);
+            }
+        }
+    }
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.IndentLess"/>
 	/// </summary>
 	[Fact]
-    public void IndentLess()
+    public async Task IndentLess()
     {
-		throw new NotImplementedException();
-	}
+        // Invoke IndexLess on a single line of which the line has one tab character at the start.
+        // Only select a single character.
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
 
-	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.ClearTextSelection"/>
-	/// </summary>
-	[Fact]
-    public void ClearTextSelection()
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    // Insert a tab character at the start of the row under testing
+                    {
+                        var cursor = new TextEditorCursor(1, 0, true);
+                        var cursorModifier = new TextEditorCursorModifier(cursor);
+
+                        var insertionCursorModifierBag = new TextEditorCursorModifierBag(
+                            Key<TextEditorViewModel>.Empty,
+                            new List<TextEditorCursorModifier> { cursorModifier });
+
+                        textEditorService.ModelApi
+                            .InsertTextUnsafeFactory(
+                                modelModifier.ResourceUri,
+                                insertionCursorModifierBag,
+                                "\t",
+                                CancellationToken.None)
+                            .Invoke(editContext);
+
+                        var rowText = new string(
+                            modelModifier.GetRows(1, 1).Single().Select(x => x.Value).ToArray());
+
+                        Assert.Equal("\t7 Pillows\n", rowText);
+                    }
+
+                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(4);
+                    primaryCursorModifier.SelectionAnchorPositionIndex = 16;
+                    primaryCursorModifier.SelectionEndingPositionIndex = 17;
+
+                    // Assert that the text selected, is what was planned
+                    {
+                        var selectedText = TextEditorSelectionHelper.GetSelectedText(
+                            primaryCursorModifier,
+                            modelModifier);
+
+                        Assert.Equal("P", selectedText);
+                    }
+
+                    return Task.CompletedTask;
+                });
+
+            await TextEditorCommandDefaultFacts.IndentLess.CommandFunc.Invoke(textEditorCommandArgs);
+
+            var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(outModel);
+
+            var rowText = new string(
+                outModel!.GetRows(1, 1).Single().Select(x => x.Value).ToArray());
+            
+            Assert.Equal("7 Pillows\n", rowText);
+        }
+
+        // Invoke IndexLess on a single line, of which the line has 4 space characters at the start.
+        // Only select a single character.
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    // Insert a tab character at the start of the row under testing
+                    {
+                        var cursor = new TextEditorCursor(1, 0, true);
+                        var cursorModifier = new TextEditorCursorModifier(cursor);
+
+                        var insertionCursorModifierBag = new TextEditorCursorModifierBag(
+                            Key<TextEditorViewModel>.Empty,
+                            new List<TextEditorCursorModifier> { cursorModifier });
+
+                        textEditorService.ModelApi
+                            .InsertTextUnsafeFactory(
+                                modelModifier.ResourceUri,
+                                insertionCursorModifierBag,
+                                "    ",
+                                CancellationToken.None)
+                            .Invoke(editContext);
+
+                        var rowText = new string(
+                            modelModifier.GetRows(1, 1).Single().Select(x => x.Value).ToArray());
+
+                        Assert.Equal("    7 Pillows\n", rowText);
+                    }
+
+                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(7);
+                    primaryCursorModifier.SelectionAnchorPositionIndex = 19;
+                    primaryCursorModifier.SelectionEndingPositionIndex = 20;
+
+                    // Assert that the text selected, is what was planned
+                    {
+                        var selectedText = TextEditorSelectionHelper.GetSelectedText(
+                            primaryCursorModifier,
+                            modelModifier);
+
+                        Assert.Equal("P", selectedText);
+                    }
+
+                    return Task.CompletedTask;
+                });
+
+            await TextEditorCommandDefaultFacts.IndentLess.CommandFunc.Invoke(textEditorCommandArgs);
+
+            var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(outModel);
+
+            var rowText = new string(
+                outModel!.GetRows(1, 1).Single().Select(x => x.Value).ToArray());
+
+            Assert.Equal("7 Pillows\n", rowText);
+        }
+
+        // Invoke IndexLess on a single line of which the line has one tab character at the start.
+        // Select the entire line, including the line ending
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    // Insert a tab character at the start of the row under testing
+                    {
+                        var cursor = new TextEditorCursor(1, 0, true);
+                        var cursorModifier = new TextEditorCursorModifier(cursor);
+
+                        var insertionCursorModifierBag = new TextEditorCursorModifierBag(
+                            Key<TextEditorViewModel>.Empty,
+                            new List<TextEditorCursorModifier> { cursorModifier });
+
+                        textEditorService.ModelApi
+                            .InsertTextUnsafeFactory(
+                                modelModifier.ResourceUri,
+                                insertionCursorModifierBag,
+                                "\t",
+                                CancellationToken.None)
+                            .Invoke(editContext);
+
+                        var rowText = new string(
+                            modelModifier.GetRows(1, 1).Single().Select(x => x.Value).ToArray());
+
+                        Assert.Equal("\t7 Pillows\n", rowText);
+                    }
+
+                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(0);
+                    primaryCursorModifier.SelectionAnchorPositionIndex = 13;
+                    primaryCursorModifier.SelectionEndingPositionIndex = 24;
+
+                    // Assert that the text selected, is what was planned
+                    {
+                        var selectedText = TextEditorSelectionHelper.GetSelectedText(
+                            primaryCursorModifier,
+                            modelModifier);
+
+                        Assert.Equal("\t7 Pillows\n", selectedText);
+                    }
+
+                    return Task.CompletedTask;
+                });
+
+            await TextEditorCommandDefaultFacts.IndentLess.CommandFunc.Invoke(textEditorCommandArgs);
+
+            var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(outModel);
+
+            var rowText = new string(
+                outModel!.GetRows(1, 1).Single().Select(x => x.Value).ToArray());
+
+            Assert.Equal("7 Pillows\n", rowText);
+        }
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorCommandDefaultFacts.ClearTextSelection"/>
+    /// </summary>
+    [Fact]
+    public async Task ClearTextSelection()
     {
-		throw new NotImplementedException();
+        // No already existing selection
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            var refViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+            Assert.NotNull(refViewModel);
+            Assert.Null(refViewModel!.PrimaryCursor.Selection.AnchorPositionIndex);
+            Assert.False(TextEditorSelectionHelper.HasSelectedText(refViewModel!.PrimaryCursor.Selection));
+
+            await TextEditorCommandDefaultFacts.ClearTextSelection.CommandFunc.Invoke(textEditorCommandArgs);
+
+            var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+            Assert.NotNull(outViewModel);
+            Assert.Null(outViewModel!.PrimaryCursor.Selection.AnchorPositionIndex);
+            Assert.False(TextEditorSelectionHelper.HasSelectedText(outViewModel!.PrimaryCursor.Selection));
+        }
+
+        // With an already existing selection
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    // Select the "Hello" text on the first row
+                    {
+                        primaryCursorModifier.SelectionAnchorPositionIndex = 0;
+                        primaryCursorModifier.SelectionEndingPositionIndex = 5;
+                    }
+
+                    // SetColumnIndexAndPreferred is unnecessary, but the user is likely
+                    // to have their ColumnIndex == SelectionEndingPositionIndex
+                    primaryCursorModifier.SetColumnIndexAndPreferred(
+                        primaryCursorModifier.SelectionEndingPositionIndex);
+
+                    return Task.CompletedTask;
+                });
+
+            var refViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+            Assert.NotNull(refViewModel);
+            Assert.NotNull(refViewModel!.PrimaryCursor.Selection.AnchorPositionIndex);
+            Assert.True(TextEditorSelectionHelper.HasSelectedText(refViewModel!.PrimaryCursor.Selection));
+
+            await TextEditorCommandDefaultFacts.ClearTextSelection.CommandFunc.Invoke(textEditorCommandArgs);
+
+            var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+            Assert.NotNull(outViewModel);
+            Assert.Null(outViewModel!.PrimaryCursor.Selection.AnchorPositionIndex);
+            Assert.False(TextEditorSelectionHelper.HasSelectedText(outViewModel!.PrimaryCursor.Selection));
+        }
 	}
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.NewLineBelow"/>
 	/// </summary>
 	[Fact]
-    public void NewLineBelow()
+    public async Task NewLineBelow()
     {
-		throw new NotImplementedException();
-	}
+        // RowIndex == 0 && ColumnIndex == 0
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // RowIndex is firstRow
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // RowIndex is not firstRow, nor lastRow
+        {
+
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // RowIndex is lastRow
+        {
+
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+        
+        // RowIndex == document.RowCount
+        //
+        // That is to say, the final character in the document is a line ending.
+        // Because a cursor can go 1 character further than the document's length,
+        // what happens here?
+        {
+
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // Cursor exists at the start of a row
+        // (Note: the cursor is at a column index of 0)
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // Cursor exists at neither the start of a row, nor the end of a row
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // Cursor exists at the end of a row
+        // (Note: the cursor is immediately before a line ending)
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+    }
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.NewLineAbove"/>
 	/// </summary>
 	[Fact]
-    public void NewLineAbove()
+    public async Task NewLineAbove()
     {
-		throw new NotImplementedException();
+        // RowIndex == 0 && ColumnIndex == 0
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // RowIndex is firstRow
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // RowIndex is not firstRow, nor lastRow
+        {
+
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // RowIndex is lastRow
+        {
+
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // RowIndex == document.RowCount
+        //
+        // That is to say, the final character in the document is a line ending.
+        // Because a cursor can go 1 character further than the document's length,
+        // what happens here?
+        {
+
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // Cursor exists at the start of a row
+        // (Note: the cursor is at a column index of 0)
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // Cursor exists at neither the start of a row, nor the end of a row
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // Cursor exists at the end of a row
+        // (Note: the cursor is immediately before a line ending)
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
 	}
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.GoToMatchingCharacterFactory(bool)"/>
 	/// </summary>
 	[Fact]
-	public void GoToMatchingCharacterFactory()
+	public async Task GoToMatchingCharacterFactory()
 	{
 		throw new NotImplementedException();
 	}
@@ -211,26 +1551,177 @@ public class TextEditorCommandDefaultFactsTests
 	/// <see cref="TextEditorCommandDefaultFacts.GoToDefinition"/>
 	/// </summary>
 	[Fact]
-    public void GoToDefinition()
+    public async Task GoToDefinition()
     {
 		throw new NotImplementedException();
 	}
 
-	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.ShowFindDialog"/>
-	/// </summary>
-	[Fact]
-    public void ShowFindDialog()
+    /// <summary>
+    /// <see cref="TextEditorCommandDefaultFacts.ShowFindDialog"/>
+    /// </summary>
+    [Fact]
+    public async Task ShowFindDialog()
     {
-		throw new NotImplementedException();
-	}
+        throw new NotImplementedException();
+    }
 
-	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.ShowTooltipByCursorPosition"/>
+    /// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.Remeasure"/>
 	/// </summary>
 	[Fact]
-    public void ShowTooltipByCursorPosition()
+    public async Task Remeasure()
     {
-		throw new NotImplementedException();
-	}
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorCommandDefaultFacts.ShowTooltipByCursorPosition"/>
+    /// </summary>
+    [Fact]
+    public async Task ShowTooltipByCursorPosition()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.ScrollLineDown"/>
+	/// </summary>
+	[Fact]
+    public async Task ScrollLineDown()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorCommandDefaultFacts.ScrollLineUp"/>
+    /// </summary>
+    [Fact]
+    public async Task ScrollLineUp()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorCommandDefaultFacts.ScrollPageDown"/>
+    /// </summary>
+    [Fact]
+    public async Task ScrollPageDown()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorCommandDefaultFacts.ScrollPageUp"/>
+    /// </summary>
+    [Fact]
+    public async Task ScrollPageUp()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorCommandDefaultFacts.CursorMovePageBottom"/>
+    /// </summary>
+    [Fact]
+    public async Task CursorMovePageBottom()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorCommandDefaultFacts.CursorMovePageTop"/>
+    /// </summary>
+    [Fact]
+    public async Task CursorMovePageTop()
+    {
+        throw new NotImplementedException();
+    }
+
+    private static void InitializeTextEditorCommandDefaultFactsTests(
+        out ITextEditorService textEditorService,
+        out TextEditorModel model,
+        out TextEditorViewModel viewModel,
+        out TextEditorCommandArgs textEditorCommandArgs,
+        out IServiceProvider serviceProvider)
+    {
+        var services = new ServiceCollection()
+            .AddSingleton<LuthetusCommonOptions>()
+            .AddSingleton<LuthetusTextEditorOptions>()
+            .AddScoped<IStorageService, DoNothingStorageService>()
+            .AddScoped<IJSRuntime, TextEditorTestingJsRuntime>()
+            .AddScoped<StorageSync>()
+            .AddScoped<IBackgroundTaskService>(_ => new BackgroundTaskServiceSynchronous())
+            .AddScoped<ITextEditorRegistryWrap, TextEditorRegistryWrap>()
+            .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistryDefault>()
+            .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistryDefault>()
+            .AddScoped<ITextEditorService, TextEditorService>()
+            .AddScoped<IClipboardService, InMemoryClipboardService>()
+            .AddFluxor(options => options.ScanAssemblies(
+                typeof(LuthetusCommonOptions).Assembly,
+                typeof(LuthetusTextEditorOptions).Assembly));
+
+        serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        var backgroundTaskService = serviceProvider.GetRequiredService<IBackgroundTaskService>();
+
+        var continuousQueue = new BackgroundTaskQueue(
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            ContinuousBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
+
+        backgroundTaskService.RegisterQueue(continuousQueue);
+
+        var blockingQueue = new BackgroundTaskQueue(
+            BlockingBackgroundTaskWorker.GetQueueKey(),
+            BlockingBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
+
+        backgroundTaskService.RegisterQueue(blockingQueue);
+
+        var textEditorRegistryWrap = serviceProvider.GetRequiredService<ITextEditorRegistryWrap>();
+
+        textEditorRegistryWrap.DecorationMapperRegistry = serviceProvider
+            .GetRequiredService<IDecorationMapperRegistry>();
+
+        textEditorRegistryWrap.CompilerServiceRegistry = serviceProvider
+            .GetRequiredService<ICompilerServiceRegistry>();
+
+        textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
+
+		model = new TextEditorModel(
+            new ResourceUri($"/{nameof(InitializeTextEditorCommandDefaultFactsTests)}.txt"),
+            DateTime.UtcNow,
+            ExtensionNoPeriodFacts.TXT,
+            TestConstants.SOURCE_TEXT,
+            null,
+            null);
+
+        textEditorService.ModelApi.RegisterCustom(model);
+
+        model = textEditorService.ModelApi.GetOrDefault(model.ResourceUri)
+           ?? throw new ArgumentNullException();
+
+        var viewModelKey = Key<TextEditorViewModel>.NewKey();
+
+        textEditorService.ViewModelApi.Register(
+            viewModelKey,
+            model.ResourceUri);
+
+        viewModel = textEditorService.ViewModelApi.GetOrDefault(viewModelKey)
+           ?? throw new ArgumentNullException();
+
+        textEditorCommandArgs = new TextEditorCommandArgs(
+            model.ResourceUri,
+            viewModel.ViewModelKey,
+            false,
+            serviceProvider.GetRequiredService<IClipboardService>(),
+            textEditorService,
+            (MouseEventArgs m) => Task.CompletedTask,
+            serviceProvider.GetRequiredService<IJSRuntime>(),
+            serviceProvider.GetRequiredService<IDispatcher>(),
+            (ResourceUri resourceUri) => { },
+            (ResourceUri resourceUri) => { },
+            (Key<TextEditorViewModel> viewModelKey) => { });
+    }
 }

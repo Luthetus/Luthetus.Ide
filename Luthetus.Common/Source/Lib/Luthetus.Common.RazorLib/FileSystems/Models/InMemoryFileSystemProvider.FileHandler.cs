@@ -237,7 +237,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
 
             // Ensure Parent Directories Exist
             {
-                var parentDirectoryBag = absolutePathString
+                var parentDirectoryList = absolutePathString
                     .Split("/")
                     // The root directory splits into string.Empty
                     .Skip(1)
@@ -247,9 +247,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
 
                 var directoryPathBuilder = new StringBuilder("/");
 
-                for (int i = 0; i < parentDirectoryBag.Length; i++)
+                for (int i = 0; i < parentDirectoryList.Length; i++)
                 {
-                    directoryPathBuilder.Append(parentDirectoryBag[i]);
+                    directoryPathBuilder.Append(parentDirectoryList[i]);
                     directoryPathBuilder.Append("/");
 
                     _inMemoryFileSystemProvider._directory.UnsafeCreateDirectoryAsync(

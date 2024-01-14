@@ -14,20 +14,18 @@ public record VimMotionResult(
 {
     public static async Task<VimMotionResult> GetResultAsync(
         ITextEditorModel model,
-        TextEditorViewModel viewModel,
-        TextEditorCommandArgs commandArgs,
-        TextEditorCursor textEditorCursorForMotion,
+        TextEditorCursorModifier cursorModifier,
         Func<Task> motionCommand)
     {
-        await motionCommand.Invoke();
-
-        var beforeMotionCursor = textEditorCursorForMotion;
+        var beforeMotionCursor = cursorModifier.ToCursor();
 
         var beforeMotionPositionIndex = model.GetPositionIndex(
             beforeMotionCursor.RowIndex,
             beforeMotionCursor.ColumnIndex);
 
-        var afterMotionCursor = textEditorCursorForMotion;
+        await motionCommand.Invoke();
+
+        var afterMotionCursor = cursorModifier.ToCursor();
 
         var afterMotionPositionIndex = model.GetPositionIndex(
             afterMotionCursor.RowIndex,

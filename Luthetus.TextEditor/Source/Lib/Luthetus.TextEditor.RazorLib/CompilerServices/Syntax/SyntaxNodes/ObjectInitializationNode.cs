@@ -11,7 +11,7 @@ public sealed record ObjectInitializationNode : ISyntaxNode
         OpenBraceToken = openBraceToken;
         CloseBraceToken = closeBraceToken;
 
-        ChildBag = new ISyntax[]
+        ChildList = new ISyntax[]
         {
             OpenBraceToken,
             CloseBraceToken,
@@ -21,7 +21,7 @@ public sealed record ObjectInitializationNode : ISyntaxNode
     public OpenBraceToken OpenBraceToken { get; }
     public CloseBraceToken CloseBraceToken { get; }
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+    public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationNode;

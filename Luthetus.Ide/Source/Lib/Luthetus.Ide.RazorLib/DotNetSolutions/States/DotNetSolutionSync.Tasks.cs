@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using static Luthetus.Ide.RazorLib.DotNetSolutions.States.DotNetSolutionState;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
@@ -23,7 +23,7 @@ public partial class DotNetSolutionSync
         IAbsolutePath cSharpProjectAbsolutePath,
         IEnvironmentProvider environmentProvider)
     {
-        var inDotNetSolutionModel = _dotNetSolutionStateWrap.Value.DotNetSolutionsBag.FirstOrDefault(
+        var inDotNetSolutionModel = _dotNetSolutionStateWrap.Value.DotNetSolutionsList.FirstOrDefault(
             x => x.Key == dotNetSolutionModelKey);
 
         if (inDotNetSolutionModel is null)
@@ -107,7 +107,7 @@ public partial class DotNetSolutionSync
 
         var compilationUnit = parser.Parse();
 
-        foreach (var project in parser.DotNetProjectBag)
+        foreach (var project in parser.DotNetProjectList)
         {
             var relativePathFromSolutionFileString = project.RelativePathFromSolutionFileString;
             
@@ -124,16 +124,16 @@ public partial class DotNetSolutionSync
             project.AbsolutePath = new AbsolutePath(absolutePathString, false, _environmentProvider);
         }
 
-        var solutionFolderBag = parser.DotNetProjectBag
+        var solutionFolderList = parser.DotNetProjectList
             .Where(x => x.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
             .Select(x => (SolutionFolder)x).ToImmutableArray();
 
         var dotNetSolutionModel = new DotNetSolutionModel(
             solutionAbsolutePath,
             parser.DotNetSolutionHeader,
-            parser.DotNetProjectBag.ToImmutableArray(),
-            solutionFolderBag,
-            parser.NestedProjectEntryBag.ToImmutableArray(),
+            parser.DotNetProjectList.ToImmutableArray(),
+            solutionFolderList,
+            parser.NestedProjectEntryList.ToImmutableArray(),
             parser.DotNetSolutionGlobal,
             content);
 
@@ -164,7 +164,7 @@ public partial class DotNetSolutionSync
     {
         var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
 
-        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionsBag.FirstOrDefault(
+        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionsList.FirstOrDefault(
             x => x.Key == dotNetSolutionModelKey);
 
         if (dotNetSolutionModel is null)
@@ -179,7 +179,7 @@ public partial class DotNetSolutionSync
             true,
             true);
 
-        await rootNode.LoadChildBagAsync();
+        await rootNode.LoadChildListAsync();
 
         if (!_treeViewService.TryGetTreeViewContainer(TreeViewSolutionExplorerStateKey, out _))
         {
@@ -191,7 +191,12 @@ public partial class DotNetSolutionSync
         else
         {
             _treeViewService.SetRoot(TreeViewSolutionExplorerStateKey, rootNode);
-            _treeViewService.SetActiveNode(TreeViewSolutionExplorerStateKey, rootNode);
+
+            _treeViewService.SetActiveNode(
+				TreeViewSolutionExplorerStateKey,
+				rootNode,
+				true,
+				false);
         }
 
         if (dotNetSolutionModel is null)

@@ -1,51 +1,164 @@
-﻿@using Fluxor.Blazor.Web.Components;
+@using Fluxor.Blazor.Web.Components;
+@using Luthetus.Common.RazorLib.Keys.Models;
+@using Luthetus.Common.RazorLib.Tabs.Displays
+@using Luthetus.Common.RazorLib.Tabs.Models;
+@using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
 
 @inherits FluxorComponent
 
-@{ var searchEngineState = TextEditorSearchEngineStateWrap.Value; }
+@{
+    var searchEngineState = TextEditorSearchEngineStateWrap.Value;
+    var tabGroup = TabStateGroupSelection.Value;
+}
 
 <div class="luth_te_find">
-    <div class="luth_te_find-tabs">
-        @foreach (var searchEngine in searchEngineState.SearchEngineBag)
-        {
-            <SearchEngineTabDisplay SearchEngine="searchEngine"
-                                    IsActive="searchEngine.SearchEngineKey == searchEngineState.ActiveSearchEngineKey" />
-        }
-    </div>
-    
     <div class="luth_te_find-body">
 
-        SearchQuery:&nbsp;
-
-        <input class="luth_input"
-               @bind="SearchQuery"
-               @bind:event="oninput"/>
-
-        <button class="luth_button"
-                @onclick="() => DoSearchOnClickAsync(searchEngineState)">
-            Do Search
-        </button>
-
-        @{ var activeSearchEngine = searchEngineState.GetActiveSearchEngineOrDefault(); }
-
-        @if (activeSearchEngine is null)
+        @if (tabGroup is null)
         {
-            @: null active find provider
+            <div>@nameof(tabGroup) is null</div>
         }
         else
         {
-            @: @activeSearchEngine.DisplayName
-        }
+            var tabEntryNoType = tabGroup.GetActiveEntryNoType();
 
-        @if (_isSearching)
-        {
-            <IconLoading/>
-        }
-        else
-        {
-            <div>
-                Not Searching
-            </div>
+            if (tabEntryNoType is null)
+            {
+                <div>@nameof(tabEntryNoType) is null</div>
+            }
+            else
+            {
+                var tabEntryWithType = (TabEntryWithType<Key<ITextEditorSearchEngine>>)tabEntryNoType;
+                var activeSearchEngine = searchEngineState.SearchEngineList.FirstOrDefault(x => x.Key == tabEntryWithType.Item);
+
+                if (activeSearchEngine is null)
+                {
+                    <div>@nameof(activeSearchEngine) is null</div>
+                }
+                else
+                {
+                    <div class="luth_te_find-top-bottom-section">
+                        <div class="luth_te_find-top">
+                            <div class="luth_te_find-search-input">
+                                SearchQuery:&nbsp;
+
+                                <input class="luth_ide_input luth_ide_input-text"
+                                       placeholder="@nameof(SearchQuery)"
+                                       @bind="SearchQuery"
+                                       @bind:event="oninput" />
+                            </div>
+                            <div class="luth_te_find-vertical-list">
+                                <div class="luth_te_find-checkbox-input">
+                                    Match case:&nbsp;
+
+                                    <input type="checkbox" @bind="MatchCase" />
+                                </div>
+                                <div class="luth_te_find-checkbox-input">
+                                    Match whole word:&nbsp;
+
+                                    <input type="checkbox" @bind="MatchWholeWord" />
+                                </div>
+                                <div class="luth_te_find-checkbox-input">
+                                    Use regular expressions:&nbsp;
+
+                                    <input type="checkbox" @bind="UseRegularExpressions" />
+                                </div>
+                            </div>
+                            <div class="luth_te_find-left-right-section">
+                                <div class="luth_te_find-left">
+                                    Look in
+                                </div>
+                                <div class="luth_te_find-right">
+                                    <div class="luth_te_find-vertical-list">
+                                        <TabGroupDisplay TabGroupKey="SelectedSearchEngineTabGroupKey" />
+                                        <div class="luth_te_find-checkbox-input">
+                                            Include external items:&nbsp;
+
+                                            <input type="checkbox" @bind="IncludeExternalItems" />
+                                        </div>
+                                        <div class="luth_te_find-checkbox-input">
+                                            Include miscellaneous files:&nbsp;
+
+                                            <input type="checkbox" @bind="IncludeMiscellaneousFiles" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="luth_te_find-left-right-section">
+                                <div class="luth_te_find-left">
+                                    File types
+                                </div>
+                                <div class="luth_te_find-right">
+                                    <div class="luth_te_find-vertical-list">
+                                        <div class="luth_te_find-dropdown">
+                                            <select>
+                                                <option selected>!*\bin\*;!*\obj\*;!*\.*\*</option>
+                                                <option>Aaa</option>
+                                                <option>Bbb</option>
+                                                <option>Ccc</option>
+                                            </select>
+
+                                            <span>OR provide string</span>
+                                        </div>
+                                        <div class="luth_te_find-checkbox-input">
+                                            Append Results:&nbsp;
+
+                                            <input type="checkbox" @bind="AppendResults" />
+                                        </div>
+                                        <div class="luth_te_find-dropdown">
+                                            <select>
+                                                <option selected>New Window</option>
+                                                <option>Aaa</option>
+                                                <option>Bbb</option>
+                                                <option>Ccc</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="luth_te_find-bottom">
+                            <div class="luth_te_find-horizontal-list">
+                                <button class="luth_button">Find Previous</button>
+                                <button class="luth_button">Find Next</button>
+                                <button class="luth_button">Skip File</button>
+                            </div>
+
+                            <div class="luth_te_find-horizontal-list">
+                                <button class="luth_button"
+                                        @onclick="() => DoSearchOnClickAsync(searchEngineState, activeSearchEngine)">
+                                    Find All
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (activeSearchEngine is null)
+                    {
+                        @: null active find provider
+                    }
+                    else
+                    {
+                        @: @activeSearchEngine.DisplayName
+                    }
+
+                    @if (_isSearching)
+                    {
+                        <IconLoading />
+                    }
+                    else
+                    {
+                        <div>
+                            Not Searching
+                        </div>
+                    }
+
+                    @if (activeSearchEngine is SearchEngineFileSystem searchEngineFileSystem)
+                    {
+                        <SearchEngineFileSystemDisplay SearchEngineFileSystem="searchEngineFileSystem" />
+                    }
+                }
+            }
         }
     </div>
 </div>

@@ -263,7 +263,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     private void PerformNewFileAction(
         string fileName,
         IFileTemplate? exactMatchFileTemplate,
-        ImmutableArray<IFileTemplate> relatedMatchFileTemplatesBag,
+        ImmutableArray<IFileTemplate> relatedMatchFileTemplatesList,
         NamespacePath namespacePath,
         Func<Task> onAfterCompletion)
     {
@@ -288,7 +288,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 else
                 {
                     var allTemplates = new[] { exactMatchFileTemplate }
-                        .Union(relatedMatchFileTemplatesBag)
+                        .Union(relatedMatchFileTemplatesList)
                         .ToArray();
 
                     foreach (var fileTemplate in allTemplates)
@@ -478,7 +478,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         }
 
         var sourceAbsolutePathString = sourceAbsolutePath.Value;
-        var parentOfSource = sourceAbsolutePath.AncestorDirectoryBag.Last();
+        var parentOfSource = sourceAbsolutePath.AncestorDirectoryList.Last();
         var destinationAbsolutePathString = parentOfSource.Value + nextName;
 
         try

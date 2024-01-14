@@ -30,13 +30,13 @@ public class TabStateReducerTests
         var registerTabGroupAction = new TabState.RegisterTabGroupAction(tabGroup);
 
         Assert.DoesNotContain(
-            tabStateWrap.Value.TabGroupBag,
+            tabStateWrap.Value.TabGroupList,
             x => x.Key == tabGroup.Key);
 
         dispatcher.Dispatch(registerTabGroupAction);
 
         Assert.Contains(
-            tabStateWrap.Value.TabGroupBag,
+            tabStateWrap.Value.TabGroupList,
             x => x.Key == tabGroup.Key);
     }
 
@@ -59,22 +59,22 @@ public class TabStateReducerTests
         dispatcher.Dispatch(registerTabGroupAction);
 
         Assert.Contains(
-            tabStateWrap.Value.TabGroupBag,
+            tabStateWrap.Value.TabGroupList,
             x => x.Key == tabGroup.Key);
 
         var disposeTabGroupAction = new TabState.DisposeTabGroupAction(tabGroup.Key);
         dispatcher.Dispatch(disposeTabGroupAction);
 
         Assert.DoesNotContain(
-            tabStateWrap.Value.TabGroupBag,
+            tabStateWrap.Value.TabGroupList,
             x => x.Key == tabGroup.Key);
     }
 
     /// <summary>
-    /// <see cref="TabState.Reducer.ReduceSetTabEntryBagAction(TabState, TabState.SetTabEntryBagAction)"/>
+    /// <see cref="TabState.Reducer.ReduceSetTabEntryListAction(TabState, TabState.SetTabEntryListAction)"/>
     /// </summary>
     [Fact]
-    public void ReduceSetTabEntryBagAction()
+    public void ReduceSetTabEntryListAction()
     {
         InitializeTabStateReducerTests(
             out var dispatcher,
@@ -88,23 +88,23 @@ public class TabStateReducerTests
         var registerTabGroupAction = new TabState.RegisterTabGroupAction(tabGroup);
         dispatcher.Dispatch(registerTabGroupAction);
 
-        Assert.Contains(tabStateWrap.Value.TabGroupBag, x => x.Key == tabGroup.Key);
+        Assert.Contains(tabStateWrap.Value.TabGroupList, x => x.Key == tabGroup.Key);
 
-        dispatcher.Dispatch(new TabState.SetTabEntryBagAction(
+        dispatcher.Dispatch(new TabState.SetTabEntryListAction(
             tabGroup.Key,
             tabEntries));
 
-        tabGroup = tabStateWrap.Value.TabGroupBag.Single(x => x.Key == tabGroup.Key);
+        tabGroup = tabStateWrap.Value.TabGroupList.Single(x => x.Key == tabGroup.Key);
 
         var emptyTabEntries = ImmutableList<TabEntryNoType>.Empty;
-        Assert.NotEqual(emptyTabEntries, tabGroup.EntryBag);
+        Assert.NotEqual(emptyTabEntries, tabGroup.EntryList);
 
-        dispatcher.Dispatch(new TabState.SetTabEntryBagAction(
+        dispatcher.Dispatch(new TabState.SetTabEntryListAction(
             tabGroup.Key,
             emptyTabEntries));
 
-        tabGroup = tabStateWrap.Value.TabGroupBag.Single(x => x.Key == tabGroup.Key);
-        Assert.Equal(emptyTabEntries, tabGroup.EntryBag);
+        tabGroup = tabStateWrap.Value.TabGroupList.Single(x => x.Key == tabGroup.Key);
+        Assert.Equal(emptyTabEntries, tabGroup.EntryList);
     }
 
     /// <summary>
@@ -125,22 +125,22 @@ public class TabStateReducerTests
         var registerTabGroupAction = new TabState.RegisterTabGroupAction(tabGroup);
         dispatcher.Dispatch(registerTabGroupAction);
 
-        Assert.Contains(tabStateWrap.Value.TabGroupBag, x => x.Key == tabGroup.Key);
+        Assert.Contains(tabStateWrap.Value.TabGroupList, x => x.Key == tabGroup.Key);
 
-        dispatcher.Dispatch(new TabState.SetTabEntryBagAction(
+        dispatcher.Dispatch(new TabState.SetTabEntryListAction(
             tabGroup.Key,
             tabEntries));
 
-        tabGroup = tabStateWrap.Value.TabGroupBag.Single(x => x.Key == tabGroup.Key);
+        tabGroup = tabStateWrap.Value.TabGroupList.Single(x => x.Key == tabGroup.Key);
 
         var emptyTabEntries = ImmutableList<TabEntryNoType>.Empty;
-        Assert.NotEqual(emptyTabEntries, tabGroup.EntryBag);
+        Assert.NotEqual(emptyTabEntries, tabGroup.EntryList);
 
         dispatcher.Dispatch(new TabState.SetActiveTabEntryKeyAction(
             tabGroup.Key,
             blueTabEntry.TabEntryKey));
 
-        tabGroup = tabStateWrap.Value.TabGroupBag.Single(x => x.Key == tabGroup.Key);
+        tabGroup = tabStateWrap.Value.TabGroupList.Single(x => x.Key == tabGroup.Key);
         Assert.Equal(blueTabEntry.TabEntryKey, tabGroup.ActiveEntryKey);
     }
 

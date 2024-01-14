@@ -126,13 +126,13 @@ public class CSharpCompilerService : ICompilerService
         if (boundScope is null)
             return ImmutableArray<AutocompleteEntry>.Empty;
 
-        var autocompleteEntryBag = new List<AutocompleteEntry>();
+        var autocompleteEntryList = new List<AutocompleteEntry>();
 
         var targetScope = boundScope;
 
         while (targetScope is not null)
         {
-            autocompleteEntryBag.AddRange(
+            autocompleteEntryList.AddRange(
                 targetScope.VariableDeclarationMap.Keys.ToArray().Where(x => x.Contains(word, StringComparison.InvariantCulture))
                 .Select(x =>
                 {
@@ -141,7 +141,7 @@ public class CSharpCompilerService : ICompilerService
                         AutocompleteEntryKind.Variable);
                 }));
 
-            autocompleteEntryBag.AddRange(
+            autocompleteEntryList.AddRange(
                 targetScope.FunctionDefinitionMap.Keys.ToArray().Where(x => x.Contains(word, StringComparison.InvariantCulture))
                 .Select(x =>
                 {
@@ -150,7 +150,7 @@ public class CSharpCompilerService : ICompilerService
                         AutocompleteEntryKind.Function);
                 }));
 
-            autocompleteEntryBag.AddRange(
+            autocompleteEntryList.AddRange(
                 targetScope.TypeDefinitionMap.Keys.ToArray().Where(x => x.Contains(word, StringComparison.InvariantCulture))
                 .Select(x =>
                 {
@@ -162,7 +162,7 @@ public class CSharpCompilerService : ICompilerService
             targetScope = targetScope.Parent;
         }
 
-        return autocompleteEntryBag.ToImmutableArray();
+        return autocompleteEntryList.ToImmutableArray();
     }
 
     public void DisposeResource(ResourceUri resourceUri)
@@ -191,7 +191,7 @@ public class CSharpCompilerService : ICompilerService
                         CompilerServiceDiagnosticPresentationFacts.PresentationKey)
                     .Invoke(editContext);
 
-                var pendingCalculation = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
+                var pendingCalculation = modelModifier.PresentationModelsList.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
                     ?.PendingCalculation;
 
@@ -223,12 +223,12 @@ public class CSharpCompilerService : ICompilerService
 
                 ResourceParsed?.Invoke();
 
-                var presentationModel = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
+                var presentationModel = modelModifier.PresentationModelsList.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
                 if (presentationModel?.PendingCalculation is not null)
                 {
-                    presentationModel.PendingCalculation.TextEditorTextSpanBag =
+                    presentationModel.PendingCalculation.TextEditorTextSpanList =
                         GetDiagnosticsFor(modelModifier.ResourceUri)
                             .Select(x => x.TextSpan)
                             .ToImmutableArray();

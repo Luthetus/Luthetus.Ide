@@ -8,6 +8,10 @@ public static class SyntaxReader
     /// <summary>
     /// This method builds a string of all <see cref="ISyntaxToken"/>(s)
     /// which make up the given <see cref="ISyntax"/>.
+    /// <br/>
+    /// One can invoke <see cref="Lexes.Models.TextEditorTextSpan.GetText()"/> one by one
+    /// themselves by using a reference to an <see cref="ISyntaxToken"/>'s
+    /// <see cref="Lexes.Models.TextEditorTextSpan"/>
     /// </summary>
     public static string GetTextRecursively(this ISyntax syntax)
     {
@@ -15,7 +19,7 @@ public static class SyntaxReader
         {
             var textBuilder = new StringBuilder();
 
-            foreach (var child in node.ChildBag)
+            foreach (var child in node.ChildList)
             {
                 textBuilder.Append(child.GetTextRecursively());
             }

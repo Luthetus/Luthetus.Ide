@@ -16,7 +16,7 @@ public class AbsolutePathTests
     /// <see cref="AbsolutePath.PathType"/>
     /// <see cref="AbsolutePath.IsDirectory"/>
     /// <see cref="AbsolutePath.EnvironmentProvider"/>
-    /// <see cref="AbsolutePath.AncestorDirectoryBag"/>
+    /// <see cref="AbsolutePath.AncestorDirectoryList"/>
     /// <see cref="AbsolutePath.NameNoExtension"/>
     /// <see cref="AbsolutePath.ExtensionNoPeriod"/>
     /// <see cref="AbsolutePath.RootDrive"/>
@@ -49,7 +49,7 @@ public class AbsolutePathTests
                 Assert.Equal(PathType.AbsolutePath, dirAbsolutePath.PathType);
                 Assert.Equal(isDirectory, dirAbsolutePath.IsDirectory);
                 Assert.Equal(environmentProvider, dirAbsolutePath.EnvironmentProvider);
-                Assert.Single(dirAbsolutePath.AncestorDirectoryBag);
+                Assert.Single(dirAbsolutePath.AncestorDirectoryList);
                 Assert.Equal(dirName, dirAbsolutePath.NameNoExtension);
 
                 Assert.Equal(
@@ -86,7 +86,7 @@ public class AbsolutePathTests
                 Assert.Equal(PathType.AbsolutePath, fileAbsolutePath.PathType);
                 Assert.Equal(isDirectory, fileAbsolutePath.IsDirectory);
                 Assert.Equal(environmentProvider, fileAbsolutePath.EnvironmentProvider);
-                Assert.Equal(2, fileAbsolutePath.AncestorDirectoryBag.Count);
+                Assert.Equal(2, fileAbsolutePath.AncestorDirectoryList.Count);
                 Assert.Equal(fileName, fileAbsolutePath.NameNoExtension);
                 Assert.Equal(fileExtension, fileAbsolutePath.ExtensionNoPeriod);
                 Assert.Null(fileAbsolutePath.RootDrive);

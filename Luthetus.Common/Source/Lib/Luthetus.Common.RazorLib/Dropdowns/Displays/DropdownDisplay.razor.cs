@@ -29,7 +29,7 @@ public partial class DropdownDisplay : FluxorComponent
 
     private bool _disposed;
 
-    private bool ShouldDisplay => DropdownStateWrap.Value.ActiveKeyBag.Contains(DropdownKey);
+    private bool ShouldDisplay => DropdownStateWrap.Value.ActiveKeyList.Contains(DropdownKey);
 
     private string DropdownPositionKindStyleCss => DropdownPositionKind switch
     {
@@ -44,7 +44,7 @@ public partial class DropdownDisplay : FluxorComponent
     /// <see cref="OutOfBoundsClicks.Displays.OutOfBoundsClickDisplay"/>
     /// requires an <see cref="Action{MouseEventArgs}"/>
     /// </summary>
-    private void ClearActiveKeyBag(MouseEventArgs mouseEventArgs)
+    private void ClearActiveKeyList(MouseEventArgs mouseEventArgs)
     {
         Dispatcher.Dispatch(new DropdownState.ClearActivesAction());
     }

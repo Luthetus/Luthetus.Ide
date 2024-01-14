@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.States;
@@ -51,7 +51,7 @@ public class TreeViewService : ITreeViewService
 
     public bool TryGetTreeViewContainer(Key<TreeViewContainer> containerKey, out TreeViewContainer? container)
     {
-        container = TreeViewStateWrap.Value.ContainerBag.FirstOrDefault(
+        container = TreeViewStateWrap.Value.ContainerList.FirstOrDefault(
             x => x.Key == containerKey);
 
         return container is not null;
@@ -76,73 +76,79 @@ public class TreeViewService : ITreeViewService
         _dispatcher.Dispatch(addChildNodeAction);
     }
 
-    public void SetActiveNode(Key<TreeViewContainer> containerKey, TreeViewNoType? nextActiveNode)
+    public void SetActiveNode(
+		Key<TreeViewContainer> containerKey,
+		TreeViewNoType? nextActiveNode,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode)
     {
         var setActiveNodeAction = new TreeViewState.SetActiveNodeAction(
             containerKey,
-            nextActiveNode);
+            nextActiveNode,
+			addSelectedNodes,
+			selectNodesBetweenCurrentAndNextActiveNode);
 
         _dispatcher.Dispatch(setActiveNodeAction);
     }
 
-    public void AddSelectedNode(Key<TreeViewContainer> containerKey, TreeViewNoType nodeSelection)
+    public void MoveLeft(
+		Key<TreeViewContainer> containerKey,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode)
     {
-        var addSelectedNodeAction = new TreeViewState.AddSelectedNodeAction(
-            containerKey,
-            nodeSelection);
-
-        _dispatcher.Dispatch(addSelectedNodeAction);
-    }
-
-    public void RemoveSelectedNode(Key<TreeViewContainer> containerKey, Key<TreeViewNoType> nodeKey)
-    {
-        var removeSelectedNodeAction = new TreeViewState.RemoveSelectedNodeAction(
-            containerKey,
-            nodeKey);
-
-        _dispatcher.Dispatch(removeSelectedNodeAction);
-    }
-
-    public void ClearSelectedNodes(Key<TreeViewContainer> containerKey)
-    {
-        var clearSelectedNodeBagAction = new TreeViewState.ClearSelectedNodeBagAction(containerKey);
-        _dispatcher.Dispatch(clearSelectedNodeBagAction);
-    }
-
-    public void MoveLeft(Key<TreeViewContainer> containerKey, bool shiftKey)
-    {
-        var moveLeftAction = new TreeViewState.MoveLeftAction(containerKey, shiftKey);
+        var moveLeftAction = new TreeViewState.MoveLeftAction(
+			containerKey,
+			addSelectedNodes,
+			selectNodesBetweenCurrentAndNextActiveNode);
         _dispatcher.Dispatch(moveLeftAction);
     }
 
-    public void MoveDown(Key<TreeViewContainer> containerKey, bool shiftKey)
+    public void MoveDown(
+		Key<TreeViewContainer> containerKey,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode)
     {
-        var moveDownAction = new TreeViewState.MoveDownAction(containerKey, shiftKey);
+        var moveDownAction = new TreeViewState.MoveDownAction(
+			containerKey,
+			addSelectedNodes,
+			selectNodesBetweenCurrentAndNextActiveNode);
+
         _dispatcher.Dispatch(moveDownAction);
     }
 
-    public void MoveUp(Key<TreeViewContainer> containerKey, bool shiftKey)
+    public void MoveUp(
+		Key<TreeViewContainer> containerKey,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode)
     {
-        var moveUpAction = new TreeViewState.MoveUpAction(containerKey, shiftKey);
+        var moveUpAction = new TreeViewState.MoveUpAction(
+			containerKey,
+			addSelectedNodes,
+			selectNodesBetweenCurrentAndNextActiveNode);
+
         _dispatcher.Dispatch(moveUpAction);
     }
 
-    public void MoveRight(Key<TreeViewContainer> containerKey, bool shiftKey)
+    public void MoveRight(
+		Key<TreeViewContainer> containerKey,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode)
     {
         var moveRightAction = new TreeViewState.MoveRightAction(
             containerKey,
-            shiftKey,
+			addSelectedNodes,
+			selectNodesBetweenCurrentAndNextActiveNode,
             treeViewNoType =>
             {
                 var backgroundTask = new BackgroundTask(
                     Key<BackgroundTask>.NewKey(),
                     ContinuousBackgroundTaskWorker.GetQueueKey(),
-                    "TreeView.LoadChildBagAsync()",
+                    "TreeView.LoadChildListAsync()",
                     async () =>
                     {
                         try
                         {
-                            await treeViewNoType.LoadChildBagAsync().ConfigureAwait(false);
+                            await treeViewNoType.LoadChildListAsync().ConfigureAwait(false);
 
                             var reRenderNodeAction = new TreeViewState.ReRenderNodeAction(
                                 containerKey,
@@ -163,15 +169,29 @@ public class TreeViewService : ITreeViewService
         _dispatcher.Dispatch(moveRightAction);
     }
 
-    public void MoveHome(Key<TreeViewContainer> containerKey, bool shiftKey)
+    public void MoveHome(
+		Key<TreeViewContainer> containerKey,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode)
     {
-        var moveHomeAction = new TreeViewState.MoveHomeAction(containerKey, shiftKey);
+        var moveHomeAction = new TreeViewState.MoveHomeAction(
+			containerKey,
+			addSelectedNodes,
+			selectNodesBetweenCurrentAndNextActiveNode);
+
         _dispatcher.Dispatch(moveHomeAction);
     }
 
-    public void MoveEnd(Key<TreeViewContainer> containerKey, bool shiftKey)
+    public void MoveEnd(
+		Key<TreeViewContainer> containerKey,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode)
     {
-        var moveEndAction = new TreeViewState.MoveEndAction(containerKey, shiftKey);
+        var moveEndAction = new TreeViewState.MoveEndAction(
+			containerKey,
+			addSelectedNodes,
+			selectNodesBetweenCurrentAndNextActiveNode);
+
         _dispatcher.Dispatch(moveEndAction);
     }
 

@@ -19,7 +19,7 @@ public class FunctionArgumentEntryNodeTests
     /// <see cref="FunctionArgumentEntryNode.HasOutKeyword"/>
     /// <see cref="FunctionArgumentEntryNode.HasInKeyword"/>
     /// <see cref="FunctionArgumentEntryNode.HasRefKeyword"/>
-    /// <see cref="FunctionArgumentEntryNode.ChildBag"/>
+    /// <see cref="FunctionArgumentEntryNode.ChildList"/>
     /// <see cref="FunctionArgumentEntryNode.IsFabricated"/>
     /// <see cref="FunctionArgumentEntryNode.SyntaxKind"/>
     /// </summary>
@@ -75,8 +75,8 @@ public class FunctionArgumentEntryNodeTests
         Assert.Equal(hasInKeyword, functionArgumentEntryNode.HasInKeyword);
         Assert.Equal(hasRefKeyword, functionArgumentEntryNode.HasRefKeyword);
 
-        Assert.Single(functionArgumentEntryNode.ChildBag);
-        Assert.Equal(variableDeclarationNode, functionArgumentEntryNode.ChildBag.Single());
+        Assert.Single(functionArgumentEntryNode.ChildList);
+        Assert.Equal(variableDeclarationNode, functionArgumentEntryNode.ChildList.Single());
 
         Assert.False(functionArgumentEntryNode.IsFabricated);
 

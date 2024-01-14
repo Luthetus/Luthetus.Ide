@@ -16,7 +16,7 @@ public class TypeClauseNodeTests
     /// <see cref="TypeClauseNode.TypeIdentifier"/>
     /// <see cref="TypeClauseNode.ValueType"/>
     /// <see cref="TypeClauseNode.GenericParametersListingNode"/>
-    /// <see cref="TypeClauseNode.ChildBag"/>
+    /// <see cref="TypeClauseNode.ChildList"/>
     /// <see cref="TypeClauseNode.IsFabricated"/>
     /// <see cref="TypeClauseNode.SyntaxKind"/>
     /// </summary>
@@ -45,8 +45,8 @@ public class TypeClauseNodeTests
         Assert.Equal(valueType, intTypeClauseNode.ValueType);
         Assert.Equal(genericParametersListingNode, intTypeClauseNode.GenericParametersListingNode);
 
-        Assert.Single(intTypeClauseNode.ChildBag);
-        Assert.Equal(intTypeIdentifier, intTypeClauseNode.ChildBag.Single());
+        Assert.Single(intTypeClauseNode.ChildList);
+        Assert.Equal(intTypeIdentifier, intTypeClauseNode.ChildList.Single());
 
         Assert.False(intTypeClauseNode.IsFabricated);
 

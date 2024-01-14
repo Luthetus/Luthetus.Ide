@@ -2,6 +2,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dropdowns.States;
+using Luthetus.Common.RazorLib.TreeViews.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.FolderExplorers.States;
@@ -39,7 +40,7 @@ public partial class IdeHeader : FluxorComponent
 
     private void InitializeMenuFile()
     {
-        var menuOptionsBag = new List<MenuOptionRecord>();
+        var menuOptionsList = new List<MenuOptionRecord>();
 
         // Menu Option New
         {
@@ -53,7 +54,7 @@ public partial class IdeHeader : FluxorComponent
                 MenuOptionKind.Other,
                 SubMenu: new MenuRecord(new[] { menuOptionNewDotNetSolution }.ToImmutableArray()));
 
-            menuOptionsBag.Add(menuOptionNew);
+            menuOptionsList.Add(menuOptionNew);
         }
 
         // Menu Option Open
@@ -89,10 +90,10 @@ public partial class IdeHeader : FluxorComponent
                     menuOptionOpenDotNetSolution
                 }.ToImmutableArray()));
 
-            menuOptionsBag.Add(menuOptionOpen);
+            menuOptionsList.Add(menuOptionOpen);
         }
 
-        _menuFile = new MenuRecord(menuOptionsBag.ToImmutableArray());
+        _menuFile = new MenuRecord(menuOptionsList.ToImmutableArray());
     }
 
     private void AddActiveDropdownKey(Key<DropdownRecord> dropdownKey)
@@ -139,6 +140,27 @@ public partial class IdeHeader : FluxorComponent
             "Info",
             typeof(IdeInfoDisplay),
             null,
+            null)
+        {
+            IsResizable = true
+        };
+
+        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+    }
+
+    private void OpenTreeViewDebugInfoDialog()
+    {
+        var dialogRecord = new DialogRecord(
+            Key<DialogRecord>.NewKey(),
+            nameof(TreeViewDebugInfo),
+            typeof(TreeViewDebugInfo),
+            new Dictionary<string, object?>
+			{
+				{
+					nameof(TreeViewDebugInfo.TreeViewContainerKey),
+					DotNetSolutionState.TreeViewSolutionExplorerStateKey
+				}
+			},
             null)
         {
             IsResizable = true

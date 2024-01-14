@@ -13,10 +13,10 @@ public partial class TreeViewHelper
     {
         var directoryAbsolutePathString = directoryTreeView.Item.AbsolutePath.Value;
 
-        var directoryPathStringsBag = await directoryTreeView.FileSystemProvider.Directory
+        var directoryPathStringsList = await directoryTreeView.FileSystemProvider.Directory
             .GetDirectoriesAsync(directoryAbsolutePathString);
 
-        var childDirectoryTreeViewModels = directoryPathStringsBag
+        var childDirectoryTreeViewModels = directoryPathStringsList
             .OrderBy(pathString => pathString)
             .Select(x =>
             {
@@ -39,10 +39,10 @@ public partial class TreeViewHelper
                 };
             });
 
-        var filePathStringsBag = await directoryTreeView.FileSystemProvider.Directory
+        var filePathStringsList = await directoryTreeView.FileSystemProvider.Directory
             .GetFilesAsync(directoryAbsolutePathString);
 
-        var childFileTreeViewModels = filePathStringsBag
+        var childFileTreeViewModels = filePathStringsList
             .OrderBy(pathString => pathString)
             .Select(x =>
             {
@@ -82,10 +82,10 @@ public partial class TreeViewHelper
     {
         var directoryAbsolutePathString = directoryTreeView.Item.Value;
 
-        var directoryPathStringsBag = await directoryTreeView.FileSystemProvider.Directory
+        var directoryPathStringsList = await directoryTreeView.FileSystemProvider.Directory
             .GetDirectoriesAsync(directoryAbsolutePathString);
 
-        var childDirectoryTreeViewModels = directoryPathStringsBag
+        var childDirectoryTreeViewModels = directoryPathStringsList
             .OrderBy(pathString => pathString)
             .Select(x =>
             {
@@ -102,10 +102,10 @@ public partial class TreeViewHelper
                 };
             });
 
-        var filePathStringsBag = await directoryTreeView.FileSystemProvider.Directory
+        var filePathStringsList = await directoryTreeView.FileSystemProvider.Directory
             .GetFilesAsync(directoryAbsolutePathString);
 
-        var childFileTreeViewModels = filePathStringsBag
+        var childFileTreeViewModels = filePathStringsList
             .OrderBy(pathString => pathString)
             .Select(x =>
             {

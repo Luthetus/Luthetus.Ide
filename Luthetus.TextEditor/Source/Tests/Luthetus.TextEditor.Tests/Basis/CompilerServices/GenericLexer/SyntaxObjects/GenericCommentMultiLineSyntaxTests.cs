@@ -27,10 +27,10 @@ public class GenericCommentMultiLineSyntaxTests
 	}
 
 	/// <summary>
-	/// <see cref="GenericCommentMultiLineSyntax.ChildBag"/>
+	/// <see cref="GenericCommentMultiLineSyntax.ChildList"/>
 	/// </summary>
 	[Fact]
-	public void ChildBag()
+	public void ChildList()
 	{
 		throw new NotImplementedException();
 	}

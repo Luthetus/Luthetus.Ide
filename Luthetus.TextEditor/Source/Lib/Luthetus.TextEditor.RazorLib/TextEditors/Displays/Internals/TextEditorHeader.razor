@@ -10,11 +10,11 @@
 
             if (model is not null)
             {
-                var localHeaderButtonKindsBag = HeaderButtonKinds;
+                var localHeaderButtonKindsList = HeaderButtonKinds;
 
-                if (localHeaderButtonKindsBag is null)
+                if (localHeaderButtonKindsList is null)
                 {
-                    localHeaderButtonKindsBag = Enum
+                    localHeaderButtonKindsList = Enum
                         .GetValues(typeof(TextEditorHeaderButtonKind))
                         .Cast<TextEditorHeaderButtonKind>()
                         //.Where(x =>
@@ -22,7 +22,7 @@
                         .ToImmutableArray();
                 }
 
-                foreach (var headerButtonKind in localHeaderButtonKindsBag)
+                foreach (var headerButtonKind in localHeaderButtonKindsList)
                 {
                     <div class="luth_te_text-editor-header-entry">
                         @switch (headerButtonKind)

@@ -40,9 +40,9 @@ public class CSharpBinder : IBinder
     public ImmutableArray<ISymbol> Symbols => _symbolDefinitions.Values.SelectMany(x => x.SymbolReferences).Select(x => x.Symbol).ToImmutableArray();
     public Dictionary<string, SymbolDefinition> SymbolDefinitions => _symbolDefinitions;
     public ImmutableArray<CSharpBoundScope> BoundScopes => _boundScopes.ToImmutableArray();
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag => _diagnosticBag.ToImmutableArray();
+    public ImmutableArray<TextEditorDiagnostic> DiagnosticsList => _diagnosticBag.ToImmutableArray();
 
-    ImmutableArray<ITextEditorSymbol> IBinder.SymbolsBag => Symbols
+    ImmutableArray<ITextEditorSymbol> IBinder.SymbolsList => Symbols
         .Select(s => (ITextEditorSymbol)s)
         .ToImmutableArray();
 
@@ -247,7 +247,7 @@ public class CSharpBinder : IBinder
                 inBoundNamespaceStatementNode.IdentifierToken.TextSpan.ResourceUri,
                 codeBlockNode);
 
-            var outChildren = existingBoundNamespaceStatementNode.NamespaceEntryNodeBag
+            var outChildren = existingBoundNamespaceStatementNode.NamespaceEntryNodeList
                 .Add(boundNamespaceEntryNode)
                 .ToImmutableArray();
 
@@ -765,7 +765,7 @@ public class CSharpBinder : IBinder
     {
         foreach (var namespaceStatementKeyValuePair in _namespaceStatementNodes)
         {
-            var keep = namespaceStatementKeyValuePair.Value.NamespaceEntryNodeBag
+            var keep = namespaceStatementKeyValuePair.Value.NamespaceEntryNodeList
                 .Where(x => x.ResourceUri != resourceUri)
                 .ToImmutableArray();
 

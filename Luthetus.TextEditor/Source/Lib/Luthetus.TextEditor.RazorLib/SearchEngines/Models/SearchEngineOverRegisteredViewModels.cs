@@ -5,7 +5,7 @@ namespace Luthetus.TextEditor.RazorLib.SearchEngines.Models;
 
 public class SearchEngineOverRegisteredViewModels : ITextEditorSearchEngine
 {
-    public Key<ITextEditorSearchEngine> SearchEngineKey { get; } =
+    public Key<ITextEditorSearchEngine> Key { get; } =
         new Key<ITextEditorSearchEngine>(Guid.Parse("8f82c804-7813-44ea-869a-f77574f2f945"));
 
     public Type IconComponentRendererType { get; } = typeof(IconCopy);

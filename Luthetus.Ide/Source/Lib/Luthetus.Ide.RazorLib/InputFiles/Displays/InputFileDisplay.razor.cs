@@ -86,7 +86,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     /// A presumption that any mutations to the HashSet are done
     /// via the UI thread. Therefore concurrency is not an issue.
     /// </summary>
-    private List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)> _searchMatchTuples = new();
+    private List<(Key<TreeViewContainer> treeViewContainerKey, TreeViewAbsolutePath treeViewAbsolutePath)> _searchMatchTuples = new();
 
     public ElementReference? SearchElementReference => _inputFileTopNavBarComponent?.SearchElementReference;
 
@@ -132,10 +132,10 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
     private void InitializeElementDimensions()
     {
-        var navMenuWidth = _sidebarElementDimensions.DimensionAttributeBag
+        var navMenuWidth = _sidebarElementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
 
-        navMenuWidth.DimensionUnitBag.AddRange(new[]
+        navMenuWidth.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit
             {
@@ -150,10 +150,10 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             }
         });
 
-        var contentWidth = _contentElementDimensions.DimensionAttributeBag
+        var contentWidth = _contentElementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
 
-        contentWidth.DimensionUnitBag.AddRange(new[]
+        contentWidth.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit
             {
@@ -180,21 +180,21 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             true,
             false);
 
-        await pseudoRootNode.LoadChildBagAsync();
+        await pseudoRootNode.LoadChildListAsync();
 
-        var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(pseudoRootNode.ChildBag.ToArray());
+        var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(pseudoRootNode.ChildList.ToArray());
 
-        foreach (var child in adhocRootNode.ChildBag)
+        foreach (var child in adhocRootNode.ChildList)
         {
             child.IsExpandable = false;
         }
 
-        var activeNode = adhocRootNode.ChildBag.FirstOrDefault();
+        var activeNode = adhocRootNode.ChildList.FirstOrDefault();
 
-        if (!TreeViewService.TryGetTreeViewContainer(InputFileContent.TreeViewStateKey, out var treeViewState))
+        if (!TreeViewService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
         {
             TreeViewService.RegisterTreeViewContainer(new TreeViewContainer(
-                InputFileContent.TreeViewStateKey,
+                InputFileContent.TreeViewContainerKey,
                 adhocRootNode,
                 activeNode is null
                     ? ImmutableList<TreeViewNoType>.Empty
@@ -202,11 +202,16 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
         }
         else
         {
-            TreeViewService.SetRoot(InputFileContent.TreeViewStateKey, adhocRootNode);
-            TreeViewService.SetActiveNode(InputFileContent.TreeViewStateKey, activeNode);
+            TreeViewService.SetRoot(InputFileContent.TreeViewContainerKey, adhocRootNode);
+            
+			TreeViewService.SetActiveNode(
+				InputFileContent.TreeViewContainerKey,
+				activeNode,
+				true,
+				false);
         }
 
-        await pseudoRootNode.LoadChildBagAsync();
+        await pseudoRootNode.LoadChildListAsync();
 
         var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
             pseudoRootNode,

@@ -21,7 +21,7 @@ public class DotNetSolutionLexer : ILexer
     }
 
     public ImmutableArray<ISyntaxToken> SyntaxTokens => _syntaxTokens.ToImmutableArray();
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag => _diagnosticBag.ToImmutableArray();
+    public ImmutableArray<TextEditorDiagnostic> DiagnosticList => _diagnosticBag.ToImmutableArray();
 
     public ResourceUri ResourceUri { get; }
 
@@ -29,17 +29,17 @@ public class DotNetSolutionLexer : ILexer
     {
         while (!_stringWalker.IsEof)
         {
-            if (_stringWalker.CheckForSubstring(LexSolutionFacts.Header.FORMAT_VERSION_START_TOKEN))
+            if (_stringWalker.PeekForSubstring(LexSolutionFacts.Header.FORMAT_VERSION_START_TOKEN))
                 LexHeaderFormatVersion();
-            else if (_stringWalker.CheckForSubstring(LexSolutionFacts.Header.HASHTAG_VISUAL_STUDIO_VERSION_START_TOKEN))
+            else if (_stringWalker.PeekForSubstring(LexSolutionFacts.Header.HASHTAG_VISUAL_STUDIO_VERSION_START_TOKEN))
                 LexHashtagVisualStudioVersion();
-            else if (_stringWalker.CheckForSubstring(LexSolutionFacts.Header.EXACT_VISUAL_STUDIO_VERSION_START_TOKEN))
+            else if (_stringWalker.PeekForSubstring(LexSolutionFacts.Header.EXACT_VISUAL_STUDIO_VERSION_START_TOKEN))
                 LexExactVisualStudioVersion();
-            else if (_stringWalker.CheckForSubstring(LexSolutionFacts.Header.MINIMUM_VISUAL_STUDIO_VERSION_START_TOKEN))
+            else if (_stringWalker.PeekForSubstring(LexSolutionFacts.Header.MINIMUM_VISUAL_STUDIO_VERSION_START_TOKEN))
                 LexMinimumVisualStudioVersion();
-            else if (_stringWalker.CheckForSubstring(LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN))
+            else if (_stringWalker.PeekForSubstring(LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN))
                 LexProjectDefinitionEntry();
-            else if (_stringWalker.CheckForSubstring(LexSolutionFacts.Global.START_TOKEN))
+            else if (_stringWalker.PeekForSubstring(LexSolutionFacts.Global.START_TOKEN))
                 LexGlobal();
 
             _ = _stringWalker.ReadCharacter();
@@ -162,7 +162,7 @@ public class DotNetSolutionLexer : ILexer
                 else
                     LexString();
             }
-            else if (_stringWalker.CheckForSubstring(LexSolutionFacts.Project.PROJECT_DEFINITION_END_TOKEN))
+            else if (_stringWalker.PeekForSubstring(LexSolutionFacts.Project.PROJECT_DEFINITION_END_TOKEN))
             {
                 startPosition = _stringWalker.PositionIndex;
                 _stringWalker.ReadRange(LexSolutionFacts.Project.PROJECT_DEFINITION_END_TOKEN.Length);
@@ -234,7 +234,7 @@ public class DotNetSolutionLexer : ILexer
         var textSpan = new TextEditorTextSpan(startPosition, _stringWalker, 0);
         _syntaxTokens.Add(new OpenAssociatedGroupToken(textSpan));
 
-        bool BreakPredicate() => _stringWalker.CheckForSubstring(LexSolutionFacts.Global.END_TOKEN);
+        bool BreakPredicate() => _stringWalker.PeekForSubstring(LexSolutionFacts.Global.END_TOKEN);
 
         while (!_stringWalker.IsEof)
         {
@@ -247,7 +247,7 @@ public class DotNetSolutionLexer : ILexer
                 _syntaxTokens.Add(new CloseAssociatedGroupToken(textSpan));
                 break;
             }
-            else if (_stringWalker.CheckForSubstring(LexSolutionFacts.GlobalSection.START_TOKEN))
+            else if (_stringWalker.PeekForSubstring(LexSolutionFacts.GlobalSection.START_TOKEN))
             {
                 LexGlobalSection(BreakPredicate);
             }
@@ -264,7 +264,7 @@ public class DotNetSolutionLexer : ILexer
         var textSpan = new TextEditorTextSpan(startPosition, _stringWalker, 0);
         _syntaxTokens.Add(new OpenAssociatedGroupToken(textSpan));
 
-        bool BreakPredicate() => _stringWalker.CheckForSubstring(LexSolutionFacts.GlobalSection.END_TOKEN);
+        bool BreakPredicate() => _stringWalker.PeekForSubstring(LexSolutionFacts.GlobalSection.END_TOKEN);
 
         while (!_stringWalker.IsEof)
         {

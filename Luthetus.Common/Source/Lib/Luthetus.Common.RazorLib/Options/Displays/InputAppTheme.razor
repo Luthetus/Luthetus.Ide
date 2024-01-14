@@ -7,8 +7,8 @@
         var themeState = ThemeRecordsCollectionService.ThemeStateWrap.Value;
         var appOptionsState = AppOptionsService.AppOptionsStateWrap.Value;
 
-        var themesInScopeBag = themeState.ThemeBag
-            .Where(x => x.ThemeScopeBag.Contains(ThemeScope.App))
+        var themesInScopeList = themeState.ThemeList
+            .Where(x => x.ThemeScopeList.Contains(ThemeScope.App))
             .ToArray();
     }
 
@@ -18,7 +18,7 @@
 
         @{
             var isActiveValid = CheckIsActiveValid(
-                themesInScopeBag,
+                themesInScopeList,
                 appOptionsState.Options.ThemeKey);
         }
 
@@ -27,7 +27,7 @@
             Select a Theme
         </option>
         
-        @foreach (var theme in themesInScopeBag)
+        @foreach (var theme in themesInScopeList)
         {
             var isActiveSelection = CheckIsActiveSelection(
                 theme.Key,

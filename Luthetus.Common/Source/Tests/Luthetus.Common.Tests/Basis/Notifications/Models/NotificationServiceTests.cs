@@ -68,7 +68,7 @@ public class NotificationServiceTests
 
         var notificationService = serviceProvider.GetRequiredService<INotificationService>();
 
-        Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultBag);
+        Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultList);
 
         var notificationRecord = new NotificationRecord(
             Key<NotificationRecord>.NewKey(),
@@ -87,9 +87,9 @@ public class NotificationServiceTests
 
         notificationService.RegisterNotificationRecord(notificationRecord);
 
-        Assert.NotEmpty(notificationService.NotificationStateWrap.Value.DefaultBag);
+        Assert.NotEmpty(notificationService.NotificationStateWrap.Value.DefaultList);
 
-        Assert.Contains(notificationService.NotificationStateWrap.Value.DefaultBag,
+        Assert.Contains(notificationService.NotificationStateWrap.Value.DefaultList,
             x => x == notificationRecord);
     }
 
@@ -110,7 +110,7 @@ public class NotificationServiceTests
 
         var notificationService = serviceProvider.GetRequiredService<INotificationService>();
 
-        Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultBag);
+        Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultList);
 
         var notificationRecord = new NotificationRecord(
             Key<NotificationRecord>.NewKey(),
@@ -129,13 +129,13 @@ public class NotificationServiceTests
 
         notificationService.RegisterNotificationRecord(notificationRecord);
 
-        Assert.NotEmpty(notificationService.NotificationStateWrap.Value.DefaultBag);
+        Assert.NotEmpty(notificationService.NotificationStateWrap.Value.DefaultList);
 
-        Assert.Contains(notificationService.NotificationStateWrap.Value.DefaultBag,
+        Assert.Contains(notificationService.NotificationStateWrap.Value.DefaultList,
             x => x == notificationRecord);
 
         notificationService.DisposeNotificationRecord(notificationRecord.Key);
 
-        Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultBag);
+        Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultList);
     }
 }

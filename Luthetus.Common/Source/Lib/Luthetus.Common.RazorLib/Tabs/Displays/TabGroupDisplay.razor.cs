@@ -18,7 +18,7 @@ public partial class TabGroupDisplay : FluxorComponent
     protected override void OnInitialized()
     {
         TabStateSelection
-            .Select(tabState => tabState.TabGroupBag
+            .Select(tabState => tabState.TabGroupList
                 .SingleOrDefault(x => x.Key == TabGroupKey));
 
         base.OnInitialized();

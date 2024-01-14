@@ -44,17 +44,17 @@ public class TreeViewCompilerService : TreeViewWithType<ICompilerService>
             });
     }
 
-    public override Task LoadChildBagAsync()
+    public override Task LoadChildListAsync()
     {
-        var previousChildren = new List<TreeViewNoType>(ChildBag);
+        var previousChildren = new List<TreeViewNoType>(ChildList);
 
         try
         {
-            ChildBag.Clear();
+            ChildList.Clear();
 
             if (Item is CSharpCompilerService cSharpCompilerService)
             {
-                ChildBag.Add(new TreeViewCompilerService(
+                ChildList.Add(new TreeViewCompilerService(
                     cSharpCompilerService,
                     IdeComponentRenderers,
                     CommonComponentRenderers,
@@ -64,11 +64,11 @@ public class TreeViewCompilerService : TreeViewWithType<ICompilerService>
         }
         catch (Exception e)
         {
-            ChildBag.Clear();
-            ChildBag.Add(new TreeViewException(e, false, false, CommonComponentRenderers));
+            ChildList.Clear();
+            ChildList.Add(new TreeViewException(e, false, false, CommonComponentRenderers));
         }
 
-        LinkChildren(previousChildren, ChildBag);
+        LinkChildren(previousChildren, ChildList);
 
         return Task.CompletedTask;
     }

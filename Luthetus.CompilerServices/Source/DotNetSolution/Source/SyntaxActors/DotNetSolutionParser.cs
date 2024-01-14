@@ -15,8 +15,8 @@ public class DotNetSolutionParser : IParser
     private readonly TokenWalker _tokenWalker;
     private readonly LuthetusDiagnosticBag _diagnosticBag = new();
     private readonly Stack<AssociatedEntryGroupBuilder> _associatedEntryGroupBuilderStack = new();
-    private readonly List<IDotNetProject> _dotNetProjectBag = new();
-    private readonly List<NestedProjectEntry> _nestedProjectEntryBag = new();
+    private readonly List<IDotNetProject> _dotNetProjectList = new();
+    private readonly List<NestedProjectEntry> _nestedProjectEntryList = new();
 
     private DotNetSolutionHeader _dotNetSolutionHeader = new();
     private bool _hasReadHeader;
@@ -29,14 +29,14 @@ public class DotNetSolutionParser : IParser
         _tokenWalker = new TokenWalker(lexer.SyntaxTokens, _diagnosticBag);
     }
 
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag => _diagnosticBag.ToImmutableArray();
+    public ImmutableArray<TextEditorDiagnostic> DiagnosticsList => _diagnosticBag.ToImmutableArray();
     public DotNetSolutionLexer Lexer { get; }
 
     public DotNetSolutionHeader DotNetSolutionHeader => _dotNetSolutionHeader;
     public DotNetSolutionGlobal DotNetSolutionGlobal => _dotNetSolutionGlobal;
     public AssociatedEntryGroup? NoParentHavingAssociatedEntryGroup => _noParentHavingAssociatedEntryGroup;
-    public List<IDotNetProject> DotNetProjectBag => _dotNetProjectBag;
-    public List<NestedProjectEntry> NestedProjectEntryBag => _nestedProjectEntryBag;
+    public List<IDotNetProject> DotNetProjectList => _dotNetProjectList;
+    public List<NestedProjectEntry> NestedProjectEntryList => _nestedProjectEntryList;
 
     public CompilationUnit Parse()
     {
@@ -66,7 +66,7 @@ public class DotNetSolutionParser : IParser
                 break;
         }
 
-        var globalSectionNestedProjects = DotNetSolutionGlobal.DotNetSolutionGlobalSectionBag.FirstOrDefault(x =>
+        var globalSectionNestedProjects = DotNetSolutionGlobal.DotNetSolutionGlobalSectionList.FirstOrDefault(x =>
         {
             return (x.GlobalSectionArgument?.TextSpan.GetText() ?? string.Empty) == 
                 LexSolutionFacts.GlobalSectionNestedProjects.START_TOKEN;
@@ -74,7 +74,7 @@ public class DotNetSolutionParser : IParser
 
         if (globalSectionNestedProjects is not null)
         {
-            foreach (var associatedEntry in globalSectionNestedProjects.AssociatedEntryGroup.AssociatedEntryBag)
+            foreach (var associatedEntry in globalSectionNestedProjects.AssociatedEntryGroup.AssociatedEntryList)
             {
                 switch (associatedEntry.AssociatedEntryKind)
                 {
@@ -91,7 +91,7 @@ public class DotNetSolutionParser : IParser
                                     childProjectIdGuid,
                                     solutionFolderIdGuid);
 
-                                _nestedProjectEntryBag.Add(nestedProjectEntry);
+                                _nestedProjectEntryList.Add(nestedProjectEntry);
                             }
                         }
 
@@ -113,7 +113,7 @@ public class DotNetSolutionParser : IParser
     {
         if (!_hasReadHeader)
         {
-            foreach (var wellKnownAssociatedName in LexSolutionFacts.Header.WellKnownAssociatedNamesBag)
+            foreach (var wellKnownAssociatedName in LexSolutionFacts.Header.WellKnownAssociatedNamesList)
             {
                 if (associatedNameToken.TextSpan.GetText() == wellKnownAssociatedName)
                 {
@@ -158,7 +158,7 @@ public class DotNetSolutionParser : IParser
             var associatedValueToken = (AssociatedValueToken)_tokenWalker.Match(SyntaxKind.AssociatedValueToken);
             var associatedEntryPair = new AssociatedEntryPair(associatedNameToken, associatedValueToken);
 
-            _associatedEntryGroupBuilderStack.Peek().AssociatedEntryBag.Add(associatedEntryPair);
+            _associatedEntryGroupBuilderStack.Peek().AssociatedEntryList.Add(associatedEntryPair);
         }
     }
 
@@ -171,7 +171,7 @@ public class DotNetSolutionParser : IParser
             new AssociatedNameToken(TextEditorTextSpan.FabricateTextSpan(string.Empty)),
             associatedValueToken);
 
-        _associatedEntryGroupBuilderStack.Peek().AssociatedEntryBag.Add(associatedEntryPair);
+        _associatedEntryGroupBuilderStack.Peek().AssociatedEntryList.Add(associatedEntryPair);
     }
 
     private void ParseOpenAssociatedGroupToken(OpenAssociatedGroupToken openAssociatedGroupToken)
@@ -200,12 +200,12 @@ public class DotNetSolutionParser : IParser
                 {
                     localDotNetSolutionGlobalSectionBuilder.AssociatedEntryGroup = builtGroup;
 
-                    var outBag = _dotNetSolutionGlobal.DotNetSolutionGlobalSectionBag.Add(
+                    var outList = _dotNetSolutionGlobal.DotNetSolutionGlobalSectionList.Add(
                         localDotNetSolutionGlobalSectionBuilder.Build());
 
                     _dotNetSolutionGlobal = _dotNetSolutionGlobal with
                     {
-                        DotNetSolutionGlobalSectionBag = outBag
+                        DotNetSolutionGlobalSectionList = outList
                     };
                 }));
 
@@ -221,14 +221,14 @@ public class DotNetSolutionParser : IParser
                 openAssociatedGroupToken,
                 builtGroup =>
                 {
-                    if (builtGroup.AssociatedEntryBag.Length == 4)
+                    if (builtGroup.AssociatedEntryList.Length == 4)
                     {
                         var i = 0;
 
-                        var projectTypeGuidAssociatedPair = builtGroup.AssociatedEntryBag[i++] as AssociatedEntryPair;
-                        var displayNameAssociatedPair = builtGroup.AssociatedEntryBag[i++] as AssociatedEntryPair;
-                        var relativePathFromSolutionFileStringAssociatedPair = builtGroup.AssociatedEntryBag[i++] as AssociatedEntryPair;
-                        var projectIdGuidAssociatedPair = builtGroup.AssociatedEntryBag[i++] as AssociatedEntryPair;
+                        var projectTypeGuidAssociatedPair = builtGroup.AssociatedEntryList[i++] as AssociatedEntryPair;
+                        var displayNameAssociatedPair = builtGroup.AssociatedEntryList[i++] as AssociatedEntryPair;
+                        var relativePathFromSolutionFileStringAssociatedPair = builtGroup.AssociatedEntryList[i++] as AssociatedEntryPair;
+                        var projectIdGuidAssociatedPair = builtGroup.AssociatedEntryList[i++] as AssociatedEntryPair;
 
                         _ = Guid.TryParse(projectTypeGuidAssociatedPair.AssociatedValueToken.TextSpan.GetText(), out var projectTypeGuid);
                         var displayName = displayNameAssociatedPair.AssociatedValueToken.TextSpan.GetText();
@@ -260,7 +260,7 @@ public class DotNetSolutionParser : IParser
                                 null);
                         }
 
-                        _dotNetProjectBag.Add(dotNetProject);
+                        _dotNetProjectList.Add(dotNetProject);
                     }
 
                     _noParentHavingAssociatedEntryGroup = builtGroup;
@@ -272,7 +272,7 @@ public class DotNetSolutionParser : IParser
                 openAssociatedGroupToken,
                 builtGroup =>
                 {
-                    parent.AssociatedEntryBag.Add(builtGroup);
+                    parent.AssociatedEntryList.Add(builtGroup);
                 }));
         }
     }

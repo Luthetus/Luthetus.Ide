@@ -87,7 +87,7 @@ public class JsonSyntaxTree
             // Skip whitespace
             while (!stringWalker.IsEof)
             {
-                if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+                if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
                     _ = stringWalker.ReadCharacter();
                 else
                     break;
@@ -236,11 +236,11 @@ public class JsonSyntaxTree
 
     /// <summary>
     /// currentCharacterIn:<br/>
-    /// - Any character that is not <see cref="WhitespaceFacts.ALL_BAG"/> (whitespace)<br/>
+    /// - Any character that is not <see cref="WhitespaceFacts.ALL_LIST"/> (whitespace)<br/>
     /// <br/>
     /// currentCharacterOut:<br/>
     /// - <see cref="JsonFacts.PROPERTY_ENTRY_DELIMITER"/><br/>
-    /// - <see cref="WhitespaceFacts.ALL_BAG"/> (whitespace)<br/>
+    /// - <see cref="WhitespaceFacts.ALL_LIST"/> (whitespace)<br/>
     /// - The <see cref="JsonFacts.OBJECT_END"/> of the object which contains the property value<br/>
     /// </summary>
     private static JsonPropertyValueSyntax ConsumePropertyValue(
@@ -325,7 +325,7 @@ public class JsonSyntaxTree
             // Skip whitespace
             while (!stringWalker.IsEof)
             {
-                if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter))
+                if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
                     _ = stringWalker.ReadCharacter();
                 else
                     break;

@@ -41,7 +41,7 @@
                     var cSharpLexer = (CSharpLexer)localCompilationUnit.Lexer;
                     var cSharpParser = (CSharpParser)localCompilationUnit.Parser;
                     var cSharpBinder = (CSharpBinder)localCompilationUnit.Binder;
-                    var diagnosticsBag = localCompilationUnit.DiagnosticsBag;
+                    var diagnosticsList = localCompilationUnit.DiagnosticsList;
 
                     <div>
                         <div>
@@ -66,10 +66,10 @@
                             </div>
                         </div>
                         <div>
-                            DiagnosticsBag:
+                            DiagnosticsList:
 
                             <div>
-                                Length: @diagnosticsBag.Length
+                                Length: @diagnosticsList.Length
                             </div>
                         </div>
                     </div>

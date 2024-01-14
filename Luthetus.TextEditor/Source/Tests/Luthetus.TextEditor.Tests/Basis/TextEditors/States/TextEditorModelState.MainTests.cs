@@ -21,17 +21,17 @@ public class TextEditorModelStateMainTests
 	public void Constructor()
 	{
 		var modelState = new TextEditorModelState();
-		Assert.Equal(ImmutableList<TextEditorModel>.Empty, modelState.ModelBag);
+		Assert.Equal(ImmutableList<TextEditorModel>.Empty, modelState.ModelList);
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModelState.ModelBag"/>
+	/// <see cref="TextEditorModelState.ModelList"/>
 	/// </summary>
 	[Fact]
-	public void ModelBag()
+	public void ModelList()
 	{
         var modelState = new TextEditorModelState();
-        Assert.Equal(ImmutableList<TextEditorModel>.Empty, modelState.ModelBag);
+        Assert.Equal(ImmutableList<TextEditorModel>.Empty, modelState.ModelList);
 
 		var model = new TextEditorModel(
             new ResourceUri("/unitTesting.txt"),
@@ -41,14 +41,14 @@ public class TextEditorModelStateMainTests
             new TextEditorDecorationMapperDefault(),
             new TextEditorCompilerServiceDefault());
 
-		var outModelBag = modelState.ModelBag.Add(model);
-        Assert.NotEqual(ImmutableList<TextEditorModel>.Empty, outModelBag);
+		var outModelList = modelState.ModelList.Add(model);
+        Assert.NotEqual(ImmutableList<TextEditorModel>.Empty, outModelList);
 
 		var outModelState = new TextEditorModelState
 		{
-			ModelBag = outModelBag
+			ModelList = outModelList
 		};
 
-		Assert.Equal(outModelBag, outModelState.ModelBag);
+		Assert.Equal(outModelList, outModelState.ModelList);
 	}
 }

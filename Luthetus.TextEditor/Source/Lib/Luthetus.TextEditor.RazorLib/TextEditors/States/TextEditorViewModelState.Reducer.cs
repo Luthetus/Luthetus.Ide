@@ -14,7 +14,7 @@ public partial class TextEditorViewModelState
             TextEditorViewModelState inState,
             RegisterAction registerAction)
         {
-            var inViewModel = inState.ViewModelBag.FirstOrDefault(
+            var inViewModel = inState.ViewModelList.FirstOrDefault(
                 x => x.ViewModelKey == registerAction.ViewModelKey);
 
             if (inViewModel is not null)
@@ -27,9 +27,9 @@ public partial class TextEditorViewModelState
                 VirtualizationResult<List<RichCharacter>>.GetEmptyRichCharacters(),
                 false);
 
-            var outViewModelBag = inState.ViewModelBag.Add(viewModel);
+            var outViewModelList = inState.ViewModelList.Add(viewModel);
 
-            return new TextEditorViewModelState { ViewModelBag = outViewModelBag };
+            return new TextEditorViewModelState { ViewModelList = outViewModelList };
         }
 
         [ReducerMethod]
@@ -37,16 +37,16 @@ public partial class TextEditorViewModelState
             TextEditorViewModelState inState,
             DisposeAction disposeAction)
         {
-            var inViewModel = inState.ViewModelBag.FirstOrDefault(
+            var inViewModel = inState.ViewModelList.FirstOrDefault(
                 x => x.ViewModelKey == disposeAction.ViewModelKey);
 
             if (inViewModel is null)
                 return inState;
 
-            var outViewModelBag = inState.ViewModelBag.Remove(inViewModel);
+            var outViewModelList = inState.ViewModelList.Remove(inViewModel);
             inViewModel.Dispose();
 
-            return new TextEditorViewModelState { ViewModelBag = outViewModelBag };
+            return new TextEditorViewModelState { ViewModelList = outViewModelList };
         }
 
         [ReducerMethod]
@@ -54,7 +54,7 @@ public partial class TextEditorViewModelState
             TextEditorViewModelState inState,
             SetViewModelWithAction setViewModelWithAction)
         {
-            var inViewModel = inState.ViewModelBag.FirstOrDefault(
+            var inViewModel = inState.ViewModelList.FirstOrDefault(
                 x => x.ViewModelKey == setViewModelWithAction.ViewModelKey);
 
             if (inViewModel is null)
@@ -62,9 +62,9 @@ public partial class TextEditorViewModelState
 
             var outViewModel = setViewModelWithAction.WithFunc.Invoke(inViewModel);
 
-            var outViewModelBag = inState.ViewModelBag.Replace(inViewModel, outViewModel);
+            var outViewModelList = inState.ViewModelList.Replace(inViewModel, outViewModel);
 
-            return new TextEditorViewModelState { ViewModelBag = outViewModelBag };
+            return new TextEditorViewModelState { ViewModelList = outViewModelList };
         }
     }
 }

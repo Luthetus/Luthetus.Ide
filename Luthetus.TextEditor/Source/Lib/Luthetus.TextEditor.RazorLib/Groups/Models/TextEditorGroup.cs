@@ -9,7 +9,7 @@ namespace Luthetus.TextEditor.RazorLib.Groups.Models;
 public record TextEditorGroup(
     Key<TextEditorGroup> GroupKey,
     Key<TextEditorViewModel> ActiveViewModelKey,
-    ImmutableList<Key<TextEditorViewModel>> ViewModelKeyBag)
+    ImmutableList<Key<TextEditorViewModel>> ViewModelKeyList)
 {
     public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();
 }

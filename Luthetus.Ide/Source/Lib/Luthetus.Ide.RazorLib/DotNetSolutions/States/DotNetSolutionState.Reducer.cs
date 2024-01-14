@@ -17,12 +17,12 @@ public partial record DotNetSolutionState
             if (dotNetSolutionModel is not null)
                 return inState;
 
-            var nextList = inState.DotNetSolutionsBag.Add(
+            var nextList = inState.DotNetSolutionsList.Add(
                 registerAction.DotNetSolutionModel);
 
             return inState with
             {
-                DotNetSolutionsBag = nextList
+                DotNetSolutionsList = nextList
             };
         }
 
@@ -36,12 +36,12 @@ public partial record DotNetSolutionState
             if (dotNetSolutionModel is null)
                 return inState;
 
-            var nextList = inState.DotNetSolutionsBag.Remove(
+            var nextList = inState.DotNetSolutionsList.Remove(
                 dotNetSolutionModel);
 
             return inState with
             {
-                DotNetSolutionsBag = nextList
+                DotNetSolutionsList = nextList
             };
         }
 

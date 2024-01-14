@@ -11,18 +11,18 @@ public partial class TextEditorSearchEngineState
             TextEditorSearchEngineState inState,
             RegisterAction registerAction)
         {
-            var inSearchEngine = inState.SearchEngineBag.FirstOrDefault(
-                x => x.SearchEngineKey == registerAction.SearchEngine.SearchEngineKey);
+            var inSearchEngine = inState.SearchEngineList.FirstOrDefault(
+                x => x.Key == registerAction.SearchEngine.Key);
 
             if (inSearchEngine is not null)
                 return inState;
 
-            var outSearchEngineBag = inState.SearchEngineBag.Add(registerAction.SearchEngine);
+            var outSearchEngineList = inState.SearchEngineList.Add(registerAction.SearchEngine);
 
             return new TextEditorSearchEngineState(
-                outSearchEngineBag,
-                inState.ActiveSearchEngineKey,
-                inState.SearchQuery);
+                outSearchEngineList,
+                inState.SearchQuery,
+                inState.Options);
         }
 
         [ReducerMethod]
@@ -30,29 +30,18 @@ public partial class TextEditorSearchEngineState
             TextEditorSearchEngineState inState,
             DisposeAction disposeAction)
         {
-            var existingSearchEngine = inState.SearchEngineBag.FirstOrDefault(
-                x => x.SearchEngineKey == disposeAction.SearchEngineKey);
+            var existingSearchEngine = inState.SearchEngineList.FirstOrDefault(
+                x => x.Key == disposeAction.SearchEngineKey);
 
             if (existingSearchEngine is null)
                 return inState;
 
-            var outSearchEngineBag = inState.SearchEngineBag.Remove(existingSearchEngine);
+            var outSearchEngineList = inState.SearchEngineList.Remove(existingSearchEngine);
 
             return new TextEditorSearchEngineState(
-                outSearchEngineBag,
-                inState.ActiveSearchEngineKey,
-                inState.SearchQuery);
-        }
-
-        [ReducerMethod]
-        public static TextEditorSearchEngineState ReduceSetActiveSearchEngineAction(
-            TextEditorSearchEngineState inState,
-            SetActiveSearchEngineAction setActiveSearchEngineAction)
-        {
-            return new TextEditorSearchEngineState(
-                inState.SearchEngineBag,
-                setActiveSearchEngineAction.SearchEngineKey,
-                inState.SearchQuery);
+                outSearchEngineList,
+                inState.SearchQuery,
+                inState.Options);
         }
 
         [ReducerMethod]
@@ -61,9 +50,9 @@ public partial class TextEditorSearchEngineState
             SetSearchQueryAction setSearchQueryAction)
         {
             return new TextEditorSearchEngineState(
-                inState.SearchEngineBag,
-                inState.ActiveSearchEngineKey,
-                setSearchQueryAction.SearchQuery);
+                inState.SearchEngineList,
+                setSearchQueryAction.SearchQuery,
+                inState.Options);
         }
     }
 }

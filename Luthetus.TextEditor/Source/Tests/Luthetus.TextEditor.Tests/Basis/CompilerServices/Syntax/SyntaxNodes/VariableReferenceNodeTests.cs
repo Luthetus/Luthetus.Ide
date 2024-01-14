@@ -18,7 +18,7 @@ public class VariableReferenceNodeTests
     /// <see cref="VariableReferenceNode.VariableIdentifierToken"/>
     /// <see cref="VariableReferenceNode.VariableDeclarationNode"/>
     /// <see cref="VariableReferenceNode.ResultTypeClauseNode"/>
-    /// <see cref="VariableReferenceNode.ChildBag"/>
+    /// <see cref="VariableReferenceNode.ChildList"/>
     /// <see cref="VariableReferenceNode.IsFabricated"/>
     /// <see cref="VariableReferenceNode.SyntaxKind"/>
     /// </summary>
@@ -88,9 +88,9 @@ MyMethod(x)";
         Assert.Equal(variableDeclarationNode, variableReferenceNode.VariableDeclarationNode);
         Assert.Equal(variableDeclarationNode.TypeClauseNode, variableReferenceNode.ResultTypeClauseNode);
 
-        Assert.Equal(2, variableReferenceNode.ChildBag.Length);
-        Assert.Equal(referenceVariableIdentifierToken, variableReferenceNode.ChildBag[0]);
-        Assert.Equal(variableDeclarationNode, variableReferenceNode.ChildBag[1]);
+        Assert.Equal(2, variableReferenceNode.ChildList.Length);
+        Assert.Equal(referenceVariableIdentifierToken, variableReferenceNode.ChildList[0]);
+        Assert.Equal(variableDeclarationNode, variableReferenceNode.ChildList[1]);
 
         Assert.False(variableReferenceNode.IsFabricated);
 
