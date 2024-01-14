@@ -1,4 +1,4 @@
-﻿@using System.Reflection;
+@using System.Reflection;
 <div class="luth_ide_info">
 
     @{ var ideAssembly = typeof(IdeInfoDisplay).Assembly; }
@@ -17,6 +17,22 @@
         </div>
         <div>
             Recent Changes:
+			<div>
+                <div>v <em class="luth_em">0.5.0.0</em> (2024-01-14)</div>
+                <ul>
+                    <li>
+                        Tab characters are rendered properly when scrolling
+						horizontally in the text editor.
+                    </li>
+					<li>
+                        Fix the majority of bugs that came about
+						from the re-write of the Text Editor for immutability.
+                    </li>
+                    <li>
+                        Progress on tree view for multi-selecting nodes
+                    </li>
+                </ul>
+            </div>
             <div>
                 <div>v <em class="luth_em">0.4.0.0</em> (2024-01-02)</div>
                 <ul>
