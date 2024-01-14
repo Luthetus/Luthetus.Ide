@@ -255,7 +255,7 @@ public partial record TreeViewState
 
 			// TODO: I'm adding multi-select. I'd like to single out the...
 			// ...SelectNodesBetweenCurrentAndNextActiveNode case for now...
-			// ...and DRY the code after. (2024-01-13)
+			// ...and DRY the code after. (2024-01-13) 
 			if (setActiveNodeAction.SelectNodesBetweenCurrentAndNextActiveNode)
 			{
 				outContainer = inContainer;
