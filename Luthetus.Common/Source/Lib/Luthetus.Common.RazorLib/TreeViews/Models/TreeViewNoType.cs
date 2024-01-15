@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.TreeViews.Models;
 
@@ -34,28 +34,30 @@ public abstract class TreeViewNoType
     /// As well it sets the child.IndexAmongSiblings, and maintains expanded state.
     /// </summary>
     public virtual void LinkChildren(
-        List<TreeViewNoType> previousChildren,
-        List<TreeViewNoType> nextChildren)
+        List<TreeViewNoType> previousChildList,
+        List<TreeViewNoType> nextChildList)
     {
-        var oldChildrenMap = previousChildren.ToDictionary(child => child);
+        var previousChildMap = previousChildList.ToDictionary(child => child);
 
-        for (int i = 0; i < nextChildren.Count; i++)
+        for (int i = 0; i < nextChildList.Count; i++)
         {
-            var child = nextChildren[i];
+            var nextChild = nextChildList[i];
 
-            child.Parent = this;
-            child.IndexAmongSiblings = i;
-        }
+            nextChild.Parent = this;
+            nextChild.IndexAmongSiblings = i;
 
-        foreach (var newChild in nextChildren)
-        {
-            if (oldChildrenMap.TryGetValue(newChild, out var oldChild))
+			if (previousChildMap.TryGetValue(nextChild, out var previousChild))
             {
-                newChild.IsExpanded = oldChild.IsExpanded;
-                newChild.IsExpandable = oldChild.IsExpandable;
-                newChild.IsHidden = oldChild.IsHidden;
-                newChild.Key = oldChild.Key;
-                newChild.ChildList = oldChild.ChildList;
+                nextChild.IsExpanded = previousChild.IsExpanded;
+                nextChild.IsExpandable = previousChild.IsExpandable;
+                nextChild.IsHidden = previousChild.IsHidden;
+                nextChild.Key = previousChild.Key;
+                nextChild.ChildList = previousChild.ChildList;
+
+				foreach (var innerChild in nextChild.ChildList)
+				{
+					innerChild.Parent = nextChild;
+				}
             }
         }
     }
