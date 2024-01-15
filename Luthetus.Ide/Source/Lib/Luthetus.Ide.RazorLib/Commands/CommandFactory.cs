@@ -4,8 +4,13 @@ using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.States;
-using Luthetus.Ide.RazorLib.Editors.States;
+using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Ide.RazorLib.Editors.States;
+using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Microsoft.JSInterop;
 
 namespace Luthetus.Ide.RazorLib.Commands;
@@ -14,20 +19,29 @@ public class CommandFactory : ICommandFactory
 {
     private readonly IState<PanelsState> _panelsStateWrap;
     private readonly ITextEditorService _textEditorService;
+    private readonly ITreeViewService _treeViewService;
+    private readonly IEnvironmentProvider _environmentProvider;
     private readonly IDispatcher _dispatcher;
     private readonly IJSRuntime _jsRuntime;
 
     public CommandFactory(
 		ITextEditorService textEditorService,
+		ITreeViewService treeViewService,
+		IEnvironmentProvider environmentProvider,
         IState<PanelsState> panelsStateWrap,
         IDispatcher dispatcher,
 		IJSRuntime jsRuntime)
     {
 		_textEditorService = textEditorService;
+		_treeViewService = treeViewService;
+		_environmentProvider = environmentProvider;
         _panelsStateWrap = panelsStateWrap;
         _dispatcher = dispatcher;
 		_jsRuntime = jsRuntime;
     }
+
+	private TreeViewNamespacePath? _nodeOfViewModel = null;
+	private List<TreeViewNoType> _nodeList = new();
 
     public void Initialize()
     {
@@ -117,10 +131,44 @@ public class CommandFactory : ICommandFactory
         }
         // SolutionExplorerContext
         {
+			var focusSolutionExplorerCommand = ConstructFocusContextElementCommand(
+	    		ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer");
+
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyS", false, true, true, Key<KeymapLayer>.Empty),
-                ConstructFocusContextElementCommand(
-                    ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer"));
+	                new KeymapArgument("KeyS", false, true, true, Key<KeymapLayer>.Empty),
+	                focusSolutionExplorerCommand);
+
+			// Set active solution explorer tree view node to be the
+			// active text editor view model and,
+			// Set focus to the solution explorer;
+			{
+				var focusTextEditorCommand = new CommonCommand(
+	                "Focus: SolutionExplorer (with text editor view model)", "focus-solution-explorer_with-text-editor-view-model", false,
+	                async commandArgs =>
+	                {
+	                    await PerformGetFlattenedTree();
+
+						var localNodeOfViewModel = _nodeOfViewModel;
+
+						if (localNodeOfViewModel is null)
+							return;
+
+						_treeViewService.SetActiveNode(
+							DotNetSolutionState.TreeViewSolutionExplorerStateKey,
+							localNodeOfViewModel,
+							false,
+							false);
+
+						var elementId = _treeViewService.GetNodeElementId(localNodeOfViewModel);
+						
+
+						await focusSolutionExplorerCommand.CommandFunc.Invoke(commandArgs);
+	                });
+	
+	            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+	                    new KeymapArgument("KeyS", true, true, true, Key<KeymapLayer>.Empty),
+	                    focusTextEditorCommand);
+			}
         }
         // TerminalContext
         {
@@ -212,4 +260,64 @@ public class CommandFactory : ICommandFactory
                 contextRecord.ContextElementId);
         }
     }
+
+	private async Task PerformGetFlattenedTree()
+	{
+		_nodeList.Clear();
+
+		var group = _textEditorService.GroupApi.GetOrDefault(EditorSync.EditorTextEditorGroupKey);
+
+		if (group is not null)
+		{
+			var textEditorViewModel = _textEditorService.ViewModelApi.GetOrDefault(group.ActiveViewModelKey);
+
+			if (textEditorViewModel is not null)
+			{
+				if (_treeViewService.TryGetTreeViewContainer(
+						DotNetSolutionState.TreeViewSolutionExplorerStateKey,
+						out var treeViewContainer))
+				{
+					await RecursiveGetFlattenedTree(treeViewContainer.RootNode, textEditorViewModel);
+				}
+			}
+		}
+	}
+
+	private async Task RecursiveGetFlattenedTree(
+		TreeViewNoType treeViewNoType,
+		TextEditorViewModel textEditorViewModel)
+	{
+		_nodeList.Add(treeViewNoType);
+
+		if (treeViewNoType is TreeViewNamespacePath treeViewNamespacePath)
+		{
+			if (textEditorViewModel is not null)
+			{
+				var viewModelAbsolutePath = new AbsolutePath(
+					textEditorViewModel.ResourceUri.Value,
+					false,
+					_environmentProvider);
+
+				if (viewModelAbsolutePath.Value ==
+						treeViewNamespacePath.Item.AbsolutePath.Value)
+				{
+					_nodeOfViewModel = treeViewNamespacePath;
+				}
+			}
+
+			switch (treeViewNamespacePath.Item.AbsolutePath.ExtensionNoPeriod)
+            {
+                case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
+                    await treeViewNamespacePath.LoadChildListAsync();
+                    break;
+            }
+		}
+
+		// await treeViewNoType.LoadChildListAsync();
+
+		foreach (var node in treeViewNoType.ChildList)
+		{
+			await RecursiveGetFlattenedTree(node, textEditorViewModel);
+		}
+	}
 }

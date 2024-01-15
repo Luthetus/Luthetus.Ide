@@ -11,10 +11,10 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.FolderExplorers.States;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
+using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
@@ -40,7 +40,6 @@ public partial class IdeHeader : FluxorComponent
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
     private ElementReference? _buttonFileElementReference;
     private TreeViewNamespacePath? _nodeOfViewModel = null;
-
 	private List<TreeViewNoType> _nodeList = new();
 
     protected override Task OnInitializedAsync()
