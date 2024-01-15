@@ -44,6 +44,17 @@
                 style="margin-left: 15px;"
                 @onclick="OpenTreeViewDebugInfoDialog">
             TreeViewDebugInfo
+			(_nodeList.Count:&nbsp;@_nodeList.Count)
+			(_nodeOfViewModel:&nbsp;
+			@if (_nodeOfViewModel is null)
+			{
+				@: false
+			}
+			else
+			{
+				@: true
+			}
+			)
         </button>
 
         @* <ActiveBackgroundTaskDisplay/> *@

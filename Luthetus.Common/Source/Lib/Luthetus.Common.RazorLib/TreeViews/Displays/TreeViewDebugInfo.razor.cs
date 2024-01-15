@@ -22,6 +22,10 @@ public partial class TreeViewDebugInfo : FluxorComponent
 
 	[Parameter, EditorRequired]
 	public Key<TreeViewContainer> TreeViewContainerKey { get; set; } = Key<TreeViewContainer>.Empty;
+	[Parameter]
+	public Func<List<TreeViewNoType>, TreeViewNoType, Task>? RecursiveGetFlattenedTreeFunc { get; set; }
+
+	private List<TreeViewNoType> _nodeList = new();
 
 	protected override void OnInitialized()
     {
@@ -31,4 +35,14 @@ public partial class TreeViewDebugInfo : FluxorComponent
 
         base.OnInitialized();
     }
+
+	private async Task PerformGetFlattenedTree()
+	{
+		if (RecursiveGetFlattenedTreeFunc is null)
+			return;
+
+		_nodeList.Clear();
+
+		await RecursiveGetFlattenedTreeFunc.Invoke(_nodeList, TreeViewStateSelection.Value.RootNode);
+	}
 }
