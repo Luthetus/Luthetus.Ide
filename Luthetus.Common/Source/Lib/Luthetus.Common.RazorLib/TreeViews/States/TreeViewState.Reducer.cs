@@ -393,6 +393,18 @@ public partial record TreeViewState
 				}
 				else
 				{
+					var alreadyExistingIndex = inContainer.SelectedNodeList.FindIndex(
+						x => setActiveNodeAction.NextActiveNode.Equals(x));
+					
+					if (alreadyExistingIndex != -1)
+					{
+						inContainer = inContainer with
+			            {
+			                SelectedNodeList = inContainer.SelectedNodeList.RemoveAt(
+								alreadyExistingIndex)
+			            };
+					}
+
 					outContainer = inContainer with
 		            {
 		                SelectedNodeList = inContainer.SelectedNodeList.Insert(
