@@ -2,6 +2,7 @@
 
 @{
 	var terminalSession = TerminalSessionsStateSelection.Value;
+
 	var output = terminalSession.ReadStandardOut(
 		TreeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey);
 }
@@ -22,11 +23,11 @@ else
 {
 	if (output.Contains("Passed!"))
 	{
-		renderFragment = @<text>Passed!</text>;
+		renderFragment = @<em class="luth_em">Passed!</em>;
 	}
 	else
 	{
-		renderFragment = @<text>Failed!</text>;
+		renderFragment = @<span class="luth_tree-view-exception">Failed!</span>;
 	}
 }
 
