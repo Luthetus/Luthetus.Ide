@@ -487,7 +487,7 @@ public partial record TreeViewState
                 var setActiveNodeAction = new SetActiveNodeAction(
                     outContainer.Key,
                     outContainer.ActiveNode.Parent,
-					true,
+                    false,
 					false);
 
                 outContainer = PerformSetActiveNode(
@@ -564,8 +564,6 @@ public partial record TreeViewState
 
             if (outContainer.ActiveNode.IndexAmongSiblings == 0)
             {
-                var nextActiveNode = outContainer.ActiveNode.Parent;
-
                 var setActiveNodeAction = new SetActiveNodeAction(
                     outContainer.Key,
                     outContainer.ActiveNode!.Parent,
