@@ -94,6 +94,8 @@ public partial class TestExplorerContextMenu : ComponentBase
 	private MenuRecord GetMultiSelectionMenuRecord(TreeViewCommandArgs commandArgs)
 	{
 		var menuOptionRecordList = new List<MenuOptionRecord>();
+		Action runAllOnClicksWithinSelection = () => {};
+		bool runAllOnClicksWithinSelectionHasEffect = false;
 
 		foreach (var node in commandArgs.TreeViewContainer.SelectedNodeList)
 		{
@@ -114,6 +116,16 @@ public partial class TestExplorerContextMenu : ComponentBase
 					treeViewStringFragment.Item.Value,
 				    MenuOptionKind.Other,
 				    SubMenu: GetMenuRecord(innerTreeViewCommandArgs, true));
+
+				var copyRunAllOnClicksWithinSelection = runAllOnClicksWithinSelection;
+
+				runAllOnClicksWithinSelection = () =>
+				{
+					copyRunAllOnClicksWithinSelection.Invoke();
+					menuOption.SubMenu.MenuOptionList.Single().OnClick.Invoke();
+				};
+
+				runAllOnClicksWithinSelectionHasEffect = true;
 			}
 			else
 			{
@@ -124,6 +136,14 @@ public partial class TestExplorerContextMenu : ComponentBase
 			}
 
 			menuOptionRecordList.Add(menuOption);
+		}
+
+		if (runAllOnClicksWithinSelectionHasEffect)
+		{
+			menuOptionRecordList.Insert(0, new(
+				"Run all OnClicks within selection",
+				MenuOptionKind.Create,
+				OnClick: runAllOnClicksWithinSelection));
 		}
 
 		if (!menuOptionRecordList.Any())
