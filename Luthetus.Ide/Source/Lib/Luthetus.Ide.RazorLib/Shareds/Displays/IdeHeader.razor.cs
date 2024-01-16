@@ -2,20 +2,16 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dropdowns.States;
-using Luthetus.Common.RazorLib.TreeViews.Displays;
-using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.FolderExplorers.States;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 
@@ -31,16 +27,10 @@ public partial class IdeHeader : FluxorComponent
     private EditorSync EditorSync { get; set; } = null!;
     [Inject]
     private FolderExplorerSync FolderExplorerSync { get; set; } = null!;
-	[Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     private Key<DropdownRecord> _dropdownKeyFile = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
     private ElementReference? _buttonFileElementReference;
-    private TreeViewNamespacePath? _nodeOfViewModel = null;
-	private List<TreeViewNoType> _nodeList = new();
 
     protected override Task OnInitializedAsync()
     {
@@ -158,79 +148,4 @@ public partial class IdeHeader : FluxorComponent
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }
-
-    private void OpenTreeViewDebugInfoDialog()
-    {
-        var dialogRecord = new DialogRecord(
-            Key<DialogRecord>.NewKey(),
-            nameof(TreeViewDebugInfo),
-            typeof(TreeViewDebugInfo),
-            new Dictionary<string, object?>
-			{
-				{
-					nameof(TreeViewDebugInfo.TreeViewContainerKey),
-					DotNetSolutionState.TreeViewSolutionExplorerStateKey
-				},
-				{
-					nameof(TreeViewDebugInfo.RecursiveGetFlattenedTreeFunc),
-					RecursiveGetFlattenedTree
-				}
-			},
-            null)
-        {
-            IsResizable = true
-        };
-
-        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
-    }
-
-	private async Task RecursiveGetFlattenedTree(List<TreeViewNoType> nodeList, TreeViewNoType treeViewNoType)
-	{
-		_nodeList = nodeList;
-
-		var textEditorViewModel = (TextEditorViewModel?)null;
-
-		// Aaa
-		{
-			var group = TextEditorService.GroupApi.GetOrDefault(EditorSync.EditorTextEditorGroupKey);
-
-			if (group is not null)
-			{
-				textEditorViewModel = TextEditorService.ViewModelApi.GetOrDefault(group.ActiveViewModelKey);
-			}
-		}
-
-		nodeList.Add(treeViewNoType);
-
-		if (treeViewNoType is TreeViewNamespacePath treeViewNamespacePath)
-		{
-			if (textEditorViewModel is not null)
-			{
-				var viewModelAbsolutePath = new AbsolutePath(
-					textEditorViewModel.ResourceUri.Value,
-					false,
-					EnvironmentProvider);
-
-				if (viewModelAbsolutePath.Value ==
-						treeViewNamespacePath.Item.AbsolutePath.Value)
-				{
-					_nodeOfViewModel = treeViewNamespacePath;
-				}
-			}
-
-			switch (treeViewNamespacePath.Item.AbsolutePath.ExtensionNoPeriod)
-            {
-                case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                    treeViewNamespacePath.LoadChildListAsync();
-                    break;
-            }
-		}
-
-		// await treeViewNoType.LoadChildListAsync();
-
-		foreach (var node in treeViewNoType.ChildList)
-		{
-			RecursiveGetFlattenedTree(nodeList, node);
-		}
-	}
 }

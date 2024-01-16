@@ -9,7 +9,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.RazorLib.Groups.Displays;
 
-public partial class TextEditorGroupTabDisplay : ComponentBase
+public partial class TextEditorGroupTabDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
@@ -27,6 +27,13 @@ public partial class TextEditorGroupTabDisplay : ComponentBase
         ? "luth_active"
         : string.Empty;
 
+    protected override void OnInitialized()
+    {
+        TextEditorViewModelStateWrap.StateChanged += TextEditorViewModelStateWrap_StateChanged;
+
+        base.OnInitialized();
+    }
+
     private void OnClickSetActiveTextEditorViewModel()
     {
         TextEditorService.GroupApi.SetActiveViewModel(TextEditorGroup.GroupKey, TextEditorViewModelKey);
@@ -41,5 +48,15 @@ public partial class TextEditorGroupTabDisplay : ComponentBase
     private void CloseTabOnClick()
     {
         TextEditorService.GroupApi.RemoveViewModel(TextEditorGroup.GroupKey, TextEditorViewModelKey);
+    }
+
+    private async void TextEditorViewModelStateWrap_StateChanged(object? sender, EventArgs e)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        TextEditorViewModelStateWrap.StateChanged -= TextEditorViewModelStateWrap_StateChanged;
     }
 }

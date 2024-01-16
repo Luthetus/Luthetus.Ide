@@ -21,6 +21,10 @@ public partial record TreeViewState
 		TreeViewNoType? NextActiveNode,
 		bool AddSelectedNodes,
 		bool SelectNodesBetweenCurrentAndNextActiveNode);
+	
+	public record RemoveSelectedNodeAction(
+		Key<TreeViewContainer> ContainerKey,
+        Key<TreeViewNoType> KeyOfNodeToRemove);
 
     public record MoveLeftAction(
 		Key<TreeViewContainer> ContainerKey,

@@ -121,6 +121,25 @@ public partial record TreeViewState
         }
 
         [ReducerMethod]
+        public static TreeViewState ReduceRemoveSelectedNodeAction(
+            TreeViewState inState, RemoveSelectedNodeAction removeSelectedNodeAction)
+        {
+            var inContainer = inState.ContainerList.FirstOrDefault(
+                x => x.Key == removeSelectedNodeAction.ContainerKey);
+
+            if (inContainer is null)
+                return inState;
+
+			var outContainer = PerformRemoveSelectedNode(inContainer, removeSelectedNodeAction);
+
+			var outContainerList = inState.ContainerList.Replace(
+				inContainer,
+				outContainer);
+
+            return inState with { ContainerList = outContainerList };
+        }
+
+        [ReducerMethod]
         public static TreeViewState ReduceMoveLeftAction(
             TreeViewState inState, MoveLeftAction moveLeftAction)
         {
@@ -424,8 +443,22 @@ public partial record TreeViewState
 
             return outContainer;
 		}
+        
+        private static TreeViewContainer PerformRemoveSelectedNode(
+			TreeViewContainer inContainer,
+            RemoveSelectedNodeAction removeSelectedNodeAction)
+        {
+            var indexOfNodeToRemove = inContainer.SelectedNodeList.FindIndex(
+                x => x.Key == removeSelectedNodeAction.KeyOfNodeToRemove);
 
-		private static TreeViewContainer PerformMoveLeft(
+            return inContainer with
+            {
+                SelectedNodeList = inContainer.SelectedNodeList.RemoveAt(
+                    indexOfNodeToRemove)
+            };
+        }
+        
+        private static TreeViewContainer PerformMoveLeft(
 			TreeViewContainer inContainer,
 			MoveLeftAction moveLeftAction)
 		{
