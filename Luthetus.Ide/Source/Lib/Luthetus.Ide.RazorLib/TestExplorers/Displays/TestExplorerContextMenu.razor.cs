@@ -32,8 +32,13 @@ public partial class TestExplorerContextMenu : ComponentBase
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
     public static readonly Key<TerminalCommand> DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey = Key<TerminalCommand>.NewKey();
 
-    private MenuRecord GetMenuRecord(TreeViewCommandArgs commandArgs)
+    private MenuRecord GetMenuRecord(TreeViewCommandArgs commandArgs, bool isRecursiveCall = false)
     {
+		if (!isRecursiveCall && commandArgs.TreeViewContainer.SelectedNodeList.Count > 1)
+		{
+			return GetMultiSelectionMenuRecord(commandArgs);
+		}
+
         if (commandArgs.TargetNode is null)
             return MenuRecord.Empty;
 
@@ -85,6 +90,47 @@ public partial class TestExplorerContextMenu : ComponentBase
 
         return new MenuRecord(menuRecordsList.ToImmutableArray());
     }
+
+	private MenuRecord GetMultiSelectionMenuRecord(TreeViewCommandArgs commandArgs)
+	{
+		var menuOptionRecordList = new List<MenuOptionRecord>();
+
+		foreach (var node in commandArgs.TreeViewContainer.SelectedNodeList)
+		{
+			MenuOptionRecord menuOption;
+
+			if (node is TreeViewStringFragment treeViewStringFragment)
+			{
+				var innerTreeViewCommandArgs = new TreeViewCommandArgs(
+			        commandArgs.TreeViewService,
+			        commandArgs.TreeViewContainer,
+			        node,
+			        commandArgs.RestoreFocusToTreeView,
+			        commandArgs.ContextMenuFixedPosition,
+			        commandArgs.MouseEventArgs,
+		        	commandArgs.KeyboardEventArgs);
+
+				menuOption = new(
+					treeViewStringFragment.Item.Value,
+				    MenuOptionKind.Other,
+				    SubMenu: GetMenuRecord(innerTreeViewCommandArgs, true));
+			}
+			else
+			{
+				menuOption = new(
+					node.GetType().Name,
+				    MenuOptionKind.Other,
+				    SubMenu: MenuRecord.Empty);
+			}
+
+			menuOptionRecordList.Add(menuOption);
+		}
+
+		if (!menuOptionRecordList.Any())
+            return MenuRecord.Empty;
+
+		return new MenuRecord(menuOptionRecordList.ToImmutableArray());
+	}
 
 	private async Task RunTestByFullyQualifiedName(
 		TreeViewStringFragment treeViewStringFragment,
