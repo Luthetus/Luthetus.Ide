@@ -4,6 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis;
 
@@ -12,7 +13,7 @@ public class ParserTests
 	[Fact]
 	public void PARSE_AmbiguousIdentifierNode()
 	{
-		throw new NotImplementedException();
+        throw new NotImplementedException();
 	}
 	
 	[Fact]
@@ -574,7 +575,102 @@ Actual:   1");
 	[Fact]
 	public void PARSE_VariableDeclarationNode()
 	{
-		throw new NotImplementedException();
+        var resourceUri = new ResourceUri("UnitTests");
+		var typeIdentifierText = "int";
+		var identifierTokenText = "x";
+        var sourceText = $"{typeIdentifierText} {identifierTokenText};";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+		Assert.Single(topCodeBlock.ChildList);
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList.Single();
+
+        // Assert ChildList
+        {
+			var i = 0;
+            var typeClauseNode = (TypeClauseNode)variableDeclarationNode.ChildList[i++];
+            var identifierToken = (IdentifierToken)variableDeclarationNode.ChildList[i++];
+
+			Assert.NotNull(typeClauseNode);
+			Assert.NotNull(identifierToken);
+        }
+
+        Assert.False(variableDeclarationNode.HasGetter);
+		Assert.False(variableDeclarationNode.HasSetter);
+		Assert.False(variableDeclarationNode.GetterIsAutoImplemented);
+		Assert.False(variableDeclarationNode.SetterIsAutoImplemented);
+
+        // Assert IdentifierToken
+        {
+			var identifierToken = variableDeclarationNode.IdentifierToken;
+			Assert.IsType<IdentifierToken>(identifierToken);
+
+			Assert.False(identifierToken.IsFabricated);
+			Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.SyntaxKind);
+
+			// Assert IdentifierToken.TextSpan
+			{
+				var textSpan = identifierToken.TextSpan;
+				Assert.IsType<TextEditorTextSpan>(textSpan);
+
+                Assert.Equal(0, textSpan.DecorationByte);
+                Assert.Equal(5, textSpan.EndingIndexExclusive);
+                Assert.Equal(1, textSpan.Length);
+                Assert.Equal(resourceUri, textSpan.ResourceUri);
+                Assert.Equal(sourceText, textSpan.SourceText);
+                Assert.Equal(4, textSpan.StartingIndexInclusive);
+                Assert.Equal(identifierTokenText, textSpan.GetText());
+			}
+        }
+
+		Assert.False(variableDeclarationNode.IsFabricated);
+		Assert.False(variableDeclarationNode.IsInitialized);
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+
+		// Assert TypeClauseNode
+		{
+            var typeClauseNode = variableDeclarationNode.TypeClauseNode;
+            Assert.IsType<TypeClauseNode>(typeClauseNode);
+
+            // Assert TypeClauseNode.ChildList
+            {
+				var i = 0;
+				var keywordToken = (KeywordToken)typeClauseNode.ChildList[i++];
+				Assert.IsType<KeywordToken>(keywordToken);
+            }
+
+            Assert.Null(typeClauseNode.GenericParametersListingNode);
+            Assert.False(typeClauseNode.IsFabricated);
+            Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
+
+            // Assert TypeClauseNode.TypeIdentifier
+            {
+				var typeIdentifier = typeClauseNode.TypeIdentifier;
+
+                Assert.False(typeIdentifier.IsFabricated);
+                Assert.Equal(SyntaxKind.IntTokenKeyword, typeIdentifier.SyntaxKind);
+				
+				// Assert TypeClauseNode.TypeIdentifier
+				{
+					var textSpan = typeIdentifier.TextSpan;
+
+                    Assert.Equal(1, textSpan.DecorationByte);
+                    Assert.Equal(3, textSpan.EndingIndexExclusive);
+                    Assert.Equal(3, textSpan.Length);
+                    Assert.Equal(resourceUri, textSpan.ResourceUri);
+                    Assert.Equal(sourceText, textSpan.SourceText);
+                    Assert.Equal(0, textSpan.StartingIndexInclusive);
+                    Assert.Equal(typeIdentifierText, textSpan.GetText());
+				}
+            }
+
+            Assert.Equal(typeof(int), typeClauseNode.ValueType);
+        }
+
+		Assert.Equal(VariableKind.Local, variableDeclarationNode.VariableKind);
 	}
 	
 	[Fact]
