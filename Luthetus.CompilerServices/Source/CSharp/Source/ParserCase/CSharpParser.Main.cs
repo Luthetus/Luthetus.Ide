@@ -2,6 +2,7 @@
 using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -133,6 +134,10 @@ public partial class CSharpParser : IParser
                     break;
                 case SyntaxKind.EndOfFileToken:
                     if (_nodeRecent is IExpressionNode)
+                    {
+                        _currentCodeBlockBuilder.ChildList.Add(_nodeRecent);
+                    }
+                    else if (_nodeRecent is AmbiguousIdentifierNode)
                     {
                         _currentCodeBlockBuilder.ChildList.Add(_nodeRecent);
                     }

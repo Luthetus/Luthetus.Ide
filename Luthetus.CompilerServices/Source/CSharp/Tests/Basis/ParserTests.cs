@@ -13,8 +13,49 @@ public class ParserTests
 	[Fact]
 	public void PARSE_AmbiguousIdentifierNode()
 	{
-        throw new NotImplementedException();
-	}
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = $"x";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        Assert.Single(topCodeBlock.ChildList);
+        var ambiguousIdentifierNode = (AmbiguousIdentifierNode)topCodeBlock.ChildList.Single();
+
+        // Assert ChildList
+        {
+			var i = 0;
+
+			var identifierToken = ambiguousIdentifierNode.ChildList[i++];
+			Assert.IsType<IdentifierToken>(identifierToken);
+		}
+
+		// Assert IdentifierToken
+		{
+			var identifierToken = ambiguousIdentifierNode.IdentifierToken;
+
+            Assert.False(identifierToken.IsFabricated);
+            Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.SyntaxKind);
+
+			// Assert IdentifierToken.TextSpan
+			{
+				var textSpan = identifierToken.TextSpan;
+
+                Assert.Equal(0, textSpan.DecorationByte);
+                Assert.Equal(1, textSpan.EndingIndexExclusive);
+                Assert.Equal(1, textSpan.Length);
+                Assert.Equal(resourceUri, textSpan.ResourceUri);
+                Assert.Equal(sourceText, textSpan.SourceText);
+                Assert.Equal(0, textSpan.StartingIndexInclusive);
+                Assert.Equal("x", textSpan.GetText());
+			}
+		}
+
+		Assert.False(ambiguousIdentifierNode.IsFabricated);
+		Assert.Equal(SyntaxKind.AmbiguousIdentifierNode, ambiguousIdentifierNode.SyntaxKind);
+    }
 	
 	[Fact]
 	public void PARSE_AttributeNode()
@@ -569,7 +610,158 @@ Actual:   1");
 	[Fact]
 	public void PARSE_VariableAssignmentExpressionNode()
 	{
-		throw new NotImplementedException();
+        var resourceUri = new ResourceUri("UnitTests");
+        var identifierTokenText = "x";
+        var expressionText = "2";
+        var sourceText = $"{identifierTokenText} = {expressionText};";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        Assert.Single(topCodeBlock.ChildList);
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList.Single();
+
+		// Assert ChildList
+		{
+			var i = 0;
+
+			var identifierToken = (IdentifierToken)variableAssignmentExpressionNode.ChildList[i++];
+			Assert.IsType<IdentifierToken>(identifierToken);
+
+            var equalsToken = (EqualsToken)variableAssignmentExpressionNode.ChildList[i++];
+            Assert.IsType<EqualsToken>(equalsToken);
+
+            var literalExpressionNode = (LiteralExpressionNode)variableAssignmentExpressionNode.ChildList[i++];
+            Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
+        }
+
+		// Assert EqualsToken
+		{
+			var equalsToken = variableAssignmentExpressionNode.EqualsToken;
+
+            Assert.False(equalsToken.IsFabricated);
+            Assert.Equal(SyntaxKind.EqualsToken, equalsToken.SyntaxKind);
+
+            // Assert EqualsToken.TextSpan
+            {
+				var textSpan = equalsToken.TextSpan;
+
+                Assert.Equal(0, textSpan.DecorationByte);
+                Assert.Equal(3, textSpan.EndingIndexExclusive);
+                Assert.Equal(1, textSpan.Length);
+                Assert.Equal(resourceUri, textSpan.ResourceUri);
+                Assert.Equal(sourceText, textSpan.SourceText);
+                Assert.Equal(2, textSpan.StartingIndexInclusive);
+                Assert.Equal("=", textSpan.GetText());
+            }
+		}
+
+		// Assert ExpressionNode
+		{
+			var literalExpressionNode = (LiteralExpressionNode)variableAssignmentExpressionNode.ExpressionNode;
+
+            // Assert ExpressionNode.ChildList
+            {
+				var i = 0;
+
+				var numericLiteralToken = (NumericLiteralToken)literalExpressionNode.ChildList[i++];
+				var typeClauseNode = (TypeClauseNode)literalExpressionNode.ChildList[i++];
+            }
+
+            Assert.False(literalExpressionNode.IsFabricated);
+
+			// Assert ExpressionNode.LiteralSyntaxToken
+			{
+				var numericLiteralToken = (NumericLiteralToken)literalExpressionNode.LiteralSyntaxToken;
+
+                Assert.False(numericLiteralToken.IsFabricated);
+                Assert.Equal(SyntaxKind.NumericLiteralToken, numericLiteralToken.SyntaxKind);
+
+				// Assert ExpressionNode.LiteralSyntaxToken.TextSpan
+				{
+					var textSpan = numericLiteralToken.TextSpan;
+
+					Assert.Equal(0, textSpan.DecorationByte);
+					Assert.Equal(5, textSpan.EndingIndexExclusive);
+					Assert.Equal(1, textSpan.Length);
+					Assert.Equal(resourceUri, textSpan.ResourceUri);
+					Assert.Equal(sourceText, textSpan.SourceText);
+					Assert.Equal(4, textSpan.StartingIndexInclusive);
+					Assert.Equal("2", textSpan.GetText());
+				}
+			}
+
+            // Assert ExpressionNode.ResultTypeClauseNode
+            {
+				var typeClauseNode = literalExpressionNode.ResultTypeClauseNode;
+				Assert.IsType<TypeClauseNode>(typeClauseNode);
+
+				// Assert ExpressionNode.ResultTypeClauseNode.ChildList
+				{
+					var i = 0;
+
+					var identifierToken = (IdentifierToken)typeClauseNode.ChildList[i++];
+                    Assert.IsType<IdentifierToken>(identifierToken);
+				}
+
+				Assert.Null(typeClauseNode.GenericParametersListingNode);
+				Assert.False(typeClauseNode.IsFabricated);
+				Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
+
+                // Assert ExpressionNode.ResultTypeClauseNode.TypeIdentifier
+                {
+					var typeIdentifierToken = typeClauseNode.TypeIdentifier;
+					Assert.IsType<IdentifierToken>(typeIdentifierToken);
+                    
+					Assert.False(typeIdentifierToken.IsFabricated);
+                    Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifierToken.SyntaxKind);
+
+                    // Assert ExpressionNode.ResultTypeClauseNode.TypeIdentifier.TextSpan
+                    {
+						var textSpan = typeIdentifierToken.TextSpan;
+
+                        Assert.Equal(0, textSpan.DecorationByte);
+                        Assert.Equal(3, textSpan.EndingIndexExclusive);
+                        Assert.Equal(3, textSpan.Length);
+                        Assert.Equal(resourceUri, textSpan.ResourceUri);
+                        Assert.Equal(sourceText, textSpan.SourceText);
+                        Assert.Equal(0, textSpan.StartingIndexInclusive);
+                        Assert.Equal("int", textSpan.GetText());
+					}
+				}
+
+				Assert.Equal(typeof(int), typeClauseNode.ValueType);
+            }
+
+            Assert.Equal(SyntaxKind.LiteralExpressionNode, literalExpressionNode.SyntaxKind);
+		}
+
+		Assert.False(variableAssignmentExpressionNode.IsFabricated);
+
+		Assert.Equal(SyntaxKind.VariableAssignmentExpressionNode, variableAssignmentExpressionNode.SyntaxKind);
+
+		// Assert VariableIdentifierToken
+		{
+			var variableIdentifierToken = variableAssignmentExpressionNode.VariableIdentifierToken;
+
+            Assert.False(variableIdentifierToken.IsFabricated);
+            Assert.Equal(SyntaxKind.IdentifierToken, variableIdentifierToken.SyntaxKind);
+
+            // Assert VariableIdentifierToken.TextSpan
+            {
+				var textSpan = variableIdentifierToken.TextSpan;
+
+                Assert.Equal(0, textSpan.DecorationByte);
+                Assert.Equal(1, textSpan.EndingIndexExclusive);
+                Assert.Equal(1, textSpan.Length);
+                Assert.Equal(resourceUri, textSpan.ResourceUri);
+                Assert.Equal(sourceText, textSpan.SourceText);
+                Assert.Equal(0, textSpan.StartingIndexInclusive);
+                Assert.Equal("x", textSpan.GetText());
+            }
+        }
 	}
 	
 	[Fact]
@@ -674,14 +866,19 @@ Actual:   1");
 	}
 	
 	[Fact]
-	public void PARSE_VariableExpressionNode()
-	{
-		throw new NotImplementedException();
-	}
-	
-	[Fact]
 	public void PARSE_VariableReferenceNode()
 	{
-		throw new NotImplementedException();
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = $"x";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        Assert.Single(topCodeBlock.ChildList);
+        var variableReferenceNode = (VariableReferenceNode)topCodeBlock.ChildList.Single();
+
+        throw new NotImplementedException();
 	}
 }
