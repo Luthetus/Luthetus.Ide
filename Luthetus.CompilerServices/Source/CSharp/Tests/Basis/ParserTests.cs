@@ -377,7 +377,11 @@ Actual:   1");
 	public void PARSE_GenericArgumentsListingNode()
 	{
 		var resourceUri = new ResourceUri("UnitTests");
-		var sourceText = $@"Dictionary<string, int> myMap = new Dictionary<string, int>();";
+		var sourceText = @"public class MyClass<T, U>
+{
+	public T ItemOne { get; set; }
+	public U ItemTwo { get; set; }
+}";
 
 		var lexer = new CSharpLexer(resourceUri, sourceText);
 		lexer.Lex();
@@ -403,7 +407,7 @@ Actual:   1");
 	public void PARSE_GenericParameterEntryNode()
 	{
 		var resourceUri = new ResourceUri("UnitTests");
-		var sourceText = $@"s";
+		var sourceText = $@"Dictionary<string, int> myMap = new Dictionary<string, int>();";
 
 		var lexer = new CSharpLexer(resourceUri, sourceText);
 		lexer.Lex();
@@ -419,6 +423,8 @@ Actual:   1");
 	[Fact]
 	public void PARSE_GenericParametersListingNode()
 	{
+		var sourceText = $@"Dictionary<string, int> myMap = new Dictionary<string, int>();";
+
 		throw new NotImplementedException();
 	}
 	
@@ -431,13 +437,33 @@ Actual:   1");
 	[Fact]
 	public void PARSE_IfStatementNode()
 	{
+		var sourceText = @"if (true) { }";
+
 		throw new NotImplementedException();
 	}
 	
 	[Fact]
 	public void PARSE_InheritanceStatementNode()
 	{
-		throw new NotImplementedException();
+		var resourceUri = new ResourceUri("UnitTests");
+		var typeIdentifierText = "SolutionEditorDisplay";
+		var inheritedTypeClauseText = "ComponentBase";
+		var sourceText = $"public partial class {typeIdentifierText} : {inheritedTypeClauseText} {{ }}";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+		lexer.Lex();
+		var parser = new CSharpParser(lexer);
+		var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+		Assert.Equal(
+			typeIdentifierText,
+			typeDefinitionNode.TypeIdentifier.TextSpan.GetText());
+
+		var inheritedTypeClauseNode = typeDefinitionNode.InheritedTypeClauseNode;
+		Assert.Equal(
+			inheritedTypeClauseText,
+			inheritedTypeClauseNode.TypeIdentifier.TextSpan.GetText());
 	}
 	
 	[Fact]
