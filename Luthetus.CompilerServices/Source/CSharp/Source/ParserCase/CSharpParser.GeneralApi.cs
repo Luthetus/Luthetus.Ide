@@ -599,7 +599,7 @@ public partial class CSharpParser : IParser
                 else
                 {
                     // Attribute
-                    _ = Specific.HandleAttribute(openSquareBracketToken);
+                    NodeRecent = Specific.HandleAttribute(openSquareBracketToken);
                 }
             }
         }

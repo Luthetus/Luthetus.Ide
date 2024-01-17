@@ -49,6 +49,11 @@ public sealed record TypeClauseNode : ISyntaxNode
     /// </summary>
     public GenericParametersListingNode? GenericParametersListingNode { get; }
 
+    /// <summary>
+    /// TODO: Change this attribute node property.
+    /// </summary>
+    public AttributeNode AttributeNode { get; set; }
+
     public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }

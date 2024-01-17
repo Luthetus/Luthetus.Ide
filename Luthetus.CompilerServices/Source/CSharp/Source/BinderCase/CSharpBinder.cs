@@ -462,6 +462,7 @@ public class CSharpBinder : IBinder
     /// <summary>TODO: Correctly implement this method. For now going to skip until the attribute closing square bracket.</summary>
     public AttributeNode BindAttributeNode(
         OpenSquareBracketToken openSquareBracketToken,
+        List<ISyntaxToken> innerTokens,
         CloseSquareBracketToken closeSquareBracketToken)
     {
         AddSymbolReference(new TypeSymbol(openSquareBracketToken.TextSpan with
@@ -472,6 +473,7 @@ public class CSharpBinder : IBinder
 
         return new AttributeNode(
             openSquareBracketToken,
+            innerTokens,
             closeSquareBracketToken);
     }
 

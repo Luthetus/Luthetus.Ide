@@ -919,6 +919,7 @@ public partial class CSharpParser : IParser
         public AttributeNode? HandleAttribute(OpenSquareBracketToken openSquareBracketToken)
         {
             ISyntaxToken tokenCurrent;
+            var innerTokens = new List<ISyntaxToken>();
 
             while (true)
             {
@@ -929,12 +930,17 @@ public partial class CSharpParser : IParser
                 {
                     break;
                 }
+                else
+                {
+                    innerTokens.Add(tokenCurrent);
+                }
             }
 
             if (tokenCurrent.SyntaxKind == SyntaxKind.CloseSquareBracketToken)
             {
                 return Binder.BindAttributeNode(
                     openSquareBracketToken,
+                    innerTokens,
                     (CloseSquareBracketToken)tokenCurrent);
             }
 
@@ -1508,6 +1514,10 @@ public partial class CSharpParser : IParser
                 TokenWalker.Backtrack();
 
                 var typeClauseNode = Utility.MatchTypeClause();
+
+                if (NodeRecent is AttributeNode attributeNode)
+                    typeClauseNode.AttributeNode = attributeNode;
+
                 NodeRecent = typeClauseNode;
             }
             else

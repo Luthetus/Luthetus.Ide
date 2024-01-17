@@ -57,6 +57,8 @@ public class AttributeNodeTests
 
         var attributeNode = new AttributeNode(
             openSquareBracketToken,
+            // This new list is a hack so the tests compile.
+            new(), 
             closeSquareBracketToken);
 
         Assert.Equal(openSquareBracketToken, attributeNode.OpenSquareBracketToken);
