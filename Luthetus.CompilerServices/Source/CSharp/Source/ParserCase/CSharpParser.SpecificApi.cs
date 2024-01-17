@@ -760,7 +760,7 @@ public partial class CSharpParser : IParser
                             new ExpressionDelimiter(
                                 SyntaxKind.OpenParenthesisToken,
                                 SyntaxKind.CloseParenthesisToken,
-                                openParenthesisToken,
+                                null,
                                 null)
                         });
                 }
@@ -968,26 +968,41 @@ public partial class CSharpParser : IParser
                 ExpressionDelimiter? closeExtraExpressionDelimiterEncountered = 
                     extraExpressionDeliminaters?.FirstOrDefault(x => x.CloseSyntaxKind == tokenCurrent.SyntaxKind);
 
-                if (tokenCurrent.SyntaxKind == SyntaxKind.CloseParenthesisToken && closeExtraExpressionDelimiterEncountered?.OpenSyntaxToken is not null)
+                if (closeExtraExpressionDelimiterEncountered is not null)
                 {
-                    ParenthesizedExpressionNode parenthesizedExpression;
-
-                    if (previousInvocationExpressionNode is not null)
+                    if (tokenCurrent.SyntaxKind == SyntaxKind.CloseParenthesisToken)
                     {
-                        parenthesizedExpression = new ParenthesizedExpressionNode(
-                            (OpenParenthesisToken)closeExtraExpressionDelimiterEncountered.OpenSyntaxToken,
-                            previousInvocationExpressionNode,
-                            (CloseParenthesisToken)tokenCurrent);
-                    }
-                    else
-                    {
-                        parenthesizedExpression = new ParenthesizedExpressionNode(
-                            (OpenParenthesisToken)closeExtraExpressionDelimiterEncountered.OpenSyntaxToken,
-                            new IdempotentExpressionNode(CSharpFacts.Types.Void.ToTypeClause()),
-                            (CloseParenthesisToken)tokenCurrent);
-                    }
+                        if (closeExtraExpressionDelimiterEncountered?.OpenSyntaxToken is not null)
+                        {
+                            ParenthesizedExpressionNode parenthesizedExpression;
 
-                    return parenthesizedExpression;
+                            if (previousInvocationExpressionNode is not null)
+                            {
+                                parenthesizedExpression = new ParenthesizedExpressionNode(
+                                    (OpenParenthesisToken)closeExtraExpressionDelimiterEncountered.OpenSyntaxToken,
+                                    previousInvocationExpressionNode,
+                                    (CloseParenthesisToken)tokenCurrent);
+                            }
+                            else
+                            {
+                                parenthesizedExpression = new ParenthesizedExpressionNode(
+                                    (OpenParenthesisToken)closeExtraExpressionDelimiterEncountered.OpenSyntaxToken,
+                                    new IdempotentExpressionNode(CSharpFacts.Types.Void.ToTypeClause()),
+                                    (CloseParenthesisToken)tokenCurrent);
+                            }
+
+                            return parenthesizedExpression;
+                        }
+                        else
+                        {
+                            // If one provides 'CloseParenthesisToken' as a closing delimiter,
+                            // but does not provide the corresponding open delimiter (it is null)
+                            // then a function invocation started the initial invocation
+                            // of this method.
+
+                            break;
+                        }
+                    }
                 }
 
                 switch (tokenCurrent.SyntaxKind)

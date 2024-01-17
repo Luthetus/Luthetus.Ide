@@ -476,12 +476,6 @@ public class ParserTests
 
 		var expressionNode = functionParameterEntryNode.ExpressionNode;
 		Assert.IsType<LiteralExpressionNode>(expressionNode);
-
-		// TODO: Continue working on this test
-		throw new NotImplementedException(@"Error Message:
-   Assert.IsType() Failure
-Expected: Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.LiteralExpressionNode
-Actual:   Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.ParenthesizedExpressionNode");
 	}
 	
 	[Fact]
