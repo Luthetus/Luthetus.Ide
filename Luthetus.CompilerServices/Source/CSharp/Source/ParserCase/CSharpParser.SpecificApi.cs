@@ -780,12 +780,14 @@ public partial class CSharpParser : IParser
 
                 if (SyntaxKind.CommaToken == TokenWalker.Current.SyntaxKind)
                 {
+                    _ = TokenWalker.Consume();
                     // TODO: Track comma tokens?
                     //
                     // mutableFunctionParametersListing.Add(_cSharpParser._tokenWalker.Consume());
                 }
-                else
+                else if (SyntaxKind.CloseParenthesisToken == TokenWalker.Current.SyntaxKind)
                 {
+                    _ = TokenWalker.Consume();
                     break;
                 }
             }
@@ -999,9 +1001,14 @@ public partial class CSharpParser : IParser
                             // but does not provide the corresponding open delimiter (it is null)
                             // then a function invocation started the initial invocation
                             // of this method.
-
+                            TokenWalker.Backtrack();
                             break;
                         }
+                    }
+                    else if (tokenCurrent.SyntaxKind == SyntaxKind.CommaToken)
+                    {
+                        TokenWalker.Backtrack();
+                        break;
                     }
                 }
 

@@ -491,22 +491,16 @@ public class ParserTests
 		var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var functionParameterEntryNode = 
+		var functionParametersListingNode = 
 			((FunctionInvocationNode)topCodeBlock.ChildList.Single())
 			.FunctionParametersListingNode;
 
-		Assert.NotNull(functionParameterEntryNode.OpenParenthesisToken);
-		Assert.Equal(2, functionParameterEntryNode.FunctionParameterEntryNodeList.Length);
-		Assert.NotNull(functionParameterEntryNode.CloseParenthesisToken);
+		Assert.NotNull(functionParametersListingNode.OpenParenthesisToken);
+		Assert.Equal(2, functionParametersListingNode.FunctionParameterEntryNodeList.Length);
+		Assert.NotNull(functionParametersListingNode.CloseParenthesisToken);
 
-		Assert.False(functionParameterEntryNode.IsFabricated);
-		Assert.Equal(SyntaxKind.FunctionParameterEntryNode, functionParameterEntryNode.SyntaxKind);
-
-		// TODO: Continue working on this test
-		throw new NotImplementedException(@"Error Message:
-   Assert.Equal() Failure
-Expected: 2
-Actual:   1");
+		Assert.False(functionParametersListingNode.IsFabricated);
+		Assert.Equal(SyntaxKind.FunctionParametersListingNode, functionParametersListingNode.SyntaxKind);
 	}
 	
 	[Fact]
