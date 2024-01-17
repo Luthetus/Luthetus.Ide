@@ -111,21 +111,21 @@ public partial class CSharpParser : IParser
             {
                 var identifierReferenceNode = (AmbiguousIdentifierNode)NodeRecent;
 
-                var expectingTypeCause = false;
+                var expectingTypeClause = false;
 
                 if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-                    expectingTypeCause = true;
+                    expectingTypeClause = true;
 
                 if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
-                    expectingTypeCause = true;
+                    expectingTypeClause = true;
 
                 if (TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken ||
                     TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
                 {
-                    expectingTypeCause = true;
+                    expectingTypeClause = true;
                 }
 
-                if (expectingTypeCause)
+                if (expectingTypeClause)
                 {
                     if (!Binder.TryGetTypeDefinitionHierarchically(
                             identifierReferenceNode.IdentifierToken.TextSpan.GetText(),
@@ -229,10 +229,15 @@ public partial class CSharpParser : IParser
                     NodeRecent = typeClauseNode;
 
                     // Re-invoke ParseIdentifierToken now that _cSharpParser._nodeRecent is known to be a Type identifier
+                    // and that identifierToken is a function identifier
                     {
                         ParseIdentifierToken(identifierToken);
                         return;
                     }
+                }
+
+                // BUG: List<int> thinks 'List' is a generic method (2024-01-17)
+                {
                 }
 
                 Specific.HandleFunctionInvocation(identifierToken);
