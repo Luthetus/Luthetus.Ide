@@ -42,7 +42,7 @@ public partial class CSharpParser : IParser
         public Stack<ISyntax> ExpressionStack => _parser._expressionStack;
 
         /// <summary>TODO: I don't like this <see cref="NodeRecent"/> property. It points to a private field on a different object. But without this property things are incredibly verbose. I need to remember to come back to this and change how I get access to the object because this doesn't feel right.</summary>
-        public ISyntaxNode? NodeRecent
+        public ISyntaxNode NodeRecent
         {
             get => _parser._nodeRecent;
             set => _parser._nodeRecent = value;
@@ -107,7 +107,7 @@ public partial class CSharpParser : IParser
 
         public void ParseIdentifierToken(IdentifierToken identifierToken)
         {
-            if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.AmbiguousIdentifierNode)
+            if (NodeRecent.SyntaxKind == SyntaxKind.AmbiguousIdentifierNode)
             {
                 var identifierReferenceNode = (AmbiguousIdentifierNode)NodeRecent;
 
@@ -151,7 +151,7 @@ public partial class CSharpParser : IParser
                 }
             }
 
-            if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.TypeClauseNode)
+            if (NodeRecent.SyntaxKind == SyntaxKind.TypeClauseNode)
             {
                 GenericArgumentsListingNode? genericArgumentsListingNode = null;
 
@@ -219,8 +219,7 @@ public partial class CSharpParser : IParser
                     return;
                 }
 
-                if (NodeRecent is not null &&
-                    NodeRecent.SyntaxKind == SyntaxKind.AmbiguousIdentifierNode)
+                if (NodeRecent.SyntaxKind == SyntaxKind.AmbiguousIdentifierNode)
                 {
                     var identifierReferenceNode = (AmbiguousIdentifierNode)NodeRecent;
 
@@ -369,7 +368,7 @@ public partial class CSharpParser : IParser
 
         public void ParseColonToken(ColonToken colonToken)
         {
-            if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+            if (NodeRecent.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
                 var typeDefinitionNode = (TypeDefinitionNode)NodeRecent;
 
@@ -396,7 +395,7 @@ public partial class CSharpParser : IParser
             ISyntaxNode? nextCodeBlockOwner = null;
             TypeClauseNode? scopeReturnTypeClauseNode = null;
 
-            if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+            if (NodeRecent.SyntaxKind == SyntaxKind.NamespaceStatementNode)
             {
                 var boundNamespaceStatementNode = (NamespaceStatementNode)NodeRecent;
                 nextCodeBlockOwner = boundNamespaceStatementNode;
@@ -410,7 +409,7 @@ public partial class CSharpParser : IParser
                     closureCurrentCodeBlockBuilder.ChildList.Add(boundNamespaceStatementNode);
                 });
             }
-            else if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+            else if (NodeRecent.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
                 var typeDefinitionNode = (TypeDefinitionNode)NodeRecent;
                 nextCodeBlockOwner = typeDefinitionNode;
@@ -429,7 +428,7 @@ public partial class CSharpParser : IParser
                     closureCurrentCodeBlockBuilder.ChildList.Add(typeDefinitionNode);
                 });
             }
-            else if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+            else if (NodeRecent.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             {
                 var functionDefinitionNode = (FunctionDefinitionNode)NodeRecent;
                 nextCodeBlockOwner = functionDefinitionNode;
@@ -449,7 +448,7 @@ public partial class CSharpParser : IParser
                     closureCurrentCodeBlockBuilder.ChildList.Add(functionDefinitionNode);
                 });
             }
-            else if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
+            else if (NodeRecent.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
             {
                 var constructorDefinitionNode = (ConstructorDefinitionNode)NodeRecent;
                 nextCodeBlockOwner = constructorDefinitionNode;
@@ -469,7 +468,7 @@ public partial class CSharpParser : IParser
                     closureCurrentCodeBlockBuilder.ChildList.Add(constructorDefinitionNode);
                 });
             }
-            else if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.IfStatementNode)
+            else if (NodeRecent.SyntaxKind == SyntaxKind.IfStatementNode)
             {
                 var ifStatementNode = (IfStatementNode)NodeRecent;
                 nextCodeBlockOwner = ifStatementNode;
@@ -499,7 +498,7 @@ public partial class CSharpParser : IParser
                 scopeReturnTypeClauseNode,
                 openBraceToken.TextSpan);
 
-            if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+            if (NodeRecent.SyntaxKind == SyntaxKind.NamespaceStatementNode)
                 Binder.AddNamespaceToCurrentScope((NamespaceStatementNode)NodeRecent);
 
             CurrentCodeBlockBuilder = new(CurrentCodeBlockBuilder, nextCodeBlockOwner);
@@ -551,33 +550,30 @@ public partial class CSharpParser : IParser
 
         public void ParseOpenAngleBracketToken(OpenAngleBracketToken openAngleBracketToken)
         {
-            if (NodeRecent is not null)
+            if (NodeRecent.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
+                NodeRecent.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
+                NodeRecent.SyntaxKind == SyntaxKind.BinaryExpressionNode ||
+                /* Prefer the enum comparison. Will short circuit. This "is" cast is for fallback in case someone in the future adds for expression syntax kinds but does not update this if statement TODO: Check if node ends with "ExpressionNode"? */
+                NodeRecent is IExpressionNode)
             {
-                if (NodeRecent.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
-                    NodeRecent.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
-                    NodeRecent.SyntaxKind == SyntaxKind.BinaryExpressionNode ||
-                    /* Prefer the enum comparison. Will short circuit. This "is" cast is for fallback in case someone in the future adds for expression syntax kinds but does not update this if statement TODO: Check if node ends with "ExpressionNode"? */
-                    NodeRecent is IExpressionNode)
-                {
-                    // Mathematical angle bracket
-                    throw new NotImplementedException();
-                }
-                else
-                {
-                    // Generic Arguments
-                    var boundGenericArguments = Specific.HandleGenericArguments(openAngleBracketToken);
+                // Mathematical angle bracket
+                throw new NotImplementedException();
+            }
+            else
+            {
+                // Generic Arguments
+                var boundGenericArguments = Specific.HandleGenericArguments(openAngleBracketToken);
 
-                    if (NodeRecent.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-                    {
-                        var typeDefinitionNode = (TypeDefinitionNode)NodeRecent;
+                if (NodeRecent.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+                {
+                    var typeDefinitionNode = (TypeDefinitionNode)NodeRecent;
 
-                        // TODO: Fix boundClassDefinitionNode, it broke on (2023-07-26)
-                        //
-                        // _cSharpParser._nodeRecent = boundClassDefinitionNode with
-                        // {
-                        //     BoundGenericArgumentsNode = boundGenericArguments
-                        // };
-                    }
+                    // TODO: Fix boundClassDefinitionNode, it broke on (2023-07-26)
+                    //
+                    // _cSharpParser._nodeRecent = boundClassDefinitionNode with
+                    // {
+                    //     BoundGenericArgumentsNode = boundGenericArguments
+                    // };
                 }
             }
         }
@@ -590,22 +586,19 @@ public partial class CSharpParser : IParser
 
         public void ParseOpenSquareBracketToken(OpenSquareBracketToken openSquareBracketToken)
         {
-            if (NodeRecent is not null)
+            if (NodeRecent.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
+                NodeRecent.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
+                NodeRecent.SyntaxKind == SyntaxKind.BinaryExpressionNode ||
+                /* Prefer the enum comparison. Will short circuit. This "is" cast is for fallback in case someone in the future adds for expression syntax kinds but does not update this if statement TODO: Check if node ends with "ExpressionNode"? */
+                NodeRecent is IExpressionNode)
             {
-                if (NodeRecent.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
-                    NodeRecent.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
-                    NodeRecent.SyntaxKind == SyntaxKind.BinaryExpressionNode ||
-                    /* Prefer the enum comparison. Will short circuit. This "is" cast is for fallback in case someone in the future adds for expression syntax kinds but does not update this if statement TODO: Check if node ends with "ExpressionNode"? */
-                    NodeRecent is IExpressionNode)
-                {
-                    // Mathematical square bracket
-                    throw new NotImplementedException();
-                }
-                else
-                {
-                    // Attribute
-                    NodeRecent = Specific.HandleAttribute(openSquareBracketToken);
-                }
+                // Mathematical square bracket
+                throw new NotImplementedException();
+            }
+            else
+            {
+                // Attribute
+                NodeRecent = Specific.HandleAttribute(openSquareBracketToken);
             }
         }
 
@@ -616,7 +609,7 @@ public partial class CSharpParser : IParser
 
         public void ParseMemberAccessToken(MemberAccessToken memberAccessToken)
         {
-            if (NodeRecent is null)
+            if (NodeRecent.SyntaxKind == SyntaxKind.EmptyNode)
                 throw new NotImplementedException($"_cSharpParser._handle.Handle the case where a {nameof(MemberAccessToken)} is used without a valid preceeding node.");
 
             switch (NodeRecent.SyntaxKind)
@@ -637,7 +630,7 @@ public partial class CSharpParser : IParser
 
         public void ParseStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken)
         {
-            if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+            if (NodeRecent.SyntaxKind == SyntaxKind.NamespaceStatementNode)
             {
                 var closureCurrentCompilationUnitBuilder = CurrentCodeBlockBuilder;
                 ISyntaxNode? nextCodeBlockOwner = null;

@@ -45,7 +45,7 @@ public partial class CSharpParser : IParser
         public Stack<ISyntax> ExpressionStack => _parser._expressionStack;
 
         /// <summary>TODO: I don't like this <see cref="NodeRecent"/> property. It points to a private field on a different object. But without this property things are incredibly verbose. I need to remember to come back to this and change how I get access to the object because this doesn't feel right.</summary>
-        public ISyntaxNode? NodeRecent 
+        public ISyntaxNode NodeRecent 
         {
             get => _parser._nodeRecent;
             set => _parser._nodeRecent = value;
@@ -2015,7 +2015,7 @@ public partial class CSharpParser : IParser
 
         public void HandleWhereTokenContextualKeyword(KeywordContextualToken whereKeywordContextualToken)
         {
-            if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+            if (NodeRecent.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             {
                 var functionDefinitionNode = (FunctionDefinitionNode)NodeRecent;
 

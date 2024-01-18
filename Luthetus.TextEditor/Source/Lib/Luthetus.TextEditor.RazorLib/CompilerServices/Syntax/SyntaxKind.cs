@@ -205,6 +205,7 @@ public enum SyntaxKind
     GenericParameterEntryNode,
     InheritanceStatementNode,
     AmbiguousIdentifierNode,
+    EmptyNode,
     IfStatementNode,
     ReturnStatementNode,
     NamespaceStatementNode,
