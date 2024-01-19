@@ -1277,7 +1277,541 @@ public class ParserTests
 	[Fact]
 	public void PARSE_ParenthesizedExpressionNode()
 	{
-		throw new NotImplementedException();
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "(3 + 2)";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.ChildList.Single();
+
+		// parenthesizedExpressionNode.ChildList
+		{
+			var i = 0;
+
+			var openParenthesisToken = (OpenParenthesisToken)parenthesizedExpressionNode.ChildList[i++];
+			Assert.IsType<OpenParenthesisToken>(openParenthesisToken);
+
+			var binaryExpressionNode = (BinaryExpressionNode)parenthesizedExpressionNode.ChildList[i++];
+            Assert.IsType<BinaryExpressionNode>(binaryExpressionNode);
+
+            var closeParenthesisToken = (CloseParenthesisToken)parenthesizedExpressionNode.ChildList[i++];
+            Assert.IsType<CloseParenthesisToken>(closeParenthesisToken);
+
+            var typeClauseNode = (TypeClauseNode)parenthesizedExpressionNode.ChildList[i++];
+            Assert.IsType<TypeClauseNode>(typeClauseNode);
+        }
+
+		// parenthesizedExpressionNode.CloseParenthesisToken
+		{
+			var closeParenthesisToken = parenthesizedExpressionNode.CloseParenthesisToken;
+
+            Assert.False(closeParenthesisToken.IsFabricated);
+            Assert.Equal(SyntaxKind.CloseParenthesisToken, closeParenthesisToken.SyntaxKind);
+
+			// closeParenthesisToken.TextSpan
+			{
+				var textSpan = closeParenthesisToken.TextSpan;
+
+                Assert.Equal(0, textSpan.DecorationByte);
+                Assert.Equal(7, textSpan.EndingIndexExclusive);
+                Assert.Equal(1, textSpan.Length);
+                Assert.Equal(resourceUri, textSpan.ResourceUri);
+                Assert.Equal(sourceText, textSpan.SourceText);
+                Assert.Equal(6, textSpan.StartingIndexInclusive);
+				Assert.Equal(")", textSpan.GetText());
+			}
+		}
+
+		// parenthesizedExpressionNode.InnerExpression
+		{
+			var innerExpression = (BinaryExpressionNode)parenthesizedExpressionNode.InnerExpression;
+
+			// innerExpression.BinaryOperatorNode
+			{
+				var binaryOperatorNode = innerExpression.BinaryOperatorNode;
+
+				// binaryOperatorNode.ChildList
+				{
+					var plusToken = binaryOperatorNode.ChildList.Single();
+					Assert.IsType<PlusToken>(plusToken);
+				}
+
+                Assert.False(binaryOperatorNode.IsFabricated);
+
+				// binaryOperatorNode.LeftOperandTypeClauseNode
+				{
+					var leftOperandTypeClauseNode = binaryOperatorNode.LeftOperandTypeClauseNode;
+
+                    Assert.Null(leftOperandTypeClauseNode.AttributeNode);
+
+					// leftOperandTypeClauseNode.ChildList
+					{
+						var identifierToken = leftOperandTypeClauseNode.ChildList.Single();
+						Assert.IsType<IdentifierToken>(identifierToken);
+					}
+
+                    Assert.Null(leftOperandTypeClauseNode.GenericParametersListingNode);
+                    Assert.False(leftOperandTypeClauseNode.IsFabricated);
+                    Assert.Equal(SyntaxKind.TypeClauseNode, leftOperandTypeClauseNode.SyntaxKind);
+
+					// leftOperandTypeClauseNode.TypeIdentifier
+					{
+						var typeIdentifier = leftOperandTypeClauseNode.TypeIdentifier;
+
+                        Assert.False(typeIdentifier.IsFabricated);
+                        Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
+
+                        // The type identifier for int is awkwardly in a class named
+                        // CSharpFacts.Types
+                        //
+                        // The primitive data types are hardcoded as of (2024-01-19)
+                        // and asserting them is confusing, while adding no value.
+                        //
+                        // typeIdentifier.TextSpan
+                        // {
+                        //     var textSpan = typeIdentifier.TextSpan;
+						// 
+                        //     Assert.Equal(0, textSpan.DecorationByte);
+                        //     Assert.Equal(3, textSpan.EndingIndexExclusive);
+                        //     Assert.Equal(3, textSpan.Length);
+                        //     Assert.Equal(resourceUri, textSpan.ResourceUri);
+                        //     Assert.Equal(sourceText, textSpan.SourceText);
+                        //     Assert.Equal(0, textSpan.StartingIndexInclusive);
+                        //     Assert.Equal("int", textSpan.GetText());
+						// }
+					}
+
+                    Assert.Equal(typeof(int), leftOperandTypeClauseNode.ValueType);
+				}
+
+				// binaryOperatorNode.OperatorToken
+				{
+					var operatorToken = binaryOperatorNode.OperatorToken;
+
+                    Assert.False(operatorToken.IsFabricated);
+                    Assert.Equal(SyntaxKind.PlusToken, operatorToken.SyntaxKind);
+
+					// operatorToken.TextSpan
+					{
+						var textSpan = operatorToken.TextSpan;
+
+                        Assert.Equal(0, textSpan.DecorationByte);
+                        Assert.Equal(4, textSpan.EndingIndexExclusive);
+                        Assert.Equal(1, textSpan.Length);
+                        Assert.Equal(resourceUri, textSpan.ResourceUri);
+                        Assert.Equal(sourceText, textSpan.SourceText);
+                        Assert.Equal(3, textSpan.StartingIndexInclusive);
+                        Assert.Equal("+", textSpan.GetText());
+					}
+				}
+
+				// binaryOperatorNode.ResultTypeClauseNode
+				{
+					var resultTypeClauseNode = binaryOperatorNode.ResultTypeClauseNode;
+
+                    Assert.Null(resultTypeClauseNode.AttributeNode);
+
+					// resultTypeClauseNode.ChildList
+					{
+						var identifierToken = resultTypeClauseNode.ChildList.Single();
+						Assert.IsType<IdentifierToken>(identifierToken);
+					}
+
+                    Assert.Null(resultTypeClauseNode.GenericParametersListingNode);
+                    Assert.False(resultTypeClauseNode.IsFabricated);
+                    Assert.Equal(SyntaxKind.TypeClauseNode, resultTypeClauseNode.SyntaxKind);
+
+					// resultTypeClauseNode.TypeIdentifier
+					{
+						var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+
+                        Assert.False(typeIdentifier.IsFabricated);
+                        Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
+
+                        // The type identifier for int is awkwardly in a class named
+                        // CSharpFacts.Types
+                        //
+                        // The primitive data types are hardcoded as of (2024-01-19)
+                        // and asserting them is confusing, while adding no value.
+                        //
+                        // typeIdentifier.TextSpan
+                        // {
+                        //     var textSpan = typeIdentifier.TextSpan;
+						// 
+                        //     Assert.Equal(0, textSpan.DecorationByte);
+                        //     Assert.Equal(3, textSpan.EndingIndexExclusive);
+                        //     Assert.Equal(3, textSpan.Length);
+                        //     Assert.Equal(resourceUri, textSpan.ResourceUri);
+                        //     Assert.Equal(sourceText, textSpan.SourceText);
+                        //     Assert.Equal(0, textSpan.StartingIndexInclusive);
+                        //     Assert.Equal("int", textSpan.GetText());
+						// }
+					}
+
+                    Assert.Equal(typeof(int), resultTypeClauseNode.ValueType);
+				}
+
+				// binaryOperatorNode.RightOperandTypeClauseNode
+				{
+					var rightOperandTypeClauseNode = binaryOperatorNode.RightOperandTypeClauseNode;
+
+                    Assert.Null(rightOperandTypeClauseNode.AttributeNode);
+
+                    // rightOperandTypeClauseNode.ChildList
+                    {
+						var identifierToken = rightOperandTypeClauseNode.ChildList.Single();
+						Assert.IsType<IdentifierToken>(identifierToken);
+					}
+
+                    Assert.Null(rightOperandTypeClauseNode.GenericParametersListingNode);
+                    Assert.False(rightOperandTypeClauseNode.IsFabricated);
+                    Assert.Equal(SyntaxKind.TypeClauseNode, rightOperandTypeClauseNode.SyntaxKind);
+
+                    // rightOperandTypeClauseNode.TypeIdentifier
+                    {
+						var typeIdentifier = rightOperandTypeClauseNode.TypeIdentifier;
+
+                        Assert.False(typeIdentifier.IsFabricated);
+                        Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
+
+                        // The type identifier for int is awkwardly in a class named
+                        // CSharpFacts.Types
+                        //
+                        // The primitive data types are hardcoded as of (2024-01-19)
+                        // and asserting them is confusing, while adding no value.
+                        //
+                        // typeIdentifier.TextSpan
+                        // {
+                        //     var textSpan = typeIdentifier.TextSpan;
+						// 
+                        //     Assert.Equal(0, textSpan.DecorationByte);
+                        //     Assert.Equal(3, textSpan.EndingIndexExclusive);
+                        //     Assert.Equal(3, textSpan.Length);
+                        //     Assert.Equal(resourceUri, textSpan.ResourceUri);
+                        //     Assert.Equal(sourceText, textSpan.SourceText);
+                        //     Assert.Equal(0, textSpan.StartingIndexInclusive);
+                        //     Assert.Equal("int", textSpan.GetText());
+						// }
+					}
+
+                    Assert.Equal(typeof(int), rightOperandTypeClauseNode.ValueType);
+				}
+
+                Assert.Equal(SyntaxKind.BinaryOperatorNode, binaryOperatorNode.SyntaxKind);
+			}
+
+			// innerExpression.ChildList
+			{
+				var i = 0;
+
+				var literalExpressionNodeFirst = innerExpression.ChildList[i++];
+				Assert.IsType<LiteralExpressionNode>(literalExpressionNodeFirst);
+
+				var binaryOperatorNode = innerExpression.ChildList[i++];
+                Assert.IsType<BinaryOperatorNode>(binaryOperatorNode);
+
+                var literalExpressionNodeSecond = innerExpression.ChildList[i++];
+                Assert.IsType<LiteralExpressionNode>(literalExpressionNodeSecond);
+            }
+
+            Assert.False(innerExpression.IsFabricated);
+
+			// innerExpression.LeftExpressionNode
+			{
+				var leftExpressionNode = (LiteralExpressionNode)innerExpression.LeftExpressionNode;
+
+				// leftExpressionNode.ChildList
+				{
+					var i = 0;
+
+					var numericLiteralToken = leftExpressionNode.ChildList[i++];
+					Assert.IsType<NumericLiteralToken>(numericLiteralToken);
+
+					var typeClauseNode = leftExpressionNode.ChildList[i++];
+                    Assert.IsType<TypeClauseNode>(typeClauseNode);
+                }
+
+                Assert.False(leftExpressionNode.IsFabricated);
+
+				// leftExpressionNode.LiteralSyntaxToken
+				{
+					var literalSyntaxToken = leftExpressionNode.LiteralSyntaxToken;
+
+                    Assert.False(literalSyntaxToken.IsFabricated);
+                    Assert.Equal(SyntaxKind.NumericLiteralToken, literalSyntaxToken.SyntaxKind);
+
+					// literalSyntaxToken.TextSpan
+					{
+						var textSpan = literalSyntaxToken.TextSpan;
+
+                        Assert.Equal(0, textSpan.DecorationByte);
+                        Assert.Equal(2, textSpan.EndingIndexExclusive);
+                        Assert.Equal(1, textSpan.Length);
+                        Assert.Equal(resourceUri, textSpan.ResourceUri);
+                        Assert.Equal(sourceText, textSpan.SourceText);
+                        Assert.Equal(1, textSpan.StartingIndexInclusive);
+                        Assert.Equal("3", textSpan.GetText());
+					}
+				}
+
+				// leftExpressionNode.ResultTypeClauseNode
+				{
+					var resultTypeClauseNode = leftExpressionNode.ResultTypeClauseNode;
+
+                    Assert.Null(resultTypeClauseNode.AttributeNode);
+
+					// resultTypeClauseNode.ChildList
+					{
+						var identifierToken = resultTypeClauseNode.ChildList.Single();
+						Assert.IsType<IdentifierToken>(identifierToken);
+					}
+
+                    Assert.Null(resultTypeClauseNode.GenericParametersListingNode);
+                    Assert.False(resultTypeClauseNode.IsFabricated);
+                    Assert.Equal(SyntaxKind.TypeClauseNode, resultTypeClauseNode.SyntaxKind);
+
+					// resultTypeClauseNode.TypeIdentifier
+					{
+						var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+
+                        Assert.False(typeIdentifier.IsFabricated);
+                        Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
+
+                        // The type identifier for int is awkwardly in a class named
+                        // CSharpFacts.Types
+                        //
+                        // The primitive data types are hardcoded as of (2024-01-19)
+                        // and asserting them is confusing, while adding no value.
+                        //
+                        // typeIdentifier.TextSpan
+                        // {
+                        //     var textSpan = typeIdentifier.TextSpan;
+						// 
+                        //     Assert.Equal(0, textSpan.DecorationByte);
+                        //     Assert.Equal(3, textSpan.EndingIndexExclusive);
+                        //     Assert.Equal(3, textSpan.Length);
+                        //     Assert.Equal(resourceUri, textSpan.ResourceUri);
+                        //     Assert.Equal(sourceText, textSpan.SourceText);
+                        //     Assert.Equal(0, textSpan.StartingIndexInclusive);
+                        //     Assert.Equal("int", textSpan.GetText());
+						// }
+					}
+
+                    Assert.Equal(typeof(int), resultTypeClauseNode.ValueType);
+				}
+
+                Assert.Equal(SyntaxKind.LiteralExpressionNode, leftExpressionNode.SyntaxKind);
+			}
+
+			// innerExpression.ResultTypeClauseNode
+			{
+				var resultTypeClauseNode = innerExpression.ResultTypeClauseNode;
+
+                Assert.Null(resultTypeClauseNode.AttributeNode);
+
+				// resultTypeClauseNode.ChildList
+				{
+					var identifierToken = resultTypeClauseNode.ChildList.Single();
+					Assert.IsType<IdentifierToken>(identifierToken);
+				}
+
+                Assert.Null(resultTypeClauseNode.GenericParametersListingNode);
+                Assert.False(resultTypeClauseNode.IsFabricated);
+                Assert.Equal(SyntaxKind.TypeClauseNode, resultTypeClauseNode.SyntaxKind);
+
+				// resultTypeClauseNode.TypeIdentifier
+				{
+					var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+
+                    Assert.False(typeIdentifier.IsFabricated);
+                    Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
+
+                    // The type identifier for int is awkwardly in a class named
+                    // CSharpFacts.Types
+                    //
+                    // The primitive data types are hardcoded as of (2024-01-19)
+                    // and asserting them is confusing, while adding no value.
+                    //
+                    // typeIdentifier.TextSpan
+                    // {
+                    //     var textSpan = typeIdentifier.TextSpan;
+					// 
+                    //     Assert.Equal(0, textSpan.DecorationByte);
+                    //     Assert.Equal(3, textSpan.EndingIndexExclusive);
+                    //     Assert.Equal(3, textSpan.Length);
+                    //     Assert.Equal(resourceUri, textSpan.ResourceUri);
+                    //     Assert.Equal(sourceText, textSpan.SourceText);
+                    //     Assert.Equal(0, textSpan.StartingIndexInclusive);
+                    //     Assert.Equal("int", textSpan.GetText());
+					// }
+				}
+
+                Assert.Equal(typeof(int), resultTypeClauseNode.ValueType);
+			}
+
+			// innerExpression.RightExpressionNode
+			{
+				var rightExpressionNode = (LiteralExpressionNode)innerExpression.RightExpressionNode;
+
+				// rightExpressionNode.ChildList
+				{
+					var i = 0;
+
+					var numericLiteralToken = rightExpressionNode.ChildList[i++];
+					Assert.IsType<NumericLiteralToken>(numericLiteralToken);
+
+					var typeClauseNode = rightExpressionNode.ChildList[i++];
+                    Assert.IsType<TypeClauseNode>(typeClauseNode);
+                }
+
+                Assert.False(rightExpressionNode.IsFabricated);
+
+				// rightExpressionNode.LiteralSyntaxToken
+				{
+					var literalSyntaxToken = rightExpressionNode.LiteralSyntaxToken;
+
+                    Assert.False(literalSyntaxToken.IsFabricated);
+                    Assert.Equal(SyntaxKind.NumericLiteralToken, literalSyntaxToken.SyntaxKind);
+
+					// literalSyntaxToken.TextSpan
+					{
+						var textSpan = literalSyntaxToken.TextSpan;
+
+                        Assert.Equal(0, textSpan.DecorationByte);
+                        Assert.Equal(6, textSpan.EndingIndexExclusive);
+                        Assert.Equal(1, textSpan.Length);
+                        Assert.Equal(resourceUri, textSpan.ResourceUri);
+                        Assert.Equal(sourceText, textSpan.SourceText);
+                        Assert.Equal(5, textSpan.StartingIndexInclusive);
+                        Assert.Equal("2", textSpan.GetText());
+					}
+				}
+
+				// rightExpressionNode.ResultTypeClauseNode
+				{
+					var resultTypeClauseNode = rightExpressionNode.ResultTypeClauseNode;
+
+                    Assert.Null(resultTypeClauseNode.AttributeNode);
+
+					// resultTypeClauseNode.ChildList
+					{
+						var identifierToken = resultTypeClauseNode.ChildList.Single();
+						Assert.IsType<IdentifierToken>(identifierToken);
+					}
+
+					Assert.Null(resultTypeClauseNode.GenericParametersListingNode);
+                    Assert.False(resultTypeClauseNode.IsFabricated);
+                    Assert.Equal(SyntaxKind.TypeClauseNode, resultTypeClauseNode.SyntaxKind);
+
+                    // resultTypeClauseNode.TypeIdentifier
+                    {
+						var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+
+                        Assert.False(typeIdentifier.IsFabricated);
+                        Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
+
+                        // The type identifier for int is awkwardly in a class named
+                        // CSharpFacts.Types
+                        //
+                        // The primitive data types are hardcoded as of (2024-01-19)
+                        // and asserting them is confusing, while adding no value.
+                        //
+                        // typeIdentifier.TextSpan
+                        // {
+                        //     var textSpan = typeIdentifier.TextSpan;
+						// 
+                        //     Assert.Equal(0, textSpan.DecorationByte);
+                        //     Assert.Equal(3, textSpan.EndingIndexExclusive);
+                        //     Assert.Equal(3, textSpan.Length);
+                        //     Assert.Equal(resourceUri, textSpan.ResourceUri);
+                        //     Assert.Equal(sourceText, textSpan.SourceText);
+                        //     Assert.Equal(0, textSpan.StartingIndexInclusive);
+                        //     Assert.Equal("int", textSpan.GetText());
+						// }
+                    }
+
+                    Assert.Equal(typeof(int), resultTypeClauseNode.ValueType);
+				}
+
+                Assert.Equal(SyntaxKind.LiteralExpressionNode, rightExpressionNode.SyntaxKind);
+			}
+
+            Assert.Equal(SyntaxKind.BinaryExpressionNode, innerExpression.SyntaxKind);
+		}
+
+		Assert.False(parenthesizedExpressionNode.IsFabricated);
+
+		// parenthesizedExpressionNode.OpenParenthesisToken
+		{
+			var openParenthesisToken = parenthesizedExpressionNode.OpenParenthesisToken;
+
+            Assert.False(openParenthesisToken.IsFabricated);
+            Assert.Equal(SyntaxKind.OpenParenthesisToken, openParenthesisToken.SyntaxKind);
+
+			// openParenthesisToken.TextSpan
+			{
+				var textSpan = openParenthesisToken.TextSpan;
+
+                Assert.Equal(0, textSpan.DecorationByte);
+                Assert.Equal(1, textSpan.EndingIndexExclusive);
+                Assert.Equal(1, textSpan.Length);
+                Assert.Equal(resourceUri, textSpan.ResourceUri);
+                Assert.Equal(sourceText, textSpan.SourceText);
+                Assert.Equal(0, textSpan.StartingIndexInclusive);
+                Assert.Equal("(", textSpan.GetText());
+			}
+		}
+
+		// parenthesizedExpressionNode.ResultTypeClauseNode
+		{
+			var resultTypeClauseNode = parenthesizedExpressionNode.ResultTypeClauseNode;
+
+            Assert.Null(resultTypeClauseNode.AttributeNode);
+
+			// resultTypeClauseNode.ChildList
+			{
+				var identifierToken = resultTypeClauseNode.ChildList.Single();
+				Assert.IsType<IdentifierToken>(identifierToken);
+			}
+
+            Assert.Null(resultTypeClauseNode.GenericParametersListingNode);
+            Assert.False(resultTypeClauseNode.IsFabricated);
+            Assert.Equal(SyntaxKind.TypeClauseNode, resultTypeClauseNode.SyntaxKind);
+
+			// resultTypeClauseNode.TypeIdentifier
+			{
+				var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+
+                Assert.False(typeIdentifier.IsFabricated);
+                Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
+
+                // The type identifier for int is awkwardly in a class named
+                // CSharpFacts.Types
+                //
+                // The primitive data types are hardcoded as of (2024-01-19)
+                // and asserting them is confusing, while adding no value.
+                //
+                // typeIdentifier.TextSpan
+                // {
+                //     var textSpan = typeIdentifier.TextSpan;
+				// 
+                //     Assert.Equal(0, textSpan.DecorationByte);
+                //     Assert.Equal(3, textSpan.EndingIndexExclusive);
+                //     Assert.Equal(3, textSpan.Length);
+                //     Assert.Equal(resourceUri, textSpan.ResourceUri);
+                //     Assert.Equal(sourceText, textSpan.SourceText);
+                //     Assert.Equal(0, textSpan.StartingIndexInclusive);
+                //     Assert.Equal("int", textSpan.GetText());
+				// }
+			}
+
+            Assert.Equal(typeof(int), resultTypeClauseNode.ValueType);
+		}
+
+		Assert.Equal(SyntaxKind.ParenthesizedExpressionNode, parenthesizedExpressionNode.SyntaxKind);
 	}
 	
 	[Fact]
