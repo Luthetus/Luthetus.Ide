@@ -356,7 +356,7 @@ public partial class CSharpParser : IParser
 
         public void HandleNamespaceReference(
             IdentifierToken identifierToken,
-            NamespaceStatementNode boundNamespaceStatementNode)
+            NamespaceGroupNode namespaceGroupNode)
         {
             Binder.BindNamespaceReference(identifierToken);
 
@@ -367,18 +367,30 @@ public partial class CSharpParser : IParser
                 var memberIdentifierToken = (IdentifierToken)TokenWalker.Match(SyntaxKind.IdentifierToken);
 
                 if (memberIdentifierToken.IsFabricated)
-                    throw new NotImplementedException("Implement a namespace being member accessed, but the next token is not an IdentifierToken");
+                {
+                    DiagnosticBag.ReportUnexpectedToken(
+                        TokenWalker.Current.TextSpan,
+                        TokenWalker.Current.SyntaxKind.ToString(),
+                        SyntaxKind.IdentifierToken.ToString());
+                }
 
                 // Check all the TypeDefinitionNodes that are in the namespace
-                var typeDefinitionNodes = boundNamespaceStatementNode.GetTopLevelTypeDefinitionNodes();
+                var typeDefinitionNodes = namespaceGroupNode.GetTopLevelTypeDefinitionNodes();
 
                 var typeDefinitionNode = typeDefinitionNodes.SingleOrDefault(td =>
                     td.TypeIdentifier.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText());
 
                 if (typeDefinitionNode is null)
-                    throw new NotImplementedException("A namespace member access, where the identifier for the member which is accessed was not a type definition.");
-
-                HandleTypeReference(memberIdentifierToken, typeDefinitionNode);
+                {
+                    DiagnosticBag.ReportNotDefinedInContext(
+                        TokenWalker.Current.TextSpan,
+                        identifierToken.TextSpan.GetText());
+                }
+                else
+                {
+                    HandleTypeReference(memberIdentifierToken, typeDefinitionNode);
+                }
+                
                 return;
             }
             else
@@ -1787,11 +1799,27 @@ public partial class CSharpParser : IParser
                     " already a file scoped namespace.");
             }
 
-            var boundNamespaceStatementNode = Binder.BindNamespaceStatementNode(
-                    keywordToken,
-                    namespaceIdentifier);
+            var namespaceStatementNode = new NamespaceStatementNode(
+                keywordToken,
+                namespaceIdentifier,
+                new CodeBlockNode(ImmutableArray<ISyntax>.Empty));
 
-            NodeRecent = boundNamespaceStatementNode;
+            NodeRecent = namespaceStatementNode;
+
+            /*
+             TODO: This code is reliant on the main while loop that iterates using TokenWalker...
+             ...It is confusing, I found this code a few months after writing it and it took me
+             a good 5 minutes to figure out what I was doing.
+             
+             So, after this method returns, either a curly brace is found, or a statement delimiter
+             is found.
+
+             The 'NodeRecent' that was set in this method is then read, and a closure
+             hack is used.
+
+             The 'TODO:' is here so I remember to re-structure this. The global 'NodeRecent'
+             is incredibly confusing.
+             */
         }
 
         public void HandleReturnTokenKeyword(KeywordToken keywordToken)

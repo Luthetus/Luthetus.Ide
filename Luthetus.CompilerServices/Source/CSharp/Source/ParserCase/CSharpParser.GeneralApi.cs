@@ -196,10 +196,10 @@ public partial class CSharpParser : IParser
         {
             var text = identifierToken.TextSpan.GetText();
 
-            if (Binder.BoundNamespaceStatementNodes.TryGetValue(text, out var boundNamespaceStatementNode) &&
-                boundNamespaceStatementNode is not null)
+            if (Binder.NamespaceGroupNodes.TryGetValue(text, out var namespaceGroupNode) &&
+                namespaceGroupNode is not null)
             {
-                Specific.HandleNamespaceReference(identifierToken, boundNamespaceStatementNode);
+                Specific.HandleNamespaceReference(identifierToken, namespaceGroupNode);
                 return true;
             }
             else
@@ -490,16 +490,18 @@ public partial class CSharpParser : IParser
 
             if (NodeRecent.SyntaxKind == SyntaxKind.NamespaceStatementNode)
             {
-                var boundNamespaceStatementNode = (NamespaceStatementNode)NodeRecent;
-                nextCodeBlockOwner = boundNamespaceStatementNode;
+                var namespaceStatementNode = (NamespaceStatementNode)NodeRecent;
+                nextCodeBlockOwner = namespaceStatementNode;
 
                 _parser._finalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
                 {
-                    boundNamespaceStatementNode = Binder.RegisterBoundNamespaceEntryNode(
-                        boundNamespaceStatementNode,
+                    namespaceStatementNode = new NamespaceStatementNode(
+                        namespaceStatementNode.KeywordToken,
+                        namespaceStatementNode.IdentifierToken,
                         codeBlockNode);
 
-                    closureCurrentCodeBlockBuilder.ChildList.Add(boundNamespaceStatementNode);
+                    closureCurrentCodeBlockBuilder.ChildList.Add(namespaceStatementNode);
+                    Binder.BindNamespaceStatementNode(namespaceStatementNode);
                 });
             }
             else if (NodeRecent.SyntaxKind == SyntaxKind.TypeDefinitionNode)
@@ -592,7 +594,14 @@ public partial class CSharpParser : IParser
                 openBraceToken.TextSpan);
 
             if (NodeRecent.SyntaxKind == SyntaxKind.NamespaceStatementNode)
-                Binder.AddNamespaceToCurrentScope((NamespaceStatementNode)NodeRecent);
+            {
+                var namespaceString = ((NamespaceStatementNode)NodeRecent)
+                    .IdentifierToken
+                    .TextSpan
+                    .GetText();
+
+                Binder.AddNamespaceToCurrentScope(namespaceString);
+            }
 
             CurrentCodeBlockBuilder = new(CurrentCodeBlockBuilder, nextCodeBlockOwner);
         }
@@ -729,23 +738,26 @@ public partial class CSharpParser : IParser
                 ISyntaxNode? nextCodeBlockOwner = null;
                 TypeClauseNode? scopeReturnTypeClauseNode = null;
 
-                var boundNamespaceStatementNode = (NamespaceStatementNode)NodeRecent;
-                nextCodeBlockOwner = boundNamespaceStatementNode;
+                var namespaceStatementNode = (NamespaceStatementNode)NodeRecent;
+                nextCodeBlockOwner = namespaceStatementNode;
+                Binder.BindNamespaceStatementNode(namespaceStatementNode);
 
                 _parser._finalizeNamespaceFileScopeCodeBlockNodeAction = codeBlockNode =>
                 {
-                    boundNamespaceStatementNode = Binder.RegisterBoundNamespaceEntryNode(
-                        boundNamespaceStatementNode,
+                    namespaceStatementNode = new NamespaceStatementNode(
+                        namespaceStatementNode.KeywordToken,
+                        namespaceStatementNode.IdentifierToken,
                         codeBlockNode);
 
-                    closureCurrentCompilationUnitBuilder.ChildList.Add(boundNamespaceStatementNode);
+                    closureCurrentCompilationUnitBuilder.ChildList.Add(namespaceStatementNode);
                 };
 
                 Binder.RegisterBoundScope(
                     scopeReturnTypeClauseNode,
                     statementDelimiterToken.TextSpan);
 
-                Binder.AddNamespaceToCurrentScope((NamespaceStatementNode)NodeRecent);
+                Binder.AddNamespaceToCurrentScope(
+                    namespaceStatementNode.IdentifierToken.TextSpan.GetText());
 
                 CurrentCodeBlockBuilder = new(CurrentCodeBlockBuilder, nextCodeBlockOwner);
             }

@@ -209,6 +209,7 @@ public enum SyntaxKind
     IfStatementNode,
     ReturnStatementNode,
     NamespaceStatementNode,
+    NamespaceGroupNode,
     ObjectInitializationNode,
     UsingStatementNode,
     UnaryOperatorNode,

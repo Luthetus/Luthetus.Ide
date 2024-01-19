@@ -1,5 +1,7 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Facts;
 
@@ -10,18 +12,22 @@ public partial class CSharpFacts
         private const string SystemNamespaceIdentifier = "System";
 
         /// <summary>TODO: Implement the initial bound namespaces correctly. Until then just add the "System" namespace as a nonsensical node.</summary>
-        public static Dictionary<string, NamespaceStatementNode> GetInitialBoundNamespaceStatementNodes()
+        public static Dictionary<string, NamespaceGroupNode> GetInitialBoundNamespaceStatementNodes()
         {
-            return new Dictionary<string, NamespaceStatementNode>
-        {
+            return new Dictionary<string, NamespaceGroupNode>
             {
-                SystemNamespaceIdentifier,
-                new NamespaceStatementNode(
-                    new(new(0, 0, 0, new(string.Empty), string.Empty), SyntaxKind.UnrecognizedTokenKeyword),
-                    new(new(0, SystemNamespaceIdentifier.Length, 0, new(string.Empty), SystemNamespaceIdentifier)),
-                    System.Collections.Immutable.ImmutableArray<NamespaceEntryNode>.Empty)
-            }
-        };
+                {
+                    SystemNamespaceIdentifier,
+                    new NamespaceGroupNode(SystemNamespaceIdentifier,
+                        new NamespaceStatementNode[] 
+                        {
+                            new NamespaceStatementNode(
+                                new(new(0, 0, 0, new(string.Empty), string.Empty), SyntaxKind.UnrecognizedTokenKeyword),
+                                new(new(0, SystemNamespaceIdentifier.Length, 0, new(string.Empty), SystemNamespaceIdentifier)),
+                                new CodeBlockNode(ImmutableArray<ISyntax>.Empty))
+                        }.ToImmutableArray())
+                }
+            };
         }
     }
 }

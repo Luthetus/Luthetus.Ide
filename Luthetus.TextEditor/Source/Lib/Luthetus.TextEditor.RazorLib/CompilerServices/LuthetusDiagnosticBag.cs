@@ -93,6 +93,17 @@ public class LuthetusDiagnosticBag : IEnumerable<TextEditorDiagnostic>
             Guid.Parse("a72619a5-a7f4-4084-acc8-2fb2c76cdac4"));
     }
 
+    public void ReportNotDefinedInContext(
+        TextEditorTextSpan textSpan,
+        string contextString)
+    {
+        Report(
+            TextEditorDiagnosticLevel.Error,
+            $"'{textSpan.GetText()}' is not defined in the context '{contextString}'",
+            textSpan,
+            Guid.Parse("89b61fa8-541d-4154-9425-82c5667842a8"));
+    }
+    
     public void ReportAlreadyDefinedVariable(
         TextEditorTextSpan textSpan,
         string alreadyDefinedVariableIdentifier)
