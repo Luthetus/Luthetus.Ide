@@ -1999,7 +1999,68 @@ public class ParserTests
 	[Fact]
 	public void PARSE_TypeDefinitionNode()
 	{
-		throw new NotImplementedException();
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"public class MyClass
+{
+}";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+
+		// typeDefinitionNode.ChildList
+		{
+			var i = 0;
+
+			var identifierToken = (IdentifierToken)typeDefinitionNode.ChildList[i++];
+			Assert.IsType<IdentifierToken>(identifierToken);
+
+			var codeBlockNode = (CodeBlockNode)typeDefinitionNode.ChildList[i++];
+            Assert.IsType<CodeBlockNode>(codeBlockNode);
+        }
+
+        Assert.Null(typeDefinitionNode.GenericArgumentsListingNode);
+		Assert.Null(typeDefinitionNode.InheritedTypeClauseNode);
+		Assert.False(typeDefinitionNode.IsFabricated);
+		Assert.False(typeDefinitionNode.IsInterface);
+		Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionNode.SyntaxKind);
+
+		// typeDefinitionNode.TypeBodyCodeBlockNode
+		{
+			var typeBodyCodeBlockNode = typeDefinitionNode.TypeBodyCodeBlockNode;
+			Assert.NotNull(typeBodyCodeBlockNode);
+
+            Assert.Empty(typeBodyCodeBlockNode.ChildList);
+            Assert.Empty(typeBodyCodeBlockNode.DiagnosticsList);
+            Assert.False(typeBodyCodeBlockNode.IsFabricated);
+            Assert.Equal(SyntaxKind.CodeBlockNode, typeBodyCodeBlockNode.SyntaxKind);
+		}
+
+		// typeDefinitionNode.TypeIdentifier
+		{
+			var typeIdentifier = typeDefinitionNode.TypeIdentifier;
+
+			Assert.False(typeIdentifier.IsFabricated);
+			Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
+
+			// typeIdentifier.TextSpan
+			{
+				var textSpan = typeIdentifier.TextSpan;
+
+                Assert.Equal(0, textSpan.DecorationByte);
+                Assert.Equal(20, textSpan.EndingIndexExclusive);
+                Assert.Equal(7, textSpan.Length);
+                Assert.Equal(resourceUri, textSpan.ResourceUri);
+                Assert.Equal(sourceText, textSpan.SourceText);
+                Assert.Equal(13, textSpan.StartingIndexInclusive);
+                Assert.Equal("MyClass", textSpan.GetText());
+			}
+		}
+
+		Assert.Null(typeDefinitionNode.ValueType);
 	}
 	
 	[Fact]
