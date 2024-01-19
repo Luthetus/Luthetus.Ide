@@ -792,9 +792,62 @@ public class ParserTests
 		var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList.Single();
 
-		throw new NotImplementedException();
+		var genericParametersListingNode = variableDeclarationNode.TypeClauseNode.GenericParametersListingNode;
+		Assert.NotNull(genericParametersListingNode);
+        
+		var genericParameterEntryNode = genericParametersListingNode.GenericParameterEntryNodeList
+            .Single();
+
+		// genericParameterEntryNode.ChildList
+		{
+			var typeClauseNode = genericParameterEntryNode.ChildList.Single();
+			Assert.IsType<TypeClauseNode>(typeClauseNode);
+		}
+
+		Assert.False(genericParameterEntryNode.IsFabricated);
+		Assert.Equal(SyntaxKind.GenericParameterEntryNode, genericParameterEntryNode.SyntaxKind);
+
+		// genericParameterEntryNode.TypeClauseNode
+		{
+			var typeClauseNode = genericParameterEntryNode.TypeClauseNode;
+
+            Assert.Null(typeClauseNode.AttributeNode);
+
+			// typeClauseNode.ChildList
+			{
+				var keywordToken = (KeywordToken)typeClauseNode.ChildList.Single();
+				Assert.IsType<KeywordToken>(keywordToken);
+			}
+
+            Assert.Null(typeClauseNode.GenericParametersListingNode);
+            Assert.False(typeClauseNode.IsFabricated);
+            Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
+
+			// typeClauseNode.TypeIdentifier
+			{
+				var typeIdentifier = typeClauseNode.TypeIdentifier;
+
+                Assert.False(typeIdentifier.IsFabricated);
+                Assert.Equal(SyntaxKind.IntTokenKeyword, typeIdentifier.SyntaxKind);
+
+				// typeIdentifier.TextSpan
+				{
+					var textSpan = typeIdentifier.TextSpan;
+
+                    Assert.Equal(1, textSpan.DecorationByte);
+                    Assert.Equal(8, textSpan.EndingIndexExclusive);
+                    Assert.Equal(3, textSpan.Length);
+                    Assert.Equal(resourceUri, textSpan.ResourceUri);
+                    Assert.Equal(sourceText, textSpan.SourceText);
+                    Assert.Equal(5, textSpan.StartingIndexInclusive);
+                    Assert.Equal("int", textSpan.GetText());
+				}
+			}
+
+            Assert.Equal(typeof(int), typeClauseNode.ValueType);
+		}
 	}
 	
 	[Fact]
@@ -808,7 +861,186 @@ public class ParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		throw new NotImplementedException();
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList.Single();
+
+        var genericParametersListingNode = variableDeclarationNode.TypeClauseNode.GenericParametersListingNode;
+        Assert.NotNull(genericParametersListingNode);
+
+		// genericParametersListingNode.ChildList
+		{
+			var i = 0;
+
+			var openAngleBracketToken = genericParametersListingNode.ChildList[i++];
+			Assert.IsType<OpenAngleBracketToken>(openAngleBracketToken);
+
+			var genericParameterEntryNodeFirst = genericParametersListingNode.ChildList[i++];
+            Assert.IsType<GenericParameterEntryNode>(genericParameterEntryNodeFirst);
+
+            var genericParameterEntryNodeSecond = genericParametersListingNode.ChildList[i++];
+            Assert.IsType<GenericParameterEntryNode>(genericParameterEntryNodeSecond);
+
+            var closeAngleBracketToken = genericParametersListingNode.ChildList[i++];
+            Assert.IsType<CloseAngleBracketToken>(closeAngleBracketToken);
+        }
+
+		// genericParametersListingNode.CloseAngleBracketToken
+		{
+			var closeAngleBracketToken = genericParametersListingNode.CloseAngleBracketToken;
+
+            Assert.False(closeAngleBracketToken.IsFabricated);
+			Assert.Equal(SyntaxKind.CloseAngleBracketToken, closeAngleBracketToken.SyntaxKind);
+
+			// closeAngleBracketToken.TextSpan
+			{
+				var textSpan = closeAngleBracketToken.TextSpan;
+
+                Assert.Equal(0, textSpan.DecorationByte);
+                Assert.Equal(23, textSpan.EndingIndexExclusive);
+                Assert.Equal(1, textSpan.Length);
+                Assert.Equal(resourceUri, textSpan.ResourceUri);
+                Assert.Equal(sourceText, textSpan.SourceText);
+                Assert.Equal(22, textSpan.StartingIndexInclusive);
+                Assert.Equal(">", textSpan.GetText());
+			}
+		}
+
+		// genericParametersListingNode.GenericParameterEntryNodeList
+		{
+			var i = 0;
+
+			// genericParameterEntryNodeFirst
+			{
+				var genericParameterEntryNodeFirst = genericParametersListingNode.GenericParameterEntryNodeList[i++];
+
+				// genericParameterEntryNodeFirst.ChildList
+				{
+					var typeClauseNode = (TypeClauseNode)genericParameterEntryNodeFirst.ChildList.Single();
+					Assert.IsType<TypeClauseNode>(typeClauseNode);
+				}
+
+				Assert.False(genericParameterEntryNodeFirst.IsFabricated);
+				Assert.Equal(SyntaxKind.GenericParameterEntryNode, genericParameterEntryNodeFirst.SyntaxKind);
+
+				// genericParameterEntryNodeFirst.TypeClauseNode
+				{
+					var typeClauseNode = genericParameterEntryNodeFirst.TypeClauseNode;
+
+                    Assert.Null(typeClauseNode.AttributeNode);
+
+					// typeClauseNode.ChildList
+					{
+						var keywordToken = (KeywordToken)typeClauseNode.ChildList.Single();
+						Assert.IsType<KeywordToken>(keywordToken);
+					}
+
+                    Assert.Null(typeClauseNode.GenericParametersListingNode);
+                    Assert.False(typeClauseNode.IsFabricated);
+                    Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
+
+					// typeClauseNode.TypeIdentifier
+					{
+						var typeIdentifier = typeClauseNode.TypeIdentifier;
+
+                        Assert.False(typeIdentifier.IsFabricated);
+                        Assert.Equal(SyntaxKind.StringTokenKeyword, typeIdentifier.SyntaxKind);
+
+						// typeIdentifier.TextSpan
+						{
+							var textSpan = typeIdentifier.TextSpan;
+
+                            Assert.Equal(1, textSpan.DecorationByte);
+                            Assert.Equal(17, textSpan.EndingIndexExclusive);
+                            Assert.Equal(6, textSpan.Length);
+                            Assert.Equal(resourceUri, textSpan.ResourceUri);
+                            Assert.Equal(sourceText, textSpan.SourceText);
+                            Assert.Equal(11, textSpan.StartingIndexInclusive);
+                            Assert.Equal("string", textSpan.GetText());
+						}
+					}
+
+                    Assert.Equal(typeof(string), typeClauseNode.ValueType);
+				}
+			}
+
+			// genericParameterEntryNodeSecond
+			{
+				var genericParameterEntryNodeSecond = genericParametersListingNode.GenericParameterEntryNodeList[i++];
+
+				// genericParameterEntryNodeSecond.ChildList
+				{
+					var typeClauseNode = (TypeClauseNode)genericParameterEntryNodeSecond.ChildList.Single();
+					Assert.IsType<TypeClauseNode>(typeClauseNode);
+				}
+
+				Assert.False(genericParameterEntryNodeSecond.IsFabricated);
+				Assert.Equal(SyntaxKind.GenericParameterEntryNode, genericParameterEntryNodeSecond.SyntaxKind);
+
+                // genericParameterEntryNodeSecond.TypeClauseNode
+                {
+					var typeClauseNode = genericParameterEntryNodeSecond.TypeClauseNode;
+
+                    Assert.Null(typeClauseNode.AttributeNode);
+
+					// typeClauseNode.ChildList
+					{
+						var keywordToken = (KeywordToken)typeClauseNode.ChildList.Single();
+						Assert.IsType<KeywordToken>(keywordToken);
+					}
+
+					Assert.Null(typeClauseNode.GenericParametersListingNode);
+                    Assert.False(typeClauseNode.IsFabricated);
+                    Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
+
+					// typeClauseNode.TypeIdentifier
+					{
+						var typeIdentifier = typeClauseNode.TypeIdentifier;
+
+                        Assert.False(typeIdentifier.IsFabricated);
+                        Assert.Equal(SyntaxKind.IntTokenKeyword, typeIdentifier.SyntaxKind);
+
+						// typeIdentifier.TextSpan
+						{
+							var textSpan = typeIdentifier.TextSpan;
+
+                            Assert.Equal(1, textSpan.DecorationByte);
+                            Assert.Equal(22, textSpan.EndingIndexExclusive);
+                            Assert.Equal(3, textSpan.Length);
+                            Assert.Equal(resourceUri, textSpan.ResourceUri);
+                            Assert.Equal(sourceText, textSpan.SourceText);
+                            Assert.Equal(19, textSpan.StartingIndexInclusive);
+                            Assert.Equal("int", textSpan.GetText());
+						}
+					}
+					
+                    Assert.Equal(typeof(int), typeClauseNode.ValueType);
+                }
+			}
+		}
+
+		Assert.False(genericParametersListingNode.IsFabricated);
+
+		// genericParametersListingNode.OpenAngleBracketToken
+		{
+			var openAngleBracketToken = genericParametersListingNode.OpenAngleBracketToken;
+
+            Assert.False(openAngleBracketToken.IsFabricated);
+            Assert.Equal(SyntaxKind.OpenAngleBracketToken, openAngleBracketToken.SyntaxKind);
+
+			// openAngleBracketToken.TextSpan
+			{
+				var textSpan = openAngleBracketToken.TextSpan;
+
+                Assert.Equal(0, textSpan.DecorationByte);
+                Assert.Equal(11, textSpan.EndingIndexExclusive);
+                Assert.Equal(1, textSpan.Length);
+                Assert.Equal(resourceUri, textSpan.ResourceUri);
+                Assert.Equal(sourceText, textSpan.SourceText);
+                Assert.Equal(10, textSpan.StartingIndexInclusive);
+				Assert.Equal("<", textSpan.GetText());
+			}
+		}
+
+		Assert.Equal(SyntaxKind.GenericParametersListingNode, genericParametersListingNode.SyntaxKind);
 	}
 	
 	[Fact]
