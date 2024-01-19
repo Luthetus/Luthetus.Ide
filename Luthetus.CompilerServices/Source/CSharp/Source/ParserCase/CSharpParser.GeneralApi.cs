@@ -740,7 +740,6 @@ public partial class CSharpParser : IParser
 
                 var namespaceStatementNode = (NamespaceStatementNode)NodeRecent;
                 nextCodeBlockOwner = namespaceStatementNode;
-                Binder.BindNamespaceStatementNode(namespaceStatementNode);
 
                 _parser._finalizeNamespaceFileScopeCodeBlockNodeAction = codeBlockNode =>
                 {
@@ -750,6 +749,7 @@ public partial class CSharpParser : IParser
                         codeBlockNode);
 
                     closureCurrentCompilationUnitBuilder.ChildList.Add(namespaceStatementNode);
+                    Binder.BindNamespaceStatementNode(namespaceStatementNode);
                 };
 
                 Binder.RegisterBoundScope(

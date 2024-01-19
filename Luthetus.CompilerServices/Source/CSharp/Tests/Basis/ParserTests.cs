@@ -1258,12 +1258,6 @@ public class ParserTests
 	}
 	
 	[Fact]
-	public void PARSE_NamespaceEntryNode()
-	{
-		throw new NotImplementedException();
-	}
-	
-	[Fact]
 	public void PARSE_NamespaceStatementNode()
 	{
 		var resourceUri = new ResourceUri("UnitTests");
