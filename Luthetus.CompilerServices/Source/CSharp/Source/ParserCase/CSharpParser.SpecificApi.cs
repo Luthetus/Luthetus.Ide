@@ -982,7 +982,7 @@ public partial class CSharpParser : IParser
                             {
                                 parenthesizedExpression = new ParenthesizedExpressionNode(
                                     (OpenParenthesisToken)closeExtraExpressionDelimiterEncountered.OpenSyntaxToken,
-                                    new IdempotentExpressionNode(CSharpFacts.Types.Void.ToTypeClause()),
+                                    new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause()),
                                     (CloseParenthesisToken)tokenCurrent);
                             }
 

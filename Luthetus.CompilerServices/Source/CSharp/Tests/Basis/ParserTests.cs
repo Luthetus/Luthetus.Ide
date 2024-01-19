@@ -313,7 +313,17 @@ public class ParserTests
     [Fact]
     public void PARSE_ConstructorInvocation()
     {
-		throw new NotImplementedException(
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"List<int> intList = new List<int>();";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+		var variableAssignmentNode = topCodeBlock.ChildList[1];
+
+        throw new NotImplementedException(
 			"TODO: How should constructor invocation be handled, versus a function invocation.");
 	}
 	
@@ -1052,7 +1062,7 @@ public class ParserTests
 	}
 	
 	[Fact]
-	public void PARSE_IdempotentExpressionNode()
+	public void PARSE_EmptyExpressionNode()
 	{
 		throw new NotImplementedException();
 	}
