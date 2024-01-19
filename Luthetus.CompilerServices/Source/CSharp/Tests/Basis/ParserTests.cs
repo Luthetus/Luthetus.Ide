@@ -1948,7 +1948,52 @@ public class ParserTests
 	[Fact]
 	public void PARSE_TypeClauseNode()
 	{
-		throw new NotImplementedException();
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "int x;";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList.Single();
+		
+		var typeClauseNode = variableDeclarationNode.TypeClauseNode;
+
+		Assert.Null(typeClauseNode.AttributeNode);
+
+		// typeClauseNode.ChildList
+		{
+			var keywordToken = (KeywordToken)typeClauseNode.ChildList.Single();
+			Assert.IsType<KeywordToken>(keywordToken);
+		}
+
+		Assert.Null(typeClauseNode.GenericParametersListingNode);
+		Assert.False(typeClauseNode.IsFabricated);
+		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
+
+        // typeClauseNode.TypeIdentifier
+        {
+			var typeIdentifier = typeClauseNode.TypeIdentifier;
+
+            Assert.False(typeIdentifier.IsFabricated);
+            Assert.Equal(SyntaxKind.IntTokenKeyword, typeIdentifier.SyntaxKind);
+
+			// typeIdentifier.TextSpan
+			{
+				var textSpan = typeIdentifier.TextSpan;
+
+                Assert.Equal(1, textSpan.DecorationByte);
+                Assert.Equal(3, textSpan.EndingIndexExclusive);
+                Assert.Equal(3, textSpan.Length);
+                Assert.Equal(resourceUri, textSpan.ResourceUri);
+                Assert.Equal(sourceText, textSpan.SourceText);
+                Assert.Equal(0, textSpan.StartingIndexInclusive);
+                Assert.Equal("int", textSpan.GetText());
+			}
+		}
+
+		Assert.Equal(typeof(int), typeClauseNode.ValueType);
 	}
 	
 	[Fact]
