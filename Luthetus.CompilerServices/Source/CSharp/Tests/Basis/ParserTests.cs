@@ -508,296 +508,78 @@ public class ParserTests
 	public void PARSE_GenericArgumentEntryNode()
 	{
 		var resourceUri = new ResourceUri("UnitTests");
-		var genericArgumentText = "int";
-		var genericArgumentValueType = typeof(int);
-		var sourceText = $@"List<{genericArgumentText}> myList = new List<{genericArgumentText}>();";
-
+		var sourceText = @"public class Box<T>
+{
+}";
 		var lexer = new CSharpLexer(resourceUri, sourceText);
 		lexer.Lex();
 		var parser = new CSharpParser(lexer);
 		var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        // variableDeclarationNode
-        {
-            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
 
-			// variableDeclarationNode.ChildList
+		var genericArgumentsListingNode = typeDefinitionNode.GenericArgumentsListingNode;
+		Assert.NotNull(genericArgumentsListingNode);
+
+		var genericArgumentEntryNode = genericArgumentsListingNode.GenericArgumentEntryNodeList
+			.Single();
+
+		// genericArgumentEntryNode.ChildList
+		{
+			var typeClauseNode = (TypeClauseNode)genericArgumentEntryNode.ChildList.Single();
+			Assert.IsType<TypeClauseNode>(typeClauseNode);
+		}
+
+		Assert.False(genericArgumentEntryNode.IsFabricated);
+		Assert.Equal(SyntaxKind.GenericArgumentEntryNode, genericArgumentEntryNode.SyntaxKind);
+
+		// genericArgumentEntryNode.TypeClauseNode
+		{
+			var typeClauseNode = genericArgumentEntryNode.TypeClauseNode;
+
+			// typeClauseNode.AttributeNode
 			{
-				var i = 0;
-
-				var typeClauseNode = (TypeClauseNode)variableDeclarationNode.ChildList[i++];
-				Assert.IsType<TypeClauseNode>(typeClauseNode);
-				
-				var identifierToken = (IdentifierToken)variableDeclarationNode.ChildList[i++];
-				Assert.IsType<IdentifierToken>(identifierToken);
-            }
-
-            Assert.False(variableDeclarationNode.GetterIsAutoImplemented);
-            Assert.False(variableDeclarationNode.HasGetter);
-            Assert.False(variableDeclarationNode.HasSetter);
-
-			// variableDeclarationNode.IdentifierToken
-			{
-				var identifierToken = variableDeclarationNode.IdentifierToken;
-
-                Assert.False(identifierToken.IsFabricated);
-                Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.SyntaxKind);
-
-				// identifierToken.TextSpan
-				{
-					var textSpan = identifierToken.TextSpan;
-					
-					Assert.Equal(0, textSpan.DecorationByte);
-					Assert.Equal(16, textSpan.EndingIndexExclusive);
-					Assert.Equal(6, textSpan.Length);
-					Assert.Equal(resourceUri, textSpan.ResourceUri);
-					Assert.Equal(sourceText, textSpan.SourceText);
-					Assert.Equal(10, textSpan.StartingIndexInclusive);
-					Assert.Equal("myList", textSpan.GetText());
-                }
+				Assert.Null(typeClauseNode.AttributeNode);
 			}
 
-            Assert.False(variableDeclarationNode.IsFabricated);
-            Assert.False(variableDeclarationNode.IsInitialized);
-            Assert.False(variableDeclarationNode.SetterIsAutoImplemented);
-            Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+			// typeClauseNode.ChildList
+			{
+				var identifierToken = (IdentifierToken)typeClauseNode.ChildList.Single();
+				Assert.IsType<IdentifierToken>(identifierToken);
+			}
 
-            // variableDeclarationNode.TypeClauseNode
-            {
-				var typeClauseNode = variableDeclarationNode.TypeClauseNode;
+			// typeClauseNode.GenericParametersListingNode
+			{
+				Assert.Null(typeClauseNode.GenericParametersListingNode);
+			}
 
-                Assert.Null(typeClauseNode.AttributeNode);
+            Assert.False(typeClauseNode.IsFabricated);
+            Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
 
-				// typeClauseNode.ChildList
+			// typeClauseNode.TypeIdentifier
+			{
+				var typeIdentifier = typeClauseNode.TypeIdentifier;
+
+                Assert.False(typeIdentifier.IsFabricated);
+                Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
+
+				// typeIdentifier.TextSpan
 				{
-					var i = 0;
+					var textSpan = typeIdentifier.TextSpan;
 
-					var identifierToken = (IdentifierToken)typeClauseNode.ChildList[i++];
-					Assert.IsType<IdentifierToken>(identifierToken);
-
-					var genericParametersListingNode = (GenericParametersListingNode)typeClauseNode.ChildList[i++];
-                    Assert.IsType<GenericParametersListingNode>(genericParametersListingNode);
+                    Assert.Equal(0, textSpan.DecorationByte);
+                    Assert.Equal(18, textSpan.EndingIndexExclusive);
+                    Assert.Equal(1, textSpan.Length);
+                    Assert.Equal(resourceUri, textSpan.ResourceUri);
+                    Assert.Equal(sourceText, textSpan.SourceText);
+                    Assert.Equal(17, textSpan.StartingIndexInclusive);
+                    Assert.Equal("T", textSpan.GetText());
 				}
+			}
 
-                // typeClauseNode.GenericParametersListingNode
-                {
-					var genericParametersListingNode = typeClauseNode.GenericParametersListingNode;
-					Assert.NotNull(genericParametersListingNode);
-
-					// genericParametersListingNode.ChildList
-					{
-						var i = 0;
-
-						var openAngleBracketToken = (OpenAngleBracketToken)genericParametersListingNode.ChildList[i++];
-						Assert.IsType<OpenAngleBracketToken>(openAngleBracketToken);
-					
-						var genericParameterEntryNode = (GenericParameterEntryNode)genericParametersListingNode.ChildList[i++];
-						Assert.IsType<GenericParameterEntryNode>(genericParameterEntryNode);
-						
-						var closeAngleBracketToken = (CloseAngleBracketToken)genericParametersListingNode.ChildList[i++];
-						Assert.IsType<CloseAngleBracketToken>(closeAngleBracketToken);
-                    }
-
-                    // genericParametersListingNode.CloseAngleBracketToken
-                    {
-						var closeAngleBracketToken = genericParametersListingNode.CloseAngleBracketToken;
-
-                        Assert.False(closeAngleBracketToken.IsFabricated);
-                        Assert.Equal(SyntaxKind.CloseAngleBracketToken, closeAngleBracketToken.SyntaxKind);
-
-						// closeAngleBracketToken.TextSpan
-						{
-							var textSpan = closeAngleBracketToken.TextSpan;
-
-                            Assert.Equal(0, textSpan.DecorationByte);
-                            Assert.Equal(9, textSpan.EndingIndexExclusive);
-                            Assert.Equal(1, textSpan.Length);
-                            Assert.Equal(resourceUri, textSpan.ResourceUri);
-                            Assert.Equal(sourceText, textSpan.SourceText);
-                            Assert.Equal(8, textSpan.StartingIndexInclusive);
-                            Assert.Equal(">", textSpan.GetText());
-						}
-					}
-
-					// genericParametersListingNode.GenericParameterEntryNodeList
-					{
-						var genericParameterEntryNode = genericParametersListingNode
-							.GenericParameterEntryNodeList
-							.Single();
-
-						Assert.IsType<GenericParameterEntryNode>(genericParameterEntryNode);
-					}
-
-					Assert.False(genericParametersListingNode.IsFabricated);
-
-					// genericParametersListingNode.OpenAngleBracketToken
-					{
-						var openAngleBracketToken = genericParametersListingNode.OpenAngleBracketToken;
-
-                        Assert.False(openAngleBracketToken.IsFabricated);
-                        Assert.Equal(SyntaxKind.OpenAngleBracketToken, openAngleBracketToken.SyntaxKind);
-
-						// openAngleBracketToken.TextSpan
-						{
-							var textSpan = openAngleBracketToken.TextSpan;
-
-                            Assert.Equal(0, textSpan.DecorationByte);
-                            Assert.Equal(5, textSpan.EndingIndexExclusive);
-                            Assert.Equal(1, textSpan.Length);
-                            Assert.Equal(resourceUri, textSpan.ResourceUri);
-                            Assert.Equal(sourceText, textSpan.SourceText);
-                            Assert.Equal(4, textSpan.StartingIndexInclusive);
-							Assert.Equal("<", textSpan.GetText());
-						}
-					}
-
-                    Assert.Equal(SyntaxKind.GenericParametersListingNode, genericParametersListingNode.SyntaxKind);
-				}
-
-				Assert.False(typeClauseNode.IsFabricated);
-				Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
-
-				// typeClauseNode.TypeIdentifier
-				{
-					var typeIdentifier = typeClauseNode.TypeIdentifier;
-
-                    Assert.False(typeIdentifier.IsFabricated);
-                    Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
-
-					// typeIdentifier.TextSpan
-					{
-						var textSpan = typeIdentifier.TextSpan;
-
-                        Assert.Equal(0, textSpan.DecorationByte);
-                        Assert.Equal(4, textSpan.EndingIndexExclusive);
-                        Assert.Equal(4, textSpan.Length);
-						Assert.Equal(resourceUri, textSpan.ResourceUri);
-						Assert.Equal(sourceText, textSpan.SourceText);
-                        Assert.Equal(0, textSpan.StartingIndexInclusive);
-                        Assert.Equal("List", textSpan.GetText());
-					}
-				}
-
-                Assert.Null(typeClauseNode.ValueType);
-            }
-            
-            Assert.Equal(VariableKind.Local, variableDeclarationNode.VariableKind);
-        }
-
-		throw new NotImplementedException("TODO: The assignment expression is a constructor invocation. This syntax is not yet handled.");
-
-		//// variableAssignmentNode
-		//{
-  //          var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
-
-		//	// variableAssignmentNode.ChildList
-		//	{
-		//		var i = 0;
-
-		//		var identifierToken = (IdentifierToken)variableAssignmentNode.ChildList[i++];
-		//		Assert.IsType<IdentifierToken>(identifierToken);
-
-		//		var equalsToken = (EqualsToken)variableAssignmentNode.ChildList[i++];
-		//		Assert.IsType<EqualsToken>(equalsToken);
-                
-		//		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)variableAssignmentNode.ChildList[i++];
-		//		Assert.IsType<ParenthesizedExpressionNode>(parenthesizedExpressionNode);
-  //          }
-
-  //          // variableAssignmentNode.EqualsToken
-  //          {
-		//		var equalsToken = variableAssignmentNode.EqualsToken;
-
-  //              Assert.False(equalsToken.IsFabricated);
-  //              Assert.Equal(SyntaxKind.EqualsToken, equalsToken.SyntaxKind);
-
-		//		// equalsToken.TextSpan
-		//		{
-		//			var textSpan = equalsToken.TextSpan;
-
-  //                  Assert.Equal(0, textSpan.DecorationByte);
-  //                  Assert.Equal(18, textSpan.EndingIndexExclusive);
-  //                  Assert.Equal(1, textSpan.Length);
-  //                  Assert.Equal(resourceUri, textSpan.ResourceUri);
-  //                  Assert.Equal(sourceText, textSpan.SourceText);
-  //                  Assert.Equal(17, textSpan.StartingIndexInclusive);
-  //                  Assert.Equal("=", textSpan.GetText());
-		//		}
-		//	}
-
-  //          // variableAssignmentNode.ExpressionNode
-  //          {
-		//		var expressionNode = (ParenthesizedExpressionNode)variableAssignmentNode.ExpressionNode;
-
-		//		// expressionNode.ChildList
-		//		{
-		//			var i = 0;
-
-		//			var openParenthesisToken = (OpenParenthesisToken)expressionNode.ChildList[i++];
-		//			Assert.IsType<OpenParenthesisToken>(openParenthesisToken);
-
-		//			var idempotentExpressionNode = (IdempotentExpressionNode)expressionNode.ChildList[i++];
-		//			Assert.IsType<IdempotentExpressionNode>(idempotentExpressionNode);
-
-  //                  var closeParenthesisToken = (CloseParenthesisToken)expressionNode.ChildList[i++];
-  //                  Assert.IsType<CloseParenthesisToken>(closeParenthesisToken);
-
-  //                  var typeClauseNode = (TypeClauseNode)expressionNode.ChildList[i++];
-  //                  Assert.IsType<TypeClauseNode>(typeClauseNode);
-  //              }
-
-  //              // expressionNode.CloseParenthesisToken
-  //              {
-		//			var closeParenthesisToken = expressionNode.CloseParenthesisToken;
-
-  //                  Assert.False(closeParenthesisToken.IsFabricated);
-  //                  Assert.Equal(SyntaxKind.CloseParenthesisToken, closeParenthesisToken.SyntaxKind);
-
-  //                  // closeParenthesisToken.TextSpan
-  //                  {
-		//				var textSpan = closeParenthesisToken.TextSpan;
-
-		//				Assert.Equal(0, textSpan.DecorationByte);
-		//				Assert.Equal(34, textSpan.EndingIndexExclusive);
-		//				Assert.Equal(1, textSpan.Length);
-		//				Assert.Equal(resourceUri, textSpan.ResourceUri);
-		//				Assert.Equal(sourceText, textSpan.SourceText);
-		//				Assert.Equal(33, textSpan.StartingIndexInclusive);
-		//				Assert.Equal(")", textSpan.GetText());
-  //                  }
-		//		}
-
-  //              // expressionNode.InnerExpression
-  //              {
-		//			var innerExpression = expressionNode.InnerExpression;
-
-  //                  Assert.Equal(, );
-		//		}
-
-  //              Assert.False(expressionNode.IsFabricated);
-
-		//		// expressionNode.OpenParenthesisToken
-		//		{
-		//			Assert.Equal(, expressionNode.OpenParenthesisToken);
-		//		}
-
-		//		// expressionNode.ResultTypeClauseNode
-		//		{
-		//			Assert.Equal(, expressionNode.ResultTypeClauseNode);
-		//		}
-
-  //              Assert.Equal(, expressionNode.SyntaxKind);
-  //          }
-
-		//	Assert.False(variableAssignmentNode.IsFabricated);
-		//	Assert.Equal(SyntaxKind.VariableAssignmentExpressionNode, variableAssignmentNode.SyntaxKind);
-
-		//	// variableAssignmentNode.VariableIdentifierToken
-		//	{
-		//		Assert.Equal(, variableAssignmentNode.VariableIdentifierToken);
-		//	}
-  //      }
+            Assert.Null(typeClauseNode.ValueType);
+		}
 	}
 	
 	[Fact]
@@ -806,36 +588,204 @@ public class ParserTests
 		var resourceUri = new ResourceUri("UnitTests");
 		var sourceText = @"public class MyClass<T, U>
 {
-	public T ItemOne { get; set; }
-	public U ItemTwo { get; set; }
 }";
-
 		var lexer = new CSharpLexer(resourceUri, sourceText);
 		lexer.Lex();
 		var parser = new CSharpParser(lexer);
 		var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
-		
-		var genericParametersListingNode = variableDeclarationNode
-			.TypeClauseNode.GenericParametersListingNode;
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
 
-		Assert.Equal(2, genericParametersListingNode.GenericParameterEntryNodeList.Length);
-		Assert.False(genericParametersListingNode.IsFabricated);
-		Assert.Equal(SyntaxKind.GenericParametersListingNode, genericParametersListingNode.SyntaxKind);
+        var genericArgumentsListingNode = typeDefinitionNode.GenericArgumentsListingNode;
+        Assert.NotNull(genericArgumentsListingNode);
 
-		// TODO: Continue working on this test
-		throw new NotImplementedException(@"Error Message:
-   System.InvalidCastException : Unable to cast object of type 'Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.FunctionInvocationNode' to type 'Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.VariableDeclarationNode'.");
+        // genericArgumentsListingNode.ChildList
+        {
+			var i = 0;
+
+			var openAngleBracketToken = (OpenAngleBracketToken)genericArgumentsListingNode.ChildList[i++];
+			Assert.IsType<OpenAngleBracketToken>(openAngleBracketToken);
+
+			var genericArgumentEntryNodeFirst = (GenericArgumentEntryNode)genericArgumentsListingNode.ChildList[i++];
+			Assert.IsType<GenericArgumentEntryNode>(genericArgumentEntryNodeFirst);
+
+            var genericArgumentEntryNodeSecond = (GenericArgumentEntryNode)genericArgumentsListingNode.ChildList[i++];
+            Assert.IsType<GenericArgumentEntryNode>(genericArgumentEntryNodeSecond);
+
+            var closeAngleBracketToken = (CloseAngleBracketToken)genericArgumentsListingNode.ChildList[i++];
+            Assert.IsType<CloseAngleBracketToken>(closeAngleBracketToken);
+        }
+
+        // genericArgumentsListingNode.CloseAngleBracketToken
+        {
+			var closeAngleBracketToken = genericArgumentsListingNode.CloseAngleBracketToken;
+
+            Assert.False(closeAngleBracketToken.IsFabricated);
+            Assert.Equal(SyntaxKind.CloseAngleBracketToken, closeAngleBracketToken.SyntaxKind);
+
+			// closeAngleBracketToken.TextSpan
+			{
+				var textSpan = closeAngleBracketToken.TextSpan;
+
+                Assert.Equal(0, textSpan.DecorationByte);
+                Assert.Equal(26, textSpan.EndingIndexExclusive);
+                Assert.Equal(1, textSpan.Length);
+                Assert.Equal(resourceUri, textSpan.ResourceUri);
+                Assert.Equal(sourceText, textSpan.SourceText);
+                Assert.Equal(25, textSpan.StartingIndexInclusive);
+                Assert.Equal(">", textSpan.GetText());
+			}
+		}
+
+		// genericArgumentsListingNode.GenericArgumentEntryNodeList
+		{
+			var i = 0;
+
+            // genericArgumentEntryNodeFirst
+            {
+                var genericArgumentEntryNodeFirst = genericArgumentsListingNode.GenericArgumentEntryNodeList[i++];
+
+				// genericArgumentEntryNodeFirst.ChildList
+				{
+					var typeClauseNode = (TypeClauseNode)genericArgumentEntryNodeFirst.ChildList
+						.Single();
+
+					Assert.IsType<TypeClauseNode>(typeClauseNode);
+				}
+
+				Assert.False(genericArgumentEntryNodeFirst.IsFabricated);
+				Assert.Equal(SyntaxKind.GenericArgumentEntryNode, genericArgumentEntryNodeFirst.SyntaxKind);
+
+				// genericArgumentEntryNodeFirst.TypeClauseNode
+				{
+					var typeClauseNode = genericArgumentEntryNodeFirst.TypeClauseNode;
+
+                    Assert.Null(typeClauseNode.AttributeNode);
+
+					// typeClauseNode.ChildList
+					{
+						var identifierToken = (IdentifierToken)typeClauseNode.ChildList.Single();
+						Assert.IsType<IdentifierToken>(identifierToken);
+					}
+
+                    Assert.Null(typeClauseNode.GenericParametersListingNode);
+
+					Assert.False(typeClauseNode.IsFabricated);
+                    Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
+
+					// typeClauseNode.TypeIdentifier
+					{
+						var typeIdentifier = typeClauseNode.TypeIdentifier;
+
+                        Assert.False(typeIdentifier.IsFabricated);
+                        Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
+
+						// typeIdentifier.TextSpan
+						{
+							var textSpan = typeIdentifier.TextSpan;
+							
+							Assert.Equal(0, textSpan.DecorationByte);
+							Assert.Equal(22, textSpan.EndingIndexExclusive);
+							Assert.Equal(1, textSpan.Length);
+							Assert.Equal(resourceUri, textSpan.ResourceUri);
+							Assert.Equal(sourceText, textSpan.SourceText);
+							Assert.Equal(21, textSpan.StartingIndexInclusive);
+							Assert.Equal("T", textSpan.GetText());
+                        }
+					}
+
+                    Assert.Null(typeClauseNode.ValueType);
+				}
+            }
+
+            // genericArgumentEntryNodeSecond
+            {
+                var genericArgumentEntryNodeSecond = genericArgumentsListingNode.GenericArgumentEntryNodeList[i++];
+
+				// genericArgumentEntryNodeSecond.ChildList
+				{
+					var typeClauseNode = (TypeClauseNode)genericArgumentEntryNodeSecond.ChildList.Single();
+					Assert.IsType<TypeClauseNode>(typeClauseNode);
+				}
+
+				Assert.False(genericArgumentEntryNodeSecond.IsFabricated);
+				Assert.Equal(SyntaxKind.GenericArgumentEntryNode, genericArgumentEntryNodeSecond.SyntaxKind);
+
+				// genericArgumentEntryNodeSecond.TypeClauseNode
+				{
+					var typeClauseNode = genericArgumentEntryNodeSecond.TypeClauseNode;
+
+                    Assert.Null(typeClauseNode.AttributeNode);
+
+					// typeClauseNode.ChildList
+					{
+						var identifierToken = (IdentifierToken)typeClauseNode.ChildList.Single();
+						Assert.IsType<IdentifierToken>(identifierToken);
+					}
+
+                    Assert.Null(typeClauseNode.GenericParametersListingNode);
+
+                    Assert.False(typeClauseNode.IsFabricated);
+                    Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
+
+					// typeClauseNode.TypeIdentifier
+					{
+						var typeIdentifier = typeClauseNode.TypeIdentifier;
+
+                        Assert.False(typeIdentifier.IsFabricated);
+                        Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
+
+						// typeIdentifier.TextSpan
+						{
+							var textSpan = typeIdentifier.TextSpan;
+
+                            Assert.Equal(0, textSpan.DecorationByte);
+                            Assert.Equal(25, textSpan.EndingIndexExclusive);
+                            Assert.Equal(1, textSpan.Length);
+                            Assert.Equal(resourceUri, textSpan.ResourceUri);
+                            Assert.Equal(sourceText, textSpan.SourceText);
+                            Assert.Equal(24, textSpan.StartingIndexInclusive);
+                            Assert.Equal("U", textSpan.GetText());
+						}
+					}
+
+                    Assert.Null(typeClauseNode.ValueType);
+				}
+			}
+		}
+
+		Assert.False(genericArgumentsListingNode.IsFabricated);
+
+		// genericArgumentsListingNode.OpenAngleBracketToken
+		{
+			var openAngleBracketToken = genericArgumentsListingNode.OpenAngleBracketToken;
+
+            Assert.False(openAngleBracketToken.IsFabricated);
+            Assert.Equal(SyntaxKind.OpenAngleBracketToken, openAngleBracketToken.SyntaxKind);
+
+            // openAngleBracketToken.TextSpan
+            {
+				var textSpan = openAngleBracketToken.TextSpan;
+
+                Assert.Equal(0, textSpan.DecorationByte);
+                Assert.Equal(21, textSpan.EndingIndexExclusive);
+                Assert.Equal(1, textSpan.Length);
+				Assert.Equal(resourceUri, textSpan.ResourceUri);
+				Assert.Equal(sourceText, textSpan.SourceText);
+                Assert.Equal(20, textSpan.StartingIndexInclusive);
+                Assert.Equal("<", textSpan.GetText());
+			}
+		}
+
+		Assert.Equal(SyntaxKind.GenericArgumentsListingNode, genericArgumentsListingNode.SyntaxKind);
 	}
 	
 	[Fact]
 	public void PARSE_GenericParameterEntryNode()
 	{
 		var resourceUri = new ResourceUri("UnitTests");
-		var sourceText = $@"Dictionary<string, int> myMap = new Dictionary<string, int>();";
-
+		var sourceText = $@"List<int> myList;";
 		var lexer = new CSharpLexer(resourceUri, sourceText);
 		lexer.Lex();
 		var parser = new CSharpParser(lexer);
@@ -850,7 +800,13 @@ public class ParserTests
 	[Fact]
 	public void PARSE_GenericParametersListingNode()
 	{
-		var sourceText = $@"Dictionary<string, int> myMap = new Dictionary<string, int>();";
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"Dictionary<string, int> myMap;";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		throw new NotImplementedException();
 	}
