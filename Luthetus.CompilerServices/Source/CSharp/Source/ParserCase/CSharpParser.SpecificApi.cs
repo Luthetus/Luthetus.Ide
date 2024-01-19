@@ -1007,8 +1007,23 @@ public partial class CSharpParser : IParser
 
                 switch (tokenCurrent.SyntaxKind)
                 {
-                    case SyntaxKind.NumericLiteralToken:
+                    case SyntaxKind.TrueTokenKeyword:
+                    case SyntaxKind.FalseTokenKeyword:
+                        var booleanLiteralExpressionNode = new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.Bool.ToTypeClause());
 
+                        previousInvocationExpressionNode = booleanLiteralExpressionNode;
+
+                        if (topMostExpressionNode is null)
+                            topMostExpressionNode = booleanLiteralExpressionNode;
+                        else if (leftExpressionNode is null)
+                            leftExpressionNode = booleanLiteralExpressionNode;
+                        else if (rightExpressionNode is null)
+                            rightExpressionNode = booleanLiteralExpressionNode;
+                        else
+                            throw new ApplicationException("TODO: Why would this occur?");
+
+                        break;
+                    case SyntaxKind.NumericLiteralToken:
                         var numericLiteralExpressionNode = new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.Int.ToTypeClause());
 
                         previousInvocationExpressionNode = numericLiteralExpressionNode;
@@ -1671,7 +1686,26 @@ public partial class CSharpParser : IParser
 
         public void HandleIfTokenKeyword(KeywordToken keywordToken)
         {
-            var expression = HandleIfStatementExpression();
+            var openParenthesisToken = TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+
+            if (openParenthesisToken.IsFabricated)
+                return;
+
+            var expression = HandleExpression(
+                null,
+                null,
+                null,
+                null,
+                null,
+                new[]
+                {
+                    new ExpressionDelimiter(
+                        SyntaxKind.OpenParenthesisToken,
+                        SyntaxKind.CloseParenthesisToken,
+                        null,
+                        null)
+                });
+
             var boundIfStatementNode = Binder.BindIfStatementNode(keywordToken, expression);
             NodeRecent = boundIfStatementNode;
         }

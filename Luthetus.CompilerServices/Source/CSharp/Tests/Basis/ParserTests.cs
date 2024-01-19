@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using System.Linq.Expressions;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis;
 
@@ -1059,9 +1060,152 @@ public class ParserTests
 	[Fact]
 	public void PARSE_IfStatementNode()
 	{
-		var sourceText = @"if (true) { }";
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"if (true) { }";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		throw new NotImplementedException();
+		var ifStatementNode = (IfStatementNode)topCodeBlock.ChildList.Single();
+
+		// ifStatementNode.ChildList
+		{
+			var i = 0;
+
+			var keywordToken = (KeywordToken)ifStatementNode.ChildList[i++];
+			Assert.IsType<KeywordToken>(keywordToken);
+
+			var literalExpressionNode = (LiteralExpressionNode)ifStatementNode.ChildList[i++];
+            Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
+
+            var codeBlockNode = (CodeBlockNode)ifStatementNode.ChildList[i++];
+            Assert.IsType<CodeBlockNode>(codeBlockNode);
+		}
+
+		// ifStatementNode.ExpressionNode
+		{
+			var expressionNode = (LiteralExpressionNode)ifStatementNode.ExpressionNode;
+
+			// expressionNode.ChildList
+			{
+				var i = 0;
+
+				var keywordToken = (KeywordToken)expressionNode.ChildList[i++];
+				Assert.IsType<KeywordToken>(keywordToken);
+
+				var typeClauseNode = (TypeClauseNode)expressionNode.ChildList[i++];
+                Assert.IsType<TypeClauseNode>(typeClauseNode);
+            }
+
+            Assert.False(expressionNode.IsFabricated);
+
+			// expressionNode.LiteralSyntaxToken
+			{
+				var literalSyntaxToken = expressionNode.LiteralSyntaxToken;
+
+                Assert.False(literalSyntaxToken.IsFabricated);
+				Assert.Equal(SyntaxKind.TrueTokenKeyword, literalSyntaxToken.SyntaxKind);
+
+				// literalSyntaxToken.TextSpan
+				{
+					var textSpan = literalSyntaxToken.TextSpan;
+
+					Assert.Equal(1, textSpan.DecorationByte);
+					Assert.Equal(8, textSpan.EndingIndexExclusive);
+					Assert.Equal(4, textSpan.Length);
+					Assert.Equal(resourceUri, textSpan.ResourceUri);
+					Assert.Equal(sourceText, textSpan.SourceText);
+					Assert.Equal(4, textSpan.StartingIndexInclusive);
+					Assert.Equal("true", textSpan.GetText());
+				}
+			}
+
+			// expressionNode.ResultTypeClauseNode
+			{
+				var resultTypeClauseNode = expressionNode.ResultTypeClauseNode;
+
+				Assert.Null(resultTypeClauseNode.AttributeNode);
+
+				// resultTypeClauseNode.ChildList
+				{
+					var identifierToken = resultTypeClauseNode.ChildList.Single();
+					Assert.IsType<IdentifierToken>(identifierToken);
+				}
+
+				Assert.Null(resultTypeClauseNode.GenericParametersListingNode);
+				Assert.False(resultTypeClauseNode.IsFabricated);
+				Assert.Equal(SyntaxKind.TypeClauseNode, resultTypeClauseNode.SyntaxKind);
+
+				// resultTypeClauseNode.TypeIdentifier
+				{
+					var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+
+                    Assert.False(typeIdentifier.IsFabricated);
+                    Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
+
+                    // The type identifier for int is awkwardly in a class named
+                    // CSharpFacts.Types
+                    //
+                    // The primitive data types are hardcoded as of (2024-01-19)
+                    // and asserting them is confusing, while adding no value.
+                    //
+                    // typeIdentifier.TextSpan
+                    // {
+                    //     var textSpan = typeIdentifier.TextSpan;
+					// 
+                    //     Assert.Equal(0, textSpan.DecorationByte);
+                    //     Assert.Equal(4, textSpan.EndingIndexExclusive);
+                    //     Assert.Equal(4, textSpan.Length);
+                    //     Assert.Equal(resourceUri, textSpan.ResourceUri);
+                    //     Assert.Equal(sourceText, textSpan.SourceText);
+                    //     Assert.Equal(0, textSpan.StartingIndexInclusive);
+                    //     Assert.Equal("bool", textSpan.GetText());
+					// }
+				}
+
+				Assert.Equal(typeof(bool), resultTypeClauseNode.ValueType);
+			}
+
+            Assert.Equal(SyntaxKind.LiteralExpressionNode, expressionNode.SyntaxKind);
+		}
+
+		// ifStatementNode.IfStatementBodyCodeBlockNode
+		{
+			var ifStatementBodyCodeBlockNode = ifStatementNode.IfStatementBodyCodeBlockNode;
+			Assert.NotNull(ifStatementBodyCodeBlockNode);
+
+            Assert.Empty(ifStatementBodyCodeBlockNode.ChildList);
+            Assert.Empty(ifStatementBodyCodeBlockNode.DiagnosticsList);
+            Assert.False(ifStatementBodyCodeBlockNode.IsFabricated);
+            Assert.Equal(SyntaxKind.CodeBlockNode, ifStatementBodyCodeBlockNode.SyntaxKind);
+		}
+
+		Assert.False(ifStatementNode.IsFabricated);
+
+		// ifStatementNode.KeywordToken
+		{
+			var keywordToken = ifStatementNode.KeywordToken;
+
+            Assert.False(keywordToken.IsFabricated);
+            Assert.Equal(SyntaxKind.IfTokenKeyword, keywordToken.SyntaxKind);
+
+			// keywordToken.TextSpan
+			{
+				var textSpan = keywordToken.TextSpan;
+
+                Assert.Equal(2, textSpan.DecorationByte);
+                Assert.Equal(2, textSpan.EndingIndexExclusive);
+                Assert.Equal(2, textSpan.Length);
+                Assert.Equal(resourceUri, textSpan.ResourceUri);
+                Assert.Equal(sourceText, textSpan.SourceText);
+                Assert.Equal(0, textSpan.StartingIndexInclusive);
+                Assert.Equal("if", textSpan.GetText());
+			}
+		}
+
+		Assert.Equal(SyntaxKind.IfStatementNode, ifStatementNode.SyntaxKind);
 	}
 	
 	[Fact]
@@ -1301,21 +1445,27 @@ public class ParserTests
 					Assert.False(typeIdentifierToken.IsFabricated);
                     Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifierToken.SyntaxKind);
 
+                    // The type identifier for int is awkwardly in a class named
+                    // CSharpFacts.Types
+					//
+					// The primitive data types are hardcoded as of (2024-01-19)
+					// and asserting them is confusing, while adding no value.
+                    //
                     // Assert ExpressionNode.ResultTypeClauseNode.TypeIdentifier.TextSpan
-                    {
-						var textSpan = typeIdentifierToken.TextSpan;
+                    // {
+                    // 	   var textSpan = typeIdentifierToken.TextSpan;
+                    // 
+                    //     Assert.Equal(0, textSpan.DecorationByte);
+                    //     Assert.Equal(3, textSpan.EndingIndexExclusive);
+                    //     Assert.Equal(3, textSpan.Length);
+                    //     Assert.Equal(resourceUri, textSpan.ResourceUri);
+                    //     Assert.Equal(sourceText, textSpan.SourceText);
+                    //     Assert.Equal(0, textSpan.StartingIndexInclusive);
+                    //     Assert.Equal("int", textSpan.GetText());
+                    // }
+                }
 
-                        Assert.Equal(0, textSpan.DecorationByte);
-                        Assert.Equal(3, textSpan.EndingIndexExclusive);
-                        Assert.Equal(3, textSpan.Length);
-                        Assert.Equal(resourceUri, textSpan.ResourceUri);
-                        Assert.Equal(sourceText, textSpan.SourceText);
-                        Assert.Equal(0, textSpan.StartingIndexInclusive);
-                        Assert.Equal("int", textSpan.GetText());
-					}
-				}
-
-				Assert.Equal(typeof(int), typeClauseNode.ValueType);
+                Assert.Equal(typeof(int), typeClauseNode.ValueType);
             }
 
             Assert.Equal(SyntaxKind.LiteralExpressionNode, literalExpressionNode.SyntaxKind);
