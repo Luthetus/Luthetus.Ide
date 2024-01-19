@@ -5,6 +5,7 @@ using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using System.Linq.Expressions;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis;
 
@@ -520,16 +521,283 @@ public class ParserTests
         // variableDeclarationNode
         {
             var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+
+			// variableDeclarationNode.ChildList
+			{
+				var i = 0;
+
+				var typeClauseNode = (TypeClauseNode)variableDeclarationNode.ChildList[i++];
+				Assert.IsType<TypeClauseNode>(typeClauseNode);
+				
+				var identifierToken = (IdentifierToken)variableDeclarationNode.ChildList[i++];
+				Assert.IsType<IdentifierToken>(identifierToken);
+            }
+
+            Assert.False(variableDeclarationNode.GetterIsAutoImplemented);
+            Assert.False(variableDeclarationNode.HasGetter);
+            Assert.False(variableDeclarationNode.HasSetter);
+
+			// variableDeclarationNode.IdentifierToken
+			{
+				var identifierToken = variableDeclarationNode.IdentifierToken;
+
+                Assert.False(identifierToken.IsFabricated);
+                Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.SyntaxKind);
+
+				// identifierToken.TextSpan
+				{
+					var textSpan = identifierToken.TextSpan;
+					
+					Assert.Equal(0, textSpan.DecorationByte);
+					Assert.Equal(16, textSpan.EndingIndexExclusive);
+					Assert.Equal(6, textSpan.Length);
+					Assert.Equal(resourceUri, textSpan.ResourceUri);
+					Assert.Equal(sourceText, textSpan.SourceText);
+					Assert.Equal(10, textSpan.StartingIndexInclusive);
+					Assert.Equal("myList", textSpan.GetText());
+                }
+			}
+
+            Assert.False(variableDeclarationNode.IsFabricated);
+            Assert.False(variableDeclarationNode.IsInitialized);
+            Assert.False(variableDeclarationNode.SetterIsAutoImplemented);
+            Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+
+            // variableDeclarationNode.TypeClauseNode
+            {
+				var typeClauseNode = variableDeclarationNode.TypeClauseNode;
+
+                Assert.Null(typeClauseNode.AttributeNode);
+
+				// typeClauseNode.ChildList
+				{
+					var i = 0;
+
+					var identifierToken = (IdentifierToken)typeClauseNode.ChildList[i++];
+					Assert.IsType<IdentifierToken>(identifierToken);
+
+					var genericParametersListingNode = (GenericParametersListingNode)typeClauseNode.ChildList[i++];
+                    Assert.IsType<GenericParametersListingNode>(genericParametersListingNode);
+				}
+
+                // typeClauseNode.GenericParametersListingNode
+                {
+					var genericParametersListingNode = typeClauseNode.GenericParametersListingNode;
+					Assert.NotNull(genericParametersListingNode);
+
+					// genericParametersListingNode.ChildList
+					{
+						var i = 0;
+
+						var openAngleBracketToken = (OpenAngleBracketToken)genericParametersListingNode.ChildList[i++];
+						Assert.IsType<OpenAngleBracketToken>(openAngleBracketToken);
+					
+						var genericParameterEntryNode = (GenericParameterEntryNode)genericParametersListingNode.ChildList[i++];
+						Assert.IsType<GenericParameterEntryNode>(genericParameterEntryNode);
+						
+						var closeAngleBracketToken = (CloseAngleBracketToken)genericParametersListingNode.ChildList[i++];
+						Assert.IsType<CloseAngleBracketToken>(closeAngleBracketToken);
+                    }
+
+                    // genericParametersListingNode.CloseAngleBracketToken
+                    {
+						var closeAngleBracketToken = genericParametersListingNode.CloseAngleBracketToken;
+
+                        Assert.False(closeAngleBracketToken.IsFabricated);
+                        Assert.Equal(SyntaxKind.CloseAngleBracketToken, closeAngleBracketToken.SyntaxKind);
+
+						// closeAngleBracketToken.TextSpan
+						{
+							var textSpan = closeAngleBracketToken.TextSpan;
+
+                            Assert.Equal(0, textSpan.DecorationByte);
+                            Assert.Equal(9, textSpan.EndingIndexExclusive);
+                            Assert.Equal(1, textSpan.Length);
+                            Assert.Equal(resourceUri, textSpan.ResourceUri);
+                            Assert.Equal(sourceText, textSpan.SourceText);
+                            Assert.Equal(8, textSpan.StartingIndexInclusive);
+                            Assert.Equal(">", textSpan.GetText());
+						}
+					}
+
+					// genericParametersListingNode.GenericParameterEntryNodeList
+					{
+						var genericParameterEntryNode = genericParametersListingNode
+							.GenericParameterEntryNodeList
+							.Single();
+
+						Assert.IsType<GenericParameterEntryNode>(genericParameterEntryNode);
+					}
+
+					Assert.False(genericParametersListingNode.IsFabricated);
+
+					// genericParametersListingNode.OpenAngleBracketToken
+					{
+						var openAngleBracketToken = genericParametersListingNode.OpenAngleBracketToken;
+
+                        Assert.False(openAngleBracketToken.IsFabricated);
+                        Assert.Equal(SyntaxKind.OpenAngleBracketToken, openAngleBracketToken.SyntaxKind);
+
+						// openAngleBracketToken.TextSpan
+						{
+							var textSpan = openAngleBracketToken.TextSpan;
+
+                            Assert.Equal(0, textSpan.DecorationByte);
+                            Assert.Equal(5, textSpan.EndingIndexExclusive);
+                            Assert.Equal(1, textSpan.Length);
+                            Assert.Equal(resourceUri, textSpan.ResourceUri);
+                            Assert.Equal(sourceText, textSpan.SourceText);
+                            Assert.Equal(4, textSpan.StartingIndexInclusive);
+							Assert.Equal("<", textSpan.GetText());
+						}
+					}
+
+                    Assert.Equal(SyntaxKind.GenericParametersListingNode, genericParametersListingNode.SyntaxKind);
+				}
+
+				Assert.False(typeClauseNode.IsFabricated);
+				Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
+
+				// typeClauseNode.TypeIdentifier
+				{
+					var typeIdentifier = typeClauseNode.TypeIdentifier;
+
+                    Assert.False(typeIdentifier.IsFabricated);
+                    Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
+
+					// typeIdentifier.TextSpan
+					{
+						var textSpan = typeIdentifier.TextSpan;
+
+                        Assert.Equal(0, textSpan.DecorationByte);
+                        Assert.Equal(4, textSpan.EndingIndexExclusive);
+                        Assert.Equal(4, textSpan.Length);
+						Assert.Equal(resourceUri, textSpan.ResourceUri);
+						Assert.Equal(sourceText, textSpan.SourceText);
+                        Assert.Equal(0, textSpan.StartingIndexInclusive);
+                        Assert.Equal("List", textSpan.GetText());
+					}
+				}
+
+                Assert.Null(typeClauseNode.ValueType);
+            }
+            
+            Assert.Equal(VariableKind.Local, variableDeclarationNode.VariableKind);
         }
 
-		// variableAssignmentNode
-		{
-            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
-        }
+		throw new NotImplementedException("TODO: The assignment expression is a constructor invocation. This syntax is not yet handled.");
 
-        // TODO: Continue working on this test
-        throw new NotImplementedException(@"Error Message:
-   System.InvalidCastException : Unable to cast object of type 'Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.FunctionInvocationNode' to type 'Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.VariableDeclarationNode'.");
+		//// variableAssignmentNode
+		//{
+  //          var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+
+		//	// variableAssignmentNode.ChildList
+		//	{
+		//		var i = 0;
+
+		//		var identifierToken = (IdentifierToken)variableAssignmentNode.ChildList[i++];
+		//		Assert.IsType<IdentifierToken>(identifierToken);
+
+		//		var equalsToken = (EqualsToken)variableAssignmentNode.ChildList[i++];
+		//		Assert.IsType<EqualsToken>(equalsToken);
+                
+		//		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)variableAssignmentNode.ChildList[i++];
+		//		Assert.IsType<ParenthesizedExpressionNode>(parenthesizedExpressionNode);
+  //          }
+
+  //          // variableAssignmentNode.EqualsToken
+  //          {
+		//		var equalsToken = variableAssignmentNode.EqualsToken;
+
+  //              Assert.False(equalsToken.IsFabricated);
+  //              Assert.Equal(SyntaxKind.EqualsToken, equalsToken.SyntaxKind);
+
+		//		// equalsToken.TextSpan
+		//		{
+		//			var textSpan = equalsToken.TextSpan;
+
+  //                  Assert.Equal(0, textSpan.DecorationByte);
+  //                  Assert.Equal(18, textSpan.EndingIndexExclusive);
+  //                  Assert.Equal(1, textSpan.Length);
+  //                  Assert.Equal(resourceUri, textSpan.ResourceUri);
+  //                  Assert.Equal(sourceText, textSpan.SourceText);
+  //                  Assert.Equal(17, textSpan.StartingIndexInclusive);
+  //                  Assert.Equal("=", textSpan.GetText());
+		//		}
+		//	}
+
+  //          // variableAssignmentNode.ExpressionNode
+  //          {
+		//		var expressionNode = (ParenthesizedExpressionNode)variableAssignmentNode.ExpressionNode;
+
+		//		// expressionNode.ChildList
+		//		{
+		//			var i = 0;
+
+		//			var openParenthesisToken = (OpenParenthesisToken)expressionNode.ChildList[i++];
+		//			Assert.IsType<OpenParenthesisToken>(openParenthesisToken);
+
+		//			var idempotentExpressionNode = (IdempotentExpressionNode)expressionNode.ChildList[i++];
+		//			Assert.IsType<IdempotentExpressionNode>(idempotentExpressionNode);
+
+  //                  var closeParenthesisToken = (CloseParenthesisToken)expressionNode.ChildList[i++];
+  //                  Assert.IsType<CloseParenthesisToken>(closeParenthesisToken);
+
+  //                  var typeClauseNode = (TypeClauseNode)expressionNode.ChildList[i++];
+  //                  Assert.IsType<TypeClauseNode>(typeClauseNode);
+  //              }
+
+  //              // expressionNode.CloseParenthesisToken
+  //              {
+		//			var closeParenthesisToken = expressionNode.CloseParenthesisToken;
+
+  //                  Assert.False(closeParenthesisToken.IsFabricated);
+  //                  Assert.Equal(SyntaxKind.CloseParenthesisToken, closeParenthesisToken.SyntaxKind);
+
+  //                  // closeParenthesisToken.TextSpan
+  //                  {
+		//				var textSpan = closeParenthesisToken.TextSpan;
+
+		//				Assert.Equal(0, textSpan.DecorationByte);
+		//				Assert.Equal(34, textSpan.EndingIndexExclusive);
+		//				Assert.Equal(1, textSpan.Length);
+		//				Assert.Equal(resourceUri, textSpan.ResourceUri);
+		//				Assert.Equal(sourceText, textSpan.SourceText);
+		//				Assert.Equal(33, textSpan.StartingIndexInclusive);
+		//				Assert.Equal(")", textSpan.GetText());
+  //                  }
+		//		}
+
+  //              // expressionNode.InnerExpression
+  //              {
+		//			var innerExpression = expressionNode.InnerExpression;
+
+  //                  Assert.Equal(, );
+		//		}
+
+  //              Assert.False(expressionNode.IsFabricated);
+
+		//		// expressionNode.OpenParenthesisToken
+		//		{
+		//			Assert.Equal(, expressionNode.OpenParenthesisToken);
+		//		}
+
+		//		// expressionNode.ResultTypeClauseNode
+		//		{
+		//			Assert.Equal(, expressionNode.ResultTypeClauseNode);
+		//		}
+
+  //              Assert.Equal(, expressionNode.SyntaxKind);
+  //          }
+
+		//	Assert.False(variableAssignmentNode.IsFabricated);
+		//	Assert.Equal(SyntaxKind.VariableAssignmentExpressionNode, variableAssignmentNode.SyntaxKind);
+
+		//	// variableAssignmentNode.VariableIdentifierToken
+		//	{
+		//		Assert.Equal(, variableAssignmentNode.VariableIdentifierToken);
+		//	}
+  //      }
 	}
 	
 	[Fact]
