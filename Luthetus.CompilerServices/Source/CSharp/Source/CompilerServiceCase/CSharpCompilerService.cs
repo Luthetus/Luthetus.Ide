@@ -133,7 +133,11 @@ public class CSharpCompilerService : ICompilerService
         while (targetScope is not null)
         {
             autocompleteEntryList.AddRange(
-                targetScope.VariableDeclarationMap.Keys.ToArray().Where(x => x.Contains(word, StringComparison.InvariantCulture))
+                targetScope.VariableDeclarationMap.Keys
+                .ToArray()
+                .Where(x => x.Contains(word, StringComparison.InvariantCulture))
+                .Distinct()
+                .Take(10)
                 .Select(x =>
                 {
                     return new AutocompleteEntry(
@@ -142,7 +146,11 @@ public class CSharpCompilerService : ICompilerService
                 }));
 
             autocompleteEntryList.AddRange(
-                targetScope.FunctionDefinitionMap.Keys.ToArray().Where(x => x.Contains(word, StringComparison.InvariantCulture))
+                targetScope.FunctionDefinitionMap.Keys
+                .ToArray()
+                .Where(x => x.Contains(word, StringComparison.InvariantCulture))
+                .Distinct()
+                .Take(10)
                 .Select(x =>
                 {
                     return new AutocompleteEntry(
@@ -151,7 +159,11 @@ public class CSharpCompilerService : ICompilerService
                 }));
 
             autocompleteEntryList.AddRange(
-                targetScope.TypeDefinitionMap.Keys.ToArray().Where(x => x.Contains(word, StringComparison.InvariantCulture))
+                targetScope.TypeDefinitionMap.Keys
+                .ToArray()
+                .Where(x => x.Contains(word, StringComparison.InvariantCulture))
+                .Distinct()
+                .Take(10)
                 .Select(x =>
                 {
                     return new AutocompleteEntry(
@@ -162,7 +174,7 @@ public class CSharpCompilerService : ICompilerService
             targetScope = targetScope.Parent;
         }
 
-        return autocompleteEntryList.ToImmutableArray();
+        return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToImmutableArray();
     }
 
     public void DisposeResource(ResourceUri resourceUri)
