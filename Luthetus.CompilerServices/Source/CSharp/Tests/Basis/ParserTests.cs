@@ -1823,7 +1823,126 @@ public class ParserTests
 	[Fact]
 	public void PARSE_ReturnStatementNode()
 	{
-		throw new NotImplementedException();
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"public int MyMethod()
+{
+	return 8;
+}";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
+		Assert.NotNull(functionDefinitionNode.FunctionBodyCodeBlockNode);
+
+		var returnStatementNode = (ReturnStatementNode)functionDefinitionNode.FunctionBodyCodeBlockNode.ChildList.Single();
+
+		// returnStatementNode.ChildList
+		{
+			var i = 0;
+
+			var keywordToken = returnStatementNode.ChildList[i++];
+			Assert.IsType<KeywordToken>(keywordToken);
+
+			var literalExpressionNode = returnStatementNode.ChildList[i++];
+            Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
+		}
+
+		// returnStatementNode.ExpressionNode
+		{
+			var expressionNode = (LiteralExpressionNode)returnStatementNode.ExpressionNode;
+
+			// expressionNode.ChildList
+			{
+				var i = 0;
+
+				var numericLiteralToken = expressionNode.ChildList[i++];
+                Assert.IsType<NumericLiteralToken>(numericLiteralToken);
+
+                var typeClauseNode = expressionNode.ChildList[i++];
+				Assert.IsType<TypeClauseNode>(typeClauseNode);
+			}
+
+            Assert.False(expressionNode.IsFabricated);
+
+			// expressionNode.LiteralSyntaxToken
+			{
+				var literalSyntaxToken = expressionNode.LiteralSyntaxToken;
+
+                Assert.False(literalSyntaxToken.IsFabricated);
+                Assert.Equal(SyntaxKind.NumericLiteralToken, literalSyntaxToken.SyntaxKind);
+
+				// literalSyntaxToken.TextSpan
+				{
+					var textSpan = literalSyntaxToken.TextSpan;
+
+                    Assert.Equal(0, textSpan.DecorationByte);
+                    Assert.Equal(35, textSpan.EndingIndexExclusive);
+                    Assert.Equal(1, textSpan.Length);
+                    Assert.Equal(resourceUri, textSpan.ResourceUri);
+                    Assert.Equal(sourceText, textSpan.SourceText);
+                    Assert.Equal(34, textSpan.StartingIndexInclusive);
+                    Assert.Equal("8", textSpan.GetText());
+				}
+			}
+
+            // expressionNode.ResultTypeClauseNode
+            {
+				var resultTypeClauseNode = expressionNode.ResultTypeClauseNode;
+
+				Assert.Null(resultTypeClauseNode.AttributeNode);
+
+				// resultTypeClauseNode.ChildList
+				{
+					var identifierToken = resultTypeClauseNode.ChildList.Single();
+					Assert.IsType<IdentifierToken>(identifierToken);
+				}
+
+                Assert.Null(resultTypeClauseNode.GenericParametersListingNode);
+                Assert.False(resultTypeClauseNode.IsFabricated);
+                Assert.Equal(SyntaxKind.TypeClauseNode, resultTypeClauseNode.SyntaxKind);
+
+                // The type identifier for int is awkwardly in a class named
+                // CSharpFacts.Types
+                //
+                // The primitive data types are hardcoded as of (2024-01-19)
+                // and asserting them is confusing, while adding no value.
+                //
+                // resultTypeClauseNode.TypeIdentifier
+                // Assert.Equal(, resultTypeClauseNode.TypeIdentifier);
+
+                Assert.Equal(typeof(int), resultTypeClauseNode.ValueType);
+            }
+
+            Assert.Equal(SyntaxKind.LiteralExpressionNode, expressionNode.SyntaxKind);
+		}
+
+		Assert.False(returnStatementNode.IsFabricated);
+
+		// returnStatementNode.KeywordToken
+		{
+			var keywordToken = returnStatementNode.KeywordToken;
+
+            Assert.False(keywordToken.IsFabricated);
+            Assert.Equal(SyntaxKind.ReturnTokenKeyword, keywordToken.SyntaxKind);
+
+			// keywordToken.TextSpan
+			{
+				var textSpan = keywordToken.TextSpan;
+
+                Assert.Equal(2, textSpan.DecorationByte);
+                Assert.Equal(33, textSpan.EndingIndexExclusive);
+                Assert.Equal(6, textSpan.Length);
+                Assert.Equal(resourceUri, textSpan.ResourceUri);
+                Assert.Equal(sourceText, textSpan.SourceText);
+                Assert.Equal(27, textSpan.StartingIndexInclusive);
+                Assert.Equal("return", textSpan.GetText());
+			}
+		}
+
+		Assert.Equal(SyntaxKind.ReturnStatementNode, returnStatementNode.SyntaxKind);
 	}
 	
 	[Fact]
