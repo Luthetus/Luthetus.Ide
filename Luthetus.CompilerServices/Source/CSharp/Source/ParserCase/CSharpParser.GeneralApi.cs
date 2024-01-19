@@ -108,179 +108,233 @@ public partial class CSharpParser : IParser
         public void ParseIdentifierToken(IdentifierToken identifierToken)
         {
             if (NodeRecent.SyntaxKind == SyntaxKind.AmbiguousIdentifierNode)
-            {
-                var identifierReferenceNode = (AmbiguousIdentifierNode)NodeRecent;
-
-                var expectingTypeClause = false;
-
-                if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-                    expectingTypeClause = true;
-
-                if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
-                    expectingTypeClause = true;
-
-                if (TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken ||
-                    TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
-                {
-                    expectingTypeClause = true;
-                }
-
-                if (expectingTypeClause)
-                {
-                    if (!Binder.TryGetTypeDefinitionHierarchically(
-                            identifierReferenceNode.IdentifierToken.TextSpan.GetText(),
-                            out var typeDefinitionNode)
-                        || typeDefinitionNode is null)
-                    {
-                        var fabricateTypeDefinition = new TypeDefinitionNode(
-                            identifierReferenceNode.IdentifierToken,
-                            null,
-                            null,
-                            null,
-                            null)
-                        { 
-                            IsFabricated = true
-                        };
-
-                        Binder.BindTypeDefinitionNode(fabricateTypeDefinition);
-
-                        typeDefinitionNode = fabricateTypeDefinition;
-                    }
-
-                    NodeRecent = typeDefinitionNode.ToTypeClause();
-                }
-            }
+                ResolveAmbiguousIdentifier();
 
             if (NodeRecent.SyntaxKind == SyntaxKind.TypeClauseNode)
             {
-                GenericArgumentsListingNode? genericArgumentsListingNode = null;
+                TryParseGenericArguments(out var genericArgumentsListingNode);
 
-                if (SyntaxKind.OpenAngleBracketToken == TokenWalker.Current.SyntaxKind)
+                if (TryParseFunctionDefinition(
+                        (TypeClauseNode)NodeRecent, identifierToken, genericArgumentsListingNode))
                 {
-                    var openAngleBracketToken = (OpenAngleBracketToken)TokenWalker.Consume();
-                    genericArgumentsListingNode = Specific.HandleGenericArguments(openAngleBracketToken);
-                }
-
-                if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
-                {
-                    Specific.HandleFunctionDefinition(
-                        (TypeClauseNode)NodeRecent,
-                        identifierToken,
-                        genericArgumentsListingNode);
-
                     return;
                 }
-                else if (TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken ||
-                         TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
-                {
-                    if (TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
-                    {
-                        Specific.HandleVariableDeclaration(
-                            (TypeClauseNode)NodeRecent,
-                            identifierToken,
-                            VariableKind.Property);
+                
+                if (TryParseVariableDeclaration((TypeClauseNode)NodeRecent, identifierToken))
+                    return;
+            }
+            
+            if (TryParseConstructorDefinition(identifierToken))
+                return;
+            
+            if (TryParseFunctionInvocation(identifierToken))
+                return;
+            
+            if (TryParseVariableAssignment(identifierToken))
+                return;
+            
+            if (TryParseReference(identifierToken))
+                return;
 
-                        return;
+            return;
+        }
+
+        private bool TryParseGenericArguments(
+            out GenericArgumentsListingNode? genericArgumentsListingNode)
+        {
+            if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+            {
+                var openAngleBracketToken = (OpenAngleBracketToken)TokenWalker.Consume();
+                genericArgumentsListingNode = Specific.HandleGenericArguments(openAngleBracketToken);
+                return true;
+            }
+            else
+            {
+                genericArgumentsListingNode = null;
+                return false;
+            }
+        }
+
+        private bool TryParseConstructorDefinition(IdentifierToken identifierToken)
+        {
+            if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken &&
+                CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
+                CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+            {
+                Specific.HandleConstructorDefinition(identifierToken);
+                return true;
+            }
+
+            return false;
+        }
+        
+        private bool TryParseReference(IdentifierToken identifierToken)
+        {
+            var text = identifierToken.TextSpan.GetText();
+
+            if (Binder.BoundNamespaceStatementNodes.TryGetValue(text, out var boundNamespaceStatementNode) &&
+                boundNamespaceStatementNode is not null)
+            {
+                Specific.HandleNamespaceReference(identifierToken, boundNamespaceStatementNode);
+                return true;
+            }
+            else
+            {
+                if (Binder.TryGetVariableDeclarationHierarchically(text, out var variableDeclarationStatementNode) &&
+                    variableDeclarationStatementNode is not null)
+                {
+                    Specific.HandleVariableReference(identifierToken, variableDeclarationStatementNode);
+                    return true;
+                }
+                else
+                {
+                    // 'undeclared-variable reference' OR 'static class identifier'
+
+                    if (Binder.TryGetTypeDefinitionHierarchically(text, out var typeDefinitionNode) &&
+                        typeDefinitionNode is not null)
+                    {
+                        Specific.HandleStaticClassIdentifier(identifierToken);
+                        return true;
                     }
                     else
                     {
-                        var variableKind = VariableKind.Local;
-
-                        if (CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode)
-                            variableKind = VariableKind.Field;
-
-                        Specific.HandleVariableDeclaration(
-                            (TypeClauseNode)NodeRecent,
-                            identifierToken,
-                            variableKind);
-
-                        return;
+                        Specific.HandleUndefinedTypeOrNamespaceReference(identifierToken);
+                        return true;
                     }
-                }
-                else if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
-                {
-                    Specific.HandleVariableDeclaration(
-                        (TypeClauseNode)NodeRecent,
-                        identifierToken,
-                        VariableKind.Property);
-
-                    return;
                 }
             }
-            else if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
-                    TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+        }
+        
+        private bool TryParseVariableAssignment(IdentifierToken identifierToken)
+        {
+            if (TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
             {
-                if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken &&
-                    CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
-                    CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-                {
-                    // TODO: Don't repeat an if statement that checks if current syntax token is OpenParenthesisToken
-                    Specific.HandleConstructorDefinition(identifierToken);
-                    return;
-                }
+                Specific.HandleVariableAssignment(identifierToken);
+                return true;
+            }
 
-                if (NodeRecent.SyntaxKind == SyntaxKind.AmbiguousIdentifierNode)
-                {
-                    var identifierReferenceNode = (AmbiguousIdentifierNode)NodeRecent;
-
-                    // The unknown identifier reference can now be understood to be the return Type of a function.
-                    var typeClauseNode = new TypeClauseNode(identifierReferenceNode.IdentifierToken, null, null);
-                    NodeRecent = typeClauseNode;
-
-                    // Re-invoke ParseIdentifierToken now that _cSharpParser._nodeRecent is known to be a Type identifier
-                    // and that identifierToken is a function identifier
-                    {
-                        ParseIdentifierToken(identifierToken);
-                        return;
-                    }
-                }
-
+            return false;
+        }
+        
+        private bool TryParseFunctionInvocation(IdentifierToken identifierToken)
+        {
+            if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
+                TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+            {
                 // BUG: List<int> thinks 'List' is a generic method (2024-01-17)
                 {
                 }
 
                 Specific.HandleFunctionInvocation(identifierToken);
-            }
-            else if (TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
-            {
-                Specific.HandleVariableAssignment(identifierToken);
-                return;
-            }
-            else
-            {
-                var text = identifierToken.TextSpan.GetText();
 
-                if (Binder.BoundNamespaceStatementNodes.TryGetValue(text, out var boundNamespaceStatementNode) &&
-                    boundNamespaceStatementNode is not null)
-                {
-                    Specific.HandleNamespaceReference(identifierToken, boundNamespaceStatementNode);
-                    return;
-                }
-                else
-                {
-                    if (Binder.TryGetVariableDeclarationHierarchically(text, out var variableDeclarationStatementNode) &&
-                        variableDeclarationStatementNode is not null)
-                    {
-                        Specific.HandleVariableReference(identifierToken, variableDeclarationStatementNode);
-                        return;
-                    }
-                    else
-                    {
-                        // 'undeclared-variable reference' OR 'static class identifier'
+                return true;
+            }
 
-                        if (Binder.TryGetTypeDefinitionHierarchically(text, out var typeDefinitionNode) &&
-                            typeDefinitionNode is not null)
-                        {
-                            Specific.HandleStaticClassIdentifier(identifierToken);
-                            return;
-                        }
-                        else
-                        {
-                            Specific.HandleUndefinedTypeOrNamespaceReference(identifierToken);
-                            return;
-                        }
-                    }
+            return false;
+        }
+            
+        private bool TryParseFunctionDefinition(
+            TypeClauseNode typeClauseNode,
+            IdentifierToken identifierToken,
+            GenericArgumentsListingNode? genericArgumentsListingNode)
+        {
+            if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+            {
+                Specific.HandleFunctionDefinition(
+                    (TypeClauseNode)NodeRecent,
+                    identifierToken,
+                    genericArgumentsListingNode);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool TryParseVariableDeclaration(
+            TypeClauseNode typeClauseNode,
+            IdentifierToken identifierToken)
+        {
+            if (TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+            {
+                var variableKind = VariableKind.Local;
+
+                if (CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode)
+                    variableKind = VariableKind.Field;
+
+                Specific.HandleVariableDeclaration(
+                    typeClauseNode,
+                    identifierToken,
+                    variableKind);
+
+                return true;
+            }
+            else if (TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken &&
+                TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+            {
+                // Property (expression bound)
+                Specific.HandleVariableDeclaration(
+                    typeClauseNode,
+                    identifierToken,
+                    VariableKind.Property);
+
+                return true;
+            }
+            else if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+            {
+                // Property
+                Specific.HandleVariableDeclaration(
+                    typeClauseNode,
+                    identifierToken,
+                    VariableKind.Property);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public void ResolveAmbiguousIdentifier()
+        {
+            var identifierReferenceNode = (AmbiguousIdentifierNode)NodeRecent;
+
+            var expectingTypeClause = false;
+
+            if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+                expectingTypeClause = true;
+
+            if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+                expectingTypeClause = true;
+
+            if (TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken ||
+                TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+            {
+                expectingTypeClause = true;
+            }
+
+            if (expectingTypeClause)
+            {
+                if (!Binder.TryGetTypeDefinitionHierarchically(
+                        identifierReferenceNode.IdentifierToken.TextSpan.GetText(),
+                        out var typeDefinitionNode)
+                    || typeDefinitionNode is null)
+                {
+                    var fabricateTypeDefinition = new TypeDefinitionNode(
+                        identifierReferenceNode.IdentifierToken,
+                        null,
+                        null,
+                        null,
+                        null)
+                    {
+                        IsFabricated = true
+                    };
+
+                    Binder.BindTypeDefinitionNode(fabricateTypeDefinition);
+
+                    typeDefinitionNode = fabricateTypeDefinition;
                 }
+
+                NodeRecent = typeDefinitionNode.ToTypeClause();
             }
         }
 
