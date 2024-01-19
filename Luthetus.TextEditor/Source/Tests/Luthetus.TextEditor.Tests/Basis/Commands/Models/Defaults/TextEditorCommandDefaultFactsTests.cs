@@ -1544,7 +1544,155 @@ public class TextEditorCommandDefaultFactsTests
 	[Fact]
 	public async Task GoToMatchingCharacterFactory()
 	{
-		throw new NotImplementedException();
+        // No shift key
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            var newContent = @"namespace BlazorCrudApp.Persons;
+
+public class Person
+{
+    public Person()
+    {
+    }
+}".ReplaceLineEndings("\n");
+
+            var newRowIndex = 3;
+            var newColumnIndex = 0;
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    modelModifier.ModifyContent(newContent);
+
+                    // Move the cursor to the first curly brace.
+                    // In otherwords, the curly brace which opens the 'Person' class.
+                    {
+                        primaryCursorModifier.RowIndex = newRowIndex;
+                        primaryCursorModifier.SetColumnIndexAndPreferred(newColumnIndex);
+                    }
+
+                    return Task.CompletedTask;
+                });
+
+            var refModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(refModel);
+            Assert.Equal(newContent, refModel!.GetAllText());
+
+            var refViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+            Assert.NotNull(refViewModel);
+            Assert.Equal(newRowIndex, refViewModel!.PrimaryCursor.RowIndex);
+            Assert.Equal(newColumnIndex, refViewModel!.PrimaryCursor.ColumnIndex);
+            Assert.Equal(newColumnIndex, refViewModel!.PrimaryCursor.PreferredColumnIndex);
+
+            await TextEditorCommandDefaultFacts.GoToMatchingCharacterFactory(false)
+                .CommandFunc
+                .Invoke(textEditorCommandArgs);
+
+            // The content should NOT have been modified. So Assert that it stayed the same.
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+                Assert.Equal(newContent, outModel!.GetAllText());
+            }
+
+            var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+            Assert.NotNull(outViewModel);
+            Assert.Equal(7, outViewModel!.PrimaryCursor.RowIndex);
+            Assert.Equal(0, outViewModel!.PrimaryCursor.ColumnIndex);
+            Assert.Equal(0, outViewModel!.PrimaryCursor.ColumnIndex);
+        }
+
+        // With shift key
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            var newContent = @"namespace BlazorCrudApp.Persons;
+
+public class Person
+{
+    public Person()
+    {
+    }
+}".ReplaceLineEndings("\n");
+
+            var newRowIndex = 3;
+            var newColumnIndex = 0;
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    modelModifier.ModifyContent(newContent);
+
+                    // Move the cursor to the first curly brace.
+                    // In otherwords, the curly brace which opens the 'Person' class.
+                    {
+                        primaryCursorModifier.RowIndex = newRowIndex;
+                        primaryCursorModifier.SetColumnIndexAndPreferred(newColumnIndex);
+                    }
+
+                    return Task.CompletedTask;
+                });
+
+            var refModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(refModel);
+            Assert.Equal(newContent, refModel!.GetAllText());
+
+            var refViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+            Assert.NotNull(refViewModel);
+            Assert.Equal(newRowIndex, refViewModel!.PrimaryCursor.RowIndex);
+            Assert.Equal(newColumnIndex, refViewModel!.PrimaryCursor.ColumnIndex);
+            Assert.Equal(newColumnIndex, refViewModel!.PrimaryCursor.PreferredColumnIndex);
+
+            await TextEditorCommandDefaultFacts.GoToMatchingCharacterFactory(true)
+                .CommandFunc
+                .Invoke(textEditorCommandArgs);
+
+            // The content should NOT have been modified. So Assert that it stayed the same.
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+                Assert.Equal(newContent, outModel!.GetAllText());
+            }
+
+            var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+            Assert.NotNull(outViewModel);
+            Assert.Equal(7, outViewModel!.PrimaryCursor.RowIndex);
+            Assert.Equal(0, outViewModel!.PrimaryCursor.ColumnIndex);
+            Assert.Equal(0, outViewModel!.PrimaryCursor.ColumnIndex);
+            Assert.Equal(54, outViewModel!.PrimaryCursor.Selection.AnchorPositionIndex);
+            Assert.Equal(88, outViewModel!.PrimaryCursor.Selection.EndingPositionIndex);
+        }
 	}
 
 	/// <summary>

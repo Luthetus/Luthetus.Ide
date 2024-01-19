@@ -790,14 +790,6 @@ public class TextEditorCommandDefaultFunctions
             if (directionToFindMatchingPunctuationCharacter is null)
                 return;
 
-            var temporaryCursor = new TextEditorCursor(
-                primaryCursorModifier.RowIndex,
-                primaryCursorModifier.ColumnIndex,
-                primaryCursorModifier.IsPrimaryCursor)
-            {
-                PreferredColumnIndex = primaryCursorModifier.PreferredColumnIndex,
-            };
-
             var unmatchedCharacters =
                 fallbackToPreviousCharacter && directionToFindMatchingPunctuationCharacter == -1
                     ? 0
@@ -812,6 +804,7 @@ public class TextEditorCommandDefaultFunctions
                     keyboardEventArgs = new KeyboardEventArgs
                     {
                         Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                        ShiftKey = commandArgs.ShouldSelectText,
                     };
                 }
                 else
@@ -819,6 +812,7 @@ public class TextEditorCommandDefaultFunctions
                     keyboardEventArgs = new KeyboardEventArgs
                     {
                         Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                        ShiftKey = commandArgs.ShouldSelectText,
                     };
                 }
 
@@ -829,10 +823,8 @@ public class TextEditorCommandDefaultFunctions
                         primaryCursorModifier)
                     .Invoke(editContext);
 
-                var temporaryCursorPositionIndex = modelModifier.GetPositionIndex(
-                    temporaryCursor);
-
-                var characterAt = modelModifier.GetCharacter(temporaryCursorPositionIndex);
+                var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+                var characterAt = modelModifier.GetCharacter(positionIndex);
 
                 if (characterAt == match)
                     unmatchedCharacters--;
@@ -842,19 +834,16 @@ public class TextEditorCommandDefaultFunctions
                 if (unmatchedCharacters == 0)
                     break;
 
-                if (temporaryCursorPositionIndex <= 0 ||
-                    temporaryCursorPositionIndex >= modelModifier.DocumentLength)
+                if (positionIndex <= 0 ||
+                    positionIndex >= modelModifier.DocumentLength)
                     break;
             }
 
             if (commandArgs.ShouldSelectText)
             {
                 primaryCursorModifier.SelectionEndingPositionIndex =
-                    modelModifier.GetPositionIndex(temporaryCursor);
+                    modelModifier.GetPositionIndex(primaryCursorModifier);
             }
-
-            primaryCursorModifier.RowIndex = temporaryCursor.RowIndex;
-            primaryCursorModifier.ColumnIndex = temporaryCursor.ColumnIndex;
         };
     }
 
