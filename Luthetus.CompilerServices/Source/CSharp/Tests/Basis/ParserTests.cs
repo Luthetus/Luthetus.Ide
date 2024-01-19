@@ -14,19 +14,19 @@ public class ParserTests
 	[Fact]
 	public void PARSE_AmbiguousIdentifierNode()
 	{
-        var resourceUri = new ResourceUri("UnitTests");
-        var sourceText = $"x";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		var resourceUri = new ResourceUri("UnitTests");
+		var sourceText = $"x";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+		lexer.Lex();
+		var parser = new CSharpParser(lexer);
+		var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var ambiguousIdentifierNode = (AmbiguousIdentifierNode)topCodeBlock.ChildList.Single();
+		Assert.Single(topCodeBlock.ChildList);
+		var ambiguousIdentifierNode = (AmbiguousIdentifierNode)topCodeBlock.ChildList.Single();
 
-        // Assert ChildList
-        {
+		// Assert ChildList
+		{
 			var i = 0;
 
 			var identifierToken = ambiguousIdentifierNode.ChildList[i++];
@@ -37,27 +37,27 @@ public class ParserTests
 		{
 			var identifierToken = ambiguousIdentifierNode.IdentifierToken;
 
-            Assert.False(identifierToken.IsFabricated);
-            Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.SyntaxKind);
+			Assert.False(identifierToken.IsFabricated);
+			Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.SyntaxKind);
 
 			// Assert IdentifierToken.TextSpan
 			{
 				var textSpan = identifierToken.TextSpan;
 
-                Assert.Equal(0, textSpan.DecorationByte);
-                Assert.Equal(1, textSpan.EndingIndexExclusive);
-                Assert.Equal(1, textSpan.Length);
-                Assert.Equal(resourceUri, textSpan.ResourceUri);
-                Assert.Equal(sourceText, textSpan.SourceText);
-                Assert.Equal(0, textSpan.StartingIndexInclusive);
-                Assert.Equal("x", textSpan.GetText());
+				Assert.Equal(0, textSpan.DecorationByte);
+				Assert.Equal(1, textSpan.EndingIndexExclusive);
+				Assert.Equal(1, textSpan.Length);
+				Assert.Equal(resourceUri, textSpan.ResourceUri);
+				Assert.Equal(sourceText, textSpan.SourceText);
+				Assert.Equal(0, textSpan.StartingIndexInclusive);
+				Assert.Equal("x", textSpan.GetText());
 			}
 		}
 
 		Assert.False(ambiguousIdentifierNode.IsFabricated);
 		Assert.Equal(SyntaxKind.AmbiguousIdentifierNode, ambiguousIdentifierNode.SyntaxKind);
-    }
-	
+	}
+
 	[Fact]
 	public void PARSE_AttributeNode()
 	{
@@ -80,17 +80,17 @@ public class ParserTests
 		var attributeNode = variableDeclarationNode.TypeClauseNode.AttributeNode;
 
 		// Assert ChildList
-		{ 
+		{
 			var i = 0;
 
 			var openSquareBracketToken = (OpenSquareBracketToken)attributeNode.ChildList[i++];
 			Assert.IsType<OpenSquareBracketToken>(openSquareBracketToken);
 
-            var identifierToken = (IdentifierToken)attributeNode.ChildList[i++];
-            Assert.IsType<IdentifierToken>(identifierToken);
-			
+			var identifierToken = (IdentifierToken)attributeNode.ChildList[i++];
+			Assert.IsType<IdentifierToken>(identifierToken);
+
 			var closeSquareBracketToken = (CloseSquareBracketToken)attributeNode.ChildList[i++];
-            Assert.IsType<CloseSquareBracketToken>(closeSquareBracketToken);
+			Assert.IsType<CloseSquareBracketToken>(closeSquareBracketToken);
 		}
 
 		// Assert CloseSquareBracketToken
@@ -104,13 +104,13 @@ public class ParserTests
 			{
 				var textSpan = closeSquareBracketToken.TextSpan;
 
-                Assert.Equal(0, textSpan.DecorationByte);
-                Assert.Equal(41, textSpan.EndingIndexExclusive);
-                Assert.Equal(1, textSpan.Length);
-                Assert.Equal(resourceUri, textSpan.ResourceUri);
+				Assert.Equal(0, textSpan.DecorationByte);
+				Assert.Equal(41, textSpan.EndingIndexExclusive);
+				Assert.Equal(1, textSpan.Length);
+				Assert.Equal(resourceUri, textSpan.ResourceUri);
 				Assert.Equal(sourceText, textSpan.SourceText);
 				Assert.Equal(40, textSpan.StartingIndexInclusive);
-                Assert.Equal("]", textSpan.GetText());
+				Assert.Equal("]", textSpan.GetText());
 			}
 		}
 
@@ -124,10 +124,10 @@ public class ParserTests
 				Assert.False(identifierToken.IsFabricated);
 				Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.SyntaxKind);
 
-                // Assert identifierToken.TextSpan
-                {
+				// Assert identifierToken.TextSpan
+				{
 					var textSpan = identifierToken.TextSpan;
-                    
+
 					Assert.Equal(0, textSpan.DecorationByte);
 					Assert.Equal(40, textSpan.EndingIndexExclusive);
 					Assert.Equal(9, textSpan.Length);
@@ -145,26 +145,26 @@ public class ParserTests
 		{
 			var openSquareBracketToken = attributeNode.OpenSquareBracketToken;
 
-            Assert.False(openSquareBracketToken.IsFabricated);
-            Assert.Equal(SyntaxKind.OpenSquareBracketToken, openSquareBracketToken.SyntaxKind);
+			Assert.False(openSquareBracketToken.IsFabricated);
+			Assert.Equal(SyntaxKind.OpenSquareBracketToken, openSquareBracketToken.SyntaxKind);
 
 			// Assert OpenSquareBracketToken.TextSpan
 			{
 				var textSpan = openSquareBracketToken.TextSpan;
 
-                Assert.Equal(0, textSpan.DecorationByte);
-                Assert.Equal(31, textSpan.EndingIndexExclusive);
-                Assert.Equal(1, textSpan.Length);
-                Assert.Equal(resourceUri, textSpan.ResourceUri);
-                Assert.Equal(sourceText, textSpan.SourceText);
-                Assert.Equal(30, textSpan.StartingIndexInclusive);
-                Assert.Equal("[", textSpan.GetText());
+				Assert.Equal(0, textSpan.DecorationByte);
+				Assert.Equal(31, textSpan.EndingIndexExclusive);
+				Assert.Equal(1, textSpan.Length);
+				Assert.Equal(resourceUri, textSpan.ResourceUri);
+				Assert.Equal(sourceText, textSpan.SourceText);
+				Assert.Equal(30, textSpan.StartingIndexInclusive);
+				Assert.Equal("[", textSpan.GetText());
 			}
 		}
 
 		Assert.Equal(SyntaxKind.AttributeNode, attributeNode.SyntaxKind);
 	}
-	
+
 	[Fact]
 	public void PARSE_BinaryExpressionNode()
 	{
@@ -189,7 +189,7 @@ public class ParserTests
 
 		Assert.Equal(typeof(int), rightLiteralExpressionNode.ResultTypeClauseNode.ValueType);
 	}
-	
+
 	[Fact]
 	public void PARSE_BinaryOperatorNode()
 	{
@@ -201,7 +201,7 @@ public class ParserTests
 		var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var binaryOperatorNode = 
+		var binaryOperatorNode =
 			((BinaryExpressionNode)topCodeBlock.ChildList.Single())
 			.BinaryOperatorNode;
 
@@ -212,24 +212,24 @@ public class ParserTests
 		Assert.False(binaryOperatorNode.IsFabricated);
 		Assert.Equal(SyntaxKind.BinaryOperatorNode, binaryOperatorNode.SyntaxKind);
 	}
-	
+
 	[Fact]
 	public void PARSE_ConstraintNode()
 	{
-        var resourceUri = new ResourceUri("UnitTests");
-        var constraintText = @"where T : class";
-        var sourceText = $@"public T Clone<T>(T item) {constraintText}
+		var resourceUri = new ResourceUri("UnitTests");
+		var constraintText = @"where T : class";
+		var sourceText = $@"public T Clone<T>(T item) {constraintText}
 {{
 	return item;
 }}";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+		lexer.Lex();
+		var parser = new CSharpParser(lexer);
+		var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
+		Assert.Single(topCodeBlock.ChildList);
+		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
 		var constraintNode = functionDefinitionNode.ConstraintNode;
 
 		Assert.NotNull(constraintNode);
@@ -244,34 +244,34 @@ public class ParserTests
 			var identifierToken = (IdentifierToken)constraintNode.ChildList[i++];
 			Assert.IsType<IdentifierToken>(identifierToken);
 
-            var colonToken = (ColonToken)constraintNode.ChildList[i++];
-            Assert.IsType<ColonToken>(colonToken);
+			var colonToken = (ColonToken)constraintNode.ChildList[i++];
+			Assert.IsType<ColonToken>(colonToken);
 
-            var keywordToken = (KeywordToken)constraintNode.ChildList[i++];
-            Assert.IsType<KeywordToken>(keywordToken);
+			var keywordToken = (KeywordToken)constraintNode.ChildList[i++];
+			Assert.IsType<KeywordToken>(keywordToken);
 		}
 
 		// Assert InnerTokens
 		{
-            var i = 0;
+			var i = 0;
 
-            var keywordContextualToken = (KeywordContextualToken)constraintNode.InnerTokens[i++];
-            Assert.IsType<KeywordContextualToken>(keywordContextualToken);
+			var keywordContextualToken = (KeywordContextualToken)constraintNode.InnerTokens[i++];
+			Assert.IsType<KeywordContextualToken>(keywordContextualToken);
 
-            var identifierToken = (IdentifierToken)constraintNode.InnerTokens[i++];
-            Assert.IsType<IdentifierToken>(identifierToken);
+			var identifierToken = (IdentifierToken)constraintNode.InnerTokens[i++];
+			Assert.IsType<IdentifierToken>(identifierToken);
 
-            var colonToken = (ColonToken)constraintNode.InnerTokens[i++];
-            Assert.IsType<ColonToken>(colonToken);
+			var colonToken = (ColonToken)constraintNode.InnerTokens[i++];
+			Assert.IsType<ColonToken>(colonToken);
 
-            var keywordToken = (KeywordToken)constraintNode.InnerTokens[i++];
-            Assert.IsType<KeywordToken>(keywordToken);
+			var keywordToken = (KeywordToken)constraintNode.InnerTokens[i++];
+			Assert.IsType<KeywordToken>(keywordToken);
 		}
 
 		Assert.False(constraintNode.IsFabricated);
 		Assert.Equal(SyntaxKind.ConstraintNode, constraintNode.SyntaxKind);
 	}
-	
+
 	[Fact]
 	public void PARSE_ConstructorDefinitionNode()
 	{
@@ -307,6 +307,13 @@ public class ParserTests
 		Assert.Null(constructorDefinitionNode.ConstraintNode);
 		Assert.False(constructorDefinitionNode.IsFabricated);
 		Assert.Equal(SyntaxKind.ConstructorDefinitionNode, constructorDefinitionNode.SyntaxKind);
+	}
+
+    [Fact]
+    public void PARSE_ConstructorInvocation()
+    {
+		throw new NotImplementedException(
+			"TODO: How should constructor invocation be handled, versus a function invocation.");
 	}
 	
 	[Fact]
@@ -1240,7 +1247,10 @@ public class ParserTests
 				var i = 0;
 
 				var numericLiteralToken = (NumericLiteralToken)literalExpressionNode.ChildList[i++];
+				Assert.IsType<NumericLiteralToken>(numericLiteralToken);
+
 				var typeClauseNode = (TypeClauseNode)literalExpressionNode.ChildList[i++];
+                Assert.IsType<TypeClauseNode>(typeClauseNode);
             }
 
             Assert.False(literalExpressionNode.IsFabricated);
