@@ -110,24 +110,13 @@ public partial class CSharpParser : IParser
             if (NodeRecent.SyntaxKind == SyntaxKind.AmbiguousIdentifierNode)
                 ResolveAmbiguousIdentifier();
 
-            if (NodeRecent.SyntaxKind == SyntaxKind.TypeClauseNode)
-            {
-                TryParseGenericArguments(out var genericArgumentsListingNode);
-
-                if (TryParseFunctionDefinition(
-                        (TypeClauseNode)NodeRecent, identifierToken, genericArgumentsListingNode))
-                {
-                    return;
-                }
-                
-                if (TryParseVariableDeclaration((TypeClauseNode)NodeRecent, identifierToken))
-                    return;
-            }
+            if (TryParseTypedSyntax(identifierToken))
+                return;
             
             if (TryParseConstructorDefinition(identifierToken))
                 return;
             
-            if (TryParseFunctionInvocation(identifierToken))
+            if (TryParseGenericTypeOrFunctionInvocation(identifierToken))
                 return;
             
             if (TryParseVariableAssignment(identifierToken))
@@ -154,6 +143,22 @@ public partial class CSharpParser : IParser
                 return false;
             }
         }
+        
+        private bool TryParseGenericParameters(
+            out GenericParametersListingNode? genericParametersListingNode)
+        {
+            if (SyntaxKind.OpenAngleBracketToken == TokenWalker.Current.SyntaxKind)
+            {
+                var openAngleBracketToken = (OpenAngleBracketToken)TokenWalker.Consume();
+                genericParametersListingNode = Specific.HandleGenericParameters(openAngleBracketToken);
+                return true;
+            }
+            else
+            {
+                genericParametersListingNode = null;
+                return false;
+            }
+        }
 
         private bool TryParseConstructorDefinition(IdentifierToken identifierToken)
         {
@@ -163,6 +168,25 @@ public partial class CSharpParser : IParser
             {
                 Specific.HandleConstructorDefinition(identifierToken);
                 return true;
+            }
+
+            return false;
+        }
+        
+        private bool TryParseTypedSyntax(IdentifierToken identifierToken)
+        {
+            if (NodeRecent.SyntaxKind == SyntaxKind.TypeClauseNode)
+            {
+                TryParseGenericArguments(out var genericArgumentsListingNode);
+
+                if (TryParseFunctionDefinition(
+                        (TypeClauseNode)NodeRecent, identifierToken, genericArgumentsListingNode))
+                {
+                    return true;
+                }
+                
+                if (TryParseVariableDeclaration((TypeClauseNode)NodeRecent, identifierToken))
+                    return true;
             }
 
             return false;
@@ -215,22 +239,33 @@ public partial class CSharpParser : IParser
 
             return false;
         }
-        
-        private bool TryParseFunctionInvocation(IdentifierToken identifierToken)
+
+        private bool TryParseGenericTypeOrFunctionInvocation(IdentifierToken identifierToken)
         {
-            if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
-                TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+            if (TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken &&
+                TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
             {
-                // BUG: List<int> thinks 'List' is a generic method (2024-01-17)
-                {
-                }
-
-                Specific.HandleFunctionInvocation(identifierToken);
-
-                return true;
+                return false;
             }
 
-            return false;
+            if (TryParseGenericParameters(out var genericParametersListingNode))
+            {
+                if (TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
+                {
+                    // Generic type
+                    NodeRecent = new TypeClauseNode(
+                        identifierToken,
+                        null,
+                        genericParametersListingNode);
+
+                    return true;
+                }
+            }
+
+            // Function invocation
+            Specific.HandleFunctionInvocation(identifierToken, genericParametersListingNode);
+            
+            return true;
         }
             
         private bool TryParseFunctionDefinition(
@@ -255,7 +290,12 @@ public partial class CSharpParser : IParser
             TypeClauseNode typeClauseNode,
             IdentifierToken identifierToken)
         {
-            if (TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+            var isLocalOrField = TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
+                                 TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken;
+            
+            var isLambda =  TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken;
+
+            if (isLocalOrField && !isLambda)
             {
                 var variableKind = VariableKind.Local;
 
@@ -269,8 +309,7 @@ public partial class CSharpParser : IParser
 
                 return true;
             }
-            else if (TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken &&
-                TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+            else if (isLambda)
             {
                 // Property (expression bound)
                 Specific.HandleVariableDeclaration(

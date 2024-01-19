@@ -517,29 +517,18 @@ public class ParserTests
 		var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
-		
-		var genericArgumentEntryNode = variableDeclarationNode
-			.TypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList.Single();
+        // variableDeclarationNode
+        {
+            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+        }
 
-		Assert.False(genericArgumentEntryNode.IsFabricated);
-		Assert.Equal(SyntaxKind.GenericArgumentEntryNode, genericArgumentEntryNode.SyntaxKind);
-
-		// TypeClauseNode assertions
+		// variableAssignmentNode
 		{
-			var typeClauseNode = genericArgumentEntryNode.TypeClauseNode;
-			
-			Assert.Equal(genericArgumentText,
-				genericArgumentEntryNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
-		    
-			Assert.Equal(genericArgumentValueType, genericArgumentEntryNode.TypeClauseNode.ValueType);
+            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+        }
 
-		    Assert.Null(genericArgumentEntryNode.TypeClauseNode.GenericParametersListingNode);
-		    Assert.False(genericArgumentEntryNode.TypeClauseNode.IsFabricated);
-		}
-
-		// TODO: Continue working on this test
-		throw new NotImplementedException(@"Error Message:
+        // TODO: Continue working on this test
+        throw new NotImplementedException(@"Error Message:
    System.InvalidCastException : Unable to cast object of type 'Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.FunctionInvocationNode' to type 'Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.VariableDeclarationNode'.");
 	}
 	

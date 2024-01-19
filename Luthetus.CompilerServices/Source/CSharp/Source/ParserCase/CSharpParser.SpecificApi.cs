@@ -97,18 +97,11 @@ public partial class CSharpParser : IParser
             return variableReferenceNode;
         }
 
-        public FunctionInvocationNode HandleFunctionInvocation(IdentifierToken identifierToken)
+        public FunctionInvocationNode HandleFunctionInvocation(
+            IdentifierToken identifierToken,
+            GenericParametersListingNode? genericParametersListingNode)
         {
             // TODO: (2023-06-04) I believe this if block will run for '<' mathematical operator.
-
-            GenericParametersListingNode? genericParametersListingNode = null;
-
-            if (SyntaxKind.OpenAngleBracketToken == TokenWalker.Current.SyntaxKind)
-            {
-                var openAngleBracketToken = (OpenAngleBracketToken)TokenWalker.Consume();
-                genericParametersListingNode = HandleGenericParameters(openAngleBracketToken);
-            }
-
             var openParenthesisToken = (OpenParenthesisToken)TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
 
             var functionParametersListingNode = HandleFunctionParameters(openParenthesisToken);
@@ -122,7 +115,7 @@ public partial class CSharpParser : IParser
             Binder.BindFunctionInvocationNode(functionInvocationNode);
 
             CurrentCodeBlockBuilder.ChildList.Add(functionInvocationNode);
-            NodeRecent = null;
+            NodeRecent = new EmptyNode();
 
             return functionInvocationNode;
         }
@@ -180,7 +173,7 @@ public partial class CSharpParser : IParser
                 _ = TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
             }
 
-            NodeRecent = null;
+            NodeRecent = new EmptyNode();
             return variableDeclarationNode;
         }
 
@@ -478,7 +471,7 @@ public partial class CSharpParser : IParser
                 {
                     _ = TokenWalker.Consume();
 
-                    NodeRecent = null;
+                    NodeRecent = new EmptyNode();
                     CurrentCodeBlockBuilder.ChildList.Add(functionInvocationNode);
                 }
                 else
