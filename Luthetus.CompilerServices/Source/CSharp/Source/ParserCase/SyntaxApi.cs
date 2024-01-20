@@ -2151,7 +2151,7 @@ internal static class SyntaxApi
     {
         var whereKeywordContextualToken = (KeywordContextualToken)model.SyntaxStack.Pop();
 
-        if (model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+        if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
         {
             var functionDefinitionNode = (FunctionDefinitionNode)model.SyntaxStack.Pop();
 

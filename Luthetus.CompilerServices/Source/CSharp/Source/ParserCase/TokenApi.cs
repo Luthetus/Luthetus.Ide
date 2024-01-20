@@ -428,7 +428,7 @@ internal static class TokenApi
     {
         var plusPlusToken = (PlusPlusToken)model.SyntaxStack.Pop();
 
-        if (model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.VariableReferenceNode)
+        if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.VariableReferenceNode)
         {
             var variableReferenceNode = (VariableReferenceNode)model.SyntaxStack.Pop();
 
@@ -497,7 +497,7 @@ internal static class TokenApi
     {
         var colonToken = (ColonToken)model.SyntaxStack.Pop();
 
-        if (model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.TypeDefinitionNode)
+        if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.TypeDefinitionNode)
         {
             var typeDefinitionNode = (TypeDefinitionNode)model.SyntaxStack.Pop();
             var inheritedTypeClauseNode = UtilityApi.MatchTypeClause(model);
@@ -525,7 +525,7 @@ internal static class TokenApi
         ISyntaxNode? nextCodeBlockOwner = null;
         TypeClauseNode? scopeReturnTypeClauseNode = null;
 
-        if (model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.NamespaceStatementNode)
+        if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
             var namespaceStatementNode = (NamespaceStatementNode)model.SyntaxStack.Pop();
             nextCodeBlockOwner = namespaceStatementNode;
@@ -543,7 +543,7 @@ internal static class TokenApi
 
             model.SyntaxStack.Push(namespaceStatementNode);
         }
-        else if (model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.TypeDefinitionNode)
+        else if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.TypeDefinitionNode)
         {
             var typeDefinitionNode = (TypeDefinitionNode)model.SyntaxStack.Pop();
             nextCodeBlockOwner = typeDefinitionNode;
@@ -562,7 +562,7 @@ internal static class TokenApi
                 closureCurrentCodeBlockBuilder.ChildList.Add(typeDefinitionNode);
             });
         }
-        else if (model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+        else if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
         {
             var functionDefinitionNode = (FunctionDefinitionNode)model.SyntaxStack.Pop();
             nextCodeBlockOwner = functionDefinitionNode;
@@ -582,7 +582,7 @@ internal static class TokenApi
                 closureCurrentCodeBlockBuilder.ChildList.Add(functionDefinitionNode);
             });
         }
-        else if (model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
+        else if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
         {
             var constructorDefinitionNode = (ConstructorDefinitionNode)model.SyntaxStack.Pop();
             nextCodeBlockOwner = constructorDefinitionNode;
@@ -602,7 +602,7 @@ internal static class TokenApi
                 closureCurrentCodeBlockBuilder.ChildList.Add(constructorDefinitionNode);
             });
         }
-        else if (model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.IfStatementNode)
+        else if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.IfStatementNode)
         {
             var ifStatementNode = (IfStatementNode)model.SyntaxStack.Pop();
             nextCodeBlockOwner = ifStatementNode;
@@ -631,7 +631,7 @@ internal static class TokenApi
             scopeReturnTypeClauseNode,
             openBraceToken.TextSpan);
 
-        if (model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.NamespaceStatementNode)
+        if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
             var namespaceStatementNode = (NamespaceStatementNode)model.SyntaxStack.Pop();
 
@@ -705,11 +705,11 @@ internal static class TokenApi
     {
         var openAngleBracketToken = (OpenAngleBracketToken)model.SyntaxStack.Pop();
 
-        if (model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.LiteralExpressionNode ||
-            model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.LiteralExpressionNode ||
-            model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.BinaryExpressionNode ||
+        if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
+            model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
+            model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.BinaryExpressionNode ||
             /* Prefer the enum comparison. Will short circuit. This "is" cast is for fallback in case someone in the future adds for expression syntax kinds but does not update this if statement TODO: Check if node ends with "ExpressionNode"? */
-            model.SyntaxStack.Peek() is IExpressionNode)
+            model.SyntaxStack.TryPeek(out syntax) && syntax is IExpressionNode)
         {
             // Mathematical angle bracket
             throw new NotImplementedException();
@@ -721,7 +721,7 @@ internal static class TokenApi
 
             SyntaxApi.HandleGenericArguments(model);
 
-            if (model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.TypeDefinitionNode)
+            if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
                 var typeDefinitionNode = (TypeDefinitionNode)model.SyntaxStack.Pop();
 
@@ -746,11 +746,11 @@ internal static class TokenApi
     {
         var openSquareBracketToken = (OpenSquareBracketToken)model.SyntaxStack.Pop();
 
-        if (model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.LiteralExpressionNode ||
-            model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.LiteralExpressionNode ||
-            model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.BinaryExpressionNode ||
+        if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
+            model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
+            model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.BinaryExpressionNode ||
             /* Prefer the enum comparison. Will short circuit. This "is" cast is for fallback in case someone in the future adds for expression syntax kinds but does not update this if statement TODO: Check if node ends with "ExpressionNode"? */
-            model.SyntaxStack.Peek() is IExpressionNode)
+            model.SyntaxStack.TryPeek(out syntax) && syntax is IExpressionNode)
         {
             // Mathematical square bracket
             throw new NotImplementedException();
@@ -772,7 +772,7 @@ internal static class TokenApi
     {
         var memberAccessToken = (MemberAccessToken)model.SyntaxStack.Pop();
 
-        if (model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.EmptyNode)
+        if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.EmptyNode)
             throw new NotImplementedException($"_cSharpParser._handle.Handle the case where a {nameof(MemberAccessToken)} is used without a valid preceeding node.");
 
         switch (model.SyntaxStack.Peek().SyntaxKind)
@@ -793,7 +793,7 @@ internal static class TokenApi
     {
         var statementDelimiterToken = (StatementDelimiterToken)model.SyntaxStack.Pop();
 
-        if (model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.NamespaceStatementNode)
+        if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
             var closureCurrentCompilationUnitBuilder = model.CurrentCodeBlockBuilder;
             ISyntaxNode? nextCodeBlockOwner = null;
