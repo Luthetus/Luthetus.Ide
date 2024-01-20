@@ -10,7 +10,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
-public partial class CSharpParser : IParser
+public class CSharpParser : IParser
 {
     public CSharpParser(CSharpLexer lexer)
     {

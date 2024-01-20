@@ -1,51 +1,81 @@
-﻿namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
-public static class UtilityApiTests
+namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase;
+
+/// <summary>
+/// <see cref="UtilityApi"/>
+/// </summary>
+public class UtilityApiTests
 {
+    /// <summary>
+    /// <see cref="UtilityApi.MatchTypeClause(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void MatchTypeClause()
+    public void MatchTypeClause()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="UtilityApi.IsContextualKeywordSyntaxKind(SyntaxKind)"/>
+    /// </summary>
     [Fact]
-    public static void IsContextualKeywordSyntaxKind()
+    public void IsContextualKeywordSyntaxKind()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="UtilityApi.IsKeywordSyntaxKind(SyntaxKind)"/>
+    /// </summary>
     [Fact]
-    public static void IsKeywordSyntaxKind()
+    public void IsKeywordSyntaxKind()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="UtilityApi.IsTypeIdentifierKeywordSyntaxKind(SyntaxKind)"/>
+    /// </summary>
     [Fact]
-    public static void IsTypeIdentifierKeywordSyntaxKind()
+    public void IsTypeIdentifierKeywordSyntaxKind()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="UtilityApi.IsBinaryOperatorSyntaxKind(SyntaxKind)"/>
+    /// </summary>
     [Fact]
-    public static void IsBinaryOperatorSyntaxKind()
+    public void IsBinaryOperatorSyntaxKind()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="UtilityApi.IsUnaryOperatorSyntaxKind(SyntaxKind)"/>
+    /// </summary>
     [Fact]
-    public static void IsUnaryOperatorSyntaxKind()
+    public void IsUnaryOperatorSyntaxKind()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="UtilityApi.IsAccessibilitySyntaxKind(SyntaxKind)"/>
+    /// </summary>
     [Fact]
-    public static void IsAccessibilitySyntaxKind()
+    public void IsAccessibilitySyntaxKind()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="UtilityApi.GetOperatorPrecedence(SyntaxKind)"/>
+    /// </summary>
     [Fact]
-    public static void GetOperatorPrecedence()
+    public void GetOperatorPrecedence()
     {
         throw new NotImplementedException();
     }

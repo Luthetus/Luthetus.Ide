@@ -1,195 +1,296 @@
-﻿namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase;
+﻿using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
-public static class TokenApiTests
+namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase;
+
+/// <summary>
+/// <see cref="TokenApi"/>
+/// </summary>
+public class TokenApiTests
 {
+    /// <summary>
+    /// <see cref="TokenApi.ParseNumericLiteralToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParseNumericLiteralToken()
+    public void ParseNumericLiteralToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParseStringLiteralToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParseStringLiteralToken()
+    public void ParseStringLiteralToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParsePreprocessorDirectiveToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParsePreprocessorDirectiveToken()
+    public void ParsePreprocessorDirectiveToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParseIdentifierToken()
+    public void ParseIdentifierToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.TryParseGenericArguments"/>
+    /// </summary>
     [Fact]
-    public static void TryParseGenericArguments()
+    public void TryParseGenericArguments()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.TryParseGenericParameters"/>
+    /// </summary>
     [Fact]
-    public static void TryParseGenericParameters()
+    public void TryParseGenericParameters()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.TryParseConstructorDefinition"/>
+    /// </summary>
     [Fact]
-    public static void TryParseConstructorDefinition()
+    public void TryParseConstructorDefinition()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.TryParseTypedIdentifier"/>
+    /// </summary>
     [Fact]
-    public static void TryParseTypedIdentifier()
+    public void TryParseTypedIdentifier()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.TryParseReference"/>
+    /// </summary>
     [Fact]
-    public static void TryParseReference()
+    public void TryParseReference()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.TryParseVariableAssignment"/>
+    /// </summary>
     [Fact]
-    public static void TryParseVariableAssignment()
+    public void TryParseVariableAssignment()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.TryParseGenericTypeOrFunctionInvocation"/>
+    /// </summary>
     [Fact]
-    public static void TryParseGenericTypeOrFunctionInvocation()
+    public void TryParseGenericTypeOrFunctionInvocation()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.TryParseFunctionDefinition"/>
+    /// </summary>
     [Fact]
-    public static void TryParseFunctionDefinition()
+    public void TryParseFunctionDefinition()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.TryParseVariableDeclaration"/>
+    /// </summary>
     [Fact]
-    public static void TryParseVariableDeclaration()
+    public void TryParseVariableDeclaration()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ResolveAmbiguousIdentifier(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ResolveAmbiguousIdentifier()
+    public void ResolveAmbiguousIdentifier()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParsePlusToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParsePlusToken()
+    public void ParsePlusToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParsePlusPlusToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParsePlusPlusToken()
+    public void ParsePlusPlusToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParseMinusToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParseMinusToken()
+    public void ParseMinusToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParseStarToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParseStarToken()
+    public void ParseStarToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParseDollarSignToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParseDollarSignToken()
+    public void ParseDollarSignToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParseColonToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParseColonToken()
+    public void ParseColonToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParseOpenBraceToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParseOpenBraceToken()
+    public void ParseOpenBraceToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParseCloseBraceToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParseCloseBraceToken()
+    public void ParseCloseBraceToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParseOpenParenthesisToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParseOpenParenthesisToken()
+    public void ParseOpenParenthesisToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParseCloseParenthesisToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParseCloseParenthesisToken()
+    public void ParseCloseParenthesisToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParseOpenAngleBracketToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParseOpenAngleBracketToken()
+    public void ParseOpenAngleBracketToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParseCloseAngleBracketToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParseCloseAngleBracketToken()
+    public void ParseCloseAngleBracketToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParseOpenSquareBracketToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParseOpenSquareBracketToken()
+    public void ParseOpenSquareBracketToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParseCloseSquareBracketToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParseCloseSquareBracketToken()
+    public void ParseCloseSquareBracketToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParseMemberAccessToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParseMemberAccessToken()
+    public void ParseMemberAccessToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.StatementDelimiterToken"/>
+    /// </summary>
     [Fact]
-    public static void StatementDelimiterToken()
+    public void StatementDelimiterToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParseKeywordToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParseKeywordToken()
+    public void ParseKeywordToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TokenApi.ParseKeywordContextualToken(ParserModel)"/>
+    /// </summary>
     [Fact]
-    public static void ParseKeywordContextualToken()
+    public void ParseKeywordContextualToken()
     {
         throw new NotImplementedException();
     }
