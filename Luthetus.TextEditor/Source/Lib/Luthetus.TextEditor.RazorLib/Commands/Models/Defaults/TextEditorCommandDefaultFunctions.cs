@@ -888,7 +888,7 @@ public class TextEditorCommandDefaultFunctions
                 if (commandArgs.RegisterModelAction is not null)
                 {
                     commandArgs.RegisterModelAction.Invoke(definitionTextSpan.ResourceUri);
-                    definitionModel = commandArgs.TextEditorService.ModelApi.GetOrDefault(definitionTextSpan.ResourceUri);
+                    var definitionModelModifier = editContext.GetModelModifier(definitionTextSpan.ResourceUri);
 
                     if (definitionModel is null)
                         return Task.CompletedTask;
@@ -917,31 +917,28 @@ public class TextEditorCommandDefaultFunctions
                 }
             }
 
-            var firstDefinitionViewModel = definitionViewModels.First();
+            var definitionViewModelKey = definitionViewModels.First().ViewModelKey;
+            var definitionViewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (definitionViewModelModifier is null)
+                return Task.CompletedTask;
+
             var rowData = definitionModel.GetRowInformationFromPositionIndex(definitionTextSpan.StartingIndexInclusive);
             var columnIndex = definitionTextSpan.StartingIndexInclusive - rowData.RowStartPositionIndexInclusive;
 
-            var firstDefinitionViewModelCursorModifier = new TextEditorCursorModifier(firstDefinitionViewModel.PrimaryCursor);
+            var definitionCursorModifierBag = editContext.GetCursorModifierBag(definitionViewModelModifier.ViewModel);
+            var definitionPrimaryCursorModifier = editContext.GetPrimaryCursorModifier(definitionCursorModifierBag);
 
-            firstDefinitionViewModelCursorModifier.RowIndex = rowData.RowIndex;
-            firstDefinitionViewModelCursorModifier.ColumnIndex = columnIndex;
-            firstDefinitionViewModelCursorModifier.PreferredColumnIndex = columnIndex;
+            if (definitionPrimaryCursorModifier is null)
+                return Task.CompletedTask;
 
-            commandArgs.TextEditorService.ViewModelApi.WithValueFactory(
-                viewModelModifier.ViewModel.ViewModelKey,
-                firstDefinitionInViewModel =>
-                {
-                    var outCursor = firstDefinitionViewModelCursorModifier.ToCursor();
-                    var outCursorBag = firstDefinitionInViewModel.CursorList.Replace(firstDefinitionInViewModel.PrimaryCursor, outCursor);
-
-                    return firstDefinitionInViewModel with
-                    {
-                        CursorList = outCursorBag
-                    };
-                }).Invoke(editContext);
+            definitionPrimaryCursorModifier.SelectionAnchorPositionIndex = null;
+            definitionPrimaryCursorModifier.RowIndex = rowData.RowIndex;
+            definitionPrimaryCursorModifier.ColumnIndex = columnIndex;
+            definitionPrimaryCursorModifier.PreferredColumnIndex = columnIndex;
 
             if (commandArgs.ShowViewModelAction is not null)
-                commandArgs.ShowViewModelAction.Invoke(firstDefinitionViewModel.ViewModelKey);
+                commandArgs.ShowViewModelAction.Invoke(definitionViewModelKey);
 
             return Task.CompletedTask;
         };
