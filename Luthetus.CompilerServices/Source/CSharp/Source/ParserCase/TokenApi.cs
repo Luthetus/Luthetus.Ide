@@ -167,9 +167,6 @@ internal static class TokenApi
                 genericArgumentsListingNode = (GenericArgumentsListingNode)model.SyntaxStack.Pop();
             }
 
-            model.SyntaxStack.Push(typeClauseNode);
-            model.SyntaxStack.Push(identifierToken);
-
             if (genericArgumentsListingNode is not null)
                 model.SyntaxStack.Push(genericArgumentsListingNode);
 
@@ -307,45 +304,44 @@ internal static class TokenApi
 
         var isLambda = model.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken;
 
+        model.SyntaxStack.Push(typeClauseNode);
+        model.SyntaxStack.Push(identifierToken);
+
+        if (genericArgumentsListingNode is not null)
+            model.SyntaxStack.Push(genericArgumentsListingNode);
+
+        var variableKind = (VariableKind?)null;
+
         if (isLocalOrField && !isLambda)
         {
-            var variableKind = VariableKind.Local;
-
             if (model.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode)
                 variableKind = VariableKind.Field;
-
-            SyntaxApi.HandleVariableDeclaration(
-                typeClauseNode,
-                identifierToken,
-                variableKind, 
-                model);
-
-            return true;
+            else
+                variableKind = VariableKind.Local;
         }
         else if (isLambda)
         {
             // Property (expression bound)
-            SyntaxApi.HandleVariableDeclaration(
-                typeClauseNode,
-                identifierToken,
-                VariableKind.Property, 
-                model);
-
-            return true;
+            variableKind = VariableKind.Property;
         }
         else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
         {
             // Property
+            variableKind = VariableKind.Property;
+        }
+
+        if (variableKind is not null)
+        {
             SyntaxApi.HandleVariableDeclaration(
-                typeClauseNode,
-                identifierToken,
-                VariableKind.Property, 
+                variableKind.Value,
                 model);
 
             return true;
         }
-
-        return false;
+        else
+        {
+            return false;
+        }
     }
 
     public static void ResolveAmbiguousIdentifier(ParserModel model)

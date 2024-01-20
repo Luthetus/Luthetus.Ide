@@ -123,6 +123,12 @@ public partial class CSharpParser : IParser
                     TokenApi.StatementDelimiterToken(model);
                     break;
                 case SyntaxKind.EndOfFileToken:
+                    if (model.SyntaxStack.TryPeek(out var syntax) &&
+                        syntax is EndOfFileToken)
+                    {
+                        _ = model.SyntaxStack.Pop();
+                    }
+
                     if (model.SyntaxStack.TryPop(out var notUsedSyntax))
                     {
                         if (notUsedSyntax is IExpressionNode ||

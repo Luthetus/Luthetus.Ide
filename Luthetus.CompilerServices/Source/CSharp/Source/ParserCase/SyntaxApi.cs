@@ -74,28 +74,19 @@ internal static class SyntaxApi
 
         model.Binder.BindFunctionInvocationNode(functionInvocationNode);
         model.CurrentCodeBlockBuilder.ChildList.Add(functionInvocationNode);
-        model.SyntaxStack.Push(new EmptyNode());
     }
 
     public static void HandleVariableDeclaration(
-        TypeClauseNode typeClauseNode,
-        IdentifierToken identifierToken,
         VariableKind variableKind,
         ParserModel model)
     {
-        /*
-         * Issues:
-         *     -Should Handle...(...) methods return the node?
-         *         -If one returns the node then they must only ever 
-         *             modify the current code block builder one time.
-         *         -Yet, HandleVariableDeclaration(...) wants to proceed to invoke
-         *             HandleVariableAssignment if an EqualsToken is found.
-         *         -This would result in two nodes needing to be added
-         *             to the current code block builder.
-         *         -Futhermore, HandleVariableDeclaration(...) adds to the current code block
-         *             builder prior to checking if the variable is a property.
-         *             - A few if statements would fix this but that seems to start creating a mess.
-         */
+        GenericArgumentsListingNode? genericArgumentsListingNode =
+            model.SyntaxStack.Peek() is GenericArgumentsListingNode temporaryNode
+                ? temporaryNode
+                : null;
+
+        var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
+        var typeClauseNode = (TypeClauseNode)model.SyntaxStack.Pop();
 
         var variableDeclarationNode = new VariableDeclarationNode(
             typeClauseNode,
@@ -132,8 +123,6 @@ internal static class SyntaxApi
         {
             _ = model.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
         }
-
-        model.SyntaxStack.Push(new EmptyNode());
     }
 
     public static void HandlePropertyDeclaration(ParserModel model)
@@ -456,7 +445,6 @@ internal static class SyntaxApi
             {
                 _ = model.TokenWalker.Consume();
 
-                model.SyntaxStack.Push(new EmptyNode());
                 model.CurrentCodeBlockBuilder.ChildList.Add(functionInvocationNode);
             }
             else
@@ -693,9 +681,10 @@ internal static class SyntaxApi
                         var outVariableTypeClause = UtilityApi.MatchTypeClause(model);
                         var outVariableIdentifier = (IdentifierToken)model.TokenWalker.Peek(0);
 
+                        model.SyntaxStack.Push(outVariableTypeClause);
+                        model.SyntaxStack.Push(outVariableIdentifier);
+
                         HandleVariableDeclaration(
-                            outVariableTypeClause,
-                            outVariableIdentifier,
                             VariableKind.Local,
                             model);
                     }
