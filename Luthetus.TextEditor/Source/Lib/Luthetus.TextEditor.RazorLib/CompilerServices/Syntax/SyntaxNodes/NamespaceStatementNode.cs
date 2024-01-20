@@ -40,7 +40,7 @@ public sealed record NamespaceStatementNode : ISyntaxNode
     /// </summary>
     public ImmutableArray<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes()
     {
-        return ChildList
+        return CodeBlockNode.ChildList
             .Where(innerC => innerC.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             .Select(td => (TypeDefinitionNode)td)
             .ToImmutableArray();

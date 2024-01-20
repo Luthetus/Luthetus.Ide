@@ -32,7 +32,7 @@ public sealed record NamespaceGroupNode : ISyntaxNode
     public ImmutableArray<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes()
     {
         return NamespaceStatementNodeList
-            .SelectMany(bne => bne.GetTopLevelTypeDefinitionNodes())
+            .SelectMany(x => x.GetTopLevelTypeDefinitionNodes())
             .ToImmutableArray();
     }
 }

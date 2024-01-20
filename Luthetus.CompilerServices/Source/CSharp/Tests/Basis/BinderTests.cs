@@ -31,6 +31,18 @@ public class MyClass
 
         var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
         var namespaceGroupNodes = parser.Binder.NamespaceGroupNodes;
+
+        var getTopLevelTypeDefinitionNodesTuples = namespaceGroupNodes
+            .Select(x => (x.Key, x.Value.GetTopLevelTypeDefinitionNodes()))
+            .ToArray();
+
+        var namespaceUnderTesting = namespaceGroupNodes
+            .Single(x => x.Key == "Luthetus.CompilerServices.Lang.CSharp.Tests.Basis")
+            .Value;
+
+        var topLevelTypeDefinitionNodes = namespaceUnderTesting.GetTopLevelTypeDefinitionNodes();
+
+        var aaa = 2;
     }
     
     [Fact]
@@ -52,5 +64,17 @@ public class MyClass
 
         var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
         var namespaceGroupNodes = parser.Binder.NamespaceGroupNodes;
+
+        var getTopLevelTypeDefinitionNodesTuples = namespaceGroupNodes
+            .Select(x => (x.Key, x.Value.GetTopLevelTypeDefinitionNodes()))
+            .ToArray();
+
+        var namespaceUnderTesting = namespaceGroupNodes
+            .Single(x => x.Key == "Luthetus.CompilerServices.Lang.CSharp.Tests.Basis")
+            .Value;
+
+        var topLevelTypeDefinitionNodes = namespaceUnderTesting.GetTopLevelTypeDefinitionNodes();
+
+        var aaa = 2;
     }
 }
