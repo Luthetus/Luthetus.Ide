@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
-internal static class UtilityApi
+public static class UtilityApi
 {
     public static TypeClauseNode MatchTypeClause(ParserModel model)
     {

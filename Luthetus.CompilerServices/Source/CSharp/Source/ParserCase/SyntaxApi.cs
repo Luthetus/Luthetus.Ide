@@ -10,7 +10,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
-internal static class SyntaxApi
+public static class SyntaxApi
 {
     public static void HandleStaticClassIdentifier(ParserModel model)
     {

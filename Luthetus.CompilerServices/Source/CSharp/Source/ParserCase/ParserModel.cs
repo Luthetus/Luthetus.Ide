@@ -13,7 +13,7 @@ namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 /// definition node itself in the syntax tree immutable.<br/><br/>
 /// That is to say, this action would create the function definition node and then append it.
 /// </param>
-internal class ParserModel
+public class ParserModel
 {
     public ParserModel(
         CSharpBinder binder,

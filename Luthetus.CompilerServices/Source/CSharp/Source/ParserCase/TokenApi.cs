@@ -6,7 +6,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
-internal static class TokenApi
+public static class TokenApi
 {
     public static void ParseNumericLiteralToken(ParserModel model)
     {
