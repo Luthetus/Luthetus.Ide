@@ -14,6 +14,10 @@ public class CSharpParserTests
 {
     /// <summary>
     /// <see cref="CSharpParser(CSharpLexer)"/>
+    /// <br/>----<br/>
+    /// <see cref="CSharpParser.Lexer"/>
+    /// <see cref="CSharpParser.Binder"/>
+    /// /// <see cref="CSharpParser.DiagnosticsList"/>
     /// </summary>
     [Fact]
     public void Constructor()
@@ -29,43 +33,45 @@ public class CSharpParserTests
     }
 
     /// <summary>
-    /// <see cref="CSharpParser.DiagnosticsList"/>
-    /// </summary>
-    [Fact]
-    public void DiagnosticsList()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="CSharpParser.Binder"/>
-    /// </summary>
-    [Fact]
-    public void Binder()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="CSharpParser.Lexer"/>
-    /// </summary>
-    [Fact]
-    public void Lexer()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="CSharpParser.Parse()"/>
+    /// <br/>----<br/>
+    /// <see cref="CSharpParser.DiagnosticsList"/>
     /// </summary>
     [Fact]
     public void Parse_A()
     {
-        throw new NotImplementedException();
+        // No diagnostics
+        {
+            var resourceUri = new ResourceUri("./unitTesting.txt");
+            var sourceText = "public class MyClass { }";
+            var lexer = new CSharpLexer(resourceUri, sourceText);
+            var parser = new CSharpParser(lexer);
+
+            // Parse, then assert there were NO diagnostics.
+            // This presumes that the sourceText variable is valid C#
+            parser.Parse();
+            Assert.Empty(parser.DiagnosticsList);
+        }
+        
+        // With diagnostics
+        {
+            var resourceUri = new ResourceUri("./unitTesting.txt");
+            var sourceText = "MyMethod()"; // MyMethod should be undefined
+            var lexer = new CSharpLexer(resourceUri, sourceText);
+            var parser = new CSharpParser(lexer);
+
+            // Parse, then assert there were diagnostics.
+            // This presumes that the sourceText variable is NOT-valid C#
+            parser.Parse();
+            Assert.NotEmpty(parser.DiagnosticsList);
+        }
     }
 
     /// <summary>
     /// <see cref="CSharpParser.Parse(CSharpBinder, ResourceUri)"/>
+    /// <br/>----<br/>
+    /// <see cref="CSharpParser.Binder"/>
+    /// <see cref="CSharpParser.DiagnosticsList"/>
     /// </summary>
     [Fact]
     public void Parse_B()
