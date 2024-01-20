@@ -4,12 +4,12 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expressio
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 /// <summary>
-/// One usage of the <see cref="IdempotentExpressionNode"/> is for a <see cref="ParenthesizedExpressionNode"/>
+/// One usage of the <see cref="EmptyExpressionNode"/> is for a <see cref="ParenthesizedExpressionNode"/>
 /// which has no <see cref="ParenthesizedExpressionNode.InnerExpression"/>
 /// </summary>
-public sealed record IdempotentExpressionNode : IExpressionNode
+public sealed record EmptyExpressionNode : IExpressionNode
 {
-    public IdempotentExpressionNode(TypeClauseNode typeClauseNode)
+    public EmptyExpressionNode(TypeClauseNode typeClauseNode)
     {
         ResultTypeClauseNode = typeClauseNode;
 
@@ -26,5 +26,5 @@ public sealed record IdempotentExpressionNode : IExpressionNode
     public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.IdempotentExpressionNode;
+    public SyntaxKind SyntaxKind => SyntaxKind.EmptyExpressionNode;
 }

@@ -2,6 +2,7 @@
 using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -39,7 +40,7 @@ public partial class CSharpParser : IParser
 
     /// <summary>If a file scoped namespace is found, then set this field, so that prior to finishing the parser constructs the namespace node.</summary>
     private Action<CodeBlockNode>? _finalizeNamespaceFileScopeCodeBlockNodeAction;
-    private ISyntaxNode? _nodeRecent;
+    private ISyntaxNode _nodeRecent = new EmptyNode();
     private CodeBlockBuilder _currentCodeBlockBuilder;
     /// <summary>When parsing the body of a function this is used in order to keep the function definition node itself in the syntax tree immutable.<br/><br/>That is to say, this action would create the function definition node and then append it.</summary>
     private Stack<Action<CodeBlockNode>> _finalizeCodeBlockNodeActionStack = new();
@@ -133,6 +134,10 @@ public partial class CSharpParser : IParser
                     break;
                 case SyntaxKind.EndOfFileToken:
                     if (_nodeRecent is IExpressionNode)
+                    {
+                        _currentCodeBlockBuilder.ChildList.Add(_nodeRecent);
+                    }
+                    else if (_nodeRecent is AmbiguousIdentifierNode)
                     {
                         _currentCodeBlockBuilder.ChildList.Add(_nodeRecent);
                     }

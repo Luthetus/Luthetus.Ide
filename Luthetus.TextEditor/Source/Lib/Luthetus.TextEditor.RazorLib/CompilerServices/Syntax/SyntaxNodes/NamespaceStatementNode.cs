@@ -1,4 +1,5 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
@@ -8,26 +9,25 @@ public sealed record NamespaceStatementNode : ISyntaxNode
     public NamespaceStatementNode(
         KeywordToken keywordToken,
         IdentifierToken identifierToken,
-        ImmutableArray<NamespaceEntryNode> namespaceEntryNodes)
+        CodeBlockNode codeBlockNode)
     {
         KeywordToken = keywordToken;
         IdentifierToken = identifierToken;
-        NamespaceEntryNodeList = namespaceEntryNodes;
+        CodeBlockNode = codeBlockNode;
 
         var children = new List<ISyntax>
         {
-            keywordToken,
-            identifierToken,
+            KeywordToken,
+            IdentifierToken,
+            CodeBlockNode,
         };
-
-        children.AddRange(namespaceEntryNodes);
 
         ChildList = children.ToImmutableArray();
     }
 
     public KeywordToken KeywordToken { get; }
     public IdentifierToken IdentifierToken { get; }
-    public ImmutableArray<NamespaceEntryNode> NamespaceEntryNodeList { get; }
+    public CodeBlockNode CodeBlockNode { get; }
 
     public ImmutableArray<ISyntax> ChildList { get; }
 
@@ -36,15 +36,11 @@ public sealed record NamespaceStatementNode : ISyntaxNode
 
     /// <summary>
     /// <see cref="GetTopLevelTypeDefinitionNodes"/> provides a collection
-    /// which contains all top level type definitions of the namespace.
-    /// <br/><br/>
-    /// This is to say that, any type definitions which are nested, would not
-    /// be in this collection.
+    /// which contains all top level type definitions of the <see cref="NamespaceStatementNode"/>.
     /// </summary>
     public ImmutableArray<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes()
     {
-        return NamespaceEntryNodeList
-            .SelectMany(bne => bne.CodeBlockNode.ChildList)
+        return CodeBlockNode.ChildList
             .Where(innerC => innerC.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             .Select(td => (TypeDefinitionNode)td)
             .ToImmutableArray();

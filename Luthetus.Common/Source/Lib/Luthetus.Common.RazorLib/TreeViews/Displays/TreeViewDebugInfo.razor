@@ -31,4 +31,29 @@
 			</div>
 		}
 	</div>
+
+	<hr/>
+
+	@if (RecursiveGetFlattenedTreeFunc is not null)
+	{
+		<button class="luth_button"
+				@onclick="PerformGetFlattenedTree">
+			PerformGetFlattenedTree
+		</button>
+	
+		<div>
+			@{ var localNodeList = _nodeList; }
+			localNodeList.Count:&nbsp;@_nodeList.Count
+	
+			@foreach (var node in localNodeList)
+			{
+				var flattenedNodeTreeViewRenderer = node.GetTreeViewRenderer();
+	
+				<div>
+					<DynamicComponent Type="flattenedNodeTreeViewRenderer.DynamicComponentType"
+			                          Parameters="flattenedNodeTreeViewRenderer.DynamicComponentParameters"/>
+				</div>
+			}
+		</div>
+	}
 </div>

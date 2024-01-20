@@ -2,17 +2,18 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dropdowns.States;
-using Luthetus.Common.RazorLib.TreeViews.Displays;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
-using Luthetus.Ide.RazorLib.Editors.States;
-using Luthetus.Ide.RazorLib.FolderExplorers.States;
-using Microsoft.AspNetCore.Components;
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.Ide.RazorLib.Editors.States;
+using Luthetus.Ide.RazorLib.FolderExplorers.States;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
+using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Microsoft.AspNetCore.Components;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -140,27 +141,6 @@ public partial class IdeHeader : FluxorComponent
             "Info",
             typeof(IdeInfoDisplay),
             null,
-            null)
-        {
-            IsResizable = true
-        };
-
-        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
-    }
-
-    private void OpenTreeViewDebugInfoDialog()
-    {
-        var dialogRecord = new DialogRecord(
-            Key<DialogRecord>.NewKey(),
-            nameof(TreeViewDebugInfo),
-            typeof(TreeViewDebugInfo),
-            new Dictionary<string, object?>
-			{
-				{
-					nameof(TreeViewDebugInfo.TreeViewContainerKey),
-					DotNetSolutionState.TreeViewSolutionExplorerStateKey
-				}
-			},
             null)
         {
             IsResizable = true

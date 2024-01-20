@@ -214,12 +214,12 @@ public static class RuntimeAssembliesLoaderFactory
 
                             var typeNamespace = definedType.Namespace;
 
-                            var systemNamespace = cSharpBinder.BoundNamespaceStatementNodes["System"];
+                            var systemNamespaceGroup = cSharpBinder.NamespaceGroupNodes["System"];
 
-                            cSharpBinder.RegisterBoundNamespaceEntryNode(
-                                systemNamespace,
-                                new CodeBlockNode(
-                                    new ISyntax[]{ typeDefinitionNode }.ToImmutableArray()));
+                            foreach (var namespaceStatementNode in systemNamespaceGroup.NamespaceStatementNodeList)
+                            {
+                                cSharpBinder.BindNamespaceStatementNode(namespaceStatementNode);
+                            }
                         }
                         catch (FileNotFoundException ex)
                         {

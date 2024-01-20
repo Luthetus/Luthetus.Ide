@@ -15,7 +15,7 @@ namespace Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 public class CSharpBinder : IBinder
 {
     private readonly CSharpBoundScope _globalScope = CSharpFacts.Scope.GetInitialGlobalScope();
-    private readonly Dictionary<string, NamespaceStatementNode> _namespaceStatementNodes = CSharpFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
+    private readonly Dictionary<string, NamespaceGroupNode> _namespaceGroupNodeMap = CSharpFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
     /// <summary>The key for _symbolDefinitions is calculated by <see cref="ISymbol.GetSymbolDefinitionId"/></summary>
     private readonly Dictionary<string, SymbolDefinition> _symbolDefinitions = new();
     private readonly LuthetusDiagnosticBag _diagnosticBag = new();
@@ -36,7 +36,7 @@ public class CSharpBinder : IBinder
 
     public ResourceUri? CurrentResourceUri { get; set; }
 
-    public ImmutableDictionary<string, NamespaceStatementNode> BoundNamespaceStatementNodes => _namespaceStatementNodes.ToImmutableDictionary();
+    public ImmutableDictionary<string, NamespaceGroupNode> NamespaceGroupNodes => _namespaceGroupNodeMap.ToImmutableDictionary();
     public ImmutableArray<ISymbol> Symbols => _symbolDefinitions.Values.SelectMany(x => x.SymbolReferences).Select(x => x.Symbol).ToImmutableArray();
     public Dictionary<string, SymbolDefinition> SymbolDefinitions => _symbolDefinitions;
     public ImmutableArray<CSharpBoundScope> BoundScopes => _boundScopes.ToImmutableArray();
@@ -200,71 +200,28 @@ public class CSharpBinder : IBinder
         return boundIfStatementNode;
     }
 
-    public NamespaceStatementNode BindNamespaceStatementNode(
-        KeywordToken keywordToken,
-        IdentifierToken identifierToken)
+    public void BindNamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
     {
-        AddSymbolReference(new NamespaceSymbol(identifierToken.TextSpan));
+        var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText();
+        AddSymbolReference(new NamespaceSymbol(namespaceStatementNode.IdentifierToken.TextSpan));
 
-        var namespaceIdentifier = identifierToken.TextSpan.GetText();
-
-        if (_namespaceStatementNodes.TryGetValue(
-                namespaceIdentifier,
-                out var boundNamespaceStatementNode))
+        if (_namespaceGroupNodeMap.TryGetValue(namespaceString, out var inNamespaceGroupNode))
         {
-            return boundNamespaceStatementNode;
-        }
-        else
-        {
-            boundNamespaceStatementNode = new NamespaceStatementNode(
-                keywordToken,
-                identifierToken,
-                ImmutableArray<NamespaceEntryNode>.Empty);
-
-            var success = _namespaceStatementNodes.TryAdd(
-                namespaceIdentifier,
-                boundNamespaceStatementNode);
-
-            if (!success)
-                _namespaceStatementNodes[namespaceIdentifier] = boundNamespaceStatementNode;
-
-            return boundNamespaceStatementNode;
-        }
-    }
-
-    public NamespaceStatementNode RegisterBoundNamespaceEntryNode(
-        NamespaceStatementNode inBoundNamespaceStatementNode,
-        CodeBlockNode codeBlockNode)
-    {
-        var namespaceIdentifier = inBoundNamespaceStatementNode
-            .IdentifierToken.TextSpan.GetText();
-
-        if (_namespaceStatementNodes.TryGetValue(
-                namespaceIdentifier,
-                out var existingBoundNamespaceStatementNode))
-        {
-            var boundNamespaceEntryNode = new NamespaceEntryNode(
-                inBoundNamespaceStatementNode.IdentifierToken.TextSpan.ResourceUri,
-                codeBlockNode);
-
-            var outChildren = existingBoundNamespaceStatementNode.NamespaceEntryNodeList
-                .Add(boundNamespaceEntryNode)
+            var outNamespaceStatementNodeList = inNamespaceGroupNode.NamespaceStatementNodeList
+                .Add(namespaceStatementNode)
                 .ToImmutableArray();
 
-            var outBoundNamespaceStatementNode = new NamespaceStatementNode(
-                existingBoundNamespaceStatementNode.KeywordToken,
-                existingBoundNamespaceStatementNode.IdentifierToken,
-                outChildren);
+            var outNamespaceGroupNode = new NamespaceGroupNode(
+                inNamespaceGroupNode.NamespaceString,
+                outNamespaceStatementNodeList);
 
-            _namespaceStatementNodes[namespaceIdentifier] = outBoundNamespaceStatementNode;
-
-            return outBoundNamespaceStatementNode;
+            _namespaceGroupNodeMap[namespaceString] = outNamespaceGroupNode;
         }
         else
         {
-            throw new NotImplementedException(
-                $"The {nameof(inBoundNamespaceStatementNode)}" +
-                $" was not found in the {nameof(_namespaceStatementNodes)} dictionary.");
+            _namespaceGroupNodeMap.Add(namespaceString, new NamespaceGroupNode(
+                namespaceString,
+                new NamespaceStatementNode[] { namespaceStatementNode }.ToImmutableArray()));
         }
     }
 
@@ -445,14 +402,7 @@ public class CSharpBinder : IBinder
     {
         AddSymbolReference(new NamespaceSymbol(namespaceIdentifierToken.TextSpan));
 
-        var namespaceText = namespaceIdentifierToken.TextSpan.GetText();
-
-        if (_namespaceStatementNodes.TryGetValue(
-                namespaceText,
-                out var boundNamespaceStatementNode))
-        {
-            AddNamespaceToCurrentScope(boundNamespaceStatementNode);
-        }
+        AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan.GetText());
 
         return new UsingStatementNode(
             usingKeywordToken,
@@ -462,6 +412,7 @@ public class CSharpBinder : IBinder
     /// <summary>TODO: Correctly implement this method. For now going to skip until the attribute closing square bracket.</summary>
     public AttributeNode BindAttributeNode(
         OpenSquareBracketToken openSquareBracketToken,
+        List<ISyntaxToken> innerTokens,
         CloseSquareBracketToken closeSquareBracketToken)
     {
         AddSymbolReference(new TypeSymbol(openSquareBracketToken.TextSpan with
@@ -472,6 +423,7 @@ public class CSharpBinder : IBinder
 
         return new AttributeNode(
             openSquareBracketToken,
+            innerTokens,
             closeSquareBracketToken);
     }
 
@@ -498,14 +450,17 @@ public class CSharpBinder : IBinder
         _currentScope = boundScope;
     }
 
-    public void AddNamespaceToCurrentScope(NamespaceStatementNode boundNamespaceStatementNode)
+    public void AddNamespaceToCurrentScope(string namespaceString)
     {
-        var typeDefinitionNodes = boundNamespaceStatementNode
-            .GetTopLevelTypeDefinitionNodes();
-
-        foreach (var typeDefinitionNode in typeDefinitionNodes)
+        if (_namespaceGroupNodeMap.TryGetValue(namespaceString, out var namespaceGroupNode) &&
+            namespaceGroupNode is not null)
         {
-            BindTypeDefinitionNode(typeDefinitionNode);
+            var typeDefinitionNodes = namespaceGroupNode.GetTopLevelTypeDefinitionNodes();
+
+            foreach (var typeDefinitionNode in typeDefinitionNodes)
+            {
+                BindTypeDefinitionNode(typeDefinitionNode);
+            }
         }
     }
 
@@ -763,17 +718,16 @@ public class CSharpBinder : IBinder
 
     public void ClearStateByResourceUri(ResourceUri resourceUri)
     {
-        foreach (var namespaceStatementKeyValuePair in _namespaceStatementNodes)
+        foreach (var namespaceGroupNodeKvp in _namespaceGroupNodeMap)
         {
-            var keep = namespaceStatementKeyValuePair.Value.NamespaceEntryNodeList
-                .Where(x => x.ResourceUri != resourceUri)
+            var keepStatements = namespaceGroupNodeKvp.Value.NamespaceStatementNodeList
+                .Where(x => x.IdentifierToken.TextSpan.ResourceUri != resourceUri)
                 .ToImmutableArray();
 
-            _namespaceStatementNodes[namespaceStatementKeyValuePair.Key] =
-                new NamespaceStatementNode(
-                    namespaceStatementKeyValuePair.Value.KeywordToken,
-                    namespaceStatementKeyValuePair.Value.IdentifierToken,
-                    keep);
+            _namespaceGroupNodeMap[namespaceGroupNodeKvp.Key] =
+                new NamespaceGroupNode(
+                    namespaceGroupNodeKvp.Value.NamespaceString,
+                    keepStatements);
         }
 
         foreach (var symbolDefinition in _symbolDefinitions)

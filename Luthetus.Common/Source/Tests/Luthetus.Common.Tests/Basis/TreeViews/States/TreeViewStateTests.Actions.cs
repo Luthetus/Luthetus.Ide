@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using System.Collections.Immutable;
 using Luthetus.Common.Tests.Basis.TreeViews.Models.Internals;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using static Luthetus.Common.RazorLib.TreeViews.States.TreeViewState;
 
 namespace Luthetus.Common.Tests.Basis.TreeViews.States;
 
@@ -35,7 +36,7 @@ public class TreeViewStateActionsTests
             out var websiteServerTreeView,
             out var websiteServerTreeViewContainer);
 
-        var registerContainerAction = new TreeViewState.RegisterContainerAction(
+        var registerContainerAction = new RegisterContainerAction(
             websiteServerTreeViewContainer);
 
         Assert.Equal(websiteServerTreeViewContainer, registerContainerAction.Container);
@@ -59,14 +60,14 @@ public class TreeViewStateActionsTests
             out var websiteServerTreeView,
             out var websiteServerTreeViewContainer);
 
-        var disposeContainerAction = new TreeViewState.DisposeContainerAction(
+        var disposeContainerAction = new DisposeContainerAction(
             websiteServerTreeViewContainer.Key);
 
         Assert.Equal(websiteServerTreeViewContainer.Key, disposeContainerAction.ContainerKey);
     }
 
     /// <summary>
-    /// <see cref="TreeViewState.WithRootNodeAction"/>
+    /// <see cref="WithRootNodeAction"/>
     /// </summary>
     [Fact]
     public async Task WithRootNodeActionAsync()
@@ -85,7 +86,7 @@ public class TreeViewStateActionsTests
 
         await websiteServerTreeView.LoadChildListAsync();
 
-        var withRootNodeAction = new TreeViewState.WithRootNodeAction(
+        var withRootNodeAction = new WithRootNodeAction(
             websiteServerTreeViewContainer.Key,
             websiteServerTreeView.ChildList.First());
 
@@ -111,7 +112,7 @@ public class TreeViewStateActionsTests
             out var websiteServerTreeView,
             out var websiteServerTreeViewContainer);
 
-        var tryGetContainerAction = new TreeViewState.TryGetContainerAction(
+        var tryGetContainerAction = new TryGetContainerAction(
             websiteServerTreeViewContainer.Key);
 
         Assert.Equal(websiteServerTreeViewContainer.Key, tryGetContainerAction.ContainerKey);
@@ -135,7 +136,7 @@ public class TreeViewStateActionsTests
             out var websiteServerTreeView,
             out var websiteServerTreeViewContainer);
 
-        var replaceContainerAction = new TreeViewState.ReplaceContainerAction(
+        var replaceContainerAction = new ReplaceContainerAction(
             websiteServerTreeViewContainer.Key,
             websiteServerTreeViewContainer);
 
@@ -144,7 +145,7 @@ public class TreeViewStateActionsTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewState.AddChildNodeAction"/>
+    /// <see cref="AddChildNodeAction"/>
     /// </summary>
     [Fact]
     public async Task AddChildNodeActionAsync()
@@ -163,7 +164,7 @@ public class TreeViewStateActionsTests
 
         await websiteServerTreeView.LoadChildListAsync();
 
-        var addChildNodeAction = new TreeViewState.AddChildNodeAction(
+        var addChildNodeAction = new AddChildNodeAction(
             websiteServerTreeViewContainer.Key,
             websiteServerTreeView,
             websiteServerTreeView.ChildList.First());
@@ -191,7 +192,7 @@ public class TreeViewStateActionsTests
             out var websiteServerTreeView,
             out var websiteServerTreeViewContainer);
 
-        var reRenderNodeAction = new TreeViewState.ReRenderNodeAction(
+        var reRenderNodeAction = new ReRenderNodeAction(
             websiteServerTreeViewContainer.Key,
             websiteServerTreeView);
 
@@ -205,50 +206,154 @@ public class TreeViewStateActionsTests
     [Fact]
     public void SetActiveNodeAction()
     {
-        InitializeTreeViewStateActionsTests(
-            out var dispatcher,
-            out var commonTreeViews,
-            out var commonComponentRenderers,
-            out var treeViewStateWrap,
-            out var treeViewService,
-            out var backgroundTaskService,
-            out var websiteServerState,
-            out var websiteServer,
-            out var websiteServerTreeView,
-            out var websiteServerTreeViewContainer);
+        // Set active node, and clear selected nodes.
+        {
+            InitializeTreeViewStateActionsTests(
+                out var dispatcher,
+                out var commonTreeViews,
+                out var commonComponentRenderers,
+                out var treeViewStateWrap,
+                out var treeViewService,
+                out var backgroundTaskService,
+                out var websiteServerState,
+                out var websiteServer,
+                out var websiteServerTreeView,
+                out var websiteServerTreeViewContainer);
 
-        var setActiveNodeAction = new TreeViewState.SetActiveNodeAction(
-            websiteServerTreeViewContainer.Key,
-            websiteServerTreeView);
+            var addSelectedNodes = false;
+            var selectNodesBetweenCurrentAndNextActiveNode = false;
 
-        Assert.Equal(websiteServerTreeViewContainer.Key, setActiveNodeAction.ContainerKey);
-        Assert.Equal(websiteServerTreeView, setActiveNodeAction.NextActiveNode);
-    }
+            var setActiveNodeAction = new SetActiveNodeAction(
+                websiteServerTreeViewContainer.Key,
+                websiteServerTreeView,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
 
-    /// <summary>
-    /// <see cref="TreeViewState.AddSelectedNodeAction"/>
-    /// </summary>
-    [Fact]
-    public void AddSelectedNodeAction()
-    {
-        InitializeTreeViewStateActionsTests(
-            out var dispatcher,
-            out var commonTreeViews,
-            out var commonComponentRenderers,
-            out var treeViewStateWrap,
-            out var treeViewService,
-            out var backgroundTaskService,
-            out var websiteServerState,
-            out var websiteServer,
-            out var websiteServerTreeView,
-            out var websiteServerTreeViewContainer);
+            Assert.Equal(websiteServerTreeViewContainer.Key, setActiveNodeAction.ContainerKey);
+            Assert.Equal(websiteServerTreeView, setActiveNodeAction.NextActiveNode);
+            Assert.Equal(addSelectedNodes, setActiveNodeAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, setActiveNodeAction.SelectNodesBetweenCurrentAndNextActiveNode);
+        }
+        
+        // Clear active node and selected nodes.
+        {
+            InitializeTreeViewStateActionsTests(
+                out var dispatcher,
+                out var commonTreeViews,
+                out var commonComponentRenderers,
+                out var treeViewStateWrap,
+                out var treeViewService,
+                out var backgroundTaskService,
+                out var websiteServerState,
+                out var websiteServer,
+                out var websiteServerTreeView,
+                out var websiteServerTreeViewContainer);
 
-        var addSelectedNodeAction = new TreeViewState.AddSelectedNodeAction(
-            websiteServerTreeViewContainer.Key,
-            websiteServerTreeView);
+            var addSelectedNodes = false;
+            var selectNodesBetweenCurrentAndNextActiveNode = false;
 
-        Assert.Equal(websiteServerTreeViewContainer.Key, addSelectedNodeAction.ContainerKey);
-        Assert.Equal(websiteServerTreeView, addSelectedNodeAction.SelectedNode);
+            var setActiveNodeAction = new SetActiveNodeAction(
+                websiteServerTreeViewContainer.Key,
+                null,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
+
+            Assert.Equal(websiteServerTreeViewContainer.Key, setActiveNodeAction.ContainerKey);
+            Assert.Null(setActiveNodeAction.NextActiveNode);
+            Assert.Equal(addSelectedNodes, setActiveNodeAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, setActiveNodeAction.SelectNodesBetweenCurrentAndNextActiveNode);
+        }
+
+        // Set active node, do NOT clear selected nodes.
+        {
+            InitializeTreeViewStateActionsTests(
+                out var dispatcher,
+                out var commonTreeViews,
+                out var commonComponentRenderers,
+                out var treeViewStateWrap,
+                out var treeViewService,
+                out var backgroundTaskService,
+                out var websiteServerState,
+                out var websiteServer,
+                out var websiteServerTreeView,
+                out var websiteServerTreeViewContainer);
+
+            var addSelectedNodes = true;
+            var selectNodesBetweenCurrentAndNextActiveNode = false;
+
+            var setActiveNodeAction = new SetActiveNodeAction(
+                websiteServerTreeViewContainer.Key,
+                websiteServerTreeView,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
+
+            Assert.Equal(websiteServerTreeViewContainer.Key, setActiveNodeAction.ContainerKey);
+            Assert.Equal(websiteServerTreeView, setActiveNodeAction.NextActiveNode);
+            Assert.Equal(addSelectedNodes, setActiveNodeAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, setActiveNodeAction.SelectNodesBetweenCurrentAndNextActiveNode);
+        }
+        
+        // Set active node, do NOT clear selected nodes, and select between.
+        {
+            InitializeTreeViewStateActionsTests(
+                out var dispatcher,
+                out var commonTreeViews,
+                out var commonComponentRenderers,
+                out var treeViewStateWrap,
+                out var treeViewService,
+                out var backgroundTaskService,
+                out var websiteServerState,
+                out var websiteServer,
+                out var websiteServerTreeView,
+                out var websiteServerTreeViewContainer);
+
+            var addSelectedNodes = true;
+            var selectNodesBetweenCurrentAndNextActiveNode = true;
+
+            var setActiveNodeAction = new SetActiveNodeAction(
+                websiteServerTreeViewContainer.Key,
+                websiteServerTreeView,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
+
+            Assert.Equal(websiteServerTreeViewContainer.Key, setActiveNodeAction.ContainerKey);
+            Assert.Equal(websiteServerTreeView, setActiveNodeAction.NextActiveNode);
+            Assert.Equal(addSelectedNodes, setActiveNodeAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, setActiveNodeAction.SelectNodesBetweenCurrentAndNextActiveNode);
+        }
+
+        // Set active node, clear selected nodes, and select between.
+        //
+        // What would even be the result of this? It seems nonsensical
+        // to have addSelectedNodes == false; meanwhile
+        // selectNodesBetweenCurrentAndNextActiveNode == true;
+        {
+            InitializeTreeViewStateActionsTests(
+                out var dispatcher,
+                out var commonTreeViews,
+                out var commonComponentRenderers,
+                out var treeViewStateWrap,
+                out var treeViewService,
+                out var backgroundTaskService,
+                out var websiteServerState,
+                out var websiteServer,
+                out var websiteServerTreeView,
+                out var websiteServerTreeViewContainer);
+
+            var addSelectedNodes = false;
+            var selectNodesBetweenCurrentAndNextActiveNode = true;
+
+            var setActiveNodeAction = new SetActiveNodeAction(
+                websiteServerTreeViewContainer.Key,
+                websiteServerTreeView,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
+
+            Assert.Equal(websiteServerTreeViewContainer.Key, setActiveNodeAction.ContainerKey);
+            Assert.Equal(websiteServerTreeView, setActiveNodeAction.NextActiveNode);
+            Assert.Equal(addSelectedNodes, setActiveNodeAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, setActiveNodeAction.SelectNodesBetweenCurrentAndNextActiveNode);
+        }
     }
 
     /// <summary>
@@ -269,36 +374,12 @@ public class TreeViewStateActionsTests
             out var websiteServerTreeView,
             out var websiteServerTreeViewContainer);
 
-        var removeSelectedNodeAction = new TreeViewState.RemoveSelectedNodeAction(
+        var removeSelectedNodeAction = new RemoveSelectedNodeAction(
             websiteServerTreeViewContainer.Key,
             websiteServerTreeView.Key);
 
         Assert.Equal(websiteServerTreeViewContainer.Key, removeSelectedNodeAction.ContainerKey);
-        Assert.Equal(websiteServerTreeView.Key, removeSelectedNodeAction.NodeKey);
-    }
-
-    /// <summary>
-    /// <see cref="TreeViewState.ClearSelectedNodeListAction"/>
-    /// </summary>
-    [Fact]
-    public void ClearSelectedNodeListAction()
-    {
-        InitializeTreeViewStateActionsTests(
-            out var dispatcher,
-            out var commonTreeViews,
-            out var commonComponentRenderers,
-            out var treeViewStateWrap,
-            out var treeViewService,
-            out var backgroundTaskService,
-            out var websiteServerState,
-            out var websiteServer,
-            out var websiteServerTreeView,
-            out var websiteServerTreeViewContainer);
-
-        var clearSelectedNodeListAction = new TreeViewState.ClearSelectedNodeListAction(
-            websiteServerTreeViewContainer.Key);
-
-        Assert.Equal(websiteServerTreeViewContainer.Key, clearSelectedNodeListAction.ContainerKey);
+        Assert.Equal(websiteServerTreeView.Key, removeSelectedNodeAction.KeyOfNodeToRemove);
     }
 
     /// <summary>
@@ -318,31 +399,71 @@ public class TreeViewStateActionsTests
             out var websiteServer,
             out var websiteServerTreeView,
             out var websiteServerTreeViewContainer);
-        
-        bool shiftKey;
 
-        // ShiftKey = false
+        var containerKey = websiteServerTreeViewContainer.Key;
+
+        // addSelectedNodes = false
+        // selectNodesBetweenCurrentAndNextActiveNode = false
         {
-            shiftKey = false;
+            var addSelectedNodes = false;
+            var selectNodesBetweenCurrentAndNextActiveNode = false;
 
-            var moveLeftAction = new TreeViewState.MoveLeftAction(
-                websiteServerTreeViewContainer.Key,
-                shiftKey);
+            var moveLeftAction = new MoveLeftAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
 
-            Assert.Equal(websiteServerTreeViewContainer.Key, moveLeftAction.ContainerKey);
-            Assert.Equal(shiftKey, moveLeftAction.ShiftKey);
+            Assert.Equal(containerKey, moveLeftAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveLeftAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveLeftAction.SelectNodesBetweenCurrentAndNextActiveNode);
         }
 
-        // ShiftKey = true
+        // addSelectedNodes = false
+        // selectNodesBetweenCurrentAndNextActiveNode = true
         {
-            shiftKey = true;
+            var addSelectedNodes = false;
+            var selectNodesBetweenCurrentAndNextActiveNode = true;
 
-            var moveLeftAction = new TreeViewState.MoveLeftAction(
-                websiteServerTreeViewContainer.Key,
-                shiftKey);
+            var moveLeftAction = new MoveLeftAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
             
             Assert.Equal(websiteServerTreeViewContainer.Key, moveLeftAction.ContainerKey);
-            Assert.Equal(shiftKey, moveLeftAction.ShiftKey);
+            Assert.Equal(addSelectedNodes, moveLeftAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveLeftAction.SelectNodesBetweenCurrentAndNextActiveNode);
+        }
+        
+        // addSelectedNodes = true
+        // selectNodesBetweenCurrentAndNextActiveNode = false
+        {
+            var addSelectedNodes = true;
+            var selectNodesBetweenCurrentAndNextActiveNode = false;
+
+            var moveLeftAction = new MoveLeftAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
+            
+            Assert.Equal(websiteServerTreeViewContainer.Key, moveLeftAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveLeftAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveLeftAction.SelectNodesBetweenCurrentAndNextActiveNode);
+        }
+
+        // addSelectedNodes = true
+        // selectNodesBetweenCurrentAndNextActiveNode = true
+        {
+            var addSelectedNodes = true;
+            var selectNodesBetweenCurrentAndNextActiveNode = true;
+
+            var moveLeftAction = new MoveLeftAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
+            
+            Assert.Equal(websiteServerTreeViewContainer.Key, moveLeftAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveLeftAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveLeftAction.SelectNodesBetweenCurrentAndNextActiveNode);
         }
     }
 
@@ -364,30 +485,70 @@ public class TreeViewStateActionsTests
             out var websiteServerTreeView,
             out var websiteServerTreeViewContainer);
 
-        bool shiftKey;
+        var containerKey = websiteServerTreeViewContainer.Key;
 
-        // ShiftKey = false
+        // addSelectedNodes = false
+        // selectNodesBetweenCurrentAndNextActiveNode = false
         {
-            shiftKey = false;
+            var addSelectedNodes = false;
+            var selectNodesBetweenCurrentAndNextActiveNode = false;
 
-            var moveDownAction = new TreeViewState.MoveDownAction(
-                websiteServerTreeViewContainer.Key,
-                shiftKey);
+            var moveDownAction = new MoveDownAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
 
             Assert.Equal(websiteServerTreeViewContainer.Key, moveDownAction.ContainerKey);
-            Assert.Equal(shiftKey, moveDownAction.ShiftKey);
+            Assert.Equal(addSelectedNodes, moveDownAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveDownAction.SelectNodesBetweenCurrentAndNextActiveNode);
         }
 
-        // ShiftKey = true
+        // addSelectedNodes = false
+        // selectNodesBetweenCurrentAndNextActiveNode = true
         {
-            shiftKey = true;
+            var addSelectedNodes = false;
+            var selectNodesBetweenCurrentAndNextActiveNode = true;
 
-            var moveDownAction = new TreeViewState.MoveDownAction(
-                websiteServerTreeViewContainer.Key,
-                shiftKey);
+            var moveDownAction = new MoveDownAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
 
             Assert.Equal(websiteServerTreeViewContainer.Key, moveDownAction.ContainerKey);
-            Assert.Equal(shiftKey, moveDownAction.ShiftKey);
+            Assert.Equal(addSelectedNodes, moveDownAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveDownAction.SelectNodesBetweenCurrentAndNextActiveNode);
+        }
+
+        // addSelectedNodes = true
+        // selectNodesBetweenCurrentAndNextActiveNode = false
+        {
+            var addSelectedNodes = true;
+            var selectNodesBetweenCurrentAndNextActiveNode = false;
+
+            var moveDownAction = new MoveDownAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
+
+            Assert.Equal(websiteServerTreeViewContainer.Key, moveDownAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveDownAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveDownAction.SelectNodesBetweenCurrentAndNextActiveNode);
+        }
+
+        // addSelectedNodes = true
+        // selectNodesBetweenCurrentAndNextActiveNode = true
+        {
+            var addSelectedNodes = true;
+            var selectNodesBetweenCurrentAndNextActiveNode = true;
+
+            var moveDownAction = new MoveDownAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
+
+            Assert.Equal(websiteServerTreeViewContainer.Key, moveDownAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveDownAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveDownAction.SelectNodesBetweenCurrentAndNextActiveNode);
         }
     }
 
@@ -409,30 +570,70 @@ public class TreeViewStateActionsTests
             out var websiteServerTreeView,
             out var websiteServerTreeViewContainer);
 
-        bool shiftKey;
+        var containerKey = websiteServerTreeViewContainer.Key;
 
-        // ShiftKey = false
+        // addSelectedNodes = false
+        // selectNodesBetweenCurrentAndNextActiveNode = false
         {
-            shiftKey = false;
+            var addSelectedNodes = false;
+            var selectNodesBetweenCurrentAndNextActiveNode = false;
 
-            var moveUpAction = new TreeViewState.MoveUpAction(
-                websiteServerTreeViewContainer.Key,
-                shiftKey);
+            var moveUpAction = new MoveUpAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
 
-            Assert.Equal(websiteServerTreeViewContainer.Key, moveUpAction.ContainerKey);
-            Assert.Equal(shiftKey, moveUpAction.ShiftKey);
+            Assert.Equal(containerKey, moveUpAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveUpAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveUpAction.SelectNodesBetweenCurrentAndNextActiveNode);
+        }       
+
+        // addSelectedNodes = false
+        // selectNodesBetweenCurrentAndNextActiveNode = true
+        {
+            var addSelectedNodes = false;
+            var selectNodesBetweenCurrentAndNextActiveNode = true;
+
+            var moveUpAction = new MoveUpAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
+
+            Assert.Equal(containerKey, moveUpAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveUpAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveUpAction.SelectNodesBetweenCurrentAndNextActiveNode);
         }
 
-        // ShiftKey = true
+        // addSelectedNodes = true
+        // selectNodesBetweenCurrentAndNextActiveNode = false
         {
-            shiftKey = true;
+            var addSelectedNodes = true;
+            var selectNodesBetweenCurrentAndNextActiveNode = false;
 
-            var moveUpAction = new TreeViewState.MoveUpAction(
-                websiteServerTreeViewContainer.Key,
-                shiftKey);
+            var moveUpAction = new MoveUpAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
 
-            Assert.Equal(websiteServerTreeViewContainer.Key, moveUpAction.ContainerKey);
-            Assert.Equal(shiftKey, moveUpAction.ShiftKey);
+            Assert.Equal(containerKey, moveUpAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveUpAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveUpAction.SelectNodesBetweenCurrentAndNextActiveNode);
+        }
+
+        // addSelectedNodes = true
+        // selectNodesBetweenCurrentAndNextActiveNode = true
+        {
+            var addSelectedNodes = true;
+            var selectNodesBetweenCurrentAndNextActiveNode = true;
+
+            var moveUpAction = new MoveUpAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
+
+            Assert.Equal(containerKey, moveUpAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveUpAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveUpAction.SelectNodesBetweenCurrentAndNextActiveNode);
         }
     }
 
@@ -454,33 +655,79 @@ public class TreeViewStateActionsTests
             out var websiteServerTreeView,
             out var websiteServerTreeViewContainer);
 
-        bool shiftKey;
+        var containerKey = websiteServerTreeViewContainer.Key;
         Action<TreeViewNoType> loadChildListAction = _ => { };
 
-        // ShiftKey = false
+        // addSelectedNodes = false
+        // selectNodesBetweenCurrentAndNextActiveNode = false
         {
-            shiftKey = false;
+            var addSelectedNodes = false;
+            var selectNodesBetweenCurrentAndNextActiveNode = false;
 
-            var moveRightAction = new TreeViewState.MoveRightAction(
+            var moveRightAction = new MoveRightAction(
                 websiteServerTreeViewContainer.Key,
-                shiftKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode,
                 loadChildListAction);
 
-            Assert.Equal(websiteServerTreeViewContainer.Key, moveRightAction.ContainerKey);
-            Assert.Equal(shiftKey, moveRightAction.ShiftKey);
+            Assert.Equal(containerKey, moveRightAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveRightAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveRightAction.SelectNodesBetweenCurrentAndNextActiveNode);
+            Assert.Equal(loadChildListAction, moveRightAction.LoadChildListAction);
         }
 
-        // ShiftKey = true
+        // addSelectedNodes = false
+        // selectNodesBetweenCurrentAndNextActiveNode = true
         {
-            shiftKey = true;
+            var addSelectedNodes = false;
+            var selectNodesBetweenCurrentAndNextActiveNode = true;
 
-            var moveRightAction = new TreeViewState.MoveRightAction(
+            var moveRightAction = new MoveRightAction(
                 websiteServerTreeViewContainer.Key,
-                shiftKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode,
                 loadChildListAction);
 
-            Assert.Equal(websiteServerTreeViewContainer.Key, moveRightAction.ContainerKey);
-            Assert.Equal(shiftKey, moveRightAction.ShiftKey);
+            Assert.Equal(containerKey, moveRightAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveRightAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveRightAction.SelectNodesBetweenCurrentAndNextActiveNode);
+            Assert.Equal(loadChildListAction, moveRightAction.LoadChildListAction);
+        }
+
+        // addSelectedNodes = true
+        // selectNodesBetweenCurrentAndNextActiveNode = false
+        {
+            var addSelectedNodes = true;
+            var selectNodesBetweenCurrentAndNextActiveNode = false;
+
+            var moveRightAction = new MoveRightAction(
+                websiteServerTreeViewContainer.Key,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode,
+                loadChildListAction);
+
+            Assert.Equal(containerKey, moveRightAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveRightAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveRightAction.SelectNodesBetweenCurrentAndNextActiveNode);
+            Assert.Equal(loadChildListAction, moveRightAction.LoadChildListAction);
+        }
+
+        // addSelectedNodes = true
+        // selectNodesBetweenCurrentAndNextActiveNode = true
+        {
+            var addSelectedNodes = true;
+            var selectNodesBetweenCurrentAndNextActiveNode = true;
+
+            var moveRightAction = new MoveRightAction(
+                websiteServerTreeViewContainer.Key,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode,
+                loadChildListAction);
+
+            Assert.Equal(containerKey, moveRightAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveRightAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveRightAction.SelectNodesBetweenCurrentAndNextActiveNode);
+            Assert.Equal(loadChildListAction, moveRightAction.LoadChildListAction);
         }
     }
 
@@ -502,30 +749,70 @@ public class TreeViewStateActionsTests
             out var websiteServerTreeView,
             out var websiteServerTreeViewContainer);
 
-        bool shiftKey;
+        var containerKey = websiteServerTreeViewContainer.Key;
 
-        // ShiftKey = false
+        // addSelectedNodes = false
+        // selectNodesBetweenCurrentAndNextActiveNode = false
         {
-            shiftKey = false;
+            var addSelectedNodes = false;
+            var selectNodesBetweenCurrentAndNextActiveNode = false;
 
-            var moveHomeAction = new TreeViewState.MoveHomeAction(
-                websiteServerTreeViewContainer.Key,
-                shiftKey);
+            var moveHomeAction = new MoveHomeAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
 
-            Assert.Equal(websiteServerTreeViewContainer.Key, moveHomeAction.ContainerKey);
-            Assert.Equal(shiftKey, moveHomeAction.ShiftKey);
+            Assert.Equal(containerKey, moveHomeAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveHomeAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveHomeAction.SelectNodesBetweenCurrentAndNextActiveNode);
         }
 
-        // ShiftKey = true
+        // addSelectedNodes = false
+        // selectNodesBetweenCurrentAndNextActiveNode = true
         {
-            shiftKey = true;
+            var addSelectedNodes = false;
+            var selectNodesBetweenCurrentAndNextActiveNode = true;
 
-            var moveHomeAction = new TreeViewState.MoveHomeAction(
-                websiteServerTreeViewContainer.Key,
-                shiftKey);
+            var moveHomeAction = new MoveHomeAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
 
-            Assert.Equal(websiteServerTreeViewContainer.Key, moveHomeAction.ContainerKey);
-            Assert.Equal(shiftKey, moveHomeAction.ShiftKey);
+            Assert.Equal(containerKey, moveHomeAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveHomeAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveHomeAction.SelectNodesBetweenCurrentAndNextActiveNode);
+        }
+
+        // addSelectedNodes = true
+        // selectNodesBetweenCurrentAndNextActiveNode = false
+        {
+            var addSelectedNodes = true;
+            var selectNodesBetweenCurrentAndNextActiveNode = false;
+
+            var moveHomeAction = new MoveHomeAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
+
+            Assert.Equal(containerKey, moveHomeAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveHomeAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveHomeAction.SelectNodesBetweenCurrentAndNextActiveNode);
+        }
+
+        // addSelectedNodes = true
+        // selectNodesBetweenCurrentAndNextActiveNode = true
+        {
+            var addSelectedNodes = true;
+            var selectNodesBetweenCurrentAndNextActiveNode = true;
+
+            var moveHomeAction = new MoveHomeAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
+
+            Assert.Equal(containerKey, moveHomeAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveHomeAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveHomeAction.SelectNodesBetweenCurrentAndNextActiveNode);
         }
     }
 
@@ -547,30 +834,70 @@ public class TreeViewStateActionsTests
             out var websiteServerTreeView,
             out var websiteServerTreeViewContainer);
 
-        bool shiftKey;
+        var containerKey = websiteServerTreeViewContainer.Key;
 
-        // ShiftKey = false
+        // addSelectedNodes = false
+        // selectNodesBetweenCurrentAndNextActiveNode = false
         {
-            shiftKey = false;
+            var addSelectedNodes = false;
+            var selectNodesBetweenCurrentAndNextActiveNode = false;
 
-            var moveEndAction = new TreeViewState.MoveEndAction(
-                websiteServerTreeViewContainer.Key,
-                shiftKey);
+            var moveEndAction = new MoveEndAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
 
-            Assert.Equal(websiteServerTreeViewContainer.Key, moveEndAction.ContainerKey);
-            Assert.Equal(shiftKey, moveEndAction.ShiftKey);
+            Assert.Equal(containerKey, moveEndAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveEndAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveEndAction.SelectNodesBetweenCurrentAndNextActiveNode);
         }
 
-        // ShiftKey = true
+        // addSelectedNodes = false
+        // selectNodesBetweenCurrentAndNextActiveNode = true
         {
-            shiftKey = true;
+            var addSelectedNodes = false;
+            var selectNodesBetweenCurrentAndNextActiveNode = true;
 
-            var moveEndAction = new TreeViewState.MoveEndAction(
-                websiteServerTreeViewContainer.Key,
-                shiftKey);
+            var moveEndAction = new MoveEndAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
 
-            Assert.Equal(websiteServerTreeViewContainer.Key, moveEndAction.ContainerKey);
-            Assert.Equal(shiftKey, moveEndAction.ShiftKey);
+            Assert.Equal(containerKey, moveEndAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveEndAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveEndAction.SelectNodesBetweenCurrentAndNextActiveNode);
+        }
+
+        // addSelectedNodes = true
+        // selectNodesBetweenCurrentAndNextActiveNode = false
+        {
+            var addSelectedNodes = true;
+            var selectNodesBetweenCurrentAndNextActiveNode = false;
+
+            var moveEndAction = new MoveEndAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
+
+            Assert.Equal(containerKey, moveEndAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveEndAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveEndAction.SelectNodesBetweenCurrentAndNextActiveNode);
+        }
+
+        // addSelectedNodes = true
+        // selectNodesBetweenCurrentAndNextActiveNode = true
+        {
+            var addSelectedNodes = true;
+            var selectNodesBetweenCurrentAndNextActiveNode = true;
+
+            var moveEndAction = new MoveEndAction(
+                containerKey,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
+
+            Assert.Equal(containerKey, moveEndAction.ContainerKey);
+            Assert.Equal(addSelectedNodes, moveEndAction.AddSelectedNodes);
+            Assert.Equal(selectNodesBetweenCurrentAndNextActiveNode, moveEndAction.SelectNodesBetweenCurrentAndNextActiveNode);
         }
     }
 

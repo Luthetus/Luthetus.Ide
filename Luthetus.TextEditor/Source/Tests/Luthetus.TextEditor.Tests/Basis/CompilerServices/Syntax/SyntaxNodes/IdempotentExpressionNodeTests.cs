@@ -6,17 +6,17 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 /// <summary>
-/// <see cref="IdempotentExpressionNode"/>
+/// <see cref="EmptyExpressionNode"/>
 /// </summary>
-public class IdempotentExpressionNodeTests
+public class EmptyExpressionNodeTests
 {
     /// <summary>
-    /// <see cref="IdempotentExpressionNode.IdempotentExpressionNode"/>
+    /// <see cref="EmptyExpressionNode(TypeClauseNode)"/>
     /// <br/>----<br/>
-    /// <see cref="IdempotentExpressionNode.ResultTypeClauseNode"/>
-    /// <see cref="IdempotentExpressionNode.ChildList"/>
-    /// <see cref="IdempotentExpressionNode.IsFabricated"/>
-    /// <see cref="IdempotentExpressionNode.SyntaxKind"/>
+    /// <see cref="EmptyExpressionNode.ResultTypeClauseNode"/>
+    /// <see cref="EmptyExpressionNode.ChildList"/>
+    /// <see cref="EmptyExpressionNode.IsFabricated"/>
+    /// <see cref="EmptyExpressionNode.SyntaxKind"/>
     /// </summary>
     [Fact]
 	public void Constructor()
@@ -33,17 +33,17 @@ public class IdempotentExpressionNodeTests
             typeof(void),
             null);
 
-        var idempotentExpressionNode = new IdempotentExpressionNode(voidTypeClauseNode);
+        var emptyExpressionNode = new EmptyExpressionNode(voidTypeClauseNode);
 
-        Assert.Equal(voidTypeClauseNode, idempotentExpressionNode.ResultTypeClauseNode);
+        Assert.Equal(voidTypeClauseNode, emptyExpressionNode.ResultTypeClauseNode);
 
-        Assert.Single(idempotentExpressionNode.ChildList);
-        Assert.Equal(voidTypeClauseNode, idempotentExpressionNode.ChildList.Single());
+        Assert.Single(emptyExpressionNode.ChildList);
+        Assert.Equal(voidTypeClauseNode, emptyExpressionNode.ChildList.Single());
 
-        Assert.False(idempotentExpressionNode.IsFabricated);
+        Assert.False(emptyExpressionNode.IsFabricated);
 
         Assert.Equal(
-            RazorLib.CompilerServices.Syntax.SyntaxKind.IdempotentExpressionNode,
-            idempotentExpressionNode.SyntaxKind);
+            RazorLib.CompilerServices.Syntax.SyntaxKind.EmptyExpressionNode,
+            emptyExpressionNode.SyntaxKind);
 	}
 }

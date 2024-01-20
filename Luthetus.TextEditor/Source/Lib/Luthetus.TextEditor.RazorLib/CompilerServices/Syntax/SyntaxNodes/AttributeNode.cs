@@ -7,19 +7,26 @@ public sealed record AttributeNode : ISyntaxNode
 {
     public AttributeNode(
         OpenSquareBracketToken openSquareBracketToken,
+        List<ISyntaxToken> innerTokens,
         CloseSquareBracketToken closeSquareBracketToken)
     {
         OpenSquareBracketToken = openSquareBracketToken;
+        InnerTokens = innerTokens;
         CloseSquareBracketToken = closeSquareBracketToken;
 
-        ChildList = new ISyntax[]
+        var childList = new List<ISyntax>
         {
-            OpenSquareBracketToken,
-            CloseSquareBracketToken,
-        }.ToImmutableArray();
+            OpenSquareBracketToken
+        };
+
+        childList.AddRange(innerTokens);
+        childList.Add(CloseSquareBracketToken);
+        
+        ChildList = childList.ToImmutableArray();
     }
 
     public OpenSquareBracketToken OpenSquareBracketToken { get; }
+    public List<ISyntaxToken> InnerTokens { get; }
     public CloseSquareBracketToken CloseSquareBracketToken { get; }
 
     public ImmutableArray<ISyntax> ChildList { get; }

@@ -790,14 +790,6 @@ public class TextEditorCommandDefaultFunctions
             if (directionToFindMatchingPunctuationCharacter is null)
                 return;
 
-            var temporaryCursor = new TextEditorCursor(
-                primaryCursorModifier.RowIndex,
-                primaryCursorModifier.ColumnIndex,
-                primaryCursorModifier.IsPrimaryCursor)
-            {
-                PreferredColumnIndex = primaryCursorModifier.PreferredColumnIndex,
-            };
-
             var unmatchedCharacters =
                 fallbackToPreviousCharacter && directionToFindMatchingPunctuationCharacter == -1
                     ? 0
@@ -812,6 +804,7 @@ public class TextEditorCommandDefaultFunctions
                     keyboardEventArgs = new KeyboardEventArgs
                     {
                         Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                        ShiftKey = commandArgs.ShouldSelectText,
                     };
                 }
                 else
@@ -819,6 +812,7 @@ public class TextEditorCommandDefaultFunctions
                     keyboardEventArgs = new KeyboardEventArgs
                     {
                         Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                        ShiftKey = commandArgs.ShouldSelectText,
                     };
                 }
 
@@ -829,10 +823,8 @@ public class TextEditorCommandDefaultFunctions
                         primaryCursorModifier)
                     .Invoke(editContext);
 
-                var temporaryCursorPositionIndex = modelModifier.GetPositionIndex(
-                    temporaryCursor);
-
-                var characterAt = modelModifier.GetCharacter(temporaryCursorPositionIndex);
+                var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+                var characterAt = modelModifier.GetCharacter(positionIndex);
 
                 if (characterAt == match)
                     unmatchedCharacters--;
@@ -842,19 +834,16 @@ public class TextEditorCommandDefaultFunctions
                 if (unmatchedCharacters == 0)
                     break;
 
-                if (temporaryCursorPositionIndex <= 0 ||
-                    temporaryCursorPositionIndex >= modelModifier.DocumentLength)
+                if (positionIndex <= 0 ||
+                    positionIndex >= modelModifier.DocumentLength)
                     break;
             }
 
             if (commandArgs.ShouldSelectText)
             {
                 primaryCursorModifier.SelectionEndingPositionIndex =
-                    modelModifier.GetPositionIndex(temporaryCursor);
+                    modelModifier.GetPositionIndex(primaryCursorModifier);
             }
-
-            primaryCursorModifier.RowIndex = temporaryCursor.RowIndex;
-            primaryCursorModifier.ColumnIndex = temporaryCursor.ColumnIndex;
         };
     }
 
@@ -899,7 +888,7 @@ public class TextEditorCommandDefaultFunctions
                 if (commandArgs.RegisterModelAction is not null)
                 {
                     commandArgs.RegisterModelAction.Invoke(definitionTextSpan.ResourceUri);
-                    definitionModel = commandArgs.TextEditorService.ModelApi.GetOrDefault(definitionTextSpan.ResourceUri);
+                    var definitionModelModifier = editContext.GetModelModifier(definitionTextSpan.ResourceUri);
 
                     if (definitionModel is null)
                         return Task.CompletedTask;
@@ -928,31 +917,28 @@ public class TextEditorCommandDefaultFunctions
                 }
             }
 
-            var firstDefinitionViewModel = definitionViewModels.First();
+            var definitionViewModelKey = definitionViewModels.First().ViewModelKey;
+            var definitionViewModelModifier = editContext.GetViewModelModifier(definitionViewModelKey);
+
+            if (definitionViewModelModifier is null)
+                return Task.CompletedTask;
+
             var rowData = definitionModel.GetRowInformationFromPositionIndex(definitionTextSpan.StartingIndexInclusive);
             var columnIndex = definitionTextSpan.StartingIndexInclusive - rowData.RowStartPositionIndexInclusive;
 
-            var firstDefinitionViewModelCursorModifier = new TextEditorCursorModifier(firstDefinitionViewModel.PrimaryCursor);
+            var definitionCursorModifierBag = editContext.GetCursorModifierBag(definitionViewModelModifier.ViewModel);
+            var definitionPrimaryCursorModifier = editContext.GetPrimaryCursorModifier(definitionCursorModifierBag);
 
-            firstDefinitionViewModelCursorModifier.RowIndex = rowData.RowIndex;
-            firstDefinitionViewModelCursorModifier.ColumnIndex = columnIndex;
-            firstDefinitionViewModelCursorModifier.PreferredColumnIndex = columnIndex;
+            if (definitionPrimaryCursorModifier is null)
+                return Task.CompletedTask;
 
-            commandArgs.TextEditorService.ViewModelApi.WithValueFactory(
-                viewModelModifier.ViewModel.ViewModelKey,
-                firstDefinitionInViewModel =>
-                {
-                    var outCursor = firstDefinitionViewModelCursorModifier.ToCursor();
-                    var outCursorBag = firstDefinitionInViewModel.CursorList.Replace(firstDefinitionInViewModel.PrimaryCursor, outCursor);
-
-                    return firstDefinitionInViewModel with
-                    {
-                        CursorList = outCursorBag
-                    };
-                }).Invoke(editContext);
+            definitionPrimaryCursorModifier.SelectionAnchorPositionIndex = null;
+            definitionPrimaryCursorModifier.RowIndex = rowData.RowIndex;
+            definitionPrimaryCursorModifier.ColumnIndex = columnIndex;
+            definitionPrimaryCursorModifier.PreferredColumnIndex = columnIndex;
 
             if (commandArgs.ShowViewModelAction is not null)
-                commandArgs.ShowViewModelAction.Invoke(firstDefinitionViewModel.ViewModelKey);
+                commandArgs.ShowViewModelAction.Invoke(definitionViewModelKey);
 
             return Task.CompletedTask;
         };

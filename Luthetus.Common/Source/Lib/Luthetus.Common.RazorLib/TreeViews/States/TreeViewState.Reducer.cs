@@ -121,6 +121,25 @@ public partial record TreeViewState
         }
 
         [ReducerMethod]
+        public static TreeViewState ReduceRemoveSelectedNodeAction(
+            TreeViewState inState, RemoveSelectedNodeAction removeSelectedNodeAction)
+        {
+            var inContainer = inState.ContainerList.FirstOrDefault(
+                x => x.Key == removeSelectedNodeAction.ContainerKey);
+
+            if (inContainer is null)
+                return inState;
+
+			var outContainer = PerformRemoveSelectedNode(inContainer, removeSelectedNodeAction);
+
+			var outContainerList = inState.ContainerList.Replace(
+				inContainer,
+				outContainer);
+
+            return inState with { ContainerList = outContainerList };
+        }
+
+        [ReducerMethod]
         public static TreeViewState ReduceMoveLeftAction(
             TreeViewState inState, MoveLeftAction moveLeftAction)
         {
@@ -255,7 +274,7 @@ public partial record TreeViewState
 
 			// TODO: I'm adding multi-select. I'd like to single out the...
 			// ...SelectNodesBetweenCurrentAndNextActiveNode case for now...
-			// ...and DRY the code after. (2024-01-13)
+			// ...and DRY the code after. (2024-01-13) 
 			if (setActiveNodeAction.SelectNodesBetweenCurrentAndNextActiveNode)
 			{
 				outContainer = inContainer;
@@ -393,6 +412,18 @@ public partial record TreeViewState
 				}
 				else
 				{
+					var alreadyExistingIndex = inContainer.SelectedNodeList.FindIndex(
+						x => setActiveNodeAction.NextActiveNode.Equals(x));
+					
+					if (alreadyExistingIndex != -1)
+					{
+						inContainer = inContainer with
+			            {
+			                SelectedNodeList = inContainer.SelectedNodeList.RemoveAt(
+								alreadyExistingIndex)
+			            };
+					}
+
 					outContainer = inContainer with
 		            {
 		                SelectedNodeList = inContainer.SelectedNodeList.Insert(
@@ -412,8 +443,22 @@ public partial record TreeViewState
 
             return outContainer;
 		}
+        
+        private static TreeViewContainer PerformRemoveSelectedNode(
+			TreeViewContainer inContainer,
+            RemoveSelectedNodeAction removeSelectedNodeAction)
+        {
+            var indexOfNodeToRemove = inContainer.SelectedNodeList.FindIndex(
+                x => x.Key == removeSelectedNodeAction.KeyOfNodeToRemove);
 
-		private static TreeViewContainer PerformMoveLeft(
+            return inContainer with
+            {
+                SelectedNodeList = inContainer.SelectedNodeList.RemoveAt(
+                    indexOfNodeToRemove)
+            };
+        }
+        
+        private static TreeViewContainer PerformMoveLeft(
 			TreeViewContainer inContainer,
 			MoveLeftAction moveLeftAction)
 		{
@@ -442,7 +487,7 @@ public partial record TreeViewState
                 var setActiveNodeAction = new SetActiveNodeAction(
                     outContainer.Key,
                     outContainer.ActiveNode.Parent,
-					true,
+                    false,
 					false);
 
                 outContainer = PerformSetActiveNode(
@@ -519,8 +564,6 @@ public partial record TreeViewState
 
             if (outContainer.ActiveNode.IndexAmongSiblings == 0)
             {
-                var nextActiveNode = outContainer.ActiveNode.Parent;
-
                 var setActiveNodeAction = new SetActiveNodeAction(
                     outContainer.Key,
                     outContainer.ActiveNode!.Parent,

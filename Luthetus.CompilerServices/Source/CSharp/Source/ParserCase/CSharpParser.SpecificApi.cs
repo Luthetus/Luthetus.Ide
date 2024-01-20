@@ -45,7 +45,7 @@ public partial class CSharpParser : IParser
         public Stack<ISyntax> ExpressionStack => _parser._expressionStack;
 
         /// <summary>TODO: I don't like this <see cref="NodeRecent"/> property. It points to a private field on a different object. But without this property things are incredibly verbose. I need to remember to come back to this and change how I get access to the object because this doesn't feel right.</summary>
-        public ISyntaxNode? NodeRecent 
+        public ISyntaxNode NodeRecent 
         {
             get => _parser._nodeRecent;
             set => _parser._nodeRecent = value;
@@ -97,18 +97,11 @@ public partial class CSharpParser : IParser
             return variableReferenceNode;
         }
 
-        public FunctionInvocationNode HandleFunctionInvocation(IdentifierToken identifierToken)
+        public FunctionInvocationNode HandleFunctionInvocation(
+            IdentifierToken identifierToken,
+            GenericParametersListingNode? genericParametersListingNode)
         {
             // TODO: (2023-06-04) I believe this if block will run for '<' mathematical operator.
-
-            GenericParametersListingNode? genericParametersListingNode = null;
-
-            if (SyntaxKind.OpenAngleBracketToken == TokenWalker.Current.SyntaxKind)
-            {
-                var openAngleBracketToken = (OpenAngleBracketToken)TokenWalker.Consume();
-                genericParametersListingNode = HandleGenericParameters(openAngleBracketToken);
-            }
-
             var openParenthesisToken = (OpenParenthesisToken)TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
 
             var functionParametersListingNode = HandleFunctionParameters(openParenthesisToken);
@@ -122,7 +115,7 @@ public partial class CSharpParser : IParser
             Binder.BindFunctionInvocationNode(functionInvocationNode);
 
             CurrentCodeBlockBuilder.ChildList.Add(functionInvocationNode);
-            NodeRecent = null;
+            NodeRecent = new EmptyNode();
 
             return functionInvocationNode;
         }
@@ -180,7 +173,7 @@ public partial class CSharpParser : IParser
                 _ = TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
             }
 
-            NodeRecent = null;
+            NodeRecent = new EmptyNode();
             return variableDeclarationNode;
         }
 
@@ -363,7 +356,7 @@ public partial class CSharpParser : IParser
 
         public void HandleNamespaceReference(
             IdentifierToken identifierToken,
-            NamespaceStatementNode boundNamespaceStatementNode)
+            NamespaceGroupNode namespaceGroupNode)
         {
             Binder.BindNamespaceReference(identifierToken);
 
@@ -374,18 +367,30 @@ public partial class CSharpParser : IParser
                 var memberIdentifierToken = (IdentifierToken)TokenWalker.Match(SyntaxKind.IdentifierToken);
 
                 if (memberIdentifierToken.IsFabricated)
-                    throw new NotImplementedException("Implement a namespace being member accessed, but the next token is not an IdentifierToken");
+                {
+                    DiagnosticBag.ReportUnexpectedToken(
+                        TokenWalker.Current.TextSpan,
+                        TokenWalker.Current.SyntaxKind.ToString(),
+                        SyntaxKind.IdentifierToken.ToString());
+                }
 
                 // Check all the TypeDefinitionNodes that are in the namespace
-                var typeDefinitionNodes = boundNamespaceStatementNode.GetTopLevelTypeDefinitionNodes();
+                var typeDefinitionNodes = namespaceGroupNode.GetTopLevelTypeDefinitionNodes();
 
                 var typeDefinitionNode = typeDefinitionNodes.SingleOrDefault(td =>
                     td.TypeIdentifier.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText());
 
                 if (typeDefinitionNode is null)
-                    throw new NotImplementedException("A namespace member access, where the identifier for the member which is accessed was not a type definition.");
-
-                HandleTypeReference(memberIdentifierToken, typeDefinitionNode);
+                {
+                    DiagnosticBag.ReportNotDefinedInContext(
+                        TokenWalker.Current.TextSpan,
+                        identifierToken.TextSpan.GetText());
+                }
+                else
+                {
+                    HandleTypeReference(memberIdentifierToken, typeDefinitionNode);
+                }
+                
                 return;
             }
             else
@@ -478,7 +483,7 @@ public partial class CSharpParser : IParser
                 {
                     _ = TokenWalker.Consume();
 
-                    NodeRecent = null;
+                    NodeRecent = new EmptyNode();
                     CurrentCodeBlockBuilder.ChildList.Add(functionInvocationNode);
                 }
                 else
@@ -744,8 +749,7 @@ public partial class CSharpParser : IParser
 
                     variableReferenceNode = Binder.BindVariableReferenceNode(variableReferenceNode);
 
-                    expression = new VariableExpressionNode(
-                        variableReferenceNode.VariableDeclarationNode.TypeClauseNode);
+                    expression = variableReferenceNode;
                 }
                 else
                 {
@@ -761,7 +765,7 @@ public partial class CSharpParser : IParser
                             new ExpressionDelimiter(
                                 SyntaxKind.OpenParenthesisToken,
                                 SyntaxKind.CloseParenthesisToken,
-                                openParenthesisToken,
+                                null,
                                 null)
                         });
                 }
@@ -781,12 +785,14 @@ public partial class CSharpParser : IParser
 
                 if (SyntaxKind.CommaToken == TokenWalker.Current.SyntaxKind)
                 {
+                    _ = TokenWalker.Consume();
                     // TODO: Track comma tokens?
                     //
                     // mutableFunctionParametersListing.Add(_cSharpParser._tokenWalker.Consume());
                 }
-                else
+                else if (SyntaxKind.CloseParenthesisToken == TokenWalker.Current.SyntaxKind)
                 {
+                    _ = TokenWalker.Consume();
                     break;
                 }
             }
@@ -920,6 +926,7 @@ public partial class CSharpParser : IParser
         public AttributeNode? HandleAttribute(OpenSquareBracketToken openSquareBracketToken)
         {
             ISyntaxToken tokenCurrent;
+            var innerTokens = new List<ISyntaxToken>();
 
             while (true)
             {
@@ -930,12 +937,17 @@ public partial class CSharpParser : IParser
                 {
                     break;
                 }
+                else
+                {
+                    innerTokens.Add(tokenCurrent);
+                }
             }
 
             if (tokenCurrent.SyntaxKind == SyntaxKind.CloseSquareBracketToken)
             {
                 return Binder.BindAttributeNode(
                     openSquareBracketToken,
+                    innerTokens,
                     (CloseSquareBracketToken)tokenCurrent);
             }
 
@@ -963,32 +975,67 @@ public partial class CSharpParser : IParser
                 ExpressionDelimiter? closeExtraExpressionDelimiterEncountered = 
                     extraExpressionDeliminaters?.FirstOrDefault(x => x.CloseSyntaxKind == tokenCurrent.SyntaxKind);
 
-                if (tokenCurrent.SyntaxKind == SyntaxKind.CloseParenthesisToken && closeExtraExpressionDelimiterEncountered?.OpenSyntaxToken is not null)
+                if (closeExtraExpressionDelimiterEncountered is not null)
                 {
-                    ParenthesizedExpressionNode parenthesizedExpression;
-
-                    if (previousInvocationExpressionNode is not null)
+                    if (tokenCurrent.SyntaxKind == SyntaxKind.CloseParenthesisToken)
                     {
-                        parenthesizedExpression = new ParenthesizedExpressionNode(
-                            (OpenParenthesisToken)closeExtraExpressionDelimiterEncountered.OpenSyntaxToken,
-                            previousInvocationExpressionNode,
-                            (CloseParenthesisToken)tokenCurrent);
-                    }
-                    else
-                    {
-                        parenthesizedExpression = new ParenthesizedExpressionNode(
-                            (OpenParenthesisToken)closeExtraExpressionDelimiterEncountered.OpenSyntaxToken,
-                            new IdempotentExpressionNode(CSharpFacts.Types.Void.ToTypeClause()),
-                            (CloseParenthesisToken)tokenCurrent);
-                    }
+                        if (closeExtraExpressionDelimiterEncountered?.OpenSyntaxToken is not null)
+                        {
+                            ParenthesizedExpressionNode parenthesizedExpression;
 
-                    return parenthesizedExpression;
+                            if (previousInvocationExpressionNode is not null)
+                            {
+                                parenthesizedExpression = new ParenthesizedExpressionNode(
+                                    (OpenParenthesisToken)closeExtraExpressionDelimiterEncountered.OpenSyntaxToken,
+                                    previousInvocationExpressionNode,
+                                    (CloseParenthesisToken)tokenCurrent);
+                            }
+                            else
+                            {
+                                parenthesizedExpression = new ParenthesizedExpressionNode(
+                                    (OpenParenthesisToken)closeExtraExpressionDelimiterEncountered.OpenSyntaxToken,
+                                    new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause()),
+                                    (CloseParenthesisToken)tokenCurrent);
+                            }
+
+                            return parenthesizedExpression;
+                        }
+                        else
+                        {
+                            // If one provides 'CloseParenthesisToken' as a closing delimiter,
+                            // but does not provide the corresponding open delimiter (it is null)
+                            // then a function invocation started the initial invocation
+                            // of this method.
+                            TokenWalker.Backtrack();
+                            break;
+                        }
+                    }
+                    else if (tokenCurrent.SyntaxKind == SyntaxKind.CommaToken)
+                    {
+                        TokenWalker.Backtrack();
+                        break;
+                    }
                 }
 
                 switch (tokenCurrent.SyntaxKind)
                 {
-                    case SyntaxKind.NumericLiteralToken:
+                    case SyntaxKind.TrueTokenKeyword:
+                    case SyntaxKind.FalseTokenKeyword:
+                        var booleanLiteralExpressionNode = new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.Bool.ToTypeClause());
 
+                        previousInvocationExpressionNode = booleanLiteralExpressionNode;
+
+                        if (topMostExpressionNode is null)
+                            topMostExpressionNode = booleanLiteralExpressionNode;
+                        else if (leftExpressionNode is null)
+                            leftExpressionNode = booleanLiteralExpressionNode;
+                        else if (rightExpressionNode is null)
+                            rightExpressionNode = booleanLiteralExpressionNode;
+                        else
+                            throw new ApplicationException("TODO: Why would this occur?");
+
+                        break;
+                    case SyntaxKind.NumericLiteralToken:
                         var numericLiteralExpressionNode = new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.Int.ToTypeClause());
 
                         previousInvocationExpressionNode = numericLiteralExpressionNode;
@@ -1509,6 +1556,10 @@ public partial class CSharpParser : IParser
                 TokenWalker.Backtrack();
 
                 var typeClauseNode = Utility.MatchTypeClause();
+
+                if (NodeRecent is AttributeNode attributeNode)
+                    typeClauseNode.AttributeNode = attributeNode;
+
                 NodeRecent = typeClauseNode;
             }
             else
@@ -1647,7 +1698,26 @@ public partial class CSharpParser : IParser
 
         public void HandleIfTokenKeyword(KeywordToken keywordToken)
         {
-            var expression = HandleIfStatementExpression();
+            var openParenthesisToken = TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+
+            if (openParenthesisToken.IsFabricated)
+                return;
+
+            var expression = HandleExpression(
+                null,
+                null,
+                null,
+                null,
+                null,
+                new[]
+                {
+                    new ExpressionDelimiter(
+                        SyntaxKind.OpenParenthesisToken,
+                        SyntaxKind.CloseParenthesisToken,
+                        null,
+                        null)
+                });
+
             var boundIfStatementNode = Binder.BindIfStatementNode(keywordToken, expression);
             NodeRecent = boundIfStatementNode;
         }
@@ -1729,11 +1799,27 @@ public partial class CSharpParser : IParser
                     " already a file scoped namespace.");
             }
 
-            var boundNamespaceStatementNode = Binder.BindNamespaceStatementNode(
-                    keywordToken,
-                    namespaceIdentifier);
+            var namespaceStatementNode = new NamespaceStatementNode(
+                keywordToken,
+                namespaceIdentifier,
+                new CodeBlockNode(ImmutableArray<ISyntax>.Empty));
 
-            NodeRecent = boundNamespaceStatementNode;
+            NodeRecent = namespaceStatementNode;
+
+            /*
+             TODO: This code is reliant on the main while loop that iterates using TokenWalker...
+             ...It is confusing, I found this code a few months after writing it and it took me
+             a good 5 minutes to figure out what I was doing.
+             
+             So, after this method returns, either a curly brace is found, or a statement delimiter
+             is found.
+
+             The 'NodeRecent' that was set in this method is then read, and a closure
+             hack is used.
+
+             The 'TODO:' is here so I remember to re-structure this. The global 'NodeRecent'
+             is incredibly confusing.
+             */
         }
 
         public void HandleReturnTokenKeyword(KeywordToken keywordToken)
@@ -1984,7 +2070,7 @@ public partial class CSharpParser : IParser
 
         public void HandleWhereTokenContextualKeyword(KeywordContextualToken whereKeywordContextualToken)
         {
-            if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+            if (NodeRecent.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             {
                 var functionDefinitionNode = (FunctionDefinitionNode)NodeRecent;
 
