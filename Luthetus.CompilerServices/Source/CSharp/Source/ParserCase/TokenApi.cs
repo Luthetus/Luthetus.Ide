@@ -147,6 +147,7 @@ internal static class TokenApi
             return true;
         }
 
+        model.SyntaxStack.Push(identifierToken);
         return false;
     }
 
@@ -158,28 +159,28 @@ internal static class TokenApi
         {
             model.SyntaxStack.Push(identifierToken);
 
+            var genericArgumentsListingNode = (GenericArgumentsListingNode?)null;
+
             if (TryParseGenericArguments(model) &&
                 model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.GenericArgumentsListingNode)
             {
-                var genericArgumentsListingNode = (GenericArgumentsListingNode)model.SyntaxStack.Pop();
-
-                model.SyntaxStack.Push(typeClauseNode);
-                model.SyntaxStack.Push(identifierToken);
-                model.SyntaxStack.Push(genericArgumentsListingNode);
+                genericArgumentsListingNode = (GenericArgumentsListingNode)model.SyntaxStack.Pop();
             }
+
+            model.SyntaxStack.Push(typeClauseNode);
+            model.SyntaxStack.Push(identifierToken);
+
+            if (genericArgumentsListingNode is not null)
+                model.SyntaxStack.Push(genericArgumentsListingNode);
 
             if (TryParseFunctionDefinition(model))
                 return true;
 
-            if (TryParseVariableDeclaration(
-                    typeClauseNode,
-                    identifierToken,
-                    model))
-            {
+            if (TryParseVariableDeclaration(model))
                 return true;
-            }
         }
 
+        model.SyntaxStack.Push(identifierToken);
         return false;
     }
 
@@ -244,6 +245,7 @@ internal static class TokenApi
             return true;
         }
 
+        model.SyntaxStack.Push(identifierToken);
         return false;
     }
 
@@ -254,6 +256,7 @@ internal static class TokenApi
         if (model.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken &&
             model.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
         {
+            model.SyntaxStack.Push(identifierToken);
             return false;
         }
 
@@ -289,11 +292,16 @@ internal static class TokenApi
         return false;
     }
 
-    private static bool TryParseVariableDeclaration(
-        TypeClauseNode typeClauseNode,
-        IdentifierToken identifierToken,
-        ParserModel model)
+    private static bool TryParseVariableDeclaration(ParserModel model)
     {
+        GenericArgumentsListingNode? genericArgumentsListingNode =
+            model.SyntaxStack.Peek() is GenericArgumentsListingNode temporaryNode
+                ? temporaryNode
+                : null;
+
+        var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
+        var typeClauseNode = (TypeClauseNode)model.SyntaxStack.Pop();
+
         var isLocalOrField = model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
                              model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken;
 

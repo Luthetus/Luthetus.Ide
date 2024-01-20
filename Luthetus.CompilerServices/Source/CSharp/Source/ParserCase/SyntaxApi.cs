@@ -1204,7 +1204,6 @@ internal static class SyntaxApi
 
     public static void HandleBoolTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
@@ -1216,7 +1215,6 @@ internal static class SyntaxApi
 
     public static void HandleByteTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
@@ -1234,7 +1232,6 @@ internal static class SyntaxApi
 
     public static void HandleCharTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
@@ -1258,7 +1255,6 @@ internal static class SyntaxApi
 
     public static void HandleDecimalTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
@@ -1270,7 +1266,6 @@ internal static class SyntaxApi
 
     public static void HandleDelegateTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
@@ -1282,7 +1277,6 @@ internal static class SyntaxApi
 
     public static void HandleDoubleTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
@@ -1294,7 +1288,6 @@ internal static class SyntaxApi
 
     public static void HandleEnumTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
@@ -1318,7 +1311,6 @@ internal static class SyntaxApi
 
     public static void HandleFalseTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
@@ -1336,7 +1328,6 @@ internal static class SyntaxApi
 
     public static void HandleFloatTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
@@ -1372,7 +1363,6 @@ internal static class SyntaxApi
 
     public static void HandleIntTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
@@ -1390,19 +1380,16 @@ internal static class SyntaxApi
 
     public static void HandleLongTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
     public static void HandleNullTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
     public static void HandleObjectTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
@@ -1444,13 +1431,11 @@ internal static class SyntaxApi
 
     public static void HandleSbyteTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
     public static void HandleShortTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
@@ -1468,7 +1453,6 @@ internal static class SyntaxApi
 
     public static void HandleStringTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
@@ -1498,7 +1482,6 @@ internal static class SyntaxApi
 
     public static void HandleTrueTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
@@ -1516,13 +1499,11 @@ internal static class SyntaxApi
 
     public static void HandleUintTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
     public static void HandleUlongTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
@@ -1540,13 +1521,11 @@ internal static class SyntaxApi
 
     public static void HandleUshortTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
     public static void HandleVoidTokenKeyword(ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleTypeIdentifierKeyword(model);
     }
 
@@ -1596,7 +1575,7 @@ internal static class SyntaxApi
 
             var typeClauseNode = UtilityApi.MatchTypeClause(model);
 
-            if (model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.AttributeNode)
+            if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.AttributeNode)
                 typeClauseNode.AttributeNode = (AttributeNode)model.SyntaxStack.Pop();
 
             model.SyntaxStack.Push(typeClauseNode);
