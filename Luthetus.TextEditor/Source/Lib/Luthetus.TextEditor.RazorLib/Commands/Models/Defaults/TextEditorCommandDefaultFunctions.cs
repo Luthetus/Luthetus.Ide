@@ -918,7 +918,7 @@ public class TextEditorCommandDefaultFunctions
             }
 
             var definitionViewModelKey = definitionViewModels.First().ViewModelKey;
-            var definitionViewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+            var definitionViewModelModifier = editContext.GetViewModelModifier(definitionViewModelKey);
 
             if (definitionViewModelModifier is null)
                 return Task.CompletedTask;
