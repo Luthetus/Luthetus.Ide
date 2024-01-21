@@ -15,20 +15,16 @@ public static class SyntaxApi
     public static void HandleStaticClassIdentifier(ParserModel model)
     {
         var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
-
         model.TokenWalker.Backtrack();
 
-        var typeClauseNode = UtilityApi.MatchTypeClause(model);
-
-        model.SyntaxStack.Push(typeClauseNode);
+        model.SyntaxStack.Push(
+            UtilityApi.MatchTypeClause(model));
     }
 
     public static void HandleUndefinedTypeOrNamespaceReference(ParserModel model)
     {
         var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
-
-        var identifierReferenceNode = new AmbiguousIdentifierNode(
-            identifierToken);
+        var identifierReferenceNode = new AmbiguousIdentifierNode(identifierToken);
 
         model.Binder.BindTypeIdentifier(identifierToken);
 
@@ -49,7 +45,6 @@ public static class SyntaxApi
             variableDeclarationStatementNode);
 
         model.Binder.BindVariableReferenceNode(variableReferenceNode);
-
         model.SyntaxStack.Push(variableReferenceNode);
     }
 
@@ -76,9 +71,7 @@ public static class SyntaxApi
         model.CurrentCodeBlockBuilder.ChildList.Add(functionInvocationNode);
     }
 
-    public static void HandleVariableDeclaration(
-        VariableKind variableKind,
-        ParserModel model)
+    public static void HandleVariableDeclaration(VariableKind variableKind, ParserModel model)
     {
         GenericArgumentsListingNode? genericArgumentsListingNode =
             model.SyntaxStack.Peek() is GenericArgumentsListingNode temporaryNode
@@ -232,7 +225,6 @@ public static class SyntaxApi
             null);
 
         model.Binder.BindFunctionDefinitionNode(functionDefinitionNode);
-
         model.SyntaxStack.Push(functionDefinitionNode);
 
         if (model.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
@@ -286,7 +278,6 @@ public static class SyntaxApi
             null);
 
         model.Binder.BindConstructorDefinitionIdentifierToken(identifierToken);
-
         model.SyntaxStack.Push(constructorDefinitionNode);
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
@@ -316,7 +307,6 @@ public static class SyntaxApi
         if (SyntaxKind.MemberAccessToken == model.TokenWalker.Current.SyntaxKind)
         {
             var memberAccessToken = model.TokenWalker.Consume();
-
             var memberIdentifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
 
             if (memberIdentifierToken.IsFabricated)
@@ -356,8 +346,8 @@ public static class SyntaxApi
     public static void HandleTypeReference(ParserModel model)
     {
         var typeDefinitionNode = (TypeDefinitionNode)model.SyntaxStack.Pop();
-        var memberIdentifierToken = (IdentifierToken)model.SyntaxStack.Pop();
 
+        var memberIdentifierToken = (IdentifierToken)model.SyntaxStack.Pop();
         model.Binder.BindTypeIdentifier(memberIdentifierToken);
 
         var memberAccessToken = (MemberAccessToken)model.TokenWalker.Match(SyntaxKind.MemberAccessToken);
@@ -402,15 +392,12 @@ public static class SyntaxApi
             '\n',
             functionDefinitionNodes.Select(fd => fd.GetTextRecursively()));
 
-        // (2023-08-03) The input 'System.Console.WriteLine();' had 18 matches.
-
         if (SyntaxKind.OpenParenthesisToken == model.TokenWalker.Current.SyntaxKind)
         {
             model.SyntaxStack.Push((OpenParenthesisToken)model.TokenWalker.Consume());
             HandleFunctionParameters(model);
 
             var functionParametersListingNode = (FunctionParametersListingNode)model.SyntaxStack.Pop();
-
             FunctionDefinitionNode? matchingOverload = null;
 
             foreach (var functionDefinitionNode in functionDefinitionNodes)
@@ -442,7 +429,6 @@ public static class SyntaxApi
             if (SyntaxKind.StatementDelimiterToken == model.TokenWalker.Current.SyntaxKind)
             {
                 _ = model.TokenWalker.Consume();
-
                 model.CurrentCodeBlockBuilder.ChildList.Add(functionInvocationNode);
             }
             else
@@ -455,9 +441,7 @@ public static class SyntaxApi
     public static void HandleVariableAssignment(ParserModel model)
     {
         var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
-
-        // Move past the EqualsToken
-        var equalsToken = (EqualsToken)model.TokenWalker.Consume();
+        var equalsToken = (EqualsToken)model.TokenWalker.Consume(); // Move past the EqualsToken
 
         HandleExpression(
             null,
@@ -476,7 +460,6 @@ public static class SyntaxApi
             rightHandExpression);
 
         model.Binder.BindVariableAssignmentExpressionNode(variableAssignmentExpressionNode);
-
         model.CurrentCodeBlockBuilder.ChildList.Add(variableAssignmentExpressionNode);
     }
 
@@ -484,7 +467,6 @@ public static class SyntaxApi
     public static void HandleObjectInitialization(ParserModel model)
     {
         var openBraceToken = (OpenBraceToken)model.SyntaxStack.Pop();
-
         ISyntaxToken shouldBeCloseBraceToken = new BadToken(openBraceToken.TextSpan);
 
         while (!model.TokenWalker.IsEof)
@@ -565,7 +547,6 @@ public static class SyntaxApi
                 break;
 
             var genericParameterEntryNode = new GenericParameterEntryNode(typeClauseNode);
-
             mutableGenericParametersListing.Add(genericParameterEntryNode);
 
             if (SyntaxKind.CommaToken == model.TokenWalker.Current.SyntaxKind)
@@ -618,7 +599,6 @@ public static class SyntaxApi
                 break;
 
             var genericArgumentEntryNode = new GenericArgumentEntryNode(typeClauseNode);
-
             mutableGenericArgumentsListing.Add(genericArgumentEntryNode);
 
             if (SyntaxKind.CommaToken == model.TokenWalker.Current.SyntaxKind)
@@ -727,7 +707,6 @@ public static class SyntaxApi
                     variableDeclarationNode);
 
                 variableReferenceNode = model.Binder.BindVariableReferenceNode(variableReferenceNode);
-
                 expression = variableReferenceNode;
             }
             else
@@ -866,9 +845,9 @@ public static class SyntaxApi
 
                 var compileTimeConstantAbleSyntaxKinds = new[]
                 {
-                        SyntaxKind.StringLiteralToken,
-                        SyntaxKind.NumericLiteralToken,
-                    };
+                    SyntaxKind.StringLiteralToken,
+                    SyntaxKind.NumericLiteralToken,
+                };
 
                 var compileTimeConstantToken = model.TokenWalker.MatchRange(
                     compileTimeConstantAbleSyntaxKinds,
@@ -887,7 +866,6 @@ public static class SyntaxApi
             if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
             {
                 var commaToken = (CommaToken)model.TokenWalker.Consume();
-
                 // TODO: Track comma tokens?
                 //
                 // functionArgumentListing.Add(commaToken);
@@ -1545,13 +1523,12 @@ public static class SyntaxApi
     public static void HandleDefault(ParserModel model)
     {
         var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
+
         if (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(keywordToken.SyntaxKind))
         {
             // One enters this conditional block with the 'keywordToken' having already been consumed.
             model.TokenWalker.Backtrack();
-
             var typeClauseNode = UtilityApi.MatchTypeClause(model);
-            
             model.SyntaxStack.Push(typeClauseNode);
         }
         else
@@ -1563,11 +1540,11 @@ public static class SyntaxApi
     public static void HandleTypeIdentifierKeyword(ParserModel model)
     {
         var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
+
         if (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(keywordToken.SyntaxKind))
         {
             // One enters this conditional block with the 'keywordToken' having already been consumed.
             model.TokenWalker.Backtrack();
-
             var typeClauseNode = UtilityApi.MatchTypeClause(model);
 
             if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.AttributeNode)
@@ -1604,7 +1581,6 @@ public static class SyntaxApi
             //     new(){}
             //     new(...)
             //     new(...){}
-
             model.SyntaxStack.Push(model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken));
             HandleFunctionParameters(model);
 
@@ -1613,7 +1589,6 @@ public static class SyntaxApi
             if (model.TokenWalker.Peek(0).SyntaxKind == SyntaxKind.OpenBraceToken)
             {
                 model.SyntaxStack.Push((OpenBraceToken)model.TokenWalker.Consume());
-
                 HandleObjectInitialization(model);
                 boundObjectInitializationNode = (ObjectInitializationNode?)model.SyntaxStack.Pop();
             }
@@ -1651,7 +1626,6 @@ public static class SyntaxApi
             {
                 model.SyntaxStack.Push((OpenParenthesisToken)model.TokenWalker.Consume());
                 HandleFunctionParameters(model);
-
                 functionParametersListingNode = (FunctionParametersListingNode?)model.SyntaxStack.Pop();
             }
 
@@ -1661,7 +1635,6 @@ public static class SyntaxApi
             {
                 model.SyntaxStack.Push((OpenBraceToken)model.TokenWalker.Consume());
                 HandleObjectInitialization(model);
-
                 boundObjectInitializationNode = (ObjectInitializationNode?)model.SyntaxStack.Pop();
             }
 
@@ -1759,7 +1732,6 @@ public static class SyntaxApi
     {
         var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleNamespaceIdentifier(model);
-
         var namespaceIdentifier = (IdentifierToken)model.SyntaxStack.Pop();
 
         var boundUsingStatementNode = model.Binder.BindUsingStatementNode(
@@ -1773,7 +1745,6 @@ public static class SyntaxApi
     public static void HandleInterfaceTokenKeyword(ParserModel model)
     {
         var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
-
         GenericArgumentsListingNode? genericArgumentsListingNode = null;
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
@@ -1802,7 +1773,6 @@ public static class SyntaxApi
     public static void HandleClassTokenKeyword(ParserModel model)
     {
         var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
-
         GenericArgumentsListingNode? genericArgumentsListingNode = null;
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
@@ -1828,7 +1798,6 @@ public static class SyntaxApi
     public static void HandleNamespaceTokenKeyword(ParserModel model)
     {
         var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
-
         HandleNamespaceIdentifier(model);
         var namespaceIdentifier = (IdentifierToken)model.SyntaxStack.Pop();
 
@@ -1862,13 +1831,12 @@ public static class SyntaxApi
 
         var returnExpression = (IExpressionNode)model.SyntaxStack.Pop();
 
-        var boundReturnStatementNode = model.Binder.BindReturnStatementNode(
+        var returnStatementNode = model.Binder.BindReturnStatementNode(
             keywordToken,
             returnExpression);
 
-        model.CurrentCodeBlockBuilder.ChildList.Add(boundReturnStatementNode);
-
-        model.SyntaxStack.Push(boundReturnStatementNode);
+        model.CurrentCodeBlockBuilder.ChildList.Add(returnStatementNode);
+        model.SyntaxStack.Push(returnStatementNode);
     }
 
     public static void HandleVarTokenContextualKeyword(ParserModel model)
@@ -1884,7 +1852,6 @@ public static class SyntaxApi
         {
             // Check if the next token is a second 'var keyword' or an IdentifierToken. Two IdentifierTokens is invalid, and therefore one can contextually take this 'var' as a keyword.
             bool nextTokenIsVarKeyword = SyntaxKind.VarTokenContextualKeyword == model.TokenWalker.Current.SyntaxKind;
-
             bool nextTokenIsIdentifierToken = SyntaxKind.IdentifierToken == model.TokenWalker.Current.SyntaxKind;
 
             if (nextTokenIsVarKeyword || nextTokenIsIdentifierToken)
@@ -1901,9 +1868,7 @@ public static class SyntaxApi
         {
             // Take 'var' as an identifier
             IdentifierToken varIdentifierToken = new(contextualKeywordToken.TextSpan);
-
             model.SyntaxStack.Push(varIdentifierToken);
-
             TokenApi.ParseIdentifierToken(model);
         }
     }

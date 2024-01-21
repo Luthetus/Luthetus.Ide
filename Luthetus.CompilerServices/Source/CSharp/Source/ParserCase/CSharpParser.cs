@@ -31,7 +31,6 @@ public class CSharpParser : IParser
         Binder = previousBinder;
         Binder.CurrentResourceUri = resourceUri;
         Binder.ClearStateByResourceUri(resourceUri);
-
         return Parse();
     }
 
@@ -39,7 +38,6 @@ public class CSharpParser : IParser
     {
         var globalCodeBlockBuilder = new CodeBlockBuilder(null, null);
         var currentCodeBlockBuilder = globalCodeBlockBuilder;
-
         var diagnosticBag = new LuthetusDiagnosticBag();
 
         var model = new ParserModel(

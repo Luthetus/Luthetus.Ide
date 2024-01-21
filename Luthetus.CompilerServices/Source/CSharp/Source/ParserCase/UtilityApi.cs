@@ -46,7 +46,6 @@ public static class UtilityApi
         while (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenSquareBracketToken)
         {
             var openSquareBracketToken = model.TokenWalker.Consume();
-
             var closeSquareBracketToken = model.TokenWalker.Match(SyntaxKind.CloseSquareBracketToken);
 
             var arraySyntaxTokenTextSpan = syntaxToken.TextSpan with
@@ -55,9 +54,7 @@ public static class UtilityApi
             };
 
             var arraySyntaxToken = new ArraySyntaxToken(arraySyntaxTokenTextSpan);
-
-            var genericParameterEntryNode = new GenericParameterEntryNode(
-                typeClauseNode);
+            var genericParameterEntryNode = new GenericParameterEntryNode(typeClauseNode);
 
             var genericParametersListingNode = new GenericParametersListingNode(
                 new OpenAngleBracketToken(openSquareBracketToken.TextSpan)
@@ -81,14 +78,12 @@ public static class UtilityApi
         return typeClauseNode;
     }
 
-    public static bool IsContextualKeywordSyntaxKind(
-        SyntaxKind syntaxKind)
+    public static bool IsContextualKeywordSyntaxKind(SyntaxKind syntaxKind)
     {
         return syntaxKind.ToString().EndsWith("ContextualKeyword");
     }
 
-    public static bool IsKeywordSyntaxKind(
-        SyntaxKind syntaxKind)
+    public static bool IsKeywordSyntaxKind(SyntaxKind syntaxKind)
     {
         return syntaxKind.ToString().EndsWith("Keyword");
     }

@@ -678,41 +678,26 @@ public class CSharpBinder : IBinder
         switch (variableKind)
         {
             case VariableKind.Field:
+                AddSymbolDefinition(new FieldSymbol(identifierToken.TextSpan with
                 {
-                    var symbol = new FieldSymbol(identifierToken.TextSpan with
-                    {
-                        DecorationByte = (byte)GenericDecorationKind.Field
-                    });
-
-                    AddSymbolDefinition(symbol);
-                }
-
+                    DecorationByte = (byte)GenericDecorationKind.Field
+                }));
                 break;
             case VariableKind.Property:
+                AddSymbolDefinition(new PropertySymbol(identifierToken.TextSpan with
                 {
-                    var symbol = new PropertySymbol(identifierToken.TextSpan with
-                    {
-                        DecorationByte = (byte)GenericDecorationKind.Property
-                    });
-
-                    AddSymbolDefinition(symbol);
-                }
-
+                    DecorationByte = (byte)GenericDecorationKind.Property
+                }));
                 break;
             case VariableKind.Local:
                 goto default;
             case VariableKind.Closure:
                 goto default;
             default:
+                AddSymbolDefinition(new VariableSymbol(identifierToken.TextSpan with
                 {
-                    var symbol = new VariableSymbol(identifierToken.TextSpan with
-                    {
-                        DecorationByte = (byte)GenericDecorationKind.Variable
-                    });
-
-                    AddSymbolDefinition(symbol);
-                }
-
+                    DecorationByte = (byte)GenericDecorationKind.Variable
+                }));
                 break;
         }
     }

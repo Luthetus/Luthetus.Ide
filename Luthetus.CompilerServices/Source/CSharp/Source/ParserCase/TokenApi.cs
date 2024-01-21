@@ -23,9 +23,8 @@ public static class TokenApi
             null,
             model);
 
-        var completeExpression = (IExpressionNode)model.SyntaxStack.Pop();
-
-        model.CurrentCodeBlockBuilder.ChildList.Add(completeExpression);
+        model.CurrentCodeBlockBuilder.ChildList.Add(
+            (IExpressionNode)model.SyntaxStack.Pop());
     }
 
     public static void ParseStringLiteralToken(ParserModel model)
@@ -43,15 +42,13 @@ public static class TokenApi
             null,
             model);
 
-        var completeExpression = (IExpressionNode)model.SyntaxStack.Pop();
-
-        model.CurrentCodeBlockBuilder.ChildList.Add(completeExpression);
+        model.CurrentCodeBlockBuilder.ChildList.Add(
+            (IExpressionNode)model.SyntaxStack.Pop());
     }
 
     public static void ParsePreprocessorDirectiveToken(ParserModel model)
     {
         var preprocessorDirectiveToken = (PreprocessorDirectiveToken)model.SyntaxStack.Pop();
-
         var consumedToken = model.TokenWalker.Consume();
 
         if (consumedToken.SyntaxKind == SyntaxKind.LibraryReferenceToken)
@@ -61,7 +58,6 @@ public static class TokenApi
                 consumedToken);
 
             model.CurrentCodeBlockBuilder.ChildList.Add(preprocessorLibraryReferenceStatement);
-
             return;
         }
         else
@@ -102,7 +98,6 @@ public static class TokenApi
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
         {
             model.SyntaxStack.Push(model.TokenWalker.Consume());
-
             SyntaxApi.HandleGenericArguments(model);
             return true;
         }
@@ -119,10 +114,8 @@ public static class TokenApi
         if (SyntaxKind.OpenAngleBracketToken == model.TokenWalker.Current.SyntaxKind)
         {
             model.SyntaxStack.Push(model.TokenWalker.Consume());
-
             SyntaxApi.HandleGenericParameters(model);
             genericParametersListingNode = (GenericParametersListingNode?)model.SyntaxStack.Pop();
-
             return true;
         }
         else
@@ -141,9 +134,7 @@ public static class TokenApi
             model.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
         {
             model.SyntaxStack.Push(identifierToken);
-
             SyntaxApi.HandleConstructorDefinition(model);
-
             return true;
         }
 
@@ -184,7 +175,6 @@ public static class TokenApi
     private static bool TryParseReference(ParserModel model)
     {
         var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
-
         var text = identifierToken.TextSpan.GetText();
 
         if (model.Binder.NamespaceGroupNodes.TryGetValue(text, out var namespaceGroupNode) &&
@@ -203,7 +193,6 @@ public static class TokenApi
             {
                 model.SyntaxStack.Push(identifierToken);
                 model.SyntaxStack.Push(variableDeclarationStatementNode);
-
                 SyntaxApi.HandleVariableReference(model);
                 return true;
             }
@@ -215,14 +204,12 @@ public static class TokenApi
                     typeDefinitionNode is not null)
                 {
                     model.SyntaxStack.Push(identifierToken);
-
                     SyntaxApi.HandleStaticClassIdentifier(model);
                     return true;
                 }
                 else
                 {
                     model.SyntaxStack.Push(identifierToken);
-
                     SyntaxApi.HandleUndefinedTypeOrNamespaceReference(model);
                     return true;
                 }
@@ -237,7 +224,6 @@ public static class TokenApi
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
         {
             model.SyntaxStack.Push(identifierToken);
-
             SyntaxApi.HandleVariableAssignment(model);
             return true;
         }
@@ -273,7 +259,6 @@ public static class TokenApi
 
         // Function invocation
         model.SyntaxStack.Push(identifierToken);
-
         SyntaxApi.HandleFunctionInvocation(genericParametersListingNode, model);
         return true;
     }
@@ -332,10 +317,7 @@ public static class TokenApi
 
         if (variableKind is not null)
         {
-            SyntaxApi.HandleVariableDeclaration(
-                variableKind.Value,
-                model);
-
+            SyntaxApi.HandleVariableDeclaration(variableKind.Value, model);
             return true;
         }
         else
@@ -347,7 +329,6 @@ public static class TokenApi
     public static void ResolveAmbiguousIdentifier(ParserModel model)
     {
         var identifierReferenceNode = (AmbiguousIdentifierNode)model.SyntaxStack.Pop();
-
         var expectingTypeClause = false;
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
@@ -380,7 +361,6 @@ public static class TokenApi
                 };
 
                 model.Binder.BindTypeDefinitionNode(fabricateTypeDefinition);
-
                 typeDefinitionNode = fabricateTypeDefinition;
             }
 
@@ -474,7 +454,6 @@ public static class TokenApi
         var dollarSignToken = (DollarSignToken)model.SyntaxStack.Pop();
 
         model.TokenWalker.Backtrack();
-
         SyntaxApi.HandleExpression(
             null,
             null,
@@ -516,7 +495,6 @@ public static class TokenApi
     public static void ParseOpenBraceToken(ParserModel model)
     {
         var openBraceToken = (OpenBraceToken)model.SyntaxStack.Pop();
-
         var closureCurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder;
         ISyntaxNode? nextCodeBlockOwner = null;
         TypeClauseNode? scopeReturnTypeClauseNode = null;
@@ -563,7 +541,6 @@ public static class TokenApi
         {
             var functionDefinitionNode = (FunctionDefinitionNode)model.SyntaxStack.Pop();
             nextCodeBlockOwner = functionDefinitionNode;
-
             scopeReturnTypeClauseNode = functionDefinitionNode.ReturnTypeClauseNode;
 
             model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
@@ -585,7 +562,6 @@ public static class TokenApi
         {
             var constructorDefinitionNode = (ConstructorDefinitionNode)model.SyntaxStack.Pop();
             nextCodeBlockOwner = constructorDefinitionNode;
-
             scopeReturnTypeClauseNode = constructorDefinitionNode.ReturnTypeClauseNode;
 
             model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
@@ -630,9 +606,7 @@ public static class TokenApi
             });
         }
 
-        model.Binder.RegisterBoundScope(
-            scopeReturnTypeClauseNode,
-            openBraceToken.TextSpan);
+        model.Binder.RegisterBoundScope(scopeReturnTypeClauseNode, openBraceToken.TextSpan);
 
         if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
@@ -653,7 +627,6 @@ public static class TokenApi
     public static void ParseCloseBraceToken(ParserModel model)
     {
         var closeBraceToken = (CloseBraceToken)model.SyntaxStack.Pop();
-
         model.Binder.DisposeBoundScope(closeBraceToken.TextSpan);
 
         if (model.CurrentCodeBlockBuilder.Parent is not null && model.FinalizeCodeBlockNodeActionStack.Any())
@@ -671,7 +644,6 @@ public static class TokenApi
         var openParenthesisToken = (OpenParenthesisToken)model.SyntaxStack.Pop();
 
         model.TokenWalker.Backtrack();
-
         SyntaxApi.HandleExpression(
             null,
             null,
@@ -695,9 +667,8 @@ public static class TokenApi
             null,
             model);
 
-        var completeExpression = (IExpressionNode)model.SyntaxStack.Pop();
-
-        model.CurrentCodeBlockBuilder.ChildList.Add(completeExpression);
+        model.CurrentCodeBlockBuilder.ChildList.Add(
+            (IExpressionNode)model.SyntaxStack.Pop());
     }
 
     public static void ParseCloseParenthesisToken(ParserModel model)
@@ -722,7 +693,6 @@ public static class TokenApi
         {
             // Generic Arguments
             model.SyntaxStack.Push(openAngleBracketToken);
-
             SyntaxApi.HandleGenericArguments(model);
 
             if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.TypeDefinitionNode)
