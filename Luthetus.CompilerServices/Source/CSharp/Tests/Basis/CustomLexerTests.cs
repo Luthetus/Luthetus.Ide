@@ -2,6 +2,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis;
 
@@ -530,5 +531,20 @@ public class CustomLexerTests
 	public void LEX_TriviaToken()
 	{
 		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void LEX_ClassDefinition()
+	{
+        var sourceText = @"public class MyClass
+{
+}".ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri("UnitTests");
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+
+        // Tokens: 'public' 'class' 'MyClass' '{' '}' 'EndOfFileToken'
+        Assert.Equal(6, lexer.SyntaxTokens.Length);
 	}
 }
