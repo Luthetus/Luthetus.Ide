@@ -1,8 +1,7 @@
 ﻿using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase;
 
@@ -24,7 +23,10 @@ public class TokenApiTests
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        Assert.Single(compilationUnit.RootCodeBlockNode.ChildList);
+        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
+        Assert.Equal(typeof(int), literalExpressionNode.ResultTypeClauseNode.ValueType);
     }
 
     /// <summary>
@@ -33,7 +35,17 @@ public class TokenApiTests
     [Fact]
     public void ParseStringLiteralToken()
     {
-        throw new NotImplementedException();
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = "\"Hello World\"";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
+        Assert.Single(compilationUnit.RootCodeBlockNode.ChildList);
+        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
+        Assert.Equal(typeof(string), literalExpressionNode.ResultTypeClauseNode.ValueType);
     }
 
     /// <summary>
@@ -51,87 +63,174 @@ public class TokenApiTests
     [Fact]
     public void ParseIdentifierToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = "MyClass";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
+        Assert.Single(compilationUnit.RootCodeBlockNode.ChildList);
+        var ambiguousIdentifierNode = (AmbiguousIdentifierNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        Assert.IsType<AmbiguousIdentifierNode>(ambiguousIdentifierNode);
+        Assert.Equal(sourceText, ambiguousIdentifierNode.IdentifierToken.TextSpan.GetText());
+    }
+
+    /// <summary>
+    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
+    /// </summary>
+    [Fact]
+    public void ParseIdentifierToken_TryParseGenericArguments()
+    {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = "public class Box<T, U> { }";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="TokenApi.TryParseGenericArguments"/>
+    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
     /// </summary>
     [Fact]
-    public void TryParseGenericArguments()
+    public void ParseIdentifierToken_TryParseGenericParameters()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = "Dictionary<string, int> map = new Dictionary<string, int>();";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="TokenApi.TryParseGenericParameters"/>
+    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
     /// </summary>
     [Fact]
-    public void TryParseGenericParameters()
+    public void ParseIdentifierToken_TryParseConstructorDefinition()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"public class MyClass
+{
+    public MyClass()
+    {
+    }
+}";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="TokenApi.TryParseConstructorDefinition"/>
+    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
     /// </summary>
     [Fact]
-    public void TryParseConstructorDefinition()
+    public void ParseIdentifierToken_TryParseTypedIdentifier()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"public string MyMethod()
+{
+}";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="TokenApi.TryParseTypedIdentifier"/>
+    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
     /// </summary>
     [Fact]
-    public void TryParseTypedIdentifier()
+    public void ParseIdentifierToken_TryParseReference()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"var x; x;";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="TokenApi.TryParseReference"/>
+    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
     /// </summary>
     [Fact]
-    public void TryParseReference()
+    public void ParseIdentifierToken_TryParseVariableAssignment()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"var x; x = 2;";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="TokenApi.TryParseVariableAssignment"/>
+    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
     /// </summary>
     [Fact]
-    public void TryParseVariableAssignment()
+    public void ParseIdentifierToken_TryParseGenericTypeOrFunctionInvocation()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"public T Clone<T>(T item)
+{
+    return T;
+}
+
+Clone<int>(3);";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="TokenApi.TryParseGenericTypeOrFunctionInvocation"/>
+    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
     /// </summary>
     [Fact]
-    public void TryParseGenericTypeOrFunctionInvocation()
+    public void ParseIdentifierToken_TryParseFunctionDefinition()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"public void MyMethod()
+{
+}";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="TokenApi.TryParseFunctionDefinition"/>
+    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
     /// </summary>
     [Fact]
-    public void TryParseFunctionDefinition()
+    public void ParseIdentifierToken_TryParseVariableDeclaration()
     {
-        throw new NotImplementedException();
-    }
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"int x;";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
 
-    /// <summary>
-    /// <see cref="TokenApi.TryParseVariableDeclaration"/>
-    /// </summary>
-    [Fact]
-    public void TryParseVariableDeclaration()
-    {
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
@@ -150,6 +249,13 @@ public class TokenApiTests
     [Fact]
     public void ParsePlusToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"+";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
@@ -159,6 +265,13 @@ public class TokenApiTests
     [Fact]
     public void ParsePlusPlusToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"++";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
@@ -168,6 +281,13 @@ public class TokenApiTests
     [Fact]
     public void ParseMinusToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"-";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
@@ -177,6 +297,13 @@ public class TokenApiTests
     [Fact]
     public void ParseStarToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"*";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
@@ -186,6 +313,13 @@ public class TokenApiTests
     [Fact]
     public void ParseDollarSignToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"$";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
@@ -195,6 +329,13 @@ public class TokenApiTests
     [Fact]
     public void ParseColonToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @":";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
@@ -204,6 +345,13 @@ public class TokenApiTests
     [Fact]
     public void ParseOpenBraceToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"{";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
@@ -213,6 +361,13 @@ public class TokenApiTests
     [Fact]
     public void ParseCloseBraceToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"}";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
@@ -222,6 +377,13 @@ public class TokenApiTests
     [Fact]
     public void ParseOpenParenthesisToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"(";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
@@ -231,6 +393,13 @@ public class TokenApiTests
     [Fact]
     public void ParseCloseParenthesisToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @")";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
@@ -240,6 +409,13 @@ public class TokenApiTests
     [Fact]
     public void ParseOpenAngleBracketToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"<";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
@@ -249,6 +425,13 @@ public class TokenApiTests
     [Fact]
     public void ParseCloseAngleBracketToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @">";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
@@ -258,6 +441,13 @@ public class TokenApiTests
     [Fact]
     public void ParseOpenSquareBracketToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"[";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
@@ -267,6 +457,13 @@ public class TokenApiTests
     [Fact]
     public void ParseCloseSquareBracketToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"]";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
@@ -276,6 +473,13 @@ public class TokenApiTests
     [Fact]
     public void ParseMemberAccessToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @".";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
@@ -285,6 +489,13 @@ public class TokenApiTests
     [Fact]
     public void StatementDelimiterToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @";";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
@@ -294,6 +505,13 @@ public class TokenApiTests
     [Fact]
     public void ParseKeywordToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"public";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
@@ -303,6 +521,13 @@ public class TokenApiTests
     [Fact]
     public void ParseKeywordContextualToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"var";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 }
