@@ -290,14 +290,11 @@ public class CSharpBinder : IBinder
         if (TryGetVariableDeclarationHierarchically(text, out var variableDeclarationNode)
             && variableDeclarationNode is not null)
         {
-            variableDeclarationNode = new VariableDeclarationNode(
-                variableDeclarationNode.TypeClauseNode,
-                variableDeclarationNode.IdentifierToken,
-                variableDeclarationNode.VariableKind,
-                true);
+            variableKind = variableDeclarationNode.VariableKind;
 
-            // TODO: Replace hierarchically (current scope isn't correct, it might be a parent scope)
-            _currentScope.VariableDeclarationMap[text] = variableDeclarationNode;
+            // TODO: Remove the setter from 'VariableDeclarationNode'...
+            // ...and set IsInitialized to true by overwriting the VariableDeclarationMap.
+            variableDeclarationNode.IsInitialized = true;
         }
         else
         {
@@ -587,7 +584,11 @@ public class CSharpBinder : IBinder
         return false;
     }
     
-    /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>
+    /// <summary>
+    /// Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>
+    /// If a match is found, then set the out parameter to it and return true.<br/><br/>
+    /// If none of the searched scopes contained a match then set the out parameter to null and return false.
+    /// </summary>
     public bool TryGetVariableDeclarationHierarchically(
         string text,
         out VariableDeclarationNode? variableDeclarationStatementNode,

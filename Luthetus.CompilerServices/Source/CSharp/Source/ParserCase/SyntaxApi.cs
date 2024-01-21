@@ -261,8 +261,6 @@ public static class SyntaxApi
     {
         var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
 
-        GenericArgumentsListingNode? genericArgumentsListingNode = null;
-
         model.SyntaxStack.Push((OpenParenthesisToken)model.TokenWalker.Consume());
         HandleFunctionArguments(model);
 
@@ -282,7 +280,7 @@ public static class SyntaxApi
         var constructorDefinitionNode = new ConstructorDefinitionNode(
             typeClauseNode,
             identifierToken,
-            genericArgumentsListingNode,
+            null,
             functionArgumentsListingNode,
             null,
             null);
@@ -1051,6 +1049,14 @@ public static class SyntaxApi
                     else
                         throw new ApplicationException("TODO: Why would this occur?");
 
+                    break;
+                case SyntaxKind.IdentifierToken:
+                    var variableReferenceNode = new VariableReferenceNode(
+                        (IdentifierToken)tokenCurrent,
+                        // TODO: Don't pass null here
+                        null);
+
+                    model.Binder.BindVariableReferenceNode(variableReferenceNode);
                     break;
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.MinusToken:

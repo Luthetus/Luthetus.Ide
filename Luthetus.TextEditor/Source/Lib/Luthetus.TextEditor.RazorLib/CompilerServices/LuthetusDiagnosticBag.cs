@@ -88,7 +88,7 @@ public class LuthetusDiagnosticBag : IEnumerable<TextEditorDiagnostic>
     {
         Report(
             TextEditorDiagnosticLevel.Error,
-            $"Undefined type or namespace: '{undefinedVariableIdentifier}'",
+            $"Undefined variable: '{undefinedVariableIdentifier}'",
             textSpan,
             Guid.Parse("a72619a5-a7f4-4084-acc8-2fb2c76cdac4"));
     }

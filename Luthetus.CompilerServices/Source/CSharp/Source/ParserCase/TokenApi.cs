@@ -85,10 +85,10 @@ public static class TokenApi
         if (TryParseConstructorDefinition(model))
             return;
 
-        if (TryParseGenericTypeOrFunctionInvocation(model))
+        if (TryParseVariableAssignment(model))
             return;
 
-        if (TryParseVariableAssignment(model))
+        if (TryParseGenericTypeOrFunctionInvocation(model))
             return;
 
         if (TryParseReference(model))

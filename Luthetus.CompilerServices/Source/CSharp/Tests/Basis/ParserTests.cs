@@ -2534,7 +2534,14 @@ public class ParserTests
 
 public class Person
 {
-	
+	public string FirstName { get; set; }
+
+	public Person(string firstName, string lastName)
+	{
+		FirstName = firstName;
+	}
+
+	public string LastName { get; set; }
 }
 ";
         var lexer = new CSharpLexer(resourceUri, sourceText);
