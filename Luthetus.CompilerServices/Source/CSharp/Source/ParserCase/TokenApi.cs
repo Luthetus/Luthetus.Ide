@@ -12,8 +12,8 @@ public static class TokenApi
     {
         var numericLiteralToken = (NumericLiteralToken)model.SyntaxStack.Pop();
 
+        // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
-
         SyntaxApi.HandleExpression(
             null,
             null,
@@ -31,8 +31,8 @@ public static class TokenApi
     {
         var stringLiteralToken = (StringLiteralToken)model.SyntaxStack.Pop();
 
+        // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
-
         SyntaxApi.HandleExpression(
             null,
             null,
@@ -453,6 +453,7 @@ public static class TokenApi
     {
         var dollarSignToken = (DollarSignToken)model.SyntaxStack.Pop();
 
+        // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
         SyntaxApi.HandleExpression(
             null,
@@ -643,6 +644,7 @@ public static class TokenApi
     {
         var openParenthesisToken = (OpenParenthesisToken)model.SyntaxStack.Pop();
 
+        // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
         SyntaxApi.HandleExpression(
             null,

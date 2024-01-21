@@ -15,7 +15,6 @@ public static class SyntaxApi
     public static void HandleStaticClassIdentifier(ParserModel model)
     {
         var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
-        model.TokenWalker.Backtrack();
 
         model.SyntaxStack.Push(
             UtilityApi.MatchTypeClause(model));
