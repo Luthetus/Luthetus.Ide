@@ -16,8 +16,9 @@ public static class SyntaxApi
     {
         var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
 
-        model.SyntaxStack.Push(
-            UtilityApi.MatchTypeClause(model));
+        // The identifier token was already consumed, so a Backtrack() is needed.
+        model.TokenWalker.Backtrack();
+        model.SyntaxStack.Push(UtilityApi.MatchTypeClause(model));
     }
 
     public static void HandleUndefinedTypeOrNamespaceReference(ParserModel model)
@@ -296,6 +297,33 @@ public static class SyntaxApi
         }
     }
 
+    public static void HandleConstructorInvocation(ParserModel model)
+    {
+        var newKeywordToken = model.TokenWalker.Consume();
+
+        TypeClauseNode typeClauseNode;
+
+        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+        {
+            typeClauseNode = CSharpFacts.Types.Var.ToTypeClause();
+        }
+        else
+        {
+            typeClauseNode = UtilityApi.MatchTypeClause(model);
+            model.SyntaxStack.Push(model.TokenWalker.Consume());
+            HandleFunctionParameters(model);
+
+            // Discard the function parameters result for now, until further implementation is done.
+            _ = model.SyntaxStack.Pop();
+        }
+
+        var constructorInvocationExpressionNode = new ConstructorInvocationExpressionNode(
+            (KeywordToken)newKeywordToken,
+            typeClauseNode);
+
+        model.SyntaxStack.Push(constructorInvocationExpressionNode);
+    }
+
     public static void HandleNamespaceReference(ParserModel model)
     {
         var namespaceGroupNode = (NamespaceGroupNode)model.SyntaxStack.Pop();
@@ -442,14 +470,24 @@ public static class SyntaxApi
         var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
         var equalsToken = (EqualsToken)model.TokenWalker.Consume(); // Move past the EqualsToken
 
-        HandleExpression(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            model);
+        if (UtilityApi.IsKeywordSyntaxKind(model.TokenWalker.Current.SyntaxKind))
+        {
+            if (model.TokenWalker.Current.SyntaxKind != SyntaxKind.NewTokenKeyword)
+                return;
+
+            HandleConstructorInvocation(model);
+        }
+        else
+        {
+            HandleExpression(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                model);
+        }
 
         var rightHandExpression = (IExpressionNode)model.SyntaxStack.Pop();
 

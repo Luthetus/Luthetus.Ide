@@ -193,6 +193,7 @@ public enum SyntaxKind
     PropertyAssignmentExpressionNode,
     PropertyExpressionNode,
     ConstructorDefinitionNode,
+    ConstructorInvocationExpressionNode,
     FunctionDefinitionNode,
     FunctionArgumentsListingNode,
     FunctionArgumentEntryNode,

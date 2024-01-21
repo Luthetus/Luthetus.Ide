@@ -2534,9 +2534,9 @@ public class ParserTests
 
 public class Person
 {
-	public Crash()
+	public void MyMethod()
 	{
-		var a = 2;
+		Person person = new Person();
 	}
 }
 ";
