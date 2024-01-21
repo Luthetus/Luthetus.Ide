@@ -2525,4 +2525,22 @@ public class ParserTests
 			}
 		}
 	}
+
+    [Fact]
+    public void DELETE_THIS_TEST()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"namespace ConsoleApp1.Persons;
+
+public class Person
+{
+	
+}
+";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
 }

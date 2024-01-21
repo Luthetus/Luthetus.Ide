@@ -43,7 +43,7 @@ public class CSharpParser : IParser
         var diagnosticBag = new LuthetusDiagnosticBag();
 
         var model = new ParserModel(
-            new CSharpBinder(),
+            Binder,
             new TokenWalker(Lexer.SyntaxTokens, diagnosticBag),
             new Stack<ISyntax>(),
             diagnosticBag,

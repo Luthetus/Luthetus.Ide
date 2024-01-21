@@ -554,9 +554,10 @@ public static class TokenApi
                     codeBlockNode);
 
                 model.Binder.BindTypeDefinitionNode(typeDefinitionNode, true);
-
                 closureCurrentCodeBlockBuilder.ChildList.Add(typeDefinitionNode);
             });
+
+            model.SyntaxStack.Push(typeDefinitionNode);
         }
         else if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
         {
@@ -577,6 +578,8 @@ public static class TokenApi
 
                 closureCurrentCodeBlockBuilder.ChildList.Add(functionDefinitionNode);
             });
+
+            model.SyntaxStack.Push(functionDefinitionNode);
         }
         else if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
         {
@@ -597,6 +600,8 @@ public static class TokenApi
 
                 closureCurrentCodeBlockBuilder.ChildList.Add(constructorDefinitionNode);
             });
+
+            model.SyntaxStack.Push(constructorDefinitionNode);
         }
         else if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.IfStatementNode)
         {
@@ -612,6 +617,8 @@ public static class TokenApi
 
                 closureCurrentCodeBlockBuilder.ChildList.Add(ifStatementNode);
             });
+
+            model.SyntaxStack.Push(ifStatementNode);
         }
         else
         {
@@ -637,6 +644,7 @@ public static class TokenApi
                 .GetText();
 
             model.Binder.AddNamespaceToCurrentScope(namespaceString);
+            model.SyntaxStack.Push(namespaceStatementNode);
         }
 
         model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, nextCodeBlockOwner);
