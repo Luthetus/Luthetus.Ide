@@ -73,8 +73,8 @@ public static class SyntaxApi
     public static void HandleVariableDeclaration(VariableKind variableKind, ParserModel model)
     {
         GenericArgumentsListingNode? genericArgumentsListingNode =
-            model.SyntaxStack.Peek() is GenericArgumentsListingNode temporaryNode
-                ? temporaryNode
+            model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.GenericArgumentsListingNode
+                ? (GenericArgumentsListingNode)model.SyntaxStack.Pop()
                 : null;
 
         var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
@@ -200,8 +200,8 @@ public static class SyntaxApi
     public static void HandleFunctionDefinition(ParserModel model)
     {
         GenericArgumentsListingNode? genericArgumentsListingNode =
-            model.SyntaxStack.Peek() is GenericArgumentsListingNode temporaryNode
-                ? temporaryNode
+            model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.GenericArgumentsListingNode
+                ? (GenericArgumentsListingNode)model.SyntaxStack.Pop()
                 : null;
 
         var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
@@ -362,7 +362,7 @@ public static class SyntaxApi
         var matchingFunctionDefinitionNodes = typeDefinitionNode
             .GetFunctionDefinitionNodes()
             .Where(fd =>
-                fd.FunctionIdentifier.TextSpan.GetText() == identifierToken.TextSpan.GetText())
+                fd.FunctionIdentifierToken.TextSpan.GetText() == identifierToken.TextSpan.GetText())
             .ToImmutableArray();
 
         model.SyntaxStack.Push(identifierToken);
@@ -508,6 +508,12 @@ public static class SyntaxApi
                 else
                     break;
             }
+        }
+
+        if (combineNamespaceIdentifierIntoOne.Count == 0)
+        {
+            model.SyntaxStack.Push(new EmptyNode());
+            return;
         }
 
         var identifierTextSpan = combineNamespaceIdentifierIntoOne.First().TextSpan with
@@ -1731,7 +1737,15 @@ public static class SyntaxApi
     {
         var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleNamespaceIdentifier(model);
-        var namespaceIdentifier = (IdentifierToken)model.SyntaxStack.Pop();
+
+        var handleNamespaceIdentifierResult = model.SyntaxStack.Pop();
+
+        if (handleNamespaceIdentifierResult.SyntaxKind == SyntaxKind.EmptyNode)
+        {
+            model.DiagnosticBag.ReportTodoException(keywordToken.TextSpan, "Expected a namespace identifier.");
+            return;
+        }
+        var namespaceIdentifier = (IdentifierToken)handleNamespaceIdentifierResult;
 
         var boundUsingStatementNode = model.Binder.BindUsingStatementNode(
             keywordToken,
@@ -1798,14 +1812,18 @@ public static class SyntaxApi
     {
         var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         HandleNamespaceIdentifier(model);
-        var namespaceIdentifier = (IdentifierToken)model.SyntaxStack.Pop();
+
+        var handleNamespaceIdentifierResult = model.SyntaxStack.Pop();
+
+        if (handleNamespaceIdentifierResult.SyntaxKind == SyntaxKind.EmptyNode)
+        {
+            model.DiagnosticBag.ReportTodoException(keywordToken.TextSpan, "Expected a namespace identifier.");
+            return;
+        }
+        var namespaceIdentifier = (IdentifierToken)handleNamespaceIdentifierResult;
 
         if (model.FinalizeNamespaceFileScopeCodeBlockNodeAction is not null)
-        {
-            throw new NotImplementedException(
-                "Need to add logic to report diagnostic when there is" +
-                " already a file scoped namespace.");
-        }
+            model.DiagnosticBag.ReportTodoException(keywordToken.TextSpan, "Need to add logic to report diagnostic when there is already a file scoped namespace.");
 
         var namespaceStatementNode = new NamespaceStatementNode(
             keywordToken,
@@ -2148,7 +2166,7 @@ public static class SyntaxApi
 
             model.SyntaxStack.Push(new FunctionDefinitionNode(
                 functionDefinitionNode.ReturnTypeClauseNode,
-                functionDefinitionNode.FunctionIdentifier,
+                functionDefinitionNode.FunctionIdentifierToken,
                 functionDefinitionNode.GenericArgumentsListingNode,
                 functionDefinitionNode.FunctionArgumentsListingNode,
                 functionDefinitionNode.FunctionBodyCodeBlockNode,
@@ -2156,7 +2174,7 @@ public static class SyntaxApi
         }
         else
         {
-            throw new NotImplementedException();
+            model.DiagnosticBag.ReportTodoException(whereKeywordContextualToken.TextSpan, nameof(HandleWhereTokenContextualKeyword));
         }
     }
 

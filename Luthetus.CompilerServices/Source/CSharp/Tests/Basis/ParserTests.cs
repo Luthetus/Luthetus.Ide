@@ -427,7 +427,7 @@ public class ParserTests
 			functionDefinitionNode.ReturnTypeClauseNode.ValueType);
 
 		Assert.Equal(functionName,
-			functionDefinitionNode.FunctionIdentifier.TextSpan.GetText());
+			functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText());
 
 		Assert.Null(functionDefinitionNode.GenericArgumentsListingNode);
 		Assert.NotNull(functionDefinitionNode.FunctionArgumentsListingNode);

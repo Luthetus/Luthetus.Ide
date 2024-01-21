@@ -110,9 +110,9 @@ public class CSharpBinder : IBinder
 
     public void BindFunctionDefinitionNode(FunctionDefinitionNode functionDefinitionNode)
     {
-        var functionIdentifierText = functionDefinitionNode.FunctionIdentifier.TextSpan.GetText();
+        var functionIdentifierText = functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText();
 
-        var functionSymbol = new FunctionSymbol(functionDefinitionNode.FunctionIdentifier.TextSpan with
+        var functionSymbol = new FunctionSymbol(functionDefinitionNode.FunctionIdentifierToken.TextSpan with
         {
             DecorationByte = (byte)GenericDecorationKind.Function
         });
@@ -124,7 +124,7 @@ public class CSharpBinder : IBinder
                 functionDefinitionNode))
         {
             _diagnosticBag.ReportAlreadyDefinedFunction(
-                functionDefinitionNode.FunctionIdentifier.TextSpan,
+                functionDefinitionNode.FunctionIdentifierToken.TextSpan,
                 functionIdentifierText);
         }
     }
@@ -502,7 +502,7 @@ public class CSharpBinder : IBinder
                      boundScope)
                  && functionDefinitionNode is not null)
         {
-            return functionDefinitionNode.FunctionIdentifier.TextSpan;
+            return functionDefinitionNode.FunctionIdentifierToken.TextSpan;
         }
         else if (TryGetTypeDefinitionHierarchically(
                      textSpan.GetText(),

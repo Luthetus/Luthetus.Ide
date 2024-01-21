@@ -54,6 +54,13 @@ public class TokenApiTests
     [Fact]
     public void ParsePreprocessorDirectiveToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"#";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 
@@ -89,7 +96,24 @@ public class TokenApiTests
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        var typeDefinitionNode = (TypeDefinitionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        Assert.IsType<TypeDefinitionNode>(typeDefinitionNode);
+
+        var genericArgumentsListNode = typeDefinitionNode.GenericArgumentsListingNode;
+        Assert.NotNull(genericArgumentsListNode);
+        Assert.Equal(2, genericArgumentsListNode.GenericArgumentEntryNodeList.Length);
+
+        // First generic argument
+        {
+            var genericArgumentEntryNode = genericArgumentsListNode.GenericArgumentEntryNodeList[0];
+            Assert.Equal("T", genericArgumentEntryNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+        }
+
+        // Second generic argument
+        {
+            var genericArgumentEntryNode = genericArgumentsListNode.GenericArgumentEntryNodeList[1];
+            Assert.Equal("U", genericArgumentEntryNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+        }
     }
 
     /// <summary>
@@ -99,13 +123,28 @@ public class TokenApiTests
     public void ParseIdentifierToken_TryParseGenericParameters()
     {
         var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "Dictionary<string, int> map = new Dictionary<string, int>();";
+        var sourceText = "Dictionary<string, int> map;";
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        var variableDeclarationNode = (VariableDeclarationNode)compilationUnit.RootCodeBlockNode.ChildList[0];
+
+        var genericParametersListingNode = variableDeclarationNode.TypeClauseNode.GenericParametersListingNode;
+        Assert.NotNull(genericParametersListingNode);
+
+        // First generic parameter
+        {
+            var genericParameterEntryNode = genericParametersListingNode.GenericParameterEntryNodeList[0];
+            Assert.Equal("string", genericParameterEntryNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+        }
+
+        // Second generic parameter
+        {
+            var genericParameterEntryNode = genericParametersListingNode.GenericParameterEntryNodeList[1];
+            Assert.Equal("int", genericParameterEntryNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+        }
     }
 
     /// <summary>
@@ -126,7 +165,14 @@ public class TokenApiTests
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        var typeDefinitionNode = (TypeDefinitionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        
+        var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.TypeBodyCodeBlockNode!.ChildList.Single();
+
+        Assert.Equal("MyClass", constructorDefinitionNode.ReturnTypeClauseNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Equal("MyClass", constructorDefinitionNode.FunctionIdentifier.TextSpan.GetText());
+        Assert.Empty(constructorDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
+        Assert.Empty(constructorDefinitionNode.FunctionBodyCodeBlockNode!.ChildList);
     }
 
     /// <summary>
@@ -144,7 +190,12 @@ public class TokenApiTests
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        var functionDefinitionNode = (FunctionDefinitionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+
+        Assert.Equal("string", functionDefinitionNode.ReturnTypeClauseNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Equal("MyMethod", functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText());
+        Assert.Empty(functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
+        Assert.Empty(functionDefinitionNode.FunctionBodyCodeBlockNode!.ChildList);
     }
 
     /// <summary>
@@ -160,7 +211,28 @@ public class TokenApiTests
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        var variableDeclarationNode = (VariableDeclarationNode)compilationUnit.RootCodeBlockNode.ChildList[0];
+        var variableReferenceNode = (VariableReferenceNode)compilationUnit.RootCodeBlockNode.ChildList[1];
+
+        // Compare with the separate VariableDeclarationNode
+        {
+            Assert.Equal("x", variableDeclarationNode.IdentifierToken.TextSpan.GetText());
+            Assert.Equal("x", variableReferenceNode.VariableIdentifierToken.TextSpan.GetText());
+
+            Assert.Equal(
+                variableDeclarationNode.IdentifierToken.TextSpan.GetText(),
+                variableReferenceNode.VariableIdentifierToken.TextSpan.GetText());
+        }
+
+        // Compare with the matched VariableDeclarationNode
+        {
+            Assert.Equal("x", variableReferenceNode.VariableDeclarationNode.IdentifierToken.TextSpan.GetText());
+            Assert.Equal("x", variableReferenceNode.VariableIdentifierToken.TextSpan.GetText());
+
+            Assert.Equal(
+                variableReferenceNode.VariableDeclarationNode.IdentifierToken.TextSpan.GetText(),
+                variableReferenceNode.VariableIdentifierToken.TextSpan.GetText());
+        }
     }
 
     /// <summary>
@@ -176,7 +248,18 @@ public class TokenApiTests
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        var variableDeclarationNode = (VariableDeclarationNode)compilationUnit.RootCodeBlockNode.ChildList[0];
+        var variableAssignmentNode = (VariableAssignmentExpressionNode)compilationUnit.RootCodeBlockNode.ChildList[1];
+
+        Assert.Equal("x", variableDeclarationNode.IdentifierToken.TextSpan.GetText());
+        Assert.Equal("x", variableAssignmentNode.VariableIdentifierToken.TextSpan.GetText());
+
+        Assert.Equal(
+            variableDeclarationNode.IdentifierToken.TextSpan.GetText(),
+            variableAssignmentNode.VariableIdentifierToken.TextSpan.GetText());
+
+        var literalExpressionNode = (LiteralExpressionNode)variableAssignmentNode.ExpressionNode;
+        Assert.Equal(typeof(int), literalExpressionNode.ResultTypeClauseNode.ValueType);
     }
 
     /// <summary>
@@ -197,7 +280,16 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+
+        var functionDefinitionNode = (FunctionDefinitionNode)compilationUnit.RootCodeBlockNode.ChildList[0];
+        Assert.IsType<FunctionDefinitionNode>(functionDefinitionNode);
+
+        var functionInvocationNode = (FunctionInvocationNode)compilationUnit.RootCodeBlockNode.ChildList[1];
+        Assert.Equal("Clone", functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.GetText());
+
+        var genericParameterEntryNode = functionInvocationNode.GenericParametersListingNode!.GenericParameterEntryNodeList.Single();
+        Assert.Equal("int", genericParameterEntryNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Equal(typeof(int), genericParameterEntryNode.TypeClauseNode.ValueType);
     }
 
     /// <summary>
@@ -215,7 +307,14 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+
+        var functionDefinitionNode = (FunctionDefinitionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        Assert.Equal("void", functionDefinitionNode.ReturnTypeClauseNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Equal(typeof(void), functionDefinitionNode.ReturnTypeClauseNode.ValueType);
+        Assert.Equal("MyMethod", functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText());
+        Assert.Null(functionDefinitionNode.GenericArgumentsListingNode);
+        Assert.Empty(functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
+        Assert.Empty(functionDefinitionNode.FunctionBodyCodeBlockNode!.ChildList);
     }
 
     /// <summary>
@@ -231,7 +330,11 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+
+        var variableDeclarationNode = (VariableDeclarationNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        Assert.Equal("int", variableDeclarationNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Equal(typeof(int), variableDeclarationNode.TypeClauseNode.ValueType);
+        Assert.Equal("x", variableDeclarationNode.IdentifierToken.TextSpan.GetText());
     }
 
     /// <summary>
@@ -256,7 +359,8 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
     }
 
     /// <summary>
@@ -272,7 +376,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
     }
 
     /// <summary>
@@ -288,7 +392,8 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
     }
 
     /// <summary>
@@ -304,7 +409,8 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
     }
 
     /// <summary>
@@ -320,7 +426,8 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
     }
 
     /// <summary>
@@ -336,7 +443,8 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        Assert.Single(compilationUnit.DiagnosticsList);
+        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
     }
 
     /// <summary>
@@ -352,7 +460,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
     }
 
     /// <summary>
@@ -368,7 +476,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
     }
 
     /// <summary>
@@ -384,7 +492,8 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
     }
 
     /// <summary>
@@ -400,7 +509,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
     }
 
     /// <summary>
@@ -416,7 +525,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
     }
 
     /// <summary>
@@ -432,7 +541,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
     }
 
     /// <summary>
@@ -448,7 +557,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
     }
 
     /// <summary>
@@ -464,7 +573,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
     }
 
     /// <summary>
@@ -480,7 +589,8 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        Assert.NotEmpty(compilationUnit.DiagnosticsList);
+        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
     }
 
     /// <summary>
@@ -496,7 +606,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
     }
 
     /// <summary>
@@ -505,14 +615,20 @@ Clone<int>(3);";
     [Fact]
     public void ParseKeywordToken()
     {
-        var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = @"public";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
+        foreach (var keywordToken in CSharpKeywords.NON_CONTEXTUAL_KEYWORDS)
+        {
+            var resourceUri = new ResourceUri("./unitTesting.txt");
+            var sourceText = keywordToken;
+            var lexer = new CSharpLexer(resourceUri, sourceText);
+            lexer.Lex();
+            var parser = new CSharpParser(lexer);
 
-        var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+            var compilationUnit = parser.Parse();
+        }
+
+        // This test (for now) only serves to ensure typing a
+        // keyword and nothing else will NOT throw an exception.
+        Assert.True(true);
     }
 
     /// <summary>
@@ -521,13 +637,16 @@ Clone<int>(3);";
     [Fact]
     public void ParseKeywordContextualToken()
     {
-        var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = @"var";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
+        foreach (var keywordContextualToken in CSharpKeywords.CONTEXTUAL_KEYWORDS)
+        {
+            var resourceUri = new ResourceUri("./unitTesting.txt");
+            var sourceText = keywordContextualToken;
+            var lexer = new CSharpLexer(resourceUri, sourceText);
+            lexer.Lex();
+            var parser = new CSharpParser(lexer);
 
-        var compilationUnit = parser.Parse();
-        throw new NotImplementedException();
+            var compilationUnit = parser.Parse();
+            Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
+        }
     }
 }

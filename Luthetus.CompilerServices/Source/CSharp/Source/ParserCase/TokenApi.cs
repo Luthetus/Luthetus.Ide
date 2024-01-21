@@ -277,8 +277,8 @@ public static class TokenApi
     private static bool TryParseVariableDeclaration(ParserModel model)
     {
         GenericArgumentsListingNode? genericArgumentsListingNode =
-            model.SyntaxStack.Peek() is GenericArgumentsListingNode temporaryNode
-                ? temporaryNode
+            model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.GenericArgumentsListingNode
+                ? (GenericArgumentsListingNode)model.SyntaxStack.Pop()
                 : null;
 
         var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
@@ -371,33 +371,20 @@ public static class TokenApi
     public static void ParsePlusToken(ParserModel model)
     {
         var plusToken = (PlusToken)model.SyntaxStack.Pop();
-        var localNodeRecent = model.SyntaxStack.Pop();
 
-        if (localNodeRecent is not IExpressionNode leftExpressionNode)
-            throw new NotImplementedException();
-
+        // The handle expression won't see this token unless backtracked.
+        model.TokenWalker.Backtrack();
         SyntaxApi.HandleExpression(
             null,
             null,
             null,
             null,
             null,
-            null, 
+            null,
             model);
 
-        var rightExpressionNode = (IExpressionNode)model.SyntaxStack.Pop();
-
-        var binaryOperatorNode = model.Binder.BindBinaryOperatorNode(
-            leftExpressionNode,
-            plusToken,
-            rightExpressionNode);
-
-        var binaryExpressionNode = new BinaryExpressionNode(
-            leftExpressionNode,
-            binaryOperatorNode,
-            rightExpressionNode);
-
-        model.SyntaxStack.Push(binaryExpressionNode);
+        model.CurrentCodeBlockBuilder.ChildList.Add(
+            (IExpressionNode)model.SyntaxStack.Pop());
     }
 
     public static void ParsePlusPlusToken(ParserModel model)
@@ -425,6 +412,8 @@ public static class TokenApi
     {
         var minusToken = (MinusToken)model.SyntaxStack.Pop();
 
+        // The handle expression won't see this token unless backtracked.
+        model.TokenWalker.Backtrack();
         SyntaxApi.HandleExpression(
             null,
             null,
@@ -433,12 +422,17 @@ public static class TokenApi
             null,
             null, 
             model);
+
+        model.CurrentCodeBlockBuilder.ChildList.Add(
+            (IExpressionNode)model.SyntaxStack.Pop());
     }
 
     public static void ParseStarToken(ParserModel model)
     {
         var starToken = (StarToken)model.SyntaxStack.Pop();
 
+        // The handle expression won't see this token unless backtracked.
+        model.TokenWalker.Backtrack();
         SyntaxApi.HandleExpression(
             null,
             null,
@@ -447,6 +441,9 @@ public static class TokenApi
             null,
             null, 
             model);
+
+        model.CurrentCodeBlockBuilder.ChildList.Add(
+            (IExpressionNode)model.SyntaxStack.Pop());
     }
 
     public static void ParseDollarSignToken(ParserModel model)
@@ -464,9 +461,8 @@ public static class TokenApi
             null, 
             model);
 
-        var completeExpression = (IExpressionNode)model.SyntaxStack.Pop();
-
-        model.CurrentCodeBlockBuilder.ChildList.Add(completeExpression);
+        model.CurrentCodeBlockBuilder.ChildList.Add(
+            (IExpressionNode)model.SyntaxStack.Pop());
     }
 
     public static void ParseColonToken(ParserModel model)
@@ -489,7 +485,7 @@ public static class TokenApi
         }
         else
         {
-            throw new NotImplementedException();
+            model.DiagnosticBag.ReportTodoException(colonToken.TextSpan, "Colon is in unexpected place.");
         }
     }
 
@@ -548,7 +544,7 @@ public static class TokenApi
             {
                 functionDefinitionNode = new FunctionDefinitionNode(
                     functionDefinitionNode.ReturnTypeClauseNode,
-                    functionDefinitionNode.FunctionIdentifier,
+                    functionDefinitionNode.FunctionIdentifierToken,
                     functionDefinitionNode.GenericArgumentsListingNode,
                     functionDefinitionNode.FunctionArgumentsListingNode,
                     codeBlockNode,
@@ -748,21 +744,33 @@ public static class TokenApi
     {
         var memberAccessToken = (MemberAccessToken)model.SyntaxStack.Pop();
 
-        if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.EmptyNode)
-            throw new NotImplementedException($"_cSharpParser._handle.Handle the case where a {nameof(MemberAccessToken)} is used without a valid preceeding node.");
+        var isMemberAccessToken = true;
 
-        switch (model.SyntaxStack.Peek().SyntaxKind)
+        if (model.SyntaxStack.TryPeek(out var syntax) && syntax is not null)
         {
-            case SyntaxKind.VariableReferenceNode:
-                var variableReferenceNode = (VariableReferenceNode)model.SyntaxStack.Pop();
+            switch (model.SyntaxStack.Peek().SyntaxKind)
+            {
+                case SyntaxKind.VariableReferenceNode:
+                    var variableReferenceNode = (VariableReferenceNode)model.SyntaxStack.Pop();
 
-                if (variableReferenceNode.VariableDeclarationNode.IsFabricated)
-                {
-                    // Undeclared variable, so the Type is unknown.
-                }
+                    if (variableReferenceNode.VariableDeclarationNode.IsFabricated)
+                    {
+                        // Undeclared variable, so the Type is unknown.
+                    }
 
-                break;
+                    break;
+                default:
+                    isMemberAccessToken = false;
+                    break;
+            }
         }
+        else
+        {
+            isMemberAccessToken = false;
+        }
+
+        if (!isMemberAccessToken)
+            model.DiagnosticBag.ReportTodoException(memberAccessToken.TextSpan, "MemberAccessToken needs further implementation.");
     }
 
     public static void StatementDelimiterToken(ParserModel model)

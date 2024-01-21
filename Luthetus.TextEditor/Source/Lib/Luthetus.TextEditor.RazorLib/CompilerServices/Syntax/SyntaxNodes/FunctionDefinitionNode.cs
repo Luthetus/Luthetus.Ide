@@ -7,14 +7,14 @@ public sealed record FunctionDefinitionNode : ISyntaxNode
 {
     public FunctionDefinitionNode(
         TypeClauseNode returnTypeClauseNode,
-        IdentifierToken functionIdentifier,
+        IdentifierToken functionIdentifierToken,
         GenericArgumentsListingNode? genericArgumentsListingNode,
         FunctionArgumentsListingNode functionArgumentsListingNode,
         CodeBlockNode? functionBodyCodeBlockNode,
         ConstraintNode? constraintNode)
     {
         ReturnTypeClauseNode = returnTypeClauseNode;
-        FunctionIdentifier = functionIdentifier;
+        FunctionIdentifierToken = functionIdentifierToken;
         GenericArgumentsListingNode = genericArgumentsListingNode;
         FunctionArgumentsListingNode = functionArgumentsListingNode;
         FunctionBodyCodeBlockNode = functionBodyCodeBlockNode;
@@ -23,7 +23,7 @@ public sealed record FunctionDefinitionNode : ISyntaxNode
         var children = new List<ISyntax>
         {
             ReturnTypeClauseNode,
-            FunctionIdentifier,
+            FunctionIdentifierToken,
         };
 
         if (GenericArgumentsListingNode is not null)
@@ -41,7 +41,7 @@ public sealed record FunctionDefinitionNode : ISyntaxNode
     }
 
     public TypeClauseNode ReturnTypeClauseNode { get; }
-    public IdentifierToken FunctionIdentifier { get; }
+    public IdentifierToken FunctionIdentifierToken { get; }
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
     public CodeBlockNode? FunctionBodyCodeBlockNode { get; }
