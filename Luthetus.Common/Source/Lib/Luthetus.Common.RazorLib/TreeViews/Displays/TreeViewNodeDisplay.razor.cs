@@ -103,7 +103,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
             	"TreeView.HandleExpansionChevronOnMouseDown",
 				async () => 
 				{
-					await localTreeViewNoType.LoadChildListAsync();
+					await localTreeViewNoType.LoadChildListAsync().ConfigureAwait(false);
 	                TreeViewService.ReRenderNode(TreeViewContainer.Key, localTreeViewNoType);
 				});
         }
