@@ -5,7 +5,11 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis;
 
-public class BinderTests
+/// <summary>
+/// <see cref="Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.BinderCase.CSharpBinderTests"/>
+/// for tests that are intended to be "1 to 1" foreach public API on the <see cref="CSharp.BinderCase.CSharpBinder"/>
+/// </summary>
+public class CustomBinderTests
 {
     [Fact]
     public void NamespaceGroupNode_FileScoped()

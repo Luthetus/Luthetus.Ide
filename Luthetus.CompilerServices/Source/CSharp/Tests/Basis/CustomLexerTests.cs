@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis;
 
-public class LexerTests
+public class CustomLexerTests
 {
 	[Fact]
 	public void LEX_ArraySyntaxToken()

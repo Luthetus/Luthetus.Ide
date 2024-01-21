@@ -4,6 +4,8 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expressio
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using System.Collections.Immutable;
+using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase;
 
