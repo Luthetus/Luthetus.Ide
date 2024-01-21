@@ -743,8 +743,9 @@ public static class TokenApi
     public static void ParseMemberAccessToken(ParserModel model)
     {
         var memberAccessToken = (MemberAccessToken)model.SyntaxStack.Pop();
+        model.SyntaxStack.Push(memberAccessToken);
 
-        var isMemberAccessToken = true;
+        var isValidMemberAccessToken = true;
 
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax is not null)
         {
@@ -759,17 +760,14 @@ public static class TokenApi
                     }
 
                     break;
-                default:
-                    isMemberAccessToken = false;
-                    break;
             }
         }
         else
         {
-            isMemberAccessToken = false;
+            isValidMemberAccessToken = false;
         }
 
-        if (!isMemberAccessToken)
+        if (!isValidMemberAccessToken)
             model.DiagnosticBag.ReportTodoException(memberAccessToken.TextSpan, "MemberAccessToken needs further implementation.");
     }
 

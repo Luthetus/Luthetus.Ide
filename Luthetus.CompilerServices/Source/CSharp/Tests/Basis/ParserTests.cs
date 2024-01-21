@@ -2527,19 +2527,22 @@ public class ParserTests
 	}
 
     [Fact]
-    public void DELETE_THIS_TEST()
+    public void DELETE_THIS_TEST_A()
 	{
         var resourceUri = new ResourceUri("UnitTests");
-        var sourceText = @"namespace ConsoleApp1.Persons;
+        var sourceText = @"Console.WriteLine(""Hello World"");";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
 
-public class Person
-{
-	public void MyMethod()
-	{
-		Person person = new Person();
-	}
-}
-";
+    [Fact]
+    public void DELETE_THIS_TEST_B()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"public void MyMethod() { }";
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
