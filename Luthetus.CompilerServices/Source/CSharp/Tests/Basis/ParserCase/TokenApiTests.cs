@@ -1,4 +1,8 @@
-﻿using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
+﻿using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
+using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase;
 
@@ -13,6 +17,13 @@ public class TokenApiTests
     [Fact]
     public void ParseNumericLiteralToken()
     {
+        var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = "1";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
         throw new NotImplementedException();
     }
 

@@ -25,6 +25,7 @@ public class CSharpParserTests
         var resourceUri = new ResourceUri("./unitTesting.txt");
         var sourceText = "public class MyClass { }";
         var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
         var parser = new CSharpParser(lexer);
 
         Assert.Equal(ImmutableArray<TextEditorDiagnostic>.Empty, parser.DiagnosticsList);
@@ -45,12 +46,13 @@ public class CSharpParserTests
             var resourceUri = new ResourceUri("./unitTesting.txt");
             var sourceText = "public class MyClass { }";
             var lexer = new CSharpLexer(resourceUri, sourceText);
+            lexer.Lex();
             var parser = new CSharpParser(lexer);
 
             // Parse, then assert there were NO diagnostics.
             // This presumes that the sourceText variable is valid C#
-            parser.Parse();
-            Assert.Empty(parser.DiagnosticsList);
+            var compilationUnit = parser.Parse();
+            Assert.Empty(compilationUnit.DiagnosticsList);
         }
         
         // With diagnostics
@@ -58,12 +60,13 @@ public class CSharpParserTests
             var resourceUri = new ResourceUri("./unitTesting.txt");
             var sourceText = "MyMethod()"; // MyMethod should be undefined
             var lexer = new CSharpLexer(resourceUri, sourceText);
+            lexer.Lex();
             var parser = new CSharpParser(lexer);
 
             // Parse, then assert there were diagnostics.
             // This presumes that the sourceText variable is NOT-valid C#
-            parser.Parse();
-            Assert.NotEmpty(parser.DiagnosticsList);
+            var compilationUnit = parser.Parse();
+            Assert.NotEmpty(compilationUnit.DiagnosticsList);
         }
     }
 
@@ -76,6 +79,62 @@ public class CSharpParserTests
     [Fact]
     public void Parse_B()
     {
-        throw new NotImplementedException();
+        // No diagnostics
+        {
+            var binder = new CSharpBinder();
+
+            // Define 'MyMethod()' at the global scope.
+            {
+                var resourceUri = new ResourceUri("./unitTesting.txt");
+                var sourceText = "public void MyMethod() { }";
+                var lexer = new CSharpLexer(resourceUri, sourceText);
+                lexer.Lex();
+                var parser = new CSharpParser(lexer);
+
+                var compilationUnit = parser.Parse(binder, resourceUri);
+                Assert.Empty(compilationUnit.DiagnosticsList);
+            }
+
+            // Invoke 'MyMethod()' from from the global scope definition.
+            {
+                var resourceUri = new ResourceUri("./unitTesting.txt");
+                var sourceText = "MyMethod()";
+                var lexer = new CSharpLexer(resourceUri, sourceText);
+                lexer.Lex();
+                var parser = new CSharpParser(lexer);
+
+                var compilationUnit = parser.Parse(binder, resourceUri);
+                Assert.Empty(compilationUnit.DiagnosticsList);
+            }
+        }
+
+        // With diagnostics
+        {
+            var binder = new CSharpBinder();
+
+            // Define 'SomeOtherMethod()' at the global scope.
+            {
+                var resourceUri = new ResourceUri("./unitTesting.txt");
+                var sourceText = "public void SomeOtherMethod() { }";
+                var lexer = new CSharpLexer(resourceUri, sourceText);
+                lexer.Lex();
+                var parser = new CSharpParser(lexer);
+
+                var compilationUnit = parser.Parse(binder, resourceUri);
+                Assert.Empty(compilationUnit.DiagnosticsList);
+            }
+
+            // Invoke 'MyMethod()', which is undefined.
+            {
+                var resourceUri = new ResourceUri("./unitTesting.txt");
+                var sourceText = "MyMethod()";
+                var lexer = new CSharpLexer(resourceUri, sourceText);
+                lexer.Lex();
+                var parser = new CSharpParser(lexer);
+
+                var compilationUnit = parser.Parse(binder, resourceUri);
+                Assert.NotEmpty(compilationUnit.DiagnosticsList);
+            }
+        }
     }
 }

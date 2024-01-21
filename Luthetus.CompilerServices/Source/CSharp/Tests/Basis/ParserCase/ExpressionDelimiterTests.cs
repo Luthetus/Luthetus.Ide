@@ -1,5 +1,7 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase;
 
@@ -10,46 +12,30 @@ public class ExpressionDelimiterTests
 {
     /// <summary>
     /// <see cref="ExpressionDelimiter(SyntaxKind?, SyntaxKind, ISyntaxToken?, ISyntaxToken?)"/>
+    /// <br/>----<br/>
+    /// <see cref="ExpressionDelimiter.OpenSyntaxKind"/>
+    /// <see cref="ExpressionDelimiter.CloseSyntaxKind"/>
+    /// <see cref="ExpressionDelimiter.OpenSyntaxToken"/>
+    /// <see cref="ExpressionDelimiter.CloseSyntaxToken"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
-    }
+        var openSyntaxKind = SyntaxKind.OpenParenthesisToken;
+        var closeSyntaxKind = SyntaxKind.CloseParenthesisToken;
 
-    /// <summary>
-    /// <see cref="ExpressionDelimiter.OpenSyntaxKind"/>
-    /// </summary>
-    [Fact]
-    public void OpenSyntaxKind()
-    {
-        throw new NotImplementedException();
-    }
+        var openParenthesisToken = new OpenParenthesisToken(TextEditorTextSpan.FabricateTextSpan("("));
+        var closeParenthesisToken = new OpenParenthesisToken(TextEditorTextSpan.FabricateTextSpan(")"));
 
-    /// <summary>
-    /// <see cref="ExpressionDelimiter.CloseSyntaxKind"/>
-    /// </summary>
-    [Fact]
-    public void CloseSyntaxKind()
-    {
-        throw new NotImplementedException();
-    }
+        var expressionDelimiter = new ExpressionDelimiter(
+            openSyntaxKind,
+            closeSyntaxKind,
+            openParenthesisToken,
+            closeParenthesisToken);
 
-    /// <summary>
-    /// <see cref="ExpressionDelimiter.OpenSyntaxToken"/>
-    /// </summary>
-    [Fact]
-    public void OpenSyntaxToken()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ExpressionDelimiter.CloseSyntaxToken"/>
-    /// </summary>
-    [Fact]
-    public void CloseSyntaxToken()
-    {
-        throw new NotImplementedException();
+        Assert.Equal(openSyntaxKind, expressionDelimiter.OpenSyntaxKind);
+        Assert.Equal(closeSyntaxKind, expressionDelimiter.CloseSyntaxKind);
+        Assert.Equal(openParenthesisToken, expressionDelimiter.OpenSyntaxToken);
+        Assert.Equal(closeParenthesisToken, expressionDelimiter.CloseSyntaxToken);
     }
 }
