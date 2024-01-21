@@ -35,31 +35,39 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     "ABCDEFK",
                     "Before");
 
-                TextEditorService.ModelApi.RegisterPresentationModel(
-                    InResourceUri,
-                    DiffPresentationFacts.EmptyInPresentationModel);
-                
-                TextEditorService.ModelApi.RegisterPresentationModel(
-                    InResourceUri,
-                    DiffPresentationFacts.EmptyOutPresentationModel);
-
                 TextEditorService.ViewModelApi.Register(
                     InViewModelKey,
                     InResourceUri);
 
-                var presentationKeys = new[]
-                {
-                    DiffPresentationFacts.InPresentationKey,
-                };
-
                 TextEditorService.Post(
-                    nameof(GitChangesDisplay),
-                    TextEditorService.ViewModelApi.WithValueFactory(
-                        InViewModelKey,
-                        textEditorViewModel => textEditorViewModel with
+                    nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
+                    async editContext =>
+                    {
+                        await TextEditorService.ModelApi.AddPresentationModelFactory(
+                                InResourceUri,
+                                DiffPresentationFacts.EmptyInPresentationModel)
+                            .Invoke(editContext);
+
+                        await TextEditorService.ModelApi.AddPresentationModelFactory(
+                                InResourceUri,
+                                DiffPresentationFacts.EmptyOutPresentationModel)
+                            .Invoke(editContext);
+
+                        var viewModelModifier = editContext.GetViewModelModifier(InViewModelKey);
+
+                        if (viewModelModifier is null)
+                            return;
+
+                        var presentationKeys = new[]
+                        {
+                            DiffPresentationFacts.InPresentationKey,
+                        };
+
+                        viewModelModifier.ViewModel = viewModelModifier.ViewModel with
                         {
                             FirstPresentationLayerKeysList = presentationKeys.ToImmutableList()
-                        }));
+                        };
+                    });
             }
             
             // "Out" Registrations
@@ -71,31 +79,39 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     "BHDEFCK",
                     "After");
 
-                TextEditorService.ModelApi.RegisterPresentationModel(
-                    OutResourceUri,
-                    DiffPresentationFacts.EmptyInPresentationModel);
-
-                TextEditorService.ModelApi.RegisterPresentationModel(
-                    OutResourceUri,
-                    DiffPresentationFacts.EmptyOutPresentationModel);
-
                 TextEditorService.ViewModelApi.Register(
                     OutViewModelKey,
                     OutResourceUri);
 
-                var presentationKeys = new[]
-                {
-                    DiffPresentationFacts.OutPresentationKey,
-                };
-
                 TextEditorService.Post(
-                    nameof(TextEditorService.ViewModelApi.WithValueFactory),
-                    TextEditorService.ViewModelApi.WithValueFactory(
-                        OutViewModelKey,
-                        textEditorViewModel => textEditorViewModel with
+                    nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
+                    async editContext =>
+                    {
+                        await TextEditorService.ModelApi.AddPresentationModelFactory(
+                                OutResourceUri,
+                                DiffPresentationFacts.EmptyInPresentationModel)
+                            .Invoke(editContext);
+
+                        await TextEditorService.ModelApi.AddPresentationModelFactory(
+                                OutResourceUri,
+                                DiffPresentationFacts.EmptyOutPresentationModel)
+                            .Invoke(editContext);
+
+                        var viewModelModifier = editContext.GetViewModelModifier(OutViewModelKey);
+
+                        if (viewModelModifier is null)
+                            return;
+
+                        var presentationKeys = new[]
+                        {
+                            DiffPresentationFacts.OutPresentationKey,
+                        };
+
+                        viewModelModifier.ViewModel = viewModelModifier.ViewModel with
                         {
                             FirstPresentationLayerKeysList = presentationKeys.ToImmutableList()
-                        }));
+                        };
+                    });
             }
 
             TextEditorService.DiffApi.Register(

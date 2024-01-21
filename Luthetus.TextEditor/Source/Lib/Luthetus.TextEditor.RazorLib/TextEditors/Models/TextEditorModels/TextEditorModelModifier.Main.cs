@@ -326,11 +326,8 @@ public partial class TextEditorModelModifier
 
                 foreach (var presentationModel in PresentationModelsList)
                 {
-                    if (presentationModel.CompletedCalculation is not null)
-                        presentationModel.CompletedCalculation.TextModificationsSinceRequestList.Add(textModification);
-
-                    if (presentationModel.PendingCalculation is not null)
-                        presentationModel.PendingCalculation.TextModificationsSinceRequestList.Add(textModification);
+                    presentationModel.CompletedCalculation?.TextModificationsSinceRequestList.Add(textModification);
+                    presentationModel.PendingCalculation?.TextModificationsSinceRequestList.Add(textModification);
                 }
             }
         }
@@ -596,15 +593,8 @@ public partial class TextEditorModelModifier
 
                 foreach (var presentationModel in PresentationModelsList)
                 {
-                    if (presentationModel.CompletedCalculation is not null)
-                    {
-                        presentationModel.CompletedCalculation.TextModificationsSinceRequestList.Add(textModification);
-                    }
-
-                    if (presentationModel.PendingCalculation is not null)
-                    {
-                        presentationModel.PendingCalculation.TextModificationsSinceRequestList.Add(textModification);
-                    }
+                    presentationModel.CompletedCalculation?.TextModificationsSinceRequestList.Add(textModification);
+                    presentationModel.PendingCalculation?.TextModificationsSinceRequestList.Add(textModification);
                 }
             }
         }

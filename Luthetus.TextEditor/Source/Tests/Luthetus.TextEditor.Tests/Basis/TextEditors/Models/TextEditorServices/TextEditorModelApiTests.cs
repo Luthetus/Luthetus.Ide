@@ -489,10 +489,10 @@ public class TextEditorModelApiTests
         textEditorService.Post(
             nameof(textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory),
             textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory(
-            inModel.ResourceUri,
-            cursorModifierBag,
-            MotionKind.Backspace,
-            CancellationToken.None));
+                inModel.ResourceUri,
+                cursorModifierBag,
+                MotionKind.Backspace,
+                CancellationToken.None));
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(expectedContent, outModel!.GetAllText());
@@ -534,7 +534,7 @@ public class TextEditorModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.RegisterPresentationModel(ResourceUri, TextEditorPresentationModel)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.AddPresentationModelFactory(ResourceUri, TextEditorPresentationModel)"/>
     /// </summary>
     [Fact]
     public void RegisterPresentationModel()
@@ -546,8 +546,10 @@ public class TextEditorModelApiTests
             out var serviceProvider);
 
         Assert.Empty(inModel!.PresentationModelsList);
-        
-        textEditorService.ModelApi.RegisterPresentationModel(inModel.ResourceUri, DiffPresentationFacts.EmptyOutPresentationModel);
+
+        textEditorService.Post(
+            nameof(textEditorService.ModelApi.AddPresentationModelFactory),
+            textEditorService.ModelApi.AddPresentationModelFactory(inModel.ResourceUri, DiffPresentationFacts.EmptyOutPresentationModel));
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.NotEmpty(outModel!.PresentationModelsList);
