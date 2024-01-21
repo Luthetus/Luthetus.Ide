@@ -217,7 +217,7 @@ public class CSharpCompilerService : ICompilerService
 
                 try
                 {
-                    // Even if the parser throughs an exception, be sure to
+                    // Even if the parser throws an exception, be sure to
                     // make use of the Lexer to do whatever syntax highlighting is possible.
                     var parser = new CSharpParser(lexer);
                     compilationUnit = parser.Parse(CSharpBinder, resourceUri);
