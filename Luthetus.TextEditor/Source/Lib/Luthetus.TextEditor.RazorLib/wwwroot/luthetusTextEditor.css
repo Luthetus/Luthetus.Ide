@@ -233,7 +233,7 @@
 }
 
 .luth_te_text-editor-caret-row {
-    border-width: 2px;
+    border-width: 1.5px;
     border-style: solid;
     border-color: var(--luth_te_text-editor-caret-row-border-color-no-focus-within-editor);
     border-left: none;
@@ -532,7 +532,7 @@
     --luth_te_text-editor-gutter-border-color: #28ae0c;
     --luth_te_text-editor-gutter-background-color: #F8F8EE;
     --luth_te_secondary-font-color: var(--luth_te_primary-font-color);
-    --luth_te_secondary-background-color: #e6e6e6;
+    --luth_te_secondary-background-color: #fefef6;
     --luth_te_primary-overlay-box-shadow-color: #000000;
     --luth_te_button-background-color: #b2d1ff;
     --luth_te_button-foreground-color: var(--luth_te_primary-font-color);
@@ -781,7 +781,7 @@
     --luth_te_text-editor-gutter-border-color: #28ae0c;
     --luth_te_text-editor-gutter-background-color: #F8F8EE;
     --luth_te_secondary-font-color: var(--luth_te_primary-font-color);
-    --luth_te_secondary-background-color: #e6e6e6;
+    --luth_te_secondary-background-color: #fefef6;
     --luth_te_primary-overlay-box-shadow-color: #000000;
     --luth_te_button-background-color: #b2d1ff;
     --luth_te_button-foreground-color: var(--luth_te_primary-font-color);
