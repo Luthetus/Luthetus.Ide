@@ -187,4 +187,11 @@ public partial class TreeViewNodeDisplay : ComponentBase
             ManuallyPropagateOnContextMenu(mouseEventArgs, TreeViewContainer, TreeViewNoType);
         }
     }
+
+    private string GetShowDefaultCursorCssClass(bool isExpandable)
+    {
+        return isExpandable
+            ? string.Empty
+            : "luth_tree-view-use-default-cursor";
+    }
 }
