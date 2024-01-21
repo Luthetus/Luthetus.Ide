@@ -165,7 +165,7 @@ public partial class EditorSync
                 viewModelKey,
                 textEditorModel.ResourceUri);
 
-            var presentationKeys = new[]
+            var lastPresentationKeys = new[]
             {
                 CompilerServiceDiagnosticPresentationFacts.PresentationKey,
             }.ToImmutableArray();
@@ -179,7 +179,7 @@ public partial class EditorSync
                         OnSaveRequested = HandleOnSaveRequested,
                         GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
                         ShouldSetFocusAfterNextRender = shouldSetFocusToEditor,
-                        FirstPresentationLayerKeysList = presentationKeys.ToImmutableList()
+                        LastPresentationLayerKeysList = lastPresentationKeys.ToImmutableList()
                     }));
         }
         else
