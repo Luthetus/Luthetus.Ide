@@ -163,9 +163,6 @@ public static class ParseTokens
                 genericArgumentsListingNode = (GenericArgumentsListingNode)model.SyntaxStack.Pop();
             }
 
-            if (genericArgumentsListingNode is not null)
-                model.SyntaxStack.Push(genericArgumentsListingNode);
-
             if (TryParseFunctionDefinition(
                 consumedIdentifierToken,
                 typeClauseNode,

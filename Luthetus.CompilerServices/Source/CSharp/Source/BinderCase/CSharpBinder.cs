@@ -139,7 +139,7 @@ public class CSharpBinder : IBinder
         var argumentTypeClauseNode = functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode;
 
         if (TryGetTypeDefinitionHierarchically(
-                argumentTypeClauseNode.TypeIdentifier.TextSpan.GetText(),
+                argumentTypeClauseNode.TypeIdentifierToken.TextSpan.GetText(),
                 out var typeDefinitionNode)
             || typeDefinitionNode is null)
         {
@@ -155,7 +155,7 @@ public class CSharpBinder : IBinder
         if (literalExpressionNode.ResultTypeClauseNode.ValueType is null ||
             literalExpressionNode.ResultTypeClauseNode.ValueType != functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.ValueType)
         {
-            var optionalArgumentTextSpan = functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.TypeIdentifier.TextSpan with
+            var optionalArgumentTextSpan = functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan with
             {
                 EndingIndexExclusive = functionArgumentEntryNode.VariableDeclarationNode.IdentifierToken.TextSpan.EndingIndexExclusive
             };
@@ -229,7 +229,7 @@ public class CSharpBinder : IBinder
 
     public InheritanceStatementNode BindInheritanceStatementNode(TypeClauseNode typeClauseNode)
     {
-        AddSymbolReference(new TypeSymbol(typeClauseNode.TypeIdentifier.TextSpan with
+        AddSymbolReference(new TypeSymbol(typeClauseNode.TypeIdentifierToken.TextSpan with
         {
             DecorationByte = (byte)GenericDecorationKind.Type
         }));
@@ -353,9 +353,9 @@ public class CSharpBinder : IBinder
 
     public TypeClauseNode BindTypeClauseNode(TypeClauseNode typeClauseNode)
     {
-        if (typeClauseNode.TypeIdentifier.SyntaxKind == SyntaxKind.IdentifierToken)
+        if (typeClauseNode.TypeIdentifierToken.SyntaxKind == SyntaxKind.IdentifierToken)
         {
-            var typeSymbol = new TypeSymbol(typeClauseNode.TypeIdentifier.TextSpan with
+            var typeSymbol = new TypeSymbol(typeClauseNode.TypeIdentifierToken.TextSpan with
             {
                 DecorationByte = (byte)GenericDecorationKind.Type
             });
@@ -364,12 +364,12 @@ public class CSharpBinder : IBinder
         }
 
         var matchingTypeDefintionNode = CSharpFacts.Types.TypeDefinitionNodes.SingleOrDefault(
-            x => x.TypeIdentifier.TextSpan.GetText() == typeClauseNode.TypeIdentifier.TextSpan.GetText());
+            x => x.TypeIdentifier.TextSpan.GetText() == typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 
         if (matchingTypeDefintionNode is not null)
         {
             return new TypeClauseNode(
-                typeClauseNode.TypeIdentifier,
+                typeClauseNode.TypeIdentifierToken,
                 matchingTypeDefintionNode.ValueType,
                 typeClauseNode.GenericParametersListingNode);
         }

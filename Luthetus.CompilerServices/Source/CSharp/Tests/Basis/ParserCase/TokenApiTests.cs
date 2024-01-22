@@ -107,13 +107,13 @@ public class TokenApiTests
         // First generic argument
         {
             var genericArgumentEntryNode = genericArgumentsListNode.GenericArgumentEntryNodeList[0];
-            Assert.Equal("T", genericArgumentEntryNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+            Assert.Equal("T", genericArgumentEntryNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
         }
 
         // Second generic argument
         {
             var genericArgumentEntryNode = genericArgumentsListNode.GenericArgumentEntryNodeList[1];
-            Assert.Equal("U", genericArgumentEntryNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+            Assert.Equal("U", genericArgumentEntryNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
         }
     }
 
@@ -138,13 +138,13 @@ public class TokenApiTests
         // First generic parameter
         {
             var genericParameterEntryNode = genericParametersListingNode.GenericParameterEntryNodeList[0];
-            Assert.Equal("string", genericParameterEntryNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+            Assert.Equal("string", genericParameterEntryNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
         }
 
         // Second generic parameter
         {
             var genericParameterEntryNode = genericParametersListingNode.GenericParameterEntryNodeList[1];
-            Assert.Equal("int", genericParameterEntryNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+            Assert.Equal("int", genericParameterEntryNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
         }
     }
 
@@ -170,7 +170,7 @@ public class TokenApiTests
         
         var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.TypeBodyCodeBlockNode!.ChildList.Single();
 
-        Assert.Equal("MyClass", constructorDefinitionNode.ReturnTypeClauseNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Equal("MyClass", constructorDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
         Assert.Equal("MyClass", constructorDefinitionNode.FunctionIdentifier.TextSpan.GetText());
         Assert.Empty(constructorDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
         Assert.Empty(constructorDefinitionNode.FunctionBodyCodeBlockNode!.ChildList);
@@ -193,7 +193,7 @@ public class TokenApiTests
         var compilationUnit = parser.Parse();
         var functionDefinitionNode = (FunctionDefinitionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
 
-        Assert.Equal("string", functionDefinitionNode.ReturnTypeClauseNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Equal("string", functionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
         Assert.Equal("MyMethod", functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText());
         Assert.Empty(functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
         Assert.Empty(functionDefinitionNode.FunctionBodyCodeBlockNode!.ChildList);
@@ -289,7 +289,7 @@ Clone<int>(3);";
         Assert.Equal("Clone", functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.GetText());
 
         var genericParameterEntryNode = functionInvocationNode.GenericParametersListingNode!.GenericParameterEntryNodeList.Single();
-        Assert.Equal("int", genericParameterEntryNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Equal("int", genericParameterEntryNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
         Assert.Equal(typeof(int), genericParameterEntryNode.TypeClauseNode.ValueType);
     }
 
@@ -310,7 +310,7 @@ Clone<int>(3);";
         var compilationUnit = parser.Parse();
 
         var functionDefinitionNode = (FunctionDefinitionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
-        Assert.Equal("void", functionDefinitionNode.ReturnTypeClauseNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Equal("void", functionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
         Assert.Equal(typeof(void), functionDefinitionNode.ReturnTypeClauseNode.ValueType);
         Assert.Equal("MyMethod", functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText());
         Assert.Null(functionDefinitionNode.GenericArgumentsListingNode);
@@ -333,7 +333,7 @@ Clone<int>(3);";
         var compilationUnit = parser.Parse();
 
         var variableDeclarationNode = (VariableDeclarationNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
-        Assert.Equal("int", variableDeclarationNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Equal("int", variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
         Assert.Equal(typeof(int), variableDeclarationNode.TypeClauseNode.ValueType);
         Assert.Equal("x", variableDeclarationNode.IdentifierToken.TextSpan.GetText());
     }

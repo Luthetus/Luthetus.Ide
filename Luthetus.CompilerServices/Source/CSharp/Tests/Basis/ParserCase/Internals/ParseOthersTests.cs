@@ -7,6 +7,6 @@ using Luthetus.CompilerServices.Lang.CSharp.Facts;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase.Internals;
 
-public static class ParseOthersTests
+public class ParseOthersTests
 {
 }

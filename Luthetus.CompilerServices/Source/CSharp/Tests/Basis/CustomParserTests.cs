@@ -299,7 +299,7 @@ public class CustomParserTests
 			.TypeBodyCodeBlockNode.ChildList.Single());
 
 		Assert.Equal(className,
-			constructorDefinitionNode.ReturnTypeClauseNode.TypeIdentifier.TextSpan.GetText());
+			constructorDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 
 		Assert.Equal(className, constructorDefinitionNode.FunctionIdentifier.TextSpan.GetText());
 		Assert.Null(constructorDefinitionNode.GenericArgumentsListingNode);
@@ -354,11 +354,11 @@ public class CustomParserTests
 
                 var typeClauseNode = (TypeClauseNode)constructorInvocationExpressionNode.ChildList[1];
                 Assert.IsType<TypeClauseNode>(typeClauseNode);
-				Assert.Equal("List", typeClauseNode.TypeIdentifier.TextSpan.GetText());
+				Assert.Equal("List", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 				Assert.NotNull(typeClauseNode.GenericParametersListingNode);
 
 				var genericParameterEntryNode = typeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList.Single();
-				Assert.Equal("int", genericParameterEntryNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+				Assert.Equal("int", genericParameterEntryNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 				Assert.Equal(typeof(int), genericParameterEntryNode.TypeClauseNode.ValueType);
             }
         }
@@ -399,7 +399,7 @@ public class CustomParserTests
 		var variableDeclarationStatementNode = functionArgumentEntryNode.VariableDeclarationNode;
 		
 		Assert.Equal(argumentTypeText,
-			variableDeclarationStatementNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+			variableDeclarationStatementNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 
 		Assert.Equal(argumentValueType,
 			variableDeclarationStatementNode.TypeClauseNode.ValueType);
@@ -459,7 +459,7 @@ public class CustomParserTests
 			(FunctionDefinitionNode)topCodeBlock.ChildList.Single();
 
 		Assert.Equal(returnTypeText,
-			functionDefinitionNode.ReturnTypeClauseNode.TypeIdentifier.TextSpan.GetText());
+			functionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 
 		Assert.Equal(returnValueType,
 			functionDefinitionNode.ReturnTypeClauseNode.ValueType);
@@ -614,7 +614,7 @@ public class CustomParserTests
 
 			// typeClauseNode.TypeIdentifier
 			{
-				var typeIdentifier = typeClauseNode.TypeIdentifier;
+				var typeIdentifier = typeClauseNode.TypeIdentifierToken;
 
                 Assert.False(typeIdentifier.IsFabricated);
                 Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
@@ -731,7 +731,7 @@ public class CustomParserTests
 
 					// typeClauseNode.TypeIdentifier
 					{
-						var typeIdentifier = typeClauseNode.TypeIdentifier;
+						var typeIdentifier = typeClauseNode.TypeIdentifierToken;
 
                         Assert.False(typeIdentifier.IsFabricated);
                         Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
@@ -786,7 +786,7 @@ public class CustomParserTests
 
 					// typeClauseNode.TypeIdentifier
 					{
-						var typeIdentifier = typeClauseNode.TypeIdentifier;
+						var typeIdentifier = typeClauseNode.TypeIdentifierToken;
 
                         Assert.False(typeIdentifier.IsFabricated);
                         Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
@@ -882,7 +882,7 @@ public class CustomParserTests
 
 			// typeClauseNode.TypeIdentifier
 			{
-				var typeIdentifier = typeClauseNode.TypeIdentifier;
+				var typeIdentifier = typeClauseNode.TypeIdentifierToken;
 
                 Assert.False(typeIdentifier.IsFabricated);
                 Assert.Equal(SyntaxKind.IntTokenKeyword, typeIdentifier.SyntaxKind);
@@ -994,7 +994,7 @@ public class CustomParserTests
 
 					// typeClauseNode.TypeIdentifier
 					{
-						var typeIdentifier = typeClauseNode.TypeIdentifier;
+						var typeIdentifier = typeClauseNode.TypeIdentifierToken;
 
                         Assert.False(typeIdentifier.IsFabricated);
                         Assert.Equal(SyntaxKind.StringTokenKeyword, typeIdentifier.SyntaxKind);
@@ -1048,7 +1048,7 @@ public class CustomParserTests
 
 					// typeClauseNode.TypeIdentifier
 					{
-						var typeIdentifier = typeClauseNode.TypeIdentifier;
+						var typeIdentifier = typeClauseNode.TypeIdentifierToken;
 
                         Assert.False(typeIdentifier.IsFabricated);
                         Assert.Equal(SyntaxKind.IntTokenKeyword, typeIdentifier.SyntaxKind);
@@ -1187,7 +1187,7 @@ public class CustomParserTests
 
 				// resultTypeClauseNode.TypeIdentifier
 				{
-					var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+					var typeIdentifier = resultTypeClauseNode.TypeIdentifierToken;
 
                     Assert.False(typeIdentifier.IsFabricated);
                     Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
@@ -1257,7 +1257,7 @@ public class CustomParserTests
 		var inheritedTypeClauseNode = typeDefinitionNode.InheritedTypeClauseNode;
 		Assert.Equal(
 			inheritedTypeClauseText,
-			inheritedTypeClauseNode.TypeIdentifier.TextSpan.GetText());
+			inheritedTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 	}
 	
 	[Fact]
@@ -1381,7 +1381,7 @@ public class CustomParserTests
 
 					// leftOperandTypeClauseNode.TypeIdentifier
 					{
-						var typeIdentifier = leftOperandTypeClauseNode.TypeIdentifier;
+						var typeIdentifier = leftOperandTypeClauseNode.TypeIdentifierToken;
 
                         Assert.False(typeIdentifier.IsFabricated);
                         Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
@@ -1429,7 +1429,7 @@ public class CustomParserTests
 
 					// resultTypeClauseNode.TypeIdentifier
 					{
-						var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+						var typeIdentifier = resultTypeClauseNode.TypeIdentifierToken;
 
                         Assert.False(typeIdentifier.IsFabricated);
                         Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
@@ -1456,7 +1456,7 @@ public class CustomParserTests
 
                     // rightOperandTypeClauseNode.TypeIdentifier
                     {
-						var typeIdentifier = rightOperandTypeClauseNode.TypeIdentifier;
+						var typeIdentifier = rightOperandTypeClauseNode.TypeIdentifierToken;
 
                         Assert.False(typeIdentifier.IsFabricated);
                         Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
@@ -1540,7 +1540,7 @@ public class CustomParserTests
 
 					// resultTypeClauseNode.TypeIdentifier
 					{
-						var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+						var typeIdentifier = resultTypeClauseNode.TypeIdentifierToken;
 
                         Assert.False(typeIdentifier.IsFabricated);
                         Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
@@ -1570,7 +1570,7 @@ public class CustomParserTests
 
 				// resultTypeClauseNode.TypeIdentifier
 				{
-					var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+					var typeIdentifier = resultTypeClauseNode.TypeIdentifierToken;
 
                     Assert.False(typeIdentifier.IsFabricated);
                     Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
@@ -1635,7 +1635,7 @@ public class CustomParserTests
 
                     // resultTypeClauseNode.TypeIdentifier
                     {
-						var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+						var typeIdentifier = resultTypeClauseNode.TypeIdentifierToken;
 
                         Assert.False(typeIdentifier.IsFabricated);
                         Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
@@ -1691,7 +1691,7 @@ public class CustomParserTests
 
 			// resultTypeClauseNode.TypeIdentifier
 			{
-				var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+				var typeIdentifier = resultTypeClauseNode.TypeIdentifierToken;
 
                 Assert.False(typeIdentifier.IsFabricated);
                 Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
@@ -1854,7 +1854,7 @@ public class CustomParserTests
 
         // typeClauseNode.TypeIdentifier
         {
-			var typeIdentifier = typeClauseNode.TypeIdentifier;
+			var typeIdentifier = typeClauseNode.TypeIdentifierToken;
 
             Assert.False(typeIdentifier.IsFabricated);
             Assert.Equal(SyntaxKind.IntTokenKeyword, typeIdentifier.SyntaxKind);
@@ -2078,7 +2078,7 @@ public class CustomParserTests
 
                 // Assert ExpressionNode.ResultTypeClauseNode.TypeIdentifier
                 {
-					var typeIdentifierToken = typeClauseNode.TypeIdentifier;
+					var typeIdentifierToken = typeClauseNode.TypeIdentifierToken;
 					Assert.IsType<IdentifierToken>(typeIdentifierToken);
                     
 					Assert.False(typeIdentifierToken.IsFabricated);
@@ -2193,7 +2193,7 @@ public class CustomParserTests
 
             // Assert TypeClauseNode.TypeIdentifier
             {
-				var typeIdentifier = typeClauseNode.TypeIdentifier;
+				var typeIdentifier = typeClauseNode.TypeIdentifierToken;
 
                 Assert.False(typeIdentifier.IsFabricated);
                 Assert.Equal(SyntaxKind.IntTokenKeyword, typeIdentifier.SyntaxKind);
@@ -2262,7 +2262,7 @@ public class CustomParserTests
 
 			// resultTypeClauseNode.TypeIdentifier
 			{
-				var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+				var typeIdentifier = resultTypeClauseNode.TypeIdentifierToken;
 
                 Assert.False(typeIdentifier.IsFabricated);
                 Assert.Equal(SyntaxKind.IntTokenKeyword, typeIdentifier.SyntaxKind);

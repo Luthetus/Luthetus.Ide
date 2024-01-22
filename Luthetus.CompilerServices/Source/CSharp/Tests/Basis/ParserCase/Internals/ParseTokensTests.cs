@@ -6,6 +6,6 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase.Internals;
 
-public static class ParseTokensTests
+public class ParseTokensTests
 {
 }

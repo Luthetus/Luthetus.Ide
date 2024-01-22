@@ -59,6 +59,16 @@ public class LuthetusDiagnosticBag : IEnumerable<TextEditorDiagnostic>
             textSpan,
             Guid.Parse("4bf6a7f1-c344-4ca4-828c-a0a4f7f91341"));
     }
+    
+    public void ReportImplicitlyTypedVariablesMustBeInitialized(
+        TextEditorTextSpan textSpan)
+    {
+        Report(
+            TextEditorDiagnosticLevel.Error,
+            $"Implicitly-typed variables must be initialized",
+            textSpan,
+            Guid.Parse("b087cb21-fa16-4ae1-bfd0-daeebe0c4b39"));
+    }
 
     public void ReportUndefinedTypeOrNamespace(
         TextEditorTextSpan textSpan,

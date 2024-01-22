@@ -5,6 +5,6 @@ using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase.Internals;
 
-public static class ParseTypesTests
+public class ParseTypesTests
 {
 }

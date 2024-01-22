@@ -225,7 +225,7 @@ public static class ParseTypes
             var genericParametersListingNode = (GenericParametersListingNode)model.SyntaxStack.Pop();
 
             typeClauseNode = new TypeClauseNode(
-                typeClauseNode.TypeIdentifier,
+                typeClauseNode.TypeIdentifierToken,
                 null,
                 genericParametersListingNode);
         }

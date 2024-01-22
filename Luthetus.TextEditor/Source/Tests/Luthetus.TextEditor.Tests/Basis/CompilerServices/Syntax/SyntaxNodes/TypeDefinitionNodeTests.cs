@@ -69,7 +69,7 @@ public class TypeDefinitionNodeTests
         Assert.Equal(typeBodyCodeBlockNode, typeDefinitionNode.TypeBodyCodeBlockNode);
         Assert.False(typeDefinitionNode.IsInterface);
         Assert.Empty(typeDefinitionNode.GetFunctionDefinitionNodes());
-        Assert.Equal(typeIdentifier, typeDefinitionNode.ToTypeClause().TypeIdentifier);
+        Assert.Equal(typeIdentifier, typeDefinitionNode.ToTypeClause().TypeIdentifierToken);
         Assert.Equal(valueType, typeDefinitionNode.ToTypeClause().ValueType);
         Assert.Null(typeDefinitionNode.ToTypeClause().GenericParametersListingNode);
 

@@ -55,6 +55,15 @@ public static class ParseVariables
                     model);
             }
         }
+        else
+        {
+            if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.SyntaxKind ==
+                SyntaxKind.VarTokenContextualKeyword)
+            {
+                model.DiagnosticBag.ReportImplicitlyTypedVariablesMustBeInitialized(
+                    consumedIdentifierToken.TextSpan);
+            }
+        }
 
         if (variableKind == VariableKind.Property &&
             model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
