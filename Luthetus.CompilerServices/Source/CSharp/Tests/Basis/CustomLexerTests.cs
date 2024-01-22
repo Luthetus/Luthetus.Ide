@@ -532,6 +532,17 @@ public class CustomLexerTests
 	{
 		throw new NotImplementedException();
 	}
+	
+	[Fact]
+	public void LEX_EscapedStrings()
+	{
+        var sourceText = @"public const string Tag = ""`'\"";luth_clipboard"";".ReplaceLineEndings("\n");
+        var resourceUri = new ResourceUri("UnitTests");
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+
+		throw new NotImplementedException();
+    }
 
 	[Fact]
 	public void LEX_ClassDefinition()

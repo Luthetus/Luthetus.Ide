@@ -1,4 +1,7 @@
-﻿@using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+﻿@using Luthetus.TextEditor.RazorLib.Decorations.Models;
+@using Luthetus.TextEditor.RazorLib.Lexes.Models;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+@using System.Collections.Immutable;
 <div class="@CssClassString">
 
     @{
@@ -10,11 +13,16 @@
     @foreach (var presentationLayer in presentationLayerOrderedByRankAscending)
     {
         var completedCalculation = presentationLayer.CompletedCalculation;
-        var textSpansList = completedCalculation?.TextEditorTextSpanList;
 
-        @if (completedCalculation is not null && textSpansList is not null)
+        var textSpansList = completedCalculation?.TextEditorTextSpanList
+            ?? Array.Empty<TextEditorTextSpan>().ToImmutableArray();
+
+        var textModificationList = completedCalculation?.TextModificationsSinceRequestList.ToArray()
+            ?? Array.Empty<TextEditorTextModification>();
+
+        @if (completedCalculation is not null)
         {
-            textSpansList = ShiftTextSpans(completedCalculation.TextModificationsSinceRequestList, textSpansList.Value);
+            textSpansList = ShiftTextSpans(textModificationList, completedCalculation.TextEditorTextSpanList);
 
             <div class="@presentationLayer.CssClassString">
                 @foreach (var textSpan in textSpansList)

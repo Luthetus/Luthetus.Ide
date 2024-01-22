@@ -180,9 +180,6 @@ public class CSharpBinder : IBinder
         KeywordToken keywordToken,
         IExpressionNode expressionNode)
     {
-        _diagnosticBag.ReportReturnStatementsAreStillBeingImplemented(
-                keywordToken.TextSpan);
-
         return new ReturnStatementNode(
             keywordToken,
             expressionNode);
