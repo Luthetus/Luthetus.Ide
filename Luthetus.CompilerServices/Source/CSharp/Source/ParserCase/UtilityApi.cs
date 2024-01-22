@@ -12,7 +12,8 @@ public static class UtilityApi
         ISyntaxToken syntaxToken;
 
         if (IsKeywordSyntaxKind(model.TokenWalker.Current.SyntaxKind) &&
-            IsTypeIdentifierKeywordSyntaxKind(model.TokenWalker.Current.SyntaxKind))
+                (IsTypeIdentifierKeywordSyntaxKind(model.TokenWalker.Current.SyntaxKind) ||
+                IsVarContextualKeyword(model, model.TokenWalker.Current.SyntaxKind)))
         {
             syntaxToken = model.TokenWalker.Consume();
         }
@@ -120,6 +121,22 @@ public static class UtilityApi
             default:
                 return false;
         }
+    }
+
+    /// <summary>
+    /// TODO: What is described in this summary has not yet been implemented.
+    /// The text 'var' can be an identifier to any syntax.
+    /// For example, 'var' can be the name of a class, a variable, etc...
+    /// Therefore, this method will check if the <see cref="SyntaxKind"/> is
+    /// <see cref="SyntaxKind.VarTokenContextualKeyword"/> AND check if
+    /// any 'var' identified definitions are in scope.
+    /// </summary>
+    public static bool IsVarContextualKeyword(ParserModel parserModel, SyntaxKind syntaxKind)
+    {
+        if (syntaxKind != SyntaxKind.VarTokenContextualKeyword)
+            return false;
+
+        return true;
     }
 
     public static bool IsBinaryOperatorSyntaxKind(SyntaxKind syntaxKind)
