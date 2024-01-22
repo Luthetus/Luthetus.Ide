@@ -7,10 +7,10 @@ namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 
 public class ParseContextualKeywords
 {
-    public static void HandleVarTokenContextualKeyword(ParserModel model)
+    public static void HandleVarTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
-
         // Check if previous statement is finished, and a new one is starting.
         // TODO: 'Peek(-2)' is horribly confusing. The reason for using -2 is that one consumed the 'var' keyword and moved their position forward by 1. So to read the token behind 'var' one must go back 2 tokens. It feels natural to put '-1' and then this evaluates to the wrong token. Should an expression bound property be made for 'Peek(-2)'?
         var previousToken = model.TokenWalker.Peek(-2);
@@ -25,7 +25,7 @@ public class ParseContextualKeywords
             if (nextTokenIsVarKeyword || nextTokenIsIdentifierToken)
             {
                 var varKeyword = new TypeClauseNode(
-                    contextualKeywordToken,
+                    consumedKeywordContextualToken,
                     null,
                     null);
 
@@ -35,250 +35,288 @@ public class ParseContextualKeywords
         else
         {
             // Take 'var' as an identifier
-            IdentifierToken varIdentifierToken = new(contextualKeywordToken.TextSpan);
-            model.SyntaxStack.Push(varIdentifierToken);
-            ParseTokens.ParseIdentifierToken(model);
+            IdentifierToken varIdentifierToken = new(consumedKeywordContextualToken.TextSpan);
+            ParseTokens.ParseIdentifierToken(varIdentifierToken, model);
         }
     }
 
-    public static void HandlePartialTokenContextualKeyword(ParserModel model)
+    public static void HandlePartialTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleAddTokenContextualKeyword(ParserModel model)
+    public static void HandleAddTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleAndTokenContextualKeyword(ParserModel model)
+    public static void HandleAndTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleAliasTokenContextualKeyword(ParserModel model)
+    public static void HandleAliasTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleAscendingTokenContextualKeyword(ParserModel model)
+    public static void HandleAscendingTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleArgsTokenContextualKeyword(ParserModel model)
+    public static void HandleArgsTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleAsyncTokenContextualKeyword(ParserModel model)
+    public static void HandleAsyncTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleAwaitTokenContextualKeyword(ParserModel model)
+    public static void HandleAwaitTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleByTokenContextualKeyword(ParserModel model)
+    public static void HandleByTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleDescendingTokenContextualKeyword(ParserModel model)
+    public static void HandleDescendingTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleDynamicTokenContextualKeyword(ParserModel model)
+    public static void HandleDynamicTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleEqualsTokenContextualKeyword(ParserModel model)
+    public static void HandleEqualsTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleFileTokenContextualKeyword(ParserModel model)
+    public static void HandleFileTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleFromTokenContextualKeyword(ParserModel model)
+    public static void HandleFromTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleGetTokenContextualKeyword(ParserModel model)
+    public static void HandleGetTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleGlobalTokenContextualKeyword(ParserModel model)
+    public static void HandleGlobalTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleGroupTokenContextualKeyword(ParserModel model)
+    public static void HandleGroupTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleInitTokenContextualKeyword(ParserModel model)
+    public static void HandleInitTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleIntoTokenContextualKeyword(ParserModel model)
+    public static void HandleIntoTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleJoinTokenContextualKeyword(ParserModel model)
+    public static void HandleJoinTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleLetTokenContextualKeyword(ParserModel model)
+    public static void HandleLetTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleManagedTokenContextualKeyword(ParserModel model)
+    public static void HandleManagedTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleNameofTokenContextualKeyword(ParserModel model)
+    public static void HandleNameofTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleNintTokenContextualKeyword(ParserModel model)
+    public static void HandleNintTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleNotTokenContextualKeyword(ParserModel model)
+    public static void HandleNotTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleNotnullTokenContextualKeyword(ParserModel model)
+    public static void HandleNotnullTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleNuintTokenContextualKeyword(ParserModel model)
+    public static void HandleNuintTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleOnTokenContextualKeyword(ParserModel model)
+    public static void HandleOnTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleOrTokenContextualKeyword(ParserModel model)
+    public static void HandleOrTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleOrderbyTokenContextualKeyword(ParserModel model)
+    public static void HandleOrderbyTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleRecordTokenContextualKeyword(ParserModel model)
+    public static void HandleRecordTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleRemoveTokenContextualKeyword(ParserModel model)
+    public static void HandleRemoveTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleRequiredTokenContextualKeyword(ParserModel model)
+    public static void HandleRequiredTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleScopedTokenContextualKeyword(ParserModel model)
+    public static void HandleScopedTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleSelectTokenContextualKeyword(ParserModel model)
+    public static void HandleSelectTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleSetTokenContextualKeyword(ParserModel model)
+    public static void HandleSetTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleUnmanagedTokenContextualKeyword(ParserModel model)
+    public static void HandleUnmanagedTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleValueTokenContextualKeyword(ParserModel model)
+    public static void HandleValueTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleWhenTokenContextualKeyword(ParserModel model)
+    public static void HandleWhenTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleWhereTokenContextualKeyword(ParserModel model)
+    public static void HandleWhereTokenContextualKeyword(
+        KeywordContextualToken consumedWhereKeywordContextualToken,
+        ParserModel model)
     {
-        var whereKeywordContextualToken = (KeywordContextualToken)model.SyntaxStack.Pop();
-
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
         {
             var functionDefinitionNode = (FunctionDefinitionNode)model.SyntaxStack.Pop();
@@ -299,7 +337,7 @@ public class ParseContextualKeywords
 
             var constraintNodeInnerTokens = new List<ISyntaxToken>
             {
-                whereKeywordContextualToken
+                consumedWhereKeywordContextualToken
             };
 
             while (!model.TokenWalker.IsEof)
@@ -325,25 +363,28 @@ public class ParseContextualKeywords
         }
         else
         {
-            model.DiagnosticBag.ReportTodoException(whereKeywordContextualToken.TextSpan, nameof(HandleWhereTokenContextualKeyword));
+            model.DiagnosticBag.ReportTodoException(consumedWhereKeywordContextualToken.TextSpan, nameof(HandleWhereTokenContextualKeyword));
         }
     }
 
-    public static void HandleWithTokenContextualKeyword(ParserModel model)
+    public static void HandleWithTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleYieldTokenContextualKeyword(ParserModel model)
+    public static void HandleYieldTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleUnrecognizedTokenContextualKeyword(ParserModel model)
+    public static void HandleUnrecognizedTokenContextualKeyword(
+        KeywordContextualToken consumedKeywordContextualToken,
+        ParserModel model)
     {
-        var contextualKeywordToken = (KeywordContextualToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 }

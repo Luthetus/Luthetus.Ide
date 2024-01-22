@@ -595,7 +595,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="ParseTokens.StatementDelimiterToken"/>
+    /// <see cref="ParseTokens.ParseStatementDelimiterToken"/>
     /// </summary>
     [Fact]
     public void StatementDelimiterToken()

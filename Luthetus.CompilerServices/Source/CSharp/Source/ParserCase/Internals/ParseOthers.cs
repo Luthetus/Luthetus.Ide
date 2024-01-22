@@ -9,12 +9,12 @@ namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 
 public static class ParseOthers
 {
-    public static void HandleNamespaceReference(ParserModel model)
+    public static void HandleNamespaceReference(
+        IdentifierToken consumedIdentifierToken,
+        NamespaceGroupNode resolvedNamespaceGroupNode,
+        ParserModel model)
     {
-        var namespaceGroupNode = (NamespaceGroupNode)model.SyntaxStack.Pop();
-        var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
-
-        model.Binder.BindNamespaceReference(identifierToken);
+        model.Binder.BindNamespaceReference(consumedIdentifierToken);
 
         if (SyntaxKind.MemberAccessToken == model.TokenWalker.Current.SyntaxKind)
         {
@@ -30,7 +30,7 @@ public static class ParseOthers
             }
 
             // Check all the TypeDefinitionNodes that are in the namespace
-            var typeDefinitionNodes = namespaceGroupNode.GetTopLevelTypeDefinitionNodes();
+            var typeDefinitionNodes = resolvedNamespaceGroupNode.GetTopLevelTypeDefinitionNodes();
 
             var typeDefinitionNode = typeDefinitionNodes.SingleOrDefault(td =>
                 td.TypeIdentifier.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText());
@@ -39,13 +39,14 @@ public static class ParseOthers
             {
                 model.DiagnosticBag.ReportNotDefinedInContext(
                     model.TokenWalker.Current.TextSpan,
-                    identifierToken.TextSpan.GetText());
+                    consumedIdentifierToken.TextSpan.GetText());
             }
             else
             {
-                model.SyntaxStack.Push(memberIdentifierToken);
-                model.SyntaxStack.Push(typeDefinitionNode);
-                ParseTypes.HandleTypeReference(model);
+                ParseTypes.HandleTypeReference(
+                    memberIdentifierToken,
+                    typeDefinitionNode,
+                    model);
             }
         }
         else

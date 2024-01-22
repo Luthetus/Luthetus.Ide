@@ -3,379 +3,459 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 
 public class ParseDefaultKeywords
 {
-    public static void HandleAsTokenKeyword(ParserModel model)
+    public static void HandleAsTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleBaseTokenKeyword(ParserModel model)
+    public static void HandleBaseTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleBoolTokenKeyword(ParserModel model)
+    public static void HandleBoolTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleBreakTokenKeyword(ParserModel model)
+    public static void HandleBreakTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleByteTokenKeyword(ParserModel model)
+    public static void HandleByteTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleCaseTokenKeyword(ParserModel model)
+    public static void HandleCaseTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleCatchTokenKeyword(ParserModel model)
+    public static void HandleCatchTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleCharTokenKeyword(ParserModel model)
+    public static void HandleCharTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleCheckedTokenKeyword(ParserModel model)
+    public static void HandleCheckedTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleConstTokenKeyword(ParserModel model)
+    public static void HandleConstTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleContinueTokenKeyword(ParserModel model)
+    public static void HandleContinueTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleDecimalTokenKeyword(ParserModel model)
+    public static void HandleDecimalTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleDefaultTokenKeyword(ParserModel model)
+    public static void HandleDefaultTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleDelegateTokenKeyword(ParserModel model)
+    public static void HandleDelegateTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleDoTokenKeyword(ParserModel model)
+    public static void HandleDoTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleDoubleTokenKeyword(ParserModel model)
+    public static void HandleDoubleTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleElseTokenKeyword(ParserModel model)
+    public static void HandleElseTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleEnumTokenKeyword(ParserModel model)
+    public static void HandleEnumTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleEventTokenKeyword(ParserModel model)
+    public static void HandleEventTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleExplicitTokenKeyword(ParserModel model)
+    public static void HandleExplicitTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleExternTokenKeyword(ParserModel model)
+    public static void HandleExternTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleFalseTokenKeyword(ParserModel model)
+    public static void HandleFalseTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleFinallyTokenKeyword(ParserModel model)
+    public static void HandleFinallyTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleFixedTokenKeyword(ParserModel model)
+    public static void HandleFixedTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleFloatTokenKeyword(ParserModel model)
+    public static void HandleFloatTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleForTokenKeyword(ParserModel model)
+    public static void HandleForTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleForeachTokenKeyword(ParserModel model)
+    public static void HandleForeachTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleGotoTokenKeyword(ParserModel model)
+    public static void HandleGotoTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleImplicitTokenKeyword(ParserModel model)
+    public static void HandleImplicitTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleInTokenKeyword(ParserModel model)
+    public static void HandleInTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleIntTokenKeyword(ParserModel model)
+    public static void HandleIntTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleIsTokenKeyword(ParserModel model)
+    public static void HandleIsTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleLockTokenKeyword(ParserModel model)
+    public static void HandleLockTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleLongTokenKeyword(ParserModel model)
+    public static void HandleLongTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleNullTokenKeyword(ParserModel model)
+    public static void HandleNullTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleObjectTokenKeyword(ParserModel model)
+    public static void HandleObjectTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleOperatorTokenKeyword(ParserModel model)
+    public static void HandleOperatorTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleOutTokenKeyword(ParserModel model)
+    public static void HandleOutTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleParamsTokenKeyword(ParserModel model)
+    public static void HandleParamsTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleProtectedTokenKeyword(ParserModel model)
+    public static void HandleProtectedTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleReadonlyTokenKeyword(ParserModel model)
+    public static void HandleReadonlyTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleRefTokenKeyword(ParserModel model)
+    public static void HandleRefTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleSbyteTokenKeyword(ParserModel model)
+    public static void HandleSbyteTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleShortTokenKeyword(ParserModel model)
+    public static void HandleShortTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleSizeofTokenKeyword(ParserModel model)
+    public static void HandleSizeofTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleStackallocTokenKeyword(ParserModel model)
+    public static void HandleStackallocTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleStringTokenKeyword(ParserModel model)
+    public static void HandleStringTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleStructTokenKeyword(ParserModel model)
+    public static void HandleStructTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleSwitchTokenKeyword(ParserModel model)
+    public static void HandleSwitchTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleThisTokenKeyword(ParserModel model)
+    public static void HandleThisTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleThrowTokenKeyword(ParserModel model)
+    public static void HandleThrowTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleTrueTokenKeyword(ParserModel model)
+    public static void HandleTrueTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleTryTokenKeyword(ParserModel model)
+    public static void HandleTryTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleTypeofTokenKeyword(ParserModel model)
+    public static void HandleTypeofTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleUintTokenKeyword(ParserModel model)
+    public static void HandleUintTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleUlongTokenKeyword(ParserModel model)
+    public static void HandleUlongTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleUncheckedTokenKeyword(ParserModel model)
+    public static void HandleUncheckedTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleUnsafeTokenKeyword(ParserModel model)
+    public static void HandleUnsafeTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleUshortTokenKeyword(ParserModel model)
+    public static void HandleUshortTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleVoidTokenKeyword(ParserModel model)
+    public static void HandleVoidTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
-    public static void HandleVolatileTokenKeyword(ParserModel model)
+    public static void HandleVolatileTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleWhileTokenKeyword(ParserModel model)
+    public static void HandleWhileTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleUnrecognizedTokenKeyword(ParserModel model)
+    public static void HandleUnrecognizedTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleDefault(ParserModel model)
+    public static void HandleDefault(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
 
-        if (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(keywordToken.SyntaxKind))
+        if (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(consumedKeywordToken.SyntaxKind))
         {
             // One enters this conditional block with the 'keywordToken' having already been consumed.
             model.TokenWalker.Backtrack();
@@ -384,15 +464,16 @@ public class ParseDefaultKeywords
         }
         else
         {
-            throw new NotImplementedException($"Implement the {keywordToken.SyntaxKind} keyword.");
+            throw new NotImplementedException($"Implement the {consumedKeywordToken.SyntaxKind} keyword.");
         }
     }
 
-    public static void HandleTypeIdentifierKeyword(ParserModel model)
+    public static void HandleTypeIdentifierKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
 
-        if (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(keywordToken.SyntaxKind))
+        if (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(consumedKeywordToken.SyntaxKind))
         {
             // One enters this conditional block with the 'keywordToken' having already been consumed.
             model.TokenWalker.Backtrack();
@@ -405,11 +486,13 @@ public class ParseDefaultKeywords
         }
         else
         {
-            throw new NotImplementedException($"Implement the {keywordToken.SyntaxKind} keyword.");
+            throw new NotImplementedException($"Implement the {consumedKeywordToken.SyntaxKind} keyword.");
         }
     }
 
-    public static void HandleNewTokenKeyword(ParserModel model)
+    public static void HandleNewTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
         var typeClauseToken = model.TokenWalker.MatchTypeClauseNode(model);
 
@@ -432,15 +515,18 @@ public class ParseDefaultKeywords
             //     new(){}
             //     new(...)
             //     new(...){}
-            model.SyntaxStack.Push(model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken));
-            ParseFunctions.HandleFunctionParameters(model);
+            ParseFunctions.HandleFunctionParameters(
+                (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken),
+                model);
 
             ObjectInitializationNode? boundObjectInitializationNode = null;
 
             if (model.TokenWalker.Peek(0).SyntaxKind == SyntaxKind.OpenBraceToken)
             {
-                model.SyntaxStack.Push((OpenBraceToken)model.TokenWalker.Consume());
-                ParseTypes.HandleObjectInitialization(model);
+                ParseTypes.HandleObjectInitialization(
+                    (OpenBraceToken)model.TokenWalker.Consume(),
+                    model);
+
                 boundObjectInitializationNode = (ObjectInitializationNode?)model.SyntaxStack.Pop();
             }
 
@@ -467,16 +553,19 @@ public class ParseDefaultKeywords
 
             if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
             {
-                model.SyntaxStack.Push((OpenAngleBracketToken)model.TokenWalker.Consume());
-                ParseTypes.HandleGenericArguments(model);
+                ParseTypes.HandleGenericArguments(
+                    (OpenAngleBracketToken)model.TokenWalker.Consume(),
+                    model);
             }
 
             FunctionParametersListingNode? functionParametersListingNode = null;
 
             if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
             {
-                model.SyntaxStack.Push((OpenParenthesisToken)model.TokenWalker.Consume());
-                ParseFunctions.HandleFunctionParameters(model);
+                ParseFunctions.HandleFunctionParameters(
+                    (OpenParenthesisToken)model.TokenWalker.Consume(),
+                    model);
+
                 functionParametersListingNode = (FunctionParametersListingNode?)model.SyntaxStack.Pop();
             }
 
@@ -484,8 +573,10 @@ public class ParseDefaultKeywords
 
             if (model.TokenWalker.Peek(0).SyntaxKind == SyntaxKind.OpenBraceToken)
             {
-                model.SyntaxStack.Push((OpenBraceToken)model.TokenWalker.Consume());
-                ParseTypes.HandleObjectInitialization(model);
+                ParseTypes.HandleObjectInitialization(
+                    (OpenBraceToken)model.TokenWalker.Consume(),
+                    model);
+
                 boundObjectInitializationNode = (ObjectInitializationNode?)model.SyntaxStack.Pop();
             }
 
@@ -501,57 +592,66 @@ public class ParseDefaultKeywords
         }
     }
 
-    public static void HandlePublicTokenKeyword(ParserModel model)
+    public static void HandlePublicTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleInternalTokenKeyword(ParserModel model)
+    public static void HandleInternalTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandlePrivateTokenKeyword(ParserModel model)
+    public static void HandlePrivateTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleStaticTokenKeyword(ParserModel model)
+    public static void HandleStaticTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleOverrideTokenKeyword(ParserModel model)
+    public static void HandleOverrideTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleVirtualTokenKeyword(ParserModel model)
+    public static void HandleVirtualTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleAbstractTokenKeyword(ParserModel model)
+    public static void HandleAbstractTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleSealedTokenKeyword(ParserModel model)
+    public static void HandleSealedTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         // TODO: Implement this method
     }
 
-    public static void HandleIfTokenKeyword(ParserModel model)
+    public static void HandleIfTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         var openParenthesisToken = model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
 
         if (openParenthesisToken.IsFabricated)
@@ -575,41 +675,45 @@ public class ParseDefaultKeywords
 
         var expression = (IExpressionNode)model.SyntaxStack.Pop();
 
-        var boundIfStatementNode = model.Binder.BindIfStatementNode(keywordToken, expression);
+        var boundIfStatementNode = model.Binder.BindIfStatementNode(consumedKeywordToken, expression);
         model.SyntaxStack.Push(boundIfStatementNode);
     }
 
-    public static void HandleUsingTokenKeyword(ParserModel model)
+    public static void HandleUsingTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         ParseOthers.HandleNamespaceIdentifier(model);
 
         var handleNamespaceIdentifierResult = model.SyntaxStack.Pop();
 
         if (handleNamespaceIdentifierResult.SyntaxKind == SyntaxKind.EmptyNode)
         {
-            model.DiagnosticBag.ReportTodoException(keywordToken.TextSpan, "Expected a namespace identifier.");
+            model.DiagnosticBag.ReportTodoException(consumedKeywordToken.TextSpan, "Expected a namespace identifier.");
             return;
         }
         var namespaceIdentifier = (IdentifierToken)handleNamespaceIdentifierResult;
 
         var boundUsingStatementNode = model.Binder.BindUsingStatementNode(
-            keywordToken,
+            consumedKeywordToken,
             namespaceIdentifier);
 
         model.CurrentCodeBlockBuilder.ChildList.Add(boundUsingStatementNode);
         model.SyntaxStack.Push(boundUsingStatementNode);
     }
 
-    public static void HandleInterfaceTokenKeyword(ParserModel model)
+    public static void HandleInterfaceTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
         var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
         GenericArgumentsListingNode? genericArgumentsListingNode = null;
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
         {
-            model.SyntaxStack.Push((OpenAngleBracketToken)model.TokenWalker.Consume());
-            ParseTypes.HandleGenericArguments(model);
+            ParseTypes.HandleGenericArguments(
+                (OpenAngleBracketToken)model.TokenWalker.Consume(),
+                model);
 
             genericArgumentsListingNode = (GenericArgumentsListingNode?)model.SyntaxStack.Pop();
         }
@@ -629,15 +733,18 @@ public class ParseDefaultKeywords
         model.SyntaxStack.Push(typeDefinitionNode);
     }
 
-    public static void HandleClassTokenKeyword(ParserModel model)
+    public static void HandleClassTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
         var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
         GenericArgumentsListingNode? genericArgumentsListingNode = null;
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
         {
-            model.SyntaxStack.Push((OpenAngleBracketToken)model.TokenWalker.Consume());
-            ParseTypes.HandleGenericArguments(model);
+            ParseTypes.HandleGenericArguments(
+                (OpenAngleBracketToken)model.TokenWalker.Consume(),
+                model);
 
             genericArgumentsListingNode = (GenericArgumentsListingNode?)model.SyntaxStack.Pop();
         }
@@ -654,35 +761,36 @@ public class ParseDefaultKeywords
         model.SyntaxStack.Push(typeDefinitionNode);
     }
 
-    public static void HandleNamespaceTokenKeyword(ParserModel model)
+    public static void HandleNamespaceTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
         ParseOthers.HandleNamespaceIdentifier(model);
 
         var handleNamespaceIdentifierResult = model.SyntaxStack.Pop();
 
         if (handleNamespaceIdentifierResult.SyntaxKind == SyntaxKind.EmptyNode)
         {
-            model.DiagnosticBag.ReportTodoException(keywordToken.TextSpan, "Expected a namespace identifier.");
+            model.DiagnosticBag.ReportTodoException(consumedKeywordToken.TextSpan, "Expected a namespace identifier.");
             return;
         }
         var namespaceIdentifier = (IdentifierToken)handleNamespaceIdentifierResult;
 
         if (model.FinalizeNamespaceFileScopeCodeBlockNodeAction is not null)
-            model.DiagnosticBag.ReportTodoException(keywordToken.TextSpan, "Need to add logic to report diagnostic when there is already a file scoped namespace.");
+            model.DiagnosticBag.ReportTodoException(consumedKeywordToken.TextSpan, "Need to add logic to report diagnostic when there is already a file scoped namespace.");
 
         var namespaceStatementNode = new NamespaceStatementNode(
-            keywordToken,
+            consumedKeywordToken,
             namespaceIdentifier,
             new CodeBlockNode(ImmutableArray<ISyntax>.Empty));
 
         model.SyntaxStack.Push(namespaceStatementNode);
     }
 
-    public static void HandleReturnTokenKeyword(ParserModel model)
+    public static void HandleReturnTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
     {
-        var keywordToken = (KeywordToken)model.SyntaxStack.Pop();
-
         ParseOthers.HandleExpression(
             null,
             null,
@@ -695,7 +803,7 @@ public class ParseDefaultKeywords
         var returnExpression = (IExpressionNode)model.SyntaxStack.Pop();
 
         var returnStatementNode = model.Binder.BindReturnStatementNode(
-            keywordToken,
+            consumedKeywordToken,
             returnExpression);
 
         model.CurrentCodeBlockBuilder.ChildList.Add(returnStatementNode);

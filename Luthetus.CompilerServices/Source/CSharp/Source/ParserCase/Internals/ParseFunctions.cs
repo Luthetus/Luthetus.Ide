@@ -10,20 +10,20 @@ namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 public class ParseFunctions
 {
     public static void HandleFunctionInvocation(
+        IdentifierToken consumedIdentifierToken,
         GenericParametersListingNode? genericParametersListingNode,
         ParserModel model)
     {
-        var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
-
         // TODO: (2023-06-04) I believe this if block will run for '<' mathematical operator.
 
-        model.SyntaxStack.Push((OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken));
-        HandleFunctionParameters(model);
+        HandleFunctionParameters(
+            (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken),
+            model);
 
         var functionParametersListingNode = (FunctionParametersListingNode)model.SyntaxStack.Pop();
 
         var functionInvocationNode = new FunctionInvocationNode(
-            identifierToken,
+            consumedIdentifierToken,
             null,
             genericParametersListingNode,
             functionParametersListingNode);
@@ -32,28 +32,25 @@ public class ParseFunctions
         model.CurrentCodeBlockBuilder.ChildList.Add(functionInvocationNode);
     }
 
-    public static void HandleFunctionDefinition(ParserModel model)
+    public static void HandleFunctionDefinition(
+        IdentifierToken consumedIdentifierToken,
+        TypeClauseNode consumedTypeClauseNode,
+        GenericArgumentsListingNode? consumedGenericArgumentsListingNode,
+        ParserModel model)
     {
-        GenericArgumentsListingNode? genericArgumentsListingNode =
-            model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.GenericArgumentsListingNode
-                ? (GenericArgumentsListingNode)model.SyntaxStack.Pop()
-                : null;
-
-        var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
-        var typeClauseNode = (TypeClauseNode)model.SyntaxStack.Pop();
-
         if (model.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
             return;
 
-        model.SyntaxStack.Push(model.TokenWalker.Consume());
-        HandleFunctionArguments(model);
+        HandleFunctionArguments(
+            (OpenParenthesisToken)model.TokenWalker.Consume(),
+            model);
 
         var functionArgumentsListingNode = (FunctionArgumentsListingNode)model.SyntaxStack.Pop();
 
         var functionDefinitionNode = new FunctionDefinitionNode(
-            typeClauseNode,
-            identifierToken,
-            genericArgumentsListingNode,
+            consumedTypeClauseNode,
+            consumedIdentifierToken,
+            consumedGenericArgumentsListingNode,
             functionArgumentsListingNode,
             null,
             null);
@@ -68,33 +65,36 @@ public class ParseFunctions
             var statementDelimiterToken = model.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
 
             // TODO: Fabricating an OpenBraceToken in order to not duplicate the logic within 'ParseOpenBraceToken(...)' seems silly. This likely should be changed
-            model.SyntaxStack.Push(new OpenBraceToken(statementDelimiterToken.TextSpan)
-            {
-                IsFabricated = true
-            });
-            ParseTokens.ParseOpenBraceToken(model);
+            ParseTokens.ParseOpenBraceToken(
+                new OpenBraceToken(statementDelimiterToken.TextSpan)
+                {
+                    IsFabricated = true
+                },
+                model);
 
             // TODO: Fabricating a CloseBraceToken in order to not duplicate the logic within 'ParseOpenBraceToken(...)' seems silly. This likely should be changed
-            model.SyntaxStack.Push(new CloseBraceToken(statementDelimiterToken.TextSpan)
-            {
-                IsFabricated = true
-            });
-            ParseTokens.ParseCloseBraceToken(model);
+            ParseTokens.ParseCloseBraceToken(
+                new CloseBraceToken(statementDelimiterToken.TextSpan)
+                {
+                    IsFabricated = true
+                },
+                model);
         }
     }
 
-    public static void HandleConstructorDefinition(ParserModel model)
+    public static void HandleConstructorDefinition(
+        IdentifierToken consumedIdentifierToken,
+        ParserModel model)
     {
-        var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
-
-        model.SyntaxStack.Push((OpenParenthesisToken)model.TokenWalker.Consume());
-        HandleFunctionArguments(model);
+        HandleFunctionArguments(
+            (OpenParenthesisToken)model.TokenWalker.Consume(),
+            model);
 
         var functionArgumentsListingNode = (FunctionArgumentsListingNode)model.SyntaxStack.Pop();
 
         if (model.CurrentCodeBlockBuilder.CodeBlockOwner is not TypeDefinitionNode typeDefinitionNode)
         {
-            model.DiagnosticBag.ReportConstructorsNeedToBeWithinTypeDefinition(identifierToken.TextSpan);
+            model.DiagnosticBag.ReportConstructorsNeedToBeWithinTypeDefinition(consumedIdentifierToken.TextSpan);
             typeDefinitionNode = Facts.CSharpFacts.Types.Void;
         }
 
@@ -105,13 +105,13 @@ public class ParseFunctions
 
         var constructorDefinitionNode = new ConstructorDefinitionNode(
             typeClauseNode,
-            identifierToken,
+            consumedIdentifierToken,
             null,
             functionArgumentsListingNode,
             null,
             null);
 
-        model.Binder.BindConstructorDefinitionIdentifierToken(identifierToken);
+        model.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken);
         model.SyntaxStack.Push(constructorDefinitionNode);
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
@@ -147,8 +147,10 @@ public class ParseFunctions
 
             if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
             {
-                model.SyntaxStack.Push(model.TokenWalker.Consume());
-                HandleFunctionParameters(model);
+                HandleFunctionParameters(
+                    (OpenParenthesisToken)model.TokenWalker.Consume(),
+                    model);
+
                 // Discard the function parameters result for now, until further implementation is done.
                 _ = model.SyntaxStack.Pop();
             }
@@ -173,19 +175,19 @@ public class ParseFunctions
     /// again the available overloads and determine which to use specifically.
     /// </summary>
     public static void HandleFunctionReferences(
+        IdentifierToken consumedIdentifierToken,
         ImmutableArray<FunctionDefinitionNode> functionDefinitionNodes,
         ParserModel model)
     {
-        var functionInvocationIdentifierToken = (IdentifierToken)model.SyntaxStack.Pop();
-
         var concatenatedGetTextResults = string.Join(
             '\n',
             functionDefinitionNodes.Select(fd => fd.GetTextRecursively()));
 
         if (SyntaxKind.OpenParenthesisToken == model.TokenWalker.Current.SyntaxKind)
         {
-            model.SyntaxStack.Push((OpenParenthesisToken)model.TokenWalker.Consume());
-            HandleFunctionParameters(model);
+            HandleFunctionParameters(
+                (OpenParenthesisToken)model.TokenWalker.Consume(),
+                model);
 
             var functionParametersListingNode = (FunctionParametersListingNode)model.SyntaxStack.Pop();
             FunctionDefinitionNode? matchingOverload = null;
@@ -203,13 +205,13 @@ public class ParseFunctions
             if (matchingOverload is null)
             {
                 model.DiagnosticBag.ReportTodoException(
-                    functionInvocationIdentifierToken.TextSpan,
+                    consumedIdentifierToken.TextSpan,
                     "TODO: Handle case where none of the function overloads match the input.");
             }
 
             // TODO: Don't assume GenericParametersListingNode to be null
             var functionInvocationNode = new FunctionInvocationNode(
-                functionInvocationIdentifierToken,
+                consumedIdentifierToken,
                 matchingOverload,
                 null,
                 functionParametersListingNode);
@@ -229,14 +231,14 @@ public class ParseFunctions
     }
 
     /// <summary>Use this method for function invocation, whereas <see cref="HandleFunctionArguments"/> should be used for function definition.</summary>
-    public static void HandleFunctionParameters(ParserModel model)
+    public static void HandleFunctionParameters(
+        OpenParenthesisToken consumedOpenParenthesisToken,
+        ParserModel model)
     {
-        var openParenthesisToken = (OpenParenthesisToken)model.SyntaxStack.Pop();
-
         if (SyntaxKind.CloseParenthesisToken == model.TokenWalker.Current.SyntaxKind)
         {
             model.SyntaxStack.Push(new FunctionParametersListingNode(
-                openParenthesisToken,
+                consumedOpenParenthesisToken,
                 ImmutableArray<FunctionParameterEntryNode>.Empty,
                 (CloseParenthesisToken)model.TokenWalker.Consume()));
 
@@ -264,10 +266,9 @@ public class ParseFunctions
                         var outVariableTypeClause = model.TokenWalker.MatchTypeClauseNode(model);
                         var outVariableIdentifier = (IdentifierToken)model.TokenWalker.Peek(0);
 
-                        model.SyntaxStack.Push(outVariableTypeClause);
-                        model.SyntaxStack.Push(outVariableIdentifier);
-
                         ParseVariables.HandleVariableDeclaration(
+                            outVariableTypeClause,
+                            outVariableIdentifier,
                             VariableKind.Local,
                             model);
                     }
@@ -363,20 +364,20 @@ public class ParseFunctions
         var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 
         model.SyntaxStack.Push(new FunctionParametersListingNode(
-            openParenthesisToken,
+            consumedOpenParenthesisToken,
             mutableFunctionParametersListing.ToImmutableArray(),
             closeParenthesisToken));
     }
 
     /// <summary>Use this method for function definition, whereas <see cref="HandleFunctionParameters"/> should be used for function invocation.</summary>
-    public static void HandleFunctionArguments(ParserModel model)
+    public static void HandleFunctionArguments(
+        OpenParenthesisToken consumedOpenParenthesisToken,
+        ParserModel model)
     {
-        var openParenthesisToken = (OpenParenthesisToken)model.SyntaxStack.Pop();
-
         if (SyntaxKind.CloseParenthesisToken == model.TokenWalker.Peek(0).SyntaxKind)
         {
             model.SyntaxStack.Push(new FunctionArgumentsListingNode(
-                openParenthesisToken,
+                consumedOpenParenthesisToken,
                 ImmutableArray<FunctionArgumentEntryNode>.Empty,
                 (CloseParenthesisToken)model.TokenWalker.Consume()));
 
@@ -479,7 +480,7 @@ public class ParseFunctions
         var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 
         model.SyntaxStack.Push(new FunctionArgumentsListingNode(
-            openParenthesisToken,
+            consumedOpenParenthesisToken,
             mutableFunctionArgumentListing.ToImmutableArray(),
             closeParenthesisToken));
     }

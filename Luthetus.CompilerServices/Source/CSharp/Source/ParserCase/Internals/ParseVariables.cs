@@ -8,32 +8,28 @@ namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 
 public static class ParseVariables
 {
-    public static void HandleVariableReference(ParserModel model)
+    public static void HandleVariableReference(
+        IdentifierToken consumedIdentifierToken,
+        VariableDeclarationNode resolvedVariableDeclarationNode,
+        ParserModel model)
     {
-        var variableDeclarationStatementNode = (VariableDeclarationNode)model.SyntaxStack.Pop();
-        var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
-
         var variableReferenceNode = new VariableReferenceNode(
-            identifierToken,
-            variableDeclarationStatementNode);
+            consumedIdentifierToken,
+            resolvedVariableDeclarationNode);
 
         model.Binder.BindVariableReferenceNode(variableReferenceNode);
         model.SyntaxStack.Push(variableReferenceNode);
     }
 
-    public static void HandleVariableDeclaration(VariableKind variableKind, ParserModel model)
+    public static void HandleVariableDeclaration(
+        TypeClauseNode consumedTypeClauseNode,
+        IdentifierToken consumedIdentifierToken,
+        VariableKind variableKind,
+        ParserModel model)
     {
-        GenericArgumentsListingNode? genericArgumentsListingNode =
-            model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.GenericArgumentsListingNode
-                ? (GenericArgumentsListingNode)model.SyntaxStack.Pop()
-                : null;
-
-        var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
-        var typeClauseNode = (TypeClauseNode)model.SyntaxStack.Pop();
-
         var variableDeclarationNode = new VariableDeclarationNode(
-            typeClauseNode,
-            identifierToken,
+            consumedTypeClauseNode,
+            consumedIdentifierToken,
             variableKind,
             false);
 
@@ -44,23 +40,29 @@ public static class ParseVariables
         {
             if (model.TokenWalker.Peek(1).SyntaxKind == SyntaxKind.CloseAngleBracketToken)
             {
-                model.SyntaxStack.Push(variableDeclarationNode);
-                HandlePropertyExpression(model);
+                HandlePropertyExpression(
+                    variableDeclarationNode,
+                    (EqualsToken)model.TokenWalker.Consume(),
+                    (CloseAngleBracketToken)model.TokenWalker.Consume(),
+                    model);
             }
             else
             {
                 // Variable initialization occurs here.
-                model.SyntaxStack.Push(identifierToken);
-                HandleVariableAssignment(model);
+                HandleVariableAssignment(
+                    consumedIdentifierToken,
+                    (EqualsToken)model.TokenWalker.Consume(),
+                    model);
             }
         }
 
         if (variableKind == VariableKind.Property &&
             model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
         {
-            model.SyntaxStack.Push(variableDeclarationNode);
-            model.SyntaxStack.Push((OpenBraceToken)model.TokenWalker.Consume());
-            HandlePropertyDeclaration(model);
+            HandlePropertyDeclaration(
+                variableDeclarationNode,
+                (OpenBraceToken)model.TokenWalker.Consume(),
+                model);
         }
         else
         {
@@ -68,11 +70,11 @@ public static class ParseVariables
         }
     }
 
-    public static void HandlePropertyDeclaration(ParserModel model)
+    public static void HandlePropertyDeclaration(
+        VariableDeclarationNode consumedVariableDeclarationNode,
+        OpenBraceToken consumedOpenBraceToken,
+        ParserModel model)
     {
-        var openBraceToken = (OpenBraceToken)model.SyntaxStack.Pop();
-        var variableDeclarationNode = (VariableDeclarationNode)model.SyntaxStack.Pop();
-
         while (!model.TokenWalker.IsEof)
         {
             var token = model.TokenWalker.Consume();
@@ -84,12 +86,12 @@ public static class ParseVariables
             }
             else if (token.SyntaxKind == SyntaxKind.GetTokenContextualKeyword)
             {
-                variableDeclarationNode.HasGetter = true;
+                consumedVariableDeclarationNode.HasGetter = true;
 
                 if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
                 {
                     _ = model.TokenWalker.Consume();
-                    variableDeclarationNode.GetterIsAutoImplemented = true;
+                    consumedVariableDeclarationNode.GetterIsAutoImplemented = true;
                 }
                 else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
                 {
@@ -98,12 +100,12 @@ public static class ParseVariables
             }
             else if (token.SyntaxKind == SyntaxKind.SetTokenContextualKeyword)
             {
-                variableDeclarationNode.HasSetter = true;
+                consumedVariableDeclarationNode.HasSetter = true;
 
                 if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
                 {
                     _ = model.TokenWalker.Consume();
-                    variableDeclarationNode.SetterIsAutoImplemented = true;
+                    consumedVariableDeclarationNode.SetterIsAutoImplemented = true;
                 }
                 else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
                 {
@@ -125,17 +127,19 @@ public static class ParseVariables
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
         {
             // Property initialization occurs here.
-            model.SyntaxStack.Push(variableDeclarationNode.IdentifierToken);
-            HandleVariableAssignment(model);
+            HandleVariableAssignment(
+                consumedVariableDeclarationNode.IdentifierToken,
+                (EqualsToken)model.TokenWalker.Consume(),
+                model);
         }
     }
 
-    public static void HandlePropertyExpression(ParserModel model)
+    public static void HandlePropertyExpression(
+        VariableDeclarationNode consumedVariableDeclarationNode,
+        EqualsToken consumedEqualsToken,
+        CloseAngleBracketToken consumedCloseAngleBracketToken,
+        ParserModel model)
     {
-        var variableDeclarationNode = (VariableDeclarationNode)model.SyntaxStack.Pop();
-        var equalsToken = (EqualsToken)model.TokenWalker.Consume();
-        var closeAngleBracketToken = (CloseAngleBracketToken)model.TokenWalker.Consume();
-
         ParseOthers.HandleExpression(
             null,
             null,
@@ -145,14 +149,14 @@ public static class ParseVariables
             null,
             model);
 
-        variableDeclarationNode.HasGetter = true;
+        consumedVariableDeclarationNode.HasGetter = true;
     }
 
-    public static void HandleVariableAssignment(ParserModel model)
+    public static void HandleVariableAssignment(
+        IdentifierToken consumedIdentifierToken,
+        EqualsToken consumedEqualsToken,
+        ParserModel model)
     {
-        var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
-        var equalsToken = (EqualsToken)model.TokenWalker.Consume(); // Move past the EqualsToken
-
         if (UtilityApi.IsKeywordSyntaxKind(model.TokenWalker.Current.SyntaxKind))
         {
             if (model.TokenWalker.Current.SyntaxKind != SyntaxKind.NewTokenKeyword)
@@ -175,8 +179,8 @@ public static class ParseVariables
         var rightHandExpression = (IExpressionNode)model.SyntaxStack.Pop();
 
         var variableAssignmentExpressionNode = new VariableAssignmentExpressionNode(
-            identifierToken,
-            equalsToken,
+            consumedIdentifierToken,
+            consumedEqualsToken,
             rightHandExpression);
 
         model.Binder.BindVariableAssignmentExpressionNode(variableAssignmentExpressionNode);

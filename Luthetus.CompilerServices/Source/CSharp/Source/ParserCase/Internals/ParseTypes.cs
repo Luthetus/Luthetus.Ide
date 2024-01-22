@@ -7,35 +7,36 @@ namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 
 public static class ParseTypes
 {
-    public static void HandleStaticClassIdentifier(ParserModel model)
+    public static void HandleStaticClassIdentifier(
+        IdentifierToken consumedIdentifierToken,
+        ParserModel model)
     {
-        var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
-
         // The identifier token was already consumed, so a Backtrack() is needed.
         model.TokenWalker.Backtrack();
         model.SyntaxStack.Push(MatchTypeClause(model));
     }
 
-    public static void HandleUndefinedTypeOrNamespaceReference(ParserModel model)
+    public static void HandleUndefinedTypeOrNamespaceReference(
+        IdentifierToken consumedIdentifierToken,
+        ParserModel model)
     {
-        var identifierToken = (IdentifierToken)model.SyntaxStack.Pop();
-        var identifierReferenceNode = new AmbiguousIdentifierNode(identifierToken);
+        var identifierReferenceNode = new AmbiguousIdentifierNode(consumedIdentifierToken);
 
-        model.Binder.BindTypeIdentifier(identifierToken);
+        model.Binder.BindTypeIdentifier(consumedIdentifierToken);
 
         model.DiagnosticBag.ReportUndefinedTypeOrNamespace(
-            identifierToken.TextSpan,
-            identifierToken.TextSpan.GetText());
+            consumedIdentifierToken.TextSpan,
+            consumedIdentifierToken.TextSpan.GetText());
 
         model.SyntaxStack.Push(identifierReferenceNode);
     }
 
-    public static void HandleTypeReference(ParserModel model)
+    public static void HandleTypeReference(
+        IdentifierToken consumedIdentifierToken,
+        TypeDefinitionNode consumedTypeDefinitionNode,
+        ParserModel model)
     {
-        var typeDefinitionNode = (TypeDefinitionNode)model.SyntaxStack.Pop();
-
-        var memberIdentifierToken = (IdentifierToken)model.SyntaxStack.Pop();
-        model.Binder.BindTypeIdentifier(memberIdentifierToken);
+        model.Binder.BindTypeIdentifier(consumedIdentifierToken);
 
         var memberAccessToken = (MemberAccessToken)model.TokenWalker.Match(SyntaxKind.MemberAccessToken);
 
@@ -47,28 +48,26 @@ public static class ParseTypes
         if (identifierToken.IsFabricated)
             throw new NotImplementedException("Implement a static class being member accessed, but the statement ends there --- it is incomplete.");
 
-        var matchingFunctionDefinitionNodes = typeDefinitionNode
+        var matchingFunctionDefinitionNodes = consumedTypeDefinitionNode
             .GetFunctionDefinitionNodes()
             .Where(fd =>
                 fd.FunctionIdentifierToken.TextSpan.GetText() == identifierToken.TextSpan.GetText())
             .ToImmutableArray();
 
-        model.SyntaxStack.Push(identifierToken);
-
-        ParseFunctions.HandleFunctionReferences(matchingFunctionDefinitionNodes, model);
+        ParseFunctions.HandleFunctionReferences(identifierToken, matchingFunctionDefinitionNodes, model);
     }
 
     /// <summary>
     /// This method is used for generic type usage such as, 'var words = new List&lt;string&gt;;'
     /// </summary>
-    public static void HandleGenericParameters(ParserModel model)
+    public static void HandleGenericParameters(
+        OpenAngleBracketToken consumedOpenAngleBracketToken,
+        ParserModel model)
     {
-        var openAngleBracketToken = (OpenAngleBracketToken)model.SyntaxStack.Pop();
-
         if (SyntaxKind.CloseAngleBracketToken == model.TokenWalker.Current.SyntaxKind)
         {
             model.SyntaxStack.Push(new GenericParametersListingNode(
-                openAngleBracketToken,
+                consumedOpenAngleBracketToken,
                 ImmutableArray<GenericParameterEntryNode>.Empty,
                 (CloseAngleBracketToken)model.TokenWalker.Consume()));
 
@@ -105,7 +104,7 @@ public static class ParseTypes
         var closeAngleBracketToken = (CloseAngleBracketToken)model.TokenWalker.Match(SyntaxKind.CloseAngleBracketToken);
 
         model.SyntaxStack.Push(new GenericParametersListingNode(
-            openAngleBracketToken,
+            consumedOpenAngleBracketToken,
             mutableGenericParametersListing.ToImmutableArray(),
             closeAngleBracketToken));
     }
@@ -113,14 +112,14 @@ public static class ParseTypes
     /// <summary>
     /// This method is used for generic type definition such as, 'class List&lt;T&gt; { ... }'
     /// </summary>
-    public static void HandleGenericArguments(ParserModel model)
+    public static void HandleGenericArguments(
+        OpenAngleBracketToken consumedOpenAngleBracketToken,
+        ParserModel model)
     {
-        var openAngleBracketToken = (OpenAngleBracketToken)model.SyntaxStack.Pop();
-
         if (SyntaxKind.CloseAngleBracketToken == model.TokenWalker.Current.SyntaxKind)
         {
             model.SyntaxStack.Push(new GenericArgumentsListingNode(
-                openAngleBracketToken,
+                consumedOpenAngleBracketToken,
                 ImmutableArray<GenericArgumentEntryNode>.Empty,
                 (CloseAngleBracketToken)model.TokenWalker.Consume()));
 
@@ -157,16 +156,16 @@ public static class ParseTypes
         var closeAngleBracketToken = (CloseAngleBracketToken)model.TokenWalker.Match(SyntaxKind.CloseAngleBracketToken);
 
         model.SyntaxStack.Push(new GenericArgumentsListingNode(
-            openAngleBracketToken,
+            consumedOpenAngleBracketToken,
             mutableGenericArgumentsListing.ToImmutableArray(),
             closeAngleBracketToken));
     }
 
     /// <summary>TODO: Correctly implement this method. For now going to skip until the attribute closing square bracket.</summary>
-    public static void HandleAttribute(ParserModel model)
+    public static void HandleAttribute(
+        OpenSquareBracketToken consumedOpenSquareBracketToken,
+        ParserModel model)
     {
-        var openSquareBracketToken = (OpenSquareBracketToken)model.SyntaxStack.Pop();
-
         ISyntaxToken tokenCurrent;
         var innerTokens = new List<ISyntaxToken>();
 
@@ -188,7 +187,7 @@ public static class ParseTypes
         if (tokenCurrent.SyntaxKind == SyntaxKind.CloseSquareBracketToken)
         {
             model.SyntaxStack.Push(model.Binder.BindAttributeNode(
-                openSquareBracketToken,
+                consumedOpenSquareBracketToken,
                 innerTokens,
                 (CloseSquareBracketToken)tokenCurrent));
         }
@@ -221,7 +220,7 @@ public static class ParseTypes
             var openAngleBracketToken = (OpenAngleBracketToken)model.TokenWalker.Consume();
 
             model.SyntaxStack.Push(openAngleBracketToken);
-            ParseTypes.HandleGenericParameters(model);
+            ParseTypes.HandleGenericParameters(openAngleBracketToken, model);
 
             var genericParametersListingNode = (GenericParametersListingNode)model.SyntaxStack.Pop();
 
@@ -267,10 +266,11 @@ public static class ParseTypes
     }
 
     /// <summary>TODO: Correctly parse object initialization. For now, just skip over it when parsing.</summary>
-    public static void HandleObjectInitialization(ParserModel model)
+    public static void HandleObjectInitialization(
+        OpenBraceToken consumedOpenBraceToken,
+        ParserModel model)
     {
-        var openBraceToken = (OpenBraceToken)model.SyntaxStack.Pop();
-        ISyntaxToken shouldBeCloseBraceToken = new BadToken(openBraceToken.TextSpan);
+        ISyntaxToken shouldBeCloseBraceToken = new BadToken(consumedOpenBraceToken.TextSpan);
 
         while (!model.TokenWalker.IsEof)
         {
@@ -287,7 +287,7 @@ public static class ParseTypes
             shouldBeCloseBraceToken = model.TokenWalker.Match(SyntaxKind.CloseBraceToken);
 
         model.SyntaxStack.Push(new ObjectInitializationNode(
-            openBraceToken,
+            consumedOpenBraceToken,
             (CloseBraceToken)shouldBeCloseBraceToken));
     }
 }
