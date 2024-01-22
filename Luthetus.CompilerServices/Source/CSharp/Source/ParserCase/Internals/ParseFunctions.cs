@@ -236,8 +236,8 @@ public class ParseFunctions
                     {
                         new ExpressionDelimiter(null, SyntaxKind.CommaToken, null, null),
                         new ExpressionDelimiter(
-                            SyntaxKind.OpenParenthesisToken,
-                            SyntaxKind.CloseParenthesisToken,
+                            null,
+                            SyntaxKind.CloseBraceToken,
                             null,
                             null)
                     },

@@ -150,7 +150,8 @@ public static class ParseOthers
                         break;
                     }
                 }
-                else if (tokenCurrent.SyntaxKind == SyntaxKind.CommaToken)
+                else if (tokenCurrent.SyntaxKind == SyntaxKind.CommaToken ||
+                         tokenCurrent.SyntaxKind == SyntaxKind.CloseBraceToken)
                 {
                     model.TokenWalker.Backtrack();
                     break;

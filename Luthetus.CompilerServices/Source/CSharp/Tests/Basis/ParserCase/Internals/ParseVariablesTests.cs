@@ -26,6 +26,9 @@ public class ParseVariablesTests
          var x = 2;
          Person person = new Person();
          Person person = new Person { };
+         Person person = new Person() { };
+         Person person = new Person { FirstName = "John", LastName = "Doe" };
+         Person person = new Person() { FirstName = "John", LastName = "Doe" };
      */
 
     [Fact]
@@ -103,7 +106,7 @@ public class ParseVariablesTests
 
         var typeClauseNode = variableDeclarationNode.TypeClauseNode;
         Assert.Equal("var", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-        Assert.Null(typeClauseNode.ValueType);
+        Assert.Equal(typeof(void), typeClauseNode.ValueType);
 
         var identifierToken = variableDeclarationNode.IdentifierToken;
         Assert.Equal("x", identifierToken.TextSpan.GetText());
@@ -137,7 +140,7 @@ public class ParseVariablesTests
 
         var typeClauseNode = variableDeclarationNode.TypeClauseNode;
         Assert.Equal("var", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-        Assert.Null(typeClauseNode.ValueType);
+        Assert.Equal(typeof(void), typeClauseNode.ValueType);
 
         var identifierToken = variableDeclarationNode.IdentifierToken;
         Assert.Equal("var", identifierToken.TextSpan.GetText());
@@ -415,7 +418,7 @@ public class ParseVariablesTests
 
             var typeClauseNode = variableDeclarationNode.TypeClauseNode;
             Assert.Equal("var", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-            Assert.Null(typeClauseNode.ValueType);
+            Assert.Equal(typeof(void), typeClauseNode.ValueType);
 
             var identifierToken = variableDeclarationNode.IdentifierToken;
             Assert.Equal("x", identifierToken.TextSpan.GetText());
@@ -681,7 +684,121 @@ public class ParseVariablesTests
 
                 Assert.NotNull(constructorInvocationNode.ObjectInitializationParametersListingNode);
                 Assert.Equal("{", constructorInvocationNode.ObjectInitializationParametersListingNode.OpenBraceToken.TextSpan.GetText());
-                Assert.Empty(constructorInvocationNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList);
+
+                // constructorInvocationNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList
+                {
+                    Assert.Equal(2, constructorInvocationNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Length);
+
+                    // First ObjectInitializationParameterEntryNode
+                    {
+                        var objectInitializationParameterEntryNode = constructorInvocationNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[0];
+
+                        Assert.Equal("FirstName", objectInitializationParameterEntryNode.PropertyIdentifierToken.TextSpan.GetText());
+                        var stringLiteralExpression = (LiteralExpressionNode)objectInitializationParameterEntryNode.ExpressionNode;
+                        Assert.Equal("\"John\"", stringLiteralExpression.LiteralSyntaxToken.TextSpan.GetText());
+                    }
+
+                    // Second ObjectInitializationParameterEntryNode
+                    {
+                        var objectInitializationParameterEntryNode = constructorInvocationNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[1];
+
+                        Assert.Equal("LastName", objectInitializationParameterEntryNode.PropertyIdentifierToken.TextSpan.GetText());
+                        var stringLiteralExpression = (LiteralExpressionNode)objectInitializationParameterEntryNode.ExpressionNode;
+                        Assert.Equal("\"Doe\"", stringLiteralExpression.LiteralSyntaxToken.TextSpan.GetText());
+                    }
+                }
+
+                Assert.Equal("}", constructorInvocationNode.ObjectInitializationParametersListingNode.CloseBraceToken.TextSpan.GetText());
+            }
+        }
+
+        Guid idOfExpectedDiagnostic;
+        {
+            // TODO: Reporting the diagnostic to get the Id like this is silly.
+            var fakeDiagnosticBag = new LuthetusDiagnosticBag();
+            fakeDiagnosticBag.ReportUndefinedTypeOrNamespace(
+                TextEditorTextSpan.FabricateTextSpan(string.Empty),
+                string.Empty);
+            idOfExpectedDiagnostic = fakeDiagnosticBag.Single().Id;
+        }
+
+        Assert.Single(compilationUnit.DiagnosticsList);
+        Assert.Equal(idOfExpectedDiagnostic, compilationUnit.DiagnosticsList.Single().Id);
+    }
+    
+    [Fact]
+    public void COMBINED_VariableDeclaration_AND_VariableAssignment_WITH_ExplicitType_WITH_ConstructorInvocation_AND_ObjectInitializationEntries()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "Person person = new Person() { FirstName = \"John\", LastName = \"Doe\" };";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        Assert.Equal(2, topCodeBlock.ChildList.Length);
+
+        // variableDeclarationNode
+        {
+            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+
+            var typeClauseNode = variableDeclarationNode.TypeClauseNode;
+            Assert.Equal("Person", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+            Assert.Null(typeClauseNode.ValueType);
+
+            var identifierToken = variableDeclarationNode.IdentifierToken;
+            Assert.Equal("person", identifierToken.TextSpan.GetText());
+        }
+
+        // variableAssignmentNode
+        {
+            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+
+            var identifierToken = variableAssignmentNode.VariableIdentifierToken;
+            Assert.Equal("person", identifierToken.TextSpan.GetText());
+
+            var equalsToken = variableAssignmentNode.EqualsToken;
+            Assert.Equal("=", equalsToken.TextSpan.GetText());
+
+            // constructorInvocationExpressionNode
+            {
+                var constructorInvocationNode = (ConstructorInvocationExpressionNode)variableAssignmentNode.ExpressionNode;
+
+                Assert.Equal("new", constructorInvocationNode.NewKeywordToken.TextSpan.GetText());
+                Assert.Equal("Person", constructorInvocationNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+
+                Assert.NotNull(constructorInvocationNode.FunctionParametersListingNode);
+                Assert.Equal("(", constructorInvocationNode.FunctionParametersListingNode.OpenParenthesisToken.TextSpan.GetText());
+                Assert.Empty(constructorInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeList);
+                Assert.Equal(")", constructorInvocationNode.FunctionParametersListingNode.CloseParenthesisToken.TextSpan.GetText());
+
+                Assert.NotNull(constructorInvocationNode.ObjectInitializationParametersListingNode);
+                Assert.Equal("{", constructorInvocationNode.ObjectInitializationParametersListingNode.OpenBraceToken.TextSpan.GetText());
+
+                // constructorInvocationNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList
+                {
+                    Assert.Equal(2, constructorInvocationNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Length);
+
+                    // First ObjectInitializationParameterEntryNode
+                    {
+                        var objectInitializationParameterEntryNode = constructorInvocationNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[0];
+
+                        Assert.Equal("FirstName", objectInitializationParameterEntryNode.PropertyIdentifierToken.TextSpan.GetText());
+                        var stringLiteralExpression = (LiteralExpressionNode)objectInitializationParameterEntryNode.ExpressionNode;
+                        Assert.Equal("\"John\"", stringLiteralExpression.LiteralSyntaxToken.TextSpan.GetText());
+                    }
+
+                    // Second ObjectInitializationParameterEntryNode
+                    {
+                        var objectInitializationParameterEntryNode = constructorInvocationNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[1];
+
+                        Assert.Equal("LastName", objectInitializationParameterEntryNode.PropertyIdentifierToken.TextSpan.GetText());
+                        var stringLiteralExpression = (LiteralExpressionNode)objectInitializationParameterEntryNode.ExpressionNode;
+                        Assert.Equal("\"Doe\"", stringLiteralExpression.LiteralSyntaxToken.TextSpan.GetText());
+                    }
+                }
+
                 Assert.Equal("}", constructorInvocationNode.ObjectInitializationParametersListingNode.CloseBraceToken.TextSpan.GetText());
             }
         }
