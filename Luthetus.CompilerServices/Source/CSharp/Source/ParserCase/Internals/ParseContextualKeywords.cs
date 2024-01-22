@@ -25,12 +25,20 @@ public class ParseContextualKeywords
 
             if (nextTokenIsVarKeyword || nextTokenIsIdentifierToken)
             {
-                var varKeyword = new TypeClauseNode(
+                var varTypeClauseNode = new TypeClauseNode(
                     consumedKeywordContextualToken,
                     null,
                     null);
 
-                model.SyntaxStack.Push(varKeyword);
+                if (model.Binder.TryGetTypeDefinitionHierarchically(
+                        consumedKeywordContextualToken.TextSpan.GetText(),
+                        out var varTypeDefinitionNode) &&
+                    varTypeDefinitionNode is not null)
+                {
+                    varTypeClauseNode = varTypeDefinitionNode.ToTypeClause();
+                }
+
+                model.SyntaxStack.Push(varTypeClauseNode);
                 return;
             }
         }

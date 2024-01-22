@@ -737,7 +737,19 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         ParserModel model)
     {
-        var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
+        IdentifierToken identifierToken;
+
+        if (UtilityApi.IsContextualKeywordSyntaxKind(model.TokenWalker.Current.SyntaxKind))
+        {
+            var contextualKeywordToken = (KeywordContextualToken)model.TokenWalker.Consume();
+            // Take the contextual keyword as an identifier
+            identifierToken = new IdentifierToken(contextualKeywordToken.TextSpan);
+        }
+        else
+        {
+            identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
+        }
+
         GenericArgumentsListingNode? genericArgumentsListingNode = null;
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)

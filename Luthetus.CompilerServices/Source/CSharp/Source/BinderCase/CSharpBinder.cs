@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Luthetus.CompilerServices.Lang.CSharp.Facts;
+using Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
@@ -295,7 +296,7 @@ public class CSharpBinder : IBinder
         }
         else
         {
-            if (CSharpKeywords.CONTEXTUAL_KEYWORDS.Contains(text))
+            if (UtilityApi.IsContextualKeywordSyntaxKind(text))
             {
                 _diagnosticBag.TheNameDoesNotExistInTheCurrentContext(
                     variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,

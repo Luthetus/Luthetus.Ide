@@ -2,6 +2,7 @@
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase.Internals;
@@ -14,6 +15,7 @@ public class ParseVariablesTests
          Person x;
          var x;
          var var;
+         public class var { } var var;
      # VariableAssignment
          x = true;
          x = 2;
@@ -149,6 +151,50 @@ public class ParseVariablesTests
 
         Assert.Single(compilationUnit.DiagnosticsList);
         Assert.Equal(idOfExpectedDiagnostic, compilationUnit.DiagnosticsList.Single().Id);
+    }
+
+    [Fact]
+    public void VariableDeclaration_WITH_VarAsDefinedType_WITH_VarIdentifier()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "public class var { } var var;";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        Assert.Equal(2, topCodeBlock.ChildList.Length);
+
+        // typeDefinitionNode
+        {
+            var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[0];
+
+            var identifierToken = (IdentifierToken)typeDefinitionNode.ChildList[0];
+            Assert.Equal("var", identifierToken.TextSpan.GetText());
+
+            var codeBlockNode = (CodeBlockNode)typeDefinitionNode.ChildList[1];
+            Assert.Empty(codeBlockNode.ChildList);
+        }
+
+        // variableDeclarationNode
+        {
+            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[1];
+
+            var typeClauseNode = variableDeclarationNode.TypeClauseNode;
+            Assert.Equal("var", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+
+            // Assert that the type isn't the var contextual keyword
+            // (since it was defined as a class)
+            Assert.IsType<IdentifierToken>(typeClauseNode.TypeIdentifierToken);
+
+            Assert.Null(typeClauseNode.ValueType);
+
+            var identifierToken = variableDeclarationNode.IdentifierToken;
+            Assert.Equal("var", identifierToken.TextSpan.GetText());
+        }
+
+        Assert.Empty(compilationUnit.DiagnosticsList);
     }
 
     [Fact]

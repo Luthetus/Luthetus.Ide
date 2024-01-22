@@ -6,7 +6,12 @@ public static class UtilityApi
 {
     public static bool IsContextualKeywordSyntaxKind(SyntaxKind syntaxKind)
     {
-        return syntaxKind.ToString().EndsWith("ContextualKeyword");
+        return IsContextualKeywordSyntaxKind(syntaxKind.ToString());
+    }
+    
+    public static bool IsContextualKeywordSyntaxKind(string syntaxKindString)
+    {
+        return syntaxKindString.EndsWith("ContextualKeyword");
     }
 
     public static bool IsKeywordSyntaxKind(SyntaxKind syntaxKind)
