@@ -790,23 +790,17 @@ public static class SyntaxApi
                 break;
             }
 
-            if (SyntaxKind.CommaToken == model.TokenWalker.Current.SyntaxKind)
+            if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
             {
-                _ = model.TokenWalker.Consume();
+                var commaToken = (CommaToken)model.TokenWalker.Consume();
                 // TODO: Track comma tokens?
-                //
-                // mutableFunctionParametersListing.Add(_cSharpParser._tokenWalker.Consume());
             }
-            else if (SyntaxKind.CloseParenthesisToken == model.TokenWalker.Current.SyntaxKind ||
-                     SyntaxKind.EndOfFileToken == model.TokenWalker.Current.SyntaxKind)
+            else
             {
-                _ = model.TokenWalker.Consume();
                 break;
             }
         }
 
-        // The expression logic will consume the CloseParenthesisToken, therefore backtrack once before matching
-        _ = model.TokenWalker.Backtrack();
         var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 
         model.SyntaxStack.Push(new FunctionParametersListingNode(
