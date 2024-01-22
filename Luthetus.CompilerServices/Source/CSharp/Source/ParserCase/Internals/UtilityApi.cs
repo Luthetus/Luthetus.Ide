@@ -3,82 +3,10 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
+namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 
 public static class UtilityApi
 {
-    public static TypeClauseNode MatchTypeClause(ParserModel model)
-    {
-        ISyntaxToken syntaxToken;
-
-        if (IsKeywordSyntaxKind(model.TokenWalker.Current.SyntaxKind) &&
-                (IsTypeIdentifierKeywordSyntaxKind(model.TokenWalker.Current.SyntaxKind) ||
-                IsVarContextualKeyword(model, model.TokenWalker.Current.SyntaxKind)))
-        {
-            syntaxToken = model.TokenWalker.Consume();
-        }
-        else
-        {
-            syntaxToken = model.TokenWalker.Match(SyntaxKind.IdentifierToken);
-        }
-
-        var typeClauseNode = new TypeClauseNode(
-            syntaxToken,
-            null,
-            null);
-
-        typeClauseNode = model.Binder.BindTypeClauseNode(typeClauseNode);
-
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-        {
-            var openAngleBracketToken = (OpenAngleBracketToken)model.TokenWalker.Consume();
-
-            model.SyntaxStack.Push(openAngleBracketToken);
-            SyntaxApi.HandleGenericParameters(model);
-
-            var genericParametersListingNode = (GenericParametersListingNode)model.SyntaxStack.Pop();
-
-            typeClauseNode = new TypeClauseNode(
-                typeClauseNode.TypeIdentifier,
-                null,
-                genericParametersListingNode);
-        }
-
-        while (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenSquareBracketToken)
-        {
-            var openSquareBracketToken = model.TokenWalker.Consume();
-            var closeSquareBracketToken = model.TokenWalker.Match(SyntaxKind.CloseSquareBracketToken);
-
-            var arraySyntaxTokenTextSpan = syntaxToken.TextSpan with
-            {
-                EndingIndexExclusive = closeSquareBracketToken.TextSpan.EndingIndexExclusive
-            };
-
-            var arraySyntaxToken = new ArraySyntaxToken(arraySyntaxTokenTextSpan);
-            var genericParameterEntryNode = new GenericParameterEntryNode(typeClauseNode);
-
-            var genericParametersListingNode = new GenericParametersListingNode(
-                new OpenAngleBracketToken(openSquareBracketToken.TextSpan)
-                {
-                    IsFabricated = true
-                },
-                new GenericParameterEntryNode[] { genericParameterEntryNode }.ToImmutableArray(),
-                new CloseAngleBracketToken(closeSquareBracketToken.TextSpan)
-                {
-                    IsFabricated = true
-                });
-
-            return new TypeClauseNode(
-                arraySyntaxToken,
-                null,
-                genericParametersListingNode);
-
-            // TODO: Implement multidimensional arrays. This array logic always returns after finding the first array syntax.
-        }
-
-        return typeClauseNode;
-    }
-
     public static bool IsContextualKeywordSyntaxKind(SyntaxKind syntaxKind)
     {
         return syntaxKind.ToString().EndsWith("ContextualKeyword");

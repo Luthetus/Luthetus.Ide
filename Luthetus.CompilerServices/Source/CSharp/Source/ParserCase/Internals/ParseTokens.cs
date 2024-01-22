@@ -4,9 +4,9 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
+namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 
-public static class TokenApi
+public static class ParseTokens
 {
     public static void ParseNumericLiteralToken(ParserModel model)
     {
@@ -14,7 +14,7 @@ public static class TokenApi
 
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
-        SyntaxApi.HandleExpression(
+        ParseOthers.HandleExpression(
             null,
             null,
             null,
@@ -33,7 +33,7 @@ public static class TokenApi
 
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
-        SyntaxApi.HandleExpression(
+        ParseOthers.HandleExpression(
             null,
             null,
             null,
@@ -98,7 +98,7 @@ public static class TokenApi
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
         {
             model.SyntaxStack.Push(model.TokenWalker.Consume());
-            SyntaxApi.HandleGenericArguments(model);
+            ParseTypes.HandleGenericArguments(model);
             return true;
         }
         else
@@ -114,7 +114,7 @@ public static class TokenApi
         if (SyntaxKind.OpenAngleBracketToken == model.TokenWalker.Current.SyntaxKind)
         {
             model.SyntaxStack.Push(model.TokenWalker.Consume());
-            SyntaxApi.HandleGenericParameters(model);
+            ParseTypes.HandleGenericParameters(model);
             genericParametersListingNode = (GenericParametersListingNode?)model.SyntaxStack.Pop();
             return true;
         }
@@ -134,7 +134,7 @@ public static class TokenApi
             model.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
         {
             model.SyntaxStack.Push(identifierToken);
-            SyntaxApi.HandleConstructorDefinition(model);
+            ParseFunctions.HandleConstructorDefinition(model);
             return true;
         }
 
@@ -183,7 +183,7 @@ public static class TokenApi
             model.SyntaxStack.Push(identifierToken);
             model.SyntaxStack.Push(namespaceGroupNode);
 
-            SyntaxApi.HandleNamespaceReference(model);
+            ParseOthers.HandleNamespaceReference(model);
             return true;
         }
         else
@@ -193,7 +193,7 @@ public static class TokenApi
             {
                 model.SyntaxStack.Push(identifierToken);
                 model.SyntaxStack.Push(variableDeclarationStatementNode);
-                SyntaxApi.HandleVariableReference(model);
+                ParseVariables.HandleVariableReference(model);
                 return true;
             }
             else
@@ -204,13 +204,13 @@ public static class TokenApi
                     typeDefinitionNode is not null)
                 {
                     model.SyntaxStack.Push(identifierToken);
-                    SyntaxApi.HandleStaticClassIdentifier(model);
+                    ParseTypes.HandleStaticClassIdentifier(model);
                     return true;
                 }
                 else
                 {
                     model.SyntaxStack.Push(identifierToken);
-                    SyntaxApi.HandleUndefinedTypeOrNamespaceReference(model);
+                    ParseTypes.HandleUndefinedTypeOrNamespaceReference(model);
                     return true;
                 }
             }
@@ -224,7 +224,7 @@ public static class TokenApi
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
         {
             model.SyntaxStack.Push(identifierToken);
-            SyntaxApi.HandleVariableAssignment(model);
+            ParseVariables.HandleVariableAssignment(model);
             return true;
         }
 
@@ -261,7 +261,7 @@ public static class TokenApi
 
         // Function invocation
         model.SyntaxStack.Push(identifierToken);
-        SyntaxApi.HandleFunctionInvocation(genericParametersListingNode, model);
+        ParseFunctions.HandleFunctionInvocation(genericParametersListingNode, model);
         return true;
     }
 
@@ -269,7 +269,7 @@ public static class TokenApi
     {
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
         {
-            SyntaxApi.HandleFunctionDefinition(model);
+            ParseFunctions.HandleFunctionDefinition(model);
             return true;
         }
 
@@ -319,7 +319,7 @@ public static class TokenApi
 
         if (variableKind is not null)
         {
-            SyntaxApi.HandleVariableDeclaration(variableKind.Value, model);
+            ParseVariables.HandleVariableDeclaration(variableKind.Value, model);
             return true;
         }
         else
@@ -376,7 +376,7 @@ public static class TokenApi
 
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
-        SyntaxApi.HandleExpression(
+        ParseOthers.HandleExpression(
             null,
             null,
             null,
@@ -416,13 +416,13 @@ public static class TokenApi
 
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
-        SyntaxApi.HandleExpression(
+        ParseOthers.HandleExpression(
             null,
             null,
             null,
             null,
             null,
-            null, 
+            null,
             model);
 
         model.CurrentCodeBlockBuilder.ChildList.Add(
@@ -435,13 +435,13 @@ public static class TokenApi
 
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
-        SyntaxApi.HandleExpression(
+        ParseOthers.HandleExpression(
             null,
             null,
             null,
             null,
             null,
-            null, 
+            null,
             model);
 
         model.CurrentCodeBlockBuilder.ChildList.Add(
@@ -454,13 +454,13 @@ public static class TokenApi
 
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
-        SyntaxApi.HandleExpression(
+        ParseOthers.HandleExpression(
             null,
             null,
             null,
             null,
             null,
-            null, 
+            null,
             model);
 
         model.CurrentCodeBlockBuilder.ChildList.Add(
@@ -474,7 +474,7 @@ public static class TokenApi
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.TypeDefinitionNode)
         {
             var typeDefinitionNode = (TypeDefinitionNode)model.SyntaxStack.Pop();
-            var inheritedTypeClauseNode = UtilityApi.MatchTypeClause(model);
+            var inheritedTypeClauseNode = model.TokenWalker.MatchTypeClauseNode(model);
 
             model.Binder.BindTypeClauseNode(inheritedTypeClauseNode);
 
@@ -644,7 +644,7 @@ public static class TokenApi
 
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
-        SyntaxApi.HandleExpression(
+        ParseOthers.HandleExpression(
             null,
             null,
             null,
@@ -658,7 +658,7 @@ public static class TokenApi
         // Example: (3 + 4) * 3
         //
         // Complete expression would be binary multiplication.
-        SyntaxApi.HandleExpression(
+        ParseOthers.HandleExpression(
             parenthesizedExpression,
             parenthesizedExpression,
             null,
@@ -693,7 +693,7 @@ public static class TokenApi
         {
             // Generic Arguments
             model.SyntaxStack.Push(openAngleBracketToken);
-            SyntaxApi.HandleGenericArguments(model);
+            ParseTypes.HandleGenericArguments(model);
 
             if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
@@ -733,7 +733,7 @@ public static class TokenApi
         {
             // Attribute
             model.SyntaxStack.Push(openSquareBracketToken);
-            SyntaxApi.HandleAttribute(model);
+            ParseTypes.HandleAttribute(model);
         }
     }
 
@@ -816,241 +816,241 @@ public static class TokenApi
         switch (keywordToken.SyntaxKind)
         {
             case SyntaxKind.AsTokenKeyword:
-                SyntaxApi.HandleAsTokenKeyword(model);
+                ParseDefaultKeywords.HandleAsTokenKeyword(model);
                 break;
             case SyntaxKind.BaseTokenKeyword:
-                SyntaxApi.HandleBaseTokenKeyword(model);
+                ParseDefaultKeywords.HandleBaseTokenKeyword(model);
                 break;
             case SyntaxKind.BoolTokenKeyword:
-                SyntaxApi.HandleBoolTokenKeyword(model);
+                ParseDefaultKeywords.HandleBoolTokenKeyword(model);
                 break;
             case SyntaxKind.BreakTokenKeyword:
-                SyntaxApi.HandleBreakTokenKeyword(model);
+                ParseDefaultKeywords.HandleBreakTokenKeyword(model);
                 break;
             case SyntaxKind.ByteTokenKeyword:
-                SyntaxApi.HandleByteTokenKeyword(model);
+                ParseDefaultKeywords.HandleByteTokenKeyword(model);
                 break;
             case SyntaxKind.CaseTokenKeyword:
-                SyntaxApi.HandleCaseTokenKeyword(model);
+                ParseDefaultKeywords.HandleCaseTokenKeyword(model);
                 break;
             case SyntaxKind.CatchTokenKeyword:
-                SyntaxApi.HandleCatchTokenKeyword(model);
+                ParseDefaultKeywords.HandleCatchTokenKeyword(model);
                 break;
             case SyntaxKind.CharTokenKeyword:
-                SyntaxApi.HandleCharTokenKeyword(model);
+                ParseDefaultKeywords.HandleCharTokenKeyword(model);
                 break;
             case SyntaxKind.CheckedTokenKeyword:
-                SyntaxApi.HandleCheckedTokenKeyword(model);
+                ParseDefaultKeywords.HandleCheckedTokenKeyword(model);
                 break;
             case SyntaxKind.ConstTokenKeyword:
-                SyntaxApi.HandleConstTokenKeyword(model);
+                ParseDefaultKeywords.HandleConstTokenKeyword(model);
                 break;
             case SyntaxKind.ContinueTokenKeyword:
-                SyntaxApi.HandleContinueTokenKeyword(model);
+                ParseDefaultKeywords.HandleContinueTokenKeyword(model);
                 break;
             case SyntaxKind.DecimalTokenKeyword:
-                SyntaxApi.HandleDecimalTokenKeyword(model);
+                ParseDefaultKeywords.HandleDecimalTokenKeyword(model);
                 break;
             case SyntaxKind.DefaultTokenKeyword:
-                SyntaxApi.HandleDefaultTokenKeyword(model);
+                ParseDefaultKeywords.HandleDefaultTokenKeyword(model);
                 break;
             case SyntaxKind.DelegateTokenKeyword:
-                SyntaxApi.HandleDelegateTokenKeyword(model);
+                ParseDefaultKeywords.HandleDelegateTokenKeyword(model);
                 break;
             case SyntaxKind.DoTokenKeyword:
-                SyntaxApi.HandleDoTokenKeyword(model);
+                ParseDefaultKeywords.HandleDoTokenKeyword(model);
                 break;
             case SyntaxKind.DoubleTokenKeyword:
-                SyntaxApi.HandleDoubleTokenKeyword(model);
+                ParseDefaultKeywords.HandleDoubleTokenKeyword(model);
                 break;
             case SyntaxKind.ElseTokenKeyword:
-                SyntaxApi.HandleElseTokenKeyword(model);
+                ParseDefaultKeywords.HandleElseTokenKeyword(model);
                 break;
             case SyntaxKind.EnumTokenKeyword:
-                SyntaxApi.HandleEnumTokenKeyword(model);
+                ParseDefaultKeywords.HandleEnumTokenKeyword(model);
                 break;
             case SyntaxKind.EventTokenKeyword:
-                SyntaxApi.HandleEventTokenKeyword(model);
+                ParseDefaultKeywords.HandleEventTokenKeyword(model);
                 break;
             case SyntaxKind.ExplicitTokenKeyword:
-                SyntaxApi.HandleExplicitTokenKeyword(model);
+                ParseDefaultKeywords.HandleExplicitTokenKeyword(model);
                 break;
             case SyntaxKind.ExternTokenKeyword:
-                SyntaxApi.HandleExternTokenKeyword(model);
+                ParseDefaultKeywords.HandleExternTokenKeyword(model);
                 break;
             case SyntaxKind.FalseTokenKeyword:
-                SyntaxApi.HandleFalseTokenKeyword(model);
+                ParseDefaultKeywords.HandleFalseTokenKeyword(model);
                 break;
             case SyntaxKind.FinallyTokenKeyword:
-                SyntaxApi.HandleFinallyTokenKeyword(model);
+                ParseDefaultKeywords.HandleFinallyTokenKeyword(model);
                 break;
             case SyntaxKind.FixedTokenKeyword:
-                SyntaxApi.HandleFixedTokenKeyword(model);
+                ParseDefaultKeywords.HandleFixedTokenKeyword(model);
                 break;
             case SyntaxKind.FloatTokenKeyword:
-                SyntaxApi.HandleFloatTokenKeyword(model);
+                ParseDefaultKeywords.HandleFloatTokenKeyword(model);
                 break;
             case SyntaxKind.ForTokenKeyword:
-                SyntaxApi.HandleForTokenKeyword(model);
+                ParseDefaultKeywords.HandleForTokenKeyword(model);
                 break;
             case SyntaxKind.ForeachTokenKeyword:
-                SyntaxApi.HandleForeachTokenKeyword(model);
+                ParseDefaultKeywords.HandleForeachTokenKeyword(model);
                 break;
             case SyntaxKind.GotoTokenKeyword:
-                SyntaxApi.HandleGotoTokenKeyword(model);
+                ParseDefaultKeywords.HandleGotoTokenKeyword(model);
                 break;
             case SyntaxKind.ImplicitTokenKeyword:
-                SyntaxApi.HandleImplicitTokenKeyword(model);
+                ParseDefaultKeywords.HandleImplicitTokenKeyword(model);
                 break;
             case SyntaxKind.InTokenKeyword:
-                SyntaxApi.HandleInTokenKeyword(model);
+                ParseDefaultKeywords.HandleInTokenKeyword(model);
                 break;
             case SyntaxKind.IntTokenKeyword:
-                SyntaxApi.HandleIntTokenKeyword(model);
+                ParseDefaultKeywords.HandleIntTokenKeyword(model);
                 break;
             case SyntaxKind.IsTokenKeyword:
-                SyntaxApi.HandleIsTokenKeyword(model);
+                ParseDefaultKeywords.HandleIsTokenKeyword(model);
                 break;
             case SyntaxKind.LockTokenKeyword:
-                SyntaxApi.HandleLockTokenKeyword(model);
+                ParseDefaultKeywords.HandleLockTokenKeyword(model);
                 break;
             case SyntaxKind.LongTokenKeyword:
-                SyntaxApi.HandleLongTokenKeyword(model);
+                ParseDefaultKeywords.HandleLongTokenKeyword(model);
                 break;
             case SyntaxKind.NullTokenKeyword:
-                SyntaxApi.HandleNullTokenKeyword(model);
+                ParseDefaultKeywords.HandleNullTokenKeyword(model);
                 break;
             case SyntaxKind.ObjectTokenKeyword:
-                SyntaxApi.HandleObjectTokenKeyword(model);
+                ParseDefaultKeywords.HandleObjectTokenKeyword(model);
                 break;
             case SyntaxKind.OperatorTokenKeyword:
-                SyntaxApi.HandleOperatorTokenKeyword(model);
+                ParseDefaultKeywords.HandleOperatorTokenKeyword(model);
                 break;
             case SyntaxKind.OutTokenKeyword:
-                SyntaxApi.HandleOutTokenKeyword(model);
+                ParseDefaultKeywords.HandleOutTokenKeyword(model);
                 break;
             case SyntaxKind.ParamsTokenKeyword:
-                SyntaxApi.HandleParamsTokenKeyword(model);
+                ParseDefaultKeywords.HandleParamsTokenKeyword(model);
                 break;
             case SyntaxKind.ProtectedTokenKeyword:
-                SyntaxApi.HandleProtectedTokenKeyword(model);
+                ParseDefaultKeywords.HandleProtectedTokenKeyword(model);
                 break;
             case SyntaxKind.ReadonlyTokenKeyword:
-                SyntaxApi.HandleReadonlyTokenKeyword(model);
+                ParseDefaultKeywords.HandleReadonlyTokenKeyword(model);
                 break;
             case SyntaxKind.RefTokenKeyword:
-                SyntaxApi.HandleRefTokenKeyword(model);
+                ParseDefaultKeywords.HandleRefTokenKeyword(model);
                 break;
             case SyntaxKind.SbyteTokenKeyword:
-                SyntaxApi.HandleSbyteTokenKeyword(model);
+                ParseDefaultKeywords.HandleSbyteTokenKeyword(model);
                 break;
             case SyntaxKind.ShortTokenKeyword:
-                SyntaxApi.HandleShortTokenKeyword(model);
+                ParseDefaultKeywords.HandleShortTokenKeyword(model);
                 break;
             case SyntaxKind.SizeofTokenKeyword:
-                SyntaxApi.HandleSizeofTokenKeyword(model);
+                ParseDefaultKeywords.HandleSizeofTokenKeyword(model);
                 break;
             case SyntaxKind.StackallocTokenKeyword:
-                SyntaxApi.HandleStackallocTokenKeyword(model);
+                ParseDefaultKeywords.HandleStackallocTokenKeyword(model);
                 break;
             case SyntaxKind.StringTokenKeyword:
-                SyntaxApi.HandleStringTokenKeyword(model);
+                ParseDefaultKeywords.HandleStringTokenKeyword(model);
                 break;
             case SyntaxKind.StructTokenKeyword:
-                SyntaxApi.HandleStructTokenKeyword(model);
+                ParseDefaultKeywords.HandleStructTokenKeyword(model);
                 break;
             case SyntaxKind.SwitchTokenKeyword:
-                SyntaxApi.HandleSwitchTokenKeyword(model);
+                ParseDefaultKeywords.HandleSwitchTokenKeyword(model);
                 break;
             case SyntaxKind.ThisTokenKeyword:
-                SyntaxApi.HandleThisTokenKeyword(model);
+                ParseDefaultKeywords.HandleThisTokenKeyword(model);
                 break;
             case SyntaxKind.ThrowTokenKeyword:
-                SyntaxApi.HandleThrowTokenKeyword(model);
+                ParseDefaultKeywords.HandleThrowTokenKeyword(model);
                 break;
             case SyntaxKind.TrueTokenKeyword:
-                SyntaxApi.HandleTrueTokenKeyword(model);
+                ParseDefaultKeywords.HandleTrueTokenKeyword(model);
                 break;
             case SyntaxKind.TryTokenKeyword:
-                SyntaxApi.HandleTryTokenKeyword(model);
+                ParseDefaultKeywords.HandleTryTokenKeyword(model);
                 break;
             case SyntaxKind.TypeofTokenKeyword:
-                SyntaxApi.HandleTypeofTokenKeyword(model);
+                ParseDefaultKeywords.HandleTypeofTokenKeyword(model);
                 break;
             case SyntaxKind.UintTokenKeyword:
-                SyntaxApi.HandleUintTokenKeyword(model);
+                ParseDefaultKeywords.HandleUintTokenKeyword(model);
                 break;
             case SyntaxKind.UlongTokenKeyword:
-                SyntaxApi.HandleUlongTokenKeyword(model);
+                ParseDefaultKeywords.HandleUlongTokenKeyword(model);
                 break;
             case SyntaxKind.UncheckedTokenKeyword:
-                SyntaxApi.HandleUncheckedTokenKeyword(model);
+                ParseDefaultKeywords.HandleUncheckedTokenKeyword(model);
                 break;
             case SyntaxKind.UnsafeTokenKeyword:
-                SyntaxApi.HandleUnsafeTokenKeyword(model);
+                ParseDefaultKeywords.HandleUnsafeTokenKeyword(model);
                 break;
             case SyntaxKind.UshortTokenKeyword:
-                SyntaxApi.HandleUshortTokenKeyword(model);
+                ParseDefaultKeywords.HandleUshortTokenKeyword(model);
                 break;
             case SyntaxKind.VoidTokenKeyword:
-                SyntaxApi.HandleVoidTokenKeyword(model);
+                ParseDefaultKeywords.HandleVoidTokenKeyword(model);
                 break;
             case SyntaxKind.VolatileTokenKeyword:
-                SyntaxApi.HandleVolatileTokenKeyword(model);
+                ParseDefaultKeywords.HandleVolatileTokenKeyword(model);
                 break;
             case SyntaxKind.WhileTokenKeyword:
-                SyntaxApi.HandleWhileTokenKeyword(model);
+                ParseDefaultKeywords.HandleWhileTokenKeyword(model);
                 break;
             case SyntaxKind.UnrecognizedTokenKeyword:
-                SyntaxApi.HandleUnrecognizedTokenKeyword(model);
+                ParseDefaultKeywords.HandleUnrecognizedTokenKeyword(model);
                 break;
             case SyntaxKind.ReturnTokenKeyword:
-                SyntaxApi.HandleReturnTokenKeyword(model);
+                ParseDefaultKeywords.HandleReturnTokenKeyword(model);
                 break;
             case SyntaxKind.NamespaceTokenKeyword:
-                SyntaxApi.HandleNamespaceTokenKeyword(model);
+                ParseDefaultKeywords.HandleNamespaceTokenKeyword(model);
                 break;
             case SyntaxKind.ClassTokenKeyword:
-                SyntaxApi.HandleClassTokenKeyword(model);
+                ParseDefaultKeywords.HandleClassTokenKeyword(model);
                 break;
             case SyntaxKind.InterfaceTokenKeyword:
-                SyntaxApi.HandleInterfaceTokenKeyword(model);
+                ParseDefaultKeywords.HandleInterfaceTokenKeyword(model);
                 break;
             case SyntaxKind.UsingTokenKeyword:
-                SyntaxApi.HandleUsingTokenKeyword(model);
+                ParseDefaultKeywords.HandleUsingTokenKeyword(model);
                 break;
             case SyntaxKind.PublicTokenKeyword:
-                SyntaxApi.HandlePublicTokenKeyword(model);
+                ParseDefaultKeywords.HandlePublicTokenKeyword(model);
                 break;
             case SyntaxKind.InternalTokenKeyword:
-                SyntaxApi.HandleInternalTokenKeyword(model);
+                ParseDefaultKeywords.HandleInternalTokenKeyword(model);
                 break;
             case SyntaxKind.PrivateTokenKeyword:
-                SyntaxApi.HandlePrivateTokenKeyword(model);
+                ParseDefaultKeywords.HandlePrivateTokenKeyword(model);
                 break;
             case SyntaxKind.StaticTokenKeyword:
-                SyntaxApi.HandleStaticTokenKeyword(model);
+                ParseDefaultKeywords.HandleStaticTokenKeyword(model);
                 break;
             case SyntaxKind.OverrideTokenKeyword:
-                SyntaxApi.HandleOverrideTokenKeyword(model);
+                ParseDefaultKeywords.HandleOverrideTokenKeyword(model);
                 break;
             case SyntaxKind.VirtualTokenKeyword:
-                SyntaxApi.HandleVirtualTokenKeyword(model);
+                ParseDefaultKeywords.HandleVirtualTokenKeyword(model);
                 break;
             case SyntaxKind.AbstractTokenKeyword:
-                SyntaxApi.HandleAbstractTokenKeyword(model);
+                ParseDefaultKeywords.HandleAbstractTokenKeyword(model);
                 break;
             case SyntaxKind.SealedTokenKeyword:
-                SyntaxApi.HandleSealedTokenKeyword(model);
+                ParseDefaultKeywords.HandleSealedTokenKeyword(model);
                 break;
             case SyntaxKind.IfTokenKeyword:
-                SyntaxApi.HandleIfTokenKeyword(model);
+                ParseDefaultKeywords.HandleIfTokenKeyword(model);
                 break;
             case SyntaxKind.NewTokenKeyword:
-                SyntaxApi.HandleNewTokenKeyword(model);
+                ParseDefaultKeywords.HandleNewTokenKeyword(model);
                 break;
             default:
-                SyntaxApi.HandleDefault(model);
+                ParseDefaultKeywords.HandleDefault(model);
                 break;
         }
     }
@@ -1062,136 +1062,136 @@ public static class TokenApi
         switch (contextualKeywordToken.SyntaxKind)
         {
             case SyntaxKind.VarTokenContextualKeyword:
-                SyntaxApi.HandleVarTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleVarTokenContextualKeyword(model);
                 break;
             case SyntaxKind.PartialTokenContextualKeyword:
-                SyntaxApi.HandlePartialTokenContextualKeyword(model);
+                ParseContextualKeywords.HandlePartialTokenContextualKeyword(model);
                 break;
             case SyntaxKind.AddTokenContextualKeyword:
-                SyntaxApi.HandleAddTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleAddTokenContextualKeyword(model);
                 break;
             case SyntaxKind.AndTokenContextualKeyword:
-                SyntaxApi.HandleAndTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleAndTokenContextualKeyword(model);
                 break;
             case SyntaxKind.AliasTokenContextualKeyword:
-                SyntaxApi.HandleAliasTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleAliasTokenContextualKeyword(model);
                 break;
             case SyntaxKind.AscendingTokenContextualKeyword:
-                SyntaxApi.HandleAscendingTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleAscendingTokenContextualKeyword(model);
                 break;
             case SyntaxKind.ArgsTokenContextualKeyword:
-                SyntaxApi.HandleArgsTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleArgsTokenContextualKeyword(model);
                 break;
             case SyntaxKind.AsyncTokenContextualKeyword:
-                SyntaxApi.HandleAsyncTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleAsyncTokenContextualKeyword(model);
                 break;
             case SyntaxKind.AwaitTokenContextualKeyword:
-                SyntaxApi.HandleAwaitTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleAwaitTokenContextualKeyword(model);
                 break;
             case SyntaxKind.ByTokenContextualKeyword:
-                SyntaxApi.HandleByTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleByTokenContextualKeyword(model);
                 break;
             case SyntaxKind.DescendingTokenContextualKeyword:
-                SyntaxApi.HandleDescendingTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleDescendingTokenContextualKeyword(model);
                 break;
             case SyntaxKind.DynamicTokenContextualKeyword:
-                SyntaxApi.HandleDynamicTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleDynamicTokenContextualKeyword(model);
                 break;
             case SyntaxKind.EqualsTokenContextualKeyword:
-                SyntaxApi.HandleEqualsTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleEqualsTokenContextualKeyword(model);
                 break;
             case SyntaxKind.FileTokenContextualKeyword:
-                SyntaxApi.HandleFileTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleFileTokenContextualKeyword(model);
                 break;
             case SyntaxKind.FromTokenContextualKeyword:
-                SyntaxApi.HandleFromTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleFromTokenContextualKeyword(model);
                 break;
             case SyntaxKind.GetTokenContextualKeyword:
-                SyntaxApi.HandleGetTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleGetTokenContextualKeyword(model);
                 break;
             case SyntaxKind.GlobalTokenContextualKeyword:
-                SyntaxApi.HandleGlobalTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleGlobalTokenContextualKeyword(model);
                 break;
             case SyntaxKind.GroupTokenContextualKeyword:
-                SyntaxApi.HandleGroupTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleGroupTokenContextualKeyword(model);
                 break;
             case SyntaxKind.InitTokenContextualKeyword:
-                SyntaxApi.HandleInitTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleInitTokenContextualKeyword(model);
                 break;
             case SyntaxKind.IntoTokenContextualKeyword:
-                SyntaxApi.HandleIntoTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleIntoTokenContextualKeyword(model);
                 break;
             case SyntaxKind.JoinTokenContextualKeyword:
-                SyntaxApi.HandleJoinTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleJoinTokenContextualKeyword(model);
                 break;
             case SyntaxKind.LetTokenContextualKeyword:
-                SyntaxApi.HandleLetTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleLetTokenContextualKeyword(model);
                 break;
             case SyntaxKind.ManagedTokenContextualKeyword:
-                SyntaxApi.HandleManagedTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleManagedTokenContextualKeyword(model);
                 break;
             case SyntaxKind.NameofTokenContextualKeyword:
-                SyntaxApi.HandleNameofTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleNameofTokenContextualKeyword(model);
                 break;
             case SyntaxKind.NintTokenContextualKeyword:
-                SyntaxApi.HandleNintTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleNintTokenContextualKeyword(model);
                 break;
             case SyntaxKind.NotTokenContextualKeyword:
-                SyntaxApi.HandleNotTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleNotTokenContextualKeyword(model);
                 break;
             case SyntaxKind.NotnullTokenContextualKeyword:
-                SyntaxApi.HandleNotnullTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleNotnullTokenContextualKeyword(model);
                 break;
             case SyntaxKind.NuintTokenContextualKeyword:
-                SyntaxApi.HandleNuintTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleNuintTokenContextualKeyword(model);
                 break;
             case SyntaxKind.OnTokenContextualKeyword:
-                SyntaxApi.HandleOnTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleOnTokenContextualKeyword(model);
                 break;
             case SyntaxKind.OrTokenContextualKeyword:
-                SyntaxApi.HandleOrTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleOrTokenContextualKeyword(model);
                 break;
             case SyntaxKind.OrderbyTokenContextualKeyword:
-                SyntaxApi.HandleOrderbyTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleOrderbyTokenContextualKeyword(model);
                 break;
             case SyntaxKind.RecordTokenContextualKeyword:
-                SyntaxApi.HandleRecordTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleRecordTokenContextualKeyword(model);
                 break;
             case SyntaxKind.RemoveTokenContextualKeyword:
-                SyntaxApi.HandleRemoveTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleRemoveTokenContextualKeyword(model);
                 break;
             case SyntaxKind.RequiredTokenContextualKeyword:
-                SyntaxApi.HandleRequiredTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleRequiredTokenContextualKeyword(model);
                 break;
             case SyntaxKind.ScopedTokenContextualKeyword:
-                SyntaxApi.HandleScopedTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleScopedTokenContextualKeyword(model);
                 break;
             case SyntaxKind.SelectTokenContextualKeyword:
-                SyntaxApi.HandleSelectTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleSelectTokenContextualKeyword(model);
                 break;
             case SyntaxKind.SetTokenContextualKeyword:
-                SyntaxApi.HandleSetTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleSetTokenContextualKeyword(model);
                 break;
             case SyntaxKind.UnmanagedTokenContextualKeyword:
-                SyntaxApi.HandleUnmanagedTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleUnmanagedTokenContextualKeyword(model);
                 break;
             case SyntaxKind.ValueTokenContextualKeyword:
-                SyntaxApi.HandleValueTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleValueTokenContextualKeyword(model);
                 break;
             case SyntaxKind.WhenTokenContextualKeyword:
-                SyntaxApi.HandleWhenTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleWhenTokenContextualKeyword(model);
                 break;
             case SyntaxKind.WhereTokenContextualKeyword:
-                SyntaxApi.HandleWhereTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleWhereTokenContextualKeyword(model);
                 break;
             case SyntaxKind.WithTokenContextualKeyword:
-                SyntaxApi.HandleWithTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleWithTokenContextualKeyword(model);
                 break;
             case SyntaxKind.YieldTokenContextualKeyword:
-                SyntaxApi.HandleYieldTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleYieldTokenContextualKeyword(model);
                 break;
             case SyntaxKind.UnrecognizedTokenContextualKeyword:
-                SyntaxApi.HandleUnrecognizedTokenContextualKeyword(model);
+                ParseContextualKeywords.HandleUnrecognizedTokenContextualKeyword(model);
                 break;
             default:
                 throw new NotImplementedException($"Implement the {contextualKeywordToken.SyntaxKind.ToString()} contextual keyword.");

@@ -1,5 +1,6 @@
 ﻿using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
+using Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
@@ -58,67 +59,67 @@ public class CSharpParser : IParser
             switch (token.SyntaxKind)
             {
                 case SyntaxKind.NumericLiteralToken:
-                    TokenApi.ParseNumericLiteralToken(model);
+                    ParseTokens.ParseNumericLiteralToken(model);
                     break;
                 case SyntaxKind.StringLiteralToken:
-                    TokenApi.ParseStringLiteralToken(model);
+                    ParseTokens.ParseStringLiteralToken(model);
                     break;
                 case SyntaxKind.PlusToken:
-                    TokenApi.ParsePlusToken(model);
+                    ParseTokens.ParsePlusToken(model);
                     break;
                 case SyntaxKind.PlusPlusToken:
-                    TokenApi.ParsePlusPlusToken(model);
+                    ParseTokens.ParsePlusPlusToken(model);
                     break;
                 case SyntaxKind.MinusToken:
-                    TokenApi.ParseMinusToken(model);
+                    ParseTokens.ParseMinusToken(model);
                     break;
                 case SyntaxKind.StarToken:
-                    TokenApi.ParseStarToken(model);
+                    ParseTokens.ParseStarToken(model);
                     break;
                 case SyntaxKind.PreprocessorDirectiveToken:
-                    TokenApi.ParsePreprocessorDirectiveToken(model);
+                    ParseTokens.ParsePreprocessorDirectiveToken(model);
                     break;
                 case SyntaxKind.CommentSingleLineToken:
                     // Do not parse comments.
                     break;
                 case SyntaxKind.IdentifierToken:
-                    TokenApi.ParseIdentifierToken(model);
+                    ParseTokens.ParseIdentifierToken(model);
                     break;
                 case SyntaxKind.OpenBraceToken:
-                    TokenApi.ParseOpenBraceToken(model);
+                    ParseTokens.ParseOpenBraceToken(model);
                     break;
                 case SyntaxKind.CloseBraceToken:
-                    TokenApi.ParseCloseBraceToken(model);
+                    ParseTokens.ParseCloseBraceToken(model);
                     break;
                 case SyntaxKind.OpenParenthesisToken:
-                    TokenApi.ParseOpenParenthesisToken(model);
+                    ParseTokens.ParseOpenParenthesisToken(model);
                     break;
                 case SyntaxKind.CloseParenthesisToken:
-                    TokenApi.ParseCloseParenthesisToken(model);
+                    ParseTokens.ParseCloseParenthesisToken(model);
                     break;
                 case SyntaxKind.OpenAngleBracketToken:
-                    TokenApi.ParseOpenAngleBracketToken(model);
+                    ParseTokens.ParseOpenAngleBracketToken(model);
                     break;
                 case SyntaxKind.CloseAngleBracketToken:
-                    TokenApi.ParseCloseAngleBracketToken(model);
+                    ParseTokens.ParseCloseAngleBracketToken(model);
                     break;
                 case SyntaxKind.OpenSquareBracketToken:
-                    TokenApi.ParseOpenSquareBracketToken(model);
+                    ParseTokens.ParseOpenSquareBracketToken(model);
                     break;
                 case SyntaxKind.CloseSquareBracketToken:
-                    TokenApi.ParseCloseSquareBracketToken(model);
+                    ParseTokens.ParseCloseSquareBracketToken(model);
                     break;
                 case SyntaxKind.DollarSignToken:
-                    TokenApi.ParseDollarSignToken(model);
+                    ParseTokens.ParseDollarSignToken(model);
                     break;
                 case SyntaxKind.ColonToken:
-                    TokenApi.ParseColonToken(model);
+                    ParseTokens.ParseColonToken(model);
                     break;
                 case SyntaxKind.MemberAccessToken:
-                    TokenApi.ParseMemberAccessToken(model);
+                    ParseTokens.ParseMemberAccessToken(model);
                     break;
                 case SyntaxKind.StatementDelimiterToken:
-                    TokenApi.StatementDelimiterToken(model);
+                    ParseTokens.StatementDelimiterToken(model);
                     break;
                 case SyntaxKind.EndOfFileToken:
                     if (model.SyntaxStack.TryPeek(out var syntax) &&
@@ -138,9 +139,9 @@ public class CSharpParser : IParser
                     break;
                 default:
                     if (UtilityApi.IsContextualKeywordSyntaxKind(token.SyntaxKind))
-                        TokenApi.ParseKeywordContextualToken(model);
+                        ParseTokens.ParseKeywordContextualToken(model);
                     else if (UtilityApi.IsKeywordSyntaxKind(token.SyntaxKind))
-                        TokenApi.ParseKeywordToken(model);
+                        ParseTokens.ParseKeywordToken(model);
                     break;
             }
 

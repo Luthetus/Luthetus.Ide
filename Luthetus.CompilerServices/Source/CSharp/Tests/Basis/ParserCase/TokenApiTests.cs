@@ -1,17 +1,18 @@
 ﻿using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
+using Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase;
 
 /// <summary>
-/// <see cref="TokenApi"/>
+/// <see cref="ParseTokens"/>
 /// </summary>
 public class TokenApiTests
 {
     /// <summary>
-    /// <see cref="TokenApi.ParseNumericLiteralToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseNumericLiteralToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseNumericLiteralToken()
@@ -30,7 +31,7 @@ public class TokenApiTests
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseStringLiteralToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseStringLiteralToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseStringLiteralToken()
@@ -49,7 +50,7 @@ public class TokenApiTests
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParsePreprocessorDirectiveToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParsePreprocessorDirectiveToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParsePreprocessorDirectiveToken()
@@ -65,7 +66,7 @@ public class TokenApiTests
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseIdentifierToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseIdentifierToken()
@@ -84,7 +85,7 @@ public class TokenApiTests
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseIdentifierToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseIdentifierToken_TryParseGenericArguments()
@@ -117,7 +118,7 @@ public class TokenApiTests
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseIdentifierToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseIdentifierToken_TryParseGenericParameters()
@@ -148,7 +149,7 @@ public class TokenApiTests
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseIdentifierToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseIdentifierToken_TryParseConstructorDefinition()
@@ -176,7 +177,7 @@ public class TokenApiTests
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseIdentifierToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseIdentifierToken_TryParseTypedIdentifier()
@@ -199,7 +200,7 @@ public class TokenApiTests
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseIdentifierToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseIdentifierToken_TryParseReference()
@@ -236,7 +237,7 @@ public class TokenApiTests
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseIdentifierToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseIdentifierToken_TryParseVariableAssignment()
@@ -263,7 +264,7 @@ public class TokenApiTests
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseIdentifierToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseIdentifierToken_TryParseGenericTypeOrFunctionInvocation()
@@ -293,7 +294,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseIdentifierToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseIdentifierToken_TryParseFunctionDefinition()
@@ -318,7 +319,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseIdentifierToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseIdentifierToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseIdentifierToken_TryParseVariableDeclaration()
@@ -338,7 +339,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ResolveAmbiguousIdentifier(ParserModel)"/>
+    /// <see cref="ParseTokens.ResolveAmbiguousIdentifier(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ResolveAmbiguousIdentifier()
@@ -347,7 +348,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParsePlusToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParsePlusToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParsePlusToken()
@@ -364,7 +365,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParsePlusPlusToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParsePlusPlusToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParsePlusPlusToken()
@@ -380,7 +381,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseMinusToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseMinusToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseMinusToken()
@@ -397,7 +398,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseStarToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseStarToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseStarToken()
@@ -414,7 +415,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseDollarSignToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseDollarSignToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseDollarSignToken()
@@ -431,7 +432,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseColonToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseColonToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseColonToken()
@@ -448,7 +449,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseOpenBraceToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseOpenBraceToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseOpenBraceToken()
@@ -464,7 +465,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseCloseBraceToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseCloseBraceToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseCloseBraceToken()
@@ -480,7 +481,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseOpenParenthesisToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseOpenParenthesisToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseOpenParenthesisToken()
@@ -497,7 +498,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseCloseParenthesisToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseCloseParenthesisToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseCloseParenthesisToken()
@@ -513,7 +514,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseOpenAngleBracketToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseOpenAngleBracketToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseOpenAngleBracketToken()
@@ -529,7 +530,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseCloseAngleBracketToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseCloseAngleBracketToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseCloseAngleBracketToken()
@@ -545,7 +546,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseOpenSquareBracketToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseOpenSquareBracketToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseOpenSquareBracketToken()
@@ -561,7 +562,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseCloseSquareBracketToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseCloseSquareBracketToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseCloseSquareBracketToken()
@@ -577,7 +578,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseMemberAccessToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseMemberAccessToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseMemberAccessToken()
@@ -594,7 +595,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.StatementDelimiterToken"/>
+    /// <see cref="ParseTokens.StatementDelimiterToken"/>
     /// </summary>
     [Fact]
     public void StatementDelimiterToken()
@@ -610,7 +611,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseKeywordToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseKeywordToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseKeywordToken()
@@ -632,7 +633,7 @@ Clone<int>(3);";
     }
 
     /// <summary>
-    /// <see cref="TokenApi.ParseKeywordContextualToken(ParserModel)"/>
+    /// <see cref="ParseTokens.ParseKeywordContextualToken(ParserModel)"/>
     /// </summary>
     [Fact]
     public void ParseKeywordContextualToken()

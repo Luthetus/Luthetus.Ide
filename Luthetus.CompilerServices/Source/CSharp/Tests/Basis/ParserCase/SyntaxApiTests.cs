@@ -6,16 +6,17 @@ using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using System.Collections.Immutable;
 using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase;
 
 /// <summary>
-/// <see cref="SyntaxApi"/>
+/// <see cref="ParseOthers"/>
 /// </summary>
 public class SyntaxApiTests
 {
     /// <summary>
-    /// <see cref="SyntaxApi.HandleStaticClassIdentifier(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleStaticClassIdentifier(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleStaticClassIdentifier()
@@ -24,7 +25,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleUndefinedTypeOrNamespaceReference(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleUndefinedTypeOrNamespaceReference(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleUndefinedTypeOrNamespaceReference()
@@ -33,7 +34,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleVariableReference(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleVariableReference(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleVariableReference()
@@ -42,7 +43,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleFunctionInvocation(GenericParametersListingNode?, ParserModel)"/>
+    /// <see cref="ParseOthers.HandleFunctionInvocation(GenericParametersListingNode?, ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleFunctionInvocation()
@@ -51,7 +52,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleVariableDeclaration(VariableKind, ParserModel)"/>
+    /// <see cref="ParseOthers.HandleVariableDeclaration(VariableKind, ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleVariableDeclaration()
@@ -60,7 +61,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandlePropertyDeclaration(ParserModel)"/>
+    /// <see cref="ParseOthers.HandlePropertyDeclaration(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandlePropertyDeclaration()
@@ -69,7 +70,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandlePropertyExpression(ParserModel)"/>
+    /// <see cref="ParseOthers.HandlePropertyExpression(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandlePropertyExpression()
@@ -78,7 +79,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleFunctionDefinition(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleFunctionDefinition(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleFunctionDefinition()
@@ -87,7 +88,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleConstructorDefinition(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleConstructorDefinition(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleConstructorDefinition()
@@ -96,7 +97,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleNamespaceReference(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleNamespaceReference(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleNamespaceReference()
@@ -105,7 +106,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleTypeReference(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleTypeReference(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleTypeReference()
@@ -114,7 +115,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleFunctionReferences(ImmutableArray{FunctionDefinitionNode}, ParserModel)"/>
+    /// <see cref="ParseOthers.HandleFunctionReferences(ImmutableArray{FunctionDefinitionNode}, ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleFunctionReferences()
@@ -123,7 +124,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleVariableAssignment(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleVariableAssignment(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleVariableAssignment()
@@ -132,7 +133,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleObjectInitialization(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleObjectInitialization(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleObjectInitialization()
@@ -141,7 +142,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleNamespaceIdentifier(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleNamespaceIdentifier(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleNamespaceIdentifier()
@@ -150,7 +151,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleGenericParameters(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleGenericParameters(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleGenericParameters()
@@ -159,7 +160,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleGenericArguments(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleGenericArguments(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleGenericArguments()
@@ -168,7 +169,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleFunctionParameters(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleFunctionParameters(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleFunctionParameters()
@@ -177,7 +178,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleFunctionArguments(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleFunctionArguments(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleFunctionArguments()
@@ -186,7 +187,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleAttribute(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleAttribute(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleAttribute()
@@ -195,7 +196,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleExpression(IExpressionNode?, IExpressionNode?, IExpressionNode?, ISyntaxToken?, IExpressionNode?, ExpressionDelimiter[]?, ParserModel)"/>
+    /// <see cref="ParseOthers.HandleExpression(IExpressionNode?, IExpressionNode?, IExpressionNode?, ISyntaxToken?, IExpressionNode?, ExpressionDelimiter[]?, ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleExpression()
@@ -204,7 +205,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleAsTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleAsTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleAsTokenKeyword()
@@ -213,7 +214,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleBaseTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleBaseTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleBaseTokenKeyword()
@@ -222,7 +223,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleBoolTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleBoolTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleBoolTokenKeyword()
@@ -231,7 +232,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleBreakTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleBreakTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleBreakTokenKeyword()
@@ -240,7 +241,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleByteTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleByteTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleByteTokenKeyword()
@@ -249,7 +250,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleCaseTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleCaseTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleCaseTokenKeyword()
@@ -258,7 +259,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleCatchTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleCatchTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleCatchTokenKeyword()
@@ -267,7 +268,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleCharTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleCharTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleCharTokenKeyword()
@@ -276,7 +277,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleCheckedTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleCheckedTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleCheckedTokenKeyword()
@@ -285,7 +286,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleConstTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleConstTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleConstTokenKeyword()
@@ -294,7 +295,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleContinueTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleContinueTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleContinueTokenKeyword()
@@ -303,7 +304,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleDecimalTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleDecimalTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleDecimalTokenKeyword()
@@ -312,7 +313,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleDefaultTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleDefaultTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleDefaultTokenKeyword()
@@ -321,7 +322,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleDelegateTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleDelegateTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleDelegateTokenKeyword()
@@ -330,7 +331,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleDoTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleDoTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleDoTokenKeyword()
@@ -339,7 +340,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleDoubleTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleDoubleTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleDoubleTokenKeyword()
@@ -348,7 +349,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleElseTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleElseTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleElseTokenKeyword()
@@ -357,7 +358,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleEnumTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleEnumTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleEnumTokenKeyword()
@@ -366,7 +367,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleEventTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleEventTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleEventTokenKeyword()
@@ -375,7 +376,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleExplicitTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleExplicitTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleExplicitTokenKeyword()
@@ -384,7 +385,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleExternTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleExternTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleExternTokenKeyword()
@@ -393,7 +394,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleFalseTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleFalseTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleFalseTokenKeyword()
@@ -402,7 +403,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleFinallyTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleFinallyTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleFinallyTokenKeyword()
@@ -411,7 +412,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleFixedTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleFixedTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleFixedTokenKeyword()
@@ -420,7 +421,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleFloatTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleFloatTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleFloatTokenKeyword()
@@ -429,7 +430,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleForTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleForTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleForTokenKeyword()
@@ -438,7 +439,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleForeachTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleForeachTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleForeachTokenKeyword()
@@ -447,7 +448,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleGotoTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleGotoTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleGotoTokenKeyword()
@@ -456,7 +457,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleImplicitTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleImplicitTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleImplicitTokenKeyword()
@@ -465,7 +466,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleInTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleInTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleInTokenKeyword()
@@ -474,7 +475,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleIntTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleIntTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleIntTokenKeyword()
@@ -483,7 +484,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleIsTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleIsTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleIsTokenKeyword()
@@ -492,7 +493,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleLockTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleLockTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleLockTokenKeyword()
@@ -501,7 +502,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleLongTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleLongTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleLongTokenKeyword()
@@ -510,7 +511,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleNullTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleNullTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleNullTokenKeyword()
@@ -519,7 +520,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleObjectTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleObjectTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleObjectTokenKeyword()
@@ -528,7 +529,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleOperatorTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleOperatorTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleOperatorTokenKeyword()
@@ -537,7 +538,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleOutTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleOutTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleOutTokenKeyword()
@@ -546,7 +547,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleParamsTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleParamsTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleParamsTokenKeyword()
@@ -555,7 +556,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleProtectedTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleProtectedTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleProtectedTokenKeyword()
@@ -564,7 +565,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleReadonlyTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleReadonlyTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleReadonlyTokenKeyword()
@@ -573,7 +574,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleRefTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleRefTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleRefTokenKeyword()
@@ -582,7 +583,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleSbyteTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleSbyteTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleSbyteTokenKeyword()
@@ -591,7 +592,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleShortTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleShortTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleShortTokenKeyword()
@@ -600,7 +601,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleSizeofTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleSizeofTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleSizeofTokenKeyword()
@@ -609,7 +610,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleStackallocTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleStackallocTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleStackallocTokenKeyword()
@@ -618,7 +619,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleStringTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleStringTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleStringTokenKeyword()
@@ -627,7 +628,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleStructTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleStructTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleStructTokenKeyword()
@@ -636,7 +637,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleSwitchTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleSwitchTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleSwitchTokenKeyword()
@@ -645,7 +646,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleThisTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleThisTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleThisTokenKeyword()
@@ -654,7 +655,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleThrowTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleThrowTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleThrowTokenKeyword()
@@ -663,7 +664,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleTrueTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleTrueTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleTrueTokenKeyword()
@@ -672,7 +673,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleTryTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleTryTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleTryTokenKeyword()
@@ -681,7 +682,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleTypeofTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleTypeofTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleTypeofTokenKeyword()
@@ -690,7 +691,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleUintTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleUintTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleUintTokenKeyword()
@@ -699,7 +700,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleUlongTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleUlongTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleUlongTokenKeyword()
@@ -708,7 +709,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleUncheckedTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleUncheckedTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleUncheckedTokenKeyword()
@@ -717,7 +718,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleUnsafeTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleUnsafeTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleUnsafeTokenKeyword()
@@ -726,7 +727,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleUshortTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleUshortTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleUshortTokenKeyword()
@@ -735,7 +736,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleVoidTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleVoidTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleVoidTokenKeyword()
@@ -744,7 +745,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleVolatileTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleVolatileTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleVolatileTokenKeyword()
@@ -753,7 +754,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleWhileTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleWhileTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleWhileTokenKeyword()
@@ -762,7 +763,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleUnrecognizedTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleUnrecognizedTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleUnrecognizedTokenKeyword()
@@ -771,7 +772,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleDefault(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleDefault(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleDefault()
@@ -780,7 +781,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleTypeIdentifierKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleTypeIdentifierKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleTypeIdentifierKeyword()
@@ -789,7 +790,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleNewTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleNewTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleNewTokenKeyword()
@@ -798,7 +799,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandlePublicTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandlePublicTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandlePublicTokenKeyword()
@@ -807,7 +808,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleInternalTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleInternalTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleInternalTokenKeyword()
@@ -816,7 +817,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandlePrivateTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandlePrivateTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandlePrivateTokenKeyword()
@@ -825,7 +826,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleStaticTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleStaticTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleStaticTokenKeyword()
@@ -834,7 +835,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleOverrideTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleOverrideTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleOverrideTokenKeyword()
@@ -843,7 +844,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleVirtualTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleVirtualTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleVirtualTokenKeyword()
@@ -852,7 +853,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleAbstractTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleAbstractTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleAbstractTokenKeyword()
@@ -861,7 +862,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleSealedTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleSealedTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleSealedTokenKeyword()
@@ -870,7 +871,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleIfTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleIfTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleIfTokenKeyword()
@@ -879,7 +880,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleUsingTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleUsingTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleUsingTokenKeyword()
@@ -888,7 +889,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleInterfaceTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleInterfaceTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleInterfaceTokenKeyword()
@@ -897,7 +898,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleClassTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleClassTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleClassTokenKeyword()
@@ -906,7 +907,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleNamespaceTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleNamespaceTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleNamespaceTokenKeyword()
@@ -915,7 +916,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleReturnTokenKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleReturnTokenKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleReturnTokenKeyword()
@@ -924,7 +925,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleVarTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleVarTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleVarTokenContextualKeyword()
@@ -933,7 +934,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandlePartialTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandlePartialTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandlePartialTokenContextualKeyword()
@@ -942,7 +943,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleAddTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleAddTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleAddTokenContextualKeyword()
@@ -951,7 +952,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleAndTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleAndTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleAndTokenContextualKeyword()
@@ -960,7 +961,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleAliasTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleAliasTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleAliasTokenContextualKeyword()
@@ -969,7 +970,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleAscendingTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleAscendingTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleAscendingTokenContextualKeyword()
@@ -978,7 +979,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleArgsTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleArgsTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleArgsTokenContextualKeyword()
@@ -987,7 +988,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleAsyncTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleAsyncTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleAsyncTokenContextualKeyword()
@@ -996,7 +997,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleAwaitTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleAwaitTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleAwaitTokenContextualKeyword()
@@ -1005,7 +1006,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleByTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleByTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleByTokenContextualKeyword()
@@ -1014,7 +1015,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleDescendingTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleDescendingTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleDescendingTokenContextualKeyword()
@@ -1023,7 +1024,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleDynamicTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleDynamicTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleDynamicTokenContextualKeyword()
@@ -1032,7 +1033,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleEqualsTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleEqualsTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleEqualsTokenContextualKeyword()
@@ -1041,7 +1042,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleFileTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleFileTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleFileTokenContextualKeyword()
@@ -1050,7 +1051,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleFromTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleFromTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleFromTokenContextualKeyword()
@@ -1059,7 +1060,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleGetTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleGetTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleGetTokenContextualKeyword()
@@ -1068,7 +1069,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleGlobalTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleGlobalTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleGlobalTokenContextualKeyword()
@@ -1077,7 +1078,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleGroupTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleGroupTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleGroupTokenContextualKeyword()
@@ -1086,7 +1087,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleInitTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleInitTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleInitTokenContextualKeyword()
@@ -1095,7 +1096,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleIntoTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleIntoTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleIntoTokenContextualKeyword()
@@ -1104,7 +1105,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleJoinTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleJoinTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleJoinTokenContextualKeyword()
@@ -1113,7 +1114,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleLetTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleLetTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleLetTokenContextualKeyword()
@@ -1122,7 +1123,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleManagedTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleManagedTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleManagedTokenContextualKeyword()
@@ -1131,7 +1132,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleNameofTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleNameofTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleNameofTokenContextualKeyword()
@@ -1140,7 +1141,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleNintTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleNintTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleNintTokenContextualKeyword()
@@ -1149,7 +1150,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleNotTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleNotTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleNotTokenContextualKeyword()
@@ -1158,7 +1159,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleNotnullTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleNotnullTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleNotnullTokenContextualKeyword()
@@ -1167,7 +1168,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleNuintTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleNuintTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleNuintTokenContextualKeyword()
@@ -1176,7 +1177,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleOnTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleOnTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleOnTokenContextualKeyword()
@@ -1185,7 +1186,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleOrTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleOrTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleOrTokenContextualKeyword()
@@ -1194,7 +1195,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleOrderbyTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleOrderbyTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleOrderbyTokenContextualKeyword()
@@ -1203,7 +1204,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleRecordTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleRecordTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleRecordTokenContextualKeyword()
@@ -1212,7 +1213,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleRemoveTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleRemoveTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleRemoveTokenContextualKeyword()
@@ -1221,7 +1222,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleRequiredTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleRequiredTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleRequiredTokenContextualKeyword()
@@ -1230,7 +1231,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleScopedTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleScopedTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleScopedTokenContextualKeyword()
@@ -1239,7 +1240,7 @@ public class SyntaxApiTests
     }
     
     /// <summary>
-    /// <see cref="SyntaxApi.HandleSelectTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleSelectTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleSelectTokenContextualKeyword()
@@ -1248,7 +1249,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleSetTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleSetTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleSetTokenContextualKeyword()
@@ -1257,7 +1258,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleUnmanagedTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleUnmanagedTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleUnmanagedTokenContextualKeyword()
@@ -1266,7 +1267,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleValueTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleValueTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleValueTokenContextualKeyword()
@@ -1275,7 +1276,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleWhenTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleWhenTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleWhenTokenContextualKeyword()
@@ -1284,7 +1285,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleWhereTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleWhereTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleWhereTokenContextualKeyword()
@@ -1293,7 +1294,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleWithTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleWithTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleWithTokenContextualKeyword()
@@ -1302,7 +1303,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleYieldTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleYieldTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleYieldTokenContextualKeyword()
@@ -1311,7 +1312,7 @@ public class SyntaxApiTests
     }
 
     /// <summary>
-    /// <see cref="SyntaxApi.HandleUnrecognizedTokenContextualKeyword(ParserModel)"/>
+    /// <see cref="ParseOthers.HandleUnrecognizedTokenContextualKeyword(ParserModel)"/>
     /// </summary>
     [Fact]
     public void HandleUnrecognizedTokenContextualKeyword()
