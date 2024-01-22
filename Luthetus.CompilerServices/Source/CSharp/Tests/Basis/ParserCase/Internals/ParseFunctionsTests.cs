@@ -1,5 +1,7 @@
 ﻿using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase.Internals;
@@ -55,7 +57,27 @@ public class ParseFunctionsTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        throw new NotImplementedException();
+        Assert.Single(topCodeBlock.ChildList);
+        var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
+
+        Assert.Equal("int", functionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+        Assert.Equal(typeof(int), functionDefinitionNode.ReturnTypeClauseNode.ValueType);
+
+        Assert.Equal("MyMethod", functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText());
+
+        Assert.Null(functionDefinitionNode.GenericArgumentsListingNode);
+
+        Assert.Equal("(", functionDefinitionNode.FunctionArgumentsListingNode.OpenParenthesisToken.TextSpan.GetText());
+        Assert.Empty(functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
+        Assert.Equal(")", functionDefinitionNode.FunctionArgumentsListingNode.CloseParenthesisToken.TextSpan.GetText());
+
+        Assert.NotNull(functionDefinitionNode.FunctionBodyCodeBlockNode);
+        Assert.Single(functionDefinitionNode.FunctionBodyCodeBlockNode.ChildList);
+
+        var returnStatementNode = (ReturnStatementNode)functionDefinitionNode.FunctionBodyCodeBlockNode.ChildList.Single();
+        Assert.IsType<ReturnStatementNode>(returnStatementNode);
+
+        Assert.Empty(compilationUnit.DiagnosticsList);
     }
 
     [Fact]
@@ -69,7 +91,27 @@ public class ParseFunctionsTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        throw new NotImplementedException();
+        Assert.Single(topCodeBlock.ChildList);
+        var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
+
+        Assert.Equal("int", functionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+        Assert.Equal(typeof(int), functionDefinitionNode.ReturnTypeClauseNode.ValueType);
+
+        Assert.Equal("MyMethod", functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText());
+
+        Assert.Null(functionDefinitionNode.GenericArgumentsListingNode);
+
+        Assert.Equal("(", functionDefinitionNode.FunctionArgumentsListingNode.OpenParenthesisToken.TextSpan.GetText());
+        Assert.Empty(functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
+        Assert.Equal(")", functionDefinitionNode.FunctionArgumentsListingNode.CloseParenthesisToken.TextSpan.GetText());
+
+        Assert.NotNull(functionDefinitionNode.FunctionBodyCodeBlockNode);
+        Assert.Single(functionDefinitionNode.FunctionBodyCodeBlockNode.ChildList);
+
+        var expressionNode = (IExpressionNode)functionDefinitionNode.FunctionBodyCodeBlockNode.ChildList.Single();
+        Assert.IsAssignableFrom<IExpressionNode>(expressionNode);
+
+        Assert.Empty(compilationUnit.DiagnosticsList);
     }
 
     [Fact]

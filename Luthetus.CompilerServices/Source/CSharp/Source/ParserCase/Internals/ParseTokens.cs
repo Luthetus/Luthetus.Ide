@@ -3,6 +3,8 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 
@@ -757,6 +759,47 @@ public static class ParseTokens
         CloseSquareBracketToken consumedCloseSquareBracketToken,
         ParserModel model)
     {
+    }
+
+    public static void ParseEqualsToken(
+        EqualsToken consumedEqualsToken,
+        ParserModel model)
+    {
+        if (model.SyntaxStack.TryPeek(out var syntax) &&
+            syntax is FunctionDefinitionNode functionDefinitionNode)
+        {
+            if (functionDefinitionNode.FunctionBodyCodeBlockNode is null &&
+                model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+            {
+                var closeAngleBracketToken = model.TokenWalker.Consume();
+
+                ParseOthers.HandleExpression(
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    model);
+                
+                var expression = model.SyntaxStack.Pop();
+                var codeBlockNode = new CodeBlockNode(new ISyntax[] 
+                {
+                    expression
+                }.ToImmutableArray());
+
+                functionDefinitionNode = (FunctionDefinitionNode)model.SyntaxStack.Pop();
+                functionDefinitionNode = new FunctionDefinitionNode(
+                    functionDefinitionNode.ReturnTypeClauseNode,
+                    functionDefinitionNode.FunctionIdentifierToken,
+                    functionDefinitionNode.GenericArgumentsListingNode,
+                    functionDefinitionNode.FunctionArgumentsListingNode,
+                    codeBlockNode,
+                    functionDefinitionNode.ConstraintNode);
+
+                model.CurrentCodeBlockBuilder.ChildList.Add(functionDefinitionNode);
+            }
+        }
     }
 
     public static void ParseMemberAccessToken(

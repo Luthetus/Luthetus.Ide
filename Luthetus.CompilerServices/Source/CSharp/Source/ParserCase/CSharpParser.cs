@@ -117,6 +117,9 @@ public class CSharpParser : IParser
                 case SyntaxKind.MemberAccessToken:
                     ParseTokens.ParseMemberAccessToken((MemberAccessToken)token, model);
                     break;
+                case SyntaxKind.EqualsToken:
+                    ParseTokens.ParseEqualsToken((EqualsToken)token, model);
+                    break;
                 case SyntaxKind.StatementDelimiterToken:
                     ParseTokens.ParseStatementDelimiterToken((StatementDelimiterToken)token, model);
                     break;

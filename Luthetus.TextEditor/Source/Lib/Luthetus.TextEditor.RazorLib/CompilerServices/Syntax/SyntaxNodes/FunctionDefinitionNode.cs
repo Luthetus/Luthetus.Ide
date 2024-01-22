@@ -3,6 +3,9 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
+/// <summary>
+/// TODO: Track the open and close braces for the function body.
+/// </summary>
 public sealed record FunctionDefinitionNode : ISyntaxNode
 {
     public FunctionDefinitionNode(
