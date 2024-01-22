@@ -138,29 +138,150 @@ public class ParseFunctions
         TypeClauseNode typeClauseNode;
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
-        {
             typeClauseNode = Facts.CSharpFacts.Types.Var.ToTypeClause();
-        }
         else
-        {
             typeClauseNode = model.TokenWalker.MatchTypeClauseNode(model);
 
-            if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
-            {
-                HandleFunctionParameters(
-                    (OpenParenthesisToken)model.TokenWalker.Consume(),
-                    model);
+        var functionParametersListingNode = (FunctionParametersListingNode?)null;
+        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+        {
+            HandleFunctionParameters(
+                (OpenParenthesisToken)model.TokenWalker.Consume(),
+                model);
 
-                // Discard the function parameters result for now, until further implementation is done.
-                _ = model.SyntaxStack.Pop();
-            }
+            functionParametersListingNode = (FunctionParametersListingNode)model.SyntaxStack.Pop();
+        }
+
+        var objectInitializationParametersListingNode = (ObjectInitializationParametersListingNode?)null;
+        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+        {
+            HandleObjectInitialization(
+                (OpenBraceToken)model.TokenWalker.Consume(),
+                model);
+
+            objectInitializationParametersListingNode = (ObjectInitializationParametersListingNode)model.SyntaxStack.Pop();
         }
 
         var constructorInvocationExpressionNode = new ConstructorInvocationExpressionNode(
             (KeywordToken)newKeywordToken,
-            typeClauseNode);
+            typeClauseNode,
+            functionParametersListingNode,
+            objectInitializationParametersListingNode);
 
         model.SyntaxStack.Push(constructorInvocationExpressionNode);
+    }
+
+    public static void HandleObjectInitialization(OpenBraceToken consumedOpenBraceToken, ParserModel model)
+    {
+        if (SyntaxKind.CloseBraceToken == model.TokenWalker.Peek(0).SyntaxKind)
+        {
+            model.SyntaxStack.Push(new ObjectInitializationParametersListingNode(
+                consumedOpenBraceToken,
+                ImmutableArray<ObjectInitializationParameterEntryNode>.Empty,
+                (CloseBraceToken)model.TokenWalker.Consume()));
+
+            return;
+        }
+
+        var mutableObjectInitializationParametersListing = new List<ObjectInitializationParameterEntryNode>();
+
+        while (true)
+        {
+            var propertyIdentifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
+            if (propertyIdentifierToken.IsFabricated)
+                break;
+            
+            var equalsToken = (EqualsToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
+            if (equalsToken.IsFabricated)
+                break;
+
+            IExpressionNode expressionNode;
+            if (SyntaxKind.IdentifierToken == model.TokenWalker.Current.SyntaxKind)
+            {
+                var variableIdentifierToken = (IdentifierToken)model.TokenWalker.Consume();
+
+                if (!model.Binder.TryGetVariableDeclarationHierarchically(
+                        variableIdentifierToken.TextSpan.GetText(),
+                        out var variableDeclarationNode)
+                    || variableDeclarationNode is null)
+                {
+                    variableDeclarationNode = new(
+                        Facts.CSharpFacts.Types.Void.ToTypeClause(),
+                        variableIdentifierToken,
+                        VariableKind.Local,
+                        false)
+                    {
+                        IsFabricated = true
+                    };
+
+                    model.Binder.BindVariableDeclarationStatementNode(variableDeclarationNode);
+                }
+
+                var variableReferenceNode = new VariableReferenceNode(
+                    variableIdentifierToken,
+                    variableDeclarationNode);
+
+                variableReferenceNode = model.Binder.BindVariableReferenceNode(variableReferenceNode);
+                expressionNode = variableReferenceNode;
+            }
+            else
+            {
+                ParseOthers.HandleExpression(
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    new[]
+                    {
+                        new ExpressionDelimiter(null, SyntaxKind.CommaToken, null, null),
+                        new ExpressionDelimiter(
+                            SyntaxKind.OpenParenthesisToken,
+                            SyntaxKind.CloseParenthesisToken,
+                            null,
+                            null)
+                    },
+                    model);
+
+                expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
+            }
+
+            // TODO: Make a PropertySymbol
+            //
+            // var variableReferenceNode = new VariableReferenceNode(
+            //     propertyIdentifierToken,
+            //     variableIdentifierToken,
+            //     VariableKind.Local,
+            //     false);
+            //
+            //variableReferenceNode = model.Binder.BindVariableReferenceNode(variableReferenceNode);
+
+            var objectInitializationParameterEntryNode = new ObjectInitializationParameterEntryNode(
+                propertyIdentifierToken,
+                equalsToken,
+                expressionNode);
+
+            mutableObjectInitializationParametersListing.Add(objectInitializationParameterEntryNode);
+
+            if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
+            {
+                var commaToken = (CommaToken)model.TokenWalker.Consume();
+                // TODO: Track comma tokens?
+                //
+                // functionArgumentListing.Add(commaToken);
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        var closeBraceToken = (CloseBraceToken)model.TokenWalker.Match(SyntaxKind.CloseBraceToken);
+
+        model.SyntaxStack.Push(new ObjectInitializationParametersListingNode(
+            consumedOpenBraceToken,
+            mutableObjectInitializationParametersListing.ToImmutableArray(),
+            closeBraceToken));
     }
 
     /// <summary>

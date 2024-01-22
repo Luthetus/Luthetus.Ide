@@ -194,6 +194,8 @@ public enum SyntaxKind
     PropertyExpressionNode,
     ConstructorDefinitionNode,
     ConstructorInvocationExpressionNode,
+    ObjectInitializationParametersListingNode,
+    ObjectInitializationParameterEntryNode,
     FunctionDefinitionNode,
     FunctionArgumentsListingNode,
     FunctionArgumentEntryNode,
