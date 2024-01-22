@@ -9,15 +9,19 @@ namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase.Internals
 public class ParseVariablesTests
 {
     /*
-     int x;
-     Person x;
-     var x;
-     var var;
-     x = true;
-     x = 2;
-     x = "Hello World!";
-     int x = 2;
-     var x = 2;
+     # VariableDeclaration
+         int x;
+         Person x;
+         var x;
+         var var;
+     # VariableAssignment
+         x = true;
+         x = 2;
+         x = "Hello World!";
+         var = "Hello World!";
+     # COMBINED_VariableDeclaration_AND_VariableAssignment
+         int x = 2;
+         var x = 2;
      */
 
     [Fact]
@@ -252,6 +256,44 @@ public class ParseVariablesTests
             // TODO: Reporting the diagnostic to get the Id like this is silly.
             var fakeDiagnosticBag = new LuthetusDiagnosticBag();
             fakeDiagnosticBag.ReportUndefinedVariable(
+                TextEditorTextSpan.FabricateTextSpan(string.Empty),
+                string.Empty);
+            idOfExpectedDiagnostic = fakeDiagnosticBag.Single().Id;
+        }
+
+        Assert.Single(compilationUnit.DiagnosticsList);
+        Assert.Equal(idOfExpectedDiagnostic, compilationUnit.DiagnosticsList.Single().Id);
+    }
+
+    [Fact]
+    public void VariableAssignment_WITH_StringLiteral_WITH_VarIdentifier()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "var = \"Hello World!\";";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        Assert.Single(topCodeBlock.ChildList);
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList.Single();
+
+        var identifierToken = variableAssignmentExpressionNode.VariableIdentifierToken;
+        Assert.Equal("var", identifierToken.TextSpan.GetText());
+
+        var equalsToken = variableAssignmentExpressionNode.EqualsToken;
+        Assert.Equal("=", equalsToken.TextSpan.GetText());
+
+        var literalExpressionNode = (LiteralExpressionNode)variableAssignmentExpressionNode.ExpressionNode;
+        Assert.Equal("\"Hello World!\"", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+        Assert.Equal(typeof(string), literalExpressionNode.ResultTypeClauseNode.ValueType);
+
+        Guid idOfExpectedDiagnostic;
+        {
+            // TODO: Reporting the diagnostic to get the Id like this is silly.
+            var fakeDiagnosticBag = new LuthetusDiagnosticBag();
+            fakeDiagnosticBag.TheNameDoesNotExistInTheCurrentContext(
                 TextEditorTextSpan.FabricateTextSpan(string.Empty),
                 string.Empty);
             idOfExpectedDiagnostic = fakeDiagnosticBag.Single().Id;

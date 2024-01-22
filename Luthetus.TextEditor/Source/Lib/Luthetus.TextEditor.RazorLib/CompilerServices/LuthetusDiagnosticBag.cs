@@ -113,6 +113,17 @@ public class LuthetusDiagnosticBag : IEnumerable<TextEditorDiagnostic>
             textSpan,
             Guid.Parse("89b61fa8-541d-4154-9425-82c5667842a8"));
     }
+
+    public void TheNameDoesNotExistInTheCurrentContext(
+        TextEditorTextSpan textSpan,
+        string name)
+    {
+        Report(
+            TextEditorDiagnosticLevel.Error,
+            $"The name '{name}' does not exist in the current context",
+            textSpan,
+            Guid.Parse("3c616af8-1c5d-41fa-962d-9836278ea570"));
+    }
     
     public void ReportAlreadyDefinedVariable(
         TextEditorTextSpan textSpan,

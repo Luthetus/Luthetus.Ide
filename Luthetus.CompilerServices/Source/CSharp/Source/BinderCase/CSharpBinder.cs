@@ -295,9 +295,18 @@ public class CSharpBinder : IBinder
         }
         else
         {
-            _diagnosticBag.ReportUndefinedVariable(
-                variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,
-                text);
+            if (CSharpKeywords.CONTEXTUAL_KEYWORDS.Contains(text))
+            {
+                _diagnosticBag.TheNameDoesNotExistInTheCurrentContext(
+                    variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,
+                    text);
+            }
+            else
+            {
+                _diagnosticBag.ReportUndefinedVariable(
+                    variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,
+                    text);
+            }
         }
 
         CreateVariableSymbol(variableAssignmentExpressionNode.VariableIdentifierToken, variableKind);

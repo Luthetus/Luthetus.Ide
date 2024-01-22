@@ -16,6 +16,7 @@ public class ParseContextualKeywords
         var previousToken = model.TokenWalker.Peek(-2);
 
         if (previousToken.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
+            previousToken.SyntaxKind == SyntaxKind.CloseBraceToken ||
             previousToken.SyntaxKind == SyntaxKind.BadToken)
         {
             // Check if the next token is a second 'var keyword' or an IdentifierToken. Two IdentifierTokens is invalid, and therefore one can contextually take this 'var' as a keyword.
@@ -30,14 +31,13 @@ public class ParseContextualKeywords
                     null);
 
                 model.SyntaxStack.Push(varKeyword);
+                return;
             }
         }
-        else
-        {
-            // Take 'var' as an identifier
-            IdentifierToken varIdentifierToken = new(consumedKeywordContextualToken.TextSpan);
-            ParseTokens.ParseIdentifierToken(varIdentifierToken, model);
-        }
+
+        // Take 'var' as an identifier
+        IdentifierToken varIdentifierToken = new(consumedKeywordContextualToken.TextSpan);
+        ParseTokens.ParseIdentifierToken(varIdentifierToken, model);
     }
 
     public static void HandlePartialTokenContextualKeyword(
