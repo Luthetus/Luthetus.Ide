@@ -2376,6 +2376,54 @@ public class CustomParserTests
 	}
 
     [Fact]
+    public void AlternateBetweenNumberAndString()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "12\"Hello\"12\"Hello\"12\"Hello\"12\"Hello\"12\"Hello\"12\"Hello\"";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+	
+	[Fact]
+    public void AlternateBetweenStringAndNumber()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "\"Hello\"12\"Hello\"12\"Hello\"12\"Hello\"12\"Hello\"12\"Hello\"12";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+
+    [Fact]
+    public void THIS_HAS_ALSO_CRASHED_WHEN_RUNNING_USER_TYPES_OUT_CODE()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"builder.RootComponents.Add<HeadOutlet>(""""head::after"""")";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+
+    [Fact]
+    public void THIS_HAS_CRASHED_WHEN_RUNNING_USER_TYPES_OUT_CODE()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "builder.RootComponents.Add<HeadOutlet>(\"\"\"\"head::after\"\"\"\")";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+
+    [Fact]
     public void THIS_HAD_A_CRASH_WHEN_RUNNING_USER_TYPES_OUT_CODE()
 	{
         var resourceUri = new ResourceUri("UnitTests");

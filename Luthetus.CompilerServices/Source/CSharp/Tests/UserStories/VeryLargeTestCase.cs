@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
+﻿namespace Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
 
 internal class VeryLargeTestCase
 {
@@ -38,99 +32,6 @@ namespace Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
 /// </summary>
 public class USER_TYPES_OUT_CODE
 {
-    [Fact]
-    public void ClassDefinition()
-    {
-        Initialize_USER_TYPES_OUT_CODE(
-            string.Empty,
-            out var textEditorService,
-            out var cSharpCompilerService,
-            out var textEditorModel,
-            out var textEditorViewModel,
-            out var serviceProvider);
-
-        var content = @""public class MyClass
-{
-}"".ReplaceLineEndings(""\n"");
-
-        foreach (var character in content)
-        {
-            textEditorService.Post(
-                nameof(USER_TYPES_OUT_CODE),
-                async editContext =>
-                {
-                    await textEditorService.ModelApi.InsertTextFactory(
-                            textEditorModel.ResourceUri,
-                            textEditorViewModel.ViewModelKey,
-                            character.ToString(),
-                            CancellationToken.None)
-                        .Invoke(editContext);
-                });
-
-            cSharpCompilerService.ResourceWasModified(
-                textEditorModel.ResourceUri,
-                ImmutableArray<TextEditorTextSpan>.Empty);
-        }
-
-        var resultText = textEditorService.ModelApi.GetAllText(textEditorModel.ResourceUri);
-        Assert.Equal(content, resultText);
-
-        var cSharpResource = (CSharpResource?)cSharpCompilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
-        Assert.NotNull(cSharpResource);
-
-        // Tokens: 'public' 'class' 'MyClass' '{' '}' 'EndOfFileToken'
-        Assert.Equal(6, cSharpResource.SyntaxTokens.Length);
-
-        Assert.Single(cSharpResource.Symbols);
-        Assert.IsType<TypeSymbol>(cSharpResource.Symbols.Single());
-    }
-    
-    [Fact]
-    public void ConstructorUsage()
-    {
-        Initialize_USER_TYPES_OUT_CODE(
-            string.Empty,
-            out var textEditorService,
-            out var cSharpCompilerService,
-            out var textEditorModel,
-            out var textEditorViewModel,
-            out var serviceProvider);
-
-        var content = @""public class MyClass
-{
-    public MyClass NonsenseMethod()
-    {
-        MyClass myClass = new MyClass();
-        return myClass;
-    }
-}"".ReplaceLineEndings(""\n"");
-
-        foreach (var character in content)
-        {
-            textEditorService.Post(
-                nameof(USER_TYPES_OUT_CODE),
-                async editContext =>
-                {
-                    await textEditorService.ModelApi.InsertTextFactory(
-                            textEditorModel.ResourceUri,
-                            textEditorViewModel.ViewModelKey,
-                            character.ToString(),
-                            CancellationToken.None)
-                        .Invoke(editContext);
-                });
-
-            cSharpCompilerService.ResourceWasModified(
-                textEditorModel.ResourceUri,
-                ImmutableArray<TextEditorTextSpan>.Empty);
-        }
-
-        var resultText = textEditorService.ModelApi.GetAllText(textEditorModel.ResourceUri);
-        Assert.Equal(content, resultText);
-
-        var cSharpResource = (CSharpResource?)cSharpCompilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
-        Assert.NotNull(cSharpResource);
-    }
-    
     [Fact]
     public void BLAZOR_WASM_TEMPLATE_PROGRAM_CS()
     {

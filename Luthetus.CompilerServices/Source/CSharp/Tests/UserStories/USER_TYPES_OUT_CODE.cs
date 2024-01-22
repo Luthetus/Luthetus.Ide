@@ -170,45 +170,55 @@ await builder.Build().RunAsync();
         var cSharpResource = (CSharpResource?)cSharpCompilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
         Assert.NotNull(cSharpResource);
     }
-    
-    [Fact]
-    public void THIS_FILE_ITSELF()
-    {
-        Initialize_USER_TYPES_OUT_CODE(
-            string.Empty,
-            out var textEditorService,
-            out var cSharpCompilerService,
-            out var textEditorModel,
-            out var textEditorViewModel,
-            out var serviceProvider);
 
-        var content = VeryLargeTestCase.Value;
-
-        foreach (var character in content)
-        {
-            textEditorService.Post(
-                nameof(USER_TYPES_OUT_CODE),
-                async editContext =>
-                {
-                    await textEditorService.ModelApi.InsertTextFactory(
-                            textEditorModel.ResourceUri,
-                            textEditorViewModel.ViewModelKey,
-                            character.ToString(),
-                            CancellationToken.None)
-                        .Invoke(editContext);
-                });
-
-            cSharpCompilerService.ResourceWasModified(
-                textEditorModel.ResourceUri,
-                ImmutableArray<TextEditorTextSpan>.Empty);
-        }
-
-        var resultText = textEditorService.ModelApi.GetAllText(textEditorModel.ResourceUri);
-        Assert.Equal(content, resultText);
-
-        var cSharpResource = (CSharpResource?)cSharpCompilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
-        Assert.NotNull(cSharpResource);
-    }
+    /// <summary>
+    /// At 6,633 characters, it took 9.8 minutes to parse the entire file after every
+    /// key stroke when programmatically typing out the characters.
+    /// <br/><br/>
+    /// For clarification: the parser ran 6,634 times total.
+    /// <br/><br/>
+    /// I'm going to comment out the 'THIS_FILE_ITSELF()' test.
+    /// While its interesting, it isn't very useful to run since there are
+    /// so many redundant syntax's being parsed. (It isn't a lean test case).
+    /// </summary>
+    //[Fact]
+    //public void THIS_FILE_ITSELF()
+    //{
+    //    Initialize_USER_TYPES_OUT_CODE(
+    //        string.Empty,
+    //        out var textEditorService,
+    //        out var cSharpCompilerService,
+    //        out var textEditorModel,
+    //        out var textEditorViewModel,
+    //        out var serviceProvider);
+    //
+    //    var content = VeryLargeTestCase.Value;
+    //
+    //    foreach (var character in content)
+    //    {
+    //        textEditorService.Post(
+    //            nameof(USER_TYPES_OUT_CODE),
+    //            async editContext =>
+    //            {
+    //                await textEditorService.ModelApi.InsertTextFactory(
+    //                        textEditorModel.ResourceUri,
+    //                        textEditorViewModel.ViewModelKey,
+    //                        character.ToString(),
+    //                        CancellationToken.None)
+    //                    .Invoke(editContext);
+    //            });
+    //
+    //        cSharpCompilerService.ResourceWasModified(
+    //            textEditorModel.ResourceUri,
+    //            ImmutableArray<TextEditorTextSpan>.Empty);
+    //    }
+    //
+    //    var resultText = textEditorService.ModelApi.GetAllText(textEditorModel.ResourceUri);
+    //    Assert.Equal(content, resultText);
+    //
+    //    var cSharpResource = (CSharpResource?)cSharpCompilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
+    //    Assert.NotNull(cSharpResource);
+    //}
 
     private static void Initialize_USER_TYPES_OUT_CODE(
         string initialContent,

@@ -1036,13 +1036,23 @@ public static class SyntaxApi
                     previousInvocationExpressionNode = booleanLiteralExpressionNode;
 
                     if (topMostExpressionNode is null)
+                    {
                         topMostExpressionNode = booleanLiteralExpressionNode;
+                    }
                     else if (leftExpressionNode is null)
-                        leftExpressionNode = booleanLiteralExpressionNode;
+                    {
+                        if (topMostExpressionNode.SyntaxKind != SyntaxKind.LiteralExpressionNode)
+                            leftExpressionNode = booleanLiteralExpressionNode;
+                    }    
                     else if (rightExpressionNode is null)
-                        rightExpressionNode = booleanLiteralExpressionNode;
+                    {
+                        if (topMostExpressionNode.SyntaxKind != SyntaxKind.LiteralExpressionNode)
+                            rightExpressionNode = booleanLiteralExpressionNode;
+                    }
                     else
+                    {
                         throw new ApplicationException("TODO: Why would this occur?");
+                    }
 
                     break;
                 case SyntaxKind.NumericLiteralToken:
@@ -1051,13 +1061,23 @@ public static class SyntaxApi
                     previousInvocationExpressionNode = numericLiteralExpressionNode;
 
                     if (topMostExpressionNode is null)
+                    {
                         topMostExpressionNode = numericLiteralExpressionNode;
+                    }
                     else if (leftExpressionNode is null)
-                        leftExpressionNode = numericLiteralExpressionNode;
+                    {
+                        if (topMostExpressionNode.SyntaxKind != SyntaxKind.LiteralExpressionNode)
+                            leftExpressionNode = numericLiteralExpressionNode;
+                    }
                     else if (rightExpressionNode is null)
-                        rightExpressionNode = numericLiteralExpressionNode;
+                    {
+                        if (topMostExpressionNode.SyntaxKind != SyntaxKind.LiteralExpressionNode)
+                                rightExpressionNode = numericLiteralExpressionNode;
+                    }
                     else
+                    {
                         throw new ApplicationException("TODO: Why would this occur?");
+                    }
 
                     break;
                 case SyntaxKind.StringLiteralToken:
@@ -1066,13 +1086,23 @@ public static class SyntaxApi
                     previousInvocationExpressionNode = stringLiteralExpressionNode;
 
                     if (topMostExpressionNode is null)
+                    {
                         topMostExpressionNode = stringLiteralExpressionNode;
+                    }
                     else if (leftExpressionNode is null)
-                        leftExpressionNode = stringLiteralExpressionNode;
+                    {
+                        if (topMostExpressionNode.SyntaxKind != SyntaxKind.LiteralExpressionNode)
+                            leftExpressionNode = stringLiteralExpressionNode;
+                    }
                     else if (rightExpressionNode is null)
-                        rightExpressionNode = stringLiteralExpressionNode;
+                    {
+                        if (topMostExpressionNode.SyntaxKind != SyntaxKind.LiteralExpressionNode)
+                            rightExpressionNode = stringLiteralExpressionNode;
+                    }
                     else
+                    {
                         throw new ApplicationException("TODO: Why would this occur?");
+                    }
 
                     break;
                 case SyntaxKind.IdentifierToken:
