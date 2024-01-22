@@ -12,6 +12,7 @@ public class ParseVariablesTests
      int x;
      Person x;
      var x;
+     var var;
      x = true;
      x = 2;
      x = "Hello World!";
@@ -30,6 +31,7 @@ public class ParseVariablesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
+        Assert.Single(topCodeBlock.ChildList);
         var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList.Single();
 
         var typeClauseNode = variableDeclarationNode.TypeClauseNode;
@@ -53,6 +55,7 @@ public class ParseVariablesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
+        Assert.Single(topCodeBlock.ChildList);
         var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList.Single();
 
         var typeClauseNode = variableDeclarationNode.TypeClauseNode;
@@ -87,6 +90,7 @@ public class ParseVariablesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
+        Assert.Single(topCodeBlock.ChildList);
         var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList.Single();
 
         var typeClauseNode = variableDeclarationNode.TypeClauseNode;
@@ -95,6 +99,40 @@ public class ParseVariablesTests
 
         var identifierToken = variableDeclarationNode.IdentifierToken;
         Assert.Equal("x", identifierToken.TextSpan.GetText());
+
+        Guid idOfExpectedDiagnostic;
+        {
+            // TODO: Reporting the diagnostic to get the Id like this is silly.
+            var fakeDiagnosticBag = new LuthetusDiagnosticBag();
+            fakeDiagnosticBag.ReportImplicitlyTypedVariablesMustBeInitialized(
+                TextEditorTextSpan.FabricateTextSpan(string.Empty));
+            idOfExpectedDiagnostic = fakeDiagnosticBag.Single().Id;
+        }
+
+        Assert.Single(compilationUnit.DiagnosticsList);
+        Assert.Equal(idOfExpectedDiagnostic, compilationUnit.DiagnosticsList.Single().Id);
+    }
+
+    [Fact]
+    public void VariableDeclaration_WITH_ImplicitType_WITH_VarIdentifier()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "var var;";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        Assert.Single(topCodeBlock.ChildList);
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList.Single();
+
+        var typeClauseNode = variableDeclarationNode.TypeClauseNode;
+        Assert.Equal("var", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+        Assert.Null(typeClauseNode.ValueType);
+
+        var identifierToken = variableDeclarationNode.IdentifierToken;
+        Assert.Equal("var", identifierToken.TextSpan.GetText());
 
         Guid idOfExpectedDiagnostic;
         {
@@ -119,29 +157,195 @@ public class ParseVariablesTests
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        Assert.Single(topCodeBlock.ChildList);
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList.Single();
+
+        var identifierToken = variableAssignmentExpressionNode.VariableIdentifierToken;
+        Assert.Equal("x", identifierToken.TextSpan.GetText());
+
+        var equalsToken = variableAssignmentExpressionNode.EqualsToken;
+        Assert.Equal("=", equalsToken.TextSpan.GetText());
+
+        var literalExpressionNode = (LiteralExpressionNode)variableAssignmentExpressionNode.ExpressionNode;
+        Assert.Equal("true", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+        Assert.Equal(typeof(bool), literalExpressionNode.ResultTypeClauseNode.ValueType);
+
+        Guid idOfExpectedDiagnostic;
+        {
+            // TODO: Reporting the diagnostic to get the Id like this is silly.
+            var fakeDiagnosticBag = new LuthetusDiagnosticBag();
+            fakeDiagnosticBag.ReportUndefinedVariable(
+                TextEditorTextSpan.FabricateTextSpan(string.Empty),
+                string.Empty);
+            idOfExpectedDiagnostic = fakeDiagnosticBag.Single().Id;
+        }
+
+        Assert.Single(compilationUnit.DiagnosticsList);
+        Assert.Equal(idOfExpectedDiagnostic, compilationUnit.DiagnosticsList.Single().Id);
     }
 
     [Fact]
     public void VariableAssignment_WITH_IntLiteral()
     {
+        var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "x = 2;";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        Assert.Single(topCodeBlock.ChildList);
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList.Single();
+
+        var identifierToken = variableAssignmentExpressionNode.VariableIdentifierToken;
+        Assert.Equal("x", identifierToken.TextSpan.GetText());
+
+        var equalsToken = variableAssignmentExpressionNode.EqualsToken;
+        Assert.Equal("=", equalsToken.TextSpan.GetText());
+
+        var literalExpressionNode = (LiteralExpressionNode)variableAssignmentExpressionNode.ExpressionNode;
+        Assert.Equal("2", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+        Assert.Equal(typeof(int), literalExpressionNode.ResultTypeClauseNode.ValueType);
+
+        Guid idOfExpectedDiagnostic;
+        {
+            // TODO: Reporting the diagnostic to get the Id like this is silly.
+            var fakeDiagnosticBag = new LuthetusDiagnosticBag();
+            fakeDiagnosticBag.ReportUndefinedVariable(
+                TextEditorTextSpan.FabricateTextSpan(string.Empty),
+                string.Empty);
+            idOfExpectedDiagnostic = fakeDiagnosticBag.Single().Id;
+        }
+
+        Assert.Single(compilationUnit.DiagnosticsList);
+        Assert.Equal(idOfExpectedDiagnostic, compilationUnit.DiagnosticsList.Single().Id);
     }
 
     [Fact]
     public void VariableAssignment_WITH_StringLiteral()
     {
+        var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "x = \"Hello World!\";";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        Assert.Single(topCodeBlock.ChildList);
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList.Single();
+
+        var identifierToken = variableAssignmentExpressionNode.VariableIdentifierToken;
+        Assert.Equal("x", identifierToken.TextSpan.GetText());
+
+        var equalsToken = variableAssignmentExpressionNode.EqualsToken;
+        Assert.Equal("=", equalsToken.TextSpan.GetText());
+
+        var literalExpressionNode = (LiteralExpressionNode)variableAssignmentExpressionNode.ExpressionNode;
+        Assert.Equal("\"Hello World!\"", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+        Assert.Equal(typeof(string), literalExpressionNode.ResultTypeClauseNode.ValueType);
+
+        Guid idOfExpectedDiagnostic;
+        {
+            // TODO: Reporting the diagnostic to get the Id like this is silly.
+            var fakeDiagnosticBag = new LuthetusDiagnosticBag();
+            fakeDiagnosticBag.ReportUndefinedVariable(
+                TextEditorTextSpan.FabricateTextSpan(string.Empty),
+                string.Empty);
+            idOfExpectedDiagnostic = fakeDiagnosticBag.Single().Id;
+        }
+
+        Assert.Single(compilationUnit.DiagnosticsList);
+        Assert.Equal(idOfExpectedDiagnostic, compilationUnit.DiagnosticsList.Single().Id);
     }
 
     [Fact]
     public void COMBINED_VariableDeclaration_AND_VariableAssignment_WITH_ExplicitType()
     {
+        var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "int x = 2;";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        Assert.Equal(2, topCodeBlock.ChildList.Length);
+
+        // variableDeclarationNode
+        {
+            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+
+            var typeClauseNode = variableDeclarationNode.TypeClauseNode;
+            Assert.Equal("int", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+            Assert.Equal(typeof(int), typeClauseNode.ValueType);
+
+            var identifierToken = variableDeclarationNode.IdentifierToken;
+            Assert.Equal("x", identifierToken.TextSpan.GetText());
+        }
+
+        // variableAssignmentNode
+        {
+            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+
+            var identifierToken = variableAssignmentNode.VariableIdentifierToken;
+            Assert.Equal("x", identifierToken.TextSpan.GetText());
+
+            var equalsToken = variableAssignmentNode.EqualsToken;
+            Assert.Equal("=", equalsToken.TextSpan.GetText());
+
+            var literalExpressionNode = (LiteralExpressionNode)variableAssignmentNode.ExpressionNode;
+            Assert.Equal("2", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+            Assert.Equal(typeof(int), literalExpressionNode.ResultTypeClauseNode.ValueType);
+        }
+
+        Assert.Empty(compilationUnit.DiagnosticsList);
     }
     
     [Fact]
     public void COMBINED_VariableDeclaration_AND_VariableAssignment_WITH_ImplicitType()
     {
+        var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "var x = 2;";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        Assert.Equal(2, topCodeBlock.ChildList.Length);
+
+        // variableDeclarationNode
+        {
+            // TODO: The var TypeClauseNode should be an integer for this case.
+
+            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+
+            var typeClauseNode = variableDeclarationNode.TypeClauseNode;
+            Assert.Equal("var", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+            Assert.Null(typeClauseNode.ValueType);
+
+            var identifierToken = variableDeclarationNode.IdentifierToken;
+            Assert.Equal("x", identifierToken.TextSpan.GetText());
+        }
+
+        // variableAssignmentNode
+        {
+            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+
+            var identifierToken = variableAssignmentNode.VariableIdentifierToken;
+            Assert.Equal("x", identifierToken.TextSpan.GetText());
+
+            var equalsToken = variableAssignmentNode.EqualsToken;
+            Assert.Equal("=", equalsToken.TextSpan.GetText());
+
+            var literalExpressionNode = (LiteralExpressionNode)variableAssignmentNode.ExpressionNode;
+            Assert.Equal("2", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+            Assert.Equal(typeof(int), literalExpressionNode.ResultTypeClauseNode.ValueType);
+        }
+
+        Assert.Empty(compilationUnit.DiagnosticsList);
     }
 }

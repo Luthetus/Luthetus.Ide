@@ -166,11 +166,8 @@ public static class ParseVariables
         EqualsToken consumedEqualsToken,
         ParserModel model)
     {
-        if (UtilityApi.IsKeywordSyntaxKind(model.TokenWalker.Current.SyntaxKind))
+        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.NewTokenKeyword)
         {
-            if (model.TokenWalker.Current.SyntaxKind != SyntaxKind.NewTokenKeyword)
-                return;
-
             ParseFunctions.HandleConstructorInvocation(model);
         }
         else

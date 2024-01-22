@@ -136,12 +136,10 @@ public static class ParseTokens
             model.CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
             model.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
         {
-            model.SyntaxStack.Push(consumedIdentifierToken);
             ParseFunctions.HandleConstructorDefinition(consumedIdentifierToken, model);
             return true;
         }
 
-        model.SyntaxStack.Push(consumedIdentifierToken);
         return false;
     }
 
@@ -180,8 +178,7 @@ public static class ParseTokens
                 return true;
             }
         }
-
-        model.SyntaxStack.Push(consumedIdentifierToken);
+        
         return false;
     }
 
@@ -239,7 +236,6 @@ public static class ParseTokens
             return true;
         }
 
-        model.SyntaxStack.Push(consumedIdentifierToken);
         return false;
     }
 
@@ -250,7 +246,6 @@ public static class ParseTokens
         if (model.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken &&
             model.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
         {
-            model.SyntaxStack.Push(consumedIdentifierToken);
             return false;
         }
 
