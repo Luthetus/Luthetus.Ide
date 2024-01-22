@@ -2476,6 +2476,18 @@ public class CustomParserTests
     }
 	
 	[Fact]
+    public void GENERIC_TYPE_SYNTAX_HIGHLIGHTING()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"ImmutableArray<string> indexedStringsList;";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+	
+	[Fact]
     public void DELETE_THIS_TEST_A()
 	{
         var resourceUri = new ResourceUri("UnitTests");

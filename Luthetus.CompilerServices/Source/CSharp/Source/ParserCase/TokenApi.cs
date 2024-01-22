@@ -248,11 +248,13 @@ public static class TokenApi
             if (model.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
             {
                 // Generic type
-                model.SyntaxStack.Push(new TypeClauseNode(
+                var typeClauseNode = new TypeClauseNode(
                     identifierToken,
                     null,
-                    genericParametersListingNode));
+                    genericParametersListingNode);
 
+                model.Binder.BindTypeClauseNode(typeClauseNode);
+                model.SyntaxStack.Push(typeClauseNode);
                 return true;
             }
         }
