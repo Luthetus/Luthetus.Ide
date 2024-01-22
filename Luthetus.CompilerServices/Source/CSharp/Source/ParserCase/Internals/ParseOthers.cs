@@ -4,6 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.CompilerServices.Lang.CSharp.Facts;
+using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 
@@ -163,86 +164,69 @@ public static class ParseOthers
                 case SyntaxKind.TrueTokenKeyword:
                 case SyntaxKind.FalseTokenKeyword:
                     var booleanLiteralExpressionNode = new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.Bool.ToTypeClause());
-
                     previousInvocationExpressionNode = booleanLiteralExpressionNode;
-
-                    if (topMostExpressionNode is null)
-                    {
-                        topMostExpressionNode = booleanLiteralExpressionNode;
-                    }
-                    else if (leftExpressionNode is null)
-                    {
-                        if (topMostExpressionNode.SyntaxKind != SyntaxKind.LiteralExpressionNode)
-                            leftExpressionNode = booleanLiteralExpressionNode;
-                    }
-                    else if (rightExpressionNode is null)
-                    {
-                        if (topMostExpressionNode.SyntaxKind != SyntaxKind.LiteralExpressionNode)
-                            rightExpressionNode = booleanLiteralExpressionNode;
-                    }
-                    else
-                    {
-                        throw new ApplicationException("TODO: Why would this occur?");
-                    }
-
+                    SetLiteralExpressionNode(booleanLiteralExpressionNode);
                     break;
                 case SyntaxKind.NumericLiteralToken:
                     var numericLiteralExpressionNode = new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.Int.ToTypeClause());
-
                     previousInvocationExpressionNode = numericLiteralExpressionNode;
-
-                    if (topMostExpressionNode is null)
-                    {
-                        topMostExpressionNode = numericLiteralExpressionNode;
-                    }
-                    else if (leftExpressionNode is null)
-                    {
-                        if (topMostExpressionNode.SyntaxKind != SyntaxKind.LiteralExpressionNode)
-                            leftExpressionNode = numericLiteralExpressionNode;
-                    }
-                    else if (rightExpressionNode is null)
-                    {
-                        if (topMostExpressionNode.SyntaxKind != SyntaxKind.LiteralExpressionNode)
-                            rightExpressionNode = numericLiteralExpressionNode;
-                    }
-                    else
-                    {
-                        throw new ApplicationException("TODO: Why would this occur?");
-                    }
-
+                    SetLiteralExpressionNode(numericLiteralExpressionNode);
                     break;
                 case SyntaxKind.StringLiteralToken:
                     var stringLiteralExpressionNode = new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.String.ToTypeClause());
-
                     previousInvocationExpressionNode = stringLiteralExpressionNode;
+                    SetLiteralExpressionNode(stringLiteralExpressionNode);
+                    break;
+                case SyntaxKind.IdentifierToken:
+                    if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
+                        model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+                    {
+                        var genericParametersListingNode = (GenericParametersListingNode?)null;
+                        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+                        {
+                            var openAngleBracketToken = (OpenAngleBracketToken)model.TokenWalker.Consume();
+                            ParseTypes.HandleGenericParameters(openAngleBracketToken, model);
+                            genericParametersListingNode = (GenericParametersListingNode)model.SyntaxStack.Pop();
+                        }
 
-                    if (topMostExpressionNode is null)
-                    {
-                        topMostExpressionNode = stringLiteralExpressionNode;
-                    }
-                    else if (leftExpressionNode is null)
-                    {
-                        if (topMostExpressionNode.SyntaxKind != SyntaxKind.LiteralExpressionNode)
-                            leftExpressionNode = stringLiteralExpressionNode;
-                    }
-                    else if (rightExpressionNode is null)
-                    {
-                        if (topMostExpressionNode.SyntaxKind != SyntaxKind.LiteralExpressionNode)
-                            rightExpressionNode = stringLiteralExpressionNode;
+                        FunctionParametersListingNode functionParametersListingNode;
+                        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+                        {
+                            var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Consume();
+                            ParseFunctions.HandleFunctionParameters(openParenthesisToken, model);
+                            functionParametersListingNode = (FunctionParametersListingNode)model.SyntaxStack.Pop();
+                        }
+                        else
+                        {
+                            functionParametersListingNode = new FunctionParametersListingNode(
+                                (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken),
+                                ImmutableArray<FunctionParameterEntryNode>.Empty,
+                                (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken));
+                        }
+
+                        model.Binder.TryGetFunctionHierarchically(
+                            tokenCurrent.TextSpan.GetText(),
+                            out var functionDefinitionNode);
+
+                        var functionInvocationNode = new FunctionInvocationNode(
+                            (IdentifierToken)tokenCurrent,
+                            functionDefinitionNode,
+                            genericParametersListingNode,
+                            functionParametersListingNode,
+                            functionDefinitionNode?.ReturnTypeClauseNode ?? CSharpFacts.Types.Void.ToTypeClause());
+
+                        model.Binder.BindFunctionInvocationNode(functionInvocationNode);
                     }
                     else
                     {
-                        throw new ApplicationException("TODO: Why would this occur?");
+                        var variableReferenceNode = new VariableReferenceNode(
+                            (IdentifierToken)tokenCurrent,
+                            // TODO: Don't pass null here
+                            null);
+
+                        model.Binder.BindVariableReferenceNode(variableReferenceNode);
                     }
 
-                    break;
-                case SyntaxKind.IdentifierToken:
-                    var variableReferenceNode = new VariableReferenceNode(
-                        (IdentifierToken)tokenCurrent,
-                        // TODO: Don't pass null here
-                        null);
-
-                    model.Binder.BindVariableReferenceNode(variableReferenceNode);
                     break;
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.MinusToken:
@@ -369,5 +353,27 @@ public static class ParseOthers
             CSharpFacts.Types.Void.ToTypeClause());
 
         model.SyntaxStack.Push(topMostExpressionNode ?? fallbackExpressionNode);
+
+        void SetLiteralExpressionNode(IExpressionNode literalExpressionNode)
+        {
+            if (topMostExpressionNode is null)
+            {
+                topMostExpressionNode = literalExpressionNode;
+            }
+            else if (leftExpressionNode is null)
+            {
+                if (topMostExpressionNode.SyntaxKind != SyntaxKind.LiteralExpressionNode)
+                    leftExpressionNode = literalExpressionNode;
+            }
+            else if (rightExpressionNode is null)
+            {
+                if (topMostExpressionNode.SyntaxKind != SyntaxKind.LiteralExpressionNode)
+                    rightExpressionNode = literalExpressionNode;
+            }
+            else
+            {
+                throw new ApplicationException("TODO: Why would this occur?");
+            }
+        }
     }
 }

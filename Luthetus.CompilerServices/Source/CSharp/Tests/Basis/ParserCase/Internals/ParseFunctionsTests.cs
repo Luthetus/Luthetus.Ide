@@ -171,14 +171,12 @@ public class ParseFunctionsTests
         // variableDeclarationNode
         {
             var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
-
             Assert.Equal("x", variableDeclarationNode.IdentifierToken.TextSpan.GetText());
         }
 
         // variableAssignmentNode
         {
             var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
-
             var functionInvocationNode = (FunctionInvocationNode)variableAssignmentNode.ExpressionNode;
         }
 
