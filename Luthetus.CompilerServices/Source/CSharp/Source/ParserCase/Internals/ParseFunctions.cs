@@ -191,7 +191,7 @@ public class ParseFunctions
             if (propertyIdentifierToken.IsFabricated)
                 break;
             
-            var equalsToken = (EqualsToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
+            var equalsToken = (EqualsToken)model.TokenWalker.Match(SyntaxKind.EqualsToken);
             if (equalsToken.IsFabricated)
                 break;
 
