@@ -218,7 +218,49 @@ public class ParseFunctionsTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        throw new NotImplementedException();
+        Assert.Single(topCodeBlock.ChildList);
+        var outerFunctionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
+
+        Assert.Equal("int", outerFunctionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+        Assert.Equal(typeof(int), outerFunctionDefinitionNode.ReturnTypeClauseNode.ValueType);
+        Assert.Equal("MyMethod", outerFunctionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText());
+        Assert.Null(outerFunctionDefinitionNode.GenericArgumentsListingNode);
+        Assert.Equal("(", outerFunctionDefinitionNode.FunctionArgumentsListingNode.OpenParenthesisToken.TextSpan.GetText());
+        Assert.Empty(outerFunctionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
+        Assert.Equal(")", outerFunctionDefinitionNode.FunctionArgumentsListingNode.CloseParenthesisToken.TextSpan.GetText());
+        Assert.False(outerFunctionDefinitionNode.IsFabricated);
+        Assert.NotNull(outerFunctionDefinitionNode.FunctionBodyCodeBlockNode);
+        Assert.Equal(2, outerFunctionDefinitionNode.FunctionBodyCodeBlockNode.ChildList.Length);
+
+        // Local FunctionDefinitionNode
+        {
+            var localFunctionDefinitionNode = (FunctionDefinitionNode)outerFunctionDefinitionNode.FunctionBodyCodeBlockNode.ChildList[0];
+
+            Assert.Equal("int", localFunctionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+            Assert.Equal(typeof(int), localFunctionDefinitionNode.ReturnTypeClauseNode.ValueType);
+            Assert.Equal("LocalFunction", localFunctionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText());
+            Assert.Null(localFunctionDefinitionNode.GenericArgumentsListingNode);
+            Assert.Equal("(", localFunctionDefinitionNode.FunctionArgumentsListingNode.OpenParenthesisToken.TextSpan.GetText());
+            Assert.Empty(localFunctionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
+            Assert.Equal(")", localFunctionDefinitionNode.FunctionArgumentsListingNode.CloseParenthesisToken.TextSpan.GetText());
+            Assert.False(localFunctionDefinitionNode.IsFabricated);
+            Assert.NotNull(localFunctionDefinitionNode.FunctionBodyCodeBlockNode);
+            Assert.Single(localFunctionDefinitionNode.FunctionBodyCodeBlockNode.ChildList);
+
+            var localReturnStatementNode = (ReturnStatementNode)localFunctionDefinitionNode.FunctionBodyCodeBlockNode.ChildList.Single();
+            var boolLiteralExpressionNode = (LiteralExpressionNode)localReturnStatementNode.ExpressionNode;
+            Assert.Equal(typeof(int), boolLiteralExpressionNode.ResultTypeClauseNode.ValueType);
+            Assert.Equal("2", boolLiteralExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+        }
+
+        // ReturnStatementNode
+        {
+            var outerReturnStatementNode = (ReturnStatementNode)outerFunctionDefinitionNode.FunctionBodyCodeBlockNode.ChildList[1];
+            var functionInvocationNode = (FunctionInvocationNode)outerReturnStatementNode.ExpressionNode;
+            Assert.Equal(typeof(int), functionInvocationNode.ResultTypeClauseNode.ValueType);
+        }
+
+        Assert.Empty(compilationUnit.DiagnosticsList);
     }
 
     [Fact]
@@ -253,14 +295,55 @@ public class ParseFunctionsTests
     public void LocalFunction_WITH_Expression_AT_Start()
     {
         var resourceUri = new ResourceUri("UnitTests");
-        var sourceText = "public int MyMethod() { int LocalFunction() => 2; return LocalFunction(); }";
+        var sourceText = "public bool MyMethod() { bool LocalFunction() => true; return LocalFunction(); }";
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        throw new NotImplementedException();
+        Assert.Single(topCodeBlock.ChildList);
+        var outerFunctionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
+
+        Assert.Equal("bool", outerFunctionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+        Assert.Equal(typeof(bool), outerFunctionDefinitionNode.ReturnTypeClauseNode.ValueType);
+        Assert.Equal("MyMethod", outerFunctionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText());
+        Assert.Null(outerFunctionDefinitionNode.GenericArgumentsListingNode);
+        Assert.Equal("(", outerFunctionDefinitionNode.FunctionArgumentsListingNode.OpenParenthesisToken.TextSpan.GetText());
+        Assert.Empty(outerFunctionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
+        Assert.Equal(")", outerFunctionDefinitionNode.FunctionArgumentsListingNode.CloseParenthesisToken.TextSpan.GetText());
+        Assert.False(outerFunctionDefinitionNode.IsFabricated);
+        Assert.NotNull(outerFunctionDefinitionNode.FunctionBodyCodeBlockNode);
+        Assert.Equal(2, outerFunctionDefinitionNode.FunctionBodyCodeBlockNode.ChildList.Length);
+
+        // Local FunctionDefinitionNode
+        {
+            var localFunctionDefinitionNode = (FunctionDefinitionNode)outerFunctionDefinitionNode.FunctionBodyCodeBlockNode.ChildList[0];
+
+            Assert.Equal("bool", localFunctionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+            Assert.Equal(typeof(bool), localFunctionDefinitionNode.ReturnTypeClauseNode.ValueType);
+            Assert.Equal("LocalFunction", localFunctionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText());
+            Assert.Null(localFunctionDefinitionNode.GenericArgumentsListingNode);
+            Assert.Equal("(", localFunctionDefinitionNode.FunctionArgumentsListingNode.OpenParenthesisToken.TextSpan.GetText());
+            Assert.Empty(localFunctionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
+            Assert.Equal(")", localFunctionDefinitionNode.FunctionArgumentsListingNode.CloseParenthesisToken.TextSpan.GetText());
+            Assert.False(localFunctionDefinitionNode.IsFabricated);
+            Assert.NotNull(localFunctionDefinitionNode.FunctionBodyCodeBlockNode);
+            Assert.Single(localFunctionDefinitionNode.FunctionBodyCodeBlockNode.ChildList);
+
+            var boolLiteralExpressionNode = (LiteralExpressionNode)localFunctionDefinitionNode.FunctionBodyCodeBlockNode.ChildList.Single();
+            Assert.Equal(typeof(bool), boolLiteralExpressionNode.ResultTypeClauseNode.ValueType);
+            Assert.Equal("true", boolLiteralExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+        }
+
+        // ReturnStatementNode
+        {
+            var outerReturnStatementNode = (ReturnStatementNode)outerFunctionDefinitionNode.FunctionBodyCodeBlockNode.ChildList[1];
+            var functionInvocationNode = (FunctionInvocationNode)outerReturnStatementNode.ExpressionNode;
+            Assert.Equal(typeof(bool), functionInvocationNode.ResultTypeClauseNode.ValueType);
+        }
+
+        Assert.Empty(compilationUnit.DiagnosticsList);
     }
 
     [Fact]
