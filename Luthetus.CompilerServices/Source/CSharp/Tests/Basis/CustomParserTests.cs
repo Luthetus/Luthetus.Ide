@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis;
 
@@ -2375,6 +2376,58 @@ public class CustomParserTests
 	}
 
     [Fact]
+    public void THIS_HAD_A_CRASH_WHEN_RUNNING_USER_TYPES_OUT_CODE()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = VeryLargeTestCase.Value;
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+
+	/// <summary>
+	/// Fixed.
+	/// </summary>
+    [Fact]
+    public void THIS_INFINITE_LOOPED_WHEN_RUNNING_USER_TYPES_OUT_CODE()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"public class MyClass
+{
+    public MyClass NonsenseMethod()
+    {
+        MyClass myClass = new MyClass(
+";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+
+    /// <summary>
+    /// Fixed.
+    /// </summary>
+    [Fact]
+    public void THIS_CRASHED_WHEN_RUNNING_USER_TYPES_OUT_CODE()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"public class MyClass
+{
+    public MyClass NonsenseMethod()
+    {
+        MyClass myClass = new
+";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+	
+	[Fact]
     public void DELETE_THIS_TEST_A()
 	{
         var resourceUri = new ResourceUri("UnitTests");
@@ -2391,6 +2444,20 @@ public class CustomParserTests
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = @"public void MyMethod() { }";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+	
+	[Fact]
+    public void DELETE_THIS_TEST_C()
+    {
+		// Infinite loop?
+
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"public class MyClass\n{\n    ";
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);

@@ -1,4 +1,14 @@
-﻿using Fluxor;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
+
+internal class VeryLargeTestCase
+{
+    public static readonly string Value = @"using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -39,9 +49,9 @@ public class USER_TYPES_OUT_CODE
             out var textEditorViewModel,
             out var serviceProvider);
 
-        var content = @"public class MyClass
+        var content = @""public class MyClass
 {
-}".ReplaceLineEndings("\n");
+}"".ReplaceLineEndings(""\n"");
 
         foreach (var character in content)
         {
@@ -86,14 +96,14 @@ public class USER_TYPES_OUT_CODE
             out var textEditorViewModel,
             out var serviceProvider);
 
-        var content = @"public class MyClass
+        var content = @""public class MyClass
 {
     public MyClass NonsenseMethod()
     {
         MyClass myClass = new MyClass();
         return myClass;
     }
-}".ReplaceLineEndings("\n");
+}"".ReplaceLineEndings(""\n"");
 
         foreach (var character in content)
         {
@@ -132,57 +142,18 @@ public class USER_TYPES_OUT_CODE
             out var textEditorViewModel,
             out var serviceProvider);
 
-        var content = @"using BlazorCrudApp;
+        var content = @""using BlazorCrudApp;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.RootComponents.Add<App>(""#app"");
-builder.RootComponents.Add<HeadOutlet>(""head::after"");
+builder.RootComponents.Add<App>(""""#app"""");
+builder.RootComponents.Add<HeadOutlet>(""""head::after"""");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 await builder.Build().RunAsync();
-".ReplaceLineEndings("\n");
-
-        foreach (var character in content)
-        {
-            textEditorService.Post(
-                nameof(USER_TYPES_OUT_CODE),
-                async editContext =>
-                {
-                    await textEditorService.ModelApi.InsertTextFactory(
-                            textEditorModel.ResourceUri,
-                            textEditorViewModel.ViewModelKey,
-                            character.ToString(),
-                            CancellationToken.None)
-                        .Invoke(editContext);
-                });
-
-            cSharpCompilerService.ResourceWasModified(
-                textEditorModel.ResourceUri,
-                ImmutableArray<TextEditorTextSpan>.Empty);
-        }
-
-        var resultText = textEditorService.ModelApi.GetAllText(textEditorModel.ResourceUri);
-        Assert.Equal(content, resultText);
-
-        var cSharpResource = (CSharpResource?)cSharpCompilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
-        Assert.NotNull(cSharpResource);
-    }
-    
-    [Fact]
-    public void THIS_FILE_ITSELF()
-    {
-        Initialize_USER_TYPES_OUT_CODE(
-            string.Empty,
-            out var textEditorService,
-            out var cSharpCompilerService,
-            out var textEditorModel,
-            out var textEditorViewModel,
-            out var serviceProvider);
-
-        var content = VeryLargeTestCase.Value;
+"".ReplaceLineEndings(""\n"");
 
         foreach (var character in content)
         {
@@ -268,7 +239,7 @@ await builder.Build().RunAsync();
             serviceProvider.GetRequiredService<IDispatcher>());
 
         var fileExtension = ExtensionNoPeriodFacts.C_SHARP_CLASS;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceUri = new ResourceUri(""/unitTesting.txt"");
         var resourceLastWriteTime = DateTime.UtcNow;
 
         model = new TextEditorModel(
@@ -292,4 +263,6 @@ await builder.Build().RunAsync();
         viewModel = textEditorService.ViewModelApi.GetOrDefault(viewModelKey)
            ?? throw new ArgumentNullException();
     }
+}
+".ReplaceLineEndings("\n");
 }

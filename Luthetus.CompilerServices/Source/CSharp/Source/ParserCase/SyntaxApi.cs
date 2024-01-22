@@ -310,11 +310,14 @@ public static class SyntaxApi
         else
         {
             typeClauseNode = UtilityApi.MatchTypeClause(model);
-            model.SyntaxStack.Push(model.TokenWalker.Consume());
-            HandleFunctionParameters(model);
 
-            // Discard the function parameters result for now, until further implementation is done.
-            _ = model.SyntaxStack.Pop();
+            if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+            {
+                model.SyntaxStack.Push(model.TokenWalker.Consume());
+                HandleFunctionParameters(model);
+                // Discard the function parameters result for now, until further implementation is done.
+                _ = model.SyntaxStack.Pop();
+            }
         }
 
         var constructorInvocationExpressionNode = new ConstructorInvocationExpressionNode(
@@ -794,7 +797,8 @@ public static class SyntaxApi
                 //
                 // mutableFunctionParametersListing.Add(_cSharpParser._tokenWalker.Consume());
             }
-            else if (SyntaxKind.CloseParenthesisToken == model.TokenWalker.Current.SyntaxKind)
+            else if (SyntaxKind.CloseParenthesisToken == model.TokenWalker.Current.SyntaxKind ||
+                     SyntaxKind.EndOfFileToken == model.TokenWalker.Current.SyntaxKind)
             {
                 _ = model.TokenWalker.Consume();
                 break;
