@@ -2476,6 +2476,36 @@ public class CustomParserTests
     }
 	
 	[Fact]
+    public void EXTENSION_METHOD()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"public static class RichCharacterExtensions
+{
+    public static CharacterKind GetCharacterKind(this RichCharacter richCharacter)
+    {
+        return CharacterKindHelper.CharToCharacterKind(richCharacter.Value);
+    }
+}";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+
+	[Fact]
+    public void THIS_TEXT_FROZE_FOR_ME()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = ThisTextFrozeForMe.Value;
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+	
+	[Fact]
     public void GENERIC_TYPE_SYNTAX_HIGHLIGHTING()
 	{
         var resourceUri = new ResourceUri("UnitTests");
