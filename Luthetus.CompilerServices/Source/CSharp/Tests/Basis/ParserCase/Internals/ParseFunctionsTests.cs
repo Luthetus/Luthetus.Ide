@@ -1,5 +1,6 @@
 ﻿using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -125,7 +126,33 @@ public class ParseFunctionsTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        throw new NotImplementedException();
+        Assert.Single(topCodeBlock.ChildList);
+
+        var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.ChildList.Single();
+        Assert.Equal("MyMethod", functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.GetText());
+        // In this test the function is undefined
+        Assert.Null(functionInvocationNode.FunctionDefinitionNode);
+        Assert.Null(functionInvocationNode.GenericParametersListingNode);
+
+        Assert.Equal("(", functionInvocationNode.FunctionParametersListingNode.OpenParenthesisToken.TextSpan.GetText());
+        Assert.Empty(functionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeList);
+        Assert.Equal(")", functionInvocationNode.FunctionParametersListingNode.CloseParenthesisToken.TextSpan.GetText());
+
+        Assert.False(functionInvocationNode.IsFabricated);
+
+        // In this test the function is undefined
+        Guid idOfExpectedDiagnostic;
+        {
+            // TODO: Reporting the diagnostic to get the Id like this is silly.
+            var fakeDiagnosticBag = new LuthetusDiagnosticBag();
+            fakeDiagnosticBag.ReportUndefinedFunction(
+                TextEditorTextSpan.FabricateTextSpan(string.Empty),
+                string.Empty);
+            idOfExpectedDiagnostic = fakeDiagnosticBag.Single().Id;
+        }
+
+        Assert.Single(compilationUnit.DiagnosticsList);
+        Assert.Equal(idOfExpectedDiagnostic, compilationUnit.DiagnosticsList.Single().Id);
     }
 
     [Fact]
@@ -138,6 +165,36 @@ public class ParseFunctionsTests
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        Assert.Equal(2, topCodeBlock.ChildList.Length);
+
+        // variableDeclarationNode
+        {
+            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+
+            Assert.Equal("x", variableDeclarationNode.IdentifierToken.TextSpan.GetText());
+        }
+
+        // variableAssignmentNode
+        {
+            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+
+            var functionInvocationNode = (FunctionInvocationNode)variableAssignmentNode.ExpressionNode;
+        }
+
+        // In this test the function is undefined
+        Guid idOfExpectedDiagnostic;
+        {
+            // TODO: Reporting the diagnostic to get the Id like this is silly.
+            var fakeDiagnosticBag = new LuthetusDiagnosticBag();
+            fakeDiagnosticBag.ReportUndefinedFunction(
+                TextEditorTextSpan.FabricateTextSpan(string.Empty),
+                string.Empty);
+            idOfExpectedDiagnostic = fakeDiagnosticBag.Single().Id;
+        }
+
+        Assert.Single(compilationUnit.DiagnosticsList);
+        Assert.Equal(idOfExpectedDiagnostic, compilationUnit.DiagnosticsList.Single().Id);
 
         throw new NotImplementedException();
     }

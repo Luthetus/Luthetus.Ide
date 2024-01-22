@@ -26,7 +26,8 @@ public class ParseFunctions
             consumedIdentifierToken,
             null,
             genericParametersListingNode,
-            functionParametersListingNode);
+            functionParametersListingNode,
+            Facts.CSharpFacts.Types.Void.ToTypeClause());
 
         model.Binder.BindFunctionInvocationNode(functionInvocationNode);
         model.CurrentCodeBlockBuilder.ChildList.Add(functionInvocationNode);
@@ -335,7 +336,8 @@ public class ParseFunctions
                 consumedIdentifierToken,
                 matchingOverload,
                 null,
-                functionParametersListingNode);
+                functionParametersListingNode,
+                matchingOverload?.ReturnTypeClauseNode ?? Facts.CSharpFacts.Types.Void.ToTypeClause());
 
             model.Binder.BindFunctionInvocationNode(functionInvocationNode);
 
