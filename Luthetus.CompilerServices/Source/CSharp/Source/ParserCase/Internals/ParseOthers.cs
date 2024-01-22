@@ -100,7 +100,8 @@ public static class ParseOthers
         IExpressionNode? leftExpressionNode,
         ISyntaxToken? operatorToken,
         IExpressionNode? rightExpressionNode,
-        ExpressionDelimiter[]? extraExpressionDeliminaters, ParserModel model)
+        ExpressionDelimiter[]? extraExpressionDeliminaters,
+        ParserModel model)
     {
         while (!model.TokenWalker.IsEof)
         {
@@ -178,6 +179,9 @@ public static class ParseOthers
                     SetLiteralExpressionNode(stringLiteralExpressionNode);
                     break;
                 case SyntaxKind.IdentifierToken:
+                    // 'resultingExpression' given the identifier.
+                    IExpressionNode resultingExpression;
+
                     if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
                         model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
                     {
@@ -216,6 +220,8 @@ public static class ParseOthers
                             functionDefinitionNode?.ReturnTypeClauseNode ?? CSharpFacts.Types.Void.ToTypeClause());
 
                         model.Binder.BindFunctionInvocationNode(functionInvocationNode);
+
+                        resultingExpression = functionInvocationNode;
                     }
                     else
                     {
@@ -225,7 +231,18 @@ public static class ParseOthers
                             null);
 
                         model.Binder.BindVariableReferenceNode(variableReferenceNode);
+
+                        resultingExpression = variableReferenceNode;
                     }
+
+                    if (topMostExpressionNode is null)
+                        topMostExpressionNode = resultingExpression;
+                    else if (leftExpressionNode is null)
+                        leftExpressionNode = resultingExpression;
+                    else if (rightExpressionNode is null)
+                        rightExpressionNode = resultingExpression;
+                    else
+                        throw new ApplicationException("TODO: Why would this occur?");
 
                     break;
                 case SyntaxKind.PlusToken:

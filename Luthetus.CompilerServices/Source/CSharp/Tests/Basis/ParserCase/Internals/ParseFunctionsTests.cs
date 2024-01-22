@@ -177,7 +177,19 @@ public class ParseFunctionsTests
         // variableAssignmentNode
         {
             var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+
             var functionInvocationNode = (FunctionInvocationNode)variableAssignmentNode.ExpressionNode;
+            
+            Assert.Equal("MyMethod", functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.GetText());
+            // In this test the function is undefined
+            Assert.Null(functionInvocationNode.FunctionDefinitionNode);
+            Assert.Null(functionInvocationNode.GenericParametersListingNode);
+
+            Assert.Equal("(", functionInvocationNode.FunctionParametersListingNode.OpenParenthesisToken.TextSpan.GetText());
+            Assert.Empty(functionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeList);
+            Assert.Equal(")", functionInvocationNode.FunctionParametersListingNode.CloseParenthesisToken.TextSpan.GetText());
+
+            Assert.False(functionInvocationNode.IsFabricated);
         }
 
         // In this test the function is undefined
@@ -193,8 +205,6 @@ public class ParseFunctionsTests
 
         Assert.Single(compilationUnit.DiagnosticsList);
         Assert.Equal(idOfExpectedDiagnostic, compilationUnit.DiagnosticsList.Single().Id);
-
-        throw new NotImplementedException();
     }
 
     [Fact]
