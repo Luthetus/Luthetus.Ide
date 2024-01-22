@@ -179,7 +179,7 @@ await builder.Build().RunAsync();
     /// <br/><br/>
     /// I'm going to comment out the 'THIS_FILE_ITSELF()' test.
     /// While its interesting, it isn't very useful to run since there are
-    /// so many redundant syntax's being parsed. (It isn't a lean test case).
+    /// so many redundant syntax(s) being parsed. (It isn't a lean test case).
     /// </summary>
     //[Fact]
     //public void THIS_FILE_ITSELF()
