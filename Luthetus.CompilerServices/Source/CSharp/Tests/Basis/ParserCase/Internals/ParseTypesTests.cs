@@ -14,7 +14,7 @@ public class ParseTypesTests
      */
 
     [Fact]
-    public void TypeDefinition_WITH_PublicAccess_AND_ClassStorage()
+    public void TypeDefinition_WITH_AccessModifierKind_AND_StorageModifierKind()
     {
         var accessModifierKindList = Enum.GetValues<AccessModifierKind>();
         foreach (var accessModifierKind in accessModifierKindList)
@@ -43,6 +43,7 @@ public class ParseTypesTests
                 var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
 
                 Assert.Equal(accessModifierKind, typeDefinitionNode.AccessModifierKind);
+                Assert.False(typeDefinitionNode.HasPartialModifier);
                 Assert.Equal(storageModifierKind, typeDefinitionNode.StorageModifierKind);
                 Assert.Equal("MyClass", typeDefinitionNode.TypeIdentifier.TextSpan.GetText());
                 Assert.Null(typeDefinitionNode.ValueType);
@@ -94,6 +95,7 @@ public class ParseTypesTests
                 var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
 
                 Assert.Equal(accessModifierKind, typeDefinitionNode.AccessModifierKind);
+                Assert.True(typeDefinitionNode.HasPartialModifier);
                 Assert.Equal(storageModifierKind, typeDefinitionNode.StorageModifierKind);
                 Assert.Equal("MyClass", typeDefinitionNode.TypeIdentifier.TextSpan.GetText());
                 Assert.Null(typeDefinitionNode.ValueType);

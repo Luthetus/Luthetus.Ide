@@ -755,7 +755,17 @@ public class ParseDefaultKeywords
 
         var accessModifierKind = AccessModifierKind.Public;
 
-        if (model.SyntaxStack.TryPeek(out var syntax) && syntax is ISyntaxToken firstSyntaxToken)
+        var hasPartialModifier = false;
+        if (model.SyntaxStack.TryPeek(out var syntax) && syntax is ISyntaxToken syntaxToken)
+        {
+            if (syntaxToken.SyntaxKind == SyntaxKind.PartialTokenContextualKeyword)
+            {
+                _ = model.SyntaxStack.Pop();
+                hasPartialModifier = true;
+            }
+        }
+
+        if (model.SyntaxStack.TryPeek(out syntax) && syntax is ISyntaxToken firstSyntaxToken)
         {
             var firstOutput = UtilityApi.GetAccessModifierKindFromToken(firstSyntaxToken);
 
@@ -770,6 +780,8 @@ public class ParseDefaultKeywords
 
                     if (secondOutput is not null)
                     {
+                        _ = model.SyntaxStack.Pop();
+
                         if ((firstOutput.Value.ToString().ToLower() == "protected" &&
                                 secondOutput.Value.ToString().ToLower() == "internal") ||
                             (firstOutput.Value.ToString().ToLower() == "internal" &&
@@ -792,6 +804,7 @@ public class ParseDefaultKeywords
 
         var typeDefinitionNode = new TypeDefinitionNode(
             accessModifierKind,
+            hasPartialModifier,
             storageModifierKind.Value,
             identifierToken,
             null,

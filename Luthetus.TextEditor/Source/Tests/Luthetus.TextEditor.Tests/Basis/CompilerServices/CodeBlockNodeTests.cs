@@ -91,6 +91,7 @@ public class CodeBlockNodeTests
 
         return new TypeDefinitionNode(
             AccessModifierKind.Public,
+            false,
             StorageModifierKind.Class,
             typeIdentifier,
             valueType,

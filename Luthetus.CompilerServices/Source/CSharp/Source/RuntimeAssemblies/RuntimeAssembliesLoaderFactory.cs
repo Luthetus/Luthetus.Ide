@@ -92,6 +92,7 @@ public static class RuntimeAssembliesLoaderFactory
 
                             var typeDefinitionNode = new TypeDefinitionNode(
                                 AccessModifierKind.Public,
+                                false,
                                 StorageModifierKind.Class,
                                 new IdentifierToken(textSpan),
                                 null,
@@ -210,6 +211,7 @@ public static class RuntimeAssembliesLoaderFactory
 
                             typeDefinitionNode = new TypeDefinitionNode(
                                 AccessModifierKind.Public,
+                                typeDefinitionNode.HasPartialModifier,
                                 StorageModifierKind.Class,
                                 typeDefinitionNode.TypeIdentifier,
                                 null,

@@ -369,6 +369,7 @@ public static class ParseTokens
             {
                 var fabricateTypeDefinition = new TypeDefinitionNode(
                     AccessModifierKind.Public,
+                    false,
                     StorageModifierKind.Class,
                     consumedAmbiguousIdentifierNode.IdentifierToken,
                     null,
@@ -497,6 +498,7 @@ public static class ParseTokens
 
             model.SyntaxStack.Push(new TypeDefinitionNode(
                 typeDefinitionNode.AccessModifierKind,
+                typeDefinitionNode.HasPartialModifier,
                 typeDefinitionNode.StorageModifierKind,
                 typeDefinitionNode.TypeIdentifier,
                 typeDefinitionNode.ValueType,
@@ -545,6 +547,7 @@ public static class ParseTokens
             {
                 typeDefinitionNode = new TypeDefinitionNode(
                     typeDefinitionNode.AccessModifierKind,
+                    typeDefinitionNode.HasPartialModifier,
                     typeDefinitionNode.StorageModifierKind,
                     typeDefinitionNode.TypeIdentifier,
                     typeDefinitionNode.ValueType,

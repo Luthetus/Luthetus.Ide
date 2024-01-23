@@ -13,6 +13,7 @@ public partial class CSharpFacts
     {
         public static readonly TypeDefinitionNode Void = new(
             AccessModifierKind.Public,
+            false,
             StorageModifierKind.Class,
             new IdentifierToken(new TextEditorTextSpan(0, "void".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "void")),
             typeof(void),
@@ -22,6 +23,7 @@ public partial class CSharpFacts
 
         public static readonly TypeDefinitionNode Int = new(
             AccessModifierKind.Public,
+            false,
             StorageModifierKind.Class,
             new IdentifierToken(new TextEditorTextSpan(0, "int".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "int")),
             typeof(int),
@@ -31,6 +33,7 @@ public partial class CSharpFacts
 
         public static readonly TypeDefinitionNode String = new(
             AccessModifierKind.Public,
+            false,
             StorageModifierKind.Class,
             new IdentifierToken(new TextEditorTextSpan(0, "string".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "string")),
             typeof(string),
@@ -40,6 +43,7 @@ public partial class CSharpFacts
 
         public static readonly TypeDefinitionNode Bool = new(
             AccessModifierKind.Public,
+            false,
             StorageModifierKind.Class,
             new IdentifierToken(new TextEditorTextSpan(0, "bool".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "bool")),
             typeof(bool),
@@ -49,6 +53,7 @@ public partial class CSharpFacts
 
         public static readonly TypeDefinitionNode Var = new(
             AccessModifierKind.Public,
+            false,
             StorageModifierKind.Class,
             new IdentifierToken(new TextEditorTextSpan(0, "var".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "var")),
             typeof(void),

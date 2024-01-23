@@ -53,7 +53,7 @@ public class ParseContextualKeywords
         KeywordContextualToken consumedKeywordContextualToken,
         ParserModel model)
     {
-        // TODO: Implement this method
+        model.SyntaxStack.Push(consumedKeywordContextualToken);
     }
 
     public static void HandleAddTokenContextualKeyword(

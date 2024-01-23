@@ -11,6 +11,7 @@ public sealed record TypeDefinitionNode : ISyntaxNode
 {
     public TypeDefinitionNode(
         AccessModifierKind accessModifierKind,
+        bool hasPartialModifier,
         StorageModifierKind storageModifierKind,
         IdentifierToken typeIdentifier,
         Type? valueType,
@@ -19,6 +20,7 @@ public sealed record TypeDefinitionNode : ISyntaxNode
         CodeBlockNode? typeBodyCodeBlockNode)
     {
         AccessModifierKind = accessModifierKind;
+        HasPartialModifier = hasPartialModifier;
         StorageModifierKind = storageModifierKind;
         TypeIdentifier = typeIdentifier;
         ValueType = valueType;
@@ -44,6 +46,7 @@ public sealed record TypeDefinitionNode : ISyntaxNode
     }
 
     public AccessModifierKind AccessModifierKind { get; }
+    public bool HasPartialModifier { get; }
     public StorageModifierKind StorageModifierKind { get; }
     /// <summary>
     /// Given: 'public class Person { /* class definition here */ }'<br/>

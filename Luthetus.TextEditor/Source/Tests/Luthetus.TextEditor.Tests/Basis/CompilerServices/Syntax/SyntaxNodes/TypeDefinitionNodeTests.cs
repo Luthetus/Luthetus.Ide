@@ -58,6 +58,7 @@ public class TypeDefinitionNodeTests
 
         var typeDefinitionNode = new TypeDefinitionNode(
             AccessModifierKind.Public,
+            false,
             StorageModifierKind.Class,
             typeIdentifier,
             valueType,
