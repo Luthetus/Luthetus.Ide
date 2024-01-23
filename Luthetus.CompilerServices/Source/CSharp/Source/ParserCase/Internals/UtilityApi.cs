@@ -156,4 +156,25 @@ public static class UtilityApi
                 return null;
         }
     }
+    
+    /// <summary>
+    /// If the provided <see cref="KeywordToken"/> does not map to a <see cref="AccessModifierKind"/>,
+    /// then null is returned.
+    /// </summary>
+    public static AccessModifierKind? GetAccessModifierKindFromToken(ISyntaxToken consumedToken)
+    {
+        switch (consumedToken.TextSpan.GetText())
+        {
+            case "public":
+                return AccessModifierKind.Public;
+            case "protected":
+                return AccessModifierKind.Protected;
+            case "internal":
+                return AccessModifierKind.Internal;
+            case "private":
+                return AccessModifierKind.Private;
+            default:
+                return null;
+        }
+    }
 }

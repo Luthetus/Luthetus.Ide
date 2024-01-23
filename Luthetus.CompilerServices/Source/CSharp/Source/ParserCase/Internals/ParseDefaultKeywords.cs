@@ -133,7 +133,13 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         ParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        HandleStorageModifierTokenKeyword(
+            consumedKeywordToken,
+            model);
+
+        // Why was this method invocation here? (2024-01-23)
+        //
+        // HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleEventTokenKeyword(
@@ -287,7 +293,7 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         ParserModel model)
     {
-        // TODO: Implement this method
+        model.SyntaxStack.Push(consumedKeywordToken);
     }
 
     public static void HandleReadonlyTokenKeyword(
@@ -599,21 +605,21 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         ParserModel model)
     {
-        // TODO: Implement this method
+        model.SyntaxStack.Push(consumedKeywordToken);
     }
 
     public static void HandleInternalTokenKeyword(
         KeywordToken consumedKeywordToken,
         ParserModel model)
     {
-        // TODO: Implement this method
+        model.SyntaxStack.Push(consumedKeywordToken);
     }
 
     public static void HandlePrivateTokenKeyword(
         KeywordToken consumedKeywordToken,
         ParserModel model)
     {
-        // TODO: Implement this method
+        model.SyntaxStack.Push(consumedKeywordToken);
     }
 
     public static void HandleStaticTokenKeyword(
@@ -743,12 +749,49 @@ public class ParseDefaultKeywords
         }
 
         var storageModifierKind = UtilityApi.GetStorageModifierKindFromToken(consumedStorageModifierToken);
-
+        
         if (storageModifierKind is null)
             return;
 
+        var accessModifierKind = AccessModifierKind.Public;
+
+        if (model.SyntaxStack.TryPeek(out var syntax) && syntax is ISyntaxToken firstSyntaxToken)
+        {
+            var firstOutput = UtilityApi.GetAccessModifierKindFromToken(firstSyntaxToken);
+
+            if (firstOutput is not null)
+            {
+                _ = model.SyntaxStack.Pop();
+                accessModifierKind = firstOutput.Value;
+
+                if (model.SyntaxStack.TryPeek(out syntax) && syntax is ISyntaxToken secondSyntaxToken)
+                {
+                    var secondOutput = UtilityApi.GetAccessModifierKindFromToken(secondSyntaxToken);
+
+                    if (secondOutput is not null)
+                    {
+                        if ((firstOutput.Value.ToString().ToLower() == "protected" &&
+                                secondOutput.Value.ToString().ToLower() == "internal") ||
+                            (firstOutput.Value.ToString().ToLower() == "internal" &&
+                                secondOutput.Value.ToString().ToLower() == "protected"))
+                        {
+                            accessModifierKind = AccessModifierKind.ProtectedInternal;
+                        }
+                        else if ((firstOutput.Value.ToString().ToLower() == "private" &&
+                                    secondOutput.Value.ToString().ToLower() == "protected") ||
+                                (firstOutput.Value.ToString().ToLower() == "protected" &&
+                                    secondOutput.Value.ToString().ToLower() == "private"))
+                        {
+                            accessModifierKind = AccessModifierKind.PrivateProtected;
+                        }
+                        // else use the firstOutput.
+                    }
+                }
+            }
+        }
+
         var typeDefinitionNode = new TypeDefinitionNode(
-            AccessModifierKind.Public,
+            accessModifierKind,
             storageModifierKind.Value,
             identifierToken,
             null,
