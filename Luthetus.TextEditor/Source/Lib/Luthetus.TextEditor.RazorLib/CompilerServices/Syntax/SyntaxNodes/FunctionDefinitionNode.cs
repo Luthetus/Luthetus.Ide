@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
@@ -9,7 +10,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 public sealed record FunctionDefinitionNode : ISyntaxNode
 {
     public FunctionDefinitionNode(
-
+        AccessModifierKind accessModifierKind,
         TypeClauseNode returnTypeClauseNode,
         IdentifierToken functionIdentifierToken,
         GenericArgumentsListingNode? genericArgumentsListingNode,
@@ -17,6 +18,7 @@ public sealed record FunctionDefinitionNode : ISyntaxNode
         CodeBlockNode? functionBodyCodeBlockNode,
         ConstraintNode? constraintNode)
     {
+        AccessModifierKind = accessModifierKind;
         ReturnTypeClauseNode = returnTypeClauseNode;
         FunctionIdentifierToken = functionIdentifierToken;
         GenericArgumentsListingNode = genericArgumentsListingNode;
@@ -44,6 +46,7 @@ public sealed record FunctionDefinitionNode : ISyntaxNode
         ChildList = children.ToImmutableArray();
     }
 
+    public AccessModifierKind AccessModifierKind { get; }
     public TypeClauseNode ReturnTypeClauseNode { get; }
     public IdentifierToken FunctionIdentifierToken { get; }
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }

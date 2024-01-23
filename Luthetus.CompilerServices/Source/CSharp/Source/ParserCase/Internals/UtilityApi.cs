@@ -1,4 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 
@@ -129,6 +131,29 @@ public static class UtilityApi
                 return 3;
             default:
                 return 0;
+        }
+    }
+
+    /// <summary>
+    /// If the provided <see cref="KeywordToken"/> does not map to a <see cref="StorageModifierKind"/>,
+    /// then null is returned.
+    /// </summary>
+    public static StorageModifierKind? GetStorageModifierKindFromToken(ISyntaxToken consumedToken)
+    {
+        switch (consumedToken.TextSpan.GetText())
+        {
+            case "enum":
+                return StorageModifierKind.Enum;
+            case "struct":
+                return StorageModifierKind.Struct;
+            case "class":
+                return StorageModifierKind.Class;
+            case "interface":
+                return StorageModifierKind.Interface;
+            case "record":
+                return StorageModifierKind.Record;
+            default:
+                return null;
         }
     }
 }

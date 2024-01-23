@@ -368,6 +368,8 @@ public static class ParseTokens
                 || typeDefinitionNode is null)
             {
                 var fabricateTypeDefinition = new TypeDefinitionNode(
+                    AccessModifierKind.Public,
+                    StorageModifierKind.Class,
                     consumedAmbiguousIdentifierNode.IdentifierToken,
                     null,
                     null,
@@ -494,6 +496,8 @@ public static class ParseTokens
             model.Binder.BindTypeClauseNode(inheritedTypeClauseNode);
 
             model.SyntaxStack.Push(new TypeDefinitionNode(
+                typeDefinitionNode.AccessModifierKind,
+                typeDefinitionNode.StorageModifierKind,
                 typeDefinitionNode.TypeIdentifier,
                 typeDefinitionNode.ValueType,
                 typeDefinitionNode.GenericArgumentsListingNode,
@@ -540,6 +544,8 @@ public static class ParseTokens
             model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
             {
                 typeDefinitionNode = new TypeDefinitionNode(
+                    typeDefinitionNode.AccessModifierKind,
+                    typeDefinitionNode.StorageModifierKind,
                     typeDefinitionNode.TypeIdentifier,
                     typeDefinitionNode.ValueType,
                     typeDefinitionNode.GenericArgumentsListingNode,
@@ -561,6 +567,7 @@ public static class ParseTokens
             model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
             {
                 functionDefinitionNode = new FunctionDefinitionNode(
+                    AccessModifierKind.Public,
                     functionDefinitionNode.ReturnTypeClauseNode,
                     functionDefinitionNode.FunctionIdentifierToken,
                     functionDefinitionNode.GenericArgumentsListingNode,
@@ -790,6 +797,7 @@ public static class ParseTokens
 
                 functionDefinitionNode = (FunctionDefinitionNode)model.SyntaxStack.Pop();
                 functionDefinitionNode = new FunctionDefinitionNode(
+                    AccessModifierKind.Public,
                     functionDefinitionNode.ReturnTypeClauseNode,
                     functionDefinitionNode.FunctionIdentifierToken,
                     functionDefinitionNode.GenericArgumentsListingNode,

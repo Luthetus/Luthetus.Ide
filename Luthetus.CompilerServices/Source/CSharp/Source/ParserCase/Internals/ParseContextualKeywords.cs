@@ -2,6 +2,7 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 
@@ -262,7 +263,9 @@ public class ParseContextualKeywords
         KeywordContextualToken consumedKeywordContextualToken,
         ParserModel model)
     {
-        // TODO: Implement this method
+        ParseDefaultKeywords.HandleStorageModifierTokenKeyword(
+            consumedKeywordContextualToken,
+            model);
     }
 
     public static void HandleRemoveTokenContextualKeyword(
@@ -362,6 +365,7 @@ public class ParseContextualKeywords
             var constraintNode = new ConstraintNode(constraintNodeInnerTokens.ToImmutableArray());
 
             model.SyntaxStack.Push(new FunctionDefinitionNode(
+                AccessModifierKind.Public,
                 functionDefinitionNode.ReturnTypeClauseNode,
                 functionDefinitionNode.FunctionIdentifierToken,
                 functionDefinitionNode.GenericArgumentsListingNode,

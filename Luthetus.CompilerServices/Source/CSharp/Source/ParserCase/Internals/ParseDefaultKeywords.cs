@@ -1,6 +1,7 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using System.Collections.Immutable;
@@ -342,7 +343,9 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         ParserModel model)
     {
-        // TODO: Implement this method
+        HandleStorageModifierTokenKeyword(
+            consumedKeywordToken,
+            model);
     }
 
     public static void HandleSwitchTokenKeyword(
@@ -706,35 +709,13 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         ParserModel model)
     {
-        var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
-        GenericArgumentsListingNode? genericArgumentsListingNode = null;
-
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-        {
-            ParseTypes.HandleGenericArguments(
-                (OpenAngleBracketToken)model.TokenWalker.Consume(),
-                model);
-
-            genericArgumentsListingNode = (GenericArgumentsListingNode?)model.SyntaxStack.Pop();
-        }
-
-        var typeDefinitionNode = new TypeDefinitionNode(
-            identifierToken,
-            null,
-            genericArgumentsListingNode,
-            null,
-            null)
-        {
-            IsInterface = true
-        };
-
-        model.Binder.BindTypeDefinitionNode(typeDefinitionNode);
-        model.Binder.BindTypeIdentifier(identifierToken);
-        model.SyntaxStack.Push(typeDefinitionNode);
+        ParseDefaultKeywords.HandleStorageModifierTokenKeyword(
+            consumedKeywordToken,
+            model);
     }
 
-    public static void HandleClassTokenKeyword(
-        KeywordToken consumedKeywordToken,
+    public static void HandleStorageModifierTokenKeyword(
+        ISyntaxToken consumedStorageModifierToken,
         ParserModel model)
     {
         IdentifierToken identifierToken;
@@ -761,7 +742,14 @@ public class ParseDefaultKeywords
             genericArgumentsListingNode = (GenericArgumentsListingNode?)model.SyntaxStack.Pop();
         }
 
+        var storageModifierKind = UtilityApi.GetStorageModifierKindFromToken(consumedStorageModifierToken);
+
+        if (storageModifierKind is null)
+            return;
+
         var typeDefinitionNode = new TypeDefinitionNode(
+            AccessModifierKind.Public,
+            storageModifierKind.Value,
             identifierToken,
             null,
             genericArgumentsListingNode,
@@ -771,6 +759,15 @@ public class ParseDefaultKeywords
         model.Binder.BindTypeDefinitionNode(typeDefinitionNode);
         model.Binder.BindTypeIdentifier(identifierToken);
         model.SyntaxStack.Push(typeDefinitionNode);
+    }
+
+    public static void HandleClassTokenKeyword(
+        KeywordToken consumedKeywordToken,
+        ParserModel model)
+    {
+        HandleStorageModifierTokenKeyword(
+            consumedKeywordToken,
+            model);
     }
 
     public static void HandleNamespaceTokenKeyword(

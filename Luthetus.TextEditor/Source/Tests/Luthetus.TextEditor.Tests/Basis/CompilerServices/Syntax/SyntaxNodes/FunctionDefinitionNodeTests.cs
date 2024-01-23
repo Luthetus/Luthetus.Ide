@@ -143,6 +143,7 @@ public class FunctionDefinitionNodeTests
         ConstraintNode? constraintNode = null;
 
         var functionDefinitionNode = new FunctionDefinitionNode(
+            AccessModifierKind.Public,
             returnTypeClauseNode,
             functionIdentifierToken,
             genericArgumentsListingNode,

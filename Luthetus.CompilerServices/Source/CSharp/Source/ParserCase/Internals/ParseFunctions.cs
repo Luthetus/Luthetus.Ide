@@ -49,6 +49,7 @@ public class ParseFunctions
         var functionArgumentsListingNode = (FunctionArgumentsListingNode)model.SyntaxStack.Pop();
 
         var functionDefinitionNode = new FunctionDefinitionNode(
+            AccessModifierKind.Public,
             consumedTypeClauseNode,
             consumedIdentifierToken,
             consumedGenericArgumentsListingNode,

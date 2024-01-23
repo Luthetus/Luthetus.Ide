@@ -2,6 +2,7 @@
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
@@ -61,6 +62,8 @@ public class ParseFunctionsTests
         Assert.Single(topCodeBlock.ChildList);
         var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
 
+        Assert.Equal(AccessModifierKind.Public, functionDefinitionNode.AccessModifierKind);
+
         Assert.Equal("int", functionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
         Assert.Equal(typeof(int), functionDefinitionNode.ReturnTypeClauseNode.ValueType);
 
@@ -94,6 +97,8 @@ public class ParseFunctionsTests
 
         Assert.Single(topCodeBlock.ChildList);
         var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
+
+        Assert.Equal(AccessModifierKind.Public, functionDefinitionNode.AccessModifierKind);
 
         Assert.Equal("int", functionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
         Assert.Equal(typeof(int), functionDefinitionNode.ReturnTypeClauseNode.ValueType);
@@ -221,6 +226,8 @@ public class ParseFunctionsTests
         Assert.Single(topCodeBlock.ChildList);
         var outerFunctionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
 
+        Assert.Equal(AccessModifierKind.Public, outerFunctionDefinitionNode.AccessModifierKind);
+
         Assert.Equal("int", outerFunctionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
         Assert.Equal(typeof(int), outerFunctionDefinitionNode.ReturnTypeClauseNode.ValueType);
         Assert.Equal("MyMethod", outerFunctionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText());
@@ -304,6 +311,8 @@ public class ParseFunctionsTests
 
         Assert.Single(topCodeBlock.ChildList);
         var outerFunctionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
+
+        Assert.Equal(AccessModifierKind.Public, outerFunctionDefinitionNode.AccessModifierKind);
 
         Assert.Equal("bool", outerFunctionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
         Assert.Equal(typeof(bool), outerFunctionDefinitionNode.ReturnTypeClauseNode.ValueType);
