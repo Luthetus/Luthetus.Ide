@@ -103,7 +103,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
             	"TreeView.HandleExpansionChevronOnMouseDown",
 				async () => 
 				{
-					await localTreeViewNoType.LoadChildListAsync();
+					await localTreeViewNoType.LoadChildListAsync().ConfigureAwait(false);
 	                TreeViewService.ReRenderNode(TreeViewContainer.Key, localTreeViewNoType);
 				});
         }
@@ -186,5 +186,12 @@ public partial class TreeViewNodeDisplay : ComponentBase
             var mouseEventArgs = new MouseEventArgs { Button = -1 };
             ManuallyPropagateOnContextMenu(mouseEventArgs, TreeViewContainer, TreeViewNoType);
         }
+    }
+
+    private string GetShowDefaultCursorCssClass(bool isExpandable)
+    {
+        return isExpandable
+            ? string.Empty
+            : "luth_tree-view-use-default-cursor";
     }
 }

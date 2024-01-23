@@ -12,6 +12,7 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.Website.RazorLib;
 
@@ -159,23 +160,29 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
                 decorationMapper,
                 compilerService);
 
-            textEditorModel.CompilerService.RegisterResource(textEditorModel.ResourceUri);
-
             TextEditorService.ModelApi.RegisterCustom(textEditorModel);
 
-            TextEditorService.ModelApi.RegisterPresentationModel(
-                    textEditorModel.ResourceUri,
-                    CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
+            TextEditorService.Post(
+                nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
+                async editContext =>
+                {
+                    await TextEditorService.ModelApi.AddPresentationModelFactory(
+                            textEditorModel.ResourceUri,
+                            CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel)
+                        .Invoke(editContext);
 
-            TextEditorService.ModelApi.RegisterPresentationModel(
-                textEditorModel.ResourceUri,
-                DiffPresentationFacts.EmptyInPresentationModel);
-            
-            TextEditorService.ModelApi.RegisterPresentationModel(
-                textEditorModel.ResourceUri,
-                DiffPresentationFacts.EmptyOutPresentationModel);
+                    await TextEditorService.ModelApi.AddPresentationModelFactory(
+                            textEditorModel.ResourceUri,
+                            DiffPresentationFacts.EmptyInPresentationModel)
+                        .Invoke(editContext);
 
-            await textEditorModel.ApplySyntaxHighlightingAsync();
+                    await TextEditorService.ModelApi.AddPresentationModelFactory(
+                            textEditorModel.ResourceUri,
+                            DiffPresentationFacts.EmptyOutPresentationModel)
+                        .Invoke(editContext);
+
+                    textEditorModel.CompilerService.RegisterResource(textEditorModel.ResourceUri);
+                });
         }
     }
 }

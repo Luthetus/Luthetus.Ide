@@ -1,20 +1,26 @@
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
+/// <summary>
+/// TODO: Track the open and close braces for the function body.
+/// </summary>
 public sealed record FunctionDefinitionNode : ISyntaxNode
 {
     public FunctionDefinitionNode(
+        AccessModifierKind accessModifierKind,
         TypeClauseNode returnTypeClauseNode,
-        IdentifierToken functionIdentifier,
+        IdentifierToken functionIdentifierToken,
         GenericArgumentsListingNode? genericArgumentsListingNode,
         FunctionArgumentsListingNode functionArgumentsListingNode,
         CodeBlockNode? functionBodyCodeBlockNode,
         ConstraintNode? constraintNode)
     {
+        AccessModifierKind = accessModifierKind;
         ReturnTypeClauseNode = returnTypeClauseNode;
-        FunctionIdentifier = functionIdentifier;
+        FunctionIdentifierToken = functionIdentifierToken;
         GenericArgumentsListingNode = genericArgumentsListingNode;
         FunctionArgumentsListingNode = functionArgumentsListingNode;
         FunctionBodyCodeBlockNode = functionBodyCodeBlockNode;
@@ -23,7 +29,7 @@ public sealed record FunctionDefinitionNode : ISyntaxNode
         var children = new List<ISyntax>
         {
             ReturnTypeClauseNode,
-            FunctionIdentifier,
+            FunctionIdentifierToken,
         };
 
         if (GenericArgumentsListingNode is not null)
@@ -40,8 +46,9 @@ public sealed record FunctionDefinitionNode : ISyntaxNode
         ChildList = children.ToImmutableArray();
     }
 
+    public AccessModifierKind AccessModifierKind { get; }
     public TypeClauseNode ReturnTypeClauseNode { get; }
-    public IdentifierToken FunctionIdentifier { get; }
+    public IdentifierToken FunctionIdentifierToken { get; }
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
     public CodeBlockNode? FunctionBodyCodeBlockNode { get; }

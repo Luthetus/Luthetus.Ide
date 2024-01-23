@@ -1041,19 +1041,19 @@ public class TextEditorCommandDefaultFactsTests
 
             textEditorService.Post(
                 nameof(TextEditorCommandDefaultFactsTests),
-                editContext =>
+                async editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
 
                     if (modelModifier is null || viewModelModifier is null)
-                        return Task.CompletedTask;
+                        return;
 
                     var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
                     var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                     if (primaryCursorModifier is null)
-                        return Task.CompletedTask;
+                        return;
 
                     // Insert a tab character at the start of the row under testing
                     {
@@ -1064,8 +1064,7 @@ public class TextEditorCommandDefaultFactsTests
                             Key<TextEditorViewModel>.Empty,
                             new List<TextEditorCursorModifier> { cursorModifier });
 
-                        textEditorService.ModelApi
-                            .InsertTextUnsafeFactory(
+                        await textEditorService.ModelApi.InsertTextUnsafeFactory(
                                 modelModifier.ResourceUri,
                                 insertionCursorModifierBag,
                                 "\t",
@@ -1092,7 +1091,7 @@ public class TextEditorCommandDefaultFactsTests
                         Assert.Equal("P", selectedText);
                     }
 
-                    return Task.CompletedTask;
+                    return;
                 });
 
             await TextEditorCommandDefaultFacts.IndentLess.CommandFunc.Invoke(textEditorCommandArgs);
@@ -1138,8 +1137,7 @@ public class TextEditorCommandDefaultFactsTests
                             Key<TextEditorViewModel>.Empty,
                             new List<TextEditorCursorModifier> { cursorModifier });
 
-                        textEditorService.ModelApi
-                            .InsertTextUnsafeFactory(
+                        textEditorService.ModelApi.InsertTextUnsafeFactory(
                                 modelModifier.ResourceUri,
                                 insertionCursorModifierBag,
                                 "    ",
@@ -1212,8 +1210,7 @@ public class TextEditorCommandDefaultFactsTests
                             Key<TextEditorViewModel>.Empty,
                             new List<TextEditorCursorModifier> { cursorModifier });
 
-                        textEditorService.ModelApi
-                            .InsertTextUnsafeFactory(
+                        textEditorService.ModelApi.InsertTextUnsafeFactory(
                                 modelModifier.ResourceUri,
                                 insertionCursorModifierBag,
                                 "\t",

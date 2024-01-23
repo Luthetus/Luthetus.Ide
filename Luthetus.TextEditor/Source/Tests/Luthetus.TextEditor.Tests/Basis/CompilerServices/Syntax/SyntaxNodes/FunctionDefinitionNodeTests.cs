@@ -17,7 +17,7 @@ public class FunctionDefinitionNodeTests
     /// <see cref="FunctionDefinitionNode(TypeClauseNode, IdentifierToken, RazorLib.CompilerServices.Syntax.SyntaxNodes.GenericArgumentsListingNode?, RazorLib.CompilerServices.Syntax.SyntaxNodes.FunctionArgumentsListingNode, RazorLib.CompilerServices.CodeBlockNode?, RazorLib.CompilerServices.Syntax.SyntaxNodes.ConstraintNode?)"/>
     /// <br/>----<br/>
     /// <see cref="FunctionDefinitionNode.ReturnTypeClauseNode"/>
-    /// <see cref="FunctionDefinitionNode.FunctionIdentifier"/>
+    /// <see cref="FunctionDefinitionNode.FunctionIdentifierToken"/>
     /// <see cref="FunctionDefinitionNode.GenericArgumentsListingNode"/>
     /// <see cref="FunctionDefinitionNode.FunctionArgumentsListingNode"/>
     /// <see cref="FunctionDefinitionNode.FunctionBodyCodeBlockNode"/>
@@ -143,6 +143,7 @@ public class FunctionDefinitionNodeTests
         ConstraintNode? constraintNode = null;
 
         var functionDefinitionNode = new FunctionDefinitionNode(
+            AccessModifierKind.Public,
             returnTypeClauseNode,
             functionIdentifierToken,
             genericArgumentsListingNode,
@@ -151,7 +152,7 @@ public class FunctionDefinitionNodeTests
             constraintNode);
 
         Assert.Equal(returnTypeClauseNode, functionDefinitionNode.ReturnTypeClauseNode);
-        Assert.Equal(functionIdentifierToken, functionDefinitionNode.FunctionIdentifier);
+        Assert.Equal(functionIdentifierToken, functionDefinitionNode.FunctionIdentifierToken);
         Assert.Equal(genericArgumentsListingNode, functionDefinitionNode.GenericArgumentsListingNode);
         Assert.Equal(functionArgumentsListingNode, functionDefinitionNode.FunctionArgumentsListingNode);
         Assert.Equal(codeBlockNode, functionDefinitionNode.FunctionBodyCodeBlockNode);

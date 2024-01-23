@@ -5,7 +5,7 @@
     @if (!TreeViewNoType.IsHidden)
     {
         <div id="@TreeViewService.GetNodeElementId(TreeViewNoType)"
-             class="luth_tree-view-title @IsSelectedCssClass @IsActiveCssClass"
+        class="luth_tree-view-title @IsSelectedCssClass @IsActiveCssClass"
              style="padding-left: @(OffsetInPixels.ToCssValue())px;"
              tabindex="-1"
              @onclick:stopPropagation="true"
@@ -19,10 +19,10 @@
              @oncontextmenu="e => ManuallyPropagateOnContextMenu(e, TreeViewContainer, TreeViewNoType)"
              @onkeydown="e => HandleOnKeyDown(e)"
              @ref="_treeViewTitleElementReference">
-            
-            <div class="luth_tree-view-expansion-chevron"
-                 @onclick:stopPropagation="true"
-                 @onmousedown:stopPropagation="true"
+
+            <div class="luth_tree-view-expansion-chevron @GetShowDefaultCursorCssClass(TreeViewNoType.IsExpandable)"
+                 @onclick:stopPropagation="TreeViewNoType.IsExpandable"
+                 @onmousedown:stopPropagation="TreeViewNoType.IsExpandable"
                  @onmousedown="_ => HandleExpansionChevronOnMouseDown(TreeViewNoType)">
 
                 @if (TreeViewNoType.IsExpandable)

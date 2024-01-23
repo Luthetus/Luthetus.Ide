@@ -156,7 +156,7 @@ public partial interface ITextEditorService
             MotionKind motionKind,
             CancellationToken cancellationToken);
 
-        public TextEditorEdit RegisterPresentationModel(
+        public TextEditorEdit AddPresentationModelFactory(
             ResourceUri resourceUri,
             TextEditorPresentationModel emptyPresentationModel);
 
@@ -552,7 +552,7 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit RegisterPresentationModel(
+        public TextEditorEdit AddPresentationModelFactory(
             ResourceUri resourceUri,
             TextEditorPresentationModel emptyPresentationModel)
         {
@@ -564,7 +564,6 @@ public partial interface ITextEditorService
                     return Task.CompletedTask;
 
                 modelModifier.PerformRegisterPresentationModelAction(emptyPresentationModel);
-
                 return Task.CompletedTask;
             };
         }

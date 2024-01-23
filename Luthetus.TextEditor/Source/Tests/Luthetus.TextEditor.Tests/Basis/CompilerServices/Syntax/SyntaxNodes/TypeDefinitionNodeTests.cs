@@ -5,6 +5,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -56,9 +57,13 @@ public class TypeDefinitionNodeTests
         CodeBlockNode? typeBodyCodeBlockNode = new(ImmutableArray<ISyntax>.Empty);
 
         var typeDefinitionNode = new TypeDefinitionNode(
+            AccessModifierKind.Public,
+            false,
+            StorageModifierKind.Class,
             typeIdentifier,
             valueType,
             genericArgumentsListingNode,
+            null,
             inheritedTypeClauseNode,
             typeBodyCodeBlockNode);
 
@@ -69,7 +74,7 @@ public class TypeDefinitionNodeTests
         Assert.Equal(typeBodyCodeBlockNode, typeDefinitionNode.TypeBodyCodeBlockNode);
         Assert.False(typeDefinitionNode.IsInterface);
         Assert.Empty(typeDefinitionNode.GetFunctionDefinitionNodes());
-        Assert.Equal(typeIdentifier, typeDefinitionNode.ToTypeClause().TypeIdentifier);
+        Assert.Equal(typeIdentifier, typeDefinitionNode.ToTypeClause().TypeIdentifierToken);
         Assert.Equal(valueType, typeDefinitionNode.ToTypeClause().ValueType);
         Assert.Null(typeDefinitionNode.ToTypeClause().GenericParametersListingNode);
 

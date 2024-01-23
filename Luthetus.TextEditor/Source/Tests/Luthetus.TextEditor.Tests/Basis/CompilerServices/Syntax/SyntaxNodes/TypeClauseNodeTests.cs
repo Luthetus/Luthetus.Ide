@@ -13,7 +13,7 @@ public class TypeClauseNodeTests
     /// <summary>
     /// <see cref="TypeClauseNode(RazorLib.CompilerServices.Syntax.ISyntaxToken, Type?, RazorLib.CompilerServices.Syntax.SyntaxNodes.GenericParametersListingNode?)"/>
     /// <br/>----<br/>
-    /// <see cref="TypeClauseNode.TypeIdentifier"/>
+    /// <see cref="TypeClauseNode.TypeIdentifierToken"/>
     /// <see cref="TypeClauseNode.ValueType"/>
     /// <see cref="TypeClauseNode.GenericParametersListingNode"/>
     /// <see cref="TypeClauseNode.ChildList"/>
@@ -41,7 +41,7 @@ public class TypeClauseNodeTests
             valueType,
             genericParametersListingNode);
 
-        Assert.Equal(intTypeIdentifier, intTypeClauseNode.TypeIdentifier);
+        Assert.Equal(intTypeIdentifier, intTypeClauseNode.TypeIdentifierToken);
         Assert.Equal(valueType, intTypeClauseNode.ValueType);
         Assert.Equal(genericParametersListingNode, intTypeClauseNode.GenericParametersListingNode);
 

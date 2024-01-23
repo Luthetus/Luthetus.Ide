@@ -138,7 +138,7 @@ public partial class PresentationLayerGroup : ComponentBase
     /// TODO: I don't think this logic is correct (ShiftTextSpans). I'm tired at this point, so I will leave this comment so I remember to look at this again. (2023-09-07)
     /// </summary>
     private ImmutableArray<TextEditorTextSpan> ShiftTextSpans(
-        List<TextEditorTextModification> textModifications,
+        TextEditorTextModification[] textModifications,
         ImmutableArray<TextEditorTextSpan> textSpans)
     {
         var outTextSpansList = new List<TextEditorTextSpan>();

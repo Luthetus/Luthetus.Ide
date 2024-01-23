@@ -36,6 +36,10 @@
     color: var(--luth_tree-view-expansion-chevron-color);
 }
 
+    .luth_tree-view-expansion-chevron.luth_tree-view-use-default-cursor {
+        cursor: default;
+    }
+
 .luth_tree-view-title-content {
     cursor: default;
 }

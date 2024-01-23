@@ -231,7 +231,7 @@ public class RazorSyntaxTree
                 typeDefinitionNode?.InheritedTypeClauseNode is not null)
             {
                 var inheritanceIdentifierText = typeDefinitionNode
-                    .InheritedTypeClauseNode.TypeIdentifier.TextSpan.GetText();
+                    .InheritedTypeClauseNode.TypeIdentifierToken.TextSpan.GetText();
 
                 if (inheritanceIdentifierText != "ComponentBase")
                     continue;

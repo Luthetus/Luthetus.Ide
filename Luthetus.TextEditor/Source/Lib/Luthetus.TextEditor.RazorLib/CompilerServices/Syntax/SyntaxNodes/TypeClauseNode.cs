@@ -12,13 +12,13 @@ public sealed record TypeClauseNode : ISyntaxNode
         Type? valueType,
         GenericParametersListingNode? genericParametersListingNode)
     {
-        TypeIdentifier = typeIdentifier;
+        TypeIdentifierToken = typeIdentifier;
         ValueType = valueType;
         GenericParametersListingNode = genericParametersListingNode;
 
         var children = new List<ISyntax>
         {
-            TypeIdentifier
+            TypeIdentifierToken
         };
 
         if (GenericParametersListingNode is not null)
@@ -29,22 +29,22 @@ public sealed record TypeClauseNode : ISyntaxNode
 
     /// <summary>
     /// Given: 'int x = 2;'<br/>
-    /// Then: 'int' is the <see cref="TypeIdentifier"/>
+    /// Then: 'int' is the <see cref="TypeIdentifierToken"/>
     /// And: <see cref="GenericParametersListingNode"/> would be null
     /// </summary>
-    public ISyntaxToken TypeIdentifier { get; }
+    public ISyntaxToken TypeIdentifierToken { get; }
 	/// <summary>
     /// Given: 'int x = 2;'<br/>
     /// Then: 'typeof(int)' is the <see cref="ValueType"/>
     /// And: <see cref="GenericParametersListingNode"/> would be null
 	///<br/>
 	/// In short, <see cref="ValueType"/> is non-null when the
-	/// <see cref="TypeIdentifier"/> maps to a C# primitive type.
+	/// <see cref="TypeIdentifierToken"/> maps to a C# primitive type.
     /// </summary>
     public Type? ValueType { get; }
     /// <summary>
     /// Given: 'int[] x = 2;'<br/>
-    /// Then: 'Array&lt;T&gt;' is the <see cref="TypeIdentifier"/><br/>
+    /// Then: 'Array&lt;T&gt;' is the <see cref="TypeIdentifierToken"/><br/>
     /// And: '&lt;int&gt;' is the <see cref="GenericParametersListingNode"/>
     /// </summary>
     public GenericParametersListingNode? GenericParametersListingNode { get; }

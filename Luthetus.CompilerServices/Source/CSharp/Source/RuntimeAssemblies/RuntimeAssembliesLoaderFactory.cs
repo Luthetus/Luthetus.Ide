@@ -91,7 +91,11 @@ public static class RuntimeAssembliesLoaderFactory
                                 definedType.Name);
 
                             var typeDefinitionNode = new TypeDefinitionNode(
+                                AccessModifierKind.Public,
+                                false,
+                                StorageModifierKind.Class,
                                 new IdentifierToken(textSpan),
+                                null,
                                 null,
                                 null,
                                 null,
@@ -195,6 +199,7 @@ public static class RuntimeAssembliesLoaderFactory
                                 }
 
                                 var functionDefinitionNode = new FunctionDefinitionNode(
+                                    AccessModifierKind.Public,
                                     returnTypeClauseNode,
                                     functionIdentifierToken,
                                     genericArgumentsListingNode,
@@ -206,9 +211,13 @@ public static class RuntimeAssembliesLoaderFactory
                             }
 
                             typeDefinitionNode = new TypeDefinitionNode(
+                                AccessModifierKind.Public,
+                                typeDefinitionNode.HasPartialModifier,
+                                StorageModifierKind.Class,
                                 typeDefinitionNode.TypeIdentifier,
                                 null,
                                 typeDefinitionNode.GenericArgumentsListingNode,
+                                null,
                                 typeDefinitionNode.InheritedTypeClauseNode,
                                 typeBodyCodeBlockNodeBuilder.Build());
 

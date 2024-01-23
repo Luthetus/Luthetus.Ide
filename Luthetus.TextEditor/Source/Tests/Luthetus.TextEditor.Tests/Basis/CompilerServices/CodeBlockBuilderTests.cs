@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
@@ -103,9 +104,13 @@ public class CodeBlockBuilderTests
         CodeBlockNode? typeBodyCodeBlockNode = new(ImmutableArray<ISyntax>.Empty);
 
         return new TypeDefinitionNode(
+            AccessModifierKind.Public,
+            false,
+            StorageModifierKind.Class,
             typeIdentifier,
             valueType,
             genericArgumentsListingNode,
+            null,
             inheritedTypeClauseNode,
             typeBodyCodeBlockNode);
     }

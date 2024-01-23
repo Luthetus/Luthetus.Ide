@@ -425,7 +425,7 @@ ul.luth_indent-child-content {
     --luth_resize-row-background-color: black;
     --luth_icon-solution-font-color: #8f38d6;
     --luth_icon-dot-net-solution-folder-font-color: #252ff1;
-    --luth_icon-project-font-color: #23d519;
+    --luth_icon-project-font-color: rgb(0, 150, 0);
     --luth_icon-razor-font-color: #c509db;
     --luth_icon-folder-font-color: #a46d00;
     --luth_icon-json-font-color: #beb106;

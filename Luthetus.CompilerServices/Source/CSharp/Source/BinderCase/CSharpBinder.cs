@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Luthetus.CompilerServices.Lang.CSharp.Facts;
+using Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
@@ -110,9 +111,9 @@ public class CSharpBinder : IBinder
 
     public void BindFunctionDefinitionNode(FunctionDefinitionNode functionDefinitionNode)
     {
-        var functionIdentifierText = functionDefinitionNode.FunctionIdentifier.TextSpan.GetText();
+        var functionIdentifierText = functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText();
 
-        var functionSymbol = new FunctionSymbol(functionDefinitionNode.FunctionIdentifier.TextSpan with
+        var functionSymbol = new FunctionSymbol(functionDefinitionNode.FunctionIdentifierToken.TextSpan with
         {
             DecorationByte = (byte)GenericDecorationKind.Function
         });
@@ -124,7 +125,7 @@ public class CSharpBinder : IBinder
                 functionDefinitionNode))
         {
             _diagnosticBag.ReportAlreadyDefinedFunction(
-                functionDefinitionNode.FunctionIdentifier.TextSpan,
+                functionDefinitionNode.FunctionIdentifierToken.TextSpan,
                 functionIdentifierText);
         }
     }
@@ -139,7 +140,7 @@ public class CSharpBinder : IBinder
         var argumentTypeClauseNode = functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode;
 
         if (TryGetTypeDefinitionHierarchically(
-                argumentTypeClauseNode.TypeIdentifier.TextSpan.GetText(),
+                argumentTypeClauseNode.TypeIdentifierToken.TextSpan.GetText(),
                 out var typeDefinitionNode)
             || typeDefinitionNode is null)
         {
@@ -155,7 +156,7 @@ public class CSharpBinder : IBinder
         if (literalExpressionNode.ResultTypeClauseNode.ValueType is null ||
             literalExpressionNode.ResultTypeClauseNode.ValueType != functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.ValueType)
         {
-            var optionalArgumentTextSpan = functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.TypeIdentifier.TextSpan with
+            var optionalArgumentTextSpan = functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan with
             {
                 EndingIndexExclusive = functionArgumentEntryNode.VariableDeclarationNode.IdentifierToken.TextSpan.EndingIndexExclusive
             };
@@ -180,9 +181,6 @@ public class CSharpBinder : IBinder
         KeywordToken keywordToken,
         IExpressionNode expressionNode)
     {
-        _diagnosticBag.ReportReturnStatementsAreStillBeingImplemented(
-                keywordToken.TextSpan);
-
         return new ReturnStatementNode(
             keywordToken,
             expressionNode);
@@ -232,7 +230,7 @@ public class CSharpBinder : IBinder
 
     public InheritanceStatementNode BindInheritanceStatementNode(TypeClauseNode typeClauseNode)
     {
-        AddSymbolReference(new TypeSymbol(typeClauseNode.TypeIdentifier.TextSpan with
+        AddSymbolReference(new TypeSymbol(typeClauseNode.TypeIdentifierToken.TextSpan with
         {
             DecorationByte = (byte)GenericDecorationKind.Type
         }));
@@ -290,20 +288,26 @@ public class CSharpBinder : IBinder
         if (TryGetVariableDeclarationHierarchically(text, out var variableDeclarationNode)
             && variableDeclarationNode is not null)
         {
-            variableDeclarationNode = new VariableDeclarationNode(
-                variableDeclarationNode.TypeClauseNode,
-                variableDeclarationNode.IdentifierToken,
-                variableDeclarationNode.VariableKind,
-                true);
+            variableKind = variableDeclarationNode.VariableKind;
 
-            // TODO: Replace hierarchically (current scope isn't correct, it might be a parent scope)
-            _currentScope.VariableDeclarationMap[text] = variableDeclarationNode;
+            // TODO: Remove the setter from 'VariableDeclarationNode'...
+            // ...and set IsInitialized to true by overwriting the VariableDeclarationMap.
+            variableDeclarationNode.IsInitialized = true;
         }
         else
         {
-            _diagnosticBag.ReportUndefinedVariable(
-                variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,
-                text);
+            if (UtilityApi.IsContextualKeywordSyntaxKind(text))
+            {
+                _diagnosticBag.TheNameDoesNotExistInTheCurrentContext(
+                    variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,
+                    text);
+            }
+            else
+            {
+                _diagnosticBag.ReportUndefinedVariable(
+                    variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,
+                    text);
+            }
         }
 
         CreateVariableSymbol(variableAssignmentExpressionNode.VariableIdentifierToken, variableKind);
@@ -359,9 +363,9 @@ public class CSharpBinder : IBinder
 
     public TypeClauseNode BindTypeClauseNode(TypeClauseNode typeClauseNode)
     {
-        if (typeClauseNode.TypeIdentifier.SyntaxKind == SyntaxKind.IdentifierToken)
+        if (typeClauseNode.TypeIdentifierToken.SyntaxKind == SyntaxKind.IdentifierToken)
         {
-            var typeSymbol = new TypeSymbol(typeClauseNode.TypeIdentifier.TextSpan with
+            var typeSymbol = new TypeSymbol(typeClauseNode.TypeIdentifierToken.TextSpan with
             {
                 DecorationByte = (byte)GenericDecorationKind.Type
             });
@@ -370,12 +374,12 @@ public class CSharpBinder : IBinder
         }
 
         var matchingTypeDefintionNode = CSharpFacts.Types.TypeDefinitionNodes.SingleOrDefault(
-            x => x.TypeIdentifier.TextSpan.GetText() == typeClauseNode.TypeIdentifier.TextSpan.GetText());
+            x => x.TypeIdentifier.TextSpan.GetText() == typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 
         if (matchingTypeDefintionNode is not null)
         {
             return new TypeClauseNode(
-                typeClauseNode.TypeIdentifier,
+                typeClauseNode.TypeIdentifierToken,
                 matchingTypeDefintionNode.ValueType,
                 typeClauseNode.GenericParametersListingNode);
         }
@@ -505,7 +509,7 @@ public class CSharpBinder : IBinder
                      boundScope)
                  && functionDefinitionNode is not null)
         {
-            return functionDefinitionNode.FunctionIdentifier.TextSpan;
+            return functionDefinitionNode.FunctionIdentifierToken.TextSpan;
         }
         else if (TryGetTypeDefinitionHierarchically(
                      textSpan.GetText(),
@@ -587,7 +591,11 @@ public class CSharpBinder : IBinder
         return false;
     }
     
-    /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>
+    /// <summary>
+    /// Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>
+    /// If a match is found, then set the out parameter to it and return true.<br/><br/>
+    /// If none of the searched scopes contained a match then set the out parameter to null and return false.
+    /// </summary>
     public bool TryGetVariableDeclarationHierarchically(
         string text,
         out VariableDeclarationNode? variableDeclarationStatementNode,
@@ -677,41 +685,26 @@ public class CSharpBinder : IBinder
         switch (variableKind)
         {
             case VariableKind.Field:
+                AddSymbolDefinition(new FieldSymbol(identifierToken.TextSpan with
                 {
-                    var symbol = new FieldSymbol(identifierToken.TextSpan with
-                    {
-                        DecorationByte = (byte)GenericDecorationKind.Field
-                    });
-
-                    AddSymbolDefinition(symbol);
-                }
-
+                    DecorationByte = (byte)GenericDecorationKind.Field
+                }));
                 break;
             case VariableKind.Property:
+                AddSymbolDefinition(new PropertySymbol(identifierToken.TextSpan with
                 {
-                    var symbol = new PropertySymbol(identifierToken.TextSpan with
-                    {
-                        DecorationByte = (byte)GenericDecorationKind.Property
-                    });
-
-                    AddSymbolDefinition(symbol);
-                }
-
+                    DecorationByte = (byte)GenericDecorationKind.Property
+                }));
                 break;
             case VariableKind.Local:
                 goto default;
             case VariableKind.Closure:
                 goto default;
             default:
+                AddSymbolDefinition(new VariableSymbol(identifierToken.TextSpan with
                 {
-                    var symbol = new VariableSymbol(identifierToken.TextSpan with
-                    {
-                        DecorationByte = (byte)GenericDecorationKind.Variable
-                    });
-
-                    AddSymbolDefinition(symbol);
-                }
-
+                    DecorationByte = (byte)GenericDecorationKind.Variable
+                }));
                 break;
         }
     }

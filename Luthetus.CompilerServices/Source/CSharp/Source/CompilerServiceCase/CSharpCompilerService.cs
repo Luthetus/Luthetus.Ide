@@ -213,43 +213,49 @@ public class CSharpCompilerService : ICompilerService
                 var lexer = new CSharpLexer(resourceUri, pendingCalculation.ContentAtRequest);
                 lexer.Lex();
 
-                var parser = new CSharpParser(lexer);
-                var compilationUnit = parser.Parse(CSharpBinder, resourceUri);
+                CompilationUnit? compilationUnit = null;
 
-                if (compilationUnit is null)
-                    return;
-
-                lock (_cSharpResourceMapLock)
+                try
                 {
-                    if (!_cSharpResourceMap.ContainsKey(resourceUri))
-                        return;
-
-                    var cSharpResource = _cSharpResourceMap[resourceUri];
-
-                    cSharpResource.CompilationUnit = compilationUnit;
-                    cSharpResource.SyntaxTokens = lexer.SyntaxTokens;
+                    // Even if the parser throws an exception, be sure to
+                    // make use of the Lexer to do whatever syntax highlighting is possible.
+                    var parser = new CSharpParser(lexer);
+                    compilationUnit = parser.Parse(CSharpBinder, resourceUri);
                 }
-
-                // TODO: Shouldn't one get a reference to the most recent TextEditorModel instance with the given key and invoke .ApplySyntaxHighlightingAsync() on that?
-                await modelModifier.ApplySyntaxHighlightingAsync();
-
-                ResourceParsed?.Invoke();
-
-                var presentationModel = modelModifier.PresentationModelsList.FirstOrDefault(x =>
-                    x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
-
-                if (presentationModel?.PendingCalculation is not null)
+                finally
                 {
-                    presentationModel.PendingCalculation.TextEditorTextSpanList =
-                        GetDiagnosticsFor(modelModifier.ResourceUri)
-                            .Select(x => x.TextSpan)
-                            .ToImmutableArray();
+                    lock (_cSharpResourceMapLock)
+                    {
+                        if (_cSharpResourceMap.ContainsKey(resourceUri))
+                        {
+                            var cSharpResource = _cSharpResourceMap[resourceUri];
 
-                    (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
-                        (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
+                            cSharpResource.SyntaxTokens = lexer.SyntaxTokens;
+
+                            if (compilationUnit is not null)
+                                cSharpResource.CompilationUnit = compilationUnit;
+                        }
+                    }
+
+                    // TODO: Shouldn't one get a reference to the most recent TextEditorModel instance with the given key and invoke .ApplySyntaxHighlightingAsync() on that?
+                    await modelModifier.ApplySyntaxHighlightingAsync();
+
+                    var presentationModel = modelModifier.PresentationModelsList.FirstOrDefault(x =>
+                        x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
+
+                    if (presentationModel?.PendingCalculation is not null)
+                    {
+                        presentationModel.PendingCalculation.TextEditorTextSpanList =
+                            GetDiagnosticsFor(modelModifier.ResourceUri)
+                                .Select(x => x.TextSpan)
+                                .ToImmutableArray();
+
+                        (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
+                            (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
+                    }
+
+                    ResourceParsed?.Invoke();
                 }
-
-                return;
             });
     }
 }

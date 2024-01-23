@@ -12,6 +12,8 @@ using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Luthetus.Ide.RazorLib.Editors.States;
 
@@ -41,23 +43,29 @@ public partial class EditorSync
                 decorationMapper,
                 compilerService);
 
-            textEditorModel.CompilerService.RegisterResource(textEditorModel.ResourceUri);
-
             _textEditorService.ModelApi.RegisterCustom(textEditorModel);
 
-            _textEditorService.ModelApi.RegisterPresentationModel(
-                textEditorModel.ResourceUri,
-                CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
+            _textEditorService.Post(
+                nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
+                async editContext =>
+                {
+                    await _textEditorService.ModelApi.AddPresentationModelFactory(
+                            textEditorModel.ResourceUri,
+                            CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel)
+                        .Invoke(editContext);
 
-            _textEditorService.ModelApi.RegisterPresentationModel(
-                textEditorModel.ResourceUri,
-                DiffPresentationFacts.EmptyInPresentationModel);
+                    await _textEditorService.ModelApi.AddPresentationModelFactory(
+                            textEditorModel.ResourceUri,
+                            DiffPresentationFacts.EmptyInPresentationModel)
+                        .Invoke(editContext);
 
-            _textEditorService.ModelApi.RegisterPresentationModel(
-                textEditorModel.ResourceUri,
-                DiffPresentationFacts.EmptyOutPresentationModel);
-
-            _ = Task.Run(async () => await textEditorModel.ApplySyntaxHighlightingAsync());
+                    await _textEditorService.ModelApi.AddPresentationModelFactory(
+                            textEditorModel.ResourceUri,
+                            DiffPresentationFacts.EmptyOutPresentationModel)
+                        .Invoke(editContext);
+            
+                    textEditorModel.CompilerService.RegisterResource(textEditorModel.ResourceUri);
+                });
         }
 
         return textEditorModel;
@@ -157,7 +165,7 @@ public partial class EditorSync
                 viewModelKey,
                 textEditorModel.ResourceUri);
 
-            var presentationKeys = new[]
+            var lastPresentationKeys = new[]
             {
                 CompilerServiceDiagnosticPresentationFacts.PresentationKey,
             }.ToImmutableArray();
@@ -171,7 +179,7 @@ public partial class EditorSync
                         OnSaveRequested = HandleOnSaveRequested,
                         GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
                         ShouldSetFocusAfterNextRender = shouldSetFocusToEditor,
-                        FirstPresentationLayerKeysList = presentationKeys.ToImmutableList()
+                        LastPresentationLayerKeysList = lastPresentationKeys.ToImmutableList()
                     }));
         }
         else

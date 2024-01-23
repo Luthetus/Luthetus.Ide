@@ -27,7 +27,7 @@ public sealed record VariableDeclarationNode : ISyntaxNode
     public TypeClauseNode TypeClauseNode { get; }
     public IdentifierToken IdentifierToken { get; }
     public VariableKind VariableKind { get; }
-    public bool IsInitialized { get; }
+    public bool IsInitialized { get; set; }
     /// <summary>
     /// TODO: Remove the 'set;' on this property
     /// </summary>

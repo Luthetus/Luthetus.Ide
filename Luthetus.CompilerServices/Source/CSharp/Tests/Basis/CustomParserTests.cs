@@ -5,12 +5,16 @@ using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
-using System.Linq.Expressions;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis;
 
-public class ParserTests
+/// <summary>
+/// <see cref="Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase.CSharpParserTests"/>
+/// for tests that are intended to be "1 to 1" foreach public API on the <see cref="CSharp.ParserCase.CSharpParser"/>
+/// </summary>
+public class CustomParserTests
 {
 	[Fact]
 	public void PARSE_AmbiguousIdentifierNode()
@@ -295,7 +299,7 @@ public class ParserTests
 			.TypeBodyCodeBlockNode.ChildList.Single());
 
 		Assert.Equal(className,
-			constructorDefinitionNode.ReturnTypeClauseNode.TypeIdentifier.TextSpan.GetText());
+			constructorDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 
 		Assert.Equal(className, constructorDefinitionNode.FunctionIdentifier.TextSpan.GetText());
 		Assert.Null(constructorDefinitionNode.GenericArgumentsListingNode);
@@ -321,10 +325,43 @@ public class ParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var variableAssignmentNode = topCodeBlock.ChildList[1];
+        // VariableDeclarationNode
+        {
+            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+			Assert.IsType<VariableDeclarationNode>(variableDeclarationNode);
+		}
 
-        throw new NotImplementedException(
-			"TODO: How should constructor invocation be handled, versus a function invocation.");
+        // VariableAssignmentNode
+        {
+            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+			Assert.IsType<VariableAssignmentExpressionNode>(variableAssignmentNode);
+
+			var i = 0;
+
+			var identifierToken = (IdentifierToken)variableAssignmentNode.ChildList[i++];
+			Assert.IsType<IdentifierToken>(identifierToken);
+
+			var equalsToken = (EqualsToken)variableAssignmentNode.ChildList[i++];
+            Assert.IsType<EqualsToken>(equalsToken);
+
+            // ConstructorInvocationExpressionNode
+            {
+                var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)variableAssignmentNode.ChildList[i++];
+                Assert.IsType<ConstructorInvocationExpressionNode>(constructorInvocationExpressionNode);
+
+				var keywordToken = (KeywordToken)constructorInvocationExpressionNode.ChildList[0];
+				Assert.IsType<KeywordToken>(keywordToken);
+
+                var typeClauseNode = (TypeClauseNode)constructorInvocationExpressionNode.ChildList[1];
+                Assert.IsType<TypeClauseNode>(typeClauseNode);
+				Assert.Equal("List", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+				Assert.NotNull(typeClauseNode.GenericParametersListingNode);
+
+				var genericParameterEntryNode = typeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList.Single();
+				Assert.Equal("int", genericParameterEntryNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+				Assert.Equal(typeof(int), genericParameterEntryNode.TypeClauseNode.ValueType);
+            }
+        }
 	}
 	
 	[Fact]
@@ -362,7 +399,7 @@ public class ParserTests
 		var variableDeclarationStatementNode = functionArgumentEntryNode.VariableDeclarationNode;
 		
 		Assert.Equal(argumentTypeText,
-			variableDeclarationStatementNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+			variableDeclarationStatementNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 
 		Assert.Equal(argumentValueType,
 			variableDeclarationStatementNode.TypeClauseNode.ValueType);
@@ -422,13 +459,13 @@ public class ParserTests
 			(FunctionDefinitionNode)topCodeBlock.ChildList.Single();
 
 		Assert.Equal(returnTypeText,
-			functionDefinitionNode.ReturnTypeClauseNode.TypeIdentifier.TextSpan.GetText());
+			functionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 
 		Assert.Equal(returnValueType,
 			functionDefinitionNode.ReturnTypeClauseNode.ValueType);
 
 		Assert.Equal(functionName,
-			functionDefinitionNode.FunctionIdentifier.TextSpan.GetText());
+			functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText());
 
 		Assert.Null(functionDefinitionNode.GenericArgumentsListingNode);
 		Assert.NotNull(functionDefinitionNode.FunctionArgumentsListingNode);
@@ -577,7 +614,7 @@ public class ParserTests
 
 			// typeClauseNode.TypeIdentifier
 			{
-				var typeIdentifier = typeClauseNode.TypeIdentifier;
+				var typeIdentifier = typeClauseNode.TypeIdentifierToken;
 
                 Assert.False(typeIdentifier.IsFabricated);
                 Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
@@ -694,7 +731,7 @@ public class ParserTests
 
 					// typeClauseNode.TypeIdentifier
 					{
-						var typeIdentifier = typeClauseNode.TypeIdentifier;
+						var typeIdentifier = typeClauseNode.TypeIdentifierToken;
 
                         Assert.False(typeIdentifier.IsFabricated);
                         Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
@@ -749,7 +786,7 @@ public class ParserTests
 
 					// typeClauseNode.TypeIdentifier
 					{
-						var typeIdentifier = typeClauseNode.TypeIdentifier;
+						var typeIdentifier = typeClauseNode.TypeIdentifierToken;
 
                         Assert.False(typeIdentifier.IsFabricated);
                         Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
@@ -845,7 +882,7 @@ public class ParserTests
 
 			// typeClauseNode.TypeIdentifier
 			{
-				var typeIdentifier = typeClauseNode.TypeIdentifier;
+				var typeIdentifier = typeClauseNode.TypeIdentifierToken;
 
                 Assert.False(typeIdentifier.IsFabricated);
                 Assert.Equal(SyntaxKind.IntTokenKeyword, typeIdentifier.SyntaxKind);
@@ -957,7 +994,7 @@ public class ParserTests
 
 					// typeClauseNode.TypeIdentifier
 					{
-						var typeIdentifier = typeClauseNode.TypeIdentifier;
+						var typeIdentifier = typeClauseNode.TypeIdentifierToken;
 
                         Assert.False(typeIdentifier.IsFabricated);
                         Assert.Equal(SyntaxKind.StringTokenKeyword, typeIdentifier.SyntaxKind);
@@ -1011,7 +1048,7 @@ public class ParserTests
 
 					// typeClauseNode.TypeIdentifier
 					{
-						var typeIdentifier = typeClauseNode.TypeIdentifier;
+						var typeIdentifier = typeClauseNode.TypeIdentifierToken;
 
                         Assert.False(typeIdentifier.IsFabricated);
                         Assert.Equal(SyntaxKind.IntTokenKeyword, typeIdentifier.SyntaxKind);
@@ -1150,29 +1187,10 @@ public class ParserTests
 
 				// resultTypeClauseNode.TypeIdentifier
 				{
-					var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+					var typeIdentifier = resultTypeClauseNode.TypeIdentifierToken;
 
                     Assert.False(typeIdentifier.IsFabricated);
                     Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
-
-                    // The type identifier for int is awkwardly in a class named
-                    // CSharpFacts.Types
-                    //
-                    // The primitive data types are hardcoded as of (2024-01-19)
-                    // and asserting them is confusing, while adding no value.
-                    //
-                    // typeIdentifier.TextSpan
-                    // {
-                    //     var textSpan = typeIdentifier.TextSpan;
-					// 
-                    //     Assert.Equal(0, textSpan.DecorationByte);
-                    //     Assert.Equal(4, textSpan.EndingIndexExclusive);
-                    //     Assert.Equal(4, textSpan.Length);
-                    //     Assert.Equal(resourceUri, textSpan.ResourceUri);
-                    //     Assert.Equal(sourceText, textSpan.SourceText);
-                    //     Assert.Equal(0, textSpan.StartingIndexInclusive);
-                    //     Assert.Equal("bool", textSpan.GetText());
-					// }
 				}
 
 				Assert.Equal(typeof(bool), resultTypeClauseNode.ValueType);
@@ -1239,7 +1257,7 @@ public class ParserTests
 		var inheritedTypeClauseNode = typeDefinitionNode.InheritedTypeClauseNode;
 		Assert.Equal(
 			inheritedTypeClauseText,
-			inheritedTypeClauseNode.TypeIdentifier.TextSpan.GetText());
+			inheritedTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 	}
 	
 	[Fact]
@@ -1363,29 +1381,10 @@ public class ParserTests
 
 					// leftOperandTypeClauseNode.TypeIdentifier
 					{
-						var typeIdentifier = leftOperandTypeClauseNode.TypeIdentifier;
+						var typeIdentifier = leftOperandTypeClauseNode.TypeIdentifierToken;
 
                         Assert.False(typeIdentifier.IsFabricated);
                         Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
-
-                        // The type identifier for int is awkwardly in a class named
-                        // CSharpFacts.Types
-                        //
-                        // The primitive data types are hardcoded as of (2024-01-19)
-                        // and asserting them is confusing, while adding no value.
-                        //
-                        // typeIdentifier.TextSpan
-                        // {
-                        //     var textSpan = typeIdentifier.TextSpan;
-						// 
-                        //     Assert.Equal(0, textSpan.DecorationByte);
-                        //     Assert.Equal(3, textSpan.EndingIndexExclusive);
-                        //     Assert.Equal(3, textSpan.Length);
-                        //     Assert.Equal(resourceUri, textSpan.ResourceUri);
-                        //     Assert.Equal(sourceText, textSpan.SourceText);
-                        //     Assert.Equal(0, textSpan.StartingIndexInclusive);
-                        //     Assert.Equal("int", textSpan.GetText());
-						// }
 					}
 
                     Assert.Equal(typeof(int), leftOperandTypeClauseNode.ValueType);
@@ -1430,29 +1429,10 @@ public class ParserTests
 
 					// resultTypeClauseNode.TypeIdentifier
 					{
-						var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+						var typeIdentifier = resultTypeClauseNode.TypeIdentifierToken;
 
                         Assert.False(typeIdentifier.IsFabricated);
                         Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
-
-                        // The type identifier for int is awkwardly in a class named
-                        // CSharpFacts.Types
-                        //
-                        // The primitive data types are hardcoded as of (2024-01-19)
-                        // and asserting them is confusing, while adding no value.
-                        //
-                        // typeIdentifier.TextSpan
-                        // {
-                        //     var textSpan = typeIdentifier.TextSpan;
-						// 
-                        //     Assert.Equal(0, textSpan.DecorationByte);
-                        //     Assert.Equal(3, textSpan.EndingIndexExclusive);
-                        //     Assert.Equal(3, textSpan.Length);
-                        //     Assert.Equal(resourceUri, textSpan.ResourceUri);
-                        //     Assert.Equal(sourceText, textSpan.SourceText);
-                        //     Assert.Equal(0, textSpan.StartingIndexInclusive);
-                        //     Assert.Equal("int", textSpan.GetText());
-						// }
 					}
 
                     Assert.Equal(typeof(int), resultTypeClauseNode.ValueType);
@@ -1476,29 +1456,10 @@ public class ParserTests
 
                     // rightOperandTypeClauseNode.TypeIdentifier
                     {
-						var typeIdentifier = rightOperandTypeClauseNode.TypeIdentifier;
+						var typeIdentifier = rightOperandTypeClauseNode.TypeIdentifierToken;
 
                         Assert.False(typeIdentifier.IsFabricated);
                         Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
-
-                        // The type identifier for int is awkwardly in a class named
-                        // CSharpFacts.Types
-                        //
-                        // The primitive data types are hardcoded as of (2024-01-19)
-                        // and asserting them is confusing, while adding no value.
-                        //
-                        // typeIdentifier.TextSpan
-                        // {
-                        //     var textSpan = typeIdentifier.TextSpan;
-						// 
-                        //     Assert.Equal(0, textSpan.DecorationByte);
-                        //     Assert.Equal(3, textSpan.EndingIndexExclusive);
-                        //     Assert.Equal(3, textSpan.Length);
-                        //     Assert.Equal(resourceUri, textSpan.ResourceUri);
-                        //     Assert.Equal(sourceText, textSpan.SourceText);
-                        //     Assert.Equal(0, textSpan.StartingIndexInclusive);
-                        //     Assert.Equal("int", textSpan.GetText());
-						// }
 					}
 
                     Assert.Equal(typeof(int), rightOperandTypeClauseNode.ValueType);
@@ -1579,29 +1540,10 @@ public class ParserTests
 
 					// resultTypeClauseNode.TypeIdentifier
 					{
-						var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+						var typeIdentifier = resultTypeClauseNode.TypeIdentifierToken;
 
                         Assert.False(typeIdentifier.IsFabricated);
                         Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
-
-                        // The type identifier for int is awkwardly in a class named
-                        // CSharpFacts.Types
-                        //
-                        // The primitive data types are hardcoded as of (2024-01-19)
-                        // and asserting them is confusing, while adding no value.
-                        //
-                        // typeIdentifier.TextSpan
-                        // {
-                        //     var textSpan = typeIdentifier.TextSpan;
-						// 
-                        //     Assert.Equal(0, textSpan.DecorationByte);
-                        //     Assert.Equal(3, textSpan.EndingIndexExclusive);
-                        //     Assert.Equal(3, textSpan.Length);
-                        //     Assert.Equal(resourceUri, textSpan.ResourceUri);
-                        //     Assert.Equal(sourceText, textSpan.SourceText);
-                        //     Assert.Equal(0, textSpan.StartingIndexInclusive);
-                        //     Assert.Equal("int", textSpan.GetText());
-						// }
 					}
 
                     Assert.Equal(typeof(int), resultTypeClauseNode.ValueType);
@@ -1628,29 +1570,10 @@ public class ParserTests
 
 				// resultTypeClauseNode.TypeIdentifier
 				{
-					var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+					var typeIdentifier = resultTypeClauseNode.TypeIdentifierToken;
 
                     Assert.False(typeIdentifier.IsFabricated);
                     Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
-
-                    // The type identifier for int is awkwardly in a class named
-                    // CSharpFacts.Types
-                    //
-                    // The primitive data types are hardcoded as of (2024-01-19)
-                    // and asserting them is confusing, while adding no value.
-                    //
-                    // typeIdentifier.TextSpan
-                    // {
-                    //     var textSpan = typeIdentifier.TextSpan;
-					// 
-                    //     Assert.Equal(0, textSpan.DecorationByte);
-                    //     Assert.Equal(3, textSpan.EndingIndexExclusive);
-                    //     Assert.Equal(3, textSpan.Length);
-                    //     Assert.Equal(resourceUri, textSpan.ResourceUri);
-                    //     Assert.Equal(sourceText, textSpan.SourceText);
-                    //     Assert.Equal(0, textSpan.StartingIndexInclusive);
-                    //     Assert.Equal("int", textSpan.GetText());
-					// }
 				}
 
                 Assert.Equal(typeof(int), resultTypeClauseNode.ValueType);
@@ -1712,29 +1635,10 @@ public class ParserTests
 
                     // resultTypeClauseNode.TypeIdentifier
                     {
-						var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+						var typeIdentifier = resultTypeClauseNode.TypeIdentifierToken;
 
                         Assert.False(typeIdentifier.IsFabricated);
                         Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
-
-                        // The type identifier for int is awkwardly in a class named
-                        // CSharpFacts.Types
-                        //
-                        // The primitive data types are hardcoded as of (2024-01-19)
-                        // and asserting them is confusing, while adding no value.
-                        //
-                        // typeIdentifier.TextSpan
-                        // {
-                        //     var textSpan = typeIdentifier.TextSpan;
-						// 
-                        //     Assert.Equal(0, textSpan.DecorationByte);
-                        //     Assert.Equal(3, textSpan.EndingIndexExclusive);
-                        //     Assert.Equal(3, textSpan.Length);
-                        //     Assert.Equal(resourceUri, textSpan.ResourceUri);
-                        //     Assert.Equal(sourceText, textSpan.SourceText);
-                        //     Assert.Equal(0, textSpan.StartingIndexInclusive);
-                        //     Assert.Equal("int", textSpan.GetText());
-						// }
                     }
 
                     Assert.Equal(typeof(int), resultTypeClauseNode.ValueType);
@@ -1787,29 +1691,10 @@ public class ParserTests
 
 			// resultTypeClauseNode.TypeIdentifier
 			{
-				var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+				var typeIdentifier = resultTypeClauseNode.TypeIdentifierToken;
 
                 Assert.False(typeIdentifier.IsFabricated);
                 Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
-
-                // The type identifier for int is awkwardly in a class named
-                // CSharpFacts.Types
-                //
-                // The primitive data types are hardcoded as of (2024-01-19)
-                // and asserting them is confusing, while adding no value.
-                //
-                // typeIdentifier.TextSpan
-                // {
-                //     var textSpan = typeIdentifier.TextSpan;
-				// 
-                //     Assert.Equal(0, textSpan.DecorationByte);
-                //     Assert.Equal(3, textSpan.EndingIndexExclusive);
-                //     Assert.Equal(3, textSpan.Length);
-                //     Assert.Equal(resourceUri, textSpan.ResourceUri);
-                //     Assert.Equal(sourceText, textSpan.SourceText);
-                //     Assert.Equal(0, textSpan.StartingIndexInclusive);
-                //     Assert.Equal("int", textSpan.GetText());
-				// }
 			}
 
             Assert.Equal(typeof(int), resultTypeClauseNode.ValueType);
@@ -1908,15 +1793,6 @@ public class ParserTests
                 Assert.False(resultTypeClauseNode.IsFabricated);
                 Assert.Equal(SyntaxKind.TypeClauseNode, resultTypeClauseNode.SyntaxKind);
 
-                // The type identifier for int is awkwardly in a class named
-                // CSharpFacts.Types
-                //
-                // The primitive data types are hardcoded as of (2024-01-19)
-                // and asserting them is confusing, while adding no value.
-                //
-                // resultTypeClauseNode.TypeIdentifier
-                // Assert.Equal(, resultTypeClauseNode.TypeIdentifier);
-
                 Assert.Equal(typeof(int), resultTypeClauseNode.ValueType);
             }
 
@@ -1978,7 +1854,7 @@ public class ParserTests
 
         // typeClauseNode.TypeIdentifier
         {
-			var typeIdentifier = typeClauseNode.TypeIdentifier;
+			var typeIdentifier = typeClauseNode.TypeIdentifierToken;
 
             Assert.False(typeIdentifier.IsFabricated);
             Assert.Equal(SyntaxKind.IntTokenKeyword, typeIdentifier.SyntaxKind);
@@ -2202,30 +2078,11 @@ public class ParserTests
 
                 // Assert ExpressionNode.ResultTypeClauseNode.TypeIdentifier
                 {
-					var typeIdentifierToken = typeClauseNode.TypeIdentifier;
+					var typeIdentifierToken = typeClauseNode.TypeIdentifierToken;
 					Assert.IsType<IdentifierToken>(typeIdentifierToken);
                     
 					Assert.False(typeIdentifierToken.IsFabricated);
                     Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifierToken.SyntaxKind);
-
-                    // The type identifier for int is awkwardly in a class named
-                    // CSharpFacts.Types
-					//
-					// The primitive data types are hardcoded as of (2024-01-19)
-					// and asserting them is confusing, while adding no value.
-                    //
-                    // Assert ExpressionNode.ResultTypeClauseNode.TypeIdentifier.TextSpan
-                    // {
-                    // 	   var textSpan = typeIdentifierToken.TextSpan;
-                    // 
-                    //     Assert.Equal(0, textSpan.DecorationByte);
-                    //     Assert.Equal(3, textSpan.EndingIndexExclusive);
-                    //     Assert.Equal(3, textSpan.Length);
-                    //     Assert.Equal(resourceUri, textSpan.ResourceUri);
-                    //     Assert.Equal(sourceText, textSpan.SourceText);
-                    //     Assert.Equal(0, textSpan.StartingIndexInclusive);
-                    //     Assert.Equal("int", textSpan.GetText());
-                    // }
                 }
 
                 Assert.Equal(typeof(int), typeClauseNode.ValueType);
@@ -2336,7 +2193,7 @@ public class ParserTests
 
             // Assert TypeClauseNode.TypeIdentifier
             {
-				var typeIdentifier = typeClauseNode.TypeIdentifier;
+				var typeIdentifier = typeClauseNode.TypeIdentifierToken;
 
                 Assert.False(typeIdentifier.IsFabricated);
                 Assert.Equal(SyntaxKind.IntTokenKeyword, typeIdentifier.SyntaxKind);
@@ -2405,7 +2262,7 @@ public class ParserTests
 
 			// resultTypeClauseNode.TypeIdentifier
 			{
-				var typeIdentifier = resultTypeClauseNode.TypeIdentifier;
+				var typeIdentifier = resultTypeClauseNode.TypeIdentifierToken;
 
                 Assert.False(typeIdentifier.IsFabricated);
                 Assert.Equal(SyntaxKind.IntTokenKeyword, typeIdentifier.SyntaxKind);
@@ -2490,15 +2347,6 @@ public class ParserTests
                 Assert.False(typeClauseNode.IsFabricated);
                 Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
 
-                // The type identifier for int is awkwardly in a class named
-                // CSharpFacts.Types
-                //
-                // The primitive data types are hardcoded as of (2024-01-19)
-                // and asserting them is confusing, while adding no value.
-                //
-                // typeClauseNode.TypeIdentifier
-                // Assert.Equal(, typeClauseNode.TypeIdentifier);
-
                 Assert.Equal(typeof(int), typeClauseNode.ValueType);
 			}
 
@@ -2526,4 +2374,184 @@ public class ParserTests
 			}
 		}
 	}
+
+    [Fact]
+    public void AlternateBetweenNumberAndString()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "12\"Hello\"12\"Hello\"12\"Hello\"12\"Hello\"12\"Hello\"12\"Hello\"";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+	
+	[Fact]
+    public void AlternateBetweenStringAndNumber()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "\"Hello\"12\"Hello\"12\"Hello\"12\"Hello\"12\"Hello\"12\"Hello\"12";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+
+    [Fact]
+    public void THIS_HAS_ALSO_CRASHED_WHEN_RUNNING_USER_TYPES_OUT_CODE()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"builder.RootComponents.Add<HeadOutlet>(""""head::after"""")";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+
+    [Fact]
+    public void THIS_HAS_CRASHED_WHEN_RUNNING_USER_TYPES_OUT_CODE()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "builder.RootComponents.Add<HeadOutlet>(\"\"\"\"head::after\"\"\"\")";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+
+    [Fact]
+    public void THIS_HAD_A_CRASH_WHEN_RUNNING_USER_TYPES_OUT_CODE()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = VeryLargeTestCase.Value;
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+
+	/// <summary>
+	/// Fixed.
+	/// </summary>
+    [Fact]
+    public void THIS_INFINITE_LOOPED_WHEN_RUNNING_USER_TYPES_OUT_CODE()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"public class MyClass
+{
+    public MyClass NonsenseMethod()
+    {
+        MyClass myClass = new MyClass(
+";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+
+    /// <summary>
+    /// Fixed.
+    /// </summary>
+    [Fact]
+    public void THIS_CRASHED_WHEN_RUNNING_USER_TYPES_OUT_CODE()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"public class MyClass
+{
+    public MyClass NonsenseMethod()
+    {
+        MyClass myClass = new
+";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+	
+	[Fact]
+    public void EXTENSION_METHOD()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"public static class RichCharacterExtensions
+{
+    public static CharacterKind GetCharacterKind(this RichCharacter richCharacter)
+    {
+        return CharacterKindHelper.CharToCharacterKind(richCharacter.Value);
+    }
+}";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+
+	[Fact]
+    public void THIS_TEXT_FROZE_FOR_ME()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = ThisTextFrozeForMe.Value;
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+	
+	[Fact]
+    public void GENERIC_TYPE_SYNTAX_HIGHLIGHTING()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"ImmutableArray<string> indexedStringsList;";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+	
+	[Fact]
+    public void DELETE_THIS_TEST_A()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"Console.WriteLine(""Hello World"");";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+
+    [Fact]
+    public void DELETE_THIS_TEST_B()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"public void MyMethod() { }";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+	
+	[Fact]
+    public void DELETE_THIS_TEST_C()
+    {
+		// Infinite loop?
+
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"public class MyClass\n{\n    ";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
 }

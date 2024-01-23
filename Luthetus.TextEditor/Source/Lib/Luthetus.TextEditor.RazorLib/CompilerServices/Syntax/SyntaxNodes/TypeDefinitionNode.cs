@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
@@ -9,15 +10,23 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 public sealed record TypeDefinitionNode : ISyntaxNode
 {
     public TypeDefinitionNode(
+        AccessModifierKind accessModifierKind,
+        bool hasPartialModifier,
+        StorageModifierKind storageModifierKind,
         IdentifierToken typeIdentifier,
         Type? valueType,
         GenericArgumentsListingNode? genericArgumentsListingNode,
+        FunctionArgumentsListingNode? primaryConstructorFunctionArgumentsListingNode,
         TypeClauseNode? inheritedTypeClauseNode,
         CodeBlockNode? typeBodyCodeBlockNode)
     {
+        AccessModifierKind = accessModifierKind;
+        HasPartialModifier = hasPartialModifier;
+        StorageModifierKind = storageModifierKind;
         TypeIdentifier = typeIdentifier;
         ValueType = valueType;
         GenericArgumentsListingNode = genericArgumentsListingNode;
+        PrimaryConstructorFunctionArgumentsListingNode = primaryConstructorFunctionArgumentsListingNode;
         InheritedTypeClauseNode = inheritedTypeClauseNode;
         TypeBodyCodeBlockNode = typeBodyCodeBlockNode;
 
@@ -38,6 +47,9 @@ public sealed record TypeDefinitionNode : ISyntaxNode
         ChildList = children.ToImmutableArray();
     }
 
+    public AccessModifierKind AccessModifierKind { get; }
+    public bool HasPartialModifier { get; }
+    public StorageModifierKind StorageModifierKind { get; }
     /// <summary>
     /// Given: 'public class Person { /* class definition here */ }'<br/>
     /// Then: 'Person' is the <see cref="TypeIdentifier"/><br/>
@@ -51,6 +63,8 @@ public sealed record TypeDefinitionNode : ISyntaxNode
     /// And: '&lt;T&gt;' is the <see cref="GenericArgumentsListingNode"/>
     /// </summary>
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
+    public FunctionArgumentsListingNode? PrimaryConstructorFunctionArgumentsListingNode { get; }
+
     /// <summary>
     /// Given:<br/>
     /// public class Person : IPerson { ... }<br/><br/>
@@ -58,7 +72,7 @@ public sealed record TypeDefinitionNode : ISyntaxNode
     /// </summary>
     public TypeClauseNode? InheritedTypeClauseNode { get; }
     public CodeBlockNode? TypeBodyCodeBlockNode { get; }
-    public bool IsInterface { get; init; }
+    public bool IsInterface => StorageModifierKind == StorageModifierKind.Interface;
 
     public ImmutableArray<ISyntax> ChildList { get; }
 

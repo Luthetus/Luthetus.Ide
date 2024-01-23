@@ -1,17 +1,15 @@
 ﻿using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis;
 
-public class BinderTests
+/// <summary>
+/// <see cref="Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.BinderCase.CSharpBinderTests"/>
+/// for tests that are intended to be "1 to 1" foreach public API on the <see cref="CSharp.BinderCase.CSharpBinder"/>
+/// </summary>
+public class CustomBinderTests
 {
     [Fact]
     public void NamespaceGroupNode_FileScoped()

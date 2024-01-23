@@ -1,20 +1,23 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record FunctionInvocationNode : ISyntaxNode
+public sealed record FunctionInvocationNode : IExpressionNode
 {
     public FunctionInvocationNode(
         IdentifierToken functionInvocationIdentifierToken,
         FunctionDefinitionNode? functionDefinitionNode,
         GenericParametersListingNode? genericParametersListingNode,
-        FunctionParametersListingNode functionParametersListingNode)
+        FunctionParametersListingNode functionParametersListingNode,
+        TypeClauseNode resultTypeClauseNode)
     {
         FunctionInvocationIdentifierToken = functionInvocationIdentifierToken;
         FunctionDefinitionNode = functionDefinitionNode;
         GenericParametersListingNode = genericParametersListingNode;
         FunctionParametersListingNode = functionParametersListingNode;
+        ResultTypeClauseNode = resultTypeClauseNode;
 
         var children = new List<ISyntax>
         {
@@ -29,6 +32,8 @@ public sealed record FunctionInvocationNode : ISyntaxNode
 
         children.Add(FunctionParametersListingNode);
 
+        children.Add(ResultTypeClauseNode);
+
         ChildList = children.ToImmutableArray();
     }
 
@@ -36,9 +41,11 @@ public sealed record FunctionInvocationNode : ISyntaxNode
     public FunctionDefinitionNode? FunctionDefinitionNode { get; }
     public GenericParametersListingNode? GenericParametersListingNode { get; }
     public FunctionParametersListingNode FunctionParametersListingNode { get; }
+    public TypeClauseNode ResultTypeClauseNode { get; }
 
     public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionInvocationNode;
+
 }

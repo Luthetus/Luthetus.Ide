@@ -233,7 +233,7 @@
 }
 
 .luth_te_text-editor-caret-row {
-    border-width: 2px;
+    border-width: 1.5px;
     border-style: solid;
     border-color: var(--luth_te_text-editor-caret-row-border-color-no-focus-within-editor);
     border-left: none;
@@ -532,7 +532,7 @@
     --luth_te_text-editor-gutter-border-color: #28ae0c;
     --luth_te_text-editor-gutter-background-color: #F8F8EE;
     --luth_te_secondary-font-color: var(--luth_te_primary-font-color);
-    --luth_te_secondary-background-color: #e6e6e6;
+    --luth_te_secondary-background-color: #fefef6;
     --luth_te_primary-overlay-box-shadow-color: #000000;
     --luth_te_button-background-color: #b2d1ff;
     --luth_te_button-foreground-color: var(--luth_te_primary-font-color);
@@ -761,15 +761,15 @@
     --luth_te_method-foreground-color: rgb(0, 150, 0);
     --luth_te_type-foreground-color: rgb(0, 100, 240);
     --luth_te_variable-foreground-color: rgb(150, 40, 190);
-    --luth_te_string-literal-foreground-color: rgb(160, 140, 0);
+    --luth_te_string-literal-foreground-color: rgb(136, 83, 31);
     --luth_te_string-literal-escape-character-foreground-color: rgb(0, 0, 255);
-    --luth_te_keyword-foreground-color: rgb(205, 115, 0);
+    --luth_te_keyword-foreground-color: rgb(220, 110, 0);
     --luth_te_keyword-control-foreground-color: rgb(210, 0, 0);
-    --luth_te_comment-foreground-color: rgb(128, 128, 128);
+    --luth_te_comment-foreground-color: rgb(88, 118, 138);
     --luth_te_tag-name-foreground-color: var(--luth_te_keyword-foreground-color);
-    --luth_te_injected-language-fragment-color: rgb(225, 80, 220);
-    --luth_te_injected-language-component-color: rgb(0, 138, 138);
-    --luth_te_associated-key-color: rgb(0, 148, 198);
+    --luth_te_injected-language-fragment-color: rgb(210, 0, 210);
+    --luth_te_injected-language-component-color: rgb(0, 125, 220);
+    --luth_te_associated-key-color: rgb(0, 150, 150);
     --luth_te_associated-value-color: var(--luth_te_string-literal-foreground-color);
     --luth_te_css-property-name-color: var(--luth_te_associated-key-color);
     --luth_te_css-property-value-color: var(--luth_te_associated-value-color);
@@ -781,7 +781,7 @@
     --luth_te_text-editor-gutter-border-color: #28ae0c;
     --luth_te_text-editor-gutter-background-color: #F8F8EE;
     --luth_te_secondary-font-color: var(--luth_te_primary-font-color);
-    --luth_te_secondary-background-color: #e6e6e6;
+    --luth_te_secondary-background-color: #fefef6;
     --luth_te_primary-overlay-box-shadow-color: #000000;
     --luth_te_button-background-color: #b2d1ff;
     --luth_te_button-foreground-color: var(--luth_te_primary-font-color);

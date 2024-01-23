@@ -18,10 +18,13 @@ public class CSharpLexer : ILexer
         string sourceText)
     {
         _stringWalker = new(resourceUri, sourceText);
+        ResourceUri = resourceUri;
     }
 
     public ImmutableArray<ISyntaxToken> SyntaxTokens => _syntaxTokens.ToImmutableArray();
     public ImmutableArray<TextEditorDiagnostic> DiagnosticList => _diagnosticBag.ToImmutableArray();
+
+    public ResourceUri ResourceUri { get; }
 
     public void Lex()
     {

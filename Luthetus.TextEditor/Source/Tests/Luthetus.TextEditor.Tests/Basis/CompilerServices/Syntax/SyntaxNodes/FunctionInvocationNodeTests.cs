@@ -3,6 +3,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
+using Luthetus.CompilerServices.Lang.CSharp.Facts;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -119,7 +120,8 @@ public class FunctionInvocationNodeTests
             functionInvocationIdentifierToken,
             functionDefinitionNode,
             genericParametersListingNode,
-            functionParametersListingNode);
+            functionParametersListingNode,
+            functionDefinitionNode?.ReturnTypeClauseNode ?? CSharpFacts.Types.Void.ToTypeClause());
 
         Assert.Equal(functionInvocationIdentifierToken, functionInvocationNode.FunctionInvocationIdentifierToken);
         Assert.Equal(functionDefinitionNode, functionInvocationNode.FunctionDefinitionNode);

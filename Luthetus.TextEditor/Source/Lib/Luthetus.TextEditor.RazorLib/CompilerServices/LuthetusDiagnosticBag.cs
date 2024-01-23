@@ -59,6 +59,16 @@ public class LuthetusDiagnosticBag : IEnumerable<TextEditorDiagnostic>
             textSpan,
             Guid.Parse("4bf6a7f1-c344-4ca4-828c-a0a4f7f91341"));
     }
+    
+    public void ReportImplicitlyTypedVariablesMustBeInitialized(
+        TextEditorTextSpan textSpan)
+    {
+        Report(
+            TextEditorDiagnosticLevel.Error,
+            $"Implicitly-typed variables must be initialized",
+            textSpan,
+            Guid.Parse("b087cb21-fa16-4ae1-bfd0-daeebe0c4b39"));
+    }
 
     public void ReportUndefinedTypeOrNamespace(
         TextEditorTextSpan textSpan,
@@ -88,7 +98,7 @@ public class LuthetusDiagnosticBag : IEnumerable<TextEditorDiagnostic>
     {
         Report(
             TextEditorDiagnosticLevel.Error,
-            $"Undefined type or namespace: '{undefinedVariableIdentifier}'",
+            $"Undefined variable: '{undefinedVariableIdentifier}'",
             textSpan,
             Guid.Parse("a72619a5-a7f4-4084-acc8-2fb2c76cdac4"));
     }
@@ -102,6 +112,17 @@ public class LuthetusDiagnosticBag : IEnumerable<TextEditorDiagnostic>
             $"'{textSpan.GetText()}' is not defined in the context '{contextString}'",
             textSpan,
             Guid.Parse("89b61fa8-541d-4154-9425-82c5667842a8"));
+    }
+
+    public void TheNameDoesNotExistInTheCurrentContext(
+        TextEditorTextSpan textSpan,
+        string name)
+    {
+        Report(
+            TextEditorDiagnosticLevel.Error,
+            $"The name '{name}' does not exist in the current context",
+            textSpan,
+            Guid.Parse("3c616af8-1c5d-41fa-962d-9836278ea570"));
     }
     
     public void ReportAlreadyDefinedVariable(
