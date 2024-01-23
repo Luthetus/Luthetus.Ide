@@ -9,6 +9,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 public sealed record FunctionDefinitionNode : ISyntaxNode
 {
     public FunctionDefinitionNode(
+
         TypeClauseNode returnTypeClauseNode,
         IdentifierToken functionIdentifierToken,
         GenericArgumentsListingNode? genericArgumentsListingNode,
