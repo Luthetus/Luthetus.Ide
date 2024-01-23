@@ -110,6 +110,7 @@ public class CodeBlockBuilderTests
             typeIdentifier,
             valueType,
             genericArgumentsListingNode,
+            null,
             inheritedTypeClauseNode,
             typeBodyCodeBlockNode);
     }

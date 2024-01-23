@@ -63,6 +63,7 @@ public class TypeDefinitionNodeTests
             typeIdentifier,
             valueType,
             genericArgumentsListingNode,
+            null,
             inheritedTypeClauseNode,
             typeBodyCodeBlockNode);
 

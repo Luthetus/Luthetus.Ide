@@ -1,5 +1,7 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using System.Collections.Immutable;
 
@@ -289,5 +291,30 @@ public static class ParseTypes
         model.SyntaxStack.Push(new ObjectInitializationNode(
             consumedOpenBraceToken,
             (CloseBraceToken)shouldBeCloseBraceToken));
+    }
+
+    public static void HandlePrimaryConstructorDefinition(
+        TypeDefinitionNode typeDefinitionNode,
+        OpenParenthesisToken consumedOpenParenthesisToken,
+        ParserModel model)
+    {
+        ParseFunctions.HandleFunctionArguments(consumedOpenParenthesisToken, model);
+        var functionArgumentsListingNode = (FunctionArgumentsListingNode)model.SyntaxStack.Pop();
+
+        typeDefinitionNode = new TypeDefinitionNode(
+            typeDefinitionNode.AccessModifierKind,
+            typeDefinitionNode.HasPartialModifier,
+            typeDefinitionNode.StorageModifierKind,
+            typeDefinitionNode.TypeIdentifier,
+            typeDefinitionNode.ValueType,
+            typeDefinitionNode.GenericArgumentsListingNode,
+            functionArgumentsListingNode,
+            typeDefinitionNode.InheritedTypeClauseNode,
+            typeDefinitionNode.TypeBodyCodeBlockNode);
+
+        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+            model.SyntaxStack.Push(typeDefinitionNode);
+        else
+            model.CurrentCodeBlockBuilder.ChildList.Add(typeDefinitionNode);
     }
 }

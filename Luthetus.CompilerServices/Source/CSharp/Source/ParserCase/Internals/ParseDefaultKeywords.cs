@@ -810,6 +810,7 @@ public class ParseDefaultKeywords
             null,
             genericArgumentsListingNode,
             null,
+            null,
             null);
 
         model.Binder.BindTypeDefinitionNode(typeDefinitionNode);

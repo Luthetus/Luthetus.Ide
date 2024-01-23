@@ -98,6 +98,7 @@ public static class RuntimeAssembliesLoaderFactory
                                 null,
                                 null,
                                 null,
+                                null,
                                 null);
 
                             var declaredMethods = definedType.GetMethods();
@@ -216,6 +217,7 @@ public static class RuntimeAssembliesLoaderFactory
                                 typeDefinitionNode.TypeIdentifier,
                                 null,
                                 typeDefinitionNode.GenericArgumentsListingNode,
+                                null,
                                 typeDefinitionNode.InheritedTypeClauseNode,
                                 typeBodyCodeBlockNodeBuilder.Build());
 

@@ -16,6 +16,7 @@ public sealed record TypeDefinitionNode : ISyntaxNode
         IdentifierToken typeIdentifier,
         Type? valueType,
         GenericArgumentsListingNode? genericArgumentsListingNode,
+        FunctionArgumentsListingNode? primaryConstructorFunctionArgumentsListingNode,
         TypeClauseNode? inheritedTypeClauseNode,
         CodeBlockNode? typeBodyCodeBlockNode)
     {
@@ -25,6 +26,7 @@ public sealed record TypeDefinitionNode : ISyntaxNode
         TypeIdentifier = typeIdentifier;
         ValueType = valueType;
         GenericArgumentsListingNode = genericArgumentsListingNode;
+        PrimaryConstructorFunctionArgumentsListingNode = primaryConstructorFunctionArgumentsListingNode;
         InheritedTypeClauseNode = inheritedTypeClauseNode;
         TypeBodyCodeBlockNode = typeBodyCodeBlockNode;
 
@@ -61,6 +63,8 @@ public sealed record TypeDefinitionNode : ISyntaxNode
     /// And: '&lt;T&gt;' is the <see cref="GenericArgumentsListingNode"/>
     /// </summary>
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
+    public FunctionArgumentsListingNode? PrimaryConstructorFunctionArgumentsListingNode { get; }
+
     /// <summary>
     /// Given:<br/>
     /// public class Person : IPerson { ... }<br/><br/>

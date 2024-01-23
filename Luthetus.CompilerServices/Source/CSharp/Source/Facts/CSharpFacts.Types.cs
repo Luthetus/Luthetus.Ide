@@ -19,6 +19,7 @@ public partial class CSharpFacts
             typeof(void),
             null,
             null,
+            null,
             null);
 
         public static readonly TypeDefinitionNode Int = new(
@@ -27,6 +28,7 @@ public partial class CSharpFacts
             StorageModifierKind.Class,
             new IdentifierToken(new TextEditorTextSpan(0, "int".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "int")),
             typeof(int),
+            null,
             null,
             null,
             null);
@@ -39,6 +41,7 @@ public partial class CSharpFacts
             typeof(string),
             null,
             null,
+            null,
             null);
 
         public static readonly TypeDefinitionNode Bool = new(
@@ -49,6 +52,7 @@ public partial class CSharpFacts
             typeof(bool),
             null,
             null,
+            null,
             null);
 
         public static readonly TypeDefinitionNode Var = new(
@@ -57,6 +61,7 @@ public partial class CSharpFacts
             StorageModifierKind.Class,
             new IdentifierToken(new TextEditorTextSpan(0, "var".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "var")),
             typeof(void),
+            null,
             null,
             null,
             null);

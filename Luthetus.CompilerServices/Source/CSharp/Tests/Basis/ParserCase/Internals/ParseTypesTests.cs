@@ -48,6 +48,7 @@ public class ParseTypesTests
                 Assert.Equal("MyClass", typeDefinitionNode.TypeIdentifier.TextSpan.GetText());
                 Assert.Null(typeDefinitionNode.ValueType);
                 Assert.Null(typeDefinitionNode.GenericArgumentsListingNode);
+                Assert.Null(typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode);
                 Assert.Null(typeDefinitionNode.InheritedTypeClauseNode);
 
                 // TypeBodyCodeBlockNode
@@ -100,6 +101,7 @@ public class ParseTypesTests
                 Assert.Equal("MyClass", typeDefinitionNode.TypeIdentifier.TextSpan.GetText());
                 Assert.Null(typeDefinitionNode.ValueType);
                 Assert.Null(typeDefinitionNode.GenericArgumentsListingNode);
+                Assert.Null(typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode);
                 Assert.Null(typeDefinitionNode.InheritedTypeClauseNode);
 
                 // TypeBodyCodeBlockNode
@@ -115,5 +117,189 @@ public class ParseTypesTests
                 Assert.Empty(compilationUnit.DiagnosticsList);
             }
         }
+    }
+
+    [Fact]
+    public void TypeDefinition_WITH_PrimaryConstructor_EMPTY_AND_NO_CodeBlock()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "public record MyRecord();";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        Assert.Single(topCodeBlock.ChildList);
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+
+        Assert.Equal(AccessModifierKind.Public, typeDefinitionNode.AccessModifierKind);
+        Assert.False(typeDefinitionNode.HasPartialModifier);
+        Assert.Equal(StorageModifierKind.Record, typeDefinitionNode.StorageModifierKind);
+        Assert.Equal("MyRecord", typeDefinitionNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Null(typeDefinitionNode.ValueType);
+        Assert.Null(typeDefinitionNode.GenericArgumentsListingNode);
+
+        // PrimaryConstructorFunctionArgumentsListingNode
+        {
+            var primaryConstructorFunctionArgumentsListingNode = typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode;
+            
+            Assert.NotNull(primaryConstructorFunctionArgumentsListingNode);
+            Assert.Equal("(", primaryConstructorFunctionArgumentsListingNode.OpenParenthesisToken.TextSpan.GetText());
+            Assert.Empty(primaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
+            Assert.Equal(")", primaryConstructorFunctionArgumentsListingNode.CloseParenthesisToken.TextSpan.GetText());
+        }
+
+        Assert.Null(typeDefinitionNode.InheritedTypeClauseNode);
+        Assert.Null(typeDefinitionNode.TypeBodyCodeBlockNode);
+
+        Assert.Empty(compilationUnit.DiagnosticsList);
+    }
+    
+    [Fact]
+    public void TypeDefinition_WITH_PrimaryConstructor_NotEmpty_AND_NO_CodeBlock()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "public record MyRecord(string FirstName, string LastName);";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        Assert.Single(topCodeBlock.ChildList);
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+
+        Assert.Equal(AccessModifierKind.Public, typeDefinitionNode.AccessModifierKind);
+        Assert.False(typeDefinitionNode.HasPartialModifier);
+        Assert.Equal(StorageModifierKind.Record, typeDefinitionNode.StorageModifierKind);
+        Assert.Equal("MyRecord", typeDefinitionNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Null(typeDefinitionNode.ValueType);
+        Assert.Null(typeDefinitionNode.GenericArgumentsListingNode);
+
+        // PrimaryConstructorFunctionArgumentsListingNode
+        {
+            var primaryConstructorFunctionArgumentsListingNode = typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode;
+
+            Assert.NotNull(primaryConstructorFunctionArgumentsListingNode);
+            Assert.Equal("(", primaryConstructorFunctionArgumentsListingNode.OpenParenthesisToken.TextSpan.GetText());
+
+            Assert.NotEmpty(primaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
+            
+            // First FunctionArgumentEntryNode
+            {
+                var functionArgumentEntryNode = primaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryNodeList[0];
+                Assert.Equal("string", functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+                Assert.Equal(typeof(string), functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.ValueType);
+                Assert.Equal("FirstName", functionArgumentEntryNode.VariableDeclarationNode.IdentifierToken.TextSpan.GetText());
+            }
+            
+            // Second FunctionArgumentEntryNode
+            {
+                var functionArgumentEntryNode = primaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryNodeList[1];
+                Assert.Equal("string", functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+                Assert.Equal(typeof(string), functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.ValueType);
+                Assert.Equal("LastName", functionArgumentEntryNode.VariableDeclarationNode.IdentifierToken.TextSpan.GetText());
+            }
+
+            Assert.Equal(")", primaryConstructorFunctionArgumentsListingNode.CloseParenthesisToken.TextSpan.GetText());
+        }
+
+        Assert.Null(typeDefinitionNode.InheritedTypeClauseNode);
+        Assert.Null(typeDefinitionNode.TypeBodyCodeBlockNode);
+
+        Assert.Empty(compilationUnit.DiagnosticsList);
+    }
+    
+    [Fact]
+    public void TypeDefinition_WITH_PrimaryConstructor_EMPTY_AND_WITH_CodeBlock()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "public record MyRecord() { }";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        Assert.Single(topCodeBlock.ChildList);
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+
+        Assert.Equal(AccessModifierKind.Public, typeDefinitionNode.AccessModifierKind);
+        Assert.False(typeDefinitionNode.HasPartialModifier);
+        Assert.Equal(StorageModifierKind.Record, typeDefinitionNode.StorageModifierKind);
+        Assert.Equal("MyRecord", typeDefinitionNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Null(typeDefinitionNode.ValueType);
+        Assert.Null(typeDefinitionNode.GenericArgumentsListingNode);
+
+        // PrimaryConstructorFunctionArgumentsListingNode
+        {
+            var primaryConstructorFunctionArgumentsListingNode = typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode;
+
+            Assert.NotNull(primaryConstructorFunctionArgumentsListingNode);
+            Assert.Equal("(", primaryConstructorFunctionArgumentsListingNode.OpenParenthesisToken.TextSpan.GetText());
+            Assert.Empty(primaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
+            Assert.Equal(")", primaryConstructorFunctionArgumentsListingNode.CloseParenthesisToken.TextSpan.GetText());
+        }
+
+        Assert.Null(typeDefinitionNode.InheritedTypeClauseNode);
+        Assert.NotNull(typeDefinitionNode.TypeBodyCodeBlockNode);
+
+        Assert.Empty(compilationUnit.DiagnosticsList);
+    }
+    
+    [Fact]
+    public void TypeDefinition_WITH_PrimaryConstructor_NotEmpty_AND_WITH_CodeBlock()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "public record MyRecord(string FirstName, string LastName) { }";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        Assert.Single(topCodeBlock.ChildList);
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+
+        Assert.Equal(AccessModifierKind.Public, typeDefinitionNode.AccessModifierKind);
+        Assert.False(typeDefinitionNode.HasPartialModifier);
+        Assert.Equal(StorageModifierKind.Record, typeDefinitionNode.StorageModifierKind);
+        Assert.Equal("MyRecord", typeDefinitionNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Null(typeDefinitionNode.ValueType);
+        Assert.Null(typeDefinitionNode.GenericArgumentsListingNode);
+
+        // PrimaryConstructorFunctionArgumentsListingNode
+        {
+            var primaryConstructorFunctionArgumentsListingNode = typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode;
+
+            Assert.NotNull(primaryConstructorFunctionArgumentsListingNode);
+            Assert.Equal("(", primaryConstructorFunctionArgumentsListingNode.OpenParenthesisToken.TextSpan.GetText());
+
+            Assert.NotEmpty(primaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
+
+            // First FunctionArgumentEntryNode
+            {
+                var functionArgumentEntryNode = primaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryNodeList[0];
+                Assert.Equal("string", functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+                Assert.Equal(typeof(string), functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.ValueType);
+                Assert.Equal("FirstName", functionArgumentEntryNode.VariableDeclarationNode.IdentifierToken.TextSpan.GetText());
+            }
+
+            // Second FunctionArgumentEntryNode
+            {
+                var functionArgumentEntryNode = primaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryNodeList[1];
+                Assert.Equal("string", functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+                Assert.Equal(typeof(string), functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.ValueType);
+                Assert.Equal("LastName", functionArgumentEntryNode.VariableDeclarationNode.IdentifierToken.TextSpan.GetText());
+            }
+
+            Assert.Equal(")", primaryConstructorFunctionArgumentsListingNode.CloseParenthesisToken.TextSpan.GetText());
+        }
+
+        Assert.Null(typeDefinitionNode.InheritedTypeClauseNode);
+        Assert.NotNull(typeDefinitionNode.TypeBodyCodeBlockNode);
+
+        Assert.Empty(compilationUnit.DiagnosticsList);
     }
 }

@@ -375,6 +375,7 @@ public static class ParseTokens
                     null,
                     null,
                     null,
+                    null,
                     null)
                 {
                     IsFabricated = true
@@ -503,6 +504,7 @@ public static class ParseTokens
                 typeDefinitionNode.TypeIdentifier,
                 typeDefinitionNode.ValueType,
                 typeDefinitionNode.GenericArgumentsListingNode,
+                typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode,
                 inheritedTypeClauseNode,
                 typeDefinitionNode.TypeBodyCodeBlockNode));
         }
@@ -552,6 +554,7 @@ public static class ParseTokens
                     typeDefinitionNode.TypeIdentifier,
                     typeDefinitionNode.ValueType,
                     typeDefinitionNode.GenericArgumentsListingNode,
+                    typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode,
                     typeDefinitionNode.InheritedTypeClauseNode,
                     codeBlockNode);
 
@@ -669,6 +672,22 @@ public static class ParseTokens
         OpenParenthesisToken consumedOpenParenthesisToken,
         ParserModel model)
     {
+        if (model.SyntaxStack.TryPeek(out var syntax) &&
+            syntax is TypeDefinitionNode typeDefinitionNode)
+        {
+            if (typeDefinitionNode.StorageModifierKind == StorageModifierKind.Record)
+            {
+                _ = model.SyntaxStack.Pop();
+
+                ParseTypes.HandlePrimaryConstructorDefinition(
+                    typeDefinitionNode,
+                    consumedOpenParenthesisToken,
+                    model);
+
+                return;
+            }
+        }
+
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
         ParseOthers.HandleExpression(

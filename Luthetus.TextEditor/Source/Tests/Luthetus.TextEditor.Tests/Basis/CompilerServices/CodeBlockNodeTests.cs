@@ -96,6 +96,7 @@ public class CodeBlockNodeTests
             typeIdentifier,
             valueType,
             genericArgumentsListingNode,
+            null,
             inheritedTypeClauseNode,
             typeBodyCodeBlockNode);
     }
