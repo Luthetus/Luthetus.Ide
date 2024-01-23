@@ -18,6 +18,54 @@
         <div>
             Recent Changes:
 			<div>
+                <div>v <em class="luth_em">0.7.0.0</em> (2024-01-23)</div>
+                <ul>
+                    <li>
+                        Added all storage types. (struct, class, interface, enum, record)
+                    </li>
+                </ul>
+                <ul>
+                    <li>
+                        Added Primary constructors (for records only at the moment)
+                    </li>
+                </ul>
+                <ul>
+                    <li>
+                        Object initialization (new Type { Property = Value, })
+                    </li>
+                </ul>
+                <ul>
+                    <li>
+                        Improved 'var' contextual keyword. (detecting it as a keyword or an identifier)
+                    </li>
+                </ul>
+                <ul>
+                    <li>
+                        Generic Type syntax highlighting. (List&lt;int&gt; myVariable;)
+                    </li>
+                </ul>
+                <ul>
+                    <li>
+                        The following syntaxes are now expressions: constructor invocation, variable references, function invocation.
+                    </li>
+                </ul>
+                <ul>
+                    <li>
+                        If parser throws an exception, still draw the valid Lexer syntax highlighting. (lexer syntax highlighting does the keywords, and more syntactic related things)
+                    </li>
+                </ul>
+                <ul>
+                    <li>
+                        Added access modifiers to type definition. (public, "protected internal", protected, internal, "private protected", private).
+                        Usage of access modifiers is not yet implemented, only the parsing of them.
+                    </li>
+                </ul>
+                <ul>
+                    <li>
+                        Added the "partial" modifier to type definition. 
+                        Usage of the modifier is not yet implemented, only the parsing of it.
+                    </li>
+                </ul>
                 <div>v <em class="luth_em">0.6.0.0</em> (2024-01-19)</div>
                 <ul>
                     <li>
