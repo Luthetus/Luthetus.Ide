@@ -22,8 +22,8 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
 
     private readonly object RequestRepoContentLock = new();
 
-    private string _owner = "Luthetus";
-    private string _repo = "Luthetus.Website";
+    private string _owner = "huntercfreeman";
+    private string _repo = "BlazorApp";
     private string _ref = string.Empty;
 
     private ImportPhase _activePhase = ImportPhase.None;
@@ -121,7 +121,7 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
                         if (string.IsNullOrWhiteSpace(entry.Name))
                             continue;
 
-                        var absoluteFilePathString = $"{localRepo}/{entry.Name}";
+                        var absoluteFilePathString = $"/{localRepo}/{entry.FullName}";
 
                         await FileSystemProvider.File.WriteAllTextAsync(
                             absoluteFilePathString,
