@@ -1,0 +1,79 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+
+<h3>
+    Import from <a href="https://github.com/" target="_blank">GitHub</a>
+</h3>
+
+<div>
+    <input class="luth_ide_input luth_ide_input-text"
+           placeholder="Owner"
+           @bind="_owner"
+           @bind:event="oninput" />
+
+    <input class="luth_ide_input luth_ide_input-text"
+           placeholder="Repo"
+           @bind="_repo"
+           @bind:event="oninput" />
+
+    <input class="luth_ide_input luth_ide_input-text"
+           placeholder="Ref"
+           @bind="_ref"
+           @bind:event="oninput" />
+
+    <button class="luth_button"
+            @onclick="LoadFromUrlOnClick">
+        Load from url
+    </button>
+
+    <button class="luth_button"
+            disabled=@(_activeCancellationToken is null)
+            @onclick="CancelOnClick">
+        Cancel
+    </button>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(_activeQuery))
+{
+    <div>
+        <div>A request was made to:</div>
+        <em class="luth_em">@_activeQuery</em>
+    </div>
+}
+
+@switch (_activePhase)
+{
+    case ImportPhase.RequestRepoContents:
+        <div>Requesting repo as zip archive<IconLoading/></div>
+        break;
+    case ImportPhase.ReadZipArchive:
+        <div>
+            Reading zip archive
+            (@_processedFilesInZipArchive/@_totalFilesInZipArchive)
+            processed:@_nameOfEntryMostRecentlyProcessed
+            <IconLoading/>
+        </div>
+        break;
+    case ImportPhase.Error:
+        <div>
+            @{ var localErrorMessage = _errorMessage; }
+            @if (_errorMessage is null)
+            {
+                <div class="luth_tree-view-exception">
+                    There was an error, but the reason is unknown.
+                </div>
+            }
+            else
+            {
+                <div class="luth_tree-view-exception">
+                    @_errorMessage
+                </div>
+            }
+        </div>
+        break;
+    case ImportPhase.Finished:
+        <div>
+            Successfully imported the repository:
+            <em class="luth_em">@_parametersForFinishedQuery</em>
+        </div>
+        break;
+}

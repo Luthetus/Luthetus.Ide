@@ -12,7 +12,8 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
+using Fluxor;
 
 namespace Luthetus.Website.RazorLib;
 
@@ -37,6 +38,8 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
     [Inject]
     private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
     [Inject]
+    private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
+    [Inject]
     private EditorSync EditorSync { get; set; } = null!;
 
     protected override void OnInitialized()
@@ -57,17 +60,7 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
                 {
                     await WriteFileSystemInMemoryAsync();
 
-                    InitializeDotNetSolutionAndExplorer();
-
                     await ParseSolutionAsync();
-
-                    // Display a file from the get-go so the user is less confused on what the website is.
-                    var absolutePath = new AbsolutePath(
-                        InitialSolutionFacts.PROGRAM_ABSOLUTE_FILE_PATH,
-                        false,
-                        EnvironmentProvider);
-
-                    EditorSync.OpenInEditor(absolutePath, false);
 
                     // This code block is hacky. I want the Solution Explorer to from the get-go be fully expanded, so the user can see 'Program.cs'
                     {
@@ -94,30 +87,32 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
 
     private async Task WriteFileSystemInMemoryAsync()
     {
-        // Program.cs
-        await FileSystemProvider.File.WriteAllTextAsync(
-            InitialSolutionFacts.PROGRAM_ABSOLUTE_FILE_PATH,
-            InitialSolutionFacts.PROGRAM_CONTENTS);
+        // Create a Blazor Wasm app
+        await WebsiteProjectTemplateFacts.HandleNewCSharpProjectAsync(
+            WebsiteProjectTemplateFacts.BlazorWasmEmptyProjectTemplate.ShortName!,
+            InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_CSPROJ_ABSOLUTE_FILE_PATH,
+            FileSystemProvider,
+            EnvironmentProvider);
 
-        // ConsoleApp1.csproj
-        await FileSystemProvider.File.WriteAllTextAsync(
-            InitialSolutionFacts.CSPROJ_ABSOLUTE_FILE_PATH,
-            InitialSolutionFacts.CSPROJ_CONTENTS);
-
-        // ConsoleApp1.sln
+        // ExampleSolution.sln
         await FileSystemProvider.File.WriteAllTextAsync(
             InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
             InitialSolutionFacts.SLN_CONTENTS);
-    }
 
-    private void InitializeDotNetSolutionAndExplorer()
-    {
         var solutionAbsolutePath = new AbsolutePath(
             InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
             false,
             EnvironmentProvider);
 
         DotNetSolutionSync.SetDotNetSolution(solutionAbsolutePath);
+
+        // Display a file from the get-go so the user is less confused on what the website is.
+        var absolutePath = new AbsolutePath(
+            InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_PROGRAM_CS_ABSOLUTE_FILE_PATH,
+            false,
+            EnvironmentProvider);
+
+        EditorSync.OpenInEditor(absolutePath, false);
     }
 
     private async Task ParseSolutionAsync()

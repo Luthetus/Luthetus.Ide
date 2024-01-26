@@ -6,14 +6,14 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.FolderExplorers.States;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -27,6 +27,8 @@ public partial class IdeHeader : FluxorComponent
     private EditorSync EditorSync { get; set; } = null!;
     [Inject]
     private FolderExplorerSync FolderExplorerSync { get; set; } = null!;
+    [Inject]
+    private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
 
     private Key<DropdownRecord> _dropdownKeyFile = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
