@@ -1,7 +1,7 @@
 using Luthetus.Ide.RazorLib.Shareds.Models;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.Shareds.Displays;
+namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 
 public partial class BackgroundTaskDialogDisplay : ComponentBase
 {

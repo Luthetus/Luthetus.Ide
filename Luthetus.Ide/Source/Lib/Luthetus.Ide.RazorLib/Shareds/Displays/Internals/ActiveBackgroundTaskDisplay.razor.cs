@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Shareds.Models;
 
-namespace Luthetus.Ide.RazorLib.Shareds.Displays;
+namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 
 public partial class ActiveBackgroundTaskDisplay : IDisposable
 {

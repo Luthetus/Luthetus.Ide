@@ -1,7 +1,7 @@
 using Luthetus.Common.RazorLib.Reflectives.PersonCase;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.Shareds.Displays;
+namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 
 public partial class IdeDevelopmentDisplay : ComponentBase
 {
