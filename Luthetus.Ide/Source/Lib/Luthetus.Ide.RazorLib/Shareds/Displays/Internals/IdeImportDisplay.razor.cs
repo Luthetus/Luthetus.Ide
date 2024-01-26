@@ -24,6 +24,8 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
     private CancellationTokenSource _cancellationTokenSource = new();
     private CancellationToken? _activeCancellationToken = null;
 
+    private string _parametersForFinishedQuery;
+
     public enum ImportPhase
     {
         None,
@@ -35,6 +37,11 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
 
     private async Task LoadFromUrlOnClick()
     {
+        var localOwner = _owner;
+        var localRepo = _repo;
+        var localRef = _ref;
+        var localActiveQuery = string.Empty;
+
         if (_activeCancellationToken is not null)
             return;
 
@@ -44,7 +51,10 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
                 return;
 
             _activeCancellationToken = _cancellationTokenSource.Token;
-            _activeQuery = $"https://api.github.com/repos/{_owner}/{_repo}/zipball/{_ref}";
+
+            localActiveQuery = 
+                _activeQuery =
+                $"https://api.github.com/repos/{localOwner}/{localRepo}/zipball/{localRef}";
         }
 
         try
@@ -60,15 +70,15 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"https://api.github.com/repos/{_owner}/{_repo}/zipball/{_ref}");
+                $"https://api.github.com/repos/{localOwner}/{localRepo}/zipball/{localRef}");
 
             request.Headers.Add("Accept", "application/vnd.github+json");
             request.Headers.Add("User-Agent", "Luthetus");
             // request.Headers.Add("Authorization", 222"Bearer <YOUR-TOKEN>");
             request.Headers.Add("X-GitHub-Api-Version", "2022-11-28");
-            request.Headers.Add("owner", _owner);
-            request.Headers.Add("repo", _repo);
-            request.Headers.Add("ref", _ref);
+            request.Headers.Add("owner", localOwner);
+            request.Headers.Add("repo", localRepo);
+            request.Headers.Add("ref", localRef);
 
             var response = await HttpClient.SendAsync(request);
 
@@ -117,16 +127,17 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
         }
         finally
         {
-            _activeCancellationToken = null;
-
             if (_activePhase != ImportPhase.Error)
             {
                 // UI progress indicator
                 {
                     _activePhase = ImportPhase.Finished;
+                    _parametersForFinishedQuery = $"({localOwner}/{localRepo})";
                     await InvokeAsync(StateHasChanged);
                 }
             }
+
+            _activeCancellationToken = null;
         }
     }
 
