@@ -1,3 +1,9 @@
+using Fluxor;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Notifications.States;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Microsoft.AspNetCore.Components;
 using System.IO.Compression;
 
@@ -7,6 +13,12 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private HttpClient HttpClient { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
     private readonly object RequestRepoContentLock = new();
 
@@ -14,17 +26,17 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
     private string _repo = "Luthetus.Website";
     private string _ref = string.Empty;
 
-    private string _text = string.Empty;
     private ImportPhase _activePhase = ImportPhase.None;
     private string _activeQuery = string.Empty;
     private int _totalFilesInZipArchive;
     private int _processedFilesInZipArchive;
+    private string _nameOfEntryMostRecentlyProcessed = string.Empty;
     private string? _errorMessage;
 
     private CancellationTokenSource _cancellationTokenSource = new();
     private CancellationToken? _activeCancellationToken = null;
 
-    private string _parametersForFinishedQuery;
+    private string _parametersForFinishedQuery = string.Empty;
 
     public enum ImportPhase
     {
@@ -101,11 +113,29 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
 
                     var stream = entry.Open();
                     var streamReader = new StreamReader(stream);
-                    var aaa = await streamReader.ReadToEndAsync();
+                    var contents = await streamReader.ReadToEndAsync();
+
+                    // Add the file to the in-memory filesystem.
+                    // (all the code in this file is for the demo website)
+                    {
+                        if (string.IsNullOrWhiteSpace(entry.Name))
+                            continue;
+
+                        var absoluteFilePathString = $"{localRepo}/{entry.Name}";
+
+                        await FileSystemProvider.File.WriteAllTextAsync(
+                            absoluteFilePathString,
+                            contents,
+                            _activeCancellationToken.Value);
+
+                        if (entry.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION))
+                            PromptUserOpenSolution(absoluteFilePathString);
+                    }
 
                     // UI progress indicator
                     {
                         _processedFilesInZipArchive++;
+                        _nameOfEntryMostRecentlyProcessed = entry.Name;
                         await InvokeAsync(StateHasChanged);
                     }
                 }
@@ -145,6 +175,31 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
     {
         _cancellationTokenSource.Cancel();
         _cancellationTokenSource = new();
+    }
+
+    private void PromptUserOpenSolution(string absolutePathString)
+    {
+        var absolutePath = new AbsolutePath(
+            absolutePathString,
+            false,
+            EnvironmentProvider);
+
+        var notificationRecord = new NotificationRecord(
+            Key<NotificationRecord>.NewKey(),
+            "A .NET Solution was found",
+            typeof(IdePromptOpenSolutionDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(IdePromptOpenSolutionDisplay.AbsolutePath),
+                    absolutePath
+                }
+            },
+            TimeSpan.FromSeconds(7),
+            false,
+            null);
+
+        Dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
     }
 
     public void Dispose()

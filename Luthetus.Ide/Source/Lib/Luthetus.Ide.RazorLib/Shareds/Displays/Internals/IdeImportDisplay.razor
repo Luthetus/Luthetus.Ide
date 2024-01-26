@@ -46,7 +46,12 @@
         <div>Requesting repo as zip archive<IconLoading/></div>
         break;
     case ImportPhase.ReadZipArchive:
-        <div>Reading zip archive (@_processedFilesInZipArchive/@_totalFilesInZipArchive) <IconLoading/></div>
+        <div>
+            Reading zip archive
+            (@_processedFilesInZipArchive/@_totalFilesInZipArchive)
+            processed:@_nameOfEntryMostRecentlyProcessed
+            <IconLoading/>
+        </div>
         break;
     case ImportPhase.Error:
         <div>
@@ -67,7 +72,8 @@
         break;
     case ImportPhase.Finished:
         <div>
-            Successfully imported the repository: <em class="luth_em">@_parametersForFinishedQuery</em>
+            Successfully imported the repository:
+            <em class="luth_em">@_parametersForFinishedQuery</em>
         </div>
         break;
 }
