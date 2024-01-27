@@ -88,9 +88,6 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
             request.Headers.Add("User-Agent", "Luthetus");
             // request.Headers.Add("Authorization", 222"Bearer <YOUR-TOKEN>");
             request.Headers.Add("X-GitHub-Api-Version", "2022-11-28");
-            request.Headers.Add("owner", localOwner);
-            request.Headers.Add("repo", localRepo);
-            request.Headers.Add("ref", localRef);
 
             var response = await HttpClient.SendAsync(request);
 
