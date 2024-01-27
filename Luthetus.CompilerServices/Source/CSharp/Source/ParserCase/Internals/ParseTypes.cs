@@ -163,35 +163,41 @@ public static class ParseTypes
             closeAngleBracketToken));
     }
 
-    /// <summary>TODO: Correctly implement this method. For now going to skip until the attribute closing square bracket.</summary>
     public static void HandleAttribute(
         OpenSquareBracketToken consumedOpenSquareBracketToken,
         ParserModel model)
     {
-        ISyntaxToken tokenCurrent;
-        var innerTokens = new List<ISyntaxToken>();
+        // Suppress unused variable warning
+        _ = consumedOpenSquareBracketToken;
+
+        if (SyntaxKind.CloseSquareBracketToken == model.TokenWalker.Current.SyntaxKind)
+        {
+            var closeSquareBracketToken = (CloseSquareBracketToken)model.TokenWalker.Consume();
+
+            model.DiagnosticBag.ReportTodoException(
+                closeSquareBracketToken.TextSpan,
+                "An identifier was expected.");
+
+            return;
+        }
 
         while (true)
         {
-            tokenCurrent = model.TokenWalker.Consume();
+            var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
+            model.Binder.BindTypeIdentifier(identifierToken);
 
-            if (tokenCurrent.SyntaxKind == SyntaxKind.EndOfFileToken ||
-                tokenCurrent.SyntaxKind == SyntaxKind.CloseSquareBracketToken)
-            {
+            if (identifierToken.IsFabricated && SyntaxKind.CommaToken != model.TokenWalker.Current.SyntaxKind)
                 break;
+
+            if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
+            {
+                var commaToken = (CommaToken)model.TokenWalker.Consume();
+                // TODO: Track comma tokens?
             }
             else
             {
-                innerTokens.Add(tokenCurrent);
+                break;
             }
-        }
-
-        if (tokenCurrent.SyntaxKind == SyntaxKind.CloseSquareBracketToken)
-        {
-            model.SyntaxStack.Push(model.Binder.BindAttributeNode(
-                consumedOpenSquareBracketToken,
-                innerTokens,
-                (CloseSquareBracketToken)tokenCurrent));
         }
     }
 
