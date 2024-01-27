@@ -142,7 +142,7 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
             }
             else
             {
-                _errorMessage = response.ToString();
+                throw new ApplicationException(response.ToString());
             }
         }
         catch (Exception exception)
