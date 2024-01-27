@@ -94,6 +94,18 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
             FileSystemProvider,
             EnvironmentProvider);
 
+        await FileSystemProvider.File.WriteAllTextAsync(
+            InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
+            InitialSolutionFacts.PERSON_CS_CONTENTS);
+        
+        await FileSystemProvider.File.WriteAllTextAsync(
+            InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CS_ABSOLUTE_FILE_PATH,
+            InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CS_CONTENTS);
+        
+        await FileSystemProvider.File.WriteAllTextAsync(
+            InitialSolutionFacts.PERSON_DISPLAY_RAZOR_ABSOLUTE_FILE_PATH,
+            InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CONTENTS);
+        
         // ExampleSolution.sln
         await FileSystemProvider.File.WriteAllTextAsync(
             InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
