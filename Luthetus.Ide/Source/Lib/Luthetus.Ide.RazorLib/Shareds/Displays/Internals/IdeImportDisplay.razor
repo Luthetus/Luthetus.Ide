@@ -1,5 +1,20 @@
 ﻿@using Microsoft.AspNetCore.Components.Forms
 
+<div>
+    Note:<br />
+    <ul>
+        <li>'Import' isn't working on the GitHub WASM app.</li>
+        <li><a href="https://github.com/isaacs/github/issues/330">github issues 'OAuth web flow endpoints don't support CORS'</a></li>
+        <li>In short: WASM is encountering CORS issues.</li>
+        <li>The solution requires me to host a server. Either to act as a proxy, or to securly store a client secret for OAuth. And I'm NOT going to host a server for this.</li>
+        <li>Running this in ServerSide locally however, the import is pretty cool.</li>
+        <li>Why not hide this button on WASM? I probably will. But for now I'm suffering from emotional damage, and need time to make a decision.</li>
+        <li>(import isn't part of the native IDE. Its only shown for WASM and ServerSide as to make a more interesting demo website)</li>
+    </ul>    
+</div>
+
+<hr />
+
 <h3>
     Import from <a href="https://github.com/" target="_blank">GitHub</a>
 </h3>
