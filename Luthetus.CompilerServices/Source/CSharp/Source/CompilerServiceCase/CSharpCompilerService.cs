@@ -10,7 +10,6 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using System.Collections.Immutable;
-using System.Diagnostics.Metrics;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 
