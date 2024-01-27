@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using Luthetus.CompilerServices.Lang.CSharp.Facts;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
@@ -238,45 +239,67 @@ public class CSharpBinder : IBinder
         throw new NotImplementedException();
     }
 
-    public void BindVariableDeclarationStatementNode(VariableDeclarationNode variableDeclarationNode)
+    public void BindVariableDeclarationNode(VariableDeclarationNode variableDeclarationNode)
     {
         CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind);
-
         var text = variableDeclarationNode.IdentifierToken.TextSpan.GetText();
 
-        if (!_currentScope.VariableDeclarationMap.TryAdd(
-                text,
-                variableDeclarationNode))
+        if (_currentScope.VariableDeclarationMap.ContainsKey(text))
         {
+            var existingVariableDeclarationNode = _currentScope.VariableDeclarationMap[text];
+
+            if (existingVariableDeclarationNode.IsFabricated)
+            {
+                // Overwrite the fabricated definition with a real one
+                //
+                // TODO: Track one or many declarations?...
+                // (if there is an error where something is defined twice for example)
+                _currentScope.VariableDeclarationMap[text] = variableDeclarationNode;
+            }
+
             _diagnosticBag.ReportAlreadyDefinedVariable(
                 variableDeclarationNode.IdentifierToken.TextSpan,
                 text);
         }
+        else
+        {
+            _currentScope.VariableDeclarationMap.Add(text, variableDeclarationNode);
+        }
     }
 
-    public VariableReferenceNode BindVariableReferenceNode(VariableReferenceNode variableReferenceNode)
+    public VariableReferenceNode ConstructAndBindVariableReferenceNode(IdentifierToken variableIdentifierToken)
     {
-        var text = variableReferenceNode.VariableIdentifierToken.TextSpan.GetText();
-        VariableKind variableKind = VariableKind.Local;
+        var text = variableIdentifierToken.TextSpan.GetText();
+        VariableReferenceNode? variableReferenceNode;
 
         if (TryGetVariableDeclarationHierarchically(text, out var variableDeclarationNode)
             && variableDeclarationNode is not null)
         {
             variableReferenceNode = new VariableReferenceNode(
-                variableReferenceNode.VariableIdentifierToken,
-                variableDeclarationNode!);
-
-            variableKind = variableDeclarationNode.VariableKind;
+                variableIdentifierToken,
+                variableDeclarationNode);
         }
         else
         {
+            variableDeclarationNode = new VariableDeclarationNode(
+                CSharpFacts.Types.Var.ToTypeClause(),
+                variableIdentifierToken,
+                VariableKind.Local,
+                false)
+            {
+                IsFabricated = true,
+            };
+
+            variableReferenceNode = new VariableReferenceNode(
+                variableIdentifierToken,
+                variableDeclarationNode);
+
             _diagnosticBag.ReportUndefinedVariable(
-                variableReferenceNode.VariableIdentifierToken.TextSpan,
+                variableIdentifierToken.TextSpan,
                 text);
         }
 
-        CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableKind);
-
+        CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind);
         return variableReferenceNode;
     }
 
@@ -374,7 +397,7 @@ public class CSharpBinder : IBinder
         }
 
         var matchingTypeDefintionNode = CSharpFacts.Types.TypeDefinitionNodes.SingleOrDefault(
-            x => x.TypeIdentifier.TextSpan.GetText() == typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+            x => x.TypeIdentifierToken.TextSpan.GetText() == typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 
         if (matchingTypeDefintionNode is not null)
         {
@@ -517,7 +540,7 @@ public class CSharpBinder : IBinder
                      boundScope)
                  && typeDefinitionNode is not null)
         {
-            return typeDefinitionNode.TypeIdentifier.TextSpan;
+            return typeDefinitionNode.TypeIdentifierToken.TextSpan;
         }
 
         return null;
@@ -556,11 +579,11 @@ public class CSharpBinder : IBinder
         bool shouldOverwrite = false)
     {
         var success = _currentScope.TypeDefinitionMap.TryAdd(
-            typeDefinitionNode.TypeIdentifier.TextSpan.GetText(),
+            typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(),
             typeDefinitionNode);
 
         if (!success && shouldOverwrite)
-            _currentScope.TypeDefinitionMap[typeDefinitionNode.TypeIdentifier.TextSpan.GetText()] = typeDefinitionNode;
+            _currentScope.TypeDefinitionMap[typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText()] = typeDefinitionNode;
     }
 
     /// <summary>
@@ -739,6 +762,24 @@ public class CSharpBinder : IBinder
         _boundScopes = _boundScopes
             .Where(x => x.ResourceUri != resourceUri)
             .ToList();
+
+        foreach (var functionKvp in _globalScope.FunctionDefinitionMap)
+        {
+            if (functionKvp.Value.FunctionIdentifierToken.TextSpan.ResourceUri == resourceUri)
+                _globalScope.FunctionDefinitionMap.Remove(functionKvp.Key);
+        }
+        
+        foreach (var variableKvp in _globalScope.VariableDeclarationMap)
+        {
+            if (variableKvp.Value.IdentifierToken.TextSpan.ResourceUri == resourceUri)
+                _globalScope.VariableDeclarationMap.Remove(variableKvp.Key);
+        }
+        
+        foreach (var typeKvp in _globalScope.TypeDefinitionMap)
+        {
+            if (typeKvp.Value.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
+                _globalScope.TypeDefinitionMap.Remove(typeKvp.Key);
+        }
 
         _diagnosticBag.ClearByResourceUri(resourceUri);
     }

@@ -34,7 +34,7 @@ public static class ParseOthers
             var typeDefinitionNodes = resolvedNamespaceGroupNode.GetTopLevelTypeDefinitionNodes();
 
             var typeDefinitionNode = typeDefinitionNodes.SingleOrDefault(td =>
-                td.TypeIdentifier.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText());
+                td.TypeIdentifierToken.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText());
 
             if (typeDefinitionNode is null)
             {
@@ -225,14 +225,8 @@ public static class ParseOthers
                     }
                     else
                     {
-                        var variableReferenceNode = new VariableReferenceNode(
-                            (IdentifierToken)tokenCurrent,
-                            // TODO: Don't pass null here
-                            null);
-
-                        model.Binder.BindVariableReferenceNode(variableReferenceNode);
-
-                        resultingExpression = variableReferenceNode;
+                        resultingExpression = model.Binder.ConstructAndBindVariableReferenceNode(
+                            (IdentifierToken)tokenCurrent);
                     }
 
                     if (topMostExpressionNode is null)

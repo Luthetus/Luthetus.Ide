@@ -305,7 +305,7 @@ public static class ParseTypes
             typeDefinitionNode.AccessModifierKind,
             typeDefinitionNode.HasPartialModifier,
             typeDefinitionNode.StorageModifierKind,
-            typeDefinitionNode.TypeIdentifier,
+            typeDefinitionNode.TypeIdentifierToken,
             typeDefinitionNode.ValueType,
             typeDefinitionNode.GenericArgumentsListingNode,
             functionArgumentsListingNode,

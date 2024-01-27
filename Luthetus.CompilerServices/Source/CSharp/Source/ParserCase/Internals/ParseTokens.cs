@@ -201,10 +201,7 @@ public static class ParseTokens
             if (model.Binder.TryGetVariableDeclarationHierarchically(text, out var variableDeclarationStatementNode) &&
                 variableDeclarationStatementNode is not null)
             {
-                ParseVariables.HandleVariableReference(
-                    consumedIdentifierToken,
-                    variableDeclarationStatementNode,
-                    model);
+                ParseVariables.HandleVariableReference(consumedIdentifierToken, model);
                 return true;
             }
             else
@@ -501,7 +498,7 @@ public static class ParseTokens
                 typeDefinitionNode.AccessModifierKind,
                 typeDefinitionNode.HasPartialModifier,
                 typeDefinitionNode.StorageModifierKind,
-                typeDefinitionNode.TypeIdentifier,
+                typeDefinitionNode.TypeIdentifierToken,
                 typeDefinitionNode.ValueType,
                 typeDefinitionNode.GenericArgumentsListingNode,
                 typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode,
@@ -551,7 +548,7 @@ public static class ParseTokens
                     typeDefinitionNode.AccessModifierKind,
                     typeDefinitionNode.HasPartialModifier,
                     typeDefinitionNode.StorageModifierKind,
-                    typeDefinitionNode.TypeIdentifier,
+                    typeDefinitionNode.TypeIdentifierToken,
                     typeDefinitionNode.ValueType,
                     typeDefinitionNode.GenericArgumentsListingNode,
                     typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode,

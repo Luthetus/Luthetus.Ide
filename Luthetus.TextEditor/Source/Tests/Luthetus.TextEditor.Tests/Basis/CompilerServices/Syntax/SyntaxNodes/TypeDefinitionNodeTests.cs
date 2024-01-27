@@ -17,7 +17,7 @@ public class TypeDefinitionNodeTests
     /// <summary>
     /// <see cref="TypeDefinitionNode(IdentifierToken, Type?, RazorLib.CompilerServices.Syntax.SyntaxNodes.GenericArgumentsListingNode?, TypeClauseNode?, RazorLib.CompilerServices.CodeBlockNode?)"/>
     /// <br/>----<br/>
-    /// <see cref="TypeDefinitionNode.TypeIdentifier"/>
+    /// <see cref="TypeDefinitionNode.TypeIdentifierToken"/>
     /// <see cref="TypeDefinitionNode.ValueType"/>
     /// <see cref="TypeDefinitionNode.GenericArgumentsListingNode"/>
     /// <see cref="TypeDefinitionNode.InheritedTypeClauseNode"/>
@@ -67,7 +67,7 @@ public class TypeDefinitionNodeTests
             inheritedTypeClauseNode,
             typeBodyCodeBlockNode);
 
-        Assert.Equal(typeIdentifier, typeDefinitionNode.TypeIdentifier);
+        Assert.Equal(typeIdentifier, typeDefinitionNode.TypeIdentifierToken);
         Assert.Equal(valueType, typeDefinitionNode.ValueType);
         Assert.Equal(genericArgumentsListingNode, typeDefinitionNode.GenericArgumentsListingNode);
         Assert.Equal(inheritedTypeClauseNode, typeDefinitionNode.InheritedTypeClauseNode);

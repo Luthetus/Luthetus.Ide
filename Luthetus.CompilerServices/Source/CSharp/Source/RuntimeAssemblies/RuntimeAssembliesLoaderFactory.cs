@@ -214,7 +214,7 @@ public static class RuntimeAssembliesLoaderFactory
                                 AccessModifierKind.Public,
                                 typeDefinitionNode.HasPartialModifier,
                                 StorageModifierKind.Class,
-                                typeDefinitionNode.TypeIdentifier,
+                                typeDefinitionNode.TypeIdentifierToken,
                                 null,
                                 typeDefinitionNode.GenericArgumentsListingNode,
                                 null,

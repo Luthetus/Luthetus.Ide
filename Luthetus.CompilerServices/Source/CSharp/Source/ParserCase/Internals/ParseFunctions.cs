@@ -4,6 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
+using System.Linq.Expressions;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 
@@ -101,7 +102,7 @@ public class ParseFunctions
         }
 
         var typeClauseNode = new TypeClauseNode(
-            typeDefinitionNode.TypeIdentifier,
+            typeDefinitionNode.TypeIdentifierToken,
             null,
             null);
 
@@ -197,38 +198,7 @@ public class ParseFunctions
             if (equalsToken.IsFabricated)
                 break;
 
-            IExpressionNode expressionNode;
-            if (SyntaxKind.IdentifierToken == model.TokenWalker.Current.SyntaxKind)
-            {
-                var variableIdentifierToken = (IdentifierToken)model.TokenWalker.Consume();
-
-                if (!model.Binder.TryGetVariableDeclarationHierarchically(
-                        variableIdentifierToken.TextSpan.GetText(),
-                        out var variableDeclarationNode)
-                    || variableDeclarationNode is null)
-                {
-                    variableDeclarationNode = new(
-                        Facts.CSharpFacts.Types.Void.ToTypeClause(),
-                        variableIdentifierToken,
-                        VariableKind.Local,
-                        false)
-                    {
-                        IsFabricated = true
-                    };
-
-                    model.Binder.BindVariableDeclarationStatementNode(variableDeclarationNode);
-                }
-
-                var variableReferenceNode = new VariableReferenceNode(
-                    variableIdentifierToken,
-                    variableDeclarationNode);
-
-                variableReferenceNode = model.Binder.BindVariableReferenceNode(variableReferenceNode);
-                expressionNode = variableReferenceNode;
-            }
-            else
-            {
-                ParseOthers.HandleExpression(
+            ParseOthers.HandleExpression(
                     null,
                     null,
                     null,
@@ -245,8 +215,7 @@ public class ParseFunctions
                     },
                     model);
 
-                expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
-            }
+            var expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
 
             // TODO: Make a PropertySymbol
             //
@@ -409,39 +378,7 @@ public class ParseFunctions
                 }
             }
 
-            IExpressionNode expression;
-
-            if (SyntaxKind.IdentifierToken == model.TokenWalker.Current.SyntaxKind)
-            {
-                var variableIdentifierToken = (IdentifierToken)model.TokenWalker.Consume();
-
-                if (!model.Binder.TryGetVariableDeclarationHierarchically(
-                        variableIdentifierToken.TextSpan.GetText(),
-                        out var variableDeclarationNode)
-                    || variableDeclarationNode is null)
-                {
-                    variableDeclarationNode = new(
-                        Facts.CSharpFacts.Types.Void.ToTypeClause(),
-                        variableIdentifierToken,
-                        VariableKind.Local,
-                        false)
-                    {
-                        IsFabricated = true
-                    };
-
-                    model.Binder.BindVariableDeclarationStatementNode(variableDeclarationNode);
-                }
-
-                var variableReferenceNode = new VariableReferenceNode(
-                    variableIdentifierToken,
-                    variableDeclarationNode);
-
-                variableReferenceNode = model.Binder.BindVariableReferenceNode(variableReferenceNode);
-                expression = variableReferenceNode;
-            }
-            else
-            {
-                ParseOthers.HandleExpression(
+            ParseOthers.HandleExpression(
                     null,
                     null,
                     null,
@@ -458,8 +395,7 @@ public class ParseFunctions
                     },
                     model);
 
-                expression = (IExpressionNode)model.SyntaxStack.Pop();
-            }
+            var expression = (IExpressionNode)model.SyntaxStack.Pop();
 
             var functionParameterEntryNode = new FunctionParameterEntryNode(
                 expression,
@@ -555,7 +491,7 @@ public class ParseFunctions
                 false
             );
 
-            model.Binder.BindVariableDeclarationStatementNode(variableDeclarationStatementNode);
+            model.Binder.BindVariableDeclarationNode(variableDeclarationStatementNode);
 
             var functionArgumentEntryNode = new FunctionArgumentEntryNode(
                 variableDeclarationStatementNode,

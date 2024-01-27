@@ -10,6 +10,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using System.Collections.Immutable;
+using System.Diagnostics.Metrics;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 
@@ -127,6 +128,39 @@ public class CSharpCompilerService : ICompilerService
             return ImmutableArray<AutocompleteEntry>.Empty;
 
         var autocompleteEntryList = new List<AutocompleteEntry>();
+
+        // (2024-01-27)
+        // Goal: when one types 'new Person { ... }',
+        //       if their cursor is between the object initialization braces,
+        //       then provide autocomplete for the public properties of that type.
+        {
+            // Idea: Determine where the user's cursor is, in terms of the deepest syntax node
+            //       in the CompilationUnit which the cursor is encompassed in.
+            //
+            // Change: I need to add a parameter that tells me the exact cursor position I believe?
+            //         Did the word match to the left or right of the cursor. Or was the cursor
+            //         within the word that I recieve?
+            //
+            // Caching?: Is it possible to keep the current syntax node that the user's cursor
+            //           is within, available at all times? As to not be recalculated from the root
+            //           compilation unit each time?
+            {
+                var cSharpResource = (CSharpResource?)null;
+
+                lock (_cSharpResourceMapLock)
+                {
+                    if (_cSharpResourceMap.ContainsKey(textSpan.ResourceUri))
+                    {
+                        cSharpResource = _cSharpResourceMap[textSpan.ResourceUri];
+                    }
+                }
+
+                if (cSharpResource is not null)
+                {
+                    var aaa = 2;
+                }
+            }
+        }
 
         var targetScope = boundScope;
 

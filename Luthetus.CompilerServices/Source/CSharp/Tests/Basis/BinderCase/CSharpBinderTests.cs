@@ -176,7 +176,7 @@ public class CSharpBinderTests
     }
 
     /// <summary>
-    /// <see cref="CSharpBinder.BindVariableDeclarationStatementNode(VariableDeclarationNode)"/>
+    /// <see cref="CSharpBinder.BindVariableDeclarationNode(VariableDeclarationNode)"/>
     /// </summary>
     [Fact]
     public void BindVariableDeclarationStatementNode()

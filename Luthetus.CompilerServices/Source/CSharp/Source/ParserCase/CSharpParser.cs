@@ -132,10 +132,17 @@ public class CSharpParser : IParser
 
                     if (model.SyntaxStack.TryPop(out var notUsedSyntax))
                     {
-                        if (notUsedSyntax is IExpressionNode ||
-                            notUsedSyntax is AmbiguousIdentifierNode)
+                        if (notUsedSyntax is IExpressionNode)
                         {
                             model.CurrentCodeBlockBuilder.ChildList.Add(notUsedSyntax);
+                        }
+                        else if (notUsedSyntax.SyntaxKind == SyntaxKind.AmbiguousIdentifierNode)
+                        {
+                            var ambiguousIdentifierNode = (AmbiguousIdentifierNode)notUsedSyntax;
+                            model.CurrentCodeBlockBuilder.ChildList.Add(notUsedSyntax);
+                            model.DiagnosticBag.ReportUndefinedTypeOrNamespace(
+                                ambiguousIdentifierNode.IdentifierToken.TextSpan,
+                                ambiguousIdentifierNode.IdentifierToken.TextSpan.GetText());
                         }
                     }
                     break;

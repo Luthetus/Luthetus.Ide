@@ -10,14 +10,9 @@ public static class ParseVariables
 {
     public static void HandleVariableReference(
         IdentifierToken consumedIdentifierToken,
-        VariableDeclarationNode resolvedVariableDeclarationNode,
         ParserModel model)
     {
-        var variableReferenceNode = new VariableReferenceNode(
-            consumedIdentifierToken,
-            resolvedVariableDeclarationNode);
-
-        model.Binder.BindVariableReferenceNode(variableReferenceNode);
+        var variableReferenceNode = model.Binder.ConstructAndBindVariableReferenceNode(consumedIdentifierToken);
         model.SyntaxStack.Push(variableReferenceNode);
     }
 
@@ -33,7 +28,7 @@ public static class ParseVariables
             variableKind,
             false);
 
-        model.Binder.BindVariableDeclarationStatementNode(variableDeclarationNode);
+        model.Binder.BindVariableDeclarationNode(variableDeclarationNode);
         model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)

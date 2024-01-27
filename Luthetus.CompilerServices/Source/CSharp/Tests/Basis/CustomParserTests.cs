@@ -1252,7 +1252,7 @@ public class CustomParserTests
 		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
 		Assert.Equal(
 			typeIdentifierText,
-			typeDefinitionNode.TypeIdentifier.TextSpan.GetText());
+			typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText());
 
 		var inheritedTypeClauseNode = typeDefinitionNode.InheritedTypeClauseNode;
 		Assert.Equal(
@@ -1921,7 +1921,7 @@ public class CustomParserTests
 
 		// typeDefinitionNode.TypeIdentifier
 		{
-			var typeIdentifier = typeDefinitionNode.TypeIdentifier;
+			var typeIdentifier = typeDefinitionNode.TypeIdentifierToken;
 
 			Assert.False(typeIdentifier.IsFabricated);
 			Assert.Equal(SyntaxKind.IdentifierToken, typeIdentifier.SyntaxKind);
@@ -2516,12 +2516,25 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
     }
+
+    #region Aaa
+    [Fact]
+    public void DELETE_THIS_TEST_1()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"var builder;";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
 	
 	[Fact]
     public void DELETE_THIS_TEST_A()
-	{
+    {
         var resourceUri = new ResourceUri("UnitTests");
-        var sourceText = @"Console.WriteLine(""Hello World"");";
+        var sourceText = @"builder;";
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
@@ -2533,25 +2546,36 @@ public class CustomParserTests
     public void DELETE_THIS_TEST_B()
     {
         var resourceUri = new ResourceUri("UnitTests");
-        var sourceText = @"public void MyMethod() { }";
+        var sourceText = @"builder.Services;";
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
     }
-	
-	[Fact]
+
+    [Fact]
     public void DELETE_THIS_TEST_C()
     {
-		// Infinite loop?
-
         var resourceUri = new ResourceUri("UnitTests");
-        var sourceText = @"public class MyClass\n{\n    ";
+        var sourceText = @"builder.Services.AddScoped();";
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
     }
+
+    [Fact]
+    public void DELETE_THIS_TEST_D()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = @"builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });";
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+    #endregion
 }
