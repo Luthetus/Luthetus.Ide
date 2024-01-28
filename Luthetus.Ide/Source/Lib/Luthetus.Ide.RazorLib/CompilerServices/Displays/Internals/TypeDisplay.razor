@@ -1,4 +1,5 @@
 ﻿@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 <div class="luth_ide_type">
 
     @if (SyntaxNode.SyntaxKind.ToString().Contains("Type"))
@@ -7,9 +8,88 @@
 
         if (SyntaxNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
         {
-            <div>
-                Cba
-            </div>
+            var typeDefinitionNode = (TypeDefinitionNode)SyntaxNode;
+
+            if (CSharpCompilerService.Binder is null)
+            {
+                <div>CSharpCompilerService.Binder is null</div>
+            }
+            else
+            {
+                <div class="luth_ide_syntax-node-property">
+                    <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.AccessModifierKind)</div>
+                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">@typeDefinitionNode.AccessModifierKind</div>
+                </div>
+                <div class="luth_ide_syntax-node-property">
+                    <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.HasPartialModifier)</div>
+                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">@typeDefinitionNode.HasPartialModifier</div>
+                </div>
+                <div class="luth_ide_syntax-node-property">
+                    <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.StorageModifierKind)</div>
+                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">@typeDefinitionNode.StorageModifierKind</div>
+                </div>
+                <div class="luth_ide_syntax-node-property">
+                    <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.TypeIdentifierToken)</div>
+                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">
+                        <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">
+                            @nameof(TypeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive)
+                        </div>
+                        <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">
+                            @typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive
+                        </div>
+                        <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">
+                            @nameof(TypeDefinitionNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive)
+                        </div>
+                        <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">
+                            @typeDefinitionNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive
+                        </div>
+                    </div>
+                </div>
+                <div class="luth_ide_syntax-node-property">
+                    <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.ValueType)</div>
+                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">@typeDefinitionNode.ValueType</div>
+                </div>
+                <div class="luth_ide_syntax-node-property">
+                    <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.GenericArgumentsListingNode)</div>
+                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">@typeDefinitionNode.GenericArgumentsListingNode</div>
+                </div>
+                <div class="luth_ide_syntax-node-property">
+                    <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode)</div>
+                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">@typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode</div>
+                </div>
+                <div class="luth_ide_syntax-node-property">
+                    <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.InheritedTypeClauseNode)</div>
+                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">@typeDefinitionNode.InheritedTypeClauseNode</div>
+                </div>
+                <div class="luth_ide_syntax-node-property">
+                    <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.TypeBodyCodeBlockNode)</div>
+                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">too much text renders with this one shown<!--@typeDefinitionNode.TypeBodyCodeBlockNode--></div>
+                </div>
+                <div class="luth_ide_syntax-node-property">
+                    <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.IsInterface)</div>
+                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">@typeDefinitionNode.IsInterface</div>
+                </div>
+                <div class="luth_ide_syntax-node-property">
+                    <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.ChildList)</div>
+                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">@typeDefinitionNode.ChildList</div>
+                </div>
+                <div class="luth_ide_syntax-node-property">
+                    <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.IsFabricated)</div>
+                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">@typeDefinitionNode.IsFabricated</div>
+                </div>
+                <div class="luth_ide_syntax-node-property">
+                    <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.SyntaxKind)</div>
+                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">@typeDefinitionNode.SyntaxKind</div>
+                </div>
+                <div class="luth_ide_syntax-node-property">
+                    <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.GetFunctionDefinitionNodes)</div>
+                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">@typeDefinitionNode.GetFunctionDefinitionNodes()</div>
+                </div>
+                <div class="luth_ide_syntax-node-property">
+                    <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.ToTypeClause)</div>
+                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">too much text renders with this one shown<!--@typeDefinitionNode.ToTypeClause()--></div>
+                </div>
+            }
         }
     }
     else if (SyntaxNode.SyntaxKind == SyntaxKind.InheritanceStatementNode)

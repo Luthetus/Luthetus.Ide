@@ -94,66 +94,70 @@
                 <div title="activeViewModelKey">@activeViewModelKey.Guid</div>
                 <div title="resourceUri">@cSharpResource.ResourceUri.Value</div>
 
-                @if (syntaxNode.SyntaxKind.ToString().Contains("Type") ||
-               syntaxNode.SyntaxKind == SyntaxKind.InheritanceStatementNode ||
-               syntaxNode.SyntaxKind == SyntaxKind.ConstraintNode ||
-               syntaxNode.SyntaxKind == SyntaxKind.AttributeNode)
-                {
-                    <TypeDisplay SyntaxNode="syntaxNode" />
-                }
-                else if (syntaxNode.SyntaxKind.ToString().Contains("Variable"))
-                {
-                    <VariableDisplay SyntaxNode="syntaxNode" />
-                }
-                else if (syntaxNode.SyntaxKind.ToString().Contains("Property"))
-                {
-                    <PropertyDisplay SyntaxNode="syntaxNode" />
-                }
-                else if (syntaxNode.SyntaxKind.ToString().Contains("Function"))
-                {
-                    <FunctionDisplay SyntaxNode="syntaxNode" />
-                }
-                else if (syntaxNode.SyntaxKind.ToString().Contains("Generic"))
-                {
-                    <GenericDisplay SyntaxNode="syntaxNode" />
-                }
-                else if (syntaxNode.SyntaxKind.ToString().Contains("Namespace") ||
-                syntaxNode.SyntaxKind == SyntaxKind.UsingStatementNode)
-                {
-                    <NamespaceDisplay SyntaxNode="syntaxNode" />
-                }
-                else if (syntaxNode.SyntaxKind.ToString().Contains("Operator"))
-                {
-                    <OperatorDisplay SyntaxNode="syntaxNode" />
-                }
-                else if (syntaxNode.SyntaxKind.ToString().Contains("Constructor"))
-                {
-                    <ConstructorDisplay SyntaxNode="syntaxNode" />
-                }
-                else if (syntaxNode.SyntaxKind.ToString().Contains("ObjectInitialization"))
-                {
-                    <ObjectInitializationDisplay SyntaxNode="syntaxNode" />
-                }
-                else if (syntaxNode.SyntaxKind == SyntaxKind.AmbiguousIdentifierNode)
-                {
-                    <AmbiguousIdentifierDisplay SyntaxNode="syntaxNode" />
-                }
-                else if (syntaxNode.SyntaxKind == SyntaxKind.IfStatementNode)
-                {
-                    <IfStatementDisplay SyntaxNode="syntaxNode" />
-                }
-                else
-                {
-                    switch (syntaxNode.SyntaxKind)
-                    {
-                        case SyntaxKind.PreprocessorLibraryReferenceStatementNode:
-                            <div>PreprocessorLibraryReferenceStatementNode</div>
-                            break;
-                        case SyntaxKind.EmptyNode:
-                            <div>EmptyNode</div>
-                            break;
-                    }
-                }
+                <CascadingValue Value="localCSharpCompilerService">
+                    <CascadingValue Value="cSharpResource">
+                        @if (syntaxNode.SyntaxKind.ToString().Contains("Type") ||
+                             syntaxNode.SyntaxKind == SyntaxKind.InheritanceStatementNode ||
+                             syntaxNode.SyntaxKind == SyntaxKind.ConstraintNode ||
+                             syntaxNode.SyntaxKind == SyntaxKind.AttributeNode)
+                        {
+                            <TypeDisplay SyntaxNode="syntaxNode" />
+                        }
+                        else if (syntaxNode.SyntaxKind.ToString().Contains("Variable"))
+                        {
+                            <VariableDisplay SyntaxNode="syntaxNode" />
+                        }
+                        else if (syntaxNode.SyntaxKind.ToString().Contains("Property"))
+                        {
+                            <PropertyDisplay SyntaxNode="syntaxNode" />
+                        }
+                        else if (syntaxNode.SyntaxKind.ToString().Contains("Function"))
+                        {
+                            <FunctionDisplay SyntaxNode="syntaxNode" />
+                        }
+                        else if (syntaxNode.SyntaxKind.ToString().Contains("Generic"))
+                        {
+                            <GenericDisplay SyntaxNode="syntaxNode" />
+                        }
+                        else if (syntaxNode.SyntaxKind.ToString().Contains("Namespace") ||
+                        syntaxNode.SyntaxKind == SyntaxKind.UsingStatementNode)
+                        {
+                            <NamespaceDisplay SyntaxNode="syntaxNode" />
+                        }
+                        else if (syntaxNode.SyntaxKind.ToString().Contains("Operator"))
+                        {
+                            <OperatorDisplay SyntaxNode="syntaxNode" />
+                        }
+                        else if (syntaxNode.SyntaxKind.ToString().Contains("Constructor"))
+                        {
+                            <ConstructorDisplay SyntaxNode="syntaxNode" />
+                        }
+                        else if (syntaxNode.SyntaxKind.ToString().Contains("ObjectInitialization"))
+                        {
+                            <ObjectInitializationDisplay SyntaxNode="syntaxNode" />
+                        }
+                        else if (syntaxNode.SyntaxKind == SyntaxKind.AmbiguousIdentifierNode)
+                        {
+                            <AmbiguousIdentifierDisplay SyntaxNode="syntaxNode" />
+                        }
+                        else if (syntaxNode.SyntaxKind == SyntaxKind.IfStatementNode)
+                        {
+                            <IfStatementDisplay SyntaxNode="syntaxNode" />
+                        }
+                        else
+                        {
+                            switch (syntaxNode.SyntaxKind)
+                            {
+                                case SyntaxKind.PreprocessorLibraryReferenceStatementNode:
+                                    <div>PreprocessorLibraryReferenceStatementNode</div>
+                                    break;
+                                case SyntaxKind.EmptyNode:
+                                    <div>EmptyNode</div>
+                                    break;
+                            }
+                        }
+                    </CascadingValue>
+                </CascadingValue>
             </div>
         }
     </div>
