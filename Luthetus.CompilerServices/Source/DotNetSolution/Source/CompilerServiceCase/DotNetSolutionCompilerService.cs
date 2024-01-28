@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
@@ -107,6 +108,10 @@ public class DotNetSolutionCompilerService : ICompilerService
     public void ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpans)
     {
         QueueParseRequest(resourceUri);
+    }
+
+    public void CursorWasModified(ResourceUri resourceUri, TextEditorCursor cursor)
+    {
     }
 
     public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)

@@ -1,4 +1,5 @@
 ﻿using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 
@@ -47,6 +48,10 @@ public class TextEditorCompilerServiceDefault : ICompilerService
     public void ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpansList)
     {
         ResourceParsed?.Invoke();
+    }
+
+    public void CursorWasModified(ResourceUri resourceUri, TextEditorCursor cursor)
+    {
     }
 
     public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
