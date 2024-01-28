@@ -1,0 +1,65 @@
+﻿@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+
+@if (SyntaxNode.SyntaxKind.ToString().Contains("Type") ||
+     SyntaxNode.SyntaxKind == SyntaxKind.InheritanceStatementNode ||
+     SyntaxNode.SyntaxKind == SyntaxKind.ConstraintNode ||
+     SyntaxNode.SyntaxKind == SyntaxKind.AttributeNode)
+{
+    <TypeDisplay SyntaxNode="SyntaxNode" />
+}
+else if (SyntaxNode.SyntaxKind.ToString().Contains("Variable"))
+{
+    <VariableDisplay SyntaxNode="SyntaxNode" />
+}
+else if (SyntaxNode.SyntaxKind.ToString().Contains("Property"))
+{
+    <PropertyDisplay SyntaxNode="SyntaxNode" />
+}
+else if (SyntaxNode.SyntaxKind.ToString().Contains("Function"))
+{
+    <FunctionDisplay SyntaxNode="SyntaxNode" />
+}
+else if (SyntaxNode.SyntaxKind.ToString().Contains("Generic"))
+{
+    <GenericDisplay SyntaxNode="SyntaxNode" />
+}
+else if (SyntaxNode.SyntaxKind.ToString().Contains("Namespace") ||
+         SyntaxNode.SyntaxKind == SyntaxKind.UsingStatementNode)
+{
+    <NamespaceDisplay SyntaxNode="SyntaxNode" />
+}
+else if (SyntaxNode.SyntaxKind.ToString().Contains("Operator"))
+{
+    <OperatorDisplay SyntaxNode="SyntaxNode" />
+}
+else if (SyntaxNode.SyntaxKind.ToString().Contains("Constructor"))
+{
+    <ConstructorDisplay SyntaxNode="SyntaxNode" />
+}
+else if (SyntaxNode.SyntaxKind.ToString().Contains("ObjectInitialization"))
+{
+    <ObjectInitializationDisplay SyntaxNode="SyntaxNode" />
+}
+else if (SyntaxNode.SyntaxKind == SyntaxKind.AmbiguousIdentifierNode)
+{
+    <AmbiguousIdentifierDisplay SyntaxNode="SyntaxNode" />
+}
+else if (SyntaxNode.SyntaxKind == SyntaxKind.IfStatementNode)
+{
+    <IfStatementDisplay SyntaxNode="SyntaxNode" />
+}
+else
+{
+    switch (SyntaxNode.SyntaxKind)
+    {
+        case SyntaxKind.PreprocessorLibraryReferenceStatementNode:
+            <div>PreprocessorLibraryReferenceStatementNode</div>
+            break;
+        case SyntaxKind.EmptyNode:
+            <div>EmptyNode</div>
+            break;
+        default:
+            <div>@SyntaxNode.SyntaxKind</div>
+            break;
+    }
+}

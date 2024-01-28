@@ -30,20 +30,10 @@
                 </div>
                 <div class="luth_ide_syntax-node-property">
                     <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.TypeIdentifierToken)</div>
-                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">
-                        <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">
-                            @nameof(TypeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive)
-                        </div>
-                        <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">
-                            @typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive
-                        </div>
-                        <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">
-                            @nameof(TypeDefinitionNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive)
-                        </div>
-                        <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">
-                            @typeDefinitionNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive
-                        </div>
-                    </div>
+                    @if (typeDefinitionNode.TypeIdentifierToken is not null)
+                    {
+                        <TokenDisplay SyntaxToken="typeDefinitionNode.TypeIdentifierToken" />
+                    }
                 </div>
                 <div class="luth_ide_syntax-node-property">
                     <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.ValueType)</div>
@@ -51,19 +41,31 @@
                 </div>
                 <div class="luth_ide_syntax-node-property">
                     <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.GenericArgumentsListingNode)</div>
-                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">@typeDefinitionNode.GenericArgumentsListingNode</div>
+                    @if (typeDefinitionNode.GenericArgumentsListingNode is not null)
+                    {
+                        <NodeDisplay SyntaxNode="typeDefinitionNode.GenericArgumentsListingNode" />
+                    }
                 </div>
                 <div class="luth_ide_syntax-node-property">
                     <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode)</div>
-                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">@typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode</div>
+                    @if (typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode is not null)
+                    {
+                        <NodeDisplay SyntaxNode="typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode" />
+                    }
                 </div>
                 <div class="luth_ide_syntax-node-property">
                     <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.InheritedTypeClauseNode)</div>
-                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">@typeDefinitionNode.InheritedTypeClauseNode</div>
+                    @if (typeDefinitionNode.InheritedTypeClauseNode is not null)
+                    {
+                        <NodeDisplay SyntaxNode="typeDefinitionNode.InheritedTypeClauseNode" />
+                    }
                 </div>
                 <div class="luth_ide_syntax-node-property">
                     <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.TypeBodyCodeBlockNode)</div>
-                    <div class="luth_ide_syntax-node-property-value luth_te_attribute-value">too much text renders with this one shown<!--@typeDefinitionNode.TypeBodyCodeBlockNode--></div>
+                    @if (typeDefinitionNode.TypeBodyCodeBlockNode is not null)
+                    {
+                        <NodeDisplay SyntaxNode="typeDefinitionNode.TypeBodyCodeBlockNode" />
+                    }
                 </div>
                 <div class="luth_ide_syntax-node-property">
                     <div class="luth_ide_syntax-node-property-name luth_te_attribute-name">@nameof(TypeDefinitionNode.IsInterface)</div>

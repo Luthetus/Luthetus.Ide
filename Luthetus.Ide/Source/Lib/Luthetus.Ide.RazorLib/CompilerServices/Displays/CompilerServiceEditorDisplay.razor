@@ -21,141 +21,53 @@
     <div class="luth_ide_section-body">
 
         @{
-            var localCSharpCompilerService = _cSharpCompilerService;
-            var localCompilerServiceEditorState = CompilerServiceEditorStateWrap.Value;
-            var localTextEditorGroupState = TextEditorGroupStateWrap.Value;
-            var localTextEditorViewModelState = TextEditorViewModelStateWrap.Value;
-            var localTextEditorModelStateWrap = TextEditorModelStateWrap.Value;
+            if (_shouldRecalculateViewModel)
+                RecalculateViewModel();
 
-            var editorTextEditorGroup = localTextEditorGroupState.GroupList.FirstOrDefault(
-                x => x.GroupKey == EditorSync.EditorTextEditorGroupKey);
-
-            var activeViewModelKey = editorTextEditorGroup?.ActiveViewModelKey ?? Key<TextEditorViewModel>.Empty;
-
-            var viewModel = localTextEditorViewModelState.ViewModelList.FirstOrDefault(
-                x => x.ViewModelKey == activeViewModelKey);
-
-            var interfaceCompilerServiceResource = viewModel is null
-                ? null
-                : localCSharpCompilerService .GetCompilerServiceResourceFor(viewModel.ResourceUri);
-
-            var cSharpResource = interfaceCompilerServiceResource is null
-                ? (CSharpResource?)null
-                : (CSharpResource)interfaceCompilerServiceResource;
-
-            var textEditorModel = viewModel is null
-                ? null
-                : localTextEditorModelStateWrap.ModelList.FirstOrDefault(x => x.ResourceUri == viewModel.ResourceUri);
-
-            Nullable<int> primaryCursorPositionIndex = textEditorModel is null || viewModel is null
-                ? null
-                : textEditorModel.GetPositionIndex(viewModel.PrimaryCursor);
-
-            var syntaxNode = primaryCursorPositionIndex is null || localCSharpCompilerService.Binder is null || cSharpResource?.CompilationUnit is null
-                ? null
-                : localCSharpCompilerService.Binder.GetSyntaxNode(primaryCursorPositionIndex.Value, cSharpResource.CompilationUnit);
+            var localViewModel = _viewModel;
         }
 
-        @if (activeViewModelKey == Key<TextEditorViewModel>.Empty)
+        @if (localViewModel.ActiveViewModelKey == Key<TextEditorViewModel>.Empty)
         {
             <div>activeViewModelKey is Empty</div>
         }
-        else if (viewModel is null)
+        else if (localViewModel.ViewModel is null)
         {
             <div>viewModel is not null</div>
         }
-        else if (interfaceCompilerServiceResource is null)
+        else if (localViewModel.InterfaceCompilerServiceResource is null)
         {
             <div>interfaceCompilerServiceResource is null</div>
         }
-        else if (cSharpResource is null)
+        else if (localViewModel.CSharpResource is null)
         {
             <div>cSharpResource is null</div>
         }
-        else if (cSharpResource.CompilationUnit is null)
+        else if (localViewModel.CSharpResource.CompilationUnit is null)
         {
             <div>cSharpResource.CompilationUnit is null</div>
         }
-        else if (textEditorModel is null)
+        else if (localViewModel.TextEditorModel is null)
         {
             <div>textEditorModel is null</div>
         }
-        else if (localCSharpCompilerService.Binder is null)
+        else if (localViewModel.LocalCSharpCompilerService.Binder is null)
         {
             <div>localCSharpCompilerService.Binder is null</div>
         }
-        else if (syntaxNode is null)
+        else if (localViewModel.SyntaxNode is null)
         {
             <div>syntaxNode is null</div>
         }
         else
         {
             <div>
-                <div title="activeViewModelKey">@activeViewModelKey.Guid</div>
-                <div title="resourceUri">@cSharpResource.ResourceUri.Value</div>
+                <div title="activeViewModelKey">@localViewModel.ActiveViewModelKey.Guid</div>
+                <div title="resourceUri">@localViewModel.CSharpResource.ResourceUri.Value</div>
 
-                <CascadingValue Value="localCSharpCompilerService">
-                    <CascadingValue Value="cSharpResource">
-                        @if (syntaxNode.SyntaxKind.ToString().Contains("Type") ||
-                             syntaxNode.SyntaxKind == SyntaxKind.InheritanceStatementNode ||
-                             syntaxNode.SyntaxKind == SyntaxKind.ConstraintNode ||
-                             syntaxNode.SyntaxKind == SyntaxKind.AttributeNode)
-                        {
-                            <TypeDisplay SyntaxNode="syntaxNode" />
-                        }
-                        else if (syntaxNode.SyntaxKind.ToString().Contains("Variable"))
-                        {
-                            <VariableDisplay SyntaxNode="syntaxNode" />
-                        }
-                        else if (syntaxNode.SyntaxKind.ToString().Contains("Property"))
-                        {
-                            <PropertyDisplay SyntaxNode="syntaxNode" />
-                        }
-                        else if (syntaxNode.SyntaxKind.ToString().Contains("Function"))
-                        {
-                            <FunctionDisplay SyntaxNode="syntaxNode" />
-                        }
-                        else if (syntaxNode.SyntaxKind.ToString().Contains("Generic"))
-                        {
-                            <GenericDisplay SyntaxNode="syntaxNode" />
-                        }
-                        else if (syntaxNode.SyntaxKind.ToString().Contains("Namespace") ||
-                        syntaxNode.SyntaxKind == SyntaxKind.UsingStatementNode)
-                        {
-                            <NamespaceDisplay SyntaxNode="syntaxNode" />
-                        }
-                        else if (syntaxNode.SyntaxKind.ToString().Contains("Operator"))
-                        {
-                            <OperatorDisplay SyntaxNode="syntaxNode" />
-                        }
-                        else if (syntaxNode.SyntaxKind.ToString().Contains("Constructor"))
-                        {
-                            <ConstructorDisplay SyntaxNode="syntaxNode" />
-                        }
-                        else if (syntaxNode.SyntaxKind.ToString().Contains("ObjectInitialization"))
-                        {
-                            <ObjectInitializationDisplay SyntaxNode="syntaxNode" />
-                        }
-                        else if (syntaxNode.SyntaxKind == SyntaxKind.AmbiguousIdentifierNode)
-                        {
-                            <AmbiguousIdentifierDisplay SyntaxNode="syntaxNode" />
-                        }
-                        else if (syntaxNode.SyntaxKind == SyntaxKind.IfStatementNode)
-                        {
-                            <IfStatementDisplay SyntaxNode="syntaxNode" />
-                        }
-                        else
-                        {
-                            switch (syntaxNode.SyntaxKind)
-                            {
-                                case SyntaxKind.PreprocessorLibraryReferenceStatementNode:
-                                    <div>PreprocessorLibraryReferenceStatementNode</div>
-                                    break;
-                                case SyntaxKind.EmptyNode:
-                                    <div>EmptyNode</div>
-                                    break;
-                            }
-                        }
+                <CascadingValue Value="localViewModel.LocalCSharpCompilerService">
+                    <CascadingValue Value="localViewModel.CSharpResource">
+                        <NodeDisplay SyntaxNode="localViewModel.SyntaxNode" />
                     </CascadingValue>
                 </CascadingValue>
             </div>
