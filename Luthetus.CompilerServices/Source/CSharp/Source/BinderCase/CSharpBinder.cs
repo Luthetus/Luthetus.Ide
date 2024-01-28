@@ -545,6 +545,38 @@ public class CSharpBinder : IBinder
         return null;
     }
 
+    public ISyntaxNode? GetSyntaxNode(int positionIndex, CompilationUnit compilationUnit)
+    {
+        // First attempt at writing this, will be to start from the root of the compilation unit,
+        // then traverse the syntax tree where the position index is within bounds.
+
+        return RecursiveGetSyntaxNode(positionIndex, compilationUnit.RootCodeBlockNode);
+        
+        ISyntaxNode? RecursiveGetSyntaxNode(int positionIndex, ISyntaxNode targetNode)
+        {
+            foreach (var child in targetNode.ChildList)
+            {
+                if (child is ISyntaxNode syntaxNode)
+                {
+                    var innerResult = RecursiveGetSyntaxNode(positionIndex, syntaxNode);
+
+                    if (innerResult is not null)
+                        return innerResult;
+                }
+                else if (child is ISyntaxToken syntaxToken)
+                {
+                    if (syntaxToken.TextSpan.StartingIndexInclusive <= positionIndex &&
+                        syntaxToken.TextSpan.EndingIndexExclusive >= positionIndex)
+                    {
+                        return targetNode;
+                    }
+                }
+            }
+
+            return null;
+        }
+    }
+
     /// <summary>
     /// Search hierarchically through all the scopes, starting at the <see cref="initialScope"/>.<br/><br/>
     /// If a match is found, then set the out parameter to it and return true.<br/><br/>

@@ -62,9 +62,16 @@ public class CommandFactory : ICommandFactory
         // CompilerServiceExplorerContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyC", false, true, true, Key<KeymapLayer>.Empty),
+                new KeymapArgument("KeyC", true, true, true, Key<KeymapLayer>.Empty),
                 ConstructFocusContextElementCommand(
                     ContextFacts.CompilerServiceExplorerContext, "Focus: CompilerServiceExplorer", "focus-compiler-service-explorer"));
+        }
+        // CompilerServiceEditorContext
+        {
+            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+                new KeymapArgument("KeyC", false, true, true, Key<KeymapLayer>.Empty),
+                ConstructFocusContextElementCommand(
+                    ContextFacts.CompilerServiceEditorContext, "Focus: CompilerServiceEditor", "focus-compiler-service-editor"));
         }
         // DialogDisplayContext
         {

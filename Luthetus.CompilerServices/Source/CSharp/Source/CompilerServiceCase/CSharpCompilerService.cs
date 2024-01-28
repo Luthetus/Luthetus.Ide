@@ -42,6 +42,7 @@ public class CSharpCompilerService : ICompilerService
     public event Action? ResourceRegistered;
     public event Action? ResourceParsed;
     public event Action? ResourceDisposed;
+    public event Action? CursorMovedInSyntaxTree;
 
     public IBinder? Binder => CSharpBinder;
 

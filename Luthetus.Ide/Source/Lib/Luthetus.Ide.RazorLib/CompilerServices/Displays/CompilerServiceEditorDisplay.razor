@@ -1,0 +1,246 @@
+﻿@using Fluxor.Blazor.Web.Components;
+@using Luthetus.Common.RazorLib.Contexts.Displays
+@using Luthetus.Common.RazorLib.Contexts.Models;
+@using Luthetus.Common.RazorLib.Keys.Models;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+@using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+@using Luthetus.Ide.RazorLib.CompilerServices.Models;
+@using Luthetus.Ide.RazorLib.Editors.States;
+
+<ContextBoundary ContextRecord="ContextFacts.CompilerServiceEditorContext"
+                 ClassCssString="luth_ide_compiler-service-editor"
+                 StyleCssString="height: 100%">
+    <div class="luth_ide_section-title">
+        Compiler Service Editor Display
+    </div>
+
+    <div class="luth_ide_section-body">
+
+        @{
+            var localCSharpCompilerService = _cSharpCompilerService;
+            var localCompilerServiceEditorState = CompilerServiceEditorStateWrap.Value;
+            var localTextEditorGroupState = TextEditorGroupStateWrap.Value;
+            var localTextEditorViewModelState = TextEditorViewModelStateWrap.Value;
+            var localTextEditorModelStateWrap = TextEditorModelStateWrap.Value;
+
+            var editorTextEditorGroup = localTextEditorGroupState.GroupList.FirstOrDefault(
+                x => x.GroupKey == EditorSync.EditorTextEditorGroupKey);
+
+            var activeViewModelKey = editorTextEditorGroup?.ActiveViewModelKey ?? Key<TextEditorViewModel>.Empty;
+        }
+
+        @if (activeViewModelKey == Key<TextEditorViewModel>.Empty)
+        {
+            <div>activeViewModelKey is Empty</div>
+        }
+        else
+        {
+            <div>
+                @activeViewModelKey.Guid
+
+                @{
+                    var viewModel = localTextEditorViewModelState.ViewModelList.FirstOrDefault(
+                            x => x.ViewModelKey == activeViewModelKey);
+                }
+
+                @if (viewModel is null)
+                {
+                    <div>viewModel is not null</div>
+                }
+                else
+                {
+                    var interfaceCompilerServiceResource = localCSharpCompilerService
+                        .GetCompilerServiceResourceFor(viewModel.ResourceUri);
+
+                    if (interfaceCompilerServiceResource is null)
+                    {
+                        <div>interfaceCompilerServiceResource is null</div>
+                    }
+                    else
+                    {
+                        var cSharpResource = (CSharpResource)interfaceCompilerServiceResource;
+
+                        <div>
+                            @cSharpResource.ResourceUri.Value
+
+                            @if (cSharpResource.CompilationUnit is null)
+                            {
+                                <div>cSharpResource.CompilationUnit is null</div>
+                            }
+                            else
+                            {
+                                var textEditorModel = localTextEditorModelStateWrap.ModelList.FirstOrDefault(
+                                    x => x.ResourceUri == viewModel.ResourceUri);
+
+                                if (textEditorModel is null)
+                                {
+                                    <div>textEditorModel is null</div>
+                                }
+                                else
+                                {
+                                    var primaryCursorPositionIndex = textEditorModel.GetPositionIndex(viewModel.PrimaryCursor);
+
+                                    if (localCSharpCompilerService.Binder is null)
+                                    {
+                                        <div>localCSharpCompilerService.Binder is null</div>
+                                    }
+                                    else
+                                    {
+                                        var syntaxNode = localCSharpCompilerService.Binder.GetSyntaxNode(
+                                            primaryCursorPositionIndex,
+                                            cSharpResource.CompilationUnit);
+
+                                        if (syntaxNode is null)
+                                        {
+                                            <div>syntaxNode is null</div>
+                                        }
+                                        else
+                                        {
+                                            switch (syntaxNode.SyntaxKind)
+                                            {
+                                                case SyntaxKind.LiteralExpressionNode:
+                                                    <div>LiteralExpressionNode</div>
+                                                    break;
+                                                case SyntaxKind.ParenthesizedExpressionNode:
+                                                    <div>ParenthesizedExpressionNode</div>
+                                                    break;
+                                                case SyntaxKind.EmptyExpressionNode:
+                                                    <div>EmptyExpressionNode</div>
+                                                    break;
+                                                case SyntaxKind.PreprocessorLibraryReferenceStatementNode:
+                                                    <div>PreprocessorLibraryReferenceStatementNode</div>
+                                                    break;
+                                                case SyntaxKind.TypeDefinitionNode:
+                                                    <div>TypeDefinitionNode</div>
+                                                    break;
+                                                case SyntaxKind.TypeClauseNode:
+                                                    <div>TypeClauseNode</div>
+                                                    break;
+                                                case SyntaxKind.ConstraintNode:
+                                                    <div>ConstraintNode</div>
+                                                    break;
+                                                case SyntaxKind.VariableDeclarationNode:
+                                                    <div>VariableDeclarationNode</div>
+                                                    break;
+                                                case SyntaxKind.VariableReferenceNode:
+                                                    <div>VariableReferenceNode</div>
+                                                    break;
+                                                case SyntaxKind.VariableAssignmentExpressionNode:
+                                                    <div>VariableAssignmentExpressionNode</div>
+                                                    break;
+                                                case SyntaxKind.VariableExpressionNode:
+                                                    <div>VariableExpressionNode</div>
+                                                    break;
+                                                case SyntaxKind.PropertyDeclarationStatementNode:
+                                                    <div>PropertyDeclarationStatementNode</div>
+                                                    break;
+                                                case SyntaxKind.PropertyReferenceNode:
+                                                    <div>PropertyReferenceNode</div>
+                                                    break;
+                                                case SyntaxKind.PropertyAssignmentExpressionNode:
+                                                    <div>PropertyAssignmentExpressionNode</div>
+                                                    break;
+                                                case SyntaxKind.PropertyExpressionNode:
+                                                    <div>PropertyExpressionNode</div>
+                                                    break;
+                                                case SyntaxKind.ConstructorDefinitionNode:
+                                                    <div>ConstructorDefinitionNode</div>
+                                                    break;
+                                                case SyntaxKind.ConstructorInvocationExpressionNode:
+                                                    <div>ConstructorInvocationExpressionNode</div>
+                                                    break;
+                                                case SyntaxKind.ObjectInitializationParametersListingNode:
+                                                    <div>ObjectInitializationParametersListingNode</div>
+                                                    break;
+                                                case SyntaxKind.ObjectInitializationParameterEntryNode:
+                                                    <div>ObjectInitializationParameterEntryNode</div>
+                                                    break;
+                                                case SyntaxKind.FunctionDefinitionNode:
+                                                    <div>FunctionDefinitionNode</div>
+                                                    break;
+                                                case SyntaxKind.FunctionArgumentsListingNode:
+                                                    <div>FunctionArgumentsListingNode</div>
+                                                    break;
+                                                case SyntaxKind.FunctionArgumentEntryNode:
+                                                    <div>FunctionArgumentEntryNode</div>
+                                                    break;
+                                                case SyntaxKind.FunctionParametersListingNode:
+                                                    <div>FunctionParametersListingNode</div>
+                                                    break;
+                                                case SyntaxKind.FunctionParameterEntryNode:
+                                                    <div>FunctionParameterEntryNode</div>
+                                                    break;
+                                                case SyntaxKind.FunctionInvocationNode:
+                                                    <div>FunctionInvocationNode</div>
+                                                    break;
+                                                case SyntaxKind.GenericArgumentsListingNode:
+                                                    <div>GenericArgumentsListingNode</div>
+                                                    break;
+                                                case SyntaxKind.GenericArgumentEntryNode:
+                                                    <div>GenericArgumentEntryNode</div>
+                                                    break;
+                                                case SyntaxKind.GenericParametersListingNode:
+                                                    <div>GenericParametersListingNode</div>
+                                                    break;
+                                                case SyntaxKind.GenericParameterEntryNode:
+                                                    <div>GenericParameterEntryNode</div>
+                                                    break;
+                                                case SyntaxKind.InheritanceStatementNode:
+                                                    <div>InheritanceStatementNode</div>
+                                                    break;
+                                                case SyntaxKind.AmbiguousIdentifierNode:
+                                                    <div>AmbiguousIdentifierNode</div>
+                                                    break;
+                                                case SyntaxKind.EmptyNode:
+                                                    <div>EmptyNode</div>
+                                                    break;
+                                                case SyntaxKind.IfStatementNode:
+                                                    <div>IfStatementNode</div>
+                                                    break;
+                                                case SyntaxKind.ReturnStatementNode:
+                                                    <div>ReturnStatementNode</div>
+                                                    break;
+                                                case SyntaxKind.NamespaceStatementNode:
+                                                    <div>NamespaceStatementNode</div>
+                                                    break;
+                                                case SyntaxKind.NamespaceGroupNode:
+                                                    <div>NamespaceGroupNode</div>
+                                                    break;
+                                                case SyntaxKind.ObjectInitializationNode:
+                                                    <div>ObjectInitializationNode</div>
+                                                    break;
+                                                case SyntaxKind.UsingStatementNode:
+                                                    <div>UsingStatementNode</div>
+                                                    break;
+                                                case SyntaxKind.UnaryOperatorNode:
+                                                    <div>UnaryOperatorNode</div>
+                                                    break;
+                                                case SyntaxKind.UnaryExpressionNode:
+                                                    <div>UnaryExpressionNode</div>
+                                                    break;
+                                                case SyntaxKind.BinaryOperatorNode:
+                                                    <div>BinaryOperatorNode</div>
+                                                    break;
+                                                case SyntaxKind.BinaryExpressionNode:
+                                                    <div>BinaryExpressionNode</div>
+                                                    break;
+                                                case SyntaxKind.AttributeNode:
+                                                    <div>AttributeNode</div>
+                                                    break;
+                                                case SyntaxKind.NamespaceEntryNode:
+                                                    <div>NamespaceEntryNode</div>
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        }
+    </div>
+</ContextBoundary>
