@@ -1,3 +1,27 @@
-﻿<div class="luth_ide_type">
-    TypeDisplay
+﻿@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+<div class="luth_ide_type">
+
+    @if (SyntaxNode.SyntaxKind.ToString().Contains("Type"))
+    {
+        <div>@SyntaxNode.SyntaxKind</div>
+
+        if (SyntaxNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+        {
+            <div>
+                Cba
+            </div>
+        }
+    }
+    else if (SyntaxNode.SyntaxKind == SyntaxKind.InheritanceStatementNode)
+    {
+        <div>@SyntaxNode.SyntaxKind</div>
+    }
+    else if (SyntaxNode.SyntaxKind == SyntaxKind.ConstraintNode)
+    {
+        <div>@SyntaxNode.SyntaxKind</div>
+    }
+    else if (SyntaxNode.SyntaxKind == SyntaxKind.AttributeNode)
+    {
+        <div>@SyntaxNode.SyntaxKind</div>
+    }
 </div>
