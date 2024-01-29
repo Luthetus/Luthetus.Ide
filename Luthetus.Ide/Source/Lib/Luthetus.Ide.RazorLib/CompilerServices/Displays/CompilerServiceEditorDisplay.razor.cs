@@ -14,7 +14,6 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Microsoft.AspNetCore.Components;
 
-
 namespace Luthetus.Ide.RazorLib.CompilerServices.Displays;
 
 public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable

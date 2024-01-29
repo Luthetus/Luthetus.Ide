@@ -1,0 +1,44 @@
+﻿@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+<div class="luth_ide_type">
+
+    <div>@Syntax.SyntaxKind</div>
+
+    @{
+        var typeFullName = Type.FullName;
+
+        if (typeFullName is not null)
+        {
+            if (!_propertyInfoMap.ContainsKey(typeFullName))
+                _propertyInfoMap.Add(typeFullName, Type.GetProperties());
+
+            var propertyInfoList = _propertyInfoMap[typeFullName];
+
+            foreach (var propertyInfo in propertyInfoList)
+            {
+                if (propertyInfo.PropertyType.IsPrimitive || (propertyInfo.PropertyType == typeof(string)))
+                {
+                    <div>Primitive or string</div>
+                }
+                else if (propertyInfo.PropertyType is ISyntax)
+                {
+                    var untypedChildSyntax = propertyInfo.GetValue(Syntax);
+
+                    if (untypedChildSyntax is null)
+                    {
+                        <div>untypedChildSyntax is null</div>
+                    }
+                    else
+                    {
+                        var childSyntax = (ISyntax)untypedChildSyntax;
+                        <SyntaxDisplay Syntax="childSyntax" Type="propertyInfo.PropertyType" />
+                    }
+                }
+                else
+                {
+                    <div>@propertyInfo.PropertyType.Name</div>
+                }
+            }
+        }
+    }
+</div>
+
