@@ -55,7 +55,7 @@
                         if (untypedPropertyValue is null)
                         {
                             <div>
-                                <em class="luth_te_property">@propertyInfo.Name</em>
+                                <span class="luth_te_property">@propertyInfo.Name</span>
                                 <span class="luth_te_keyword">is null</span>
                             </div>
                         }
@@ -75,7 +75,7 @@
                                 }
                                 else
                                 {
-                                    <div>defaultcase: @propertyInfo.PropertyType.Name</div>
+                                    <div>@propertyInfo.PropertyType.Name : @propertyInfo.GetValue(Syntax)</div>
                                 }
                             }
                         }
