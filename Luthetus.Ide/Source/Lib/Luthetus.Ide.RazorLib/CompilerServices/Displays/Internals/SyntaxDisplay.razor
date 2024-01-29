@@ -1,44 +1,88 @@
-﻿@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-<div class="luth_ide_type">
+﻿@using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+@using Luthetus.TextEditor.RazorLib.Lexes.Models;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-    <div>@Syntax.SyntaxKind</div>
+<div class="luth_ide_syntax">
 
     @{
-        var typeFullName = Type.FullName;
+        var cssClassForColor = string.Empty;
+        var decorationMapper = DecorationMapperRegistry.GetDecorationMapper(ExtensionNoPeriodFacts.C_SHARP_CLASS);
+    }
 
-        if (typeFullName is not null)
+    @if (Syntax is ISyntaxToken syntaxToken)
+    {
+        cssClassForColor = decorationMapper.Map(syntaxToken.TextSpan.DecorationByte);
+    }
+    else if (Syntax is ISyntaxNode syntaxNode)
+    {
+        switch (Syntax.SyntaxKind)
         {
-            if (!_propertyInfoMap.ContainsKey(typeFullName))
-                _propertyInfoMap.Add(typeFullName, Type.GetProperties());
+            case SyntaxKind.TypeClauseNode:
+            case SyntaxKind.TypeDefinitionNode:
+            case SyntaxKind.TypeSymbol:
+                cssClassForColor = decorationMapper.Map((byte)GenericDecorationKind.Type);
+                break;
+        }
+    }
 
-            var propertyInfoList = _propertyInfoMap[typeFullName];
+    <div class="luth_ide_syntax-title @cssClassForColor">
+        @Syntax.SyntaxKind
+    </div>
 
-            foreach (var propertyInfo in propertyInfoList)
+    <div class="luth_ide_syntax-body">
+        @{
+            var type = Syntax.GetType();
+            var typeFullName = type.FullName;
+
+            if (typeFullName is not null)
             {
-                if (propertyInfo.PropertyType.IsPrimitive || (propertyInfo.PropertyType == typeof(string)))
-                {
-                    <div>Primitive or string</div>
-                }
-                else if (propertyInfo.PropertyType is ISyntax)
-                {
-                    var untypedChildSyntax = propertyInfo.GetValue(Syntax);
+                if (!_propertyInfoMap.ContainsKey(typeFullName))
+                    _propertyInfoMap.Add(typeFullName, type.GetProperties());
 
-                    if (untypedChildSyntax is null)
+                var propertyInfoList = _propertyInfoMap[typeFullName];
+
+                foreach (var propertyInfo in propertyInfoList)
+                {
+                    if (propertyInfo.PropertyType.IsPrimitive || propertyInfo.PropertyType == typeof(string))
                     {
-                        <div>untypedChildSyntax is null</div>
+                        <SyntaxValueEditorDisplay Syntax="Syntax" PropertyInfo="propertyInfo" />
                     }
                     else
                     {
-                        var childSyntax = (ISyntax)untypedChildSyntax;
-                        <SyntaxDisplay Syntax="childSyntax" Type="propertyInfo.PropertyType" />
+                        var untypedPropertyValue = propertyInfo.GetValue(Syntax);
+
+                        if (untypedPropertyValue is null)
+                        {
+                            <div>
+                                <em class="luth_te_property">@propertyInfo.Name</em>
+                                <span class="luth_te_keyword">is null</span>
+                            </div>
+                        }
+                        else
+                        {
+                            var childPropertyType = untypedPropertyValue.GetType();
+
+                            if (typeof(ISyntax).IsAssignableFrom(childPropertyType))
+                            {
+                                <SyntaxDisplay Syntax="(ISyntax)untypedPropertyValue" />
+                            }
+                            else
+                            {
+                                if (childPropertyType == typeof(TextEditorTextSpan))
+                                {
+                                    <SyntaxTextSpanDisplay TextSpan="(TextEditorTextSpan)untypedPropertyValue" />
+                                }
+                                else
+                                {
+                                    <div>defaultcase: @propertyInfo.PropertyType.Name</div>
+                                }
+                            }
+                        }
                     }
-                }
-                else
-                {
-                    <div>@propertyInfo.PropertyType.Name</div>
                 }
             }
         }
-    }
+    </div>
 </div>
 
