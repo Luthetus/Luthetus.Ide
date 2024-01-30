@@ -1,16 +1,17 @@
 ﻿using Fluxor;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Luthetus.Ide.RazorLib.FindAlls.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.FindAlls.States;
 
 [FeatureState]
-public partial record FindAllState(string Query)
+public partial record FindAllState(
+    string Query,
+    FindAllFilterKind FindAllFilterKind,
+    ImmutableList<string> ResultList)
 {
-    public FindAllState() : this(string.Empty)
+    public FindAllState()
+        : this(string.Empty, FindAllFilterKind.None, ImmutableList<string>.Empty)
     {
     }
 }

@@ -1,5 +1,6 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
+using Luthetus.Ide.RazorLib.FindAlls.Models;
 using Luthetus.Ide.RazorLib.FindAlls.States;
 using Microsoft.AspNetCore.Components;
 
@@ -24,6 +25,15 @@ public partial class FindAllDisplay : FluxorComponent
             {
                 Query = value
             }));
+
+            Dispatcher.Dispatch(new FindAllState.SearchEffect());
         }
+    }
+
+    private string GetIsActiveCssClass(FindAllFilterKind findAllFilterKind)
+    {
+        return FindAllStateWrap.Value.FindAllFilterKind == findAllFilterKind
+            ? "luth_active"
+            : string.Empty;
     }
 }

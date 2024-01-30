@@ -1,9 +1,30 @@
 ﻿@using Fluxor.Blazor.Web.Components;
+@using Luthetus.Ide.RazorLib.FindAlls.Models;
 @inherits FluxorComponent
 
+@{ var findAllState = FindAllStateWrap.Value; }
+
 <div class="luth_ide_find-all">
-    luth_ide_find-all
+    <div class="luth_ide_find-all-filter-list">
+        <div class="luth_ide_find-all-filter @GetIsActiveCssClass(FindAllFilterKind.Files)">
+            <IconFile/> files (f:)
+        </div>
+        <div class="luth_ide_find-all-filter @GetIsActiveCssClass(FindAllFilterKind.Types)">
+            <IconSymbolClass/> types (t:)
+        </div>
+        <div class="luth_ide_find-all-filter @GetIsActiveCssClass(FindAllFilterKind.Members)">
+            <IconSymbolMethod/> members (m:)
+        </div>
+    </div>
+    
     <input @bind="InputValue" />
 
     <div>@InputValue</div>
+
+    <hr/>
+
+    @foreach (var result in findAllState.ResultList)
+    {
+        <div>@result</div>
+    }
 </div>

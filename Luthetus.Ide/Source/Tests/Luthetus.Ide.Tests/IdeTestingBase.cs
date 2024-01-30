@@ -34,7 +34,7 @@ public class IdeTestingBase
         });
 
         services.AddScoped<IEnvironmentProvider>(_ => new LocalEnvironmentProvider());
-        services.AddScoped<IFileSystemProvider>(_ => new LocalFileSystemProvider());
+        services.AddScoped<IFileSystemProvider>(serviceProvider => new LocalFileSystemProvider(serviceProvider.GetRequiredService<IEnvironmentProvider>()));
 
         services.AddFluxor(options => options.ScanAssemblies(
             typeof(LuthetusCommonOptions).Assembly,

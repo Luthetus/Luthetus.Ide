@@ -1,14 +1,47 @@
+using Fluxor;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
+
 namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
 public class LocalDirectoryHandler : IDirectoryHandler
 {
-    public Task CreateDirectoryAsync(
+    private const bool IS_DIRECTORY_RESPONSE = true;
+
+    private readonly IEnvironmentProvider _environmentProvider;
+    private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
+    private readonly IDispatcher _dispatcher;
+
+    public LocalDirectoryHandler(
+        IEnvironmentProvider environmentProvider,
+        ILuthetusCommonComponentRenderers commonComponentRenderers,
+        IDispatcher dispatcher)
+    {
+        _environmentProvider = environmentProvider;
+        _commonComponentRenderers = commonComponentRenderers;
+        _dispatcher = dispatcher;
+    }
+
+    public async Task CreateDirectoryAsync(
         string absolutePathString,
         CancellationToken cancellationToken = default)
     {
+        // This method will add the path to IEnvironmentProvider.DeletionPermittedPaths
+        // and therefore, if the directory already exists, then
+        // return early.
+        //
+        // An example of the concern is that someone tries to create the
+        // root directory. It already existed, so the 'create' part did nothing.
+        // But now they're allowed to delete the root directory.
+        // (note: there are double checks in place such that this described
+        //        situation couldn't happen regardless)
+        if (await ExistsAsync(absolutePathString, cancellationToken))
+            return;
+
         Directory.CreateDirectory(absolutePathString);
 
-        return Task.CompletedTask;
+        _environmentProvider.DeletionPermittedRegister(
+            new SimplePath(absolutePathString, IS_DIRECTORY_RESPONSE));
     }
 
     public Task DeleteAsync(
@@ -16,7 +49,16 @@ public class LocalDirectoryHandler : IDirectoryHandler
         bool recursive,
         CancellationToken cancellationToken = default)
     {
-        Directory.Delete(absolutePathString, recursive);
+        try
+        {
+            _environmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
+            Directory.Delete(absolutePathString, recursive);
+        }
+        catch (Exception exception)
+        {
+            NotifyUserOfException(exception);
+            throw;
+        }
 
         return Task.CompletedTask;
     }
@@ -38,16 +80,30 @@ public class LocalDirectoryHandler : IDirectoryHandler
         throw new NotImplementedException();
     }
 
-    public Task MoveAsync(
+    public async Task MoveAsync(
         string sourceAbsolutePathString,
         string destinationAbsolutePathString,
         CancellationToken cancellationToken = default)
     {
-        Directory.Move(
-            sourceAbsolutePathString,
-            destinationAbsolutePathString);
+        try
+        {
+            _environmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
-        return Task.CompletedTask;
+            if (await ExistsAsync(destinationAbsolutePathString))
+                _environmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
+
+            Directory.Move(
+                sourceAbsolutePathString,
+                destinationAbsolutePathString);
+
+            _environmentProvider.DeletionPermittedRegister(
+                new SimplePath(destinationAbsolutePathString, true));
+        }
+        catch (Exception exception)
+        {
+            NotifyUserOfException(exception);
+            throw;
+        }
     }
 
     public Task<string[]> GetDirectoriesAsync(
@@ -75,5 +131,20 @@ public class LocalDirectoryHandler : IDirectoryHandler
         return Task.FromResult(
             Directory.EnumerateFileSystemEntries(
                 absolutePathString));
+    }
+
+    private void NotifyUserOfException(Exception exception)
+    {
+        var title = "FILESYSTEM ERROR";
+
+        if (exception.Message.StartsWith(PermittanceChecker.ERROR_PREFIX))
+            title = PermittanceChecker.ERROR_PREFIX;
+
+        NotificationHelper.DispatchError(
+            title,
+            exception.ToString(),
+            _commonComponentRenderers,
+            _dispatcher,
+            TimeSpan.FromSeconds(10));
     }
 }

@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
+using System.Text;
 
 namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
@@ -6,15 +9,23 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
 {
     public class InMemoryFileHandler : IFileHandler
     {
+        private const bool IS_DIRECTORY_RESPONSE = false;
+
         private readonly InMemoryFileSystemProvider _inMemoryFileSystemProvider;
         private readonly IEnvironmentProvider _environmentProvider;
+        private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
+        private readonly IDispatcher _dispatcher;
 
         public InMemoryFileHandler(
             InMemoryFileSystemProvider inMemoryFileSystemProvider,
-            IEnvironmentProvider environmentProvider)
+            IEnvironmentProvider environmentProvider,
+            ILuthetusCommonComponentRenderers commonComponentRenderers,
+            IDispatcher dispatcher)
         {
             _inMemoryFileSystemProvider = inMemoryFileSystemProvider;
             _environmentProvider = environmentProvider;
+            _commonComponentRenderers = commonComponentRenderers;
+            _dispatcher = dispatcher;
         }
 
         public Task<bool> ExistsAsync(
@@ -32,6 +43,11 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             {
                 await _inMemoryFileSystemProvider._modificationSemaphore.WaitAsync();
                 await UnsafeDeleteAsync(absolutePathString, cancellationToken);
+            }
+            catch (Exception exception)
+            {
+                NotifyUserOfException(exception);
+                throw;
             }
             finally
             {
@@ -53,6 +69,11 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                     destinationAbsolutePathString,
                     cancellationToken);
             }
+            catch (Exception exception)
+            {
+                NotifyUserOfException(exception);
+                throw;
+            }
             finally
             {
                 _inMemoryFileSystemProvider._modificationSemaphore.Release();
@@ -72,6 +93,11 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                     sourceAbsolutePathString,
                     destinationAbsolutePathString,
                     cancellationToken);
+            }
+            catch (Exception exception)
+            {
+                NotifyUserOfException(exception);
+                throw;
             }
             finally
             {
@@ -107,6 +133,11 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                     contents,
                     cancellationToken);
             }
+            catch (Exception exception)
+            {
+                NotifyUserOfException(exception);
+                throw;
+            }
             finally
             {
                 _inMemoryFileSystemProvider._modificationSemaphore.Release();
@@ -126,6 +157,8 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             string absolutePathString,
             CancellationToken cancellationToken = default)
         {
+            _environmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
+
             var indexOfExistingFile = _inMemoryFileSystemProvider._files.FindIndex(f =>
                 f.AbsolutePath.Value == absolutePathString &&
                 !f.IsDirectory);
@@ -160,7 +193,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                     !f.IsDirectory);
 
                 if (indexOfDestination != -1)
-                    throw new ApplicationException($"A file already exists with the path: {sourceAbsolutePathString}.");
+                    _environmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
             }
 
             var contents = await UnsafeReadAllTextAsync(
@@ -178,6 +211,11 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             string destinationAbsolutePathString,
             CancellationToken cancellationToken = default)
         {
+            _environmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
+
+            if (await ExistsAsync(destinationAbsolutePathString))
+                _environmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
+
             await UnsafeCopyAsync(
                 sourceAbsolutePathString,
                 destinationAbsolutePathString,
@@ -225,6 +263,8 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
 
             if (indexOfExistingFile != -1)
             {
+                _environmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
+
                 var existingFile = _inMemoryFileSystemProvider._files[indexOfExistingFile];
 
                 _inMemoryFileSystemProvider._files[indexOfExistingFile] = existingFile with
@@ -271,6 +311,21 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             _inMemoryFileSystemProvider._files.Add(outFile);
 
             return Task.CompletedTask;
+        }
+
+        private void NotifyUserOfException(Exception exception)
+        {
+            var title = "FILESYSTEM ERROR";
+
+            if (exception.Message.StartsWith(PermittanceChecker.ERROR_PREFIX))
+                title = PermittanceChecker.ERROR_PREFIX;
+
+            NotificationHelper.DispatchError(
+                title,
+                exception.ToString(),
+                _commonComponentRenderers,
+                _dispatcher,
+                TimeSpan.FromSeconds(10));
         }
     }
 }
