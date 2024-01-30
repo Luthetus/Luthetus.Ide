@@ -15,10 +15,10 @@ public partial class TreeViewHelper
             return new();
 
         var parentDirectoryOfRazorMarkup = razorMarkupTreeView.Item.AbsolutePath.AncestorDirectoryList.Last();
-        var parentAbsolutePathString = parentDirectoryOfRazorMarkup;
+        var ancestorDirectory = parentDirectoryOfRazorMarkup;
 
         var filePathStringsList = await razorMarkupTreeView.FileSystemProvider.Directory
-            .GetFilesAsync(parentAbsolutePathString.Path);
+            .GetFilesAsync(ancestorDirectory.Path);
 
         var childFileTreeViewModels = filePathStringsList
             .Select(x =>

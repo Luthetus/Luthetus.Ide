@@ -26,9 +26,9 @@ public partial class StartupControlsDisplay : FluxorComponent
         if (programExecutionState.StartupProjectAbsolutePath is null)
             return;
 
-        var parentDirectoryAbsolutePathString = programExecutionState.StartupProjectAbsolutePath.ParentDirectory;
+        var ancestorDirectory = programExecutionState.StartupProjectAbsolutePath.ParentDirectory;
 
-        if (parentDirectoryAbsolutePathString is null)
+        if (ancestorDirectory is null)
             return;
 
         var formattedCommand = DotNetCliCommandFormatter.FormatStartProjectWithoutDebugging(
@@ -37,7 +37,7 @@ public partial class StartupControlsDisplay : FluxorComponent
         var startProgramWithoutDebuggingCommand = new TerminalCommand(
             _newDotNetSolutionTerminalCommandKey,
             formattedCommand,
-            parentDirectoryAbsolutePathString.Path,
+            ancestorDirectory.Path,
             _newDotNetSolutionCancellationTokenSource.Token);
 
         var executionTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[

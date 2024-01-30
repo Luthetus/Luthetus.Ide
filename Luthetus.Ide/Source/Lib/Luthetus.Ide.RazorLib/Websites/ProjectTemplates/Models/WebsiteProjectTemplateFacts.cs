@@ -194,12 +194,12 @@ public static class WebsiteProjectTemplateFacts
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject;
+        var ancestorDirectory = parentDirectoryOfProject;
 
         // AppRazor
         {
             var absolutePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsolutePathString.Path,
+                ancestorDirectory.Path,
                 BlazorServerEmptyFacts.APP_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
@@ -210,7 +210,7 @@ public static class WebsiteProjectTemplateFacts
         // AppSettingsDevelopmentJson
         {
             var absolutePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsolutePathString.Path,
+                ancestorDirectory.Path,
                 BlazorServerEmptyFacts.APP_SETTINGS_DEVELOPMENT_JSON_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
@@ -221,7 +221,7 @@ public static class WebsiteProjectTemplateFacts
         // AppSettingsJson
         {
             var absolutePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsolutePathString.Path,
+                ancestorDirectory.Path,
                 BlazorServerEmptyFacts.APP_SETTINGS_JSON_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
@@ -239,7 +239,7 @@ public static class WebsiteProjectTemplateFacts
         // HostCshtml
         {
             var absolutePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsolutePathString.Path,
+                ancestorDirectory.Path,
                 BlazorServerEmptyFacts.HOST_CSHTML_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
@@ -250,7 +250,7 @@ public static class WebsiteProjectTemplateFacts
         // ImportsRazor
         {
             var absolutePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsolutePathString.Path,
+                ancestorDirectory.Path,
                 BlazorServerEmptyFacts.IMPORTS_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
@@ -261,7 +261,7 @@ public static class WebsiteProjectTemplateFacts
         // IndexRazor
         {
             var absolutePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsolutePathString.Path,
+                ancestorDirectory.Path,
                 BlazorServerEmptyFacts.INDEX_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
@@ -272,7 +272,7 @@ public static class WebsiteProjectTemplateFacts
         // LaunchSettingsJson
         {
             var absolutePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsolutePathString.Path,
+                ancestorDirectory.Path,
                 BlazorServerEmptyFacts.LAUNCH_SETTINGS_JSON_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
@@ -283,7 +283,7 @@ public static class WebsiteProjectTemplateFacts
         // MainLayoutRazor
         {
             var absolutePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsolutePathString.Path,
+                ancestorDirectory.Path,
                 BlazorServerEmptyFacts.MAIN_LAYOUT_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
@@ -294,7 +294,7 @@ public static class WebsiteProjectTemplateFacts
         // ProgramCs
         {
             var absolutePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsolutePathString.Path,
+                ancestorDirectory.Path,
                 BlazorServerEmptyFacts.PROGRAM_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
@@ -305,7 +305,7 @@ public static class WebsiteProjectTemplateFacts
         // SiteCss
         {
             var absolutePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsolutePathString.Path,
+                ancestorDirectory.Path,
                 BlazorServerEmptyFacts.SITE_CSS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
@@ -325,12 +325,12 @@ public static class WebsiteProjectTemplateFacts
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject;
+        var ancestorDirectory = parentDirectoryOfProject;
 
         // Class1Cs
         {
             var absolutePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsolutePathString.Path,
+                ancestorDirectory.Path,
                 ClassLibFacts.CLASS_1_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
@@ -357,12 +357,12 @@ public static class WebsiteProjectTemplateFacts
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject;
+        var ancestorDirectory = parentDirectoryOfProject;
 
         // Component1Razor
         {
             var absolutePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsolutePathString.Path,
+                ancestorDirectory.Path,
                 RazorClassLibFacts.COMPONENT_1_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
@@ -373,7 +373,7 @@ public static class WebsiteProjectTemplateFacts
         // Component1RazorCss
         {
             var absolutePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsolutePathString.Path,
+                ancestorDirectory.Path,
                 RazorClassLibFacts.COMPONENT_1_RAZOR_CSS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
@@ -391,7 +391,7 @@ public static class WebsiteProjectTemplateFacts
         // ExampleJsInteropCs
         {
             var absolutePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsolutePathString.Path,
+                ancestorDirectory.Path,
                 RazorClassLibFacts.EXAMPLE_JS_INTEROP_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
@@ -402,7 +402,7 @@ public static class WebsiteProjectTemplateFacts
         // ExampleJsInteropJs
         {
             var absolutePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsolutePathString.Path,
+                ancestorDirectory.Path,
                 RazorClassLibFacts.EXAMPLE_JS_INTEROP_JS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
@@ -413,7 +413,7 @@ public static class WebsiteProjectTemplateFacts
         // ImportsRazor
         {
             var absolutePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsolutePathString.Path,
+                ancestorDirectory.Path,
                 RazorClassLibFacts.IMPORTS_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
@@ -433,12 +433,12 @@ public static class WebsiteProjectTemplateFacts
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject;
+        var ancestorDirectory = parentDirectoryOfProject;
 
         // ProgramCs
         {
             var absolutePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsolutePathString.Path,
+                ancestorDirectory.Path,
                 ConsoleAppFacts.PROGRAM_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
@@ -465,7 +465,7 @@ public static class WebsiteProjectTemplateFacts
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject;
+        var ancestorDirectory = parentDirectoryOfProject;
 
         // Csproj
         {
@@ -477,7 +477,7 @@ public static class WebsiteProjectTemplateFacts
         // UnitTest1Cs
         {
             var absolutePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsolutePathString.Path,
+                ancestorDirectory.Path,
                 XUnitFacts.UNIT_TEST_1_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
@@ -488,7 +488,7 @@ public static class WebsiteProjectTemplateFacts
         // UsingsCs
         {
             var absolutePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsolutePathString.Path,
+                ancestorDirectory.Path,
                 XUnitFacts.USINGS_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
