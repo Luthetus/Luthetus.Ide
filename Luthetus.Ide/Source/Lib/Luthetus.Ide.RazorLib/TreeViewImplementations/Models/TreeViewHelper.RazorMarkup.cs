@@ -18,7 +18,7 @@ public partial class TreeViewHelper
         var parentAbsolutePathString = parentDirectoryOfRazorMarkup;
 
         var filePathStringsList = await razorMarkupTreeView.FileSystemProvider.Directory
-            .GetFilesAsync(parentAbsolutePathString);
+            .GetFilesAsync(parentAbsolutePathString.Path);
 
         var childFileTreeViewModels = filePathStringsList
             .Select(x =>

@@ -44,7 +44,7 @@ public class AbsolutePathTests
                 if (dirAbsolutePath.ParentDirectory is null)
                     throw new Exception();
 
-                Assert.Equal("/", dirAbsolutePath.ParentDirectory);
+                Assert.Equal("/", dirAbsolutePath.ParentDirectory.Path);
                 Assert.Equal(dirPath, dirAbsolutePath.ExactInput);
                 Assert.Equal(PathType.AbsolutePath, dirAbsolutePath.PathType);
                 Assert.Equal(isDirectory, dirAbsolutePath.IsDirectory);
@@ -81,7 +81,7 @@ public class AbsolutePathTests
                 if (fileAbsolutePath.ParentDirectory is null)
                     throw new Exception();
 
-                Assert.Equal($@"/{parentDirectoryName}/", fileAbsolutePath.ParentDirectory);
+                Assert.Equal($@"/{parentDirectoryName}/", fileAbsolutePath.ParentDirectory.Path);
                 Assert.Equal(filePath, fileAbsolutePath.ExactInput);
                 Assert.Equal(PathType.AbsolutePath, fileAbsolutePath.PathType);
                 Assert.Equal(isDirectory, fileAbsolutePath.IsDirectory);
@@ -99,5 +99,18 @@ public class AbsolutePathTests
                 Assert.False(fileAbsolutePath.IsRootDirectory);
             }
         }
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        FileSystemsTestsHelper.InitializeFileSystemsTests(
+            out InMemoryEnvironmentProvider environmentProvider,
+            out InMemoryFileSystemProvider fileSystemProvider,
+            out ServiceProvider serviceProvider);
+
+        var path = "C:\\Users\\hunte\\Repos";
+        var isDirectory = true;
+        var dirAbsolutePath = environmentProvider.AbsolutePathFactory(path, isDirectory);
     }
 }

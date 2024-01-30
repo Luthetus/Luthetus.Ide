@@ -37,7 +37,7 @@ public partial class StartupControlsDisplay : FluxorComponent
         var startProgramWithoutDebuggingCommand = new TerminalCommand(
             _newDotNetSolutionTerminalCommandKey,
             formattedCommand,
-            parentDirectoryAbsolutePathString,
+            parentDirectoryAbsolutePathString.Path,
             _newDotNetSolutionCancellationTokenSource.Token);
 
         var executionTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
