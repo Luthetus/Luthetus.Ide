@@ -58,7 +58,7 @@ public class FileSystemsTestsHelper
         var services = new ServiceCollection()
             .AddFluxor(options => options.ScanAssemblies(typeof(IEnvironmentProvider).Assembly))
             .AddScoped<ILuthetusCommonComponentRenderers>(_ => luthetusCommonComponentRenderers)
-            .AddScoped<IEnvironmentProvider>()
+            .AddScoped<IEnvironmentProvider, InMemoryEnvironmentProvider>()
             .AddScoped<IFileSystemProvider>(serviceProvider => new InMemoryFileSystemProvider(
                 serviceProvider.GetRequiredService<IEnvironmentProvider>(),
                 serviceProvider.GetRequiredService<ILuthetusCommonComponentRenderers>(),
