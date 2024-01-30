@@ -1,4 +1,8 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Notifications.Displays;
+using Luthetus.Common.RazorLib.WatchWindows.Displays;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.Tests.Basis.FileSystems;
@@ -35,25 +39,42 @@ public class FileSystemsTestsHelper
         out InMemoryFileSystemProvider inMemoryFileSystemProvider,
         out ServiceProvider serviceProvider)
     {
-        // Cannot provide out variable to a lambda, so make local 'temporary' variables.
-        //
-        // There are other ways to achieve the result, but I want to
-        // write out explicitly both 'new' expressions for anxiety's sake.
-        //
-        // I don't ever want a test somehow running on someone's true filesystem
-        // and this explit 'new' helps me sleep at night.
-        var tempInMemoryEnvironmentProvider = inMemoryEnvironmentProvider = new InMemoryEnvironmentProvider();
-        var tempInMemoryFileSystemProvider = inMemoryFileSystemProvider = new InMemoryFileSystemProvider(tempInMemoryEnvironmentProvider);
+        var luthetusCommonTreeViews = new LuthetusCommonTreeViews(
+            typeof(TreeViewExceptionDisplay),
+            typeof(TreeViewMissingRendererFallbackDisplay),
+            typeof(TreeViewTextDisplay),
+            typeof(TreeViewReflectionDisplay),
+            typeof(TreeViewPropertiesDisplay),
+            typeof(TreeViewInterfaceImplementationDisplay),
+            typeof(TreeViewFieldsDisplay),
+            typeof(TreeViewExceptionDisplay),
+            typeof(TreeViewEnumerableDisplay));
+
+        var luthetusCommonComponentRenderers = new LuthetusCommonComponentRenderers(
+            typeof(CommonErrorNotificationDisplay),
+            typeof(CommonInformativeNotificationDisplay),
+            luthetusCommonTreeViews);
 
         var services = new ServiceCollection()
-            .AddScoped<IEnvironmentProvider>(sp => tempInMemoryEnvironmentProvider)
-            .AddScoped<IFileSystemProvider>(sp => tempInMemoryFileSystemProvider);
+            .AddFluxor(options => options.ScanAssemblies(typeof(IEnvironmentProvider).Assembly))
+            .AddScoped<ILuthetusCommonComponentRenderers>(_ => luthetusCommonComponentRenderers)
+            .AddScoped<IEnvironmentProvider>()
+            .AddScoped<IFileSystemProvider>(serviceProvider => new InMemoryFileSystemProvider(
+                serviceProvider.GetRequiredService<IEnvironmentProvider>(),
+                serviceProvider.GetRequiredService<ILuthetusCommonComponentRenderers>(),
+                serviceProvider.GetRequiredService<IDispatcher>()));
 
         serviceProvider = services.BuildServiceProvider();
 
+        inMemoryEnvironmentProvider = (InMemoryEnvironmentProvider)serviceProvider
+            .GetRequiredService<IEnvironmentProvider>();
+
+        inMemoryFileSystemProvider = (InMemoryFileSystemProvider)serviceProvider
+            .GetRequiredService<IFileSystemProvider>();
+
         WriteToInMemoryFileSystem(
-            tempInMemoryEnvironmentProvider,
-            tempInMemoryFileSystemProvider);
+            inMemoryEnvironmentProvider,
+            inMemoryFileSystemProvider);
     }
 
     private static void WriteToInMemoryFileSystem(

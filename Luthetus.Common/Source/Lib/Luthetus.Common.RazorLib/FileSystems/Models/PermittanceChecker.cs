@@ -28,7 +28,22 @@ public static class PermittanceChecker
         }
 
         if (!environmentProvider.DeletionPermittedPathList.Contains(simplePath))
+        {
+            foreach (var deletionPermittedPath in environmentProvider.DeletionPermittedPathList)
+            {
+                if (deletionPermittedPath.IsDirectory)
+                {
+                    // Check if the path is encompassed by a directory with delete permission.
+                    //
+                    // The idea here being: if a directory is allowed to be deleted,
+                    // then all files which are not protected are able to be deleted too.
+                    if (path.StartsWith(deletionPermittedPath.AbsolutePath))
+                        return;
+                }
+            }
+
             throw NotDeletionPermittedExceptionFactory(path, isDirectory);
+        }
     }
 
     /// <summary>

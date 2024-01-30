@@ -310,6 +310,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
 
             _inMemoryFileSystemProvider._files.Add(outFile);
 
+            _environmentProvider.DeletionPermittedRegister(
+                new SimplePath(absolutePathString, IS_DIRECTORY_RESPONSE));
+
             return Task.CompletedTask;
         }
 
