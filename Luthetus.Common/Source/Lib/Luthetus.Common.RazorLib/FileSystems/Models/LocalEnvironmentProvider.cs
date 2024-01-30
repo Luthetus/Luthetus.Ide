@@ -15,9 +15,9 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
             true,
             this);
 
-        ProtectedPaths = ProtectedPaths.Add(new SimplePath("/", true));
-        ProtectedPaths = ProtectedPaths.Add(new SimplePath("\\", true));
-        ProtectedPaths = ProtectedPaths.Add(new SimplePath("", true));
+        ProtectedPathList = ProtectedPathList.Add(new SimplePath("/", true));
+        ProtectedPathList = ProtectedPathList.Add(new SimplePath("\\", true));
+        ProtectedPathList = ProtectedPathList.Add(new SimplePath("", true));
     }
 
     public IAbsolutePath RootDirectoryAbsolutePath { get; }
@@ -25,8 +25,8 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
 
     public char DirectorySeparatorChar => Path.DirectorySeparatorChar;
     public char AltDirectorySeparatorChar => Path.AltDirectorySeparatorChar;
-    public ImmutableHashSet<SimplePath> DeletionPermittedPaths { get; private set; } = ImmutableHashSet<SimplePath>.Empty;
-    public ImmutableHashSet<SimplePath> ProtectedPaths { get; private set; } = ImmutableHashSet<SimplePath>.Empty;
+    public ImmutableHashSet<SimplePath> DeletionPermittedPathList { get; private set; } = ImmutableHashSet<SimplePath>.Empty;
+    public ImmutableHashSet<SimplePath> ProtectedPathList { get; private set; } = ImmutableHashSet<SimplePath>.Empty;
 
     public bool IsDirectorySeparator(char character) =>
         character == DirectorySeparatorChar || character == AltDirectorySeparatorChar;
@@ -50,7 +50,15 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
     {
         lock (_specialPathLock)
         {
-            DeletionPermittedPaths = DeletionPermittedPaths.Add(simplePath);
+            var absolutePath = simplePath.AbsolutePath;
+
+            if (absolutePath == "/" || absolutePath == "\\" || string.IsNullOrWhiteSpace(absolutePath))
+                return;
+
+            if (PermittanceChecker.IsRootOrHomeDirectory(simplePath, this))
+                return;
+
+            DeletionPermittedPathList = DeletionPermittedPathList.Add(simplePath);
         }
     }
 
@@ -58,7 +66,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
     {
         lock (_specialPathLock)
         {
-            DeletionPermittedPaths = DeletionPermittedPaths.Remove(simplePath);
+            DeletionPermittedPathList = DeletionPermittedPathList.Remove(simplePath);
         }
     }
 
@@ -66,7 +74,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
     {
         lock (_specialPathLock)
         {
-            ProtectedPaths = ProtectedPaths.Add(simplePath);
+            ProtectedPathList = ProtectedPathList.Add(simplePath);
         }
     }
 
@@ -74,7 +82,15 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
     {
         lock (_specialPathLock)
         {
-            ProtectedPaths = ProtectedPaths.Remove(simplePath);
+            var absolutePath = simplePath.AbsolutePath;
+
+            if (absolutePath == "/" || absolutePath == "\\" || string.IsNullOrWhiteSpace(absolutePath))
+                return;
+
+            if (PermittanceChecker.IsRootOrHomeDirectory(simplePath, this))
+                return;
+
+            ProtectedPathList = ProtectedPathList.Remove(simplePath);
         }
     }
 }

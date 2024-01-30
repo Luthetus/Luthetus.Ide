@@ -45,8 +45,8 @@ public interface IEnvironmentProvider
     /// <br/><br/>
     /// Even this though I wonder, might one want to open a solution 'read-only'?
     /// </summary>
-    public ImmutableHashSet<SimplePath> DeletionPermittedPaths { get; }
-    public ImmutableHashSet<SimplePath> ProtectedPaths { get; }
+    public ImmutableHashSet<SimplePath> DeletionPermittedPathList { get; }
+    public ImmutableHashSet<SimplePath> ProtectedPathList { get; }
 
     public bool IsDirectorySeparator(char input);
     public string GetRandomFileName();

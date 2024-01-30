@@ -17,7 +17,7 @@ public static class PermittanceChecker
     {
         var simplePath = new SimplePath(path, isDirectory);
 
-        if (environmentProvider.ProtectedPaths.Contains(simplePath))
+        if (environmentProvider.ProtectedPathList.Contains(simplePath))
             throw NotDeletionPermittedExceptionFactory(path, isDirectory);
 
         // Double check obviously bad scenarios.
@@ -27,8 +27,32 @@ public static class PermittanceChecker
                 throw NotDeletionPermittedExceptionFactory(path, isDirectory);
         }
 
-        if (!environmentProvider.DeletionPermittedPaths.Contains(simplePath))
+        if (!environmentProvider.DeletionPermittedPathList.Contains(simplePath))
             throw NotDeletionPermittedExceptionFactory(path, isDirectory);
+    }
+
+    /// <summary>
+    /// Beyond <see cref="SimplePath"/>, the app also uses <see cref="IAbsolutePath"/>.
+    /// So, since there can be more than one directory separators for a filesystem,
+    /// then here run the constructor for <see cref="IAbsolutePath"/> as a check
+    /// that the two validated, and standardized strings do not match.
+    /// </summary>
+    public static bool IsRootOrHomeDirectory(
+        SimplePath simplePath,
+        IEnvironmentProvider environmentProvider)
+    {
+        var absolutePath = new AbsolutePath(
+            simplePath.AbsolutePath,
+            simplePath.IsDirectory,
+            environmentProvider);
+
+        if (absolutePath.Value == environmentProvider.RootDirectoryAbsolutePath.Value ||
+            absolutePath.Value == environmentProvider.HomeDirectoryAbsolutePath.Value)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private static ApplicationException NotDeletionPermittedExceptionFactory(

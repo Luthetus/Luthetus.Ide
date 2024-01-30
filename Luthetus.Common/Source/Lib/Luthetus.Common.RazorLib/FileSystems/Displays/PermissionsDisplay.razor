@@ -1,0 +1,28 @@
+﻿<div class="luth_permissions">
+    @{
+        var localDeletionPermittedPathList = EnvironmentProvider.DeletionPermittedPathList;
+        var localProtectedPathList = EnvironmentProvider.ProtectedPathList;
+    }
+
+    <div class="luth_permission-entry">
+        <div class="luth_permission-title">DeletionPermittedPathList</div>
+
+        <div class="luth_permissions-body">
+            @foreach (var deletionPermittedPath in localDeletionPermittedPathList)
+            {
+                <div>@deletionPermittedPath.AbsolutePath;is-directory:@deletionPermittedPath.IsDirectory</div>
+            }
+        </div>
+    </div>
+    
+    <div class="luth_permission-entry">
+        <div class="luth_permission-title">ProtectedPathList</div>
+
+        <div class="luth_permissions-body">
+            @foreach (var protectedPath in localProtectedPathList)
+            {
+                <div>@protectedPath.AbsolutePath;is-directory:@protectedPath.IsDirectory</div>
+            }
+        </div>
+    </div>
+</div>
