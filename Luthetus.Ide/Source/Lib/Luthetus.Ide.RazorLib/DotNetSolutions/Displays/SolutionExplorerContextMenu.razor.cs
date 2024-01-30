@@ -25,6 +25,7 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 
@@ -44,6 +45,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
     [Inject]
     private InputFileSync InputFileSync { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
@@ -171,12 +174,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 return Array.Empty<MenuOptionRecord>();
         }
 
+        var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(parentDirectory, true);
+
         return new[]
         {
-            MenuOptionsFactory.NewEmptyFile(parentDirectory, async () => await ReloadTreeViewModel(treeViewModel)),
-            MenuOptionsFactory.NewTemplatedFile(new NamespacePath(treeViewModel.Item.Namespace, parentDirectory), async () => await ReloadTreeViewModel(treeViewModel)),
-            MenuOptionsFactory.NewDirectory(parentDirectory, async () => await ReloadTreeViewModel(treeViewModel)),
-            MenuOptionsFactory.PasteClipboard(parentDirectory, async () =>
+            MenuOptionsFactory.NewEmptyFile(parentDirectoryAbsolutePath, async () => await ReloadTreeViewModel(treeViewModel)),
+            MenuOptionsFactory.NewTemplatedFile(new NamespacePath(treeViewModel.Item.Namespace, parentDirectoryAbsolutePath), async () => await ReloadTreeViewModel(treeViewModel)),
+            MenuOptionsFactory.NewDirectory(parentDirectoryAbsolutePath, async () => await ReloadTreeViewModel(treeViewModel)),
+            MenuOptionsFactory.PasteClipboard(parentDirectoryAbsolutePath, async () =>
             {
                 var localParentOfCutFile = ParentOfCutFile;
                 ParentOfCutFile = null;

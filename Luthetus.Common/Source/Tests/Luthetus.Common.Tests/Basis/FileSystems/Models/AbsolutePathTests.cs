@@ -39,12 +39,12 @@ public class AbsolutePathTests
                 var dirName = "homework";
                 var dirPath = $@"/{dirName}/";
                 var isDirectory = true;
-                var dirAbsolutePath = new AbsolutePath(dirPath, isDirectory, environmentProvider);
+                var dirAbsolutePath = environmentProvider.AbsolutePathFactory(dirPath, isDirectory);
 
                 if (dirAbsolutePath.ParentDirectory is null)
                     throw new Exception();
 
-                Assert.Equal("/", dirAbsolutePath.ParentDirectory.Value);
+                Assert.Equal("/", dirAbsolutePath.ParentDirectory);
                 Assert.Equal(dirPath, dirAbsolutePath.ExactInput);
                 Assert.Equal(PathType.AbsolutePath, dirAbsolutePath.PathType);
                 Assert.Equal(isDirectory, dirAbsolutePath.IsDirectory);
@@ -76,12 +76,12 @@ public class AbsolutePathTests
                 var parentDirectoryName = "homework";
                 var filePath = $@"/{parentDirectoryName}/{fileName}.{fileExtension}";
                 var isDirectory = false;
-                var fileAbsolutePath = new AbsolutePath(filePath, isDirectory, environmentProvider);
+                var fileAbsolutePath = environmentProvider.AbsolutePathFactory(filePath, isDirectory);
 
                 if (fileAbsolutePath.ParentDirectory is null)
                     throw new Exception();
 
-                Assert.Equal($@"/{parentDirectoryName}/", fileAbsolutePath.ParentDirectory.Value);
+                Assert.Equal($@"/{parentDirectoryName}/", fileAbsolutePath.ParentDirectory);
                 Assert.Equal(filePath, fileAbsolutePath.ExactInput);
                 Assert.Equal(PathType.AbsolutePath, fileAbsolutePath.PathType);
                 Assert.Equal(isDirectory, fileAbsolutePath.IsDirectory);

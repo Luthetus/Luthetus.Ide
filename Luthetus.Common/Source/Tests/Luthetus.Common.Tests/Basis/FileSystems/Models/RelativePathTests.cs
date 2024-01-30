@@ -37,7 +37,7 @@ public class RelativePathTests
             // That being said, I need to parse more than one UpDir directive, and
             // am using this for that purpose.
             var relativePathString = "../../Homework/Math/";
-            var relativePath = new RelativePath(relativePathString, true, environmentProvider);
+            var relativePath = environmentProvider.RelativePathFactory(relativePathString, true);
 
             Assert.Equal(PathType.RelativePath, relativePath.PathType);
             Assert.True(relativePath.IsDirectory);
@@ -50,12 +50,13 @@ public class RelativePathTests
             Assert.Equal("Math/", relativePath.NameWithExtension);
 
             var homeworkDirectory = relativePath.AncestorDirectoryList[0];
-            Assert.Equal("Homework", homeworkDirectory.NameNoExtension);
+            var homeworkDirectoryRelativePath = environmentProvider.RelativePathFactory(homeworkDirectory, true);
+            Assert.Equal("Homework", homeworkDirectoryRelativePath.NameNoExtension);
         }
 
         {
             var relativePathString = "../Math/addition.txt";
-            var relativePath = new RelativePath(relativePathString, false, environmentProvider);
+            var relativePath = environmentProvider.RelativePathFactory(relativePathString, false);
 
             Assert.Equal(PathType.RelativePath, relativePath.PathType);
             Assert.False(relativePath.IsDirectory);
@@ -68,12 +69,13 @@ public class RelativePathTests
             Assert.Equal("addition.txt", relativePath.NameWithExtension);
 
             var mathDirectory = relativePath.AncestorDirectoryList[0];
-            Assert.Equal("Math", mathDirectory.NameNoExtension);
+            var mathDirectoryRelativePath = environmentProvider.RelativePathFactory(mathDirectory, true);
+            Assert.Equal("Math", mathDirectoryRelativePath.NameNoExtension);
         }
 
         {
             var relativePathString = "./skeletalSystem.txt";
-            var relativePath = new RelativePath(relativePathString, false, environmentProvider);
+            var relativePath = environmentProvider.RelativePathFactory(relativePathString, false);
 
             Assert.Equal(PathType.RelativePath, relativePath.PathType);
             Assert.False(relativePath.IsDirectory);
@@ -90,7 +92,7 @@ public class RelativePathTests
 
         {
             var relativePathString = "../";
-            var relativePath = new RelativePath(relativePathString, true, environmentProvider);
+            var relativePath = environmentProvider.RelativePathFactory(relativePathString, true);
 
             Assert.Equal(PathType.RelativePath, relativePath.PathType);
             Assert.True(relativePath.IsDirectory);
@@ -107,7 +109,7 @@ public class RelativePathTests
 
         {
             var relativePathString = "../";
-            var relativePath = new RelativePath(relativePathString, true, environmentProvider);
+            var relativePath = environmentProvider.RelativePathFactory(relativePathString, true);
 
             Assert.Equal(PathType.RelativePath, relativePath.PathType);
             Assert.True(relativePath.IsDirectory);

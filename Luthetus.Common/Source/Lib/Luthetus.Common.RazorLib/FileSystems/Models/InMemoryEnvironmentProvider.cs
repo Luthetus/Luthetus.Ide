@@ -1,10 +1,11 @@
 ﻿using System.Collections.Immutable;
+using static Luthetus.Common.RazorLib.FileSystems.Models.IEnvironmentProvider;
 
 namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
 public class InMemoryEnvironmentProvider : IEnvironmentProvider
 {
-    private readonly object _specialPathLock = new();
+    private readonly object _pathLock = new();
 
     public InMemoryEnvironmentProvider()
     {
@@ -55,7 +56,7 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
 
     public void DeletionPermittedRegister(SimplePath simplePath)
     {
-        lock (_specialPathLock)
+        lock (_pathLock)
         {
             var absolutePath = simplePath.AbsolutePath;
 
@@ -71,7 +72,7 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
 
     public void DeletionPermittedDispose(SimplePath simplePath)
     {
-        lock (_specialPathLock)
+        lock (_pathLock)
         {
             DeletionPermittedPathList = DeletionPermittedPathList.Remove(simplePath);
         }
@@ -79,7 +80,7 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
 
     public void ProtectedPathsRegister(SimplePath simplePath)
     {
-        lock (_specialPathLock)
+        lock (_pathLock)
         {
             ProtectedPathList = ProtectedPathList.Add(simplePath);
         }
@@ -87,7 +88,7 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
     
     public void ProtectedPathsDispose(SimplePath simplePath)
     {
-        lock (_specialPathLock)
+        lock (_pathLock)
         {
             var absolutePath = simplePath.AbsolutePath;
 
@@ -99,5 +100,15 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
 
             ProtectedPathList = ProtectedPathList.Remove(simplePath);
         }
+    }
+
+    public IAbsolutePath AbsolutePathFactory(string path, bool isDirectory)
+    {
+        return new AbsolutePath(path, isDirectory, this);
+    }
+
+    public IRelativePath RelativePathFactory(string path, bool isDirectory)
+    {
+        return new RelativePath(path, isDirectory, this);
     }
 }

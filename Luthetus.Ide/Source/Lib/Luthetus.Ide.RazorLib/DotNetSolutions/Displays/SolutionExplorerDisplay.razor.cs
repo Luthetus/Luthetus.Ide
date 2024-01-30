@@ -14,6 +14,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 
@@ -37,6 +38,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private EditorSync EditorSync { get; set; } = null!;
 	[Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
     private SolutionExplorerTreeViewKeyboardEventHandler _solutionExplorerTreeViewKeymap = null!;
@@ -55,7 +58,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             MenuOptionsFactory,
             LuthetusCommonComponentRenderers,
             TreeViewService,
-			BackgroundTaskService);
+			BackgroundTaskService,
+            EnvironmentProvider);
 
         _solutionExplorerTreeViewMouseEventHandler = new SolutionExplorerTreeViewMouseEventHandler(
             EditorSync,

@@ -90,13 +90,13 @@ public static class WebsiteProjectTemplateFacts
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-        var cSharpProjectAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, environmentProvider);
+        var cSharpProjectAbsolutePath = environmentProvider.AbsolutePathFactory(cSharpProjectAbsolutePathString, false);
         var parentDirectoryOfProject = cSharpProjectAbsolutePath.ParentDirectory;
 
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.Value;
+        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject;
 
         // AppCss
         {
@@ -188,13 +188,13 @@ public static class WebsiteProjectTemplateFacts
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-        var cSharpProjectAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, environmentProvider);
+        var cSharpProjectAbsolutePath = environmentProvider.AbsolutePathFactory(cSharpProjectAbsolutePathString, false);
         var parentDirectoryOfProject = cSharpProjectAbsolutePath.ParentDirectory;
 
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.Value;
+        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject;
 
         // AppRazor
         {
@@ -319,13 +319,13 @@ public static class WebsiteProjectTemplateFacts
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-        var cSharpProjectAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, environmentProvider);
+        var cSharpProjectAbsolutePath = environmentProvider.AbsolutePathFactory(cSharpProjectAbsolutePathString, false);
         var parentDirectoryOfProject = cSharpProjectAbsolutePath.ParentDirectory;
 
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.Value;
+        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject;
 
         // Class1Cs
         {
@@ -351,13 +351,13 @@ public static class WebsiteProjectTemplateFacts
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-        var cSharpProjectAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, environmentProvider);
+        var cSharpProjectAbsolutePath = environmentProvider.AbsolutePathFactory(cSharpProjectAbsolutePathString, false);
         var parentDirectoryOfProject = cSharpProjectAbsolutePath.ParentDirectory;
 
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.Value;
+        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject;
 
         // Component1Razor
         {
@@ -427,13 +427,13 @@ public static class WebsiteProjectTemplateFacts
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-        var cSharpProjectAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, environmentProvider);
+        var cSharpProjectAbsolutePath = environmentProvider.AbsolutePathFactory(cSharpProjectAbsolutePathString, false);
         var parentDirectoryOfProject = cSharpProjectAbsolutePath.ParentDirectory;
 
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.Value;
+        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject;
 
         // ProgramCs
         {
@@ -459,13 +459,13 @@ public static class WebsiteProjectTemplateFacts
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-        var cSharpProjectAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, environmentProvider);
+        var cSharpProjectAbsolutePath = environmentProvider.AbsolutePathFactory(cSharpProjectAbsolutePathString, false);
         var parentDirectoryOfProject = cSharpProjectAbsolutePath.ParentDirectory;
 
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.Value;
+        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject;
 
         // Csproj
         {

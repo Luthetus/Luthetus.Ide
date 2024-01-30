@@ -140,10 +140,9 @@ public class DotNetSolutionCompilerService : ICompilerService
                 if (modelModifier is null)
                     return;
 
-                var absolutePath = new AbsolutePath(
+                var absolutePath = _environmentProvider.AbsolutePathFactory(
                     modelModifier.ResourceUri.Value,
-                    false,
-                    _environmentProvider);
+                    false);
 
                 var namespacePath = new NamespacePath(
                     string.Empty,

@@ -28,5 +28,5 @@ public class ProjectTestModel
 	public Key<TerminalCommand> DotNetTestListTestsTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
 	public Action<TreeViewNoType> ReRenderNodeAction { get; }
 	
-	public string DirectoryNameForTestDiscovery => AbsolutePath.ParentDirectory?.Value ?? string.Empty;
+	public string DirectoryNameForTestDiscovery => AbsolutePath.ParentDirectory ?? string.Empty;
 }

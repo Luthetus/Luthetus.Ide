@@ -80,10 +80,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
             if (File.Exists(personalTestPath))
             {
-                var absolutePath = new AbsolutePath(
+                var absolutePath = EnvironmentProvider.AbsolutePathFactory(
                     personalTestPath,
-                    false,
-                    EnvironmentProvider);
+                    false);
 
                 DotNetSolutionSync.SetDotNetSolution(absolutePath);
             }

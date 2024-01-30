@@ -176,10 +176,9 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
 
     private void PromptUserOpenSolution(string absolutePathString)
     {
-        var absolutePath = new AbsolutePath(
+        var absolutePath = EnvironmentProvider.AbsolutePathFactory(
             absolutePathString,
-            false,
-            EnvironmentProvider);
+            false);
 
         var notificationRecord = new NotificationRecord(
             Key<NotificationRecord>.NewKey(),

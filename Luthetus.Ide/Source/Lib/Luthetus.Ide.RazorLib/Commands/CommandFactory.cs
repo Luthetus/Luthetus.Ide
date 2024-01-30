@@ -329,10 +329,9 @@ public class CommandFactory : ICommandFactory
 		{
 			if (textEditorViewModel is not null)
 			{
-				var viewModelAbsolutePath = new AbsolutePath(
+				var viewModelAbsolutePath = _environmentProvider.AbsolutePathFactory(
 					textEditorViewModel.ResourceUri.Value,
-					false,
-					_environmentProvider);
+					false);
 
 				if (viewModelAbsolutePath.Value ==
 						treeViewNamespacePath.Item.AbsolutePath.Value)

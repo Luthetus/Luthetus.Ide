@@ -20,7 +20,7 @@ public partial class TreeViewHelper
             .OrderBy(pathString => pathString)
             .Select(x =>
             {
-                var absolutePath = new AbsolutePath(x, true, directoryTreeView.EnvironmentProvider);
+                var absolutePath = directoryTreeView.EnvironmentProvider.AbsolutePathFactory(x, true);
 
                 var namespaceString = directoryTreeView.Item.Namespace +
                     NAMESPACE_DELIMITER +
@@ -46,7 +46,7 @@ public partial class TreeViewHelper
             .OrderBy(pathString => pathString)
             .Select(x =>
             {
-                var absolutePath = new AbsolutePath(x, false, directoryTreeView.EnvironmentProvider);
+                var absolutePath = directoryTreeView.EnvironmentProvider.AbsolutePathFactory(x, false);
                 var namespaceString = directoryTreeView.Item.Namespace;
 
                 return (TreeViewNoType)new TreeViewNamespacePath(
@@ -90,7 +90,7 @@ public partial class TreeViewHelper
             .Select(x =>
             {
                 return (TreeViewNoType)new TreeViewAbsolutePath(
-                    new AbsolutePath(x, true, directoryTreeView.EnvironmentProvider),
+                    directoryTreeView.EnvironmentProvider.AbsolutePathFactory(x, true),
                     directoryTreeView.IdeComponentRenderers,
                     directoryTreeView.CommonComponentRenderers,
                     directoryTreeView.FileSystemProvider,
@@ -110,7 +110,7 @@ public partial class TreeViewHelper
             .Select(x =>
             {
                 return (TreeViewNoType)new TreeViewAbsolutePath(
-                    new AbsolutePath(x, false, directoryTreeView.EnvironmentProvider),
+                    directoryTreeView.EnvironmentProvider.AbsolutePathFactory(x, false),
                     directoryTreeView.IdeComponentRenderers,
                     directoryTreeView.CommonComponentRenderers,
                     directoryTreeView.FileSystemProvider,

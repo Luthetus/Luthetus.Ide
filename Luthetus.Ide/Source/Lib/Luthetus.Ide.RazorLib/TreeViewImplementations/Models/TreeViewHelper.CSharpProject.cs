@@ -14,7 +14,7 @@ public partial class TreeViewHelper
         this TreeViewNamespacePath cSharpProjectTreeView)
     {
         var parentDirectoryOfCSharpProject = cSharpProjectTreeView.Item.AbsolutePath.AncestorDirectoryList.Last();
-        var parentAbsolutePathString = parentDirectoryOfCSharpProject.Value;
+        var parentAbsolutePathString = parentDirectoryOfCSharpProject;
         var hiddenFiles = HiddenFileFacts.GetHiddenFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
 
         var directoryPathStringsList = await cSharpProjectTreeView.FileSystemProvider.Directory
@@ -25,7 +25,7 @@ public partial class TreeViewHelper
             .Where(x => hiddenFiles.All(hidden => !x.EndsWith(hidden)))
             .Select(x =>
             {
-                var absolutePath = new AbsolutePath(x, true, cSharpProjectTreeView.EnvironmentProvider);
+                var absolutePath = cSharpProjectTreeView.EnvironmentProvider.AbsolutePathFactory(x, true);
 
                 var namespaceString = cSharpProjectTreeView.Item.Namespace +
                     NAMESPACE_DELIMITER +
@@ -66,7 +66,7 @@ public partial class TreeViewHelper
             .Where(x => !x.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
             .Select(x =>
             {
-                var absolutePath = new AbsolutePath(x, false, cSharpProjectTreeView.EnvironmentProvider);
+                var absolutePath = cSharpProjectTreeView.EnvironmentProvider.AbsolutePathFactory(x, false);
                 var namespaceString = cSharpProjectTreeView.Item.Namespace;
 
                 return (TreeViewNoType)new TreeViewNamespacePath(new NamespacePath(namespaceString, absolutePath),

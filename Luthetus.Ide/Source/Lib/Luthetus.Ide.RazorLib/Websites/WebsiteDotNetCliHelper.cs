@@ -42,10 +42,9 @@ public class WebsiteDotNetCliHelper
             fileSystemProvider,
             environmentProvider);
 
-        var cSharpAbsolutePath = new AbsolutePath(
+        var cSharpAbsolutePath = environmentProvider.AbsolutePathFactory(
             cSharpProjectAbsolutePathString,
-            false,
-            environmentProvider);
+            false);
 
         dotNetSolutionSync.Website_AddExistingProjectToSolution(
             immutableView.DotNetSolutionModel.Key,

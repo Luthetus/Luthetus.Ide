@@ -56,10 +56,9 @@ public static class PermittanceChecker
         SimplePath simplePath,
         IEnvironmentProvider environmentProvider)
     {
-        var absolutePath = new AbsolutePath(
+        var absolutePath = environmentProvider.AbsolutePathFactory(
             simplePath.AbsolutePath,
-            simplePath.IsDirectory,
-            environmentProvider);
+            simplePath.IsDirectory);
 
         if (absolutePath.Value == environmentProvider.RootDirectoryAbsolutePath.Value ||
             absolutePath.Value == environmentProvider.HomeDirectoryAbsolutePath.Value)

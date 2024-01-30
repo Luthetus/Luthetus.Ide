@@ -110,7 +110,7 @@ public partial class InputFileTopNavBar : ComponentBase
                 throw new ApplicationException($"Address provided does not exist. {address}");
             }
 
-            var absolutePath = new AbsolutePath(address, true, EnvironmentProvider);
+            var absolutePath = EnvironmentProvider.AbsolutePathFactory(address, true);
             _showInputTextEditForAddress = false;
 
             await SetInputFileContentTreeViewRootFunc.Invoke(absolutePath);

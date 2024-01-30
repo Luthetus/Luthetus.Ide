@@ -15,7 +15,7 @@ public partial class TreeViewHelper
             return new();
 
         var parentDirectoryOfRazorMarkup = razorMarkupTreeView.Item.AbsolutePath.AncestorDirectoryList.Last();
-        var parentAbsolutePathString = parentDirectoryOfRazorMarkup.Value;
+        var parentAbsolutePathString = parentDirectoryOfRazorMarkup;
 
         var filePathStringsList = await razorMarkupTreeView.FileSystemProvider.Directory
             .GetFilesAsync(parentAbsolutePathString);
@@ -23,7 +23,7 @@ public partial class TreeViewHelper
         var childFileTreeViewModels = filePathStringsList
             .Select(x =>
             {
-                var absolutePath = new AbsolutePath(x, false, razorMarkupTreeView.EnvironmentProvider);
+                var absolutePath = razorMarkupTreeView.EnvironmentProvider.AbsolutePathFactory(x, false);
                 var namespaceString = razorMarkupTreeView.Item.Namespace;
 
                 return (TreeViewNoType)new TreeViewNamespacePath(

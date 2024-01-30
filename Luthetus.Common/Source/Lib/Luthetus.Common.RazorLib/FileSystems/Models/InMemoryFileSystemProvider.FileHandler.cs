@@ -297,10 +297,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 }
             }
 
-            var absolutePath = new AbsolutePath(
+            var absolutePath = _environmentProvider.AbsolutePathFactory(
                 absolutePathString,
-                false,
-                _environmentProvider);
+                false);
 
             var outFile = new InMemoryFile(
                 contents,

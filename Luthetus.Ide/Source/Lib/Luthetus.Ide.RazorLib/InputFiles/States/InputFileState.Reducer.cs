@@ -95,7 +95,11 @@ public partial record InputFileState
             // If has a ParentDirectory select it
             if (currentSelection.Item.AncestorDirectoryList.Any())
             {
-                var parentDirectoryAbsolutePath = currentSelection.Item.AncestorDirectoryList.Last();
+                var parentDirectory = currentSelection.Item.AncestorDirectoryList.Last();
+
+                var parentDirectoryAbsolutePath = openParentDirectoryAction.EnvironmentProvider.AbsolutePathFactory(
+                    parentDirectory,
+                    true);
 
                 parentDirectoryTreeViewModel = new TreeViewAbsolutePath(
                     parentDirectoryAbsolutePath,

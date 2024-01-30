@@ -70,7 +70,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 				            async () => await RunTestByFullyQualifiedName(
 								treeViewStringFragment,
 								fullyQualifiedName,
-								treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory?.Value));
+								treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory));
 					});
 	
 				menuRecordsList.Add(menuOptionRecord);

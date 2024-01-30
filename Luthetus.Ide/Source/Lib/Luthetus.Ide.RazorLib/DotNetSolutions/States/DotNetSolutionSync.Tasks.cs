@@ -88,10 +88,9 @@ public partial class DotNetSolutionSync
             dotNetSolutionAbsolutePathString,
             CancellationToken.None);
 
-        var solutionAbsolutePath = new AbsolutePath(
+        var solutionAbsolutePath = _environmentProvider.AbsolutePathFactory(
             dotNetSolutionAbsolutePathString,
-            false,
-            _environmentProvider);
+            false);
 
         var solutionNamespacePath = new NamespacePath(
             string.Empty,
@@ -121,7 +120,7 @@ public partial class DotNetSolutionSync
                 relativePathFromSolutionFileString,
                 _environmentProvider);
 
-            project.AbsolutePath = new AbsolutePath(absolutePathString, false, _environmentProvider);
+            project.AbsolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, false);
         }
 
         var solutionFolderList = parser.DotNetProjectList

@@ -55,7 +55,7 @@ public partial class GitSync
         var gitStatusCommand = new TerminalCommand(
             GitFacts.GitStatusTerminalCommandKey,
             formattedCommand,
-            gitState.GitFolderAbsolutePath.ParentDirectory.Value,
+            gitState.GitFolderAbsolutePath.ParentDirectory,
             CancellationToken.None,
             async () =>
             {
@@ -183,10 +183,9 @@ public partial class GitSync
 
         if (gitFolderAbsolutePathString is not null)
         {
-            var gitFolderAbsolutePath = new AbsolutePath(
+            var gitFolderAbsolutePath = _environmentProvider.AbsolutePathFactory(
                 gitFolderAbsolutePathString,
-                true,
-                _environmentProvider);
+                true);
 
             Dispatcher.Dispatch(new SetGitStateWithAction(inGitState => inGitState with
             {
@@ -316,15 +315,14 @@ public partial class GitSync
                 .Select(x =>
                 {
                     var absolutePathString =
-                        gitState.GitFolderAbsolutePath.ParentDirectory.Value +
+                        gitState.GitFolderAbsolutePath.ParentDirectory +
                         x.relativePath;
 
                     var isDirectory = _environmentProvider.IsDirectorySeparator(x.relativePath.LastOrDefault());
 
-                    var absolutePath = new AbsolutePath(
+                    var absolutePath = _environmentProvider.AbsolutePathFactory(
                         absolutePathString,
-                        isDirectory,
-                        _environmentProvider);
+                        isDirectory);
 
                     return new GitFile(absolutePath, x.gitDirtyReason);
                 })

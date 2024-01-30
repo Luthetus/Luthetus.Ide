@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
-public class SimplePath
+public record SimplePath
 {
     public SimplePath(string absolutePath, bool isDirectory)
     {

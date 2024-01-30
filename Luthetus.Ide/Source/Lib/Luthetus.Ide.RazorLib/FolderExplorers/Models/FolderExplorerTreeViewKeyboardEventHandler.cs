@@ -10,6 +10,7 @@ using Luthetus.Ide.RazorLib.FolderExplorers.States;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorers.Models;
 
@@ -19,19 +20,22 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     private readonly IMenuOptionsFactory _menuOptionsFactory;
     private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
+    private readonly IEnvironmentProvider _environmentProvider;
 
     public FolderExplorerTreeViewKeyboardEventHandler(
-        EditorSync editorSync,
-        IMenuOptionsFactory menuOptionsFactory,
-        ILuthetusCommonComponentRenderers commonComponentRenderers,
-        ITreeViewService treeViewService,
-		IBackgroundTaskService backgroundTaskService)
+            EditorSync editorSync,
+            IMenuOptionsFactory menuOptionsFactory,
+            ILuthetusCommonComponentRenderers commonComponentRenderers,
+            ITreeViewService treeViewService,
+		    IBackgroundTaskService backgroundTaskService,
+            IEnvironmentProvider environmentProvider)
         : base(treeViewService, backgroundTaskService)
     {
         _editorSync = editorSync;
         _menuOptionsFactory = menuOptionsFactory;
         _commonComponentRenderers = commonComponentRenderers;
         _treeViewService = treeViewService;
+        _environmentProvider = environmentProvider;
     }
 
     public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
@@ -148,8 +152,12 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         {
             var parentDirectory = treeViewAbsolutePath.Item.AncestorDirectoryList.Last();
 
-            pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
+            var parentDirectoryAbsolutePath = _environmentProvider.AbsolutePathFactory(
                 parentDirectory,
+                true);
+
+            pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
+                parentDirectoryAbsolutePath,
                 async () =>
                 {
                     var localParentOfCutFile = SolutionExplorerContextMenu.ParentOfCutFile;

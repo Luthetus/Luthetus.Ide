@@ -172,10 +172,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             if (existingFile is not null)
                 return Task.CompletedTask;
 
-            var absolutePath = new AbsolutePath(
-                absolutePathString,
-                true,
-                _environmentProvider);
+            var absolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, true);
 
             var outDirectory = new InMemoryFile(
                 string.Empty,
@@ -243,17 +240,14 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             if (indexOfExistingFile == -1)
                 return;
 
-            var sourceAbsolutePath = new AbsolutePath(
-                sourceAbsolutePathString,
-                true,
-                _environmentProvider);
+            var sourceAbsolutePath = _environmentProvider.AbsolutePathFactory(sourceAbsolutePathString, true);
 
             var childDirectories = (await GetDirectoriesAsync(sourceAbsolutePathString, cancellationToken))
-                .Select(x => new AbsolutePath(x, true, _environmentProvider))
+                .Select(x => _environmentProvider.AbsolutePathFactory(x, true))
                 .ToArray();
 
             var childFiles = (await GetFilesAsync(sourceAbsolutePathString, cancellationToken))
-                .Select(x => new AbsolutePath(x, false, _environmentProvider))
+                .Select(x => _environmentProvider.AbsolutePathFactory(x, false))
                 .ToArray();
 
             var children = childDirectories.Union(childFiles);
@@ -266,10 +260,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             }
             else
             {
-                var destinationAbsolutePath = new AbsolutePath(
-                destinationAbsolutePathString,
-                true,
-                _environmentProvider);
+                var destinationAbsolutePath = _environmentProvider.AbsolutePathFactory(
+                    destinationAbsolutePathString,
+                    true);
 
                 var destinationFile = new InMemoryFile(
                     string.Empty,
