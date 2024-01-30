@@ -1,5 +1,4 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Common.RazorLib.Namespaces.Models;
+﻿using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using System.Collections.Immutable;
 

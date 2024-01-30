@@ -14,7 +14,6 @@ using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.FindAlls.Displays;
 
 namespace Luthetus.Ide.RazorLib.Commands;
