@@ -30,6 +30,7 @@ public partial record FindAllState
         {
             await _throttle.FireAsync(async _ =>
             {
+                dispatcher.Dispatch(new ClearResultListAction());
                 var findAllState = _findAllStateWrap.Value;
 
                 await RecursiveHandleSearchEffect(_environmentProvider.RootDirectoryAbsolutePath.Value);
