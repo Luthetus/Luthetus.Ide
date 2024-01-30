@@ -10,10 +10,21 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
     {
         RootDirectoryAbsolutePath = new AbsolutePath("/", true, this);
         HomeDirectoryAbsolutePath = new AbsolutePath("/Repos/", true, this);
+        
+        ProtectedPathList = ProtectedPathList.Add(
+            new(RootDirectoryAbsolutePath.Value,
+            RootDirectoryAbsolutePath.IsDirectory));
 
-        ProtectedPathList = ProtectedPathList.Add(new SimplePath("/", true));
-        ProtectedPathList = ProtectedPathList.Add(new SimplePath("\\", true));
-        ProtectedPathList = ProtectedPathList.Add(new SimplePath("", true));
+        ProtectedPathList = ProtectedPathList.Add(
+            new(HomeDirectoryAbsolutePath.Value,
+            HomeDirectoryAbsolutePath.IsRootDirectory));
+
+        // Redundantly hardcode some obvious cases for protection.
+        {
+            ProtectedPathList = ProtectedPathList.Add(new SimplePath("/", true));
+            ProtectedPathList = ProtectedPathList.Add(new SimplePath("\\", true));
+            ProtectedPathList = ProtectedPathList.Add(new SimplePath("", true));
+        }
     }
 
     public IAbsolutePath RootDirectoryAbsolutePath { get; }
