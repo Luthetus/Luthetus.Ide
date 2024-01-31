@@ -85,8 +85,8 @@ public static class ServiceCollectionExtensions
             switch (hostingInformation.LuthetusHostingKind)
             {
                 case LuthetusHostingKind.Photino:
-                    services.AddSingleton<IEnvironmentProvider, LocalEnvironmentProvider>();
-                    services.AddSingleton<IFileSystemProvider, LocalFileSystemProvider>();
+                    services.AddScoped<IEnvironmentProvider, LocalEnvironmentProvider>();
+                    services.AddScoped<IFileSystemProvider, LocalFileSystemProvider>();
                     break;
                 default:
                     services.AddScoped<IEnvironmentProvider, InMemoryEnvironmentProvider>();
