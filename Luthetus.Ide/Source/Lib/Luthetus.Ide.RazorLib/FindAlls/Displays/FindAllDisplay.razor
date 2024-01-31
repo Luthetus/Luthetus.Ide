@@ -23,8 +23,12 @@
 
     <hr/>
 
-    @foreach (var result in findAllState.ResultList)
+    @foreach (var filePath in findAllState.ResultList)
     {
-        <div>@result</div>
+        <div style="cursor: pointer;"
+             @onclick="() => OpenInEditorOnClick(filePath)">
+
+            @filePath
+        </div>
     }
 </div>

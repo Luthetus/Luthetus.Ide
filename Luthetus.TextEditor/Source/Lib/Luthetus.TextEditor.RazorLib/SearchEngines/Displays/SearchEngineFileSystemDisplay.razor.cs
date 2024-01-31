@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
 
@@ -7,8 +6,6 @@ namespace Luthetus.TextEditor.RazorLib.SearchEngines.Displays;
 
 public partial class SearchEngineFileSystemDisplay : ComponentBase, IDisposable
 {
-	[Inject]
-	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 	[Inject]
 	private LuthetusTextEditorOptions LuthetusTextEditorOptions { get; set; } = null!;
 	[Inject]

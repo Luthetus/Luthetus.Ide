@@ -15,14 +15,25 @@ namespace Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 
 public class CSharpBinder : IBinder
 {
-    private readonly CSharpBoundScope _globalScope = CSharpFacts.Scope.GetInitialGlobalScope();
     private readonly Dictionary<string, NamespaceGroupNode> _namespaceGroupNodeMap = CSharpFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
-    /// <summary>The key for _symbolDefinitions is calculated by <see cref="ISymbol.GetSymbolDefinitionId"/></summary>
+    /// <summary>
+    /// The key for _symbolDefinitions is calculated by <see cref="ISymbol.GetSymbolDefinitionId"/>
+    /// </summary>
     private readonly Dictionary<string, SymbolDefinition> _symbolDefinitions = new();
+    /// <summary>
+    /// All of the type definitions should be maintainted in this dictionary as they are
+    /// found via parsing. Then, when one types an ambiguous identifier, perhaps they
+    /// wanted a type, and a lookup in this map can be done, and a using statement
+    /// inserted for the user if they decide to use that autocomplete option.
+    /// </summary>
+    private readonly Dictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> _allTypeDefinitions = new();
     private readonly LuthetusDiagnosticBag _diagnosticBag = new();
+    private readonly CSharpBoundScope _globalScope = CSharpFacts.Scope.GetInitialGlobalScope();
+    private readonly NamespaceStatementNode _topLevelNamespaceStatementNode = CSharpFacts.Namespaces.GetTopLevelNamespaceStatementNode();
 
     private List<CSharpBoundScope> _boundScopes = new();
     private CSharpBoundScope _currentScope;
+    private NamespaceStatementNode _currentNamespaceStatementNode;
 
     public CSharpBinder()
     {
@@ -33,6 +44,8 @@ public class CSharpBinder : IBinder
         _boundScopes = _boundScopes
             .OrderBy(x => x.StartingIndexInclusive)
             .ToList();
+
+        _currentNamespaceStatementNode = _topLevelNamespaceStatementNode;
     }
 
     public ResourceUri? CurrentResourceUri { get; set; }
@@ -41,6 +54,7 @@ public class CSharpBinder : IBinder
     public ImmutableArray<ISymbol> Symbols => _symbolDefinitions.Values.SelectMany(x => x.SymbolReferences).Select(x => x.Symbol).ToImmutableArray();
     public Dictionary<string, SymbolDefinition> SymbolDefinitions => _symbolDefinitions;
     public ImmutableArray<CSharpBoundScope> BoundScopes => _boundScopes.ToImmutableArray();
+    public ImmutableDictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions.ToImmutableDictionary();
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList => _diagnosticBag.ToImmutableArray();
 
     ImmutableArray<ITextEditorSymbol> IBinder.SymbolsList => Symbols
@@ -196,6 +210,11 @@ public class CSharpBinder : IBinder
             null);
 
         return boundIfStatementNode;
+    }
+
+    public void SetCurrentNamespace(NamespaceStatementNode namespaceStatementNode)
+    {
+        _currentNamespaceStatementNode = namespaceStatementNode;
     }
 
     public void BindNamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
@@ -455,17 +474,18 @@ public class CSharpBinder : IBinder
 
     public void RegisterBoundScope(
         TypeClauseNode? scopeReturnTypeClauseNode,
-        TextEditorTextSpan textEditorTextSpan)
+        TextEditorTextSpan textSpan)
     {
         var boundScope = new CSharpBoundScope(
             _currentScope,
             scopeReturnTypeClauseNode,
-            textEditorTextSpan.StartingIndexInclusive,
+            textSpan.StartingIndexInclusive,
             null,
-            textEditorTextSpan.ResourceUri,
+            textSpan.ResourceUri,
             new(),
             new(),
-            new());
+            new(),
+            _currentNamespaceStatementNode.IdentifierToken);
 
         _boundScopes.Add(boundScope);
 
@@ -609,12 +629,18 @@ public class CSharpBinder : IBinder
         TypeDefinitionNode typeDefinitionNode,
         bool shouldOverwrite = false)
     {
-        var success = _currentScope.TypeDefinitionMap.TryAdd(
-            typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(),
-            typeDefinitionNode);
+        var typeIdentifierText = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText();
 
+        var currentNamespaceStatementText = _currentNamespaceStatementNode.IdentifierToken.TextSpan.GetText();
+
+        var success = _currentScope.TypeDefinitionMap.TryAdd(typeIdentifierText, typeDefinitionNode);
         if (!success && shouldOverwrite)
-            _currentScope.TypeDefinitionMap[typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText()] = typeDefinitionNode;
+            _currentScope.TypeDefinitionMap[typeIdentifierText] = typeDefinitionNode;
+
+        var namespaceAndTypeIdentifiers = new NamespaceAndTypeIdentifiers(currentNamespaceStatementText, typeIdentifierText);
+        success = _allTypeDefinitions.TryAdd(namespaceAndTypeIdentifiers, typeDefinitionNode);
+        if (!success && shouldOverwrite)
+            _allTypeDefinitions[namespaceAndTypeIdentifiers] = typeDefinitionNode;
     }
 
     /// <summary>

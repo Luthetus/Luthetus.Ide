@@ -42,7 +42,8 @@ public partial class CSharpFacts
                 new ResourceUri(string.Empty),
                 typeDefinitionMap,
                 new(),
-                new());
+                new(),
+                Namespaces.GetTopLevelNamespaceStatementNode().IdentifierToken);
         }
     }
 }

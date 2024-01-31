@@ -77,7 +77,7 @@ public partial class AutocompleteMenu : ComponentBase
                 var autocompleteWordsList = AutocompleteService.GetAutocompleteOptions(word);
 
                 var autocompleteEntryList = autocompleteWordsList
-                    .Select(aw => new AutocompleteEntry(aw, AutocompleteEntryKind.Word))
+                    .Select(aw => new AutocompleteEntry(aw, AutocompleteEntryKind.Word, null))
                     .ToArray();
 
                 // (2023-08-09) Looking into using an ICompilerService for autocompletion.
@@ -107,8 +107,12 @@ public partial class AutocompleteMenu : ComponentBase
                 menuOptionRecordsList = autocompleteEntryList.Select(entry => new MenuOptionRecord(
                     entry.DisplayName,
                     MenuOptionKind.Other,
-                    () => SelectMenuOption(
-                        () => InsertAutocompleteMenuOption(word, entry, RenderBatch.ViewModel!)),
+                    () => SelectMenuOption(() =>
+                    {
+                        InsertAutocompleteMenuOption(word, entry, RenderBatch.ViewModel!);
+                        entry.SideEffectAction?.Invoke();
+                        return Task.CompletedTask;
+                    }),
                     WidgetParameterMap: new Dictionary<string, object?>
                     {
                         {

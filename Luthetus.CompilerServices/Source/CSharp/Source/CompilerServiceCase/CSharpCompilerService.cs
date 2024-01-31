@@ -1,5 +1,7 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
@@ -8,9 +10,12 @@ using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 
@@ -181,7 +186,8 @@ public class CSharpCompilerService : ICompilerService
                 {
                     return new AutocompleteEntry(
                         x,
-                        AutocompleteEntryKind.Variable);
+                        AutocompleteEntryKind.Variable,
+                        null);
                 }));
 
             autocompleteEntryList.AddRange(
@@ -194,24 +200,84 @@ public class CSharpCompilerService : ICompilerService
                 {
                     return new AutocompleteEntry(
                         x,
-                        AutocompleteEntryKind.Function);
-                }));
-
-            autocompleteEntryList.AddRange(
-                targetScope.TypeDefinitionMap.Keys
-                .ToArray()
-                .Where(x => x.Contains(word, StringComparison.InvariantCulture))
-                .Distinct()
-                .Take(10)
-                .Select(x =>
-                {
-                    return new AutocompleteEntry(
-                        x,
-                        AutocompleteEntryKind.Type);
+                        AutocompleteEntryKind.Function,
+                        null);
                 }));
 
             targetScope = targetScope.Parent;
         }
+
+        var allTypeDefinitions = CSharpBinder.AllTypeDefinitions;
+
+        autocompleteEntryList.AddRange(
+            allTypeDefinitions
+            .Where(x => x.Key.TypeIdentifier.Contains(word, StringComparison.InvariantCulture))
+            .Distinct()
+            .Take(10)
+            .Select(x =>
+            {
+                return new AutocompleteEntry(
+                    x.Key.TypeIdentifier,
+                    AutocompleteEntryKind.Type,
+                    () =>
+                    {
+                        if (boundScope.EncompassingNamespaceIdentifierToken.TextSpan.GetText() != x.Key.NamespaceIdentifier)
+                        {
+                            _textEditorService.Post(
+                                "Add using statement",
+                                async editContext =>
+                                {
+                                    var modelModifier = editContext.GetModelModifier(textSpan.ResourceUri);
+
+                                    if (modelModifier is null)
+                                        return;
+
+                                    var viewModelList = _textEditorService.ModelApi.GetViewModelsOrEmpty(textSpan.ResourceUri);
+
+                                    var cursor = new TextEditorCursor(0, 0, true);
+                                    var cursorModifierBag = new TextEditorCursorModifierBag(
+                                        Key<TextEditorViewModel>.Empty,
+                                        new List<TextEditorCursorModifier> { new(cursor) });
+
+                                    var textToInsert = $"using {x.Key.NamespaceIdentifier};\n";
+
+                                    modelModifier.EditByInsertion(
+                                        textToInsert,
+                                        cursorModifierBag,
+                                        CancellationToken.None);
+
+                                    foreach (var unsafeViewModel in viewModelList)
+                                    {
+                                        var viewModelModifier = editContext.GetViewModelModifier(
+                                            unsafeViewModel.ViewModelKey);
+
+                                        if (viewModelModifier is null)
+                                            continue;
+
+                                        var viewModelCursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+
+                                        if (viewModelCursorModifierBag is null)
+                                            continue;
+
+                                        foreach (var cursorModifier in viewModelCursorModifierBag.List)
+                                        {
+                                            for (int i = 0; i < textToInsert.Length; i++)
+                                            {
+                                                await _textEditorService.ViewModelApi.MoveCursorFactory(
+                                                    new KeyboardEventArgs
+                                                    {
+                                                        Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                                                    },
+                                                    textSpan.ResourceUri,
+                                                    viewModelModifier.ViewModel.ViewModelKey)
+                                                .Invoke(editContext);
+                                            }
+                                        }
+                                    }
+                                });
+                        }
+                    });
+            }));
 
         return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToImmutableArray();
     }

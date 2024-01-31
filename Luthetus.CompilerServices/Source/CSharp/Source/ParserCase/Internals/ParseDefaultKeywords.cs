@@ -850,6 +850,8 @@ public class ParseDefaultKeywords
             namespaceIdentifier,
             new CodeBlockNode(ImmutableArray<ISyntax>.Empty));
 
+        model.Binder.SetCurrentNamespace(namespaceStatementNode);
+
         model.SyntaxStack.Push(namespaceStatementNode);
     }
 

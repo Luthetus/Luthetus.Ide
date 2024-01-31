@@ -1,6 +1,7 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.BinderCase;
@@ -15,7 +16,8 @@ public sealed record CSharpBoundScope : IBoundScope
         ResourceUri resourceUri,
         Dictionary<string, TypeDefinitionNode> typeDefinitionMap,
         Dictionary<string, FunctionDefinitionNode> functionDefinitionMap,
-        Dictionary<string, VariableDeclarationNode> variableDeclarationMap)
+        Dictionary<string, VariableDeclarationNode> variableDeclarationMap,
+        IdentifierToken encompassingNamespaceIdentifierToken)
     {
         Parent = parent;
         ScopeReturnTypeClauseNode = scopeReturnTypeClauseNode;
@@ -25,6 +27,7 @@ public sealed record CSharpBoundScope : IBoundScope
         TypeDefinitionMap = typeDefinitionMap;
         FunctionDefinitionMap = functionDefinitionMap;
         VariableDeclarationMap = variableDeclarationMap;
+        EncompassingNamespaceIdentifierToken = encompassingNamespaceIdentifierToken;
     }
 
     public BoundScopeKey BoundScopeKey { get; init; } = BoundScopeKey.NewKey();
@@ -43,4 +46,5 @@ public sealed record CSharpBoundScope : IBoundScope
     public Dictionary<string, TypeDefinitionNode> TypeDefinitionMap { get; init; }
     public Dictionary<string, FunctionDefinitionNode> FunctionDefinitionMap { get; init; }
     public Dictionary<string, VariableDeclarationNode> VariableDeclarationMap { get; init; }
+    public IdentifierToken EncompassingNamespaceIdentifierToken { get; }
 }
