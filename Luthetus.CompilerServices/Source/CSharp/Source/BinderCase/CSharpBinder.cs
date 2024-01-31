@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using Luthetus.CompilerServices.Lang.CSharp.Facts;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
@@ -34,6 +35,7 @@ public class CSharpBinder : IBinder
     private List<CSharpBoundScope> _boundScopes = new();
     private CSharpBoundScope _currentScope;
     private NamespaceStatementNode _currentNamespaceStatementNode;
+    private List<UsingStatementNode> _currentUsingStatementNodeList;
 
     public CSharpBinder()
     {
@@ -46,6 +48,7 @@ public class CSharpBinder : IBinder
             .ToList();
 
         _currentNamespaceStatementNode = _topLevelNamespaceStatementNode;
+        _currentUsingStatementNodeList = new();
     }
 
     public ResourceUri? CurrentResourceUri { get; set; }
@@ -447,11 +450,14 @@ public class CSharpBinder : IBinder
     {
         AddSymbolReference(new NamespaceSymbol(namespaceIdentifierToken.TextSpan));
 
-        AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan.GetText());
-
-        return new UsingStatementNode(
+        var usingStatementNode = new UsingStatementNode(
             usingKeywordToken,
             namespaceIdentifierToken);
+
+        _currentUsingStatementNodeList.Add(usingStatementNode);
+        AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan.GetText());
+
+        return usingStatementNode;
     }
 
     /// <summary>TODO: Correctly implement this method. For now going to skip until the attribute closing square bracket.</summary>
@@ -485,7 +491,7 @@ public class CSharpBinder : IBinder
             new(),
             new(),
             new(),
-            _currentNamespaceStatementNode.IdentifierToken);
+            _currentNamespaceStatementNode);
 
         _boundScopes.Add(boundScope);
 
@@ -505,7 +511,7 @@ public class CSharpBinder : IBinder
 
             foreach (var typeDefinitionNode in typeDefinitionNodes)
             {
-                BindTypeDefinitionNode(typeDefinitionNode);
+                _ = _currentScope.TypeDefinitionMap.TryAdd(typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(), typeDefinitionNode);
             }
         }
     }
@@ -630,14 +636,16 @@ public class CSharpBinder : IBinder
         bool shouldOverwrite = false)
     {
         var typeIdentifierText = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText();
-
         var currentNamespaceStatementText = _currentNamespaceStatementNode.IdentifierToken.TextSpan.GetText();
+        
+        var namespaceAndTypeIdentifiers = new NamespaceAndTypeIdentifiers(currentNamespaceStatementText, typeIdentifierText);
+
+        typeDefinitionNode.EncompassingNamespaceIdentifierString = currentNamespaceStatementText;
 
         var success = _currentScope.TypeDefinitionMap.TryAdd(typeIdentifierText, typeDefinitionNode);
         if (!success && shouldOverwrite)
             _currentScope.TypeDefinitionMap[typeIdentifierText] = typeDefinitionNode;
 
-        var namespaceAndTypeIdentifiers = new NamespaceAndTypeIdentifiers(currentNamespaceStatementText, typeIdentifierText);
         success = _allTypeDefinitions.TryAdd(namespaceAndTypeIdentifiers, typeDefinitionNode);
         if (!success && shouldOverwrite)
             _allTypeDefinitions[namespaceAndTypeIdentifiers] = typeDefinitionNode;

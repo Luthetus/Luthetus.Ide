@@ -221,7 +221,7 @@ public class CSharpCompilerService : ICompilerService
                     AutocompleteEntryKind.Type,
                     () =>
                     {
-                        if (boundScope.EncompassingNamespaceIdentifierToken.TextSpan.GetText() != x.Key.NamespaceIdentifier)
+                        if (boundScope.EncompassingNamespaceStatementNode.IdentifierToken.TextSpan.GetText() != x.Key.NamespaceIdentifier)
                         {
                             _textEditorService.Post(
                                 "Add using statement",

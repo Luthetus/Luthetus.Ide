@@ -17,7 +17,7 @@ public sealed record CSharpBoundScope : IBoundScope
         Dictionary<string, TypeDefinitionNode> typeDefinitionMap,
         Dictionary<string, FunctionDefinitionNode> functionDefinitionMap,
         Dictionary<string, VariableDeclarationNode> variableDeclarationMap,
-        IdentifierToken encompassingNamespaceIdentifierToken)
+        NamespaceStatementNode encompassingNamespaceStatementNode)
     {
         Parent = parent;
         ScopeReturnTypeClauseNode = scopeReturnTypeClauseNode;
@@ -27,7 +27,7 @@ public sealed record CSharpBoundScope : IBoundScope
         TypeDefinitionMap = typeDefinitionMap;
         FunctionDefinitionMap = functionDefinitionMap;
         VariableDeclarationMap = variableDeclarationMap;
-        EncompassingNamespaceIdentifierToken = encompassingNamespaceIdentifierToken;
+        EncompassingNamespaceStatementNode = encompassingNamespaceStatementNode;
     }
 
     public BoundScopeKey BoundScopeKey { get; init; } = BoundScopeKey.NewKey();
@@ -46,5 +46,5 @@ public sealed record CSharpBoundScope : IBoundScope
     public Dictionary<string, TypeDefinitionNode> TypeDefinitionMap { get; init; }
     public Dictionary<string, FunctionDefinitionNode> FunctionDefinitionMap { get; init; }
     public Dictionary<string, VariableDeclarationNode> VariableDeclarationMap { get; init; }
-    public IdentifierToken EncompassingNamespaceIdentifierToken { get; }
+    public NamespaceStatementNode EncompassingNamespaceStatementNode { get; }
 }

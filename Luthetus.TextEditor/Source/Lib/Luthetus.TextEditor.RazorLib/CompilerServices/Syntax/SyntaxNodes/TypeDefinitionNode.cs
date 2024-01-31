@@ -79,6 +79,8 @@ public sealed record TypeDefinitionNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TypeDefinitionNode;
 
+    public string EncompassingNamespaceIdentifierString { get; set; }
+
     public ImmutableArray<FunctionDefinitionNode> GetFunctionDefinitionNodes()
     {
         if (TypeBodyCodeBlockNode is null)

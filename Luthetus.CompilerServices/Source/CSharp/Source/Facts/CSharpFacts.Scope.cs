@@ -43,7 +43,7 @@ public partial class CSharpFacts
                 typeDefinitionMap,
                 new(),
                 new(),
-                Namespaces.GetTopLevelNamespaceStatementNode().IdentifierToken);
+                Namespaces.GetTopLevelNamespaceStatementNode());
         }
     }
 }
