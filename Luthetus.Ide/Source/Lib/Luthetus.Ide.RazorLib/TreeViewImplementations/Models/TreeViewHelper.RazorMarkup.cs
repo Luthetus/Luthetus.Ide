@@ -1,5 +1,4 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Common.RazorLib.Namespaces.Models;
+﻿using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -15,15 +14,15 @@ public partial class TreeViewHelper
             return new();
 
         var parentDirectoryOfRazorMarkup = razorMarkupTreeView.Item.AbsolutePath.AncestorDirectoryList.Last();
-        var parentAbsolutePathString = parentDirectoryOfRazorMarkup.Value;
+        var ancestorDirectory = parentDirectoryOfRazorMarkup;
 
         var filePathStringsList = await razorMarkupTreeView.FileSystemProvider.Directory
-            .GetFilesAsync(parentAbsolutePathString);
+            .GetFilesAsync(ancestorDirectory.Path);
 
         var childFileTreeViewModels = filePathStringsList
             .Select(x =>
             {
-                var absolutePath = new AbsolutePath(x, false, razorMarkupTreeView.EnvironmentProvider);
+                var absolutePath = razorMarkupTreeView.EnvironmentProvider.AbsolutePathFactory(x, false);
                 var namespaceString = razorMarkupTreeView.Item.Namespace;
 
                 return (TreeViewNoType)new TreeViewNamespacePath(

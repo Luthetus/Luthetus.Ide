@@ -47,7 +47,7 @@ public class RazorSyntaxTree
         _cSharpCompilerService = cSharpCompilerService;
         _environmentProvider = environmentProvider;
 
-        var absolutePath = new AbsolutePath(resourceUri.Value, false, _environmentProvider);
+        var absolutePath = _environmentProvider.AbsolutePathFactory(resourceUri.Value, false);
 
         _codebehindClassIdentifier = absolutePath.NameNoExtension;
         _codebehindRenderFunctionIdentifier = "__LUTHETUS_RENDER_FUNCTION__";

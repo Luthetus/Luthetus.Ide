@@ -23,7 +23,7 @@ public class NamespacePathTests
         var isDirectory = true;
         var inMemoryEnvironmentProvider = new InMemoryEnvironmentProvider();
 
-        var absolutePath = new AbsolutePath(absolutePathString, isDirectory, inMemoryEnvironmentProvider);
+        var absolutePath = inMemoryEnvironmentProvider.AbsolutePathFactory(absolutePathString, isDirectory);
 
         var namespacePath = new NamespacePath(namespaceString, absolutePath);
 

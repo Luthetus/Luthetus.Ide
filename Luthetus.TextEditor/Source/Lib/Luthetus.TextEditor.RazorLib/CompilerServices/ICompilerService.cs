@@ -1,4 +1,5 @@
 ﻿using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 
@@ -20,6 +21,12 @@ public interface ICompilerService
     public void ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpansList);
 
     public ICompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri);
+
+    /// <summary>
+    /// (2024-01-28)
+    /// Goal: track the cursor's position within the compilation unit as it moves.
+    /// </summary>
+    public void CursorWasModified(ResourceUri resourceUri, TextEditorCursor cursor);
 
     /// <summary>
     /// Provides syntax highlighting from the lexing result.

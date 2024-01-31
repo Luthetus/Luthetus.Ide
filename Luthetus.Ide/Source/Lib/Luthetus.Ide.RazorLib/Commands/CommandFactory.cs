@@ -12,6 +12,9 @@ using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Microsoft.JSInterop;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Ide.RazorLib.FindAlls.Displays;
 
 namespace Luthetus.Ide.RazorLib.Commands;
 
@@ -62,9 +65,16 @@ public class CommandFactory : ICommandFactory
         // CompilerServiceExplorerContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyC", false, true, true, Key<KeymapLayer>.Empty),
+                new KeymapArgument("KeyC", true, true, true, Key<KeymapLayer>.Empty),
                 ConstructFocusContextElementCommand(
                     ContextFacts.CompilerServiceExplorerContext, "Focus: CompilerServiceExplorer", "focus-compiler-service-explorer"));
+        }
+        // CompilerServiceEditorContext
+        {
+            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+                new KeymapArgument("KeyC", false, true, true, Key<KeymapLayer>.Empty),
+                ConstructFocusContextElementCommand(
+                    ContextFacts.CompilerServiceEditorContext, "Focus: CompilerServiceEditor", "focus-compiler-service-editor"));
         }
         // DialogDisplayContext
         {
@@ -231,6 +241,31 @@ public class CommandFactory : ICommandFactory
 	                new KeymapArgument("KeyF", true, true, false, Key<KeymapLayer>.Empty),
 	                openFindDialogCommand);
         }
+
+		// Add command to bring up a Find All dialog. Example: { Ctrl + , }
+		{
+			var openFindAllDialogCommand = new CommonCommand(
+	            "Open: Find All", "open-find-all", false,
+	            commandArgs => 
+				{
+                    var findDialog = new DialogRecord(
+                        Key<DialogRecord>.NewKey(),
+                        "Find All",
+                        typeof(FindAllDisplay),
+                        null,
+                        null)
+                    {
+                        IsResizable = true
+                    };
+
+                    _dispatcher.Dispatch(new DialogState.RegisterAction(findDialog));
+                    return Task.CompletedTask;
+				});
+
+            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+	                new KeymapArgument("Comma", false, true, false, Key<KeymapLayer>.Empty),
+	                openFindAllDialogCommand);
+        }
     }
 
     public CommandNoType ConstructFocusContextElementCommand(
@@ -293,10 +328,9 @@ public class CommandFactory : ICommandFactory
 		{
 			if (textEditorViewModel is not null)
 			{
-				var viewModelAbsolutePath = new AbsolutePath(
+				var viewModelAbsolutePath = _environmentProvider.AbsolutePathFactory(
 					textEditorViewModel.ResourceUri.Value,
-					false,
-					_environmentProvider);
+					false);
 
 				if (viewModelAbsolutePath.Value ==
 						treeViewNamespacePath.Item.AbsolutePath.Value)

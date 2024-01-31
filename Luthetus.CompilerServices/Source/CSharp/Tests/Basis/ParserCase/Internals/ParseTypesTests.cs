@@ -45,7 +45,7 @@ public class ParseTypesTests
                 Assert.Equal(accessModifierKind, typeDefinitionNode.AccessModifierKind);
                 Assert.False(typeDefinitionNode.HasPartialModifier);
                 Assert.Equal(storageModifierKind, typeDefinitionNode.StorageModifierKind);
-                Assert.Equal("MyClass", typeDefinitionNode.TypeIdentifier.TextSpan.GetText());
+                Assert.Equal("MyClass", typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText());
                 Assert.Null(typeDefinitionNode.ValueType);
                 Assert.Null(typeDefinitionNode.GenericArgumentsListingNode);
                 Assert.Null(typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode);
@@ -98,7 +98,7 @@ public class ParseTypesTests
                 Assert.Equal(accessModifierKind, typeDefinitionNode.AccessModifierKind);
                 Assert.True(typeDefinitionNode.HasPartialModifier);
                 Assert.Equal(storageModifierKind, typeDefinitionNode.StorageModifierKind);
-                Assert.Equal("MyClass", typeDefinitionNode.TypeIdentifier.TextSpan.GetText());
+                Assert.Equal("MyClass", typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText());
                 Assert.Null(typeDefinitionNode.ValueType);
                 Assert.Null(typeDefinitionNode.GenericArgumentsListingNode);
                 Assert.Null(typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode);
@@ -136,7 +136,7 @@ public class ParseTypesTests
         Assert.Equal(AccessModifierKind.Public, typeDefinitionNode.AccessModifierKind);
         Assert.False(typeDefinitionNode.HasPartialModifier);
         Assert.Equal(StorageModifierKind.Record, typeDefinitionNode.StorageModifierKind);
-        Assert.Equal("MyRecord", typeDefinitionNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Equal("MyRecord", typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText());
         Assert.Null(typeDefinitionNode.ValueType);
         Assert.Null(typeDefinitionNode.GenericArgumentsListingNode);
 
@@ -173,7 +173,7 @@ public class ParseTypesTests
         Assert.Equal(AccessModifierKind.Public, typeDefinitionNode.AccessModifierKind);
         Assert.False(typeDefinitionNode.HasPartialModifier);
         Assert.Equal(StorageModifierKind.Record, typeDefinitionNode.StorageModifierKind);
-        Assert.Equal("MyRecord", typeDefinitionNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Equal("MyRecord", typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText());
         Assert.Null(typeDefinitionNode.ValueType);
         Assert.Null(typeDefinitionNode.GenericArgumentsListingNode);
 
@@ -228,7 +228,7 @@ public class ParseTypesTests
         Assert.Equal(AccessModifierKind.Public, typeDefinitionNode.AccessModifierKind);
         Assert.False(typeDefinitionNode.HasPartialModifier);
         Assert.Equal(StorageModifierKind.Record, typeDefinitionNode.StorageModifierKind);
-        Assert.Equal("MyRecord", typeDefinitionNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Equal("MyRecord", typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText());
         Assert.Null(typeDefinitionNode.ValueType);
         Assert.Null(typeDefinitionNode.GenericArgumentsListingNode);
 
@@ -265,7 +265,7 @@ public class ParseTypesTests
         Assert.Equal(AccessModifierKind.Public, typeDefinitionNode.AccessModifierKind);
         Assert.False(typeDefinitionNode.HasPartialModifier);
         Assert.Equal(StorageModifierKind.Record, typeDefinitionNode.StorageModifierKind);
-        Assert.Equal("MyRecord", typeDefinitionNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Equal("MyRecord", typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText());
         Assert.Null(typeDefinitionNode.ValueType);
         Assert.Null(typeDefinitionNode.GenericArgumentsListingNode);
 

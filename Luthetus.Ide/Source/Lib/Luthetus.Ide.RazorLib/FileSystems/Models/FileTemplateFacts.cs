@@ -1,5 +1,4 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Common.RazorLib.Namespaces.Models;
+﻿using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using System.Collections.Immutable;
 
@@ -51,10 +50,9 @@ public static class FileTemplateFacts
             templateParameter.Filename;
 
         // Create AbsolutePath as to leverage it for knowing the file extension and other details
-        var emptyFileAbsolutePath = new AbsolutePath(
+        var emptyFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
             emptyFileAbsolutePathString,
-            false,
-            templateParameter.EnvironmentProvider);
+            false);
 
         var templatedFileContent = GetContent(
             emptyFileAbsolutePath.NameNoExtension,
@@ -65,10 +63,9 @@ public static class FileTemplateFacts
             '.' +
             ExtensionNoPeriodFacts.C_SHARP_CLASS;
 
-        var templatedFileAbsolutePath = new AbsolutePath(
+        var templatedFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
             templatedFileAbsolutePathString,
-            false,
-            templateParameter.EnvironmentProvider);
+            false);
 
         var templatedFileNamespacePath = new NamespacePath(
             templateParameter.ParentDirectory.Namespace,
@@ -102,10 +99,9 @@ public class {fileNameNoExtension}
             templateParameter.Filename;
 
         // Create AbsolutePath as to leverage it for knowing the file extension and other details
-        var emptyFileAbsolutePath = new AbsolutePath(
+        var emptyFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
             emptyFileAbsolutePathString,
-            false,
-            templateParameter.EnvironmentProvider);
+            false);
 
         var templatedFileContent = GetContent(emptyFileAbsolutePath.NameNoExtension);
 
@@ -114,10 +110,9 @@ public class {fileNameNoExtension}
             '.' +
             ExtensionNoPeriodFacts.RAZOR_MARKUP;
 
-        var templatedFileAbsolutePath = new AbsolutePath(
+        var templatedFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
             templatedFileAbsolutePathString,
-            false,
-            templateParameter.EnvironmentProvider);
+            false);
 
         var templatedFileNamespacePath = new NamespacePath(
             templateParameter.ParentDirectory.Namespace,
@@ -167,10 +162,9 @@ public partial class {className} : ComponentBase
             templateParameter.Filename;
 
         // Create AbsolutePath as to leverage it for knowing the file extension and other details
-        var emptyFileAbsolutePath = new AbsolutePath(
+        var emptyFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
             emptyFileAbsolutePathString,
-            false,
-            templateParameter.EnvironmentProvider);
+            false);
 
         var templatedFileContent = GetContent(
             emptyFileAbsolutePath.NameNoExtension,
@@ -184,10 +178,9 @@ public partial class {className} : ComponentBase
         else
             templatedFileAbsolutePathString += '.' + ExtensionNoPeriodFacts.RAZOR_CODEBEHIND;
 
-        var templatedFileAbsolutePath = new AbsolutePath(
+        var templatedFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
             templatedFileAbsolutePathString,
-            false,
-            templateParameter.EnvironmentProvider);
+            false);
 
         var templatedFileNamespacePath = new NamespacePath(
             templateParameter.ParentDirectory.Namespace,

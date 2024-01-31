@@ -1,7 +1,5 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using System.Collections.Immutable;
 
@@ -24,7 +22,7 @@ public static class ParseTypes
     {
         var identifierReferenceNode = new AmbiguousIdentifierNode(consumedIdentifierToken);
 
-        model.Binder.BindTypeIdentifier(consumedIdentifierToken);
+        model.Binder.BindTypeIdentifier(consumedIdentifierToken, model);
 
         model.DiagnosticBag.ReportUndefinedTypeOrNamespace(
             consumedIdentifierToken.TextSpan,
@@ -38,7 +36,7 @@ public static class ParseTypes
         TypeDefinitionNode consumedTypeDefinitionNode,
         ParserModel model)
     {
-        model.Binder.BindTypeIdentifier(consumedIdentifierToken);
+        model.Binder.BindTypeIdentifier(consumedIdentifierToken, model);
 
         var memberAccessToken = (MemberAccessToken)model.TokenWalker.Match(SyntaxKind.MemberAccessToken);
 
@@ -163,35 +161,41 @@ public static class ParseTypes
             closeAngleBracketToken));
     }
 
-    /// <summary>TODO: Correctly implement this method. For now going to skip until the attribute closing square bracket.</summary>
     public static void HandleAttribute(
         OpenSquareBracketToken consumedOpenSquareBracketToken,
         ParserModel model)
     {
-        ISyntaxToken tokenCurrent;
-        var innerTokens = new List<ISyntaxToken>();
+        // Suppress unused variable warning
+        _ = consumedOpenSquareBracketToken;
+
+        if (SyntaxKind.CloseSquareBracketToken == model.TokenWalker.Current.SyntaxKind)
+        {
+            var closeSquareBracketToken = (CloseSquareBracketToken)model.TokenWalker.Consume();
+
+            model.DiagnosticBag.ReportTodoException(
+                closeSquareBracketToken.TextSpan,
+                "An identifier was expected.");
+
+            return;
+        }
 
         while (true)
         {
-            tokenCurrent = model.TokenWalker.Consume();
+            var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
+            model.Binder.BindTypeIdentifier(identifierToken, model);
 
-            if (tokenCurrent.SyntaxKind == SyntaxKind.EndOfFileToken ||
-                tokenCurrent.SyntaxKind == SyntaxKind.CloseSquareBracketToken)
-            {
+            if (identifierToken.IsFabricated && SyntaxKind.CommaToken != model.TokenWalker.Current.SyntaxKind)
                 break;
+
+            if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
+            {
+                var commaToken = (CommaToken)model.TokenWalker.Consume();
+                // TODO: Track comma tokens?
             }
             else
             {
-                innerTokens.Add(tokenCurrent);
+                break;
             }
-        }
-
-        if (tokenCurrent.SyntaxKind == SyntaxKind.CloseSquareBracketToken)
-        {
-            model.SyntaxStack.Push(model.Binder.BindAttributeNode(
-                consumedOpenSquareBracketToken,
-                innerTokens,
-                (CloseSquareBracketToken)tokenCurrent));
         }
     }
 
@@ -215,7 +219,7 @@ public static class ParseTypes
             null,
             null);
 
-        typeClauseNode = model.Binder.BindTypeClauseNode(typeClauseNode);
+        typeClauseNode = model.Binder.BindTypeClauseNode(typeClauseNode, model);
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
         {
@@ -305,7 +309,7 @@ public static class ParseTypes
             typeDefinitionNode.AccessModifierKind,
             typeDefinitionNode.HasPartialModifier,
             typeDefinitionNode.StorageModifierKind,
-            typeDefinitionNode.TypeIdentifier,
+            typeDefinitionNode.TypeIdentifierToken,
             typeDefinitionNode.ValueType,
             typeDefinitionNode.GenericArgumentsListingNode,
             functionArgumentsListingNode,

@@ -1,0 +1,15 @@
+.luth_ide_find-all-filter-list {
+    display: flex;
+}
+
+.luth_ide_find-all-filter-list > .luth_ide_find-all-filter {
+    margin-right: 5px;
+}
+
+.luth_ide_find-all-filter {
+    background-color: var(--luth_active-no-focus-background-color);
+}
+
+    .luth_ide_find-all-filter.luth_active {
+        background-color: var(--luth_active-with-focus-background-color);
+    }

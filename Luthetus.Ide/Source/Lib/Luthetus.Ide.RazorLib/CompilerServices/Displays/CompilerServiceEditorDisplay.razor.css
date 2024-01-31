@@ -1,0 +1,7 @@
+::deep .luth_ide_syntax-node-property {
+    display: flex;
+}
+
+::deep .luth_ide_syntax-node-property-name {
+    margin-right: 20px;
+}

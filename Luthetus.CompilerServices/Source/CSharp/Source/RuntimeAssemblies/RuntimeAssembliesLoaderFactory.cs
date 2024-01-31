@@ -4,10 +4,12 @@ using System.Runtime.InteropServices;
 using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
+using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using System.Diagnostics.Metrics;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.RuntimeAssemblies;
 
@@ -52,6 +54,21 @@ public static class RuntimeAssembliesLoaderFactory
     {
         public void CreateCache(CSharpBinder cSharpBinder)
         {
+            var globalCodeBlockBuilder = new CodeBlockBuilder(null, null);
+            var currentCodeBlockBuilder = globalCodeBlockBuilder;
+            var diagnosticBag = new LuthetusDiagnosticBag();
+
+            var model = new ParserModel(
+                cSharpBinder,
+                cSharpBinder.ConstructBinderSession(new ResourceUri("aaa")),
+                new TokenWalker(ImmutableArray<ISyntaxToken>.Empty, new()),
+                new Stack<ISyntax>(),
+                diagnosticBag,
+                globalCodeBlockBuilder,
+                currentCodeBlockBuilder,
+                null,
+                new Stack<Action<CodeBlockNode>>());
+
             // Get the array of runtime assemblies.
             string[] runtimeAssemblyPaths = Directory.GetFiles(
                 RuntimeEnvironment.GetRuntimeDirectory(),
@@ -214,7 +231,7 @@ public static class RuntimeAssembliesLoaderFactory
                                 AccessModifierKind.Public,
                                 typeDefinitionNode.HasPartialModifier,
                                 StorageModifierKind.Class,
-                                typeDefinitionNode.TypeIdentifier,
+                                typeDefinitionNode.TypeIdentifierToken,
                                 null,
                                 typeDefinitionNode.GenericArgumentsListingNode,
                                 null,
@@ -227,7 +244,7 @@ public static class RuntimeAssembliesLoaderFactory
 
                             foreach (var namespaceStatementNode in systemNamespaceGroup.NamespaceStatementNodeList)
                             {
-                                cSharpBinder.BindNamespaceStatementNode(namespaceStatementNode);
+                                cSharpBinder.BindNamespaceStatementNode(namespaceStatementNode, model);
                             }
                         }
                         catch (FileNotFoundException ex)

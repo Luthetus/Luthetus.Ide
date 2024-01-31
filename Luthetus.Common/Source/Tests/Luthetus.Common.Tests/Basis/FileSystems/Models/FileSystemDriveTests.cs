@@ -33,7 +33,7 @@ public class FileSystemDriveTests
         {
             // Root
             {
-                var absolutePath = new AbsolutePath($@"C:{dsc}", true, environmentProvider);
+                var absolutePath = environmentProvider.AbsolutePathFactory($@"C:{dsc}", true);
 
                 if (absolutePath.RootDrive is null)
                     throw new Exception($"{nameof(absolutePath.RootDrive)} was null, test failed");
@@ -44,7 +44,7 @@ public class FileSystemDriveTests
 
             // Directory
             {
-                var absolutePath = new AbsolutePath($@"C:{dsc}Homework{dsc}Math{dsc}", true, environmentProvider);
+                var absolutePath = environmentProvider.AbsolutePathFactory($@"C:{dsc}Homework{dsc}Math{dsc}", true);
 
                 if (absolutePath.RootDrive is null)
                     throw new Exception($"{nameof(absolutePath.RootDrive)} was null, test failed");
@@ -55,7 +55,7 @@ public class FileSystemDriveTests
 
             // File
             {
-                var absolutePath = new AbsolutePath($@"C:{dsc}Homework{dsc}Math{dsc}addition.txt", false, environmentProvider);
+                var absolutePath = environmentProvider.AbsolutePathFactory($@"C:{dsc}Homework{dsc}Math{dsc}addition.txt", false);
 
                 if (absolutePath.RootDrive is null)
                     throw new Exception($"{nameof(absolutePath.RootDrive)} was null, test failed");
@@ -66,7 +66,7 @@ public class FileSystemDriveTests
 
             // No drive provided
             {
-                var absolutePath = new AbsolutePath($@"{dsc}Homework{dsc}Math{dsc}addition.txt", false, environmentProvider);
+                var absolutePath = environmentProvider.AbsolutePathFactory($@"{dsc}Homework{dsc}Math{dsc}addition.txt", false);
 
                 Assert.Null(absolutePath.RootDrive);
             }

@@ -13,23 +13,23 @@ public partial class CSharpFacts
             var typeDefinitionMap = new Dictionary<string, TypeDefinitionNode>
         {
             {
-                Types.Void.TypeIdentifier.TextSpan.GetText(),
+                Types.Void.TypeIdentifierToken.TextSpan.GetText(),
                 Types.Void
             },
             {
-                Types.Var.TypeIdentifier.TextSpan.GetText(),
+                Types.Var.TypeIdentifierToken.TextSpan.GetText(),
                 Types.Var
             },
             {
-                Types.Bool.TypeIdentifier.TextSpan.GetText(),
+                Types.Bool.TypeIdentifierToken.TextSpan.GetText(),
                 Types.Bool
             },
             {
-                Types.Int.TypeIdentifier.TextSpan.GetText(),
+                Types.Int.TypeIdentifierToken.TextSpan.GetText(),
                 Types.Int
             },
             {
-                Types.String.TypeIdentifier.TextSpan.GetText(),
+                Types.String.TypeIdentifierToken.TextSpan.GetText(),
                 Types.String
             },
         };
@@ -42,6 +42,8 @@ public partial class CSharpFacts
                 new ResourceUri(string.Empty),
                 typeDefinitionMap,
                 new(),
+                new(),
+                Namespaces.GetTopLevelNamespaceStatementNode(),
                 new());
         }
     }

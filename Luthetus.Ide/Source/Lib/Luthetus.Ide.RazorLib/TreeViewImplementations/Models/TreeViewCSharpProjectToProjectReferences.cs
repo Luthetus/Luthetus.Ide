@@ -89,10 +89,9 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
                 includeAttribute.Item2,
                 EnvironmentProvider);
 
-            var referenceProjectAbsolutePath = new AbsolutePath(
+            var referenceProjectAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
                 referenceProjectAbsolutePathString,
-                false,
-                EnvironmentProvider);
+                false);
 
             var cSharpProjectToProjectReference = new CSharpProjectToProjectReference(
                 Item.CSharpProjectNamespacePath,

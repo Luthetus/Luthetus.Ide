@@ -113,10 +113,9 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                     Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
 
                     // Open the created .NET Solution
-                    var parentDirectoryAbsolutePath = new AbsolutePath(
+                    var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
                         localParentDirectoryName,
-                        true,
-                        EnvironmentProvider);
+                        true);
 
                     var solutionAbsolutePathString =
                         parentDirectoryAbsolutePath.Value +
@@ -126,10 +125,9 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         '.' +
                         ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-                    var solutionAbsolutePath = new AbsolutePath(
+                    var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
                         solutionAbsolutePathString,
-                        false,
-                        EnvironmentProvider);
+                        false);
 
                     DotNetSolutionSync.SetDotNetSolution(solutionAbsolutePath);
                     return Task.CompletedTask;
@@ -172,10 +170,9 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 
         NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", LuthetusCommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
 
-        var solutionAbsolutePath = new AbsolutePath(
+        var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
             solutionAbsolutePathString,
-            false,
-            EnvironmentProvider);
+            false);
 
         DotNetSolutionSync.SetDotNetSolution(solutionAbsolutePath);
     }

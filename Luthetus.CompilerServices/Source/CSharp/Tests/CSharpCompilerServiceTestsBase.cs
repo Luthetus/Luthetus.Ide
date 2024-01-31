@@ -10,6 +10,7 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Misc;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests;
 
@@ -27,7 +28,10 @@ public class CSharpCompilerServiceTestsBase
             .AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime())
             .AddScoped<CSharpCompilerService>()
             .AddScoped<IEnvironmentProvider>(serviceProvider => new InMemoryEnvironmentProvider())
-            .AddScoped<IFileSystemProvider>(serviceProvider => new InMemoryFileSystemProvider(serviceProvider.GetRequiredService<IEnvironmentProvider>()));
+            .AddScoped<IFileSystemProvider>(serviceProvider => new InMemoryFileSystemProvider(
+                serviceProvider.GetRequiredService<IEnvironmentProvider>(),
+                serviceProvider.GetRequiredService<ILuthetusCommonComponentRenderers>(),
+                serviceProvider.GetRequiredService<IDispatcher>()));
 
         var hostingInformation = new LuthetusHostingInformation(
             LuthetusHostingKind.UnitTesting,

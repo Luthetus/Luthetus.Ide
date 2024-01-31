@@ -1,4 +1,6 @@
-﻿using System.Collections.Immutable;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
@@ -10,12 +12,15 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
     private readonly InMemoryFileHandler _file;
     private readonly InMemoryDirectoryHandler _directory;
 
-    public InMemoryFileSystemProvider(IEnvironmentProvider environmentProvider)
+    public InMemoryFileSystemProvider(
+        IEnvironmentProvider environmentProvider,
+        ILuthetusCommonComponentRenderers commonComponentRenderers,
+        IDispatcher dispatcher)
     {
         _environmentProvider = environmentProvider;
 
-        _file = new InMemoryFileHandler(this, _environmentProvider);
-        _directory = new InMemoryDirectoryHandler(this, _environmentProvider);
+        _file = new InMemoryFileHandler(this, _environmentProvider, commonComponentRenderers, dispatcher);
+        _directory = new InMemoryDirectoryHandler(this, _environmentProvider, commonComponentRenderers, dispatcher);
 
         Directory
             .CreateDirectoryAsync(_environmentProvider.RootDirectoryAbsolutePath.Value)

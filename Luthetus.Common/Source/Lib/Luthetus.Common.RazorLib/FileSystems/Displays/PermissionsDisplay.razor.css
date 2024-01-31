@@ -1,0 +1,5 @@
+.luth_permissions-body {
+    margin: 10px;
+    padding: 10px;
+    border-left: 1px solid var(--luth_primary-border-color);
+}

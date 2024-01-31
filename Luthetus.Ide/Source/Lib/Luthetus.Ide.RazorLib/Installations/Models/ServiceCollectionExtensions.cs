@@ -49,13 +49,13 @@ public static class ServiceCollectionExtensions
             {
                 CustomThemeRecordList = LuthetusTextEditorCustomThemeFacts.AllCustomThemesList,
                 InitialThemeKey = ThemeFacts.VisualStudioDarkThemeClone.Key,
-				OpenInEditorAsyncFunc = (absolutePath, serviceProvider) =>
+				OpenInEditorAsyncFunc = (absolutePathString, serviceProvider) =>
 				{
 					var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
 					var editorSync = serviceProvider.GetRequiredService<EditorSync>();
 
 					editorSync.OpenInEditor(
-						new AbsolutePath(absolutePath, false, environmentProvider),
+                        environmentProvider.AbsolutePathFactory(absolutePathString, false),
 						false);
 
 					return Task.CompletedTask;

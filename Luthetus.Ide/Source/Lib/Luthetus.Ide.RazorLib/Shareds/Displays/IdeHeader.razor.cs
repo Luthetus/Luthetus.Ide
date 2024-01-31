@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
+using Luthetus.Common.RazorLib.FileSystems.Displays;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -96,6 +97,16 @@ public partial class IdeHeader : FluxorComponent
             menuOptionsList.Add(menuOptionOpen);
         }
 
+        // Menu Option Permissions
+        {
+            var menuOptionPermissions = new MenuOptionRecord(
+                "Permissions",
+                MenuOptionKind.Delete,
+                ShowPermissionsDialog);
+
+            menuOptionsList.Add(menuOptionPermissions);
+        }
+
         _menuFile = new MenuRecord(menuOptionsList.ToImmutableArray());
     }
 
@@ -142,6 +153,21 @@ public partial class IdeHeader : FluxorComponent
             Key<DialogRecord>.NewKey(),
             "Info",
             typeof(IdeInfoDisplay),
+            null,
+            null)
+        {
+            IsResizable = true
+        };
+
+        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+    }
+
+    private void ShowPermissionsDialog()
+    {
+        var dialogRecord = new DialogRecord(
+            Key<DialogRecord>.NewKey(),
+            "Permissions",
+            typeof(PermissionsDisplay),
             null,
             null)
         {

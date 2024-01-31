@@ -134,7 +134,20 @@ public partial class LuthetusIdeInitializer : ComponentBase
         };
 
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, compilerServiceExplorerPanelTab, false));
-        
+
+        var compilerServiceEditorPanelTab = new PanelTab(
+            Key<PanelTab>.NewKey(),
+            rightPanel.ElementDimensions,
+            new(),
+            typeof(CompilerServiceEditorDisplay),
+            typeof(IconFolder),
+            "Compiler Service Editor")
+        {
+            ContextRecordKey = ContextFacts.CompilerServiceEditorContext.ContextKey
+        };
+
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, compilerServiceEditorPanelTab, false));
+
         var gitChangesPanelTab = new PanelTab(
             Key<PanelTab>.NewKey(),
             rightPanel.ElementDimensions,

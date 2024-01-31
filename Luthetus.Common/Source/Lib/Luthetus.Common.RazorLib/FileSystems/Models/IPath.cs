@@ -48,4 +48,7 @@ public interface IPath
     /// to be <see cref="IEnvironmentProvider.DirectorySeparatorChar"/>.
     /// </summary>
     public string Value { get; }
+    public AncestorDirectory? ParentDirectory { get; }
+    public List<AncestorDirectory> AncestorDirectoryList { get; }
+    public IEnvironmentProvider EnvironmentProvider { get; }
 }

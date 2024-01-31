@@ -46,7 +46,7 @@ public partial class EditorDisplay : ComponentBase
 
     private void RegisterModelAction(ResourceUri resourceUri)
     {
-        var absolutePath = new AbsolutePath(resourceUri.Value, false, EnvironmentProvider);
+        var absolutePath = EnvironmentProvider.AbsolutePathFactory(resourceUri.Value, false);
         EditorSync.OpenInEditor(absolutePath, true);
     }
 

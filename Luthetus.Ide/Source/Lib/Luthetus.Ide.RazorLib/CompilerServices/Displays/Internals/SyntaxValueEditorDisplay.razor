@@ -1,0 +1,105 @@
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+
+<div class="luth_ide_syntax-value-editor">
+
+    <label class="luth_ide_syntax-editor-label"
+           for="@(HtmlId)">
+        @PropertyInfo.Name&nbsp;
+    </label>
+
+    @if (PropertyInfo.PropertyType == typeof(string))
+    {
+        <div>Ab123stringstringstring</div>
+        
+        <input id="@HtmlId" />
+    }
+    else if (PropertyInfo.PropertyType == typeof(bool))
+    {
+        if (PropertyInfo.Name != nameof(ISyntax.IsFabricated))
+        {
+            <input type="checkbox" />
+        }
+        else
+        {
+            var value = PropertyInfo.GetValue(Syntax);
+
+            if (value is null)
+            {
+                <span>value <span class="luth_te_keyword">is null</span></span>
+            }
+            else
+            {
+                <span class="luth_te_keyword">@value</span>
+            }
+        }
+    }
+    else if (PropertyInfo.PropertyType == typeof(byte))
+    {
+        <div>TODO: @PropertyInfo.PropertyType.Name</div>
+    }
+    else if (PropertyInfo.PropertyType == typeof(char))
+    {
+        <div>TODO: @PropertyInfo.PropertyType.Name</div>
+    }
+    else if (PropertyInfo.PropertyType == typeof(decimal))
+    {
+        <div>TODO: @PropertyInfo.PropertyType.Name</div>
+    }
+    else if (PropertyInfo.PropertyType == typeof(double))
+    {
+        <div>TODO: @PropertyInfo.PropertyType.Name</div>
+    }
+    else if (PropertyInfo.PropertyType == typeof(bool))
+    {
+        <div>TODO: @PropertyInfo.PropertyType.Name</div>
+    }
+    else if (PropertyInfo.PropertyType == typeof(float))
+    {
+        <div>TODO: @PropertyInfo.PropertyType.Name</div>
+    }
+    else if (PropertyInfo.PropertyType == typeof(int))
+    {
+        <div>TODO: @PropertyInfo.PropertyType.Name</div>
+    }
+    else if (PropertyInfo.PropertyType == typeof(long))
+    {
+        <div>TODO: @PropertyInfo.PropertyType.Name</div>
+    }
+    else if (PropertyInfo.PropertyType == typeof(object))
+    {
+        <div>TODO: @PropertyInfo.PropertyType.Name</div>
+    }
+    else if (PropertyInfo.PropertyType == typeof(sbyte))
+    {
+        <div>TODO: @PropertyInfo.PropertyType.Name</div>
+    }
+    else if (PropertyInfo.PropertyType == typeof(short))
+    {
+        <div>TODO: @PropertyInfo.PropertyType.Name</div>
+    }
+    else if (PropertyInfo.PropertyType == typeof(string))
+    {
+        <div>TODO: @PropertyInfo.PropertyType.Name</div>
+    }
+    else if (PropertyInfo.PropertyType == typeof(uint))
+    {
+        <div>TODO: @PropertyInfo.PropertyType.Name</div>
+    }
+    else if (PropertyInfo.PropertyType == typeof(ulong))
+    {
+        <div>TODO: @PropertyInfo.PropertyType.Name</div>
+    }
+    else if (PropertyInfo.PropertyType == typeof(ushort))
+    {
+        <div>TODO: @PropertyInfo.PropertyType.Name</div>
+    }
+    else if (PropertyInfo.PropertyType == typeof(void))
+    {
+        <div>TODO: @PropertyInfo.PropertyType.Name</div>
+    }
+    else
+    {
+        <div>TODO: @PropertyInfo.PropertyType.Name</div>
+    }
+</div>
+

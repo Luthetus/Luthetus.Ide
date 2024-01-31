@@ -275,10 +275,9 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 {
                     var emptyFileAbsolutePathString = namespacePath.AbsolutePath.Value + fileName;
 
-                    var emptyFileAbsolutePath = new AbsolutePath(
+                    var emptyFileAbsolutePath = _environmentProvider.AbsolutePathFactory(
                         emptyFileAbsolutePathString,
-                        false,
-                        _environmentProvider);
+                        false);
 
                     await _fileSystemProvider.File.WriteAllTextAsync(
                         emptyFileAbsolutePath.Value,
@@ -310,7 +309,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     private void PerformNewDirectoryAction(string directoryName, IAbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         var directoryAbsolutePathString = parentDirectory.Value + directoryName;
-        var directoryAbsolutePath = new AbsolutePath(directoryAbsolutePathString, true, _environmentProvider);
+        var directoryAbsolutePath = _environmentProvider.AbsolutePathFactory(directoryAbsolutePathString, true);
 
         _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "New Directory Action",
@@ -393,17 +392,15 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                             // If kept as inline awaits then the else if won't execute if the first one succeeds.
                             if (await _fileSystemProvider.Directory.ExistsAsync(clipboardPhrase.Value))
                             {
-                                clipboardAbsolutePath = new AbsolutePath(
+                                clipboardAbsolutePath = _environmentProvider.AbsolutePathFactory(
                                     clipboardPhrase.Value,
-                                    true,
-                                    _environmentProvider);
+                                    true);
                             }
                             else if (await _fileSystemProvider.File.ExistsAsync(clipboardPhrase.Value))
                             {
-                                clipboardAbsolutePath = new AbsolutePath(
+                                clipboardAbsolutePath = _environmentProvider.AbsolutePathFactory(
                                     clipboardPhrase.Value,
-                                    false,
-                                    _environmentProvider);
+                                    false);
                             }
 
                             if (clipboardAbsolutePath is not null)
@@ -479,7 +476,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
         var sourceAbsolutePathString = sourceAbsolutePath.Value;
         var parentOfSource = sourceAbsolutePath.AncestorDirectoryList.Last();
-        var destinationAbsolutePathString = parentOfSource.Value + nextName;
+        var destinationAbsolutePathString = parentOfSource + nextName;
 
         try
         {
@@ -497,7 +494,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
         onAfterCompletion.Invoke();
 
-        return new AbsolutePath(destinationAbsolutePathString, sourceAbsolutePath.IsDirectory, _environmentProvider);
+        return _environmentProvider.AbsolutePathFactory(destinationAbsolutePathString, sourceAbsolutePath.IsDirectory);
     }
 
     private void PerformRemoveCSharpProjectReferenceFromSolutionAction(
@@ -520,7 +517,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 var terminalCommand = new TerminalCommand(
                     Key<TerminalCommand>.NewKey(),
                     formattedCommand,
-                    workingDirectory.Value,
+                    workingDirectory.Path,
                     CancellationToken.None,
                     async () => await onAfterCompletion.Invoke());
 

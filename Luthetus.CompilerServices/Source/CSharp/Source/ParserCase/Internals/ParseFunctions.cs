@@ -29,7 +29,7 @@ public class ParseFunctions
             functionParametersListingNode,
             Facts.CSharpFacts.Types.Void.ToTypeClause());
 
-        model.Binder.BindFunctionInvocationNode(functionInvocationNode);
+        model.Binder.BindFunctionInvocationNode(functionInvocationNode, model);
         model.CurrentCodeBlockBuilder.ChildList.Add(functionInvocationNode);
     }
 
@@ -57,7 +57,7 @@ public class ParseFunctions
             null,
             null);
 
-        model.Binder.BindFunctionDefinitionNode(functionDefinitionNode);
+        model.Binder.BindFunctionDefinitionNode(functionDefinitionNode, model);
         model.SyntaxStack.Push(functionDefinitionNode);
 
         if (model.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
@@ -101,7 +101,7 @@ public class ParseFunctions
         }
 
         var typeClauseNode = new TypeClauseNode(
-            typeDefinitionNode.TypeIdentifier,
+            typeDefinitionNode.TypeIdentifierToken,
             null,
             null);
 
@@ -113,7 +113,7 @@ public class ParseFunctions
             null,
             null);
 
-        model.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken);
+        model.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, model);
         model.SyntaxStack.Push(constructorDefinitionNode);
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
@@ -197,38 +197,7 @@ public class ParseFunctions
             if (equalsToken.IsFabricated)
                 break;
 
-            IExpressionNode expressionNode;
-            if (SyntaxKind.IdentifierToken == model.TokenWalker.Current.SyntaxKind)
-            {
-                var variableIdentifierToken = (IdentifierToken)model.TokenWalker.Consume();
-
-                if (!model.Binder.TryGetVariableDeclarationHierarchically(
-                        variableIdentifierToken.TextSpan.GetText(),
-                        out var variableDeclarationNode)
-                    || variableDeclarationNode is null)
-                {
-                    variableDeclarationNode = new(
-                        Facts.CSharpFacts.Types.Void.ToTypeClause(),
-                        variableIdentifierToken,
-                        VariableKind.Local,
-                        false)
-                    {
-                        IsFabricated = true
-                    };
-
-                    model.Binder.BindVariableDeclarationStatementNode(variableDeclarationNode);
-                }
-
-                var variableReferenceNode = new VariableReferenceNode(
-                    variableIdentifierToken,
-                    variableDeclarationNode);
-
-                variableReferenceNode = model.Binder.BindVariableReferenceNode(variableReferenceNode);
-                expressionNode = variableReferenceNode;
-            }
-            else
-            {
-                ParseOthers.HandleExpression(
+            ParseOthers.HandleExpression(
                     null,
                     null,
                     null,
@@ -245,8 +214,7 @@ public class ParseFunctions
                     },
                     model);
 
-                expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
-            }
+            var expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
 
             // TODO: Make a PropertySymbol
             //
@@ -340,7 +308,7 @@ public class ParseFunctions
                 functionParametersListingNode,
                 matchingOverload?.ReturnTypeClauseNode ?? Facts.CSharpFacts.Types.Void.ToTypeClause());
 
-            model.Binder.BindFunctionInvocationNode(functionInvocationNode);
+            model.Binder.BindFunctionInvocationNode(functionInvocationNode, model);
 
             if (SyntaxKind.StatementDelimiterToken == model.TokenWalker.Current.SyntaxKind)
             {
@@ -409,39 +377,7 @@ public class ParseFunctions
                 }
             }
 
-            IExpressionNode expression;
-
-            if (SyntaxKind.IdentifierToken == model.TokenWalker.Current.SyntaxKind)
-            {
-                var variableIdentifierToken = (IdentifierToken)model.TokenWalker.Consume();
-
-                if (!model.Binder.TryGetVariableDeclarationHierarchically(
-                        variableIdentifierToken.TextSpan.GetText(),
-                        out var variableDeclarationNode)
-                    || variableDeclarationNode is null)
-                {
-                    variableDeclarationNode = new(
-                        Facts.CSharpFacts.Types.Void.ToTypeClause(),
-                        variableIdentifierToken,
-                        VariableKind.Local,
-                        false)
-                    {
-                        IsFabricated = true
-                    };
-
-                    model.Binder.BindVariableDeclarationStatementNode(variableDeclarationNode);
-                }
-
-                var variableReferenceNode = new VariableReferenceNode(
-                    variableIdentifierToken,
-                    variableDeclarationNode);
-
-                variableReferenceNode = model.Binder.BindVariableReferenceNode(variableReferenceNode);
-                expression = variableReferenceNode;
-            }
-            else
-            {
-                ParseOthers.HandleExpression(
+            ParseOthers.HandleExpression(
                     null,
                     null,
                     null,
@@ -458,8 +394,7 @@ public class ParseFunctions
                     },
                     model);
 
-                expression = (IExpressionNode)model.SyntaxStack.Pop();
-            }
+            var expression = (IExpressionNode)model.SyntaxStack.Pop();
 
             var functionParameterEntryNode = new FunctionParameterEntryNode(
                 expression,
@@ -555,7 +490,7 @@ public class ParseFunctions
                 false
             );
 
-            model.Binder.BindVariableDeclarationStatementNode(variableDeclarationStatementNode);
+            model.Binder.BindVariableDeclarationNode(variableDeclarationStatementNode, model);
 
             var functionArgumentEntryNode = new FunctionArgumentEntryNode(
                 variableDeclarationStatementNode,
@@ -583,7 +518,8 @@ public class ParseFunctions
                     compileTimeConstantToken,
                     hasOutKeyword,
                     hasInKeyword,
-                    hasRefKeyword);
+                    hasRefKeyword,
+                    model);
             }
 
             mutableFunctionArgumentListing.Add(functionArgumentEntryNode);

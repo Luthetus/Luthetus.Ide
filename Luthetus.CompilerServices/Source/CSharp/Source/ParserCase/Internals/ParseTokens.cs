@@ -198,19 +198,22 @@ public static class ParseTokens
         }
         else
         {
-            if (model.Binder.TryGetVariableDeclarationHierarchically(text, out var variableDeclarationStatementNode) &&
+            if (model.Binder.TryGetVariableDeclarationHierarchically(
+                    text,
+                    model.BinderSession.CurrentScope,
+                    out var variableDeclarationStatementNode) &&
                 variableDeclarationStatementNode is not null)
             {
-                ParseVariables.HandleVariableReference(
-                    consumedIdentifierToken,
-                    variableDeclarationStatementNode,
-                    model);
+                ParseVariables.HandleVariableReference(consumedIdentifierToken, model);
                 return true;
             }
             else
             {
                 // 'static class identifier' OR 'undeclared-variable reference'
-                if (model.Binder.TryGetTypeDefinitionHierarchically(text, out var typeDefinitionNode) &&
+                if (model.Binder.TryGetTypeDefinitionHierarchically(
+                        text,
+                        model.BinderSession.CurrentScope,
+                        out var typeDefinitionNode) &&
                     typeDefinitionNode is not null)
                 {
                     ParseTypes.HandleStaticClassIdentifier(consumedIdentifierToken, model);
@@ -261,7 +264,7 @@ public static class ParseTokens
                     null,
                     genericParametersListingNode);
 
-                model.Binder.BindTypeClauseNode(typeClauseNode);
+                model.Binder.BindTypeClauseNode(typeClauseNode, model);
                 model.SyntaxStack.Push(typeClauseNode);
                 return true;
             }
@@ -364,6 +367,7 @@ public static class ParseTokens
         {
             if (!model.Binder.TryGetTypeDefinitionHierarchically(
                     consumedAmbiguousIdentifierNode.IdentifierToken.TextSpan.GetText(),
+                    model.BinderSession.CurrentScope,
                     out var typeDefinitionNode)
                 || typeDefinitionNode is null)
             {
@@ -381,7 +385,7 @@ public static class ParseTokens
                     IsFabricated = true
                 };
 
-                model.Binder.BindTypeDefinitionNode(fabricateTypeDefinition);
+                model.Binder.BindTypeDefinitionNode(fabricateTypeDefinition, model);
                 typeDefinitionNode = fabricateTypeDefinition;
             }
 
@@ -495,13 +499,13 @@ public static class ParseTokens
             var typeDefinitionNode = (TypeDefinitionNode)model.SyntaxStack.Pop();
             var inheritedTypeClauseNode = model.TokenWalker.MatchTypeClauseNode(model);
 
-            model.Binder.BindTypeClauseNode(inheritedTypeClauseNode);
+            model.Binder.BindTypeClauseNode(inheritedTypeClauseNode, model);
 
             model.SyntaxStack.Push(new TypeDefinitionNode(
                 typeDefinitionNode.AccessModifierKind,
                 typeDefinitionNode.HasPartialModifier,
                 typeDefinitionNode.StorageModifierKind,
-                typeDefinitionNode.TypeIdentifier,
+                typeDefinitionNode.TypeIdentifierToken,
                 typeDefinitionNode.ValueType,
                 typeDefinitionNode.GenericArgumentsListingNode,
                 typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode,
@@ -535,7 +539,7 @@ public static class ParseTokens
                     codeBlockNode);
 
                 closureCurrentCodeBlockBuilder.ChildList.Add(namespaceStatementNode);
-                model.Binder.BindNamespaceStatementNode(namespaceStatementNode);
+                model.Binder.BindNamespaceStatementNode(namespaceStatementNode, model);
             });
 
             model.SyntaxStack.Push(namespaceStatementNode);
@@ -551,14 +555,14 @@ public static class ParseTokens
                     typeDefinitionNode.AccessModifierKind,
                     typeDefinitionNode.HasPartialModifier,
                     typeDefinitionNode.StorageModifierKind,
-                    typeDefinitionNode.TypeIdentifier,
+                    typeDefinitionNode.TypeIdentifierToken,
                     typeDefinitionNode.ValueType,
                     typeDefinitionNode.GenericArgumentsListingNode,
                     typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode,
                     typeDefinitionNode.InheritedTypeClauseNode,
                     codeBlockNode);
 
-                model.Binder.BindTypeDefinitionNode(typeDefinitionNode, true);
+                model.Binder.BindTypeDefinitionNode(typeDefinitionNode, model, true);
                 closureCurrentCodeBlockBuilder.ChildList.Add(typeDefinitionNode);
             });
 
@@ -634,7 +638,7 @@ public static class ParseTokens
             });
         }
 
-        model.Binder.RegisterBoundScope(scopeReturnTypeClauseNode, consumedOpenBraceToken.TextSpan);
+        model.Binder.RegisterBoundScope(scopeReturnTypeClauseNode, consumedOpenBraceToken.TextSpan, model);
 
         if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
@@ -645,7 +649,7 @@ public static class ParseTokens
                 .TextSpan
                 .GetText();
 
-            model.Binder.AddNamespaceToCurrentScope(namespaceString);
+            model.Binder.AddNamespaceToCurrentScope(namespaceString, model);
             model.SyntaxStack.Push(namespaceStatementNode);
         }
 
@@ -656,7 +660,7 @@ public static class ParseTokens
         CloseBraceToken consumedCloseBraceToken,
         ParserModel model)
     {
-        model.Binder.DisposeBoundScope(consumedCloseBraceToken.TextSpan);
+        model.Binder.DisposeBoundScope(consumedCloseBraceToken.TextSpan, model);
 
         if (model.CurrentCodeBlockBuilder.Parent is not null && model.FinalizeCodeBlockNodeActionStack.Any())
         {
@@ -885,15 +889,17 @@ public static class ParseTokens
                         codeBlockNode);
 
                     closureCurrentCompilationUnitBuilder.ChildList.Add(namespaceStatementNode);
-                    model.Binder.BindNamespaceStatementNode(namespaceStatementNode);
+                    model.Binder.BindNamespaceStatementNode(namespaceStatementNode, model);
                 };
 
             model.Binder.RegisterBoundScope(
                 scopeReturnTypeClauseNode,
-                consumedStatementDelimiterToken.TextSpan);
+                consumedStatementDelimiterToken.TextSpan,
+                model);
 
             model.Binder.AddNamespaceToCurrentScope(
-                namespaceStatementNode.IdentifierToken.TextSpan.GetText());
+                namespaceStatementNode.IdentifierToken.TextSpan.GetText(),
+                model);
 
             model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, nextCodeBlockOwner);
         }

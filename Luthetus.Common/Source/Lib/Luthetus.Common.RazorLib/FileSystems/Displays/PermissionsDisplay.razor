@@ -1,0 +1,54 @@
+﻿<div class="luth_permissions">
+    @{
+        var localDeletionPermittedPathList = EnvironmentProvider.DeletionPermittedPathList;
+        var localProtectedPathList = EnvironmentProvider.ProtectedPathList;
+    }
+
+    <div class="luth_permission-entry">
+        <div class="luth_permission-title">DeletionPermittedPathList</div>
+
+        <div class="luth_permission-form">
+            <div>
+                Add Modify/Delete rights to: <input @bind="_deleteAllowPathTextInput" @bind:event="oninput" />
+            </div>
+            <div>
+                Is Directory: <input type="checkbox" @bind="_deleteAllowPathIsDirectoryInput" @bind:event="oninput" />
+            </div>
+            <div>
+                Add Modify/Delete rights to @_deleteAllowPathTextInput (isDirectory:@_deleteAllowPathIsDirectoryInput)
+                <button class="luth_button" @onclick="() => AddModifyDeleteRightsOnClick(_deleteAllowPathTextInput, _deleteAllowPathIsDirectoryInput)">Submit Add Modify/Delete Rights</button>
+            </div>
+        </div>
+
+        <div class="luth_permissions-body">
+            @foreach (var deletionPermittedPath in localDeletionPermittedPathList)
+            {
+                <div>@deletionPermittedPath.AbsolutePath;is-directory:@deletionPermittedPath.IsDirectory</div>
+            }
+        </div>
+    </div>
+    
+    <div class="luth_permission-entry">
+        <div class="luth_permission-title">ProtectedPathList</div>
+
+        <div class="luth_permission-form">
+            <div>
+                Protect the path: <input @bind="_protectPathTextInput" @bind:event="oninput" />
+            </div>
+            <div>
+                Is Directory: <input type="checkbox" @bind="_protectPathIsDirectoryInput" @bind:event="oninput" />
+            </div>
+            <div>
+                Protect the path: @_protectPathTextInput (isDirectory:@_protectPathIsDirectoryInput)
+                <button class="luth_button" @onclick="() => SubmitProtectOnClick(_protectPathTextInput, _protectPathIsDirectoryInput)">Submit Protect</button>
+            </div>
+        </div>
+
+        <div class="luth_permissions-body">
+            @foreach (var protectedPath in localProtectedPathList)
+            {
+                <div>@protectedPath.AbsolutePath;is-directory:@protectedPath.IsDirectory</div>
+            }
+        </div>
+    </div>
+</div>

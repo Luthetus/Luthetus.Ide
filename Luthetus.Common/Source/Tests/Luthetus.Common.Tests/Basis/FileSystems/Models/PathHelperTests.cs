@@ -44,7 +44,7 @@ public class PathHelperTests
             var relativePathString = "../Math/addition.txt";
             var expectedOutputPathString = "/Homework/Math/addition.txt";
 
-            var startAbsolutePath = new AbsolutePath(startPathString, false, environmentProvider);
+            var startAbsolutePath = environmentProvider.AbsolutePathFactory(startPathString, false);
 
             var outputAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
                 startAbsolutePath,
@@ -60,7 +60,7 @@ public class PathHelperTests
             var relativePathString = "./skeletalSystem.txt";
             var expectedOutputPathString = "/Homework/Biology/skeletalSystem.txt";
 
-            var startAbsolutePath = new AbsolutePath(startPathString, false, environmentProvider);
+            var startAbsolutePath = environmentProvider.AbsolutePathFactory(startPathString, false);
 
             var outputAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
                 startAbsolutePath,
@@ -76,7 +76,7 @@ public class PathHelperTests
             var relativePathString = "../";
             var expectedOutputPathString = "/Homework/";
 
-            var startAbsolutePath = new AbsolutePath(startPathString, false, environmentProvider);
+            var startAbsolutePath = environmentProvider.AbsolutePathFactory(startPathString, false);
 
             var outputAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
                 startAbsolutePath,
@@ -92,7 +92,7 @@ public class PathHelperTests
             var relativePathString = "../";
             var expectedOutputPathString = "/Homework/";
 
-            var startAbsolutePath = new AbsolutePath(startPathString, false, environmentProvider);
+            var startAbsolutePath = environmentProvider.AbsolutePathFactory(startPathString, false);
 
             var outputAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
                 startAbsolutePath,
@@ -116,15 +116,13 @@ public class PathHelperTests
 
         // File to file with UpDir directives.
         {
-            var startAbsolutePath = new AbsolutePath(
+            var startAbsolutePath = environmentProvider.AbsolutePathFactory(
                 WellKnownPaths.Files.NervousSystemTxt,
-                false,
-                environmentProvider);
+                false);
 
-            var endAbsolutePath = new AbsolutePath(
+            var endAbsolutePath = environmentProvider.AbsolutePathFactory(
                 WellKnownPaths.Files.AdditionTxt,
-                false,
-                environmentProvider);
+                false);
 
             var expectedRelativePathString = "../Math/addition.txt";
 
@@ -138,15 +136,13 @@ public class PathHelperTests
 
         // File to file NOT-USING any UpDir directives.
         {
-            var startAbsolutePath = new AbsolutePath(
+            var startAbsolutePath = environmentProvider.AbsolutePathFactory(
                 WellKnownPaths.Files.NervousSystemTxt,
-                false,
-                environmentProvider);
+                false);
 
-            var endAbsolutePath = new AbsolutePath(
+            var endAbsolutePath = environmentProvider.AbsolutePathFactory(
                 WellKnownPaths.Files.SkeletalSystemTxt,
-                false,
-                environmentProvider);
+                false);
 
             var expectedRelativePathString = "./skeletalSystem.txt";
 
@@ -160,15 +156,13 @@ public class PathHelperTests
 
         // A single UpDir directive from a file.
         {
-            var startAbsolutePath = new AbsolutePath(
+            var startAbsolutePath = environmentProvider.AbsolutePathFactory(
                 WellKnownPaths.Files.NervousSystemTxt,
-                false,
-                environmentProvider);
+                false);
 
-            var endAbsolutePath = new AbsolutePath(
+            var endAbsolutePath = environmentProvider.AbsolutePathFactory(
                 WellKnownPaths.Directories.Homework,
-                false,
-                environmentProvider);
+                false);
 
             var expectedRelativePathString = "../";
 
@@ -182,15 +176,13 @@ public class PathHelperTests
 
         // A single UpDir directive from a directory.
         {
-            var startAbsolutePath = new AbsolutePath(
+            var startAbsolutePath = environmentProvider.AbsolutePathFactory(
                 WellKnownPaths.Directories.Biology,
-                false,
-                environmentProvider);
+                false);
 
-            var endAbsolutePath = new AbsolutePath(
+            var endAbsolutePath = environmentProvider.AbsolutePathFactory(
                 WellKnownPaths.Directories.Homework,
-                false,
-                environmentProvider);
+                false);
 
             var expectedRelativePathString = "../";
 

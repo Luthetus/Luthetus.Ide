@@ -17,11 +17,12 @@ public class CSharpParser : IParser
     {
         Lexer = lexer;
         Binder = new CSharpBinder();
-        Binder.CurrentResourceUri = lexer.ResourceUri;
+        BinderSession = Binder.ConstructBinderSession(lexer.ResourceUri);
     }
 
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; private set; } = ImmutableArray<TextEditorDiagnostic>.Empty;
     public CSharpBinder Binder { get; private set; }
+    public BinderSession BinderSession { get; private set; }
     public CSharpLexer Lexer { get; }
 
     /// <summary>This method is used when parsing many files as a single compilation. The first binder instance would be passed to the following parsers. The resourceUri is passed in so if a file is parsed for a second time, the previous symbols can be deleted so they do not duplicate.</summary>
@@ -30,7 +31,7 @@ public class CSharpParser : IParser
         ResourceUri resourceUri)
     {
         Binder = previousBinder;
-        Binder.CurrentResourceUri = resourceUri;
+        BinderSession = Binder.ConstructBinderSession(resourceUri);
         Binder.ClearStateByResourceUri(resourceUri);
         return Parse();
     }
@@ -43,6 +44,7 @@ public class CSharpParser : IParser
 
         var model = new ParserModel(
             Binder,
+            BinderSession,
             new TokenWalker(Lexer.SyntaxTokens, diagnosticBag),
             new Stack<ISyntax>(),
             diagnosticBag,
@@ -132,10 +134,17 @@ public class CSharpParser : IParser
 
                     if (model.SyntaxStack.TryPop(out var notUsedSyntax))
                     {
-                        if (notUsedSyntax is IExpressionNode ||
-                            notUsedSyntax is AmbiguousIdentifierNode)
+                        if (notUsedSyntax is IExpressionNode)
                         {
                             model.CurrentCodeBlockBuilder.ChildList.Add(notUsedSyntax);
+                        }
+                        else if (notUsedSyntax.SyntaxKind == SyntaxKind.AmbiguousIdentifierNode)
+                        {
+                            var ambiguousIdentifierNode = (AmbiguousIdentifierNode)notUsedSyntax;
+                            model.CurrentCodeBlockBuilder.ChildList.Add(notUsedSyntax);
+                            model.DiagnosticBag.ReportUndefinedTypeOrNamespace(
+                                ambiguousIdentifierNode.IdentifierToken.TextSpan,
+                                ambiguousIdentifierNode.IdentifierToken.TextSpan.GetText());
                         }
                     }
                     break;
@@ -155,7 +164,7 @@ public class CSharpParser : IParser
             model.CurrentCodeBlockBuilder.Parent is not null)
         {
             // The current token here would be the EOF token.
-            Binder.DisposeBoundScope(model.TokenWalker.Current.TextSpan);
+            Binder.DisposeBoundScope(model.TokenWalker.Current.TextSpan, model);
 
             model.FinalizeNamespaceFileScopeCodeBlockNodeAction.Invoke(
                 model.CurrentCodeBlockBuilder.Build());

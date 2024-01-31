@@ -94,23 +94,33 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
             FileSystemProvider,
             EnvironmentProvider);
 
+        await FileSystemProvider.File.WriteAllTextAsync(
+            InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
+            InitialSolutionFacts.PERSON_CS_CONTENTS);
+        
+        await FileSystemProvider.File.WriteAllTextAsync(
+            InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CS_ABSOLUTE_FILE_PATH,
+            InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CS_CONTENTS);
+        
+        await FileSystemProvider.File.WriteAllTextAsync(
+            InitialSolutionFacts.PERSON_DISPLAY_RAZOR_ABSOLUTE_FILE_PATH,
+            InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CONTENTS);
+        
         // ExampleSolution.sln
         await FileSystemProvider.File.WriteAllTextAsync(
             InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
             InitialSolutionFacts.SLN_CONTENTS);
 
-        var solutionAbsolutePath = new AbsolutePath(
+        var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
             InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
-            false,
-            EnvironmentProvider);
+            false);
 
         DotNetSolutionSync.SetDotNetSolution(solutionAbsolutePath);
 
         // Display a file from the get-go so the user is less confused on what the website is.
-        var absolutePath = new AbsolutePath(
+        var absolutePath = EnvironmentProvider.AbsolutePathFactory(
             InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_PROGRAM_CS_ABSOLUTE_FILE_PATH,
-            false,
-            EnvironmentProvider);
+            false);
 
         EditorSync.OpenInEditor(absolutePath, false);
     }
@@ -139,7 +149,7 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
 
         foreach (var file in allFiles)
         {
-            var absolutePath = new AbsolutePath(file, false, EnvironmentProvider);
+            var absolutePath = EnvironmentProvider.AbsolutePathFactory(file, false);
             var resourceUri = new ResourceUri(file);
             var fileLastWriteTime = await FileSystemProvider.File.GetLastWriteTimeAsync(file);
             var content = await FileSystemProvider.File.ReadAllTextAsync(file);

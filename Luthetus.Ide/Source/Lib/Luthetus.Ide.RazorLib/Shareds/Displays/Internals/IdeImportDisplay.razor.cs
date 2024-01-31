@@ -88,9 +88,6 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
             request.Headers.Add("User-Agent", "Luthetus");
             // request.Headers.Add("Authorization", 222"Bearer <YOUR-TOKEN>");
             request.Headers.Add("X-GitHub-Api-Version", "2022-11-28");
-            request.Headers.Add("owner", localOwner);
-            request.Headers.Add("repo", localRepo);
-            request.Headers.Add("ref", localRef);
 
             var response = await HttpClient.SendAsync(request);
 
@@ -142,7 +139,7 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
             }
             else
             {
-                _errorMessage = response.ToString();
+                throw new ApplicationException(response.ToString());
             }
         }
         catch (Exception exception)
@@ -179,10 +176,9 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
 
     private void PromptUserOpenSolution(string absolutePathString)
     {
-        var absolutePath = new AbsolutePath(
+        var absolutePath = EnvironmentProvider.AbsolutePathFactory(
             absolutePathString,
-            false,
-            EnvironmentProvider);
+            false);
 
         var notificationRecord = new NotificationRecord(
             Key<NotificationRecord>.NewKey(),

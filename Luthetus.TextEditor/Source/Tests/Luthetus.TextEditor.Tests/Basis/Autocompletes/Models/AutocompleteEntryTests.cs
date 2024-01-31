@@ -23,7 +23,7 @@ public class AutocompleteEntryTests
         {
             string displayName = "MyFunction";
 			AutocompleteEntryKind autocompleteEntryKind = AutocompleteEntryKind.Function;
-			var autocompleteEntry = new AutocompleteEntry(displayName, autocompleteEntryKind);
+			var autocompleteEntry = new AutocompleteEntry(displayName, autocompleteEntryKind, null);
 
 			Assert.Equal(displayName, autocompleteEntry.DisplayName);
 			Assert.Equal(autocompleteEntryKind, autocompleteEntry.AutocompleteEntryKind);
@@ -32,7 +32,7 @@ public class AutocompleteEntryTests
 		{
 			string displayName = "MyClass";
             AutocompleteEntryKind autocompleteEntryKind = AutocompleteEntryKind.Type;
-            var autocompleteEntry = new AutocompleteEntry(displayName, autocompleteEntryKind);
+            var autocompleteEntry = new AutocompleteEntry(displayName, autocompleteEntryKind, null);
 
             Assert.Equal(displayName, autocompleteEntry.DisplayName);
             Assert.Equal(autocompleteEntryKind, autocompleteEntry.AutocompleteEntryKind);

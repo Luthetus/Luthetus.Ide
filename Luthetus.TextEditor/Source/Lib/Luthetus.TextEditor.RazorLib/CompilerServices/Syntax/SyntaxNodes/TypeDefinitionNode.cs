@@ -23,7 +23,7 @@ public sealed record TypeDefinitionNode : ISyntaxNode
         AccessModifierKind = accessModifierKind;
         HasPartialModifier = hasPartialModifier;
         StorageModifierKind = storageModifierKind;
-        TypeIdentifier = typeIdentifier;
+        TypeIdentifierToken = typeIdentifier;
         ValueType = valueType;
         GenericArgumentsListingNode = genericArgumentsListingNode;
         PrimaryConstructorFunctionArgumentsListingNode = primaryConstructorFunctionArgumentsListingNode;
@@ -32,7 +32,7 @@ public sealed record TypeDefinitionNode : ISyntaxNode
 
         var children = new List<ISyntax>
         {
-            TypeIdentifier,
+            TypeIdentifierToken,
         };
 
         if (GenericArgumentsListingNode is not null)
@@ -52,14 +52,14 @@ public sealed record TypeDefinitionNode : ISyntaxNode
     public StorageModifierKind StorageModifierKind { get; }
     /// <summary>
     /// Given: 'public class Person { /* class definition here */ }'<br/>
-    /// Then: 'Person' is the <see cref="TypeIdentifier"/><br/>
+    /// Then: 'Person' is the <see cref="TypeIdentifierToken"/><br/>
     /// And: <see cref="GenericArgumentsListingNode"/> would be null
     /// </summary>
-    public IdentifierToken TypeIdentifier { get; }
+    public IdentifierToken TypeIdentifierToken { get; }
     public Type? ValueType { get; }
     /// <summary>
     /// Given: 'public struct Array&lt;T&gt; { /* struct definition here */ }'<br/>
-    /// Then: 'Array&lt;T&gt;' is the <see cref="TypeIdentifier"/><br/>
+    /// Then: 'Array&lt;T&gt;' is the <see cref="TypeIdentifierToken"/><br/>
     /// And: '&lt;T&gt;' is the <see cref="GenericArgumentsListingNode"/>
     /// </summary>
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
@@ -79,6 +79,8 @@ public sealed record TypeDefinitionNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TypeDefinitionNode;
 
+    public string EncompassingNamespaceIdentifierString { get; set; }
+
     public ImmutableArray<FunctionDefinitionNode> GetFunctionDefinitionNodes()
     {
         if (TypeBodyCodeBlockNode is null)
@@ -93,7 +95,7 @@ public sealed record TypeDefinitionNode : ISyntaxNode
     public TypeClauseNode ToTypeClause()
     {
         return new TypeClauseNode(
-            TypeIdentifier,
+            TypeIdentifierToken,
             ValueType,
             null);
     }

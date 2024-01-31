@@ -10,6 +10,7 @@ using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Models;
 
@@ -19,19 +20,22 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
     private readonly IMenuOptionsFactory _menuOptionsFactory;
     private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
+    private readonly IEnvironmentProvider _environmentProvider;
 
     public SolutionExplorerTreeViewKeyboardEventHandler(
         EditorSync editorSync,
         IMenuOptionsFactory menuOptionsFactory,
         ILuthetusCommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
-		IBackgroundTaskService backgroundTaskService)
+		IBackgroundTaskService backgroundTaskService,
+        IEnvironmentProvider environmentProvider)
         : base(treeViewService, backgroundTaskService)
     {
         _editorSync = editorSync;
         _menuOptionsFactory = menuOptionsFactory;
         _commonComponentRenderers = commonComponentRenderers;
         _treeViewService = treeViewService;
+        _environmentProvider = environmentProvider;
     }
 
     public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
@@ -149,8 +153,10 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
             var parentDirectory = treeViewNamespacePath
                 .Item.AbsolutePath.AncestorDirectoryList.Last();
 
+            var parentDirectoryAbsolutePath = _environmentProvider.AbsolutePathFactory(parentDirectory.Path, true);
+
             pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
-                parentDirectory,
+                parentDirectoryAbsolutePath,
                 async () =>
                 {
                     var localParentOfCutFile =

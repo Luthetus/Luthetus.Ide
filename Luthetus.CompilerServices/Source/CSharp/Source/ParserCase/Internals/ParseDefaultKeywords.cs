@@ -705,7 +705,8 @@ public class ParseDefaultKeywords
 
         var boundUsingStatementNode = model.Binder.BindUsingStatementNode(
             consumedKeywordToken,
-            namespaceIdentifier);
+            namespaceIdentifier,
+            model);
 
         model.CurrentCodeBlockBuilder.ChildList.Add(boundUsingStatementNode);
         model.SyntaxStack.Push(boundUsingStatementNode);
@@ -813,8 +814,8 @@ public class ParseDefaultKeywords
             null,
             null);
 
-        model.Binder.BindTypeDefinitionNode(typeDefinitionNode);
-        model.Binder.BindTypeIdentifier(identifierToken);
+        model.Binder.BindTypeDefinitionNode(typeDefinitionNode, model);
+        model.Binder.BindTypeIdentifier(identifierToken, model);
         model.SyntaxStack.Push(typeDefinitionNode);
     }
 
@@ -849,6 +850,8 @@ public class ParseDefaultKeywords
             consumedKeywordToken,
             namespaceIdentifier,
             new CodeBlockNode(ImmutableArray<ISyntax>.Empty));
+
+        model.Binder.SetCurrentNamespaceStatementNode(namespaceStatementNode, model);
 
         model.SyntaxStack.Push(namespaceStatementNode);
     }
