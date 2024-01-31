@@ -7,11 +7,12 @@ namespace Luthetus.Ide.RazorLib.FindAlls.States;
 [FeatureState]
 public partial record FindAllState(
     string Query,
+    string? StartingAbsolutePathForSearch,
     FindAllFilterKind FindAllFilterKind,
     ImmutableList<string> ResultList)
 {
     public FindAllState()
-        : this(string.Empty, FindAllFilterKind.None, ImmutableList<string>.Empty)
+        : this(string.Empty, null, FindAllFilterKind.None, ImmutableList<string>.Empty)
     {
     }
 }

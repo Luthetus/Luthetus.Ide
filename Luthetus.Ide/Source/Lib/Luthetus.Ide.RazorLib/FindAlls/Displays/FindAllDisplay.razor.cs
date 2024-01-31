@@ -1,5 +1,6 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
+using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.FindAlls.Models;
 using Luthetus.Ide.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -11,6 +12,8 @@ public partial class FindAllDisplay : FluxorComponent
 {
     [Inject]
     private IState<FindAllState> FindAllStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -33,6 +36,30 @@ public partial class FindAllDisplay : FluxorComponent
 
             Dispatcher.Dispatch(new FindAllState.SearchEffect());
         }
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var dotNetSolutionState = DotNetSolutionStateWrap.Value;
+            var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
+
+            if (dotNetSolutionModel is not null)
+            {
+                var parentDirectory = dotNetSolutionModel.AbsolutePath.ParentDirectory;
+
+                if (parentDirectory is not null)
+                {
+                    Dispatcher.Dispatch(new FindAllState.WithAction(inState => inState with
+                    {
+                        StartingAbsolutePathForSearch = parentDirectory.Path
+                    }));
+                }
+            }
+        }
+
+        return base.OnAfterRenderAsync(firstRender);
     }
 
     private string GetIsActiveCssClass(FindAllFilterKind findAllFilterKind)

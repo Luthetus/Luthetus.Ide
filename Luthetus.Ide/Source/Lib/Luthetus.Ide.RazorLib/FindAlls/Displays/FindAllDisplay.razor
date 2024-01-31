@@ -16,6 +16,15 @@
             <IconSymbolMethod/> members (m:)
         </div>
     </div>
+
+    @if (findAllState.StartingAbsolutePathForSearch is null)
+    {
+        <div>Set an active .NET Solution to choose a beginning path for the search.</div>
+    }
+    else
+    {
+        <div>Search beginning path: '@findAllState.StartingAbsolutePathForSearch'</div>
+    }
     
     <input @bind="InputValue" />
 
@@ -28,7 +37,14 @@
         <div style="cursor: pointer;"
              @onclick="() => OpenInEditorOnClick(filePath)">
 
-            @filePath
+            @if (findAllState.StartingAbsolutePathForSearch is not null)
+            {
+                @filePath.Replace(findAllState.StartingAbsolutePathForSearch, string.Empty)
+            }
+            else
+            {
+                @filePath
+            }
         </div>
     }
 </div>
