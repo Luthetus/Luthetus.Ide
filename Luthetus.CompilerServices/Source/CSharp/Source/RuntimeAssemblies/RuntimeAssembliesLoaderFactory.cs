@@ -9,7 +9,6 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using System.Diagnostics.Metrics;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.RuntimeAssemblies;
 
