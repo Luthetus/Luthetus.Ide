@@ -29,7 +29,7 @@ public class ParseFunctions
             functionParametersListingNode,
             Facts.CSharpFacts.Types.Void.ToTypeClause());
 
-        model.Binder.BindFunctionInvocationNode(functionInvocationNode);
+        model.Binder.BindFunctionInvocationNode(functionInvocationNode, model);
         model.CurrentCodeBlockBuilder.ChildList.Add(functionInvocationNode);
     }
 
@@ -57,7 +57,7 @@ public class ParseFunctions
             null,
             null);
 
-        model.Binder.BindFunctionDefinitionNode(functionDefinitionNode);
+        model.Binder.BindFunctionDefinitionNode(functionDefinitionNode, model);
         model.SyntaxStack.Push(functionDefinitionNode);
 
         if (model.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
@@ -113,7 +113,7 @@ public class ParseFunctions
             null,
             null);
 
-        model.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken);
+        model.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, model);
         model.SyntaxStack.Push(constructorDefinitionNode);
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
@@ -308,7 +308,7 @@ public class ParseFunctions
                 functionParametersListingNode,
                 matchingOverload?.ReturnTypeClauseNode ?? Facts.CSharpFacts.Types.Void.ToTypeClause());
 
-            model.Binder.BindFunctionInvocationNode(functionInvocationNode);
+            model.Binder.BindFunctionInvocationNode(functionInvocationNode, model);
 
             if (SyntaxKind.StatementDelimiterToken == model.TokenWalker.Current.SyntaxKind)
             {
@@ -490,7 +490,7 @@ public class ParseFunctions
                 false
             );
 
-            model.Binder.BindVariableDeclarationNode(variableDeclarationStatementNode);
+            model.Binder.BindVariableDeclarationNode(variableDeclarationStatementNode, model);
 
             var functionArgumentEntryNode = new FunctionArgumentEntryNode(
                 variableDeclarationStatementNode,
@@ -518,7 +518,8 @@ public class ParseFunctions
                     compileTimeConstantToken,
                     hasOutKeyword,
                     hasInKeyword,
-                    hasRefKeyword);
+                    hasRefKeyword,
+                    model);
             }
 
             mutableFunctionArgumentListing.Add(functionArgumentEntryNode);

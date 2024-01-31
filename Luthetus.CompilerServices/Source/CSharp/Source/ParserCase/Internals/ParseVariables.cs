@@ -12,7 +12,10 @@ public static class ParseVariables
         IdentifierToken consumedIdentifierToken,
         ParserModel model)
     {
-        var variableReferenceNode = model.Binder.ConstructAndBindVariableReferenceNode(consumedIdentifierToken);
+        var variableReferenceNode = model.Binder.ConstructAndBindVariableReferenceNode(
+            consumedIdentifierToken,
+            model);
+
         model.SyntaxStack.Push(variableReferenceNode);
     }
 
@@ -28,7 +31,7 @@ public static class ParseVariables
             variableKind,
             false);
 
-        model.Binder.BindVariableDeclarationNode(variableDeclarationNode);
+        model.Binder.BindVariableDeclarationNode(variableDeclarationNode, model);
         model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
@@ -184,7 +187,7 @@ public static class ParseVariables
             consumedEqualsToken,
             rightHandExpression);
 
-        model.Binder.BindVariableAssignmentExpressionNode(variableAssignmentExpressionNode);
+        model.Binder.BindVariableAssignmentExpressionNode(variableAssignmentExpressionNode, model);
         model.CurrentCodeBlockBuilder.ChildList.Add(variableAssignmentExpressionNode);
     }
 }

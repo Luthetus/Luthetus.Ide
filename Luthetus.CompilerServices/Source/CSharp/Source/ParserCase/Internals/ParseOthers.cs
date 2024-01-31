@@ -15,7 +15,7 @@ public static class ParseOthers
         NamespaceGroupNode resolvedNamespaceGroupNode,
         ParserModel model)
     {
-        model.Binder.BindNamespaceReference(consumedIdentifierToken);
+        model.Binder.BindNamespaceReference(consumedIdentifierToken, model);
 
         if (SyntaxKind.MemberAccessToken == model.TokenWalker.Current.SyntaxKind)
         {
@@ -210,6 +210,7 @@ public static class ParseOthers
 
                         model.Binder.TryGetFunctionHierarchically(
                             tokenCurrent.TextSpan.GetText(),
+                            model.BinderSession.CurrentScope,
                             out var functionDefinitionNode);
 
                         var functionInvocationNode = new FunctionInvocationNode(
@@ -219,14 +220,15 @@ public static class ParseOthers
                             functionParametersListingNode,
                             functionDefinitionNode?.ReturnTypeClauseNode ?? CSharpFacts.Types.Void.ToTypeClause());
 
-                        model.Binder.BindFunctionInvocationNode(functionInvocationNode);
+                        model.Binder.BindFunctionInvocationNode(functionInvocationNode, model);
 
                         resultingExpression = functionInvocationNode;
                     }
                     else
                     {
                         resultingExpression = model.Binder.ConstructAndBindVariableReferenceNode(
-                            (IdentifierToken)tokenCurrent);
+                            (IdentifierToken)tokenCurrent,
+                            model);
                     }
 
                     if (topMostExpressionNode is null)
@@ -321,7 +323,9 @@ public static class ParseOthers
                         // ...Then read in the parameters...
                         // ...Any function invocation logic also would be done here
 
-                        model.Binder.BindStringInterpolationExpression((DollarSignToken)tokenCurrent);
+                        model.Binder.BindStringInterpolationExpression(
+                            (DollarSignToken)tokenCurrent,
+                            model);
                     }
 
                     break;

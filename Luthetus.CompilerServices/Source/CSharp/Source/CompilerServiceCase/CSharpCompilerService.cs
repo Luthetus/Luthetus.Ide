@@ -221,8 +221,12 @@ public class CSharpCompilerService : ICompilerService
                     AutocompleteEntryKind.Type,
                     () =>
                     {
-                        if (boundScope.EncompassingNamespaceStatementNode.IdentifierToken.TextSpan.GetText() != x.Key.NamespaceIdentifier)
+                        if (boundScope.EncompassingNamespaceStatementNode.IdentifierToken.TextSpan.GetText() != x.Key.NamespaceIdentifier ||
+                            boundScope.CurrentUsingStatementNodeList.Any(usn => usn.NamespaceIdentifier.TextSpan.GetText() == x.Key.NamespaceIdentifier))
                         {
+                            return;
+                        }
+
                             _textEditorService.Post(
                                 "Add using statement",
                                 async editContext =>
@@ -275,7 +279,6 @@ public class CSharpCompilerService : ICompilerService
                                         }
                                     }
                                 });
-                        }
                     });
             }));
 

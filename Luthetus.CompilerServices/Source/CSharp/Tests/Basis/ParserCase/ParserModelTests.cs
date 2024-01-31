@@ -32,6 +32,7 @@ public class ParserModelTests
         var lexer = new CSharpLexer(resourceUri, sourceText);
 
         var binder = new CSharpBinder();
+        var binderSession = binder.ConstructBinderSession(resourceUri);
         var tokenWalker = new TokenWalker(lexer.SyntaxTokens, new LuthetusDiagnosticBag());
         var syntaxStack = new Stack<ISyntax>();
         var diagnosticBag = new LuthetusDiagnosticBag();
@@ -42,6 +43,7 @@ public class ParserModelTests
 
         var parserModel = new ParserModel(
             binder,
+            binderSession,
             tokenWalker,
             syntaxStack,
             diagnosticBag,

@@ -1,7 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.BinderCase;
@@ -17,7 +16,8 @@ public sealed record CSharpBoundScope : IBoundScope
         Dictionary<string, TypeDefinitionNode> typeDefinitionMap,
         Dictionary<string, FunctionDefinitionNode> functionDefinitionMap,
         Dictionary<string, VariableDeclarationNode> variableDeclarationMap,
-        NamespaceStatementNode encompassingNamespaceStatementNode)
+        NamespaceStatementNode encompassingNamespaceStatementNode,
+        List<UsingStatementNode> currentUsingStatementNodeList)
     {
         Parent = parent;
         ScopeReturnTypeClauseNode = scopeReturnTypeClauseNode;
@@ -28,6 +28,7 @@ public sealed record CSharpBoundScope : IBoundScope
         FunctionDefinitionMap = functionDefinitionMap;
         VariableDeclarationMap = variableDeclarationMap;
         EncompassingNamespaceStatementNode = encompassingNamespaceStatementNode;
+        CurrentUsingStatementNodeList = currentUsingStatementNodeList;
     }
 
     public BoundScopeKey BoundScopeKey { get; init; } = BoundScopeKey.NewKey();
@@ -47,4 +48,5 @@ public sealed record CSharpBoundScope : IBoundScope
     public Dictionary<string, FunctionDefinitionNode> FunctionDefinitionMap { get; init; }
     public Dictionary<string, VariableDeclarationNode> VariableDeclarationMap { get; init; }
     public NamespaceStatementNode EncompassingNamespaceStatementNode { get; }
+    public List<UsingStatementNode> CurrentUsingStatementNodeList { get; }
 }

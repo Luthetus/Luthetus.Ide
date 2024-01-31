@@ -22,7 +22,7 @@ public static class ParseTypes
     {
         var identifierReferenceNode = new AmbiguousIdentifierNode(consumedIdentifierToken);
 
-        model.Binder.BindTypeIdentifier(consumedIdentifierToken);
+        model.Binder.BindTypeIdentifier(consumedIdentifierToken, model);
 
         model.DiagnosticBag.ReportUndefinedTypeOrNamespace(
             consumedIdentifierToken.TextSpan,
@@ -36,7 +36,7 @@ public static class ParseTypes
         TypeDefinitionNode consumedTypeDefinitionNode,
         ParserModel model)
     {
-        model.Binder.BindTypeIdentifier(consumedIdentifierToken);
+        model.Binder.BindTypeIdentifier(consumedIdentifierToken, model);
 
         var memberAccessToken = (MemberAccessToken)model.TokenWalker.Match(SyntaxKind.MemberAccessToken);
 
@@ -182,7 +182,7 @@ public static class ParseTypes
         while (true)
         {
             var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
-            model.Binder.BindTypeIdentifier(identifierToken);
+            model.Binder.BindTypeIdentifier(identifierToken, model);
 
             if (identifierToken.IsFabricated && SyntaxKind.CommaToken != model.TokenWalker.Current.SyntaxKind)
                 break;
@@ -219,7 +219,7 @@ public static class ParseTypes
             null,
             null);
 
-        typeClauseNode = model.Binder.BindTypeClauseNode(typeClauseNode);
+        typeClauseNode = model.Binder.BindTypeClauseNode(typeClauseNode, model);
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
         {

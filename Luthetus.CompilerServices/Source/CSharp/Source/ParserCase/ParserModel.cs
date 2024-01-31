@@ -8,6 +8,7 @@ public class ParserModel
 {
     public ParserModel(
         CSharpBinder binder,
+        BinderSession binderSession,
         TokenWalker tokenWalker,
         Stack<ISyntax> syntaxStack,
         LuthetusDiagnosticBag diagnosticBag,
@@ -17,6 +18,7 @@ public class ParserModel
         Stack<Action<CodeBlockNode>> finalizeCodeBlockNodeActionStack)
     {
         Binder = binder;
+        BinderSession = binderSession;
         TokenWalker = tokenWalker;
         SyntaxStack = syntaxStack;
         DiagnosticBag = diagnosticBag;
@@ -27,6 +29,7 @@ public class ParserModel
     }
 
     public CSharpBinder Binder { get; }
+    public BinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
     public Stack<ISyntax> SyntaxStack { get; set; }
     public LuthetusDiagnosticBag DiagnosticBag { get; }
