@@ -156,6 +156,11 @@ public partial class DotNetSolutionSync
             new ResourceUri(solutionAbsolutePath.Value),
             ImmutableArray<TextEditorTextSpan>.Empty);
 
+        var parentDirectory = solutionAbsolutePath.ParentDirectory;
+
+        if (parentDirectory is not null)
+            _environmentProvider.DeletionPermittedRegister(new(parentDirectory.Path, true));
+
         await SetDotNetSolutionTreeViewAsync(dotNetSolutionModel.Key);
     }
 
