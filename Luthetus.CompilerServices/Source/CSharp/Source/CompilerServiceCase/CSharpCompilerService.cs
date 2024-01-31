@@ -221,64 +221,66 @@ public class CSharpCompilerService : ICompilerService
                     AutocompleteEntryKind.Type,
                     () =>
                     {
-                        if (boundScope.EncompassingNamespaceStatementNode.IdentifierToken.TextSpan.GetText() != x.Key.NamespaceIdentifier ||
+                        if (boundScope.EncompassingNamespaceStatementNode.IdentifierToken.TextSpan.GetText() == x.Key.NamespaceIdentifier ||
                             boundScope.CurrentUsingStatementNodeList.Any(usn => usn.NamespaceIdentifier.TextSpan.GetText() == x.Key.NamespaceIdentifier))
                         {
                             return;
                         }
 
-                            _textEditorService.Post(
-                                "Add using statement",
-                                async editContext =>
+                        _textEditorService.Post(
+                            "Add using statement",
+                            async editContext =>
+                            {
+                                var modelModifier = editContext.GetModelModifier(textSpan.ResourceUri);
+
+                                if (modelModifier is null)
+                                    return;
+
+                                var viewModelList = _textEditorService.ModelApi.GetViewModelsOrEmpty(textSpan.ResourceUri);
+
+                                var cursor = new TextEditorCursor(0, 0, true);
+                                var cursorModifierBag = new TextEditorCursorModifierBag(
+                                    Key<TextEditorViewModel>.Empty,
+                                    new List<TextEditorCursorModifier> { new(cursor) });
+
+                                var textToInsert = $"using {x.Key.NamespaceIdentifier};\n";
+
+                                modelModifier.EditByInsertion(
+                                    textToInsert,
+                                    cursorModifierBag,
+                                    CancellationToken.None);
+
+                                foreach (var unsafeViewModel in viewModelList)
                                 {
-                                    var modelModifier = editContext.GetModelModifier(textSpan.ResourceUri);
+                                    var viewModelModifier = editContext.GetViewModelModifier(
+                                        unsafeViewModel.ViewModelKey);
 
-                                    if (modelModifier is null)
-                                        return;
+                                    if (viewModelModifier is null)
+                                        continue;
 
-                                    var viewModelList = _textEditorService.ModelApi.GetViewModelsOrEmpty(textSpan.ResourceUri);
+                                    var viewModelCursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
 
-                                    var cursor = new TextEditorCursor(0, 0, true);
-                                    var cursorModifierBag = new TextEditorCursorModifierBag(
-                                        Key<TextEditorViewModel>.Empty,
-                                        new List<TextEditorCursorModifier> { new(cursor) });
+                                    if (viewModelCursorModifierBag is null)
+                                        continue;
 
-                                    var textToInsert = $"using {x.Key.NamespaceIdentifier};\n";
-
-                                    modelModifier.EditByInsertion(
-                                        textToInsert,
-                                        cursorModifierBag,
-                                        CancellationToken.None);
-
-                                    foreach (var unsafeViewModel in viewModelList)
+                                    foreach (var cursorModifier in viewModelCursorModifierBag.List)
                                     {
-                                        var viewModelModifier = editContext.GetViewModelModifier(
-                                            unsafeViewModel.ViewModelKey);
-
-                                        if (viewModelModifier is null)
-                                            continue;
-
-                                        var viewModelCursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
-
-                                        if (viewModelCursorModifierBag is null)
-                                            continue;
-
-                                        foreach (var cursorModifier in viewModelCursorModifierBag.List)
+                                        for (int i = 0; i < textToInsert.Length; i++)
                                         {
-                                            for (int i = 0; i < textToInsert.Length; i++)
-                                            {
-                                                await _textEditorService.ViewModelApi.MoveCursorFactory(
-                                                    new KeyboardEventArgs
-                                                    {
-                                                        Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                                                    },
-                                                    textSpan.ResourceUri,
-                                                    viewModelModifier.ViewModel.ViewModelKey)
-                                                .Invoke(editContext);
-                                            }
+                                            await _textEditorService.ViewModelApi.MoveCursorFactory(
+                                                new KeyboardEventArgs
+                                                {
+                                                    Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                                                },
+                                                textSpan.ResourceUri,
+                                                viewModelModifier.ViewModel.ViewModelKey)
+                                            .Invoke(editContext);
                                         }
                                     }
-                                });
+
+                                    await modelModifier.ApplySyntaxHighlightingAsync();
+                                }
+                            });
                     });
             }));
 
