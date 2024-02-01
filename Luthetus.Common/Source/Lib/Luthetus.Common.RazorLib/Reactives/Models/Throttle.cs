@@ -37,10 +37,10 @@ public class Throttle : IThrottle
                 return;
         }
 
-        await _throttleDelayTask;
+        await _throttleDelayTask.ConfigureAwait(false);
 
         if (ShouldWaitForPreviousWorkItemToComplete)
-            await _previousWorkItemTask;
+            await _previousWorkItemTask.ConfigureAwait(false);
 
         Func<CancellationToken, Task> mostRecentWorkItem;
         CancellationToken cancellationToken;
@@ -57,12 +57,12 @@ public class Throttle : IThrottle
 
             _throttleDelayTask = Task.Run(async () =>
             {
-                await Task.Delay(ThrottleTimeSpan);
+                await Task.Delay(ThrottleTimeSpan).ConfigureAwait(false);
             }, cancellationToken);
         }
 
         _previousWorkItemTask = mostRecentWorkItem.Invoke(cancellationToken);
-        await _previousWorkItemTask;
+        await _previousWorkItemTask.ConfigureAwait(false);
     }
 
     public void Dispose()

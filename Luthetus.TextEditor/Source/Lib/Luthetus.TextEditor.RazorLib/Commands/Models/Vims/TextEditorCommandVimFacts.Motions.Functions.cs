@@ -74,7 +74,7 @@ public static partial class TextEditorCommandVimFacts
         {
             return async (ITextEditorEditContext editContext) =>
             {
-                await PerformEndAsync(commandArgs, editContext);
+                await PerformEndAsync(commandArgs, editContext).ConfigureAwait(false);
                 return;
             };
         }
@@ -150,9 +150,10 @@ public static partial class TextEditorCommandVimFacts
                              */
 
                             await PerformEndAsync(
-                                commandArgs,
-                                editContext,
-                                isRecursiveCall: true);
+                                    commandArgs,
+                                    editContext,
+                                    isRecursiveCall: true)
+                                .ConfigureAwait(false);
 
                             // Leave method early as all is finished.
                             return;
@@ -253,7 +254,7 @@ public static partial class TextEditorCommandVimFacts
                     return;
 
                 var textEditorEdit = commandArgs.InnerCommand.TextEditorEditFactory.Invoke(commandArgs);
-                await textEditorEdit.Invoke(editContext);
+                await textEditorEdit.Invoke(editContext).ConfigureAwait(false);
 
                 var nextEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
 
@@ -307,7 +308,7 @@ public static partial class TextEditorCommandVimFacts
                     return;
 
                 var textEditorEdit = commandArgs.InnerCommand.TextEditorEditFactory.Invoke(commandArgs);
-                await textEditorEdit.Invoke(editContext);
+                await textEditorEdit.Invoke(editContext).ConfigureAwait(false);
 
                 var nextEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
 

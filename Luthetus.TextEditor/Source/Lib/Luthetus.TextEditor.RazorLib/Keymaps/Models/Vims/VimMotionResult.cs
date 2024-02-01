@@ -21,7 +21,7 @@ public record VimMotionResult(
             beforeMotionCursor.RowIndex,
             beforeMotionCursor.ColumnIndex);
 
-        await motionCommand.Invoke();
+        await motionCommand.Invoke().ConfigureAwait(false);
 
         var afterMotionCursor = cursorModifier.ToCursor();
 

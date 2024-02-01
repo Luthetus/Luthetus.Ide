@@ -32,7 +32,7 @@ public class TreeViewMouseEventHandler
     {
 		BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
         	"TreeView.OnKeyDown",
-			async () => await OnDoubleClickAsync(commandArgs));
+			async () => await OnDoubleClickAsync(commandArgs).ConfigureAwait(false));
         return;
     }
 

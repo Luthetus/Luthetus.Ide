@@ -151,7 +151,8 @@ public class DotNetSolutionCompilerService : ICompilerService
                 await _textEditorService.ModelApi.CalculatePresentationModelFactory(
                         modelModifier.ResourceUri,
                         CompilerServiceDiagnosticPresentationFacts.PresentationKey)
-                    .Invoke(editContext);
+                    .Invoke(editContext)
+					.ConfigureAwait(false);
 
                 var pendingCalculation = modelModifier.PresentationModelsList.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
@@ -177,7 +178,7 @@ public class DotNetSolutionCompilerService : ICompilerService
                     dotNetSolutionResource.CompilationUnit = compilationUnit;
                 }
 
-                await modelModifier.ApplySyntaxHighlightingAsync();
+                await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
 
                 ResourceParsed?.Invoke();
 

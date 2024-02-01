@@ -72,7 +72,7 @@ public class LocalFileHandler : IFileHandler
         {
             _environmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
-            if (await ExistsAsync(destinationAbsolutePathString))
+            if (await ExistsAsync(destinationAbsolutePathString).ConfigureAwait(false))
                 _environmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
             File.Move(
@@ -103,8 +103,9 @@ public class LocalFileHandler : IFileHandler
         CancellationToken cancellationToken = default)
     {
         return await File.ReadAllTextAsync(
-            absolutePathString,
-            cancellationToken);
+                absolutePathString,
+                cancellationToken)
+			.ConfigureAwait(false);
     }
 
     public async Task WriteAllTextAsync(
@@ -114,13 +115,14 @@ public class LocalFileHandler : IFileHandler
     {
         try
         {
-            if (await ExistsAsync(absolutePathString, cancellationToken))
+            if (await ExistsAsync(absolutePathString, cancellationToken).ConfigureAwait(false))
                 _environmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
 
             await File.WriteAllTextAsync(
-                absolutePathString,
-                contents,
-                cancellationToken);
+                    absolutePathString,
+                    contents,
+                    cancellationToken)
+				.ConfigureAwait(false);
 
             _environmentProvider.DeletionPermittedRegister(
                 new SimplePath(absolutePathString, IS_DIRECTORY_RESPONSE));

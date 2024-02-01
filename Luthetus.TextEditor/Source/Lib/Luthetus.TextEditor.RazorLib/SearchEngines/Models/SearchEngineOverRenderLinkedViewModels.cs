@@ -13,6 +13,6 @@ public class SearchEngineOverRenderLinkedViewModels : ITextEditorSearchEngine
 
     public async Task SearchAsync(string searchQuery, CancellationToken cancellationToken = default)
     {
-        await Task.Delay(3_000);
+        await Task.Delay(3_000).ConfigureAwait(false);
     }
 }

@@ -13,6 +13,6 @@ public class SearchEngineOverRegisteredViewModels : ITextEditorSearchEngine
 
     public async Task SearchAsync(string searchQuery, CancellationToken cancellationToken = default)
     {
-        await Task.Delay(5_000);
+        await Task.Delay(5_000).ConfigureAwait(false);
     }
 }

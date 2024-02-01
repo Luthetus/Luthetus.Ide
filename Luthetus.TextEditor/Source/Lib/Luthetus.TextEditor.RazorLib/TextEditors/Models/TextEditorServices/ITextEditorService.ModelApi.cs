@@ -206,7 +206,7 @@ public partial interface ITextEditorService
                 {
                     // Getting a model modifier marks it to be reloaded (2023-12-28)
                     _ = editContext.GetModelModifier(model.ResourceUri);
-                    await model.ApplySyntaxHighlightingAsync();
+                    await model.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
                 });
         }
 
@@ -236,7 +236,7 @@ public partial interface ITextEditorService
                 {
                     // Getting a model modifier marks it to be reloaded (2023-12-28)
                     _ = editContext.GetModelModifier(model.ResourceUri);
-                    await model.ApplySyntaxHighlightingAsync();
+                    await model.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
                 });
         }
         #endregion

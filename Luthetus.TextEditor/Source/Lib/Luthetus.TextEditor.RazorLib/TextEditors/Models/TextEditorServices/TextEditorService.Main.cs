@@ -113,7 +113,7 @@ public partial class TextEditorService : ITextEditorService
                         this,
                         AuthenticatedActionKey);
 
-                    await edit.Invoke(editContext);
+                    await edit.Invoke(editContext).ConfigureAwait(false);
 
                     foreach (var modelModifier in editContext.ModelCache.Values)
                     {
@@ -155,7 +155,8 @@ public partial class TextEditorService : ITextEditorService
 
                         await ViewModelApi.CalculateVirtualizationResultFactory(
                                 viewModelModifier.ViewModel.ResourceUri, viewModelModifier.ViewModel.ViewModelKey, CancellationToken.None)
-                            .Invoke(editContext);
+                            .Invoke(editContext)
+							.ConfigureAwait(false);
 
                         _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
                             AuthenticatedActionKey,

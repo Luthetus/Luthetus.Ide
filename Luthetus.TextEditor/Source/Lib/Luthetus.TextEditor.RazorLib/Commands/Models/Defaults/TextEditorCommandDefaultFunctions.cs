@@ -50,7 +50,7 @@ public class TextEditorCommandDefaultFunctions
                 primaryCursorModifier.RowIndex,
                 1);
 
-            await commandArgs.ClipboardService.SetClipboard(selectedText);
+            await commandArgs.ClipboardService.SetClipboard(selectedText).ConfigureAwait(false);
             viewModelModifier.ViewModel.Focus();
         };
     }
@@ -90,7 +90,7 @@ public class TextEditorCommandDefaultFunctions
             if (selectedText is null)
                 return; // This should never occur
 
-            await commandArgs.ClipboardService.SetClipboard(selectedText);
+            await commandArgs.ClipboardService.SetClipboard(selectedText).ConfigureAwait(false);
             viewModelModifier.ViewModel.Focus();
 
             modelModifier.HandleKeyboardEvent(
@@ -119,7 +119,7 @@ public class TextEditorCommandDefaultFunctions
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
-            var clipboard = await commandArgs.ClipboardService.ReadClipboard();
+            var clipboard = await commandArgs.ClipboardService.ReadClipboard().ConfigureAwait(false);
 
             modelModifier.EditByInsertion(
                 clipboard,
@@ -817,7 +817,8 @@ public class TextEditorCommandDefaultFunctions
                         modelModifier.ResourceUri,
                         viewModelModifier.ViewModel.ViewModelKey,
                         primaryCursorModifier)
-                    .Invoke(editContext);
+                    .Invoke(editContext)
+					.ConfigureAwait(false);
 
                 var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
                 var characterAt = modelModifier.GetCharacter(positionIndex);
@@ -975,8 +976,9 @@ public class TextEditorCommandDefaultFunctions
                 return;
 
             var elementPositionInPixels = await commandArgs.JsRuntime.InvokeAsync<ElementPositionInPixels>(
-                "luthetusTextEditor.getBoundingClientRect",
-                viewModelModifier.ViewModel.PrimaryCursorContentId);
+                    "luthetusTextEditor.getBoundingClientRect",
+                    viewModelModifier.ViewModel.PrimaryCursorContentId)
+			    .ConfigureAwait(false);
 
             elementPositionInPixels = elementPositionInPixels with
             {
@@ -988,7 +990,7 @@ public class TextEditorCommandDefaultFunctions
             {
                 ClientX = elementPositionInPixels.Left,
                 ClientY = elementPositionInPixels.Top
-            });
+            }).ConfigureAwait(false);
         };
     }
 }

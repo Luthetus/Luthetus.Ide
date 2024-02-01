@@ -273,11 +273,12 @@ public class CSharpCompilerService : ICompilerService
                                                 },
                                                 textSpan.ResourceUri,
                                                 viewModelModifier.ViewModel.ViewModelKey)
-                                            .Invoke(editContext);
+                                            .Invoke(editContext)
+											.ConfigureAwait(false);
                                         }
                                     }
 
-                                    await modelModifier.ApplySyntaxHighlightingAsync();
+                                    await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
                                 }
                             });
                     });
@@ -310,7 +311,8 @@ public class CSharpCompilerService : ICompilerService
                 await _textEditorService.ModelApi.CalculatePresentationModelFactory(
                         modelModifier.ResourceUri,
                         CompilerServiceDiagnosticPresentationFacts.PresentationKey)
-                    .Invoke(editContext);
+                    .Invoke(editContext)
+					.ConfigureAwait(false);
 
                 var pendingCalculation = modelModifier.PresentationModelsList.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
@@ -347,7 +349,7 @@ public class CSharpCompilerService : ICompilerService
                     }
 
                     // TODO: Shouldn't one get a reference to the most recent TextEditorModel instance with the given key and invoke .ApplySyntaxHighlightingAsync() on that?
-                    await modelModifier.ApplySyntaxHighlightingAsync();
+                    await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
 
                     var presentationModel = modelModifier.PresentationModelsList.FirstOrDefault(x =>
                         x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);

@@ -140,7 +140,8 @@ public class CSharpProjectCompilerService : ICompilerService
                 await _textEditorService.ModelApi.CalculatePresentationModelFactory(
                         modelModifier.ResourceUri,
                         CompilerServiceDiagnosticPresentationFacts.PresentationKey)
-                    .Invoke(editContext);
+                    .Invoke(editContext)
+					.ConfigureAwait(false);
 
                 var pendingCalculation = modelModifier.PresentationModelsList.FirstOrDefault<TextEditor.RazorLib.Decorations.Models.TextEditorPresentationModel>((Func<TextEditor.RazorLib.Decorations.Models.TextEditorPresentationModel, bool>)(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey))
@@ -150,7 +151,7 @@ public class CSharpProjectCompilerService : ICompilerService
                     pendingCalculation = new(TextEditorModelHelper.GetAllText(modelModifier));
 
                 var lexer = new TextEditorHtmlLexer(modelModifier.ResourceUri);
-                var lexResult = await lexer.Lex(text, modelModifier.RenderStateKey);
+                var lexResult = await lexer.Lex(text, modelModifier.RenderStateKey).ConfigureAwait(false);
 
                 lock (_cSharpProjectResourceMapLock)
                 {
@@ -161,7 +162,7 @@ public class CSharpProjectCompilerService : ICompilerService
                         .SyntacticTextSpans = lexResult;
                 }
 
-                await TextEditorModelHelper.ApplySyntaxHighlightingAsync(modelModifier);
+                await TextEditorModelHelper.ApplySyntaxHighlightingAsync(modelModifier).ConfigureAwait(false);
 
                 ResourceParsed?.Invoke();
 

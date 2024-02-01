@@ -35,7 +35,7 @@ public class LocalDirectoryHandler : IDirectoryHandler
         // But now they're allowed to delete the root directory.
         // (note: there are double checks in place such that this described
         //        situation couldn't happen regardless)
-        if (await ExistsAsync(absolutePathString, cancellationToken))
+        if (await ExistsAsync(absolutePathString, cancellationToken).ConfigureAwait(false))
             return;
 
         Directory.CreateDirectory(absolutePathString);
@@ -89,7 +89,7 @@ public class LocalDirectoryHandler : IDirectoryHandler
         {
             _environmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
-            if (await ExistsAsync(destinationAbsolutePathString))
+            if (await ExistsAsync(destinationAbsolutePathString).ConfigureAwait(false))
                 _environmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
             Directory.Move(

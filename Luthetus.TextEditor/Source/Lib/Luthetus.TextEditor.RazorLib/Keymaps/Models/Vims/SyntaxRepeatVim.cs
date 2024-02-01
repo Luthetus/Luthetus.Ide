@@ -74,7 +74,7 @@ public static class SyntaxRepeatVim
                 {
                     for (int index = 0; index < intValue; index++)
                     {
-                        await innerTextEditorCommand.CommandFunc.Invoke(textEditorCommandArgs);
+                        await innerTextEditorCommand.CommandFunc.Invoke(textEditorCommandArgs).ConfigureAwait(false);
                     }
                 })
             {
@@ -86,7 +86,7 @@ public static class SyntaxRepeatVim
                     {
                         for (int index = 0; index < intValue; index++)
                         {
-                            await innerTextEditorCommand.CommandFunc.Invoke(textEditorCommandArgs);
+                            await innerTextEditorCommand.CommandFunc.Invoke(textEditorCommandArgs).ConfigureAwait(false);
                         }
                     };
                 }

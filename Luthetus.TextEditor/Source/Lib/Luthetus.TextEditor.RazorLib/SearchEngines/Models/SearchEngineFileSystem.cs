@@ -38,11 +38,11 @@ public class SearchEngineFileSystem : ITextEditorSearchEngine
 			IsSearching = true;
 			ProgressOccurred?.Invoke();
 			
-			await RecursiveSearchAsync(StartingDirectoryPath, searchQuery, cancellationToken);
+			await RecursiveSearchAsync(StartingDirectoryPath, searchQuery, cancellationToken).ConfigureAwait(false);
 			IsSearching = false;
 			ProgressOccurred?.Invoke();
 			_runCount--;
-		});
+		}).ConfigureAwait(false);
     }
 
 	private async Task RecursiveSearchAsync(string directoryPath, string searchQuery, CancellationToken cancellationToken = default)
@@ -51,12 +51,13 @@ public class SearchEngineFileSystem : ITextEditorSearchEngine
 
 		// Search Files
 		{
-			var childFileList = await _fileSystemProvider.Directory.GetFilesAsync(
-				directoryPath);
+			var childFileList = await _fileSystemProvider.Directory
+				.GetFilesAsync(directoryPath)
+				.ConfigureAwait(false);
 
 			foreach (var childFile in childFileList)
 			{
-				await PerformSearchFileAsync(childFile, searchQuery, cancellationToken);
+				await PerformSearchFileAsync(childFile, searchQuery, cancellationToken).ConfigureAwait(false);
 			}
 		}
 
@@ -67,22 +68,23 @@ public class SearchEngineFileSystem : ITextEditorSearchEngine
 
 		// Recurse into subdirectories
 		{
-			var subdirectoryList = await _fileSystemProvider.Directory.GetDirectoriesAsync(
-				directoryPath);
+			var subdirectoryList = await _fileSystemProvider.Directory
+				.GetDirectoriesAsync(directoryPath)
+				.ConfigureAwait(false);
 
 			foreach (var subdirectory in subdirectoryList)
 			{
 				if (subdirectory.Contains(".git")  || subdirectory.Contains("bin") || subdirectory.Contains("obj"))
 					continue;
 
-				await RecursiveSearchAsync(subdirectory, searchQuery, cancellationToken);
+				await RecursiveSearchAsync(subdirectory, searchQuery, cancellationToken).ConfigureAwait(false);
 			}
 		}
 	}
 
 	private async Task PerformSearchFileAsync(string filePath, string searchQuery, CancellationToken cancellationToken = default)
 	{
-		var contents = await _fileSystemProvider.File.ReadAllTextAsync(filePath);
+		var contents = await _fileSystemProvider.File.ReadAllTextAsync(filePath).ConfigureAwait(false);
 
 		if (contents.Contains(searchQuery))
 			FilePathList.Add(filePath);

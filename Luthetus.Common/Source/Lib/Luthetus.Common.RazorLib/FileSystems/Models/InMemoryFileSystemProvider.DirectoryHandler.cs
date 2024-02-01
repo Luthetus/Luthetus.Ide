@@ -40,8 +40,8 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
         {
             try
             {
-                await _inMemoryFileSystemProvider._modificationSemaphore.WaitAsync();
-                await UnsafeCreateDirectoryAsync(absolutePathString, cancellationToken);
+                await _inMemoryFileSystemProvider._modificationSemaphore.WaitAsync().ConfigureAwait(false);
+                await UnsafeCreateDirectoryAsync(absolutePathString, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -61,12 +61,13 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
         {
             try
             {
-                await _inMemoryFileSystemProvider._modificationSemaphore.WaitAsync();
+                await _inMemoryFileSystemProvider._modificationSemaphore.WaitAsync().ConfigureAwait(false);
 
                 await UnsafeDeleteAsync(
-                    absolutePathString,
-                    recursive,
-                    cancellationToken);
+                        absolutePathString,
+                        recursive,
+                        cancellationToken)
+                    .ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -86,12 +87,13 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
         {
             try
             {
-                await _inMemoryFileSystemProvider._modificationSemaphore.WaitAsync();
+                await _inMemoryFileSystemProvider._modificationSemaphore.WaitAsync().ConfigureAwait(false);
 
                 await UnsafeCopyAsync(
-                    sourceAbsoluteFileString,
-                    destinationAbsolutePathString,
-                    cancellationToken);
+                        sourceAbsoluteFileString,
+                        destinationAbsolutePathString,
+                        cancellationToken)
+					.ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -111,12 +113,13 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
         {
             try
             {
-                await _inMemoryFileSystemProvider._modificationSemaphore.WaitAsync();
+                await _inMemoryFileSystemProvider._modificationSemaphore.WaitAsync().ConfigureAwait(false);
 
                 await UnsafeMoveAsync(
-                    sourceAbsolutePathString,
-                    destinationAbsolutePathString,
-                    cancellationToken);
+                        sourceAbsolutePathString,
+                        destinationAbsolutePathString,
+                        cancellationToken)
+					.ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -148,8 +151,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             CancellationToken cancellationToken = default)
         {
             return await UnsafeEnumerateFileSystemEntriesAsync(
-                absolutePathString,
-                cancellationToken);
+                    absolutePathString,
+                    cancellationToken)
+				.ConfigureAwait(false);
         }
         
         public Task<bool> UnsafeExistsAsync(
@@ -213,15 +217,17 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 if (child.IsDirectory)
                 {
                     await _inMemoryFileSystemProvider._directory.UnsafeDeleteAsync(
-                        child.AbsolutePath.Value,
-                        false,
-                        cancellationToken);
+                            child.AbsolutePath.Value,
+                            false,
+                            cancellationToken)
+						.ConfigureAwait(false);
                 }
                 else
                 {
                     await _inMemoryFileSystemProvider._file.UnsafeDeleteAsync(
-                        child.AbsolutePath.Value,
-                        cancellationToken);
+                            child.AbsolutePath.Value,
+                            cancellationToken)
+						.ConfigureAwait(false);
                 }
             }
 
@@ -242,17 +248,17 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
 
             var sourceAbsolutePath = _environmentProvider.AbsolutePathFactory(sourceAbsolutePathString, true);
 
-            var childDirectories = (await GetDirectoriesAsync(sourceAbsolutePathString, cancellationToken))
+            var childDirectories = (await GetDirectoriesAsync(sourceAbsolutePathString, cancellationToken).ConfigureAwait(false))
                 .Select(x => _environmentProvider.AbsolutePathFactory(x, true))
                 .ToArray();
 
-            var childFiles = (await GetFilesAsync(sourceAbsolutePathString, cancellationToken))
+            var childFiles = (await GetFilesAsync(sourceAbsolutePathString, cancellationToken).ConfigureAwait(false))
                 .Select(x => _environmentProvider.AbsolutePathFactory(x, false))
                 .ToArray();
 
             var children = childDirectories.Union(childFiles);
 
-            var destinationExists = await UnsafeExistsAsync(destinationAbsolutePathString, cancellationToken);
+            var destinationExists = await UnsafeExistsAsync(destinationAbsolutePathString, cancellationToken).ConfigureAwait(false);
 
             if (destinationExists)
             {
@@ -286,16 +292,18 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 if (child.IsDirectory)
                 {
                     await _inMemoryFileSystemProvider._directory.UnsafeCopyAsync(
-                        child.Value,
-                        innerDestinationPath,
-                        cancellationToken);
+                            child.Value,
+                            innerDestinationPath,
+                            cancellationToken)
+						.ConfigureAwait(false);
                 }
                 else
                 {
                     await _inMemoryFileSystemProvider._file.UnsafeCopyAsync(
-                        child.Value,
-                        destinationChild,
-                        cancellationToken);
+                            child.Value,
+                            destinationChild,
+                            cancellationToken)
+						.ConfigureAwait(false);
                 }
             }
         }
@@ -317,11 +325,11 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             if (indexOfExistingFile == -1)
                 return;
 
-            if (await ExistsAsync(destinationAbsolutePathString))
+            if (await ExistsAsync(destinationAbsolutePathString).ConfigureAwait(false))
                 _environmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
-            await UnsafeCopyAsync(sourceAbsolutePathString, destinationAbsolutePathString, cancellationToken);
-            await UnsafeDeleteAsync(sourceAbsolutePathString, true, cancellationToken);
+            await UnsafeCopyAsync(sourceAbsolutePathString, destinationAbsolutePathString, cancellationToken).ConfigureAwait(false);
+            await UnsafeDeleteAsync(sourceAbsolutePathString, true, cancellationToken).ConfigureAwait(false);
         }
 
         public Task<string[]> UnsafeGetDirectoriesAsync(
@@ -393,10 +401,11 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             CancellationToken cancellationToken = default)
         {
             var directoryList = await UnsafeGetDirectoriesAsync(
-                absolutePathString,
-                cancellationToken);
+                    absolutePathString,
+                    cancellationToken)
+				.ConfigureAwait(false);
 
-            var fileList = await UnsafeGetFilesAsync(absolutePathString, cancellationToken);
+            var fileList = await UnsafeGetFilesAsync(absolutePathString, cancellationToken).ConfigureAwait(false);
 
             return directoryList.Union(fileList);
         }

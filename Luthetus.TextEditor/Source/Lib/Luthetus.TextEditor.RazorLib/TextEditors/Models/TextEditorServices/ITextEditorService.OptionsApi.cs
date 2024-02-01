@@ -152,7 +152,7 @@ public partial interface ITextEditorService
 
         public async Task SetFromLocalStorageAsync()
         {
-            var optionsJsonString = await _storageService.GetValue(_textEditorService.StorageKey) as string;
+            var optionsJsonString = await _storageService.GetValue(_textEditorService.StorageKey).ConfigureAwait(false) as string;
 
             if (string.IsNullOrWhiteSpace(optionsJsonString))
                 return;

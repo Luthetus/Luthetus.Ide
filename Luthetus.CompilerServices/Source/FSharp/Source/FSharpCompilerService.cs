@@ -135,7 +135,8 @@ public class FSharpCompilerService : ICompilerService
                 await _textEditorService.ModelApi.CalculatePresentationModelFactory(
                         modelModifier.ResourceUri,
                         CompilerServiceDiagnosticPresentationFacts.PresentationKey)
-                    .Invoke(editContext);
+                    .Invoke(editContext)
+					.ConfigureAwait(false);
 
                 var pendingCalculation = modelModifier.PresentationModelsList.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
@@ -145,7 +146,7 @@ public class FSharpCompilerService : ICompilerService
                     pendingCalculation = new(modelModifier.GetAllText());
 
                 var lexer = new TextEditorFSharpLexer(modelModifier.ResourceUri);
-                var lexResult = await lexer.Lex(text, modelModifier.RenderStateKey);
+                var lexResult = await lexer.Lex(text, modelModifier.RenderStateKey).ConfigureAwait(false);
 
                 lock (_fSharpResourceMapLock)
                 {
@@ -156,7 +157,7 @@ public class FSharpCompilerService : ICompilerService
                         .SyntacticTextSpans = lexResult;
                 }
 
-                await modelModifier.ApplySyntaxHighlightingAsync();
+                await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
 
                 ResourceParsed?.Invoke();
 

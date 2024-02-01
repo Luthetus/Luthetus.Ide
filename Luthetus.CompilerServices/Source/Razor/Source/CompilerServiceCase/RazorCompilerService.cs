@@ -145,7 +145,8 @@ public class RazorCompilerService : ICompilerService
                 await _textEditorService.ModelApi.CalculatePresentationModelFactory(
                         modelModifier.ResourceUri,
                         CompilerServiceDiagnosticPresentationFacts.PresentationKey)
-                    .Invoke(editContext);
+                    .Invoke(editContext)
+					.ConfigureAwait(false);
 
                 var pendingCalculation = modelModifier.PresentationModelsList.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
@@ -184,7 +185,7 @@ public class RazorCompilerService : ICompilerService
                     razorResource.RazorSyntaxTree = lexer.RazorSyntaxTree;
                 }
 
-                await modelModifier.ApplySyntaxHighlightingAsync();
+                await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
 
                 ResourceParsed?.Invoke();
 
