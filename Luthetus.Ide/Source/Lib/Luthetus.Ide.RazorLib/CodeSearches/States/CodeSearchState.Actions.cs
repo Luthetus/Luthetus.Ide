@@ -1,8 +1,8 @@
-﻿namespace Luthetus.Ide.RazorLib.FindAlls.States;
+﻿namespace Luthetus.Ide.RazorLib.CodeSearches.States;
 
-public partial record FindAllState
+public partial record CodeSearchState
 {
-    public record WithAction(Func<FindAllState, FindAllState> WithFunc);
+    public record WithAction(Func<CodeSearchState, CodeSearchState> WithFunc);
     public record AddResultAction(string Result);
     public record ClearResultListAction;
     public record SearchEffect(CancellationToken CancellationToken = default);

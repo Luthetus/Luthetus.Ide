@@ -1,15 +1,16 @@
 ﻿using Fluxor;
+using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.RazorLib.FindAlls.States;
+namespace Luthetus.Ide.RazorLib.CodeSearches.States;
 
-public partial record FindAllState
+public partial record CodeSearchState
 {
     public class Reducer
     {
         [ReducerMethod]
-        public static FindAllState ReduceWithAction(
-            FindAllState inState,
+        public static CodeSearchState ReduceWithAction(
+            CodeSearchState inState,
             WithAction withAction)
         {
             var outState = withAction.WithFunc.Invoke(inState);
@@ -18,28 +19,28 @@ public partial record FindAllState
             {
                 outState = outState with
                 {
-                    FindAllFilterKind = Models.FindAllFilterKind.Files
+                    CodeSearchFilterKind = CodeSearchFilterKind.Files
                 };
             }
             else if (outState.Query.StartsWith("t:"))
             {
                 outState = outState with
                 {
-                    FindAllFilterKind = Models.FindAllFilterKind.Types
+                    CodeSearchFilterKind = CodeSearchFilterKind.Types
                 };
             }
             else if (outState.Query.StartsWith("m:"))
             {
                 outState = outState with
                 {
-                    FindAllFilterKind = Models.FindAllFilterKind.Members
+                    CodeSearchFilterKind = CodeSearchFilterKind.Members
                 };
             }
             else
             {
                 outState = outState with
                 {
-                    FindAllFilterKind = Models.FindAllFilterKind.None
+                    CodeSearchFilterKind = CodeSearchFilterKind.None
                 };
             }
 
@@ -47,8 +48,8 @@ public partial record FindAllState
         }
 
         [ReducerMethod]
-        public static FindAllState ReduceAddResultAction(
-            FindAllState inState,
+        public static CodeSearchState ReduceAddResultAction(
+            CodeSearchState inState,
             AddResultAction addResultAction)
         {
             return inState with
@@ -58,8 +59,8 @@ public partial record FindAllState
         }
 
         [ReducerMethod(typeof(ClearResultListAction))]
-        public static FindAllState ReduceClearResultListAction(
-            FindAllState inState)
+        public static CodeSearchState ReduceClearResultListAction(
+            CodeSearchState inState)
         {
             return inState with
             {

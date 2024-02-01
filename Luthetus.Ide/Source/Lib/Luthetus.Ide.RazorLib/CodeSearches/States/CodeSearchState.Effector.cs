@@ -3,23 +3,23 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
-namespace Luthetus.Ide.RazorLib.FindAlls.States;
+namespace Luthetus.Ide.RazorLib.CodeSearches.States;
 
-public partial record FindAllState
+public partial record CodeSearchState
 {
     public class Effector : IDisposable
     {
         private readonly IThrottle _throttle = new Throttle(TimeSpan.FromMilliseconds(300));
-        private readonly IState<FindAllState> _findAllStateWrap;
+        private readonly IState<CodeSearchState> _codeSearchStateWrap;
         private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
         private readonly IFileSystemProvider _fileSystemProvider;
 
         public Effector(
-            IState<FindAllState> findAllStateWrap,
+            IState<CodeSearchState> codeSearchStateWrap,
             IState<DotNetSolutionState> dotNetSolutionStateWrap,
             IFileSystemProvider fileSystemProvider)
         {
-            _findAllStateWrap = findAllStateWrap;
+            _codeSearchStateWrap = codeSearchStateWrap;
             _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
             _fileSystemProvider = fileSystemProvider;
         }
@@ -33,7 +33,7 @@ public partial record FindAllState
             {
                 dispatcher.Dispatch(new ClearResultListAction());
 
-                var findAllState = _findAllStateWrap.Value;
+                var codeSearchState = _codeSearchStateWrap.Value;
                 var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
                 var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 
@@ -66,7 +66,7 @@ public partial record FindAllState
 
                     foreach (var filePathChild in filePathChildList)
                     {
-                        if (filePathChild.Contains(findAllState.Query))
+                        if (filePathChild.Contains(codeSearchState.Query))
                             dispatcher.Dispatch(new AddResultAction(filePathChild));
                     }
 
