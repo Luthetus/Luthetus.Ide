@@ -15,6 +15,8 @@ using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
+using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Contexts.Displays;
 
 namespace Luthetus.Ide.RazorLib.Commands;
 
@@ -45,8 +47,10 @@ public class CommandFactory : ICommandFactory
 
 	private TreeViewNamespacePath? _nodeOfViewModel = null;
 	private List<TreeViewNoType> _nodeList = new();
+    private DialogRecord? _contextSwitchDialog;
+    private DialogRecord? _codeSearchDialog;
 
-    public void Initialize()
+	public void Initialize()
     {
         // ActiveContextsContext
         {
@@ -248,7 +252,7 @@ public class CommandFactory : ICommandFactory
 	            "Open: Code Search", "open-code-search", false,
 	            commandArgs => 
 				{
-                    var codeSearchDialog = new DialogRecord(
+                    _codeSearchDialog ??= new DialogRecord(
                         Key<DialogRecord>.NewKey(),
 						"Code Search",
                         typeof(CodeSearchDisplay),
@@ -258,13 +262,46 @@ public class CommandFactory : ICommandFactory
                         IsResizable = true
                     };
 
-                    _dispatcher.Dispatch(new DialogState.RegisterAction(codeSearchDialog));
+                    _dispatcher.Dispatch(new DialogState.RegisterAction(_codeSearchDialog));
                     return Task.CompletedTask;
 				});
 
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
 	                new KeymapArgument("Comma", false, true, false, Key<KeymapLayer>.Empty),
 	                openCodeSearchDialogCommand);
+        }
+
+		// Add command to bring up a Context Switch dialog. Example: { Ctrl + , }
+		{
+			var openContextSwitchDialogCommand = new CommonCommand(
+	            "Open: Context Switch", "open-context-switch", false,
+	            commandArgs => 
+				{
+                    _contextSwitchDialog ??= new DialogRecord(
+                        Key<DialogRecord>.NewKey(),
+						"Context Switch",
+                        typeof(ContextSwitchDisplay),
+                        null,
+                        null)
+                    {
+                        IsResizable = true
+                    };
+
+                    _dispatcher.Dispatch(new DialogState.RegisterAction(_contextSwitchDialog));
+                    return Task.CompletedTask;
+				});
+
+            var defaultAndAlternativeMovementCodeList = new List<string>();
+
+            defaultAndAlternativeMovementCodeList.AddRange(KeyboardKeyFacts.MovementCodes.AllList);
+			defaultAndAlternativeMovementCodeList.AddRange(KeyboardKeyFacts.AlternateMovementCodes.AllList);
+
+            foreach (var movementKey in defaultAndAlternativeMovementCodeList)
+            {
+				_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+					new KeymapArgument(movementKey, false, true, true, Key<KeymapLayer>.Empty),
+					openContextSwitchDialogCommand);
+			}
         }
     }
 
