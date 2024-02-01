@@ -33,7 +33,7 @@ public partial interface ITextEditorService
         /// <summary>This is setting the TextEditor's theme specifically. This is not to be confused with the AppOptions Themes which get applied at an application level. <br /><br /> This allows for a "DarkTheme-Application" that has a "LightTheme-TextEditor"</summary>
         public void SetTheme(ThemeRecord theme);
         public void ShowSettingsDialog(bool? isResizableOverride = null, string? cssClassString = null);
-        public void ShowFindDialog(bool? isResizableOverride = null, string? cssClassString = null);
+        public void ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null);
         public void WriteToStorage();
         public void SetRenderStateKey(Key<RenderState> renderStateKey);
 
@@ -67,6 +67,8 @@ public partial interface ITextEditorService
             _dispatcher = dispatcher;
         }
 
+        private DialogRecord? _findAllDialog;
+
         public void WriteToStorage()
         {
             _storageSync.WriteToLocalStorage(
@@ -89,19 +91,19 @@ public partial interface ITextEditorService
             _dispatcher.Dispatch(new DialogState.RegisterAction(settingsDialog));
         }
 
-        public void ShowFindDialog(bool? isResizableOverride = null, string? cssClassString = null)
+        public void ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null)
         {
-            var findDialog = new DialogRecord(
+            _findAllDialog ??= new DialogRecord(
                 Key<DialogRecord>.NewKey(),
-                "Text Editor Find",
-                _luthetusTextEditorOptions.FindComponentRendererType,
+                "Find All",
+                _luthetusTextEditorOptions.FindAllComponentRendererType,
                 null,
                 cssClassString)
             {
-                IsResizable = isResizableOverride ?? _luthetusTextEditorOptions.FindDialogComponentIsResizable
+                IsResizable = isResizableOverride ?? _luthetusTextEditorOptions.FindAllDialogComponentIsResizable
             };
 
-            _dispatcher.Dispatch(new DialogState.RegisterAction(findDialog));
+            _dispatcher.Dispatch(new DialogState.RegisterAction(_findAllDialog));
         }
 
         public void SetTheme(ThemeRecord theme)

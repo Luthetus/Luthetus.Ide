@@ -1701,7 +1701,7 @@ public class Person
 	}
 
     /// <summary>
-    /// <see cref="TextEditorCommandDefaultFacts.ShowFindDialog"/>
+    /// <see cref="TextEditorCommandDefaultFacts.ShowFindAllDialog"/>
     /// </summary>
     [Fact]
     public async Task ShowFindDialog()

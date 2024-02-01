@@ -275,7 +275,7 @@ public class TextEditorOptionsApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.ShowFindDialog(bool?, string?)"/>
+    /// <see cref="ITextEditorService.TextEditorOptionsApi.ShowFindAllDialog(bool?, string?)"/>
     /// </summary>
     [Fact]
     public void ShowFindDialog()

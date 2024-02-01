@@ -272,7 +272,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                                 viewModelModifier.ViewModel.ViewModelKey,
                                 previousViewModel => previousViewModel with
                                 {
-                                    DisplayCommandBar = true
+                                    ShowCommandBar = true
                                 }).Invoke(editContext);
 
                             return Task.CompletedTask;

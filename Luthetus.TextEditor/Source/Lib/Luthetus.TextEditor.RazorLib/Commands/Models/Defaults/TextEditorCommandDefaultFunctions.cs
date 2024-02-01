@@ -941,14 +941,14 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit ShowFindDialogFactory(
+    public static TextEditorEdit ShowFindAllDialogFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
-            commandArgs.TextEditorService.OptionsApi.ShowFindDialog();
+            commandArgs.TextEditorService.OptionsApi.ShowFindAllDialog();
             return Task.CompletedTask;
         };
     }

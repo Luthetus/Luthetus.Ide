@@ -54,7 +54,7 @@ public partial class CommandBarDisplay : FluxorComponent
                     previousViewModel => previousViewModel with
                     {
                         CommandBarValue = string.Empty,
-                        DisplayCommandBar = false
+                        ShowCommandBar = false
                     }));
         }
     }

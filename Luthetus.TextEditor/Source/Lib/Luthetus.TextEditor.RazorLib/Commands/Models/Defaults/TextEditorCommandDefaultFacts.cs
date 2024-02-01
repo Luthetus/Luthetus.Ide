@@ -361,15 +361,15 @@ public static class TextEditorCommandDefaultFacts
             return Task.CompletedTask;
         });
 
-    public static readonly TextEditorCommand ShowFindDialog = new(
+    public static readonly TextEditorCommand ShowFindAllDialog = new(
         "OpenFindDialog", "defaults_open-find-dialog", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
             commandArgs.TextEditorService.Post(
-                nameof(ShowFindDialog),
-                TextEditorCommandDefaultFunctions.ShowFindDialogFactory(
+                nameof(ShowFindAllDialog),
+                TextEditorCommandDefaultFunctions.ShowFindAllDialogFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
@@ -393,6 +393,32 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
+
+            return Task.CompletedTask;
+        });
+
+    public static readonly TextEditorCommand ShowFindOverlay = new(
+        "ShowFindOverlay", "defaults_show-find-overlay", false, true, TextEditKind.None, null,
+        interfaceCommandArgs =>
+        {
+            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+            commandArgs.TextEditorService.Post(
+                nameof(ShowFindOverlay),
+                editContext =>
+                {
+                    var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
+
+                    if (viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                    {
+                        ShowFindOverlay = true,
+                    };
+
+                    return Task.CompletedTask;
+                });
 
             return Task.CompletedTask;
         });

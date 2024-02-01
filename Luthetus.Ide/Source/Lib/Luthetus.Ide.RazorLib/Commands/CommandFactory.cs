@@ -17,6 +17,7 @@ using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Contexts.Displays;
+using static Luthetus.Common.RazorLib.Keyboards.Models.KeyboardKeyFacts;
 
 namespace Luthetus.Ide.RazorLib.Commands;
 
@@ -237,7 +238,7 @@ public class CommandFactory : ICommandFactory
 	            "Open: Find", "open-find", false,
 	            commandArgs => 
 				{
-					_textEditorService.OptionsApi.ShowFindDialog();
+					_textEditorService.OptionsApi.ShowFindAllDialog();
 		            return Task.CompletedTask;
 				});
 
@@ -271,7 +272,7 @@ public class CommandFactory : ICommandFactory
 	                openCodeSearchDialogCommand);
         }
 
-		// Add command to bring up a Context Switch dialog. Example: { Ctrl + , }
+		// Add command to bring up a Context Switch dialog. Example: { Ctrl + Tab }
 		{
 			var openContextSwitchDialogCommand = new CommonCommand(
 	            "Open: Context Switch", "open-context-switch", false,
@@ -291,18 +292,10 @@ public class CommandFactory : ICommandFactory
                     return Task.CompletedTask;
 				});
 
-            var defaultAndAlternativeMovementCodeList = new List<string>();
-
-            defaultAndAlternativeMovementCodeList.AddRange(KeyboardKeyFacts.MovementCodes.AllList);
-			defaultAndAlternativeMovementCodeList.AddRange(KeyboardKeyFacts.AlternateMovementCodes.AllList);
-
-            foreach (var movementKey in defaultAndAlternativeMovementCodeList)
-            {
-				_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-					new KeymapArgument(movementKey, false, true, true, Key<KeymapLayer>.Empty),
+			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+					new KeymapArgument("Backslash", false, true, true, Key<KeymapLayer>.Empty),
 					openContextSwitchDialogCommand);
-			}
-        }
+		}
     }
 
     public CommandNoType ConstructFocusContextElementCommand(

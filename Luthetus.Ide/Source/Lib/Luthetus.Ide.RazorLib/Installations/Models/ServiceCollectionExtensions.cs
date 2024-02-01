@@ -59,7 +59,7 @@ public static class ServiceCollectionExtensions
 						false);
 
 					return Task.CompletedTask;
-				}
+				},
             });
         }
 

@@ -72,7 +72,7 @@ public record LuthetusTextEditorOptionsTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusTextEditorOptions.FindComponentRendererType"/>
+	/// <see cref="LuthetusTextEditorOptions.FindAllComponentRendererType"/>
 	/// </summary>
 	[Fact]
 	public void FindComponentRendererType()
@@ -81,7 +81,7 @@ public record LuthetusTextEditorOptionsTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusTextEditorOptions.FindDialogComponentIsResizable"/>
+	/// <see cref="LuthetusTextEditorOptions.FindAllDialogComponentIsResizable"/>
 	/// </summary>
 	[Fact]
 	public void FindDialogComponentIsResizable()

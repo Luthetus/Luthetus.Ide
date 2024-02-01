@@ -112,7 +112,7 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
             CtrlKey = true,
             ShiftKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
-        }, TextEditorCommandDefaultFacts.ShowFindDialog);
+        }, TextEditorCommandDefaultFacts.ShowFindAllDialog);
 
         Map.Add(new KeymapArgument("ArrowDown")
         {
@@ -155,6 +155,12 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.ShowTooltipByCursorPosition);
+        
+        Map.Add(new KeymapArgument("KeyF")
+        {
+            CtrlKey = true,
+            LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
+        }, TextEditorCommandDefaultFacts.ShowFindOverlay);
     }
 
     private void AddDefaultAltModifiedKeymap()

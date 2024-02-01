@@ -21,8 +21,8 @@ public record LuthetusTextEditorOptions
     public Func<IServiceProvider, IAutocompleteIndexer> AutocompleteIndexerFactory { get; init; } = serviceProvider => new WordAutocompleteIndexer();
     public Type SettingsComponentRendererType { get; init; } = typeof(TextEditorSettings);
     public bool SettingsDialogComponentIsResizable { get; init; } = true;
-    public Type FindComponentRendererType { get; init; } = typeof(TextEditorSearchEngineDisplay);
-    public bool FindDialogComponentIsResizable { get; init; } = true;
+    public Type FindAllComponentRendererType { get; init; } = typeof(TextEditorSearchEngineDisplay);
+    public bool FindAllDialogComponentIsResizable { get; init; } = true;
     public ImmutableArray<ITextEditorSearchEngine> SearchEngineList { get; init; } = SearchEngineFacts.DefaultSearchEngineList;
     public Func<string, IServiceProvider, Task> OpenInEditorAsyncFunc { get; init; } = null;
     /// <summary>Default value is <see cref="true"/>. If one wishes to configure Luthetus.Common themselves, then set this to false, and invoke <see cref="Common.RazorLib.Installations.Models.ServiceCollectionExtensions.AddLuthetusCommonServices(IServiceCollection, Func{LuthetusCommonOptions, LuthetusCommonOptions}?)"/> prior to invoking Luthetus.TextEditor's</summary>
