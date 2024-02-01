@@ -1,7 +1,9 @@
 @using Luthetus.Common.RazorLib.Resizes.Displays
 
-<div class="luth_dialog-display @DialogRecord.CssClassString"
-     style="@ElementDimensionsStyleCssString @IsMaximizedStyleCssString">
+<div class="luth_dialog-display @DialogRecord.CssClassString @GetCssClassForDialogStateIsActiveSelection(DialogStateIsActiveSelection.Value)"
+     style="@ElementDimensionsStyleCssString @IsMaximizedStyleCssString"
+     @onfocusin="HandleOnFocusIn"
+     @onmousedown="HandleOnMouseDown">
 
     @if (DialogRecord.IsResizable && !DialogRecord.IsMaximized)
     {

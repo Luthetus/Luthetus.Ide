@@ -5,6 +5,10 @@
     box-shadow: 0 0 var(--luth_dialog-display-box-shadow-blur-radius) var(--luth_primary-box-shadow-color);
 }
 
+.luth_dialog-display.luth_active {
+    z-index: var(--luth_dialog-display-active-z-index);
+}
+
 .luth_dialog-display-toolbar {
     height: var(--luth_dialog-display-toolbar-height);
     display: flex;

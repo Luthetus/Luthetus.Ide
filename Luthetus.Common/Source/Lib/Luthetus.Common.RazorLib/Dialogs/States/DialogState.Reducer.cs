@@ -16,7 +16,11 @@ public partial record DialogState
 
             var outDialogList = inState.DialogList.Add(registerAction.Entry);
 
-            return new DialogState { DialogList = outDialogList };
+            return inState with 
+            {
+                DialogList = outDialogList,
+                ActiveDialogKey = registerAction.Entry.Key,
+            };
         }
 
         [ReducerMethod]
@@ -35,7 +39,15 @@ public partial record DialogState
                 IsMaximized = setIsMaximizedAction.IsMaximized
             });
 
-            return new DialogState { DialogList = outDialogList };
+            return inState with { DialogList = outDialogList };
+        }
+        
+        [ReducerMethod]
+        public static DialogState ReduceSetActiveDialogKeyAction(
+            DialogState inState,
+            SetActiveDialogKeyAction setActiveDialogKeyAction)
+        {
+            return inState with { ActiveDialogKey = setActiveDialogKeyAction.DialogKey };
         }
 
         [ReducerMethod]
@@ -51,10 +63,7 @@ public partial record DialogState
 
             var outDialogList = inState.DialogList.Remove(inDialog);
 
-            return new DialogState
-            {
-                DialogList = outDialogList
-            };
+            return inState with { DialogList = outDialogList };
         }
     }
 }

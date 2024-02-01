@@ -270,6 +270,7 @@ ul.luth_indent-child-content {
     --luth_tree-view-display-focus-outline-offset: -5px;
     --luth_dialog-display-toolbar-height: 2rem;
     --luth_dialog-display-z-index: 10;
+    --luth_dialog-display-active-z-index: 11;
     --luth_dialog-display-box-shadow-blur-radius: 2px;
     --luth_dialog-display-button-entry-margin-right: 5px;
     --luth_dialog-display-button-entry-padding: 3px;
