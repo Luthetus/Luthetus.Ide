@@ -57,7 +57,7 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
                             Console.WriteLine(e);
                             throw;
                         }
-                    }, CancellationToken.None);
+                    }, CancellationToken.None).ConfigureAwait(false);
                 }));
 
         return new MenuRecord(menuOptionRecordList.ToImmutableArray());

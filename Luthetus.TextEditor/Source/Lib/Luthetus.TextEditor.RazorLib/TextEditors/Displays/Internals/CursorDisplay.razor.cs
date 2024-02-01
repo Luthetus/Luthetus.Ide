@@ -336,7 +336,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                     Console.WriteLine(e);
                     throw;
                 }
-            }, CancellationToken.None);
+            }, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

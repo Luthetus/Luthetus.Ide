@@ -23,7 +23,7 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
             if (value < TextEditorOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS)
                 value = TextEditorOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS;
 
-            _ = Task.Run(() => TextEditorService.OptionsApi.SetFontSize(value));
+            _ = Task.Run(() => TextEditorService.OptionsApi.SetFontSize(value)).ConfigureAwait(false);
         }
     }
 

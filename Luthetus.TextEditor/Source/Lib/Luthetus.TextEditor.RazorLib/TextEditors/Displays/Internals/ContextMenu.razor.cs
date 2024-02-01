@@ -120,7 +120,7 @@ public partial class ContextMenu : ComponentBase
                 Console.WriteLine(e);
                 throw;
             }
-        }, CancellationToken.None);
+        }, CancellationToken.None).ConfigureAwait(false);
     }
 
     private async Task CutMenuOption()
