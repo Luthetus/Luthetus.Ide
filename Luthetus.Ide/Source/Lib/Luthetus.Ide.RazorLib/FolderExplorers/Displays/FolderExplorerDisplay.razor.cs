@@ -65,7 +65,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         base.OnInitialized();
     }
 
-    private async void OnStateChanged(object? sender, EventArgs e) => await InvokeAsync(StateHasChanged);
+    private async void OnStateChanged(object? sender, EventArgs e) => await InvokeAsync(StateHasChanged).ConfigureAwait(false);
 
     private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
@@ -74,7 +74,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         Dispatcher.Dispatch(new DropdownState.AddActiveAction(
             FolderExplorerContextMenu.ContextMenuEventDropdownKey));
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     public void Dispose()

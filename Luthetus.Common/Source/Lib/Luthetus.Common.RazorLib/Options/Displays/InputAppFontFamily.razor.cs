@@ -34,7 +34,7 @@ public partial class InputAppFontFamily : ComponentBase, IDisposable
 
     private async void AppOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
     {
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     public void Dispose()

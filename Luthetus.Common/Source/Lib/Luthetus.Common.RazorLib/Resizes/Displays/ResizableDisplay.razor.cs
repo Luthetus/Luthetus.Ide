@@ -55,11 +55,13 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             {
                 if (_previousDragMouseEventArgs is not null && mouseEventArgs is not null)
                 {
-                    await _dragEventHandler.Invoke((_previousDragMouseEventArgs, mouseEventArgs));
+                    await _dragEventHandler
+                        .Invoke((_previousDragMouseEventArgs, mouseEventArgs))
+                        .ConfigureAwait(false);
                 }
 
                 _previousDragMouseEventArgs = mouseEventArgs;
-                await ReRenderFuncAsync.Invoke();
+                await ReRenderFuncAsync.Invoke().ConfigureAwait(false);
             }
         }
     }
@@ -660,7 +662,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private async Task DragEventHandlerEastResizeHandleAsync(
@@ -671,7 +673,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private async Task DragEventHandlerSouthResizeHandleAsync(
@@ -682,7 +684,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private async Task DragEventHandlerWestResizeHandleAsync(
@@ -693,7 +695,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private async Task DragEventHandlerNorthEastResizeHandleAsync(
@@ -704,7 +706,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private async Task DragEventHandlerSouthEastResizeHandleAsync(
@@ -715,7 +717,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private async Task DragEventHandlerSouthWestResizeHandleAsync(
@@ -726,7 +728,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private async Task DragEventHandlerNorthWestResizeHandleAsync(
@@ -737,7 +739,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private async Task DragEventHandlerMoveHandleAsync(
@@ -748,7 +750,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     #endregion

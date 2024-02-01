@@ -50,7 +50,7 @@ public partial class MenuDisplay : ComponentBase
             {
                 try
                 {
-                    await _menuDisplayElementReference.Value.FocusAsync();
+                    await _menuDisplayElementReference.Value.FocusAsync().ConfigureAwait(false);
                 }
                 catch (Exception)
                 {
@@ -62,18 +62,18 @@ public partial class MenuDisplay : ComponentBase
             }
             else
             {
-                await InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
     }
 
     public async Task SetFocusToFirstOptionInMenuAsync()
     {
         _activeMenuOptionRecordIndex = 0;
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private async Task RestoreFocusToThisMenuAsync()
@@ -83,7 +83,7 @@ public partial class MenuDisplay : ComponentBase
             try
             {
                 if (_menuDisplayElementReference is not null)
-                    await _menuDisplayElementReference.Value.FocusAsync();
+                    await _menuDisplayElementReference.Value.FocusAsync().ConfigureAwait(false);
             }
             catch (Exception)
             {
@@ -93,7 +93,7 @@ public partial class MenuDisplay : ComponentBase
                 //             on an ElementReference.
             }
 
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
     }
 

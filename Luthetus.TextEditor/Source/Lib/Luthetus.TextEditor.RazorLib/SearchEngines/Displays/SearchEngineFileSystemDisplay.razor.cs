@@ -25,14 +25,14 @@ public partial class SearchEngineFileSystemDisplay : ComponentBase, IDisposable
 		if (LuthetusTextEditorOptions.OpenInEditorAsyncFunc is null)
 			return;
 
-		await LuthetusTextEditorOptions.OpenInEditorAsyncFunc.Invoke(
-			filePath,
-			ServiceProvider);
+		await LuthetusTextEditorOptions.OpenInEditorAsyncFunc
+			.Invoke(filePath, ServiceProvider)
+            .ConfigureAwait(false);
 	}
 
 	private async void On_SearchEngineFileSystem_ProgressOccurred()
 	{
-		await InvokeAsync(StateHasChanged);
+		await InvokeAsync(StateHasChanged).ConfigureAwait(false);
 	}
 
 	public void Dispose()

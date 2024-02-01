@@ -51,6 +51,6 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
         Dispatcher.Dispatch(new DropdownState.AddActiveAction(
             TestExplorerContextMenu.ContextMenuEventDropdownKey));
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 }

@@ -43,6 +43,8 @@ public partial class StartupControlsDisplay : FluxorComponent
         var executionTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
             TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
 
-        await executionTerminalSession.EnqueueCommandAsync(startProgramWithoutDebuggingCommand);
+        await executionTerminalSession
+            .EnqueueCommandAsync(startProgramWithoutDebuggingCommand)
+            .ConfigureAwait(false);
     }
 }

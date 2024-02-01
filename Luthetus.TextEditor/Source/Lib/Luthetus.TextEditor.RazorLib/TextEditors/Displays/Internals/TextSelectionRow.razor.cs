@@ -34,9 +34,9 @@ public partial class TextSelectionRow : ComponentBase
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!RenderBatch.Options!.UseMonospaceOptimizations)
-            await GetTextSelectionStyleCssAsync();
+            await GetTextSelectionStyleCssAsync().ConfigureAwait(false);
 
-        await base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
     }
 
     private async Task GetTextSelectionStyleCssAsync()
@@ -92,12 +92,13 @@ public partial class TextSelectionRow : ComponentBase
             var guid = Guid.NewGuid();
 
             var nextSelectionStartingLeftRelativeToParentInPixels = await JsRuntime.InvokeAsync<double>(
-                "luthetusTextEditor.calculateProportionalLeftOffset",
-                ProportionalFontMeasurementsContainerElementId,
-                $"luth_te_proportional-font-measurement-parent_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
-                $"luth_te_proportional-font-measurement-cursor_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
-                textOffsettingCursor,
-                true);
+                    "luthetusTextEditor.calculateProportionalLeftOffset",
+                    ProportionalFontMeasurementsContainerElementId,
+                    $"luth_te_proportional-font-measurement-parent_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
+                    $"luth_te_proportional-font-measurement-cursor_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
+                    textOffsettingCursor,
+                    true)
+                .ConfigureAwait(false);
 
             var previousSelectionStartingLeftRelativeToParentInPixels = _selectionStartingLeftRelativeToParentInPixels;
 
@@ -127,12 +128,13 @@ public partial class TextSelectionRow : ComponentBase
             var guid = Guid.NewGuid();
 
             var selectionEndingLeftRelativeToParentInPixels = await JsRuntime.InvokeAsync<double>(
-                "luthetusTextEditor.calculateProportionalLeftOffset",
-                ProportionalFontMeasurementsContainerElementId,
-                $"luth_te_proportional-font-measurement-parent_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
-                $"luth_te_proportional-font-measurement-cursor_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
-                textOffsettingCursor,
-                true);
+                    "luthetusTextEditor.calculateProportionalLeftOffset",
+                    ProportionalFontMeasurementsContainerElementId,
+                    $"luth_te_proportional-font-measurement-parent_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
+                    $"luth_te_proportional-font-measurement-cursor_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
+                    textOffsettingCursor,
+                    true)
+                .ConfigureAwait(false);
 
             var nextSelectionWidthInPixels = selectionEndingLeftRelativeToParentInPixels -
                 _selectionStartingLeftRelativeToParentInPixels;
@@ -166,7 +168,7 @@ public partial class TextSelectionRow : ComponentBase
             widthCssStyleString += $"{selectionWidthInPixelsInvariantCulture}px;";
 
         if (stateHasChanged)
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
 
         _proportionalTextSelectionStyleCss = $"{top} {height} {left} {widthCssStyleString}";
     }

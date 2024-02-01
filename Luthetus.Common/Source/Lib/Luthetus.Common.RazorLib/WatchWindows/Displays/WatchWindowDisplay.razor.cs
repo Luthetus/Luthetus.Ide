@@ -73,7 +73,7 @@ public partial class WatchWindowDisplay : FluxorComponent
 
         DropdownService.AddActiveDropdownKey(WatchWindowContextMenuDropdownKey);
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     protected override void Dispose(bool disposing)

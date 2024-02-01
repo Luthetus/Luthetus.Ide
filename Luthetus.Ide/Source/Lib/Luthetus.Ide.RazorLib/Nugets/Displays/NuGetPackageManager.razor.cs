@@ -84,7 +84,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
             {
                 _exceptionFromNugetQuery = null;
                 _performingNugetQuery = true;
-                await InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
             }
 
             BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
@@ -93,7 +93,8 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
                 {
                     var localNugetResult =
                         await NugetPackageManagerProvider
-                            .QueryForNugetPackagesAsync(query);
+                            .QueryForNugetPackagesAsync(query)
+                            .ConfigureAwait(false);
 
                     var setMostRecentQueryResultAction =
                         new NuGetPackageManagerState.SetMostRecentQueryResultAction(
@@ -109,7 +110,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
         finally
         {
             _performingNugetQuery = false;
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
     }
 }

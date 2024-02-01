@@ -75,7 +75,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             CommandFactory.Initialize();
         }
 
-        await base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
     }
 
     private void InitializePanelTabs()

@@ -71,7 +71,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
     private async void DotNetSolutionStateWrapOnStateChanged(object? sender, EventArgs e)
     {
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
@@ -81,7 +81,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         Dispatcher.Dispatch(new DropdownState.AddActiveAction(
             SolutionExplorerContextMenu.ContextMenuEventDropdownKey));
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private void OpenNewDotNetSolutionDialog()

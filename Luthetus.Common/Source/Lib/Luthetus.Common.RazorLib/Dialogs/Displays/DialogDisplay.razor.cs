@@ -48,12 +48,12 @@ public partial class DialogDisplay : IDisposable
 
     private async void AppOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
     {
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private async Task ReRenderAsync()
     {
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private void SubscribeMoveHandle()

@@ -53,7 +53,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 
     private async void AppOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
     {
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
@@ -71,8 +71,9 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
                     try
                     {
                         await Task.Delay(
-                            notificationRecord.NotificationOverlayLifespan.Value,
-                            _notificationOverlayCancellationTokenSource.Token);
+                                notificationRecord.NotificationOverlayLifespan.Value,
+                                _notificationOverlayCancellationTokenSource.Token)
+                            .ConfigureAwait(false);
 
                         HandleShouldNoLongerRender();
                     }
@@ -81,7 +82,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
                         Console.WriteLine(e);
                         throw;
                     }
-                }, CancellationToken.None);
+                }, CancellationToken.None).ConfigureAwait(false);
             }
         }
 

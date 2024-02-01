@@ -36,7 +36,7 @@ public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromp
             {
                 try
                 {
-                    await _declineButtonElementReference.Value.FocusAsync();
+                    await _declineButtonElementReference.Value.FocusAsync().ConfigureAwait(false);
                 }
                 catch (Exception)
                 {
@@ -48,7 +48,7 @@ public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromp
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
     }
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
@@ -57,7 +57,7 @@ public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromp
         {
             if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
             {
-                await MenuOptionCallbacks.HideWidgetAsync.Invoke();
+                await MenuOptionCallbacks.HideWidgetAsync.Invoke().ConfigureAwait(false);
             }
         }
     }

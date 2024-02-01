@@ -56,10 +56,10 @@ public partial class ActiveBackgroundTaskDisplay : IDisposable
         if (executingBackgroundTask is not null)
             _seenBackgroundTasks.Add(executingBackgroundTask);
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
 
         if (_backgroundTaskDialogModel.ReRenderFuncAsync is not null)
-            await _backgroundTaskDialogModel.ReRenderFuncAsync.Invoke();
+            await _backgroundTaskDialogModel.ReRenderFuncAsync.Invoke().ConfigureAwait(false);
     }
 
     public void Dispose()

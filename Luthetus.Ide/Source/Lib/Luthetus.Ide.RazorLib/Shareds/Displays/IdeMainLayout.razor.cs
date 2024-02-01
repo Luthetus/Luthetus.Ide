@@ -73,8 +73,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         if (firstRender)
         {
-            await TextEditorService.OptionsApi.SetFromLocalStorageAsync();
-            await AppOptionsService.SetFromLocalStorageAsync();
+            await TextEditorService.OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
+            await AppOptionsService.SetFromLocalStorageAsync().ConfigureAwait(false);
 
             var personalTestPath = "C:\\Users\\hunte\\Repos\\Luthetus.Ide_Fork\\Luthetus.Ide.sln";
 
@@ -88,12 +88,12 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
     }
 
     private async void AppOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
     {
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private async void DragStateWrapOnStateChanged(object? sender, EventArgs e)
@@ -101,13 +101,13 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         if (_previousDragStateWrapShouldDisplay != DragStateWrap.Value.ShouldDisplay)
         {
             _previousDragStateWrapShouldDisplay = DragStateWrap.Value.ShouldDisplay;
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
     }
 
     private async void TextEditorOptionsStateWrap_StateChanged(object? sender, EventArgs e)
     {
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     public void Dispose()

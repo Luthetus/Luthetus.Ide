@@ -79,14 +79,14 @@ public partial class TreeViewContainerDisplay : FluxorComponent
             async () =>
             {
                 _treeViewContextMenuCommandArgs = null;
-                await InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
 
                 var localTreeViewStateDisplayElementReference = _treeViewStateDisplayElementReference;
 
                 try
                 {
                     if (localTreeViewStateDisplayElementReference.HasValue)
-                        await localTreeViewStateDisplayElementReference.Value.FocusAsync();
+                        await localTreeViewStateDisplayElementReference.Value.FocusAsync().ConfigureAwait(false);
                 }
                 catch (Exception)
                 {
@@ -122,9 +122,10 @@ public partial class TreeViewContainerDisplay : FluxorComponent
             // If dedicated context menu button or shift + F10 was pressed as opposed to
             // a mouse RightClick then use JavaScript to determine the ContextMenu position.
             contextMenuFixedPosition = await JsRuntime.InvokeAsync<ContextMenuFixedPosition>(
-                "luthetusCommon.getTreeViewContextMenuFixedPosition",
-                TreeViewService.GetTreeContainerElementId(treeViewContainer.Key),
-                TreeViewService.GetNodeElementId(treeViewContainer.ActiveNode));
+                    "luthetusCommon.getTreeViewContextMenuFixedPosition",
+                    TreeViewService.GetTreeContainerElementId(treeViewContainer.Key),
+                    TreeViewService.GetNodeElementId(treeViewContainer.ActiveNode))
+                .ConfigureAwait(false);
 
             contextMenuTargetTreeViewNoType = treeViewContainer.ActiveNode;
         }
@@ -154,14 +155,14 @@ public partial class TreeViewContainerDisplay : FluxorComponent
             async () =>
             {
                 _treeViewContextMenuCommandArgs = null;
-                await InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
 
                 var localTreeViewStateDisplayElementReference = _treeViewStateDisplayElementReference;
 
                 try
                 {
                     if (localTreeViewStateDisplayElementReference.HasValue)
-                        await localTreeViewStateDisplayElementReference.Value.FocusAsync();
+                        await localTreeViewStateDisplayElementReference.Value.FocusAsync().ConfigureAwait(false);
                 }
                 catch (Exception)
                 {
@@ -179,11 +180,10 @@ public partial class TreeViewContainerDisplay : FluxorComponent
 		{
 			BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
 	        	"TreeView.HandleTreeViewOnContextMenu",
-				async () => await OnContextMenuFunc
-					.Invoke(_treeViewContextMenuCommandArgs));
+				async () => await OnContextMenuFunc.Invoke(_treeViewContextMenuCommandArgs).ConfigureAwait(false));
 		}
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private string GetHasActiveNodeCssClass(TreeViewContainer? treeViewContainer)

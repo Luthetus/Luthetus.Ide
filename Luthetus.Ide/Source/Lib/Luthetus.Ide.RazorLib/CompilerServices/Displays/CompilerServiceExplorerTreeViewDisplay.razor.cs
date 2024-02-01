@@ -78,7 +78,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
     private async void RerenderAfterEventWithArgs(object? sender, EventArgs e)
     {
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
@@ -88,7 +88,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
         Dispatcher.Dispatch(new DropdownState.AddActiveAction(
             CompilerServiceExplorerTreeViewContextMenu.ContextMenuEventDropdownKey));
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private void ReloadOnClick()

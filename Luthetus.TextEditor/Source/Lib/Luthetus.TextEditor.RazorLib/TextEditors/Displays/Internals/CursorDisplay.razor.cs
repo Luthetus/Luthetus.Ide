@@ -72,7 +72,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
     private async void ViewModel_CursorShouldBlinkChanged()
     {
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -89,29 +89,31 @@ public partial class CursorDisplay : ComponentBase, IDisposable
             var guid = Guid.NewGuid();
 
             var nextLeftRelativeToParentInPixels = await JsRuntime.InvokeAsync<double>(
-                "luthetusTextEditor.calculateProportionalLeftOffset",
-                ProportionalFontMeasurementsContainerElementId,
-                $"luth_te_proportional-font-measurement-parent_{viewModel.ViewModelKey.Guid}_cursor_{guid}",
-                $"luth_te_proportional-font-measurement-cursor_{viewModel.ViewModelKey.Guid}_cursor_{guid}",
-                textOffsettingCursor,
-                true);
+                    "luthetusTextEditor.calculateProportionalLeftOffset",
+                    ProportionalFontMeasurementsContainerElementId,
+                    $"luth_te_proportional-font-measurement-parent_{viewModel.ViewModelKey.Guid}_cursor_{guid}",
+                    $"luth_te_proportional-font-measurement-cursor_{viewModel.ViewModelKey.Guid}_cursor_{guid}",
+                    textOffsettingCursor,
+                    true)
+                .ConfigureAwait(false);
 
             var previousLeftRelativeToParentInPixels = _leftRelativeToParentInPixels;
 
             _leftRelativeToParentInPixels = nextLeftRelativeToParentInPixels;
 
             if ((int)nextLeftRelativeToParentInPixels != (int)previousLeftRelativeToParentInPixels)
-                await InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
 
         if (_previouslyObservedCursorDisplayId != CursorDisplayId && IsFocusTarget)
         {
             await JsRuntime.InvokeVoidAsync(
-                "luthetusTextEditor.initializeTextEditorCursorIntersectionObserver",
-                _intersectionObserverMapKey.ToString(),
-                DotNetObjectReference.Create(this),
-                ScrollableContainerId,
-                CursorDisplayId);
+                    "luthetusTextEditor.initializeTextEditorCursorIntersectionObserver",
+                    _intersectionObserverMapKey.ToString(),
+                    DotNetObjectReference.Create(this),
+                    ScrollableContainerId,
+                    CursorDisplayId)
+                .ConfigureAwait(false);
 
             _previouslyObservedCursorDisplayId = CursorDisplayId;
         }
@@ -124,13 +126,15 @@ public partial class CursorDisplay : ComponentBase, IDisposable
             {
                 await _throttleShouldRevealCursor.FireAsync(async _ =>
                 {
-                    await JsRuntime.InvokeVoidAsync("luthetusTextEditor.scrollElementIntoView",
-                        CursorDisplayId);
-                });
+                    await JsRuntime.InvokeVoidAsync(
+                            "luthetusTextEditor.scrollElementIntoView",
+                            CursorDisplayId)
+                        .ConfigureAwait(false);
+                }).ConfigureAwait(false);
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
     }
 
     [JSInvokable]
@@ -250,7 +254,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         try
         {
             if (_cursorDisplayElementReference is not null)
-                await _cursorDisplayElementReference.Value.FocusAsync();
+                await _cursorDisplayElementReference.Value.FocusAsync().ConfigureAwait(false);
         }
         catch (Exception)
         {
@@ -278,16 +282,16 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
         _menuKind = textEditorMenuKind;
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
 
         if (shouldFocusCursor && _menuKind == TextEditorMenuKind.None)
-            await FocusAsync();
+            await FocusAsync().ConfigureAwait(false);
     }
 
     public async Task SetFocusToActiveMenuAsync()
     {
         _menuShouldGetFocusRequestCount++;
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private bool TextEditorMenuShouldTakeFocus()
@@ -321,9 +325,11 @@ public partial class CursorDisplay : ComponentBase, IDisposable
             {
                 try
                 {
-                    await JsRuntime.InvokeVoidAsync("luthetusTextEditor.disposeTextEditorCursorIntersectionObserver",
-                        CancellationToken.None,
-                        _intersectionObserverMapKey.ToString());
+                    await JsRuntime.InvokeVoidAsync(
+                            "luthetusTextEditor.disposeTextEditorCursorIntersectionObserver",
+                            CancellationToken.None,
+                            _intersectionObserverMapKey.ToString())
+                        .ConfigureAwait(false);
                 }
                 catch (Exception e)
                 {

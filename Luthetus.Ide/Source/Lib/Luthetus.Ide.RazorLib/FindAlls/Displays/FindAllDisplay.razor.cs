@@ -74,8 +74,8 @@ public partial class FindAllDisplay : FluxorComponent
         if (LuthetusTextEditorOptions.OpenInEditorAsyncFunc is null)
             return;
 
-        await LuthetusTextEditorOptions.OpenInEditorAsyncFunc.Invoke(
-            filePath,
-            ServiceProvider);
+        await LuthetusTextEditorOptions.OpenInEditorAsyncFunc
+            .Invoke(filePath, ServiceProvider)
+            .ConfigureAwait(false);
     }
 }
