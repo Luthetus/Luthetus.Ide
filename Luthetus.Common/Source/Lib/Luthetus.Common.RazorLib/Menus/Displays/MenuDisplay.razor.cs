@@ -97,7 +97,7 @@ public partial class MenuDisplay : ComponentBase
         }
     }
 
-    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (MenuRecord.MenuOptionList.Length == 0)
         {
@@ -112,7 +112,7 @@ public partial class MenuDisplay : ComponentBase
                 if (DropdownKey != Key<DropdownRecord>.Empty && ReturnFocusToParentFuncAsync is not null)
                 {
                     Dispatcher.Dispatch(new DropdownState.RemoveActiveAction(DropdownKey));
-                    ReturnFocusToParentFuncAsync.Invoke();
+                    await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);
                 }
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
@@ -140,7 +140,7 @@ public partial class MenuDisplay : ComponentBase
                     Dispatcher.Dispatch(new DropdownState.RemoveActiveAction(DropdownKey));
 
                 if (ReturnFocusToParentFuncAsync is not null)
-                    ReturnFocusToParentFuncAsync.Invoke();
+                    await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);
 
                 break;
         }
