@@ -138,12 +138,21 @@ public partial class CodeSearchDisplay : FluxorComponent
 		var inPreviewViewModelKey = CodeSearchStateWrap.Value.PreviewViewModelKey;
 		var outPreviewViewModelKey = Key<TextEditorViewModel>.NewKey();
 
-        if (TextEditorConfig.RegisterViewModelFunc is null)
+		var resourceUri = new ResourceUri(filePath);
+
+        if (TextEditorConfig.RegisterModelFunc is null)
+            return;
+
+        await TextEditorConfig.RegisterModelFunc.Invoke(
+            resourceUri,
+            ServiceProvider);
+		
+		if (TextEditorConfig.RegisterViewModelFunc is null)
             return;
 
         await TextEditorConfig.RegisterViewModelFunc.Invoke(
             outPreviewViewModelKey,
-            new ResourceUri(filePath),
+            resourceUri,
             ServiceProvider);
 
         Dispatcher.Dispatch(new CodeSearchState.WithAction(inState => inState with

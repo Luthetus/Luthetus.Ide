@@ -67,6 +67,11 @@ public partial class EditorSync
                 });
         }
 
+        await CheckIfContentsWereModifiedAsync(
+            Dispatcher,
+            absolutePathString,
+            textEditorModel);
+
         return textEditorModel;
     }
 
@@ -233,11 +238,6 @@ public partial class EditorSync
 
         if (textEditorModel is null)
             return;
-
-        await CheckIfContentsWereModifiedAsync(
-            Dispatcher,
-            inputFileAbsolutePathString,
-            textEditorModel);
 
         var viewModel = GetOrCreateTextEditorViewModel(
             absolutePath,

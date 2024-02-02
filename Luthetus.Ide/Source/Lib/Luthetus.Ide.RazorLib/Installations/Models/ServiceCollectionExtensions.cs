@@ -70,7 +70,7 @@ public static class ServiceCollectionExtensions
                     var editorSync = serviceProvider.GetRequiredService<EditorSync>();
 
                     var absolutePath = environmentProvider.AbsolutePathFactory(resourceUri.Value, false);
-                    editorSync.OpenInEditor(absolutePath, true);
+                    editorSync.GetOrCreateTextEditorModel(absolutePath, absolutePath.Value);
                     return Task.CompletedTask;
                 },
                 RegisterViewModelFunc = (viewModelKey, resourceUri, serviceProvider) =>
