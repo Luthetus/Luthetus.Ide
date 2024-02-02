@@ -1,9 +1,8 @@
-using Fluxor;
-using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -45,10 +44,19 @@ public partial class FindOverlayDisplay : ComponentBase
                             if (viewModelModifier is null)
                                 return Task.CompletedTask;
 
+                            var localInputValue = _inputValue;
+
                             viewModelModifier.ViewModel = viewModelModifier.ViewModel with
                             {
-                                FindOverlayValue = _inputValue,
+                                FindOverlayValue = localInputValue,
                             };
+
+                            var modelModifier = editContext.GetModelModifier(RenderBatch.Model!.ResourceUri);
+
+                            if (modelModifier is null)
+                                return Task.CompletedTask;
+
+                            var textSpanMatches = modelModifier.FindMatches(localInputValue);
 
                             return Task.CompletedTask;
                         });

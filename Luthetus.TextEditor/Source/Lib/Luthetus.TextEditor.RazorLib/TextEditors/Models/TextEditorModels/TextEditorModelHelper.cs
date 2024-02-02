@@ -1,5 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
@@ -313,7 +314,41 @@ public static class TextEditorModelHelper
 		return null;
 	}
 
-	public static RowInformation GetRowInformationFromPositionIndex(
+	public static ImmutableArray<TextEditorTextSpan> FindMatches(
+		this ITextEditorModel model,
+		string query)
+	{
+		var text = model.GetAllText();
+		var matchedTextSpans = new List<TextEditorTextSpan>();
+
+		for (int outerI = 0; outerI < text.Length; outerI++)
+		{
+            if (outerI + query.Length <= text.Length)
+			{
+				int innerI = 0;
+                for (; innerI < query.Length; innerI++)
+				{
+					if (text[outerI + innerI] != query[innerI])
+						break;
+				}
+
+				if (innerI == query.Length)
+				{
+					// Then the entire query was matched
+					matchedTextSpans.Add(new TextEditorTextSpan(
+                        outerI,
+                        outerI + innerI,
+                        (byte)GenericDecorationKind.None,
+                        model.ResourceUri,
+                        text));
+                }
+			}
+		}
+
+		return matchedTextSpans.ToImmutableArray();
+	}
+
+    public static RowInformation GetRowInformationFromPositionIndex(
 		this ITextEditorModel model,
 		int positionIndex)
 	{
