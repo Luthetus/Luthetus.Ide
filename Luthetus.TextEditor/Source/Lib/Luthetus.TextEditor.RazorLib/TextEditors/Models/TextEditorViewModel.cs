@@ -68,6 +68,7 @@ public record TextEditorViewModel : IDisposable
     public string BodyElementId => $"luth_te_text-editor-content_{ViewModelKey.Guid}";
     public string PrimaryCursorContentId => $"luth_te_text-editor-content_{ViewModelKey.Guid}_primary-cursor";
     public string GutterElementId => $"luth_te_text-editor-gutter_{ViewModelKey.Guid}";
+    public string FindOverlayId => $"luth_te_find-overlay_{ViewModelKey.Guid}";
 
     public void MutateScrollHorizontalPositionByPixels(double pixels)
     {

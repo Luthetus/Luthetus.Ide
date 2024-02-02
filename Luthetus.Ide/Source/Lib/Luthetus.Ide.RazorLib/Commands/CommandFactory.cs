@@ -15,9 +15,7 @@ using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
-using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Contexts.Displays;
-using static Luthetus.Common.RazorLib.Keyboards.Models.KeyboardKeyFacts;
 
 namespace Luthetus.Ide.RazorLib.Commands;
 
