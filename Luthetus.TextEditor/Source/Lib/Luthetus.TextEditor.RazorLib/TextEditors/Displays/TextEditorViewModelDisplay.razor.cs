@@ -54,6 +54,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
     private ILuthetusTextEditorComponentRenderers LuthetusTextEditorComponentRenderers { get; set; } = null!;
+    [Inject]
+    private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<TextEditorViewModel> TextEditorViewModelKey { get; set; } = Key<TextEditorViewModel>.Empty;
@@ -744,7 +746,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         return (rowIndex, columnIndexInt);
     }
 
-    /// <summary>The default <see cref="AfterOnKeyDownAsync"/> will provide syntax highlighting, and autocomplete.<br/><br/>The syntax highlighting occurs on ';', whitespace, paste, undo, redo<br/><br/>The autocomplete occurs on LetterOrDigit typed or { Ctrl + Space }. Furthermore, the autocomplete is done via <see cref="IAutocompleteService"/> and the one can provide their own implementation when registering the Luthetus.TextEditor services using <see cref="LuthetusTextEditorOptions.AutocompleteServiceFactory"/></summary>
+    /// <summary>The default <see cref="AfterOnKeyDownAsync"/> will provide syntax highlighting, and autocomplete.<br/><br/>The syntax highlighting occurs on ';', whitespace, paste, undo, redo<br/><br/>The autocomplete occurs on LetterOrDigit typed or { Ctrl + Space }. Furthermore, the autocomplete is done via <see cref="IAutocompleteService"/> and the one can provide their own implementation when registering the Luthetus.TextEditor services using <see cref="LuthetusTextEditorConfig.AutocompleteServiceFactory"/></summary>
     public TextEditorEdit HandleAfterOnKeyDownAsyncFactory(
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,

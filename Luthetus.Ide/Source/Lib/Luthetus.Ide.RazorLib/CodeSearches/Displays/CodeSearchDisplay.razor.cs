@@ -17,7 +17,7 @@ public partial class CodeSearchDisplay : FluxorComponent
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
-	private LuthetusTextEditorOptions LuthetusTextEditorOptions { get; set; } = null!;
+	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 
@@ -71,15 +71,18 @@ public partial class CodeSearchDisplay : FluxorComponent
 
 	private async Task HandleOnClick(string filePath)
 	{
-		// TODO: Render a text editor view model in the dialog.
+		Dispatcher.Dispatch(new CodeSearchState.WithAction(inState => inState with
+		{
+			PreviewFilePath = filePath
+        }));
 	}
 	
 	private async Task HandleOnDoubleClick(string filePath)
 	{
-		if (LuthetusTextEditorOptions.OpenInEditorAsyncFunc is null)
+		if (TextEditorConfig.OpenInEditorAsyncFunc is null)
 			return;
 
-		await LuthetusTextEditorOptions.OpenInEditorAsyncFunc
+		await TextEditorConfig.OpenInEditorAsyncFunc
 			.Invoke(filePath, ServiceProvider)
 			.ConfigureAwait(false);
 	}

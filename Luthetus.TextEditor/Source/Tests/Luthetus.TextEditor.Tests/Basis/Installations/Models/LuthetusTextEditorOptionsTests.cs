@@ -4,12 +4,12 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 namespace Luthetus.TextEditor.Tests.Basis.Installations.Models;
 
 /// <summary>
-/// <see cref="LuthetusTextEditorOptions"/>
+/// <see cref="LuthetusTextEditorConfig"/>
 /// </summary>
 public record LuthetusTextEditorOptionsTests
 {
 	/// <summary>
-	/// <see cref="LuthetusTextEditorOptions.InitialThemeKey"/>
+	/// <see cref="LuthetusTextEditorConfig.InitialThemeKey"/>
 	/// </summary>
 	[Fact]
 	public void InitialThemeKey()
@@ -18,7 +18,7 @@ public record LuthetusTextEditorOptionsTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusTextEditorOptions.CustomThemeRecordList"/>
+	/// <see cref="LuthetusTextEditorConfig.CustomThemeRecordList"/>
 	/// </summary>
 	[Fact]
 	public void CustomThemeRecordList()
@@ -27,7 +27,7 @@ public record LuthetusTextEditorOptionsTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusTextEditorOptions.InitialTheme"/>
+	/// <see cref="LuthetusTextEditorConfig.InitialTheme"/>
 	/// </summary>
 	[Fact]
 	public void InitialTheme()
@@ -36,7 +36,7 @@ public record LuthetusTextEditorOptionsTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusTextEditorOptions.AutocompleteServiceFactory"/>
+	/// <see cref="LuthetusTextEditorConfig.AutocompleteServiceFactory"/>
 	/// </summary>
 	[Fact]
 	public void AutocompleteServiceFactory()
@@ -45,7 +45,7 @@ public record LuthetusTextEditorOptionsTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusTextEditorOptions.AutocompleteIndexerFactory"/>
+	/// <see cref="LuthetusTextEditorConfig.AutocompleteIndexerFactory"/>
 	/// </summary>
 	[Fact]
 	public void AutocompleteIndexerFactory()
@@ -54,7 +54,7 @@ public record LuthetusTextEditorOptionsTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusTextEditorOptions.SettingsComponentRendererType"/>
+	/// <see cref="LuthetusTextEditorConfig.SettingsComponentRendererType"/>
 	/// </summary>
 	[Fact]
 	public void SettingsComponentRendererType()
@@ -63,7 +63,7 @@ public record LuthetusTextEditorOptionsTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusTextEditorOptions.SettingsDialogComponentIsResizable"/>
+	/// <see cref="LuthetusTextEditorConfig.SettingsDialogComponentIsResizable"/>
 	/// </summary>
 	[Fact]
 	public void SettingsDialogComponentIsResizable()
@@ -72,7 +72,7 @@ public record LuthetusTextEditorOptionsTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusTextEditorOptions.FindAllComponentRendererType"/>
+	/// <see cref="LuthetusTextEditorConfig.FindAllComponentRendererType"/>
 	/// </summary>
 	[Fact]
 	public void FindComponentRendererType()
@@ -81,7 +81,7 @@ public record LuthetusTextEditorOptionsTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusTextEditorOptions.FindAllDialogComponentIsResizable"/>
+	/// <see cref="LuthetusTextEditorConfig.FindAllDialogComponentIsResizable"/>
 	/// </summary>
 	[Fact]
 	public void FindDialogComponentIsResizable()
@@ -90,7 +90,7 @@ public record LuthetusTextEditorOptionsTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusTextEditorOptions.SearchEngineList"/>
+	/// <see cref="LuthetusTextEditorConfig.SearchEngineList"/>
 	/// </summary>
 	[Fact]
 	public void SearchEngineList()
@@ -99,7 +99,7 @@ public record LuthetusTextEditorOptionsTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusTextEditorOptions.AddLuthetusCommon"/>
+	/// <see cref="LuthetusTextEditorConfig.AddLuthetusCommon"/>
 	/// </summary>
 	[Fact]
 	public void AddLuthetusCommon()

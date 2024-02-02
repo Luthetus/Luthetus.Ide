@@ -31,7 +31,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private LuthetusTextEditorOptions LuthetusTextEditorOptions { get; set; } = null!;
+    private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
@@ -43,15 +43,15 @@ public partial class LuthetusIdeInitializer : ComponentBase
     {
         if (firstRender)
         {
-            if (LuthetusTextEditorOptions.CustomThemeRecordList is not null)
+            if (TextEditorConfig.CustomThemeRecordList is not null)
             {
-                foreach (var themeRecord in LuthetusTextEditorOptions.CustomThemeRecordList)
+                foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
                 {
                     Dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
                 }
             }
 
-            foreach (var searchEngine in LuthetusTextEditorOptions.SearchEngineList)
+            foreach (var searchEngine in TextEditorConfig.SearchEngineList)
             {
                 Dispatcher.Dispatch(new TextEditorSearchEngineState.RegisterAction(searchEngine));
             }

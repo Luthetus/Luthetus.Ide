@@ -13,9 +13,9 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddLuthetusTextEditor(
         this IServiceCollection services,
         LuthetusHostingInformation hostingInformation,
-        Func<LuthetusTextEditorOptions, LuthetusTextEditorOptions>? configure = null)
+        Func<LuthetusTextEditorConfig, LuthetusTextEditorConfig>? configure = null)
     {
-        var textEditorOptions = new LuthetusTextEditorOptions();
+        var textEditorOptions = new LuthetusTextEditorConfig();
 
         if (configure is not null)
             textEditorOptions = configure.Invoke(textEditorOptions);

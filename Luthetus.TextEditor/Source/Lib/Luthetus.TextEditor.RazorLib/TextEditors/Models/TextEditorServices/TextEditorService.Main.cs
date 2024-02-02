@@ -28,7 +28,7 @@ public partial class TextEditorService : ITextEditorService
 
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
-    private readonly LuthetusTextEditorOptions _textEditorOptions;
+    private readonly LuthetusTextEditorConfig _textEditorOptions;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
     private readonly IStorageService _storageService;
     // TODO: Perhaps do not reference IJSRuntime but instead wrap it in a 'IUiProvider' or something like that. The 'IUiProvider' would then expose methods that allow the TextEditorViewModel to adjust the scrollbars. 
@@ -44,7 +44,7 @@ public partial class TextEditorService : ITextEditorService
         IState<TextEditorOptionsState> optionsStateWrap,
         IState<TextEditorSearchEngineState> searchEngineStateWrap,
         IBackgroundTaskService backgroundTaskService,
-        LuthetusTextEditorOptions textEditorOptions,
+        LuthetusTextEditorConfig textEditorOptions,
         ITextEditorRegistryWrap textEditorRegistryWrap,
         IStorageService storageService,
         IJSRuntime jsRuntime,

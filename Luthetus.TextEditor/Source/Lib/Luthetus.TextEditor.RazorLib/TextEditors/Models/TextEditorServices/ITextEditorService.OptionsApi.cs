@@ -48,20 +48,20 @@ public partial interface ITextEditorService
     public class TextEditorOptionsApi : ITextEditorOptionsApi
     {
         private readonly ITextEditorService _textEditorService;
-        private readonly LuthetusTextEditorOptions _luthetusTextEditorOptions;
+        private readonly LuthetusTextEditorConfig _textEditorConfig;
         private readonly IStorageService _storageService;
         private readonly StorageSync _storageSync;
         private readonly IDispatcher _dispatcher;
 
         public TextEditorOptionsApi(
             ITextEditorService textEditorService,
-            LuthetusTextEditorOptions luthetusTextEditorOptions,
+            LuthetusTextEditorConfig textEditorConfig,
             IStorageService storageService,
             StorageSync storageSync,
             IDispatcher dispatcher)
         {
             _textEditorService = textEditorService;
-            _luthetusTextEditorOptions = luthetusTextEditorOptions;
+            _textEditorConfig = textEditorConfig;
             _storageService = storageService;
             _storageSync = storageSync;
             _dispatcher = dispatcher;
@@ -81,11 +81,11 @@ public partial interface ITextEditorService
             var settingsDialog = new DialogRecord(
                 Key<DialogRecord>.NewKey(),
                 "Text Editor Settings",
-                _luthetusTextEditorOptions.SettingsComponentRendererType,
+                _textEditorConfig.SettingsComponentRendererType,
                 null,
                 cssClassString)
             {
-                IsResizable = isResizableOverride ?? _luthetusTextEditorOptions.SettingsDialogComponentIsResizable
+                IsResizable = isResizableOverride ?? _textEditorConfig.SettingsDialogComponentIsResizable
             };
 
             _dispatcher.Dispatch(new DialogState.RegisterAction(settingsDialog));
@@ -96,11 +96,11 @@ public partial interface ITextEditorService
             _findAllDialog ??= new DialogRecord(
                 Key<DialogRecord>.NewKey(),
                 "Find All",
-                _luthetusTextEditorOptions.FindAllComponentRendererType,
+                _textEditorConfig.FindAllComponentRendererType,
                 null,
                 cssClassString)
             {
-                IsResizable = isResizableOverride ?? _luthetusTextEditorOptions.FindAllDialogComponentIsResizable
+                IsResizable = isResizableOverride ?? _textEditorConfig.FindAllDialogComponentIsResizable
             };
 
             _dispatcher.Dispatch(new DialogState.RegisterAction(_findAllDialog));

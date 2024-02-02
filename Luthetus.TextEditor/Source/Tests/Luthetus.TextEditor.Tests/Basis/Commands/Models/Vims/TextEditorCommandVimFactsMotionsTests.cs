@@ -97,7 +97,7 @@ public class TextEditorCommandVimFactsMotionsTests
     {
         var services = new ServiceCollection()
             .AddSingleton<LuthetusCommonOptions>()
-            .AddSingleton<LuthetusTextEditorOptions>()
+            .AddSingleton<LuthetusTextEditorConfig>()
             .AddScoped<IStorageService, DoNothingStorageService>()
             .AddScoped<IJSRuntime, TextEditorTestingJsRuntime>()
             .AddScoped<StorageSync>()
@@ -109,7 +109,7 @@ public class TextEditorCommandVimFactsMotionsTests
             .AddScoped<IClipboardService, InMemoryClipboardService>()
             .AddFluxor(options => options.ScanAssemblies(
                 typeof(LuthetusCommonOptions).Assembly,
-                typeof(LuthetusTextEditorOptions).Assembly));
+                typeof(LuthetusTextEditorConfig).Assembly));
 
         serviceProvider = services.BuildServiceProvider();
 

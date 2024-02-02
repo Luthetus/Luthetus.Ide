@@ -44,7 +44,7 @@ public class TextEditorTestingBase
 
         services.AddFluxor(options => options.ScanAssemblies(
             typeof(LuthetusCommonOptions).Assembly,
-            typeof(LuthetusTextEditorOptions).Assembly));
+            typeof(LuthetusTextEditorConfig).Assembly));
 
         ServiceProvider = services.BuildServiceProvider();
 

@@ -26,7 +26,7 @@ class Program
 
         appBuilder.Services.AddSingleton(new ReflectiveOptions(
             typeof(LuthetusCommonOptions).Assembly,
-            typeof(LuthetusTextEditorOptions).Assembly,
+            typeof(LuthetusTextEditorConfig).Assembly,
             typeof(LuthetusIdeOptions).Assembly));
 
         appBuilder.RootComponents.Add<App>("app");

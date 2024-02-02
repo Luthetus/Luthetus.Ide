@@ -9,10 +9,11 @@ public partial record CodeSearchState(
     string Query,
     string? StartingAbsolutePathForSearch,
     CodeSearchFilterKind CodeSearchFilterKind,
-    ImmutableList<string> ResultList)
+    ImmutableList<string> ResultList,
+    string PreviewFilePath)
 {
     public CodeSearchState()
-        : this(string.Empty, null, CodeSearchFilterKind.None, ImmutableList<string>.Empty)
+        : this(string.Empty, null, CodeSearchFilterKind.None, ImmutableList<string>.Empty, string.Empty)
     {
     }
 }
