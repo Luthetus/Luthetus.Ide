@@ -54,10 +54,10 @@ public class ServiceCollectionExtensionsTests
             //
             // Then, reinvoke 'AddLuthetusCommonServices' and assert that the memory locations
             // do match, because the 'configure' result was used in place or the default.
-            var otherCommonOptions = new LuthetusCommonConfig();
+            var otherCommonConfig = new LuthetusCommonConfig();
 
             Assert.False(ReferenceEquals(
-                otherCommonOptions,
+                otherCommonConfig,
                 serviceProvider.GetRequiredService<LuthetusCommonConfig>()));
 
             var innerHostingInformation = new LuthetusHostingInformation(
@@ -65,14 +65,14 @@ public class ServiceCollectionExtensionsTests
                 new BackgroundTaskServiceSynchronous());
 
             var innerServiceCollection = new ServiceCollection()
-                .AddLuthetusCommonServices(innerHostingInformation, options => otherCommonOptions)
+                .AddLuthetusCommonServices(innerHostingInformation, options => otherCommonConfig)
                 .AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime())
                 .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonConfig).Assembly));
 
             var innerServiceProvider = innerServiceCollection.BuildServiceProvider();
 
             Assert.True(ReferenceEquals(
-                otherCommonOptions,
+                otherCommonConfig,
                 innerServiceProvider.GetRequiredService<LuthetusCommonConfig>()));
         }
 

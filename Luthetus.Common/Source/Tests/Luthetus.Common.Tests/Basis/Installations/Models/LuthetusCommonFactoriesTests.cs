@@ -39,18 +39,18 @@ public record LuthetusCommonFactoriesTests
     [Fact]
     public void CommonFactories()
     {
-        var commonOptions = new LuthetusCommonConfig();
+        var commonConfig = new LuthetusCommonConfig();
 
         var services = new ServiceCollection()
-            .AddScoped(sp => commonOptions.CommonFactories.ClipboardServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonOptions.CommonFactories.DialogServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonOptions.CommonFactories.NotificationServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonOptions.CommonFactories.DragServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonOptions.CommonFactories.DropdownServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonOptions.CommonFactories.AppOptionsServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonOptions.CommonFactories.StorageServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonOptions.CommonFactories.ThemeServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonOptions.CommonFactories.TreeViewServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonConfig.CommonFactories.ClipboardServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonConfig.CommonFactories.DialogServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonConfig.CommonFactories.NotificationServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonConfig.CommonFactories.DragServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonConfig.CommonFactories.DropdownServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonConfig.CommonFactories.AppOptionsServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonConfig.CommonFactories.StorageServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonConfig.CommonFactories.ThemeServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonConfig.CommonFactories.TreeViewServiceFactory.Invoke(sp))
             .AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime())
             .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonConfig).Assembly))
             .AddScoped<StorageSync>()

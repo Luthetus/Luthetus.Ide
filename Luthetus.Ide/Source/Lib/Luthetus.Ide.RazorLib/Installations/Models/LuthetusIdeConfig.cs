@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.RazorLib.Installations.Models;
 
-public record LuthetusIdeOptions
+public record LuthetusIdeConfig
 {
     /// <summary>Default value is <see cref="true"/>. If one wishes to configure Luthetus.TextEditor themselves, then set this to false, and invoke <see cref="TextEditor.RazorLib.Installations.Models.ServiceCollectionExtensions.AddLuthetusTextEditor(Microsoft.Extensions.DependencyInjection.IServiceCollection, Func{LuthetusTextEditorConfig, LuthetusTextEditorConfig}?)"/> prior to invoking Luthetus.TextEditor's</summary>
     public bool AddLuthetusTextEditor { get; init; } = true;

@@ -36,14 +36,14 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddLuthetusIdeRazorLibServices(
         this IServiceCollection services,
         LuthetusHostingInformation hostingInformation,
-        Func<LuthetusIdeOptions, LuthetusIdeOptions>? configure = null)
+        Func<LuthetusIdeConfig, LuthetusIdeConfig>? configure = null)
     {
-        var ideOptions = new LuthetusIdeOptions();
+        var ideConfig = new LuthetusIdeConfig();
 
         if (configure is not null)
-            ideOptions = configure.Invoke(ideOptions);
+            ideConfig = configure.Invoke(ideConfig);
 
-        if (ideOptions.AddLuthetusTextEditor)
+        if (ideConfig.AddLuthetusTextEditor)
         {
             services.AddLuthetusTextEditor(hostingInformation, inTextEditorOptions => inTextEditorOptions with
             {
@@ -64,7 +64,7 @@ public static class ServiceCollectionExtensions
         }
 
         services
-            .AddSingleton(ideOptions)
+            .AddSingleton(ideConfig)
             .AddSingleton<ILuthetusIdeComponentRenderers>(_ideComponentRenderers)
             .AddScoped<DotNetSolutionSync>()
             .AddScoped<CompilerServiceExplorerSync>()
