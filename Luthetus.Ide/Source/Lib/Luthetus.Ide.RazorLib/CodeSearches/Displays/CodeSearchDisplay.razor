@@ -1,8 +1,9 @@
 ﻿@using Fluxor.Blazor.Web.Components;
 @using Luthetus.Ide.RazorLib.CodeSearches.Models;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays
 @inherits FluxorComponent
 
-@{ var codeSearchState = CodeSearchStateStateWrap.Value; }
+@{ var codeSearchState = CodeSearchStateWrap.Value; }
 
 <div class="luth_ide_find-all">
     <div class="luth_ide_find-all-filter-list">
@@ -48,4 +49,8 @@
             }
         </div>
     }
+
+    <hr/>
+
+    <TextEditorViewModelDisplay TextEditorViewModelKey="codeSearchState.PreviewViewModelKey"/>
 </div>

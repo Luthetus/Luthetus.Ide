@@ -73,12 +73,12 @@ public static class ServiceCollectionExtensions
                     editorSync.OpenInEditor(absolutePath, true);
                     return Task.CompletedTask;
                 },
-                RegisterViewModelFunc = (resourceUri, serviceProvider) =>
+                RegisterViewModelFunc = (viewModelKey, resourceUri, serviceProvider) =>
                 {
                     var textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
                     var editorSync = serviceProvider.GetRequiredService<EditorSync>();
 
-                    textEditorService.ViewModelApi.Register(Key<TextEditorViewModel>.NewKey(), resourceUri);
+                    textEditorService.ViewModelApi.Register(viewModelKey, resourceUri);
                     return Task.CompletedTask;
                 },
                 ShowViewModelFunc = (viewModelKey, serviceProvider) =>

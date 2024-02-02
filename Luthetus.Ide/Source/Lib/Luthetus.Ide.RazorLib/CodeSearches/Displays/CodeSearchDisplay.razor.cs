@@ -5,13 +5,17 @@ using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.CodeSearches.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Microsoft.AspNetCore.Components;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Displays;
 
 public partial class CodeSearchDisplay : FluxorComponent
 {
 	[Inject]
-	private IState<CodeSearchState> CodeSearchStateStateWrap { get; set; } = null!;
+	private IState<CodeSearchState> CodeSearchStateWrap { get; set; } = null!;
 	[Inject]
 	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
 	[Inject]
@@ -19,11 +23,13 @@ public partial class CodeSearchDisplay : FluxorComponent
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]
+	private ITextEditorService TextEditorService { get; set; } = null!;
+	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 
 	private string InputValue
 	{
-		get => CodeSearchStateStateWrap.Value.Query;
+		get => CodeSearchStateWrap.Value.Query;
 		set
 		{
 			if (value is null)
@@ -31,7 +37,7 @@ public partial class CodeSearchDisplay : FluxorComponent
 
 			Dispatcher.Dispatch(new CodeSearchState.WithAction(inState => inState with
 			{
-				Query = value
+				Query = value,
 			}));
 
 			Dispatcher.Dispatch(new CodeSearchState.SearchEffect());
@@ -64,18 +70,33 @@ public partial class CodeSearchDisplay : FluxorComponent
 
 	private string GetIsActiveCssClass(CodeSearchFilterKind codeSearchFilterKind)
 	{
-		return CodeSearchStateStateWrap.Value.CodeSearchFilterKind == codeSearchFilterKind
+		return CodeSearchStateWrap.Value.CodeSearchFilterKind == codeSearchFilterKind
 			? "luth_active"
 			: string.Empty;
 	}
 
 	private async Task HandleOnClick(string filePath)
 	{
-		Dispatcher.Dispatch(new CodeSearchState.WithAction(inState => inState with
+		var inPreviewViewModelKey = CodeSearchStateWrap.Value.PreviewViewModelKey;
+		var outPreviewViewModelKey = Key<TextEditorViewModel>.NewKey();
+
+        if (TextEditorConfig.RegisterViewModelFunc is null)
+            return;
+
+        await TextEditorConfig.RegisterViewModelFunc.Invoke(
+            outPreviewViewModelKey,
+            new ResourceUri(filePath),
+            ServiceProvider);
+
+        Dispatcher.Dispatch(new CodeSearchState.WithAction(inState => inState with
 		{
-			PreviewFilePath = filePath
+			PreviewFilePath = filePath,
+            PreviewViewModelKey = outPreviewViewModelKey,
         }));
-	}
+
+		if (inPreviewViewModelKey != Key<TextEditorViewModel>.Empty)
+			TextEditorService.ViewModelApi.Dispose(inPreviewViewModelKey);
+    }
 	
 	private async Task HandleOnDoubleClick(string filePath)
 	{

@@ -47,7 +47,7 @@ public record LuthetusTextEditorConfig
     /// 
     /// The Func takes in the resource uri that needs a ViewModel.
     /// </summary>
-    public Func<ResourceUri, IServiceProvider, Task>? RegisterViewModelFunc { get; set; }
+    public Func<Key<TextEditorViewModel>, ResourceUri, IServiceProvider, Task>? RegisterViewModelFunc { get; set; }
     public Func<Key<TextEditorViewModel>, IServiceProvider, Task>? ShowViewModelFunc { get; set; }
     /// <summary>Default value is <see cref="true"/>. If one wishes to configure Luthetus.Common themselves, then set this to false, and invoke <see cref="Common.RazorLib.Installations.Models.ServiceCollectionExtensions.AddLuthetusCommonServices(IServiceCollection, Func{LuthetusCommonConfig, LuthetusCommonConfig}?)"/> prior to invoking Luthetus.TextEditor's</summary>
     public bool AddLuthetusCommon { get; init; } = true;

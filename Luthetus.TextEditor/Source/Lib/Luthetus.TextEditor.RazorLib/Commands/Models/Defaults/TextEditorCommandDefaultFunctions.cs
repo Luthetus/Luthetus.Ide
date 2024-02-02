@@ -902,7 +902,7 @@ public class TextEditorCommandDefaultFunctions
             {
                 if (commandArgs.TextEditorConfig.RegisterViewModelFunc is not null)
                 {
-                    commandArgs.TextEditorConfig.RegisterViewModelFunc.Invoke(definitionTextSpan.ResourceUri, commandArgs.ServiceProvider);
+                    commandArgs.TextEditorConfig.RegisterViewModelFunc.Invoke(Key<TextEditorViewModel>.NewKey(), definitionTextSpan.ResourceUri, commandArgs.ServiceProvider);
                     definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
 
                     if (!definitionViewModels.Any())
