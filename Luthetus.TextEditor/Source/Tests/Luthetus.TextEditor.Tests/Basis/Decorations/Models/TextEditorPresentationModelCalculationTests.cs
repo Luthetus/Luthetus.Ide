@@ -36,7 +36,7 @@ public class TextEditorPresentationModelCalculationTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorPresentationModelCalculation.TextEditorTextSpanList"/>
+	/// <see cref="TextEditorPresentationModelCalculation.TextSpanList"/>
 	/// </summary>
 	[Fact]
 	public void TextEditorTextSpanList()

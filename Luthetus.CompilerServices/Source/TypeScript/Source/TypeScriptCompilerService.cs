@@ -166,7 +166,7 @@ public class TypeScriptCompilerService : ICompilerService
 
                 if (presentationModel?.PendingCalculation is not null)
                 {
-                    presentationModel.PendingCalculation.TextEditorTextSpanList =
+                    presentationModel.PendingCalculation.TextSpanList =
                         GetDiagnosticsFor(modelModifier.ResourceUri)
                             .Select(x => x.TextSpan)
                             .ToImmutableArray();

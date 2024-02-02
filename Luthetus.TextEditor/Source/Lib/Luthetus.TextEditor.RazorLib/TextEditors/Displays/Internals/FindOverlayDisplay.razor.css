@@ -5,7 +5,6 @@
     top: 0;
     width: 25%;
     min-width: calc(22ch + 16px);
-    height: calc(2em + 12px);
     padding: 7px;
     z-index: 1;
     cursor: default;

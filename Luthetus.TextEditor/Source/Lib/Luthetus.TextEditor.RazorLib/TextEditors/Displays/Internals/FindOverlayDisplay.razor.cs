@@ -23,6 +23,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private bool _lastSeenShowFindOverlayValue = false;
     private string _inputValue = string.Empty;
+    private int _activeIndexMatchedTextSpan;
 
     private IThrottle _throttleInputValueChange = new Throttle(TimeSpan.FromMilliseconds(150));
 
@@ -78,7 +79,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
                             if (presentationModel?.PendingCalculation is not null)
                             {
-                                presentationModel.PendingCalculation.TextEditorTextSpanList = textSpanMatches;
+                                presentationModel.PendingCalculation.TextSpanList = textSpanMatches;
 
                                 (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
                                     (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
@@ -156,7 +157,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
                     if (presentationModel?.PendingCalculation is not null)
                     {
-                        presentationModel.PendingCalculation.TextEditorTextSpanList = ImmutableArray<TextEditorTextSpan>.Empty;
+                        presentationModel.PendingCalculation.TextSpanList = ImmutableArray<TextEditorTextSpan>.Empty;
 
                         (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
                             (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);

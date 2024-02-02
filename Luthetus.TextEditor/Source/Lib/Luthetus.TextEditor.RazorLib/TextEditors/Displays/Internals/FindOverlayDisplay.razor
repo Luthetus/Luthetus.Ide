@@ -1,4 +1,5 @@
-﻿@if (RenderBatch.ViewModel!.ShowFindOverlay)
+﻿@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+@if (RenderBatch.ViewModel!.ShowFindOverlay)
 {
     <div class="luth_te_find-overlay"
          @onmousedown:stopPropagation="true"
@@ -9,11 +10,40 @@
          @onkeydown="HandleOnKeyDownAsync"
          @onkeydown:stopPropagation="true">
 
-        <input @bind="InputValue"
-               @bind:event="oninput"
-               id="@RenderBatch.ViewModel.FindOverlayId"
-               class="luth_ide_input luth_ide_input-text"
-               placeholder="Find..."/>
+        <div class="luth_te_find-overlay-top-row">
+            <input @bind="InputValue"
+                   @bind:event="oninput"
+                   id="@RenderBatch.ViewModel.FindOverlayId"
+                   class="luth_ide_input luth_ide_input-text"
+                   placeholder="Find..." />
+         </div>
 
+        <div class="luth_te_find-overlay-bottom-row">
+            @{
+                var findOverlayPresentationModel = RenderBatch.Model!.PresentationModelsList.FirstOrDefault(
+                    x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
+
+                var completedCalculation = findOverlayPresentationModel?.CompletedCalculation;
+            }
+
+            @if (findOverlayPresentationModel is null)
+            {
+                <div title="@nameof(findOverlayPresentationModel) is null">
+                    null
+                </div>
+            }
+            else if (completedCalculation is null)
+            {
+                <div title="@nameof(completedCalculation) is null">
+                    null
+                </div>
+            }
+            else
+            {
+                <div>
+                    @_activeIndexMatchedTextSpan of @completedCalculation.TextSpanList.Length
+                </div>
+            }
+        </div>
     </div>
 }
