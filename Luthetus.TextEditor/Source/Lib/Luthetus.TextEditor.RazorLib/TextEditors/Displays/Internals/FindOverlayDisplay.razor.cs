@@ -37,12 +37,12 @@ public partial class FindOverlayDisplay : ComponentBase
                 {
                     TextEditorService.Post(
                         nameof(FindOverlayDisplay),
-                        editContext =>
+                        async editContext =>
                         {
                             var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel!.ViewModelKey);
 
                             if (viewModelModifier is null)
-                                return Task.CompletedTask;
+                                return;
 
                             var localInputValue = _inputValue;
 
@@ -54,11 +54,33 @@ public partial class FindOverlayDisplay : ComponentBase
                             var modelModifier = editContext.GetModelModifier(RenderBatch.Model!.ResourceUri);
 
                             if (modelModifier is null)
-                                return Task.CompletedTask;
+                                return;
 
                             var textSpanMatches = modelModifier.FindMatches(localInputValue);
 
-                            return Task.CompletedTask;
+                            await TextEditorService.ModelApi.CalculatePresentationModelFactory(
+                                modelModifier.ResourceUri,
+                                FindOverlayPresentationFacts.PresentationKey)
+                                .Invoke(editContext)
+                                .ConfigureAwait(false);
+
+                            var pendingCalculation = modelModifier.PresentationModelsList.FirstOrDefault(x =>
+                                x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey)
+                                ?.PendingCalculation;
+
+                            if (pendingCalculation is null)
+                                pendingCalculation = new(modelModifier.GetAllText());
+
+                            var presentationModel = modelModifier.PresentationModelsList.FirstOrDefault(x =>
+                                x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
+
+                            if (presentationModel?.PendingCalculation is not null)
+                            {
+                                presentationModel.PendingCalculation.TextEditorTextSpanList = textSpanMatches;
+
+                                (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
+                                    (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
+                            }
                         });
 
                     return Task.CompletedTask;

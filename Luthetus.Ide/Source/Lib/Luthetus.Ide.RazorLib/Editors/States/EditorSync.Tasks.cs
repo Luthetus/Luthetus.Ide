@@ -12,6 +12,7 @@ using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.Ide.RazorLib.Editors.States;
 
@@ -166,6 +167,7 @@ public partial class EditorSync
             var lastPresentationKeys = new[]
             {
                 CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+                FindOverlayPresentationFacts.PresentationKey,
             }.ToImmutableArray();
 
             _textEditorService.Post(

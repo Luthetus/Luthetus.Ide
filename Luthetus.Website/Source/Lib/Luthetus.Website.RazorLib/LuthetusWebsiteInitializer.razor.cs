@@ -14,6 +14,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
 using Fluxor;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.Website.RazorLib;
 
@@ -182,6 +183,12 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
                     await TextEditorService.ModelApi.AddPresentationModelFactory(
                             textEditorModel.ResourceUri,
                             CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel)
+                        .Invoke(editContext)
+                        .ConfigureAwait(false);
+                    
+                    await TextEditorService.ModelApi.AddPresentationModelFactory(
+                            textEditorModel.ResourceUri,
+                            FindOverlayPresentationFacts.EmptyPresentationModel)
                         .Invoke(editContext)
                         .ConfigureAwait(false);
 
