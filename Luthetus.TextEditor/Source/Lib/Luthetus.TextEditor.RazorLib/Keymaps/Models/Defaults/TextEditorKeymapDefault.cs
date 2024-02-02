@@ -150,6 +150,12 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.DoNothingDiscard);
         
+        Map.Add(new KeymapArgument("Comma")
+        {
+            CtrlKey = true,
+            LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
+        }, TextEditorCommandDefaultFacts.DoNothingDiscard);
+        
         Map.Add(new KeymapArgument("Slash")
         {
             CtrlKey = true,

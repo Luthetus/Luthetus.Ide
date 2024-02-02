@@ -11,6 +11,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Displays;
 
@@ -29,7 +30,12 @@ public partial class CodeSearchDisplay : FluxorComponent
 	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 
-	private ElementDimensions _topContentElementDimensions = new();
+	private readonly TextEditorViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
+	{
+		IncludeHeaderHelperComponent = false,
+	};
+
+    private ElementDimensions _topContentElementDimensions = new();
 	private ElementDimensions _bottomContentElementDimensions = new();
 
     private string InputValue
