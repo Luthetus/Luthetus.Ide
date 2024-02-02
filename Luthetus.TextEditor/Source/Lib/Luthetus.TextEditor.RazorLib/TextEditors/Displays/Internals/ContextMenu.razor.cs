@@ -9,6 +9,8 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Fluxor;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -18,6 +20,12 @@ public partial class ContextMenu : ComponentBase
     private IClipboardService ClipboardService { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IServiceProvider ServiceProvider { get; set; } = null!;
 
     [CascadingParameter]
     public TextEditorRenderBatch RenderBatch { get; set; } = null!;
@@ -62,10 +70,9 @@ public partial class ContextMenu : ComponentBase
             TextEditorService,
             null,
             null,
-            null,
-            null,
-            null,
-            null);
+            Dispatcher,
+            ServiceProvider,
+            TextEditorConfig);
     }
 
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)

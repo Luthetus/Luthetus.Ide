@@ -171,8 +171,7 @@ public class TextEditorCommandVimFactsMotionsTests
             (MouseEventArgs m) => Task.CompletedTask,
             serviceProvider.GetRequiredService<IJSRuntime>(),
             serviceProvider.GetRequiredService<IDispatcher>(),
-            (ResourceUri resourceUri) => { },
-            (ResourceUri resourceUri) => { },
-            (Key<TextEditorViewModel> viewModelKey) => { });
+            serviceProvider.GetRequiredService<IServiceProvider>(),
+            serviceProvider.GetRequiredService<LuthetusTextEditorConfig>());
     }
 }

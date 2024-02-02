@@ -13,6 +13,8 @@ using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Fluxor;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -24,6 +26,12 @@ public partial class TextEditorHeader : ComponentBase
     private IClipboardService ClipboardService { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IServiceProvider ServiceProvider { get; set; } = null!;
+    [Inject]
+    private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 
     [CascadingParameter]
     public TextEditorRenderBatch RenderBatch { get; set; } = null!;
@@ -46,10 +54,9 @@ public partial class TextEditorHeader : ComponentBase
             TextEditorService,
             null,
             null,
-            null,
-            null,
-            null,
-            null);
+            Dispatcher,
+            ServiceProvider,
+            TextEditorConfig);
     }
 
     private async Task DoCopyOnClick(MouseEventArgs arg)

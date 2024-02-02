@@ -882,9 +882,9 @@ public class TextEditorCommandDefaultFunctions
 
             if (definitionModel is null)
             {
-                if (commandArgs.RegisterModelAction is not null)
+                if (commandArgs.TextEditorConfig.RegisterModelFunc is not null)
                 {
-                    commandArgs.RegisterModelAction.Invoke(definitionTextSpan.ResourceUri);
+                    commandArgs.TextEditorConfig.RegisterModelFunc.Invoke(definitionTextSpan.ResourceUri, commandArgs.ServiceProvider);
                     var definitionModelModifier = editContext.GetModelModifier(definitionTextSpan.ResourceUri);
 
                     if (definitionModel is null)
@@ -900,9 +900,9 @@ public class TextEditorCommandDefaultFunctions
 
             if (!definitionViewModels.Any())
             {
-                if (commandArgs.RegisterViewModelAction is not null)
+                if (commandArgs.TextEditorConfig.RegisterViewModelFunc is not null)
                 {
-                    commandArgs.RegisterViewModelAction.Invoke(definitionTextSpan.ResourceUri);
+                    commandArgs.TextEditorConfig.RegisterViewModelFunc.Invoke(definitionTextSpan.ResourceUri, commandArgs.ServiceProvider);
                     definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
 
                     if (!definitionViewModels.Any())
@@ -934,8 +934,8 @@ public class TextEditorCommandDefaultFunctions
             definitionPrimaryCursorModifier.ColumnIndex = columnIndex;
             definitionPrimaryCursorModifier.PreferredColumnIndex = columnIndex;
 
-            if (commandArgs.ShowViewModelAction is not null)
-                commandArgs.ShowViewModelAction.Invoke(definitionViewModelKey);
+            if (commandArgs.TextEditorConfig.ShowViewModelFunc is not null)
+                commandArgs.TextEditorConfig.ShowViewModelFunc.Invoke(definitionViewModelKey, commandArgs.ServiceProvider);
 
             return Task.CompletedTask;
         };

@@ -64,9 +64,8 @@ public static partial class TextEditorCommandVimFacts
                     commandArgs.HandleMouseStoppedMovingEventAsyncFunc,
                     commandArgs.JsRuntime,
                     commandArgs.Dispatcher,
-                    commandArgs.RegisterModelAction,
-                    commandArgs.RegisterViewModelAction,
-                    commandArgs.ShowViewModelAction);
+                    commandArgs.ServiceProvider,
+                    commandArgs.TextEditorConfig);
 
                 var inCursor = primaryCursorModifier.ToCursor();
 

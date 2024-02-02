@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using System.Threading.Tasks;
 
 namespace Luthetus.TextEditor.RazorLib.Installations.Models;
 
@@ -28,7 +29,7 @@ public record LuthetusTextEditorConfig
     public ImmutableArray<ITextEditorSearchEngine> SearchEngineList { get; init; } = SearchEngineFacts.DefaultSearchEngineList;
     public Func<string, IServiceProvider, Task> OpenInEditorAsyncFunc { get; init; } = null;
     /// <summary>
-    /// The go-to definition implementation makes use of <see cref="RegisterModelAction"/>.<br/>
+    /// The go-to definition implementation makes use of <see cref="RegisterModelFunc"/>.<br/>
     /// 
     /// In the case that a symbol's definition exists within a resource that does not have
     /// an already existing Model, then this is invoked to create that instance, so that
@@ -36,9 +37,9 @@ public record LuthetusTextEditorConfig
     /// 
     /// The Func takes in the resource uri that needs a model.
     /// </summary>
-    public Action<ResourceUri>? RegisterModelAction { get; set; }
+    public Func<ResourceUri, IServiceProvider, Task>? RegisterModelFunc { get; set; }
     /// <summary>
-    /// The go-to definition implementation makes use of <see cref="RegisterModelAction"/>.<br/>
+    /// The go-to definition implementation makes use of <see cref="RegisterModelFunc"/>.<br/>
     /// 
     /// In the case that a symbol's definition exists within a resource that does not have
     /// an already existing ViewModel, then this is invoked to create that instance, so that
@@ -46,8 +47,8 @@ public record LuthetusTextEditorConfig
     /// 
     /// The Func takes in the resource uri that needs a ViewModel.
     /// </summary>
-    public Action<ResourceUri>? RegisterViewModelAction { get; set; }
-    public Action<Key<TextEditorViewModel>>? ShowViewModelAction { get; set; }
+    public Func<ResourceUri, IServiceProvider, Task>? RegisterViewModelFunc { get; set; }
+    public Func<Key<TextEditorViewModel>, IServiceProvider, Task>? ShowViewModelFunc { get; set; }
     /// <summary>Default value is <see cref="true"/>. If one wishes to configure Luthetus.Common themselves, then set this to false, and invoke <see cref="Common.RazorLib.Installations.Models.ServiceCollectionExtensions.AddLuthetusCommonServices(IServiceCollection, Func{LuthetusCommonConfig, LuthetusCommonConfig}?)"/> prior to invoking Luthetus.TextEditor's</summary>
     public bool AddLuthetusCommon { get; init; } = true;
 }

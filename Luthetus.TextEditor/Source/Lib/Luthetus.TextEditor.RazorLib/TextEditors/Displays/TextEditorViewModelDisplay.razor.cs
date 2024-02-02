@@ -29,6 +29,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.Common.RazorLib.Commands.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -42,6 +43,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     protected IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]
     protected ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -353,9 +356,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                                 HandleMouseStoppedMovingEventAsync,
                                 JsRuntime,
                                 Dispatcher,
-                                ViewModelDisplayOptions.RegisterModelAction,
-                                ViewModelDisplayOptions.RegisterViewModelAction,
-                                ViewModelDisplayOptions.ShowViewModelAction))
+                                ServiceProvider,
+                                TextEditorConfig))
                             .ConfigureAwait(false);
                     }
                     else

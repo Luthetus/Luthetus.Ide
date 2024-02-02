@@ -22,6 +22,7 @@ public class TextEditorCommandArgs : ICommandArgs
         Func<MouseEventArgs, Task>? handleMouseStoppedMovingEventAsyncFunc,
         IJSRuntime? jsRuntime,
         IDispatcher dispatcher,
+        IServiceProvider serviceProvider,
         LuthetusTextEditorConfig textEditorConfig)
     {
         ModelResourceUri = modelResourceUri;
@@ -32,6 +33,7 @@ public class TextEditorCommandArgs : ICommandArgs
         HandleMouseStoppedMovingEventAsyncFunc = handleMouseStoppedMovingEventAsyncFunc;
         JsRuntime = jsRuntime;
         Dispatcher = dispatcher;
+        ServiceProvider = serviceProvider;
         TextEditorConfig = textEditorConfig;
     }
 
@@ -45,6 +47,7 @@ public class TextEditorCommandArgs : ICommandArgs
     public Func<MouseEventArgs, Task>? HandleMouseStoppedMovingEventAsyncFunc { get; }
     public IJSRuntime? JsRuntime { get; }
     public IDispatcher Dispatcher { get; }
+    public IServiceProvider ServiceProvider { get; }
     public LuthetusTextEditorConfig TextEditorConfig { get; }
     public bool HasTextSelection { get; set; }
 
