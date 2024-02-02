@@ -4,6 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
@@ -338,7 +339,7 @@ public static class TextEditorModelHelper
 					matchedTextSpans.Add(new TextEditorTextSpan(
                         outerI,
                         outerI + innerI,
-                        (byte)GenericDecorationKind.None,
+                        (byte)TextEditorFindOverlayDecorationKind.LongestCommonSubsequence,
                         model.ResourceUri,
                         text));
                 }

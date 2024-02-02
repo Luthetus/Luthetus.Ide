@@ -1,5 +1,4 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -14,5 +13,5 @@ public static class FindOverlayPresentationFacts
         PresentationKey,
         0,
         CssClassString,
-        new CompilerServiceDiagnosticDecorationMapper());
+        new TextEditorFindOverlayDecorationMapper());
 }

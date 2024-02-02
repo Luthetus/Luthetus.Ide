@@ -6,6 +6,8 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -119,19 +121,46 @@ public partial class FindOverlayDisplay : ComponentBase
 
             TextEditorService.Post(
                 nameof(FindOverlayDisplay),
-                editContext =>
+                async editContext =>
                 {
                     var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel!.ViewModelKey);
 
                     if (viewModelModifier is null)
-                        return Task.CompletedTask;
+                        return;
 
                     viewModelModifier.ViewModel = viewModelModifier.ViewModel with
                     {
                         ShowFindOverlay = false,
                     };
 
-                    return Task.CompletedTask;
+                    var modelModifier = editContext.GetModelModifier(RenderBatch.Model!.ResourceUri);
+
+                    if (modelModifier is null)
+                        return;
+
+                    await TextEditorService.ModelApi.CalculatePresentationModelFactory(
+                        modelModifier.ResourceUri,
+                        FindOverlayPresentationFacts.PresentationKey)
+                        .Invoke(editContext)
+                        .ConfigureAwait(false);
+
+                    var pendingCalculation = modelModifier.PresentationModelsList.FirstOrDefault(x =>
+                        x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey)
+                        ?.PendingCalculation;
+
+                    if (pendingCalculation is null)
+                        pendingCalculation = new(modelModifier.GetAllText());
+
+                    var presentationModel = modelModifier.PresentationModelsList.FirstOrDefault(x =>
+                        x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
+
+                    if (presentationModel?.PendingCalculation is not null)
+                    {
+                        presentationModel.PendingCalculation.TextEditorTextSpanList = ImmutableArray<TextEditorTextSpan>.Empty;
+
+                        (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
+                            (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
+                    }
                 });
         }
     }
