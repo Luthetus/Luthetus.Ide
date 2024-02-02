@@ -14,6 +14,7 @@ public record DialogRecord(
     public bool IsMinimized { get; set; }
     public bool IsMaximized { get; set; }
     public bool IsResizable { get; set; }
+    public string FocusPointHtmlElementId => $"luth_dialog-focus-point_{Key.Guid}";
 
     public static ElementDimensions ConstructDefaultDialogDimensions()
     {

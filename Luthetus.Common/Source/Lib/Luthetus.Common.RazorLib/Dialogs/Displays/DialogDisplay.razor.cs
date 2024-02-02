@@ -7,7 +7,8 @@ using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.Common.RazorLib.Dialogs.States;
-using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.RenderTree;
+using Microsoft.JSInterop;
 
 namespace Luthetus.Common.RazorLib.Dialogs.Displays;
 
@@ -23,6 +24,8 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private LuthetusCommonConfig CommonConfig { get; set; } = null!;
+    [Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
 
     [Parameter]
     public DialogRecord DialogRecord { get; set; } = null!;
@@ -53,6 +56,19 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         DialogStateIsActiveSelection.Select(dialogState => dialogState.ActiveDialogKey == DialogRecord.Key);
 
         base.OnInitialized();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JsRuntime.InvokeVoidAsync(
+                    "luthetusTextEditor.focusHtmlElementById",
+                    DialogRecord.FocusPointHtmlElementId)
+            .ConfigureAwait(false);
+        }
+
+        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
     }
 
     private async void DialogStateIsActiveSelection_SelectedValueChanged(object? sender, bool e)
