@@ -23,7 +23,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private bool _lastSeenShowFindOverlayValue = false;
     private string _inputValue = string.Empty;
-    private int _activeIndexMatchedTextSpan;
+    private int? _activeIndexMatchedTextSpan = null;
 
     private IThrottle _throttleInputValueChange = new Throttle(TimeSpan.FromMilliseconds(150));
 
@@ -164,5 +164,55 @@ public partial class FindOverlayDisplay : ComponentBase
                     }
                 });
         }
+    }
+
+    private void MoveActiveIndexMatchedTextSpanUp()
+    {
+        var findOverlayPresentationModel = RenderBatch.Model!.PresentationModelsList.FirstOrDefault(
+            x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
+
+        if (findOverlayPresentationModel is null)
+            return;
+
+        var completedCalculation = findOverlayPresentationModel.CompletedCalculation;
+
+        if (completedCalculation is null)
+            return;
+
+        if (_activeIndexMatchedTextSpan is null)
+        {
+            _activeIndexMatchedTextSpan = completedCalculation.TextSpanList.Length - 1;
+            return;
+        }
+
+        _activeIndexMatchedTextSpan--;
+
+        if (_activeIndexMatchedTextSpan == -1)
+            _activeIndexMatchedTextSpan = completedCalculation.TextSpanList.Length - 1;
+    }
+
+    private void MoveActiveIndexMatchedTextSpanDown()
+    {
+        var findOverlayPresentationModel = RenderBatch.Model!.PresentationModelsList.FirstOrDefault(
+            x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
+
+        if (findOverlayPresentationModel is null)
+            return;
+
+        var completedCalculation = findOverlayPresentationModel.CompletedCalculation;
+
+        if (completedCalculation is null)
+            return;
+
+        if (_activeIndexMatchedTextSpan is null)
+        {
+            _activeIndexMatchedTextSpan = 0;
+            return;
+        }
+
+        _activeIndexMatchedTextSpan++;
+
+        if (_activeIndexMatchedTextSpan == completedCalculation.TextSpanList.Length)
+            _activeIndexMatchedTextSpan =  0;
     }
 }

@@ -40,8 +40,32 @@
             }
             else
             {
-                <div>
-                    @_activeIndexMatchedTextSpan of @completedCalculation.TextSpanList.Length
+                <div style="display: flex;">
+
+                    @if (_activeIndexMatchedTextSpan is null)
+                    {
+                        @: ?
+                    }
+                    else
+                    {
+                        <text>@(_activeIndexMatchedTextSpan.Value + 1)</text>
+                    }
+
+                    of
+
+                    @completedCalculation.TextSpanList.Length
+
+                    <button class="luth_button"
+                            style="margin-left: 5px;"
+                            @onclick="MoveActiveIndexMatchedTextSpanUp">
+                        <IconArrowUp />
+                    </button>
+
+                    <button class="luth_button"
+                            style="margin-left: 5px;"
+                            @onclick="MoveActiveIndexMatchedTextSpanDown">
+                        <IconArrowDown />
+                    </button>
                 </div>
             }
         </div>
