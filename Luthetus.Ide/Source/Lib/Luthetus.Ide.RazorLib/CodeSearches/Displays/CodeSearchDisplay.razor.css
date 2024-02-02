@@ -1,3 +1,11 @@
+.luth_ide_find-all {
+    height: 100%;
+}
+
+.luth_ide_find-all-top-content {
+    overflow: auto;
+}
+
 .luth_ide_find-all-filter-list {
     display: flex;
 }

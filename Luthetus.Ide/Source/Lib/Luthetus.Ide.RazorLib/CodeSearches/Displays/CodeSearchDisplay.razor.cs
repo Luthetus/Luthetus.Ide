@@ -9,6 +9,8 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Resizes.Displays;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Displays;
 
@@ -27,7 +29,10 @@ public partial class CodeSearchDisplay : FluxorComponent
 	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 
-	private string InputValue
+	private ElementDimensions _topContentElementDimensions = new();
+	private ElementDimensions _bottomContentElementDimensions = new();
+
+    private string InputValue
 	{
 		get => CodeSearchStateWrap.Value.Query;
 		set
@@ -44,7 +49,54 @@ public partial class CodeSearchDisplay : FluxorComponent
 		}
 	}
 
-	protected override Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnInitialized()
+    {
+        // topContentHeight
+        {
+			var topContentHeight = _topContentElementDimensions.DimensionAttributeList.Single(
+				da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
+
+			topContentHeight.DimensionUnitList.AddRange(new[]
+			{
+				new DimensionUnit
+				{
+					Value = 40,
+					DimensionUnitKind = DimensionUnitKind.Percentage
+				},
+				new DimensionUnit
+				{
+					Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
+					DimensionUnitKind = DimensionUnitKind.Pixels,
+					DimensionOperatorKind = DimensionOperatorKind.Subtract
+				},
+			});
+        }
+
+        // bottomContentHeight
+        {
+            var bottomContentHeight = _bottomContentElementDimensions.DimensionAttributeList.Single(
+				da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
+
+				bottomContentHeight.DimensionUnitList.AddRange(new[]
+				{
+				new DimensionUnit
+				{
+					Value = 60,
+					DimensionUnitKind = DimensionUnitKind.Percentage
+				},
+				new DimensionUnit
+				{
+					Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
+					DimensionUnitKind = DimensionUnitKind.Pixels,
+					DimensionOperatorKind = DimensionOperatorKind.Subtract
+				},
+			});
+        }
+
+        base.OnInitialized();
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
 		{
@@ -106,5 +158,10 @@ public partial class CodeSearchDisplay : FluxorComponent
 		await TextEditorConfig.OpenInEditorAsyncFunc
 			.Invoke(filePath, ServiceProvider)
 			.ConfigureAwait(false);
+	}
+
+	private async Task HandleResizableRowReRenderAsync()
+	{
+		await InvokeAsync(StateHasChanged).ConfigureAwait(false);
 	}
 }
