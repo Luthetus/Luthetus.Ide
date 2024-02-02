@@ -5,6 +5,16 @@
     box-shadow: 0 0 var(--luth_dialog-display-box-shadow-blur-radius) var(--luth_primary-box-shadow-color);
 }
 
+    .luth_dialog-display:focus {
+        box-shadow: 0 0 8px var(--luth_primary-overlay-box-shadow-color) inset;
+        outline: 8px solid var(--luth_toggled-on-hover-background-color);
+        outline-offset: -8px;
+    }
+
+.luth_dialog-display.luth_active {
+    z-index: var(--luth_dialog-display-active-z-index);
+}
+
 .luth_dialog-display-toolbar {
     height: var(--luth_dialog-display-toolbar-height);
     display: flex;

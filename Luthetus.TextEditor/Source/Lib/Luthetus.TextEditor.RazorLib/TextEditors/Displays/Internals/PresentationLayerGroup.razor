@@ -14,7 +14,7 @@
     {
         var completedCalculation = presentationLayer.CompletedCalculation;
 
-        var textSpansList = completedCalculation?.TextEditorTextSpanList
+        var textSpansList = completedCalculation?.TextSpanList
             ?? Array.Empty<TextEditorTextSpan>().ToImmutableArray();
 
         var textModificationList = completedCalculation?.TextModificationsSinceRequestList.ToArray()
@@ -22,7 +22,7 @@
 
         @if (completedCalculation is not null)
         {
-            textSpansList = ShiftTextSpans(textModificationList, completedCalculation.TextEditorTextSpanList);
+            textSpansList = ShiftTextSpans(textModificationList, completedCalculation.TextSpanList);
 
             <div class="@presentationLayer.CssClassString">
                 @foreach (var textSpan in textSpansList)

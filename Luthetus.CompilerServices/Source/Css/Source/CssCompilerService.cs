@@ -135,7 +135,8 @@ public class CssCompilerService : ICompilerService
                 await _textEditorService.ModelApi.CalculatePresentationModelFactory(
                         modelModifier.ResourceUri,
                         CompilerServiceDiagnosticPresentationFacts.PresentationKey)
-                    .Invoke(editContext);
+                    .Invoke(editContext)
+					.ConfigureAwait(false);
 
                 var pendingCalculation = modelModifier.PresentationModelsList.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
@@ -145,7 +146,7 @@ public class CssCompilerService : ICompilerService
                     pendingCalculation = new(modelModifier.GetAllText());
 
                 var lexer = new TextEditorCssLexer(modelModifier.ResourceUri);
-                var lexResult = await lexer.Lex(text, modelModifier.RenderStateKey);
+                var lexResult = await lexer.Lex(text, modelModifier.RenderStateKey).ConfigureAwait(false);
 
                 lock (_cssResourceMapLock)
                 {
@@ -155,7 +156,7 @@ public class CssCompilerService : ICompilerService
                     _cssResourceMap[resourceUri].SyntacticTextSpans = lexResult;
                 }
 
-                await modelModifier.ApplySyntaxHighlightingAsync();
+                await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
 
                 ResourceParsed?.Invoke();
 
@@ -164,7 +165,7 @@ public class CssCompilerService : ICompilerService
 
                 if (presentationModel?.PendingCalculation is not null)
                 {
-                    presentationModel.PendingCalculation.TextEditorTextSpanList =
+                    presentationModel.PendingCalculation.TextSpanList =
                         GetDiagnosticsFor(modelModifier.ResourceUri)
                             .Select(x => x.TextSpan)
                             .ToImmutableArray();

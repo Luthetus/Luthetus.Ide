@@ -27,7 +27,7 @@ public partial class InputAppTheme : IDisposable
 
     private async void OnStateChanged(object? sender, EventArgs e)
     {
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private void OnThemeSelectChanged(ChangeEventArgs changeEventArgs)

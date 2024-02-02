@@ -1,0 +1,68 @@
+﻿@using Fluxor.Blazor.Web.Components;
+@using Luthetus.Common.RazorLib.Resizes.Displays
+@using Luthetus.Ide.RazorLib.CodeSearches.Models;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays
+@inherits FluxorComponent
+
+@{ var codeSearchState = CodeSearchStateWrap.Value; }
+
+<div class="luth_ide_find-all">
+
+    <div class="luth_ide_find-all-top-content"
+         style="@_topContentElementDimensions.StyleString">
+        <div class="luth_ide_find-all-filter-list">
+            <div class="luth_ide_find-all-filter @GetIsActiveCssClass(CodeSearchFilterKind.Files)">
+                <IconFile /> files (f:)
+            </div>
+            <div class="luth_ide_find-all-filter @GetIsActiveCssClass(CodeSearchFilterKind.Types)">
+                <IconSymbolClass /> types (t:)
+            </div>
+            <div class="luth_ide_find-all-filter @GetIsActiveCssClass(CodeSearchFilterKind.Members)">
+                <IconSymbolMethod /> members (m:)
+            </div>
+        </div>
+
+        @if (codeSearchState.StartingAbsolutePathForSearch is null)
+        {
+            <div>Set an active .NET Solution to choose a beginning path for the search.</div>
+        }
+        else
+        {
+            <div>Search beginning path: '@codeSearchState.StartingAbsolutePathForSearch'</div>
+        }
+
+        <input @bind="InputValue" />
+
+        <div>@InputValue</div>
+
+        <hr />
+
+        @foreach (var filePath in codeSearchState.ResultList)
+        {
+            <div style="cursor: pointer;"
+            @onclick="() => HandleOnClick(filePath)"
+            @ondblclick="() => HandleOnDoubleClick(filePath)">
+
+                @if (codeSearchState.StartingAbsolutePathForSearch is not null)
+                {
+                    @filePath.Replace(codeSearchState.StartingAbsolutePathForSearch, string.Empty)
+                }
+                else
+                {
+                    @filePath
+                }
+            </div>
+        }
+    </div>
+
+    <ResizableRow TopElementDimensions="_topContentElementDimensions"
+                  BottomElementDimensions="_bottomContentElementDimensions"
+                  ReRenderFuncAsync="HandleResizableRowReRenderAsync"/>
+    
+    <div class="luth_ide_find-all-bottom-content"
+         style="@_bottomContentElementDimensions.StyleString">
+         
+         <TextEditorViewModelDisplay TextEditorViewModelKey="codeSearchState.PreviewViewModelKey"
+                                    ViewModelDisplayOptions="_textEditorViewModelDisplayOptions" />
+    </div>
+</div>

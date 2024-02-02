@@ -102,7 +102,7 @@ public partial interface ITextEditorService
                     if (presentationModel.PendingCalculation is null)
                         presentationModel.PendingCalculation = new(inModel.GetAllText());
 
-                    presentationModel.PendingCalculation.TextEditorTextSpanList =
+                    presentationModel.PendingCalculation.TextSpanList =
                         diffResult.InResultTextSpanList.ToImmutableArray();
 
                     (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
@@ -120,7 +120,7 @@ public partial interface ITextEditorService
                     if (presentationModel.PendingCalculation is null)
                         presentationModel.PendingCalculation = new(outModel.GetAllText());
 
-                    presentationModel.PendingCalculation.TextEditorTextSpanList =
+                    presentationModel.PendingCalculation.TextSpanList =
                         diffResult.OutResultTextSpanList.ToImmutableArray();
 
                     (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =

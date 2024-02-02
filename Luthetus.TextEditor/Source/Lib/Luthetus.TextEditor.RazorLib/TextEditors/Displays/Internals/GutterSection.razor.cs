@@ -1,6 +1,8 @@
-﻿using Luthetus.Common.RazorLib.Dimensions.Models;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
@@ -14,6 +16,12 @@ public partial class GutterSection : ComponentBase
 {
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IServiceProvider ServiceProvider { get; set; } = null!;
 
     [CascadingParameter]
     public TextEditorRenderBatch RenderBatch { get; set; } = null!;
@@ -26,7 +34,7 @@ public partial class GutterSection : ComponentBase
 
         var commandArgs = new TextEditorCommandArgs(
             null, Key<TextEditorViewModel>.Empty, false, null,
-            TextEditorService, null, null, null, null, null, null);
+            TextEditorService, null, null, Dispatcher, ServiceProvider, TextEditorConfig);
 
         if (_scrollTop != viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop)
         {

@@ -42,15 +42,18 @@ public partial class InputFileBottomControls : ComponentBase
 
     private async Task FireOnAfterSubmit()
     {
-        var valid = await InputFileState.SelectionIsValidFunc.Invoke(
-            InputFileState.SelectedTreeViewModel?.Item);
+        var valid = await InputFileState.SelectionIsValidFunc
+            .Invoke(InputFileState.SelectedTreeViewModel?.Item)
+            .ConfigureAwait(false);
 
         if (valid)
         {
             if (DialogRecord is not null)
                 Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
 
-            await InputFileState.OnAfterSubmitFunc.Invoke(InputFileState.SelectedTreeViewModel?.Item);
+            await InputFileState.OnAfterSubmitFunc
+                .Invoke(InputFileState.SelectedTreeViewModel?.Item)
+                .ConfigureAwait(false);
         }
     }
 

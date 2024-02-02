@@ -65,16 +65,19 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         base.OnInitialized();
     }
 
-    private async void OnStateChanged(object? sender, EventArgs e) => await InvokeAsync(StateHasChanged);
+    private async void OnStateChanged(object? sender, EventArgs e) => await InvokeAsync(StateHasChanged).ConfigureAwait(false);
 
     private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
         _mostRecentTreeViewCommandArgs = treeViewCommandArgs;
 
+		// The order of 'StateHasChanged(...)' and 'AddActiveDropdownKey(...)' is important.
+		// The ChildContent renders nothing, unless the provider of the child content
+		// re-renders now that there is a given '_mostRecentTreeViewContextMenuCommandArgs'
+		await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+
         Dispatcher.Dispatch(new DropdownState.AddActiveAction(
             FolderExplorerContextMenu.ContextMenuEventDropdownKey));
-
-        await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()

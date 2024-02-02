@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Fluxor;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models;
 
@@ -21,9 +22,8 @@ public class TextEditorCommandArgs : ICommandArgs
         Func<MouseEventArgs, Task>? handleMouseStoppedMovingEventAsyncFunc,
         IJSRuntime? jsRuntime,
         IDispatcher dispatcher,
-        Action<ResourceUri>? registerModelAction,
-        Action<ResourceUri>? registerViewModelAction,
-        Action<Key<TextEditorViewModel>>? showViewModelAction)
+        IServiceProvider serviceProvider,
+        LuthetusTextEditorConfig textEditorConfig)
     {
         ModelResourceUri = modelResourceUri;
         ViewModelKey = viewModelKey;
@@ -33,9 +33,8 @@ public class TextEditorCommandArgs : ICommandArgs
         HandleMouseStoppedMovingEventAsyncFunc = handleMouseStoppedMovingEventAsyncFunc;
         JsRuntime = jsRuntime;
         Dispatcher = dispatcher;
-        RegisterModelAction = registerModelAction;
-        RegisterViewModelAction = registerViewModelAction;
-        ShowViewModelAction = showViewModelAction;
+        ServiceProvider = serviceProvider;
+        TextEditorConfig = textEditorConfig;
     }
 
     public ResourceUri ModelResourceUri { get; }
@@ -48,28 +47,9 @@ public class TextEditorCommandArgs : ICommandArgs
     public Func<MouseEventArgs, Task>? HandleMouseStoppedMovingEventAsyncFunc { get; }
     public IJSRuntime? JsRuntime { get; }
     public IDispatcher Dispatcher { get; }
+    public IServiceProvider ServiceProvider { get; }
+    public LuthetusTextEditorConfig TextEditorConfig { get; }
     public bool HasTextSelection { get; set; }
-    /// <summary>
-    /// The go-to definition implementation makes use of <see cref="RegisterModelAction"/>.<br/>
-    /// 
-    /// In the case that a symbol's definition exists within a resource that does not have
-    /// an already existing Model, then this is invoked to create that instance, so that
-    /// go-to definition can then be performed.<br/>
-    /// 
-    /// The Func takes in the resource uri that needs a model.
-    /// </summary>
-    public Action<ResourceUri>? RegisterModelAction { get; set; }
-    /// <summary>
-    /// The go-to definition implementation makes use of <see cref="RegisterModelAction"/>.<br/>
-    /// 
-    /// In the case that a symbol's definition exists within a resource that does not have
-    /// an already existing ViewModel, then this is invoked to create that instance, so that
-    /// go-to definition can then be performed.<br/>
-    /// 
-    /// The Func takes in the resource uri that needs a ViewModel.
-    /// </summary>
-    public Action<ResourceUri>? RegisterViewModelAction { get; set; }
-    public Action<Key<TextEditorViewModel>>? ShowViewModelAction { get; set; }
 
     /// <summary>
     /// Hack for <see cref="Defaults.TextEditorCommandDefaultFacts.GoToMatchingCharacterFactory(bool)"/>

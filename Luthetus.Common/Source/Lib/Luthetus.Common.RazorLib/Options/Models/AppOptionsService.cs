@@ -139,7 +139,7 @@ public class AppOptionsService : IAppOptionsService
 
     public async Task SetFromLocalStorageAsync()
     {
-        var optionsJsonString = await _storageService.GetValue(StorageKey) as string;
+        var optionsJsonString = await _storageService.GetValue(StorageKey).ConfigureAwait(false) as string;
 
         if (string.IsNullOrWhiteSpace(optionsJsonString))
             return;

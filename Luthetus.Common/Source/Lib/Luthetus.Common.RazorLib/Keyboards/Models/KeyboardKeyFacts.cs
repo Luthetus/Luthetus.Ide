@@ -437,6 +437,26 @@ public static class KeyboardKeyFacts
             END,
         }.ToImmutableArray();
     }
+    
+    public static class MovementCodes
+    {
+        public const string ARROW_LEFT = "ArrowLeft";
+        public const string ARROW_DOWN = "ArrowDown";
+        public const string ARROW_UP = "ArrowUp";
+        public const string ARROW_RIGHT = "ArrowRight";
+        public const string HOME = "Home";
+        public const string END = "End";
+
+        public static readonly ImmutableArray<string> AllList = new string[]
+        {
+            ARROW_LEFT,
+            ARROW_DOWN,
+            ARROW_UP,
+            ARROW_RIGHT,
+            HOME,
+            END,
+        }.ToImmutableArray();
+    }
 
     public static class AlternateMovementKeys
     {
@@ -444,6 +464,22 @@ public static class KeyboardKeyFacts
         public const string ARROW_DOWN = "j";
         public const string ARROW_UP = "k";
         public const string ARROW_RIGHT = "l";
+
+        public static readonly ImmutableArray<string> AllList = new string[]
+        {
+            ARROW_LEFT,
+            ARROW_DOWN,
+            ARROW_UP,
+            ARROW_RIGHT,
+        }.ToImmutableArray();
+    }
+    
+    public static class AlternateMovementCodes
+    {
+        public const string ARROW_LEFT = "KeyH";
+        public const string ARROW_DOWN = "KeyJ";
+        public const string ARROW_UP = "KeyK";
+        public const string ARROW_RIGHT = "KeyL";
 
         public static readonly ImmutableArray<string> AllList = new string[]
         {

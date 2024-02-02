@@ -38,7 +38,7 @@ public class BackgroundTaskService : IBackgroundTaskService
     {
         var queue = _queueMap[queueKey];
 
-        await queue.WorkItemsQueueSemaphoreSlim.WaitAsync(cancellationToken);
+        await queue.WorkItemsQueueSemaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
         _ = queue.BackgroundTasks.TryDequeue(out var backgroundTask);
 
         return backgroundTask;
@@ -70,7 +70,7 @@ public class BackgroundTaskService : IBackgroundTaskService
         // TODO: Polling solution for now, perhaps change to a more optimal solution? (2023-11-19)
         while (_queueMap.Values.SelectMany(x => x.BackgroundTasks).Any())
         {
-            await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken);
+            await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken).ConfigureAwait(false);
         }
     }
 }

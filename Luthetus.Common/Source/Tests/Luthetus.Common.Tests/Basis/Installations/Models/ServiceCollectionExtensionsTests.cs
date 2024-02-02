@@ -27,7 +27,7 @@ namespace Luthetus.Common.Tests.Basis.Installations.Models;
 public class ServiceCollectionExtensionsTests
 {
     /// <summary>
-    /// <see cref="RazorLib.Installations.Models.ServiceCollectionExtensions.AddLuthetusCommonServices(IServiceCollection, LuthetusHostingInformation, Func{LuthetusCommonOptions, LuthetusCommonOptions}?)"/>
+    /// <see cref="RazorLib.Installations.Models.ServiceCollectionExtensions.AddLuthetusCommonServices(IServiceCollection, LuthetusHostingInformation, Func{LuthetusCommonConfig, LuthetusCommonConfig}?)"/>
     /// </summary>
     [Fact]
     public void AddLuthetusCommonServices()
@@ -40,7 +40,7 @@ public class ServiceCollectionExtensionsTests
             .AddLuthetusCommonServices(hostingInformation)
             .AddScoped<ILoggerFactory, NullLoggerFactory>()
             .AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime())
-            .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonOptions).Assembly));
+            .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonConfig).Assembly));
 
         var serviceProvider = services.BuildServiceProvider();
 
@@ -54,26 +54,26 @@ public class ServiceCollectionExtensionsTests
             //
             // Then, reinvoke 'AddLuthetusCommonServices' and assert that the memory locations
             // do match, because the 'configure' result was used in place or the default.
-            var otherCommonOptions = new LuthetusCommonOptions();
+            var otherCommonConfig = new LuthetusCommonConfig();
 
             Assert.False(ReferenceEquals(
-                otherCommonOptions,
-                serviceProvider.GetRequiredService<LuthetusCommonOptions>()));
+                otherCommonConfig,
+                serviceProvider.GetRequiredService<LuthetusCommonConfig>()));
 
             var innerHostingInformation = new LuthetusHostingInformation(
                 LuthetusHostingKind.UnitTesting,
                 new BackgroundTaskServiceSynchronous());
 
             var innerServiceCollection = new ServiceCollection()
-                .AddLuthetusCommonServices(innerHostingInformation, options => otherCommonOptions)
+                .AddLuthetusCommonServices(innerHostingInformation, options => otherCommonConfig)
                 .AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime())
-                .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonOptions).Assembly));
+                .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonConfig).Assembly));
 
             var innerServiceProvider = innerServiceCollection.BuildServiceProvider();
 
             Assert.True(ReferenceEquals(
-                otherCommonOptions,
-                innerServiceProvider.GetRequiredService<LuthetusCommonOptions>()));
+                otherCommonConfig,
+                innerServiceProvider.GetRequiredService<LuthetusCommonConfig>()));
         }
 
         // 2. RegisterQueue Continuous
@@ -121,7 +121,7 @@ public class ServiceCollectionExtensionsTests
 
         // 6. commonOptions
         {
-            Assert.NotNull(serviceProvider.GetRequiredService<LuthetusCommonOptions>());
+            Assert.NotNull(serviceProvider.GetRequiredService<LuthetusCommonConfig>());
         }
 
         // 7. hostingInformation

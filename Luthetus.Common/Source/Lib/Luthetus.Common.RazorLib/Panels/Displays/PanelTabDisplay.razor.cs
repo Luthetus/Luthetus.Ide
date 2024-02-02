@@ -42,7 +42,7 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
 
     private async void PanelsCollectionWrapOnStateChanged(object? sender, EventArgs e)
     {
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private async void DragStateWrapOnStateChanged(object? sender, EventArgs e)
@@ -65,11 +65,13 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
             {
                 if (_previousDragMouseEventArgs is not null && mouseEventArgs is not null)
                 {
-                    await _dragEventHandler.Invoke((_previousDragMouseEventArgs, mouseEventArgs));
+                    await _dragEventHandler
+                        .Invoke((_previousDragMouseEventArgs, mouseEventArgs))
+                        .ConfigureAwait(false);
                 }
 
                 _previousDragMouseEventArgs = mouseEventArgs;
-                await InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
             }
         }
     }

@@ -72,7 +72,7 @@ public class TreeViewKeyboardEventHandler
 
 		BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
         	"TreeView.OnKeyDown",
-			async () => await OnKeyDownAsync(commandArgs));
+			async () => await OnKeyDownAsync(commandArgs).ConfigureAwait(false));
     }
 
     /// <summary>Used for handling "onkeydownwithpreventscroll" events within the user interface</summary>

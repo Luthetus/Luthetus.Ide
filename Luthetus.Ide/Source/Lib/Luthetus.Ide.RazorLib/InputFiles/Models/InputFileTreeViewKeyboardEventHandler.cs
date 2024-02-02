@@ -183,6 +183,8 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 
     private void MoveFocusToSearchBar(TreeViewCommandArgs commandArgs)
     {
-        Task.Run(async () => await _focusSearchInputElementFunc.Invoke());
+        _ = Task.Run(
+                async () => await _focusSearchInputElementFunc.Invoke().ConfigureAwait(false))
+            .ConfigureAwait(false);
     }
 }

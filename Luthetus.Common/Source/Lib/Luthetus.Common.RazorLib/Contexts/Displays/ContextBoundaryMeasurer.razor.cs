@@ -47,8 +47,9 @@ public partial class ContextBoundaryMeasurer : FluxorComponent
             if (contextState.IsSelectingInspectionTarget)
             {
                 var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
-                    "luthetusIde.measureElementById",
-                    ContextRecord.ContextElementId);
+                        "luthetusIde.measureElementById",
+                        ContextRecord.ContextElementId)
+                    .ConfigureAwait(false);
 
                 var contextBoundaryHeirarchy = GetContextBoundaryHeirarchy.Invoke();
 
@@ -64,6 +65,6 @@ public partial class ContextBoundaryMeasurer : FluxorComponent
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
     }
 }

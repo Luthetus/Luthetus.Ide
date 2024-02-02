@@ -71,9 +71,12 @@ public partial class WatchWindowDisplay : FluxorComponent
     {
         _mostRecentTreeViewContextMenuCommandArgs = commandArgs;
 
-        DropdownService.AddActiveDropdownKey(WatchWindowContextMenuDropdownKey);
+		// The order of 'StateHasChanged(...)' and 'AddActiveDropdownKey(...)' is important.
+		// The ChildContent renders nothing, unless the provider of the child content
+		// re-renders now that there is a given '_mostRecentTreeViewContextMenuCommandArgs'
+		await InvokeAsync(StateHasChanged).ConfigureAwait(false);
 
-        await InvokeAsync(StateHasChanged);
+        DropdownService.AddActiveDropdownKey(WatchWindowContextMenuDropdownKey);
     }
 
     protected override void Dispose(bool disposing)

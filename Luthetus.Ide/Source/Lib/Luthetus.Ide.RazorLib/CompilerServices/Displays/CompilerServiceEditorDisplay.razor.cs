@@ -120,27 +120,27 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 
     private async void TextEditorModelStateWrap_StateChanged(object? sender, EventArgs e)
     {
-        await ThrottledReRender();
+        await ThrottledReRender().ConfigureAwait(false);
     }
 
     private async void TextEditorViewModelStateWrap_StateChanged(object? sender, EventArgs e)
     {
-        await ThrottledReRender();
+        await ThrottledReRender().ConfigureAwait(false);
     }
 
     private async void TextEditorGroupStateWrap_StateChanged(object? sender, EventArgs e)
     {
-        await ThrottledReRender();
+        await ThrottledReRender().ConfigureAwait(false);
     }
 
     private async void CompilerServiceEditorStateWrap_StateChanged(object? sender, EventArgs e)
     {
-        await ThrottledReRender();
+        await ThrottledReRender().ConfigureAwait(false);
     }
 
     private async void CSharpCompilerService_StateChanged()
     {
-        await ThrottledReRender();
+        await ThrottledReRender().ConfigureAwait(false);
     }
 
     private async Task ThrottledReRender()
@@ -148,8 +148,8 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
         await _throttleEventCausingReRender.FireAsync(async _ =>
         {
             _shouldRecalculateViewModel = true;
-            await InvokeAsync(StateHasChanged);
-        });
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        }).ConfigureAwait(false);
     }
 
     public void Dispose()

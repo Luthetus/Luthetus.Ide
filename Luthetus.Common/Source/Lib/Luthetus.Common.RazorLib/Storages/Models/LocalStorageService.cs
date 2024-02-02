@@ -14,15 +14,17 @@ public class LocalStorageService : IStorageService
     public async ValueTask SetValue(string key, object? value)
     {
         await _jsRuntime.InvokeVoidAsync(
-            "luthetusCommon.localStorageSetItem",
-            key,
-            value);
+                "luthetusCommon.localStorageSetItem",
+                key,
+                value)
+			.ConfigureAwait(false);
     }
 
     public async ValueTask<object?> GetValue(string key)
     {
         return await _jsRuntime.InvokeAsync<string>(
-            "luthetusCommon.localStorageGetItem",
-            key);
+                "luthetusCommon.localStorageGetItem",
+                key)
+			.ConfigureAwait(false);
     }
 }

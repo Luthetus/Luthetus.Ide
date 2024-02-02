@@ -43,7 +43,7 @@ public class TextEditorViewModelTests
         Assert.Equal(resourceUri, viewModel.ResourceUri);
         Assert.Equal(textEditorService, viewModel.TextEditorService);
         Assert.Equal(virtualizationResult, viewModel.VirtualizationResult);
-		Assert.Equal(displayCommandBar, viewModel.DisplayCommandBar);
+		Assert.Equal(displayCommandBar, viewModel.ShowCommandBar);
 	}
 
     /// <summary>
@@ -101,7 +101,7 @@ public class TextEditorViewModelTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorViewModel.DisplayCommandBar"/>
+	/// <see cref="TextEditorViewModel.ShowCommandBar"/>
 	/// </summary>
 	[Fact]
 	public void DisplayCommandBar()

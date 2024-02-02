@@ -80,10 +80,11 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
         _thinksLeftMouseButtonIsDown = true;
 
         _relativeCoordinatesOnMouseDown = await JsRuntime.InvokeAsync<RelativeCoordinates>(
-            "luthetusTextEditor.getRelativePosition",
-            ScrollbarSliderElementId,
-            mouseEventArgs.ClientX,
-            mouseEventArgs.ClientY);
+                "luthetusTextEditor.getRelativePosition",
+                ScrollbarSliderElementId,
+                mouseEventArgs.ClientX,
+                mouseEventArgs.ClientY)
+            .ConfigureAwait(false);
 
         SubscribeToDragEventForScrolling();
     }
@@ -103,11 +104,11 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
             {
                 if (_previousDragMouseEventArgs is not null && mouseEventArgs is not null)
                 {
-                    await _dragEventHandler.Invoke((_previousDragMouseEventArgs, mouseEventArgs));
+                    await _dragEventHandler.Invoke((_previousDragMouseEventArgs, mouseEventArgs)).ConfigureAwait(false);
                 }
 
                 _previousDragMouseEventArgs = mouseEventArgs;
-                await InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
             }
         }
     }
@@ -135,10 +136,11 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgsTuple.secondMouseEventArgs.Buttons & 1) == 1)
         {
             var relativeCoordinatesOfDragEvent = await JsRuntime.InvokeAsync<RelativeCoordinates>(
-                "luthetusTextEditor.getRelativePosition",
-                ScrollbarElementId,
-                mouseEventArgsTuple.secondMouseEventArgs.ClientX,
-                mouseEventArgsTuple.secondMouseEventArgs.ClientY);
+                    "luthetusTextEditor.getRelativePosition",
+                    ScrollbarElementId,
+                    mouseEventArgsTuple.secondMouseEventArgs.ClientX,
+                    mouseEventArgsTuple.secondMouseEventArgs.ClientY)
+                .ConfigureAwait(false);
 
             var xPosition = relativeCoordinatesOfDragEvent.RelativeX - _relativeCoordinatesOnMouseDown.RelativeX;
 

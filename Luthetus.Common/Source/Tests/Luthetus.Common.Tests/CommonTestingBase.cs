@@ -23,7 +23,7 @@ public class CommonTestingBase
         CommonUnitTestHelper.AddLuthetusCommonServicesUnitTesting(services, hostingInformation);
 
         services.AddFluxor(options => options.ScanAssemblies(
-            typeof(LuthetusCommonOptions).Assembly));
+            typeof(LuthetusCommonConfig).Assembly));
 
         ServiceProvider = services.BuildServiceProvider();
 

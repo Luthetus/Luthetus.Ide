@@ -11,12 +11,12 @@ using Microsoft.JSInterop;
 namespace Luthetus.Common.Tests.Basis.Installations.Models;
 
 /// <summary>
-/// <see cref="LuthetusCommonOptions"/>
+/// <see cref="LuthetusCommonConfig"/>
 /// </summary>
-public record LuthetusCommonOptionsTests
+public record LuthetusCommonConfigTests
 {
     /// <summary>
-    /// <see cref="LuthetusCommonOptions.InitialThemeKey"/>
+    /// <see cref="LuthetusCommonConfig.InitialThemeKey"/>
     /// </summary>
     [Fact]
     public void InitialThemeKey()
@@ -24,43 +24,43 @@ public record LuthetusCommonOptionsTests
         // Use default value
         {
             var initialThemeKeyDefault = ThemeFacts.VisualStudioDarkThemeClone.Key;
-            var luthetusCommonOptions = new LuthetusCommonOptions();
+            var commonConfig = new LuthetusCommonConfig();
 
-            Assert.Equal(initialThemeKeyDefault, luthetusCommonOptions.InitialThemeKey);
+            Assert.Equal(initialThemeKeyDefault, commonConfig.InitialThemeKey);
         }
         
         // Init value
         {
             var initialThemeKey = ThemeFacts.VisualStudioLightThemeClone.Key;
             
-            var luthetusCommonOptions = new LuthetusCommonOptions
+            var commonConfig = new LuthetusCommonConfig
             {
                 InitialThemeKey = initialThemeKey
             };
 
-            Assert.Equal(initialThemeKey, luthetusCommonOptions.InitialThemeKey);
+            Assert.Equal(initialThemeKey, commonConfig.InitialThemeKey);
         }
         
         // With value
         {
             var initialThemeKeyDefault = ThemeFacts.VisualStudioDarkThemeClone.Key;
-            var luthetusCommonOptions = new LuthetusCommonOptions();
+            var commonConfig = new LuthetusCommonConfig();
 
-            Assert.Equal(initialThemeKeyDefault, luthetusCommonOptions.InitialThemeKey);
+            Assert.Equal(initialThemeKeyDefault, commonConfig.InitialThemeKey);
             
             var initialThemeKey = ThemeFacts.VisualStudioLightThemeClone.Key;
 
-            luthetusCommonOptions = luthetusCommonOptions with
+            commonConfig = commonConfig with
             {
                 InitialThemeKey = initialThemeKey
             };
 
-            Assert.Equal(initialThemeKey, luthetusCommonOptions.InitialThemeKey);
+            Assert.Equal(initialThemeKey, commonConfig.InitialThemeKey);
         }
     }
 
     /// <summary>
-    /// <see cref="LuthetusCommonOptions.CommonFactories"/>
+    /// <see cref="LuthetusCommonConfig.CommonFactories"/>
     /// </summary>
     [Fact]
     public void CommonFactories()
@@ -74,7 +74,7 @@ public record LuthetusCommonOptionsTests
             var services = new ServiceCollection()
                 .AddLuthetusCommonServices(hostingInformation)
                 .AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime())
-                .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonOptions).Assembly));
+                .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonConfig).Assembly));
 
             var serviceProvider = services.BuildServiceProvider();
 
@@ -105,7 +105,7 @@ public record LuthetusCommonOptionsTests
                     };
                 })
                 .AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime())
-                .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonOptions).Assembly));
+                .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonConfig).Assembly));
 
             var serviceProvider = services.BuildServiceProvider();
 
@@ -117,7 +117,7 @@ public record LuthetusCommonOptionsTests
     }
 
     /// <summary>
-    /// <see cref="LuthetusCommonOptions.DialogServiceOptions"/>
+    /// <see cref="LuthetusCommonConfig.DialogServiceOptions"/>
     /// </summary>
     [Fact]
     public void DialogServiceOptions()
@@ -125,9 +125,9 @@ public record LuthetusCommonOptionsTests
         // Use default value
         {
             var dialogServiceOptionsDefault = new DialogServiceOptions();
-            var luthetusCommonOptions = new LuthetusCommonOptions();
+            var commonConfig = new LuthetusCommonConfig();
 
-            Assert.Equal(dialogServiceOptionsDefault, luthetusCommonOptions.DialogServiceOptions);
+            Assert.Equal(dialogServiceOptionsDefault, commonConfig.DialogServiceOptions);
         }
 
         // Init value
@@ -139,19 +139,19 @@ public record LuthetusCommonOptionsTests
                 IsMaximizedStyleCssString = isMaximizedStyleCssString
             };
 
-            var luthetusCommonOptions = new LuthetusCommonOptions
+            var commonConfig = new LuthetusCommonConfig
             {
                 DialogServiceOptions = dialogServiceOptions
             };
 
-            Assert.Equal(dialogServiceOptions, luthetusCommonOptions.DialogServiceOptions);
+            Assert.Equal(dialogServiceOptions, commonConfig.DialogServiceOptions);
         }
 
         // With value
         {
             var dialogServiceOptions = new DialogServiceOptions();
-            var luthetusCommonOptions = new LuthetusCommonOptions();
-            Assert.Equal(dialogServiceOptions, luthetusCommonOptions.DialogServiceOptions);
+            var commonConfig = new LuthetusCommonConfig();
+            Assert.Equal(dialogServiceOptions, commonConfig.DialogServiceOptions);
 
             var isMaximizedStyleCssString = "abc123";
             
@@ -160,12 +160,12 @@ public record LuthetusCommonOptionsTests
                 IsMaximizedStyleCssString = isMaximizedStyleCssString
             };
 
-            luthetusCommonOptions = luthetusCommonOptions with
+            commonConfig = commonConfig with
             {
                 DialogServiceOptions = dialogServiceOptions
             };
 
-            Assert.Equal(dialogServiceOptions, luthetusCommonOptions.DialogServiceOptions);
+            Assert.Equal(dialogServiceOptions, commonConfig.DialogServiceOptions);
         }
     }
 }

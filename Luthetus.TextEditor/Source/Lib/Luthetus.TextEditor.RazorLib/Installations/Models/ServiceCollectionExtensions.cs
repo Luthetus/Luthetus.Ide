@@ -13,21 +13,21 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddLuthetusTextEditor(
         this IServiceCollection services,
         LuthetusHostingInformation hostingInformation,
-        Func<LuthetusTextEditorOptions, LuthetusTextEditorOptions>? configure = null)
+        Func<LuthetusTextEditorConfig, LuthetusTextEditorConfig>? configure = null)
     {
-        var textEditorOptions = new LuthetusTextEditorOptions();
+        var textEditorConfig = new LuthetusTextEditorConfig();
 
         if (configure is not null)
-            textEditorOptions = configure.Invoke(textEditorOptions);
+            textEditorConfig = configure.Invoke(textEditorConfig);
 
-        if (textEditorOptions.AddLuthetusCommon)
+        if (textEditorConfig.AddLuthetusCommon)
             services.AddLuthetusCommonServices(hostingInformation);
 
         services
-            .AddSingleton(textEditorOptions)
+            .AddSingleton(textEditorConfig)
             .AddSingleton<ILuthetusTextEditorComponentRenderers>(_textEditorComponentRenderers)
-            .AddScoped(serviceProvider => textEditorOptions.AutocompleteServiceFactory.Invoke(serviceProvider))
-            .AddScoped(serviceProvider => textEditorOptions.AutocompleteIndexerFactory.Invoke(serviceProvider))
+            .AddScoped(serviceProvider => textEditorConfig.AutocompleteServiceFactory.Invoke(serviceProvider))
+            .AddScoped(serviceProvider => textEditorConfig.AutocompleteIndexerFactory.Invoke(serviceProvider))
             .AddScoped<ITextEditorService, TextEditorService>()
             .AddScoped<ITextEditorRegistryWrap, TextEditorRegistryWrap>();
         

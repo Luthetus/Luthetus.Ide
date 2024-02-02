@@ -15,7 +15,7 @@ public class JavaScriptInteropClipboardService : IClipboardService
     {
         try
         {
-            return await _jsRuntime.InvokeAsync<string>("luthetusCommon.readClipboard");
+            return await _jsRuntime.InvokeAsync<string>("luthetusCommon.readClipboard").ConfigureAwait(false);
         }
         catch (TaskCanceledException)
         {
@@ -27,7 +27,7 @@ public class JavaScriptInteropClipboardService : IClipboardService
     {
         try
         {
-            await _jsRuntime.InvokeVoidAsync("luthetusCommon.setClipboard", value);
+            await _jsRuntime.InvokeVoidAsync("luthetusCommon.setClipboard", value).ConfigureAwait(false);
         }
         catch (TaskCanceledException)
         {

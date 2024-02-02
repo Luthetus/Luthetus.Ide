@@ -75,7 +75,7 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
             {
                 _errorMessage = null;
                 _activePhase = ImportPhase.RequestRepoContents;
-                await InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
             }
 
             _activeCancellationToken.Value.ThrowIfCancellationRequested();
@@ -89,11 +89,11 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
             // request.Headers.Add("Authorization", 222"Bearer <YOUR-TOKEN>");
             request.Headers.Add("X-GitHub-Api-Version", "2022-11-28");
 
-            var response = await HttpClient.SendAsync(request);
+            var response = await HttpClient.SendAsync(request).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
             {
-                using var responseStream = await response.Content.ReadAsStreamAsync();
+                using var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 var zipArchive = new ZipArchive(responseStream);
 
                 // UI progress indicator
@@ -101,7 +101,7 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
                     _processedFilesInZipArchive = 0;
                     _totalFilesInZipArchive = zipArchive.Entries.Count;
                     _activePhase = ImportPhase.ReadZipArchive;
-                    await InvokeAsync(StateHasChanged);
+                    await InvokeAsync(StateHasChanged).ConfigureAwait(false);
                 }
 
                 foreach (var entry in zipArchive.Entries)
@@ -110,7 +110,7 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
 
                     var stream = entry.Open();
                     var streamReader = new StreamReader(stream);
-                    var contents = await streamReader.ReadToEndAsync();
+                    var contents = await streamReader.ReadToEndAsync().ConfigureAwait(false);
 
                     // Add the file to the in-memory filesystem.
                     // (all the code in this file is for the demo website)
@@ -121,9 +121,10 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
                         var absoluteFilePathString = $"/{localRepo}/{entry.FullName}";
 
                         await FileSystemProvider.File.WriteAllTextAsync(
-                            absoluteFilePathString,
-                            contents,
-                            _activeCancellationToken.Value);
+                                absoluteFilePathString,
+                                contents,
+                                _activeCancellationToken.Value)
+                            .ConfigureAwait(false);
 
                         if (entry.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION))
                             PromptUserOpenSolution(absoluteFilePathString);
@@ -133,7 +134,7 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
                     {
                         _processedFilesInZipArchive++;
                         _nameOfEntryMostRecentlyProcessed = entry.Name;
-                        await InvokeAsync(StateHasChanged);
+                        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
                     }
                 }
             }
@@ -149,7 +150,7 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
             // UI progress indicator
             {
                 _activePhase = ImportPhase.Error;
-                await InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
             }
         }
         finally
@@ -160,7 +161,7 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
                 {
                     _activePhase = ImportPhase.Finished;
                     _parametersForFinishedQuery = $"({localOwner}/{localRepo})";
-                    await InvokeAsync(StateHasChanged);
+                    await InvokeAsync(StateHasChanged).ConfigureAwait(false);
                 }
             }
 

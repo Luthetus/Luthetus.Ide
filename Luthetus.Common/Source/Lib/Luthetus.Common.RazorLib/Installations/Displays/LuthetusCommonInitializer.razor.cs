@@ -8,7 +8,7 @@ namespace Luthetus.Common.RazorLib.Installations.Displays;
 public partial class LuthetusCommonInitializer : ComponentBase
 {
     [Inject]
-    private LuthetusCommonOptions LuthetusCommonOptions { get; set; } = null!;
+    private LuthetusCommonConfig CommonConfig { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
@@ -25,18 +25,20 @@ public partial class LuthetusCommonInitializer : ComponentBase
             if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.ServerSide)
             {
                 _ = Task.Run(async () => await ContinuousBackgroundTaskWorker
-                                                   .StartAsync(CancellationToken.None)
-                                                   .ConfigureAwait(false));
+                            .StartAsync(CancellationToken.None)
+                            .ConfigureAwait(false))
+                        .ConfigureAwait(false);
 
                 _ = Task.Run(async () => await BlockingBackgroundTaskWorker
-                                                   .StartAsync(CancellationToken.None)
-                                                   .ConfigureAwait(false));
+                            .StartAsync(CancellationToken.None)
+                            .ConfigureAwait(false))
+                        .ConfigureAwait(false);
             }
 
-            AppOptionsService.SetActiveThemeRecordKey(LuthetusCommonOptions.InitialThemeKey, false);
-            await AppOptionsService.SetFromLocalStorageAsync();
+            AppOptionsService.SetActiveThemeRecordKey(CommonConfig.InitialThemeKey, false);
+            await AppOptionsService.SetFromLocalStorageAsync().ConfigureAwait(false);
         }
 
-        await base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
     }
 }

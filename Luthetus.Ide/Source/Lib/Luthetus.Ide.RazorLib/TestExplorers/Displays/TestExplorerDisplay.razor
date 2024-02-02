@@ -48,7 +48,7 @@
 	
 				<ResizableColumn LeftElementDimensions="_treeViewElementDimensions"
 				                 RightElementDimensions="_detailsElementDimensions"
-				                 ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged)" />
+								 ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged).ConfigureAwait(false)" />
 		
 				<TestExplorerDetailsDisplay ElementDimensions="_detailsElementDimensions"/>
 			</CascadingValue>

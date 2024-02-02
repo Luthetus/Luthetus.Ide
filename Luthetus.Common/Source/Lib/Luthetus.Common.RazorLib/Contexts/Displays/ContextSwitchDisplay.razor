@@ -1,0 +1,13 @@
+﻿<div class="luth_context-switch">
+    
+    @{ var contextState = ContextStateWrap.Value; }
+    
+    luth_context-switch
+
+    <div>
+        @foreach (var context in contextState.AllContextsList)
+        {
+            <div>@context.DisplayNameFriendly</div>
+        }
+    </div>
+</div>

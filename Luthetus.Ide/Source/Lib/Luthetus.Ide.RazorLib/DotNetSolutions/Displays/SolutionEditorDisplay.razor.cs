@@ -39,7 +39,9 @@ public partial class SolutionEditorDisplay : ComponentBase, IDisposable
         {
             _compilerServiceRegistry = (CompilerServiceRegistry)InterfaceCompilerServiceRegistry;
 
-            var content = await FileSystemProvider.File.ReadAllTextAsync(localDotNetSolutionResourceUri.Value);
+            var content = await FileSystemProvider.File
+                .ReadAllTextAsync(localDotNetSolutionResourceUri.Value)
+                .ConfigureAwait(false);
 
             TextEditorService.ModelApi.RegisterTemplated(
                 ExtensionNoPeriodFacts.DOT_NET_SOLUTION,
@@ -50,7 +52,7 @@ public partial class SolutionEditorDisplay : ComponentBase, IDisposable
             _compilerServiceRegistry.DotNetSolutionCompilerService.RegisterResource(localDotNetSolutionResourceUri);
         }
 
-        await base.OnParametersSetAsync();
+        await base.OnParametersSetAsync().ConfigureAwait(false);
     }
 
     protected override void OnInitialized()
@@ -64,7 +66,7 @@ public partial class SolutionEditorDisplay : ComponentBase, IDisposable
 
     private async void DotNetSolutionCompilerService_ModelParsed()
     {
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     public void Dispose()

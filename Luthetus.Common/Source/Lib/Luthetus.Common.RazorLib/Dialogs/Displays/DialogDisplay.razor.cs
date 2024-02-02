@@ -6,17 +6,26 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
+using Luthetus.Common.RazorLib.Dialogs.States;
+using Microsoft.AspNetCore.Components.RenderTree;
+using Microsoft.JSInterop;
 
 namespace Luthetus.Common.RazorLib.Dialogs.Displays;
 
-public partial class DialogDisplay : IDisposable
+public partial class DialogDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
     [Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
-    private LuthetusCommonOptions LuthetusCommonOptions { get; set; } = null!;
+    private IStateSelection<DialogState, bool> DialogStateIsActiveSelection { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private LuthetusCommonConfig CommonConfig { get; set; } = null!;
+    [Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
 
     [Parameter]
     public DialogRecord DialogRecord { get; set; } = null!;
@@ -28,7 +37,7 @@ public partial class DialogDisplay : IDisposable
     private string ElementDimensionsStyleCssString => DialogRecord.ElementDimensions.StyleString;
 
     private string IsMaximizedStyleCssString => DialogRecord.IsMaximized
-        ? LuthetusCommonOptions.DialogServiceOptions.IsMaximizedStyleCssString
+        ? CommonConfig.DialogServiceOptions.IsMaximizedStyleCssString
         : string.Empty;
 
     private string IconSizeInPixelsCssValue =>
@@ -42,18 +51,39 @@ public partial class DialogDisplay : IDisposable
     protected override void OnInitialized()
     {
         AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
+        DialogStateIsActiveSelection.SelectedValueChanged += DialogStateIsActiveSelection_SelectedValueChanged;
+
+        DialogStateIsActiveSelection.Select(dialogState => dialogState.ActiveDialogKey == DialogRecord.Key);
 
         base.OnInitialized();
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JsRuntime.InvokeVoidAsync(
+                    "luthetusTextEditor.focusHtmlElementById",
+                    DialogRecord.FocusPointHtmlElementId)
+            .ConfigureAwait(false);
+        }
+
+        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+    }
+
+    private async void DialogStateIsActiveSelection_SelectedValueChanged(object? sender, bool e)
+    {
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+    }
+
     private async void AppOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
     {
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private async Task ReRenderAsync()
     {
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private void SubscribeMoveHandle()
@@ -73,8 +103,26 @@ public partial class DialogDisplay : IDisposable
         DialogService.DisposeDialogRecord(DialogRecord.Key);
     }
 
+    private string GetCssClassForDialogStateIsActiveSelection(bool isActive)
+    {
+        return isActive
+            ? "luth_active"
+            : string.Empty;
+    }
+
+    private void HandleOnFocusIn()
+    {
+        Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(DialogRecord.Key));
+    }
+
+    private void HandleOnMouseDown()
+    {
+        Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(DialogRecord.Key));
+    }
+
     public void Dispose()
     {
         AppOptionsStateWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
+        DialogStateIsActiveSelection.SelectedValueChanged += DialogStateIsActiveSelection_SelectedValueChanged;
     }
 }

@@ -50,7 +50,7 @@ public class TextEditorCommandDefaultFunctions
                 primaryCursorModifier.RowIndex,
                 1);
 
-            await commandArgs.ClipboardService.SetClipboard(selectedText);
+            await commandArgs.ClipboardService.SetClipboard(selectedText).ConfigureAwait(false);
             viewModelModifier.ViewModel.Focus();
         };
     }
@@ -90,7 +90,7 @@ public class TextEditorCommandDefaultFunctions
             if (selectedText is null)
                 return; // This should never occur
 
-            await commandArgs.ClipboardService.SetClipboard(selectedText);
+            await commandArgs.ClipboardService.SetClipboard(selectedText).ConfigureAwait(false);
             viewModelModifier.ViewModel.Focus();
 
             modelModifier.HandleKeyboardEvent(
@@ -119,7 +119,7 @@ public class TextEditorCommandDefaultFunctions
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
-            var clipboard = await commandArgs.ClipboardService.ReadClipboard();
+            var clipboard = await commandArgs.ClipboardService.ReadClipboard().ConfigureAwait(false);
 
             modelModifier.EditByInsertion(
                 clipboard,
@@ -817,7 +817,8 @@ public class TextEditorCommandDefaultFunctions
                         modelModifier.ResourceUri,
                         viewModelModifier.ViewModel.ViewModelKey,
                         primaryCursorModifier)
-                    .Invoke(editContext);
+                    .Invoke(editContext)
+					.ConfigureAwait(false);
 
                 var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
                 var characterAt = modelModifier.GetCharacter(positionIndex);
@@ -881,9 +882,9 @@ public class TextEditorCommandDefaultFunctions
 
             if (definitionModel is null)
             {
-                if (commandArgs.RegisterModelAction is not null)
+                if (commandArgs.TextEditorConfig.RegisterModelFunc is not null)
                 {
-                    commandArgs.RegisterModelAction.Invoke(definitionTextSpan.ResourceUri);
+                    commandArgs.TextEditorConfig.RegisterModelFunc.Invoke(definitionTextSpan.ResourceUri, commandArgs.ServiceProvider);
                     var definitionModelModifier = editContext.GetModelModifier(definitionTextSpan.ResourceUri);
 
                     if (definitionModel is null)
@@ -899,9 +900,9 @@ public class TextEditorCommandDefaultFunctions
 
             if (!definitionViewModels.Any())
             {
-                if (commandArgs.RegisterViewModelAction is not null)
+                if (commandArgs.TextEditorConfig.RegisterViewModelFunc is not null)
                 {
-                    commandArgs.RegisterViewModelAction.Invoke(definitionTextSpan.ResourceUri);
+                    commandArgs.TextEditorConfig.RegisterViewModelFunc.Invoke(Key<TextEditorViewModel>.NewKey(), definitionTextSpan.ResourceUri, commandArgs.ServiceProvider);
                     definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
 
                     if (!definitionViewModels.Any())
@@ -933,21 +934,21 @@ public class TextEditorCommandDefaultFunctions
             definitionPrimaryCursorModifier.ColumnIndex = columnIndex;
             definitionPrimaryCursorModifier.PreferredColumnIndex = columnIndex;
 
-            if (commandArgs.ShowViewModelAction is not null)
-                commandArgs.ShowViewModelAction.Invoke(definitionViewModelKey);
+            if (commandArgs.TextEditorConfig.ShowViewModelFunc is not null)
+                commandArgs.TextEditorConfig.ShowViewModelFunc.Invoke(definitionViewModelKey, commandArgs.ServiceProvider);
 
             return Task.CompletedTask;
         };
     }
 
-    public static TextEditorEdit ShowFindDialogFactory(
+    public static TextEditorEdit ShowFindAllDialogFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
-            commandArgs.TextEditorService.OptionsApi.ShowFindDialog();
+            commandArgs.TextEditorService.OptionsApi.ShowFindAllDialog();
             return Task.CompletedTask;
         };
     }
@@ -975,8 +976,9 @@ public class TextEditorCommandDefaultFunctions
                 return;
 
             var elementPositionInPixels = await commandArgs.JsRuntime.InvokeAsync<ElementPositionInPixels>(
-                "luthetusTextEditor.getBoundingClientRect",
-                viewModelModifier.ViewModel.PrimaryCursorContentId);
+                    "luthetusTextEditor.getBoundingClientRect",
+                    viewModelModifier.ViewModel.PrimaryCursorContentId)
+			    .ConfigureAwait(false);
 
             elementPositionInPixels = elementPositionInPixels with
             {
@@ -988,7 +990,7 @@ public class TextEditorCommandDefaultFunctions
             {
                 ClientX = elementPositionInPixels.Left,
                 ClientY = elementPositionInPixels.Top
-            });
+            }).ConfigureAwait(false);
         };
     }
 }

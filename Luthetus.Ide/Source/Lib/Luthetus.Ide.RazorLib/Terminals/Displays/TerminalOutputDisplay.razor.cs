@@ -188,7 +188,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
             //        CancellationToken.None,
             //        () => Task.CompletedTask);
 
-            //    await generalTerminalSession.EnqueueCommandAsync(terminalCommand);
+            //    await generalTerminalSession.EnqueueCommandAsync(terminalCommand).ConfigureAwait(false);
             //}
 
             return Task.CompletedTask;

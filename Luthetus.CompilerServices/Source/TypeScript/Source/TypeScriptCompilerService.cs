@@ -135,7 +135,8 @@ public class TypeScriptCompilerService : ICompilerService
                 await _textEditorService.ModelApi.CalculatePresentationModelFactory(
                         modelModifier.ResourceUri,
                         CompilerServiceDiagnosticPresentationFacts.PresentationKey)
-                    .Invoke(editContext);
+                    .Invoke(editContext)
+                    .ConfigureAwait(false);
 
                 var pendingCalculation = modelModifier.PresentationModelsList.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
@@ -145,7 +146,7 @@ public class TypeScriptCompilerService : ICompilerService
                     pendingCalculation = new(modelModifier.GetAllText());
 
                 var lexer = new TextEditorTypeScriptLexer(modelModifier.ResourceUri);
-                var lexResult = await lexer.Lex(text, modelModifier.RenderStateKey);
+                var lexResult = await lexer.Lex(text, modelModifier.RenderStateKey).ConfigureAwait(false);
 
                 lock (_tsResourceMapLock)
                 {
@@ -156,7 +157,7 @@ public class TypeScriptCompilerService : ICompilerService
                         .SyntacticTextSpans = lexResult;
                 }
 
-                await modelModifier.ApplySyntaxHighlightingAsync();
+                await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
 
                 ResourceParsed?.Invoke();
 
@@ -165,7 +166,7 @@ public class TypeScriptCompilerService : ICompilerService
 
                 if (presentationModel?.PendingCalculation is not null)
                 {
-                    presentationModel.PendingCalculation.TextEditorTextSpanList =
+                    presentationModel.PendingCalculation.TextSpanList =
                         GetDiagnosticsFor(modelModifier.ResourceUri)
                             .Select(x => x.TextSpan)
                             .ToImmutableArray();

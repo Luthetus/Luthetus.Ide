@@ -23,7 +23,7 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
             if (value < TextEditorOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS)
                 value = TextEditorOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS;
 
-            _ = Task.Run(() => TextEditorService.OptionsApi.SetFontSize(value));
+            _ = Task.Run(() => TextEditorService.OptionsApi.SetFontSize(value)).ConfigureAwait(false);
         }
     }
 
@@ -36,7 +36,7 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
 
     private async void OptionsWrapOnStateChanged(object? sender, EventArgs e)
     {
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     public void Dispose()

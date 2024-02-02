@@ -14,7 +14,7 @@ namespace Luthetus.TextEditor.RazorLib.Installations.Displays;
 public partial class LuthetusTextEditorInitializer : ComponentBase
 {
     [Inject]
-    private LuthetusTextEditorOptions LuthetusTextEditorOptions { get; set; } = null!;
+    private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -28,21 +28,21 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
     {
 		if (firstRender)
 		{
-			if (LuthetusTextEditorOptions.CustomThemeRecordList is not null)
+			if (TextEditorConfig.CustomThemeRecordList is not null)
 	        {
-	            foreach (var themeRecord in LuthetusTextEditorOptions.CustomThemeRecordList)
+	            foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
 	            {
 	                Dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
 	            }
 	        }
 	
 	        var initialThemeRecord = ThemeRecordsCollectionService.ThemeStateWrap.Value.ThemeList.FirstOrDefault(
-	            x => x.Key == LuthetusTextEditorOptions.InitialThemeKey);
+	            x => x.Key == TextEditorConfig.InitialThemeKey);
 	
 	        if (initialThemeRecord is not null)
 	            Dispatcher.Dispatch(new TextEditorOptionsState.SetThemeAction(initialThemeRecord));
 	
-	        foreach (var searchEngine in LuthetusTextEditorOptions.SearchEngineList)
+	        foreach (var searchEngine in TextEditorConfig.SearchEngineList)
 	        {
 	            Dispatcher.Dispatch(new TextEditorSearchEngineState.RegisterAction(searchEngine));
 	        }
@@ -50,9 +50,9 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
 			Dispatcher.Dispatch(new TextEditorSearchEngineState.RegisterAction(
 				new SearchEngineFileSystem(FileSystemProvider)));
 	
-	        await TextEditorService.OptionsApi.SetFromLocalStorageAsync();
+	        await TextEditorService.OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
 		}
 	
-		await base.OnAfterRenderAsync(firstRender);
+		await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
     }
 }

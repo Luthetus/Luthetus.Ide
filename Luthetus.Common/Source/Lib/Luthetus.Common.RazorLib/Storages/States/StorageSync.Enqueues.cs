@@ -14,7 +14,7 @@ public partial class StorageSync
             async () => 
             {
                 var valueJson = System.Text.Json.JsonSerializer.Serialize(value);
-                await _storageService.SetValue(key, valueJson);
+                await _storageService.SetValue(key, valueJson).ConfigureAwait(false);
             });
     }
 }

@@ -285,17 +285,21 @@ public partial interface ITextEditorService
 
         public async Task<TextEditorMeasurements> GetTextEditorMeasurementsAsync(string elementId)
         {
-            return await _jsRuntime.InvokeAsync<TextEditorMeasurements>("luthetusTextEditor.getTextEditorMeasurementsInPixelsById",
-                elementId);
+            return await _jsRuntime.InvokeAsync<TextEditorMeasurements>(
+                    "luthetusTextEditor.getTextEditorMeasurementsInPixelsById",
+                    elementId)
+				.ConfigureAwait(false);
         }
 
         public async Task<CharAndRowMeasurements> MeasureCharacterWidthAndRowHeightAsync(
             string measureCharacterWidthAndRowHeightElementId,
             int countOfTestCharacters)
         {
-            return await _jsRuntime.InvokeAsync<CharAndRowMeasurements>("luthetusTextEditor.getCharAndRowMeasurementsInPixelsById",
-                measureCharacterWidthAndRowHeightElementId,
-                countOfTestCharacters);
+            return await _jsRuntime.InvokeAsync<CharAndRowMeasurements>(
+                    "luthetusTextEditor.getCharAndRowMeasurementsInPixelsById",
+                    measureCharacterWidthAndRowHeightElementId,
+                    countOfTestCharacters)
+				.ConfigureAwait(false);
         }
         #endregion
 
@@ -331,7 +335,7 @@ public partial interface ITextEditorService
                     TextEditorService.AuthenticatedActionKey,
                     editContext,
                     viewModelKey,
-                    await withFuncWrap.Invoke(viewModelModifier.ViewModel)));
+                    await withFuncWrap.Invoke(viewModelModifier.ViewModel).ConfigureAwait(false)));
             };
         }
 
@@ -346,11 +350,13 @@ public partial interface ITextEditorService
         {
             return async editContext =>
             {
-                await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.setScrollPosition",
-                    bodyElementId,
-                    gutterElementId,
-                    scrollLeftInPixels,
-                    scrollTopInPixels);
+                await _jsRuntime.InvokeVoidAsync(
+                        "luthetusTextEditor.setScrollPosition",
+                        bodyElementId,
+                        gutterElementId,
+                        scrollLeftInPixels,
+                        scrollTopInPixels)
+				    .ConfigureAwait(false);
             };
         }
 
@@ -360,9 +366,11 @@ public partial interface ITextEditorService
         {
             return async editContext =>
             {
-                await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.setGutterScrollTop",
-                    gutterElementId,
-                    scrollTopInPixels);
+                await _jsRuntime.InvokeVoidAsync(
+                        "luthetusTextEditor.setGutterScrollTop",
+                        gutterElementId,
+                        scrollTopInPixels)
+				    .ConfigureAwait(false);
             };
         }
 
@@ -373,10 +381,12 @@ public partial interface ITextEditorService
         {
             return async editContext =>
             {
-                await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.mutateScrollVerticalPositionByPixels",
-                    bodyElementId,
-                    gutterElementId,
-                    pixels);
+                await _jsRuntime.InvokeVoidAsync(
+                        "luthetusTextEditor.mutateScrollVerticalPositionByPixels",
+                        bodyElementId,
+                        gutterElementId,
+                        pixels)
+				    .ConfigureAwait(false);
             };
         }
 
@@ -387,10 +397,12 @@ public partial interface ITextEditorService
         {
             return async editContext =>
             {
-                await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.mutateScrollHorizontalPositionByPixels",
-                    bodyElementId,
-                    gutterElementId,
-                    pixels);
+                await _jsRuntime.InvokeVoidAsync(
+                        "luthetusTextEditor.mutateScrollHorizontalPositionByPixels",
+                        bodyElementId,
+                        gutterElementId,
+                        pixels)
+				    .ConfigureAwait(false);
             };
         }
 
@@ -398,8 +410,10 @@ public partial interface ITextEditorService
         {
             return async editContext =>
             {
-                await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.focusHtmlElementById",
-                    primaryCursorContentId);
+                await _jsRuntime.InvokeVoidAsync(
+                        "luthetusTextEditor.focusHtmlElementById",
+                        primaryCursorContentId)
+				    .ConfigureAwait(false);
             };
         }
 
@@ -753,8 +767,9 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return;
 
-                var textEditorMeasurements = await _textEditorService.ViewModelApi.GetTextEditorMeasurementsAsync(
-                    viewModelModifier.ViewModel.BodyElementId);
+                var textEditorMeasurements = await _textEditorService.ViewModelApi
+                    .GetTextEditorMeasurementsAsync(viewModelModifier.ViewModel.BodyElementId)
+					.ConfigureAwait(false);
 
                 if (textEditorMeasurements is null)
                     return;
@@ -985,8 +1000,9 @@ public partial interface ITextEditorService
                 var options = _textEditorService.OptionsApi.GetOptions();
 
                 var characterWidthAndRowHeight = await _textEditorService.ViewModelApi.MeasureCharacterWidthAndRowHeightAsync(
-                    measureCharacterWidthAndRowHeightElementId,
-                    countOfTestCharacters);
+                        measureCharacterWidthAndRowHeightElementId,
+                        countOfTestCharacters)
+				    .ConfigureAwait(false);
 
                 viewModelModifier.ViewModel = viewModelModifier.ViewModel with
                 {

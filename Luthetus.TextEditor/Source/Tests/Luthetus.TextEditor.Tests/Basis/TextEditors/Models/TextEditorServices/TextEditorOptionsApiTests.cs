@@ -15,7 +15,7 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 public class TextEditorOptionsApiTests
 {
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.TextEditorOptionsApi(ITextEditorService, RazorLib.Installations.Models.LuthetusTextEditorOptions, Common.RazorLib.Storages.Models.IStorageService, Common.RazorLib.Storages.States.StorageSync, Fluxor.IDispatcher)"/>
+    /// <see cref="ITextEditorService.TextEditorOptionsApi.TextEditorOptionsApi(ITextEditorService, RazorLib.Installations.Models.LuthetusTextEditorConfig, Common.RazorLib.Storages.Models.IStorageService, Common.RazorLib.Storages.States.StorageSync, Fluxor.IDispatcher)"/>
     /// </summary>
     [Fact]
     public void Constructor()
@@ -275,7 +275,7 @@ public class TextEditorOptionsApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.ShowFindDialog(bool?, string?)"/>
+    /// <see cref="ITextEditorService.TextEditorOptionsApi.ShowFindAllDialog(bool?, string?)"/>
     /// </summary>
     [Fact]
     public void ShowFindDialog()

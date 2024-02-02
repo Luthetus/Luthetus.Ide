@@ -18,12 +18,12 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddLuthetusCommonServices(
         this IServiceCollection services,
         LuthetusHostingInformation hostingInformation,
-        Func<LuthetusCommonOptions, LuthetusCommonOptions>? configure = null)
+        Func<LuthetusCommonConfig, LuthetusCommonConfig>? configure = null)
     {
-        var commonOptions = new LuthetusCommonOptions();
+        var commonConfig = new LuthetusCommonConfig();
 
         if (configure is not null)
-            commonOptions = configure.Invoke(commonOptions);
+            commonConfig = configure.Invoke(commonConfig);
 
         hostingInformation.BackgroundTaskService.RegisterQueue(new BackgroundTaskQueue(
             ContinuousBackgroundTaskWorker.GetQueueKey(),
@@ -48,11 +48,11 @@ public static class ServiceCollectionExtensions
         }
 
         services
-            .AddSingleton(commonOptions)
+            .AddSingleton(commonConfig)
             .AddSingleton(hostingInformation)
             .AddSingleton(hostingInformation.BackgroundTaskService)
             .AddSingleton<ILuthetusCommonComponentRenderers>(_ => _commonRendererTypes)
-            .AddCommonFactories(hostingInformation, commonOptions)
+            .AddCommonFactories(hostingInformation, commonConfig)
             .AddScoped<StorageSync>();
 
         return services;
@@ -61,24 +61,24 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddCommonFactories(
         this IServiceCollection services,
         LuthetusHostingInformation hostingInformation,
-        LuthetusCommonOptions commonOptions)
+        LuthetusCommonConfig commonConfig)
     {
         services
-            .AddScoped(sp => commonOptions.CommonFactories.ClipboardServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonOptions.CommonFactories.DialogServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonOptions.CommonFactories.NotificationServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonOptions.CommonFactories.DragServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonOptions.CommonFactories.DropdownServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonOptions.CommonFactories.AppOptionsServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonOptions.CommonFactories.StorageServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonOptions.CommonFactories.ThemeServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonOptions.CommonFactories.TreeViewServiceFactory.Invoke(sp));
+            .AddScoped(sp => commonConfig.CommonFactories.ClipboardServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonConfig.CommonFactories.DialogServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonConfig.CommonFactories.NotificationServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonConfig.CommonFactories.DragServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonConfig.CommonFactories.DropdownServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonConfig.CommonFactories.AppOptionsServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonConfig.CommonFactories.StorageServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonConfig.CommonFactories.ThemeServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonConfig.CommonFactories.TreeViewServiceFactory.Invoke(sp));
 
-        if (commonOptions.CommonFactories.EnvironmentProviderFactory is not null &&
-            commonOptions.CommonFactories.FileSystemProviderFactory is not null)
+        if (commonConfig.CommonFactories.EnvironmentProviderFactory is not null &&
+            commonConfig.CommonFactories.FileSystemProviderFactory is not null)
         {
-            services.AddScoped(sp => commonOptions.CommonFactories.EnvironmentProviderFactory.Invoke(sp));
-            services.AddScoped(sp => commonOptions.CommonFactories.FileSystemProviderFactory.Invoke(sp));
+            services.AddScoped(sp => commonConfig.CommonFactories.EnvironmentProviderFactory.Invoke(sp));
+            services.AddScoped(sp => commonConfig.CommonFactories.FileSystemProviderFactory.Invoke(sp));
         }
         else
         {

@@ -41,8 +41,8 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
         {
             try
             {
-                await _inMemoryFileSystemProvider._modificationSemaphore.WaitAsync();
-                await UnsafeDeleteAsync(absolutePathString, cancellationToken);
+                await _inMemoryFileSystemProvider._modificationSemaphore.WaitAsync().ConfigureAwait(false);
+                await UnsafeDeleteAsync(absolutePathString, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -62,12 +62,13 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
         {
             try
             {
-                await _inMemoryFileSystemProvider._modificationSemaphore.WaitAsync();
+                await _inMemoryFileSystemProvider._modificationSemaphore.WaitAsync().ConfigureAwait(false);
                 
                 await UnsafeCopyAsync(
-                    sourceAbsolutePathString,
-                    destinationAbsolutePathString,
-                    cancellationToken);
+                        sourceAbsolutePathString,
+                        destinationAbsolutePathString,
+                        cancellationToken)
+					.ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -87,12 +88,13 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
         {
             try
             {
-                await _inMemoryFileSystemProvider._modificationSemaphore.WaitAsync();
+                await _inMemoryFileSystemProvider._modificationSemaphore.WaitAsync().ConfigureAwait(false);
                 
                 await UnsafeMoveAsync(
-                    sourceAbsolutePathString,
-                    destinationAbsolutePathString,
-                    cancellationToken);
+                        sourceAbsolutePathString,
+                        destinationAbsolutePathString,
+                        cancellationToken)
+					.ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -109,14 +111,14 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             string absolutePathString,
             CancellationToken cancellationToken = default)
         {
-            return await UnsafeGetLastWriteTimeAsync(absolutePathString, cancellationToken);
+            return await UnsafeGetLastWriteTimeAsync(absolutePathString, cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<string> ReadAllTextAsync(
             string absolutePathString,
             CancellationToken cancellationToken = default)
         {
-            return await UnsafeReadAllTextAsync(absolutePathString, cancellationToken);
+            return await UnsafeReadAllTextAsync(absolutePathString, cancellationToken).ConfigureAwait(false);
         }
 
         public async Task WriteAllTextAsync(
@@ -126,12 +128,13 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
         {
             try
             {
-                await _inMemoryFileSystemProvider._modificationSemaphore.WaitAsync();
+                await _inMemoryFileSystemProvider._modificationSemaphore.WaitAsync().ConfigureAwait(false);
                 
                 await UnsafeWriteAllTextAsync(
-                    absolutePathString,
-                    contents,
-                    cancellationToken);
+                        absolutePathString,
+                        contents,
+                        cancellationToken)
+					.ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -197,13 +200,15 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             }
 
             var contents = await UnsafeReadAllTextAsync(
-                sourceAbsolutePathString,
-                cancellationToken);
+                    sourceAbsolutePathString,
+                    cancellationToken)
+				.ConfigureAwait(false);
 
             await UnsafeWriteAllTextAsync(
-                destinationAbsolutePathString,
-                contents,
-                cancellationToken);
+                    destinationAbsolutePathString,
+                    contents,
+                    cancellationToken)
+				.ConfigureAwait(false);
         }
 
         public async Task UnsafeMoveAsync(
@@ -213,15 +218,16 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
         {
             _environmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
-            if (await ExistsAsync(destinationAbsolutePathString))
+            if (await ExistsAsync(destinationAbsolutePathString).ConfigureAwait(false))
                 _environmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
             await UnsafeCopyAsync(
-                sourceAbsolutePathString,
-                destinationAbsolutePathString,
-                cancellationToken);
+                    sourceAbsolutePathString,
+                    destinationAbsolutePathString,
+                    cancellationToken)
+                .ConfigureAwait(false);
 
-            await UnsafeDeleteAsync(sourceAbsolutePathString, cancellationToken);
+            await UnsafeDeleteAsync(sourceAbsolutePathString, cancellationToken).ConfigureAwait(false);
         }
 
         public Task<DateTime> UnsafeGetLastWriteTimeAsync(

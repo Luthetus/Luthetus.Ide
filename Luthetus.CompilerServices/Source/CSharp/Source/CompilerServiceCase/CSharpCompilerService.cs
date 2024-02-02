@@ -15,7 +15,6 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 
@@ -274,11 +273,12 @@ public class CSharpCompilerService : ICompilerService
                                                 },
                                                 textSpan.ResourceUri,
                                                 viewModelModifier.ViewModel.ViewModelKey)
-                                            .Invoke(editContext);
+                                            .Invoke(editContext)
+											.ConfigureAwait(false);
                                         }
                                     }
 
-                                    await modelModifier.ApplySyntaxHighlightingAsync();
+                                    await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
                                 }
                             });
                     });
@@ -311,7 +311,8 @@ public class CSharpCompilerService : ICompilerService
                 await _textEditorService.ModelApi.CalculatePresentationModelFactory(
                         modelModifier.ResourceUri,
                         CompilerServiceDiagnosticPresentationFacts.PresentationKey)
-                    .Invoke(editContext);
+                    .Invoke(editContext)
+					.ConfigureAwait(false);
 
                 var pendingCalculation = modelModifier.PresentationModelsList.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
@@ -348,14 +349,14 @@ public class CSharpCompilerService : ICompilerService
                     }
 
                     // TODO: Shouldn't one get a reference to the most recent TextEditorModel instance with the given key and invoke .ApplySyntaxHighlightingAsync() on that?
-                    await modelModifier.ApplySyntaxHighlightingAsync();
+                    await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
 
                     var presentationModel = modelModifier.PresentationModelsList.FirstOrDefault(x =>
                         x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
                     if (presentationModel?.PendingCalculation is not null)
                     {
-                        presentationModel.PendingCalculation.TextEditorTextSpanList =
+                        presentationModel.PendingCalculation.TextSpanList =
                             GetDiagnosticsFor(modelModifier.ResourceUri)
                                 .Select(x => x.TextSpan)
                                 .ToImmutableArray();

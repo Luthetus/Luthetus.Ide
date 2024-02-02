@@ -28,7 +28,7 @@ public record TabGroup(
     {
         var tabGroupLoadTabEntriesArgs = new TabGroupLoadTabEntriesArgs(EntryList);
 
-        return await LoadEntryListAsyncFunc.Invoke(tabGroupLoadTabEntriesArgs);
+        return await LoadEntryListAsyncFunc.Invoke(tabGroupLoadTabEntriesArgs).ConfigureAwait(false);
     }
 
     public TabEntryNoType? GetActiveEntryNoType()

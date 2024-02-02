@@ -25,7 +25,7 @@ public record TextEditorViewModel : IDisposable
         ResourceUri = resourceUri;
         TextEditorService = textEditorService;
         VirtualizationResult = virtualizationResult;
-        DisplayCommandBar = displayCommandBar;
+        ShowCommandBar = displayCommandBar;
 
         var primaryCursor = new TextEditorCursor(true);
 
@@ -52,7 +52,8 @@ public record TextEditorViewModel : IDisposable
     public ResourceUri ResourceUri { get; init; }
     public ITextEditorService TextEditorService { get; init; }
     public VirtualizationResult<List<RichCharacter>> VirtualizationResult { get; init; }
-    public bool DisplayCommandBar { get; init; }
+    public bool ShowCommandBar { get; init; }
+    public bool ShowFindOverlay { get; init; }
     public Action<ITextEditorModel>? OnSaveRequested { get; init; }
     public Func<TextEditorModel, string>? GetTabDisplayNameFunc { get; init; }
     /// <summary><see cref="FirstPresentationLayerKeysList"/> is painted prior to any internal workings of the text editor.<br/><br/>Therefore the selected text background is rendered after anything in the <see cref="FirstPresentationLayerKeysList"/>.<br/><br/>When using the <see cref="FirstPresentationLayerKeysList"/> one might find their css overriden by for example, text being selected.</summary>
@@ -61,11 +62,13 @@ public record TextEditorViewModel : IDisposable
     public ImmutableList<Key<TextEditorPresentationModel>> LastPresentationLayerKeysList { get; init; } = ImmutableList<Key<TextEditorPresentationModel>>.Empty;
 
     public string CommandBarValue { get; set; } = string.Empty;
+    public string FindOverlayValue { get; set; } = string.Empty;
     public bool ShouldSetFocusAfterNextRender { get; set; }
 
     public string BodyElementId => $"luth_te_text-editor-content_{ViewModelKey.Guid}";
     public string PrimaryCursorContentId => $"luth_te_text-editor-content_{ViewModelKey.Guid}_primary-cursor";
     public string GutterElementId => $"luth_te_text-editor-gutter_{ViewModelKey.Guid}";
+    public string FindOverlayId => $"luth_te_find-overlay_{ViewModelKey.Guid}";
 
     public void MutateScrollHorizontalPositionByPixels(double pixels)
     {

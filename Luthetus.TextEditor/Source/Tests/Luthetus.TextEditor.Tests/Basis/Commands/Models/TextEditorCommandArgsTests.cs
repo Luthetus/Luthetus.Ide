@@ -11,6 +11,7 @@ using Fluxor;
 using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 using Luthetus.Common.RazorLib.Misc;
 using Microsoft.Extensions.DependencyInjection;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Commands.Models;
 
@@ -52,6 +53,7 @@ public class TextEditorCommandArgsTests
         Func<MouseEventArgs, Task>? handleMouseStoppedMovingEventAsyncFunc = mouseEventArgs => Task.CompletedTask;
         IJSRuntime? jsRuntime = new DoNothingJsRuntime();
         IDispatcher dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+        LuthetusTextEditorConfig textEditorConfig = serviceProvider.GetRequiredService<LuthetusTextEditorConfig>();
         Action<ResourceUri>? registerModelAction = resourceUri => { };
         Action<ResourceUri>? registerViewModelAction = resourceUri => { };
         Action<Key<TextEditorViewModel>>? showViewModelAction = viewModelKey => { };
@@ -65,9 +67,8 @@ public class TextEditorCommandArgsTests
             handleMouseStoppedMovingEventAsyncFunc,
             jsRuntime,
             dispatcher,
-            registerModelAction,
-            registerViewModelAction,
-            showViewModelAction);
+            serviceProvider,
+            textEditorConfig);
 
 		Assert.Equal(modelResourceUri, commandArgs.ModelResourceUri);
 		Assert.Equal(viewModelKey, commandArgs.ViewModelKey);
@@ -77,8 +78,7 @@ public class TextEditorCommandArgsTests
         Assert.Equal(handleMouseStoppedMovingEventAsyncFunc, commandArgs.HandleMouseStoppedMovingEventAsyncFunc);
         Assert.Equal(jsRuntime, commandArgs.JsRuntime);
         Assert.Equal(dispatcher, commandArgs.Dispatcher);
-        Assert.Equal(registerModelAction, commandArgs.RegisterModelAction);
-        Assert.Equal(registerViewModelAction, commandArgs.RegisterViewModelAction);
-        Assert.Equal(showViewModelAction, commandArgs.ShowViewModelAction);
+        Assert.Equal(serviceProvider, commandArgs.ServiceProvider);
+        Assert.Equal(textEditorConfig, commandArgs.TextEditorConfig);
 	}
 }

@@ -96,8 +96,8 @@ public class TextEditorCommandVimFactsMotionsTests
         out IServiceProvider serviceProvider)
     {
         var services = new ServiceCollection()
-            .AddSingleton<LuthetusCommonOptions>()
-            .AddSingleton<LuthetusTextEditorOptions>()
+            .AddSingleton<LuthetusCommonConfig>()
+            .AddSingleton<LuthetusTextEditorConfig>()
             .AddScoped<IStorageService, DoNothingStorageService>()
             .AddScoped<IJSRuntime, TextEditorTestingJsRuntime>()
             .AddScoped<StorageSync>()
@@ -108,8 +108,8 @@ public class TextEditorCommandVimFactsMotionsTests
             .AddScoped<ITextEditorService, TextEditorService>()
             .AddScoped<IClipboardService, InMemoryClipboardService>()
             .AddFluxor(options => options.ScanAssemblies(
-                typeof(LuthetusCommonOptions).Assembly,
-                typeof(LuthetusTextEditorOptions).Assembly));
+                typeof(LuthetusCommonConfig).Assembly,
+                typeof(LuthetusTextEditorConfig).Assembly));
 
         serviceProvider = services.BuildServiceProvider();
 
@@ -171,8 +171,7 @@ public class TextEditorCommandVimFactsMotionsTests
             (MouseEventArgs m) => Task.CompletedTask,
             serviceProvider.GetRequiredService<IJSRuntime>(),
             serviceProvider.GetRequiredService<IDispatcher>(),
-            (ResourceUri resourceUri) => { },
-            (ResourceUri resourceUri) => { },
-            (Key<TextEditorViewModel> viewModelKey) => { });
+            serviceProvider.GetRequiredService<IServiceProvider>(),
+            serviceProvider.GetRequiredService<LuthetusTextEditorConfig>());
     }
 }

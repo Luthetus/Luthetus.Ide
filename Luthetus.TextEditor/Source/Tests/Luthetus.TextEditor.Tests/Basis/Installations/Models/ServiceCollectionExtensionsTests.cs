@@ -10,7 +10,7 @@ public class ServiceCollectionExtensionsTests
 {
 
 	/// <summary>
-	/// <see cref="ServiceCollectionExtensions.AddLuthetusTextEditor(Microsoft.Extensions.DependencyInjection.IServiceCollection, Common.RazorLib.Installations.Models.LuthetusHostingInformation, Func{LuthetusTextEditorOptions, LuthetusTextEditorOptions}?)"/>
+	/// <see cref="ServiceCollectionExtensions.AddLuthetusTextEditor(Microsoft.Extensions.DependencyInjection.IServiceCollection, Common.RazorLib.Installations.Models.LuthetusHostingInformation, Func{LuthetusTextEditorConfig, LuthetusTextEditorConfig}?)"/>
 	/// </summary>
 	[Fact]
 	public void AddLuthetusTextEditor()

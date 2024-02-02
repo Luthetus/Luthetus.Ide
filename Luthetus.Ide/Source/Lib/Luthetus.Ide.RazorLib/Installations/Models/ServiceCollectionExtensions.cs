@@ -28,6 +28,10 @@ using Luthetus.Ide.RazorLib.Decorations;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.TestExplorers.States;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Ide.RazorLib.Installations.Models;
 
@@ -36,14 +40,14 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddLuthetusIdeRazorLibServices(
         this IServiceCollection services,
         LuthetusHostingInformation hostingInformation,
-        Func<LuthetusIdeOptions, LuthetusIdeOptions>? configure = null)
+        Func<LuthetusIdeConfig, LuthetusIdeConfig>? configure = null)
     {
-        var ideOptions = new LuthetusIdeOptions();
+        var ideConfig = new LuthetusIdeConfig();
 
         if (configure is not null)
-            ideOptions = configure.Invoke(ideOptions);
+            ideConfig = configure.Invoke(ideConfig);
 
-        if (ideOptions.AddLuthetusTextEditor)
+        if (ideConfig.AddLuthetusTextEditor)
         {
             services.AddLuthetusTextEditor(hostingInformation, inTextEditorOptions => inTextEditorOptions with
             {
@@ -58,13 +62,38 @@ public static class ServiceCollectionExtensions
                         environmentProvider.AbsolutePathFactory(absolutePathString, false),
 						false);
 
-					return Task.CompletedTask;
-				}
+                    return Task.CompletedTask;
+				},
+                RegisterModelFunc = (resourceUri, serviceProvider) =>
+                {
+                    var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
+                    var editorSync = serviceProvider.GetRequiredService<EditorSync>();
+
+                    var absolutePath = environmentProvider.AbsolutePathFactory(resourceUri.Value, false);
+                    editorSync.OpenInEditor(absolutePath, true);
+                    return Task.CompletedTask;
+                },
+                RegisterViewModelFunc = (viewModelKey, resourceUri, serviceProvider) =>
+                {
+                    var textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
+                    var editorSync = serviceProvider.GetRequiredService<EditorSync>();
+
+                    textEditorService.ViewModelApi.Register(viewModelKey, resourceUri);
+                    return Task.CompletedTask;
+                },
+                ShowViewModelFunc = (viewModelKey, serviceProvider) =>
+                {
+                    var textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
+                    var editorSync = serviceProvider.GetRequiredService<EditorSync>();
+
+                    textEditorService.GroupApi.SetActiveViewModel(EditorSync.EditorTextEditorGroupKey, viewModelKey);
+                    return Task.CompletedTask;
+                },
             });
         }
 
         services
-            .AddSingleton(ideOptions)
+            .AddSingleton(ideConfig)
             .AddSingleton<ILuthetusIdeComponentRenderers>(_ideComponentRenderers)
             .AddScoped<DotNetSolutionSync>()
             .AddScoped<CompilerServiceExplorerSync>()
@@ -83,8 +112,8 @@ public static class ServiceCollectionExtensions
 
         services.AddFluxor(options => options.ScanAssemblies(
             typeof(ServiceCollectionExtensions).Assembly,
-            typeof(LuthetusCommonOptions).Assembly,
-            typeof(LuthetusTextEditorOptions).Assembly));
+            typeof(LuthetusCommonConfig).Assembly,
+            typeof(LuthetusTextEditorConfig).Assembly));
 
         return services;
     }

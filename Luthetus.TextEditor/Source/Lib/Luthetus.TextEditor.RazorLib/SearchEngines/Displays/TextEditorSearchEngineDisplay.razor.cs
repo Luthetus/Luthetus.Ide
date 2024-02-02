@@ -141,7 +141,7 @@ public partial class TextEditorSearchEngineDisplay : FluxorComponent
 
                 Dispatcher.Dispatch(new TabState.RegisterTabGroupAction(tabGroup));
 
-                var entries = await tabGroup.LoadEntryListAsync();
+                var entries = await tabGroup.LoadEntryListAsync().ConfigureAwait(false);
 
                 Dispatcher.Dispatch(new TabState.SetTabEntryListAction(
                     SelectedSearchEngineTabGroupKey,
@@ -156,7 +156,7 @@ public partial class TextEditorSearchEngineDisplay : FluxorComponent
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
     }
 
     private async Task DoSearchOnClickAsync(
@@ -166,19 +166,21 @@ public partial class TextEditorSearchEngineDisplay : FluxorComponent
         try
         {
             _isSearching = true;
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
 
             _doSearchCancellationTokenSource.Cancel();
             _doSearchCancellationTokenSource = new();
 
             var cancellationToken = _doSearchCancellationTokenSource.Token;
 
-            await activeSearchEngine.SearchAsync(searchEngineState.SearchQuery, cancellationToken);
+            await activeSearchEngine
+                .SearchAsync(searchEngineState.SearchQuery, cancellationToken)
+                .ConfigureAwait(false);
         }
         finally
         {
             _isSearching = false;
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
     }
 

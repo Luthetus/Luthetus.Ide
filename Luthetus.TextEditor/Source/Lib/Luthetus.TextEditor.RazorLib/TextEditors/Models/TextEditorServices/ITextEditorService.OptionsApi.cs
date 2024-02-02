@@ -33,7 +33,7 @@ public partial interface ITextEditorService
         /// <summary>This is setting the TextEditor's theme specifically. This is not to be confused with the AppOptions Themes which get applied at an application level. <br /><br /> This allows for a "DarkTheme-Application" that has a "LightTheme-TextEditor"</summary>
         public void SetTheme(ThemeRecord theme);
         public void ShowSettingsDialog(bool? isResizableOverride = null, string? cssClassString = null);
-        public void ShowFindDialog(bool? isResizableOverride = null, string? cssClassString = null);
+        public void ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null);
         public void WriteToStorage();
         public void SetRenderStateKey(Key<RenderState> renderStateKey);
 
@@ -48,24 +48,26 @@ public partial interface ITextEditorService
     public class TextEditorOptionsApi : ITextEditorOptionsApi
     {
         private readonly ITextEditorService _textEditorService;
-        private readonly LuthetusTextEditorOptions _luthetusTextEditorOptions;
+        private readonly LuthetusTextEditorConfig _textEditorConfig;
         private readonly IStorageService _storageService;
         private readonly StorageSync _storageSync;
         private readonly IDispatcher _dispatcher;
 
         public TextEditorOptionsApi(
             ITextEditorService textEditorService,
-            LuthetusTextEditorOptions luthetusTextEditorOptions,
+            LuthetusTextEditorConfig textEditorConfig,
             IStorageService storageService,
             StorageSync storageSync,
             IDispatcher dispatcher)
         {
             _textEditorService = textEditorService;
-            _luthetusTextEditorOptions = luthetusTextEditorOptions;
+            _textEditorConfig = textEditorConfig;
             _storageService = storageService;
             _storageSync = storageSync;
             _dispatcher = dispatcher;
         }
+
+        private DialogRecord? _findAllDialog;
 
         public void WriteToStorage()
         {
@@ -79,29 +81,29 @@ public partial interface ITextEditorService
             var settingsDialog = new DialogRecord(
                 Key<DialogRecord>.NewKey(),
                 "Text Editor Settings",
-                _luthetusTextEditorOptions.SettingsComponentRendererType,
+                _textEditorConfig.SettingsComponentRendererType,
                 null,
                 cssClassString)
             {
-                IsResizable = isResizableOverride ?? _luthetusTextEditorOptions.SettingsDialogComponentIsResizable
+                IsResizable = isResizableOverride ?? _textEditorConfig.SettingsDialogComponentIsResizable
             };
 
             _dispatcher.Dispatch(new DialogState.RegisterAction(settingsDialog));
         }
 
-        public void ShowFindDialog(bool? isResizableOverride = null, string? cssClassString = null)
+        public void ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null)
         {
-            var findDialog = new DialogRecord(
+            _findAllDialog ??= new DialogRecord(
                 Key<DialogRecord>.NewKey(),
-                "Text Editor Find",
-                _luthetusTextEditorOptions.FindComponentRendererType,
+                "Find All",
+                _textEditorConfig.FindAllComponentRendererType,
                 null,
                 cssClassString)
             {
-                IsResizable = isResizableOverride ?? _luthetusTextEditorOptions.FindDialogComponentIsResizable
+                IsResizable = isResizableOverride ?? _textEditorConfig.FindAllDialogComponentIsResizable
             };
 
-            _dispatcher.Dispatch(new DialogState.RegisterAction(findDialog));
+            _dispatcher.Dispatch(new DialogState.RegisterAction(_findAllDialog));
         }
 
         public void SetTheme(ThemeRecord theme)
@@ -152,7 +154,7 @@ public partial interface ITextEditorService
 
         public async Task SetFromLocalStorageAsync()
         {
-            var optionsJsonString = await _storageService.GetValue(_textEditorService.StorageKey) as string;
+            var optionsJsonString = await _storageService.GetValue(_textEditorService.StorageKey).ConfigureAwait(false) as string;
 
             if (string.IsNullOrWhiteSpace(optionsJsonString))
                 return;

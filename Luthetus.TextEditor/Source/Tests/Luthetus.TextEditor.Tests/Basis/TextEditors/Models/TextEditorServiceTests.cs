@@ -11,7 +11,7 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 public class TextEditorServiceTests
 {
 	/// <summary>
-	/// <see cref="TextEditorService(IState{RazorLib.TextEditors.States.TextEditorModelState}, IState{RazorLib.TextEditors.States.TextEditorViewModelState}, IState{RazorLib.Groups.States.TextEditorGroupState}, IState{RazorLib.Diffs.States.TextEditorDiffState}, IState{Common.RazorLib.Themes.States.ThemeState}, IState{RazorLib.Options.States.TextEditorOptionsState}, IState{RazorLib.Finds.States.TextEditorSearchEngineState}, RazorLib.Installations.Models.LuthetusTextEditorOptions, Common.RazorLib.Storages.Models.IStorageService, Microsoft.JSInterop.IJSRuntime, Common.RazorLib.Storages.States.StorageSync, IDispatcher)"/>
+	/// <see cref="TextEditorService(IState{RazorLib.TextEditors.States.TextEditorModelState}, IState{RazorLib.TextEditors.States.TextEditorViewModelState}, IState{RazorLib.Groups.States.TextEditorGroupState}, IState{RazorLib.Diffs.States.TextEditorDiffState}, IState{Common.RazorLib.Themes.States.ThemeState}, IState{RazorLib.Options.States.TextEditorOptionsState}, IState{RazorLib.Finds.States.TextEditorSearchEngineState}, RazorLib.Installations.Models.LuthetusTextEditorConfig, Common.RazorLib.Storages.Models.IStorageService, Microsoft.JSInterop.IJSRuntime, Common.RazorLib.Storages.States.StorageSync, IDispatcher)"/>
 	/// <br/>----<br/>
 	/// <see cref="TextEditorService.ModelStateWrap"/>
 	/// <see cref="TextEditorService.ViewModelStateWrap"/>

@@ -71,17 +71,17 @@ public partial class FolderExplorerContextMenu : ComponentBase
     {
         return new[]
         {
-            MenuOptionsFactory.NewEmptyFile(treeViewModel.Item, async () => await ReloadTreeViewModel(treeViewModel)),
-            MenuOptionsFactory.NewDirectory(treeViewModel.Item, async () => await ReloadTreeViewModel(treeViewModel)),
+            MenuOptionsFactory.NewEmptyFile(treeViewModel.Item, async () => await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false)),
+            MenuOptionsFactory.NewDirectory(treeViewModel.Item, async () => await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false)),
             MenuOptionsFactory.PasteClipboard(treeViewModel.Item, async () => 
             {
                 var localParentOfCutFile = ParentOfCutFile;
                 ParentOfCutFile = null;
 
                 if (localParentOfCutFile is not null)
-                    await ReloadTreeViewModel(localParentOfCutFile);
+                    await ReloadTreeViewModel(localParentOfCutFile).ConfigureAwait(false);
 
-                await ReloadTreeViewModel(treeViewModel);
+                await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false);
             }),
         };
     }
@@ -101,8 +101,8 @@ public partial class FolderExplorerContextMenu : ComponentBase
                 ParentOfCutFile = parentTreeViewModel;
                 return Task.CompletedTask;
             }),
-            MenuOptionsFactory.DeleteFile(treeViewModel.Item, async () => await ReloadTreeViewModel(parentTreeViewModel)),
-            MenuOptionsFactory.RenameFile(treeViewModel.Item, Dispatcher, async ()  => await ReloadTreeViewModel(parentTreeViewModel))
+            MenuOptionsFactory.DeleteFile(treeViewModel.Item, async () => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
+            MenuOptionsFactory.RenameFile(treeViewModel.Item, Dispatcher, async ()  => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false))
         };
     }
 
@@ -131,7 +131,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
         if (treeViewModel is null)
             return;
 
-        await treeViewModel.LoadChildListAsync();
+        await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
         TreeViewService.ReRenderNode(
             FolderExplorerState.TreeViewContentStateKey,

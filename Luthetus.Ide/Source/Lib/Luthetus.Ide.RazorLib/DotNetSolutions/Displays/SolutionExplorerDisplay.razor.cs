@@ -71,17 +71,20 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
     private async void DotNetSolutionStateWrapOnStateChanged(object? sender, EventArgs e)
     {
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
         _mostRecentTreeViewCommandArgs = treeViewCommandArgs;
 
+		// The order of 'StateHasChanged(...)' and 'AddActiveDropdownKey(...)' is important.
+		// The ChildContent renders nothing, unless the provider of the child content
+		// re-renders now that there is a given '_mostRecentTreeViewContextMenuCommandArgs'
+		await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+
         Dispatcher.Dispatch(new DropdownState.AddActiveAction(
             SolutionExplorerContextMenu.ContextMenuEventDropdownKey));
-
-        await InvokeAsync(StateHasChanged);
     }
 
     private void OpenNewDotNetSolutionDialog()

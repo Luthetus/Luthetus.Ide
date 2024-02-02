@@ -1,5 +1,5 @@
 ﻿<div class="luth_ide_project-template"
-     @onclick="async () => await OnProjectTemplateSelectedEventCallback.InvokeAsync(ProjectTemplate)">
+@onclick="async () => await OnProjectTemplateSelectedEventCallback.InvokeAsync(ProjectTemplate).ConfigureAwait(false)">
 
     <div class="luth_ide_project-template-title @IsActiveCssClass">
         @ProjectTemplate.TemplateName (@ProjectTemplate.ShortName)

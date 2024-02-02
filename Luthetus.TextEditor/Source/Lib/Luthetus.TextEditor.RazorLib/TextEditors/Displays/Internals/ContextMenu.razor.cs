@@ -9,6 +9,8 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Fluxor;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -18,6 +20,12 @@ public partial class ContextMenu : ComponentBase
     private IClipboardService ClipboardService { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IServiceProvider ServiceProvider { get; set; } = null!;
 
     [CascadingParameter]
     public TextEditorRenderBatch RenderBatch { get; set; } = null!;
@@ -34,7 +42,7 @@ public partial class ContextMenu : ComponentBase
             {
                 try
                 {
-                    await _textEditorContextMenuElementReference.Value.FocusAsync();
+                    await _textEditorContextMenuElementReference.Value.FocusAsync().ConfigureAwait(false);
                 }
                 catch (Exception)
                 {
@@ -46,7 +54,7 @@ public partial class ContextMenu : ComponentBase
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
     }
 
     private TextEditorCommandArgs ConstructCommandArgs()
@@ -62,23 +70,22 @@ public partial class ContextMenu : ComponentBase
             TextEditorService,
             null,
             null,
-            null,
-            null,
-            null,
-            null);
+            Dispatcher,
+            ServiceProvider,
+            TextEditorConfig);
     }
 
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
-            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
+            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true).ConfigureAwait(false);
     }
 
     private async Task ReturnFocusToThisAsync()
     {
         try
         {
-            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
+            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true).ConfigureAwait(false);
         }
         catch (Exception e)
         {
@@ -112,32 +119,32 @@ public partial class ContextMenu : ComponentBase
         {
             try
             {
-                await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
-                await menuOptionAction();
+                await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true).ConfigureAwait(false);
+                await menuOptionAction.Invoke().ConfigureAwait(false);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 throw;
             }
-        }, CancellationToken.None);
+        }, CancellationToken.None).ConfigureAwait(false);
     }
 
     private async Task CutMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.Cut.CommandFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.Cut.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
     }
 
     private async Task CopyMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.Copy.CommandFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.Copy.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
     }
 
     private async Task PasteMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.PasteCommand.CommandFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.PasteCommand.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
     }
 }

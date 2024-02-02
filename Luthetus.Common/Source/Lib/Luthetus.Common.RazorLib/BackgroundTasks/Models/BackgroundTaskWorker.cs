@@ -28,7 +28,7 @@ public class BackgroundTaskWorker : BackgroundService
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            var backgroundTask = await BackgroundTaskService.DequeueAsync(QueueKey, cancellationToken);
+            var backgroundTask = await BackgroundTaskService.DequeueAsync(QueueKey, cancellationToken).ConfigureAwait(false);
 
             if (backgroundTask is not null)
             {
@@ -37,7 +37,7 @@ public class BackgroundTaskWorker : BackgroundService
                     _hasActiveExecutionActive = true;
 
                     BackgroundTaskService.SetExecutingBackgroundTask(QueueKey, backgroundTask);
-                    await backgroundTask.InvokeWorkItem(cancellationToken);
+                    await backgroundTask.InvokeWorkItem(cancellationToken).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -63,7 +63,7 @@ public class BackgroundTaskWorker : BackgroundService
     {
         try
         {
-            await BackgroundTaskService.StopAsync(CancellationToken.None);
+            await BackgroundTaskService.StopAsync(CancellationToken.None).ConfigureAwait(false);
 
             // TODO: Polling solution for now, perhaps change to a more optimal solution? (2023-11-19)
             while (BackgroundTaskService.Queues.Any(x => x.ExecutingBackgroundTask is not null) ||
@@ -71,12 +71,12 @@ public class BackgroundTaskWorker : BackgroundService
                    // TODO: Here a check is done for if there are background tasks pending for a hacky-concurrency solution
                    BackgroundTaskService.Queues.SelectMany(x => x.BackgroundTasks).Any())
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken);
+                await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken).ConfigureAwait(false);
             }
         }
         finally
         {
-            await base.StopAsync(cancellationToken);
+            await base.StopAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

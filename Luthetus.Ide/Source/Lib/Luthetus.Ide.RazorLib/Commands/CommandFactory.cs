@@ -14,7 +14,8 @@ using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
-using Luthetus.Ide.RazorLib.FindAlls.Displays;
+using Luthetus.Ide.RazorLib.CodeSearches.Displays;
+using Luthetus.Common.RazorLib.Contexts.Displays;
 
 namespace Luthetus.Ide.RazorLib.Commands;
 
@@ -45,8 +46,10 @@ public class CommandFactory : ICommandFactory
 
 	private TreeViewNamespacePath? _nodeOfViewModel = null;
 	private List<TreeViewNoType> _nodeList = new();
+    private DialogRecord? _contextSwitchDialog;
+    private DialogRecord? _codeSearchDialog;
 
-    public void Initialize()
+	public void Initialize()
     {
         // ActiveContextsContext
         {
@@ -233,7 +236,7 @@ public class CommandFactory : ICommandFactory
 	            "Open: Find", "open-find", false,
 	            commandArgs => 
 				{
-					_textEditorService.OptionsApi.ShowFindDialog();
+					_textEditorService.OptionsApi.ShowFindAllDialog();
 		            return Task.CompletedTask;
 				});
 
@@ -242,30 +245,55 @@ public class CommandFactory : ICommandFactory
 	                openFindDialogCommand);
         }
 
-		// Add command to bring up a Find All dialog. Example: { Ctrl + , }
+		// Add command to bring up a Code Search dialog. Example: { Ctrl + , }
 		{
-			var openFindAllDialogCommand = new CommonCommand(
-	            "Open: Find All", "open-find-all", false,
+			var openCodeSearchDialogCommand = new CommonCommand(
+	            "Open: Code Search", "open-code-search", false,
 	            commandArgs => 
 				{
-                    var findDialog = new DialogRecord(
+                    _codeSearchDialog ??= new DialogRecord(
                         Key<DialogRecord>.NewKey(),
-                        "Find All",
-                        typeof(FindAllDisplay),
+						"Code Search",
+                        typeof(CodeSearchDisplay),
                         null,
                         null)
                     {
                         IsResizable = true
                     };
 
-                    _dispatcher.Dispatch(new DialogState.RegisterAction(findDialog));
+                    _dispatcher.Dispatch(new DialogState.RegisterAction(_codeSearchDialog));
                     return Task.CompletedTask;
 				});
 
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
 	                new KeymapArgument("Comma", false, true, false, Key<KeymapLayer>.Empty),
-	                openFindAllDialogCommand);
+	                openCodeSearchDialogCommand);
         }
+
+		// Add command to bring up a Context Switch dialog. Example: { Ctrl + Tab }
+		{
+			var openContextSwitchDialogCommand = new CommonCommand(
+	            "Open: Context Switch", "open-context-switch", false,
+	            commandArgs => 
+				{
+                    _contextSwitchDialog ??= new DialogRecord(
+                        Key<DialogRecord>.NewKey(),
+						"Context Switch",
+                        typeof(ContextSwitchDisplay),
+                        null,
+                        null)
+                    {
+                        IsResizable = true
+                    };
+
+                    _dispatcher.Dispatch(new DialogState.RegisterAction(_contextSwitchDialog));
+                    return Task.CompletedTask;
+				});
+
+			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+					new KeymapArgument("Backslash", false, true, true, Key<KeymapLayer>.Empty),
+					openContextSwitchDialogCommand);
+		}
     }
 
     public CommandNoType ConstructFocusContextElementCommand(

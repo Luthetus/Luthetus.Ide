@@ -272,7 +272,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                                 viewModelModifier.ViewModel.ViewModelKey,
                                 previousViewModel => previousViewModel with
                                 {
-                                    DisplayCommandBar = true
+                                    ShowCommandBar = true
                                 }).Invoke(editContext);
 
                             return Task.CompletedTask;
@@ -315,9 +315,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                             await commandArgs.TextEditorService.ModelApi
                                 .UndoEditFactory(commandArgs.ModelResourceUri)
-                                .Invoke(editContext);
+                                .Invoke(editContext)
+								.ConfigureAwait(false);
 
-                            await modelModifier.ApplySyntaxHighlightingAsync();
+                            await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
                         });
                     return Task.CompletedTask;
                 });
@@ -356,9 +357,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                             await commandArgs.TextEditorService.ModelApi
                                 .RedoEditFactory(commandArgs.ModelResourceUri)
-                                .Invoke(editContext);
+                                .Invoke(editContext)
+								.ConfigureAwait(false);
 
-                            await modelModifier.ApplySyntaxHighlightingAsync();
+                            await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
                         });
                     return Task.CompletedTask;
                 });

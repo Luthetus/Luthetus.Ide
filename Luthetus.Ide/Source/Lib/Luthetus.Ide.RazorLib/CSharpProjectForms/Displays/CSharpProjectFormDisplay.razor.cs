@@ -38,7 +38,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     [Inject]
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
-    private LuthetusIdeOptions LuthetusIdeOptions { get; set; } = null!;
+    private LuthetusIdeConfig IdeConfig { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -69,10 +69,10 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     {
         if (firstRender)
         {
-            await ReadProjectTemplates();
+            await ReadProjectTemplates().ConfigureAwait(false);
         }
 
-        await base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
     }
 
     private string GetIsActiveCssClassString(CSharpProjectFormPanelKind panelKind) =>
@@ -87,7 +87,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                     return;
 
                 _viewModel.ParentDirectoryNameValue = afp.Value;
-                await InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
             },
             afp =>
             {
@@ -107,11 +107,11 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.Photino)
         {
             _viewModel.ProjectTemplateList = WebsiteProjectTemplateFacts.WebsiteProjectTemplatesContainer.ToList();
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
         else
         {
-            await EnqueueDotNetNewListAsync();
+            await EnqueueDotNetNewListAsync().ConfigureAwait(false);
         }
     }
 
@@ -121,7 +121,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         {
             // Render UI loading icon
             _viewModel.IsReadingProjectTemplates = true;
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
 
             var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewList();
 
@@ -139,21 +139,21 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                     if (output is not null)
                     {
                         _viewModel.ProjectTemplateList = DotNetCliOutputLexer.LexDotNetNewListTerminalOutput(output);
-                        await InvokeAsync(StateHasChanged);
+                        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
                     }
                     else
                     {
-                        await EnqueueDotnetNewListDeprecatedAsync();
+                        await EnqueueDotnetNewListDeprecatedAsync().ConfigureAwait(false);
                     }
                 });
 
-            await generalTerminalSession.EnqueueCommandAsync(newCSharpProjectCommand);
+            await generalTerminalSession.EnqueueCommandAsync(newCSharpProjectCommand).ConfigureAwait(false);
         }
         finally
         {
             // UI loading message
             _viewModel.IsReadingProjectTemplates = false;
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
     }
 
@@ -164,7 +164,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         {
             // UI loading message
             _viewModel.IsReadingProjectTemplates = true;
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
 
             var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewListDeprecated();
             var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
@@ -181,7 +181,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                     if (output is not null)
                     {
                         _viewModel.ProjectTemplateList = DotNetCliOutputLexer.LexDotNetNewListTerminalOutput(output);
-                        await InvokeAsync(StateHasChanged);
+                        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
                     }
                     else
                     {
@@ -189,13 +189,13 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                     }
                 });
 
-            await generalTerminalSession.EnqueueCommandAsync(newCSharpProjectCommand);
+            await generalTerminalSession.EnqueueCommandAsync(newCSharpProjectCommand).ConfigureAwait(false);
         }
         finally
         {
             // UI loading message
             _viewModel.IsReadingProjectTemplates = false;
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
     }
 
@@ -247,21 +247,26 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                             return Task.CompletedTask;
                         });
 
-                    await generalTerminalSession.EnqueueCommandAsync(addExistingProjectToSolutionCommand);
+                    await generalTerminalSession
+                        .EnqueueCommandAsync(addExistingProjectToSolutionCommand)
+                        .ConfigureAwait(false);
                 });
 
-            await generalTerminalSession.EnqueueCommandAsync(newCSharpProjectCommand);
+            await generalTerminalSession
+                .EnqueueCommandAsync(newCSharpProjectCommand)
+                .ConfigureAwait(false);
         }
         else
         {
             await WebsiteDotNetCliHelper.StartNewCSharpProjectCommand(
-                immutableView,
-                EnvironmentProvider,
-                FileSystemProvider,
-                DotNetSolutionSync,
-                Dispatcher,
-                DialogRecord,
-                LuthetusCommonComponentRenderers);
+                    immutableView,
+                    EnvironmentProvider,
+                    FileSystemProvider,
+                    DotNetSolutionSync,
+                    Dispatcher,
+                    DialogRecord,
+                    LuthetusCommonComponentRenderers)
+                .ConfigureAwait(false);
         }
     }
 }
