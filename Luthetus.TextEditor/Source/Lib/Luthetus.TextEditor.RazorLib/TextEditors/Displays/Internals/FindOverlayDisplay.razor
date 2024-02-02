@@ -57,13 +57,25 @@
 
                     <button class="luth_button"
                             style="margin-left: 5px;"
-                            @onclick="MoveActiveIndexMatchedTextSpanUp">
+                            @onclick="MoveActiveIndexMatchedTextSpanUp"
+                            @onclick:stopPropagation="true"
+                            @onmousedown:stopPropagation="true"
+                            @onmousemove:stopPropagation="true"
+                            @ondblclick:stopPropagation="true"
+                            @oncontextmenu:stopPropagation="true"
+                            @onkeydown:stopPropagation="true">
                         <IconArrowUp />
                     </button>
 
                     <button class="luth_button"
                             style="margin-left: 5px;"
-                            @onclick="MoveActiveIndexMatchedTextSpanDown">
+                            @onclick="MoveActiveIndexMatchedTextSpanDown"
+                            @onclick:stopPropagation="true"
+                            @onmousedown:stopPropagation="true"
+                            @onmousemove:stopPropagation="true"
+                            @ondblclick:stopPropagation="true"
+                            @oncontextmenu:stopPropagation="true"
+                            @onkeydown:stopPropagation="true">
                         <IconArrowDown />
                     </button>
                 </div>
