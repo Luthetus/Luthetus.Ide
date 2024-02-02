@@ -35,7 +35,8 @@
     @foreach (var filePath in codeSearchState.ResultList)
     {
         <div style="cursor: pointer;"
-             @onclick="() => OpenInEditorOnClick(filePath)">
+             @onclick="() => HandleOnClick(filePath)"
+             @ondblclick="() => HandleOnDoubleClick(filePath)">
 
             @if (codeSearchState.StartingAbsolutePathForSearch is not null)
             {

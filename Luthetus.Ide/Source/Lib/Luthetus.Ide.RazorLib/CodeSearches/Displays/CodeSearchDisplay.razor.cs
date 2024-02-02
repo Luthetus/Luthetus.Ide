@@ -69,7 +69,12 @@ public partial class CodeSearchDisplay : FluxorComponent
 			: string.Empty;
 	}
 
-	private async Task OpenInEditorOnClick(string filePath)
+	private async Task HandleOnClick(string filePath)
+	{
+		// TODO: Render a text editor view model in the dialog.
+	}
+	
+	private async Task HandleOnDoubleClick(string filePath)
 	{
 		if (LuthetusTextEditorOptions.OpenInEditorAsyncFunc is null)
 			return;
