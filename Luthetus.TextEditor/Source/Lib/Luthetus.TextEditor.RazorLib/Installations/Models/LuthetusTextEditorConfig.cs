@@ -48,6 +48,6 @@ public record LuthetusTextEditorConfig
     /// </summary>
     public Action<ResourceUri>? RegisterViewModelAction { get; set; }
     public Action<Key<TextEditorViewModel>>? ShowViewModelAction { get; set; }
-    /// <summary>Default value is <see cref="true"/>. If one wishes to configure Luthetus.Common themselves, then set this to false, and invoke <see cref="Common.RazorLib.Installations.Models.ServiceCollectionExtensions.AddLuthetusCommonServices(IServiceCollection, Func{LuthetusCommonOptions, LuthetusCommonOptions}?)"/> prior to invoking Luthetus.TextEditor's</summary>
+    /// <summary>Default value is <see cref="true"/>. If one wishes to configure Luthetus.Common themselves, then set this to false, and invoke <see cref="Common.RazorLib.Installations.Models.ServiceCollectionExtensions.AddLuthetusCommonServices(IServiceCollection, Func{LuthetusCommonConfig, LuthetusCommonConfig}?)"/> prior to invoking Luthetus.TextEditor's</summary>
     public bool AddLuthetusCommon { get; init; } = true;
 }

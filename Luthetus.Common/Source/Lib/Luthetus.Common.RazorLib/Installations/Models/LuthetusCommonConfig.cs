@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.Themes.Models;
 
 namespace Luthetus.Common.RazorLib.Installations.Models;
 
-public record LuthetusCommonOptions
+public record LuthetusCommonConfig
 {
     /// <summary>The <see cref="Key{ThemeRecord}"/> to be used when the application starts</summary>
     public Key<ThemeRecord> InitialThemeKey { get; init; } = ThemeFacts.VisualStudioDarkThemeClone.Key;

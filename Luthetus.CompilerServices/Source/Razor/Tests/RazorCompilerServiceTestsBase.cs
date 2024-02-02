@@ -63,7 +63,7 @@ public class RazorCompilerServiceTestsBase
         });
 
         services.AddFluxor(options => options.ScanAssemblies(
-            typeof(LuthetusCommonOptions).Assembly,
+            typeof(LuthetusCommonConfig).Assembly,
             typeof(LuthetusTextEditorConfig).Assembly));
 
         ServiceProvider = services.BuildServiceProvider();

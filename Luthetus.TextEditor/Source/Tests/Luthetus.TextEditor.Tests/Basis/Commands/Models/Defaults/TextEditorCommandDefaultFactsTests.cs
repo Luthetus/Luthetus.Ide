@@ -1789,7 +1789,7 @@ public class Person
         out IServiceProvider serviceProvider)
     {
         var services = new ServiceCollection()
-            .AddSingleton<LuthetusCommonOptions>()
+            .AddSingleton<LuthetusCommonConfig>()
             .AddSingleton<LuthetusTextEditorConfig>()
             .AddScoped<IStorageService, DoNothingStorageService>()
             .AddScoped<IJSRuntime, TextEditorTestingJsRuntime>()
@@ -1801,7 +1801,7 @@ public class Person
             .AddScoped<ITextEditorService, TextEditorService>()
             .AddScoped<IClipboardService, InMemoryClipboardService>()
             .AddFluxor(options => options.ScanAssemblies(
-                typeof(LuthetusCommonOptions).Assembly,
+                typeof(LuthetusCommonConfig).Assembly,
                 typeof(LuthetusTextEditorConfig).Assembly));
 
         serviceProvider = services.BuildServiceProvider();

@@ -8,7 +8,7 @@ namespace Luthetus.Common.RazorLib.Installations.Displays;
 public partial class LuthetusCommonInitializer : ComponentBase
 {
     [Inject]
-    private LuthetusCommonOptions LuthetusCommonOptions { get; set; } = null!;
+    private LuthetusCommonConfig CommonConfig { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
@@ -35,7 +35,7 @@ public partial class LuthetusCommonInitializer : ComponentBase
                         .ConfigureAwait(false);
             }
 
-            AppOptionsService.SetActiveThemeRecordKey(LuthetusCommonOptions.InitialThemeKey, false);
+            AppOptionsService.SetActiveThemeRecordKey(CommonConfig.InitialThemeKey, false);
             await AppOptionsService.SetFromLocalStorageAsync().ConfigureAwait(false);
         }
 

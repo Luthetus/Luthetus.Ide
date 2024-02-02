@@ -22,7 +22,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private LuthetusCommonOptions LuthetusCommonOptions { get; set; } = null!;
+    private LuthetusCommonConfig CommonConfig { get; set; } = null!;
 
     [Parameter]
     public DialogRecord DialogRecord { get; set; } = null!;
@@ -34,7 +34,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     private string ElementDimensionsStyleCssString => DialogRecord.ElementDimensions.StyleString;
 
     private string IsMaximizedStyleCssString => DialogRecord.IsMaximized
-        ? LuthetusCommonOptions.DialogServiceOptions.IsMaximizedStyleCssString
+        ? CommonConfig.DialogServiceOptions.IsMaximizedStyleCssString
         : string.Empty;
 
     private string IconSizeInPixelsCssValue =>

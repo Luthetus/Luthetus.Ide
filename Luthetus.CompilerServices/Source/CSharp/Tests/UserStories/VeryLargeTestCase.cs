@@ -91,7 +91,7 @@ await builder.Build().RunAsync();
         out IServiceProvider serviceProvider)
     {
         var services = new ServiceCollection()
-            .AddSingleton<LuthetusCommonOptions>()
+            .AddSingleton<LuthetusCommonConfig>()
             .AddSingleton<LuthetusTextEditorConfig>()
             .AddScoped<IStorageService, DoNothingStorageService>()
             .AddScoped<IJSRuntime, DoNothingJsRuntime>()
@@ -102,7 +102,7 @@ await builder.Build().RunAsync();
             .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistryDefault>()
             .AddScoped<ITextEditorService, TextEditorService>()
             .AddFluxor(options => options.ScanAssemblies(
-                typeof(LuthetusCommonOptions).Assembly,
+                typeof(LuthetusCommonConfig).Assembly,
                 typeof(LuthetusTextEditorConfig).Assembly));
 
         serviceProvider = services.BuildServiceProvider();

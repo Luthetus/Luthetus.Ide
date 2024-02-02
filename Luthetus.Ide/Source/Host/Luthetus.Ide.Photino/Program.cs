@@ -25,7 +25,7 @@ class Program
         appBuilder.Services.AddLuthetusIdeRazorLibServices(hostingInformation);
 
         appBuilder.Services.AddSingleton(new ReflectiveOptions(
-            typeof(LuthetusCommonOptions).Assembly,
+            typeof(LuthetusCommonConfig).Assembly,
             typeof(LuthetusTextEditorConfig).Assembly,
             typeof(LuthetusIdeOptions).Assembly));
 

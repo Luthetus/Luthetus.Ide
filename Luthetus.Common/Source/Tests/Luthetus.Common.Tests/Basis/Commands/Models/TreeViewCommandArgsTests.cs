@@ -33,7 +33,7 @@ public class TreeViewCommandArgsTests
             new BackgroundTaskServiceSynchronous());
 
         services.AddFluxor(options => options.ScanAssemblies(
-            typeof(LuthetusCommonOptions).Assembly));
+            typeof(LuthetusCommonConfig).Assembly));
 
         services.AddScoped(_ => hostingInformation.BackgroundTaskService);
 

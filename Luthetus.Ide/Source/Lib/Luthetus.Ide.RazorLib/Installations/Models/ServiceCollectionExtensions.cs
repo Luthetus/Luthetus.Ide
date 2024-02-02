@@ -83,7 +83,7 @@ public static class ServiceCollectionExtensions
 
         services.AddFluxor(options => options.ScanAssemblies(
             typeof(ServiceCollectionExtensions).Assembly,
-            typeof(LuthetusCommonOptions).Assembly,
+            typeof(LuthetusCommonConfig).Assembly,
             typeof(LuthetusTextEditorConfig).Assembly));
 
         return services;

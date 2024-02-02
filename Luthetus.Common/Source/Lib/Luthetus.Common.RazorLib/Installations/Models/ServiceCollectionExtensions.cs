@@ -18,9 +18,9 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddLuthetusCommonServices(
         this IServiceCollection services,
         LuthetusHostingInformation hostingInformation,
-        Func<LuthetusCommonOptions, LuthetusCommonOptions>? configure = null)
+        Func<LuthetusCommonConfig, LuthetusCommonConfig>? configure = null)
     {
-        var commonOptions = new LuthetusCommonOptions();
+        var commonOptions = new LuthetusCommonConfig();
 
         if (configure is not null)
             commonOptions = configure.Invoke(commonOptions);
@@ -61,7 +61,7 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddCommonFactories(
         this IServiceCollection services,
         LuthetusHostingInformation hostingInformation,
-        LuthetusCommonOptions commonOptions)
+        LuthetusCommonConfig commonOptions)
     {
         services
             .AddScoped(sp => commonOptions.CommonFactories.ClipboardServiceFactory.Invoke(sp))
