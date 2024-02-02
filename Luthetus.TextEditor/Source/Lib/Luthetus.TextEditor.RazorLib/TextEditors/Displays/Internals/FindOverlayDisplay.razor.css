@@ -1,0 +1,13 @@
+.luth_te_find-overlay {
+    overflow: hidden;
+    position: absolute;
+    right: var(--luth_te_scrollbar-size);
+    top: 0;
+    width: 25%;
+    min-width: calc(22ch + 16px);
+    height: calc(2em + 13px);
+    padding: 7px;
+    z-index: 1;
+    cursor: default;
+    background-color: var(--luth_te_scrollbar-background-color);
+}
