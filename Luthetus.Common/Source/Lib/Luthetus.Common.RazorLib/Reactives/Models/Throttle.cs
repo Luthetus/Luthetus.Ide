@@ -65,7 +65,7 @@ public class Throttle : IThrottle
 
             _previousWorkItemTask = mostRecentWorkItem.Invoke(cancellationToken);
             await _previousWorkItemTask.ConfigureAwait(false);
-        });
+        }).ConfigureAwait(false);
     }
 
     public void Dispose()
