@@ -93,7 +93,8 @@ public partial class TerminalOutputDisplay : FluxorComponent
 
                         TextEditorService.ViewModelApi.Register(
                             terminalSession.TextEditorViewModelKey,
-                            terminalSession.ResourceUri);
+                            terminalSession.ResourceUri,
+                            new TextEditorCategory(nameof(TerminalOutputDisplay)));
                     }
                 }
             }

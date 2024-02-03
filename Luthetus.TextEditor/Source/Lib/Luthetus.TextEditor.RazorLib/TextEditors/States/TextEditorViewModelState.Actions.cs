@@ -10,6 +10,7 @@ public partial class TextEditorViewModelState
     public record RegisterAction(
         Key<TextEditorViewModel> ViewModelKey,
         ResourceUri ResourceUri,
+        TextEditorCategory Category,
         ITextEditorService TextEditorService);
 
     public record DisposeAction(Key<TextEditorViewModel> ViewModelKey);

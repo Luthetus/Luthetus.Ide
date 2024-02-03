@@ -81,11 +81,11 @@ public partial interface ITextEditorService
             var settingsDialog = new DialogRecord(
                 Key<DialogRecord>.NewKey(),
                 "Text Editor Settings",
-                _textEditorConfig.SettingsComponentRendererType,
+                _textEditorConfig.SettingsDialogConfig.ComponentRendererType,
                 null,
                 cssClassString)
             {
-                IsResizable = isResizableOverride ?? _textEditorConfig.SettingsDialogComponentIsResizable
+                IsResizable = isResizableOverride ?? _textEditorConfig.SettingsDialogConfig.ComponentIsResizable
             };
 
             _dispatcher.Dispatch(new DialogState.RegisterAction(settingsDialog));
@@ -96,11 +96,11 @@ public partial interface ITextEditorService
             _findAllDialog ??= new DialogRecord(
                 Key<DialogRecord>.NewKey(),
                 "Find All",
-                _textEditorConfig.FindAllComponentRendererType,
+                _textEditorConfig.FindAllDialogConfig.ComponentRendererType,
                 null,
                 cssClassString)
             {
-                IsResizable = isResizableOverride ?? _textEditorConfig.FindAllDialogComponentIsResizable
+                IsResizable = isResizableOverride ?? _textEditorConfig.FindAllDialogConfig.ComponentIsResizable
             };
 
             _dispatcher.Dispatch(new DialogState.RegisterAction(_findAllDialog));

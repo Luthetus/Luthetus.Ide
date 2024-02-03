@@ -157,7 +157,8 @@ public class TextEditorCommandVimFactsMotionsTests
 
         textEditorService.ViewModelApi.Register(
             viewModelKey,
-            model.ResourceUri);
+            model.ResourceUri,
+            new TextEditorCategory("UnitTesting"));
 
         viewModel = textEditorService.ViewModelApi.GetOrDefault(viewModelKey)
            ?? throw new ArgumentNullException();

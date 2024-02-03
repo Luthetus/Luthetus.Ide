@@ -40,7 +40,8 @@ public partial class TextEditorDiffStateActionsTests
 
         textEditorService.ViewModelApi.Register(
             outViewModelKey,
-            outModelResourceUri);
+            outModelResourceUri,
+            new TextEditorCategory("UnitTesting"));
 
         var outViewModel = textEditorService.ViewModelApi.GetOrDefault(outViewModelKey)
            ?? throw new ArgumentNullException();
@@ -84,7 +85,8 @@ public partial class TextEditorDiffStateActionsTests
 
         textEditorService.ViewModelApi.Register(
             outViewModelKey,
-            outModelResourceUri);
+            outModelResourceUri,
+            new TextEditorCategory("UnitTesting"));
 
         var outViewModel = textEditorService.ViewModelApi.GetOrDefault(outViewModelKey)
            ?? throw new ArgumentNullException();

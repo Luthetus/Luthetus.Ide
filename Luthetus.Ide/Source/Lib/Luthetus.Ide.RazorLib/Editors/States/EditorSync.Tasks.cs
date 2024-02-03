@@ -4,75 +4,49 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.States;
 using Luthetus.Common.RazorLib.Notifications.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.Ide.RazorLib.Editors.States;
 
 public partial class EditorSync
 {
-    private async Task<TextEditorModel?> GetOrCreateTextEditorModelAsync(
-        IAbsolutePath absolutePath,
-        string absolutePathString)
+    private async Task OpenInEditorAsync(
+        IAbsolutePath? absolutePath,
+        bool shouldSetFocusToEditor,
+        Key<TextEditorGroup>? editorTextEditorGroupKey = null)
     {
-        var textEditorModel = _textEditorService.ModelApi
-            .GetOrDefault(new(absolutePathString));
+        editorTextEditorGroupKey ??= EditorTextEditorGroupKey;
 
-        if (textEditorModel is null)
-        {
-            var resourceUri = new ResourceUri(absolutePathString);
-            var fileLastWriteTime = await _fileSystemProvider.File.GetLastWriteTimeAsync(absolutePathString);
-            var content = await _fileSystemProvider.File.ReadAllTextAsync(absolutePathString);
+        if (absolutePath is null || absolutePath.IsDirectory)
+            return;
 
-            var decorationMapper = _decorationMapperRegistry.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
-            var compilerService = _compilerServiceRegistry.GetCompilerService(absolutePath.ExtensionNoPeriod);
+        _textEditorService.GroupApi.Register(editorTextEditorGroupKey.Value);
 
-            textEditorModel = new TextEditorModel(
-                resourceUri,
-                fileLastWriteTime,
-                absolutePath.ExtensionNoPeriod,
-                content,
-                decorationMapper,
-                compilerService);
+        var resourceUri = new ResourceUri(absolutePath.Value);
 
-            _textEditorService.ModelApi.RegisterCustom(textEditorModel);
+        await RegisterModelFunc(new RegisterModelArgs(
+            resourceUri,
+            _serviceProvider));
 
-            _textEditorService.Post(
-                nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
-                async editContext =>
-                {
-                    await _textEditorService.ModelApi.AddPresentationModelFactory(
-                            textEditorModel.ResourceUri,
-                            CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel)
-                        .Invoke(editContext);
+        var viewModelKey = await TryRegisterViewModelFunc(new TryRegisterViewModelArgs(
+            Key<TextEditorViewModel>.NewKey(),
+            resourceUri,
+            new TextEditorCategory("main"),
+            shouldSetFocusToEditor,
+            _serviceProvider));
 
-                    await _textEditorService.ModelApi.AddPresentationModelFactory(
-                            textEditorModel.ResourceUri,
-                            DiffPresentationFacts.EmptyInPresentationModel)
-                        .Invoke(editContext);
+        _textEditorService.GroupApi.AddViewModel(
+            editorTextEditorGroupKey.Value,
+            viewModelKey);
 
-                    await _textEditorService.ModelApi.AddPresentationModelFactory(
-                            textEditorModel.ResourceUri,
-                            DiffPresentationFacts.EmptyOutPresentationModel)
-                        .Invoke(editContext);
-            
-                    textEditorModel.CompilerService.RegisterResource(textEditorModel.ResourceUri);
-                });
-        }
-
-        await CheckIfContentsWereModifiedAsync(
-            Dispatcher,
-            absolutePathString,
-            textEditorModel);
-
-        return textEditorModel;
+        _textEditorService.GroupApi.SetActiveViewModel(
+            editorTextEditorGroupKey.Value,
+            viewModelKey);
     }
 
     private async Task CheckIfContentsWereModifiedAsync(
@@ -148,108 +122,5 @@ public partial class EditorSync
             dispatcher.Dispatch(new NotificationState.RegisterAction(
                 notificationInformative));
         }
-    }
-
-    private Key<TextEditorViewModel> GetOrCreateTextEditorViewModel(
-        IAbsolutePath absolutePath,
-        bool shouldSetFocusToEditor,
-        TextEditorModel textEditorModel)
-    {
-        var viewModel = _textEditorService.ModelApi
-            .GetViewModelsOrEmpty(textEditorModel.ResourceUri)
-            .FirstOrDefault();
-
-        var viewModelKey = viewModel?.ViewModelKey ?? Key<TextEditorViewModel>.Empty;
-
-        if (viewModel is null)
-        {
-            viewModelKey = Key<TextEditorViewModel>.NewKey();
-
-            _textEditorService.ViewModelApi.Register(
-                viewModelKey,
-                textEditorModel.ResourceUri);
-
-            var lastPresentationKeys = new[]
-            {
-                CompilerServiceDiagnosticPresentationFacts.PresentationKey,
-                FindOverlayPresentationFacts.PresentationKey,
-            }.ToImmutableArray();
-
-            _textEditorService.Post(
-                nameof(GetOrCreateTextEditorViewModel),
-                _textEditorService.ViewModelApi.WithValueFactory(
-                    viewModelKey,
-                    textEditorViewModel => textEditorViewModel with
-                    {
-                        OnSaveRequested = HandleOnSaveRequested,
-                        GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
-                        ShouldSetFocusAfterNextRender = shouldSetFocusToEditor,
-                        LastPresentationLayerKeysList = lastPresentationKeys.ToImmutableList()
-                    }));
-        }
-        else
-        {
-            viewModel.ShouldSetFocusAfterNextRender = shouldSetFocusToEditor;
-        }
-
-        return viewModelKey;
-
-        void HandleOnSaveRequested(ITextEditorModel innerTextEditor)
-        {
-            var innerContent = innerTextEditor.GetAllText();
-
-            var cancellationToken = textEditorModel.TextEditorSaveFileHelper.GetCancellationToken();
-
-			_fileSystemSync.SaveFile(
-                absolutePath,
-                innerContent,
-                writtenDateTime =>
-                {
-                    if (writtenDateTime is not null)
-                    {
-                        _textEditorService.Post(
-                            nameof(HandleOnSaveRequested),
-                            _textEditorService.ModelApi.SetResourceDataFactory(
-                                innerTextEditor.ResourceUri,
-                                writtenDateTime.Value));
-                    }
-                },
-                cancellationToken);
-        }
-    }
-
-    private async Task OpenInEditorAsync(
-        IAbsolutePath? absolutePath,
-        bool shouldSetFocusToEditor,
-        Key<TextEditorGroup>? editorTextEditorGroupKey = null)
-    {
-        editorTextEditorGroupKey ??= EditorTextEditorGroupKey;
-
-        if (absolutePath is null || absolutePath.IsDirectory)
-            return;
-
-        _textEditorService.GroupApi.Register(editorTextEditorGroupKey.Value);
-
-        var inputFileAbsolutePathString = absolutePath.Value;
-
-        var textEditorModel = await GetOrCreateTextEditorModelAsync(
-            absolutePath,
-            inputFileAbsolutePathString);
-
-        if (textEditorModel is null)
-            return;
-
-        var viewModel = GetOrCreateTextEditorViewModel(
-            absolutePath,
-            shouldSetFocusToEditor,
-            textEditorModel);
-
-        _textEditorService.GroupApi.AddViewModel(
-            editorTextEditorGroupKey.Value,
-            viewModel);
-
-        _textEditorService.GroupApi.SetActiveViewModel(
-            editorTextEditorGroupKey.Value,
-            viewModel);
     }
 }

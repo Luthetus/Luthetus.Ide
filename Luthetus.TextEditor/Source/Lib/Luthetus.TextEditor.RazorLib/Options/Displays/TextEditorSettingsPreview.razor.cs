@@ -46,7 +46,8 @@ public partial class TextEditorSettingsPreview : ComponentBase
 
             TextEditorService.ViewModelApi.Register(
                 SettingsPreviewTextEditorViewModelKey,
-                SettingsPreviewTextEditorResourceUri);
+                SettingsPreviewTextEditorResourceUri,
+                new TextEditorCategory(nameof(TextEditorSettingsPreview)));
 
             await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }

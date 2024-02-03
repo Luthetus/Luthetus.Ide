@@ -37,7 +37,8 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
 
                 TextEditorService.ViewModelApi.Register(
                     InViewModelKey,
-                    InResourceUri);
+                    InResourceUri,
+                    new TextEditorCategory(nameof(GitChangesDisplay)));
 
                 TextEditorService.Post(
                     nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
@@ -83,7 +84,8 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
 
                 TextEditorService.ViewModelApi.Register(
                     OutViewModelKey,
-                    OutResourceUri);
+                    OutResourceUri,
+                    new TextEditorCategory(nameof(GitChangesDisplay)));
 
                 TextEditorService.Post(
                     nameof(TextEditorService.ModelApi.AddPresentationModelFactory),

@@ -25,7 +25,8 @@ public partial class TextEditorViewModelState
                 registerAction.ResourceUri,
                 registerAction.TextEditorService,
                 VirtualizationResult<List<RichCharacter>>.GetEmptyRichCharacters(),
-                false);
+                false,
+                registerAction.Category);
 
             var outViewModelList = inState.ViewModelList.Add(viewModel);
 

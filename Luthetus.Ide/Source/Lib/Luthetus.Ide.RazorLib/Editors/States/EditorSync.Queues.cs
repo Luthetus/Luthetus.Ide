@@ -21,15 +21,6 @@ public partial class EditorSync
                 shouldSetFocusToEditor,
                 editorTextEditorGroupKey));
     }
-    
-    public void GetOrCreateTextEditorModel(IAbsolutePath absolutePath, string absolutePathString)
-    {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-            nameof(GetOrCreateTextEditorModel),
-            async () => await GetOrCreateTextEditorModelAsync(
-                absolutePath,
-                absolutePathString));
-    }
 
     public void ShowInputFile()
     {

@@ -45,7 +45,8 @@ public class TextEditorViewModelStateMainTests
             new ResourceUri("/unitTesting.txt"),
             textEditorService,
             VirtualizationResult<List<RichCharacter>>.GetEmptyRichCharacters(),
-            false);
+            false,
+            new TextEditorCategory("UnitTesting"));
 
 		var outViewModelList = viewModelState.ViewModelList.Add(viewModel);
         Assert.NotEqual(ImmutableList<TextEditorViewModel>.Empty, outViewModelList);

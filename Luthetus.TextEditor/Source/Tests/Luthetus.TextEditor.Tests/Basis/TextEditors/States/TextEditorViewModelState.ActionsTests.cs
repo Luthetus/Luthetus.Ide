@@ -25,10 +25,12 @@ public class TextEditorViewModelStateActionsTests
         var registerAction = new TextEditorViewModelState.RegisterAction(
             inViewModel.ViewModelKey,
             inModel.ResourceUri,
+            inViewModel.Category,
             textEditorService);
 
         Assert.Equal(inViewModel.ViewModelKey, registerAction.ViewModelKey);
         Assert.Equal(inModel.ResourceUri, registerAction.ResourceUri);
+        Assert.Equal(inViewModel.Category, registerAction.Category);
         Assert.Equal(textEditorService, registerAction.TextEditorService);
     }
 
