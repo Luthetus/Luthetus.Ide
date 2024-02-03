@@ -1,4 +1,5 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
@@ -137,6 +138,8 @@ public partial class EditorSync
 
     public Task<bool> TryShowViewModelFunc(TryShowViewModelArgs showViewModelArgs)
     {
+        _textEditorService.GroupApi.Register(EditorTextEditorGroupKey);
+
         var viewModel = _textEditorService.ViewModelApi.GetOrDefault(showViewModelArgs.ViewModelKey);
 
         if (viewModel is null)
