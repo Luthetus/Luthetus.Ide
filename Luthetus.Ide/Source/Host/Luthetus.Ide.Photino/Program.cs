@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
 using System;
 using Luthetus.Common.RazorLib.Reflectives.Models;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Luthetus.Ide.Photino;
 
@@ -44,10 +46,40 @@ class Program
             .SetLeft(50)
             .SetTop(100);
 
+        var continuousStartCts = new CancellationTokenSource();
+        var blockingStartCts = new CancellationTokenSource();
+
+        var continuousStopCts = new CancellationTokenSource();
+        var blockingStopCts = new CancellationTokenSource();
+
+        var continuousBtw = app.Services.GetRequiredService<ContinuousBackgroundTaskWorker>();
+        var blockingBtw = app.Services.GetRequiredService<BlockingBackgroundTaskWorker>();
+
+        var continuousStartTask = continuousBtw.StartAsync(continuousStartCts.Token);
+        var blockingStartTask = blockingBtw.StartAsync(blockingStartCts.Token);
+
+        Task continuousStopTask;
+        Task blockingStopTask;
+
         AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
         {
             app.MainWindow.ShowMessage("Fatal exception", error.ExceptionObject.ToString());
+
+            continuousStartCts.Cancel();
+            blockingStartCts.Cancel();
+
+            continuousStopTask = continuousBtw.StopAsync(continuousStopCts.Token);
+            blockingStopTask = blockingBtw.StopAsync(blockingStopCts.Token);
         };
+
+        AppDomain.CurrentDomain.ProcessExit += (sender, error) =>
+        {
+            continuousStartCts.Cancel();
+            blockingStartCts.Cancel();
+
+            continuousStopCts.Cancel();
+            blockingStopCts.Cancel();
+        };  
 
         app.Run();
     }

@@ -22,7 +22,8 @@ public partial class LuthetusCommonInitializer : ComponentBase
     {
         if (firstRender)
         {
-            if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.ServerSide)
+            if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.ServerSide &&
+                LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.Photino)
             {
                 _ = Task.Run(async () => await ContinuousBackgroundTaskWorker
                             .StartAsync(CancellationToken.None)

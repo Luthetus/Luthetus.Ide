@@ -60,25 +60,24 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     private void RequestInputFileForParentDirectory()
     {
         InputFileSync.RequestInputFileStateForm("Directory for new .NET Solution",
-            async afp =>
+            async absolutePath =>
             {
-                if (afp is null)
+                if (absolutePath is null)
                     return;
 
-                _parentDirectoryName = afp.Value;
-
+                _parentDirectoryName = absolutePath.Value;
                 await InvokeAsync(StateHasChanged).ConfigureAwait(false);
             },
-            afp =>
+            absolutePath =>
             {
-                if (afp is null || !afp.IsDirectory)
+                if (absolutePath is null || !absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(true);
             },
             new[]
             {
-                new InputFilePattern("Directory", afp => afp.IsDirectory)
+                new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
             }.ToImmutableArray());
     }
 
