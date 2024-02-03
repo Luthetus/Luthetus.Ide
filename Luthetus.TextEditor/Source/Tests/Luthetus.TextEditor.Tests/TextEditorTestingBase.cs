@@ -64,6 +64,10 @@ public class TextEditorTestingBase
             null);
 
         TextEditorHelper.TextEditorService.ModelApi.RegisterCustom(textEditor);
-        TextEditorHelper.TextEditorService.ViewModelApi.Register(TextEditorViewModelKey, ResourceUri);
+
+        TextEditorHelper.TextEditorService.ViewModelApi.Register(
+            TextEditorViewModelKey,
+            ResourceUri,
+            new TextEditorCategory("UnitTesting"));
     }
 }

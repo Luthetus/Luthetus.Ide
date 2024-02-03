@@ -363,7 +363,8 @@ public class TextEditorModelApiTests
 
         textEditorService.ViewModelApi.Register(
             Key<TextEditorViewModel>.NewKey(),
-            inModel.ResourceUri);
+            inModel.ResourceUri,
+            new TextEditorCategory("UnitTesting"));
         
         Assert.Single(textEditorService.ModelApi.GetViewModelsOrEmpty(inModel.ResourceUri));
     }

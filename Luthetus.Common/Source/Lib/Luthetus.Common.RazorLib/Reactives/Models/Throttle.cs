@@ -27,7 +27,7 @@ public class Throttle : IThrottle
 
     public TimeSpan ThrottleTimeSpan { get; }
 
-    public async Task FireAsync(Func<CancellationToken, Task> workItem)
+    public void FireAndForget(Func<CancellationToken, Task> workItem)
     {
         lock (_syncRoot)
         {
@@ -37,32 +37,35 @@ public class Throttle : IThrottle
                 return;
         }
 
-        await _throttleDelayTask.ConfigureAwait(false);
-
-        if (ShouldWaitForPreviousWorkItemToComplete)
-            await _previousWorkItemTask.ConfigureAwait(false);
-
-        Func<CancellationToken, Task> mostRecentWorkItem;
-        CancellationToken cancellationToken;
-
-        lock (_syncRoot)
+        _ = Task.Run(async () =>
         {
-            mostRecentWorkItem = _workItemsStack.Pop();
-            _workItemsStack.Clear();
+            await _throttleDelayTask.ConfigureAwait(false);
 
-            _throttleCancellationTokenSource.Cancel();
-            _throttleCancellationTokenSource = new();
+            if (ShouldWaitForPreviousWorkItemToComplete)
+                await _previousWorkItemTask.ConfigureAwait(false);
 
-            cancellationToken = _throttleCancellationTokenSource.Token;
+            Func<CancellationToken, Task> mostRecentWorkItem;
+            CancellationToken cancellationToken;
 
-            _throttleDelayTask = Task.Run(async () =>
+            lock (_syncRoot)
             {
-                await Task.Delay(ThrottleTimeSpan).ConfigureAwait(false);
-            }, cancellationToken);
-        }
+                mostRecentWorkItem = _workItemsStack.Pop();
+                _workItemsStack.Clear();
 
-        _previousWorkItemTask = mostRecentWorkItem.Invoke(cancellationToken);
-        await _previousWorkItemTask.ConfigureAwait(false);
+                _throttleCancellationTokenSource.Cancel();
+                _throttleCancellationTokenSource = new();
+
+                cancellationToken = _throttleCancellationTokenSource.Token;
+
+                _throttleDelayTask = Task.Run(async () =>
+                {
+                    await Task.Delay(ThrottleTimeSpan).ConfigureAwait(false);
+                }, cancellationToken);
+            }
+
+            _previousWorkItemTask = mostRecentWorkItem.Invoke(cancellationToken);
+            await _previousWorkItemTask.ConfigureAwait(false);
+        }).ConfigureAwait(false);
     }
 
     public void Dispose()

@@ -88,7 +88,8 @@ public class TextEditorServicesTestsHelper
 
         textEditorService.ViewModelApi.Register(
             viewModelKey,
-            resourceUri);
+            resourceUri,
+            new TextEditorCategory("UnitTesting"));
 
         viewModel = textEditorService.ViewModelApi.GetOrDefault(viewModelKey)
            ?? throw new ArgumentNullException();

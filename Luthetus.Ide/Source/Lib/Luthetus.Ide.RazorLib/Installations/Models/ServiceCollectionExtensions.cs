@@ -53,41 +53,20 @@ public static class ServiceCollectionExtensions
             {
                 CustomThemeRecordList = LuthetusTextEditorCustomThemeFacts.AllCustomThemesList,
                 InitialThemeKey = ThemeFacts.VisualStudioDarkThemeClone.Key,
-				OpenInEditorAsyncFunc = (absolutePathString, serviceProvider) =>
-				{
-					var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
-					var editorSync = serviceProvider.GetRequiredService<EditorSync>();
-
-					editorSync.OpenInEditor(
-                        environmentProvider.AbsolutePathFactory(absolutePathString, false),
-						false);
-
-                    return Task.CompletedTask;
-				},
-                RegisterModelFunc = (resourceUri, serviceProvider) =>
+                RegisterModelFunc = async (registerModelArgs) =>
                 {
-                    var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
-                    var editorSync = serviceProvider.GetRequiredService<EditorSync>();
-
-                    var absolutePath = environmentProvider.AbsolutePathFactory(resourceUri.Value, false);
-                    editorSync.OpenInEditor(absolutePath, true);
-                    return Task.CompletedTask;
+                    var editorSync = registerModelArgs.ServiceProvider.GetRequiredService<EditorSync>();
+                    await editorSync.RegisterModelFunc(registerModelArgs).ConfigureAwait(false);
                 },
-                RegisterViewModelFunc = (viewModelKey, resourceUri, serviceProvider) =>
+                TryRegisterViewModelFunc = async (registerViewModelArgs) =>
                 {
-                    var textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
-                    var editorSync = serviceProvider.GetRequiredService<EditorSync>();
-
-                    textEditorService.ViewModelApi.Register(viewModelKey, resourceUri);
-                    return Task.CompletedTask;
+                    var editorSync = registerViewModelArgs.ServiceProvider.GetRequiredService<EditorSync>();
+                    return await editorSync.TryRegisterViewModelFunc(registerViewModelArgs).ConfigureAwait(false);
                 },
-                ShowViewModelFunc = (viewModelKey, serviceProvider) =>
+                TryShowViewModelFunc = async (tryShowViewModelArgs) =>
                 {
-                    var textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
-                    var editorSync = serviceProvider.GetRequiredService<EditorSync>();
-
-                    textEditorService.GroupApi.SetActiveViewModel(EditorSync.EditorTextEditorGroupKey, viewModelKey);
-                    return Task.CompletedTask;
+                    var editorSync = tryShowViewModelArgs.ServiceProvider.GetRequiredService<EditorSync>();
+                    return await editorSync.TryShowViewModelFunc(tryShowViewModelArgs);
                 },
             });
         }

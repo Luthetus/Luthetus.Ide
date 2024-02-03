@@ -20,7 +20,10 @@ public partial interface ITextEditorService
     public interface ITextEditorViewModelApi
     {
         #region CREATE_METHODS
-        public void Register(Key<TextEditorViewModel> textEditorViewModelKey, ResourceUri resourceUri);
+        public void Register(
+            Key<TextEditorViewModel> textEditorViewModelKey,
+            ResourceUri resourceUri,
+            TextEditorCategory category);
         #endregion
 
         #region READ_METHODS
@@ -240,11 +243,15 @@ public partial interface ITextEditorService
         }
 
         #region CREATE_METHODS
-        public void Register(Key<TextEditorViewModel> textEditorViewModelKey, ResourceUri resourceUri)
+        public void Register(
+            Key<TextEditorViewModel> viewModelKey,
+            ResourceUri resourceUri,
+            TextEditorCategory category)
         {
             _dispatcher.Dispatch(new TextEditorViewModelState.RegisterAction(
-                textEditorViewModelKey,
+                viewModelKey,
                 resourceUri,
+                category,
                 _textEditorService));
         }
         #endregion

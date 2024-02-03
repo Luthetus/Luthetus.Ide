@@ -12,6 +12,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Displays;
 
@@ -138,33 +139,72 @@ public partial class CodeSearchDisplay : FluxorComponent
 		var inPreviewViewModelKey = CodeSearchStateWrap.Value.PreviewViewModelKey;
 		var outPreviewViewModelKey = Key<TextEditorViewModel>.NewKey();
 
-        if (TextEditorConfig.RegisterViewModelFunc is null)
+		var resourceUri = new ResourceUri(filePath);
+
+        if (TextEditorConfig.RegisterModelFunc is null)
             return;
 
-        await TextEditorConfig.RegisterViewModelFunc.Invoke(
-            outPreviewViewModelKey,
-            new ResourceUri(filePath),
-            ServiceProvider);
+        await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
+                resourceUri,
+                ServiceProvider));
 
-        Dispatcher.Dispatch(new CodeSearchState.WithAction(inState => inState with
-		{
-			PreviewFilePath = filePath,
-            PreviewViewModelKey = outPreviewViewModelKey,
-        }));
+        if (TextEditorConfig.TryRegisterViewModelFunc is not null)
+        {
+            var viewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
+                outPreviewViewModelKey,
+                resourceUri,
+                new TextEditorCategory(nameof(CodeSearchDisplay)),
+                false,
+                ServiceProvider));
 
-		if (inPreviewViewModelKey != Key<TextEditorViewModel>.Empty)
-			TextEditorService.ViewModelApi.Dispose(inPreviewViewModelKey);
+            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
+                TextEditorConfig.TryShowViewModelFunc is not null)
+            {
+                Dispatcher.Dispatch(new CodeSearchState.WithAction(inState => inState with
+                {
+                    PreviewFilePath = filePath,
+                    PreviewViewModelKey = viewModelKey,
+                }));
+
+                if (inPreviewViewModelKey != Key<TextEditorViewModel>.Empty &&
+                    inPreviewViewModelKey != viewModelKey)
+				{
+                    TextEditorService.ViewModelApi.Dispose(inPreviewViewModelKey);
+				}
+            }
+        }
     }
 	
 	private async Task HandleOnDoubleClick(string filePath)
 	{
-		if (TextEditorConfig.OpenInEditorAsyncFunc is null)
-			return;
+        var resourceUri = new ResourceUri(filePath);
 
-		await TextEditorConfig.OpenInEditorAsyncFunc
-			.Invoke(filePath, ServiceProvider)
-			.ConfigureAwait(false);
-	}
+        if (TextEditorConfig.RegisterModelFunc is null)
+            return;
+
+        await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
+                resourceUri,
+                ServiceProvider));
+
+        if (TextEditorConfig.TryRegisterViewModelFunc is not null)
+        {
+            var viewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
+                Key<TextEditorViewModel>.NewKey(),
+                resourceUri,
+                new TextEditorCategory("main"),
+                false,
+                ServiceProvider));
+
+            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
+                TextEditorConfig.TryShowViewModelFunc is not null)
+            {
+                await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
+                    viewModelKey,
+                    Key<TextEditorGroup>.Empty,
+                    ServiceProvider));
+            }
+        }
+    }
 
 	private async Task HandleResizableRowReRenderAsync()
 	{

@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
 
 namespace Luthetus.TextEditor.RazorLib.SearchEngines.Displays;
 
@@ -22,12 +26,33 @@ public partial class SearchEngineFileSystemDisplay : ComponentBase, IDisposable
 
 	private async Task OpenInEditorOnClick(string filePath)
 	{
-		if (TextEditorConfig.OpenInEditorAsyncFunc is null)
+		var resourceUri = new ResourceUri(filePath);
+
+        if (TextEditorConfig.RegisterModelFunc is null)
 			return;
 
-		await TextEditorConfig.OpenInEditorAsyncFunc
-			.Invoke(filePath, ServiceProvider)
-            .ConfigureAwait(false);
+        await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
+                resourceUri,
+                ServiceProvider));
+
+        if (TextEditorConfig.TryRegisterViewModelFunc is not null)
+		{
+			var viewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
+				Key<TextEditorViewModel>.NewKey(),
+                resourceUri,
+                new TextEditorCategory("main"),
+				false,
+				ServiceProvider));
+
+            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
+				TextEditorConfig.TryShowViewModelFunc is not null)
+            {
+				await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
+					viewModelKey,
+					Key<TextEditorGroup>.Empty,
+					ServiceProvider));
+            }
+        }
 	}
 
 	private async void On_SearchEngineFileSystem_ProgressOccurred()

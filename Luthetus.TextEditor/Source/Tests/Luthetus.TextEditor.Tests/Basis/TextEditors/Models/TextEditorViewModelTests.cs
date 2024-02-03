@@ -37,7 +37,8 @@ public class TextEditorViewModelTests
 			resourceUri,
 			textEditorService,
             virtualizationResult,
-            displayCommandBar);
+            displayCommandBar,
+            new TextEditorCategory("UnitTesting"));
 
         Assert.Equal(viewModelKey, viewModel.ViewModelKey);
         Assert.Equal(resourceUri, viewModel.ResourceUri);

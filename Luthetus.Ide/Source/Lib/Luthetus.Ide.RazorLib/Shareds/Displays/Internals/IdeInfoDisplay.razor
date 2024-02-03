@@ -19,6 +19,21 @@
             Recent Changes:
 			<div>
                 <div>
+                    <div>v <em class="luth_em">0.7.4.0</em> (2024-02-03)</div>
+                    
+                    <ul>
+                        <li>
+                            Fix the IDE freezing "randomly":
+                            I wrote the <a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.Common/Source/Lib/Luthetus.Common.RazorLib/Reactives/Models/Throttle.cs">Throttle.cs</a> initially as async.
+                            But if the source that wants to be throttled awaits the throttle timer,
+                            its just sort of nonsense, right?
+                            I believe this was locking.
+                            Now its a fire and forget, so the invoker doesn't have to await the
+                            throttle.
+                        </li>
+                    </ul>
+                </div>
+                <div>
                     <div>v <em class="luth_em">0.7.3.0</em> (2024-02-02)</div>
                     
                     <ul>

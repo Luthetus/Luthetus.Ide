@@ -37,7 +37,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
             _ = Task.Run(async () =>
             {
-                await _throttleInputValueChange.FireAsync(_ =>
+                _throttleInputValueChange.FireAndForget(_ =>
                 {
                     TextEditorService.Post(
                         nameof(FindOverlayDisplay),
@@ -88,7 +88,7 @@ public partial class FindOverlayDisplay : ComponentBase
                         });
 
                     return Task.CompletedTask;
-                }).ConfigureAwait(false);
+                });
             });
         }
     }

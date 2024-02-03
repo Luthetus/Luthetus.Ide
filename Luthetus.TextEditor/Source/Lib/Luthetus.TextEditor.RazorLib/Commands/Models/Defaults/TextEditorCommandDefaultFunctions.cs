@@ -10,6 +10,8 @@ using Microsoft.JSInterop;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -884,7 +886,7 @@ public class TextEditorCommandDefaultFunctions
             {
                 if (commandArgs.TextEditorConfig.RegisterModelFunc is not null)
                 {
-                    commandArgs.TextEditorConfig.RegisterModelFunc.Invoke(definitionTextSpan.ResourceUri, commandArgs.ServiceProvider);
+                    commandArgs.TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(definitionTextSpan.ResourceUri, commandArgs.ServiceProvider));
                     var definitionModelModifier = editContext.GetModelModifier(definitionTextSpan.ResourceUri);
 
                     if (definitionModel is null)
@@ -900,9 +902,15 @@ public class TextEditorCommandDefaultFunctions
 
             if (!definitionViewModels.Any())
             {
-                if (commandArgs.TextEditorConfig.RegisterViewModelFunc is not null)
+                if (commandArgs.TextEditorConfig.TryRegisterViewModelFunc is not null)
                 {
-                    commandArgs.TextEditorConfig.RegisterViewModelFunc.Invoke(Key<TextEditorViewModel>.NewKey(), definitionTextSpan.ResourceUri, commandArgs.ServiceProvider);
+                    commandArgs.TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
+                        Key<TextEditorViewModel>.NewKey(),
+                        definitionTextSpan.ResourceUri,
+                        new TextEditorCategory("main"),
+                        true,
+                        commandArgs.ServiceProvider));
+
                     definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
 
                     if (!definitionViewModels.Any())
@@ -934,8 +942,13 @@ public class TextEditorCommandDefaultFunctions
             definitionPrimaryCursorModifier.ColumnIndex = columnIndex;
             definitionPrimaryCursorModifier.PreferredColumnIndex = columnIndex;
 
-            if (commandArgs.TextEditorConfig.ShowViewModelFunc is not null)
-                commandArgs.TextEditorConfig.ShowViewModelFunc.Invoke(definitionViewModelKey, commandArgs.ServiceProvider);
+            if (commandArgs.TextEditorConfig.TryShowViewModelFunc is not null)
+            {
+                commandArgs.TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
+                    definitionViewModelKey,
+                    Key<TextEditorGroup>.Empty,
+                    commandArgs.ServiceProvider));
+            }
 
             return Task.CompletedTask;
         };
