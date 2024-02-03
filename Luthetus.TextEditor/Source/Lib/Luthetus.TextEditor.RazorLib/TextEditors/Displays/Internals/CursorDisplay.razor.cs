@@ -124,13 +124,13 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
             if (!Cursor.IsIntersecting)
             {
-                await _throttleShouldRevealCursor.FireAsync(async _ =>
+                _throttleShouldRevealCursor.FireAndForget(async _ =>
                 {
                     await JsRuntime.InvokeVoidAsync(
                             "luthetusTextEditor.scrollElementIntoView",
                             CursorDisplayId)
                         .ConfigureAwait(false);
-                }).ConfigureAwait(false);
+                });
             }
         }
 

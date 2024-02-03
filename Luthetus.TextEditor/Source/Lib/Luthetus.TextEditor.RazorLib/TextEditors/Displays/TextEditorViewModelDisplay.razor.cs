@@ -795,24 +795,21 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             }
             else if (IsSyntaxHighlightingInvoker(keyboardEventArgs))
             {
-                _ = Task.Run(async () =>
+                _throttleApplySyntaxHighlighting.FireAndForget(async _ =>
                 {
-                    await _throttleApplySyntaxHighlighting.FireAsync(async _ =>
+                    // The TextEditorModel may have been changed by the time this logic is ran and
+                    // thus the local variables must be updated accordingly.
+                    var model = GetModel();
+                    var viewModel = GetViewModel();
+
+                    if (model is not null)
                     {
-                        // The TextEditorModel may have been changed by the time this logic is ran and
-                        // thus the local variables must be updated accordingly.
-                        var model = GetModel();
-                        var viewModel = GetViewModel();
+                        await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
 
-                        if (model is not null)
-                        {
-                            await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
-
-                            if (viewModel is not null && model.CompilerService is not null)
-                                model.CompilerService.ResourceWasModified(model.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
-                        }
-                    }).ConfigureAwait(false);
-                }).ConfigureAwait(false);
+                        if (viewModel is not null && model.CompilerService is not null)
+                            model.CompilerService.ResourceWasModified(model.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
+                    }
+                });
             }
         };
     }

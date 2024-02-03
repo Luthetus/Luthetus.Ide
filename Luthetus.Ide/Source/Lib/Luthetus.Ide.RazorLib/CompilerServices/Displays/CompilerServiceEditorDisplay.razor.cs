@@ -145,11 +145,11 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 
     private async Task ThrottledReRender()
     {
-        await _throttleEventCausingReRender.FireAsync(async _ =>
+        _throttleEventCausingReRender.FireAndForget(async _ =>
         {
             _shouldRecalculateViewModel = true;
             await InvokeAsync(StateHasChanged).ConfigureAwait(false);
-        }).ConfigureAwait(false);
+        });
     }
 
     public void Dispose()
