@@ -41,7 +41,7 @@ public class ThrottleTests
 
         var counter = 0;
 
-        await throttle.FireAsync(throttleCancellationToken =>
+        throttle.FireAndForget(throttleCancellationToken =>
         {
             counter++;
             return Task.CompletedTask;
@@ -49,7 +49,7 @@ public class ThrottleTests
 
         Assert.Equal(1, counter);
 
-        await throttle.FireAsync(throttleCancellationToken =>
+        throttle.FireAndForget(throttleCancellationToken =>
         {
             throttle.Dispose();
 
