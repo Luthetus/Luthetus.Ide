@@ -1,6 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 	<PropertyGroup>
-		<LangVersion>11</LangVersion>
 		<Product>Fluxor for Blazor (Web)</Product>
 		<Description>A zero boilerplate Redux/Flux framework for Blazor</Description>
 		<PackageIcon>fluxor-blazor-logo-small.png</PackageIcon>
