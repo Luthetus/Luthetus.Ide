@@ -1,4 +1,5 @@
 using Luthetus.Common.RazorLib.Reflectives.PersonCase;
+using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
@@ -9,5 +10,6 @@ public partial class IdeDevelopmentDisplay : ComponentBase
     {
         typeof(PersonDisplay),
         typeof(PersonSimpleDisplay),
+        typeof(DotNetSolutionFormDisplay),
     };
 }
