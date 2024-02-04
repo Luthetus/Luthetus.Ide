@@ -19,12 +19,25 @@
             Recent Changes:
 			<div>
                 <div>
+                    <div>v <em class="luth_em">0.7.5.0</em> (2024-02-04)</div>
+                    
+                    <ul>
+                        <li>
+                            Fix Fluxor related deadlocks in Photino hosted app version of the IDE.
+                            I made a PR to the Fluxor repo: <a href="https://github.com/mrpmorris/Fluxor/pull/469" target="_blank">https://github.com/mrpmorris/Fluxor/pull/469</a>
+                            This seems to only happen in the Photino hosted app.
+                            I hope to hear back from the creator of Fluxor, I might just be
+                            doing something silly on my end to even encounter this.
+                        </li>
+                    </ul>
+                </div>
+                <div>
                     <div>v <em class="luth_em">0.7.4.0</em> (2024-02-03)</div>
                     
                     <ul>
                         <li>
                             Fix the IDE freezing "randomly":
-                            I wrote the <a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.Common/Source/Lib/Luthetus.Common.RazorLib/Reactives/Models/Throttle.cs">Throttle.cs</a> initially as async.
+                            I wrote the <a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.Common/Source/Lib/Luthetus.Common.RazorLib/Reactives/Models/Throttle.cs" target="_blank">Throttle.cs</a> initially as async.
                             But if the source that wants to be throttled awaits the throttle timer,
                             its just sort of nonsense, right?
                             I believe this was locking.
