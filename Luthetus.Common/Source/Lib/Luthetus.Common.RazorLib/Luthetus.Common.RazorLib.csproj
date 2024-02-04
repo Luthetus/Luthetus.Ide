@@ -31,10 +31,6 @@
     </ItemGroup>
     
     <ItemGroup>
-        <PackageReference Include="Fluxor.Blazor.Web" Version="5.9.0" />        
-    </ItemGroup>
-    
-    <ItemGroup>
       <_ContentIncludedByDefault Remove="wwwroot\background.png" />
       <_ContentIncludedByDefault Remove="wwwroot\exampleJsInterop.js" />
       <_ContentIncludedByDefault Remove="DialogNotification\Dialog\DialogDisplay.razor" />
@@ -47,6 +43,10 @@
     
     <ItemGroup>
       <Folder Include="ShouldRenderBoundaries\" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\..\Fluxor_fork\Source\Lib\Fluxor.Blazor.Web\Fluxor.Blazor.Web.csproj" />
     </ItemGroup>
 
 </Project>
