@@ -6,4 +6,5 @@
 .luth_ide_startup-controls-display-entry {
     display: flex;
     align-items: center;
+    margin-left: 15px;
 }

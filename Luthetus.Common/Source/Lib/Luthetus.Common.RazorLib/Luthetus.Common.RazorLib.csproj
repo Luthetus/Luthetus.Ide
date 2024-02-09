@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
@@ -14,11 +14,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Content Remove="wwwroot\luthetusTreeView.css" />
-    </ItemGroup>
-
-
-    <ItemGroup>
         <SupportedPlatform Include="browser" />
     </ItemGroup>
 
@@ -30,23 +25,8 @@
         <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
     </ItemGroup>
     
-    <ItemGroup>
-      <_ContentIncludedByDefault Remove="wwwroot\background.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\exampleJsInterop.js" />
-      <_ContentIncludedByDefault Remove="DialogNotification\Dialog\DialogDisplay.razor" />
-      <_ContentIncludedByDefault Remove="DialogNotification\Notification\CommonErrorNotificationDisplay.razor" />
-      <_ContentIncludedByDefault Remove="DialogNotification\Notification\CommonInformativeNotificationDisplay.razor" />
-      <_ContentIncludedByDefault Remove="DialogNotification\Notification\NotificationDisplay.razor" />
-      <_ContentIncludedByDefault Remove="WatchWindow\NavLinks\BalcTreeViewNavLinks.razor" />
-      <_ContentIncludedByDefault Remove="BackgroundTaskCase\BackgroundTaskDisplay.razor" />
-    </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="ShouldRenderBoundaries\" />
-    </ItemGroup>
-    
-    <ItemGroup>
+  <ItemGroup>
       <ProjectReference Include="..\..\..\..\Fluxor_fork\Source\Lib\Fluxor.Blazor.Web\Fluxor.Blazor.Web.csproj" />
     </ItemGroup>
-
+    
 </Project>

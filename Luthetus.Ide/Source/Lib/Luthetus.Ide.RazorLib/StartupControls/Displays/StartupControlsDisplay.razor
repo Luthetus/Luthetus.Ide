@@ -8,11 +8,19 @@
        &nbsp;
    </div>
    <div class="luth_ide_startup-controls-display-entry">
-       <button @onclick="StartProgramWithoutDebuggingOnClick"
+        <button @onclick="StartProgramWithDebuggingOnClick"
               class="luth_button"
-              disabled=@(ProgramExecutionStateWrap.Value.StartupProjectAbsolutePath is null)>
-           
-           <IconStartWithoutDebugging/>
+              disabled=@(ProgramExecutionStateWrap.Value.StartupProjectAbsolutePath is null)
+              title="Start with debugging">
+           <IconDebug/>
        </button>
+   </div>
+   <div class="luth_ide_startup-controls-display-entry">
+        <button @onclick="StartProgramWithoutDebuggingOnClick"
+                class="luth_button"
+                disabled=@(ProgramExecutionStateWrap.Value.StartupProjectAbsolutePath is null)
+                title="Start without debugging">
+            <IconStartWithoutDebugging />
+        </button>
    </div>
 </div>
