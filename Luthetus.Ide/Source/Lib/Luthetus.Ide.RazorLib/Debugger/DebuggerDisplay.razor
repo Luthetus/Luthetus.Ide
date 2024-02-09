@@ -1,1 +1,72 @@
-﻿<h3>DebuggerDisplay</h3>
+﻿<div class="luth_ide_debugger">
+
+    <table @onmousedown:stopPropagation="true">
+        <tr class="luth_ide_debugger-form-element">
+            <td class="luth_ide_debugger-form-label-container">
+                <label for="@InputElementIdForDebuggerAbsolutePath">@_debuggerAbsolutePathDefault</label>
+            </td>
+            <td>
+                <input class="luth_ide_input luth_ide_input-text"
+                        id="@InputElementIdForDebuggerAbsolutePath"
+                        placeholder="@_debuggerAbsolutePathDefault"
+                        @bind="_debuggerAbsolutePathBind"
+                        @bind:event="oninput" />
+            </td>
+        </tr>
+        <tr class="luth_ide_debugger-form-element">
+            <td class="luth_ide_debugger-form-label-container">
+                <label for="@InputElementIdForInterpreterType">@_interpreterTypeDefault</label>
+            </td>
+            <td>
+                <input class="luth_ide_input luth_ide_input-text"
+                       id="@InputElementIdForInterpreterType"
+                       placeholder="@_interpreterTypeDefault"
+                       @bind="_interpreterTypeBind"
+                       @bind:event="oninput" />
+            </td>
+        </tr>
+        <tr class="luth_ide_debugger-form-element">
+            <td class="luth_ide_debugger-form-label-container">
+                <label for="@InputElementIdForDotNetAbsolutePath">@_dotNetAbsolutePathDefault</label>
+            </td>
+            <td>
+                <input class="luth_ide_input luth_ide_input-text"
+                       id="@InputElementIdForDotNetAbsolutePath"
+                       placeholder="@_dotNetAbsolutePathDefault"
+                       @bind="_dotNetAbsolutePathBind"
+                       @bind:event="oninput" />
+            </td>
+        </tr>
+        <tr class="luth_ide_debugger-form-element">
+            <td class="luth_ide_debugger-form-label-container">
+                <label for="@InputElementIdForProgramDllAbsolutePath">@_programDllAbsolutePathDefault</label>
+            </td>
+            <td>
+                <input class="luth_ide_input luth_ide_input-text"
+                       id="@InputElementIdForProgramDllAbsolutePath"
+                       placeholder="@_programDllAbsolutePathDefault"
+                       @bind="_programDllAbsolutePathBind"
+                       @bind:event="oninput" />
+            </td>
+        </tr>
+        <tr class="luth_ide_debugger-form-element">
+            <td class="luth_ide_debugger-form-label-container">
+                <label for="@InputElementIdForProcessId">@_processIdDefault</label>
+            </td>
+            <td>
+                <input class="luth_ide_input luth_ide_input-text"
+                       id="@InputElementIdForProcessId"
+                       placeholder="@_processIdDefault"
+                       @bind="_processIdBind"
+                       @bind:event="oninput" />
+            </td>
+        </tr>
+    </table>
+
+    <div class="luth_ide_debugger-form-submit-section">
+        <em class="luth_em">@FormattedCommand</em>
+        <hr/>
+        @@@(nameof(_processIdBind)):&nbsp;@_processIdBind
+        <button class="luth_button">Submit</button>
+    </div>
+</div>
