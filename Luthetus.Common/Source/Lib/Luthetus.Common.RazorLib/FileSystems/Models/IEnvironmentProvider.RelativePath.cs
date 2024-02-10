@@ -166,7 +166,7 @@ public partial interface IEnvironmentProvider
 
             foreach (var directory in AncestorDirectoryList)
             {
-                var ancestorPath = new RelativePath(directory.Path, true, EnvironmentProvider);
+                var ancestorPath = new RelativePath(directory.Value, true, EnvironmentProvider);
                 relativePathStringBuilder.Append(ancestorPath.NameWithExtension);
             }
 

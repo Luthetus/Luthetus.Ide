@@ -42,7 +42,7 @@ public partial class StartupControlsDisplay : FluxorComponent
         return new TerminalCommand(
             _newDotNetSolutionTerminalCommandKey,
             formattedCommand,
-            ancestorDirectory.Path,
+            ancestorDirectory.Value,
             _newDotNetSolutionCancellationTokenSource.Token);
     }
 

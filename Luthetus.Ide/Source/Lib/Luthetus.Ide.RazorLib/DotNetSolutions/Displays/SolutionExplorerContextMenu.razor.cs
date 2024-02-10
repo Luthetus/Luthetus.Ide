@@ -174,7 +174,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 return Array.Empty<MenuOptionRecord>();
         }
 
-        var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(parentDirectory.Path, true);
+        var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(parentDirectory.Value, true);
 
         return new[]
         {

@@ -517,7 +517,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 var terminalCommand = new TerminalCommand(
                     Key<TerminalCommand>.NewKey(),
                     formattedCommand,
-                    workingDirectory.Path,
+                    workingDirectory.Value,
                     CancellationToken.None,
                     async () => await onAfterCompletion.Invoke());
 

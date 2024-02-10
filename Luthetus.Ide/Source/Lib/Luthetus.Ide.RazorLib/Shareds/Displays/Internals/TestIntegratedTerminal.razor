@@ -1,0 +1,28 @@
+﻿<div class="luth_ide_integrated-terminal">
+
+    @{
+        var startButtonIsDisabled = !_terminalTask.IsCompleted;
+        var cancelButtonIsDisabled = _terminalTask.IsCompleted;
+    }
+
+    <button @onclick="StartTerminalOnClick"
+            class="luth_button"
+            disabled=@startButtonIsDisabled>
+        Start
+    </button>
+
+    <button @onclick="CancelTerminalOnClick"
+            class="luth_button"
+            disabled=@cancelButtonIsDisabled>
+        Cancel
+    </button>
+
+    @if (!_terminalTask.IsCompleted)
+    {
+        <IconLoading/>
+    }
+
+    <div>
+        @_cliWrapIntegratedTerminal.Render()
+    </div>
+</div>

@@ -8,12 +8,12 @@ public class AncestorDirectory
         IEnvironmentProvider environmentProvider)
     {
         NameNoExtension = nameNoExtension;
-        Path = path;
+        Value = path;
         EnvironmentProvider = environmentProvider;
     }
 
     public string NameNoExtension { get; }
-    public string Path { get; }
+    public string Value { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
     public string NameWithExtension => NameNoExtension + EnvironmentProvider.DirectorySeparatorChar;

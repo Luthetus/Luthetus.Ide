@@ -118,7 +118,7 @@ public partial class CodeSearchDisplay : FluxorComponent
 				{
 					Dispatcher.Dispatch(new CodeSearchState.WithAction(inState => inState with
 					{
-						StartingAbsolutePathForSearch = parentDirectory.Path
+						StartingAbsolutePathForSearch = parentDirectory.Value
 					}));
 				}
 			}

@@ -159,7 +159,7 @@ public partial class DotNetSolutionSync
         var parentDirectory = solutionAbsolutePath.ParentDirectory;
 
         if (parentDirectory is not null)
-            _environmentProvider.DeletionPermittedRegister(new(parentDirectory.Path, true));
+            _environmentProvider.DeletionPermittedRegister(new(parentDirectory.Value, true));
 
         await SetDotNetSolutionTreeViewAsync(dotNetSolutionModel.Key);
     }

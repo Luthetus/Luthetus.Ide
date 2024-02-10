@@ -49,7 +49,7 @@ public static class PathHelper
         if (sharedAncestorDirectories.Length > 0)
         {
             var nearestSharedAncestor = sharedAncestorDirectories.Last();
-            var nearestSharedAncestorAbsolutePathString = nearestSharedAncestor.Path;
+            var nearestSharedAncestorAbsolutePathString = nearestSharedAncestor.Value;
 
             return nearestSharedAncestorAbsolutePathString + upperDirectoryString;
         }
@@ -71,17 +71,17 @@ public static class PathHelper
         IEnvironmentProvider environmentProvider)
     {
         var pathBuilder = new StringBuilder();
-        var commonPath = startingPath.AncestorDirectoryList.First().Path;
+        var commonPath = startingPath.AncestorDirectoryList.First().Value;
 
-        if ((startingPath.ParentDirectory?.Path ?? string.Empty) ==
-            (endingPath.ParentDirectory?.Path ?? string.Empty))
+        if ((startingPath.ParentDirectory?.Value ?? string.Empty) ==
+            (endingPath.ParentDirectory?.Value ?? string.Empty))
         {
             // TODO: Will this code break when the mounted drives are different, and parent directories share same name?
 
             // Use './' because they share the same parent directory.
             pathBuilder.Append($".{environmentProvider.DirectorySeparatorChar}");
 
-            commonPath = startingPath.AncestorDirectoryList.Last().Path;
+            commonPath = startingPath.AncestorDirectoryList.Last().Value;
         }
         else
         {
@@ -95,11 +95,11 @@ public static class PathHelper
             for (; i < limitingIndex; i++)
             {
                 var startingPathAncestor = environmentProvider.AbsolutePathFactory(
-                    startingPath.AncestorDirectoryList[i].Path,
+                    startingPath.AncestorDirectoryList[i].Value,
                     true);
 
                 var endingPathAncestor = environmentProvider.AbsolutePathFactory(
-                    endingPath.AncestorDirectoryList[i].Path,
+                    endingPath.AncestorDirectoryList[i].Value,
                     true);
 
                 if (startingPathAncestor.NameWithExtension == endingPathAncestor.NameWithExtension)

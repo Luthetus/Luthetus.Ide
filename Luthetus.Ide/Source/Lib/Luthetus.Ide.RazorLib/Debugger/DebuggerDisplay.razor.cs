@@ -75,7 +75,7 @@ public partial class DebuggerDisplay : ComponentBase
             return string.Empty;
 
         return EnvironmentProvider.JoinPaths(
-            ancestorDirectory.Path,
+            ancestorDirectory.Value,
                 $"bin{EnvironmentProvider.DirectorySeparatorChar}" +
                 $"Debug{EnvironmentProvider.DirectorySeparatorChar}" +
                 $"net6.0{EnvironmentProvider.DirectorySeparatorChar}" +
@@ -90,10 +90,10 @@ public partial class DebuggerDisplay : ComponentBase
             EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
             CancellationToken.None);
 
-        var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
-            TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+        var debugTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
+            TerminalSessionFacts.DEBUG_TERMINAL_SESSION_KEY];
 
-        await generalTerminalSession
+        await debugTerminalSession
             .EnqueueCommandAsync(startDebuggerCommand)
             .ConfigureAwait(false);
     }

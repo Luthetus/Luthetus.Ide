@@ -14,9 +14,19 @@
             {
                 @: Execution
             }
-            else
+            else if (WellKnownTerminalSessionKey == TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY)
             {
                 @: General
+            }
+            else if (WellKnownTerminalSessionKey == TerminalSessionFacts.DEBUG_TERMINAL_SESSION_KEY)
+            {
+                @: Debug
+            }
+            else
+            {
+                <text>
+                    BAD_WellKnownTerminalSessionKey:@WellKnownTerminalSessionKey.Guid
+                </text>
             }
 
             <button class="luth_button"
