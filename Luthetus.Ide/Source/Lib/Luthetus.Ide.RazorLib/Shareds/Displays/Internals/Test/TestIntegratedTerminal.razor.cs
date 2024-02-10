@@ -4,11 +4,9 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Concurrent;
 using System.Reactive.Linq;
-using System.Text;
 
-namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
+namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals.Test;
 
 public partial class TestIntegratedTerminal : ComponentBase, IDisposable
 {
@@ -73,7 +71,7 @@ public partial class TestIntegratedTerminal : ComponentBase, IDisposable
 
                         if (output is not null)
                         {
-                            _stdOut += $"{output}{Environment.NewLine}";
+                            _cliWrapIntegratedTerminal.AddStandardOut($"{output}{Environment.NewLine}");
                             await InvokeAsync(StateHasChanged);
                         }
                     });
@@ -118,129 +116,5 @@ public partial class TestIntegratedTerminal : ComponentBase, IDisposable
     public void Dispose()
     {
         _terminalCancellationTokenSource.Cancel();
-    }
-
-    private abstract class IntegratedTerminal
-    {
-        public IntegratedTerminal(string initialWorkingDirectory, IEnvironmentProvider environmentProvider)
-        {
-            WorkingDirectory = initialWorkingDirectory;
-            EnvironmentProvider = environmentProvider;
-        }
-
-        public string WorkingDirectory { get; }
-        public IEnvironmentProvider EnvironmentProvider { get; }
-        public ConcurrentQueue<Func<Task>> TaskQueue { get; } = new();
-
-        public abstract Task StartAsync(CancellationToken cancellationToken = default);
-        public abstract string Render();
-        public abstract Task StopAsync(CancellationToken cancellationToken = default);
-    }
-
-    private class CliWrapIntegratedTerminal : IntegratedTerminal
-    {
-        private readonly List<Std> _stdList = new();
-
-        public CliWrapIntegratedTerminal(string initialWorkingDirectory, IEnvironmentProvider environmentProvider)
-            : base(initialWorkingDirectory, environmentProvider)
-        {
-            _stdList.Add(new StdIn(this));
-        }
-
-        public override async Task StartAsync(CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                while (!cancellationToken.IsCancellationRequested)
-                {
-                    await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
-
-                    if (TaskQueue.TryDequeue(out var func))
-                        await func.Invoke();
-                }
-            }
-            catch (TaskCanceledException)
-            {
-                // eat this exception?
-            }
-
-            await StopAsync();
-        }
-
-        public override string Render()
-        {
-            var outputBuilder = new StringBuilder();
-            
-            foreach (var std in _stdList)
-            {
-                std.Render(outputBuilder);
-            }
-
-            return outputBuilder.ToString();
-        }
-
-        public override async Task StopAsync(CancellationToken cancellationToken = default)
-        {
-        }
-    }
-
-    private abstract class Std
-    {
-        protected readonly IntegratedTerminal _integratedTerminal;
-
-        public Std(IntegratedTerminal integratedTerminal)
-        {
-            _integratedTerminal = integratedTerminal;
-        }
-
-        public abstract void Render(StringBuilder stringBuilder);
-    }
-
-    private class StdOut : Std
-    {
-        public StdOut(IntegratedTerminal integratedTerminal)
-            : base(integratedTerminal)
-        {
-        }
-
-        public override void Render(StringBuilder stringBuilder)
-        { 
-        }
-    }
-
-    private class StdErr : Std
-    {
-        public StdErr(IntegratedTerminal integratedTerminal)
-            : base(integratedTerminal)
-        {
-        }
-
-        public override void Render(StringBuilder stringBuilder)
-        {
-        }
-    }
-
-    private class StdIn : Std
-    {
-        public StdIn(IntegratedTerminal integratedTerminal)
-            : base(integratedTerminal)
-        {
-        }
-
-        public override void Render(StringBuilder stringBuilder)
-        {
-            var workingDirectoryAbsolutePath = _integratedTerminal.EnvironmentProvider.AbsolutePathFactory(
-                _integratedTerminal.WorkingDirectory,
-                true);
-
-            var showWorkingDirectory = workingDirectoryAbsolutePath.NameNoExtension;
-
-            var parentDirectory = workingDirectoryAbsolutePath.ParentDirectory;
-
-            if (parentDirectory is not null)
-                showWorkingDirectory = parentDirectory.Value + showWorkingDirectory;
-
-            stringBuilder.Append($"{showWorkingDirectory}>");
-        }
     }
 }
