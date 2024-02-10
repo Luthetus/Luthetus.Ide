@@ -1,5 +1,11 @@
+using CliWrap;
+using CliWrap.EventStream;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Keyboards.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using System.Collections.Concurrent;
+using System.Reactive.Linq;
 using System.Text;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
@@ -21,6 +27,8 @@ public partial class TestIntegratedTerminal : ComponentBase, IDisposable
     private string _stdIn = string.Empty;
 
     private string _output = string.Empty;
+    private string _targetFilePath = "netcoredbg";
+    private string _arguments = "--interpreter=cli -- dotnet \\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg\\bin\\Debug\\net6.0\\BlazorApp4NetCoreDbg.dll";
 
     private Task _terminalTask = Task.CompletedTask;
 
@@ -30,6 +38,47 @@ public partial class TestIntegratedTerminal : ComponentBase, IDisposable
         _cliWrapIntegratedTerminal = new(_workingDirectory, EnvironmentProvider);
 
         base.OnInitialized();
+    }
+
+    protected void StdInHandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    {
+        if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+        {
+            var command = Cli
+                .Wrap(_targetFilePath)
+                .WithArguments(_arguments);
+
+            _cliWrapIntegratedTerminal.TaskQueue.Enqueue(async () =>
+            {
+                await command.Observe()
+                    .ForEachAsync(async cmdEvent =>
+                    {
+                        var output = (string?)null;
+
+                        switch (cmdEvent)
+                        {
+                            case StartedCommandEvent started:
+                                output = $"> {_workingDirectory} (PID:{started.ProcessId}) {command.ToString()}";
+                                break;
+                            case StandardOutputCommandEvent stdOut:
+                                output = $"{stdOut.Text}";
+                                break;
+                            case StandardErrorCommandEvent stdErr:
+                                output = $"Err> {stdErr.Text}";
+                                break;
+                            case ExitedCommandEvent exited:
+                                output = $"Process exited; Code: {exited.ExitCode}";
+                                break;
+                        }
+
+                        if (output is not null)
+                        {
+                            _stdOut += $"{output}{Environment.NewLine}";
+                            await InvokeAsync(StateHasChanged);
+                        }
+                    });
+            });
+        }
     }
 
     private void StartTerminalOnClick()
@@ -81,6 +130,7 @@ public partial class TestIntegratedTerminal : ComponentBase, IDisposable
 
         public string WorkingDirectory { get; }
         public IEnvironmentProvider EnvironmentProvider { get; }
+        public ConcurrentQueue<Func<Task>> TaskQueue { get; } = new();
 
         public abstract Task StartAsync(CancellationToken cancellationToken = default);
         public abstract string Render();
@@ -104,6 +154,9 @@ public partial class TestIntegratedTerminal : ComponentBase, IDisposable
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+
+                    if (TaskQueue.TryDequeue(out var func))
+                        await func.Invoke();
                 }
             }
             catch (TaskCanceledException)
