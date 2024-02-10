@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.Common.RazorLib.StateHasChangedBoundaries.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Luthetus.Ide.RazorLib.ProgramExecutions.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.AspNetCore.Components;
 
@@ -21,6 +22,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -76,7 +79,13 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             await TextEditorService.OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
             await AppOptionsService.SetFromLocalStorageAsync().ConfigureAwait(false);
 
-            var personalTestPath = "C:\\Users\\hunte\\Repos\\Luthetus.Ide_Fork\\Luthetus.Ide.sln";
+            string personalTestPath;
+
+#if DEBUG
+            personalTestPath = "C:\\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg.sln";
+#else
+            personalTestPath = "C:\\Users\\hunte\\Repos\\Luthetus.Ide_Fork\\Luthetus.Ide.sln";
+#endif
 
             if (File.Exists(personalTestPath))
             {
@@ -85,6 +94,10 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     false);
 
                 DotNetSolutionSync.SetDotNetSolution(absolutePath);
+
+#if DEBUG
+                Dispatcher.Dispatch(new ProgramExecutionState.SetStartupProjectAbsolutePathAction(absolutePath));
+#endif
             }
         }
 
