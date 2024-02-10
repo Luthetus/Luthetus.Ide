@@ -96,7 +96,10 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 DotNetSolutionSync.SetDotNetSolution(absolutePath);
 
 #if DEBUG
-                Dispatcher.Dispatch(new ProgramExecutionState.SetStartupProjectAbsolutePathAction(absolutePath));
+                Dispatcher.Dispatch(new ProgramExecutionState.SetStartupProjectAbsolutePathAction(
+                    EnvironmentProvider.AbsolutePathFactory(
+                        "C:\\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg.csproj",
+                        false)));
 #endif
             }
         }

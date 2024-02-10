@@ -24,61 +24,55 @@ public partial class StartupControlsDisplay : FluxorComponent
     private readonly Key<TerminalCommand> _newDotNetSolutionTerminalCommandKey = Key<TerminalCommand>.NewKey();
     private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
 
-    private async Task StartProgramWithoutDebuggingOnClick()
+    private TerminalCommand? GetStartProgramTerminalCommand()
     {
         var programExecutionState = ProgramExecutionStateWrap.Value;
 
         if (programExecutionState.StartupProjectAbsolutePath is null)
-            return;
+            return null;
 
         var ancestorDirectory = programExecutionState.StartupProjectAbsolutePath.ParentDirectory;
 
         if (ancestorDirectory is null)
-            return;
+            return null;
 
         var formattedCommand = DotNetCliCommandFormatter.FormatStartProjectWithoutDebugging(
             programExecutionState.StartupProjectAbsolutePath);
 
-        var startProgramWithoutDebuggingCommand = new TerminalCommand(
+        return new TerminalCommand(
             _newDotNetSolutionTerminalCommandKey,
             formattedCommand,
             ancestorDirectory.Path,
             _newDotNetSolutionCancellationTokenSource.Token);
+    }
+
+    private async Task StartProgramWithoutDebuggingOnClick()
+    {
+        var startProgramTerminalCommand = GetStartProgramTerminalCommand();
+
+        if (startProgramTerminalCommand is null)
+            return;
 
         var executionTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
             TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
 
         await executionTerminalSession
-            .EnqueueCommandAsync(startProgramWithoutDebuggingCommand)
+            .EnqueueCommandAsync(startProgramTerminalCommand)
             .ConfigureAwait(false);
     }
     
     private async Task StartProgramWithDebuggingOnClick()
     {
-        var programExecutionState = ProgramExecutionStateWrap.Value;
+        var startProgramTerminalCommand = GetStartProgramTerminalCommand();
 
-        if (programExecutionState.StartupProjectAbsolutePath is null)
+        if (startProgramTerminalCommand is null)
             return;
-
-        var ancestorDirectory = programExecutionState.StartupProjectAbsolutePath.ParentDirectory;
-
-        if (ancestorDirectory is null)
-            return;
-
-        var formattedCommand = DotNetCliCommandFormatter.FormatStartProjectWithoutDebugging(
-            programExecutionState.StartupProjectAbsolutePath);
-
-        var startProgramWithoutDebuggingCommand = new TerminalCommand(
-            _newDotNetSolutionTerminalCommandKey,
-            formattedCommand,
-            ancestorDirectory.Path,
-            _newDotNetSolutionCancellationTokenSource.Token);
 
         var executionTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
             TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
 
         await executionTerminalSession
-            .EnqueueCommandAsync(startProgramWithoutDebuggingCommand)
+            .EnqueueCommandAsync(startProgramTerminalCommand)
             .ConfigureAwait(false);
 
         // Show debug dialog

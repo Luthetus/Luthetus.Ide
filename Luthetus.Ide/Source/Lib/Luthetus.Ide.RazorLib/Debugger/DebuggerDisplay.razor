@@ -1,4 +1,5 @@
-﻿<div class="luth_ide_debugger">
+﻿@using Luthetus.Ide.RazorLib.CommandLines.Models
+<div class="luth_ide_debugger">
 
     <table @onmousedown:stopPropagation="true">
         <tr class="luth_ide_debugger-form-element">
@@ -64,9 +65,29 @@
     </table>
 
     <div class="luth_ide_debugger-form-submit-section">
-        <em class="luth_em">@FormattedCommand</em>
+
+        @{
+            var showFormattedCommand = ShowFormattedCommand;
+            var localProcessIdBind = _processIdBind;
+
+            var localFormattedCommand = new FormattedCommand(_debuggerAbsolutePathBind, new[]
+            {
+                $"--interpreter={ShowInterpreterType}",
+                "--",
+                _dotNetAbsolutePathBind,
+                _programDllAbsolutePathBind,
+            });
+        }
+
+        <em class="luth_em">@showFormattedCommand</em>
+
         <hr/>
-        @@@(nameof(_processIdBind)):&nbsp;@_processIdBind
-        <button class="luth_button">Submit</button>
+
+        @@@(nameof(localProcessIdBind)):&nbsp;@_processIdBind
+
+        <button class="luth_button"
+                @onclick="() => StartDebuggerOnClickAsync(localFormattedCommand, localProcessIdBind)">
+            Start Debugger
+        </button>
     </div>
 </div>

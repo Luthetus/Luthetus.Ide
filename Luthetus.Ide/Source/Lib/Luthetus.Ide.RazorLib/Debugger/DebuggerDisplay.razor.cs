@@ -1,6 +1,10 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.ProgramExecutions.States;
+using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.Terminals.States;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Debugger;
@@ -10,7 +14,11 @@ public partial class DebuggerDisplay : ComponentBase
     [Inject]
     private IState<ProgramExecutionState> ProgramExecutionStateWrap { get; set; } = null!;
     [Inject]
+    private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
+    [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+
+    public static readonly Key<TerminalCommand> StartDebuggerCommand = Key<TerminalCommand>.NewKey();
 
     private string InputElementIdForDebuggerAbsolutePath = "luth_debugger__debuggerAbsolutePath-input";
     private string InputElementIdForInterpreterType = "luth_debugger__interpreterType-input";
@@ -35,7 +43,7 @@ public partial class DebuggerDisplay : ComponentBase
     private string ShowDotNetAbsolutePath => string.IsNullOrWhiteSpace(_dotNetAbsolutePathBind) ? _dotNetAbsolutePathDefault : _dotNetAbsolutePathBind;
     private string ShowProgramDllAbsolutePath => string.IsNullOrWhiteSpace(_programDllAbsolutePathBind) ? _programDllAbsolutePathDefault : _programDllAbsolutePathBind;
 
-    private string FormattedCommand => 
+    private string ShowFormattedCommand => 
         $"{ShowDebuggerAbsolutePath}" +
         " " +
         $"--interpreter={ShowInterpreterType}" +
@@ -70,6 +78,23 @@ public partial class DebuggerDisplay : ComponentBase
             ancestorDirectory.Path,
                 $"bin{EnvironmentProvider.DirectorySeparatorChar}" +
                 $"Debug{EnvironmentProvider.DirectorySeparatorChar}" +
-                $"net6.0{EnvironmentProvider.DirectorySeparatorChar}");
+                $"net6.0{EnvironmentProvider.DirectorySeparatorChar}" +
+                programExecutionState.StartupProjectAbsolutePath.NameNoExtension + ".dll");
+    }
+
+    private async Task StartDebuggerOnClickAsync(FormattedCommand localFormattedCommand, string localProcessIdBind)
+    {
+        var startDebuggerCommand = new TerminalCommand(
+            StartDebuggerCommand,
+            localFormattedCommand,
+            EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+            CancellationToken.None);
+
+        var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
+            TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+
+        await generalTerminalSession
+            .EnqueueCommandAsync(startDebuggerCommand)
+            .ConfigureAwait(false);
     }
 }
