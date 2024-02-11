@@ -1,4 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using System.Text;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals.Test;
@@ -13,15 +15,19 @@ public class CliWrapIntegratedTerminal : IntegratedTerminal
         _stdList.Add(new StdIn(this));
     }
 
-    public void AddStandardOut(string content)
+    public void AddStandardOut(string content, StdOutKind stdOutKind)
     {
         var existingStd = _stdList.LastOrDefault();
 
-        if (existingStd is not null && existingStd is StdOut existingStdOut)
+        if (existingStd is not null &&
+            existingStd is StdOut existingStdOut &&
+            existingStdOut.StdOutKind == stdOutKind)
+        {
             existingStdOut.Content += content;
+        }
         else
         {
-            _stdList.Add(new StdOut(this, content));
+            _stdList.Add(new StdOut(this, content, stdOutKind));
         }
     }
 
@@ -45,16 +51,14 @@ public class CliWrapIntegratedTerminal : IntegratedTerminal
         await StopAsync();
     }
 
-    public override string Render()
+    public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
     {
-        var outputBuilder = new StringBuilder();
-            
         foreach (var std in _stdList)
         {
-            std.Render(outputBuilder);
+            std.GetRenderTreeBuilder(builder, ref sequence);
         }
 
-        return outputBuilder.ToString();
+        return builder;
     }
 
     public override async Task StopAsync(CancellationToken cancellationToken = default)

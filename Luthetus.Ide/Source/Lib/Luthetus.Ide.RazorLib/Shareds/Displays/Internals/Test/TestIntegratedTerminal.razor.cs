@@ -25,8 +25,8 @@ public partial class TestIntegratedTerminal : ComponentBase, IDisposable
     private string _stdIn = string.Empty;
 
     private string _output = string.Empty;
-    private string _targetFilePath = "netcoredbg";
-    private string _arguments = "--interpreter=cli -- dotnet \\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg\\bin\\Debug\\net6.0\\BlazorApp4NetCoreDbg.dll";
+    private string _targetFilePath = "\\Users\\hunte\\Repos\\Demos\\TestingCliWrap\\a.out";//"netcoredbg";
+    private string _arguments = string.Empty;//"--interpreter=cli -- dotnet \\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg\\bin\\Debug\\net6.0\\BlazorApp4NetCoreDbg.dll";
 
     private Task _terminalTask = Task.CompletedTask;
 
@@ -59,7 +59,7 @@ public partial class TestIntegratedTerminal : ComponentBase, IDisposable
         base.OnInitialized();
     }
 
-    protected void StdInHandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    protected void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
         {
@@ -76,11 +76,13 @@ public partial class TestIntegratedTerminal : ComponentBase, IDisposable
                     .ForEachAsync(async cmdEvent =>
                     {
                         var output = (string?)null;
+                        var outputKind = StdOutKind.None;
 
                         switch (cmdEvent)
                         {
                             case StartedCommandEvent started:
                                 output = $"> {_workingDirectory} (PID:{started.ProcessId}) {command.ToString()}";
+                                outputKind = StdOutKind.Started;
 
                                 // https://stackoverflow.com/questions/5769494/reusing-memory-streams
                                 //
@@ -112,15 +114,20 @@ public partial class TestIntegratedTerminal : ComponentBase, IDisposable
                                 break;
                             case StandardErrorCommandEvent stdErr:
                                 output = $"Err> {stdErr.Text}";
+                                outputKind = StdOutKind.Error;
                                 break;
                             case ExitedCommandEvent exited:
                                 output = $"Process exited; Code: {exited.ExitCode}";
+                                outputKind = StdOutKind.Exited;
                                 break;
                         }
 
                         if (output is not null)
                         {
-                            _cliWrapIntegratedTerminal.AddStandardOut($"{output}{Environment.NewLine}");
+                            _cliWrapIntegratedTerminal.AddStandardOut(
+                                $"{output}{Environment.NewLine}",
+                                outputKind);
+
                             await InvokeAsync(StateHasChanged);
                         }
                     });

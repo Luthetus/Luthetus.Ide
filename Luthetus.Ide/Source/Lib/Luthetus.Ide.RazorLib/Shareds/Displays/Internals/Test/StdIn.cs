@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Microsoft.AspNetCore.Components.Rendering;
+using System.Text;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals.Test;
 
@@ -9,7 +10,7 @@ public class StdIn : Std
     {
     }
 
-    public override void Render(StringBuilder stringBuilder)
+    public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
     {
         var workingDirectoryAbsolutePath = _integratedTerminal.EnvironmentProvider.AbsolutePathFactory(
             _integratedTerminal.WorkingDirectory,
@@ -22,6 +23,11 @@ public class StdIn : Std
         if (parentDirectory is not null)
             showWorkingDirectory = parentDirectory.Value + showWorkingDirectory;
 
-        stringBuilder.Append($"{showWorkingDirectory}>");
+        builder.OpenElement(sequence++, "div");
+        builder.AddAttribute(sequence++, "class", "luth_te_method");
+        builder.AddContent(sequence++, $"{showWorkingDirectory}>");
+        builder.CloseElement();
+
+        return builder;
     }
 }

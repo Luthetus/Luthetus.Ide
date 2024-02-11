@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
+using System.Text;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals.Test;
 
@@ -9,7 +11,8 @@ public class StdErr : Std
     {
     }
 
-    public override void Render(StringBuilder stringBuilder)
+    public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
     {
+        return builder;
     }
 }

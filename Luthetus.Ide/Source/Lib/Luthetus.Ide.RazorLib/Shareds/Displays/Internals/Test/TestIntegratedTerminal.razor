@@ -1,8 +1,5 @@
 ﻿<div class="luth_ide_integrated-terminal">
 
-    <div>netcoredbg --interpreter=cli -- dotnet \Users\hunte\Repos\Demos\BlazorApp4NetCoreDbg\BlazorApp4NetCoreDbg\bin\Debug\net6.0\BlazorApp4NetCoreDbg.dll</div>
-
-    <hr/>
     @{
         var startButtonIsDisabled = !_terminalTask.IsCompleted;
         var cancelButtonIsDisabled = _terminalTask.IsCompleted;
@@ -31,7 +28,7 @@
                    placeholder="_targetFilePath"
                    @bind="_targetFilePath"
                    @bind:event="oninput"
-                   @onkeydown="StdInHandleOnKeyDown" />
+                   @onkeydown="HandleOnKeyDown" />
         </div>
         <div>
             <label>_arguments</label>
@@ -40,7 +37,7 @@
                    placeholder="_arguments"
                    @bind="_arguments"
                    @bind:event="oninput"
-                   @onkeydown="StdInHandleOnKeyDown" />
+                   @onkeydown="HandleOnKeyDown" />
         </div>
         <div>
             <label>_stdIn</label>
@@ -49,11 +46,14 @@
                    placeholder="_stdIn"
                    @bind="_stdIn"
                    @bind:event="oninput"
-                   @onkeydown="StdInHandleOnKeyDown" />
+                   @onkeydown="HandleOnKeyDown" />
         </div>
     }
 
     <div>
-        @_cliWrapIntegratedTerminal.Render()
+        @{ var sequenceCliWrapIntegratedTerminal = 0; }
+        @(new RenderFragment(builder => _cliWrapIntegratedTerminal.GetRenderTreeBuilder(
+            builder,
+            ref sequenceCliWrapIntegratedTerminal)))
     </div>
 </div>
