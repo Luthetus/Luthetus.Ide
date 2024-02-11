@@ -12,8 +12,14 @@ public partial class StdInInputDisplay
 
     public async Task HandleStdInputOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
+        if (StdInRequest.IsCompleted)
+            return;
+
+        var capturedValue = StdInRequest.Value;
+
         await IntegratedTerminal.HandleStdInputOnKeyDown(
             keyboardEventArgs,
-            StdInRequest);
+            StdInRequest,
+            capturedValue);
     }
 }

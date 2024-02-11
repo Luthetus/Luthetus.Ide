@@ -1,11 +1,12 @@
-﻿<div class="luth_ide_integrated-terminal">
+﻿<div class="luth_ide_integrated-terminal"
+     style="height: 100%; overflow: auto;">
 
     @{
         var startButtonIsDisabled = !_terminalTask.IsCompleted;
         var cancelButtonIsDisabled = _terminalTask.IsCompleted;
     }
 
-    <button @onclick="StartTerminalOnClick"
+    <button @onclick="StartTerminal"
             class="luth_button"
             disabled=@startButtonIsDisabled>
         Start
@@ -20,25 +21,6 @@
     @if (!_terminalTask.IsCompleted)
     {
         <IconLoading/>
-
-        <div>
-            <label>_targetFilePath</label>
-            <input class="luth_ide_input luth_ide_input-text"
-                   style="width: 100%;"
-                   placeholder="_targetFilePath"
-                   @bind="_integratedTerminal.TargetFilePath"
-                   @bind:event="oninput"
-                   @onkeydown="HandleOnKeyDown" />
-        </div>
-        <div>
-            <label>_arguments</label>
-            <input class="luth_ide_input luth_ide_input-text"
-                   style="width: 100%;"
-                   placeholder="_arguments"
-                   @bind="_integratedTerminal.Arguments"
-                   @bind:event="oninput"
-                   @onkeydown="HandleOnKeyDown" />
-        </div>
     }
 
     <div>

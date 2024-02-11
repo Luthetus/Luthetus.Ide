@@ -23,6 +23,8 @@ public partial class IntegratedTerminalDisplay : ComponentBase, IDisposable
 
         _integratedTerminal.StateChanged += IntegratedTerminal_StateChanged;
 
+        StartTerminal();
+
         base.OnInitialized();
     }
 
@@ -31,12 +33,7 @@ public partial class IntegratedTerminalDisplay : ComponentBase, IDisposable
         await InvokeAsync(StateHasChanged);
     }
 
-    public async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
-    {
-        await _integratedTerminal.HandleOnKeyDown(keyboardEventArgs);
-    }
-
-    private void StartTerminalOnClick()
+    private void StartTerminal()
     {
         if (_terminalTask.IsCompleted)
         {

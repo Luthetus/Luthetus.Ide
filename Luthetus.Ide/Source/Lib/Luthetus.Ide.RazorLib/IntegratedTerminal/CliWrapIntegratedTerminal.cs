@@ -22,7 +22,7 @@ public class CliWrapIntegratedTerminal : IntegratedTerminal
     public CliWrapIntegratedTerminal(string initialWorkingDirectory, IEnvironmentProvider environmentProvider)
         : base(initialWorkingDirectory, environmentProvider)
     {
-        _stdList.Add(new StdIn(this));
+        _stdList.Add(new StdQuiescent(this));
     }
 
     private string _workingDirectory = string.Empty;
@@ -61,7 +61,11 @@ public class CliWrapIntegratedTerminal : IntegratedTerminal
                 await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
 
                 if (TaskQueue.TryDequeue(out var func))
+                {
                     await func.Invoke();
+                    _stdList.Add(new StdQuiescent(this));
+                    InvokeStateChanged();
+                }
             }
         }
         catch (TaskCanceledException)
@@ -90,28 +94,42 @@ public class CliWrapIntegratedTerminal : IntegratedTerminal
         return Task.CompletedTask;
     }
 
-    public override Task HandleStdInputOnKeyDown(KeyboardEventArgs keyboardEventArgs, StdInRequest stdInRequest)
+    public override Task HandleStdInputOnKeyDown(
+        KeyboardEventArgs keyboardEventArgs,
+        StdInRequest stdInRequest,
+        string capturedValue)
     {
-        if (ShowHtmlElementStdInput && keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+        if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
         {
-            ShowHtmlElementStdInput = false;
+            stdInRequest.IsCompleted = true;
+            stdInRequest.Value = capturedValue;
             InvokeStateChanged();
 
-            var localHtmlElementBindStdInput = HtmlElementBindStdInput;
             _stdInputBuffer.Clear();
-            _stdInputBuffer.AppendLine(localHtmlElementBindStdInput);
-            stdInRequest.Value = localHtmlElementBindStdInput;
-            stdInRequest.IsCompleted = true;
+            _stdInputBuffer.AppendLine(capturedValue);
             _stdInputSemaphore.Release();
         }
 
         return Task.CompletedTask;
     }
 
-    public override Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    public override Task HandleStdQuiescentOnKeyDown(
+        KeyboardEventArgs keyboardEventArgs,
+        StdQuiescent stdQuiescent,
+        string capturedTargetFilePath,
+        string capturedArguments)
     {
         if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
         {
+            stdQuiescent.IsCompleted = true;
+            stdQuiescent.TargetFilePath = capturedTargetFilePath;
+            stdQuiescent.Arguments = capturedArguments;
+
+            _targetFilePath = capturedTargetFilePath;
+            _arguments = capturedTargetFilePath;
+
+            InvokeStateChanged();
+
             TaskQueue.Enqueue(async () =>
             {
                 StdInPipeSource = PipeSource.Create(async (destination, cancellationToken) =>
@@ -125,7 +143,6 @@ public class CliWrapIntegratedTerminal : IntegratedTerminal
                         // accept input, and upon 'Enter' key,
                         // release the '_stdInputSemaphore'
                         AddStdInRequest();
-                        ShowHtmlElementStdInput = true;
                         InvokeStateChanged();
                         return Task.CompletedTask;
                     });
@@ -149,7 +166,7 @@ public class CliWrapIntegratedTerminal : IntegratedTerminal
                         switch (cmdEvent)
                         {
                             case StartedCommandEvent started:
-                                output = $"> {_workingDirectory} (PID:{started.ProcessId}) {command.ToString()}";
+                                output = $"(PID:{started.ProcessId})";
                                 outputKind = StdOutKind.Started;
                                 break;
                             case StandardOutputCommandEvent stdOut:

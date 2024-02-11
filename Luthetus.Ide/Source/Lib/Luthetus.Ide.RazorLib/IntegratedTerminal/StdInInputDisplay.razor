@@ -1,9 +1,8 @@
-﻿<div>
-    <label>_stdInput</label>
-    <input class="luth_ide_input luth_ide_input-text"
-            style="width: 100%;"
-            placeholder="_arguments"
-            @bind="IntegratedTerminal.HtmlElementBindStdInput"
-            @bind:event="oninput"
-            @onkeydown="HandleStdInputOnKeyDown" />
-</div>
+﻿<input class="luth_ide_input luth_ide_input-text"
+       style="width: 33.33%; min-width:12ch;"
+       title="_stdInput=@StdInRequest.Value"
+       placeholder="_stdInput"
+       readonly=@StdInRequest.IsCompleted
+       @bind="StdInRequest.Value"
+       @bind:event="oninput"
+       @onkeydown="HandleStdInputOnKeyDown" />
