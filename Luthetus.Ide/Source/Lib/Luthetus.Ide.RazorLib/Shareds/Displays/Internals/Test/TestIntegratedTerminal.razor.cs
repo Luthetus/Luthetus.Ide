@@ -30,10 +30,31 @@ public partial class TestIntegratedTerminal : ComponentBase, IDisposable
 
     private Task _terminalTask = Task.CompletedTask;
 
+    byte[] StdInBuffer 
+    { 
+        get;
+        set;
+    } = new byte[100];
+
+    Stream StdInStream
+    {
+        get;
+        set;
+    } = null!;
+
+    public string StdIn
+    {
+        get => _stdIn;
+        set => _stdIn = value;
+    }
+    public PipeSource? StdInPipeSource { get; private set; }
+
     protected override void OnInitialized()
     {
         _workingDirectory = EnvironmentProvider.HomeDirectoryAbsolutePath.Value;
         _cliWrapIntegratedTerminal = new(_workingDirectory, EnvironmentProvider);
+
+        StdInStream = new MemoryStream(StdInBuffer);
 
         base.OnInitialized();
     }
@@ -42,9 +63,12 @@ public partial class TestIntegratedTerminal : ComponentBase, IDisposable
     {
         if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
         {
+            StdInPipeSource = PipeSource.FromStream(StdInStream, true);
+
             var command = Cli
                 .Wrap(_targetFilePath)
-                .WithArguments(_arguments);
+                .WithArguments(_arguments)
+                .WithStandardInputPipe(StdInPipeSource);
 
             _cliWrapIntegratedTerminal.TaskQueue.Enqueue(async () =>
             {
@@ -57,6 +81,31 @@ public partial class TestIntegratedTerminal : ComponentBase, IDisposable
                         {
                             case StartedCommandEvent started:
                                 output = $"> {_workingDirectory} (PID:{started.ProcessId}) {command.ToString()}";
+
+                                // https://stackoverflow.com/questions/5769494/reusing-memory-streams
+                                //
+                                // Reset the stream so you can re-use it
+                                StdInStream.Position = 0; // Not actually needed, SetLength(0) will reset the Position anyway
+                                StdInStream.SetLength(0);
+
+                                var stdInWriter = new StreamWriter(StdInStream);
+                                stdInWriter.Write($"attach {started.ProcessId}\n");
+                                stdInWriter.Flush();
+
+                                // https://stackoverflow.com/questions/78181/how-do-you-get-a-string-from-a-memorystream
+                                //
+                                // The StreamReader will read from the current 
+                                // position of the MemoryStream which is currently 
+                                // set at the end of the string we just wrote to it. 
+                                // We need to set the position to 0 in order to read 
+                                // from the beginning.
+                                StdInStream.Position = 0;
+
+                                // Sanity checking that StreamReader returns what I want.
+                                {
+                                    //var stdInReader = new StreamReader(StdInStream);
+                                    //var line = stdInReader.ReadLine();
+                                }
                                 break;
                             case StandardOutputCommandEvent stdOut:
                                 output = $"{stdOut.Text}";
@@ -116,5 +165,6 @@ public partial class TestIntegratedTerminal : ComponentBase, IDisposable
     public void Dispose()
     {
         _terminalCancellationTokenSource.Cancel();
+        StdInStream.Dispose();
     }
 }
