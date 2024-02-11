@@ -49,7 +49,7 @@ public class CliWrapIntegratedTerminal : IntegratedTerminal
 
     public void AddStdInRequest()
     {
-        // _stdList.Add(new StdOut(this, content, stdOutKind));
+        _stdList.Add(new StdInRequest(this));
     }
 
     public override async Task StartAsync(CancellationToken cancellationToken = default)
@@ -90,14 +90,18 @@ public class CliWrapIntegratedTerminal : IntegratedTerminal
         return Task.CompletedTask;
     }
 
-    public override Task HandleStdInputOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    public override Task HandleStdInputOnKeyDown(KeyboardEventArgs keyboardEventArgs, StdInRequest stdInRequest)
     {
         if (ShowHtmlElementStdInput && keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
         {
             ShowHtmlElementStdInput = false;
             InvokeStateChanged();
+
+            var localHtmlElementBindStdInput = HtmlElementBindStdInput;
             _stdInputBuffer.Clear();
-            _stdInputBuffer.AppendLine(HtmlElementBindStdInput);
+            _stdInputBuffer.AppendLine(localHtmlElementBindStdInput);
+            stdInRequest.Value = localHtmlElementBindStdInput;
+            stdInRequest.IsCompleted = true;
             _stdInputSemaphore.Release();
         }
 

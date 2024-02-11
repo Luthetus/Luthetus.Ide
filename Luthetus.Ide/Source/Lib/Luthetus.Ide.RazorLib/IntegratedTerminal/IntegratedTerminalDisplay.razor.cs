@@ -31,11 +31,6 @@ public partial class IntegratedTerminalDisplay : ComponentBase, IDisposable
         await InvokeAsync(StateHasChanged);
     }
 
-    public async Task HandleStdInputOnKeyDown(KeyboardEventArgs keyboardEventArgs)
-    {
-        await _integratedTerminal.HandleStdInputOnKeyDown(keyboardEventArgs);
-    }
-
     public async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         await _integratedTerminal.HandleOnKeyDown(keyboardEventArgs);

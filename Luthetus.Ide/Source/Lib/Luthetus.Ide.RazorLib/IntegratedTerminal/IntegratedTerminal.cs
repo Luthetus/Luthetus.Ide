@@ -23,7 +23,7 @@ public abstract class IntegratedTerminal
     
     public event Action? StateChanged;
     
-    public abstract Task HandleStdInputOnKeyDown(KeyboardEventArgs keyboardEventArgs);
+    public abstract Task HandleStdInputOnKeyDown(KeyboardEventArgs keyboardEventArgs, StdInRequest stdInRequest);
     public abstract Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs);
     public abstract Task StartAsync(CancellationToken cancellationToken = default);
     public abstract RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence);
