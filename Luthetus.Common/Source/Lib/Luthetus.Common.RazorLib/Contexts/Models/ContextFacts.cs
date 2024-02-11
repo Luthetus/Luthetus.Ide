@@ -107,6 +107,12 @@ public static class ContextFacts
         "Git",
         "git",
         Keymap.Empty);
+    
+    public static readonly ContextRecord TestIntegratedTerminalContext = new(
+        Key<ContextRecord>.NewKey(),
+        "IntegratedTerminal",
+        "integrated-terminal",
+        Keymap.Empty);
 
     public static readonly ImmutableArray<ContextRecord> AllContextsList = new[]
     {
@@ -126,5 +132,6 @@ public static class ContextFacts
         TerminalContext,
         NuGetPackageManagerContext,
         GitContext,
+        TestIntegratedTerminalContext,
     }.ToImmutableArray();
 }
