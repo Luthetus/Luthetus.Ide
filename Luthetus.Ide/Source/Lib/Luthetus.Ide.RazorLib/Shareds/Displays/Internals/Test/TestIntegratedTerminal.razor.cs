@@ -4,7 +4,10 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using System;
 using System.Reactive.Linq;
+using System.Text;
+using System.Threading;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals.Test;
 
@@ -14,21 +17,23 @@ public partial class TestIntegratedTerminal : ComponentBase, IDisposable
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     private readonly object TerminalLock = new();
+    /// <summary>
+    /// https://github.com/Tyrrrz/CliWrap/issues/191
+    /// (Topic is accepting user input with CliWrap)
+    /// </summary>
+    private SemaphoreSlim _stdInputSemaphore = new SemaphoreSlim(0, 1);
+    private StringBuilder _stdInputBuffer = new StringBuilder();
 
     private CliWrapIntegratedTerminal _cliWrapIntegratedTerminal = null!;
     private CancellationTokenSource _terminalCancellationTokenSource = new();
 
     private string _workingDirectory = string.Empty;
-    private string _shellAbsolutePath = string.Empty;
-    private string _stdOut = string.Empty;
-    private string _stdErr = string.Empty;
-    private string _stdIn = string.Empty;
-
-    private string _output = string.Empty;
     private string _targetFilePath = "\\Users\\hunte\\Repos\\Demos\\TestingCliWrap\\a.out";//"netcoredbg";
     private string _arguments = string.Empty;//"--interpreter=cli -- dotnet \\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg\\bin\\Debug\\net6.0\\BlazorApp4NetCoreDbg.dll";
 
     private Task _terminalTask = Task.CompletedTask;
+    private string _stdInput = string.Empty;
+    private bool _showStdInput;
 
     byte[] StdInBuffer 
     { 
@@ -42,11 +47,6 @@ public partial class TestIntegratedTerminal : ComponentBase, IDisposable
         set;
     } = null!;
 
-    public string StdIn
-    {
-        get => _stdIn;
-        set => _stdIn = value;
-    }
     public PipeSource? StdInPipeSource { get; private set; }
 
     protected override void OnInitialized()
@@ -59,19 +59,48 @@ public partial class TestIntegratedTerminal : ComponentBase, IDisposable
         base.OnInitialized();
     }
 
-    protected void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private async Task HandleStdInputOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
         {
-            StdInPipeSource = PipeSource.FromStream(StdInStream, true);
+            _showStdInput = false;
+            await InvokeAsync(StateHasChanged);
+            _stdInputBuffer.Clear();
+            _stdInputBuffer.AppendLine(_stdInput);
+            _stdInputSemaphore.Release();
+        }
+    }
 
-            var command = Cli
-                .Wrap(_targetFilePath)
-                .WithArguments(_arguments)
-                .WithStandardInputPipe(StdInPipeSource);
-
+    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    {
+        if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+        {
             _cliWrapIntegratedTerminal.TaskQueue.Enqueue(async () =>
             {
+                StdInPipeSource = PipeSource.Create(async (destination, cancellationToken) =>
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                        return;
+
+                    _ = Task.Run(async () =>
+                    {
+                        // The UI element for stdin should render,
+                        // accept input, and upon 'Enter' key,
+                        // release the '_stdInputSemaphore'
+                        _showStdInput = true;
+                        await InvokeAsync(StateHasChanged);
+                    });
+
+                    await _stdInputSemaphore.WaitAsync(cancellationToken);
+                    var data = Encoding.UTF8.GetBytes(_stdInputBuffer.ToString());
+                    await destination.WriteAsync(data, 0, data.Length, cancellationToken);
+                });
+
+                var command = Cli
+                    .Wrap(_targetFilePath)
+                    .WithArguments(_arguments)
+                    .WithStandardInputPipe(StdInPipeSource);
+
                 await command.Observe()
                     .ForEachAsync(async cmdEvent =>
                     {
@@ -83,31 +112,6 @@ public partial class TestIntegratedTerminal : ComponentBase, IDisposable
                             case StartedCommandEvent started:
                                 output = $"> {_workingDirectory} (PID:{started.ProcessId}) {command.ToString()}";
                                 outputKind = StdOutKind.Started;
-
-                                // https://stackoverflow.com/questions/5769494/reusing-memory-streams
-                                //
-                                // Reset the stream so you can re-use it
-                                StdInStream.Position = 0; // Not actually needed, SetLength(0) will reset the Position anyway
-                                StdInStream.SetLength(0);
-
-                                var stdInWriter = new StreamWriter(StdInStream);
-                                stdInWriter.Write($"attach {started.ProcessId}\n");
-                                stdInWriter.Flush();
-
-                                // https://stackoverflow.com/questions/78181/how-do-you-get-a-string-from-a-memorystream
-                                //
-                                // The StreamReader will read from the current 
-                                // position of the MemoryStream which is currently 
-                                // set at the end of the string we just wrote to it. 
-                                // We need to set the position to 0 in order to read 
-                                // from the beginning.
-                                StdInStream.Position = 0;
-
-                                // Sanity checking that StreamReader returns what I want.
-                                {
-                                    //var stdInReader = new StreamReader(StdInStream);
-                                    //var line = stdInReader.ReadLine();
-                                }
                                 break;
                             case StandardOutputCommandEvent stdOut:
                                 output = $"{stdOut.Text}";
@@ -128,7 +132,8 @@ public partial class TestIntegratedTerminal : ComponentBase, IDisposable
                                 $"{output}{Environment.NewLine}",
                                 outputKind);
 
-                            await InvokeAsync(StateHasChanged);
+                            
+                            _ = Task.Run(async () => await InvokeAsync(StateHasChanged)).ConfigureAwait(false);
                         }
                     });
             });

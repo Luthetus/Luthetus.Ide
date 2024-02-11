@@ -56,6 +56,8 @@ public class CliWrapIntegratedTerminal : IntegratedTerminal
         foreach (var std in _stdList)
         {
             std.GetRenderTreeBuilder(builder, ref sequence);
+            builder.OpenElement(sequence++, "hr");
+            builder.CloseElement();
         }
 
         return builder;

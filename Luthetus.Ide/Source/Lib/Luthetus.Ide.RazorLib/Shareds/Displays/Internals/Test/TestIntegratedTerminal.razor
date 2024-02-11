@@ -39,15 +39,19 @@
                    @bind:event="oninput"
                    @onkeydown="HandleOnKeyDown" />
         </div>
-        <div>
-            <label>_stdIn</label>
-            <input class="luth_ide_input luth_ide_input-text"
-                   style="width: 100%;"
-                   placeholder="_stdIn"
-                   @bind="_stdIn"
-                   @bind:event="oninput"
-                   @onkeydown="HandleOnKeyDown" />
-        </div>
+
+        @if (_showStdInput)
+        {
+            <div>
+                <label>_stdInput</label>
+                <input class="luth_ide_input luth_ide_input-text"
+                       style="width: 100%;"
+                       placeholder="_arguments"
+                       @bind="_stdInput"
+                       @bind:event="oninput"
+                       @onkeydown="HandleStdInputOnKeyDown" />
+            </div>
+        }
     }
 
     <div>
