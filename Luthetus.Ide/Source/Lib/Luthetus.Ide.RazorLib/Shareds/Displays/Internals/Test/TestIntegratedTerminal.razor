@@ -26,7 +26,7 @@
             <input class="luth_ide_input luth_ide_input-text"
                    style="width: 100%;"
                    placeholder="_targetFilePath"
-                   @bind="_targetFilePath"
+                   @bind="_integratedTerminal.TargetFilePath"
                    @bind:event="oninput"
                    @onkeydown="HandleOnKeyDown" />
         </div>
@@ -35,19 +35,19 @@
             <input class="luth_ide_input luth_ide_input-text"
                    style="width: 100%;"
                    placeholder="_arguments"
-                   @bind="_arguments"
+                   @bind="_integratedTerminal.Arguments"
                    @bind:event="oninput"
                    @onkeydown="HandleOnKeyDown" />
         </div>
 
-        @if (_showStdInput)
+        @if (_integratedTerminal.ShowHtmlElementStdInput)
         {
             <div>
                 <label>_stdInput</label>
                 <input class="luth_ide_input luth_ide_input-text"
                        style="width: 100%;"
                        placeholder="_arguments"
-                       @bind="_stdInput"
+                       @bind="_integratedTerminal.HtmlElementBindStdInput"
                        @bind:event="oninput"
                        @onkeydown="HandleStdInputOnKeyDown" />
             </div>
@@ -56,7 +56,7 @@
 
     <div>
         @{ var sequenceCliWrapIntegratedTerminal = 0; }
-        @(new RenderFragment(builder => _cliWrapIntegratedTerminal.GetRenderTreeBuilder(
+        @(new RenderFragment(builder => _integratedTerminal.GetRenderTreeBuilder(
             builder,
             ref sequenceCliWrapIntegratedTerminal)))
     </div>
