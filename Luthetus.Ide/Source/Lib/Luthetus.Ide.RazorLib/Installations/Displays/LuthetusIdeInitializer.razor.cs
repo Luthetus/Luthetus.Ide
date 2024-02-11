@@ -21,7 +21,7 @@ using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.TestExplorers.Displays;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Ide.RazorLib.Gits.Displays;
-using Luthetus.Ide.RazorLib.Shareds.Displays.Internals.Test;
+using Luthetus.Ide.RazorLib.IntegratedTerminal;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
 

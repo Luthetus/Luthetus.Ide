@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Rendering;
 
-namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals.Test;
+namespace Luthetus.Ide.RazorLib.IntegratedTerminal;
 
 public class StdInRequest : Std
 {

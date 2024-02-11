@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Concurrent;
 
-namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals.Test;
+namespace Luthetus.Ide.RazorLib.IntegratedTerminal;
 
 public abstract class IntegratedTerminal
 {

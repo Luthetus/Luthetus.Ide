@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components.Web;
 using System.Reactive.Linq;
 using System.Text;
 
-namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals.Test;
+namespace Luthetus.Ide.RazorLib.IntegratedTerminal;
 
 public class CliWrapIntegratedTerminal : IntegratedTerminal
 {

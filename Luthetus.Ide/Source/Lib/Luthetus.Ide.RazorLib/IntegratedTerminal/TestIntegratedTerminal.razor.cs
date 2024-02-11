@@ -2,7 +2,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals.Test;
+namespace Luthetus.Ide.RazorLib.IntegratedTerminal;
 
 public partial class TestIntegratedTerminal : ComponentBase, IDisposable
 {
