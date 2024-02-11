@@ -74,7 +74,8 @@ public class CliWrapIntegratedTerminal : IntegratedTerminal
 
     public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
     {
-        foreach (var std in _stdList)
+        var localStdList = new List<Std>(_stdList);
+        foreach (var std in localStdList)
         {
             std.GetRenderTreeBuilder(builder, ref sequence);
             builder.OpenElement(sequence++, "hr");

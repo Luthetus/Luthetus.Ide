@@ -128,7 +128,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 Key<PanelTab>.NewKey(),
                 leftPanel.ElementDimensions,
                 new(),
-                typeof(TestIntegratedTerminal),
+                typeof(IntegratedTerminalDisplay),
                 typeof(IconFolder),
                 "TestIntegratedTerminal")
             {

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.Ide.RazorLib.IntegratedTerminal;
 
-public partial class TestIntegratedTerminal : ComponentBase, IDisposable
+public partial class IntegratedTerminalDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
