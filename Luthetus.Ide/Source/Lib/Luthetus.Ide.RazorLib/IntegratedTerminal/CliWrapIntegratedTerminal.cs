@@ -25,10 +25,6 @@ public class CliWrapIntegratedTerminal : IntegratedTerminal
         _stdList.Add(new StdQuiescent(this));
     }
 
-    private string _workingDirectory = string.Empty;
-    private string _targetFilePath = "\\Users\\hunte\\Repos\\Demos\\TestingCliWrap\\a.out";//"netcoredbg";
-    private string _arguments = string.Empty;//"--interpreter=cli -- dotnet \\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg\\bin\\Debug\\net6.0\\BlazorApp4NetCoreDbg.dll";
-
     public PipeSource? StdInPipeSource { get; private set; }
 
     public void AddStdOut(string content, StdOutKind stdOutKind)
@@ -125,8 +121,8 @@ public class CliWrapIntegratedTerminal : IntegratedTerminal
             stdQuiescent.TargetFilePath = capturedTargetFilePath;
             stdQuiescent.Arguments = capturedArguments;
 
-            _targetFilePath = capturedTargetFilePath;
-            _arguments = capturedTargetFilePath;
+            TargetFilePath = capturedTargetFilePath;
+            Arguments = capturedArguments;
 
             InvokeStateChanged();
 
@@ -153,8 +149,8 @@ public class CliWrapIntegratedTerminal : IntegratedTerminal
                 });
 
                 var command = Cli
-                    .Wrap(_targetFilePath)
-                    .WithArguments(_arguments)
+                    .Wrap(TargetFilePath)
+                    .WithArguments(Arguments)
                     .WithStandardInputPipe(StdInPipeSource);
 
                 await command.Observe()

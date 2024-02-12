@@ -8,19 +8,23 @@
 
     <button @onclick="StartTerminal"
             class="luth_button"
+            style="display: inline;"
             disabled=@startButtonIsDisabled>
         Start
     </button>
 
     <button @onclick="CancelTerminalOnClick"
             class="luth_button"
+            style="display: inline;"
             disabled=@cancelButtonIsDisabled>
         Cancel
     </button>
 
     @if (!_terminalTask.IsCompleted)
     {
-        <IconLoading/>
+        <span style="display: inline-block;">
+            <IconLoading/>
+        </span>
     }
 
     <div>

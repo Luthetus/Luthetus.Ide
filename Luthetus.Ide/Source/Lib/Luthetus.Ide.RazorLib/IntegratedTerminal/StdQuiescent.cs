@@ -7,11 +7,13 @@ public class StdQuiescent : Std
     public StdQuiescent(IntegratedTerminal integratedTerminal)
         : base(integratedTerminal)
     {
+        TargetFilePath = integratedTerminal.TargetFilePath;
+        Arguments = integratedTerminal.Arguments;
     }
 
     public bool IsCompleted { get; set; }
-    public string TargetFilePath { get; set; } = "\\Users\\hunte\\Repos\\Demos\\TestingCliWrap\\a.out";//"netcoredbg";
-    public string Arguments { get; set; } = string.Empty;//"--interpreter=cli -- dotnet \\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg\\bin\\Debug\\net6.0\\BlazorApp4NetCoreDbg.dll";
+    public string TargetFilePath { get; set; }
+    public string Arguments { get; set; }
 
     public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
     {

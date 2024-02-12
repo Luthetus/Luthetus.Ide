@@ -18,13 +18,21 @@ public class StdOut : Std
     public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
     {
         builder.OpenElement(sequence++, "div");
+        {
+            if (StdOutKind == StdOutKind.Started || StdOutKind == StdOutKind.Exited)
+                builder.AddAttribute(sequence++, "class", "luth_te_keyword");
+            if (StdOutKind == StdOutKind.Error)
+                builder.AddAttribute(sequence++, "class", "luth_te_keyword-contextual");
 
-        if (StdOutKind == StdOutKind.Started || StdOutKind == StdOutKind.Exited)
-            builder.AddAttribute(sequence++, "class", "luth_te_keyword");
-        if (StdOutKind == StdOutKind.Error)
-            builder.AddAttribute(sequence++, "class", "luth_te_keyword-contextual");
-
-        builder.AddContent(sequence++, Content);
+            var stringReader = new StringReader(Content);
+            string? line;
+            while ((line = stringReader.ReadLine()) is not null)
+            {
+                builder.AddContent(sequence++, line);
+                builder.OpenElement(sequence++, "br");
+                builder.CloseElement();
+            }
+        }
         builder.CloseElement();
 
         return builder;
