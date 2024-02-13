@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.Json.Json.Facts;
@@ -8,9 +8,9 @@ public static class JsonFacts
     public const string COMMENT_LINE_START = "//";
     public static readonly ImmutableArray<char> COMMENT_LINE_ENDINGS = new[]
     {
-    WhitespaceFacts.CARRIAGE_RETURN,
-    WhitespaceFacts.LINE_FEED,
-}.ToImmutableArray();
+        WhitespaceFacts.CARRIAGE_RETURN,
+        WhitespaceFacts.LINE_FEED,
+    }.ToImmutableArray();
 
     public const string COMMENT_BLOCK_START = "/*";
     public const string COMMENT_BLOCK_END = "*/";

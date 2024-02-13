@@ -1,8 +1,8 @@
 using Xunit;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Expression;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 

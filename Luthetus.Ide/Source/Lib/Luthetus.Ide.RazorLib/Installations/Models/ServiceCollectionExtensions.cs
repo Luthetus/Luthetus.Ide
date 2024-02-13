@@ -21,12 +21,12 @@ using Luthetus.Ide.RazorLib.InputFiles.Displays;
 using Luthetus.Ide.RazorLib.FileSystems.Displays;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
 using Luthetus.Ide.RazorLib.CSharpProjectForms.Displays;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.Ide.RazorLib.Decorations;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.TestExplorers.States;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.Ide.RazorLib.Installations.Models;
 

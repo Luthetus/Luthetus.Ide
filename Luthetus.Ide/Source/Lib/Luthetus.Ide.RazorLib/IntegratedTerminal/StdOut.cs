@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components.Rendering;
-using System.Text;
 
 namespace Luthetus.Ide.RazorLib.IntegratedTerminal;
 

@@ -1,5 +1,5 @@
 ﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 

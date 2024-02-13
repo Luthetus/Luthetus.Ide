@@ -2,6 +2,7 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.SyntaxActors;
 
@@ -38,7 +39,7 @@ public class GenericSyntaxTreeTests
 	}
 
 	/// <summary>
-	/// <see cref="GenericSyntaxTree.ParseCommentSingleLine(RazorLib.CompilerServices.StringWalker, RazorLib.CompilerServices.LuthetusDiagnosticBag)"/>
+	/// <see cref="GenericSyntaxTree.ParseCommentSingleLine(StringWalker, RazorLib.CompilerServices.LuthDiagnosticBag)"/>
 	/// </summary>
 	[Fact]
 	public void ParseCommentSingleLine()
@@ -47,7 +48,7 @@ public class GenericSyntaxTreeTests
 	}
 
 	/// <summary>
-	/// <see cref="GenericSyntaxTree.ParseCommentMultiLine(RazorLib.CompilerServices.StringWalker, RazorLib.CompilerServices.LuthetusDiagnosticBag)"/>
+	/// <see cref="GenericSyntaxTree.ParseCommentMultiLine(StringWalker, RazorLib.CompilerServices.LuthDiagnosticBag)"/>
 	/// </summary>
 	[Fact]
 	public void ParseCommentMultiLine()
@@ -56,7 +57,7 @@ public class GenericSyntaxTreeTests
 	}
 
 	/// <summary>
-	/// <see cref="GenericSyntaxTree.ParseString(RazorLib.CompilerServices.StringWalker, RazorLib.CompilerServices.LuthetusDiagnosticBag)"/>
+	/// <see cref="GenericSyntaxTree.ParseString(StringWalker, RazorLib.CompilerServices.LuthDiagnosticBag)"/>
 	/// </summary>
 	[Fact]
 	public void ParseString()

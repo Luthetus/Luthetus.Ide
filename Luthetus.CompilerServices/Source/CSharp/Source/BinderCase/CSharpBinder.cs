@@ -4,17 +4,18 @@ using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Expression;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 
-public partial class CSharpBinder : IBinder
+public partial class CSharpBinder : ILuthBinder
 {
     private readonly Dictionary<string, NamespaceGroupNode> _namespaceGroupNodeMap = CSharpFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
     /// <summary>
@@ -28,7 +29,7 @@ public partial class CSharpBinder : IBinder
     /// inserted for the user if they decide to use that autocomplete option.
     /// </summary>
     private readonly Dictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> _allTypeDefinitions = new();
-    private readonly LuthetusDiagnosticBag _diagnosticBag = new();
+    private readonly LuthDiagnosticBag _diagnosticBag = new();
     private readonly CSharpBoundScope _globalScope = CSharpFacts.Scope.GetInitialGlobalScope();
     private readonly NamespaceStatementNode _topLevelNamespaceStatementNode = CSharpFacts.Namespaces.GetTopLevelNamespaceStatementNode();
 
@@ -50,13 +51,13 @@ public partial class CSharpBinder : IBinder
     public ImmutableDictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions.ToImmutableDictionary();
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList => _diagnosticBag.ToImmutableArray();
 
-    ImmutableArray<ITextEditorSymbol> IBinder.SymbolsList => Symbols
+    ImmutableArray<ITextEditorSymbol> ILuthBinder.SymbolsList => Symbols
         .Select(s => (ITextEditorSymbol)s)
         .ToImmutableArray();
 
-    public BinderSession ConstructBinderSession(ResourceUri resourceUri)
+    public ILuthBinderSession ConstructBinderSession(ResourceUri resourceUri)
     {
-        return new BinderSession(
+        return new CSharpBinderSession(
             resourceUri,
             _globalScope,
             _topLevelNamespaceStatementNode,

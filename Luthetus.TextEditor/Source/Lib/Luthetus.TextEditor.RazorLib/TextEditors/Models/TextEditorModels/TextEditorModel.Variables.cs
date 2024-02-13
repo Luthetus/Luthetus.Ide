@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -36,7 +36,7 @@ public partial class TextEditorModel
     /// <inheritdoc cref="ITextEditorModel.FileExtension"/>
     public string FileExtension { get; init; }
     public IDecorationMapper DecorationMapper { get; init; }
-    public ICompilerService CompilerService { get; init; }
+    public ILuthCompilerService CompilerService { get; init; }
     public TextEditorSaveFileHelper TextEditorSaveFileHelper { get; init; } = new();
     public int EditBlockIndex { get; init; }
 	public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple { get; init; }

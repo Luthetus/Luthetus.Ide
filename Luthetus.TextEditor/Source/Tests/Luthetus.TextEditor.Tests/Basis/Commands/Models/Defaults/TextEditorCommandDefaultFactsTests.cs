@@ -21,6 +21,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.TextEditor.Tests.Basis.Commands.Models.Defaults;
 

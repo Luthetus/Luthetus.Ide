@@ -1,5 +1,5 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 

@@ -16,7 +16,7 @@ public abstract class IntegratedTerminal
     public string WorkingDirectory { get; }
 
     public string TargetFilePath { get; set; } = "netcoredbg";
-    public string Arguments { get; set; } = "--interpreter=cli -- dotnet \\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg\\bin\\Debug\\net6.0\\BlazorApp4NetCoreDbg.dll";
+    public string Arguments { get; set; } = "--interpreter=cli -- dotnet C:\\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\ConsoleApp1\\bin\\Debug\\net8.0\\ConsoleApp1.dll";
     public IEnvironmentProvider EnvironmentProvider { get; }
     public ConcurrentQueue<Func<Task>> TaskQueue { get; } = new();
     

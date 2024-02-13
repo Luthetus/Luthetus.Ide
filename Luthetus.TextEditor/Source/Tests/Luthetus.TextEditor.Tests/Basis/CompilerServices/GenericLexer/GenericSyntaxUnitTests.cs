@@ -9,7 +9,7 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer;
 public class GenericSyntaxUnitTests
 {
 	/// <summary>
-	/// <see cref="GenericSyntaxUnit(RazorLib.CompilerServices.GenericLexer.SyntaxObjects.GenericDocumentSyntax, RazorLib.CompilerServices.LuthetusDiagnosticBag)"/>
+	/// <see cref="GenericSyntaxUnit(RazorLib.CompilerServices.GenericLexer.SyntaxObjects.GenericDocumentSyntax, RazorLib.CompilerServices.LuthDiagnosticBag)"/>
 	/// </summary>
 	[Fact]
 	public void Constructor()

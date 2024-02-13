@@ -2,6 +2,9 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
@@ -11,7 +14,7 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 public class CompilationUnitTests
 {
     /// <summary>
-    /// <see cref="CompilationUnit(CodeBlockNode?, ILexer?, IParser?, IBinder?)"/>
+    /// <see cref="CompilationUnit(CodeBlockNode?, ILuthLexer?, ILuthParser?, ILuthBinder?)"/>
 	/// <br/>----<br/>
     /// <see cref="CompilationUnit.RootCodeBlockNode"/>
     /// <see cref="CompilationUnit.Lexer"/>
@@ -26,9 +29,9 @@ public class CompilationUnitTests
 	public void Constructor()
 	{
 		var codeBlockNode = new CodeBlockNode(ImmutableArray<ISyntax>.Empty);
-		var lexer = new TextEditorDefaultLexer();
-		var parser = new TextEditorDefaultParser();
-		var binder = new TextEditorDefaultBinder();
+		var lexer = new LuthLexer(null, null, null);
+		var parser = new LuthParser();
+		var binder = new LuthBinder();
 
 		var compilationUnit = new CompilationUnit(
             codeBlockNode,

@@ -1,9 +1,9 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Facts;
 

@@ -29,7 +29,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
-using Luthetus.Common.RazorLib.Commands.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 

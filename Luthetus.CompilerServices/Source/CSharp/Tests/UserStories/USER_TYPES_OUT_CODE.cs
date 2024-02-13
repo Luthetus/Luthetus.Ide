@@ -18,6 +18,7 @@ using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
 
@@ -69,10 +70,10 @@ public class USER_TYPES_OUT_CODE
         Assert.NotNull(cSharpResource);
 
         // Tokens: 'public' 'class' 'MyClass' '{' '}' 'EndOfFileToken'
-        Assert.Equal(6, cSharpResource.SyntaxTokens.Length);
+        Assert.Equal(6, cSharpResource.SyntaxTokenList.Length);
 
-        Assert.Single(cSharpResource.Symbols);
-        Assert.IsType<TypeSymbol>(cSharpResource.Symbols.Single());
+        Assert.Single(cSharpResource.GetSymbols());
+        Assert.IsType<TypeSymbol>(cSharpResource.GetSymbols().Single());
     }
     
     [Fact]

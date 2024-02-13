@@ -1,5 +1,6 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
@@ -9,7 +10,7 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 public class TokenWalkerTests
 {
 	/// <summary>
-	/// <see cref="TokenWalker(System.Collections.Immutable.ImmutableArray{RazorLib.CompilerServices.Syntax.ISyntaxToken}, LuthetusDiagnosticBag)"/>
+	/// <see cref="TokenWalker(System.Collections.Immutable.ImmutableArray{RazorLib.CompilerServices.Syntax.ISyntaxToken}, LuthDiagnosticBag)"/>
 	/// </summary>
 	[Fact]
 	public void Constructor()

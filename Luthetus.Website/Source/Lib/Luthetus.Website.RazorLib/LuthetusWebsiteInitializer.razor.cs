@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
@@ -15,6 +14,9 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
 using Fluxor;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
+using Luthetus.Common.RazorLib.Installations.Models;
 
 namespace Luthetus.Website.RazorLib;
 
@@ -42,11 +44,31 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
     private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
     private EditorSync EditorSync { get; set; } = null!;
+    [Inject]
+    private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
+    [Inject]
+    private ContinuousBackgroundTaskWorker ContinuousBackgroundTaskWorker { get; set; } = null!;
+    [Inject]
+    private BlockingBackgroundTaskWorker BlockingBackgroundTaskWorker { get; set; } = null!;
 
     protected override void OnInitialized()
     {
         TextEditorRegistryWrap.DecorationMapperRegistry = DecorationMapperRegistry;
         TextEditorRegistryWrap.CompilerServiceRegistry = CompilerServiceRegistry;
+
+        if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Wasm ||
+            LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.UnitTesting)
+        {
+            _ = Task.Run(async () => await ContinuousBackgroundTaskWorker
+                        .StartAsync(CancellationToken.None)
+                        .ConfigureAwait(false))
+                    .ConfigureAwait(false);
+
+            _ = Task.Run(async () => await BlockingBackgroundTaskWorker
+                        .StartAsync(CancellationToken.None)
+                        .ConfigureAwait(false))
+                    .ConfigureAwait(false);
+        }
 
         base.OnInitialized();
     }

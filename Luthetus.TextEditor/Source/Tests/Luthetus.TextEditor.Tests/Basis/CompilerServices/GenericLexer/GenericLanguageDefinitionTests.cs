@@ -1,8 +1,8 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
 using Luthetus.CompilerServices.Lang.FSharp.FSharp.Facts;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer;
 
@@ -41,10 +41,10 @@ public class GenericLanguageDefinitionTests
 		var commentSingleLineStart = "//";
 
 		var commentSingleLineEndingsList = new[]
-            {
-                WhitespaceFacts.CARRIAGE_RETURN.ToString(),
-                WhitespaceFacts.LINE_FEED.ToString()
-            }.ToImmutableArray();
+        {
+            WhitespaceFacts.CARRIAGE_RETURN.ToString(),
+            WhitespaceFacts.LINE_FEED.ToString()
+        }.ToImmutableArray();
 
 		var commentMultiLineStart = "(*";
 		var commentMultiLineEnd = "*)";

@@ -11,7 +11,8 @@ using Luthetus.CompilerServices.Lang.Json;
 using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.TypeScript;
 using Luthetus.CompilerServices.Lang.Xml;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using System.Collections.Immutable;
@@ -20,9 +21,9 @@ namespace Luthetus.Ide.RazorLib.CompilerServices.Models;
 
 public class CompilerServiceRegistry : ICompilerServiceRegistry
 {
-    private readonly Dictionary<string, ICompilerService> _map = new();
+    private readonly Dictionary<string, ILuthCompilerService> _map = new();
 
-    public ImmutableDictionary<string, ICompilerService> Map => _map.ToImmutableDictionary();
+    public ImmutableDictionary<string, ILuthCompilerService> Map => _map.ToImmutableDictionary();
 
     public CompilerServiceRegistry(
         ITextEditorService textEditorService,
@@ -40,7 +41,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
         RazorCompilerService = new RazorCompilerService(textEditorService, backgroundTaskService, CSharpCompilerService, environmentProvider, dispatcher);
         TypeScriptCompilerService = new TypeScriptCompilerService(textEditorService, backgroundTaskService, dispatcher);
         XmlCompilerService = new XmlCompilerService(textEditorService, backgroundTaskService, dispatcher);
-        DefaultCompilerService = new TextEditorCompilerServiceDefault();
+        DefaultCompilerService = new LuthCompilerService(textEditorService, (_, _) => null, _ => null);
 
         _map.Add(ExtensionNoPeriodFacts.HTML, XmlCompilerService);
         _map.Add(ExtensionNoPeriodFacts.XML, XmlCompilerService);
@@ -67,9 +68,9 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
     public RazorCompilerService RazorCompilerService { get; }
     public TypeScriptCompilerService TypeScriptCompilerService { get; }
     public XmlCompilerService XmlCompilerService { get; }
-    public TextEditorCompilerServiceDefault DefaultCompilerService { get; }
+    public LuthCompilerService DefaultCompilerService { get; }
 
-    public ICompilerService GetCompilerService(string extensionNoPeriod)
+    public ILuthCompilerService GetCompilerService(string extensionNoPeriod)
     {
         if (_map.TryGetValue(extensionNoPeriod, out var compilerService))
             return compilerService;

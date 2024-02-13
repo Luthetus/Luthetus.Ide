@@ -1,9 +1,10 @@
 ﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 

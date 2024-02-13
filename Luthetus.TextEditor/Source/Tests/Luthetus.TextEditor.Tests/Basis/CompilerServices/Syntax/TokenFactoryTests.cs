@@ -1,5 +1,6 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax;
 
@@ -9,7 +10,7 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax;
 public class TokenFactoryTests
 {
 	/// <summary>
-	/// <see cref="TokenFactory.FabricateToken(RazorLib.CompilerServices.TokenWalker, SyntaxKind)"/>
+	/// <see cref="TokenFactory.FabricateToken(TokenWalker, SyntaxKind)"/>
 	/// </summary>
 	[Fact]
 	public void FabricateToken()

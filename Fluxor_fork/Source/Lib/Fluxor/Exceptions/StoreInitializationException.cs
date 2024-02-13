@@ -1,12 +1,11 @@
-﻿using Fluxor.Exceptions;
-using System;
+﻿using System;
 
 namespace Fluxor.Exceptions
 {
-	/// <summary>
-	/// An exception that is thrown when the Store fails to initialize
-	/// </summary>
-	public class StoreInitializationException : FluxorException
+    /// <summary>
+    /// An exception that is thrown when the Store fails to initialize
+    /// </summary>
+    public class StoreInitializationException : FluxorException
 	{
 		/// <summary>
 		/// Creates a new instance of the exception

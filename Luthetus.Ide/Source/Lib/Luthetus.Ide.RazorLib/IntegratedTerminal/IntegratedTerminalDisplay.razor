@@ -1,36 +1,7 @@
 ﻿<div class="luth_ide_integrated-terminal"
      style="height: 100%; overflow: auto;">
-
-    @{
-        var startButtonIsDisabled = !_terminalTask.IsCompleted;
-        var cancelButtonIsDisabled = _terminalTask.IsCompleted;
-    }
-
-    <button @onclick="StartTerminal"
-            class="luth_button"
-            style="display: inline;"
-            disabled=@startButtonIsDisabled>
-        Start
-    </button>
-
-    <button @onclick="CancelTerminalOnClick"
-            class="luth_button"
-            style="display: inline;"
-            disabled=@cancelButtonIsDisabled>
-        Cancel
-    </button>
-
-    @if (!_terminalTask.IsCompleted)
-    {
-        <span style="display: inline-block;">
-            <IconLoading/>
-        </span>
-    }
-
-    <div>
-        @{ var sequenceCliWrapIntegratedTerminal = 0; }
-        @(new RenderFragment(builder => _integratedTerminal.GetRenderTreeBuilder(
-            builder,
-            ref sequenceCliWrapIntegratedTerminal)))
-    </div>
+    @{ var sequenceCliWrapIntegratedTerminal = 0; }
+    @(new RenderFragment(builder => _integratedTerminal.GetRenderTreeBuilder(
+        builder,
+        ref sequenceCliWrapIntegratedTerminal)))
 </div>

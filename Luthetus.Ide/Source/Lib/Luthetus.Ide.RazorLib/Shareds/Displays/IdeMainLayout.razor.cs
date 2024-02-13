@@ -31,6 +31,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
     private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
 
     private bool _previousDragStateWrapShouldDisplay;
@@ -87,7 +89,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             personalTestPath = "C:\\Users\\hunte\\Repos\\Luthetus.Ide_Fork\\Luthetus.Ide.sln";
 #endif
 
-            if (File.Exists(personalTestPath))
+            if (await FileSystemProvider.File.ExistsAsync(personalTestPath).ConfigureAwait(false))
             {
                 var absolutePath = EnvironmentProvider.AbsolutePathFactory(
                     personalTestPath,

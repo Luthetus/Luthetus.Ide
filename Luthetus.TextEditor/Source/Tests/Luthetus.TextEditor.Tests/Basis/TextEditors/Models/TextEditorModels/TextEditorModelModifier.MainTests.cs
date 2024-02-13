@@ -3,7 +3,6 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.AspNetCore.Components.Web;
@@ -12,6 +11,7 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
@@ -172,7 +172,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ModifyCompilerService(ICompilerService)"/>
+    /// <see cref="TextEditorModelModifier.ModifyCompilerService(ILuthCompilerService)"/>
     /// </summary>
     [Fact]
     public void ModifyCompilerService()

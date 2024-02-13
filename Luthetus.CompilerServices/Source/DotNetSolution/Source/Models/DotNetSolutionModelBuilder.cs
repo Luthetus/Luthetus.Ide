@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 

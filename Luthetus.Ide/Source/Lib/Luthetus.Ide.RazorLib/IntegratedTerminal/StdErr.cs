@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
-using System.Text;
+﻿using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Luthetus.Ide.RazorLib.IntegratedTerminal;
 

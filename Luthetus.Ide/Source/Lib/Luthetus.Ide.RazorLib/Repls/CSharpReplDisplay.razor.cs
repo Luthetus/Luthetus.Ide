@@ -2,6 +2,7 @@ using Luthetus.CompilerServices.Lang.CSharp.EvaluatorCase;
 using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Microsoft.AspNetCore.Components;
 

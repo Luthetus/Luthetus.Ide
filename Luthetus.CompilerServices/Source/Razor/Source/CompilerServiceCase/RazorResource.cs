@@ -1,13 +1,16 @@
 ﻿using Luthetus.CompilerServices.Lang.Xml.Html.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
 
-public class RazorResource : ICompilerServiceResource
+public class RazorResource : ILuthCompilerServiceResource
 {
     private readonly ITextEditorService _textEditorService;
 
@@ -24,10 +27,12 @@ public class RazorResource : ICompilerServiceResource
     public ResourceUri ResourceUri { get; }
     public RazorCompilerService RazorCompilerService { get; }
 
-    public ImmutableArray<TextEditorTextSpan> SyntacticTextSpans { get; internal set; } = ImmutableArray<TextEditorTextSpan>.Empty;
     public RazorSyntaxTree? RazorSyntaxTree { get; internal set; }
     
-    public ImmutableArray<ITextEditorSymbol> Symbols => GetSymbols();
+    CompilationUnit? ILuthCompilerServiceResource.CompilationUnit { get; set; }
+    ILuthCompilerService ILuthCompilerServiceResource.CompilerService => RazorCompilerService;
+    ImmutableArray<ISyntaxToken> ILuthCompilerServiceResource.SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
+    public ImmutableArray<TextEditorTextSpan> TokenTextSpanList { get; internal set; }
 
     public List<ITextEditorSymbol> HtmlSymbols = new();
 
@@ -35,7 +40,7 @@ public class RazorResource : ICompilerServiceResource
     /// TODO: It might be a useful optimization to evaluate these linq expressions
     /// and store the result as to not re-evaluate the linq expression over and over.
     /// </summary>
-    private ImmutableArray<ITextEditorSymbol> GetSymbols()
+    public ImmutableArray<ITextEditorSymbol> GetSymbols()
     {
         var localRazorSyntaxTree = RazorSyntaxTree;
 
@@ -158,5 +163,15 @@ public class RazorResource : ICompilerServiceResource
         }
 
         return mappedSymbols.ToImmutableArray();
+    }
+
+    public ImmutableArray<TextEditorTextSpan> GetTokenTextSpans()
+    {
+        return TokenTextSpanList;
+    }
+
+    public ImmutableArray<TextEditorDiagnostic> GetDiagnostics()
+    {
+        return ImmutableArray<TextEditorDiagnostic>.Empty;
     }
 }

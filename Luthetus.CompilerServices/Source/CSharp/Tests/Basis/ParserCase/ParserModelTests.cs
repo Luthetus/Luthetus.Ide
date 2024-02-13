@@ -4,6 +4,8 @@ using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase;
 
@@ -13,7 +15,7 @@ namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase;
 public class ParserModelTests
 {
     /// <summary>
-    /// <see cref="ParserModel(CSharpBinder, TokenWalker, Stack{ISyntax}, LuthetusDiagnosticBag, CodeBlockBuilder, CodeBlockBuilder, Action{CodeBlockNode}?, Stack{Action{CodeBlockNode}})"/>
+    /// <see cref="ParserModel(CSharpBinder, TokenWalker, Stack{ISyntax}, LuthDiagnosticBag, CodeBlockBuilder, CodeBlockBuilder, Action{CodeBlockNode}?, Stack{Action{CodeBlockNode}})"/>
     /// <br/>----<br/>
     /// <see cref="ParserModel.Binder"/>
     /// <see cref="ParserModel.TokenWalker"/>
@@ -33,9 +35,9 @@ public class ParserModelTests
 
         var binder = new CSharpBinder();
         var binderSession = binder.ConstructBinderSession(resourceUri);
-        var tokenWalker = new TokenWalker(lexer.SyntaxTokens, new LuthetusDiagnosticBag());
+        var tokenWalker = new TokenWalker(lexer.SyntaxTokens, new LuthDiagnosticBag());
         var syntaxStack = new Stack<ISyntax>();
-        var diagnosticBag = new LuthetusDiagnosticBag();
+        var diagnosticBag = new LuthDiagnosticBag();
         var globalCodeBlockBuilder = new CodeBlockBuilder(null, null);
         var currentCodeBlockBuilder = globalCodeBlockBuilder;
         var finalizeNamespaceFileScopeCodeBlockNodeAction = new Action<CodeBlockNode>(cbn => { });
@@ -43,7 +45,7 @@ public class ParserModelTests
 
         var parserModel = new ParserModel(
             binder,
-            binderSession,
+            (CSharpBinderSession)binderSession,
             tokenWalker,
             syntaxStack,
             diagnosticBag,

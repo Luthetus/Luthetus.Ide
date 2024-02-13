@@ -1,6 +1,8 @@
 ﻿using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
@@ -8,10 +10,10 @@ public class ParserModel
 {
     public ParserModel(
         CSharpBinder binder,
-        BinderSession binderSession,
+        CSharpBinderSession binderSession,
         TokenWalker tokenWalker,
         Stack<ISyntax> syntaxStack,
-        LuthetusDiagnosticBag diagnosticBag,
+        LuthDiagnosticBag diagnosticBag,
         CodeBlockBuilder globalCodeBlockBuilder,
         CodeBlockBuilder currentCodeBlockBuilder,
         Action<CodeBlockNode>? finalizeNamespaceFileScopeCodeBlockNodeAction,
@@ -29,10 +31,10 @@ public class ParserModel
     }
 
     public CSharpBinder Binder { get; }
-    public BinderSession BinderSession { get; }
+    public CSharpBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
     public Stack<ISyntax> SyntaxStack { get; set; }
-    public LuthetusDiagnosticBag DiagnosticBag { get; }
+    public LuthDiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }
     /// <summary>

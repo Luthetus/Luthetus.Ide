@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
-using System;
 using System.Threading.Tasks;
 
 namespace Fluxor.Blazor.Web.Middlewares.Routing
 {
-	/// <summary>
-	/// Adds support for routing <see cref="Microsoft.AspNetCore.Components.NavigationManager"/>
-	/// via a Fluxor store.
-	/// </summary>
-	internal class RoutingMiddleware : Middleware
+    /// <summary>
+    /// Adds support for routing <see cref="Microsoft.AspNetCore.Components.NavigationManager"/>
+    /// via a Fluxor store.
+    /// </summary>
+    internal class RoutingMiddleware : Middleware
 	{
 		private readonly NavigationManager NavigationManager;
 		private readonly IFeature<RoutingState> Feature;

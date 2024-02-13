@@ -3,35 +3,37 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
 /// <summary>
-/// <see cref="TextEditorCompilerServiceDefault"/>
+/// <see cref="LuthCompilerService"/>
 /// </summary>
 public class TextEditorDefaultCompilerServiceTests
 {
     /// <summary>
-    /// <see cref="TextEditorCompilerServiceDefault()"/>
+    /// <see cref="LuthetusCompilerServiceBase()"/>
     /// <br/>----<br/>
-	/// <see cref="TextEditorCompilerServiceDefault.ResourceRegistered"/>
-	/// <see cref="TextEditorCompilerServiceDefault.ResourceParsed"/>
-	/// <see cref="TextEditorCompilerServiceDefault.ResourceDisposed"/>
-	/// <see cref="TextEditorCompilerServiceDefault.Binder"/>
-	/// <see cref="TextEditorCompilerServiceDefault.CompilerServiceResources"/>
-	/// <see cref="TextEditorCompilerServiceDefault.RegisterResource(ResourceUri)"/>
-	/// <see cref="TextEditorCompilerServiceDefault.GetCompilerServiceResourceFor(ResourceUri)"/>
-	/// <see cref="TextEditorCompilerServiceDefault.GetSyntacticTextSpansFor(ResourceUri)"/>
-	/// <see cref="TextEditorCompilerServiceDefault.GetSymbolsFor(ResourceUri)"/>
-	/// <see cref="TextEditorCompilerServiceDefault.GetDiagnosticsFor(ResourceUri)"/>
-	/// <see cref="TextEditorCompilerServiceDefault.ResourceWasModified(ResourceUri, ImmutableArray{TextEditorTextSpan})"/>
-	/// <see cref="TextEditorCompilerServiceDefault.GetAutocompleteEntries(string, TextEditorTextSpan)"/>
-	/// <see cref="TextEditorCompilerServiceDefault.DisposeResource(ResourceUri)"/>
+	/// <see cref="LuthCompilerService.ResourceRegistered"/>
+	/// <see cref="LuthCompilerService.ResourceParsed"/>
+	/// <see cref="LuthCompilerService.ResourceDisposed"/>
+	/// <see cref="LuthCompilerService.Binder"/>
+	/// <see cref="LuthCompilerService.CompilerServiceResources"/>
+	/// <see cref="LuthCompilerService.RegisterResource(ResourceUri)"/>
+	/// <see cref="LuthCompilerService.GetCompilerServiceResourceFor(ResourceUri)"/>
+	/// <see cref="LuthCompilerService.GetSyntacticTextSpansFor(ResourceUri)"/>
+	/// <see cref="LuthCompilerService.GetSymbolsFor(ResourceUri)"/>
+	/// <see cref="LuthCompilerService.GetDiagnosticsFor(ResourceUri)"/>
+	/// <see cref="LuthCompilerService.ResourceWasModified(ResourceUri, ImmutableArray{TextEditorTextSpan})"/>
+	/// <see cref="LuthCompilerService.GetAutocompleteEntries(string, TextEditorTextSpan)"/>
+	/// <see cref="LuthCompilerService.DisposeResource(ResourceUri)"/>
     /// </summary>
     [Fact]
 	public void Constructor()
 	{
-		var compilerServiceDefault = new TextEditorCompilerServiceDefault();
+		var compilerServiceDefault = new LuthCompilerService(null, null, null);
 
 		Assert.Null(compilerServiceDefault.Binder);
 		Assert.Empty(compilerServiceDefault.CompilerServiceResources);

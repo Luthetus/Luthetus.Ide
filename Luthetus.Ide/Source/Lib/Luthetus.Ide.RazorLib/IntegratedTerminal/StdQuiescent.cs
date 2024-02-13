@@ -14,6 +14,7 @@ public class StdQuiescent : Std
     public bool IsCompleted { get; set; }
     public string TargetFilePath { get; set; }
     public string Arguments { get; set; }
+    public string Text { get; set; } = string.Empty;
 
     public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
     {
