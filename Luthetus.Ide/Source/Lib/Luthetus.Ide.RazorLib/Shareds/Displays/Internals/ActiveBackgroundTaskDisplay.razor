@@ -6,22 +6,8 @@
      style="display: flex;">
     
     <button class="luth_button"
+            style="margin-left: 15px;"
             @onclick="ShowBackgroundTaskDialogOnClick">
-        Dialog
+        Tasks
     </button>
-
-    <div>
-        @if (activeBackgroundTask is null)
-        {
-            <text>
-                activeBackgroundTask is null
-            </text>
-        }
-        else
-        {
-            <text>
-                @activeBackgroundTask.Name @activeBackgroundTask.BackgroundTaskKey.Guid
-            </text>
-        }
-    </div>
 </div>

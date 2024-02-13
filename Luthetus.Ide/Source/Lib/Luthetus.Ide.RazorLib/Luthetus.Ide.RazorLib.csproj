@@ -26,6 +26,7 @@
       <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\CSharpProject\Source\Luthetus.CompilerServices.Lang.CSharpProject.csproj" />
       <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\CSharp\Source\Luthetus.CompilerServices.Lang.CSharp.csproj" />
       <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\Css\Source\Luthetus.CompilerServices.Lang.Css.csproj" />
+      <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\C\Source\Luthetus.CompilerServices.Lang.C.csproj" />
       <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\DotNetSolution\Source\Luthetus.CompilerServices.Lang.DotNetSolution.csproj" />
       <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\FSharp\Source\Luthetus.CompilerServices.Lang.FSharp.csproj" />
       <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\JavaScript\Source\Luthetus.CompilerServices.Lang.JavaScript.csproj" />

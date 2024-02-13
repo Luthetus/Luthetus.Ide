@@ -7,8 +7,8 @@
     <div>Total count:@seenBackgroundTasks.Length // only showing the most recent @countShown</div>
     <div>The most recent entry is the first entry rendered, the last entry is the oldest entry relative to the set which was rendered.</div>
     
-    <hr/>
-
+    <hr />
+    @BackgroundTaskDialogModel.SeenBackgroundTasks.Count
     <div>
         @for (var i = 0; i < seenBackgroundTasks.Length; i++)
         {
@@ -17,14 +17,14 @@
 
             if (backgroundTask.Name.StartsWith("te_"))
             {
-                <div class="luth_te_keyword">
-                    @backgroundTask.Name @backgroundTask.BackgroundTaskKey.Guid
+                <div class="luth_te_keyword" title="@backgroundTask.BackgroundTaskKey.Guid">
+                    @backgroundTask.Name
                 </div>
             }
             else
             {
-                <div>
-                    @backgroundTask.Name @backgroundTask.BackgroundTaskKey.Guid
+                <div title="@backgroundTask.BackgroundTaskKey.Guid">
+                    @backgroundTask.Name
                 </div>
             }
         }

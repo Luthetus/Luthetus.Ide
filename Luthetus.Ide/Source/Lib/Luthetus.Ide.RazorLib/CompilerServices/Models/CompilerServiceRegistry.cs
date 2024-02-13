@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.CompilerServices.Lang.C;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.Css;
@@ -41,6 +42,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
         RazorCompilerService = new RazorCompilerService(textEditorService, backgroundTaskService, CSharpCompilerService, environmentProvider, dispatcher);
         TypeScriptCompilerService = new TypeScriptCompilerService(textEditorService, backgroundTaskService, dispatcher);
         XmlCompilerService = new XmlCompilerService(textEditorService, backgroundTaskService, dispatcher);
+        CCompilerService = new CCompilerService(textEditorService, backgroundTaskService, dispatcher);
         DefaultCompilerService = new LuthCompilerService(textEditorService, (_, _) => null, _ => null);
 
         _map.Add(ExtensionNoPeriodFacts.HTML, XmlCompilerService);
@@ -56,6 +58,10 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
         _map.Add(ExtensionNoPeriodFacts.TYPE_SCRIPT, TypeScriptCompilerService);
         _map.Add(ExtensionNoPeriodFacts.F_SHARP, FSharpCompilerService);
         _map.Add(ExtensionNoPeriodFacts.DOT_NET_SOLUTION, DotNetSolutionCompilerService);
+        _map.Add(ExtensionNoPeriodFacts.C, CCompilerService);
+        _map.Add(ExtensionNoPeriodFacts.H, CCompilerService);
+        _map.Add(ExtensionNoPeriodFacts.CPP, CCompilerService);
+        _map.Add(ExtensionNoPeriodFacts.HPP, CCompilerService);
     }
 
     public CSharpCompilerService CSharpCompilerService { get; }
@@ -68,6 +74,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
     public RazorCompilerService RazorCompilerService { get; }
     public TypeScriptCompilerService TypeScriptCompilerService { get; }
     public XmlCompilerService XmlCompilerService { get; }
+    public CCompilerService CCompilerService { get; }
     public LuthCompilerService DefaultCompilerService { get; }
 
     public ILuthCompilerService GetCompilerService(string extensionNoPeriod)

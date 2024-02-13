@@ -56,20 +56,6 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
         TextEditorRegistryWrap.DecorationMapperRegistry = DecorationMapperRegistry;
         TextEditorRegistryWrap.CompilerServiceRegistry = CompilerServiceRegistry;
 
-        if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Wasm ||
-            LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.UnitTesting)
-        {
-            _ = Task.Run(async () => await ContinuousBackgroundTaskWorker
-                        .StartAsync(CancellationToken.None)
-                        .ConfigureAwait(false))
-                    .ConfigureAwait(false);
-
-            _ = Task.Run(async () => await BlockingBackgroundTaskWorker
-                        .StartAsync(CancellationToken.None)
-                        .ConfigureAwait(false))
-                    .ConfigureAwait(false);
-        }
-
         base.OnInitialized();
     }
 
@@ -77,6 +63,20 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
     {
         if (firstRender)
         {
+            if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Wasm ||
+                LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.UnitTesting)
+            {
+                _ = Task.Run(async () => await ContinuousBackgroundTaskWorker
+                            .StartAsync(CancellationToken.None)
+                            .ConfigureAwait(false))
+                        .ConfigureAwait(false);
+
+                _ = Task.Run(async () => await BlockingBackgroundTaskWorker
+                            .StartAsync(CancellationToken.None)
+                            .ConfigureAwait(false))
+                        .ConfigureAwait(false);
+            }
+
             BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
                 "Initialize Website",
                 async () =>

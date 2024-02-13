@@ -40,13 +40,13 @@
             Info
         </button>
 
-        @if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.Photino)
+        @if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
         {
             <IdeImportExportButtons/>
         }
 
         <StartupControlsDisplay/>
 
-        @* <ActiveBackgroundTaskDisplay/> *@
+        <ActiveBackgroundTaskDisplay/>
     </div>
 </ContextBoundary>
