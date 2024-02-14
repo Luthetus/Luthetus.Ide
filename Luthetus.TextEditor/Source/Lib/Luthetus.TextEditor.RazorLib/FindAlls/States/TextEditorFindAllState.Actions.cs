@@ -1,9 +1,9 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
-namespace Luthetus.TextEditor.RazorLib.SearchEngines.States;
+namespace Luthetus.TextEditor.RazorLib.FindAlls.States;
 
-public partial class TextEditorSearchEngineState
+public partial class TextEditorFindAllState
 {
     public record RegisterAction(ITextEditorSearchEngine SearchEngine);
     public record DisposeAction(Key<ITextEditorSearchEngine> SearchEngineKey);

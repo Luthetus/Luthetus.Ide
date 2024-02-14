@@ -1,8 +1,8 @@
-﻿using Fluxor;
-using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
+using Fluxor;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.SearchEngines.States;
+namespace Luthetus.TextEditor.RazorLib.FindAlls.States;
 
 /// <summary>
 /// Keep the <see cref="TextEditorSearchEngineState"/> as a class
@@ -10,7 +10,7 @@ namespace Luthetus.TextEditor.RazorLib.SearchEngines.States;
 /// if the <see cref="FeatureStateAttribute"/> has been replaced.
 /// </summary>
 [FeatureState]
-public partial class TextEditorSearchEngineState
+public partial class TextEditorFindAllState
 {
     public TextEditorSearchEngineState()
     {

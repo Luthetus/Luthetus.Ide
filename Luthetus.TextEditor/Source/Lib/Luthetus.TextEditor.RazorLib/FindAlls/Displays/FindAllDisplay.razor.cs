@@ -4,103 +4,117 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
 using Luthetus.Common.RazorLib.Tabs.States;
-using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
-using Luthetus.TextEditor.RazorLib.SearchEngines.States;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
+using Luthetus.TextEditor.RazorLib.FindAlls.States;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.SearchEngines.Displays;
+namespace Luthetus.TextEditor.RazorLib.FindAlls.Displays;
 
-public partial class TextEditorSearchEngineDisplay : FluxorComponent
+public partial class FindAllDisplay : FluxorComponent
 {
-    [Inject]
-    private IState<TextEditorSearchEngineState> TextEditorSearchEngineStateWrap { get; set; } = null!;
+	[Inject]
+    private IState<TextEditorFindAllState> TextEditorFindAllStateWrap { get; set; } = null!;
     [Inject]
     private IStateSelection<TabState, TabGroup?> TabStateGroupSelection { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
+	[Inject]
+	private IServiceProvider ServiceProvider { get; set; } = null!;	
+	[Inject]
+	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
+	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
     private static readonly Key<TabGroup> SelectedSearchEngineTabGroupKey = new(Guid.Parse("92ec8823-79b3-4be3-99c5-1c68d713e685"));
 
-    private CancellationTokenSource _doSearchCancellationTokenSource = new();
+	private CancellationTokenSource _doSearchCancellationTokenSource = new();
     private bool _isSearching;
     private bool _disposed;
 
-    private string SearchQuery
+	public SearchEngineFileSystem SearchEngineFileSystem => (SearchEngineFileSystem)
+		TextEditorSearchEngineStateWrap.Value.SearchEngineList
+			.FirstOrDefault(x => x.DisplayName == "FileSystem");
+
+	private string SearchQuery
     {
         get => TextEditorSearchEngineStateWrap.Value.SearchQuery;
         set
         {
             if (value is not null)
-                Dispatcher.Dispatch(new TextEditorSearchEngineState.SetSearchQueryAction(value));
+                Dispatcher.Dispatch(new TextEditorFindAllState.SetSearchQueryAction(value));
         }
     }
 
     private bool MatchCase
     {
-        get => TextEditorSearchEngineStateWrap.Value.Options.MatchCase.Value;
+        get => TextEditorFindAllStateWrap.Value.Options.MatchCase.Value;
         set
         {
-            TextEditorSearchEngineStateWrap.Value.Options.MatchCase.Value = value;
+            TextEditorFindAllStateWrap.Value.Options.MatchCase.Value = value;
         }
     }
 
     private bool MatchWholeWord
     {
-        get => TextEditorSearchEngineStateWrap.Value.Options.MatchWholeWord.Value;
+        get => TextEditorFindAllStateWrap.Value.Options.MatchWholeWord.Value;
         set
         {
-            TextEditorSearchEngineStateWrap.Value.Options.MatchWholeWord.Value = value;
+            TextEditorFindAllStateWrap.Value.Options.MatchWholeWord.Value = value;
         }
     }
 
     private bool UseRegularExpressions
     {
-        get => TextEditorSearchEngineStateWrap.Value.Options.UseRegularExpressions.Value;
+        get => TextEditorFindAllStateWrap.Value.Options.UseRegularExpressions.Value;
         set
         {
-            TextEditorSearchEngineStateWrap.Value.Options.UseRegularExpressions.Value = value;
+            TextEditorFindAllStateWrap.Value.Options.UseRegularExpressions.Value = value;
         }
     }
 
     private bool IncludeExternalItems
     {
-        get => TextEditorSearchEngineStateWrap.Value.Options.IncludeExternalItems.Value;
+        get => TextEditorFindAllStateWrap.Value.Options.IncludeExternalItems.Value;
         set
         {
-            TextEditorSearchEngineStateWrap.Value.Options.IncludeExternalItems.Value = value;
+            TextEditorFindAllStateWrap.Value.Options.IncludeExternalItems.Value = value;
         }
     }
 
     private bool IncludeMiscellaneousFiles
     {
-        get => TextEditorSearchEngineStateWrap.Value.Options.IncludeMiscellaneousFiles.Value;
+        get => TextEditorFindAllStateWrap.Value.Options.IncludeMiscellaneousFiles.Value;
         set
         {
-            TextEditorSearchEngineStateWrap.Value.Options.IncludeMiscellaneousFiles.Value = value;
+            TextEditorFindAllStateWrap.Value.Options.IncludeMiscellaneousFiles.Value = value;
         }
     }
 
     private bool AppendResults
     {
-        get => TextEditorSearchEngineStateWrap.Value.Options.AppendResults.Value;
+        get => TextEditorFindAllStateWrap.Value.Options.AppendResults.Value;
         set
         {
-            TextEditorSearchEngineStateWrap.Value.Options.AppendResults.Value = value;
+            TextEditorFindAllStateWrap.Value.Options.AppendResults.Value = value;
         }
     }
 
-    protected override void OnInitialized()
-    {
-        TabStateGroupSelection.Select(tabState => tabState.TabGroupList.FirstOrDefault(
+	protected override void OnInitialized()
+	{
+		TabStateGroupSelection.Select(tabState => tabState.TabGroupList.FirstOrDefault(
             group => group.Key == SelectedSearchEngineTabGroupKey));
 
-        base.OnInitialized();
-    }
+		SearchEngineFileSystem.ProgressOccurred += On_SearchEngineFileSystem_ProgressOccurred;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+		base.OnInitialized();
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
@@ -123,7 +137,7 @@ public partial class TextEditorSearchEngineDisplay : FluxorComponent
                                 tabEntryNoType =>
                                 {
                                     var tabEntryWithType = (TabEntryWithType<Key<ITextEditorSearchEngine>>)tabEntryNoType;
-                                    var searchEngineState = TextEditorSearchEngineStateWrap.Value;
+                                    var searchEngineState = TextEditorFindAllStateWrap.Value;
                                     var searchEngine = searchEngineState.SearchEngineList.FirstOrDefault(x => x.Key == tabEntryWithType.Item);
                                     return searchEngine?.DisplayName ?? $"{nameof(searchEngine.DisplayName)} was null";
                                 },
@@ -159,7 +173,38 @@ public partial class TextEditorSearchEngineDisplay : FluxorComponent
         await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
     }
 
-    private async Task DoSearchOnClickAsync(
+	private async Task OpenInEditorOnClick(string filePath)
+	{
+		var resourceUri = new ResourceUri(filePath);
+
+        if (TextEditorConfig.RegisterModelFunc is null)
+			return;
+
+        await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
+                resourceUri,
+                ServiceProvider));
+
+        if (TextEditorConfig.TryRegisterViewModelFunc is not null)
+		{
+			var viewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
+				Key<TextEditorViewModel>.NewKey(),
+                resourceUri,
+                new TextEditorCategory("main"),
+				false,
+				ServiceProvider));
+
+            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
+				TextEditorConfig.TryShowViewModelFunc is not null)
+            {
+				await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
+					viewModelKey,
+					Key<TextEditorGroup>.Empty,
+					ServiceProvider));
+            }
+        }
+	}
+
+	private async Task DoSearchOnClickAsync(
         TextEditorSearchEngineState searchEngineState,
         ITextEditorSearchEngine activeSearchEngine)
     {
@@ -184,7 +229,12 @@ public partial class TextEditorSearchEngineDisplay : FluxorComponent
         }
     }
 
-    protected override void Dispose(bool disposing)
+	private async void On_SearchEngineFileSystem_ProgressOccurred()
+	{
+		await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+	}
+
+	protected override void Dispose(bool disposing)
     {
         if (_disposed)
         {
@@ -196,7 +246,8 @@ public partial class TextEditorSearchEngineDisplay : FluxorComponent
             _disposed = true;
 
             _doSearchCancellationTokenSource.Cancel();
-        }
+        	SearchEngineFileSystem.ProgressOccurred -= On_SearchEngineFileSystem_ProgressOccurred;
+		}
 
         base.Dispose(disposing);
     }

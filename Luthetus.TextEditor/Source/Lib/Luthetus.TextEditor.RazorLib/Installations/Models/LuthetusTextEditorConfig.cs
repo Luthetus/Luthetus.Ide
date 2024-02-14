@@ -2,7 +2,7 @@ using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
-using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,16 +1,18 @@
 using Fluxor;
 using Microsoft.AspNetCore.Components;
-using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
-using Luthetus.TextEditor.RazorLib.SearchEngines.States;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Storages.Models;
+using Luthetus.TextEditor.RazorLib.FindAlls.States;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Nugets.Displays;
 using Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 using Luthetus.Ide.RazorLib.CompilerServices.Displays;
@@ -19,10 +21,8 @@ using Luthetus.Ide.RazorLib.Terminals.Displays;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.TestExplorers.Displays;
-using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Ide.RazorLib.Gits.Displays;
 using Luthetus.Ide.RazorLib.IntegratedTerminal;
-using Luthetus.Common.RazorLib.Storages.Models;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
 
@@ -61,7 +61,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
                     foreach (var searchEngine in TextEditorConfig.SearchEngineList)
                     {
-                        Dispatcher.Dispatch(new TextEditorSearchEngineState.RegisterAction(searchEngine));
+                        Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(searchEngine));
                     }
 
                     foreach (var terminalSessionKey in TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS)

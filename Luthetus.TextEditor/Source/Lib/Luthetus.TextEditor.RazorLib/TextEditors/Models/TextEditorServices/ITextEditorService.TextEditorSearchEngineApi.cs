@@ -1,6 +1,6 @@
-﻿using Fluxor;
-using Luthetus.TextEditor.RazorLib.SearchEngines.States;
-using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
+using Fluxor;
+using Luthetus.TextEditor.RazorLib.FindAlls.States;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using System.Collections.Immutable;
 

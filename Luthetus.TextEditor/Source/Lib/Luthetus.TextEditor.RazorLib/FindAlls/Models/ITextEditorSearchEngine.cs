@@ -1,6 +1,6 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
-namespace Luthetus.TextEditor.RazorLib.SearchEngines.Models;
+namespace Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
 public interface ITextEditorSearchEngine
 {

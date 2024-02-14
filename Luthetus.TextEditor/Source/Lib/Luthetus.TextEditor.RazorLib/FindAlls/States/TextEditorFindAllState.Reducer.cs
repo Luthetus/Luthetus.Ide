@@ -1,8 +1,8 @@
-﻿using Fluxor;
+using Fluxor;
 
-namespace Luthetus.TextEditor.RazorLib.SearchEngines.States;
+namespace Luthetus.TextEditor.RazorLib.FindAlls.States;
 
-public partial class TextEditorSearchEngineState
+public partial class TextEditorFindAllState
 {
     public class Reducer
     {

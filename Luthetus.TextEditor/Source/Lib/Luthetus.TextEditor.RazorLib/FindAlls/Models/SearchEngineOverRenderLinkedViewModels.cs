@@ -1,7 +1,7 @@
-﻿using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
+using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
 using Luthetus.Common.RazorLib.Keys.Models;
 
-namespace Luthetus.TextEditor.RazorLib.SearchEngines.Models;
+namespace Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
 public class SearchEngineOverRenderLinkedViewModels : ITextEditorSearchEngine
 {

@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.SearchEngines.Models;
+namespace Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
 public static class SearchEngineFacts
 {

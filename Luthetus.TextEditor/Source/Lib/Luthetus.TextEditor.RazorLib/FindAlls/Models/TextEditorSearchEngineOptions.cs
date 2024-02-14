@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.SearchEngines.Models;
+namespace Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
 public class TextEditorSearchEngineOptions
 {

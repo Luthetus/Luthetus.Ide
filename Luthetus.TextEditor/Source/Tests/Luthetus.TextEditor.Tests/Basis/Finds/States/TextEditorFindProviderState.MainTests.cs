@@ -1,9 +1,9 @@
-﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.SearchEngines.States;
-using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
+using Xunit;
+using Luthetus.TextEditor.RazorLib.FindAlls.States;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.Tests.Basis.SearchEngines.States;
+namespace Luthetus.TextEditor.Tests.Basis.FindAlls.States;
 
 /// <summary>
 /// <see cref="TextEditorSearchEngineState"/>

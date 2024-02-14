@@ -2,7 +2,7 @@ using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 
-namespace Luthetus.TextEditor.RazorLib.SearchEngines.Models;
+namespace Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
 public class SearchEngineFileSystem : ITextEditorSearchEngine
 {

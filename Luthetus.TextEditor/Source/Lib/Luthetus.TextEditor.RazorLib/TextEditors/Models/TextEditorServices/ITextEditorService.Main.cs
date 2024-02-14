@@ -1,7 +1,7 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
-using Luthetus.TextEditor.RazorLib.SearchEngines.States;
+using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
