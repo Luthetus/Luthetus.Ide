@@ -27,8 +27,7 @@ public class LocalDirectoryHandler : IDirectoryHandler
         CancellationToken cancellationToken = default)
     {
         // This method will add the path to IEnvironmentProvider.DeletionPermittedPaths
-        // and therefore, if the directory already exists, then
-        // return early.
+        // and therefore, if the directory already exists, then return early.
         //
         // An example of the concern is that someone tries to create the
         // root directory. It already existed, so the 'create' part did nothing.
@@ -77,6 +76,13 @@ public class LocalDirectoryHandler : IDirectoryHandler
         string destinationAbsolutePathString,
         CancellationToken cancellationToken = default)
     {
+		/*
+			Luthetus.Ide.RazorLib.Menus.Models.MenuOptionsFactory.cs
+			currently uses the method "CopyFilesRecursively" (which exists in the same file).
+			To copy and paste a directory.
+
+			TODO: Implement this method.
+		*/
         throw new NotImplementedException();
     }
 
@@ -87,7 +93,7 @@ public class LocalDirectoryHandler : IDirectoryHandler
     {
         try
         {
-            _environmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
+			_environmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
             if (await ExistsAsync(destinationAbsolutePathString).ConfigureAwait(false))
                 _environmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
@@ -140,7 +146,7 @@ public class LocalDirectoryHandler : IDirectoryHandler
         if (exception.Message.StartsWith(PermittanceChecker.ERROR_PREFIX))
             title = PermittanceChecker.ERROR_PREFIX;
 
-        NotificationHelper.DispatchError(
+		NotificationHelper.DispatchError(
             title,
             exception.ToString(),
             _commonComponentRenderers,

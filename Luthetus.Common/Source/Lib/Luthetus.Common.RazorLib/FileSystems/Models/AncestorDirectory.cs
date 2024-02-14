@@ -1,14 +1,14 @@
-﻿namespace Luthetus.Common.RazorLib.FileSystems.Models;
+namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
 public class AncestorDirectory
 {
     public AncestorDirectory(
         string nameNoExtension,
-        string path,
+        string value,
         IEnvironmentProvider environmentProvider)
     {
         NameNoExtension = nameNoExtension;
-        Value = path;
+        Value = value;
         EnvironmentProvider = environmentProvider;
     }
 

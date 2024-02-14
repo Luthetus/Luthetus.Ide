@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
@@ -451,8 +451,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
     private IAbsolutePath? PerformRenameAction(IAbsolutePath sourceAbsolutePath, string nextName, IDispatcher dispatcher, Func<Task> onAfterCompletion)
     {
-        // If the current and next name match when compared
-        // with case insensitivity
+        // Check if the current and next name match when compared with case insensitivity
         if (0 == string.Compare(sourceAbsolutePath.NameWithExtension, nextName, StringComparison.OrdinalIgnoreCase))
         {
             var temporaryNextName = _environmentProvider.GetRandomFileName();
@@ -475,7 +474,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         }
 
         var sourceAbsolutePathString = sourceAbsolutePath.Value;
-        var parentOfSource = sourceAbsolutePath.AncestorDirectoryList.Last();
+        var parentOfSource = sourceAbsolutePath.AncestorDirectoryList.Last().Value;
         var destinationAbsolutePathString = parentOfSource + nextName;
 
         try
