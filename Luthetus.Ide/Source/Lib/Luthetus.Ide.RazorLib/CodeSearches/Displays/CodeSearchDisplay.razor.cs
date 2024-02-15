@@ -1,18 +1,18 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
+using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Resizes.Displays;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.CodeSearches.States;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Microsoft.AspNetCore.Components;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.Common.RazorLib.Resizes.Displays;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib.Groups.Models;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Displays;
 
@@ -36,9 +36,6 @@ public partial class CodeSearchDisplay : FluxorComponent
 		IncludeHeaderHelperComponent = false,
 	};
 
-    private ElementDimensions _topContentElementDimensions = new();
-	private ElementDimensions _bottomContentElementDimensions = new();
-
     private string InputValue
 	{
 		get => CodeSearchStateWrap.Value.Query;
@@ -55,53 +52,6 @@ public partial class CodeSearchDisplay : FluxorComponent
 			Dispatcher.Dispatch(new CodeSearchState.SearchEffect());
 		}
 	}
-
-    protected override void OnInitialized()
-    {
-        // topContentHeight
-        {
-			var topContentHeight = _topContentElementDimensions.DimensionAttributeList.Single(
-				da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
-
-			topContentHeight.DimensionUnitList.AddRange(new[]
-			{
-				new DimensionUnit
-				{
-					Value = 40,
-					DimensionUnitKind = DimensionUnitKind.Percentage
-				},
-				new DimensionUnit
-				{
-					Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
-					DimensionUnitKind = DimensionUnitKind.Pixels,
-					DimensionOperatorKind = DimensionOperatorKind.Subtract
-				},
-			});
-        }
-
-        // bottomContentHeight
-        {
-            var bottomContentHeight = _bottomContentElementDimensions.DimensionAttributeList.Single(
-				da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
-
-				bottomContentHeight.DimensionUnitList.AddRange(new[]
-				{
-				new DimensionUnit
-				{
-					Value = 60,
-					DimensionUnitKind = DimensionUnitKind.Percentage
-				},
-				new DimensionUnit
-				{
-					Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
-					DimensionUnitKind = DimensionUnitKind.Pixels,
-					DimensionOperatorKind = DimensionOperatorKind.Subtract
-				},
-			});
-        }
-
-        base.OnInitialized();
-    }
 
 	private string GetIsActiveCssClass(CodeSearchFilterKind codeSearchFilterKind)
 	{
