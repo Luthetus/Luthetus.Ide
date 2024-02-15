@@ -46,6 +46,10 @@ public partial class IdeHeader : FluxorComponent
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
+	private static readonly Key<DialogRecord> _infoDialogKey = Key<DialogRecord>.NewKey();
+	private static readonly Key<DialogRecord> _newDotNetSolutionDialogKey = Key<DialogRecord>.NewKey();
+	private static readonly Key<DialogRecord> _permissionsDialogKey = Key<DialogRecord>.NewKey();
+
     private Key<DropdownRecord> _dropdownKeyFile = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
     private ElementReference? _buttonFileElementReference;
@@ -255,7 +259,7 @@ public partial class IdeHeader : FluxorComponent
     private void OpenNewDotNetSolutionDialog()
     {
         var dialogRecord = new DialogRecord(
-            Key<DialogRecord>.NewKey(),
+            _newDotNetSolutionDialogKey,
             "New .NET Solution",
             typeof(DotNetSolutionFormDisplay),
             null,
@@ -270,7 +274,7 @@ public partial class IdeHeader : FluxorComponent
     private void OpenInfoDialogOnClick()
     {
         var dialogRecord = new DialogRecord(
-            Key<DialogRecord>.NewKey(),
+            _infoDialogKey,
             "Info",
             typeof(IdeInfoDisplay),
             null,
@@ -285,7 +289,7 @@ public partial class IdeHeader : FluxorComponent
     private void ShowPermissionsDialog()
     {
         var dialogRecord = new DialogRecord(
-            Key<DialogRecord>.NewKey(),
+            _permissionsDialogKey,
             "Permissions",
             typeof(PermissionsDisplay),
             null,

@@ -14,11 +14,12 @@ public partial class ActiveBackgroundTaskDisplay : IDisposable
     [Inject]
     public IDialogService DialogService { get; set; } = null!;
 
-    private BackgroundTaskQueue _continuousBackgroundTaskWorker = null!;
+	private static readonly Key<DialogRecord> _backgroundTaskDialogKey = Key<DialogRecord>.NewKey();
 
     private readonly IThrottle _executingBackgroundTaskChangedThrottle = new Throttle(TimeSpan.FromMilliseconds(1000));
-
     private readonly List<IBackgroundTask> _seenBackgroundTasks = new List<IBackgroundTask>();
+
+    private BackgroundTaskQueue _continuousBackgroundTaskWorker = null!;
     private BackgroundTaskDialogModel _backgroundTaskDialogModel = null!;
 
     protected override void OnInitialized()
@@ -34,7 +35,7 @@ public partial class ActiveBackgroundTaskDisplay : IDisposable
     public void ShowBackgroundTaskDialogOnClick()
     {
         DialogService.RegisterDialogRecord(new DialogRecord(
-            Key<DialogRecord>.NewKey(),
+            _backgroundTaskDialogKey,
             "Background Tasks",
             typeof(BackgroundTaskDialogDisplay),
             new Dictionary<string, object?>

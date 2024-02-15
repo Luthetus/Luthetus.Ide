@@ -51,6 +51,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     [Parameter, EditorRequired]
     public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
 
+	private static readonly Key<DialogRecord> _solutionEditorDialogKey = Key<DialogRecord>.NewKey();
+	private static readonly Key<DialogRecord> _newCSharpProjectDialogKey = Key<DialogRecord>.NewKey();
+
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
     /// <summary>
@@ -141,7 +144,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         var openSolutionEditor = new MenuOptionRecord(
             "Open Solution Editor",
             MenuOptionKind.Update,
-            () => Aaa(treeViewSolution.Item));
+            () => OpenSolutionEditorDialog(treeViewSolution.Item));
 
         return new[]
         {
@@ -308,7 +311,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private void OpenNewCSharpProjectDialog(DotNetSolutionModel dotNetSolutionModel)
     {
         var dialogRecord = new DialogRecord(
-            Key<DialogRecord>.NewKey(),
+            _newCSharpProjectDialogKey,
             "New C# Project",
             typeof(CSharpProjectFormDisplay),
             new Dictionary<string, object?>
@@ -367,10 +370,10 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             }.ToImmutableArray());
     }
 
-    private void Aaa(DotNetSolutionModel dotNetSolutionModel)
+    private void OpenSolutionEditorDialog(DotNetSolutionModel dotNetSolutionModel)
     {
         var dialogRecord = new DialogRecord(
-            Key<DialogRecord>.NewKey(),
+            _solutionEditorDialogKey,
             "Solution Editor",
             typeof(SolutionEditorDisplay),
             new Dictionary<string, object?>
