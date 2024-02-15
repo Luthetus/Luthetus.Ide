@@ -1,4 +1,4 @@
-﻿@using Fluxor.Blazor.Web.Components;
+@using Fluxor.Blazor.Web.Components;
 @using Luthetus.Common.RazorLib.Resizes.Displays
 @using Luthetus.Ide.RazorLib.CodeSearches.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays
@@ -10,17 +10,20 @@
 
     <div class="luth_ide_find-all-top-content"
          style="@_topContentElementDimensions.StyleString">
-        <div class="luth_ide_find-all-filter-list">
-            <div class="luth_ide_find-all-filter @GetIsActiveCssClass(CodeSearchFilterKind.Files)">
-                <IconFile /> files (f:)
-            </div>
-            <div class="luth_ide_find-all-filter @GetIsActiveCssClass(CodeSearchFilterKind.Types)">
-                <IconSymbolClass /> types (t:)
-            </div>
-            <div class="luth_ide_find-all-filter @GetIsActiveCssClass(CodeSearchFilterKind.Members)">
-                <IconSymbolMethod /> members (m:)
-            </div>
-        </div>
+		
+		@* <!-- Comment out currently unimplemented code -->
+	        <div class="luth_ide_find-all-filter-list">
+	            <div class="luth_ide_find-all-filter @GetIsActiveCssClass(CodeSearchFilterKind.Files)">
+	                <IconFile /> files (f:)
+	            </div>
+	            <div class="luth_ide_find-all-filter @GetIsActiveCssClass(CodeSearchFilterKind.Types)">
+	                <IconSymbolClass /> types (t:)
+	            </div>
+	            <div class="luth_ide_find-all-filter @GetIsActiveCssClass(CodeSearchFilterKind.Members)">
+	                <IconSymbolMethod /> members (m:)
+	            </div>
+	        </div>
+		*@
 
         @if (codeSearchState.StartingAbsolutePathForSearch is null)
         {
