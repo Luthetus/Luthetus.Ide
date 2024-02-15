@@ -34,6 +34,21 @@
             </DropdownDisplay>
         </button>
 
+		<button @ref="_buttonToolsElementReference"
+                @onclick="() => { AddActiveDropdownKey(_dropdownKeyTools); return Task.CompletedTask; }"
+                class="luth_button"
+                style="position: relative; margin-left: 15px;">
+            Tools
+            
+            <DropdownDisplay DropdownKey="_dropdownKeyTools"
+                             DropdownPositionKind="DropdownPositionKind.Vertical">
+    
+                <CascadingValue Value="RestoreFocusToButtonDisplayComponentToolsAsync" Name="ReturnFocusToParentFuncAsync">
+                    <MenuDisplay MenuRecord="_menuTools"/>
+                </CascadingValue>
+            </DropdownDisplay>
+        </button>
+
         <button class="luth_button"
                 style="margin-left: 15px;"
                 @onclick="OpenInfoDialogOnClick">
@@ -47,6 +62,6 @@
 
         <StartupControlsDisplay/>
 
-        <ActiveBackgroundTaskDisplay/>
+        <ActiveBackgroundTaskDisplay @ref="_activeBackgroundTaskDisplayComponent"/>
     </div>
 </ContextBoundary>

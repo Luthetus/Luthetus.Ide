@@ -6,15 +6,24 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.FileSystems.Displays;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.FolderExplorers.States;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
-using Microsoft.AspNetCore.Components;
-using System.Collections.Immutable;
-using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
-using Luthetus.Common.RazorLib.FileSystems.Displays;
+using Luthetus.Ide.RazorLib.CodeSearches.Displays;
+using Luthetus.Ide.RazorLib.Commands;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -30,14 +39,27 @@ public partial class IdeHeader : FluxorComponent
     private FolderExplorerSync FolderExplorerSync { get; set; } = null!;
     [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private ICommandFactory CommandFactory { get; set; } = null!;
+    [Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
 
     private Key<DropdownRecord> _dropdownKeyFile = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
     private ElementReference? _buttonFileElementReference;
 
+	private Key<DropdownRecord> _dropdownKeyTools = Key<DropdownRecord>.NewKey();
+    private MenuRecord _menuTools = new(ImmutableArray<MenuOptionRecord>.Empty);
+    private ElementReference? _buttonToolsElementReference;
+
+	private ActiveBackgroundTaskDisplay _activeBackgroundTaskDisplayComponent;
+
     protected override Task OnInitializedAsync()
     {
         InitializeMenuFile();
+		InitializeMenuTools();
 
         return base.OnInitializedAsync();
     }
@@ -110,6 +132,90 @@ public partial class IdeHeader : FluxorComponent
         _menuFile = new MenuRecord(menuOptionsList.ToImmutableArray());
     }
 
+	private void InitializeMenuTools()
+    {
+        var menuOptionsList = new List<MenuOptionRecord>();
+
+        // Menu Option Find All
+        {
+            var menuOptionFindAll = new MenuOptionRecord(
+				"Find All",
+                MenuOptionKind.Delete,
+                () => TextEditorService.OptionsApi.ShowFindAllDialog());
+
+            menuOptionsList.Add(menuOptionFindAll);
+        }
+
+		// Menu Option Code Search
+        {
+            var menuOptionPermissions = new MenuOptionRecord(
+				"Code Search",
+                MenuOptionKind.Delete,
+                () =>
+				{
+					CommandFactory.CodeSearchDialog ??= new DialogRecord(
+                        Key<DialogRecord>.NewKey(),
+						"Code Search",
+                        typeof(CodeSearchDisplay),
+                        null,
+                        null)
+                    {
+                        IsResizable = true
+                    };
+
+                    Dispatcher.Dispatch(new DialogState.RegisterAction(CommandFactory.CodeSearchDialog));
+				});
+
+            menuOptionsList.Add(menuOptionPermissions);
+        }
+
+		// Menu Option Find
+        {
+            var menuOptionPermissions = new MenuOptionRecord(
+				"Find (in text editor)",
+                MenuOptionKind.Delete,
+                () =>
+				{
+					var group = TextEditorService.GroupApi.GetOrDefault(EditorSync.EditorTextEditorGroupKey);
+
+                    if (group is null)
+                        return;
+
+                    var activeViewModel = TextEditorService.ViewModelApi.GetOrDefault(group.ActiveViewModelKey);
+
+                    if (activeViewModel is null)
+                        return;
+
+					TextEditorCommandDefaultFacts.ShowFindOverlay.CommandFunc.Invoke(
+						new TextEditorCommandArgs(
+							new(string.Empty),
+					        activeViewModel.ViewModelKey,
+					        false,
+					        null,
+					        TextEditorService,
+					        null,
+					        JsRuntime,
+					        Dispatcher,
+					        null,
+					        null));
+				});
+
+            menuOptionsList.Add(menuOptionPermissions);
+        }
+
+		// Menu Option BackgroundTasks
+        {
+            var menuOptionPermissions = new MenuOptionRecord(
+				"BackgroundTasks",
+                MenuOptionKind.Delete,
+                () => _activeBackgroundTaskDisplayComponent.ShowBackgroundTaskDialogOnClick());
+
+            menuOptionsList.Add(menuOptionPermissions);
+        }
+
+        _menuTools = new MenuRecord(menuOptionsList.ToImmutableArray());
+    }
+
     private void AddActiveDropdownKey(Key<DropdownRecord> dropdownKey)
     {
         Dispatcher.Dispatch(new DropdownState.AddActiveAction(dropdownKey));
@@ -124,6 +230,20 @@ public partial class IdeHeader : FluxorComponent
         {
             if (_buttonFileElementReference is not null)
                 await _buttonFileElementReference.Value.FocusAsync().ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+	private async Task RestoreFocusToButtonDisplayComponentToolsAsync()
+    {
+        try
+        {
+            if (_buttonToolsElementReference is not null)
+                await _buttonToolsElementReference.Value.FocusAsync().ConfigureAwait(false);
         }
         catch (Exception e)
         {

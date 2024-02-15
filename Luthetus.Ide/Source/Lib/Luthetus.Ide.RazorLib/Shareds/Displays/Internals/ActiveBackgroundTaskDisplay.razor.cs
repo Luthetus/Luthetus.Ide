@@ -31,7 +31,7 @@ public partial class ActiveBackgroundTaskDisplay : IDisposable
         base.OnInitialized();
     }
 
-    private void ShowBackgroundTaskDialogOnClick()
+    public void ShowBackgroundTaskDialogOnClick()
     {
         DialogService.RegisterDialogRecord(new DialogRecord(
             Key<DialogRecord>.NewKey(),
