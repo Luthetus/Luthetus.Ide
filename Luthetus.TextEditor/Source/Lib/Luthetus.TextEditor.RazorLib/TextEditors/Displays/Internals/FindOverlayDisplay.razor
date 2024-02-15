@@ -1,4 +1,4 @@
-﻿@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 @if (RenderBatch.ViewModel!.ShowFindOverlay)
 {
     <div class="luth_te_find-overlay"
@@ -57,18 +57,6 @@
 
                     <button class="luth_button"
                             style="margin-left: 5px;"
-                            @onclick="MoveActiveIndexMatchedTextSpanUp"
-                            @onclick:stopPropagation="true"
-                            @onmousedown:stopPropagation="true"
-                            @onmousemove:stopPropagation="true"
-                            @ondblclick:stopPropagation="true"
-                            @oncontextmenu:stopPropagation="true"
-                            @onkeydown:stopPropagation="true">
-                        <IconArrowUp />
-                    </button>
-
-                    <button class="luth_button"
-                            style="margin-left: 5px;"
                             @onclick="MoveActiveIndexMatchedTextSpanDown"
                             @onclick:stopPropagation="true"
                             @onmousedown:stopPropagation="true"
@@ -77,6 +65,18 @@
                             @oncontextmenu:stopPropagation="true"
                             @onkeydown:stopPropagation="true">
                         <IconArrowDown />
+                    </button>
+
+					<button class="luth_button"
+                            style="margin-left: 5px;"
+                            @onclick="MoveActiveIndexMatchedTextSpanUp"
+                            @onclick:stopPropagation="true"
+                            @onmousedown:stopPropagation="true"
+                            @onmousemove:stopPropagation="true"
+                            @ondblclick:stopPropagation="true"
+                            @oncontextmenu:stopPropagation="true"
+                            @onkeydown:stopPropagation="true">
+                        <IconArrowUp />
                     </button>
                 </div>
             }
