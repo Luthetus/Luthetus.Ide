@@ -7,8 +7,8 @@ public partial class TextEditorFindAllState
     public class Reducer
     {
         [ReducerMethod]
-        public static TextEditorSearchEngineState ReduceRegisterAction(
-            TextEditorSearchEngineState inState,
+        public static TextEditorFindAllState ReduceRegisterAction(
+            TextEditorFindAllState inState,
             RegisterAction registerAction)
         {
             var inSearchEngine = inState.SearchEngineList.FirstOrDefault(
@@ -19,15 +19,16 @@ public partial class TextEditorFindAllState
 
             var outSearchEngineList = inState.SearchEngineList.Add(registerAction.SearchEngine);
 
-            return new TextEditorSearchEngineState(
+            return new TextEditorFindAllState(
                 outSearchEngineList,
                 inState.SearchQuery,
+                inState.StartingDirectoryPath,
                 inState.Options);
         }
 
         [ReducerMethod]
-        public static TextEditorSearchEngineState ReduceDisposeAction(
-            TextEditorSearchEngineState inState,
+        public static TextEditorFindAllState ReduceDisposeAction(
+            TextEditorFindAllState inState,
             DisposeAction disposeAction)
         {
             var existingSearchEngine = inState.SearchEngineList.FirstOrDefault(
@@ -38,20 +39,34 @@ public partial class TextEditorFindAllState
 
             var outSearchEngineList = inState.SearchEngineList.Remove(existingSearchEngine);
 
-            return new TextEditorSearchEngineState(
+            return new TextEditorFindAllState(
                 outSearchEngineList,
                 inState.SearchQuery,
+                inState.StartingDirectoryPath,
                 inState.Options);
         }
 
         [ReducerMethod]
-        public static TextEditorSearchEngineState ReduceSetSearchQueryAction(
-            TextEditorSearchEngineState inState,
+        public static TextEditorFindAllState ReduceSetSearchQueryAction(
+            TextEditorFindAllState inState,
             SetSearchQueryAction setSearchQueryAction)
         {
-            return new TextEditorSearchEngineState(
+            return new TextEditorFindAllState(
                 inState.SearchEngineList,
                 setSearchQueryAction.SearchQuery,
+                inState.StartingDirectoryPath,
+                inState.Options);
+        }
+
+        [ReducerMethod]
+        public static TextEditorFindAllState ReduceSetStartingDirectoryPathAction(
+            TextEditorFindAllState inState,
+            SetStartingDirectoryPathAction setStartingDirectoryPathAction)
+        {
+            return new TextEditorFindAllState(
+                inState.SearchEngineList,
+                inState.SearchQuery,
+                setStartingDirectoryPathAction.StartingDirectoryPath,
                 inState.Options);
         }
     }

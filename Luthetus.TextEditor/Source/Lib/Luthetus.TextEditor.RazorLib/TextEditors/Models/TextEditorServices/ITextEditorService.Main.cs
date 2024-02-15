@@ -19,7 +19,7 @@ public partial interface ITextEditorService
     public ITextEditorGroupApi GroupApi { get; }
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
-    public ITextEditorSearchEngineApi SearchEngineApi { get; }
+    public ITextEditorFindAllApi FindAllApi { get; }
 
     public IState<TextEditorModelState> ModelStateWrap { get; }
     public IState<TextEditorViewModelState> ViewModelStateWrap { get; }
@@ -27,7 +27,7 @@ public partial interface ITextEditorService
     public IState<TextEditorDiffState> DiffStateWrap { get; }
     public IState<ThemeState> ThemeStateWrap { get; }
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
-    public IState<TextEditorSearchEngineState> SearchEngineStateWrap { get; }
+    public IState<TextEditorFindAllState> FindAllStateWrap { get; }
 
     /// <summary>
     /// The intent of this method is to replicate functionality of the <see cref="SynchronizationContext"/>

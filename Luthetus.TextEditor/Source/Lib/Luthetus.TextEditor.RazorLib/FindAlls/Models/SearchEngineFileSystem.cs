@@ -1,18 +1,24 @@
+using Fluxor;
 using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.TextEditor.RazorLib.FindAlls.States;
 
 namespace Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
 public class SearchEngineFileSystem : ITextEditorSearchEngine
 {
 	private readonly IFileSystemProvider _fileSystemProvider;
+	private readonly IState<TextEditorFindAllState> _textEditorFindAllStateWrap;
 	
 	private int _runCount;
 
-	public SearchEngineFileSystem(IFileSystemProvider fileSystemProvider)
+	public SearchEngineFileSystem(
+		IFileSystemProvider fileSystemProvider,
+		IState<TextEditorFindAllState> textEditorFindAllStateWrap)
 	{
 		_fileSystemProvider = fileSystemProvider;
+		_textEditorFindAllStateWrap = textEditorFindAllStateWrap;
 	}
 
     public Key<ITextEditorSearchEngine> Key { get; } =
@@ -20,7 +26,6 @@ public class SearchEngineFileSystem : ITextEditorSearchEngine
 
     public Type IconComponentRendererType { get; } = typeof(IconCopy);
     public string DisplayName { get; } = "FileSystem";
-	public string StartingDirectoryPath = "C:\\Users\\hunte\\Repos\\Luthetus.Ide_Fork\\";
 	public List<string> FilePathList = new List<string>();
 	public event Action? ProgressOccurred;
 	public bool IsSearching;
@@ -34,11 +39,13 @@ public class SearchEngineFileSystem : ITextEditorSearchEngine
 
 		_ =  Task.Run(async () => 
 		{
+			var textEditorFindAllState = _textEditorFindAllStateWrap.Value;
+
 			FilePathList.Clear();
 			IsSearching = true;
 			ProgressOccurred?.Invoke();
 			
-			await RecursiveSearchAsync(StartingDirectoryPath, searchQuery, cancellationToken).ConfigureAwait(false);
+			await RecursiveSearchAsync(textEditorFindAllState.StartingDirectoryPath, searchQuery, cancellationToken).ConfigureAwait(false);
 			IsSearching = false;
 			ProgressOccurred?.Invoke();
 			_runCount--;

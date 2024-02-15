@@ -8,7 +8,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 public partial interface ITextEditorService
 {
-    public interface ITextEditorSearchEngineApi
+    public interface ITextEditorFindAllApi
     {
         public void Register(ITextEditorSearchEngine searchEngine);
         public void DisposeAction(Key<ITextEditorSearchEngine> searchEngineKey);
@@ -23,12 +23,12 @@ public partial interface ITextEditorService
         public ImmutableList<ITextEditorSearchEngine> GetSearchEngines();
     }
 
-    public class TextEditorSearchEngineApi : ITextEditorSearchEngineApi
+    public class TextEditorFindAllApi : ITextEditorFindAllApi
     {
         private readonly IDispatcher _dispatcher;
         private readonly ITextEditorService _textEditorService;
 
-        public TextEditorSearchEngineApi(ITextEditorService textEditorService, IDispatcher dispatcher)
+        public TextEditorFindAllApi(ITextEditorService textEditorService, IDispatcher dispatcher)
         {
             _textEditorService = textEditorService;
             _dispatcher = dispatcher;
@@ -36,18 +36,18 @@ public partial interface ITextEditorService
 
         public void DisposeAction(Key<ITextEditorSearchEngine> searchEngineKey)
         {
-            _dispatcher.Dispatch(new TextEditorSearchEngineState.DisposeAction(searchEngineKey));
+            _dispatcher.Dispatch(new TextEditorFindAllState.DisposeAction(searchEngineKey));
         }
 
         public ITextEditorSearchEngine? GetOrDefault(Key<ITextEditorSearchEngine> searchEngineKey)
         {
-            return _textEditorService.SearchEngineStateWrap.Value.SearchEngineList.FirstOrDefault(
+            return _textEditorService.FindAllStateWrap.Value.SearchEngineList.FirstOrDefault(
                 x => x.Key == searchEngineKey);
         }
 
         public void Register(ITextEditorSearchEngine searchEngine)
         {
-            _dispatcher.Dispatch(new TextEditorSearchEngineState.RegisterAction(searchEngine));
+            _dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(searchEngine));
         }
 
         public void SetActiveSearchEngine(Key<ITextEditorSearchEngine> searchEngineKey)
@@ -61,7 +61,7 @@ public partial interface ITextEditorService
 
         public ImmutableList<ITextEditorSearchEngine> GetSearchEngines()
         {
-            return _textEditorService.SearchEngineStateWrap.Value.SearchEngineList;
+            return _textEditorService.FindAllStateWrap.Value.SearchEngineList;
         }
     }
 }

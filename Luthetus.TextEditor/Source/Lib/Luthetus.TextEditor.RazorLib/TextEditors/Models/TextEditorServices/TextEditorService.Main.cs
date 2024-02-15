@@ -43,7 +43,7 @@ public partial class TextEditorService : ITextEditorService
         IState<TextEditorDiffState> diffStateWrap,
         IState<ThemeState> themeStateWrap,
         IState<TextEditorOptionsState> optionsStateWrap,
-        IState<TextEditorSearchEngineState> searchEngineStateWrap,
+        IState<TextEditorFindAllState> findAllStateWrap,
         IBackgroundTaskService backgroundTaskService,
         LuthetusTextEditorConfig textEditorOptions,
         ITextEditorRegistryWrap textEditorRegistryWrap,
@@ -58,7 +58,7 @@ public partial class TextEditorService : ITextEditorService
         DiffStateWrap = diffStateWrap;
         ThemeStateWrap = themeStateWrap;
         OptionsStateWrap = optionsStateWrap;
-        SearchEngineStateWrap = searchEngineStateWrap;
+        FindAllStateWrap = findAllStateWrap;
 
         _backgroundTaskService = backgroundTaskService;
         _textEditorOptions = textEditorOptions;
@@ -73,7 +73,7 @@ public partial class TextEditorService : ITextEditorService
         GroupApi = new TextEditorGroupApi(this, _dispatcher);
         DiffApi = new TextEditorDiffApi(this, _dispatcher);
         OptionsApi = new TextEditorOptionsApi(this, _textEditorOptions, _storageService, _storageSync, _dispatcher);
-        SearchEngineApi = new TextEditorSearchEngineApi(this, _dispatcher);
+        FindAllApi = new TextEditorFindAllApi(this, _dispatcher);
     }
 
     public IState<TextEditorModelState> ModelStateWrap { get; }
@@ -82,7 +82,7 @@ public partial class TextEditorService : ITextEditorService
     public IState<TextEditorDiffState> DiffStateWrap { get; }
     public IState<ThemeState> ThemeStateWrap { get; }
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
-    public IState<TextEditorSearchEngineState> SearchEngineStateWrap { get; }
+    public IState<TextEditorFindAllState> FindAllStateWrap { get; }
 
     
 #if DEBUG
@@ -101,7 +101,7 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorGroupApi GroupApi { get; }
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
-    public ITextEditorSearchEngineApi SearchEngineApi { get; }
+    public ITextEditorFindAllApi FindAllApi { get; }
     
     public void Post(string taskDisplayName, TextEditorEdit edit)
     {

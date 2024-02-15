@@ -1,8 +1,8 @@
 namespace Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
-public class TextEditorSearchEngineOptions
+public class TextEditorFindAllOptions
 {
-    public TextEditorSearchEngineOptions()
+    public TextEditorFindAllOptions()
     {
         MatchCase = new("Match case");
         MatchWholeWord = new("Match whole word");
@@ -12,10 +12,10 @@ public class TextEditorSearchEngineOptions
         AppendResults = new("Append Results");
     }
 
-    public TextEditorSearchEngineOptionsBoolean MatchCase { get; }
-    public TextEditorSearchEngineOptionsBoolean MatchWholeWord { get; }
-    public TextEditorSearchEngineOptionsBoolean UseRegularExpressions { get; }
-    public TextEditorSearchEngineOptionsBoolean IncludeExternalItems { get; }
-    public TextEditorSearchEngineOptionsBoolean IncludeMiscellaneousFiles { get; }
-    public TextEditorSearchEngineOptionsBoolean AppendResults { get; }
+    public TextEditorFindAllOptionsBoolean MatchCase { get; }
+    public TextEditorFindAllOptionsBoolean MatchWholeWord { get; }
+    public TextEditorFindAllOptionsBoolean UseRegularExpressions { get; }
+    public TextEditorFindAllOptionsBoolean IncludeExternalItems { get; }
+    public TextEditorFindAllOptionsBoolean IncludeMiscellaneousFiles { get; }
+    public TextEditorFindAllOptionsBoolean AppendResults { get; }
 }

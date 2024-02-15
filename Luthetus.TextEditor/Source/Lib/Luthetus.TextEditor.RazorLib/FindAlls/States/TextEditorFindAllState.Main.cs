@@ -12,24 +12,27 @@ namespace Luthetus.TextEditor.RazorLib.FindAlls.States;
 [FeatureState]
 public partial class TextEditorFindAllState
 {
-    public TextEditorSearchEngineState()
+    public TextEditorFindAllState()
     {
         SearchEngineList = ImmutableList<ITextEditorSearchEngine>.Empty;
         SearchQuery = string.Empty;
         Options = new();
     }
 
-	public TextEditorSearchEngineState(
+	public TextEditorFindAllState(
         ImmutableList<ITextEditorSearchEngine> searchEngineList,
         string searchQuery,
-        TextEditorSearchEngineOptions textEditorSearchEngineOptions)
+		string startingDirectoryPath,
+        TextEditorFindAllOptions findAllOptions)
     {
         SearchEngineList = searchEngineList;
         SearchQuery = searchQuery;
-        Options = textEditorSearchEngineOptions;
+		StartingDirectoryPath = startingDirectoryPath;
+        Options = findAllOptions;
     }
 
     public ImmutableList<ITextEditorSearchEngine> SearchEngineList { get; init; }
     public string SearchQuery { get; init; }
-    public TextEditorSearchEngineOptions Options { get; init; }
+    public string StartingDirectoryPath { get; init; }
+    public TextEditorFindAllOptions Options { get; init; }
 }

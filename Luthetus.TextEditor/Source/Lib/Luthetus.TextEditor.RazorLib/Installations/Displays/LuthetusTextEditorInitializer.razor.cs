@@ -28,6 +28,8 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    [Inject]
+    private IState<TextEditorFindAllState> TextEditorFindAllStateWrap { get; set; } = null!;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -55,11 +57,11 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
 
                     foreach (var searchEngine in TextEditorConfig.SearchEngineList)
                     {
-                        Dispatcher.Dispatch(new TextEditorSearchEngineState.RegisterAction(searchEngine));
+                        Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(searchEngine));
                     }
 
-                    Dispatcher.Dispatch(new TextEditorSearchEngineState.RegisterAction(
-                        new SearchEngineFileSystem(FileSystemProvider)));
+                    Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(
+                        new SearchEngineFileSystem(FileSystemProvider, TextEditorFindAllStateWrap)));
 
                     await TextEditorService.OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
                 });

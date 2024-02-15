@@ -1,16 +1,18 @@
 using System.Collections.Immutable;
-using static Luthetus.Ide.RazorLib.DotNetSolutions.States.DotNetSolutionState;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
+using Luthetus.Ide.RazorLib.CodeSearches.States;
+using static Luthetus.Ide.RazorLib.DotNetSolutions.States.DotNetSolutionState;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
@@ -159,7 +161,17 @@ public partial class DotNetSolutionSync
         var parentDirectory = solutionAbsolutePath.ParentDirectory;
 
         if (parentDirectory is not null)
+		{
             _environmentProvider.DeletionPermittedRegister(new(parentDirectory.Value, true));
+
+			Dispatcher.Dispatch(new TextEditorFindAllState.SetStartingDirectoryPathAction(
+				parentDirectory.Value));
+
+			Dispatcher.Dispatch(new CodeSearchState.WithAction(inState => inState with
+			{
+				StartingAbsolutePathForSearch = parentDirectory.Value
+			}));
+		}
 
         await SetDotNetSolutionTreeViewAsync(dotNetSolutionModel.Key);
     }

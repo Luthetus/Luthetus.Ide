@@ -103,30 +103,6 @@ public partial class CodeSearchDisplay : FluxorComponent
         base.OnInitialized();
     }
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
-	{
-		if (firstRender)
-		{
-			var dotNetSolutionState = DotNetSolutionStateWrap.Value;
-			var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
-
-			if (dotNetSolutionModel is not null)
-			{
-				var parentDirectory = dotNetSolutionModel.AbsolutePath.ParentDirectory;
-
-				if (parentDirectory is not null)
-				{
-					Dispatcher.Dispatch(new CodeSearchState.WithAction(inState => inState with
-					{
-						StartingAbsolutePathForSearch = parentDirectory.Value
-					}));
-				}
-			}
-		}
-
-		return base.OnAfterRenderAsync(firstRender);
-	}
-
 	private string GetIsActiveCssClass(CodeSearchFilterKind codeSearchFilterKind)
 	{
 		return CodeSearchStateWrap.Value.CodeSearchFilterKind == codeSearchFilterKind

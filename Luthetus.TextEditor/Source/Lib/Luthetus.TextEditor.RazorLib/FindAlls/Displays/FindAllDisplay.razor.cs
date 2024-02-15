@@ -37,16 +37,26 @@ public partial class FindAllDisplay : FluxorComponent
     private bool _disposed;
 
 	public SearchEngineFileSystem SearchEngineFileSystem => (SearchEngineFileSystem)
-		TextEditorSearchEngineStateWrap.Value.SearchEngineList
+		TextEditorFindAllStateWrap.Value.SearchEngineList
 			.FirstOrDefault(x => x.DisplayName == "FileSystem");
 
 	private string SearchQuery
     {
-        get => TextEditorSearchEngineStateWrap.Value.SearchQuery;
+        get => TextEditorFindAllStateWrap.Value.SearchQuery;
         set
         {
             if (value is not null)
                 Dispatcher.Dispatch(new TextEditorFindAllState.SetSearchQueryAction(value));
+        }
+    }
+
+	private string StartingDirectoryPath
+    {
+        get => TextEditorFindAllStateWrap.Value.StartingDirectoryPath;
+        set
+        {
+            if (value is not null)
+                Dispatcher.Dispatch(new TextEditorFindAllState.SetStartingDirectoryPathAction(value));
         }
     }
 
@@ -115,14 +125,14 @@ public partial class FindAllDisplay : FluxorComponent
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
+	{
         if (firstRender)
         {
-            var tabGroup = TabStateGroupSelection.Value;
+			var tabGroup = TabStateGroupSelection.Value;
 
             if (tabGroup is null)
             {
-                var searchEngineState = TextEditorSearchEngineStateWrap.Value;
+                var searchEngineState = TextEditorFindAllStateWrap.Value;
 
                 tabGroup = new TabGroup(
                     args =>
@@ -165,7 +175,7 @@ public partial class FindAllDisplay : FluxorComponent
                     SelectedSearchEngineTabGroupKey,
                     entries.OutTabEntries.Single(x =>
                         ((TabEntryWithType<Key<ITextEditorSearchEngine>>)x).Item ==
-                            new SearchEngineFileSystem(FileSystemProvider).Key)
+                            new SearchEngineFileSystem(FileSystemProvider, TextEditorFindAllStateWrap).Key)
                     .TabEntryKey));
             }
         }
@@ -205,7 +215,7 @@ public partial class FindAllDisplay : FluxorComponent
 	}
 
 	private async Task DoSearchOnClickAsync(
-        TextEditorSearchEngineState searchEngineState,
+        TextEditorFindAllState findAllState,
         ITextEditorSearchEngine activeSearchEngine)
     {
         try
@@ -219,7 +229,7 @@ public partial class FindAllDisplay : FluxorComponent
             var cancellationToken = _doSearchCancellationTokenSource.Token;
 
             await activeSearchEngine
-                .SearchAsync(searchEngineState.SearchQuery, cancellationToken)
+                .SearchAsync(findAllState.SearchQuery, cancellationToken)
                 .ConfigureAwait(false);
         }
         finally

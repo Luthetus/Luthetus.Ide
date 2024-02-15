@@ -1,8 +1,8 @@
 namespace Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
-public class TextEditorSearchEngineOptionsBoolean
+public class TextEditorFindAllOptionsBoolean
 {
-    public TextEditorSearchEngineOptionsBoolean(string displayName)
+    public TextEditorFindAllOptionsBoolean(string displayName)
     {
         DisplayName = displayName;
     }
