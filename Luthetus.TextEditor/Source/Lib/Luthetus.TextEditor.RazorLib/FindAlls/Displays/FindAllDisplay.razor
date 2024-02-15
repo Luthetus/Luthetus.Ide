@@ -14,182 +14,48 @@
 <div class="luth_te_find-all">
     <div class="luth_te_find-all-body">
 
-        @if (tabGroup is null)
-        {
-            <div>@nameof(tabGroup) is null</div>
-        }
-        else
-        {
-            var tabEntryNoType = tabGroup.GetActiveEntryNoType();
+		<div class="luth_te_find-all-search-query">
+			SearchQuery:&nbsp;
+			<input class="luth_ide_input luth_ide_input-text"
+				   style="width: 100%;"
+				   placeholder="@nameof(SearchQuery)"
+				   @bind="SearchQuery"
+				   @bind:event="oninput" />
+		</div>
 
-            if (tabEntryNoType is null)
-            {
-                <div>@nameof(tabEntryNoType) is null</div>
-            }
-            else
-            {
-                var tabEntryWithType = (TabEntryWithType<Key<ITextEditorSearchEngine>>)tabEntryNoType;
-                var activeSearchEngine = findAllState.SearchEngineList.FirstOrDefault(x => x.Key == tabEntryWithType.Item);
+		<div class="luth_te_find-all-starting-directory-path">
+			StartingDirectoryPath:&nbsp;
+			<input class="luth_ide_input luth_ide_input-text"
+				   style="width: 100%;"
+				   placeholder="@nameof(StartingDirectoryPath)"
+				   @bind="StartingDirectoryPath"
+				   @bind:event="oninput" />
+		</div>
 
-                if (activeSearchEngine is null)
-                {
-                    <div>@nameof(activeSearchEngine) is null</div>
-                }
-                else
-                {
-                    <div class="luth_te_find-all-top-bottom-section">
-                        <div class="luth_te_find-all-top">
-                            <div class="luth_te_find-all-search-input">
-                                SearchQuery:&nbsp;
+		<button class="luth_button"
+                @onclick="() => DoSearchOnClickAsync(findAllState, SearchEngineFileSystem)">
+            Find All
+        </button>
 
-                                <input class="luth_ide_input luth_ide_input-text"
-                                       placeholder="@nameof(SearchQuery)"
-                                       @bind="SearchQuery"
-                                       @bind:event="oninput" />
-                            </div>
-                            <div class="luth_te_find-all-vertical-list">
-                                <div class="luth_te_find-checkbox-input">
-                                    Match case:&nbsp;
+		@if (SearchEngineFileSystem.IsSearching)
+	    {
+	        <IconLoading/>
+	    }
+	    else
+	    {
+	        <div>Not Searching</div>
+	    }
+	
+		<div class="luth_te_search-engine-file-system-results">
+			@{ var localFilePathList = SearchEngineFileSystem.FilePathList.ToArray(); }
 
-                                    <input type="checkbox" @bind="MatchCase" />
-                                </div>
-                                <div class="luth_te_find-all-checkbox-input">
-                                    Match whole word:&nbsp;
-
-                                    <input type="checkbox" @bind="MatchWholeWord" />
-                                </div>
-                                <div class="luth_te_find-all-checkbox-input">
-                                    Use regular expressions:&nbsp;
-
-                                    <input type="checkbox" @bind="UseRegularExpressions" />
-                                </div>
-                            </div>
-                            <div class="luth_te_find-all-left-right-section">
-                                <div class="luth_te_find-all-left">
-                                    Look in
-                                </div>
-                                <div class="luth_te_find-all-right">
-                                    <div class="luth_te_find-all-vertical-list">
-                                        <TabGroupDisplay TabGroupKey="SelectedSearchEngineTabGroupKey" />
-                                        <div class="luth_te_find-all-checkbox-input">
-                                            Include external items:&nbsp;
-
-                                            <input type="checkbox" @bind="IncludeExternalItems" />
-                                        </div>
-                                        <div class="luth_te_find-all-checkbox-input">
-                                            Include miscellaneous files:&nbsp;
-
-                                            <input type="checkbox" @bind="IncludeMiscellaneousFiles" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="luth_te_find-all-left-right-section">
-                                <div class="luth_te_find-all-left">
-                                    File types
-                                </div>
-                                <div class="luth_te_find-all-right">
-                                    <div class="luth_te_find-all-vertical-list">
-                                        <div class="luth_te_find-all-dropdown">
-                                            <select>
-                                                <option selected>!*\bin\*;!*\obj\*;!*\.*\*</option>
-                                                <option>Aaa</option>
-                                                <option>Bbb</option>
-                                                <option>Ccc</option>
-                                            </select>
-
-                                            <span>OR provide string</span>
-                                        </div>
-                                        <div class="luth_te_find-all-checkbox-input">
-                                            Append Results:&nbsp;
-
-                                            <input type="checkbox" @bind="AppendResults" />
-                                        </div>
-                                        <div class="luth_te_find-all-dropdown">
-                                            <select>
-                                                <option selected>New Window</option>
-                                                <option>Aaa</option>
-                                                <option>Bbb</option>
-                                                <option>Ccc</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="luth_te_find-all-bottom">
-                            <div class="luth_te_find-all-horizontal-list">
-                                <button class="luth_button">Find Previous</button>
-                                <button class="luth_button">Find Next</button>
-                                <button class="luth_button">Skip File</button>
-                            </div>
-
-                            <div class="luth_te_find-all-horizontal-list">
-                                <button class="luth_button"
-                                        @onclick="() => DoSearchOnClickAsync(findAllState, activeSearchEngine)">
-                                    Find All
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    @if (activeSearchEngine is null)
-                    {
-                        @: null active find provider
-                    }
-                    else
-                    {
-                        @: @activeSearchEngine.DisplayName
-                    }
-
-                    @if (_isSearching)
-                    {
-                        <IconLoading />
-                    }
-                    else
-                    {
-                        <div>
-                            Not Searching
-                        </div>
-                    }
-
-                    @if (activeSearchEngine is SearchEngineFileSystem searchEngineFileSystem)
-                    {
-                        <div class="luth_te_search-engine-file-system">
-							<input class="luth_ide_input luth_ide_input-text"
-								   style="width: 100%;"
-								   placeholder="@nameof(StartingDirectoryPath)"
-								   @bind="StartingDirectoryPath"
-								   @bind:event="oninput"/>
-						
-							@if (SearchEngineFileSystem.IsSearching)
-						    {
-						        <IconLoading/>
-						    }
-						    else
-						    {
-						        <div>
-						            Not Searching
-						        </div>
-						    }
-						
-							<div class="luth_te_search-engine-file-system-results">
-						
-								@{ var localFilePathList = SearchEngineFileSystem.FilePathList.ToArray(); }
-						
-								@foreach (var filePath in localFilePathList)
-								{
-									<div style="cursor: pointer;"
-										 @onclick="() => OpenInEditorOnClick(filePath)">
-						
-										@filePath
-									</div>
-								}
-							</div>
-						</div>
-                    }
-                }
-            }
-        }
+			@foreach (var filePath in localFilePathList)
+			{
+				<div style="cursor: pointer;"
+					 @onclick="() => OpenInEditorOnClick(filePath)">
+					@filePath
+				</div>
+			}
+		</div>
     </div>
 </div>
