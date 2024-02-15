@@ -1,4 +1,4 @@
-﻿using Microsoft.JSInterop;
+using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -63,6 +63,25 @@ public partial interface ITextEditorService
             string gutterElementId,
             double? scrollLeftInPixels,
             double? scrollTopInPixels);
+
+        /// <summary>
+        /// If a parameter is null then its respective scroll direction will not be modified.
+        /// </summary>
+        public TextEditorEdit ScrollIntoViewFactory(
+            string bodyElementId,
+            string gutterElementId,
+            int? rowIndex = null,
+            int? columnIndex = null);
+
+		public TextEditorEdit ScrollIntoViewFactory(
+            string bodyElementId,
+            string gutterElementId,
+            int positionIndex);
+
+		public TextEditorEdit ScrollIntoViewFactory(
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            TextEditorTextSpan textSpan);
 
         public TextEditorEdit SetGutterScrollTopFactory(
             string gutterElementId,
@@ -366,6 +385,89 @@ public partial interface ITextEditorService
 				    .ConfigureAwait(false);
             };
         }
+
+		/// <summary>
+        /// If a parameter is null then its respective scroll direction will not be modified.
+        /// </summary>
+        public TextEditorEdit ScrollIntoViewFactory(
+            string bodyElementId,
+            string gutterElementId,
+            int? rowIndex = null,
+            int? columnIndex = null)
+		{
+			throw new NotImplementedException();
+		}
+
+		public TextEditorEdit ScrollIntoViewFactory(
+            string bodyElementId,
+            string gutterElementId,
+            int positionIndex)
+		{
+			throw new NotImplementedException();
+		}
+
+		public TextEditorEdit ScrollIntoViewFactory(
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            TextEditorTextSpan textSpan)
+		{
+			return editContext =>
+            {
+				var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+				var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+				if (viewModelModifier is null)
+                    return Task.CompletedTask;
+
+				var rowInformation = modelModifier.GetRowInformationFromPositionIndex(textSpan.StartingIndexInclusive);
+				var rowIndex = rowInformation.RowIndex;
+				var columnIndex = textSpan.StartingIndexInclusive - rowInformation.RowStartPositionIndexInclusive;
+
+				// Unit of measurement is pixels (px)
+				var scrollLeft = new Nullable<double>(columnIndex *
+					viewModelModifier.ViewModel.VirtualizationResult.CharAndRowMeasurements.CharacterWidth);
+
+				// Unit of measurement is pixels (px)
+				var scrollTop = new Nullable<double>(rowIndex *
+					viewModelModifier.ViewModel.VirtualizationResult.CharAndRowMeasurements.RowHeight);
+
+				// If a given scroll direction is already within view of the text span, do not scroll on that direction
+				{
+					// scrollLeft needs to be modified?
+					{
+						var currentScrollLeft = viewModelModifier.ViewModel.VirtualizationResult.TextEditorMeasurements.ScrollLeft;
+						var currentWidth = viewModelModifier.ViewModel.VirtualizationResult.TextEditorMeasurements.Width;
+
+						var caseA = currentScrollLeft <= scrollLeft;
+						var caseB = (scrollLeft ?? 0) < (currentWidth + currentScrollLeft);
+
+						if (caseA && caseB)
+							scrollLeft = null;
+					}
+					
+					// scrollTop needs to be modified?
+					{
+						var currentScrollTop = viewModelModifier.ViewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop;
+						var currentHeight = viewModelModifier.ViewModel.VirtualizationResult.TextEditorMeasurements.Height;
+
+						var caseA = currentScrollTop <= scrollTop;
+						var caseB = (scrollTop ?? 0) < (currentHeight + currentScrollTop);
+
+						if (caseA && caseB)
+							scrollTop = null;
+					}
+				}
+				
+				return SetScrollPositionFactory(
+						viewModelModifier.ViewModel.BodyElementId,
+						viewModelModifier.ViewModel.GutterElementId,
+						scrollLeft,
+						scrollTop)
+					.Invoke(editContext);
+            };
+		}
 
         public TextEditorEdit SetGutterScrollTopFactory(
             string gutterElementId,
