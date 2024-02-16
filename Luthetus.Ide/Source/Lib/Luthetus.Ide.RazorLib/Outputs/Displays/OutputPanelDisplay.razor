@@ -1,4 +1,4 @@
-﻿@using Luthetus.Common.RazorLib.Contexts.Displays
+@using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models;
 @using Luthetus.Ide.RazorLib.Terminals.Models;
 
@@ -21,7 +21,7 @@
                 var index = i;
                 var wellKnownTerminalCommandKey = TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS[index];
                 
-                <TerminalWellKnownTab WellKnownTerminalSessionKey="@wellKnownTerminalCommandKey"/>
+                <OutputWellKnownTab WellKnownTerminalSessionKey="@wellKnownTerminalCommandKey"/>
                 
                 if (i != TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS.Length - 1)
                 {
@@ -34,6 +34,6 @@
             }
         </div>
 
-        <TerminalOutputDisplay TerminalSessionKey="WellKnownTerminalSessionsStateWrap.Value.ActiveTerminalSessionKey"/>
+        <OutputDisplay TerminalSessionKey="WellKnownTerminalSessionsStateWrap.Value.ActiveTerminalSessionKey"/>
     </div>
 </ContextBoundary>

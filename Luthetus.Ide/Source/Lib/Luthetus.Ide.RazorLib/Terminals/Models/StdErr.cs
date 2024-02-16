@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.AspNetCore.Components.Rendering;
 
-namespace Luthetus.Ide.RazorLib.IntegratedTerminal;
+namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public class StdErr : Std
 {

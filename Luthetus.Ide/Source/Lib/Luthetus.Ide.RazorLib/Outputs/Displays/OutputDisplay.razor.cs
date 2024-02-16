@@ -12,9 +12,9 @@ using System.Text;
 using Luthetus.TextEditor.RazorLib.Htmls.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
-namespace Luthetus.Ide.RazorLib.Terminals.Displays;
+namespace Luthetus.Ide.RazorLib.Outputs.Displays;
 
-public partial class TerminalOutputDisplay : FluxorComponent
+public partial class OutputDisplay : FluxorComponent
 {
     [Inject]
     private IStateSelection<TerminalSessionState, TerminalSession?> TerminalSessionsStateSelection { get; set; } = null!;
@@ -94,7 +94,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
                         TextEditorService.ViewModelApi.Register(
                             terminalSession.TextEditorViewModelKey,
                             terminalSession.ResourceUri,
-                            new TextEditorCategory(nameof(TerminalOutputDisplay)));
+                            new TextEditorCategory(nameof(OutputDisplay)));
                     }
                 }
             }

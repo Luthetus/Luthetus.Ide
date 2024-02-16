@@ -1,4 +1,4 @@
-﻿@using Luthetus.Ide.RazorLib.Terminals.Displays
+@using Luthetus.Ide.RazorLib.Outputs.Displays
 @using Luthetus.Ide.RazorLib.Terminals.Models;
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
@@ -71,6 +71,6 @@
         Run
     </button>
     
-    <TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY" 
-                           TerminalCommandKey="NewDotNetSolutionTerminalCommandKey" />
+    <OutputDisplay TerminalSessionKey="TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY" 
+                   TerminalCommandKey="NewDotNetSolutionTerminalCommandKey" />
 </div>

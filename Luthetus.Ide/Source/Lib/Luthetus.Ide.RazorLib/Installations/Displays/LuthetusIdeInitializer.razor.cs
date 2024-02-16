@@ -12,17 +12,17 @@ using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.Terminals.Displays;
 using Luthetus.Ide.RazorLib.Nugets.Displays;
 using Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 using Luthetus.Ide.RazorLib.CompilerServices.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
-using Luthetus.Ide.RazorLib.Terminals.Displays;
-using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.Outputs.Displays;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.TestExplorers.Displays;
 using Luthetus.Ide.RazorLib.Gits.Displays;
-using Luthetus.Ide.RazorLib.IntegratedTerminal;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
 
@@ -196,7 +196,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             Key<PanelTab>.NewKey(),
             bottomPanel.ElementDimensions,
             new(),
-            typeof(TerminalDisplay),
+            typeof(OutputPanelDisplay),
             typeof(IconFolder),
             "Terminal")
         {

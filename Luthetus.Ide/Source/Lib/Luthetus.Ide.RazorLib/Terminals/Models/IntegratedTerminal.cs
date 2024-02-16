@@ -1,9 +1,9 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Concurrent;
 
-namespace Luthetus.Ide.RazorLib.IntegratedTerminal;
+namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public abstract class IntegratedTerminal
 {

@@ -1,7 +1,8 @@
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.IntegratedTerminal;
+namespace Luthetus.Ide.RazorLib.Terminals.Displays;
 
 public partial class IntegratedTerminalDisplay : ComponentBase, IDisposable
 {

@@ -1,4 +1,4 @@
-﻿using CliWrap;
+using CliWrap;
 using CliWrap.EventStream;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components.Web;
 using System.Reactive.Linq;
 using System.Text;
 
-namespace Luthetus.Ide.RazorLib.IntegratedTerminal;
+namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public class CliWrapIntegratedTerminal : IntegratedTerminal
 {

@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Components.Rendering;
+using Luthetus.Ide.RazorLib.Terminals.Displays;
+using Microsoft.AspNetCore.Components.Rendering;
 
-namespace Luthetus.Ide.RazorLib.IntegratedTerminal;
+namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public class StdQuiescent : Std
 {

@@ -5,9 +5,9 @@ using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.Terminals.Displays;
+namespace Luthetus.Ide.RazorLib.Outputs.Displays;
 
-public partial class TerminalWellKnownTab : FluxorComponent
+public partial class OutputWellKnownTab : FluxorComponent
 {
     [Inject]
     private IState<WellKnownTerminalSessionsState> WellKnownTerminalSessionsStateWrap { get; set; } = null!;
