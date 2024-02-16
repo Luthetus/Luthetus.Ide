@@ -178,31 +178,31 @@ public partial class LuthetusIdeInitializer : ComponentBase
     {
         var bottomPanel = PanelFacts.GetBottomPanelRecord(PanelsStateWrap.Value);
 
-        // integratedTerminalPanelTab
-        var integratedTerminalPanelTab = new PanelTab(
-            Key<PanelTab>.NewKey(),
-            bottomPanel.ElementDimensions,
-            new(),
-            typeof(IntegratedTerminalDisplay),
-            typeof(IconFolder),
-            "IntegratedTerminal")
-        {
-            ContextRecordKey = ContextFacts.IntegratedTerminalContext.ContextKey
-        };
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, integratedTerminalPanelTab, false));
-
         // terminalPanelTab
         var terminalPanelTab = new PanelTab(
             Key<PanelTab>.NewKey(),
             bottomPanel.ElementDimensions,
             new(),
-            typeof(OutputPanelDisplay),
+            typeof(IntegratedTerminalDisplay),
             typeof(IconFolder),
             "Terminal")
         {
             ContextRecordKey = ContextFacts.TerminalContext.ContextKey
         };
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, terminalPanelTab, false));
+
+        // outputPanelTab
+        var outputPanelTab = new PanelTab(
+            Key<PanelTab>.NewKey(),
+            bottomPanel.ElementDimensions,
+            new(),
+            typeof(OutputPanelDisplay),
+            typeof(IconFolder),
+            "Output")
+        {
+            ContextRecordKey = ContextFacts.OutputContext.ContextKey
+        };
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, outputPanelTab, false));
 
         // nuGetPanelTab
         var nuGetPanelTab = new PanelTab(
@@ -244,6 +244,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, testExplorerPanelTab, false));
 
         // SetActivePanelTabAction
-        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(bottomPanel.Key, integratedTerminalPanelTab.Key));
+        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(bottomPanel.Key, terminalPanelTab.Key));
     }
 }

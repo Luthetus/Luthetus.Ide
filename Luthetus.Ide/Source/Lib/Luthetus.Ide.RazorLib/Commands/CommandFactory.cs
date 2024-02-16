@@ -184,7 +184,14 @@ public class CommandFactory : ICommandFactory
 	                    focusTextEditorCommand);
 			}
         }
-        // TerminalContext
+        // OutputContext
+        {
+            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+                new KeymapArgument("KeyO", false, true, true, Key<KeymapLayer>.Empty),
+                ConstructFocusContextElementCommand(
+                    ContextFacts.OutputContext, "Focus: Output", "focus-output"));
+        }
+		// TerminalContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
                 new KeymapArgument("KeyT", false, true, true, Key<KeymapLayer>.Empty),
