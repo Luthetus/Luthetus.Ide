@@ -90,16 +90,6 @@ public class TerminalSession
     {
         var queueKey = BlockingBackgroundTaskWorker.GetQueueKey();
 
-        if (TerminalSessionKey == TerminalSessionFacts.DEBUG_TERMINAL_SESSION_KEY)
-        {
-            // TODO: (2024-02-10) I'm experiencing issues with running both the...
-            // ...program being debugged, and the debugger. As currently,
-            // both will be put on the same queue, requiring the other to finish before it can begin.
-            // 'TerminalSessionFacts.DEBUG_TERMINAL_SESSION_KEY' is a hacky way to get around this
-            // issue for now. It will block the 'ContinuousBackgroundTaskWorker'.
-            queueKey = ContinuousBackgroundTaskWorker.GetQueueKey();
-        }
-
         _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), queueKey,
             "Enqueue Command",
             async () =>

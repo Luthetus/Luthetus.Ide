@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
@@ -8,7 +8,6 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
-using Luthetus.Ide.RazorLib.Debugger;
 
 namespace Luthetus.Ide.RazorLib.StartupControls.Displays;
 
@@ -59,35 +58,5 @@ public partial class StartupControlsDisplay : FluxorComponent
         await executionTerminalSession
             .EnqueueCommandAsync(startProgramTerminalCommand)
             .ConfigureAwait(false);
-    }
-    
-    private async Task StartProgramWithDebuggingOnClick()
-    {
-        var startProgramTerminalCommand = GetStartProgramTerminalCommand();
-
-        if (startProgramTerminalCommand is null)
-            return;
-
-        var executionTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
-            TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
-
-        await executionTerminalSession
-            .EnqueueCommandAsync(startProgramTerminalCommand)
-            .ConfigureAwait(false);
-
-        // Show debug dialog
-        {
-            var dialogRecord = new DialogRecord(
-                Key<DialogRecord>.NewKey(),
-                "Debug",
-                typeof(DebuggerDisplay),
-                null,
-                null)
-                {
-                    IsResizable = true
-                };
-
-            Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
-        }
     }
 }

@@ -1,4 +1,4 @@
-﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="luth_ide_startup-controls-display">
    <div class="luth_ide_startup-controls-display-entry">
@@ -6,14 +6,6 @@
        &nbsp;
        @(ProgramExecutionStateWrap.Value.StartupProjectAbsolutePath?.NameNoExtension ?? "null")
        &nbsp;
-   </div>
-   <div class="luth_ide_startup-controls-display-entry">
-        <button @onclick="StartProgramWithDebuggingOnClick"
-              class="luth_button"
-              disabled=@(ProgramExecutionStateWrap.Value.StartupProjectAbsolutePath is null)
-              title="Start with debugging">
-           <IconDebug/>
-       </button>
    </div>
    <div class="luth_ide_startup-controls-display-entry">
         <button @onclick="StartProgramWithoutDebuggingOnClick"
