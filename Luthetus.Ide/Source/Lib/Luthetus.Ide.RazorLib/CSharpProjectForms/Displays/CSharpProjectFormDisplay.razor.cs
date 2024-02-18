@@ -134,36 +134,10 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 _viewModel.NewCSharpProjectCancellationTokenSource.Token,
                 async () =>
                 {
-					// The return type of ReadStandardOut is.... 'string?'
-					//
-					// The goal of the previous changes was to allow for Blazor components to see
-					// a List<string>
-					//
-					// The internal code in TerminalSession for
-					// converting the List<string> to a
-					// string, or the entirety of the terminal to a string is not something I want to
-					// type over and over again.
-					//
-					// Perhaps ReadStandardOut makes sense to keep as returning a 'string?', but that
-					// another method need be added, that maintains the List<string> Type.
-					//
-					// Okay, a critical exception occurred and crashed the IDE. I saved the error
-					// and I'll look at it later. "Enumeration was modified"
-					//
-					// I'm going to add 'GetStandardOut()' as a method to get the 'List<string>?' format.
-					// and keep 'ReadStandardOut()' for if someone wants the 'string?' format.
-					//
-					// A large sip of water Okay
                     var output = generalTerminalSession.ReadStandardOut(_viewModel.LoadProjectTemplatesTerminalCommandKey);
 
                     if (output is not null)
                     {
-						// Temp_Comment: Here the DotNetCliOutputLexer is used to parse the project templates
-						//               that a user has installed.
-						//               Given that I renamed this type to Parser I'll do that
-						//			   change here as well.
-						//               I now have 1 of 1 usages for 'DotNetCliOutputLexer'
-						//			   in this file, where the only usage is in this comment.
                         _viewModel.ProjectTemplateList = DotNetCliOutputParser.ParseDotNetNewListTerminalOutput(output);
                         await InvokeAsync(StateHasChanged).ConfigureAwait(false);
                     }

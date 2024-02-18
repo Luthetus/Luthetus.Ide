@@ -180,7 +180,7 @@ public class CliWrapIntegratedTerminal : IntegratedTerminal
 
                         if (output is not null)
                         {
-                            AddStdOut( // It seems to be here too so it must be the correct wording
+                            AddStdOut(
                                 $"{output}{Environment.NewLine}",
                                 outputKind);
 

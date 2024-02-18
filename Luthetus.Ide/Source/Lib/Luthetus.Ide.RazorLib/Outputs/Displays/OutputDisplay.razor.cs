@@ -44,8 +44,7 @@ public partial class OutputDisplay : FluxorComponent
     public Key<TerminalCommand> TerminalCommandKey { get; set; } = Key<TerminalCommand>.Empty;
     [Parameter]
     public bool AllowInput { get; set; }
-    [Parameter] // This will be 'EditorRequired'?
-	// I suppose not. The default could be no parsing, just render out the text.
+    [Parameter]
     public IOutputParser OutputParser { get; set; }
 
     private TextEditorViewModelDisplayOptions _textEditorViewModelDisplayOptions = null!;
@@ -107,30 +106,6 @@ public partial class OutputDisplay : FluxorComponent
         base.OnAfterRender(firstRender);
     }
 
-	/*
-		If I want to parse the output of various streams of text.
-		
-		Perhaps I want to separate the parsing logic from this 'OutputDisplay' component.
-
-		By doing so I can then pass a Blazor parameter, 'TerminalOutputParser'
-		and perhaps more specifically,
-		'DotNetCliOutputParser'.
-
-		I can see in the past I've made a class named 'DotNetCliOutputLexer'
-		According to my personal defintion (I'm not sure the true one)
-		Lexing is a sub-step to Parsing.
-
-		One would never 'Lex' unless they intended to 'Parse' afterwards.
-		As 'Lex' is to imply converting text into objects (tokens)
-		in order to allow parsing of the text to be easier.
-
-		So, I want to rename DotNetCliOutputLexer to DotNetCliOutputParser
-		because I know myself that I am only doing 1 step.
-
-		Using { Ctrl + Shift + f } I can find all text equal to 'DotNetCliOutputLexer'
-
-		All usages of the DotNetCliOutputLexer in this file are from comments.
-	*/
     private static MarkupString ParseHttpLinks(string input)
     {
         var outputBuilder = new StringBuilder();

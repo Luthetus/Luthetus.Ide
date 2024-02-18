@@ -11,8 +11,6 @@ namespace Luthetus.Ide.RazorLib.TestExplorers.States;
 
 public partial class TestExplorerSync
 {
-	// When the user opens a .NET solution.
-	// A C# object is made to store that chosen solution.
 	private Task DotNetSolutionStateWrap_StateChangedAsync()
     {
         var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
@@ -21,7 +19,6 @@ public partial class TestExplorerSync
 		if (dotNetSolutionModel is null)
             return Task.CompletedTask;
 
-		// Get the projects
         var localDotNetProjectList = dotNetSolutionModel.DotNetProjectList
 			.Where(x => x.DotNetProjectKind == DotNetProjectKind.CSharpProject);
 
@@ -33,11 +30,6 @@ public partial class TestExplorerSync
 
 		var localFormattedCommand = DotNetCliCommandFormatter.FormatDotNetTestListTests();
 
-		// FormatDotNetTestListTests
-		//
-		// The dotnet cli command to discover unit tests appears to be ran
-		// at some point in this method.
-
 		var localTreeViewProjectTestModelList = localProjectTestModelList.Select(x =>
 				(TreeViewNoType)new TreeViewProjectTestModel(
 					x,
@@ -47,7 +39,7 @@ public partial class TestExplorerSync
 			.ToArray();
 
 		foreach (var entry in localTreeViewProjectTestModelList)
-		{ // Foreach project in the solution, the discover unit tests cli command is being ran.
+		{
 			var treeViewProjectTestModel = (TreeViewProjectTestModel)entry;
 			
 			if (string.IsNullOrWhiteSpace(treeViewProjectTestModel.Item.DirectoryNameForTestDiscovery))
@@ -67,28 +59,11 @@ public partial class TestExplorerSync
 					{
 						try
 						{
-							// This lambda is the 'ContinueWith' for the 'TerminalCommand'
-							// datatype.
-							//
-							// That is to say, after a terminal command finishes,
-							// the 'ContinueWith' Func is invoked.
-							//
-							// I can use the 'Code Search' dialog to find the 'TerminalCommand'
-							// source code.
-							// { Ctrl + , } is the keybind OR use the header 'Tools' dropdown.
 							var output = executionTerminalSession.ReadStandardOut(treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey);
 
 							if (output is null)
 								return;
 
-	// I'm going to re-run the Find All so I can confirm that
-	// I made all the renames.
-
-							// The width of this line seems to be bugged out.
-							// I put a newline so we can see the entire line.
-							//
-							// The DotNetCliOutputLexer is being used here to parse out the
-							// Discovered unit tests.
 							treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput =
 								DotNetCliOutputParser.ParseDotNetTestListTestsTerminalOutput(output);
 			

@@ -9,14 +9,6 @@
 <div class="luth_ide_terminal-output-display">
     <div class="luth_ide_terminal-output-history-display">
         @{
-			// We added a new method 'GetStandardOut()' to return a List<string>?
-			// so we can start using that here instead of the previous 'ReadStandardOut()'
-			//			
-			// This 'EmptyTextHack' is revolting.
-			// I must be using a setter side effect or something.
-			//
-			// I can discard to trigger the setter hack.
-			// Preferably I can remove this hack entirely.
             _ = TerminalSessionWasModifiedStateWrap.Value.EmptyTextHack;
 
 			var outputStrList = (List<string>?)null;
@@ -35,24 +27,7 @@
                 }
             }
         }
-		<!-- 
-			The parsing for the Http links isn't working fully as of this moment.
 
-			However, this shows us that there is a method which is receiving the
-			text, prior to the text being rendered.
-
-			I should use the new Ctrl + F logic.
-
-			I want to use the OutputParser instead of the ParseHttpLinks method.
-
-			Well, the interface doesn't have the 'Parse' method defined yet
-		-->
-
-		<!--
-			I'm not sure how I feel about this code.
-			I'd written it about a week ago while asking myself the same question I just did,
-			"How does one return a RenderFragment from a method correctly".
-		-->
 		@{ var sequenceOutput = 0; }
 		@(new RenderFragment(builder => OutputParser.Parse(
 			outputStrList,

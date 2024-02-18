@@ -8,7 +8,6 @@ namespace Luthetus.Ide.RazorLib.Outputs.Models;
 
 public class DotNetRunOutputParser : IOutputParser
 {
-	// Can make a Blazor Component that takes as a parameter the 'DotNetRunOutputLine'
 	public List<IOutputLine> Parse(List<string> text)
 	{
 		var stringWalker = new StringWalker(new ResourceUri("/unitTesting.txt"), testData);
@@ -29,9 +28,8 @@ public class DotNetRunOutputParser : IOutputParser
 				{
 					var character = stringWalker.ReadCharacter();
 
-					if (character == '(')  // Open parenthesis is the exclusive delimiter here
+					if (character == '(')
 					{
-						// We eagerly 'consumed' the exclusive character, therefore backtrack.
 						_ = stringWalker.BacktrackCharacter();
 
 						filePathTextSpan = new TextEditorTextSpan(
@@ -56,7 +54,7 @@ public class DotNetRunOutputParser : IOutputParser
 				{
 					var character = stringWalker.ReadCharacter();
 
-					if (character == ')') // Close parenthesis is the inclusive delimiter here
+					if (character == ')')
 					{
 						rowAndColumnNumberTextSpan = new TextEditorTextSpan(
 							startPositionInclusiveRowAndColumnNumber,
@@ -91,7 +89,6 @@ public class DotNetRunOutputParser : IOutputParser
 
 					if (character == ':')
 					{
-						// We eagerly 'consumed' the exclusive character, therefore backtrack.
 						_ = stringWalker.BacktrackCharacter();
 
 						errorKeywordAndErrorCodeTextSpan = new TextEditorTextSpan(
@@ -126,7 +123,6 @@ public class DotNetRunOutputParser : IOutputParser
 
 					if (character == '[')
 					{
-						// We eagerly 'consumed' the exclusive character, therefore backtrack.
 						_ = stringWalker.BacktrackCharacter();
 
 						errorMessageTextSpan = new TextEditorTextSpan(

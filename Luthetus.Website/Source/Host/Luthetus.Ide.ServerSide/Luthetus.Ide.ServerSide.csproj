@@ -1,11 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-<!--
-	Okay, I started a new recording.
-	I ran Luthetus.Ide.ServerSide.csproj
-	there's a build exception
--->
-
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>

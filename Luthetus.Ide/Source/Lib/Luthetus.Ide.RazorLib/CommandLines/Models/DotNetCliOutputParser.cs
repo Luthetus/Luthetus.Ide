@@ -3,41 +3,10 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Text;
 
-// I believe the renaming for 'DotNetCliOutputParser' is finished.
-// I'll see if the program will run without errors.
-
-// The 'Output' is not virtualized. Photino.Blazor
-// writes a lot of messages to the console, so I'll run the website
-// instead of the native host
-
-// The rename appears to have worked.
-
-// I want to accept as a Parameter to the Blazor component 'OutputDisplay'
-// where the parameter is an 'IOutputParser' or something like that.
-
 namespace Luthetus.Ide.RazorLib.CommandLines.Models;
 
-// { Ctrl + Alt + s } sets focus to the Solution Explorer.
-// Escape will set focus to the text editor
-// { Ctrl + Alt + Shift + s } sets focus to the Solution Explorer,
-	// and furthermore, will change the active tree view node to be the
-	// currently opened file which is opened in the text editor.
-// I'll do this now
-
-// { Ctrl + Alt + Shift + s } only works when the treeview node exists.
-// In otherwords one must drill into the directories until that treeview node is
-// loaded.
-//
-// If the treeview node has not yet been loaded, then only the
-// { Ctrl + Alt + s } portion will run. TODO: Drill into the treeview directories
-// as part of this command, in the case were one has not yet done so as the user.
-public static class DotNetCliOutputParser // 1 of 1 usages in this file
+public static class DotNetCliOutputParser
 {
-	// { Ctrl + ']' } goes to the corresponding matching character.
-	// I'll use this keybind to goto the end of this method.
-	// I'm finding that the scroll isn't updating.
-	// I'll hit the keybind, then hit the left arrowkey so that it scrolls me.
-	// TODO: Fix "I'll hit the keybind, then hit the left arrowkey so that it scrolls me."
     public static List<ProjectTemplate> ParseDotNetNewListTerminalOutput(string output)
     {
         // The columns are titled: { "Template Name", "Short Name", "Language", "Tags" }
@@ -189,7 +158,6 @@ public static class DotNetCliOutputParser // 1 of 1 usages in this file
         return projectTemplateList;
     }
 
-	// There are two 'Lex' prefixed methods so far. Continuing...
 	public static List<string> ParseDotNetTestListTestsTerminalOutput(string output)
 	{
 		if (output is null)
@@ -214,7 +182,4 @@ public static class DotNetCliOutputParser // 1 of 1 usages in this file
 	
 		return lineList;
 	}
-
-	// Okay there are 2 in total.
-	// I'll rename them. I did the previous renaming slowly. I'll aim to do this one quickly.     
 }
