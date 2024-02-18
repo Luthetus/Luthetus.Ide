@@ -1,3 +1,6 @@
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
@@ -5,63 +8,173 @@ namespace Luthetus.Ide.RazorLib.Outputs.Models;
 
 public class DotNetRunOutputParser : IOutputParser
 {
-	public void Parse(List<string> text, RenderTreeBuilder builder, ref int sequence)
+	// Can make a Blazor Component that takes as a parameter the 'DotNetRunOutputLine'
+	public List<IOutputLine> Parse(List<string> text)
 	{
-		// Below I wrote, builder.OpenElement....
-		// This will render a <div> html element. And include as child content
-		// any builder.Aaa() invocations that occur up until builder.CloseElement()
-		// in which the </div> will be rendered.
-		// I'm putting a code block after invoking builder.OpenElement(...)
-		// just to visually provide the indentation that one would expect for child content
-		// in an HTML file.
+		var stringWalker = new StringWalker(new ResourceUri("/unitTesting.txt"), testData);
 
-		// I'm now going to ignore that builder invocation I wrote for now and just focus on parsing.
-		// I want to make a Unit Test for this.
+		TextEditorTextSpan filePathTextSpan = new TextEditorTextSpan(0, stringWalker, (byte)GenericDecorationKind.None);
+		TextEditorTextSpan rowAndColumnNumberTextSpan = new TextEditorTextSpan(0, stringWalker, (byte)GenericDecorationKind.None);
+		TextEditorTextSpan errorKeywordAndErrorCodeTextSpan = new TextEditorTextSpan(0, stringWalker, (byte)GenericDecorationKind.None);
+		TextEditorTextSpan errorMessageTextSpan = new TextEditorTextSpan(0, stringWalker, (byte)GenericDecorationKind.None);
+		TextEditorTextSpan projectFilePathTextSpan = new TextEditorTextSpan(0, stringWalker, (byte)GenericDecorationKind.None);
 
-		builder.OpenElement(sequence++, "div");
+		while (!stringWalker.IsEof)
 		{
-			
-		}
-		builder.CloseElement();
-		// I'm trying to recall how the 'RenderFragment' works.
-		//
-		// I can't remember if its just:
-		// public RenderFragment Parse(List<string> text) => builder => { builder.OpenE... };
-		//
-		// or if I need to take in a RenderTreeBuilder as an argument
+			// Step 1: Read filePathTextSpan
+			{
+				var startPositionInclusiveFilePath = stringWalker.PositionIndex;
+				
+				while (true)
+				{
+					var character = stringWalker.ReadCharacter();
 
-		
+					if (character == '(')  // Open parenthesis is the exclusive delimiter here
+					{
+						// We eagerly 'consumed' the exclusive character, therefore backtrack.
+						_ = stringWalker.BacktrackCharacter();
+
+						filePathTextSpan = new TextEditorTextSpan(
+							startPositionInclusiveFilePath,
+							stringWalker,
+							(byte)GenericDecorationKind.None);
+
+						break;
+					}
+					else if (stringWalker.IsEof)
+					{
+						break;
+					}
+				}
+			}
+			
+			// Step 2: Read rowAndColumnNumberTextSpan
+			{
+				var startPositionInclusiveRowAndColumnNumber = stringWalker.PositionIndex;
+				
+				while (true)
+				{
+					var character = stringWalker.ReadCharacter();
+
+					if (character == ')') // Close parenthesis is the inclusive delimiter here
+					{
+						rowAndColumnNumberTextSpan = new TextEditorTextSpan(
+							startPositionInclusiveRowAndColumnNumber,
+							stringWalker,
+							(byte)GenericDecorationKind.None);
+
+						break;
+					}
+					else if (stringWalker.IsEof)
+					{
+						break;
+					}
+				}
+			}
+
+			// Step 3: Read errorKeywordAndErrorCode
+			{
+				// Consider having Step 2 use ':' as its exclusive delimiter.
+				// Because now a step is needed to skip over some text.
+				{
+					if (stringWalker.CurrentCharacter == ':')
+						_ = stringWalker.ReadCharacter();
+
+					_ = stringWalker.ReadWhitespace();
+				}
+
+				var startPositionInclusiveErrorKeywordAndErrorCode = stringWalker.PositionIndex;
+				
+				while (true)
+				{
+					var character = stringWalker.ReadCharacter();
+
+					if (character == ':')
+					{
+						// We eagerly 'consumed' the exclusive character, therefore backtrack.
+						_ = stringWalker.BacktrackCharacter();
+
+						errorKeywordAndErrorCodeTextSpan = new TextEditorTextSpan(
+							startPositionInclusiveErrorKeywordAndErrorCode,
+							stringWalker,
+							(byte)GenericDecorationKind.None);
+
+						break;
+					}
+					else if (stringWalker.IsEof)
+					{
+						break;
+					}
+				}
+			}
+
+			// Step 4: Read errorMessage
+			{
+				// A step is needed to skip over some text.
+				{
+					if (stringWalker.CurrentCharacter == ':')
+						_ = stringWalker.ReadCharacter();
+
+					_ = stringWalker.ReadWhitespace();
+				}
+
+				var startPositionInclusiveErrorMessage = stringWalker.PositionIndex;
+				
+				while (true)
+				{
+					var character = stringWalker.ReadCharacter();
+
+					if (character == '[')
+					{
+						// We eagerly 'consumed' the exclusive character, therefore backtrack.
+						_ = stringWalker.BacktrackCharacter();
+
+						errorMessageTextSpan = new TextEditorTextSpan(
+							startPositionInclusiveErrorMessage,
+							stringWalker,
+							(byte)GenericDecorationKind.None);
+
+						break;
+					}
+					else if (stringWalker.IsEof)
+					{
+						break;
+					}
+				}
+			}
+
+			// Step 5: Read project file path
+			{
+				var startPositionInclusiveProjectFilePath = stringWalker.PositionIndex;
+				
+				while (true)
+				{
+					var character = stringWalker.ReadCharacter();
+
+					if (character == ']')
+					{
+						projectFilePathTextSpan = new TextEditorTextSpan(
+							startPositionInclusiveProjectFilePath,
+							stringWalker,
+							(byte)GenericDecorationKind.None);
+
+						break;
+					}
+					else if (stringWalker.IsEof)
+					{
+						break;
+					}
+				}
+			}
+
+			_ = stringWalker.ReadCharacter();
+		}
+
+		return new DotNetRunOutputLine(
+			filePathTextSpan,
+			rowAndColumnNumberTextSpan,
+			errorKeywordAndErrorCodeTextSpan,
+			errorMessageTextSpan,
+			projectFilePathTextSpan);
 	}
 }
-
-// I opened the Luthetus.Common.Tests.csproj in the Unit Test explorer
-// just so I can showcase how the Unit Test explorer works.
-
-// dotnet test -t
-// is ran then the discovered tests are populated into a tree view.
-// Any namespaces are then grouped foreach '.' in their name.
-// 'namespace TreeViews.States;' becomes:
-// -TreeViews
-//     -States
-// I'm going to run RegisterContainerAction
-// This caused:
-//
-// dotnet test
-// 	--filter FullyQualifiedName=Luthetus.Common.Tests.Basis.TreeViews
-// 	    		.States.TreeViewStateActionsTests.RegisterContainerAction
-//
-// The result is 'Passed!' as shown in the tree view
-// Also I can scroll down in the output and see that it passed.
-//
-// I can multi-select in the tree view to run multiple tests.
-// Make sure you hold down shift when right clicking "oof".
-// Round 2
-// TODO: Measure screen position and how big the menu is and
-// 	  reposition if needed.
-//
-// The topmost option of the context menu will iterate over all
-// selections and run them.
-//
-// Okay, back to the Luthetus.Ide.Tests.csproj
-//
-// There should be none here yet

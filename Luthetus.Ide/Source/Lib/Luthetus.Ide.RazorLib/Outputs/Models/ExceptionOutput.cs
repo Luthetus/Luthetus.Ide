@@ -1,5 +1,6 @@
 namespace Luthetus.Ide.RazorLib.Outputs.Models;
 
+// TODO: Delete this?
 public record ExceptionOutput(
 	string SourceFilePath,
 	int RowNumber,
