@@ -7,21 +7,21 @@ namespace Luthetus.Ide.Tests.Basis.Gits.States;
 public class GitSyncEnqueuesTests
 {
     [Fact]
-    public void Aaa()
+    public void RefreshGit()
     {
-        //public void RefreshGit(CancellationToken cancellationToken)
+        //public void (CancellationToken cancellationToken)
     }
 
     [Fact]
-    public void Aaa()
+    public void GitInit()
     {
-        //public void GitInit(CancellationToken cancellationToken)
+        //public void (CancellationToken cancellationToken)
     }
 
     [Fact]
-    public void Aaa()
+    public void TryFindGitFolderInDirectory()
     {
-        //public void TryFindGitFolderInDirectory(
+        //public void (
         //    IAbsolutePath directoryAbsolutePath,
         //    CancellationToken cancellationToken)
     }

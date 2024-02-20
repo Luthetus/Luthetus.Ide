@@ -3,7 +3,7 @@
 public class FileTemplateTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public FileTemplate(
         //    string displayName,
@@ -16,50 +16,50 @@ public class FileTemplateTests
     }
     
     [Fact]
-    public void Aaa()
+    public void Id()
     {
-        //public Guid Id { get; } = Guid.NewGuid();
+        //public Guid  { get; } = Guid.NewGuid();
     }
     
     [Fact]
-    public void Aaa()
+    public void DisplayName()
     {
-        //public string DisplayName { get; }
+        //public string  { get; }
     }
     
     [Fact]
-    public void Aaa()
+    public void CodeName()
     {
-        //public string CodeName { get; }
+        //public string  { get; }
     }
     
     [Fact]
-    public void Aaa()
+    public void FileTemplateKind()
     {
-        //public FileTemplateKind FileTemplateKind { get; }
+        //public FileTemplateKind  { get; }
     }
     
     [Fact]
-    public void Aaa()
+    public void IsExactTemplate()
     {
-        //public Func<string, bool> IsExactTemplate { get; }
+        //public Func<string, bool>  { get; }
     }
     
     [Fact]
-    public void Aaa()
+    public void RelatedFileTemplatesFunc()
     {
-        //public Func<string, ImmutableArray<IFileTemplate>> RelatedFileTemplatesFunc { get; }
+        //public Func<string, ImmutableArray<IFileTemplate>>  { get; }
     }
     
     [Fact]
-    public void Aaa()
+    public void InitialCheckedStateWhenIsRelatedFile()
     {
-        //public bool InitialCheckedStateWhenIsRelatedFile { get; }
+        //public bool  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void ConstructFileContents()
     {
-        //public Func<FileTemplateParameter, FileTemplateResult> ConstructFileContents { get; }
+        //public Func<FileTemplateParameter, FileTemplateResult>  { get; }
     }
 }

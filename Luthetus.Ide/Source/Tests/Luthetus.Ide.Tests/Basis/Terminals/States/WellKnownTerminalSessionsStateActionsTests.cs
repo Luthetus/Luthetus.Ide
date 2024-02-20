@@ -6,8 +6,8 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.States;
 public partial record WellKnownTerminalSessionsStateActionsTests
 {
     [Fact]
-    public void Aaa()
+    public void SetActiveWellKnownTerminalSessionKey()
     {
-        //public record SetActiveWellKnownTerminalSessionKey(Key<TerminalSession> TerminalSessionKey);
+        //public record (Key<TerminalSession> TerminalSessionKey);
     }
 }

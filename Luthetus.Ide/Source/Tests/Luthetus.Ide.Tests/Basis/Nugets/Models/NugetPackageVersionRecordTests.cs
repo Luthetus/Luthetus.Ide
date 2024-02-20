@@ -5,21 +5,21 @@ namespace Luthetus.Ide.Tests.Basis.Nugets.Models;
 public class NugetPackageVersionRecordTests
 {
     [Fact]
-    public void Aaa()
+    public void Version()
     {
-        //string Version,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void Downloads()
     {
-        //long Downloads)
+        //long )
     }
 
     [Fact]
-    public void Aaa()
+    public void AtId()
     {
         //[JsonPropertyName("@id")]
-        //public string AtId { get; init; } = string.Empty;
+        //public string  { get; init; } = string.Empty;
     }
 }

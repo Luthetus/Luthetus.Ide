@@ -3,14 +3,14 @@
 public class FileTemplateProviderTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public FileTemplateProvider()
     }
 
     [Fact]
-    public void Aaa()
+    public void FileTemplatesList()
     {
-        //public ImmutableArray<IFileTemplate> FileTemplatesList => _fileTemplatesList.ToImmutableArray();
+        //public ImmutableArray<IFileTemplate>  => _fileTemplatesList.ToImmutableArray();
     }
 }

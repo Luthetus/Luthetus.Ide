@@ -3,7 +3,7 @@
 public class FileSystemSyncConstructorTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public FileSystemSync(
         //    IFileSystemProvider fileSystemProvider,
@@ -13,14 +13,14 @@ public class FileSystemSyncConstructorTests
     }
 
     [Fact]
-    public void Aaa()
+    public void BackgroundTaskService()
     {
-        //public IBackgroundTaskService BackgroundTaskService { get; }
+        //public IBackgroundTaskService  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void Dispatcher()
     {
-        //public IDispatcher Dispatcher { get; }
+        //public IDispatcher  { get; }
     }
 }

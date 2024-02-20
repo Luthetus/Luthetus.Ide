@@ -11,7 +11,7 @@ namespace Luthetus.Ide.Tests.Basis.InputFiles.Models;
 public class InputFileTreeViewMouseEventHandlerTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
       //  public InputFileTreeViewMouseEventHandler(
       //      ITreeViewService treeViewService,
@@ -22,14 +22,14 @@ public class InputFileTreeViewMouseEventHandlerTests
     }
 
     [Fact]
-    public void Aaa()
+    public void OnClick()
     {
-        //public override void OnClick(TreeViewCommandArgs commandArgs)
+        //public override void (TreeViewCommandArgs commandArgs)
     }
 
     [Fact]
-    public void Aaa()
+    public void OnDoubleClickAsync()
     {
-        //public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
+        //public override Task (TreeViewCommandArgs commandArgs)
     }
 }

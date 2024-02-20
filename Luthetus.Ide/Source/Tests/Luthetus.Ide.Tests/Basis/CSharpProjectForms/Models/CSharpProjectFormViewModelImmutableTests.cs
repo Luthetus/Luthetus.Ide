@@ -3,128 +3,128 @@
 public record CSharpProjectFormViewModelImmutableTests
 {
     [Fact]
-    public void Aaa()
+    public void DotNetSolutionModel()
     {
-        //DotNetSolutionModel DotNetSolutionModel,
+        //DotNetSolutionModel ,
     }
 
     [Fact]
-    public void Aaa()
+    public void EnvironmentProvider()
     {
-        //IEnvironmentProvider EnvironmentProvider,
+        //IEnvironmentProvider ,
     }
 
     [Fact]
-    public void Aaa()
+    public void IsReadingProjectTemplates()
     {
-        //bool IsReadingProjectTemplates,
+        //bool ,
     }
 
     [Fact]
-    public void Aaa()
+    public void ProjectTemplateShortNameValue()
     {
-        //string ProjectTemplateShortNameValue,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void CSharpProjectNameValue()
     {
-        //string CSharpProjectNameValue,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void OptionalParametersValue()
     {
-        //string OptionalParametersValue,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void ParentDirectoryNameValue()
     {
-        //string ParentDirectoryNameValue,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void ProjectTemplateList()
     {
-        //List<ProjectTemplate> ProjectTemplateList,
+        //List<ProjectTemplate> ,
     }
 
     [Fact]
-    public void Aaa()
+    public void ActivePanelKind()
     {
-        //CSharpProjectFormPanelKind ActivePanelKind,
+        //CSharpProjectFormPanelKind ,
     }
 
     [Fact]
-    public void Aaa()
+    public void SearchInput()
     {
-        //string SearchInput,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void SelectedProjectTemplate()
     {
-        //ProjectTemplate? SelectedProjectTemplate,
+        //ProjectTemplate? ,
     }
 
     [Fact]
-    public void Aaa()
+    public void IsValid()
     {
-        //bool IsValid,
+        //bool ,
     }
 
     [Fact]
-    public void Aaa()
+    public void ProjectTemplateShortNameDisplay()
     {
-        //string ProjectTemplateShortNameDisplay,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void CSharpProjectNameDisplay()
     {
-        //string CSharpProjectNameDisplay,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void OptionalParametersDisplay()
     {
-        //string OptionalParametersDisplay,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void ParentDirectoryNameDisplay()
     {
-        //string ParentDirectoryNameDisplay,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void FormattedNewCSharpProjectCommand()
     {
-        //FormattedCommand FormattedNewCSharpProjectCommand,
+        //FormattedCommand ,
     }
 
     [Fact]
-    public void Aaa()
+    public void FormattedAddExistingProjectToSolutionCommand()
     {
-        //FormattedCommand FormattedAddExistingProjectToSolutionCommand,
+        //FormattedCommand ,
     }
 
     [Fact]
-    public void Aaa()
+    public void NewCSharpProjectTerminalCommandKey()
     {
-        //Key<TerminalCommand> NewCSharpProjectTerminalCommandKey,
+        //Key<TerminalCommand> ,
     }
 
     [Fact]
-    public void Aaa()
+    public void LoadProjectTemplatesTerminalCommandKey()
     {
-        //Key<TerminalCommand> LoadProjectTemplatesTerminalCommandKey,
+        //Key<TerminalCommand> ,
     }
 
     [Fact]
-    public void Aaa()
+    public void NewCSharpProjectCancellationTokenSource()
     {
-        //CancellationTokenSource NewCSharpProjectCancellationTokenSource
+        //CancellationTokenSource 
     }
 }

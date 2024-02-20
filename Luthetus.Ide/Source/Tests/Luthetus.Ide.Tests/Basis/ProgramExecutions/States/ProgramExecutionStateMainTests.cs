@@ -6,14 +6,14 @@ namespace Luthetus.Ide.Tests.Basis.ProgramExecutions.States;
 public class ProgramExecutionStateMainTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //private ProgramExecutionState() : this(default(IAbsolutePath))
     }
 
     [Fact]
-    public void Aaa()
+    public void StartupProjectAbsolutePath()
     {
-        //(IAbsolutePath? StartupProjectAbsolutePath)
+        //(IAbsolutePath? )
     }
 }

@@ -11,45 +11,45 @@ namespace Luthetus.Ide.Tests.Basis.InputFiles.States;
 public class InputFileStateActionsTests
 {
     [Fact]
-    public void Aaa()
+    public void SetSelectedTreeViewModelAction()
     {
-        //public record SetSelectedTreeViewModelAction(TreeViewAbsolutePath? SelectedTreeViewModel);
+        //public record (TreeViewAbsolutePath? SelectedTreeViewModel);
     }
     
     [Fact]
-    public void Aaa()
+    public void SetSelectedInputFilePatternAction()
     {
-        //public record SetSelectedInputFilePatternAction(InputFilePattern InputFilePattern);
+        //public record (InputFilePattern InputFilePattern);
     }
     
     [Fact]
-    public void Aaa()
+    public void SetSearchQueryAction()
     {
-        //public record SetSearchQueryAction(string SearchQuery);
+        //public record (string SearchQuery);
     }
     
     [Fact]
-    public void Aaa()
+    public void RefreshCurrentSelectionAction()
     {
-        //public record RefreshCurrentSelectionAction(IBackgroundTaskService BackgroundTaskService);
+        //public record (IBackgroundTaskService BackgroundTaskService);
     }
     
     [Fact]
-    public void Aaa()
+    public void MoveBackwardsInHistoryAction()
     {
-        //public record MoveBackwardsInHistoryAction;
+        //public record ;
     }
 
     [Fact]
-    public void Aaa()
+    public void MoveForwardsInHistoryAction()
     {
-        //public record MoveForwardsInHistoryAction;
+        //public record ;
     }
 
     [Fact]
-    public void Aaa()
+    public void SetOpenedTreeViewModelAction()
     {
-        //public record SetOpenedTreeViewModelAction(
+        //public record (
         //    TreeViewAbsolutePath TreeViewModel,
         //    ILuthetusIdeComponentRenderers IdeComponentRenderers,
         //    ILuthetusCommonComponentRenderers CommonComponentRenderers,
@@ -58,9 +58,9 @@ public class InputFileStateActionsTests
     }
 
     [Fact]
-    public void Aaa()
+    public void OpenParentDirectoryAction()
     {
-        //public record OpenParentDirectoryAction(
+        //public record (
         //    ILuthetusIdeComponentRenderers IdeComponentRenderers,
         //    ILuthetusCommonComponentRenderers CommonComponentRenderers,
         //    IFileSystemProvider FileSystemProvider,
@@ -69,9 +69,9 @@ public class InputFileStateActionsTests
     }
 
     [Fact]
-    public void Aaa()
+    public void StartInputFileStateFormAction()
     {
-        //public record StartInputFileStateFormAction(
+        //public record (
         //    string Message,
         //    Func<IAbsolutePath?, Task> OnAfterSubmitFunc,
         //    Func<IAbsolutePath?, Task<bool>> SelectionIsValidFunc,

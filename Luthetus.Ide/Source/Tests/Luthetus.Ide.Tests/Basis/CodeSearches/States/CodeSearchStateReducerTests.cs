@@ -9,7 +9,7 @@ public class CodeSearchStateReducerTests
     public class Reducer
     {
         [Fact]
-        public void Aaa()
+        public void ReduceWithAction()
         {
             //[ReducerMethod]
             //public static CodeSearchState ReduceWithAction(
@@ -18,7 +18,7 @@ public class CodeSearchStateReducerTests
         }
 
         [Fact]
-        public void Aaa()
+        public void ReduceAddResultAction()
         {
             //[ReducerMethod]
             //public static CodeSearchState ReduceAddResultAction(
@@ -27,7 +27,7 @@ public class CodeSearchStateReducerTests
         }
 
         [Fact]
-        public void Aaa()
+        public void ReduceClearResultListAction()
         {
             //[ReducerMethod(typeof(ClearResultListAction))]
             //public static CodeSearchState ReduceClearResultListAction(

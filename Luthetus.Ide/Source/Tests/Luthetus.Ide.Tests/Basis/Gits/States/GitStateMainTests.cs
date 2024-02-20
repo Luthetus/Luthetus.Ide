@@ -3,26 +3,26 @@
 public class GitStateMainTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public GitState() : this(null, ImmutableList<GitFile>.Empty, ImmutableList<GitTask>.Empty)
     }
 
     [Fact]
-    public void Aaa()
+    public void GitFolderAbsolutePath()
     {
-        //IAbsolutePath? GitFolderAbsolutePath,
+        //IAbsolutePath? ,
     }
 
     [Fact]
-    public void Aaa()
+    public void GitFilesList()
     {
-        //ImmutableList<GitFile> GitFilesList,
+        //ImmutableList<GitFile> ,
     }
 
     [Fact]
-    public void Aaa()
+    public void ActiveGitTasks()
     {
-        //ImmutableList<GitTask> ActiveGitTasks)
+        //ImmutableList<GitTask> )
     }
 }

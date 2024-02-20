@@ -3,25 +3,25 @@
 public class CodeSearchStateActionsTests
 {
     [Fact]
-    public void Aaa()
+    public void WithAction()
     {
         //public record WithAction(Func<CodeSearchState, CodeSearchState> WithFunc);
     }
 
     [Fact]
-    public void Aaa()
+    public void AddResultAction()
     {
         //public record AddResultAction(string Result);
     }
 
     [Fact]
-    public void Aaa()
+    public void ClearResultListAction()
     {
         //public record ClearResultListAction;
     }
 
     [Fact]
-    public void Aaa()
+    public void SearchEffect()
     {
         //public record SearchEffect(CancellationToken CancellationToken = default);
     }

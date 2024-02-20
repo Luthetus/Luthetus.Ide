@@ -7,10 +7,10 @@ public class TestExplorerStateReducerTests
     public class Reducer
     {
         [Fact]
-        public void Aaa()
+        public void ReduceWithAction()
         {
             //[ReducerMethod]
-            //public static TestExplorerState ReduceWithAction(
+            //public static TestExplorerState (
             //    TestExplorerState inState,
             //    WithAction withAction)
             //{

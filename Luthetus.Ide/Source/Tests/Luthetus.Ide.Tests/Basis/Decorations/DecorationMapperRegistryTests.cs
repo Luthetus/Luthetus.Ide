@@ -3,50 +3,50 @@
 public class DecorationMapperRegistryTests
 {
     [Fact]
-    public void Aaa()
-    {
-        //public ImmutableDictionary<string, IDecorationMapper> Map => _map.ToImmutableDictionary();
-    }
-
-    [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public DecorationMapperRegistry()
     }
 
     [Fact]
-    public void Aaa()
+    public void Map()
     {
-        //public TextEditorCssDecorationMapper CssDecorationMapper { get; }
+        //public ImmutableDictionary<string, IDecorationMapper>  => _map.ToImmutableDictionary();
     }
 
     [Fact]
-    public void Aaa()
+    public void CssDecorationMapper()
     {
-        //public TextEditorJsonDecorationMapper JsonDecorationMapper { get; }
+        //public TextEditorCssDecorationMapper  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void JsonDecorationMapper()
     {
-        //public GenericDecorationMapper GenericDecorationMapper { get; }
+        //public TextEditorJsonDecorationMapper  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void GenericDecorationMapper()
     {
-        //public TextEditorHtmlDecorationMapper HtmlDecorationMapper { get; }
+        //public GenericDecorationMapper  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void HtmlDecorationMapper()
     {
-        //public TextEditorDecorationMapperDefault DefaultDecorationMapper { get; }
+        //public TextEditorHtmlDecorationMapper  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void DefaultDecorationMapper()
     {
-        //public IDecorationMapper GetDecorationMapper(string extensionNoPeriod)
+        //public TextEditorDecorationMapperDefault  { get; }
+    }
+
+    [Fact]
+    public void GetDecorationMapper()
+    {
+        //public IDecorationMapper (string extensionNoPeriod)
     }
 }

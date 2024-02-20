@@ -8,10 +8,10 @@ public class DotNetSolutionStateEffectorTests
 	public class Effector
 	{
         [Fact]
-        public void Aaa()
+        public void NotifyDotNetSolutionStateStateHasChanged()
         {
       //      [EffectMethod(typeof(IWithAction))]
-		    //public Task NotifyDotNetSolutionStateStateHasChanged(IDispatcher dispatcher)
+		    //public Task (IDispatcher dispatcher)
         }
 	}
 }

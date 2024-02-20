@@ -8,9 +8,9 @@ namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 public partial class TreeViewHelperDotNetSolutionTests
 {
     [Fact]
-    public void Aaa()
+    public void DotNetSolutionLoadChildrenAsync()
     {
-        //public static Task<List<TreeViewNoType>> DotNetSolutionLoadChildrenAsync(
+        //public static Task<List<TreeViewNoType>> (
         //    this TreeViewSolution treeViewSolution)
     }
 }

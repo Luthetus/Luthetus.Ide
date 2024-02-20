@@ -3,44 +3,44 @@
 public record ObsoleteCompilerServiceGraphicalDimensionsTests
 {
     [Fact]
-    public void Aaa()
+    public void ViewBoxWidth()
     {
-        //public int ViewBoxWidth { get; init; } = 100;
+        //public int  { get; init; } = 100;
     }
     
     [Fact]
-    public void Aaa()
+    public void ViewBoxHeight()
     {
-        //public int ViewBoxHeight { get; init; } = 100;
+        //public int  { get; init; } = 100;
     }
     
     [Fact]
-    public void Aaa()
+    public void CircleRadiusInPixels()
     {
-        //public double CircleRadiusInPixels { get; init; } = 10;
+        //public double  { get; init; } = 10;
     }
     
     [Fact]
-    public void Aaa()
+    public void MinimumMarginRightBetweenSiblingsAndSelf()
     {
-        //public double MinimumMarginRightBetweenSiblingsAndSelf { get; init; } = 3;
+        //public double  { get; init; } = 3;
     }
     
     [Fact]
-    public void Aaa()
+    public void MinimumMarginBottomBetweenRows()
     {
-        //public double MinimumMarginBottomBetweenRows { get; init; } = 6;
+        //public double  { get; init; } = 6;
     }
     
     [Fact]
-    public void Aaa()
+    public void SvgPadding()
     {
-        //public double SvgPadding { get; init; } = 3;
+        //public double  { get; init; } = 3;
     }
 
     [Fact]
-    public void Aaa()
+    public void SvgFontSizeInPixels()
     {
-        //public double SvgFontSizeInPixels { get; init; } = 3;
+        //public double  { get; init; } = 3;
     }
 }

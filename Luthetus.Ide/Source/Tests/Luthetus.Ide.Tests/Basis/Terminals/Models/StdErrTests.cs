@@ -5,15 +5,15 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 public class StdErrTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public StdErr(IntegratedTerminal integratedTerminal)
         //    : base(integratedTerminal)
     }
 
     [Fact]
-    public void Aaa()
+    public void GetRenderTreeBuilder()
     {
-        //public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
+        //public override RenderTreeBuilder (RenderTreeBuilder builder, ref int sequence)
     }
 }

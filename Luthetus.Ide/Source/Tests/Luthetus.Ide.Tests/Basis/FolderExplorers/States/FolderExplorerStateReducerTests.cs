@@ -7,10 +7,10 @@ public class FolderExplorerStateReducerTests
     private class Reducer
     {
         [Fact]
-        public void Aaa()
+        public void ReduceWithAction()
         {
             //[ReducerMethod]
-            //public static FolderExplorerState ReduceWithAction(
+            //public static FolderExplorerState (
             //    FolderExplorerState inState,
             //    WithAction withAction)
         }

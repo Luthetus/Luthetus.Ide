@@ -3,13 +3,7 @@
 public class CompilerServiceRegistryTests
 {
     [Fact]
-    public void Aaa()
-    {
-        //public ImmutableDictionary<string, ILuthCompilerService> Map => _map.ToImmutableDictionary();
-    }
-
-    [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public CompilerServiceRegistry(
         //    ITextEditorService textEditorService,
@@ -19,80 +13,86 @@ public class CompilerServiceRegistryTests
     }
 
     [Fact]
-    public void Aaa()
+    public void Map()
     {
-        //public CSharpCompilerService CSharpCompilerService { get; }
+        //public ImmutableDictionary<string, ILuthCompilerService>  => _map.ToImmutableDictionary();
     }
 
     [Fact]
-    public void Aaa()
+    public void CSharpCompilerService()
     {
-        //public CSharpProjectCompilerService CSharpProjectCompilerService { get; }
+        //public CSharpCompilerService  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void CSharpProjectCompilerService()
     {
-        //public CssCompilerService CssCompilerService { get; }
+        //public CSharpProjectCompilerService  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void CssCompilerService()
     {
-        //public DotNetSolutionCompilerService DotNetSolutionCompilerService { get; }
+        //public CssCompilerService  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void DotNetSolutionCompilerService()
     {
-        //public FSharpCompilerService FSharpCompilerService { get; }
+        //public DotNetSolutionCompilerService  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void FSharpCompilerService()
     {
-        //public JavaScriptCompilerService JavaScriptCompilerService { get; }
+        //public FSharpCompilerService  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void JavaScriptCompilerService()
     {
-        //public JsonCompilerService JsonCompilerService { get; }
+        //public JavaScriptCompilerService  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void JsonCompilerService()
     {
-        //public RazorCompilerService RazorCompilerService { get; }
+        //public JsonCompilerService  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void RazorCompilerService()
     {
-        //public TypeScriptCompilerService TypeScriptCompilerService { get; }
+        //public RazorCompilerService  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void TypeScriptCompilerService()
     {
-        //public XmlCompilerService XmlCompilerService { get; }
+        //public TypeScriptCompilerService  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void XmlCompilerService()
     {
-        //public CCompilerService CCompilerService { get; }
+        //public XmlCompilerService  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void CCompilerService()
     {
-        //public LuthCompilerService DefaultCompilerService { get; }
+        //public CCompilerService  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void DefaultCompilerService()
     {
-        //public ILuthCompilerService GetCompilerService(string extensionNoPeriod)
+        //public LuthCompilerService  { get; }
+    }
+
+    [Fact]
+    public void GetCompilerService()
+    {
+        //public ILuthCompilerService (string extensionNoPeriod)
     }
 }

@@ -11,44 +11,44 @@ namespace Luthetus.Ide.Tests.Basis.DotNetSolutions.States;
 public class DotNetSolutionStateMainTests
 {
     [Fact]
-    public void Aaa()
-    {
-        //public static readonly Key<TreeViewContainer> TreeViewSolutionExplorerStateKey = Key<TreeViewContainer>.NewKey();
-    }
-
-    [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //private DotNetSolutionState() : this(Key<DotNetSolutionModel>.Empty, 0)
     }
 
     [Fact]
-    public void Aaa()
+    public void TreeViewSolutionExplorerStateKey()
     {
-        //Key<DotNetSolutionModel>? DotNetSolutionModelKey,
+        //public static readonly Key<TreeViewContainer>  = Key<TreeViewContainer>.NewKey();
     }
 
     [Fact]
-    public void Aaa()
+    public void DotNetSolutionModelKey()
     {
-        //int IsExecutingAsyncTaskLinks
+        //Key<DotNetSolutionModel>? ,
     }
 
     [Fact]
-    public void Aaa()
+    public void IsExecutingAsyncTaskLinks()
     {
-        //public ImmutableList<DotNetSolutionModel> DotNetSolutionsList { get; init; } = ImmutableList<DotNetSolutionModel>.Empty;
+        //int 
     }
 
     [Fact]
-    public void Aaa()
+    public void DotNetSolutionsList()
     {
-        //public DotNetSolutionModel? DotNetSolutionModel => 
+        //public ImmutableList<DotNetSolutionModel>  { get; init; } = ImmutableList<DotNetSolutionModel>.Empty;
     }
 
     [Fact]
-    public void Aaa()
+    public void DotNetSolutionModel()
     {
-        //public static void ShowInputFile(DotNetSolutionSync sync)
+        //public DotNetSolutionModel?  => 
+    }
+
+    [Fact]
+    public void ShowInputFile()
+    {
+        //public static void (DotNetSolutionSync sync)
     }
 }

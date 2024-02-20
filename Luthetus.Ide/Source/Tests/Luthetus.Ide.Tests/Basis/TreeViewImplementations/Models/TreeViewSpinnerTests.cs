@@ -7,7 +7,7 @@ namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 public class TreeViewSpinnerTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
        // public TreeViewSpinner(
        //         Guid guid,
@@ -18,38 +18,38 @@ public class TreeViewSpinnerTests
     }
 
     [Fact]
-    public void Aaa()
+    public void CommonComponentRenderers()
     {
-        //public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
+        //public ILuthetusCommonComponentRenderers  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void Equals()
     {
-        //public override bool Equals(object? obj)
+        //public override bool (object? obj)
     }
 
     [Fact]
-    public void Aaa()
+    public void GetHashCode()
     {
-        //public override int GetHashCode() => Item.GetHashCode();
+        //public override int () => Item.GetHashCode();
     }
 
     [Fact]
-    public void Aaa()
+    public void GetTreeViewRenderer()
     {
-        //public override TreeViewRenderer GetTreeViewRenderer()
+        //public override TreeViewRenderer ()
     }
 
     [Fact]
-    public void Aaa()
+    public void LoadChildListAsync()
     {
-        //public override Task LoadChildListAsync()
+        //public override Task ()
     }
 
     [Fact]
-    public void Aaa()
+    public void RemoveRelatedFilesFromParent()
     {
-        //public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
+        //public override void (List<TreeViewNoType> siblingsAndSelfTreeViews)
     }
 }

@@ -8,20 +8,20 @@ namespace Luthetus.Ide.Tests.Basis.InputFiles.States;
 public class InputFileStateCommonTests
 {
     [Fact]
-    public void Aaa()
+    public void CanMoveBackwardsInHistory()
     {
-        //public bool CanMoveBackwardsInHistory => IndexInHistory > 0;
+        //public bool  => IndexInHistory > 0;
     }
 
     [Fact]
-    public void Aaa()
+    public void CanMoveForwardsInHistory()
     {
-        //public bool CanMoveForwardsInHistory => IndexInHistory < OpenedTreeViewModelHistoryList.Count - 1;
+        //public bool  => IndexInHistory < OpenedTreeViewModelHistoryList.Count - 1;
     }
 
     [Fact]
-    public void Aaa()
+    public void GetOpenedTreeView()
     {
-        //public TreeViewAbsolutePath? GetOpenedTreeView()
+        //public TreeViewAbsolutePath? ()
     }
 }

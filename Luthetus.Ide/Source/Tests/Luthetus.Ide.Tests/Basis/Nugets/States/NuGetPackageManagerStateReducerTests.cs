@@ -7,19 +7,19 @@ public class NuGetPackageManagerStateReducerTests
     private class NuGetPackageManagerStateReducer
     {
         [Fact]
-        public void Aaa()
+        public void ReduceSetSelectedProjectToModifyAction()
         {
             //[ReducerMethod]
-            //public static NuGetPackageManagerState ReduceSetSelectedProjectToModifyAction(
+            //public static NuGetPackageManagerState (
             //    NuGetPackageManagerState inState,
             //    SetSelectedProjectToModifyAction setSelectedProjectToModifyAction)
         }
 
         [Fact]
-        public void Aaa()
+        public void ReduceSetNugetQueryAction()
         {
             //[ReducerMethod]
-            //public static NuGetPackageManagerState ReduceSetNugetQueryAction(
+            //public static NuGetPackageManagerState (
             //    NuGetPackageManagerState inState,
             //    SetNugetQueryAction setNugetQueryAction)
             //{
@@ -28,10 +28,10 @@ public class NuGetPackageManagerStateReducerTests
         }
 
         [Fact]
-        public void Aaa()
+        public void ReduceSetIncludePrereleaseAction()
         {
             //[ReducerMethod]
-            //public static NuGetPackageManagerState ReduceSetIncludePrereleaseAction(
+            //public static NuGetPackageManagerState (
             //    NuGetPackageManagerState inState,
             //    SetIncludePrereleaseAction setIncludePrereleaseAction)
             //{
@@ -40,10 +40,10 @@ public class NuGetPackageManagerStateReducerTests
         }
 
         [Fact]
-        public void Aaa()
+        public void ReduceSetMostRecentQueryResultAction()
         {
             //[ReducerMethod]
-            //public static NuGetPackageManagerState ReduceSetMostRecentQueryResultAction(
+            //public static NuGetPackageManagerState (
             //    NuGetPackageManagerState inState,
             //    SetMostRecentQueryResultAction setMostRecentQueryResultAction)
             //{

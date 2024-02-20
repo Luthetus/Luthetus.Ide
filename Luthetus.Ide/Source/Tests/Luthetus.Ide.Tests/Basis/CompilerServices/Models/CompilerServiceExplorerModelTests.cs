@@ -5,14 +5,14 @@ namespace Luthetus.Ide.Tests.Basis.CompilerServices.Models;
 public class CompilerServiceExplorerModelTests
 {
     [Fact]
-    public void Aaa()
+    public void AbsolutePath()
     {
-        //public IAbsolutePath? AbsolutePath { get; }
+        //public IAbsolutePath?  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void IsLoadingCompilerServiceExplorer()
     {
-        //public bool IsLoadingCompilerServiceExplorer { get; }
+        //public bool  { get; }
     }
 }

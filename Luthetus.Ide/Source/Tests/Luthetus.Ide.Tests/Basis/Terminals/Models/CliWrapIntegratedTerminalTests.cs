@@ -12,61 +12,61 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 public class CliWrapIntegratedTerminalTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public CliWrapIntegratedTerminal(string initialWorkingDirectory, IEnvironmentProvider environmentProvider)
         //    : base(initialWorkingDirectory, environmentProvider)
     }
 
     [Fact]
-    public void Aaa()
+    public void StdInPipeSource()
     {
-        //public PipeSource? StdInPipeSource { get; private set; }
+        //public PipeSource?  { get; private set; }
     }
 
     [Fact]
-    public void Aaa()
+    public void AddStdOut()
     {
-        //public void AddStdOut(string content, StdOutKind stdOutKind)
+        //public void (string content, StdOutKind stdOutKind)
     }
 
     [Fact]
-    public void Aaa()
+    public void AddStdInRequest()
     {
-        //public void AddStdInRequest()
+        //public void ()
     }
 
     [Fact]
-    public void Aaa()
+    public void StartAsync()
     {
-        //public override async Task StartAsync(CancellationToken cancellationToken = default)
+        //public override async Task (CancellationToken cancellationToken = default)
     }
 
     [Fact]
-    public void Aaa()
+    public void GetRenderTreeBuilder()
     {
-        //public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
+        //public override RenderTreeBuilder (RenderTreeBuilder builder, ref int sequence)
     }
 
     [Fact]
-    public void Aaa()
+    public void StopAsync()
     {
-        //public override Task StopAsync(CancellationToken cancellationToken = default)
+        //public override Task (CancellationToken cancellationToken = default)
     }
 
     [Fact]
-    public void Aaa()
+    public void HandleStdInputOnKeyDown()
     {
-        //public override Task HandleStdInputOnKeyDown(
+        //public override Task (
         //    KeyboardEventArgs keyboardEventArgs,
         //    StdInRequest stdInRequest,
         //    string capturedValue)
     }
 
     [Fact]
-    public void Aaa()
+    public void HandleStdQuiescentOnKeyDown()
     {
-        //public override Task HandleStdQuiescentOnKeyDown(
+        //public override Task (
         //    KeyboardEventArgs keyboardEventArgs,
         //    StdQuiescent stdQuiescent,
         //    string capturedTargetFilePath,

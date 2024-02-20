@@ -5,38 +5,38 @@ namespace Luthetus.Ide.Tests.Basis.Outputs.Models;
 public record DotNetRunOutputLineTests
 {
     [Fact]
-    public void Aaa()
+    public void SourceText()
     {
-        //string SourceText,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void FilePathTextSpan()
     {
-        //TextEditorTextSpan FilePathTextSpan,
+        //TextEditorTextSpan ,
     }
 
     [Fact]
-    public void Aaa()
+    public void RowAndColumnNumberTextSpan()
     {
-        //TextEditorTextSpan RowAndColumnNumberTextSpan,
+        //TextEditorTextSpan ,
     }
 
     [Fact]
-    public void Aaa()
+    public void ErrorKeywordAndErrorCodeTextSpan()
     {
-        //TextEditorTextSpan ErrorKeywordAndErrorCodeTextSpan,
+        //TextEditorTextSpan ,
     }
 
     [Fact]
-    public void Aaa()
+    public void ErrorMessageTextSpan()
     {
-        //TextEditorTextSpan ErrorMessageTextSpan,
+        //TextEditorTextSpan ,
     }
 
     [Fact]
-    public void Aaa()
+    public void ProjectFilePathTextSpan()
     {
-        //TextEditorTextSpan ProjectFilePathTextSpan);
+        //TextEditorTextSpan );
     }
 }

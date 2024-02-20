@@ -3,7 +3,7 @@ namespace Luthetus.Ide.Tests.Basis.CompilerServices.Models;
 public class CompilerServiceExplorerTreeViewMouseEventHandlerTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
       //  public CompilerServiceExplorerTreeViewMouseEventHandler(
       //      EditorSync editorSync,
@@ -13,8 +13,8 @@ public class CompilerServiceExplorerTreeViewMouseEventHandlerTests
     }
 
     [Fact]
-    public void Aaa()
+    public void OnDoubleClickAsync()
     {
-        //public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
+        //public override Task (TreeViewCommandArgs commandArgs)
     }
 }

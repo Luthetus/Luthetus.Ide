@@ -8,25 +8,25 @@ namespace Luthetus.Ide.Tests.Basis.CompilerServices.States;
 public class CompilerServiceExplorerStateMainTests
 {
     [Fact]
-    public void Aaa()
-    {
-        //public static readonly Key<TreeViewContainer> TreeViewCompilerServiceExplorerContentStateKey = Key<TreeViewContainer>.NewKey();
-    }
-
-    [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public CompilerServiceExplorerState()
     }
 
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public CompilerServiceExplorerState(CompilerServiceExplorerModel model)
     }
 
     [Fact]
-    public void Aaa()
+    public void TreeViewCompilerServiceExplorerContentStateKey()
+    {
+        //public static readonly Key<TreeViewContainer>  = Key<TreeViewContainer>.NewKey();
+    }
+
+    [Fact]
+    public void Model()
     {
         //public CompilerServiceExplorerModel Model { get; }
     }

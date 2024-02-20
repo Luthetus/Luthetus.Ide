@@ -3,7 +3,7 @@
 public class FileTemplateParameterTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public FileTemplateParameter(
         //    string filename,
@@ -12,20 +12,20 @@ public class FileTemplateParameterTests
     }
 
     [Fact]
-    public void Aaa()
+    public void Filename()
     {
-        //public string Filename { get; }
+        //public string  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void ParentDirectory()
     {
-        //public NamespacePath ParentDirectory { get; }
+        //public NamespacePath  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void EnvironmentProvider()
     {
-        //public IEnvironmentProvider EnvironmentProvider { get; }
+        //public IEnvironmentProvider  { get; }
     }
 }

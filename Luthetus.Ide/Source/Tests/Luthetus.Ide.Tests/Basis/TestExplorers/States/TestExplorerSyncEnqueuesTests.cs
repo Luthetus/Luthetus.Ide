@@ -6,8 +6,8 @@ namespace Luthetus.Ide.Tests.Basis.TestExplorers.States;
 public partial class TestExplorerSyncEnqueuesTests
 {
     [Fact]
-    public void Aaa()
+    public void DotNetSolutionStateWrap_StateChanged()
     {
-        //public void DotNetSolutionStateWrap_StateChanged()
+        //public void ()
     }
 }

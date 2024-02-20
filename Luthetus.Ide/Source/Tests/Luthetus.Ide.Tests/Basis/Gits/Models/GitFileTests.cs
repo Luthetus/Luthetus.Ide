@@ -3,20 +3,20 @@
 public class GitFileTests
 {
     [Fact]
-    public void Aaa()
+    public void AbsolutePath()
     {
-        //IAbsolutePath AbsolutePath,
+        //IAbsolutePath ,
     }
 
     [Fact]
-    public void Aaa()
+    public void GitDirtyReason()
     {
-        //GitDirtyReason GitDirtyReason
+        //GitDirtyReason 
     }
 
     [Fact]
-    public void Aaa()
+    public void IsDirty()
     {
-        //public bool IsDirty => GitDirtyReason switch;
+        //public bool  => GitDirtyReason switch;
     }
 }

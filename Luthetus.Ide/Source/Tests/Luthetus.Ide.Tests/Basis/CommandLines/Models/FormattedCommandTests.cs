@@ -5,32 +5,32 @@ namespace Luthetus.Ide.Tests.Basis.CommandLines.Models;
 public class FormattedCommandTests
 {
     [Fact]
-    public void Aaa()
+    public void FormattedCommand()
     {
-        //public FormattedCommand(string targetFileName, IEnumerable<string> argumentsList)
+        //public (string targetFileName, IEnumerable<string> argumentsList)
     }
 
     [Fact]
-    public void Aaa()
+    public void TargetFileName()
     {
-        //public string TargetFileName { get; }
+        //public string  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void ArgumentsList()
     {
-        //public IEnumerable<string> ArgumentsList { get; }
+        //public IEnumerable<string>  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void Value()
     {
-        //public string Value => FormattedCommandToStringHelper();
+        //public string  => FormattedCommandToStringHelper();
     }
 
     [Fact]
-    public void Aaa()
+    public void FormattedCommandToStringHelper()
     {
-        //private string FormattedCommandToStringHelper()
+        //private string ()
     }
 }

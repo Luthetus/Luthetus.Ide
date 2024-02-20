@@ -3,7 +3,7 @@ namespace Luthetus.Ide.Tests.Basis.CodeSearches.States;
 public class CodeSearchStateMainTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public CodeSearchState() : this(
         //    string.Empty,
@@ -15,49 +15,49 @@ public class CodeSearchStateMainTests
     }
 
     [Fact]
-    public void Aaa()
+    public void Query()
     {
         //string Query,
     }
 
     [Fact]
-    public void Aaa()
+    public void StartingAbsolutePathForSearch()
     {
         //string? StartingAbsolutePathForSearch,
     }
 
     [Fact]
-    public void Aaa()
+    public void CodeSearchFilterKind()
     {
         //CodeSearchFilterKind CodeSearchFilterKind,
     }
 
     [Fact]
-    public void Aaa()
+    public void ResultList()
     {
         //ImmutableList<string> ResultList,
     }
 
     [Fact]
-    public void Aaa()
+    public void PreviewFilePath()
     {
         //string PreviewFilePath,
     }
 
     [Fact]
-    public void Aaa()
+    public void PreviewViewModelKey()
     {
         //Key<TextEditorViewModel> PreviewViewModelKey)
     }
 
     [Fact]
-    public void Aaa()
+    public void TopContentElementDimensions()
     {
         //public ElementDimensions TopContentElementDimensions = new();
     }
 
     [Fact]
-    public void Aaa()
+    public void BottomContentElementDimensions()
     {
         //public ElementDimensions BottomContentElementDimensions = new();
     }

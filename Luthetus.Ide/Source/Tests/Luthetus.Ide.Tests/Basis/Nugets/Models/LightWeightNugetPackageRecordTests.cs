@@ -3,20 +3,20 @@
 public class LightWeightNugetPackageRecordTests
 {
     [Fact]
-    public void Aaa()
+    public void Id()
     {
-        //string Id,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void Title()
     {
-        //string Title,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void Version()
     {
-        //string Version);
+        //string );
     }
 }

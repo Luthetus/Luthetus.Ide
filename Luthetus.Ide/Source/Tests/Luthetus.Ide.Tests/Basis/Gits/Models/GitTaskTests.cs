@@ -3,20 +3,20 @@
 public class GitTaskTests
 {
     [Fact]
-    public void Aaa()
+    public void Id()
     {
-        //Guid Id,
+        //Guid ,
     }
 
     [Fact]
-    public void Aaa()
+    public void DisplayName()
     {
-        //string DisplayName,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void CancellationToken()
     {
-        //CancellationToken CancellationToken
+        //CancellationToken 
     }
 }

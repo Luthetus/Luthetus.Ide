@@ -3,20 +3,20 @@ namespace Luthetus.Ide.Tests.Basis.FolderExplorers.States;
 public class FolderExplorerSyncEnqueuesTests
 {
     [Fact]
-    public void Aaa()
+    public void SetFolderExplorerState()
     {
-        //public void SetFolderExplorerState(IAbsolutePath folderAbsolutePath)
+        //public void (IAbsolutePath folderAbsolutePath)
     }
 
     [Fact]
-    public void Aaa()
+    public void SetFolderExplorerTreeView()
     {
-        //public void SetFolderExplorerTreeView(IAbsolutePath folderAbsolutePath)
+        //public void (IAbsolutePath folderAbsolutePath)
     }
 
     [Fact]
-    public void Aaa()
+    public void ShowInputFile()
     {
-        //public void ShowInputFile()
+        //public void ()
     }
 }

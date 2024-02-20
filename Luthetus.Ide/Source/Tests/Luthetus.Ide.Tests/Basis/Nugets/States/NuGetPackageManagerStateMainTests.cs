@@ -8,32 +8,32 @@ namespace Luthetus.Ide.Tests.Basis.Nugets.States;
 public class NuGetPackageManagerStateMainTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public NuGetPackageManagerState() : this(null, string.Empty, false, ImmutableArray<NugetPackageRecord>.Empty)
     }
 
     [Fact]
-    public void Aaa()
+    public void SelectedProjectToModify()
     {
-        //IDotNetProject? SelectedProjectToModify,
+        //IDotNetProject? ,
     }
 
     [Fact]
-    public void Aaa()
+    public void NugetQuery()
     {
-        //string NugetQuery,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void IncludePrerelease()
     {
-        //bool IncludePrerelease,
+        //bool ,
     }
 
     [Fact]
-    public void Aaa()
+    public void QueryResultList()
     {
-        //ImmutableArray<NugetPackageRecord> QueryResultList)
+        //ImmutableArray<NugetPackageRecord> )
     }
 }

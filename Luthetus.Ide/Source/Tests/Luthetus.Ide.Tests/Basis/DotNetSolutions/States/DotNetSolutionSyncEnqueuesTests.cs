@@ -3,9 +3,9 @@
 public class DotNetSolutionSyncEnqueuesTests
 {
     [Fact]
-    public void Aaa()
+    public void Website_AddExistingProjectToSolution()
     {
-        //public void Website_AddExistingProjectToSolution(
+        //public void (
         //    Key<DotNetSolutionModel> dotNetSolutionModelKey,
         //    string projectTemplateShortName,
         //    string cSharpProjectName,
@@ -14,14 +14,14 @@ public class DotNetSolutionSyncEnqueuesTests
     }
 
     [Fact]
-    public void Aaa()
+    public void SetDotNetSolution()
     {
-        //public void SetDotNetSolution(IAbsolutePath inSolutionAbsolutePath)
+        //public void (IAbsolutePath inSolutionAbsolutePath)
     }
 
     [Fact]
-    public void Aaa()
+    public void SetDotNetSolutionTreeView()
     {
-        //public void SetDotNetSolutionTreeView(Key<DotNetSolutionModel> dotNetSolutionModelKey)
+        //public void (Key<DotNetSolutionModel> dotNetSolutionModelKey)
     }
 }

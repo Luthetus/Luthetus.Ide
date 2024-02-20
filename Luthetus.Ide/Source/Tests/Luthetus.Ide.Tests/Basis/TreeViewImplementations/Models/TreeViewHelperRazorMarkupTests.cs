@@ -8,16 +8,16 @@ namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 public partial class TreeViewHelperRazorMarkupTests
 {
     [Fact]
-    public void Aaa()
+    public void RazorMarkupLoadChildrenAsync()
     {
-        //public static async Task<List<TreeViewNoType>> RazorMarkupLoadChildrenAsync(
+        //public static async Task<List<TreeViewNoType>> (
         //    this TreeViewNamespacePath razorMarkupTreeView)
     }
 
     [Fact]
-    public void Aaa()
+    public void RazorMarkupFindRelatedFiles()
     {
-        //public static void RazorMarkupFindRelatedFiles(
+        //public static void (
         //    TreeViewNamespacePath razorMarkupTreeView,
         //    List<TreeViewNoType> siblingsAndSelfTreeViews)
     }

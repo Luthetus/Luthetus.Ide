@@ -6,32 +6,32 @@ namespace Luthetus.Ide.Tests.Basis.TestExplorers.Models;
 public class StringFragmentTests
 {
     [Fact]
-    public void Aaa()
+    public void StringFragment()
     {
-        //public StringFragment(string stringValue)
+        //public (string stringValue)
     }
 
     [Fact]
-    public void Aaa()
+    public void Value()
     {
-        //public string Value { get; set; }
+        //public string  { get; set; }
     }
 
     [Fact]
-    public void Aaa()
+    public void Map()
     {
-        //public Dictionary<string, StringFragment> Map { get; set; } = new();
+        //public Dictionary<string, StringFragment>  { get; set; } = new();
     }
 
     [Fact]
-    public void Aaa()
+    public void IsEndpoint()
     {
-        //public bool IsEndpoint { get; set; }
+        //public bool  { get; set; }
     }
 
     [Fact]
-    public void Aaa()
+    public void DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey()
     {
-        //public Key<TerminalCommand> DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+        //public Key<TerminalCommand>  { get; } = Key<TerminalCommand>.NewKey();
     }
 }

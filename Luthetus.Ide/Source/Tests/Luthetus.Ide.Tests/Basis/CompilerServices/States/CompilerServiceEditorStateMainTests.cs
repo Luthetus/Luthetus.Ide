@@ -7,14 +7,14 @@ namespace Luthetus.Ide.Tests.Basis.CompilerServices.States;
 public class CompilerServiceEditorStateMainTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public CompilerServiceEditorState() : this(Key<TextEditorViewModel>.Empty)
     }
 
     [Fact]
-    public void Aaa()
+    public void TextEditorViewModelKey()
     {
-        //Key<TextEditorViewModel> TextEditorViewModelKey
+        //Key<TextEditorViewModel> 
     }
 }

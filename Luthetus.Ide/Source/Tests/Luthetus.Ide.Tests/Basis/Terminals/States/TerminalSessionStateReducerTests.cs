@@ -7,28 +7,28 @@ public class TerminalSessionStateReducerTests
     private class Reducer
     {
         [Fact]
-        public void Aaa()
+        public void ReduceRegisterTerminalSessionAction()
         {
             //[ReducerMethod]
-            //public static TerminalSessionState ReduceRegisterTerminalSessionAction(
+            //public static TerminalSessionState (
             //TerminalSessionState inState,
             //RegisterTerminalSessionAction registerTerminalSessionAction)
         }
 
         [Fact]
-        public void Aaa()
+        public void ReduceUpdateTerminalSessionStateKeyAction()
         {
             //[ReducerMethod]
-            //public static TerminalSessionState ReduceUpdateTerminalSessionStateKeyAction(
+            //public static TerminalSessionState (
             //    TerminalSessionState inState,
             //    UpdateTerminalSessionStateKeyAction updateTerminalSessionStateKeyAction)
         }
 
         [Fact]
-        public void Aaa()
+        public void ReduceDisposeTerminalSessionAction()
         {
             //[ReducerMethod]
-            //public static TerminalSessionState ReduceDisposeTerminalSessionAction(
+            //public static TerminalSessionState (
             //    TerminalSessionState inState,
             //    DisposeTerminalSessionAction disposeTerminalSessionAction)
         }

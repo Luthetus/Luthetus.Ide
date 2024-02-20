@@ -5,9 +5,9 @@ namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 public partial class TreeViewHelperCSharpClassTests
 {
     [Fact]
-    public void Aaa()
+    public void CSharpClassLoadChildrenAsync()
     {
-        //public static Task<List<TreeViewNoType>> CSharpClassLoadChildrenAsync(
+        //public static Task<List<TreeViewNoType>> (
         //    this TreeViewNamespacePath cSharpClassTreeView)
     }
 }

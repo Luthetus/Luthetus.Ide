@@ -3,7 +3,7 @@ namespace Luthetus.Ide.Tests.Basis.CompilerServices.Models;
 public class CompilerServiceExplorerTreeViewKeyboardEventHandlerTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
       //  public CompilerServiceExplorerTreeViewKeyboardEventHandler(
       //      EditorSync editorSync,
@@ -13,8 +13,8 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandlerTests
     }
 
     [Fact]
-    public void Aaa()
+    public void OnKeyDownAsync()
     {
-        //public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
+        //public override Task (TreeViewCommandArgs commandArgs)
     }
 }

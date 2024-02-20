@@ -15,7 +15,7 @@ namespace Luthetus.Ide.Tests.Basis.InputFiles.Models;
 public class InputFileTreeViewKeyboardEventHandlerTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public InputFileTreeViewKeyboardEventHandler(
         //    ITreeViewService treeViewService,
@@ -33,8 +33,8 @@ public class InputFileTreeViewKeyboardEventHandlerTests
     }
 
     [Fact]
-    public void Aaa()
+    public void OnKeyDownAsync()
     {
-        //public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
+        //public override Task (TreeViewCommandArgs commandArgs)
     }
 }

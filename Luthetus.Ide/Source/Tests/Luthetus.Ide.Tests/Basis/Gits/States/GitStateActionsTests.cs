@@ -3,8 +3,8 @@
 public class GitStateActionsTests
 {
     [Fact]
-    public void Aaa()
+    public void SetGitStateWithAction()
     {
-        //public record SetGitStateWithAction(Func<GitState, GitState> GitStateWithFunc);
+        //public record (Func<GitState, GitState> GitStateWithFunc);
     }
 }

@@ -5,27 +5,27 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 public class StdOutTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public StdOut(IntegratedTerminal integratedTerminal, string initialContent, StdOutKind stdOutKind)
         //    : base(integratedTerminal)
     }
 
     [Fact]
-    public void Aaa()
+    public void Content()
     {
-        //public string Content { get; internal set; }
+        //public string  { get; internal set; }
     }
 
     [Fact]
-    public void Aaa()
+    public void StdOutKind()
     {
-        //public StdOutKind StdOutKind { get; internal set; }
+        //public StdOutKind  { get; internal set; }
     }
 
     [Fact]
-    public void Aaa()
+    public void GetRenderTreeBuilder()
     {
-        //public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
+        //public override RenderTreeBuilder (RenderTreeBuilder builder, ref int sequence)
     }
 }

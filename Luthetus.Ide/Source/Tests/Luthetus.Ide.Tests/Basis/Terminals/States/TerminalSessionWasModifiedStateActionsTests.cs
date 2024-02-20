@@ -7,9 +7,9 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.States;
 public class TerminalSessionWasModifiedStateActionsTests
 {
     [Fact]
-    public void Aaa()
+    public void SetTerminalSessionStateKeyAction()
     {
-        //public record SetTerminalSessionStateKeyAction(
+        //public record (
         //    Key<TerminalSession> TerminalSessionKey,
         //    Key<StateRecord> StateKey);
     }

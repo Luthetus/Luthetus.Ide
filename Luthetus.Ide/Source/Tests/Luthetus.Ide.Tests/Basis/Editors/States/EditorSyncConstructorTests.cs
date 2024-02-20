@@ -4,13 +4,7 @@ namespace Luthetus.Ide.Tests.Basis.Editors.States;
 public class EditorSyncConstructorTests
 {
     [Fact]
-    public void Aaa()
-    {
-        //public static readonly Key<TextEditorGroup> EditorTextEditorGroupKey = Key<TextEditorGroup>.NewKey();
-    }
-
-    [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public EditorSync(
         //    ITextEditorService textEditorService,
@@ -27,14 +21,20 @@ public class EditorSyncConstructorTests
     }
 
     [Fact]
-    public void Aaa()
+    public void EditorTextEditorGroupKey()
     {
-        //public IBackgroundTaskService BackgroundTaskService { get; }
+        //public static readonly Key<TextEditorGroup>  = Key<TextEditorGroup>.NewKey();
+    }
+    
+    [Fact]
+    public void BackgroundTaskService()
+    {
+        //public IBackgroundTaskService  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void Dispatcher()
     {
-        //public IDispatcher Dispatcher { get; }
+        //public IDispatcher  { get; }
     }
 }

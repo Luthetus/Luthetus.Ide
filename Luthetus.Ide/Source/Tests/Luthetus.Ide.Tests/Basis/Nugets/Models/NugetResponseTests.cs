@@ -3,14 +3,14 @@
 public class NugetResponseTests
 {
     [Fact]
-    public void Aaa()
+    public void TotalHits()
     {
-        //int TotalHits,
+        //int ,
     }
 
     [Fact]
-    public void Aaa()
+    public void Data()
     {
-        //NugetPackageRecord[] Data);
+        //NugetPackageRecord[] );
     }
 }

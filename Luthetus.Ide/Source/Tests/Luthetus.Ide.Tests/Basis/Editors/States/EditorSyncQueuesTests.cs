@@ -3,17 +3,17 @@
 public class EditorSyncQueuesTests
 {
     [Fact]
-    public void Aaa()
+    public void OpenInEditor()
     {
-        //public void OpenInEditor(
+        //public void (
         //    IAbsolutePath? absolutePath,
         //    bool shouldSetFocusToEditor,
         //    Key<TextEditorGroup>? editorTextEditorGroupKey = null)
     }
 
     [Fact]
-    public void Aaa()
+    public void ShowInputFile()
     {
-        //public void ShowInputFile()
+        //public void ()
     }
 }

@@ -6,39 +6,39 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 public class StdQuiescentTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public StdQuiescent(IntegratedTerminal integratedTerminal)
         //    : base(integratedTerminal)
     }
 
     [Fact]
-    public void Aaa()
+    public void IsCompleted()
     {
-        //public bool IsCompleted { get; set; }
+        //public bool  { get; set; }
     }
 
     [Fact]
-    public void Aaa()
+    public void TargetFilePath()
     {
-        //public string TargetFilePath { get; set; }
+        //public string  { get; set; }
     }
 
     [Fact]
-    public void Aaa()
+    public void Arguments()
     {
-        //public string Arguments { get; set; }
+        //public string  { get; set; }
     }
 
     [Fact]
-    public void Aaa()
+    public void Text()
     {
-        //public string Text { get; set; } = string.Empty;
+        //public string  { get; set; } = string.Empty;
     }
 
     [Fact]
-    public void Aaa()
+    public void GetRenderTreeBuilder()
     {
-        //public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
+        //public override RenderTreeBuilder (RenderTreeBuilder builder, ref int sequence)
     }
 }

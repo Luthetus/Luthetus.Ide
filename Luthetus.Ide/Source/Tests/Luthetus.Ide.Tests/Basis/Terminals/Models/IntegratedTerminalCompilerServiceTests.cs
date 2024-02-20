@@ -8,7 +8,7 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 public sealed class IntegratedTerminalCompilerServiceTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public IntegratedTerminalCompilerService(
         //        ITextEditorService textEditorService,

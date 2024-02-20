@@ -9,15 +9,22 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.States;
 public class TerminalSessionWasModifiedStateMainTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public TerminalSessionWasModifiedState()
         //    : this(ImmutableDictionary<Key<TerminalSession>, Key<StateRecord>>.Empty, string.Empty)
     }
 
     [Fact]
-    public void Aaa()
+    public void TerminalSessionWasModifiedMap()
     {
-        //(ImmutableDictionary<Key<TerminalSession>, Key<StateRecord>> TerminalSessionWasModifiedMap, string EmptyTextHack)
+        //ImmutableDictionary<Key<TerminalSession>, Key<StateRecord>> TerminalSessionWasModifiedMap
+    }
+    
+    
+    [Fact]
+    public void EmptyTextHack()
+    {
+        //string EmptyTextHack
     }
 }

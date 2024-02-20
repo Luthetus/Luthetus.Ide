@@ -3,8 +3,8 @@ namespace Luthetus.Ide.Tests.Basis.CompilerServices.States;
 public class CompilerServiceExplorerStateActionsTests
 {
     [Fact]
-    public void Aaa()
+    public void NewAction()
     {
-        //public record NewAction(Func<CompilerServiceExplorerState, CompilerServiceExplorerState> NewFunc);
+        //public record (Func<CompilerServiceExplorerState, CompilerServiceExplorerState> NewFunc);
     }
 }

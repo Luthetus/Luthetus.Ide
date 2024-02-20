@@ -7,10 +7,10 @@ public class CompilerServiceExplorerStateReducerTests
     private class Reducer
     {
         [Fact]
-        public void Aaa()
+        public void ReduceNewAction()
         {
             //[ReducerMethod]
-            //public CompilerServiceExplorerState ReduceNewAction(
+            //public CompilerServiceExplorerState (
             //    CompilerServiceExplorerState inCompilerServiceExplorerState,
             //    NewAction newAction)
         }

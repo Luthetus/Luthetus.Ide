@@ -3,7 +3,7 @@ namespace Luthetus.Ide.Tests.Basis.Commands;
 public class CommandFactoryTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
       //  public CommandFactory(
 		    //ITextEditorService textEditorService,
@@ -15,21 +15,21 @@ public class CommandFactoryTests
     }
 
     [Fact]
-    public void Aaa()
+    public void CodeSearchDialog()
     {
-        //public DialogRecord? CodeSearchDialog { get; set; }
+        //public DialogRecord?  { get; set; }
     }
 
     [Fact]
-    public void Aaa()
+    public void Initialize()
     {
-	    //public void Initialize()
+	    //public void ()
     }
 
     [Fact]
-    public void Aaa()
+    public void ConstructFocusContextElementCommand()
     {
-		//public CommandNoType ConstructFocusContextElementCommand(
+		//public CommandNoType (
 		//	ContextRecord contextRecord,
 		//	string displayName,
 		//	string internalIdentifier)

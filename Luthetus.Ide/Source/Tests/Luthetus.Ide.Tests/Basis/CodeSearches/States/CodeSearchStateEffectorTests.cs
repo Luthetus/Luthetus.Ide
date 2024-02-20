@@ -9,7 +9,7 @@ public class CodeSearchStateEffectorTests
     public class Effector : IDisposable
     {
         [Fact]
-        public void Aaa()
+        public void Constructor()
         {
             //public Effector(
             //    IState<CodeSearchState> codeSearchStateWrap,
@@ -18,7 +18,7 @@ public class CodeSearchStateEffectorTests
         }
 
         [Fact]
-        public void Aaa()
+        public void HandleSearchEffect()
         {
             //[EffectMethod]
             //public async Task HandleSearchEffect(
@@ -27,7 +27,7 @@ public class CodeSearchStateEffectorTests
         }
 
         [Fact]
-        public void Aaa()
+        public void Dispose()
         {
             //public void Dispose()
         }

@@ -9,7 +9,7 @@ namespace Luthetus.Ide.Tests.Basis.InputFiles.States;
 public class InputFileStateMainTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //private InputFileState() : this(
         //    -1,
@@ -26,56 +26,56 @@ public class InputFileStateMainTests
     }
 
     [Fact]
-    public void Aaa()
+    public void IndexInHistory()
     {
-        //int IndexInHistory,
+        //int ,
     }
 
     [Fact]
-    public void Aaa()
+    public void OpenedTreeViewModelHistoryList()
     {
-        //ImmutableList<TreeViewAbsolutePath> OpenedTreeViewModelHistoryList,
+        //ImmutableList<TreeViewAbsolutePath> ,
     }
 
     [Fact]
-    public void Aaa()
+    public void SelectedTreeViewModel()
     {
-        //TreeViewAbsolutePath? SelectedTreeViewModel,
+        //TreeViewAbsolutePath? ,
     }
 
     [Fact]
-    public void Aaa()
+    public void OnAfterSubmitFunc()
     {
-        //Func<IAbsolutePath?, Task> OnAfterSubmitFunc,
+        //Func<IAbsolutePath?, Task> ,
     }
 
     [Fact]
-    public void Aaa()
+    public void SelectionIsValidFunc()
     {
-        //Func<IAbsolutePath?, Task<bool>> SelectionIsValidFunc,
+        //Func<IAbsolutePath?, Task<bool>> ,
     }
 
     [Fact]
-    public void Aaa()
+    public void InputFilePatternsList()
     {
-        //ImmutableArray<InputFilePattern> InputFilePatternsList,
+        //ImmutableArray<InputFilePattern> ,
     }
 
     [Fact]
-    public void Aaa()
+    public void SelectedInputFilePattern()
     {
-        //InputFilePattern? SelectedInputFilePattern,
+        //InputFilePattern? ,
     }
 
     [Fact]
-    public void Aaa()
+    public void SearchQuery()
     {
-        //string SearchQuery,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void Message()
     {
-        //string Message)
+        //string )
     }
 }

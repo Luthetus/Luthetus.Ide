@@ -8,13 +8,7 @@ namespace Luthetus.Ide.Tests.Basis.FolderExplorers.States;
 public class FolderExplorerStateMainTests
 {
     [Fact]
-    public void Aaa()
-    {
-        //public static readonly Key<TreeViewContainer> TreeViewContentStateKey = Key<TreeViewContainer>.NewKey();
-    }
-
-    [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //private FolderExplorerState() : this(
         //    default,
@@ -22,14 +16,20 @@ public class FolderExplorerStateMainTests
     }
 
     [Fact]
-    public void Aaa()
+    public void TreeViewContentStateKey()
     {
-        //IAbsolutePath? AbsolutePath,
+        //public static readonly Key<TreeViewContainer>  = Key<TreeViewContainer>.NewKey();
+    }
+    
+    [Fact]
+    public void AbsolutePath()
+    {
+        //IAbsolutePath? ,
     }
 
     [Fact]
-    public void Aaa()
+    public void IsLoadingFolderExplorer()
     {
-        //bool IsLoadingFolderExplorer
+        //bool 
     }
 }

@@ -3,7 +3,7 @@
 public class DotNetSolutionSyncConstructorTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public DotNetSolutionSync(
         //    IFileSystemProvider fileSystemProvider,
@@ -20,40 +20,40 @@ public class DotNetSolutionSyncConstructorTests
     }
 
     [Fact]
-    public void Aaa()
+    public void BackgroundTaskService()
     {
-        //public IBackgroundTaskService BackgroundTaskService { get; }
+        //public IBackgroundTaskService  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void Dispatcher()
     {
-        //public IDispatcher Dispatcher { get; }
+        //public IDispatcher  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void InputFileSync()
     {
-        //public InputFileSync InputFileSync { get; }
+        //public InputFileSync  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void IWithAction()
     {
-        //public interface IWithAction
+        //public interface 
     }
 
     [Fact]
-    public void Aaa()
+    public void WithAction()
     {
-        //public record WithAction(Func<DotNetSolutionState, DotNetSolutionState> WithFunc)
+        //public record (Func<DotNetSolutionState, DotNetSolutionState> WithFunc)
         //    : IWithAction;
     }
 
     [Fact]
-    public void Aaa()
+    public void ConstructModelReplacement()
     {
-        //public static IWithAction ConstructModelReplacement(
+        //public static IWithAction (
         //        Key<DotNetSolutionModel> dotNetSolutionModelKey,
         //        DotNetSolutionModel outDotNetSolutionModel)
     }

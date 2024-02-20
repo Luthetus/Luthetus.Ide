@@ -3,7 +3,7 @@
 public class LuthetusIdeTreeViewsTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public LuthetusIdeTreeViews(
         //    Type treeViewNamespacePathRendererType,
@@ -19,62 +19,62 @@ public class LuthetusIdeTreeViewsTests
     }
     
     [Fact]
-    public void Aaa()
+    public void TreeViewNamespacePathRendererType()
     {
-        //public Type TreeViewNamespacePathRendererType { get; }
+        //public Type  { get; }
     }
     
     [Fact]
-    public void Aaa()
+    public void TreeViewSolutionFolderRendererType()
     {
-        //public Type TreeViewSolutionFolderRendererType { get; }
+        //public Type  { get; }
     }
     
     [Fact]
-    public void Aaa()
+    public void TreeViewCSharpProjectDependenciesRendererType()
     {
-        //public Type TreeViewCSharpProjectDependenciesRendererType { get; }
+        //public Type  { get; }
     }
     
     [Fact]
-    public void Aaa()
+    public void TreeViewCSharpProjectNugetPackageReferencesRendererType()
     {
-        //public Type TreeViewCSharpProjectNugetPackageReferencesRendererType { get; }
+        //public Type  { get; }
     }
     
     [Fact]
-    public void Aaa()
+    public void TreeViewCSharpProjectToProjectReferencesRendererType()
     {
-        //public Type TreeViewCSharpProjectToProjectReferencesRendererType { get; }
+        //public Type  { get; }
     }
     
     [Fact]
-    public void Aaa()
+    public void TreeViewLightWeightNugetPackageRecordRendererType()
     {
-        //public Type TreeViewLightWeightNugetPackageRecordRendererType { get; }
+        //public Type  { get; }
     }
     
     [Fact]
-    public void Aaa()
+    public void TreeViewCSharpProjectToProjectReferenceRendererType()
     {
-        //public Type TreeViewCSharpProjectToProjectReferenceRendererType { get; }
+        //public Type  { get; }
     }
     
     [Fact]
-    public void Aaa()
+    public void TreeViewAbsolutePathRendererType()
     {
-        //public Type TreeViewAbsolutePathRendererType { get; }
+        //public Type  { get; }
     }
     
     [Fact]
-    public void Aaa()
+    public void TreeViewGitFileRendererType()
     {
-        //public Type TreeViewGitFileRendererType { get; }
+        //public Type  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void TreeViewCompilerServiceRendererType()
     {
-        //public Type TreeViewCompilerServiceRendererType { get; }
+        //public Type  { get; }
     }
 }

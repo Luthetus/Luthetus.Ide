@@ -3,7 +3,7 @@ namespace Luthetus.Ide.Tests.Basis.FolderExplorers.Models;
 public class FolderExplorerTreeViewMouseEventHandlerTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
       //  public FolderExplorerTreeViewMouseEventHandler(
       //      EditorSync editorSync,
@@ -13,8 +13,8 @@ public class FolderExplorerTreeViewMouseEventHandlerTests
     }
 
     [Fact]
-    public void Aaa()
+    public void OnDoubleClickAsync()
     {
-        //public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
+        //public override Task (TreeViewCommandArgs commandArgs)
     }
 }

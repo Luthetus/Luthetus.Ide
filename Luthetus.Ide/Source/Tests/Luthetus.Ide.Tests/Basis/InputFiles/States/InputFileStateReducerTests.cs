@@ -10,79 +10,79 @@ public class InputFileStateReducerTests
     private static class Reducer
     {
         [Fact]
-        public void Aaa()
+        public void ReduceStartInputFileStateFormAction()
         {
             //[ReducerMethod]
-            //public static InputFileState ReduceStartInputFileStateFormAction(
+            //public static InputFileState (
             //    InputFileState inState,
             //    StartInputFileStateFormAction startInputFileStateFormAction)
         }
 
         [Fact]
-        public void Aaa()
+        public void ReduceSetSelectedTreeViewModelAction()
         {
             //[ReducerMethod]
-            //public static InputFileState ReduceSetSelectedTreeViewModelAction(
+            //public static InputFileState (
             //    InputFileState inState,
             //    SetSelectedTreeViewModelAction setSelectedTreeViewModelAction)
         }
 
         [Fact]
-        public void Aaa()
+        public void ReduceSetOpenedTreeViewModelAction()
         {
             //[ReducerMethod]
-            //public static InputFileState ReduceSetOpenedTreeViewModelAction(
+            //public static InputFileState (
             //    InputFileState inState,
             //    SetOpenedTreeViewModelAction setOpenedTreeViewModelAction)
         }
 
         [Fact]
-        public void Aaa()
+        public void ReduceSetSelectedInputFilePatternAction()
         {
             //[ReducerMethod]
-            //public static InputFileState ReduceSetSelectedInputFilePatternAction(
+            //public static InputFileState (
             //    InputFileState inState,
             //    SetSelectedInputFilePatternAction setSelectedInputFilePatternAction)
         }
 
 
         [Fact]
-        public void Aaa()
+        public void ReduceMoveBackwardsInHistoryAction()
         {
             //[ReducerMethod(typeof(MoveBackwardsInHistoryAction))]
-            //public static InputFileState ReduceMoveBackwardsInHistoryAction(InputFileState inState)
+            //public static InputFileState (InputFileState inState)
         }
 
         [Fact]
-        public void Aaa()
+        public void ReduceMoveForwardsInHistoryAction()
         {
             //[ReducerMethod(typeof(MoveForwardsInHistoryAction))]
-            //public static InputFileState ReduceMoveForwardsInHistoryAction(InputFileState inState)
+            //public static InputFileState (InputFileState inState)
         }
 
         [Fact]
-        public void Aaa()
+        public void ReduceOpenParentDirectoryAction()
         {
             //[ReducerMethod]
-            //public static InputFileState ReduceOpenParentDirectoryAction(
+            //public static InputFileState (
             //    InputFileState inState,
             //    OpenParentDirectoryAction openParentDirectoryAction)
         }
 
         [Fact]
-        public void Aaa()
+        public void ReduceRefreshCurrentSelectionAction()
         {
             //[ReducerMethod]
-            //public static InputFileState ReduceRefreshCurrentSelectionAction(
+            //public static InputFileState (
             //    InputFileState inState,
             //    RefreshCurrentSelectionAction refreshCurrentSelectionAction)
         }
 
         [Fact]
-        public void Aaa()
+        public void ReduceSetSearchQueryAction()
         {
             //[ReducerMethod]
-            //public static InputFileState ReduceSetSearchQueryAction(
+            //public static InputFileState (
             //    InputFileState inState,
             //    SetSearchQueryAction setSearchQueryAction)
         }

@@ -11,153 +11,153 @@ namespace Luthetus.Ide.Tests.Basis.CSharpProjectForms.Models;
 public class CSharpProjectFormViewModelTests
 {
     [Fact]
-    public void Aaa()
-    {
-        //public readonly Key<TerminalCommand> NewCSharpProjectTerminalCommandKey = Key<TerminalCommand>.NewKey();
-    }
-
-    [Fact]
-    public void Aaa()
-    {
-        //public readonly Key<TerminalCommand> LoadProjectTemplatesTerminalCommandKey = Key<TerminalCommand>.NewKey();
-    }
-
-    [Fact]
-    public void Aaa()
-    {
-        //public readonly CancellationTokenSource NewCSharpProjectCancellationTokenSource = new();
-    }
-
-    [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public CSharpProjectFormViewModel(
         //    DotNetSolutionModel? dotNetSolutionModel,
         //    IEnvironmentProvider environmentProvider)
     }
-    
+
     [Fact]
-    public void Aaa()
+    public void NewCSharpProjectTerminalCommandKey()
     {
-        //public DotNetSolutionModel? DotNetSolutionModel { get; set; }
-    }
-    
-    [Fact]
-    public void Aaa()
-    {
-        //public IEnvironmentProvider EnvironmentProvider { get; }
-    }
-    
-    [Fact]
-    public void Aaa()
-    {
-        //public bool IsReadingProjectTemplates { get; set; } = false;
-    }
-    
-    [Fact]
-    public void Aaa()
-    {
-        //public string ProjectTemplateShortNameValue { get; set; } = string.Empty;
-    }
-    
-    [Fact]
-    public void Aaa()
-    {
-        //public string CSharpProjectNameValue { get; set; } = string.Empty;
-    }
-    
-    [Fact]
-    public void Aaa()
-    {
-        //public string OptionalParametersValue { get; set; } = string.Empty;
-    }
-    
-    [Fact]
-    public void Aaa()
-    {
-        //public string ParentDirectoryNameValue { get; set; } = string.Empty;
-    }
-    
-    [Fact]
-    public void Aaa()
-    {
-        //public List<ProjectTemplate> ProjectTemplateList { get; set; } = new List<ProjectTemplate>();
-    }
-    
-    [Fact]
-    public void Aaa()
-    {
-        //public CSharpProjectFormPanelKind ActivePanelKind { get; set; } = CSharpProjectFormPanelKind.Graphical;
-    }
-    
-    [Fact]
-    public void Aaa()
-    {
-        //public string SearchInput { get; set; } = string.Empty;
+        //public readonly Key<TerminalCommand>  = Key<TerminalCommand>.NewKey();
     }
 
     [Fact]
-    public void Aaa()
+    public void LoadProjectTemplatesTerminalCommandKey()
     {
-        //public ProjectTemplate? SelectedProjectTemplate { get; set; } = null;
+        //public readonly Key<TerminalCommand>  = Key<TerminalCommand>.NewKey();
     }
 
     [Fact]
-    public void Aaa()
+    public void NewCSharpProjectCancellationTokenSource()
     {
-        //public bool IsValid => DotNetSolutionModel is not null;
+        //public readonly CancellationTokenSource  = new();
+    }
+    
+    [Fact]
+    public void DotNetSolutionModel()
+    {
+        //public DotNetSolutionModel?  { get; set; }
+    }
+    
+    [Fact]
+    public void EnvironmentProvider()
+    {
+        //public IEnvironmentProvider  { get; }
+    }
+    
+    [Fact]
+    public void IsReadingProjectTemplates()
+    {
+        //public bool  { get; set; } = false;
+    }
+    
+    [Fact]
+    public void ProjectTemplateShortNameValue()
+    {
+        //public string  { get; set; } = string.Empty;
+    }
+    
+    [Fact]
+    public void CSharpProjectNameValue()
+    {
+        //public string  { get; set; } = string.Empty;
+    }
+    
+    [Fact]
+    public void OptionalParametersValue()
+    {
+        //public string  { get; set; } = string.Empty;
+    }
+    
+    [Fact]
+    public void ParentDirectoryNameValue()
+    {
+        //public string  { get; set; } = string.Empty;
+    }
+    
+    [Fact]
+    public void ProjectTemplateList()
+    {
+        //public List<ProjectTemplate>  { get; set; } = new List<ProjectTemplate>();
+    }
+    
+    [Fact]
+    public void ActivePanelKind()
+    {
+        //public CSharpProjectFormPanelKind  { get; set; } = CSharpProjectFormPanelKind.Graphical;
+    }
+    
+    [Fact]
+    public void SearchInput()
+    {
+        //public string  { get; set; } = string.Empty;
     }
 
     [Fact]
-    public void Aaa()
+    public void SelectedProjectTemplate()
     {
-        //public string ProjectTemplateShortNameDisplay => string.IsNullOrWhiteSpace(ProjectTemplateShortNameValue)
+        //public ProjectTemplate?  { get; set; } = null;
+    }
+
+    [Fact]
+    public void IsValid()
+    {
+        //public bool  => DotNetSolutionModel is not null;
+    }
+
+    [Fact]
+    public void ProjectTemplateShortNameDisplay()
+    {
+        //public string  => string.IsNullOrWhiteSpace(ProjectTemplateShortNameValue)
         //    ? "{enter Template name}"
         //    : ProjectTemplateShortNameValue;
     }
 
     [Fact]
-    public void Aaa()
+    public void CSharpProjectNameDisplay()
     {
-        //public string CSharpProjectNameDisplay => string.IsNullOrWhiteSpace(CSharpProjectNameValue)
+        //public string  => string.IsNullOrWhiteSpace(CSharpProjectNameValue)
         //    ? "{enter C# Project name}"
         //    : CSharpProjectNameValue;
     }
 
     [Fact]
-    public void Aaa()
+    public void OptionalParametersDisplay()
     {
-        //public string OptionalParametersDisplay => OptionalParametersValue;
+        //public string  => OptionalParametersValue;
     }
 
     [Fact]
-    public void Aaa()
+    public void ParentDirectoryNameDisplay()
     {
-        //public string ParentDirectoryNameDisplay => string.IsNullOrWhiteSpace(ParentDirectoryNameValue)
+        //public string  => string.IsNullOrWhiteSpace(ParentDirectoryNameValue)
         //    ? "{enter parent directory name}"
         //    : ParentDirectoryNameValue;
     }
 
     [Fact]
-    public void Aaa()
+    public void FormattedNewCSharpProjectCommand()
     {
-        //public FormattedCommand FormattedNewCSharpProjectCommand => DotNetCliCommandFormatter.FormatDotnetNewCSharpProject(
+        //public FormattedCommand  => DotNetCliCommandFormatter.FormatDotnetNewCSharpProject(
         //    ProjectTemplateShortNameValue,
         //    CSharpProjectNameValue,
         //    OptionalParametersValue);
     }
 
     [Fact]
-    public void Aaa()
+    public void FormattedAddExistingProjectToSolutionCommand()
     {
-        //public FormattedCommand FormattedAddExistingProjectToSolutionCommand => DotNetCliCommandFormatter.FormatAddExistingProjectToSolution(
+        //public FormattedCommand  => DotNetCliCommandFormatter.FormatAddExistingProjectToSolution(
         //    DotNetSolutionModel?.NamespacePath?.AbsolutePath.Value ?? string.Empty,
         //    $"{CSharpProjectNameValue}{EnvironmentProvider.DirectorySeparatorChar}{CSharpProjectNameValue}.{ExtensionNoPeriodFacts.C_SHARP_PROJECT}");
     }
 
     [Fact]
-    public void Aaa()
+    public void TryTakeSnapshot()
     {
-        //public bool TryTakeSnapshot(out CSharpProjectFormViewModelImmutable? viewModelImmutable)
+        //public bool (out CSharpProjectFormViewModelImmutable? viewModelImmutable)
     }
 }

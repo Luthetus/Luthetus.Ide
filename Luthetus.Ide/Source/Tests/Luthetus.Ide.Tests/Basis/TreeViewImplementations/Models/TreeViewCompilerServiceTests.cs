@@ -10,7 +10,7 @@ namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 public class TreeViewCompilerServiceTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public TreeViewCompilerService(
         //        ILuthCompilerService compilerService,
@@ -26,38 +26,38 @@ public class TreeViewCompilerServiceTests
     }
 
     [Fact]
-    public void Aaa()
+    public void IdeComponentRenderers()
     {
-        //public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
+        //public ILuthetusIdeComponentRenderers  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void CommonComponentRenderers()
     {
-        //public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
+        //public ILuthetusCommonComponentRenderers  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void Equals()
     {
-        //public override bool Equals(object? obj)
+        //public override bool (object? obj)
     }
 
     [Fact]
-    public void Aaa()
+    public void GetHashCode()
     {
-        //public override int GetHashCode() => Item.GetHashCode();
+        //public override int () => Item.GetHashCode();
     }
 
     [Fact]
-    public void Aaa()
+    public void GetTreeViewRenderer()
     {
-        //public override TreeViewRenderer GetTreeViewRenderer()
+        //public override TreeViewRenderer ()
     }
 
     [Fact]
-    public void Aaa()
+    public void LoadChildListAsync()
     {
-        //public override Task LoadChildListAsync()
+        //public override Task ()
     }
 }

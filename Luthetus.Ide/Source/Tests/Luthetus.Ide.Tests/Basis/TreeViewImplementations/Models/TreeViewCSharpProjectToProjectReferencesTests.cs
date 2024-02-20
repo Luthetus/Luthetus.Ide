@@ -10,7 +10,7 @@ namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 public class TreeViewCSharpProjectToProjectReferencesTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public TreeViewCSharpProjectToProjectReferences(
         //        CSharpProjectToProjectReferences cSharpProjectToProjectReferences,
@@ -23,50 +23,50 @@ public class TreeViewCSharpProjectToProjectReferencesTests
     }
 
     [Fact]
-    public void Aaa()
+    public void IdeComponentRenderers()
     {
-        //public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
+        //public ILuthetusIdeComponentRenderers  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void FileSystemProvider()
     {
-        //public IFileSystemProvider FileSystemProvider { get; }
+        //public IFileSystemProvider  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void EnvironmentProvider()
     {
-        //public IEnvironmentProvider EnvironmentProvider { get; }
+        //public IEnvironmentProvider  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void Equals()
     {
-        //public override bool Equals(object? obj)
+        //public override bool (object? obj)
     }
 
     [Fact]
-    public void Aaa()
+    public void GetHashCode()
     {
-        //public override int GetHashCode() => Item.CSharpProjectNamespacePath.AbsolutePath.Value.GetHashCode();
+        //public override int () => Item.CSharpProjectNamespacePath.AbsolutePath.Value.GetHashCode();
     }
 
     [Fact]
-    public void Aaa()
+    public void GetTreeViewRenderer()
     {
-        //public override TreeViewRenderer GetTreeViewRenderer()
+        //public override TreeViewRenderer ()
     }
 
     [Fact]
-    public void Aaa()
+    public void LoadChildListAsync()
     {
-        //public override async Task LoadChildListAsync()
+        //public override async Task ()
     }
 
     [Fact]
-    public void Aaa()
+    public void RemoveRelatedFilesFromParent()
     {
-        //public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
+        //public override void (List<TreeViewNoType> siblingsAndSelfTreeViews)
     }
 }

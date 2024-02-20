@@ -8,7 +8,7 @@ namespace Luthetus.Ide.Tests.Basis.Gits.States;
 public class GitSyncConstructorTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public GitSync(
         //    IState<TerminalSessionState> terminalSessionStateWrap,
@@ -20,14 +20,14 @@ public class GitSyncConstructorTests
     }
 
     [Fact]
-    public void Aaa()
+    public void BackgroundTaskService()
     {
-        //public IBackgroundTaskService BackgroundTaskService { get; }
+        //public IBackgroundTaskService  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void Dispatcher()
     {
-        //public IDispatcher Dispatcher { get; }
+        //public IDispatcher  { get; }
     }
 }

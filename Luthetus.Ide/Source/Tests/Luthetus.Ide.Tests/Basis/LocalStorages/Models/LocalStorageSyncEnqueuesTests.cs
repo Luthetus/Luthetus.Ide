@@ -6,8 +6,8 @@ namespace Luthetus.Ide.Tests.Basis.LocalStorages.Models;
 public partial class LocalStorageSyncEnqueuesTests
 {
     [Fact]
-    public void Aaa()
+    public void LocalStorageSetItem()
     {
-        //public void LocalStorageSetItem(string key, string value)
+        //public void (string key, string value)
     }
 }

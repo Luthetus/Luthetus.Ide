@@ -9,20 +9,20 @@ namespace Luthetus.Ide.Tests.Basis.TestExplorers.States;
 public class TestExplorerStateMainTests
 {
     [Fact]
-    public void Aaa()
+    public void TreeViewTestExplorerKey()
     {
-        //public static readonly Key<TreeViewContainer> TreeViewTestExplorerKey = Key<TreeViewContainer>.NewKey();
+        //public static readonly Key<TreeViewContainer>  = Key<TreeViewContainer>.NewKey();
     }
 
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public TestExplorerState()
     }
 
     [Fact]
-    public void Aaa()
+    public void ProjectTestModelList()
     {
-        //public ImmutableList<ProjectTestModel> ProjectTestModelList { get; init; } = ImmutableList<ProjectTestModel>.Empty;
+        //public ImmutableList<ProjectTestModel>  { get; init; } = ImmutableList<ProjectTestModel>.Empty;
     }
 }

@@ -6,105 +6,105 @@ namespace Luthetus.Ide.Tests.Basis.Nugets.Models;
 public class NugetPackageRecordTests
 {
     [Fact]
-    public void Aaa()
+    public void Type()
     {
-        //string Type,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void Registration()
     {
-        //string Registration,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void Id()
     {
-        //string Id,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void Version()
     {
-        //string Version,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void Description()
     {
-        //string Description,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void Summary()
     {
-        //string Summary,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void Title()
     {
-        //string Title,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void IconUrl()
     {
-        //string IconUrl,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void LicenseUrl()
     {
-        //string LicenseUrl,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void ProjectUrl()
     {
-        //string ProjectUrl,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void Tags()
     {
-        //ImmutableArray<string> Tags,
+        //ImmutableArray<string> ,
     }
 
     [Fact]
-    public void Aaa()
+    public void Authors()
     {
-        //ImmutableArray<string> Authors,
+        //ImmutableArray<string> ,
     }
 
     [Fact]
-    public void Aaa()
+    public void Owners()
     {
-        //ImmutableArray<string> Owners,
+        //ImmutableArray<string> ,
     }
 
     [Fact]
-    public void Aaa()
+    public void TotalDownloads()
     {
-        //long TotalDownloads,
+        //long ,
     }
 
     [Fact]
-    public void Aaa()
+    public void Verified()
     {
-        //bool Verified,
+        //bool ,
     }
 
     [Fact]
-    public void Aaa()
+    public void Versions()
     {
-        //ImmutableArray<NugetPackageVersionRecord> Versions)
+        //ImmutableArray<NugetPackageVersionRecord> )
     }
 
     [Fact]
-    public void Aaa()
+    public void AtId()
     {
         //[JsonPropertyName("@id")]
-        //public string AtId { get; init; } = string.Empty;
+        //public string  { get; init; } = string.Empty;
     }
 }

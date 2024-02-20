@@ -11,7 +11,7 @@ namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 public class TreeViewSolutionTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public TreeViewSolution(
         //        DotNetSolutionModel dotNetSolutionModel,
@@ -25,58 +25,58 @@ public class TreeViewSolutionTests
     }
 
     [Fact]
-    public void Aaa()
+    public void IdeComponentRenderers()
     {
-        //public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
+        //public ILuthetusIdeComponentRenderers  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void CommonComponentRenderers()
     {
-        //public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
+        //public ILuthetusCommonComponentRenderers  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void FileSystemProvider()
     {
-        //public IFileSystemProvider FileSystemProvider { get; }
+        //public IFileSystemProvider  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void EnvironmentProvider()
     {
-        //public IEnvironmentProvider EnvironmentProvider { get; }
+        //public IEnvironmentProvider  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void Equals()
     {
-        //public override bool Equals(object? obj)
+        //public override bool (object? obj)
     }
 
     [Fact]
-    public void Aaa()
+    public void GetHashCode()
     {
-        //public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
+        //public override int () => Item.AbsolutePath.Value.GetHashCode();
     }
 
     [Fact]
-    public void Aaa()
+    public void GetTreeViewRenderer()
     {
-        //public override TreeViewRenderer GetTreeViewRenderer()
-    }
-
-
-    [Fact]
-    public void Aaa()
-    {
-        //public override async Task LoadChildListAsync()
+        //public override TreeViewRenderer ()
     }
 
 
     [Fact]
-    public void Aaa()
+    public void LoadChildListAsync()
     {
-        //public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
+        //public override async Task ()
+    }
+
+
+    [Fact]
+    public void RemoveRelatedFilesFromParent()
+    {
+        //public override void (List<TreeViewNoType> siblingsAndSelfTreeViews)
     }
 }

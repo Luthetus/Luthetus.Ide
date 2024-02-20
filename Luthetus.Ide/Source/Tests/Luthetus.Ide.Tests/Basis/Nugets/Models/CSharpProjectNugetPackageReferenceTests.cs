@@ -3,15 +3,15 @@
 public class CSharpProjectNugetPackageReferenceTests
 {
     [Fact]
-    public void Aaa()
+    public void CSharpProjectAbsolutePathString()
     {
-        //string CSharpProjectAbsolutePathString,
+        //string ,
     }
 
     [Fact]
-    public void Aaa()
+    public void LightWeightNugetPackageRecord()
     {
-        //LightWeightNugetPackageRecord LightWeightNugetPackageRecord);
+        //LightWeightNugetPackageRecord );
     }
 }
     

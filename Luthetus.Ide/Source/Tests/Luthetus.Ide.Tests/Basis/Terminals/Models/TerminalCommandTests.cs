@@ -6,38 +6,38 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 public record TerminalCommandTests
 {
     [Fact]
-    public void Aaa()
+    public void TerminalCommandKey()
     {
-        //Key<TerminalCommand> TerminalCommandKey,
+        //Key<TerminalCommand> ,
     }
 
     [Fact]
-    public void Aaa()
+    public void FormattedCommand()
     {
-        //FormattedCommand FormattedCommand,
+        //FormattedCommand ,
     }
 
     [Fact]
-    public void Aaa()
+    public void ChangeWorkingDirectoryTo()
     {
-        //string? ChangeWorkingDirectoryTo = null,
+        //string?  = null,
     }
 
     [Fact]
-    public void Aaa()
+    public void CancellationToken()
     {
-        //CancellationToken CancellationToken = default,
+        //CancellationToken  = default,
     }
 
     [Fact]
-    public void Aaa()
+    public void ContinueWith()
     {
-        //Func<Task>? ContinueWith = null,
+        //Func<Task>?  = null,
     }
 
     [Fact]
-    public void Aaa()
+    public void BeginWith()
     {
-        //Func<Task>? BeginWith = null);
+        //Func<Task>?  = null);
     }
 }

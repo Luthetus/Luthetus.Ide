@@ -7,14 +7,14 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.States;
 public class WellKnownTerminalSessionsStateMainTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public WellKnownTerminalSessionsState() : this(TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY)
     }
 
     [Fact]
-    public void Aaa()
+    public void ActiveTerminalSessionKey()
     {
-        //(Key<TerminalSession> ActiveTerminalSessionKey)
+        //(Key<TerminalSession> )
     }
 }

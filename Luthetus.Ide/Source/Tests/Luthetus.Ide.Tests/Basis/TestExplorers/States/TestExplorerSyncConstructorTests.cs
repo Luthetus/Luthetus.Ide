@@ -10,7 +10,7 @@ namespace Luthetus.Ide.Tests.Basis.TestExplorers.States;
 public partial class TestExplorerSyncConstructorTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
       //  public TestExplorerSync(
 		    //ILuthetusCommonComponentRenderers commonComponentRenderers,

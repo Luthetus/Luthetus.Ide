@@ -3,7 +3,7 @@
 public class FolderExplorerSyncConstructorTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public FolderExplorerSync(
         //    IFileSystemProvider fileSystemProvider,
@@ -17,20 +17,20 @@ public class FolderExplorerSyncConstructorTests
     }
 
     [Fact]
-    public void Aaa()
+    public void BackgroundTaskService()
     {
-        //public IBackgroundTaskService BackgroundTaskService { get; }
+        //public IBackgroundTaskService  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void Dispatcher()
     {
-        //public IDispatcher Dispatcher { get; }
+        //public IDispatcher  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void InputFileSync()
     {
-        //public InputFileSync InputFileSync { get; }
+        //public InputFileSync  { get; }
     }
 }

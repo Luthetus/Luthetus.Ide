@@ -3,20 +3,20 @@
 public class FileTemplateResultTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public FileTemplateResult(NamespacePath fileNamespacePath, string contents)
     }
 
     [Fact]
-    public void Aaa()
+    public void FileNamespacePath()
     {
-        //public NamespacePath FileNamespacePath { get; }
+        //public NamespacePath  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void Contents()
     {
-        //public string Contents { get; }
+        //public string  { get; }
     }
 }

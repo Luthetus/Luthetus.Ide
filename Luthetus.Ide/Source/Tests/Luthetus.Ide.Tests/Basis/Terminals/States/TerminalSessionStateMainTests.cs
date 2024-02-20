@@ -8,15 +8,15 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.States;
 public class TerminalSessionStateMainTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public TerminalSessionState()
         //    : this(ImmutableDictionary<Key<TerminalSession>, TerminalSession>.Empty)
     }
 
     [Fact]
-    public void Aaa()
+    public void TerminalSessionMap()
     {
-        //(ImmutableDictionary<Key<TerminalSession>, TerminalSession> TerminalSessionMap)
+        //(ImmutableDictionary<Key<TerminalSession>, TerminalSession> )
     }
 }

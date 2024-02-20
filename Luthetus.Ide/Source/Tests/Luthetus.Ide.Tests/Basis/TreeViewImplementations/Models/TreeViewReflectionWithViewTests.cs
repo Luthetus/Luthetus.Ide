@@ -8,7 +8,7 @@ namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 public class TreeViewReflectionWithViewTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public TreeViewReflectionWithView(
         //        WatchWindowObject watchWindowObject,
@@ -20,20 +20,20 @@ public class TreeViewReflectionWithViewTests
     }
 
     [Fact]
-    public void Aaa()
+    public void IdeComponentRenderers()
     {
-        //public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
+        //public ILuthetusIdeComponentRenderers  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void CommonComponentRenderers()
     {
-        //public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
+        //public ILuthetusCommonComponentRenderers  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void LoadChildListAsync()
     {
-        //public override async Task LoadChildListAsync()
+        //public override async Task ()
     }
 }

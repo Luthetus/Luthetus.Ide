@@ -5,14 +5,14 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 public abstract class StdTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public Std(IntegratedTerminal integratedTerminal)
     }
 
     [Fact]
-    public void Aaa()
+    public void GetRenderTreeBuilder()
     {
-        //public abstract RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence);
+        //public abstract RenderTreeBuilder (RenderTreeBuilder builder, ref int sequence);
     }
 }

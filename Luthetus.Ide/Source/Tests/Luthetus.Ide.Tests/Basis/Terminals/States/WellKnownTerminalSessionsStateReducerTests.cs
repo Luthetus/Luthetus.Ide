@@ -7,10 +7,10 @@ public partial record WellKnownTerminalSessionsStateReducerTests
     private class Reducer
     {
         [Fact]
-        public void Aaa()
+        public void ReduceSetActiveTerminalCommandKeyAction()
         {
             //[ReducerMethod]
-            //public static WellKnownTerminalSessionsState ReduceSetActiveTerminalCommandKeyAction(
+            //public static WellKnownTerminalSessionsState (
             //    WellKnownTerminalSessionsState inState,
             //    SetActiveWellKnownTerminalSessionKey setActiveWellKnownTerminalSessionKeyAction)
         }

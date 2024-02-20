@@ -17,7 +17,7 @@ namespace Luthetus.Ide.Tests.Basis.FolderExplorers.Models;
 public class FolderExplorerTreeViewKeyboardEventHandlerTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public FolderExplorerTreeViewKeyboardEventHandler(
         //        EditorSync editorSync,
@@ -30,8 +30,8 @@ public class FolderExplorerTreeViewKeyboardEventHandlerTests
     }
 
     [Fact]
-    public void Aaa()
+    public void OnKeyDownAsync()
     {
-        //public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
+        //public override Task (TreeViewCommandArgs commandArgs)
     }
 }

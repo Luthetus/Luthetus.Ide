@@ -8,79 +8,80 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 public abstract class IntegratedTerminalTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public IntegratedTerminal(string initialWorkingDirectory, IEnvironmentProvider environmentProvider)
     }
 
     [Fact]
-    public void Aaa()
+    public void WorkingDirectory()
     {
-        //public string WorkingDirectory { get; }
+        //public string  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void TargetFilePath()
     {
-        //public string TargetFilePath { get; set; } = "netcoredbg";
+        //public string  { get; set; } = "netcoredbg";
     }
 
     [Fact]
-    public void Aaa()
+    public void Arguments()
     {
-        //public string Arguments { get; set; } = "--interpreter=cli -- dotnet C:\\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\ConsoleApp1\\bin\\Debug\\net8.0\\ConsoleApp1.dll";
+        //public string  { get; set; } = "--interpreter=cli -- dotnet C:\\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\ConsoleApp1\\bin\\Debug\\net8.0\\ConsoleApp1.dll";
     }
 
     [Fact]
-    public void Aaa()
+    public void EnvironmentProvider()
     {
-        //public IEnvironmentProvider EnvironmentProvider { get; }
+        //public IEnvironmentProvider  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void TaskQueue()
     {
-        //public ConcurrentQueue<Func<Task>> TaskQueue { get; } = new();
+        //public ConcurrentQueue<Func<Task>>  { get; } = new();
     }
 
     [Fact]
-    public void Aaa()
+    public void StateChanged()
     {
-        //public event Action? StateChanged;
+        //public event Action? ;
     }
 
     [Fact]
-    public void Aaa()
+    public void HandleStdInputOnKeyDown()
     {
-        //public abstract Task HandleStdInputOnKeyDown(KeyboardEventArgs keyboardEventArgs, StdInRequest stdInRequest, string capturedValue);
+        //public abstract Task (KeyboardEventArgs keyboardEventArgs, StdInRequest stdInRequest, string capturedValue);
     }
 
     [Fact]
-    public void Aaa()
+    public void HandleStdQuiescentOnKeyDown()
     {
-        //public abstract Task HandleStdQuiescentOnKeyDown(KeyboardEventArgs keyboardEventArgs, StdQuiescent stdQuiescent, string capturedTargetFilePath, string capturedArguments);
+        //public abstract Task (KeyboardEventArgs keyboardEventArgs, StdQuiescent stdQuiescent, string capturedTargetFilePath, string capturedArguments);
     }
 
     [Fact]
-    public void Aaa()
+    public void StartAsync()
     {
-        //public abstract Task StartAsync(CancellationToken cancellationToken = default);
+        //public abstract Task (CancellationToken cancellationToken = default);
     }
 
     [Fact]
-    public void Aaa()
+    public void GetRenderTreeBuilder()
     {
-        //public abstract RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence);
+        //public abstract RenderTreeBuilder (RenderTreeBuilder builder, ref int sequence);
     }
 
     [Fact]
-    public void Aaa()
+    public void StopAsync()
     {
-        //public abstract Task StopAsync(CancellationToken cancellationToken = default);
+        //public abstract Task (CancellationToken cancellationToken = default);
     }
 
-    protected virtual void InvokeStateChanged()
+    [Fact]
+    public void InvokeStateChanged()
     {
-        StateChanged?.Invoke();
+        //StateChanged?.Invoke();
     }
 }

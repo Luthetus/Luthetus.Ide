@@ -3,25 +3,25 @@
 public class ClipboardPhraseTests
 {
     [Fact]
-    public void Aaa()
+    public void ClipboardPhrase()
     {
         //public ClipboardPhrase(string command, string dataType, string value)
     }
 
     [Fact]
-    public void Aaa()
+    public void Command()
     {
         //public string Command { get; set; }
     }
 
     [Fact]
-    public void Aaa()
+    public void DataType()
     {
         //public string DataType { get; set; }
     }
 
     [Fact]
-    public void Aaa()
+    public void Value()
     {
         //public string Value { get; set; }
     }

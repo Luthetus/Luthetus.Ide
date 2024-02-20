@@ -7,16 +7,16 @@ namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 public partial class TreeViewHelperDirectoryTests
 {
     [Fact]
-    public void Aaa()
+    public void DirectoryLoadChildrenAsync()
     {
-        //public static async Task<List<TreeViewNoType>> DirectoryLoadChildrenAsync(
+        //public static async Task<List<TreeViewNoType>> (
         //    this TreeViewNamespacePath directoryTreeView)
     }
 
     [Fact]
-    public void Aaa()
+    public void LoadChildrenForDirectoryAsync()
     {
-        //public static async Task<List<TreeViewNoType>> LoadChildrenForDirectoryAsync(
+        //public static async Task<List<TreeViewNoType>> (
         //    TreeViewAbsolutePath directoryTreeView)
     }
 }

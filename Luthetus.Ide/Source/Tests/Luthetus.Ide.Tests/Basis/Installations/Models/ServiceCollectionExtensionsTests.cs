@@ -33,9 +33,9 @@ namespace Luthetus.Ide.Tests.Basis.Installations.Models;
 public class ServiceCollectionExtensionsTests
 {
     [Fact]
-    public void Aaa()
+    public void AddLuthetusIdeRazorLibServices()
     {
-        //public static IServiceCollection AddLuthetusIdeRazorLibServices(
+        //public static IServiceCollection (
         //    this IServiceCollection services,
         //    LuthetusHostingInformation hostingInformation,
         //    Func<LuthetusIdeConfig, LuthetusIdeConfig>? configure = null)

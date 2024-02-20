@@ -6,27 +6,27 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 public class StdInRequestTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public StdInRequest(IntegratedTerminal integratedTerminal)
         //    : base(integratedTerminal)
     }
 
     [Fact]
-    public void Aaa()
+    public void IsCompleted()
     {
-        //public bool IsCompleted { get; set; }
+        //public bool  { get; set; }
     }
 
     [Fact]
-    public void Aaa()
+    public void Value()
     {
-        //public string Value { get; set; } = string.Empty;
+        //public string  { get; set; } = string.Empty;
     }
 
     [Fact]
-    public void Aaa()
+    public void GetRenderTreeBuilder()
     {
-        //public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
+        //public override RenderTreeBuilder (RenderTreeBuilder builder, ref int sequence)
     }
 }

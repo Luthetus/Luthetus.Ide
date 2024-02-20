@@ -5,8 +5,8 @@ namespace Luthetus.Ide.Tests.Basis.Installations.Models;
 public record LuthetusIdeConfigTests
 {
     [Fact]
-    public void Aaa()
+    public void AddLuthetusTextEditor()
     {
-        //public bool AddLuthetusTextEditor { get; init; } = true;
+        //public bool  { get; init; } = true;
     }
 }

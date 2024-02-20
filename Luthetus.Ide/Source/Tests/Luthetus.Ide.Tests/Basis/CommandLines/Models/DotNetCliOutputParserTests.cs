@@ -8,14 +8,14 @@ namespace Luthetus.Ide.Tests.Basis.CommandLines.Models;
 public class DotNetCliOutputParserTests
 {
     [Fact]
-    public void Aaa()
+    public void ParseDotNetNewListTerminalOutput()
     {
-	    //public static List<ProjectTemplate> ParseDotNetNewListTerminalOutput(string output)
+	    //public static List<ProjectTemplate> (string output)
     }
 
     [Fact]
-    public void Aaa()
+    public void ParseDotNetTestListTestsTerminalOutput()
     {
-        //public static List<string> ParseDotNetTestListTestsTerminalOutput(string output)
+        //public static List<string> (string output)
     }
 }

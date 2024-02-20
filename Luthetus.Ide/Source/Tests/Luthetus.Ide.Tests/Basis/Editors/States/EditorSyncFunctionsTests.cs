@@ -13,20 +13,20 @@ namespace Luthetus.Ide.Tests.Basis.Editors.States;
 public class EditorSyncFunctionsTests
 {
     [Fact]
-    public void Aaa()
+    public void RegisterModelFunc()
     {
-        //public async Task RegisterModelFunc(RegisterModelArgs registerModelArgs)
+        //public async Task (RegisterModelArgs registerModelArgs)
     }
 
     [Fact]
-    public void Aaa()
+    public void TryRegisterViewModelFunc()
     {
-        //public Task<Key<TextEditorViewModel>> TryRegisterViewModelFunc(TryRegisterViewModelArgs registerViewModelArgs)
+        //public Task<Key<TextEditorViewModel>> (TryRegisterViewModelArgs registerViewModelArgs)
     }
 
     [Fact]
-    public void Aaa()
+    public void TryShowViewModelFunc()
     {
-        //public Task<bool> TryShowViewModelFunc(TryShowViewModelArgs showViewModelArgs)
+        //public Task<bool> (TryShowViewModelArgs showViewModelArgs)
     }
 }

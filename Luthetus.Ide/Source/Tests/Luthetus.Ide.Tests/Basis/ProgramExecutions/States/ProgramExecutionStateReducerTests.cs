@@ -7,10 +7,10 @@ public class ProgramExecutionStateReducerTests
     private class Reducer
     {
         [Fact]
-        public void Aaa()
+        public void ReduceSetStartupProjectAbsolutePathAction()
         {
             //[ReducerMethod]
-            //public static ProgramExecutionState ReduceSetStartupProjectAbsolutePathAction(
+            //public static ProgramExecutionState (
             //    ProgramExecutionState inState,
             //    SetStartupProjectAbsolutePathAction setStartupProjectAbsolutePathAction)
         }

@@ -5,8 +5,8 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 public class IntegratedTerminalDecorationMapperTests
 {
     [Fact]
-    public void Aaa()
+    public void Map()
     {
-        //public string Map(byte decorationByte)
+        //public string (byte decorationByte)
     }
 }

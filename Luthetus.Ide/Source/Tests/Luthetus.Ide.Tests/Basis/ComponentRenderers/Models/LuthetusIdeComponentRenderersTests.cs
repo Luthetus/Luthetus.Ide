@@ -3,7 +3,7 @@
 public class LuthetusIdeComponentRenderersTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public LuthetusIdeComponentRenderers(
         //    Type booleanPromptOrCancelRendererType,
@@ -17,50 +17,50 @@ public class LuthetusIdeComponentRenderersTests
     }
 
     [Fact]
-    public void Aaa()
+    public void BooleanPromptOrCancelRendererType()
     {
-        //public Type BooleanPromptOrCancelRendererType { get; }
+        //public Type  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void FileFormRendererType()
     {
-        //public Type FileFormRendererType { get; }
+        //public Type  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void DeleteFileFormRendererType()
     {
-        //public Type DeleteFileFormRendererType { get; }
+        //public Type  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void NuGetPackageManagerRendererType()
     {
-        //public Type NuGetPackageManagerRendererType { get; }
+        //public Type  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void GitDisplayRendererType()
     {
-        //public Type GitDisplayRendererType { get; }
+        //public Type  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void RemoveCSharpProjectFromSolutionRendererType()
     {
-        //public Type RemoveCSharpProjectFromSolutionRendererType { get; }
+        //public Type  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void InputFileRendererType()
     {
-        //public Type InputFileRendererType { get; }
+        //public Type  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void LuthetusIdeTreeViews()
     {
-        //public LuthetusIdeTreeViews LuthetusIdeTreeViews { get; }
+        //public LuthetusIdeTreeViews  { get; }
     }
 }

@@ -19,7 +19,7 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 public class TerminalSessionTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public TerminalSession(
         //    string? workingDirectoryAbsolutePathString,
@@ -29,92 +29,92 @@ public class TerminalSessionTests
     }
 
     [Fact]
-    public void Aaa()
+    public void TerminalSessionKey()
     {
-        //public Key<TerminalSession> TerminalSessionKey { get; init; } = Key<TerminalSession>.NewKey();
+        //public Key<TerminalSession>  { get; init; } = Key<TerminalSession>.NewKey();
     }
 
     [Fact]
-    public void Aaa()
+    public void WorkingDirectoryAbsolutePathString()
     {
-        //public string? WorkingDirectoryAbsolutePathString { get; private set; }
+        //public string?  { get; private set; }
     }
 
     [Fact]
-    public void Aaa()
+    public void ActiveTerminalCommand()
     {
-        //public TerminalCommand? ActiveTerminalCommand { get; private set; }
+        //public TerminalCommand?  { get; private set; }
     }
 
     [Fact]
-    public void Aaa()
+    public void HasExecutingProcess()
     {
-        //public bool HasExecutingProcess { get; private set; }
+        //public bool  { get; private set; }
     }
 
     [Fact]
-    public void Aaa()
+    public void TerminalCommandsHistory()
     {
-        //public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
+        //public ImmutableArray<TerminalCommand>  => _terminalCommandsHistory.ToImmutableArray();
     }
 
     [Fact]
-    public void Aaa()
+    public void ResourceUri()
     {
-        //public ResourceUri ResourceUri => new($"__LUTHETUS_{TerminalSessionKey.Guid}__");
+        //public ResourceUri  => new($"__LUTHETUS_{TerminalSessionKey.Guid}__");
     }
 
     [Fact]
-    public void Aaa()
+    public void TextEditorViewModelKey()
     {
-        //public Key<TextEditorViewModel> TextEditorViewModelKey => new(TerminalSessionKey.Guid);
+        //public Key<TextEditorViewModel>  => new(TerminalSessionKey.Guid);
     }
 
     [Fact]
-    public void Aaa()
+    public void ReadStandardOut()
     {
-        //public string ReadStandardOut()
+        //public string ()
     }
 
     [Fact]
-    public void Aaa()
+    public void ReadStandardOut()
     {
-        //public string? ReadStandardOut(Key<TerminalCommand> terminalCommandKey)
+        //public string? (Key<TerminalCommand> terminalCommandKey)
     }
 
     [Fact]
-    public void Aaa()
+    public void GetStandardOut()
     {
-        //public List<string>? GetStandardOut()
+        //public List<string>? ()
     }
 
     [Fact]
-    public void Aaa()
+    public void GetStandardOut()
     {
-        //public List<string>? GetStandardOut(Key<TerminalCommand> terminalCommandKey)
+        //public List<string>? (Key<TerminalCommand> terminalCommandKey)
     }
 
     [Fact]
-    public void Aaa()
+    public void EnqueueCommandAsync()
     {
-        //public Task EnqueueCommandAsync(TerminalCommand terminalCommand)
+        //public Task (TerminalCommand terminalCommand)
     }
 
     [Fact]
-    public void Aaa()
+    public void ClearStandardOut()
     {
-        //public void ClearStandardOut()
+        //public void ()
     }
 
     [Fact]
-    public void Aaa()
+    public void ClearStandardOut()
     {
-        //public void ClearStandardOut(Key<TerminalCommand> terminalCommandKey)
+        //public void (Key<TerminalCommand> terminalCommandKey)
     }
 
     [Fact]
-    public void Aaa()
+    public void KillProcess()
     {
-        //public void KillProcess()
+        //public void ()
     }
 }

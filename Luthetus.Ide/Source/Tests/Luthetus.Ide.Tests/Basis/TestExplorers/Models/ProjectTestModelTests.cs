@@ -8,7 +8,7 @@ namespace Luthetus.Ide.Tests.Basis.TestExplorers.Models;
 public class ProjectTestModelTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
 	  //  public ProjectTestModel(
 			//Guid projectIdGuid,
@@ -18,50 +18,50 @@ public class ProjectTestModelTests
     }
 
     [Fact]
-    public void Aaa()
+    public void DotNetTestListTestsCommandOutput()
     {
-	    //public List<string>? DotNetTestListTestsCommandOutput { get; set; }
+	    //public List<string>?  { get; set; }
     }
 
     [Fact]
-    public void Aaa()
+    public void EnqueueDiscoverTestsFunc()
     {
-        //public Func<Func<Dictionary<string, StringFragment>, Task>, Task> EnqueueDiscoverTestsFunc { get; set; }
+        //public Func<Func<Dictionary<string, StringFragment>, Task>, Task>  { get; set; }
     }
 
     [Fact]
-    public void Aaa()
+    public void RootStringFragmentMap()
     {
-        //public Dictionary<string, StringFragment> RootStringFragmentMap { get; set; } = new();
+        //public Dictionary<string, StringFragment>  { get; set; } = new();
     }
 
     [Fact]
-    public void Aaa()
+    public void ProjectIdGuid()
     {
-        //public Guid ProjectIdGuid { get; }
+        //public Guid  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void AbsolutePath()
     {
-        //public IAbsolutePath AbsolutePath { get; }
+        //public IAbsolutePath  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void DotNetTestListTestsTerminalCommandKey()
     {
-        //public Key<TerminalCommand> DotNetTestListTestsTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+        //public Key<TerminalCommand>  { get; } = Key<TerminalCommand>.NewKey();
     }
 
     [Fact]
-    public void Aaa()
+    public void ReRenderNodeAction()
     {
-        //public Action<TreeViewNoType> ReRenderNodeAction { get; }
+        //public Action<TreeViewNoType>  { get; }
     }
 
     [Fact]
-    public void Aaa()
+    public void DirectoryNameForTestDiscovery()
     {
-        //public string DirectoryNameForTestDiscovery => AbsolutePath.ParentDirectory?.Value ?? string.Empty;
+        //public string  => AbsolutePath.ParentDirectory?.Value ?? string.Empty;
     }
 }

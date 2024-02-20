@@ -8,28 +8,28 @@ public class DotNetSolutionStateReducerTests
     private class Reducer
     {
         [Fact]
-        public void Aaa()
+        public void ReduceRegisterAction()
         {
             //[ReducerMethod]
-            //public static DotNetSolutionState ReduceRegisterAction(
+            //public static DotNetSolutionState (
             //    DotNetSolutionState inState,
             //    RegisterAction registerAction)
         }
 
         [Fact]
-        public void Aaa()
+        public void ReduceDisposeAction()
         {
             //[ReducerMethod]
-            //public static DotNetSolutionState ReduceDisposeAction(
+            //public static DotNetSolutionState (
             //    DotNetSolutionState inState,
             //    DisposeAction disposeAction)
         }
 
         [Fact]
-        public void Aaa()
+        public void ReduceWithAction()
         {
             //[ReducerMethod]
-            //public static DotNetSolutionState ReduceWithAction(
+            //public static DotNetSolutionState (
             //    DotNetSolutionState inState,
             //    IWithAction withActionInterface)
         }

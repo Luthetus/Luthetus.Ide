@@ -3,7 +3,7 @@ namespace Luthetus.Ide.Tests.Basis.Menus.Models;
 public class MenuOptionsFactoryTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public MenuOptionsFactory(
         //    ILuthetusIdeComponentRenderers ideComponentRenderers,
@@ -15,57 +15,57 @@ public class MenuOptionsFactoryTests
     }
 
     [Fact]
-    public void Aaa()
+    public void NewEmptyFile()
     {
-        //public MenuOptionRecord NewEmptyFile(IAbsolutePath parentDirectory, Func<Task> onAfterCompletion)
+        //public MenuOptionRecord (IAbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     }
 
     [Fact]
-    public void Aaa()
+    public void NewTemplatedFile()
     {
-        //public MenuOptionRecord NewTemplatedFile(NamespacePath parentDirectory, Func<Task> onAfterCompletion)
+        //public MenuOptionRecord (NamespacePath parentDirectory, Func<Task> onAfterCompletion)
     }
 
     [Fact]
-    public void Aaa()
+    public void NewDirectory()
     {
-        //public MenuOptionRecord NewDirectory(IAbsolutePath parentDirectory, Func<Task> onAfterCompletion)
+        //public MenuOptionRecord (IAbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     }
 
     [Fact]
-    public void Aaa()
+    public void DeleteFile()
     {
-        //public MenuOptionRecord DeleteFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
+        //public MenuOptionRecord (IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
     }
 
     [Fact]
-    public void Aaa()
+    public void RenameFile()
     {
-        //public MenuOptionRecord RenameFile(IAbsolutePath sourceAbsolutePath, IDispatcher dispatcher, Func<Task> onAfterCompletion)
+        //public MenuOptionRecord (IAbsolutePath sourceAbsolutePath, IDispatcher dispatcher, Func<Task> onAfterCompletion)
     }
 
     [Fact]
-    public void Aaa()
+    public void CopyFile()
     {
-        //public MenuOptionRecord CopyFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
+        //public MenuOptionRecord (IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
     }
 
     [Fact]
-    public void Aaa()
+    public void CutFile()
     {
-        //public MenuOptionRecord CutFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
+        //public MenuOptionRecord (IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
     }
 
     [Fact]
-    public void Aaa()
+    public void PasteClipboard()
     {
-        //public MenuOptionRecord PasteClipboard(IAbsolutePath directoryAbsolutePath, Func<Task> onAfterCompletion)
+        //public MenuOptionRecord (IAbsolutePath directoryAbsolutePath, Func<Task> onAfterCompletion)
     }
 
     [Fact]
-    public void Aaa()
+    public void RemoveCSharpProjectReferenceFromSolution()
     {
-        //public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(
+        //public MenuOptionRecord (
         //    TreeViewSolution treeViewSolution,
         //    TreeViewNamespacePath projectNode,
         //    TerminalSession terminalSession,
@@ -74,9 +74,9 @@ public class MenuOptionsFactoryTests
     }
 
     [Fact]
-    public void Aaa()
+    public void AddProjectToProjectReference()
     {
-        //public MenuOptionRecord AddProjectToProjectReference(
+        //public MenuOptionRecord (
         //    TreeViewNamespacePath projectReceivingReference,
         //    TerminalSession terminalSession,
         //    IDispatcher dispatcher,
@@ -85,9 +85,9 @@ public class MenuOptionsFactoryTests
     }
 
     [Fact]
-    public void Aaa()
+    public void RemoveProjectToProjectReference()
     {
-        //public MenuOptionRecord RemoveProjectToProjectReference(
+        //public MenuOptionRecord (
         //    TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
         //    TerminalSession terminalSession,
         //    IDispatcher dispatcher,
@@ -95,9 +95,9 @@ public class MenuOptionsFactoryTests
     }
 
     [Fact]
-    public void Aaa()
+    public void MoveProjectToSolutionFolder()
     {
-        //public MenuOptionRecord MoveProjectToSolutionFolder(
+        //public MenuOptionRecord (
         //    TreeViewSolution treeViewSolution,
         //    TreeViewNamespacePath treeViewProjectToMove,
         //    TerminalSession terminalSession,
@@ -106,9 +106,9 @@ public class MenuOptionsFactoryTests
     }
 
     [Fact]
-    public void Aaa()
+    public void RemoveNuGetPackageReferenceFromProject()
     {
-        //public MenuOptionRecord RemoveNuGetPackageReferenceFromProject(
+        //public MenuOptionRecord (
         //    NamespacePath modifyProjectNamespacePath,
         //    TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
         //    TerminalSession terminalSession,
@@ -117,9 +117,9 @@ public class MenuOptionsFactoryTests
     }
 
     [Fact]
-    public void Aaa()
+    public void PerformAddProjectToProjectReferenceAction()
     {
-        //public void PerformAddProjectToProjectReferenceAction(
+        //public void (
         //    TreeViewNamespacePath projectReceivingReference,
         //    TerminalSession terminalSession,
         //    IDispatcher dispatcher,
@@ -128,9 +128,9 @@ public class MenuOptionsFactoryTests
     }
 
     [Fact]
-    public void Aaa()
+    public void PerformRemoveProjectToProjectReferenceAction()
     {
-        //public void PerformRemoveProjectToProjectReferenceAction(
+        //public void (
         //    TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
         //    TerminalSession terminalSession,
         //    IDispatcher dispatcher,
@@ -138,9 +138,9 @@ public class MenuOptionsFactoryTests
     }
 
     [Fact]
-    public void Aaa()
+    public void PerformMoveProjectToSolutionFolderAction()
     {
-        //public void PerformMoveProjectToSolutionFolderAction(
+        //public void (
         //    TreeViewSolution treeViewSolution,
         //    TreeViewNamespacePath treeViewProjectToMove,
         //    string solutionFolderPath,
@@ -150,9 +150,9 @@ public class MenuOptionsFactoryTests
     }
 
     [Fact]
-    public void Aaa()
+    public void PerformRemoveNuGetPackageReferenceFromProjectAction()
     {
-        //public void PerformRemoveNuGetPackageReferenceFromProjectAction(
+        //public void (
         //    NamespacePath modifyProjectNamespacePath,
         //    TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
         //    TerminalSession terminalSession,
@@ -161,8 +161,8 @@ public class MenuOptionsFactoryTests
     }
 
     [Fact]
-    public void Aaa()
+    public void CopyFilesRecursively()
     {
-        //public static DirectoryInfo CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
+        //public static DirectoryInfo (DirectoryInfo source, DirectoryInfo target)
     }
 }

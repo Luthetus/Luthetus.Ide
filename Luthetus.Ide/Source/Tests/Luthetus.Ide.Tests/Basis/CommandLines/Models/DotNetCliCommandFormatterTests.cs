@@ -5,117 +5,117 @@ namespace Luthetus.Ide.Tests.Basis.CommandLines.Models;
 public class DotNetCliCommandFormatterTests
 {
     [Fact]
-    public void Aaa()
+    public void DOT_NET_CLI_TARGET_FILE_NAME()
     {
-        //public const string DOT_NET_CLI_TARGET_FILE_NAME = "dotnet";
+        //public const string  = "dotnet";
     }
 
     [Fact]
-    public void Aaa()
+    public void FormatStartProjectWithoutDebugging()
     {
-        //public static FormattedCommand FormatStartProjectWithoutDebugging(IAbsolutePath projectAbsolutePath)
+        //public static FormattedCommand (IAbsolutePath projectAbsolutePath)
     }
 
     [Fact]
-    public void Aaa()
+    public void FormatStartProjectWithoutDebugging()
     {
-        //public static FormattedCommand FormatStartProjectWithoutDebugging(string projectPath)
+        //public static FormattedCommand (string projectPath)
     }
 
     [Fact]
-    public void Aaa()
+    public void FormatDotnetNewSln()
     {
-        //public static FormattedCommand FormatDotnetNewSln(string solutionName)
+        //public static FormattedCommand (string solutionName)
     }
 
     [Fact]
-    public void Aaa()
+    public void FormatDotnetNewCSharpProject()
     {
-        //public static FormattedCommand FormatDotnetNewCSharpProject(
+        //public static FormattedCommand (
         //    string projectTemplateName,
         //    string cSharpProjectName,
         //    string optionalParameters)
     }
 
     [Fact]
-    public void Aaa()
+    public void FormatAddExistingProjectToSolution()
     {
-        //public static FormattedCommand FormatAddExistingProjectToSolution(
+        //public static FormattedCommand (
         //    string solutionAbsolutePathString,
         //    string cSharpProjectPath)
     }
 
     [Fact]
-    public void Aaa()
+    public void FormatRemoveCSharpProjectReferenceFromSolutionAction()
     {
-        //public static FormattedCommand FormatRemoveCSharpProjectReferenceFromSolutionAction(
+        //public static FormattedCommand (
         //    string solutionAbsolutePathString,
         //    string cSharpProjectAbsolutePathString)
     }
 
     [Fact]
-    public void Aaa()
+    public void FormatAddNugetPackageReferenceToProject()
     {
-        //public static FormattedCommand FormatAddNugetPackageReferenceToProject(
+        //public static FormattedCommand (
         //    string cSharpProjectAbsolutePathString,
         //    string nugetPackageId,
         //    string nugetPackageVersion)
     }
 
     [Fact]
-    public void Aaa()
+    public void FormatRemoveNugetPackageReferenceFromProject()
     {
-        //public static FormattedCommand FormatRemoveNugetPackageReferenceFromProject(
+        //public static FormattedCommand (
         //    string cSharpProjectAbsolutePathString,
         //    string nugetPackageId)
     }
 
     [Fact]
-    public void Aaa()
+    public void FormatAddProjectToProjectReference()
     {
-        //public static FormattedCommand FormatAddProjectToProjectReference(
+        //public static FormattedCommand (
         //    string receivingProjectAbsolutePathString,
         //    string referenceProjectAbsolutePathString)
     }
 
     [Fact]
-    public void Aaa()
+    public void FormatRemoveProjectToProjectReference()
     {
-        //public static FormattedCommand FormatRemoveProjectToProjectReference(
+        //public static FormattedCommand (
         //    string modifyProjectAbsolutePathString,
         //    string referenceProjectAbsolutePathString)
     }
 
     [Fact]
-    public void Aaa()
+    public void FormatMoveProjectToSolutionFolder()
     {
-        //public static FormattedCommand FormatMoveProjectToSolutionFolder(
+        //public static FormattedCommand (
         //    string solutionAbsolutePathString,
         //    string projectToMoveAbsolutePathString,
         //    string solutionFolderPath)
     }
 
     [Fact]
-    public void Aaa()
+    public void FormatDotnetNewList()
     {
-        //public static FormattedCommand FormatDotnetNewList() =>
+        //public static FormattedCommand () =>
     }
 
     [Fact]
-    public void Aaa()
+    public void FormatDotnetNewListDeprecated()
     {
-        //public static FormattedCommand FormatDotnetNewListDeprecated() =>
+        //public static FormattedCommand () =>
     }
 
     [Fact]
-    public void Aaa()
+    public void FormatDotNetTestListTests()
     {
-        //public static FormattedCommand FormatDotNetTestListTests() =>
+        //public static FormattedCommand () =>
     }
 
     [Fact]
-    public void Aaa()
+    public void FormatDotNetTestByFullyQualifiedName()
     {
-        //public static FormattedCommand FormatDotNetTestByFullyQualifiedName(string fullyQualifiedName) =>
+        //public static FormattedCommand (string fullyQualifiedName) =>
     }
 }

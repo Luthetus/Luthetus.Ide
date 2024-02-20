@@ -8,7 +8,7 @@ public partial record TestExplorerStateEffectorTests
 	public class Effector
 	{
         [Fact]
-        public void Aaa()
+        public void Constructor()
         {
 	  //      public Effector(TestExplorerSync testExplorerSync)
 			//{
@@ -17,10 +17,10 @@ public partial record TestExplorerStateEffectorTests
         }
 
         [Fact]
-        public void Aaa()
+        public void HandleDotNetSolutionStateStateHasChanged()
         {
 			//[EffectMethod(typeof(DotNetSolutionState.StateHasChanged))]
-			//public Task HandleDotNetSolutionStateStateHasChanged(IDispatcher dispatcher)
+			//public Task (IDispatcher dispatcher)
 			//{
 			//	_ = dispatcher; // Suppress unused parameter
 

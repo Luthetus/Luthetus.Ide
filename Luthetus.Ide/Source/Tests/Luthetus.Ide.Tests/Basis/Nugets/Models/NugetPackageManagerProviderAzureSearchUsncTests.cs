@@ -8,37 +8,37 @@ namespace Luthetus.Ide.Tests.Basis.Nugets.Models;
 public class NugetPackageManagerProviderAzureSearchUsncTests
 {
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
         //public NugetPackageManagerProviderAzureSearchUsnc(HttpClient httpClient)
     }
 
     [Fact]
-    public void Aaa()
+    public void ProviderWebsiteUrlNoFormatting()
     {
-        //public string ProviderWebsiteUrlNoFormatting { get; } = "https://azuresearch-usnc.nuget.org/";
+        //public string  { get; } = "https://azuresearch-usnc.nuget.org/";
     }
 
     [Fact]
-    public void Aaa()
+    public void QueryForNugetPackagesAsync()
     {
-        //public async Task<ImmutableArray<NugetPackageRecord>> QueryForNugetPackagesAsync(
+        //public async Task<ImmutableArray<NugetPackageRecord>> (
         //    string queryValue,
         //    bool includePrerelease = false,
         //    CancellationToken cancellationToken = default)
     }
 
     [Fact]
-    public void Aaa()
+    public void QueryForNugetPackagesAsync()
     {
-        //public async Task<ImmutableArray<NugetPackageRecord>> QueryForNugetPackagesAsync(
+        //public async Task<ImmutableArray<NugetPackageRecord>> (
         //    INugetPackageManagerQuery nugetPackageManagerQuery,
         //    CancellationToken cancellationToken = default)
     }
 
     [Fact]
-    public void Aaa()
+    public void BuildQuery()
     {
-        //public INugetPackageManagerQuery BuildQuery(string query, bool includePrerelease = false)
+        //public INugetPackageManagerQuery (string query, bool includePrerelease = false)
     }
 }

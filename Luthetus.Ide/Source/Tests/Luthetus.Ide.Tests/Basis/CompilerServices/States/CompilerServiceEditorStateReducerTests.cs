@@ -7,10 +7,10 @@ public class CompilerServiceEditorStateReducerTests
     public class Reducer
     {
         [Fact]
-        public void Aaa()
+        public void ReduceSetTextEditorViewModelKeyAction()
         {
             //[ReducerMethod]
-            //public CompilerServiceEditorState ReduceSetTextEditorViewModelKeyAction(
+            //public CompilerServiceEditorState (
             //    CompilerServiceEditorState inState,
             //    SetTextEditorViewModelKeyAction setTextEditorViewModelKeyAction)
         }
