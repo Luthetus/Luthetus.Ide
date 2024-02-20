@@ -8,169 +8,177 @@ namespace Luthetus.Ide.RazorLib.Outputs.Models;
 
 public class DotNetRunOutputParser : IOutputParser
 {
-	public List<IOutputLine> Parse(List<string> text)
+	public List<IOutputLine> Parse(List<string> strList)
 	{
-		var stringWalker = new StringWalker(new ResourceUri("/unitTesting.txt"), testData);
+		var outputList = new List<IOutputLine>();
 
-		TextEditorTextSpan filePathTextSpan = new TextEditorTextSpan(0, stringWalker, (byte)GenericDecorationKind.None);
-		TextEditorTextSpan rowAndColumnNumberTextSpan = new TextEditorTextSpan(0, stringWalker, (byte)GenericDecorationKind.None);
-		TextEditorTextSpan errorKeywordAndErrorCodeTextSpan = new TextEditorTextSpan(0, stringWalker, (byte)GenericDecorationKind.None);
-		TextEditorTextSpan errorMessageTextSpan = new TextEditorTextSpan(0, stringWalker, (byte)GenericDecorationKind.None);
-		TextEditorTextSpan projectFilePathTextSpan = new TextEditorTextSpan(0, stringWalker, (byte)GenericDecorationKind.None);
-
-		while (!stringWalker.IsEof)
+		foreach (var str in strList)
 		{
-			// Step 1: Read filePathTextSpan
+			var stringWalker = new StringWalker(new ResourceUri("/unitTesting.txt"), str);
+
+			TextEditorTextSpan filePathTextSpan = new TextEditorTextSpan(0, stringWalker, (byte)GenericDecorationKind.None);
+			TextEditorTextSpan rowAndColumnNumberTextSpan = new TextEditorTextSpan(0, stringWalker, (byte)GenericDecorationKind.None);
+			TextEditorTextSpan errorKeywordAndErrorCodeTextSpan = new TextEditorTextSpan(0, stringWalker, (byte)GenericDecorationKind.None);
+			TextEditorTextSpan errorMessageTextSpan = new TextEditorTextSpan(0, stringWalker, (byte)GenericDecorationKind.None);
+			TextEditorTextSpan projectFilePathTextSpan = new TextEditorTextSpan(0, stringWalker, (byte)GenericDecorationKind.None);
+	
+			while (!stringWalker.IsEof)
 			{
-				var startPositionInclusiveFilePath = stringWalker.PositionIndex;
+				// Step 1: Read filePathTextSpan
+				{
+					var startPositionInclusiveFilePath = stringWalker.PositionIndex;
+					
+					while (true)
+					{
+						var character = stringWalker.ReadCharacter();
+	
+						if (character == '(')
+						{
+							_ = stringWalker.BacktrackCharacter();
+	
+							filePathTextSpan = new TextEditorTextSpan(
+								startPositionInclusiveFilePath,
+								stringWalker,
+								(byte)GenericDecorationKind.None);
+	
+							break;
+						}
+						else if (stringWalker.IsEof)
+						{
+							break;
+						}
+					}
+				}
 				
-				while (true)
+				// Step 2: Read rowAndColumnNumberTextSpan
 				{
-					var character = stringWalker.ReadCharacter();
-
-					if (character == '(')
+					var startPositionInclusiveRowAndColumnNumber = stringWalker.PositionIndex;
+					
+					while (true)
 					{
-						_ = stringWalker.BacktrackCharacter();
-
-						filePathTextSpan = new TextEditorTextSpan(
-							startPositionInclusiveFilePath,
-							stringWalker,
-							(byte)GenericDecorationKind.None);
-
-						break;
-					}
-					else if (stringWalker.IsEof)
-					{
-						break;
+						var character = stringWalker.ReadCharacter();
+	
+						if (character == ')')
+						{
+							rowAndColumnNumberTextSpan = new TextEditorTextSpan(
+								startPositionInclusiveRowAndColumnNumber,
+								stringWalker,
+								(byte)GenericDecorationKind.None);
+	
+							break;
+						}
+						else if (stringWalker.IsEof)
+						{
+							break;
+						}
 					}
 				}
-			}
-			
-			// Step 2: Read rowAndColumnNumberTextSpan
-			{
-				var startPositionInclusiveRowAndColumnNumber = stringWalker.PositionIndex;
-				
-				while (true)
+	
+				// Step 3: Read errorKeywordAndErrorCode
 				{
-					var character = stringWalker.ReadCharacter();
-
-					if (character == ')')
+					// Consider having Step 2 use ':' as its exclusive delimiter.
+					// Because now a step is needed to skip over some text.
 					{
-						rowAndColumnNumberTextSpan = new TextEditorTextSpan(
-							startPositionInclusiveRowAndColumnNumber,
-							stringWalker,
-							(byte)GenericDecorationKind.None);
-
-						break;
+						if (stringWalker.CurrentCharacter == ':')
+							_ = stringWalker.ReadCharacter();
+	
+						_ = stringWalker.ReadWhitespace();
 					}
-					else if (stringWalker.IsEof)
+	
+					var startPositionInclusiveErrorKeywordAndErrorCode = stringWalker.PositionIndex;
+					
+					while (true)
 					{
-						break;
+						var character = stringWalker.ReadCharacter();
+	
+						if (character == ':')
+						{
+							_ = stringWalker.BacktrackCharacter();
+	
+							errorKeywordAndErrorCodeTextSpan = new TextEditorTextSpan(
+								startPositionInclusiveErrorKeywordAndErrorCode,
+								stringWalker,
+								(byte)GenericDecorationKind.None);
+	
+							break;
+						}
+						else if (stringWalker.IsEof)
+						{
+							break;
+						}
 					}
 				}
-			}
-
-			// Step 3: Read errorKeywordAndErrorCode
-			{
-				// Consider having Step 2 use ':' as its exclusive delimiter.
-				// Because now a step is needed to skip over some text.
+	
+				// Step 4: Read errorMessage
 				{
-					if (stringWalker.CurrentCharacter == ':')
-						_ = stringWalker.ReadCharacter();
-
-					_ = stringWalker.ReadWhitespace();
-				}
-
-				var startPositionInclusiveErrorKeywordAndErrorCode = stringWalker.PositionIndex;
-				
-				while (true)
-				{
-					var character = stringWalker.ReadCharacter();
-
-					if (character == ':')
+					// A step is needed to skip over some text.
 					{
-						_ = stringWalker.BacktrackCharacter();
-
-						errorKeywordAndErrorCodeTextSpan = new TextEditorTextSpan(
-							startPositionInclusiveErrorKeywordAndErrorCode,
-							stringWalker,
-							(byte)GenericDecorationKind.None);
-
-						break;
+						if (stringWalker.CurrentCharacter == ':')
+							_ = stringWalker.ReadCharacter();
+	
+						_ = stringWalker.ReadWhitespace();
 					}
-					else if (stringWalker.IsEof)
+	
+					var startPositionInclusiveErrorMessage = stringWalker.PositionIndex;
+					
+					while (true)
 					{
-						break;
-					}
-				}
-			}
-
-			// Step 4: Read errorMessage
-			{
-				// A step is needed to skip over some text.
-				{
-					if (stringWalker.CurrentCharacter == ':')
-						_ = stringWalker.ReadCharacter();
-
-					_ = stringWalker.ReadWhitespace();
-				}
-
-				var startPositionInclusiveErrorMessage = stringWalker.PositionIndex;
-				
-				while (true)
-				{
-					var character = stringWalker.ReadCharacter();
-
-					if (character == '[')
-					{
-						_ = stringWalker.BacktrackCharacter();
-
-						errorMessageTextSpan = new TextEditorTextSpan(
-							startPositionInclusiveErrorMessage,
-							stringWalker,
-							(byte)GenericDecorationKind.None);
-
-						break;
-					}
-					else if (stringWalker.IsEof)
-					{
-						break;
+						var character = stringWalker.ReadCharacter();
+	
+						if (character == '[')
+						{
+							_ = stringWalker.BacktrackCharacter();
+	
+							errorMessageTextSpan = new TextEditorTextSpan(
+								startPositionInclusiveErrorMessage,
+								stringWalker,
+								(byte)GenericDecorationKind.None);
+	
+							break;
+						}
+						else if (stringWalker.IsEof)
+						{
+							break;
+						}
 					}
 				}
-			}
-
-			// Step 5: Read project file path
-			{
-				var startPositionInclusiveProjectFilePath = stringWalker.PositionIndex;
-				
-				while (true)
+	
+				// Step 5: Read project file path
 				{
-					var character = stringWalker.ReadCharacter();
-
-					if (character == ']')
+					var startPositionInclusiveProjectFilePath = stringWalker.PositionIndex;
+					
+					while (true)
 					{
-						projectFilePathTextSpan = new TextEditorTextSpan(
-							startPositionInclusiveProjectFilePath,
-							stringWalker,
-							(byte)GenericDecorationKind.None);
-
-						break;
-					}
-					else if (stringWalker.IsEof)
-					{
-						break;
+						var character = stringWalker.ReadCharacter();
+	
+						if (character == ']')
+						{
+							projectFilePathTextSpan = new TextEditorTextSpan(
+								startPositionInclusiveProjectFilePath,
+								stringWalker,
+								(byte)GenericDecorationKind.None);
+	
+							break;
+						}
+						else if (stringWalker.IsEof)
+						{
+							break;
+						}
 					}
 				}
+	
+				_ = stringWalker.ReadCharacter();
 			}
 
-			_ = stringWalker.ReadCharacter();
+			outputList.Add(new DotNetRunOutputLine(
+				str,
+				filePathTextSpan,
+				rowAndColumnNumberTextSpan,
+				errorKeywordAndErrorCodeTextSpan,
+				errorMessageTextSpan,
+				projectFilePathTextSpan));
 		}
 
-		return new DotNetRunOutputLine(
-			filePathTextSpan,
-			rowAndColumnNumberTextSpan,
-			errorKeywordAndErrorCodeTextSpan,
-			errorMessageTextSpan,
-			projectFilePathTextSpan);
+		return outputList;
 	}
 }

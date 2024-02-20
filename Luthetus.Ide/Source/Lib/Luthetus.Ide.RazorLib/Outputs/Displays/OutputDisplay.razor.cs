@@ -45,7 +45,7 @@ public partial class OutputDisplay : FluxorComponent
     [Parameter]
     public bool AllowInput { get; set; }
     [Parameter]
-    public IOutputParser OutputParser { get; set; }
+    public IOutputParser OutputParser { get; set; } = new OutputParser();
 
     private TextEditorViewModelDisplayOptions _textEditorViewModelDisplayOptions = null!;
 

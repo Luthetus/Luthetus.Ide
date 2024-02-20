@@ -28,23 +28,6 @@ public class TerminalSession
 
     private readonly ConcurrentQueue<TerminalCommand> _terminalCommandsConcurrentQueue = new();
 
-    // Here there is a map from 'Key<TerminalCommand>' to 'StringBuilder'
-	// I'd like to change 'StringBuilder' to List<string>
-	//
-	// I know that the StringBuilder, as text comes from the terminal output,
-	// that the terminal output provides text line by line.
-	// Each line is a separate invocation of a method.
-	//
-	// I essentially say,
-	// OnLineOutput(string text) => stringBuilder.Append($"text\n")
-	//
-	// Each method invocation just appends the line with a newline character.
-	// So this should be an easy change. Instead of appending to a stringBuilder
-	// I can append to a list of string.
-	//
-	// Funny enough the goto definition keymap worked. { F12 } is the keymap
-	//
-	// I'm going to iterate over the "Find" results. And makesure that everything seems to be in place.
     private readonly Dictionary<Key<TerminalCommand>, List<string>> _standardOutBuilderMap = new();
 
     public TerminalSession(
@@ -60,50 +43,21 @@ public class TerminalSession
     }
 
     public Key<TerminalSession> TerminalSessionKey { get; init; } = Key<TerminalSession>.NewKey();
-
-    public ResourceUri ResourceUri => new($"__LUTHETUS_{TerminalSessionKey.Guid}__");
-    public Key<TextEditorViewModel> TextEditorViewModelKey => new(TerminalSessionKey.Guid);
-
     public string? WorkingDirectoryAbsolutePathString { get; private set; }
-
     public TerminalCommand? ActiveTerminalCommand { get; private set; }
-
-    public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
-
-    /// <summary>NOTE: the following did not work => _process?.HasExited ?? false;</summary>
+	/// <summary>NOTE: the following did not work => _process?.HasExited ?? false;</summary>
     public bool HasExecutingProcess { get; private set; }
 
-	// Now that the internals of TerminalSession have been changed.
-	// How do Blazor components acccess the standard out?
-	//
-	// Its with the ReadStandardOut methods
-	// So we have to track down the references to these methods
+    public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
+	public ResourceUri ResourceUri => new($"__LUTHETUS_{TerminalSessionKey.Guid}__");
+    public Key<TextEditorViewModel> TextEditorViewModelKey => new(TerminalSessionKey.Guid);
+
     public string ReadStandardOut()
     {
 		var output = string.Empty;
 
 		lock(_standardOutBuilderMapLock)
 		{
-			// Okay, should the _standardOutBuilderMap's List<string> store the
-			// line ending character foreach entry?
-			// 
-			// I'm going to say no, do not store the line ending character.
-			//
-			// As such, this method ReadStandardOut() needs to be changed, so that it can combine
-			// every terminal command's output into a single string.
-			//
-			// The '.Select' lambda uses the variable 'x'.
-			// After having made our changes, the variable 'x' is now a List<string>, NOT a StringBuilder.
-			//
-			// The following line isn't the nicest thing to read.
-			// But I am content with it for now.
-			//
-			// I'm coming back to this code, because I forgot to add the line endings.
-			// The line endings aren't stored, they must be added when joining the entries.
-			//
-			// I'm thinking about what the first step is here. 'aaa' is just a temporary variable name while I
-			// work out the details
-
 			var entireStdOutStringBuilder = new StringBuilder();
 
 			foreach (var strList in _standardOutBuilderMap.Values)
@@ -112,9 +66,7 @@ public class TerminalSession
 	
 				foreach (var str in strList)
 				{
-					// I'm not sure what the code is for "Environment.NewLine" so I'm { Ctrl + Shift + f }ing
-					// that text to see if I used it elsewhere.
-					perCommandStringBuilder.Append($"{perCommandStringBuilder}{Environment.NewLine}");
+					perCommandStringBuilder.Append(str);
 				}
 
 				entireStdOutStringBuilder.Append(perCommandStringBuilder.ToString());
@@ -126,11 +78,6 @@ public class TerminalSession
         return output;
     }
 
-	// Here is the second ReadStandardOut method
-	//
-	// The first one was reading the entirety of the terminal
-	//
-	// this one reads the specific command output
     public string? ReadStandardOut(Key<TerminalCommand> terminalCommandKey)
     {
 		var output = (string?)null;
@@ -143,7 +90,7 @@ public class TerminalSession
 	
 				foreach (var str in strList)
 				{
-					perCommandStringBuilder.Append($"{perCommandStringBuilder}{Environment.NewLine}");
+					perCommandStringBuilder.Append(str);
 				}
 
 				output = perCommandStringBuilder.ToString();
@@ -158,7 +105,6 @@ public class TerminalSession
 	/// </summary>
 	public List<string>? GetStandardOut()
 	{
-		// I forgot to put 'null'
 		var allOutput = (List<string>?)null;
 
 		lock(_standardOutBuilderMapLock)
@@ -169,14 +115,6 @@ public class TerminalSession
 		}
 
         return allOutput;
-
-		// Before continuing, I want to get the program to run without errors.
-		// We have changed nothing so far in terms of public API.
-		// Since the ReadStandardOut input and output were untouched.
-		//
-		// I should stop this recording and start a new one.
-		// I'll do so in a second.
-		// okay doing
 	}
 
 	/// <summary>
@@ -227,7 +165,7 @@ public class TerminalSession
                 else if (WorkingDirectoryAbsolutePathString is not null)
                     command = command.WithWorkingDirectory(WorkingDirectoryAbsolutePathString);
 
-                // Push-based event stream
+                // Event stream
                 {
                     var terminalCommandKey = terminalCommand.TerminalCommandKey;
 					
@@ -248,6 +186,8 @@ public class TerminalSession
                     {
 						if (terminalCommand.BeginWith is not null)
                             await terminalCommand.BeginWith.Invoke(); // Actually start the terminal command here
+
+						int lineIndex = 0;
 
                         await command.Observe(_commandCancellationTokenSource.Token)
                             .ForEachAsync(cmdEvent =>
@@ -274,10 +214,8 @@ public class TerminalSession
 								{
 									lock(_standardOutBuilderMapLock)
 									{
-										// Append the line here
-										// We need to change this to add an entry to the List<string> now
-										_standardOutBuilderMap[terminalCommandKey].Add(output);
-									}
+                                        _standardOutBuilderMap[terminalCommandKey].Add(output);
+                                    }
 								}
 
                                 DispatchNewStateKey();
