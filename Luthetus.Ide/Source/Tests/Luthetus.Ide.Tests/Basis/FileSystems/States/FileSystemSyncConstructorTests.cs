@@ -5,22 +5,18 @@ public class FileSystemSyncConstructorTests
     [Fact]
     public void Constructor()
     {
-        //public FileSystemSync(
-        //    IFileSystemProvider fileSystemProvider,
-        //    ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
-        //    IBackgroundTaskService backgroundTaskService,
-        //    IDispatcher dispatcher)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void BackgroundTaskService()
     {
-        //public IBackgroundTaskService  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Dispatcher()
     {
-        //public IDispatcher  { get; }
+        throw new NotImplementedException();
     }
 }

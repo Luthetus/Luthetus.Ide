@@ -8,6 +8,6 @@ public class CompilerServiceEditorStateActionsTests
     [Fact]
     public void SetTextEditorViewModelKeyAction()
     {
-        //public record (Key<TextEditorViewModel> TextEditorViewModelKey);
+        throw new NotImplementedException();
     }
 }

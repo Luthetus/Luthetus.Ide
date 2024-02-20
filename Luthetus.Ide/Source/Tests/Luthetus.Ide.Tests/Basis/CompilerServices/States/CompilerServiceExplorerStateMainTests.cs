@@ -8,26 +8,26 @@ namespace Luthetus.Ide.Tests.Basis.CompilerServices.States;
 public class CompilerServiceExplorerStateMainTests
 {
     [Fact]
-    public void Constructor()
+    public void Constructor_NO_ARGS()
     {
-        //public CompilerServiceExplorerState()
+        throw new NotImplementedException();
     }
 
     [Fact]
-    public void Constructor()
+    public void Constructor_CompilerServiceExplorerModel()
     {
-        //public CompilerServiceExplorerState(CompilerServiceExplorerModel model)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TreeViewCompilerServiceExplorerContentStateKey()
     {
-        //public static readonly Key<TreeViewContainer>  = Key<TreeViewContainer>.NewKey();
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Model()
     {
-        //public CompilerServiceExplorerModel Model { get; }
+        throw new NotImplementedException();
     }
 }

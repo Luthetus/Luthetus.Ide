@@ -7,6 +7,6 @@ public class ProgramExecutionStateActionsTests
     [Fact]
     public void SetStartupProjectAbsolutePathAction()
     {
-        //public record (IAbsolutePath? StartupProjectAbsolutePath);
+        throw new NotImplementedException();
     }
 }

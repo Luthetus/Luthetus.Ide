@@ -9,10 +9,7 @@ public class GitStateReducerTests
         [Fact]
         public void ReduceSetGitStateWithAction()
         {
-            //[ReducerMethod]
-            //public static GitState (
-            //    GitState inGitState,
-            //    SetGitStateWithAction setGitStateWithAction)
+            throw new NotImplementedException();
         }
     }
 }

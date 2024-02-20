@@ -10,30 +10,30 @@ public class NuGetPackageManagerStateMainTests
     [Fact]
     public void Constructor()
     {
-        //public NuGetPackageManagerState() : this(null, string.Empty, false, ImmutableArray<NugetPackageRecord>.Empty)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void SelectedProjectToModify()
     {
-        //IDotNetProject? ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void NugetQuery()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void IncludePrerelease()
     {
-        //bool ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void QueryResultList()
     {
-        //ImmutableArray<NugetPackageRecord> )
+        throw new NotImplementedException();
     }
 }

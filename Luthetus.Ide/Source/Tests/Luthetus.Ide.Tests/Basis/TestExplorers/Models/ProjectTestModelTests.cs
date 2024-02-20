@@ -10,58 +10,54 @@ public class ProjectTestModelTests
     [Fact]
     public void Constructor()
     {
-	  //  public ProjectTestModel(
-			//Guid projectIdGuid,
-			//IAbsolutePath absolutePath,
-			//Func<Func<Dictionary<string, StringFragment>, Task>, Task> enqueueDiscoverTestsFunc,
-			//Action<TreeViewNoType> reRenderNodeAction)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void DotNetTestListTestsCommandOutput()
     {
-	    //public List<string>?  { get; set; }
+	    throw new NotImplementedException();
     }
 
     [Fact]
     public void EnqueueDiscoverTestsFunc()
     {
-        //public Func<Func<Dictionary<string, StringFragment>, Task>, Task>  { get; set; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void RootStringFragmentMap()
     {
-        //public Dictionary<string, StringFragment>  { get; set; } = new();
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ProjectIdGuid()
     {
-        //public Guid  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void AbsolutePath()
     {
-        //public IAbsolutePath  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void DotNetTestListTestsTerminalCommandKey()
     {
-        //public Key<TerminalCommand>  { get; } = Key<TerminalCommand>.NewKey();
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ReRenderNodeAction()
     {
-        //public Action<TreeViewNoType>  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void DirectoryNameForTestDiscovery()
     {
-        //public string  => AbsolutePath.ParentDirectory?.Value ?? string.Empty;
+        throw new NotImplementedException();
     }
 }

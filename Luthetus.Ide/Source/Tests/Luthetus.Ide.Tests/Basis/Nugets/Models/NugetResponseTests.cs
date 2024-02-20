@@ -5,12 +5,12 @@ public class NugetResponseTests
     [Fact]
     public void TotalHits()
     {
-        //int ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Data()
     {
-        //NugetPackageRecord[] );
+        throw new NotImplementedException();
     }
 }

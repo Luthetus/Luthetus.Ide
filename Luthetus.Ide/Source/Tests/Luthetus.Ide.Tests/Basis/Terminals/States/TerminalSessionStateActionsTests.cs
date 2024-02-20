@@ -8,18 +8,18 @@ public partial record TerminalSessionStateActionsTests
     [Fact]
     public void RegisterTerminalSessionAction()
     {
-        //public record (TerminalSession TerminalSession);
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void UpdateTerminalSessionStateKeyAction()
     {
-        //public record (TerminalSession TerminalSession);
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void DisposeTerminalSessionAction()
     {
-        //public record (Key<TerminalSession> TerminalSessionKey);
+        throw new NotImplementedException();
     }
 }

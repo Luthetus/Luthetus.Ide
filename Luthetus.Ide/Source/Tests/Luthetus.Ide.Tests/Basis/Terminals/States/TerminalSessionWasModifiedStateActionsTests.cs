@@ -9,8 +9,6 @@ public class TerminalSessionWasModifiedStateActionsTests
     [Fact]
     public void SetTerminalSessionStateKeyAction()
     {
-        //public record (
-        //    Key<TerminalSession> TerminalSessionKey,
-        //    Key<StateRecord> StateKey);
+        throw new NotImplementedException();
     }
 }

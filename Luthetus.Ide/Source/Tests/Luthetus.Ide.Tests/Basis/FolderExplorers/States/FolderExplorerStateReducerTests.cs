@@ -9,10 +9,7 @@ public class FolderExplorerStateReducerTests
         [Fact]
         public void ReduceWithAction()
         {
-            //[ReducerMethod]
-            //public static FolderExplorerState (
-            //    FolderExplorerState inState,
-            //    WithAction withAction)
+            throw new NotImplementedException();
         }
     }
 }

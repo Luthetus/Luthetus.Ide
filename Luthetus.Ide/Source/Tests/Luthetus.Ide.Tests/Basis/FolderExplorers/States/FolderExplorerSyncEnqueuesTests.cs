@@ -5,18 +5,18 @@ public class FolderExplorerSyncEnqueuesTests
     [Fact]
     public void SetFolderExplorerState()
     {
-        //public void (IAbsolutePath folderAbsolutePath)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void SetFolderExplorerTreeView()
     {
-        //public void (IAbsolutePath folderAbsolutePath)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ShowInputFile()
     {
-        //public void ()
+        throw new NotImplementedException();
     }
 }

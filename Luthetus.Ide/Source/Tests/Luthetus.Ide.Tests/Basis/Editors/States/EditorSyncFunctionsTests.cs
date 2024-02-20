@@ -15,18 +15,18 @@ public class EditorSyncFunctionsTests
     [Fact]
     public void RegisterModelFunc()
     {
-        //public async Task (RegisterModelArgs registerModelArgs)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TryRegisterViewModelFunc()
     {
-        //public Task<Key<TextEditorViewModel>> (TryRegisterViewModelArgs registerViewModelArgs)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TryShowViewModelFunc()
     {
-        //public Task<bool> (TryShowViewModelArgs showViewModelArgs)
+        throw new NotImplementedException();
     }
 }

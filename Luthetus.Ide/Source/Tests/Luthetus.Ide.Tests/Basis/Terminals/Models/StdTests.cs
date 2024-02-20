@@ -7,12 +7,12 @@ public abstract class StdTests
     [Fact]
     public void Constructor()
     {
-        //public Std(IntegratedTerminal integratedTerminal)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void GetRenderTreeBuilder()
     {
-        //public abstract RenderTreeBuilder (RenderTreeBuilder builder, ref int sequence);
+        throw new NotImplementedException();
     }
 }

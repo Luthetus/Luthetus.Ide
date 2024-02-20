@@ -5,13 +5,13 @@ public class CSharpProjectNugetPackageReferenceTests
     [Fact]
     public void CSharpProjectAbsolutePathString()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void LightWeightNugetPackageRecord()
     {
-        //LightWeightNugetPackageRecord );
+        throw new NotImplementedException();
     }
 }
     

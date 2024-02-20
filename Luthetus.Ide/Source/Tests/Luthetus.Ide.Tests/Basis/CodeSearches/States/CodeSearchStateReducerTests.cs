@@ -11,27 +11,19 @@ public class CodeSearchStateReducerTests
         [Fact]
         public void ReduceWithAction()
         {
-            //[ReducerMethod]
-            //public static CodeSearchState ReduceWithAction(
-            //    CodeSearchState inState,
-            //    WithAction withAction)
+            throw new NotImplementedException();
         }
 
         [Fact]
         public void ReduceAddResultAction()
         {
-            //[ReducerMethod]
-            //public static CodeSearchState ReduceAddResultAction(
-            //    CodeSearchState inState,
-            //    AddResultAction addResultAction)
+            throw new NotImplementedException();
         }
 
         [Fact]
         public void ReduceClearResultListAction()
         {
-            //[ReducerMethod(typeof(ClearResultListAction))]
-            //public static CodeSearchState ReduceClearResultListAction(
-            //    CodeSearchState inState)
+            throw new NotImplementedException();
         }
     }
 }

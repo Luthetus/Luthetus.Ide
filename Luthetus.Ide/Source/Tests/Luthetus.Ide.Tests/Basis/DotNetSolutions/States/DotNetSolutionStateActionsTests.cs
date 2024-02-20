@@ -8,18 +8,18 @@ public class DotNetSolutionStateActionsTests
     [Fact]
     public void RegisterAction()
     {
-        //public record (DotNetSolutionModel DotNetSolutionModel, DotNetSolutionSync Sync);
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void DisposeAction()
     {
-        //public record (Key<DotNetSolutionModel> DotNetSolutionModelKey, DotNetSolutionSync Sync);
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void StateHasChanged()
     {
-        //public record ;
+        throw new NotImplementedException();
     }
 }

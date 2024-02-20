@@ -11,71 +11,60 @@ public class InputFileStateMainTests
     [Fact]
     public void Constructor()
     {
-        //private InputFileState() : this(
-        //    -1,
-        //    ImmutableList<TreeViewAbsolutePath>.Empty,
-        //    null,
-        //    _ => Task.CompletedTask,
-        //    _ => Task.FromResult(false),
-        //    ImmutableArray<InputFilePattern>.Empty,
-        //    null,
-        //    string.Empty,
-        //    string.Empty)
-        //{
-        //}
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void IndexInHistory()
     {
-        //int ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void OpenedTreeViewModelHistoryList()
     {
-        //ImmutableList<TreeViewAbsolutePath> ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void SelectedTreeViewModel()
     {
-        //TreeViewAbsolutePath? ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void OnAfterSubmitFunc()
     {
-        //Func<IAbsolutePath?, Task> ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void SelectionIsValidFunc()
     {
-        //Func<IAbsolutePath?, Task<bool>> ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void InputFilePatternsList()
     {
-        //ImmutableArray<InputFilePattern> ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void SelectedInputFilePattern()
     {
-        //InputFilePattern? ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void SearchQuery()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Message()
     {
-        //string )
+        throw new NotImplementedException();
     }
 }

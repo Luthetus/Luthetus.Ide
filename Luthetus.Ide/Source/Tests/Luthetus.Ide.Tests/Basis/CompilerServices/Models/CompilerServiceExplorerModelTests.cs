@@ -7,12 +7,12 @@ public class CompilerServiceExplorerModelTests
     [Fact]
     public void AbsolutePath()
     {
-        //public IAbsolutePath?  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void IsLoadingCompilerServiceExplorer()
     {
-        //public bool  { get; }
+        throw new NotImplementedException();
     }
 }

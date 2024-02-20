@@ -9,20 +9,18 @@ public class GitSyncEnqueuesTests
     [Fact]
     public void RefreshGit()
     {
-        //public void (CancellationToken cancellationToken)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void GitInit()
     {
-        //public void (CancellationToken cancellationToken)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TryFindGitFolderInDirectory()
     {
-        //public void (
-        //    IAbsolutePath directoryAbsolutePath,
-        //    CancellationToken cancellationToken)
+        throw new NotImplementedException();
     }
 }

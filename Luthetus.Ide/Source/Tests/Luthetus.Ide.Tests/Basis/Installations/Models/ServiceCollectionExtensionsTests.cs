@@ -35,9 +35,6 @@ public class ServiceCollectionExtensionsTests
     [Fact]
     public void AddLuthetusIdeRazorLibServices()
     {
-        //public static IServiceCollection (
-        //    this IServiceCollection services,
-        //    LuthetusHostingInformation hostingInformation,
-        //    Func<LuthetusIdeConfig, LuthetusIdeConfig>? configure = null)
+        throw new NotImplementedException();
     }
 }

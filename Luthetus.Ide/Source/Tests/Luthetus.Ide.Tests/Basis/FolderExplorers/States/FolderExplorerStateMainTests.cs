@@ -10,26 +10,24 @@ public class FolderExplorerStateMainTests
     [Fact]
     public void Constructor()
     {
-        //private FolderExplorerState() : this(
-        //    default,
-        //    false)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TreeViewContentStateKey()
     {
-        //public static readonly Key<TreeViewContainer>  = Key<TreeViewContainer>.NewKey();
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void AbsolutePath()
     {
-        //IAbsolutePath? ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void IsLoadingFolderExplorer()
     {
-        //bool 
+        throw new NotImplementedException();
     }
 }

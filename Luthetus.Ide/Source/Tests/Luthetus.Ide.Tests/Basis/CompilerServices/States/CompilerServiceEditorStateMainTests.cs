@@ -9,12 +9,12 @@ public class CompilerServiceEditorStateMainTests
     [Fact]
     public void Constructor()
     {
-        //public CompilerServiceEditorState() : this(Key<TextEditorViewModel>.Empty)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TextEditorViewModelKey()
     {
-        //Key<TextEditorViewModel> 
+        throw new NotImplementedException();
     }
 }

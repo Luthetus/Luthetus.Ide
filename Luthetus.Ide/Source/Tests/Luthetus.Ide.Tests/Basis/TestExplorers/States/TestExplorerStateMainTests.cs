@@ -11,18 +11,18 @@ public class TestExplorerStateMainTests
     [Fact]
     public void TreeViewTestExplorerKey()
     {
-        //public static readonly Key<TreeViewContainer>  = Key<TreeViewContainer>.NewKey();
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Constructor()
     {
-        //public TestExplorerState()
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ProjectTestModelList()
     {
-        //public ImmutableList<ProjectTestModel>  { get; init; } = ImmutableList<ProjectTestModel>.Empty;
+        throw new NotImplementedException();
     }
 }

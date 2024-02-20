@@ -5,48 +5,48 @@ public class DecorationMapperRegistryTests
     [Fact]
     public void Constructor()
     {
-        //public DecorationMapperRegistry()
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Map()
     {
-        //public ImmutableDictionary<string, IDecorationMapper>  => _map.ToImmutableDictionary();
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void CssDecorationMapper()
     {
-        //public TextEditorCssDecorationMapper  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void JsonDecorationMapper()
     {
-        //public TextEditorJsonDecorationMapper  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void GenericDecorationMapper()
     {
-        //public GenericDecorationMapper  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void HtmlDecorationMapper()
     {
-        //public TextEditorHtmlDecorationMapper  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void DefaultDecorationMapper()
     {
-        //public TextEditorDecorationMapperDefault  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void GetDecorationMapper()
     {
-        //public IDecorationMapper (string extensionNoPeriod)
+        throw new NotImplementedException();
     }
 }

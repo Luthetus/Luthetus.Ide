@@ -5,33 +5,24 @@ public class CommandFactoryTests
     [Fact]
     public void Constructor()
     {
-      //  public CommandFactory(
-		    //ITextEditorService textEditorService,
-		    //ITreeViewService treeViewService,
-		    //IEnvironmentProvider environmentProvider,
-      //      IState<PanelsState> panelsStateWrap,
-      //      IDispatcher dispatcher,
-		    //IJSRuntime jsRuntime)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void CodeSearchDialog()
     {
-        //public DialogRecord?  { get; set; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Initialize()
     {
-	    //public void ()
+	    throw new NotImplementedException();
     }
 
     [Fact]
     public void ConstructFocusContextElementCommand()
     {
-		//public CommandNoType (
-		//	ContextRecord contextRecord,
-		//	string displayName,
-		//	string internalIdentifier)
+		throw new NotImplementedException();
     }
 }

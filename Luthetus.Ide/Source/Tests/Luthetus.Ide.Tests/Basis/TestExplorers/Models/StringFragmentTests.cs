@@ -8,30 +8,30 @@ public class StringFragmentTests
     [Fact]
     public void StringFragment()
     {
-        //public (string stringValue)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Value()
     {
-        //public string  { get; set; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Map()
     {
-        //public Dictionary<string, StringFragment>  { get; set; } = new();
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void IsEndpoint()
     {
-        //public bool  { get; set; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey()
     {
-        //public Key<TerminalCommand>  { get; } = Key<TerminalCommand>.NewKey();
+        throw new NotImplementedException();
     }
 }

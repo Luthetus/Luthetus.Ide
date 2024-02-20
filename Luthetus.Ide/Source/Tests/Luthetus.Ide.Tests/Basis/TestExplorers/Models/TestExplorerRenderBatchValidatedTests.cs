@@ -9,24 +9,24 @@ public class TestExplorerRenderBatchValidatedTests
     [Fact]
     public void Constructor()
     {
-        //public TestExplorerRenderBatchValidated(TestExplorerRenderBatch testExplorerRenderBatch)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TestExplorerState()
     {
-        //public TestExplorerState  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void AppOptionsState()
     {
-        //public AppOptionsState  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TreeViewContainer()
     {
-        //public TreeViewContainer  { get; }
+        throw new NotImplementedException();
     }
 }

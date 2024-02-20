@@ -11,25 +11,19 @@ public class CodeSearchStateEffectorTests
         [Fact]
         public void Constructor()
         {
-            //public Effector(
-            //    IState<CodeSearchState> codeSearchStateWrap,
-            //    IState<DotNetSolutionState> dotNetSolutionStateWrap,
-            //    IFileSystemProvider fileSystemProvider)
+            throw new NotImplementedException();
         }
 
         [Fact]
         public void HandleSearchEffect()
         {
-            //[EffectMethod]
-            //public async Task HandleSearchEffect(
-            //    SearchEffect searchEffect,
-            //    IDispatcher dispatcher)
+            throw new NotImplementedException();
         }
 
         [Fact]
         public void Dispose()
         {
-            //public void Dispose()
+            throw new NotImplementedException();
         }
     }
 }

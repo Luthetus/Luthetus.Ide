@@ -8,103 +8,102 @@ public class NugetPackageRecordTests
     [Fact]
     public void Type()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Registration()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Id()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Version()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Description()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Summary()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Title()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void IconUrl()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void LicenseUrl()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ProjectUrl()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Tags()
     {
-        //ImmutableArray<string> ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Authors()
     {
-        //ImmutableArray<string> ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Owners()
     {
-        //ImmutableArray<string> ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TotalDownloads()
     {
-        //long ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Verified()
     {
-        //bool ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Versions()
     {
-        //ImmutableArray<NugetPackageVersionRecord> )
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void AtId()
     {
-        //[JsonPropertyName("@id")]
-        //public string  { get; init; } = string.Empty;
+        throw new NotImplementedException();
     }
 }

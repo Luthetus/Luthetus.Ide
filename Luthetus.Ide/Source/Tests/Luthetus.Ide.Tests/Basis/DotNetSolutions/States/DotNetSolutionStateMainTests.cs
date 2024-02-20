@@ -13,42 +13,42 @@ public class DotNetSolutionStateMainTests
     [Fact]
     public void Constructor()
     {
-        //private DotNetSolutionState() : this(Key<DotNetSolutionModel>.Empty, 0)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TreeViewSolutionExplorerStateKey()
     {
-        //public static readonly Key<TreeViewContainer>  = Key<TreeViewContainer>.NewKey();
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void DotNetSolutionModelKey()
     {
-        //Key<DotNetSolutionModel>? ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void IsExecutingAsyncTaskLinks()
     {
-        //int 
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void DotNetSolutionsList()
     {
-        //public ImmutableList<DotNetSolutionModel>  { get; init; } = ImmutableList<DotNetSolutionModel>.Empty;
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void DotNetSolutionModel()
     {
-        //public DotNetSolutionModel?  => 
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ShowInputFile()
     {
-        //public static void (DotNetSolutionSync sync)
+        throw new NotImplementedException();
     }
 }

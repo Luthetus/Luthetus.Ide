@@ -5,76 +5,66 @@ public class LuthetusIdeTreeViewsTests
     [Fact]
     public void Constructor()
     {
-        //public LuthetusIdeTreeViews(
-        //    Type treeViewNamespacePathRendererType,
-        //    Type treeViewAbsolutePathRendererType,
-        //    Type treeViewGitFileRendererType,
-        //    Type treeViewCompilerServiceRendererType,
-        //    Type treeViewCSharpProjectDependenciesRendererType,
-        //    Type treeViewCSharpProjectNugetPackageReferencesRendererType,
-        //    Type treeViewCSharpProjectToProjectReferencesRendererType,
-        //    Type treeViewLightWeightNugetPackageRecordRendererType,
-        //    Type treeViewCSharpProjectToProjectReferenceRendererType,
-        //    Type treeViewSolutionFolderRendererType)
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void TreeViewNamespacePathRendererType()
     {
-        //public Type  { get; }
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void TreeViewSolutionFolderRendererType()
     {
-        //public Type  { get; }
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void TreeViewCSharpProjectDependenciesRendererType()
     {
-        //public Type  { get; }
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void TreeViewCSharpProjectNugetPackageReferencesRendererType()
     {
-        //public Type  { get; }
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void TreeViewCSharpProjectToProjectReferencesRendererType()
     {
-        //public Type  { get; }
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void TreeViewLightWeightNugetPackageRecordRendererType()
     {
-        //public Type  { get; }
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void TreeViewCSharpProjectToProjectReferenceRendererType()
     {
-        //public Type  { get; }
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void TreeViewAbsolutePathRendererType()
     {
-        //public Type  { get; }
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void TreeViewGitFileRendererType()
     {
-        //public Type  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TreeViewCompilerServiceRendererType()
     {
-        //public Type  { get; }
+        throw new NotImplementedException();
     }
 }

@@ -5,27 +5,24 @@ public class FileTemplateParameterTests
     [Fact]
     public void Constructor()
     {
-        //public FileTemplateParameter(
-        //    string filename,
-        //    NamespacePath parentDirectory,
-        //    IEnvironmentProvider environmentProvider)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Filename()
     {
-        //public string  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ParentDirectory()
     {
-        //public NamespacePath  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void EnvironmentProvider()
     {
-        //public IEnvironmentProvider  { get; }
+        throw new NotImplementedException();
     }
 }

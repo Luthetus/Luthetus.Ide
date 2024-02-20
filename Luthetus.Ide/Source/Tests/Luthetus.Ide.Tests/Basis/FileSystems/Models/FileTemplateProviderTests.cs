@@ -5,12 +5,12 @@ public class FileTemplateProviderTests
     [Fact]
     public void Constructor()
     {
-        //public FileTemplateProvider()
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FileTemplatesList()
     {
-        //public ImmutableArray<IFileTemplate>  => _fileTemplatesList.ToImmutableArray();
+        throw new NotImplementedException();
     }
 }

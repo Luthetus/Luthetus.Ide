@@ -7,30 +7,30 @@ public class FormattedCommandTests
     [Fact]
     public void FormattedCommand()
     {
-        //public (string targetFileName, IEnumerable<string> argumentsList)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TargetFileName()
     {
-        //public string  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ArgumentsList()
     {
-        //public IEnumerable<string>  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Value()
     {
-        //public string  => FormattedCommandToStringHelper();
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormattedCommandToStringHelper()
     {
-        //private string ()
+        throw new NotImplementedException();
     }
 }

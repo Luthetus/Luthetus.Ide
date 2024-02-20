@@ -10,24 +10,18 @@ public class GitSyncConstructorTests
     [Fact]
     public void Constructor()
     {
-        //public GitSync(
-        //    IState<TerminalSessionState> terminalSessionStateWrap,
-        //    IState<GitState> gitStateWrap,
-        //    IFileSystemProvider fileSystemProvider,
-        //    IEnvironmentProvider environmentProvider,
-        //    IBackgroundTaskService backgroundTaskService,
-        //    IDispatcher dispatcher)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void BackgroundTaskService()
     {
-        //public IBackgroundTaskService  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Dispatcher()
     {
-        //public IDispatcher  { get; }
+        throw new NotImplementedException();
     }
 }

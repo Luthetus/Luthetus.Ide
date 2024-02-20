@@ -13,151 +13,138 @@ public class CSharpProjectFormViewModelTests
     [Fact]
     public void Constructor()
     {
-        //public CSharpProjectFormViewModel(
-        //    DotNetSolutionModel? dotNetSolutionModel,
-        //    IEnvironmentProvider environmentProvider)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void NewCSharpProjectTerminalCommandKey()
     {
-        //public readonly Key<TerminalCommand>  = Key<TerminalCommand>.NewKey();
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void LoadProjectTemplatesTerminalCommandKey()
     {
-        //public readonly Key<TerminalCommand>  = Key<TerminalCommand>.NewKey();
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void NewCSharpProjectCancellationTokenSource()
     {
-        //public readonly CancellationTokenSource  = new();
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void DotNetSolutionModel()
     {
-        //public DotNetSolutionModel?  { get; set; }
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void EnvironmentProvider()
     {
-        //public IEnvironmentProvider  { get; }
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void IsReadingProjectTemplates()
     {
-        //public bool  { get; set; } = false;
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void ProjectTemplateShortNameValue()
     {
-        //public string  { get; set; } = string.Empty;
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void CSharpProjectNameValue()
     {
-        //public string  { get; set; } = string.Empty;
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void OptionalParametersValue()
     {
-        //public string  { get; set; } = string.Empty;
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void ParentDirectoryNameValue()
     {
-        //public string  { get; set; } = string.Empty;
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void ProjectTemplateList()
     {
-        //public List<ProjectTemplate>  { get; set; } = new List<ProjectTemplate>();
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void ActivePanelKind()
     {
-        //public CSharpProjectFormPanelKind  { get; set; } = CSharpProjectFormPanelKind.Graphical;
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void SearchInput()
     {
-        //public string  { get; set; } = string.Empty;
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void SelectedProjectTemplate()
     {
-        //public ProjectTemplate?  { get; set; } = null;
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void IsValid()
     {
-        //public bool  => DotNetSolutionModel is not null;
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ProjectTemplateShortNameDisplay()
     {
-        //public string  => string.IsNullOrWhiteSpace(ProjectTemplateShortNameValue)
-        //    ? "{enter Template name}"
-        //    : ProjectTemplateShortNameValue;
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void CSharpProjectNameDisplay()
     {
-        //public string  => string.IsNullOrWhiteSpace(CSharpProjectNameValue)
-        //    ? "{enter C# Project name}"
-        //    : CSharpProjectNameValue;
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void OptionalParametersDisplay()
     {
-        //public string  => OptionalParametersValue;
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ParentDirectoryNameDisplay()
     {
-        //public string  => string.IsNullOrWhiteSpace(ParentDirectoryNameValue)
-        //    ? "{enter parent directory name}"
-        //    : ParentDirectoryNameValue;
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormattedNewCSharpProjectCommand()
     {
-        //public FormattedCommand  => DotNetCliCommandFormatter.FormatDotnetNewCSharpProject(
-        //    ProjectTemplateShortNameValue,
-        //    CSharpProjectNameValue,
-        //    OptionalParametersValue);
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormattedAddExistingProjectToSolutionCommand()
     {
-        //public FormattedCommand  => DotNetCliCommandFormatter.FormatAddExistingProjectToSolution(
-        //    DotNetSolutionModel?.NamespacePath?.AbsolutePath.Value ?? string.Empty,
-        //    $"{CSharpProjectNameValue}{EnvironmentProvider.DirectorySeparatorChar}{CSharpProjectNameValue}.{ExtensionNoPeriodFacts.C_SHARP_PROJECT}");
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TryTakeSnapshot()
     {
-        //public bool (out CSharpProjectFormViewModelImmutable? viewModelImmutable)
+        throw new NotImplementedException();
     }
 }

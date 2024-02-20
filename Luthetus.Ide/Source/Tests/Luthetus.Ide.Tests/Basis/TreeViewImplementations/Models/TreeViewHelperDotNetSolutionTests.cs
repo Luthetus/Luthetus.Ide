@@ -10,7 +10,6 @@ public partial class TreeViewHelperDotNetSolutionTests
     [Fact]
     public void DotNetSolutionLoadChildrenAsync()
     {
-        //public static Task<List<TreeViewNoType>> (
-        //    this TreeViewSolution treeViewSolution)
+        throw new NotImplementedException();
     }
 }

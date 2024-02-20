@@ -10,78 +10,78 @@ public abstract class IntegratedTerminalTests
     [Fact]
     public void Constructor()
     {
-        //public IntegratedTerminal(string initialWorkingDirectory, IEnvironmentProvider environmentProvider)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void WorkingDirectory()
     {
-        //public string  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TargetFilePath()
     {
-        //public string  { get; set; } = "netcoredbg";
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Arguments()
     {
-        //public string  { get; set; } = "--interpreter=cli -- dotnet C:\\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\ConsoleApp1\\bin\\Debug\\net8.0\\ConsoleApp1.dll";
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void EnvironmentProvider()
     {
-        //public IEnvironmentProvider  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TaskQueue()
     {
-        //public ConcurrentQueue<Func<Task>>  { get; } = new();
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void StateChanged()
     {
-        //public event Action? ;
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void HandleStdInputOnKeyDown()
     {
-        //public abstract Task (KeyboardEventArgs keyboardEventArgs, StdInRequest stdInRequest, string capturedValue);
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void HandleStdQuiescentOnKeyDown()
     {
-        //public abstract Task (KeyboardEventArgs keyboardEventArgs, StdQuiescent stdQuiescent, string capturedTargetFilePath, string capturedArguments);
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void StartAsync()
     {
-        //public abstract Task (CancellationToken cancellationToken = default);
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void GetRenderTreeBuilder()
     {
-        //public abstract RenderTreeBuilder (RenderTreeBuilder builder, ref int sequence);
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void StopAsync()
     {
-        //public abstract Task (CancellationToken cancellationToken = default);
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void InvokeStateChanged()
     {
-        //StateChanged?.Invoke();
+        throw new NotImplementedException();
     }
 }

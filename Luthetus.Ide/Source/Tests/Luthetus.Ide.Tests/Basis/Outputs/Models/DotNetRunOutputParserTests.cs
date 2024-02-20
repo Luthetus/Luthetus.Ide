@@ -9,6 +9,6 @@ public class DotNetRunOutputParserTests
     [Fact]
     public void Parse()
     {
-        //public List<IOutputLine> (List<string> strList)
+        throw new NotImplementedException();
     }
 }

@@ -12,7 +12,6 @@ public partial class TreeViewHelperCSharpProjectTests
     [Fact]
     public void CSharpProjectLoadChildrenAsync()
     {
-        //public static async Task<List<TreeViewNoType>> (
-        //    this TreeViewNamespacePath cSharpProjectTreeView)
+        throw new NotImplementedException();
     }
 }

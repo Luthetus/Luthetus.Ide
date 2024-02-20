@@ -10,35 +10,30 @@ public class NugetPackageManagerProviderAzureSearchUsncTests
     [Fact]
     public void Constructor()
     {
-        //public NugetPackageManagerProviderAzureSearchUsnc(HttpClient httpClient)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ProviderWebsiteUrlNoFormatting()
     {
-        //public string  { get; } = "https://azuresearch-usnc.nuget.org/";
+        throw new NotImplementedException();
     }
 
     [Fact]
-    public void QueryForNugetPackagesAsync()
+    public void QueryForNugetPackagesAsync_string_bool()
     {
-        //public async Task<ImmutableArray<NugetPackageRecord>> (
-        //    string queryValue,
-        //    bool includePrerelease = false,
-        //    CancellationToken cancellationToken = default)
+        throw new NotImplementedException();
     }
 
     [Fact]
-    public void QueryForNugetPackagesAsync()
+    public void QueryForNugetPackagesAsync_INugetPackageManagerQuery()
     {
-        //public async Task<ImmutableArray<NugetPackageRecord>> (
-        //    INugetPackageManagerQuery nugetPackageManagerQuery,
-        //    CancellationToken cancellationToken = default)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void BuildQuery()
     {
-        //public INugetPackageManagerQuery (string query, bool includePrerelease = false)
+        throw new NotImplementedException();
     }
 }

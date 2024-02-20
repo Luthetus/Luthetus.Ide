@@ -7,25 +7,24 @@ public class StdOutTests
     [Fact]
     public void Constructor()
     {
-        //public StdOut(IntegratedTerminal integratedTerminal, string initialContent, StdOutKind stdOutKind)
-        //    : base(integratedTerminal)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Content()
     {
-        //public string  { get; internal set; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void StdOutKind()
     {
-        //public StdOutKind  { get; internal set; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void GetRenderTreeBuilder()
     {
-        //public override RenderTreeBuilder (RenderTreeBuilder builder, ref int sequence)
+        throw new NotImplementedException();
     }
 }

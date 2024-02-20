@@ -5,126 +5,126 @@ public record CSharpProjectFormViewModelImmutableTests
     [Fact]
     public void DotNetSolutionModel()
     {
-        //DotNetSolutionModel ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void EnvironmentProvider()
     {
-        //IEnvironmentProvider ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void IsReadingProjectTemplates()
     {
-        //bool ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ProjectTemplateShortNameValue()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void CSharpProjectNameValue()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void OptionalParametersValue()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ParentDirectoryNameValue()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ProjectTemplateList()
     {
-        //List<ProjectTemplate> ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ActivePanelKind()
     {
-        //CSharpProjectFormPanelKind ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void SearchInput()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void SelectedProjectTemplate()
     {
-        //ProjectTemplate? ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void IsValid()
     {
-        //bool ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ProjectTemplateShortNameDisplay()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void CSharpProjectNameDisplay()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void OptionalParametersDisplay()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ParentDirectoryNameDisplay()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormattedNewCSharpProjectCommand()
     {
-        //FormattedCommand ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormattedAddExistingProjectToSolutionCommand()
     {
-        //FormattedCommand ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void NewCSharpProjectTerminalCommandKey()
     {
-        //Key<TerminalCommand> ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void LoadProjectTemplatesTerminalCommandKey()
     {
-        //Key<TerminalCommand> ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void NewCSharpProjectCancellationTokenSource()
     {
-        //CancellationTokenSource 
+        throw new NotImplementedException();
     }
 }

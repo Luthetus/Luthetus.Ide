@@ -9,27 +9,24 @@ public class TestExplorerRenderBatchTests
     [Fact]
     public void Constructor()
     {
-        //public TestExplorerRenderBatch(
-        //    TestExplorerState testExplorerState,
-        //    AppOptionsState appOptionsState,
-        //    TreeViewContainer? treeViewContainer)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TestExplorerState()
     {
-        //public TestExplorerState  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void AppOptionsState()
     {
-        //public AppOptionsState  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TreeViewContainer()
     {
-        //public TreeViewContainer?  { get; }
+        throw new NotImplementedException();
     }
 }

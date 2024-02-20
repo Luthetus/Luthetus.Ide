@@ -10,18 +10,18 @@ public class InputFileStateCommonTests
     [Fact]
     public void CanMoveBackwardsInHistory()
     {
-        //public bool  => IndexInHistory > 0;
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void CanMoveForwardsInHistory()
     {
-        //public bool  => IndexInHistory < OpenedTreeViewModelHistoryList.Count - 1;
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void GetOpenedTreeView()
     {
-        //public TreeViewAbsolutePath? ()
+        throw new NotImplementedException();
     }
 }

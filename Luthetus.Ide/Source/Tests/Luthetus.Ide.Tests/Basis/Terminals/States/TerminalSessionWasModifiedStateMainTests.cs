@@ -11,20 +11,18 @@ public class TerminalSessionWasModifiedStateMainTests
     [Fact]
     public void Constructor()
     {
-        //public TerminalSessionWasModifiedState()
-        //    : this(ImmutableDictionary<Key<TerminalSession>, Key<StateRecord>>.Empty, string.Empty)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TerminalSessionWasModifiedMap()
     {
-        //ImmutableDictionary<Key<TerminalSession>, Key<StateRecord>> TerminalSessionWasModifiedMap
+        throw new NotImplementedException();
     }
-    
     
     [Fact]
     public void EmptyTextHack()
     {
-        //string EmptyTextHack
+        throw new NotImplementedException();
     }
 }

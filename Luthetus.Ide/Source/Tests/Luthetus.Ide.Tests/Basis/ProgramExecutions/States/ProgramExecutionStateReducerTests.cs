@@ -9,10 +9,7 @@ public class ProgramExecutionStateReducerTests
         [Fact]
         public void ReduceSetStartupProjectAbsolutePathAction()
         {
-            //[ReducerMethod]
-            //public static ProgramExecutionState (
-            //    ProgramExecutionState inState,
-            //    SetStartupProjectAbsolutePathAction setStartupProjectAbsolutePathAction)
+            throw new NotImplementedException();
         }
     }
 }

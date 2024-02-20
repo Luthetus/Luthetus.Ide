@@ -8,25 +8,24 @@ public class StdInRequestTests
     [Fact]
     public void Constructor()
     {
-        //public StdInRequest(IntegratedTerminal integratedTerminal)
-        //    : base(integratedTerminal)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void IsCompleted()
     {
-        //public bool  { get; set; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Value()
     {
-        //public string  { get; set; } = string.Empty;
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void GetRenderTreeBuilder()
     {
-        //public override RenderTreeBuilder (RenderTreeBuilder builder, ref int sequence)
+        throw new NotImplementedException();
     }
 }

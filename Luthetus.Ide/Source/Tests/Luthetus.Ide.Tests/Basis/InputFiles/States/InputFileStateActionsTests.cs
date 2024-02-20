@@ -13,68 +13,54 @@ public class InputFileStateActionsTests
     [Fact]
     public void SetSelectedTreeViewModelAction()
     {
-        //public record (TreeViewAbsolutePath? SelectedTreeViewModel);
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void SetSelectedInputFilePatternAction()
     {
-        //public record (InputFilePattern InputFilePattern);
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void SetSearchQueryAction()
     {
-        //public record (string SearchQuery);
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void RefreshCurrentSelectionAction()
     {
-        //public record (IBackgroundTaskService BackgroundTaskService);
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void MoveBackwardsInHistoryAction()
     {
-        //public record ;
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void MoveForwardsInHistoryAction()
     {
-        //public record ;
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void SetOpenedTreeViewModelAction()
     {
-        //public record (
-        //    TreeViewAbsolutePath TreeViewModel,
-        //    ILuthetusIdeComponentRenderers IdeComponentRenderers,
-        //    ILuthetusCommonComponentRenderers CommonComponentRenderers,
-        //    IFileSystemProvider FileSystemProvider,
-        //    IEnvironmentProvider EnvironmentProvider);
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void OpenParentDirectoryAction()
     {
-        //public record (
-        //    ILuthetusIdeComponentRenderers IdeComponentRenderers,
-        //    ILuthetusCommonComponentRenderers CommonComponentRenderers,
-        //    IFileSystemProvider FileSystemProvider,
-        //    IEnvironmentProvider EnvironmentProvider,
-        //    IBackgroundTaskService BackgroundTaskService);
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void StartInputFileStateFormAction()
     {
-        //public record (
-        //    string Message,
-        //    Func<IAbsolutePath?, Task> OnAfterSubmitFunc,
-        //    Func<IAbsolutePath?, Task<bool>> SelectionIsValidFunc,
-        //    ImmutableArray<InputFilePattern> InputFilePatterns);
+        throw new NotImplementedException();
     }
 }

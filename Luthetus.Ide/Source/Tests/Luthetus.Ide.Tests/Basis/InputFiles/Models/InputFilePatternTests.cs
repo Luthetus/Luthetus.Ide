@@ -7,18 +7,18 @@ public class InputFilePatternTests
     [Fact]
     public void Constructor()
     {
-        //public InputFilePattern(string patternName, Func<IAbsolutePath, bool> matchesPatternFunc)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void PatternName()
     {
-        //public string  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void MatchesPatternFunc()
     {
-        //public Func<IAbsolutePath, bool>  { get; }
+        throw new NotImplementedException();
     }
 }

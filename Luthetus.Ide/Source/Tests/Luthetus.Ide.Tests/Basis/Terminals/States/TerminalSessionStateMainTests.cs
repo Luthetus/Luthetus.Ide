@@ -10,13 +10,12 @@ public class TerminalSessionStateMainTests
     [Fact]
     public void Constructor()
     {
-        //public TerminalSessionState()
-        //    : this(ImmutableDictionary<Key<TerminalSession>, TerminalSession>.Empty)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TerminalSessionMap()
     {
-        //(ImmutableDictionary<Key<TerminalSession>, TerminalSession> )
+        throw new NotImplementedException();
     }
 }

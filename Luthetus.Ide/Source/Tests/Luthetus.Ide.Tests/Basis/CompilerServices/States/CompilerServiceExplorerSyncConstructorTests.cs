@@ -14,26 +14,18 @@ public class CompilerServiceExplorerSyncConstructorTests
     [Fact]
     public void Constructor()
     {
-        //public CompilerServiceExplorerSync(
-        //    ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        //    ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
-        //    ITreeViewService treeViewService,
-        //    IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
-        //    IDecorationMapperRegistry decorationMapperRegistry,
-        //    ICompilerServiceRegistry compilerServiceRegistry,
-        //    IBackgroundTaskService backgroundTaskService,
-        //    IDispatcher dispatcher)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void BackgroundTaskService()
     {
-        //public IBackgroundTaskService  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Dispatcher()
     {
-        //public IDispatcher  { get; }
+        throw new NotImplementedException();
     }
 }

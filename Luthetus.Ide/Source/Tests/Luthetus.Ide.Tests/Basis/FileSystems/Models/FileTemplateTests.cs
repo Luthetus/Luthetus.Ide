@@ -5,61 +5,54 @@ public class FileTemplateTests
     [Fact]
     public void Constructor()
     {
-        //public FileTemplate(
-        //    string displayName,
-        //    string codeName,
-        //    FileTemplateKind fileTemplateKind,
-        //    Func<string, bool> isExactTemplate,
-        //    Func<string, ImmutableArray<IFileTemplate>> relatedFileTemplatesFunc,
-        //    bool initialCheckedStateWhenIsRelatedFile,
-        //    Func<FileTemplateParameter, FileTemplateResult> constructFileContents)
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void Id()
     {
-        //public Guid  { get; } = Guid.NewGuid();
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void DisplayName()
     {
-        //public string  { get; }
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void CodeName()
     {
-        //public string  { get; }
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void FileTemplateKind()
     {
-        //public FileTemplateKind  { get; }
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void IsExactTemplate()
     {
-        //public Func<string, bool>  { get; }
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void RelatedFileTemplatesFunc()
     {
-        //public Func<string, ImmutableArray<IFileTemplate>>  { get; }
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void InitialCheckedStateWhenIsRelatedFile()
     {
-        //public bool  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ConstructFileContents()
     {
-        //public Func<FileTemplateParameter, FileTemplateResult>  { get; }
+        throw new NotImplementedException();
     }
 }

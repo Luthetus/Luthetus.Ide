@@ -5,94 +5,90 @@ public class CompilerServiceRegistryTests
     [Fact]
     public void Constructor()
     {
-        //public CompilerServiceRegistry(
-        //    ITextEditorService textEditorService,
-        //    IBackgroundTaskService backgroundTaskService,
-        //    IEnvironmentProvider environmentProvider,
-        //    IDispatcher dispatcher)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Map()
     {
-        //public ImmutableDictionary<string, ILuthCompilerService>  => _map.ToImmutableDictionary();
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void CSharpCompilerService()
     {
-        //public CSharpCompilerService  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void CSharpProjectCompilerService()
     {
-        //public CSharpProjectCompilerService  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void CssCompilerService()
     {
-        //public CssCompilerService  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void DotNetSolutionCompilerService()
     {
-        //public DotNetSolutionCompilerService  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FSharpCompilerService()
     {
-        //public FSharpCompilerService  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void JavaScriptCompilerService()
     {
-        //public JavaScriptCompilerService  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void JsonCompilerService()
     {
-        //public JsonCompilerService  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void RazorCompilerService()
     {
-        //public RazorCompilerService  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TypeScriptCompilerService()
     {
-        //public TypeScriptCompilerService  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void XmlCompilerService()
     {
-        //public XmlCompilerService  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void CCompilerService()
     {
-        //public CCompilerService  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void DefaultCompilerService()
     {
-        //public LuthCompilerService  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void GetCompilerService()
     {
-        //public ILuthCompilerService (string extensionNoPeriod)
+        throw new NotImplementedException();
     }
 }

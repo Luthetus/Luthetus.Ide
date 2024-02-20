@@ -9,21 +9,18 @@ public class InputFileSyncConstructorTests
     [Fact]
     public void Constructor()
     {
-        //public InputFileSync(
-        //    ILuthetusIdeComponentRenderers ideComponentRenderers,
-        //    IBackgroundTaskService backgroundTaskService,
-        //    IDispatcher dispatcher)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void BackgroundTaskService()
     {
-        //public IBackgroundTaskService  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Dispatcher()
     {
-        //public IDispatcher  { get; }
+        throw new NotImplementedException();
     }
 }

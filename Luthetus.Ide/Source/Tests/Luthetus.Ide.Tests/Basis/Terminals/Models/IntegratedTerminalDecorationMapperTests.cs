@@ -7,6 +7,6 @@ public class IntegratedTerminalDecorationMapperTests
     [Fact]
     public void Map()
     {
-        //public string (byte decorationByte)
+        throw new NotImplementedException();
     }
 }

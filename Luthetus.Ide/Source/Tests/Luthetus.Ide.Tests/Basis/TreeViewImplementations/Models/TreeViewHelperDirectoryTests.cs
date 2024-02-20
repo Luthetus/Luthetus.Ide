@@ -9,14 +9,12 @@ public partial class TreeViewHelperDirectoryTests
     [Fact]
     public void DirectoryLoadChildrenAsync()
     {
-        //public static async Task<List<TreeViewNoType>> (
-        //    this TreeViewNamespacePath directoryTreeView)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void LoadChildrenForDirectoryAsync()
     {
-        //public static async Task<List<TreeViewNoType>> (
-        //    TreeViewAbsolutePath directoryTreeView)
+        throw new NotImplementedException();
     }
 }

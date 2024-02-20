@@ -7,6 +7,6 @@ public record LuthetusIdeConfigTests
     [Fact]
     public void AddLuthetusTextEditor()
     {
-        //public bool  { get; init; } = true;
+        throw new NotImplementedException();
     }
 }

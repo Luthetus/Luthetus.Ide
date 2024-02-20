@@ -8,6 +8,6 @@ public partial class TestExplorerSyncEnqueuesTests
     [Fact]
     public void DotNetSolutionStateWrap_StateChanged()
     {
-        //public void ()
+        throw new NotImplementedException();
     }
 }

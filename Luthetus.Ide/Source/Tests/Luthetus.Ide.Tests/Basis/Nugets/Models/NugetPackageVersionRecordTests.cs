@@ -7,19 +7,18 @@ public class NugetPackageVersionRecordTests
     [Fact]
     public void Version()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Downloads()
     {
-        //long )
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void AtId()
     {
-        //[JsonPropertyName("@id")]
-        //public string  { get; init; } = string.Empty;
+        throw new NotImplementedException();
     }
 }

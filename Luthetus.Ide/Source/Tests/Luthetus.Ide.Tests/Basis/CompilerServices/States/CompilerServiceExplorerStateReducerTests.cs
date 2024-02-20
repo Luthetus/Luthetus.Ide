@@ -9,10 +9,7 @@ public class CompilerServiceExplorerStateReducerTests
         [Fact]
         public void ReduceNewAction()
         {
-            //[ReducerMethod]
-            //public CompilerServiceExplorerState (
-            //    CompilerServiceExplorerState inCompilerServiceExplorerState,
-            //    NewAction newAction)
+            throw new NotImplementedException();
         }
     }
 }

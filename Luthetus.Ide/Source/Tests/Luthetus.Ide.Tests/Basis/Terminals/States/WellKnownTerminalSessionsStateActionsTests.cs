@@ -8,6 +8,6 @@ public partial record WellKnownTerminalSessionsStateActionsTests
     [Fact]
     public void SetActiveWellKnownTerminalSessionKey()
     {
-        //public record (Key<TerminalSession> TerminalSessionKey);
+        throw new NotImplementedException();
     }
 }

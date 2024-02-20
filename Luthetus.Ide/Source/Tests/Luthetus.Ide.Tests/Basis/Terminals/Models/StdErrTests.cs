@@ -7,13 +7,12 @@ public class StdErrTests
     [Fact]
     public void Constructor()
     {
-        //public StdErr(IntegratedTerminal integratedTerminal)
-        //    : base(integratedTerminal)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void GetRenderTreeBuilder()
     {
-        //public override RenderTreeBuilder (RenderTreeBuilder builder, ref int sequence)
+        throw new NotImplementedException();
     }
 }

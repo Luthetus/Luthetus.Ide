@@ -5,18 +5,18 @@ public class LightWeightNugetPackageRecordTests
     [Fact]
     public void Id()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Title()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Version()
     {
-        //string );
+        throw new NotImplementedException();
     }
 }

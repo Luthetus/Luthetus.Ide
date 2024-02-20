@@ -14,62 +14,54 @@ public class CliWrapIntegratedTerminalTests
     [Fact]
     public void Constructor()
     {
-        //public CliWrapIntegratedTerminal(string initialWorkingDirectory, IEnvironmentProvider environmentProvider)
-        //    : base(initialWorkingDirectory, environmentProvider)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void StdInPipeSource()
     {
-        //public PipeSource?  { get; private set; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void AddStdOut()
     {
-        //public void (string content, StdOutKind stdOutKind)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void AddStdInRequest()
     {
-        //public void ()
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void StartAsync()
     {
-        //public override async Task (CancellationToken cancellationToken = default)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void GetRenderTreeBuilder()
     {
-        //public override RenderTreeBuilder (RenderTreeBuilder builder, ref int sequence)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void StopAsync()
     {
-        //public override Task (CancellationToken cancellationToken = default)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void HandleStdInputOnKeyDown()
     {
-        //public override Task (
-        //    KeyboardEventArgs keyboardEventArgs,
-        //    StdInRequest stdInRequest,
-        //    string capturedValue)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void HandleStdQuiescentOnKeyDown()
     {
-        //public override Task (
-        //    KeyboardEventArgs keyboardEventArgs,
-        //    StdQuiescent stdQuiescent,
-        //    string capturedTargetFilePath,
-        //    string capturedArguments)
+        throw new NotImplementedException();
     }
 }

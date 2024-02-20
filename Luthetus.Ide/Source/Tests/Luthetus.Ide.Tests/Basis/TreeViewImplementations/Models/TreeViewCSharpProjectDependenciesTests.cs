@@ -11,67 +11,55 @@ public class TreeViewCSharpProjectDependenciesTests
     [Fact]
     public void Constructor()
     {
-        //public TreeViewCSharpProjectDependencies(
-        //        CSharpProjectDependencies cSharpProjectDependencies,
-        //        ILuthetusIdeComponentRenderers ideComponentRenderers,
-        //        IFileSystemProvider fileSystemProvider,
-        //        IEnvironmentProvider environmentProvider,
-        //        bool isExpandable,
-        //        bool isExpanded)
-        //    : base(cSharpProjectDependencies, isExpandable, isExpanded)
-        //{
-        //    IdeComponentRenderers = ideComponentRenderers;
-        //    FileSystemProvider = fileSystemProvider;
-        //    EnvironmentProvider = environmentProvider;
-        //}
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void IdeComponentRenderers()
     {
-        //public ILuthetusIdeComponentRenderers  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FileSystemProvider()
     {
-        //public IFileSystemProvider  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void EnvironmentProvider()
     {
-        //public IEnvironmentProvider  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
-    public void Equals()
+    public void Equals_Test()
     {
-        //public override bool (object? obj)
+        throw new NotImplementedException();
     }
 
 
     [Fact]
-    public void GetHashCode()
+    public void GetHashCode_Test()
     {
-        //public override int () => Item.CSharpProjectNamespacePath.AbsolutePath.Value.GetHashCode();
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void GetTreeViewRenderer()
     {
-        //public override TreeViewRenderer ()
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void LoadChildListAsync()
     {
-        //public override Task ()
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void RemoveRelatedFilesFromParent()
     {
-        //public override void (List<TreeViewNoType> siblingsAndSelfTreeViews)
+        throw new NotImplementedException();
     }
 }

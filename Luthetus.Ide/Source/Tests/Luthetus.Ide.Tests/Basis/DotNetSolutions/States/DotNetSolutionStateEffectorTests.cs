@@ -10,8 +10,7 @@ public class DotNetSolutionStateEffectorTests
         [Fact]
         public void NotifyDotNetSolutionStateStateHasChanged()
         {
-      //      [EffectMethod(typeof(IWithAction))]
-		    //public Task (IDispatcher dispatcher)
+            throw new NotImplementedException();
         }
 	}
 }

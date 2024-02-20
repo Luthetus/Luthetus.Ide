@@ -13,23 +13,18 @@ public class InputFileTreeViewMouseEventHandlerTests
     [Fact]
     public void Constructor()
     {
-      //  public InputFileTreeViewMouseEventHandler(
-      //      ITreeViewService treeViewService,
-      //      IDispatcher dispatcher,
-      //      Func<IAbsolutePath, Task> setInputFileContentTreeViewRootFunc,
-		    //IBackgroundTaskService backgroundTaskService)
-      //      : base(treeViewService, backgroundTaskService)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void OnClick()
     {
-        //public override void (TreeViewCommandArgs commandArgs)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void OnDoubleClickAsync()
     {
-        //public override Task (TreeViewCommandArgs commandArgs)
+        throw new NotImplementedException();
     }
 }

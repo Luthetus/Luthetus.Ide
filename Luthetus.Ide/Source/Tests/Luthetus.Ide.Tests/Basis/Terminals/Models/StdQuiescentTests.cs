@@ -8,37 +8,36 @@ public class StdQuiescentTests
     [Fact]
     public void Constructor()
     {
-        //public StdQuiescent(IntegratedTerminal integratedTerminal)
-        //    : base(integratedTerminal)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void IsCompleted()
     {
-        //public bool  { get; set; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TargetFilePath()
     {
-        //public string  { get; set; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Arguments()
     {
-        //public string  { get; set; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Text()
     {
-        //public string  { get; set; } = string.Empty;
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void GetRenderTreeBuilder()
     {
-        //public override RenderTreeBuilder (RenderTreeBuilder builder, ref int sequence)
+        throw new NotImplementedException();
     }
 }

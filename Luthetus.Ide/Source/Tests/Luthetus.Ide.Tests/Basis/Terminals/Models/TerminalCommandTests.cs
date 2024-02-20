@@ -8,36 +8,36 @@ public record TerminalCommandTests
     [Fact]
     public void TerminalCommandKey()
     {
-        //Key<TerminalCommand> ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormattedCommand()
     {
-        //FormattedCommand ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ChangeWorkingDirectoryTo()
     {
-        //string?  = null,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void CancellationToken()
     {
-        //CancellationToken  = default,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ContinueWith()
     {
-        //Func<Task>?  = null,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void BeginWith()
     {
-        //Func<Task>?  = null);
+        throw new NotImplementedException();
     }
 }

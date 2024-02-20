@@ -5,15 +5,12 @@ public class EditorSyncQueuesTests
     [Fact]
     public void OpenInEditor()
     {
-        //public void (
-        //    IAbsolutePath? absolutePath,
-        //    bool shouldSetFocusToEditor,
-        //    Key<TextEditorGroup>? editorTextEditorGroupKey = null)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ShowInputFile()
     {
-        //public void ()
+        throw new NotImplementedException();
     }
 }

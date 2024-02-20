@@ -9,10 +9,7 @@ public partial record WellKnownTerminalSessionsStateReducerTests
         [Fact]
         public void ReduceSetActiveTerminalCommandKeyAction()
         {
-            //[ReducerMethod]
-            //public static WellKnownTerminalSessionsState (
-            //    WellKnownTerminalSessionsState inState,
-            //    SetActiveWellKnownTerminalSessionKey setActiveWellKnownTerminalSessionKeyAction)
+            throw new NotImplementedException();
         }
     }
 }

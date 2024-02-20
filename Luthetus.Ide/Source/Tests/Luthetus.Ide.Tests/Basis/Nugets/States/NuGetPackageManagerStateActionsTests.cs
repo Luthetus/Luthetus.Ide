@@ -9,24 +9,24 @@ public class NuGetPackageManagerStateActionsTests
     [Fact]
     public void SetSelectedProjectToModifyAction()
     {
-        //public record (IDotNetProject? SelectedProjectToModify);
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void SetNugetQueryAction()
     {
-        //public record (string NugetQuery);
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void SetIncludePrereleaseAction()
     {
-        //public record (bool IncludePrerelease);
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void SetMostRecentQueryResultAction()
     {
-        //public record (ImmutableArray<NugetPackageRecord> QueryResultList);
+        throw new NotImplementedException();
     }
 }

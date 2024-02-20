@@ -9,13 +9,7 @@ public class TestExplorerStateReducerTests
         [Fact]
         public void ReduceWithAction()
         {
-            //[ReducerMethod]
-            //public static TestExplorerState (
-            //    TestExplorerState inState,
-            //    WithAction withAction)
-            //{
-            //    return withAction.WithFunc.Invoke(inState);
-            //}
+            throw new NotImplementedException();
         }
     }
 }

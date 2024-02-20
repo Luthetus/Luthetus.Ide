@@ -5,16 +5,12 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandlerTests
     [Fact]
     public void Constructor()
     {
-      //  public CompilerServiceExplorerTreeViewKeyboardEventHandler(
-      //      EditorSync editorSync,
-      //      ITreeViewService treeViewService,
-		    //IBackgroundTaskService backgroundTaskService)
-      //      : base(treeViewService, backgroundTaskService)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void OnKeyDownAsync()
     {
-        //public override Task (TreeViewCommandArgs commandArgs)
+        throw new NotImplementedException();
     }
 }

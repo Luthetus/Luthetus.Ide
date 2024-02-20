@@ -5,60 +5,54 @@ public class CodeSearchStateMainTests
     [Fact]
     public void Constructor()
     {
-        //public CodeSearchState() : this(
-        //    string.Empty,
-        //    null,
-        //    CodeSearchFilterKind.None,
-        //    ImmutableList<string>.Empty,
-        //    string.Empty,
-        //    Key<TextEditorViewModel>.Empty)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Query()
     {
-        //string Query,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void StartingAbsolutePathForSearch()
     {
-        //string? StartingAbsolutePathForSearch,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void CodeSearchFilterKind()
     {
-        //CodeSearchFilterKind CodeSearchFilterKind,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ResultList()
     {
-        //ImmutableList<string> ResultList,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void PreviewFilePath()
     {
-        //string PreviewFilePath,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void PreviewViewModelKey()
     {
-        //Key<TextEditorViewModel> PreviewViewModelKey)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TopContentElementDimensions()
     {
-        //public ElementDimensions TopContentElementDimensions = new();
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void BottomContentElementDimensions()
     {
-        //public ElementDimensions BottomContentElementDimensions = new();
+        throw new NotImplementedException();
     }
 }

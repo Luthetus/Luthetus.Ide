@@ -5,16 +5,12 @@ public class SolutionExplorerTreeViewMouseEventHandlerTests
     [Fact]
     public void Constructor()
     {
-      //  public SolutionExplorerTreeViewMouseEventHandler(
-      //      EditorSync editorSync,
-      //      ITreeViewService treeViewService,
-		    //IBackgroundTaskService backgroundTaskService)
-      //      : base(treeViewService, backgroundTaskService)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void OnDoubleClickAsync()
     {
-        //public override Task (TreeViewCommandArgs commandArgs)
+        throw new NotImplementedException();
     }
 }

@@ -5,18 +5,18 @@ public class GitFileTests
     [Fact]
     public void AbsolutePath()
     {
-        //IAbsolutePath ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void GitDirtyReason()
     {
-        //GitDirtyReason 
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void IsDirty()
     {
-        //public bool  => GitDirtyReason switch;
+        throw new NotImplementedException();
     }
 }

@@ -9,46 +9,25 @@ public class NuGetPackageManagerStateReducerTests
         [Fact]
         public void ReduceSetSelectedProjectToModifyAction()
         {
-            //[ReducerMethod]
-            //public static NuGetPackageManagerState (
-            //    NuGetPackageManagerState inState,
-            //    SetSelectedProjectToModifyAction setSelectedProjectToModifyAction)
+            throw new NotImplementedException();
         }
 
         [Fact]
         public void ReduceSetNugetQueryAction()
         {
-            //[ReducerMethod]
-            //public static NuGetPackageManagerState (
-            //    NuGetPackageManagerState inState,
-            //    SetNugetQueryAction setNugetQueryAction)
-            //{
-            //    return inState with { NugetQuery = setNugetQueryAction.NugetQuery };
-            //}
+            throw new NotImplementedException();
         }
 
         [Fact]
         public void ReduceSetIncludePrereleaseAction()
         {
-            //[ReducerMethod]
-            //public static NuGetPackageManagerState (
-            //    NuGetPackageManagerState inState,
-            //    SetIncludePrereleaseAction setIncludePrereleaseAction)
-            //{
-            //    return inState with { IncludePrerelease = setIncludePrereleaseAction.IncludePrerelease };
-            //}
+            throw new NotImplementedException();
         }
 
         [Fact]
         public void ReduceSetMostRecentQueryResultAction()
         {
-            //[ReducerMethod]
-            //public static NuGetPackageManagerState (
-            //    NuGetPackageManagerState inState,
-            //    SetMostRecentQueryResultAction setMostRecentQueryResultAction)
-            //{
-            //    return inState with { QueryResultList = setMostRecentQueryResultAction.QueryResultList };
-            //}
+            throw new NotImplementedException();
         }
     }
 }

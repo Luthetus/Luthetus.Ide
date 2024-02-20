@@ -21,100 +21,96 @@ public class TerminalSessionTests
     [Fact]
     public void Constructor()
     {
-        //public TerminalSession(
-        //    string? workingDirectoryAbsolutePathString,
-        //    IDispatcher dispatcher,
-        //    IBackgroundTaskService backgroundTaskService,
-        //    ILuthetusCommonComponentRenderers commonComponentRenderers)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TerminalSessionKey()
     {
-        //public Key<TerminalSession>  { get; init; } = Key<TerminalSession>.NewKey();
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void WorkingDirectoryAbsolutePathString()
     {
-        //public string?  { get; private set; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ActiveTerminalCommand()
     {
-        //public TerminalCommand?  { get; private set; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void HasExecutingProcess()
     {
-        //public bool  { get; private set; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TerminalCommandsHistory()
     {
-        //public ImmutableArray<TerminalCommand>  => _terminalCommandsHistory.ToImmutableArray();
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ResourceUri()
     {
-        //public ResourceUri  => new($"__LUTHETUS_{TerminalSessionKey.Guid}__");
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TextEditorViewModelKey()
     {
-        //public Key<TextEditorViewModel>  => new(TerminalSessionKey.Guid);
+        throw new NotImplementedException();
     }
 
     [Fact]
-    public void ReadStandardOut()
+    public void ReadStandardOut_NO_ARGS()
     {
-        //public string ()
+        throw new NotImplementedException();
     }
 
     [Fact]
-    public void ReadStandardOut()
+    public void ReadStandardOut_WITH_ARGS()
     {
-        //public string? (Key<TerminalCommand> terminalCommandKey)
+        throw new NotImplementedException();
     }
 
     [Fact]
-    public void GetStandardOut()
+    public void GetStandardOut_NO_ARGS()
     {
-        //public List<string>? ()
+        throw new NotImplementedException();
     }
 
     [Fact]
-    public void GetStandardOut()
+    public void GetStandardOut_WITH_ARGS()
     {
-        //public List<string>? (Key<TerminalCommand> terminalCommandKey)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void EnqueueCommandAsync()
     {
-        //public Task (TerminalCommand terminalCommand)
+        throw new NotImplementedException();
     }
 
     [Fact]
-    public void ClearStandardOut()
+    public void ClearStandardOut_NO_ARGS()
     {
-        //public void ()
+        throw new NotImplementedException();
     }
 
     [Fact]
-    public void ClearStandardOut()
+    public void ClearStandardOut_WITH_ARGS()
     {
-        //public void (Key<TerminalCommand> terminalCommandKey)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void KillProcess()
     {
-        //public void ()
+        throw new NotImplementedException();
     }
 }

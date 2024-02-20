@@ -7,36 +7,36 @@ public record DotNetRunOutputLineTests
     [Fact]
     public void SourceText()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FilePathTextSpan()
     {
-        //TextEditorTextSpan ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void RowAndColumnNumberTextSpan()
     {
-        //TextEditorTextSpan ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ErrorKeywordAndErrorCodeTextSpan()
     {
-        //TextEditorTextSpan ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ErrorMessageTextSpan()
     {
-        //TextEditorTextSpan ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ProjectFilePathTextSpan()
     {
-        //TextEditorTextSpan );
+        throw new NotImplementedException();
     }
 }

@@ -10,23 +10,13 @@ public partial record TestExplorerStateEffectorTests
         [Fact]
         public void Constructor()
         {
-	  //      public Effector(TestExplorerSync testExplorerSync)
-			//{
-			//	_testExplorerSync = testExplorerSync;
-			//}
+            throw new NotImplementedException();
         }
 
         [Fact]
         public void HandleDotNetSolutionStateStateHasChanged()
         {
-			//[EffectMethod(typeof(DotNetSolutionState.StateHasChanged))]
-			//public Task (IDispatcher dispatcher)
-			//{
-			//	_ = dispatcher; // Suppress unused parameter
-
-			//	_testExplorerSync.DotNetSolutionStateWrap_StateChanged();
-			//	return Task.CompletedTask;
-			//}
+            throw new NotImplementedException();
         }
 	}
 }

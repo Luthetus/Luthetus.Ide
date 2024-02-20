@@ -10,15 +10,12 @@ public partial class TreeViewHelperRazorMarkupTests
     [Fact]
     public void RazorMarkupLoadChildrenAsync()
     {
-        //public static async Task<List<TreeViewNoType>> (
-        //    this TreeViewNamespacePath razorMarkupTreeView)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void RazorMarkupFindRelatedFiles()
     {
-        //public static void (
-        //    TreeViewNamespacePath razorMarkupTreeView,
-        //    List<TreeViewNoType> siblingsAndSelfTreeViews)
+        throw new NotImplementedException();
     }
 }

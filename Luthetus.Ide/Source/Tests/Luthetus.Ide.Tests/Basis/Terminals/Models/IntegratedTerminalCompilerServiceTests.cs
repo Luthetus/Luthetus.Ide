@@ -10,10 +10,6 @@ public sealed class IntegratedTerminalCompilerServiceTests
     [Fact]
     public void Constructor()
     {
-        //public IntegratedTerminalCompilerService(
-        //        ITextEditorService textEditorService,
-        //        Func<ResourceUri, string, ILuthLexer> getLexerFunc,
-        //        Func<ILuthLexer, ILuthParser> getParserFunc)
-        //    : base(textEditorService, getLexerFunc, getParserFunc)
+        throw new NotImplementedException();
     }
 }

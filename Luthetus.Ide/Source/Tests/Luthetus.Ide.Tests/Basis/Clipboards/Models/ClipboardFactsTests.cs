@@ -5,42 +5,42 @@ public class ClipboardFactsTests
     [Fact]
     public void Tag()
     {
-        //public const string Tag = "`'\";luth_clipboard";
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FieldDelimiter()
     {
-        //public const string FieldDelimiter = "_";
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void CopyCommand()
     {
-        //public const string CopyCommand = "copy";
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void CutCommand()
     {
-        //public const string CutCommand = "cut";
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void AbsolutePathDataType()
     {
-        //public const string AbsolutePathDataType = "absolute-file-path";
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormatPhrase()
     {
-        //public static string FormatPhrase(string command, string dataType, string value)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void TryParseString()
     {
-        //public static bool TryParseString(string clipboardContents, out ClipboardPhrase? clipboardPhrase)
+        throw new NotImplementedException();
     }
 }

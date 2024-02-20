@@ -7,115 +7,96 @@ public class DotNetCliCommandFormatterTests
     [Fact]
     public void DOT_NET_CLI_TARGET_FILE_NAME()
     {
-        //public const string  = "dotnet";
+        throw new NotImplementedException();
     }
 
     [Fact]
-    public void FormatStartProjectWithoutDebugging()
+    public void FormatStartProjectWithoutDebugging_IAbsolutePath()
     {
-        //public static FormattedCommand (IAbsolutePath projectAbsolutePath)
+        throw new NotImplementedException();
     }
 
     [Fact]
-    public void FormatStartProjectWithoutDebugging()
+    public void FormatStartProjectWithoutDebugging_string()
     {
-        //public static FormattedCommand (string projectPath)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormatDotnetNewSln()
     {
-        //public static FormattedCommand (string solutionName)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormatDotnetNewCSharpProject()
     {
-        //public static FormattedCommand (
-        //    string projectTemplateName,
-        //    string cSharpProjectName,
-        //    string optionalParameters)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormatAddExistingProjectToSolution()
     {
-        //public static FormattedCommand (
-        //    string solutionAbsolutePathString,
-        //    string cSharpProjectPath)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormatRemoveCSharpProjectReferenceFromSolutionAction()
     {
-        //public static FormattedCommand (
-        //    string solutionAbsolutePathString,
-        //    string cSharpProjectAbsolutePathString)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormatAddNugetPackageReferenceToProject()
     {
-        //public static FormattedCommand (
-        //    string cSharpProjectAbsolutePathString,
-        //    string nugetPackageId,
-        //    string nugetPackageVersion)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormatRemoveNugetPackageReferenceFromProject()
     {
-        //public static FormattedCommand (
-        //    string cSharpProjectAbsolutePathString,
-        //    string nugetPackageId)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormatAddProjectToProjectReference()
     {
-        //public static FormattedCommand (
-        //    string receivingProjectAbsolutePathString,
-        //    string referenceProjectAbsolutePathString)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormatRemoveProjectToProjectReference()
     {
-        //public static FormattedCommand (
-        //    string modifyProjectAbsolutePathString,
-        //    string referenceProjectAbsolutePathString)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormatMoveProjectToSolutionFolder()
     {
-        //public static FormattedCommand (
-        //    string solutionAbsolutePathString,
-        //    string projectToMoveAbsolutePathString,
-        //    string solutionFolderPath)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormatDotnetNewList()
     {
-        //public static FormattedCommand () =>
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormatDotnetNewListDeprecated()
     {
-        //public static FormattedCommand () =>
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormatDotNetTestListTests()
     {
-        //public static FormattedCommand () =>
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FormatDotNetTestByFullyQualifiedName()
     {
-        //public static FormattedCommand (string fullyQualifiedName) =>
+        throw new NotImplementedException();
     }
 }

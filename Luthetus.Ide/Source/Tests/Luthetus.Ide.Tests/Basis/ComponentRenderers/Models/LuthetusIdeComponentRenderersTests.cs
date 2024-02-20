@@ -5,62 +5,54 @@ public class LuthetusIdeComponentRenderersTests
     [Fact]
     public void Constructor()
     {
-        //public LuthetusIdeComponentRenderers(
-        //    Type booleanPromptOrCancelRendererType,
-        //    Type fileFormRendererType,
-        //    Type deleteFileFormRendererType,
-        //    Type nuGetPackageManagerRendererType,
-        //    Type gitDisplayRendererType,
-        //    Type removeCSharpProjectFromSolutionRendererType,
-        //    Type inputFileRendererType,
-        //    LuthetusIdeTreeViews luthetusIdeTreeViews)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void BooleanPromptOrCancelRendererType()
     {
-        //public Type  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FileFormRendererType()
     {
-        //public Type  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void DeleteFileFormRendererType()
     {
-        //public Type  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void NuGetPackageManagerRendererType()
     {
-        //public Type  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void GitDisplayRendererType()
     {
-        //public Type  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void RemoveCSharpProjectFromSolutionRendererType()
     {
-        //public Type  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void InputFileRendererType()
     {
-        //public Type  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void LuthetusIdeTreeViews()
     {
-        //public LuthetusIdeTreeViews  { get; }
+        throw new NotImplementedException();
     }
 }

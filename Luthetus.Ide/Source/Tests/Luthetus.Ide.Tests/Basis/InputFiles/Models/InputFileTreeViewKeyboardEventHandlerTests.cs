@@ -17,24 +17,12 @@ public class InputFileTreeViewKeyboardEventHandlerTests
     [Fact]
     public void Constructor()
     {
-        //public InputFileTreeViewKeyboardEventHandler(
-        //    ITreeViewService treeViewService,
-        //    IState<InputFileState> inputFileStateWrap,
-        //    IDispatcher dispatcher,
-        //    ILuthetusIdeComponentRenderers ideComponentRenderers,
-        //    ILuthetusCommonComponentRenderers commonComponentRenderers,
-        //    IFileSystemProvider fileSystemProvider,
-        //    IEnvironmentProvider environmentProvider,
-        //    Func<IAbsolutePath, Task> setInputFileContentTreeViewRootFunc,
-        //    Func<Task> focusSearchInputElementFunc,
-        //    Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc,
-        //    IBackgroundTaskService backgroundTaskService)
-        //    : base(treeViewService, backgroundTaskService)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void OnKeyDownAsync()
     {
-        //public override Task (TreeViewCommandArgs commandArgs)
+        throw new NotImplementedException();
     }
 }

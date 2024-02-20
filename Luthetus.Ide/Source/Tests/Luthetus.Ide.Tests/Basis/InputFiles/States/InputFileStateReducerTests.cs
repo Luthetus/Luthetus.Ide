@@ -12,79 +12,56 @@ public class InputFileStateReducerTests
         [Fact]
         public void ReduceStartInputFileStateFormAction()
         {
-            //[ReducerMethod]
-            //public static InputFileState (
-            //    InputFileState inState,
-            //    StartInputFileStateFormAction startInputFileStateFormAction)
+            throw new NotImplementedException();
         }
 
         [Fact]
         public void ReduceSetSelectedTreeViewModelAction()
         {
-            //[ReducerMethod]
-            //public static InputFileState (
-            //    InputFileState inState,
-            //    SetSelectedTreeViewModelAction setSelectedTreeViewModelAction)
+            throw new NotImplementedException();
         }
 
         [Fact]
         public void ReduceSetOpenedTreeViewModelAction()
         {
-            //[ReducerMethod]
-            //public static InputFileState (
-            //    InputFileState inState,
-            //    SetOpenedTreeViewModelAction setOpenedTreeViewModelAction)
+            throw new NotImplementedException();
         }
 
         [Fact]
         public void ReduceSetSelectedInputFilePatternAction()
         {
-            //[ReducerMethod]
-            //public static InputFileState (
-            //    InputFileState inState,
-            //    SetSelectedInputFilePatternAction setSelectedInputFilePatternAction)
+            throw new NotImplementedException();
         }
 
 
         [Fact]
         public void ReduceMoveBackwardsInHistoryAction()
         {
-            //[ReducerMethod(typeof(MoveBackwardsInHistoryAction))]
-            //public static InputFileState (InputFileState inState)
+            throw new NotImplementedException();
         }
 
         [Fact]
         public void ReduceMoveForwardsInHistoryAction()
         {
-            //[ReducerMethod(typeof(MoveForwardsInHistoryAction))]
-            //public static InputFileState (InputFileState inState)
+            throw new NotImplementedException();
         }
 
         [Fact]
         public void ReduceOpenParentDirectoryAction()
         {
-            //[ReducerMethod]
-            //public static InputFileState (
-            //    InputFileState inState,
-            //    OpenParentDirectoryAction openParentDirectoryAction)
+            throw new NotImplementedException();
         }
 
         [Fact]
         public void ReduceRefreshCurrentSelectionAction()
         {
-            //[ReducerMethod]
-            //public static InputFileState (
-            //    InputFileState inState,
-            //    RefreshCurrentSelectionAction refreshCurrentSelectionAction)
+            throw new NotImplementedException();
         }
 
         [Fact]
         public void ReduceSetSearchQueryAction()
         {
-            //[ReducerMethod]
-            //public static InputFileState (
-            //    InputFileState inState,
-            //    SetSearchQueryAction setSearchQueryAction)
+            throw new NotImplementedException();
         }
     }
 }

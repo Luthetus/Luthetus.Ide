@@ -6,35 +6,24 @@ public class EditorSyncConstructorTests
     [Fact]
     public void Constructor()
     {
-        //public EditorSync(
-        //    ITextEditorService textEditorService,
-        //    ILuthetusIdeComponentRenderers ideComponentRenderers,
-        //    IFileSystemProvider fileSystemProvider,
-        //    IEnvironmentProvider environmentProvider,
-        //    IDecorationMapperRegistry decorationMapperRegistry,
-        //    ICompilerServiceRegistry compilerServiceRegistry,
-        //    FileSystemSync fileSystemSync,
-        //    InputFileSync inputFileSync,
-        //    IServiceProvider serviceProvider,
-        //    IBackgroundTaskService backgroundTaskService,
-        //    IDispatcher dispatcher)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void EditorTextEditorGroupKey()
     {
-        //public static readonly Key<TextEditorGroup>  = Key<TextEditorGroup>.NewKey();
+        throw new NotImplementedException();
     }
     
     [Fact]
     public void BackgroundTaskService()
     {
-        //public IBackgroundTaskService  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Dispatcher()
     {
-        //public IDispatcher  { get; }
+        throw new NotImplementedException();
     }
 }

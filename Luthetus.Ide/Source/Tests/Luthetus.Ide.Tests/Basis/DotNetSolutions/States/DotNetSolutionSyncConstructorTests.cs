@@ -5,57 +5,43 @@ public class DotNetSolutionSyncConstructorTests
     [Fact]
     public void Constructor()
     {
-        //public DotNetSolutionSync(
-        //    IFileSystemProvider fileSystemProvider,
-        //    IEnvironmentProvider environmentProvider,
-        //    ILuthetusIdeComponentRenderers ideComponentRenderers,
-        //    ILuthetusCommonComponentRenderers commonComponentRenderers,
-        //    ITreeViewService treeViewService,
-        //    IState<DotNetSolutionState> dotNetSolutionStateWrap,
-        //    ITextEditorService textEditorService,
-        //    InputFileSync inputFileSync,
-        //    IBackgroundTaskService backgroundTaskService,
-        //    ICompilerServiceRegistry interfaceCompilerServiceRegistry,
-        //    IDispatcher dispatcher)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void BackgroundTaskService()
     {
-        //public IBackgroundTaskService  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Dispatcher()
     {
-        //public IDispatcher  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void InputFileSync()
     {
-        //public InputFileSync  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void IWithAction()
     {
-        //public interface 
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void WithAction()
     {
-        //public record (Func<DotNetSolutionState, DotNetSolutionState> WithFunc)
-        //    : IWithAction;
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ConstructModelReplacement()
     {
-        //public static IWithAction (
-        //        Key<DotNetSolutionModel> dotNetSolutionModelKey,
-        //        DotNetSolutionModel outDotNetSolutionModel)
+        throw new NotImplementedException();
     }
 }
 

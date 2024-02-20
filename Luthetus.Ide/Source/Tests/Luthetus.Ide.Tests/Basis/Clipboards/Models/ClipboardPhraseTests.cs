@@ -5,24 +5,24 @@ public class ClipboardPhraseTests
     [Fact]
     public void ClipboardPhrase()
     {
-        //public ClipboardPhrase(string command, string dataType, string value)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Command()
     {
-        //public string Command { get; set; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void DataType()
     {
-        //public string DataType { get; set; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Value()
     {
-        //public string Value { get; set; }
+        throw new NotImplementedException();
     }
 }

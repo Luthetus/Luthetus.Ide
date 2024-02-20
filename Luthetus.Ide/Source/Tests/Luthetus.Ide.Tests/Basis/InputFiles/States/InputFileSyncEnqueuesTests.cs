@@ -11,10 +11,6 @@ public class InputFileSyncEnqueuesTests
     [Fact]
     public void RequestInputFileStateForm()
     {
-        //public void (
-        //    string message,
-        //    Func<IAbsolutePath?, Task> onAfterSubmitFunc,
-        //    Func<IAbsolutePath?, Task<bool>> selectionIsValidFunc,
-        //    ImmutableArray<InputFilePattern> inputFilePatterns)
+        throw new NotImplementedException();
     }
 }

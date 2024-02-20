@@ -9,28 +9,19 @@ public class TerminalSessionStateReducerTests
         [Fact]
         public void ReduceRegisterTerminalSessionAction()
         {
-            //[ReducerMethod]
-            //public static TerminalSessionState (
-            //TerminalSessionState inState,
-            //RegisterTerminalSessionAction registerTerminalSessionAction)
+            throw new NotImplementedException();
         }
 
         [Fact]
         public void ReduceUpdateTerminalSessionStateKeyAction()
         {
-            //[ReducerMethod]
-            //public static TerminalSessionState (
-            //    TerminalSessionState inState,
-            //    UpdateTerminalSessionStateKeyAction updateTerminalSessionStateKeyAction)
+            throw new NotImplementedException();
         }
 
         [Fact]
         public void ReduceDisposeTerminalSessionAction()
         {
-            //[ReducerMethod]
-            //public static TerminalSessionState (
-            //    TerminalSessionState inState,
-            //    DisposeTerminalSessionAction disposeTerminalSessionAction)
+            throw new NotImplementedException();
         }
     }
 }

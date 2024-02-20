@@ -8,12 +8,12 @@ public class ProgramExecutionStateMainTests
     [Fact]
     public void Constructor()
     {
-        //private ProgramExecutionState() : this(default(IAbsolutePath))
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void StartupProjectAbsolutePath()
     {
-        //(IAbsolutePath? )
+        throw new NotImplementedException();
     }
 }

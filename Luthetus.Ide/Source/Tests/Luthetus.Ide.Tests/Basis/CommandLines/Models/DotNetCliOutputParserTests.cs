@@ -10,12 +10,12 @@ public class DotNetCliOutputParserTests
     [Fact]
     public void ParseDotNetNewListTerminalOutput()
     {
-	    //public static List<ProjectTemplate> (string output)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ParseDotNetTestListTestsTerminalOutput()
     {
-        //public static List<string> (string output)
+        throw new NotImplementedException();
     }
 }

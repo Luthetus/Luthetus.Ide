@@ -12,13 +12,7 @@ public partial class TestExplorerSyncConstructorTests
     [Fact]
     public void Constructor()
     {
-      //  public TestExplorerSync(
-		    //ILuthetusCommonComponentRenderers commonComponentRenderers,
-      //      ITreeViewService treeViewService,
-      //      IBackgroundTaskService backgroundTaskService,
-		    //IState<DotNetSolutionState> dotNetSolutionStateWrap,
-		    //IState<TerminalSessionState> terminalSessionStateWrap,
-      //      IDispatcher dispatcher)
+        throw new NotImplementedException();
     }
 }
 

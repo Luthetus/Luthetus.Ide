@@ -5,6 +5,6 @@ public class FolderExplorerStateActionsTests
     [Fact]
     public void WithAction()
     {
-        //public record (Func<FolderExplorerState, FolderExplorerState> WithFunc);
+        throw new NotImplementedException();
     }
 }

@@ -7,18 +7,18 @@ public class BackgroundTaskDialogModelTests
     [Fact]
     public void Constructor()
     {
-        //public BackgroundTaskDialogModel(List<IBackgroundTask> seenBackgroundTasks)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void SeenBackgroundTasks()
     {
-        //public List<IBackgroundTask>  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void ReRenderFuncAsync()
     {
-        //public Func<Task>?  { get; set; }
+        throw new NotImplementedException();
     }
 }

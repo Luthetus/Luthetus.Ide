@@ -7,7 +7,6 @@ public partial class TreeViewHelperCSharpClassTests
     [Fact]
     public void CSharpClassLoadChildrenAsync()
     {
-        //public static Task<List<TreeViewNoType>> (
-        //    this TreeViewNamespacePath cSharpClassTreeView)
+        throw new NotImplementedException();
     }
 }

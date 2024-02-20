@@ -5,6 +5,6 @@ public class GitStateActionsTests
     [Fact]
     public void SetGitStateWithAction()
     {
-        //public record (Func<GitState, GitState> GitStateWithFunc);
+        throw new NotImplementedException();
     }
 }

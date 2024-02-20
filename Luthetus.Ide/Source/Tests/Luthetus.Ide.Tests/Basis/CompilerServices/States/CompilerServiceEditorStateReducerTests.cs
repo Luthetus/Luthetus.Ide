@@ -9,10 +9,7 @@ public class CompilerServiceEditorStateReducerTests
         [Fact]
         public void ReduceSetTextEditorViewModelKeyAction()
         {
-            //[ReducerMethod]
-            //public CompilerServiceEditorState (
-            //    CompilerServiceEditorState inState,
-            //    SetTextEditorViewModelKeyAction setTextEditorViewModelKeyAction)
+            throw new NotImplementedException();
         }
     }
 }

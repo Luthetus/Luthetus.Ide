@@ -5,18 +5,18 @@ public class GitTaskTests
     [Fact]
     public void Id()
     {
-        //Guid ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void DisplayName()
     {
-        //string ,
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void CancellationToken()
     {
-        //CancellationToken 
+        throw new NotImplementedException();
     }
 }

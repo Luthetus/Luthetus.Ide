@@ -5,32 +5,24 @@ public class FolderExplorerSyncConstructorTests
     [Fact]
     public void Constructor()
     {
-        //public FolderExplorerSync(
-        //    IFileSystemProvider fileSystemProvider,
-        //    IEnvironmentProvider environmentProvider,
-        //    ILuthetusIdeComponentRenderers ideComponentRenderers,
-        //    ILuthetusCommonComponentRenderers commonComponentRenderers,
-        //    ITreeViewService treeViewService,
-        //    InputFileSync inputFileSync,
-        //    IBackgroundTaskService backgroundTaskService,
-        //    IDispatcher dispatcher)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void BackgroundTaskService()
     {
-        //public IBackgroundTaskService  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Dispatcher()
     {
-        //public IDispatcher  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void InputFileSync()
     {
-        //public InputFileSync  { get; }
+        throw new NotImplementedException();
     }
 }

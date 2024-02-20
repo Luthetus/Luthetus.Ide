@@ -5,6 +5,6 @@ public class CompilerServiceExplorerStateActionsTests
     [Fact]
     public void NewAction()
     {
-        //public record (Func<CompilerServiceExplorerState, CompilerServiceExplorerState> NewFunc);
+        throw new NotImplementedException();
     }
 }

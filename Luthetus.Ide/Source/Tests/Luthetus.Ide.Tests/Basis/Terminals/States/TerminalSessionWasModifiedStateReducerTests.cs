@@ -7,9 +7,6 @@ public partial record TerminalSessionWasModifiedStateReducerTests
     [Fact]
     public void ReduceSetTerminalSessionStateKeyAction()
     {
-        //[ReducerMethod]
-        //public static TerminalSessionWasModifiedState (
-        //    TerminalSessionWasModifiedState inState,
-        //    SetTerminalSessionStateKeyAction setTerminalSessionStateKeyAction)
+        throw new NotImplementedException();
     }
 }

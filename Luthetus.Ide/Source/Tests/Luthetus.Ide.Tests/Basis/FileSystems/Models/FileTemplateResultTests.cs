@@ -5,18 +5,18 @@ public class FileTemplateResultTests
     [Fact]
     public void Constructor()
     {
-        //public FileTemplateResult(NamespacePath fileNamespacePath, string contents)
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void FileNamespacePath()
     {
-        //public NamespacePath  { get; }
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void Contents()
     {
-        //public string  { get; }
+        throw new NotImplementedException();
     }
 }
