@@ -6,48 +6,50 @@ namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 
 public class TreeViewGitFileTests
 {
-    public TreeViewGitFile(
-            GitFile gitFile,
-            ILuthetusIdeComponentRenderers ideComponentRenderers,
-            bool isExpandable,
-            bool isExpanded)
-        : base(gitFile, isExpandable, isExpanded)
+    [Fact]
+    public void Aaa()
     {
-        IdeComponentRenderers = ideComponentRenderers;
+        //public TreeViewGitFile(
+        //        GitFile gitFile,
+        //        ILuthetusIdeComponentRenderers ideComponentRenderers,
+        //        bool isExpandable,
+        //        bool isExpanded)
+        //    : base(gitFile, isExpandable, isExpanded)
     }
 
-    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
-
-    public override bool Equals(object? obj)
+    [Fact]
+    public void Aaa()
     {
-        if (obj is not TreeViewGitFile treeViewGitFile)
-            return false;
-
-        return treeViewGitFile.Item.AbsolutePath.Value == Item.AbsolutePath.Value;
+        //public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
     }
 
-    public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
-
-    public override TreeViewRenderer GetTreeViewRenderer()
+    [Fact]
+    public void Aaa()
     {
-        return new TreeViewRenderer(
-            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewGitFileRendererType,
-            new Dictionary<string, object?>
-            {
-                {
-                    nameof(ITreeViewGitFileRendererType.TreeViewGitFile),
-                    this
-                },
-            });
+        //public override bool Equals(object? obj)
     }
 
-    public override Task LoadChildListAsync()
+    [Fact]
+    public void Aaa()
     {
-        return Task.CompletedTask;
+        //public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
     }
 
-    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
+    [Fact]
+    public void Aaa()
     {
-        // This method is meant to do nothing in this case.
+        //public override TreeViewRenderer GetTreeViewRenderer()
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override Task LoadChildListAsync()
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     }
 }

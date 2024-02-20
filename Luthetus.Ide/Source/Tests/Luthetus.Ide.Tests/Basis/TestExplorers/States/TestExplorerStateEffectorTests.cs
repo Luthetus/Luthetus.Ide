@@ -7,20 +7,26 @@ public partial record TestExplorerStateEffectorTests
 {
 	public class Effector
 	{
-		private readonly TestExplorerSync _testExplorerSync;
+        [Fact]
+        public void Aaa()
+        {
+	  //      public Effector(TestExplorerSync testExplorerSync)
+			//{
+			//	_testExplorerSync = testExplorerSync;
+			//}
+        }
 
-		public Effector(TestExplorerSync testExplorerSync)
-		{
-			_testExplorerSync = testExplorerSync;
-		}
+        [Fact]
+        public void Aaa()
+        {
+			//[EffectMethod(typeof(DotNetSolutionState.StateHasChanged))]
+			//public Task HandleDotNetSolutionStateStateHasChanged(IDispatcher dispatcher)
+			//{
+			//	_ = dispatcher; // Suppress unused parameter
 
-		[EffectMethod(typeof(DotNetSolutionState.StateHasChanged))]
-		public Task HandleDotNetSolutionStateStateHasChanged(IDispatcher dispatcher)
-		{
-			_ = dispatcher; // Suppress unused parameter
-
-            _testExplorerSync.DotNetSolutionStateWrap_StateChanged();
-			return Task.CompletedTask;
-		}
+			//	_testExplorerSync.DotNetSolutionStateWrap_StateChanged();
+			//	return Task.CompletedTask;
+			//}
+        }
 	}
 }

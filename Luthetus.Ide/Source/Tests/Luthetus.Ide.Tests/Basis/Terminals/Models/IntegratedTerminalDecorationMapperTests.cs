@@ -4,8 +4,9 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 
 public class IntegratedTerminalDecorationMapperTests
 {
-    public string Map(byte decorationByte)
+    [Fact]
+    public void Aaa()
     {
-        throw new NotImplementedException();
+        //public string Map(byte decorationByte)
     }
 }

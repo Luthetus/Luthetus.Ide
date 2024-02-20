@@ -6,14 +6,23 @@ using Luthetus.Ide.RazorLib.TestExplorers.Models;
 
 namespace Luthetus.Ide.Tests.Basis.TestExplorers.States;
 
-[FeatureState]
-public partial record TestExplorerStateMainTests
+public class TestExplorerStateMainTests
 {
-    public static readonly Key<TreeViewContainer> TreeViewTestExplorerKey = Key<TreeViewContainer>.NewKey();
-
-    public TestExplorerState()
+    [Fact]
+    public void Aaa()
     {
+        //public static readonly Key<TreeViewContainer> TreeViewTestExplorerKey = Key<TreeViewContainer>.NewKey();
     }
-	
-	public ImmutableList<ProjectTestModel> ProjectTestModelList { get; init; } = ImmutableList<ProjectTestModel>.Empty;
+
+    [Fact]
+    public void Aaa()
+    {
+        //public TestExplorerState()
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public ImmutableList<ProjectTestModel> ProjectTestModelList { get; init; } = ImmutableList<ProjectTestModel>.Empty;
+    }
 }

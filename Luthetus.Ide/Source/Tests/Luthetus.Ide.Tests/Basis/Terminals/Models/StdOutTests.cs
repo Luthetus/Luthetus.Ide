@@ -4,36 +4,28 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 
 public class StdOutTests
 {
-    public StdOut(IntegratedTerminal integratedTerminal, string initialContent, StdOutKind stdOutKind)
-        : base(integratedTerminal)
+    [Fact]
+    public void Aaa()
     {
-        Content = initialContent;
-        StdOutKind = stdOutKind;
+        //public StdOut(IntegratedTerminal integratedTerminal, string initialContent, StdOutKind stdOutKind)
+        //    : base(integratedTerminal)
     }
 
-    public string Content { get; internal set; }
-    public StdOutKind StdOutKind { get; internal set; }
-
-    public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
+    [Fact]
+    public void Aaa()
     {
-        builder.OpenElement(sequence++, "div");
-        {
-            if (StdOutKind == StdOutKind.Started || StdOutKind == StdOutKind.Exited)
-                builder.AddAttribute(sequence++, "class", "luth_te_keyword");
-            if (StdOutKind == StdOutKind.Error)
-                builder.AddAttribute(sequence++, "class", "luth_te_keyword-contextual");
+        //public string Content { get; internal set; }
+    }
 
-            var stringReader = new StringReader(Content);
-            string? line;
-            while ((line = stringReader.ReadLine()) is not null)
-            {
-                builder.AddContent(sequence++, line);
-                builder.OpenElement(sequence++, "br");
-                builder.CloseElement();
-            }
-        }
-        builder.CloseElement();
+    [Fact]
+    public void Aaa()
+    {
+        //public StdOutKind StdOutKind { get; internal set; }
+    }
 
-        return builder;
+    [Fact]
+    public void Aaa()
+    {
+        //public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
     }
 }

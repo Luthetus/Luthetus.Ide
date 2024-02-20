@@ -5,10 +5,18 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.Tests.Basis.Terminals.States;
 
-public partial record TerminalSessionStateMainTests(ImmutableDictionary<Key<TerminalSession>, TerminalSession> TerminalSessionMap)
+public class TerminalSessionStateMainTests
 {
-    public TerminalSessionState()
-        : this(ImmutableDictionary<Key<TerminalSession>, TerminalSession>.Empty)
+    [Fact]
+    public void Aaa()
     {
+        //public TerminalSessionState()
+        //    : this(ImmutableDictionary<Key<TerminalSession>, TerminalSession>.Empty)
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //(ImmutableDictionary<Key<TerminalSession>, TerminalSession> TerminalSessionMap)
     }
 }

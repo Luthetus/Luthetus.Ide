@@ -2,5 +2,9 @@
 
 public class GitStateActionsTests
 {
-    public record SetGitStateWithAction(Func<GitState, GitState> GitStateWithFunc);
+    [Fact]
+    public void Aaa()
+    {
+        //public record SetGitStateWithAction(Func<GitState, GitState> GitStateWithFunc);
+    }
 }

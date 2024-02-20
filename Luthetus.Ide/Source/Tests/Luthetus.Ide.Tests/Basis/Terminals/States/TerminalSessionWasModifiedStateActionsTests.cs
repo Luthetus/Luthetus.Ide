@@ -4,9 +4,13 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.Ide.Tests.Basis.Terminals.States;
 
-public partial record TerminalSessionWasModifiedStateActionsTests
+public class TerminalSessionWasModifiedStateActionsTests
 {
-    public record SetTerminalSessionStateKeyAction(
-        Key<TerminalSession> TerminalSessionKey,
-        Key<StateRecord> StateKey);
+    [Fact]
+    public void Aaa()
+    {
+        //public record SetTerminalSessionStateKeyAction(
+        //    Key<TerminalSession> TerminalSessionKey,
+        //    Key<StateRecord> StateKey);
+    }
 }

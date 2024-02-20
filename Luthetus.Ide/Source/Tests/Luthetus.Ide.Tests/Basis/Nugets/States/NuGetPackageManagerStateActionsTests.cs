@@ -6,8 +6,27 @@ namespace Luthetus.Ide.Tests.Basis.Nugets.States;
 
 public class NuGetPackageManagerStateActionsTests
 {
-    public record SetSelectedProjectToModifyAction(IDotNetProject? SelectedProjectToModify);
-    public record SetNugetQueryAction(string NugetQuery);
-    public record SetIncludePrereleaseAction(bool IncludePrerelease);
-    public record SetMostRecentQueryResultAction(ImmutableArray<NugetPackageRecord> QueryResultList);
+    [Fact]
+    public void Aaa()
+    {
+        //public record SetSelectedProjectToModifyAction(IDotNetProject? SelectedProjectToModify);
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public record SetNugetQueryAction(string NugetQuery);
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public record SetIncludePrereleaseAction(bool IncludePrerelease);
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public record SetMostRecentQueryResultAction(ImmutableArray<NugetPackageRecord> QueryResultList);
+    }
 }

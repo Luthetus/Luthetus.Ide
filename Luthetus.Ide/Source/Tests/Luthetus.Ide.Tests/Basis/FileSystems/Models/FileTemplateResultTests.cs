@@ -1,15 +1,22 @@
-﻿using Luthetus.Common.RazorLib.Namespaces.Models;
-
-namespace Luthetus.Ide.Tests.Basis.FileSystems.Models;
+﻿namespace Luthetus.Ide.Tests.Basis.FileSystems.Models;
 
 public class FileTemplateResultTests
 {
-    public FileTemplateResult(NamespacePath fileNamespacePath, string contents)
+    [Fact]
+    public void Aaa()
     {
-        FileNamespacePath = fileNamespacePath;
-        Contents = contents;
+        //public FileTemplateResult(NamespacePath fileNamespacePath, string contents)
     }
 
-    public NamespacePath FileNamespacePath { get; }
-    public string Contents { get; }
+    [Fact]
+    public void Aaa()
+    {
+        //public NamespacePath FileNamespacePath { get; }
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public string Contents { get; }
+    }
 }

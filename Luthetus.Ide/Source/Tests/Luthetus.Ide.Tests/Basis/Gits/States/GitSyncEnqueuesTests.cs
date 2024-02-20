@@ -6,26 +6,23 @@ namespace Luthetus.Ide.Tests.Basis.Gits.States;
 
 public class GitSyncEnqueuesTests
 {
-    public void RefreshGit(CancellationToken cancellationToken)
+    [Fact]
+    public void Aaa()
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-            "Git Refresh",
-            async () => await RefreshGitAsync(cancellationToken));
+        //public void RefreshGit(CancellationToken cancellationToken)
     }
 
-    public void GitInit(CancellationToken cancellationToken)
+    [Fact]
+    public void Aaa()
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-            "Git Init",
-            async () => await GitInitAsync(cancellationToken));
+        //public void GitInit(CancellationToken cancellationToken)
     }
 
-    public void TryFindGitFolderInDirectory(
-        IAbsolutePath directoryAbsolutePath,
-        CancellationToken cancellationToken)
+    [Fact]
+    public void Aaa()
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-            "Git Find '.git' Folder",
-            async () => await TryFindGitFolderInDirectoryAsync(directoryAbsolutePath, cancellationToken));
+        //public void TryFindGitFolderInDirectory(
+        //    IAbsolutePath directoryAbsolutePath,
+        //    CancellationToken cancellationToken)
     }
 }

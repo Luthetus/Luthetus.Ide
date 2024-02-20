@@ -8,64 +8,30 @@ public class CodeSearchStateReducerTests
 {
     public class Reducer
     {
-        [ReducerMethod]
-        public static CodeSearchState ReduceWithAction(
-            CodeSearchState inState,
-            WithAction withAction)
+        [Fact]
+        public void Aaa()
         {
-            var outState = withAction.WithFunc.Invoke(inState);
-
-            if (outState.Query.StartsWith("f:"))
-            {
-                outState = outState with
-                {
-                    CodeSearchFilterKind = CodeSearchFilterKind.Files
-                };
-            }
-            else if (outState.Query.StartsWith("t:"))
-            {
-                outState = outState with
-                {
-                    CodeSearchFilterKind = CodeSearchFilterKind.Types
-                };
-            }
-            else if (outState.Query.StartsWith("m:"))
-            {
-                outState = outState with
-                {
-                    CodeSearchFilterKind = CodeSearchFilterKind.Members
-                };
-            }
-            else
-            {
-                outState = outState with
-                {
-                    CodeSearchFilterKind = CodeSearchFilterKind.None
-                };
-            }
-
-            return outState;
+            //[ReducerMethod]
+            //public static CodeSearchState ReduceWithAction(
+            //    CodeSearchState inState,
+            //    WithAction withAction)
         }
 
-        [ReducerMethod]
-        public static CodeSearchState ReduceAddResultAction(
-            CodeSearchState inState,
-            AddResultAction addResultAction)
+        [Fact]
+        public void Aaa()
         {
-            return inState with
-            {
-                ResultList = inState.ResultList.Add(addResultAction.Result)
-            };
+            //[ReducerMethod]
+            //public static CodeSearchState ReduceAddResultAction(
+            //    CodeSearchState inState,
+            //    AddResultAction addResultAction)
         }
 
-        [ReducerMethod(typeof(ClearResultListAction))]
-        public static CodeSearchState ReduceClearResultListAction(
-            CodeSearchState inState)
+        [Fact]
+        public void Aaa()
         {
-            return inState with
-            {
-                ResultList = ImmutableList<string>.Empty
-            };
+            //[ReducerMethod(typeof(ClearResultListAction))]
+            //public static CodeSearchState ReduceClearResultListAction(
+            //    CodeSearchState inState)
         }
     }
 }

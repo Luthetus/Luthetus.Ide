@@ -6,15 +6,13 @@ public class CompilerServiceEditorStateReducerTests
 {
     public class Reducer
     {
-        [ReducerMethod]
-        public CompilerServiceEditorState ReduceSetTextEditorViewModelKeyAction(
-            CompilerServiceEditorState inState,
-            SetTextEditorViewModelKeyAction setTextEditorViewModelKeyAction)
+        [Fact]
+        public void Aaa()
         {
-            return inState with
-            { 
-                TextEditorViewModelKey = setTextEditorViewModelKeyAction.TextEditorViewModelKey
-            };
+            //[ReducerMethod]
+            //public CompilerServiceEditorState ReduceSetTextEditorViewModelKeyAction(
+            //    CompilerServiceEditorState inState,
+            //    SetTextEditorViewModelKeyAction setTextEditorViewModelKeyAction)
         }
     }
 }

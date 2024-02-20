@@ -11,34 +11,29 @@ namespace Luthetus.Ide.Tests.Basis.CompilerServices.States;
 
 public class CompilerServiceExplorerSyncConstructorTests
 {
-    private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
-    private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
-    private readonly ITreeViewService _treeViewService;
-    private readonly IState<CompilerServiceExplorerState> _compilerServiceExplorerStateWrap;
-    private readonly IDecorationMapperRegistry _decorationMapperRegistry;
-    private readonly CompilerServiceRegistry _compilerServiceRegistry;
-
-    public CompilerServiceExplorerSync(
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
-        ITreeViewService treeViewService,
-        IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
-        IDecorationMapperRegistry decorationMapperRegistry,
-        ICompilerServiceRegistry compilerServiceRegistry,
-        IBackgroundTaskService backgroundTaskService,
-        IDispatcher dispatcher)
+    [Fact]
+    public void Aaa()
     {
-        _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
-        _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
-        _treeViewService = treeViewService;
-        _compilerServiceExplorerStateWrap = compilerServiceExplorerStateWrap;
-        _decorationMapperRegistry = decorationMapperRegistry;
-        _compilerServiceRegistry = (CompilerServiceRegistry)compilerServiceRegistry;
-
-        BackgroundTaskService = backgroundTaskService;
-        Dispatcher = dispatcher;
+        //public CompilerServiceExplorerSync(
+        //    ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
+        //    ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
+        //    ITreeViewService treeViewService,
+        //    IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
+        //    IDecorationMapperRegistry decorationMapperRegistry,
+        //    ICompilerServiceRegistry compilerServiceRegistry,
+        //    IBackgroundTaskService backgroundTaskService,
+        //    IDispatcher dispatcher)
     }
 
-    public IBackgroundTaskService BackgroundTaskService { get; }
-    public IDispatcher Dispatcher { get; }
+    [Fact]
+    public void Aaa()
+    {
+        //public IBackgroundTaskService BackgroundTaskService { get; }
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public IDispatcher Dispatcher { get; }
+    }
 }

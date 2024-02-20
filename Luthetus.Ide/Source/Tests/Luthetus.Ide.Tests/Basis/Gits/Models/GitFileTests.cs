@@ -1,19 +1,22 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+﻿namespace Luthetus.Ide.Tests.Basis.Gits.Models;
 
-namespace Luthetus.Ide.Tests.Basis.Gits.Models;
-
-public class GitFileTests(IAbsolutePath AbsolutePath, GitDirtyReason GitDirtyReason)
+public class GitFileTests
 {
-    public bool IsDirty => GitDirtyReason switch
+    [Fact]
+    public void Aaa()
     {
-        GitDirtyReason.None => false,
-        GitDirtyReason.Untracked => true,
-        GitDirtyReason.Added => true,
-        GitDirtyReason.Modified => true,
-        GitDirtyReason.Deleted => true,
-        _ => throw new ApplicationException(GetUnrecognizedGitDirtyReasonExceptionMessage(GitDirtyReason))
-    };
+        //IAbsolutePath AbsolutePath,
+    }
 
-    private static string GetUnrecognizedGitDirtyReasonExceptionMessage(GitDirtyReason gitDirtyReason) =>
-        $"The {nameof(GitDirtyReason)}: {gitDirtyReason} was unrecognized.";
+    [Fact]
+    public void Aaa()
+    {
+        //GitDirtyReason GitDirtyReason
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public bool IsDirty => GitDirtyReason switch;
+    }
 }

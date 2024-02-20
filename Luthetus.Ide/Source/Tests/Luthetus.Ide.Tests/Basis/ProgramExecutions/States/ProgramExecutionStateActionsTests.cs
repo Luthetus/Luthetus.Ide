@@ -4,5 +4,9 @@ namespace Luthetus.Ide.Tests.Basis.ProgramExecutions.States;
 
 public class ProgramExecutionStateActionsTests
 {
-    public record SetStartupProjectAbsolutePathAction(IAbsolutePath? StartupProjectAbsolutePath);
+    [Fact]
+    public void Aaa()
+    {
+        //public record SetStartupProjectAbsolutePathAction(IAbsolutePath? StartupProjectAbsolutePath);
+    }
 }

@@ -6,16 +6,27 @@ namespace Luthetus.Ide.Tests.Basis.TestExplorers.Models;
 
 public class TestExplorerRenderBatchValidatedTests
 {
-	public TestExplorerRenderBatchValidated(TestExplorerRenderBatch testExplorerRenderBatch)
-	{
-		TestExplorerState = testExplorerRenderBatch.TestExplorerState;
-		AppOptionsState = testExplorerRenderBatch.AppOptionsState;
+    [Fact]
+    public void Aaa()
+    {
+        //public TestExplorerRenderBatchValidated(TestExplorerRenderBatch testExplorerRenderBatch)
+    }
 
-		TreeViewContainer = testExplorerRenderBatch.TreeViewContainer ??
-			throw new NullReferenceException();
-	}
+    [Fact]
+    public void Aaa()
+    {
+        //public TestExplorerState TestExplorerState { get; }
+    }
 
-	public TestExplorerState TestExplorerState { get; }
-	public AppOptionsState AppOptionsState { get; }
-	public TreeViewContainer TreeViewContainer { get; }
+    [Fact]
+    public void Aaa()
+    {
+        //public AppOptionsState AppOptionsState { get; }
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public TreeViewContainer TreeViewContainer { get; }
+    }
 }

@@ -2,38 +2,79 @@
 
 public class LuthetusIdeTreeViewsTests
 {
-    public LuthetusIdeTreeViews(
-        Type treeViewNamespacePathRendererType,
-        Type treeViewAbsolutePathRendererType,
-        Type treeViewGitFileRendererType,
-        Type treeViewCompilerServiceRendererType,
-        Type treeViewCSharpProjectDependenciesRendererType,
-        Type treeViewCSharpProjectNugetPackageReferencesRendererType,
-        Type treeViewCSharpProjectToProjectReferencesRendererType,
-        Type treeViewLightWeightNugetPackageRecordRendererType,
-        Type treeViewCSharpProjectToProjectReferenceRendererType,
-        Type treeViewSolutionFolderRendererType)
+    [Fact]
+    public void Aaa()
     {
-        TreeViewNamespacePathRendererType = treeViewNamespacePathRendererType;
-        TreeViewAbsolutePathRendererType = treeViewAbsolutePathRendererType;
-        TreeViewGitFileRendererType = treeViewGitFileRendererType;
-        TreeViewCompilerServiceRendererType = treeViewCompilerServiceRendererType;
-        TreeViewCSharpProjectDependenciesRendererType = treeViewCSharpProjectDependenciesRendererType;
-        TreeViewCSharpProjectNugetPackageReferencesRendererType = treeViewCSharpProjectNugetPackageReferencesRendererType;
-        TreeViewCSharpProjectToProjectReferencesRendererType = treeViewCSharpProjectToProjectReferencesRendererType;
-        TreeViewLightWeightNugetPackageRecordRendererType = treeViewLightWeightNugetPackageRecordRendererType;
-        TreeViewCSharpProjectToProjectReferenceRendererType = treeViewCSharpProjectToProjectReferenceRendererType;
-        TreeViewSolutionFolderRendererType = treeViewSolutionFolderRendererType;
+        //public LuthetusIdeTreeViews(
+        //    Type treeViewNamespacePathRendererType,
+        //    Type treeViewAbsolutePathRendererType,
+        //    Type treeViewGitFileRendererType,
+        //    Type treeViewCompilerServiceRendererType,
+        //    Type treeViewCSharpProjectDependenciesRendererType,
+        //    Type treeViewCSharpProjectNugetPackageReferencesRendererType,
+        //    Type treeViewCSharpProjectToProjectReferencesRendererType,
+        //    Type treeViewLightWeightNugetPackageRecordRendererType,
+        //    Type treeViewCSharpProjectToProjectReferenceRendererType,
+        //    Type treeViewSolutionFolderRendererType)
+    }
+    
+    [Fact]
+    public void Aaa()
+    {
+        //public Type TreeViewNamespacePathRendererType { get; }
+    }
+    
+    [Fact]
+    public void Aaa()
+    {
+        //public Type TreeViewSolutionFolderRendererType { get; }
+    }
+    
+    [Fact]
+    public void Aaa()
+    {
+        //public Type TreeViewCSharpProjectDependenciesRendererType { get; }
+    }
+    
+    [Fact]
+    public void Aaa()
+    {
+        //public Type TreeViewCSharpProjectNugetPackageReferencesRendererType { get; }
+    }
+    
+    [Fact]
+    public void Aaa()
+    {
+        //public Type TreeViewCSharpProjectToProjectReferencesRendererType { get; }
+    }
+    
+    [Fact]
+    public void Aaa()
+    {
+        //public Type TreeViewLightWeightNugetPackageRecordRendererType { get; }
+    }
+    
+    [Fact]
+    public void Aaa()
+    {
+        //public Type TreeViewCSharpProjectToProjectReferenceRendererType { get; }
+    }
+    
+    [Fact]
+    public void Aaa()
+    {
+        //public Type TreeViewAbsolutePathRendererType { get; }
+    }
+    
+    [Fact]
+    public void Aaa()
+    {
+        //public Type TreeViewGitFileRendererType { get; }
     }
 
-    public Type TreeViewNamespacePathRendererType { get; }
-    public Type TreeViewSolutionFolderRendererType { get; }
-    public Type TreeViewCSharpProjectDependenciesRendererType { get; }
-    public Type TreeViewCSharpProjectNugetPackageReferencesRendererType { get; }
-    public Type TreeViewCSharpProjectToProjectReferencesRendererType { get; }
-    public Type TreeViewLightWeightNugetPackageRecordRendererType { get; }
-    public Type TreeViewCSharpProjectToProjectReferenceRendererType { get; }
-    public Type TreeViewAbsolutePathRendererType { get; }
-    public Type TreeViewGitFileRendererType { get; }
-    public Type TreeViewCompilerServiceRendererType { get; }
+    [Fact]
+    public void Aaa()
+    {
+        //public Type TreeViewCompilerServiceRendererType { get; }
+    }
 }

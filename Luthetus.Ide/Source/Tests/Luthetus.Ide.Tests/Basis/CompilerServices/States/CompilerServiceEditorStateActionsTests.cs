@@ -5,5 +5,9 @@ namespace Luthetus.Ide.Tests.Basis.CompilerServices.States;
 
 public class CompilerServiceEditorStateActionsTests
 {
-    public record SetTextEditorViewModelKeyAction(Key<TextEditorViewModel> TextEditorViewModelKey);
+    [Fact]
+    public void Aaa()
+    {
+        //public record SetTextEditorViewModelKeyAction(Key<TextEditorViewModel> TextEditorViewModelKey);
+    }
 }

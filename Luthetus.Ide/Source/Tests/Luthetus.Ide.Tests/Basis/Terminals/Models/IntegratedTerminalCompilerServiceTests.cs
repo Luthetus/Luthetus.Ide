@@ -7,11 +7,13 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 
 public sealed class IntegratedTerminalCompilerServiceTests
 {
-    public IntegratedTerminalCompilerService(
-            ITextEditorService textEditorService,
-            Func<ResourceUri, string, ILuthLexer> getLexerFunc,
-            Func<ILuthLexer, ILuthParser> getParserFunc)
-        : base(textEditorService, getLexerFunc, getParserFunc)
+    [Fact]
+    public void Aaa()
     {
+        //public IntegratedTerminalCompilerService(
+        //        ITextEditorService textEditorService,
+        //        Func<ResourceUri, string, ILuthLexer> getLexerFunc,
+        //        Func<ILuthLexer, ILuthParser> getParserFunc)
+        //    : base(textEditorService, getLexerFunc, getParserFunc)
     }
 }

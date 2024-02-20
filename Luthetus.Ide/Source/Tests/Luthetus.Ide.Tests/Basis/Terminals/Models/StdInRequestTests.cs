@@ -5,21 +5,28 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 
 public class StdInRequestTests
 {
-    public StdInRequest(IntegratedTerminal integratedTerminal)
-        : base(integratedTerminal)
+    [Fact]
+    public void Aaa()
     {
+        //public StdInRequest(IntegratedTerminal integratedTerminal)
+        //    : base(integratedTerminal)
     }
 
-    public bool IsCompleted { get; set; }
-    public string Value { get; set; } = string.Empty;
-
-    public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
+    [Fact]
+    public void Aaa()
     {
-        builder.OpenComponent<StdInInputDisplay>(sequence++);
-        builder.AddAttribute(sequence++, nameof(StdInInputDisplay.IntegratedTerminal), _integratedTerminal);
-        builder.AddAttribute(sequence++, nameof(StdInInputDisplay.StdInRequest), this);
-        builder.CloseComponent();
+        //public bool IsCompleted { get; set; }
+    }
 
-        return builder;
+    [Fact]
+    public void Aaa()
+    {
+        //public string Value { get; set; } = string.Empty;
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
     }
 }

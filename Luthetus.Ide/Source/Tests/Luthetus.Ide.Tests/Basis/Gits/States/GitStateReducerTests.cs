@@ -6,12 +6,13 @@ public class GitStateReducerTests
 {
     private class Reducer
     {
-        [ReducerMethod]
-        public static GitState ReduceSetGitStateWithAction(
-            GitState inGitState,
-            SetGitStateWithAction setGitStateWithAction)
+        [Fact]
+        public void Aaa()
         {
-            return setGitStateWithAction.GitStateWithFunc.Invoke(inGitState);
+            //[ReducerMethod]
+            //public static GitState ReduceSetGitStateWithAction(
+            //    GitState inGitState,
+            //    SetGitStateWithAction setGitStateWithAction)
         }
     }
 }

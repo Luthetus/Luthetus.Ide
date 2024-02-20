@@ -6,12 +6,13 @@ public class FolderExplorerStateReducerTests
 {
     private class Reducer
     {
-        [ReducerMethod]
-        public static FolderExplorerState ReduceWithAction(
-            FolderExplorerState inState,
-            WithAction withAction)
+        [Fact]
+        public void Aaa()
         {
-            return withAction.WithFunc.Invoke(inState);
+            //[ReducerMethod]
+            //public static FolderExplorerState ReduceWithAction(
+            //    FolderExplorerState inState,
+            //    WithAction withAction)
         }
     }
 }

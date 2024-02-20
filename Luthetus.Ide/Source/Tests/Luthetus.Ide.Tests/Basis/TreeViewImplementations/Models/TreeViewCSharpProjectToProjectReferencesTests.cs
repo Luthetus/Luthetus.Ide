@@ -9,117 +9,64 @@ namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 
 public class TreeViewCSharpProjectToProjectReferencesTests
 {
-    public TreeViewCSharpProjectToProjectReferences(
-            CSharpProjectToProjectReferences cSharpProjectToProjectReferences,
-            ILuthetusIdeComponentRenderers ideComponentRenderers,
-            IFileSystemProvider fileSystemProvider,
-            IEnvironmentProvider environmentProvider,
-            bool isExpandable,
-            bool isExpanded)
-        : base(cSharpProjectToProjectReferences, isExpandable, isExpanded)
+    [Fact]
+    public void Aaa()
     {
-        IdeComponentRenderers = ideComponentRenderers;
-        FileSystemProvider = fileSystemProvider;
-        EnvironmentProvider = environmentProvider;
+        //public TreeViewCSharpProjectToProjectReferences(
+        //        CSharpProjectToProjectReferences cSharpProjectToProjectReferences,
+        //        ILuthetusIdeComponentRenderers ideComponentRenderers,
+        //        IFileSystemProvider fileSystemProvider,
+        //        IEnvironmentProvider environmentProvider,
+        //        bool isExpandable,
+        //        bool isExpanded)
+        //    : base(cSharpProjectToProjectReferences, isExpandable, isExpanded)
     }
 
-    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
-    public IFileSystemProvider FileSystemProvider { get; }
-    public IEnvironmentProvider EnvironmentProvider { get; }
-
-    public override bool Equals(object? obj)
+    [Fact]
+    public void Aaa()
     {
-        if (obj is not TreeViewCSharpProjectToProjectReferences otherTreeView)
-            return false;
-
-        return otherTreeView.GetHashCode() == GetHashCode();
+        //public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
     }
 
-    public override int GetHashCode() => Item.CSharpProjectNamespacePath.AbsolutePath.Value.GetHashCode();
-
-    public override TreeViewRenderer GetTreeViewRenderer()
+    [Fact]
+    public void Aaa()
     {
-        return new TreeViewRenderer(
-            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewCSharpProjectToProjectReferencesRendererType,
-            null);
+        //public IFileSystemProvider FileSystemProvider { get; }
     }
 
-    public override async Task LoadChildListAsync()
+    [Fact]
+    public void Aaa()
     {
-        var previousChildren = new List<TreeViewNoType>(ChildList);
-
-        var content = await FileSystemProvider.File.ReadAllTextAsync(
-            Item.CSharpProjectNamespacePath.AbsolutePath.Value);
-
-        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
-            new(Item.CSharpProjectNamespacePath.AbsolutePath.Value),
-            content);
-
-        var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
-
-        var cSharpProjectSyntaxWalker = new CSharpProjectSyntaxWalker();
-
-        cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
-
-        var projectReferences = cSharpProjectSyntaxWalker.TagNodes
-            .Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText() ?? string.Empty) == "ProjectReference")
-            .ToList();
-
-        List<CSharpProjectToProjectReference> cSharpProjectToProjectReferences = new();
-
-        foreach (var projectReference in projectReferences)
-        {
-            var attributeNameValueTuples = projectReference
-                .AttributeNodes
-                .Select(x => (
-                    x.AttributeNameSyntax.TextEditorTextSpan
-                        .GetText()
-                        .Trim(),
-                    x.AttributeValueSyntax.TextEditorTextSpan
-                        .GetText()
-                        .Replace("\"", string.Empty)
-                        .Replace("=", string.Empty)
-                        .Trim()))
-                .ToArray();
-
-            var includeAttribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Include");
-
-            var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
-                Item.CSharpProjectNamespacePath.AbsolutePath,
-                includeAttribute.Item2,
-                EnvironmentProvider);
-
-            var referenceProjectAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
-                referenceProjectAbsolutePathString,
-                false);
-
-            var cSharpProjectToProjectReference = new CSharpProjectToProjectReference(
-                Item.CSharpProjectNamespacePath,
-                referenceProjectAbsolutePath);
-
-            cSharpProjectToProjectReferences.Add(cSharpProjectToProjectReference);
-        }
-
-        var newChildList = cSharpProjectToProjectReferences
-            .Select(x => (TreeViewNoType)new TreeViewCSharpProjectToProjectReference(
-                x,
-                IdeComponentRenderers,
-                FileSystemProvider,
-                EnvironmentProvider,
-                false,
-                false)
-            {
-                TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
-            })
-            .ToList();
-
-        ChildList = newChildList;
-        LinkChildren(previousChildren, ChildList);
-        TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
+        //public IEnvironmentProvider EnvironmentProvider { get; }
     }
 
-    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
+    [Fact]
+    public void Aaa()
     {
-        return;
+        //public override bool Equals(object? obj)
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override int GetHashCode() => Item.CSharpProjectNamespacePath.AbsolutePath.Value.GetHashCode();
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override TreeViewRenderer GetTreeViewRenderer()
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override async Task LoadChildListAsync()
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     }
 }

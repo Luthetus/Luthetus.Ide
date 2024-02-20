@@ -5,10 +5,9 @@ namespace Luthetus.Ide.Tests.Basis.LocalStorages.Models;
 
 public partial class LocalStorageSyncEnqueuesTests
 {
-    public void LocalStorageSetItem(string key, string value)
+    [Fact]
+    public void Aaa()
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-            "LocalStorage SetItem",
-            async () => await LocalStorageSetItemAsync(key, value));
+        //public void LocalStorageSetItem(string key, string value)
     }
 }

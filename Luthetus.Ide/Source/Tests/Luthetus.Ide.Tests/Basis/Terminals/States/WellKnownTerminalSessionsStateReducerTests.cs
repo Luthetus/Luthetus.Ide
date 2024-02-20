@@ -6,15 +6,13 @@ public partial record WellKnownTerminalSessionsStateReducerTests
 {
     private class Reducer
     {
-        [ReducerMethod]
-        public static WellKnownTerminalSessionsState ReduceSetActiveTerminalCommandKeyAction(
-            WellKnownTerminalSessionsState inState,
-            SetActiveWellKnownTerminalSessionKey setActiveWellKnownTerminalSessionKeyAction)
+        [Fact]
+        public void Aaa()
         {
-            return inState with
-            {
-                ActiveTerminalSessionKey = setActiveWellKnownTerminalSessionKeyAction.TerminalSessionKey
-            };
+            //[ReducerMethod]
+            //public static WellKnownTerminalSessionsState ReduceSetActiveTerminalCommandKeyAction(
+            //    WellKnownTerminalSessionsState inState,
+            //    SetActiveWellKnownTerminalSessionKey setActiveWellKnownTerminalSessionKeyAction)
         }
     }
 }

@@ -4,12 +4,15 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 
 public abstract class StdTests
 {
-    protected readonly IntegratedTerminal _integratedTerminal;
-
-    public Std(IntegratedTerminal integratedTerminal)
+    [Fact]
+    public void Aaa()
     {
-        _integratedTerminal = integratedTerminal;
+        //public Std(IntegratedTerminal integratedTerminal)
     }
 
-    public abstract RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence);
+    [Fact]
+    public void Aaa()
+    {
+        //public abstract RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence);
+    }
 }

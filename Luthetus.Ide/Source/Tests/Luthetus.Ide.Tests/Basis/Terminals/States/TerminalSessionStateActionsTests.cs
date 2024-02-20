@@ -5,7 +5,21 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.States;
 
 public partial record TerminalSessionStateActionsTests
 {
-    public record RegisterTerminalSessionAction(TerminalSession TerminalSession);
-    public record UpdateTerminalSessionStateKeyAction(TerminalSession TerminalSession);
-    public record DisposeTerminalSessionAction(Key<TerminalSession> TerminalSessionKey);
+    [Fact]
+    public void Aaa()
+    {
+        //public record RegisterTerminalSessionAction(TerminalSession TerminalSession);
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public record UpdateTerminalSessionStateKeyAction(TerminalSession TerminalSession);
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public record DisposeTerminalSessionAction(Key<TerminalSession> TerminalSessionKey);
+    }
 }

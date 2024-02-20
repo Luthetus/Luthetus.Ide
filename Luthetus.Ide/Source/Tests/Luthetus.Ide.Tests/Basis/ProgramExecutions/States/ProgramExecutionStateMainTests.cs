@@ -3,10 +3,17 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.Tests.Basis.ProgramExecutions.States;
 
-public class ProgramExecutionStateMainTests(IAbsolutePath? StartupProjectAbsolutePath)
+public class ProgramExecutionStateMainTests
 {
-    private ProgramExecutionState() : this(default(IAbsolutePath))
+    [Fact]
+    public void Aaa()
     {
+        //private ProgramExecutionState() : this(default(IAbsolutePath))
+    }
 
+    [Fact]
+    public void Aaa()
+    {
+        //(IAbsolutePath? StartupProjectAbsolutePath)
     }
 }

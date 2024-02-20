@@ -8,59 +8,67 @@ namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 
 public class TreeViewMarkupStringTests
 {
-    public TreeViewMarkupString(
-            MarkupString markupString,
-            ILuthetusIdeComponentRenderers ideComponentRenderers,
-            IFileSystemProvider fileSystemProvider,
-            IEnvironmentProvider environmentProvider,
-            bool isExpandable,
-            bool isExpanded)
-        : base(
-            markupString,
-            isExpandable,
-            isExpanded)
+    [Fact]
+    public void Aaa()
     {
-        IdeComponentRenderers = ideComponentRenderers;
-        FileSystemProvider = fileSystemProvider;
-        EnvironmentProvider = environmentProvider;
+        //public TreeViewMarkupString(
+        //        MarkupString markupString,
+        //        ILuthetusIdeComponentRenderers ideComponentRenderers,
+        //        IFileSystemProvider fileSystemProvider,
+        //        IEnvironmentProvider environmentProvider,
+        //        bool isExpandable,
+        //        bool isExpanded)
+        //    : base(
+        //        markupString,
+        //        isExpandable,
+        //        isExpanded)
     }
 
-    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
-    public IFileSystemProvider FileSystemProvider { get; }
-    public IEnvironmentProvider EnvironmentProvider { get; }
-
-    public override bool Equals(object? obj)
+    [Fact]
+    public void Aaa()
     {
-        // TODO: Equals
-        return false;
+        //public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
     }
 
-    public override int GetHashCode()
+    [Fact]
+    public void Aaa()
     {
-        // TODO: GetHashCode
-        return Path.GetRandomFileName().GetHashCode();
+        //public IFileSystemProvider FileSystemProvider { get; }
     }
 
-    public override TreeViewRenderer GetTreeViewRenderer()
+    [Fact]
+    public void Aaa()
     {
-        return new TreeViewRenderer(
-            typeof(TreeViewMarkupStringDisplay),
-            new Dictionary<string, object?>
-            {
-                {
-                    nameof(TreeViewMarkupStringDisplay.MarkupString),
-                    Item
-                },
-            });
+        //public IEnvironmentProvider EnvironmentProvider { get; }
     }
 
-    public override Task LoadChildListAsync()
+    [Fact]
+    public void Aaa()
     {
-        return Task.CompletedTask;
+        //public override bool Equals(object? obj)
     }
 
-    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
+    [Fact]
+    public void Aaa()
     {
-        return;
+        //public override int GetHashCode()
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override TreeViewRenderer GetTreeViewRenderer()
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override Task LoadChildListAsync()
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     }
 }

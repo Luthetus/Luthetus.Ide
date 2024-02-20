@@ -7,54 +7,38 @@ namespace Luthetus.Ide.Tests.Basis.Nugets.Models;
 
 public class NugetPackageManagerProviderAzureSearchUsncTests
 {
-    private readonly HttpClient _httpClient;
-
-    public NugetPackageManagerProviderAzureSearchUsnc(HttpClient httpClient)
+    [Fact]
+    public void Aaa()
     {
-        _httpClient = httpClient;
+        //public NugetPackageManagerProviderAzureSearchUsnc(HttpClient httpClient)
     }
 
-    public string ProviderWebsiteUrlNoFormatting { get; } = "https://azuresearch-usnc.nuget.org/";
-
-    public async Task<ImmutableArray<NugetPackageRecord>> QueryForNugetPackagesAsync(
-        string queryValue,
-        bool includePrerelease = false,
-        CancellationToken cancellationToken = default)
+    [Fact]
+    public void Aaa()
     {
-        return await QueryForNugetPackagesAsync(
-            BuildQuery(queryValue, includePrerelease),
-            cancellationToken);
+        //public string ProviderWebsiteUrlNoFormatting { get; } = "https://azuresearch-usnc.nuget.org/";
     }
 
-    public async Task<ImmutableArray<NugetPackageRecord>> QueryForNugetPackagesAsync(
-        INugetPackageManagerQuery nugetPackageManagerQuery,
-        CancellationToken cancellationToken = default)
+    [Fact]
+    public void Aaa()
     {
-        var query = nugetPackageManagerQuery.Query;
-
-        var nugetPackages = await _httpClient
-            .GetFromJsonAsync<NugetResponse>(
-                query,
-                cancellationToken: cancellationToken);
-
-        if (nugetPackages is not null)
-            return nugetPackages.Data.ToImmutableArray();
-
-        return ImmutableArray<NugetPackageRecord>.Empty;
+        //public async Task<ImmutableArray<NugetPackageRecord>> QueryForNugetPackagesAsync(
+        //    string queryValue,
+        //    bool includePrerelease = false,
+        //    CancellationToken cancellationToken = default)
     }
 
-    public INugetPackageManagerQuery BuildQuery(string query, bool includePrerelease = false)
+    [Fact]
+    public void Aaa()
     {
-        var queryBuilder = new StringBuilder(ProviderWebsiteUrlNoFormatting + "query?");
-
-        queryBuilder.Append($"q={HttpUtility.UrlEncode(query)}");
-
-        queryBuilder.Append('&');
-
-        queryBuilder.Append($"prerelease={includePrerelease}");
-
-        return new NugetPackageManagerQuery(queryBuilder.ToString());
+        //public async Task<ImmutableArray<NugetPackageRecord>> QueryForNugetPackagesAsync(
+        //    INugetPackageManagerQuery nugetPackageManagerQuery,
+        //    CancellationToken cancellationToken = default)
     }
 
-    private record NugetPackageManagerQuery(string Query) : INugetPackageManagerQuery;
+    [Fact]
+    public void Aaa()
+    {
+        //public INugetPackageManagerQuery BuildQuery(string query, bool includePrerelease = false)
+    }
 }

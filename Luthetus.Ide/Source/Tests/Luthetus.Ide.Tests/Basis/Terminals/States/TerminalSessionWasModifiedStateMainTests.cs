@@ -6,10 +6,18 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.Tests.Basis.Terminals.States;
 
-public partial record TerminalSessionWasModifiedStateMainTests(ImmutableDictionary<Key<TerminalSession>, Key<StateRecord>> TerminalSessionWasModifiedMap, string EmptyTextHack)
+public class TerminalSessionWasModifiedStateMainTests
 {
-    public TerminalSessionWasModifiedState()
-        : this(ImmutableDictionary<Key<TerminalSession>, Key<StateRecord>>.Empty, string.Empty)
+    [Fact]
+    public void Aaa()
     {
+        //public TerminalSessionWasModifiedState()
+        //    : this(ImmutableDictionary<Key<TerminalSession>, Key<StateRecord>>.Empty, string.Empty)
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //(ImmutableDictionary<Key<TerminalSession>, Key<StateRecord>> TerminalSessionWasModifiedMap, string EmptyTextHack)
     }
 }

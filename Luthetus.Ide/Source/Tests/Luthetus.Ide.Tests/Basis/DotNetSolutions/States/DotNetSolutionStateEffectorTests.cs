@@ -7,11 +7,11 @@ public class DotNetSolutionStateEffectorTests
 {
 	public class Effector
 	{
-		[EffectMethod(typeof(IWithAction))]
-		public Task NotifyDotNetSolutionStateStateHasChanged(IDispatcher dispatcher)
-		{
-			dispatcher.Dispatch(new StateHasChanged());
-			return Task.CompletedTask;
-		}
+        [Fact]
+        public void Aaa()
+        {
+      //      [EffectMethod(typeof(IWithAction))]
+		    //public Task NotifyDotNetSolutionStateStateHasChanged(IDispatcher dispatcher)
+        }
 	}
 }

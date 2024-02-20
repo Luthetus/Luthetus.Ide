@@ -6,19 +6,24 @@ namespace Luthetus.Ide.Tests.Basis.LocalStorages.Models;
 
 public partial class LocalStorageSyncConstructorTests
 {
-    private readonly IJSRuntime _jsRuntime;
-
-    public LocalStorageSync(
-        IJSRuntime jsRuntime,
-        IBackgroundTaskService backgroundTaskService,
-        IDispatcher dispatcher)
+    [Fact]
+    public void Aaa()
     {
-        _jsRuntime = jsRuntime;
-        
-        BackgroundTaskService = backgroundTaskService;
-        Dispatcher = dispatcher;
+        //public LocalStorageSync(
+        //    IJSRuntime jsRuntime,
+        //    IBackgroundTaskService backgroundTaskService,
+        //    IDispatcher dispatcher)
     }
 
-    public IBackgroundTaskService BackgroundTaskService { get; }
-    public IDispatcher Dispatcher { get; }
+    [Fact]
+    public void Aaa()
+    {
+        //public IBackgroundTaskService BackgroundTaskService { get; }
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public IDispatcher Dispatcher { get; }
+    }
 }

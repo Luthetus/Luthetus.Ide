@@ -7,28 +7,27 @@ namespace Luthetus.Ide.Tests.Basis.Gits.States;
 
 public class GitSyncConstructorTests
 {
-    private readonly IState<TerminalSessionState> _terminalSessionStateWrap;
-    private readonly IState<GitState> _gitStateWrap;
-    private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly IEnvironmentProvider _environmentProvider;
-
-    public GitSync(
-        IState<TerminalSessionState> terminalSessionStateWrap,
-        IState<GitState> gitStateWrap,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        IBackgroundTaskService backgroundTaskService,
-        IDispatcher dispatcher)
+    [Fact]
+    public void Aaa()
     {
-        _terminalSessionStateWrap = terminalSessionStateWrap;
-        _gitStateWrap = gitStateWrap;
-        _fileSystemProvider = fileSystemProvider;
-        _environmentProvider = environmentProvider;
-
-        BackgroundTaskService = backgroundTaskService;
-        Dispatcher = dispatcher;
+        //public GitSync(
+        //    IState<TerminalSessionState> terminalSessionStateWrap,
+        //    IState<GitState> gitStateWrap,
+        //    IFileSystemProvider fileSystemProvider,
+        //    IEnvironmentProvider environmentProvider,
+        //    IBackgroundTaskService backgroundTaskService,
+        //    IDispatcher dispatcher)
     }
 
-    public IBackgroundTaskService BackgroundTaskService { get; }
-    public IDispatcher Dispatcher { get; }
+    [Fact]
+    public void Aaa()
+    {
+        //public IBackgroundTaskService BackgroundTaskService { get; }
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public IDispatcher Dispatcher { get; }
+    }
 }

@@ -8,62 +8,64 @@ namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 
 public class TreeViewCSharpProjectToProjectReferenceTests
 {
-    public TreeViewCSharpProjectToProjectReference(
-            CSharpProjectToProjectReference cSharpProjectToProjectReference,
-            ILuthetusIdeComponentRenderers ideComponentRenderers,
-            IFileSystemProvider fileSystemProvider,
-            IEnvironmentProvider environmentProvider,
-            bool isExpandable,
-            bool isExpanded)
-        : base(cSharpProjectToProjectReference, isExpandable, isExpanded)
+    [Fact]
+    public void Aaa()
     {
-        IdeComponentRenderers = ideComponentRenderers;
-        FileSystemProvider = fileSystemProvider;
-        EnvironmentProvider = environmentProvider;
+        //public TreeViewCSharpProjectToProjectReference(
+        //        CSharpProjectToProjectReference cSharpProjectToProjectReference,
+        //        ILuthetusIdeComponentRenderers ideComponentRenderers,
+        //        IFileSystemProvider fileSystemProvider,
+        //        IEnvironmentProvider environmentProvider,
+        //        bool isExpandable,
+        //        bool isExpanded)
+        //    : base(cSharpProjectToProjectReference, isExpandable, isExpanded)
     }
 
-    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
-    public IFileSystemProvider FileSystemProvider { get; }
-    public IEnvironmentProvider EnvironmentProvider { get; }
-
-    public override bool Equals(object? obj)
+    [Fact]
+    public void Aaa()
     {
-        if (obj is not TreeViewCSharpProjectToProjectReference otherTreeView)
-            return false;
-
-        return otherTreeView.GetHashCode() == GetHashCode();
+        //public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
     }
 
-    public override int GetHashCode()
+    [Fact]
+    public void Aaa()
     {
-        var modifyProjectAbsolutePathString = Item.ModifyProjectNamespacePath.AbsolutePath.Value;
-        var referenceProjectAbsolutePathString = Item.ReferenceProjectAbsolutePath.Value;
-        
-        var uniqueAbsolutePathString = modifyProjectAbsolutePathString + referenceProjectAbsolutePathString;
-        return uniqueAbsolutePathString.GetHashCode();
+        //public IFileSystemProvider FileSystemProvider { get; }
     }
 
-    public override TreeViewRenderer GetTreeViewRenderer()
+    [Fact]
+    public void Aaa()
     {
-        return new TreeViewRenderer(
-            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewCSharpProjectToProjectReferenceRendererType,
-            new Dictionary<string, object?>
-            {
-                {
-                    nameof(ITreeViewCSharpProjectToProjectReferenceRendererType.CSharpProjectToProjectReference),
-                    Item
-                },
-            });
+        //public IEnvironmentProvider EnvironmentProvider { get; }
     }
 
-    public override Task LoadChildListAsync()
+    [Fact]
+    public void Aaa()
     {
-        TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
-        return Task.CompletedTask;
+        //public override bool Equals(object? obj)
     }
 
-    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
+    [Fact]
+    public void Aaa()
     {
-        return;
+        //public override int GetHashCode()
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override TreeViewRenderer GetTreeViewRenderer()
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override Task LoadChildListAsync()
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)    
     }
 }

@@ -1,72 +1,64 @@
-using Fluxor;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.Common.RazorLib.Resizes.Displays;
-using Luthetus.Ide.RazorLib.CodeSearches.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using System.Collections.Immutable;
-
 namespace Luthetus.Ide.Tests.Basis.CodeSearches.States;
 
-public class CodeSearchStateMainTests(
-    string Query,
-    string? StartingAbsolutePathForSearch,
-    CodeSearchFilterKind CodeSearchFilterKind,
-    ImmutableList<string> ResultList,
-    string PreviewFilePath,
-    Key<TextEditorViewModel> PreviewViewModelKey)
+public class CodeSearchStateMainTests
 {
-    public CodeSearchState() : this(
-        string.Empty,
-        null,
-        CodeSearchFilterKind.None,
-        ImmutableList<string>.Empty,
-        string.Empty,
-        Key<TextEditorViewModel>.Empty)
+    [Fact]
+    public void Aaa()
     {
-		// topContentHeight
-        {
-			var topContentHeight = TopContentElementDimensions.DimensionAttributeList.Single(
-				da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
-
-			topContentHeight.DimensionUnitList.AddRange(new[]
-			{
-				new DimensionUnit
-				{
-					Value = 40,
-					DimensionUnitKind = DimensionUnitKind.Percentage
-				},
-				new DimensionUnit
-				{
-					Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
-					DimensionUnitKind = DimensionUnitKind.Pixels,
-					DimensionOperatorKind = DimensionOperatorKind.Subtract
-				},
-			});
-        }
-
-        // bottomContentHeight
-        {
-            var bottomContentHeight = BottomContentElementDimensions.DimensionAttributeList.Single(
-				da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
-
-				bottomContentHeight.DimensionUnitList.AddRange(new[]
-				{
-				new DimensionUnit
-				{
-					Value = 60,
-					DimensionUnitKind = DimensionUnitKind.Percentage
-				},
-				new DimensionUnit
-				{
-					Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
-					DimensionUnitKind = DimensionUnitKind.Pixels,
-					DimensionOperatorKind = DimensionOperatorKind.Subtract
-				},
-			});
-        }
+        //public CodeSearchState() : this(
+        //    string.Empty,
+        //    null,
+        //    CodeSearchFilterKind.None,
+        //    ImmutableList<string>.Empty,
+        //    string.Empty,
+        //    Key<TextEditorViewModel>.Empty)
     }
 
-	public ElementDimensions TopContentElementDimensions = new();
-	public ElementDimensions BottomContentElementDimensions = new();
+    [Fact]
+    public void Aaa()
+    {
+        //string Query,
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //string? StartingAbsolutePathForSearch,
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //CodeSearchFilterKind CodeSearchFilterKind,
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //ImmutableList<string> ResultList,
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //string PreviewFilePath,
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //Key<TextEditorViewModel> PreviewViewModelKey)
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public ElementDimensions TopContentElementDimensions = new();
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public ElementDimensions BottomContentElementDimensions = new();
+    }
 }

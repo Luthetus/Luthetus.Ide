@@ -5,8 +5,21 @@ namespace Luthetus.Ide.Tests.Basis.DotNetSolutions.States;
 
 public class DotNetSolutionStateActionsTests
 {
-    public record RegisterAction(DotNetSolutionModel DotNetSolutionModel, DotNetSolutionSync Sync);
-    public record DisposeAction(Key<DotNetSolutionModel> DotNetSolutionModelKey, DotNetSolutionSync Sync);
-    
-	public record StateHasChanged;
+    [Fact]
+    public void Aaa()
+    {
+        //public record RegisterAction(DotNetSolutionModel DotNetSolutionModel, DotNetSolutionSync Sync);
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public record DisposeAction(Key<DotNetSolutionModel> DotNetSolutionModelKey, DotNetSolutionSync Sync);
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public record StateHasChanged;
+    }
 }

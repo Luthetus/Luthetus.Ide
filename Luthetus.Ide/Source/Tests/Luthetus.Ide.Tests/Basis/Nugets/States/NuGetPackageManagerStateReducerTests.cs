@@ -6,39 +6,49 @@ public class NuGetPackageManagerStateReducerTests
 {
     private class NuGetPackageManagerStateReducer
     {
-        [ReducerMethod]
-        public static NuGetPackageManagerState ReduceSetSelectedProjectToModifyAction(
-            NuGetPackageManagerState inState,
-            SetSelectedProjectToModifyAction setSelectedProjectToModifyAction)
+        [Fact]
+        public void Aaa()
         {
-            return inState with
-            {
-                SelectedProjectToModify = setSelectedProjectToModifyAction.SelectedProjectToModify
-            };
+            //[ReducerMethod]
+            //public static NuGetPackageManagerState ReduceSetSelectedProjectToModifyAction(
+            //    NuGetPackageManagerState inState,
+            //    SetSelectedProjectToModifyAction setSelectedProjectToModifyAction)
         }
 
-        [ReducerMethod]
-        public static NuGetPackageManagerState ReduceSetNugetQueryAction(
-            NuGetPackageManagerState inState,
-            SetNugetQueryAction setNugetQueryAction)
+        [Fact]
+        public void Aaa()
         {
-            return inState with { NugetQuery = setNugetQueryAction.NugetQuery };
+            //[ReducerMethod]
+            //public static NuGetPackageManagerState ReduceSetNugetQueryAction(
+            //    NuGetPackageManagerState inState,
+            //    SetNugetQueryAction setNugetQueryAction)
+            //{
+            //    return inState with { NugetQuery = setNugetQueryAction.NugetQuery };
+            //}
         }
 
-        [ReducerMethod]
-        public static NuGetPackageManagerState ReduceSetIncludePrereleaseAction(
-            NuGetPackageManagerState inState,
-            SetIncludePrereleaseAction setIncludePrereleaseAction)
+        [Fact]
+        public void Aaa()
         {
-            return inState with { IncludePrerelease = setIncludePrereleaseAction.IncludePrerelease };
+            //[ReducerMethod]
+            //public static NuGetPackageManagerState ReduceSetIncludePrereleaseAction(
+            //    NuGetPackageManagerState inState,
+            //    SetIncludePrereleaseAction setIncludePrereleaseAction)
+            //{
+            //    return inState with { IncludePrerelease = setIncludePrereleaseAction.IncludePrerelease };
+            //}
         }
 
-        [ReducerMethod]
-        public static NuGetPackageManagerState ReduceSetMostRecentQueryResultAction(
-            NuGetPackageManagerState inState,
-            SetMostRecentQueryResultAction setMostRecentQueryResultAction)
+        [Fact]
+        public void Aaa()
         {
-            return inState with { QueryResultList = setMostRecentQueryResultAction.QueryResultList };
+            //[ReducerMethod]
+            //public static NuGetPackageManagerState ReduceSetMostRecentQueryResultAction(
+            //    NuGetPackageManagerState inState,
+            //    SetMostRecentQueryResultAction setMostRecentQueryResultAction)
+            //{
+            //    return inState with { QueryResultList = setMostRecentQueryResultAction.QueryResultList };
+            //}
         }
     }
 }

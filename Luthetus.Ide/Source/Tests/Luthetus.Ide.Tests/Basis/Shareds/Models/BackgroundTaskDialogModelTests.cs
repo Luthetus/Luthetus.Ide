@@ -4,11 +4,21 @@ namespace Luthetus.Ide.Tests.Basis.Shareds.Models;
 
 public class BackgroundTaskDialogModelTests
 {
-    public BackgroundTaskDialogModel(List<IBackgroundTask> seenBackgroundTasks)
+    [Fact]
+    public void Aaa()
     {
-        SeenBackgroundTasks = seenBackgroundTasks;
+        //public BackgroundTaskDialogModel(List<IBackgroundTask> seenBackgroundTasks)
     }
 
-    public List<IBackgroundTask> SeenBackgroundTasks { get; }
-    public Func<Task>? ReRenderFuncAsync { get; set; }
+    [Fact]
+    public void Aaa()
+    {
+        //public List<IBackgroundTask> SeenBackgroundTasks { get; }
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public Func<Task>? ReRenderFuncAsync { get; set; }
+    }
 }

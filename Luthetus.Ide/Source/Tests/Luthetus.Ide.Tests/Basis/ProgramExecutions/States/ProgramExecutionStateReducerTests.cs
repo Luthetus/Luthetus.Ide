@@ -6,15 +6,13 @@ public class ProgramExecutionStateReducerTests
 {
     private class Reducer
     {
-        [ReducerMethod]
-        public static ProgramExecutionState ReduceSetStartupProjectAbsolutePathAction(
-            ProgramExecutionState inState,
-            SetStartupProjectAbsolutePathAction setStartupProjectAbsolutePathAction)
+        [Fact]
+        public void Aaa()
         {
-            return inState with
-            {
-                StartupProjectAbsolutePath = setStartupProjectAbsolutePathAction.StartupProjectAbsolutePath
-            };
+            //[ReducerMethod]
+            //public static ProgramExecutionState ReduceSetStartupProjectAbsolutePathAction(
+            //    ProgramExecutionState inState,
+            //    SetStartupProjectAbsolutePathAction setStartupProjectAbsolutePathAction)
         }
     }
 }

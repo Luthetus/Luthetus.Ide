@@ -8,44 +8,47 @@ using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 
 namespace Luthetus.Ide.Tests.Basis.DotNetSolutions.States;
 
-public class DotNetSolutionStateMainTests(
-    Key<DotNetSolutionModel>? DotNetSolutionModelKey,
-    int IsExecutingAsyncTaskLinks)
+public class DotNetSolutionStateMainTests
 {
-    public static readonly Key<TreeViewContainer> TreeViewSolutionExplorerStateKey = Key<TreeViewContainer>.NewKey();
-
-    private DotNetSolutionState() : this(Key<DotNetSolutionModel>.Empty, 0)
+    [Fact]
+    public void Aaa()
     {
+        //public static readonly Key<TreeViewContainer> TreeViewSolutionExplorerStateKey = Key<TreeViewContainer>.NewKey();
     }
 
-    public ImmutableList<DotNetSolutionModel> DotNetSolutionsList { get; init; } = ImmutableList<DotNetSolutionModel>.Empty;
-
-    public DotNetSolutionModel? DotNetSolutionModel => DotNetSolutionsList.FirstOrDefault(x =>
-        x.Key == DotNetSolutionModelKey);
-
-    public static void ShowInputFile(DotNetSolutionSync sync)
+    [Fact]
+    public void Aaa()
     {
-        sync.InputFileSync.RequestInputFileStateForm("Solution Explorer",
-            afp =>
-            {
-                if (afp is not null)
-                    sync.SetDotNetSolution(afp);
+        //private DotNetSolutionState() : this(Key<DotNetSolutionModel>.Empty, 0)
+    }
 
-                return Task.CompletedTask;
-            },
-            afp =>
-            {
-                if (afp is null || afp.IsDirectory)
-                    return Task.FromResult(false);
+    [Fact]
+    public void Aaa()
+    {
+        //Key<DotNetSolutionModel>? DotNetSolutionModelKey,
+    }
 
-                return Task.FromResult(
-                    afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
-            },
-            new[]
-            {
-                new InputFilePattern(
-                    ".NET Solution",
-                    afp => afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
-            }.ToImmutableArray());
+    [Fact]
+    public void Aaa()
+    {
+        //int IsExecutingAsyncTaskLinks
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public ImmutableList<DotNetSolutionModel> DotNetSolutionsList { get; init; } = ImmutableList<DotNetSolutionModel>.Empty;
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public DotNetSolutionModel? DotNetSolutionModel => 
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public static void ShowInputFile(DotNetSolutionSync sync)
     }
 }

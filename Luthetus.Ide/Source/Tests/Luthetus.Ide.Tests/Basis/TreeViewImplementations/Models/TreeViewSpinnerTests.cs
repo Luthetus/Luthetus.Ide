@@ -6,48 +6,50 @@ namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 
 public class TreeViewSpinnerTests
 {
-	public TreeViewSpinner(
-            Guid guid,
-			ILuthetusCommonComponentRenderers commonComponentRenderers,
-            bool isExpandable,
-            bool isExpanded)
-        : base(guid, isExpandable, isExpanded)
+    [Fact]
+    public void Aaa()
     {
-		CommonComponentRenderers = commonComponentRenderers;
+       // public TreeViewSpinner(
+       //         Guid guid,
+			    //ILuthetusCommonComponentRenderers commonComponentRenderers,
+       //         bool isExpandable,
+       //         bool isExpanded)
+       //     : base(guid, isExpandable, isExpanded)
     }
 
-	public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
-
-    public override bool Equals(object? obj)
+    [Fact]
+    public void Aaa()
     {
-        if (obj is not TreeViewSpinner treeViewSpinner)
-            return false;
-
-        return treeViewSpinner.Item == Item;
+        //public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
     }
 
-    public override int GetHashCode() => Item.GetHashCode();
-
-    public override TreeViewRenderer GetTreeViewRenderer()
+    [Fact]
+    public void Aaa()
     {
-        return new TreeViewRenderer(
-            typeof(TreeViewSpinnerDisplay),
-            new Dictionary<string, object?>
-            {
-                {
-                    nameof(TreeViewSpinnerDisplay.TreeViewSpinner),
-                    this
-                },
-            });
+        //public override bool Equals(object? obj)
     }
 
-    public override Task LoadChildListAsync()
+    [Fact]
+    public void Aaa()
     {
-        return Task.CompletedTask;
+        //public override int GetHashCode() => Item.GetHashCode();
     }
 
-    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
+    [Fact]
+    public void Aaa()
     {
-        return;
+        //public override TreeViewRenderer GetTreeViewRenderer()
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override Task LoadChildListAsync()
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     }
 }

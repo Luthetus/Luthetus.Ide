@@ -5,47 +5,40 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 
 public class StdQuiescentTests
 {
-    public StdQuiescent(IntegratedTerminal integratedTerminal)
-        : base(integratedTerminal)
+    [Fact]
+    public void Aaa()
     {
-        TargetFilePath = integratedTerminal.TargetFilePath;
-        Arguments = integratedTerminal.Arguments;
+        //public StdQuiescent(IntegratedTerminal integratedTerminal)
+        //    : base(integratedTerminal)
     }
 
-    public bool IsCompleted { get; set; }
-    public string TargetFilePath { get; set; }
-    public string Arguments { get; set; }
-    public string Text { get; set; } = string.Empty;
-
-    public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
+    [Fact]
+    public void Aaa()
     {
-        var workingDirectoryAbsolutePath = _integratedTerminal.EnvironmentProvider.AbsolutePathFactory(
-            _integratedTerminal.WorkingDirectory,
-            true);
+        //public bool IsCompleted { get; set; }
+    }
 
-        var showWorkingDirectory = workingDirectoryAbsolutePath.NameNoExtension;
+    [Fact]
+    public void Aaa()
+    {
+        //public string TargetFilePath { get; set; }
+    }
 
-        var parentDirectory = workingDirectoryAbsolutePath.ParentDirectory;
+    [Fact]
+    public void Aaa()
+    {
+        //public string Arguments { get; set; }
+    }
 
-        if (parentDirectory is not null)
-            showWorkingDirectory = parentDirectory.Value + showWorkingDirectory;
+    [Fact]
+    public void Aaa()
+    {
+        //public string Text { get; set; } = string.Empty;
+    }
 
-        builder.OpenElement(sequence++, "div");
-        {
-            builder.OpenElement(sequence++, "span");
-            {
-                builder.AddAttribute(sequence++, "class", "luth_te_method");
-                builder.AddContent(sequence++, $"{showWorkingDirectory}>");
-            }
-            builder.CloseElement();
-
-            builder.OpenComponent<StdQuiescentInputDisplay>(sequence++);
-            builder.AddAttribute(sequence++, nameof(StdQuiescentInputDisplay.IntegratedTerminal), _integratedTerminal);
-            builder.AddAttribute(sequence++, nameof(StdQuiescentInputDisplay.StdQuiescent), this);
-            builder.CloseComponent();
-        }
-        builder.CloseElement();
-
-        return builder;
+    [Fact]
+    public void Aaa()
+    {
+        //public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
     }
 }

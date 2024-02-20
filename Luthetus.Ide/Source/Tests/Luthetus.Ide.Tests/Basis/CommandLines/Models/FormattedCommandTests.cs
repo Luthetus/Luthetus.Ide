@@ -4,27 +4,33 @@ namespace Luthetus.Ide.Tests.Basis.CommandLines.Models;
 
 public class FormattedCommandTests
 {
-    public FormattedCommand(string targetFileName, IEnumerable<string> argumentsList)
+    [Fact]
+    public void Aaa()
     {
-        TargetFileName = targetFileName;
-        ArgumentsList = argumentsList;
+        //public FormattedCommand(string targetFileName, IEnumerable<string> argumentsList)
     }
 
-    public string TargetFileName { get; }
-    public IEnumerable<string> ArgumentsList { get; }
-
-    /// <summary>The command in string form.</summary>
-    public string Value => FormattedCommandToStringHelper();
-
-    private string FormattedCommandToStringHelper()
+    [Fact]
+    public void Aaa()
     {
-        var interpolatedCommandBuilder = new StringBuilder(TargetFileName);
+        //public string TargetFileName { get; }
+    }
 
-        foreach (var argument in ArgumentsList)
-        {
-            interpolatedCommandBuilder.Append($" {argument}");
-        }
+    [Fact]
+    public void Aaa()
+    {
+        //public IEnumerable<string> ArgumentsList { get; }
+    }
 
-        return interpolatedCommandBuilder.ToString();
+    [Fact]
+    public void Aaa()
+    {
+        //public string Value => FormattedCommandToStringHelper();
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //private string FormattedCommandToStringHelper()
     }
 }

@@ -5,13 +5,33 @@ namespace Luthetus.Ide.Tests.Basis.TestExplorers.Models;
 
 public class StringFragmentTests
 {
-	public StringFragment(string stringValue)
-	{
-		Value = stringValue;
-	}
+    [Fact]
+    public void Aaa()
+    {
+        //public StringFragment(string stringValue)
+    }
 
-	public string Value { get; set; }
-	public Dictionary<string, StringFragment> Map { get; set; } = new();
-	public bool IsEndpoint { get; set; }
-	public Key<TerminalCommand> DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+    [Fact]
+    public void Aaa()
+    {
+        //public string Value { get; set; }
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public Dictionary<string, StringFragment> Map { get; set; } = new();
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public bool IsEndpoint { get; set; }
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public Key<TerminalCommand> DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+    }
 }

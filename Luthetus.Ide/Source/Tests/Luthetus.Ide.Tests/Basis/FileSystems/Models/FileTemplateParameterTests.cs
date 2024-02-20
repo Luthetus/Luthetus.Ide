@@ -1,21 +1,31 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Common.RazorLib.Namespaces.Models;
-
-namespace Luthetus.Ide.Tests.Basis.FileSystems.Models;
+﻿namespace Luthetus.Ide.Tests.Basis.FileSystems.Models;
 
 public class FileTemplateParameterTests
 {
-    public FileTemplateParameter(
-        string filename,
-        NamespacePath parentDirectory,
-        IEnvironmentProvider environmentProvider)
+    [Fact]
+    public void Aaa()
     {
-        Filename = filename;
-        ParentDirectory = parentDirectory;
-        EnvironmentProvider = environmentProvider;
+        //public FileTemplateParameter(
+        //    string filename,
+        //    NamespacePath parentDirectory,
+        //    IEnvironmentProvider environmentProvider)
     }
 
-    public string Filename { get; }
-    public NamespacePath ParentDirectory { get; }
-    public IEnvironmentProvider EnvironmentProvider { get; }
+    [Fact]
+    public void Aaa()
+    {
+        //public string Filename { get; }
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public NamespacePath ParentDirectory { get; }
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public IEnvironmentProvider EnvironmentProvider { get; }
+    }
 }

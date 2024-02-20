@@ -6,12 +6,13 @@ public class CompilerServiceExplorerStateReducerTests
 {
     private class Reducer
     {
-        [ReducerMethod]
-        public CompilerServiceExplorerState ReduceNewAction(
-            CompilerServiceExplorerState inCompilerServiceExplorerState,
-            NewAction newAction)
+        [Fact]
+        public void Aaa()
         {
-            return newAction.NewFunc.Invoke(inCompilerServiceExplorerState);
+            //[ReducerMethod]
+            //public CompilerServiceExplorerState ReduceNewAction(
+            //    CompilerServiceExplorerState inCompilerServiceExplorerState,
+            //    NewAction newAction)
         }
     }
 }

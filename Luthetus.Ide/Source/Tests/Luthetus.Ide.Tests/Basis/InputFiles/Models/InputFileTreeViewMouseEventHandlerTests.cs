@@ -10,40 +10,26 @@ namespace Luthetus.Ide.Tests.Basis.InputFiles.Models;
 
 public class InputFileTreeViewMouseEventHandlerTests
 {
-    private readonly IDispatcher _dispatcher;
-    private readonly Func<IAbsolutePath, Task> _setInputFileContentTreeViewRootFunc;
-
-    public InputFileTreeViewMouseEventHandler(
-        ITreeViewService treeViewService,
-        IDispatcher dispatcher,
-        Func<IAbsolutePath, Task> setInputFileContentTreeViewRootFunc,
-		IBackgroundTaskService backgroundTaskService)
-        : base(treeViewService, backgroundTaskService)
+    [Fact]
+    public void Aaa()
     {
-        _dispatcher = dispatcher;
-        _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
+      //  public InputFileTreeViewMouseEventHandler(
+      //      ITreeViewService treeViewService,
+      //      IDispatcher dispatcher,
+      //      Func<IAbsolutePath, Task> setInputFileContentTreeViewRootFunc,
+		    //IBackgroundTaskService backgroundTaskService)
+      //      : base(treeViewService, backgroundTaskService)
     }
 
-    public override void OnClick(TreeViewCommandArgs commandArgs)
+    [Fact]
+    public void Aaa()
     {
-        base.OnClick(commandArgs);
-
-        if (commandArgs.TargetNode is not TreeViewAbsolutePath treeViewAbsolutePath)
-            return;
-
-        var setSelectedTreeViewModelAction = new InputFileState.SetSelectedTreeViewModelAction(treeViewAbsolutePath);
-
-        _dispatcher.Dispatch(setSelectedTreeViewModelAction);
+        //public override void OnClick(TreeViewCommandArgs commandArgs)
     }
 
-    public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
+    [Fact]
+    public void Aaa()
     {
-        base.OnDoubleClickAsync(commandArgs);
-
-        if (commandArgs.TargetNode is not TreeViewAbsolutePath treeViewAbsolutePath)
-            return Task.CompletedTask;
-
-        _setInputFileContentTreeViewRootFunc.Invoke(treeViewAbsolutePath.Item);
-        return Task.CompletedTask;
+        //public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
     }
 }

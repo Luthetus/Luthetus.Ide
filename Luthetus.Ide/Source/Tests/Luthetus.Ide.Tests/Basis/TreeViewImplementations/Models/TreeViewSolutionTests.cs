@@ -10,79 +10,73 @@ namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 
 public class TreeViewSolutionTests
 {
-    public TreeViewSolution(
-            DotNetSolutionModel dotNetSolutionModel,
-            ILuthetusIdeComponentRenderers ideComponentRenderers,
-            ILuthetusCommonComponentRenderers commonComponentRenderers,
-            IFileSystemProvider fileSystemProvider,
-            IEnvironmentProvider environmentProvider,
-            bool isExpandable,
-            bool isExpanded)
-        : base(dotNetSolutionModel, isExpandable, isExpanded)
+    [Fact]
+    public void Aaa()
     {
-        IdeComponentRenderers = ideComponentRenderers;
-        CommonComponentRenderers = commonComponentRenderers;
-        FileSystemProvider = fileSystemProvider;
-        EnvironmentProvider = environmentProvider;
+        //public TreeViewSolution(
+        //        DotNetSolutionModel dotNetSolutionModel,
+        //        ILuthetusIdeComponentRenderers ideComponentRenderers,
+        //        ILuthetusCommonComponentRenderers commonComponentRenderers,
+        //        IFileSystemProvider fileSystemProvider,
+        //        IEnvironmentProvider environmentProvider,
+        //        bool isExpandable,
+        //        bool isExpanded)
+        //    : base(dotNetSolutionModel, isExpandable, isExpanded)
     }
 
-    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
-    public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
-    public IFileSystemProvider FileSystemProvider { get; }
-    public IEnvironmentProvider EnvironmentProvider { get; }
-
-    public override bool Equals(object? obj)
+    [Fact]
+    public void Aaa()
     {
-        if (obj is not TreeViewSolution treeViewSolution)
-            return false;
-
-        return treeViewSolution.Item.AbsolutePath.Value ==
-               Item.AbsolutePath.Value;
+        //public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
     }
 
-    public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
-
-    public override TreeViewRenderer GetTreeViewRenderer()
+    [Fact]
+    public void Aaa()
     {
-        return new TreeViewRenderer(
-            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewNamespacePathRendererType,
-            new Dictionary<string, object?>
-            {
-                {
-                    nameof(ITreeViewNamespacePathRendererType.NamespacePath),
-                    Item.NamespacePath
-                },
-            });
+        //public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
     }
 
-    public override async Task LoadChildListAsync()
+    [Fact]
+    public void Aaa()
     {
-        try
-        {
-            var previousChildren = new List<TreeViewNoType>(ChildList);
-
-            var newChildList = await this.DotNetSolutionLoadChildrenAsync();
-
-            ChildList = newChildList;
-            LinkChildren(previousChildren, ChildList);
-        }
-        catch (Exception exception)
-        {
-            ChildList = new List<TreeViewNoType>
-            {
-                new TreeViewException(exception, false, false, CommonComponentRenderers)
-                {
-                    Parent = this,
-                    IndexAmongSiblings = 0,
-                }
-            };
-        }
-
-        TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
+        //public IFileSystemProvider FileSystemProvider { get; }
     }
 
-    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
+    [Fact]
+    public void Aaa()
     {
-        return;
+        //public IEnvironmentProvider EnvironmentProvider { get; }
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override bool Equals(object? obj)
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override TreeViewRenderer GetTreeViewRenderer()
+    }
+
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override async Task LoadChildListAsync()
+    }
+
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     }
 }

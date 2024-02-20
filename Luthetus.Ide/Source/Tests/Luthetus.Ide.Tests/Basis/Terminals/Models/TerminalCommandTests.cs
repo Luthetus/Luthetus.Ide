@@ -3,10 +3,41 @@ using Luthetus.Ide.RazorLib.CommandLines.Models;
 
 namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 
-public record TerminalCommandTests(
-    Key<TerminalCommand> TerminalCommandKey,
-    FormattedCommand FormattedCommand,
-    string? ChangeWorkingDirectoryTo = null,
-    CancellationToken CancellationToken = default,
-    Func<Task>? ContinueWith = null,
-	Func<Task>? BeginWith = null);
+public record TerminalCommandTests
+{
+    [Fact]
+    public void Aaa()
+    {
+        //Key<TerminalCommand> TerminalCommandKey,
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //FormattedCommand FormattedCommand,
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //string? ChangeWorkingDirectoryTo = null,
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //CancellationToken CancellationToken = default,
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //Func<Task>? ContinueWith = null,
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //Func<Task>? BeginWith = null);
+    }
+}

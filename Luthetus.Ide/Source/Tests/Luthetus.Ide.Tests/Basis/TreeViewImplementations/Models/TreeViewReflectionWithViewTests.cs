@@ -7,49 +7,33 @@ namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 
 public class TreeViewReflectionWithViewTests
 {
-    public TreeViewReflectionWithView(
-            WatchWindowObject watchWindowObject,
-            bool isExpandable,
-            bool isExpanded,
-            ILuthetusIdeComponentRenderers ideComponentRenderers,
-            ILuthetusCommonComponentRenderers commonComponentRenderers)
-    : base(watchWindowObject, isExpandable, isExpanded, commonComponentRenderers)
+    [Fact]
+    public void Aaa()
     {
-        IdeComponentRenderers = ideComponentRenderers;
-        CommonComponentRenderers = commonComponentRenderers;
+        //public TreeViewReflectionWithView(
+        //        WatchWindowObject watchWindowObject,
+        //        bool isExpandable,
+        //        bool isExpanded,
+        //        ILuthetusIdeComponentRenderers ideComponentRenderers,
+        //        ILuthetusCommonComponentRenderers commonComponentRenderers)
+        //: base(watchWindowObject, isExpandable, isExpanded, commonComponentRenderers)
     }
 
-    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
-    public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
-
-    public override async Task LoadChildListAsync()
+    [Fact]
+    public void Aaa()
     {
-        var previousChildren = new List<TreeViewNoType>(ChildList);
+        //public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
+    }
 
-        ChildList.Clear();
+    [Fact]
+    public void Aaa()
+    {
+        //public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
+    }
 
-        await base.LoadChildListAsync();
-
-        try
-        {
-            // TODO: Had planned to make a more distilled view of the object as the reflection was a lot of information. (2023-09-08)
-            //
-            //if (Item.DebugObjectItem is ICompilerService compilerService)
-            //{
-            //    Children.Insert(0, new TreeViewCompilerService(
-            //        compilerService,
-            //        LuthetusIdeComponentRenderers,
-            //        LuthetusCommonComponentRenderers,
-            //        true,
-            //        false));
-            //}
-        }
-        catch (Exception e)
-        {
-            ChildList.Clear();
-            ChildList.Add(new TreeViewException(e, false, false, CommonComponentRenderers));
-        }
-
-        LinkChildren(previousChildren, ChildList);
+    [Fact]
+    public void Aaa()
+    {
+        //public override async Task LoadChildListAsync()
     }
 }

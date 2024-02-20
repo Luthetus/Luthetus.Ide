@@ -4,10 +4,17 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.Ide.Tests.Basis.CompilerServices.States;
 
-public class CompilerServiceEditorStateMainTests(Key<TextEditorViewModel> TextEditorViewModelKey)
+public class CompilerServiceEditorStateMainTests
 {
-    public CompilerServiceEditorState() : this(Key<TextEditorViewModel>.Empty)
+    [Fact]
+    public void Aaa()
     {
-        
+        //public CompilerServiceEditorState() : this(Key<TextEditorViewModel>.Empty)
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //Key<TextEditorViewModel> TextEditorViewModelKey
     }
 }

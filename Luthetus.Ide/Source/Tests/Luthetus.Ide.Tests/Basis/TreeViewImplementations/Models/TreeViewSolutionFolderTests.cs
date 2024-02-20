@@ -11,183 +11,71 @@ namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 
 public class TreeViewSolutionFolderTests
 {
-    public TreeViewSolutionFolder(
-            SolutionFolder dotNetSolutionFolder,
-            ILuthetusIdeComponentRenderers ideComponentRenderers,
-            ILuthetusCommonComponentRenderers commonComponentRenderers,
-            IFileSystemProvider fileSystemProvider,
-            IEnvironmentProvider environmentProvider,
-            bool isExpandable,
-            bool isExpanded)
-        : base(dotNetSolutionFolder, isExpandable, isExpanded)
+    [Fact]
+    public void Aaa()
     {
-        IdeComponentRenderers = ideComponentRenderers;
-        CommonComponentRenderers = commonComponentRenderers;
-        FileSystemProvider = fileSystemProvider;
-        EnvironmentProvider = environmentProvider;
+        //public TreeViewSolutionFolder(
+        //        SolutionFolder dotNetSolutionFolder,
+        //        ILuthetusIdeComponentRenderers ideComponentRenderers,
+        //        ILuthetusCommonComponentRenderers commonComponentRenderers,
+        //        IFileSystemProvider fileSystemProvider,
+        //        IEnvironmentProvider environmentProvider,
+        //        bool isExpandable,
+        //        bool isExpanded)
+        //    : base(dotNetSolutionFolder, isExpandable, isExpanded)
     }
 
-    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
-    public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
-    public IFileSystemProvider FileSystemProvider { get; }
-    public IEnvironmentProvider EnvironmentProvider { get; }
-
-    public override bool Equals(object? obj)
+    [Fact]
+    public void Aaa()
     {
-        if (obj is not TreeViewSolutionFolder treeViewSolutionFolder)
-            return false;
-
-        return treeViewSolutionFolder.Item.AbsolutePath.Value == Item.AbsolutePath.Value;
+        //public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
     }
 
-    public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
-
-    public override TreeViewRenderer GetTreeViewRenderer()
+    [Fact]
+    public void Aaa()
     {
-        return new TreeViewRenderer(
-            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewSolutionFolderRendererType,
-            new Dictionary<string, object?>
-            {
-                {
-                    nameof(ITreeViewSolutionFolderRendererType.DotNetSolutionFolder),
-                    Item
-                },
-            });
+        //public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
     }
 
-    public override Task LoadChildListAsync()
+    [Fact]
+    public void Aaa()
     {
-        if (Item is null)
-            return Task.CompletedTask;
-
-        try
-        {
-			LinkChildren(ChildList, ChildList);
-        }
-        catch (Exception exception)
-        {
-            ChildList = new List<TreeViewNoType>
-            {
-                new TreeViewException(exception, false, false, CommonComponentRenderers)
-                {
-                    Parent = this,
-                    IndexAmongSiblings = 0,
-                }
-            };
-        }
-
-        TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
-
-        return Task.CompletedTask;
+        //public IFileSystemProvider FileSystemProvider { get; }
     }
 
-    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
+    [Fact]
+    public void Aaa()
     {
-        var currentNode = (TreeViewNoType)this;
-
-        // First, find the TreeViewSolution
-        while (currentNode is not TreeViewSolution && currentNode.Parent is not null)
-        {
-            currentNode = currentNode.Parent;
-        }
-        
-        if (currentNode is not TreeViewSolution treeViewSolution)
-            return;
-
-        var nestedProjectEntries = treeViewSolution.Item.NestedProjectEntryList
-                .Where(x => x.SolutionFolderIdGuid == Item.ProjectIdGuid)
-                .ToArray();
-
-        var childProjectIds = nestedProjectEntries.Select(x => x.ChildProjectIdGuid).ToArray();
-
-        var childProjects = treeViewSolution.Item.DotNetProjectList
-            .Where(x => childProjectIds.Contains(x.ProjectIdGuid))
-            .ToArray();
-
-        var childTreeViews = childProjects.Select(x =>
-        {
-            if (x.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
-                return ConstructTreeViewSolutionFolder((SolutionFolder)x);
-            else
-                return ConstructTreeViewCSharpProject((CSharpProject)x);
-        }).ToList();
-
-        for (int siblingsIndex = siblingsAndSelfTreeViews.Count - 1; siblingsIndex >= 0; siblingsIndex--)
-        {
-            var siblingOrSelf = siblingsAndSelfTreeViews[siblingsIndex];
-
-            for (var childrensIndex = 0; childrensIndex < childTreeViews.Count; childrensIndex++)
-            {
-                var childTreeView = childTreeViews[childrensIndex];
-
-                if (siblingOrSelf.Equals(childTreeView))
-                {
-                    // What i'm doing here is super confusing and needs changed.
-                    // In lines above I re-created a TreeView node for a second time.
-                    //
-                    // Now I have to figure out where that re-created TreeView node
-                    // existed originally because it will have its
-                    // "RemoveRelatedFilesFromParent" invoked.
-                    //
-                    // Without this logic a:
-                    //     solution folder -> solution folder -> project
-                    //
-                    // Will not render the project.
-                    //
-                    // TODO: Revisit this logic.
-                    var originalTreeView = siblingsAndSelfTreeViews[siblingsIndex];
-
-                    originalTreeView.Parent = this;
-                    originalTreeView.IndexAmongSiblings = childrensIndex;
-                    originalTreeView.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
-
-                    siblingsAndSelfTreeViews.RemoveAt(siblingsIndex);
-
-                    childTreeViews[childrensIndex] = originalTreeView;
-                }
-                else
-                {
-                    childTreeView.Parent = this;
-                    childTreeView.IndexAmongSiblings = childrensIndex;
-                    childTreeView.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
-                }
-            }
-        }
-
-        ChildList = childTreeViews;
+        //public IEnvironmentProvider EnvironmentProvider { get; }
     }
 
-    private TreeViewNoType ConstructTreeViewSolutionFolder(SolutionFolder dotNetSolutionFolder)
+    [Fact]
+    public void Aaa()
     {
-        return new TreeViewSolutionFolder(
-            dotNetSolutionFolder,
-            IdeComponentRenderers,
-            CommonComponentRenderers,
-            FileSystemProvider,
-            EnvironmentProvider,
-            true,
-            false)
-        {
-            TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
-        };
+        //public override bool Equals(object? obj)
     }
 
-    private TreeViewNoType ConstructTreeViewCSharpProject(CSharpProject cSharpProject)
+    [Fact]
+    public void Aaa()
     {
-        var namespacePath = new NamespacePath(
-            cSharpProject.AbsolutePath.NameNoExtension,
-            cSharpProject.AbsolutePath);
+        //public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
+    }
 
-        return new TreeViewNamespacePath(
-            namespacePath,
-            IdeComponentRenderers,
-            CommonComponentRenderers,
-            FileSystemProvider,
-            EnvironmentProvider,
-            true,
-            false)
-        {
-            TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
-        };
+    [Fact]
+    public void Aaa()
+    {
+        //public override TreeViewRenderer GetTreeViewRenderer()
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override Task LoadChildListAsync()
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     }
 }

@@ -4,12 +4,21 @@ namespace Luthetus.Ide.Tests.Basis.InputFiles.Models;
 
 public class InputFilePatternTests
 {
-    public InputFilePattern(string patternName, Func<IAbsolutePath, bool> matchesPatternFunc)
+    [Fact]
+    public void Aaa()
     {
-        PatternName = patternName;
-        MatchesPatternFunc = matchesPatternFunc;
+        //public InputFilePattern(string patternName, Func<IAbsolutePath, bool> matchesPatternFunc)
     }
 
-    public string PatternName { get; }
-    public Func<IAbsolutePath, bool> MatchesPatternFunc { get; }
+    [Fact]
+    public void Aaa()
+    {
+        //public string PatternName { get; }
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //public Func<IAbsolutePath, bool> MatchesPatternFunc { get; }
+    }
 }

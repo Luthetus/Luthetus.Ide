@@ -4,10 +4,17 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.Ide.Tests.Basis.Terminals.States;
 
-[FeatureState]
-public partial record WellKnownTerminalSessionsStateMainTests(Key<TerminalSession> ActiveTerminalSessionKey)
+public class WellKnownTerminalSessionsStateMainTests
 {
-    public WellKnownTerminalSessionsState() : this(TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY)
+    [Fact]
+    public void Aaa()
     {
+        //public WellKnownTerminalSessionsState() : this(TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY)
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //(Key<TerminalSession> ActiveTerminalSessionKey)
     }
 }

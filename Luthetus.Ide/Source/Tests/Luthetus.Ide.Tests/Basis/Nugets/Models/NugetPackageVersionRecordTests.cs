@@ -2,10 +2,24 @@
 
 namespace Luthetus.Ide.Tests.Basis.Nugets.Models;
 
-public class NugetPackageVersionRecordTests(
-    string Version,
-    long Downloads)
+public class NugetPackageVersionRecordTests
 {
-    [JsonPropertyName("@id")]
-    public string AtId { get; init; } = string.Empty;
+    [Fact]
+    public void Aaa()
+    {
+        //string Version,
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //long Downloads)
+    }
+
+    [Fact]
+    public void Aaa()
+    {
+        //[JsonPropertyName("@id")]
+        //public string AtId { get; init; } = string.Empty;
+    }
 }
