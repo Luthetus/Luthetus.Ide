@@ -10,27 +10,12 @@ public class StdOutTests
 {
     /// <summary>
     /// <see cref="StdOut(IntegratedTerminal, string, StdOutKind)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="StdOut.Content"/>
-    /// </summary>
-    [Fact]
-    public void Content()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="StdOut.StdOutKind"/>
     /// </summary>
     [Fact]
-    public void StdOutKind()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

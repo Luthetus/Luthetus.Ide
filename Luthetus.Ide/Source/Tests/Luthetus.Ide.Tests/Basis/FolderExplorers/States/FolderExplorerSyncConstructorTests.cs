@@ -16,36 +16,13 @@ public class FolderExplorerSyncConstructorTests
 {
     /// <summary>
     /// <see cref="FolderExplorerSync(IFileSystemProvider, IEnvironmentProvider, ILuthetusIdeComponentRenderers, ILuthetusCommonComponentRenderers, ITreeViewService, InputFileSync, IBackgroundTaskService, IDispatcher)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="FolderExplorerSync.BackgroundTaskService"/>
-    /// </summary>
-    [Fact]
-    public void BackgroundTaskService()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="FolderExplorerSync.Dispatcher"/>
-    /// </summary>
-    [Fact]
-    public void Dispatcher()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="FolderExplorerSync.InputFileSync"/>
     /// </summary>
     [Fact]
-    public void InputFileSync()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

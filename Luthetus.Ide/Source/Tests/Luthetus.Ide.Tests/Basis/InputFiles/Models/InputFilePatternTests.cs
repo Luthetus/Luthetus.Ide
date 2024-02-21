@@ -10,27 +10,12 @@ public class InputFilePatternTests
 {
     /// <summary>
     /// <see cref="InputFilePattern(string, Func{IAbsolutePath, bool})"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="InputFilePattern.PatternName"/>
-    /// </summary>
-    [Fact]
-    public void PatternName()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="InputFilePattern.MatchesPatternFunc"/>
     /// </summary>
     [Fact]
-    public void MatchesPatternFunc()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

@@ -9,6 +9,8 @@ public class NugetPackageManagerProviderAzureSearchUsncTests
 {
     /// <summary>
     /// <see cref="NugetPackageManagerProviderAzureSearchUsnc(HttpClient)"/>
+    /// <br/>----<br/>
+    /// <see cref="NugetPackageManagerProviderAzureSearchUsnc.ProviderWebsiteUrlNoFormatting"/>
     /// </summary>
     [Fact]
     public void Constructor()
@@ -17,7 +19,6 @@ public class NugetPackageManagerProviderAzureSearchUsncTests
     }
 
     /// <summary>
-    /// <see cref="NugetPackageManagerProviderAzureSearchUsnc.ProviderWebsiteUrlNoFormatting"/>
     /// </summary>
     [Fact]
     public void ProviderWebsiteUrlNoFormatting()

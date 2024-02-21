@@ -12,27 +12,12 @@ public class TreeViewCompilerServiceTests
 {
     /// <summary>
     /// <see cref="TreeViewCompilerService(ILuthCompilerService, ILuthetusIdeComponentRenderers, ILuthetusCommonComponentRenderers, bool, bool)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="TreeViewCompilerService.IdeComponentRenderers"/>
-    /// </summary>
-    [Fact]
-    public void IdeComponentRenderers()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TreeViewCompilerService.CommonComponentRenderers"/>
     /// </summary>
     [Fact]
-    public void CommonComponentRenderers()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

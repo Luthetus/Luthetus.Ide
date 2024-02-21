@@ -13,27 +13,12 @@ public class TerminalSessionWasModifiedStateMainTests
 {
     /// <summary>
     /// <see cref="TerminalSessionWasModifiedState(ImmutableDictionary{Key{TerminalSession}, Key{StateRecord}}, string)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="TerminalSessionWasModifiedState.TerminalSessionWasModifiedMap"/>
-    /// </summary>
-    [Fact]
-    public void TerminalSessionWasModifiedMap()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TerminalSessionWasModifiedState.EmptyTextHack"/>
     /// </summary>
     [Fact]
-    public void EmptyTextHack()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

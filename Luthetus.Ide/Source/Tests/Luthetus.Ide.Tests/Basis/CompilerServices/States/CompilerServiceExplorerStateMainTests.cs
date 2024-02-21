@@ -10,6 +10,9 @@ public class CompilerServiceExplorerStateMainTests
 {
     /// <summary>
     /// <see cref="CompilerServiceExplorerState()"/>
+    /// <br/>----<br/>
+    /// <see cref="CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey"/>
+    /// <see cref="CompilerServiceExplorerState.Model"/>
     /// </summary>
     [Fact]
     public void Constructor_NO_ARGS()
@@ -19,27 +22,12 @@ public class CompilerServiceExplorerStateMainTests
 
     /// <summary>
     /// <see cref="CompilerServiceExplorerState(CompilerServiceExplorerModel)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor_CompilerServiceExplorerModel()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey"/>
-    /// </summary>
-    [Fact]
-    public void TreeViewCompilerServiceExplorerContentStateKey()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="CompilerServiceExplorerState.Model"/>
     /// </summary>
     [Fact]
-    public void Model()
+    public void Constructor_CompilerServiceExplorerModel()
     {
         throw new NotImplementedException();
     }

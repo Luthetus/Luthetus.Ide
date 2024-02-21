@@ -11,54 +11,15 @@ public class DotNetSolutionStateMainTests
 {
     /// <summary>
     /// <see cref="DotNetSolutionState(Key{DotNetSolutionModel}?, int)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="DotNetSolutionState.TreeViewSolutionExplorerStateKey"/>
-    /// </summary>
-    [Fact]
-    public void TreeViewSolutionExplorerStateKey()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="DotNetSolutionState.DotNetSolutionModelKey"/>
-    /// </summary>
-    [Fact]
-    public void DotNetSolutionModelKey()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="DotNetSolutionState.IsExecutingAsyncTaskLinks"/>
-    /// </summary>
-    [Fact]
-    public void IsExecutingAsyncTaskLinks()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="DotNetSolutionState.DotNetSolutionsList"/>
-    /// </summary>
-    [Fact]
-    public void DotNetSolutionsList()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="DotNetSolutionState.DotNetSolutionModel"/>
     /// </summary>
     [Fact]
-    public void DotNetSolutionModel()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

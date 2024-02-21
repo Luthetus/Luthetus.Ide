@@ -12,36 +12,13 @@ public class GitStateMainTests
 {
     /// <summary>
     /// <see cref="GitState(IAbsolutePath?, ImmutableList{GitFile}, ImmutableList{GitTask})"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="GitState.GitFolderAbsolutePath"/>
-    /// </summary>
-    [Fact]
-    public void GitFolderAbsolutePath()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="GitState.GitFilesList"/>
-    /// </summary>
-    [Fact]
-    public void GitFilesList()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="GitState.ActiveGitTasks"/>
     /// </summary>
     [Fact]
-    public void ActiveGitTasks()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

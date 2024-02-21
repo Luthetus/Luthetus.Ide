@@ -12,18 +12,11 @@ public class TreeViewStringFragmentTests
 {
     /// <summary>
     /// <see cref="TreeViewStringFragment(StringFragment, ILuthetusCommonComponentRenderers, bool, bool)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="TreeViewStringFragment.CommonComponentRenderers"/>
     /// </summary>
     [Fact]
-    public void CommonComponentRenderers()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

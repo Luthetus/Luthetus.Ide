@@ -12,18 +12,11 @@ public class CliWrapIntegratedTerminalTests
 {
     /// <summary>
     /// <see cref="CliWrapIntegratedTerminal(string, IEnvironmentProvider)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="CliWrapIntegratedTerminal.StdInPipeSource"/>
     /// </summary>
     [Fact]
-    public void StdInPipeSource()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

@@ -12,27 +12,12 @@ public class InputFileSyncConstructorTests
 {
     /// <summary>
     /// <see cref="InputFileSync(ILuthetusIdeComponentRenderers, IBackgroundTaskService, IDispatcher)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="InputFileSync.BackgroundTaskService"/>
-    /// </summary>
-    [Fact]
-    public void BackgroundTaskService()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="InputFileSync.Dispatcher"/>
     /// </summary>
     [Fact]
-    public void Dispatcher()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

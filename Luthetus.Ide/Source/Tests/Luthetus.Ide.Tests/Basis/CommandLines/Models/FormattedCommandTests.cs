@@ -9,36 +9,13 @@ public class FormattedCommandTests
 {
     /// <summary>
     /// <see cref="FormattedCommand(string, IEnumerable{string})"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="FormattedCommand.TargetFileName"/>
-    /// </summary>
-    [Fact]
-    public void TargetFileName()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="FormattedCommand.ArgumentsList"/>
-    /// </summary>
-    [Fact]
-    public void ArgumentsList()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="FormattedCommand.Value"/>
     /// </summary>
     [Fact]
-    public void Value()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

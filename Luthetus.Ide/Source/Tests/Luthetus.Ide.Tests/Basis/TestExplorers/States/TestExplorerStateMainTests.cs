@@ -9,27 +9,12 @@ public class TestExplorerStateMainTests
 {
     /// <summary>
     /// <see cref="TestExplorerState()"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="TestExplorerState.TreeViewTestExplorerKey"/>
-    /// </summary>
-    [Fact]
-    public void TreeViewTestExplorerKey()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TestExplorerState.ProjectTestModelList"/>
     /// </summary>
     [Fact]
-    public void ProjectTestModelList()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

@@ -12,18 +12,11 @@ public class TreeViewProjectTestModelTests
 {
     /// <summary>
     /// <see cref="TreeViewProjectTestModel(ProjectTestModel, ILuthetusCommonComponentRenderers, bool, bool)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="TreeViewProjectTestModel.CommonComponentRenderers"/>
     /// </summary>
     [Fact]
-    public void CommonComponentRenderers()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

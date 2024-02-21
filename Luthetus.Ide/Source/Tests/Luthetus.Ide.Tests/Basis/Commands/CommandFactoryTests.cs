@@ -16,18 +16,11 @@ public class CommandFactoryTests
 {
     /// <summary>
     /// <see cref="CommandFactory(ITextEditorService, ITreeViewService, IEnvironmentProvider, IState{PanelsState}, IDispatcher, IJSRuntime)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="CommandFactory.CodeSearchDialog"/>
     /// </summary>
     [Fact]
-    public void CodeSearchDialog()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

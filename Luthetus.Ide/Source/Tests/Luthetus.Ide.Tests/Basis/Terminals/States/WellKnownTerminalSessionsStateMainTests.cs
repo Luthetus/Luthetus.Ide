@@ -11,18 +11,11 @@ public class WellKnownTerminalSessionsStateMainTests
 {
     /// <summary>
     /// <see cref="WellKnownTerminalSessionsState(Key{TerminalSession})"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="WellKnownTerminalSessionsState.ActiveTerminalSessionKey"/>
     /// </summary>
     [Fact]
-    public void ActiveTerminalSessionKey()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

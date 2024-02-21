@@ -20,36 +20,13 @@ public class DotNetSolutionSyncConstructorTests
 {
     /// <summary>
     /// <see cref="DotNetSolutionSync(IFileSystemProvider, IEnvironmentProvider, ILuthetusIdeComponentRenderers, ILuthetusCommonComponentRenderers, ITreeViewService, IState{DotNetSolutionState}, ITextEditorService, InputFileSync, IBackgroundTaskService, ICompilerServiceRegistry, IDispatcher)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="DotNetSolutionSync.BackgroundTaskService"/>
-    /// </summary>
-    [Fact]
-    public void BackgroundTaskService()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="DotNetSolutionSync.Dispatcher"/>
-    /// </summary>
-    [Fact]
-    public void Dispatcher()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="DotNetSolutionSync.InputFileSync"/>
     /// </summary>
     [Fact]
-    public void InputFileSync()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

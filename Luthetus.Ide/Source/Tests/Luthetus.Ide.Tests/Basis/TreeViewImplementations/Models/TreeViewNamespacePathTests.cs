@@ -14,45 +14,14 @@ public class TreeViewNamespacePathTests
 {
     /// <summary>
     /// <see cref="TreeViewNamespacePath(NamespacePath, ILuthetusIdeComponentRenderers, ILuthetusCommonComponentRenderers, IFileSystemProvider, IEnvironmentProvider, bool, bool)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="TreeViewNamespacePath.IdeComponentRenderers"/>
-    /// </summary>
-    [Fact]
-    public void IdeComponentRenderers()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TreeViewNamespacePath.CommonComponentRenderers"/>
-    /// </summary>
-    [Fact]
-    public void CommonComponentRenderers()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TreeViewNamespacePath.FileSystemProvider"/>
-    /// </summary>
-    [Fact]
-    public void FileSystemProvider()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TreeViewNamespacePath.EnvironmentProvider"/>
     /// </summary>
     [Fact]
-    public void EnvironmentProvider()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

@@ -11,36 +11,13 @@ public class FileTemplateParameterTests
 {
     /// <summary>
     /// <see cref="FileTemplateParameter(string, NamespacePath, IEnvironmentProvider)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="FileTemplateParameter.Filename"/>
-    /// </summary>
-    [Fact]
-    public void Filename()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="FileTemplateParameter.ParentDirectory"/>
-    /// </summary>
-    [Fact]
-    public void ParentDirectory()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="FileTemplateParameter.EnvironmentProvider"/>
     /// </summary>
     [Fact]
-    public void EnvironmentProvider()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

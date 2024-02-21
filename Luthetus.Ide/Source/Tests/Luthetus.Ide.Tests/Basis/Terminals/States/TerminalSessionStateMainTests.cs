@@ -12,18 +12,11 @@ public class TerminalSessionStateMainTests
 {
     /// <summary>
     /// <see cref="TerminalSessionState(ImmutableDictionary{Key{TerminalSession}, TerminalSession})"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="TerminalSessionState.TerminalSessionMap"/>
     /// </summary>
     [Fact]
-    public void TerminalSessionMap()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

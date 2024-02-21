@@ -13,72 +13,17 @@ public class TerminalSessionTests
 {
     /// <summary>
     /// <see cref="TerminalSession(string?, IDispatcher, IBackgroundTaskService, ILuthetusCommonComponentRenderers)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="TerminalSession.TerminalSessionKey"/>
-    /// </summary>
-    [Fact]
-    public void TerminalSessionKey()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TerminalSession.WorkingDirectoryAbsolutePathString"/>
-    /// </summary>
-    [Fact]
-    public void WorkingDirectoryAbsolutePathString()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TerminalSession.ActiveTerminalCommand"/>
-    /// </summary>
-    [Fact]
-    public void ActiveTerminalCommand()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TerminalSession.HasExecutingProcess"/>
-    /// </summary>
-    [Fact]
-    public void HasExecutingProcess()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TerminalSession.TerminalCommandsHistory"/>
-    /// </summary>
-    [Fact]
-    public void TerminalCommandsHistory()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TerminalSession.ResourceUri"/>
-    /// </summary>
-    [Fact]
-    public void ResourceUri()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TerminalSession.TextEditorViewModelKey"/>
     /// </summary>
     [Fact]
-    public void TextEditorViewModelKey()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

@@ -10,45 +10,14 @@ public class StdQuiescentTests
 {
     /// <summary>
     /// <see cref="StdQuiescent(IntegratedTerminal)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="StdQuiescent.IsCompleted"/>
-    /// </summary>
-    [Fact]
-    public void IsCompleted()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="StdQuiescent.TargetFilePath"/>
-    /// </summary>
-    [Fact]
-    public void TargetFilePath()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="StdQuiescent.Arguments"/>
-    /// </summary>
-    [Fact]
-    public void Arguments()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="StdQuiescent.Text"/>
     /// </summary>
     [Fact]
-    public void Text()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

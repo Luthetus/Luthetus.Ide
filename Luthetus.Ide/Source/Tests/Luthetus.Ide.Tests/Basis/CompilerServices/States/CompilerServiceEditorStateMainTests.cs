@@ -11,18 +11,11 @@ public class CompilerServiceEditorStateMainTests
 {
     /// <summary>
     /// <see cref="CompilerServiceEditorState(Key{TextEditorViewModel})"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="CompilerServiceEditorState.TextEditorViewModelKey"/>
     /// </summary>
     [Fact]
-    public void TextEditorViewModelKey()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

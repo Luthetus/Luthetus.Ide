@@ -13,36 +13,13 @@ public class TreeViewCSharpProjectToProjectReferencesTests
 {
     /// <summary>
     /// <see cref="TreeViewCSharpProjectToProjectReferences(CSharpProjectToProjectReferences, ILuthetusIdeComponentRenderers, IFileSystemProvider, IEnvironmentProvider, bool, bool)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="TreeViewCSharpProjectToProjectReferences.IdeComponentRenderers"/>
-    /// </summary>
-    [Fact]
-    public void IdeComponentRenderers()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TreeViewCSharpProjectToProjectReferences.FileSystemProvider"/>
-    /// </summary>
-    [Fact]
-    public void FileSystemProvider()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TreeViewCSharpProjectToProjectReferences.EnvironmentProvider"/>
     /// </summary>
     [Fact]
-    public void EnvironmentProvider()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

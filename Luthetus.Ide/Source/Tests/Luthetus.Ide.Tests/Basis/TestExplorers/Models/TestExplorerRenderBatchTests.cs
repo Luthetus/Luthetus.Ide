@@ -12,36 +12,13 @@ public class TestExplorerRenderBatchTests
 {
     /// <summary>
     /// <see cref="TestExplorerRenderBatch(TestExplorerState, AppOptionsState, TreeViewContainer?)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="TestExplorerRenderBatch.TestExplorerState"/>
-    /// </summary>
-    [Fact]
-    public void TestExplorerState()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TestExplorerRenderBatch.AppOptionsState"/>
-    /// </summary>
-    [Fact]
-    public void AppOptionsState()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TestExplorerRenderBatch.TreeViewContainer"/>
     /// </summary>
     [Fact]
-    public void TreeViewContainer()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

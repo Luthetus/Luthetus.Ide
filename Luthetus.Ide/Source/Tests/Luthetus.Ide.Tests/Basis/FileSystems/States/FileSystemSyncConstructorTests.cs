@@ -13,27 +13,12 @@ public class FileSystemSyncConstructorTests
 {
     /// <summary>
     /// <see cref="FileSystemSync(IFileSystemProvider, ILuthetusCommonComponentRenderers, IBackgroundTaskService, IDispatcher)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="FileSystemSync.BackgroundTaskService"/>
-    /// </summary>
-    [Fact]
-    public void BackgroundTaskService()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="FileSystemSync.Dispatcher"/>
     /// </summary>
     [Fact]
-    public void Dispatcher()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

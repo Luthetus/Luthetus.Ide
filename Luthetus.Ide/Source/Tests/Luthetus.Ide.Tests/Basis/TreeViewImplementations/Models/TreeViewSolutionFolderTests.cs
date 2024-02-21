@@ -14,45 +14,14 @@ public class TreeViewSolutionFolderTests
 {
     /// <summary>
     /// <see cref="TreeViewSolutionFolder(SolutionFolder, ILuthetusIdeComponentRenderers, ILuthetusCommonComponentRenderers, IFileSystemProvider, IEnvironmentProvider, bool, bool)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="TreeViewSolutionFolder.IdeComponentRenderers"/>
-    /// </summary>
-    [Fact]
-    public void IdeComponentRenderers()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TreeViewSolutionFolder.CommonComponentRenderers"/>
-    /// </summary>
-    [Fact]
-    public void CommonComponentRenderers()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TreeViewSolutionFolder.FileSystemProvider"/>
-    /// </summary>
-    [Fact]
-    public void FileSystemProvider()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TreeViewSolutionFolder.EnvironmentProvider"/>
     /// </summary>
     [Fact]
-    public void EnvironmentProvider()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

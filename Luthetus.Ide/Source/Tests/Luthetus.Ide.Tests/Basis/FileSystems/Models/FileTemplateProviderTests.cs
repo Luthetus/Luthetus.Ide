@@ -9,18 +9,11 @@ public class FileTemplateProviderTests
 {
     /// <summary>
     /// <see cref="FileTemplateProvider()"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="FileTemplateProvider.FileTemplatesList"/>
     /// </summary>
     [Fact]
-    public void FileTemplatesList()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

@@ -10,27 +10,12 @@ public class StdInRequestTests
 {
     /// <summary>
     /// <see cref="StdInRequest(IntegratedTerminal)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="StdInRequest.IsCompleted"/>
-    /// </summary>
-    [Fact]
-    public void IsCompleted()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="StdInRequest.Value"/>
     /// </summary>
     [Fact]
-    public void Value()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

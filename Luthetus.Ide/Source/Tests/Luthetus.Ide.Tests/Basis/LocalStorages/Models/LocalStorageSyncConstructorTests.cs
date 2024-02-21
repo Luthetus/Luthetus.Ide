@@ -12,27 +12,12 @@ public partial class LocalStorageSyncConstructorTests
 {
     /// <summary>
     /// <see cref="LocalStorageSync(IJSRuntime, IBackgroundTaskService, IDispatcher)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="LocalStorageSync.BackgroundTaskService"/>
-    /// </summary>
-    [Fact]
-    public void BackgroundTaskService()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="LocalStorageSync.Dispatcher"/>
     /// </summary>
     [Fact]
-    public void Dispatcher()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

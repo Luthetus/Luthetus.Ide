@@ -13,27 +13,12 @@ public class GitSyncConstructorTests
 {
     /// <summary>
     /// <see cref="GitSync(IState{TerminalSessionState}, IState{GitState}, IFileSystemProvider, IEnvironmentProvider, IBackgroundTaskService, IDispatcher)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="GitSync.BackgroundTaskService"/>
-    /// </summary>
-    [Fact]
-    public void BackgroundTaskService()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="GitSync.Dispatcher"/>
     /// </summary>
     [Fact]
-    public void Dispatcher()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

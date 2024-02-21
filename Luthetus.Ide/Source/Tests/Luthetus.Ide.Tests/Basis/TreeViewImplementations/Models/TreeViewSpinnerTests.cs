@@ -11,18 +11,11 @@ public class TreeViewSpinnerTests
 {
     /// <summary>
     /// <see cref="TreeViewSpinner(Guid, ILuthetusCommonComponentRenderers, bool, bool)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="TreeViewSpinner.CommonComponentRenderers"/>
     /// </summary>
     [Fact]
-    public void CommonComponentRenderers()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

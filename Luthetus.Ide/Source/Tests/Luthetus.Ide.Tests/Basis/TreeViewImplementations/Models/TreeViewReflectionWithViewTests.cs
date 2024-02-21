@@ -12,27 +12,12 @@ public class TreeViewReflectionWithViewTests
 {
     /// <summary>
     /// <see cref="TreeViewReflectionWithView(WatchWindowObject, bool, bool, ILuthetusIdeComponentRenderers, ILuthetusCommonComponentRenderers)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="TreeViewReflectionWithView.IdeComponentRenderers"/>
-    /// </summary>
-    [Fact]
-    public void IdeComponentRenderers()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TreeViewReflectionWithView.CommonComponentRenderers"/>
     /// </summary>
     [Fact]
-    public void CommonComponentRenderers()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

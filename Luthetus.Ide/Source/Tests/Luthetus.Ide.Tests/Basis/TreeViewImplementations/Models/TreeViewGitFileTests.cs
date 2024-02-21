@@ -12,18 +12,11 @@ public class TreeViewGitFileTests
 {
     /// <summary>
     /// <see cref="TreeViewGitFile(GitFile, ILuthetusIdeComponentRenderers, bool, bool)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="TreeViewGitFile.IdeComponentRenderers"/>
     /// </summary>
     [Fact]
-    public void IdeComponentRenderers()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }
