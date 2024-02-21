@@ -1,10 +1,14 @@
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Concurrent;
 
 namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 
+/// <summary>
+/// <see cref="IntegratedTerminal"/>
+/// </summary>
 public abstract class IntegratedTerminalTests
 {
     [Fact]

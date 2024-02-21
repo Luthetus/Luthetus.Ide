@@ -1,4 +1,5 @@
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
@@ -10,6 +11,9 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.Tests.Basis.Editors.States;
 
+/// <summary>
+/// <see cref="EditorSync"/>
+/// </summary>
 public class EditorSyncFunctionsTests
 {
     [Fact]

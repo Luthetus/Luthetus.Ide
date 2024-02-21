@@ -1,11 +1,15 @@
-﻿using System.Text;
+﻿using Luthetus.Ide.RazorLib.CommandLines.Models;
+using System.Text;
 
 namespace Luthetus.Ide.Tests.Basis.CommandLines.Models;
 
+/// <summary>
+/// <see cref="FormattedCommand"/>
+/// </summary>
 public class FormattedCommandTests
 {
     [Fact]
-    public void FormattedCommand()
+    public void Constructor()
     {
         throw new NotImplementedException();
     }

@@ -1,5 +1,10 @@
+using Luthetus.Ide.RazorLib.Menus.Models;
+
 namespace Luthetus.Ide.Tests.Basis.Menus.Models;
 
+/// <summary>
+/// <see cref="MenuOptionsFactory"/>
+/// </summary>
 public class MenuOptionsFactoryTests
 {
     [Fact]

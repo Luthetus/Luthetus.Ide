@@ -1,15 +1,16 @@
 ﻿using Fluxor;
+using Luthetus.Ide.RazorLib.CompilerServices.States;
 
 namespace Luthetus.Ide.Tests.Basis.CompilerServices.States;
 
+/// <summary>
+/// <see cref="CompilerServiceEditorState.Reducer"/>
+/// </summary>
 public class CompilerServiceEditorStateReducerTests
 {
-    public class Reducer
+    [Fact]
+    public void ReduceSetTextEditorViewModelKeyAction()
     {
-        [Fact]
-        public void ReduceSetTextEditorViewModelKeyAction()
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
     }
 }

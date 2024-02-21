@@ -1,5 +1,10 @@
+using Luthetus.Ide.RazorLib.CompilerServices.Models;
+
 namespace Luthetus.Ide.Tests.Basis.CompilerServices.Models;
 
+/// <summary>
+/// <see cref="CompilerServiceExplorerTreeViewMouseEventHandler"/>
+/// </summary>
 public class CompilerServiceExplorerTreeViewMouseEventHandlerTests
 {
     [Fact]

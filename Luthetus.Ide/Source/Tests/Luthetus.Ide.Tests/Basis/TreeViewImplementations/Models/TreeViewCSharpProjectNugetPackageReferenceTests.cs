@@ -3,9 +3,13 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Nugets.Models;
+using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 
 namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 
+/// <summary>
+/// <see cref="TreeViewCSharpProjectNugetPackageReference"/>
+/// </summary>
 public class TreeViewCSharpProjectNugetPackageReferenceTests
 {
     [Fact]

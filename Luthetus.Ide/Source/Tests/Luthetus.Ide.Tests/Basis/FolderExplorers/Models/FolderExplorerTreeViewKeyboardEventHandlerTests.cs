@@ -11,9 +11,13 @@ using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.FolderExplorers.Models;
 
 namespace Luthetus.Ide.Tests.Basis.FolderExplorers.Models;
 
+/// <summary>
+/// <see cref="FolderExplorerTreeViewKeyboardEventHandler"/>
+/// </summary>
 public class FolderExplorerTreeViewKeyboardEventHandlerTests
 {
     [Fact]

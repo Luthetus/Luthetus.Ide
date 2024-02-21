@@ -1,15 +1,16 @@
 ﻿using Fluxor;
+using Luthetus.Ide.RazorLib.Gits.States;
 
 namespace Luthetus.Ide.Tests.Basis.Gits.States;
 
+/// <summary>
+/// <see cref="GitState"/>
+/// </summary>
 public class GitStateReducerTests
 {
-    private class Reducer
+    [Fact]
+    public void ReduceSetGitStateWithAction()
     {
-        [Fact]
-        public void ReduceSetGitStateWithAction()
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
     }
 }

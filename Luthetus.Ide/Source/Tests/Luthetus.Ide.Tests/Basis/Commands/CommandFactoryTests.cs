@@ -1,5 +1,10 @@
+using Luthetus.Ide.RazorLib.Commands;
+
 namespace Luthetus.Ide.Tests.Basis.Commands;
 
+/// <summary>
+/// <see cref="CommandFactory"/>
+/// </summary>
 public class CommandFactoryTests
 {
     [Fact]

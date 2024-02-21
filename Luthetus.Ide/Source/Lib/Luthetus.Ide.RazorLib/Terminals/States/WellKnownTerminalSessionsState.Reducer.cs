@@ -4,7 +4,7 @@ namespace Luthetus.Ide.RazorLib.Terminals.States;
 
 public partial record WellKnownTerminalSessionsState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static WellKnownTerminalSessionsState ReduceSetActiveTerminalCommandKeyAction(

@@ -2,12 +2,16 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
+using Luthetus.Ide.RazorLib.CSharpProjectForms.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.Ide.Tests.Basis.CSharpProjectForms.Models;
 
+/// <summary>
+/// <see cref="CSharpProjectFormViewModel"/>
+/// </summary>
 public class CSharpProjectFormViewModelTests
 {
     [Fact]

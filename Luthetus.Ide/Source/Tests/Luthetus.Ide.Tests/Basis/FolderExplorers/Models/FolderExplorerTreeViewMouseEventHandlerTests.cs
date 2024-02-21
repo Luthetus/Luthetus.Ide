@@ -1,5 +1,10 @@
+using Luthetus.Ide.RazorLib.FolderExplorers.Models;
+
 namespace Luthetus.Ide.Tests.Basis.FolderExplorers.Models;
 
+/// <summary>
+/// <see cref="FolderExplorerTreeViewMouseEventHandler"/>
+/// </summary>
 public class FolderExplorerTreeViewMouseEventHandlerTests
 {
     [Fact]

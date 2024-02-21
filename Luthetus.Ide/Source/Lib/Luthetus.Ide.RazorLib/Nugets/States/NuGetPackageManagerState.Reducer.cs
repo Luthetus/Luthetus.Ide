@@ -4,7 +4,7 @@ namespace Luthetus.Ide.RazorLib.Nugets.States;
 
 public partial record NuGetPackageManagerState
 {
-    private class NuGetPackageManagerStateReducer
+    public class Reducer
     {
         [ReducerMethod]
         public static NuGetPackageManagerState ReduceSetSelectedProjectToModifyAction(

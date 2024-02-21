@@ -1,5 +1,10 @@
-﻿namespace Luthetus.Ide.Tests.Basis.DotNetSolutions.States;
+﻿using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
+namespace Luthetus.Ide.Tests.Basis.DotNetSolutions.States;
+
+/// <summary>
+/// <see cref="DotNetSolutionSync"/>
+/// </summary>
 public class DotNetSolutionSyncConstructorTests
 {
     [Fact]

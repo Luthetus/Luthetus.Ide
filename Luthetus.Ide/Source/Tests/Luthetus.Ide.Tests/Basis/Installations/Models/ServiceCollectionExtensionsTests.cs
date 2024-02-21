@@ -30,6 +30,9 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.Ide.Tests.Basis.Installations.Models;
 
+/// <summary>
+/// <see cref="TextEditor.RazorLib.Installations.Models.ServiceCollectionExtensions"/>
+/// </summary>
 public class ServiceCollectionExtensionsTests
 {
     [Fact]

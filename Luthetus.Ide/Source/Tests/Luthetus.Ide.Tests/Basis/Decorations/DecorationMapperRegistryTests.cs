@@ -1,5 +1,10 @@
-﻿namespace Luthetus.Ide.Tests.Basis.Decorations;
+﻿using Luthetus.Ide.RazorLib.Decorations;
 
+namespace Luthetus.Ide.Tests.Basis.Decorations;
+
+/// <summary>
+/// <see cref="DecorationMapperRegistry"/>
+/// </summary>
 public class DecorationMapperRegistryTests
 {
     [Fact]

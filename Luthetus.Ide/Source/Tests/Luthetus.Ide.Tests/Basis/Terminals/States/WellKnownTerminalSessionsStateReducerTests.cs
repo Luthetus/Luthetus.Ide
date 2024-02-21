@@ -1,15 +1,16 @@
 using Fluxor;
+using Luthetus.Ide.RazorLib.Terminals.States;
 
 namespace Luthetus.Ide.Tests.Basis.Terminals.States;
 
+/// <summary>
+/// <see cref="WellKnownTerminalSessionsState.Reducer"/>
+/// </summary>
 public partial record WellKnownTerminalSessionsStateReducerTests
 {
-    private class Reducer
+    [Fact]
+    public void ReduceSetActiveTerminalCommandKeyAction()
     {
-        [Fact]
-        public void ReduceSetActiveTerminalCommandKeyAction()
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
     }
 }

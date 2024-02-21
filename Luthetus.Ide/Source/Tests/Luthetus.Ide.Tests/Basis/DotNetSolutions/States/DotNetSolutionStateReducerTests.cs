@@ -1,27 +1,28 @@
 ﻿using Fluxor;
+using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 namespace Luthetus.Ide.Tests.Basis.DotNetSolutions.States;
 
+/// <summary>
+/// <see cref="DotNetSolutionState.Reducer"/>
+/// </summary>
 public class DotNetSolutionStateReducerTests
 {
-    private class Reducer
+    [Fact]
+    public void ReduceRegisterAction()
     {
-        [Fact]
-        public void ReduceRegisterAction()
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
+    }
 
-        [Fact]
-        public void ReduceDisposeAction()
-        {
-            throw new NotImplementedException();
-        }
+    [Fact]
+    public void ReduceDisposeAction()
+    {
+        throw new NotImplementedException();
+    }
 
-        [Fact]
-        public void ReduceWithAction()
-        {
-            throw new NotImplementedException();
-        }
+    [Fact]
+    public void ReduceWithAction()
+    {
+        throw new NotImplementedException();
     }
 }

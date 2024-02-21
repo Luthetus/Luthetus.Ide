@@ -5,9 +5,13 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
+using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 namespace Luthetus.Ide.Tests.Basis.DotNetSolutions.States;
 
+/// <summary>
+/// <see cref="DotNetSolutionState"/>
+/// </summary>
 public class DotNetSolutionStateMainTests
 {
     [Fact]

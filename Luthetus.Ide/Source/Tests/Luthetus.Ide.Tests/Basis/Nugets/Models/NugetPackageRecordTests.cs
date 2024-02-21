@@ -1,8 +1,12 @@
-﻿using System.Collections.Immutable;
+﻿using Luthetus.Ide.RazorLib.Nugets.Models;
+using System.Collections.Immutable;
 using System.Text.Json.Serialization;
 
 namespace Luthetus.Ide.Tests.Basis.Nugets.Models;
 
+/// <summary>
+/// <see cref="NugetPackageRecord"/>
+/// </summary>
 public class NugetPackageRecordTests
 {
     [Fact]

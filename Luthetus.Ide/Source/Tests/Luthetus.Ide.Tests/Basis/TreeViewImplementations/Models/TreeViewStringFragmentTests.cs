@@ -4,9 +4,13 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Displays;
 using Luthetus.Ide.RazorLib.TestExplorers.Models;
+using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 
 namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 
+/// <summary>
+/// <see cref="TreeViewStringFragment"/>
+/// </summary>
 public class TreeViewStringFragmentTests
 {
     [Fact]

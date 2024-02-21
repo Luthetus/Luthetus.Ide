@@ -1,5 +1,10 @@
-﻿namespace Luthetus.Ide.Tests.Basis.FileSystems.Models;
+﻿using Luthetus.Ide.RazorLib.FileSystems.Models;
 
+namespace Luthetus.Ide.Tests.Basis.FileSystems.Models;
+
+/// <summary>
+/// <see cref="FileTemplateParameter"/>
+/// </summary>
 public class FileTemplateParameterTests
 {
     [Fact]

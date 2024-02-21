@@ -1,5 +1,10 @@
-﻿namespace Luthetus.Ide.Tests.Basis.Clipboards.Models;
+﻿using Luthetus.Ide.RazorLib.Clipboards.Models;
 
+namespace Luthetus.Ide.Tests.Basis.Clipboards.Models;
+
+/// <summary>
+/// <see cref="ClipboardFacts"/>
+/// </summary>
 public class ClipboardFactsTests
 {
     [Fact]

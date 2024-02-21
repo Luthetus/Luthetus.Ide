@@ -1,5 +1,10 @@
+using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
+
 namespace Luthetus.Ide.Tests.Basis.DotNetSolutions.Models;
 
+/// <summary>
+/// <see cref="SolutionExplorerTreeViewKeyboardEventHandler"/>
+/// </summary>
 public class SolutionExplorerTreeViewKeyboardEventHandlerTests
 {
     [Fact]

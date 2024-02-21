@@ -1,5 +1,10 @@
+using Luthetus.Ide.RazorLib.CodeSearches.States;
+
 namespace Luthetus.Ide.Tests.Basis.CodeSearches.States;
 
+/// <summary>
+/// <see cref="CodeSearchState"/>
+/// </summary>
 public class CodeSearchStateMainTests
 {
     [Fact]

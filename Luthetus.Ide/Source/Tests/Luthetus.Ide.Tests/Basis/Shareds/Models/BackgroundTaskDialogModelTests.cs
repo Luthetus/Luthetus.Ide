@@ -1,7 +1,11 @@
 ﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.Shareds.Models;
 
 namespace Luthetus.Ide.Tests.Basis.Shareds.Models;
 
+/// <summary>
+/// <see cref="BackgroundTaskDialogModel"/>
+/// </summary>
 public class BackgroundTaskDialogModelTests
 {
     [Fact]

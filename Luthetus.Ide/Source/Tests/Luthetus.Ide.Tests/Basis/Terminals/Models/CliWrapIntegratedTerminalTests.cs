@@ -2,6 +2,7 @@ using CliWrap;
 using CliWrap.EventStream;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using System.Reactive.Linq;
@@ -9,6 +10,9 @@ using System.Text;
 
 namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 
+/// <summary>
+/// <see cref="CliWrapIntegratedTerminal"/>
+/// </summary>
 public class CliWrapIntegratedTerminalTests
 {
     [Fact]

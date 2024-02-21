@@ -7,7 +7,7 @@ namespace Luthetus.Ide.RazorLib.InputFiles.States;
 
 public partial record InputFileState
 {
-    private static class Reducer
+    public static class Reducer
     {
         [ReducerMethod]
         public static InputFileState ReduceStartInputFileStateFormAction(

@@ -1,5 +1,10 @@
+using Luthetus.Ide.RazorLib.CompilerServices.Models;
+
 namespace Luthetus.Ide.Tests.Basis.CompilerServices.Models;
 
+/// <summary>
+/// <see cref="CompilerServiceExplorerTreeViewKeyboardEventHandler"/>
+/// </summary>
 public class CompilerServiceExplorerTreeViewKeyboardEventHandlerTests
 {
     [Fact]

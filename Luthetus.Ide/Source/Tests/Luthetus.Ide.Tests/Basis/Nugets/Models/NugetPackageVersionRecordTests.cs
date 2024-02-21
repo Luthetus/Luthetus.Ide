@@ -1,7 +1,11 @@
-﻿using System.Text.Json.Serialization;
+﻿using Luthetus.Ide.RazorLib.Nugets.Models;
+using System.Text.Json.Serialization;
 
 namespace Luthetus.Ide.Tests.Basis.Nugets.Models;
 
+/// <summary>
+/// <see cref="NugetPackageVersionRecord"/>
+/// </summary>
 public class NugetPackageVersionRecordTests
 {
     [Fact]

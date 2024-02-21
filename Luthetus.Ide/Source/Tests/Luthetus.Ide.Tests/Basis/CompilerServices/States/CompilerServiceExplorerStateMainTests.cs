@@ -2,9 +2,13 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
+using Luthetus.Ide.RazorLib.CompilerServices.States;
 
 namespace Luthetus.Ide.Tests.Basis.CompilerServices.States;
 
+/// <summary>
+/// <see cref="CompilerServiceExplorerState"/>
+/// </summary>
 public class CompilerServiceExplorerStateMainTests
 {
     [Fact]

@@ -1,8 +1,12 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
+using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 namespace Luthetus.Ide.Tests.Basis.DotNetSolutions.States;
 
+/// <summary>
+/// <see cref="DotNetSolutionState"/>
+/// </summary>
 public class DotNetSolutionStateActionsTests
 {
     [Fact]

@@ -1,8 +1,12 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 
+/// <summary>
+/// <see cref="TerminalCommand"/>
+/// </summary>
 public record TerminalCommandTests
 {
     [Fact]

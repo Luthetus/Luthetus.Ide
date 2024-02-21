@@ -1,15 +1,16 @@
 ﻿using Fluxor;
+using Luthetus.Ide.RazorLib.ProgramExecutions.States;
 
 namespace Luthetus.Ide.Tests.Basis.ProgramExecutions.States;
 
+/// <summary>
+/// <see cref="ProgramExecutionState.Reducer"/>
+/// </summary>
 public class ProgramExecutionStateReducerTests
 {
-    private class Reducer
+    [Fact]
+    public void ReduceSetStartupProjectAbsolutePathAction()
     {
-        [Fact]
-        public void ReduceSetStartupProjectAbsolutePathAction()
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
     }
 }

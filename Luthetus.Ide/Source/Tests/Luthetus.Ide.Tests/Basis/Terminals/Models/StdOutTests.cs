@@ -1,7 +1,11 @@
+using Luthetus.Ide.RazorLib.Terminals.Models;
 using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 
+/// <summary>
+/// <see cref="StdOut"/>
+/// </summary>
 public class StdOutTests
 {
     [Fact]

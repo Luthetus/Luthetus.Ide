@@ -3,11 +3,15 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
+using Luthetus.Ide.RazorLib.InputFiles.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.Tests.Basis.InputFiles.States;
 
+/// <summary>
+/// <see cref="InputFileState"/>
+/// </summary>
 public class InputFileStateActionsTests
 {
     [Fact]

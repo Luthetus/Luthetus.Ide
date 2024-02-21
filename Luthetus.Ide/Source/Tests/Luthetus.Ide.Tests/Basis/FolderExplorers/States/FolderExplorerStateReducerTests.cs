@@ -1,15 +1,16 @@
 using Fluxor;
+using Luthetus.Ide.RazorLib.FolderExplorers.States;
 
 namespace Luthetus.Ide.Tests.Basis.FolderExplorers.States;
 
+/// <summary>
+/// <see cref="FolderExplorerState.Reducer"/>
+/// </summary>
 public class FolderExplorerStateReducerTests
 {
-    private class Reducer
+    [Fact]
+    public void ReduceWithAction()
     {
-        [Fact]
-        public void ReduceWithAction()
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
     }
 }

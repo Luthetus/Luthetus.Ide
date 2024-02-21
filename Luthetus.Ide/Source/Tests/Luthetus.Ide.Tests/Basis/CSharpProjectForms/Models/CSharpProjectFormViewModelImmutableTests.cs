@@ -1,5 +1,10 @@
-﻿namespace Luthetus.Ide.Tests.Basis.CSharpProjectForms.Models;
+﻿using Luthetus.Ide.RazorLib.CSharpProjectForms.Models;
 
+namespace Luthetus.Ide.Tests.Basis.CSharpProjectForms.Models;
+
+/// <summary>
+/// <see cref="CSharpProjectFormViewModelImmutable"/>
+/// </summary>
 public record CSharpProjectFormViewModelImmutableTests
 {
     [Fact]

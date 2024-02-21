@@ -1,33 +1,34 @@
 ﻿using Fluxor;
+using Luthetus.Ide.RazorLib.Nugets.States;
 
 namespace Luthetus.Ide.Tests.Basis.Nugets.States;
 
+/// <summary>
+/// <see cref="NuGetPackageManagerState.Reducer"/>
+/// </summary>
 public class NuGetPackageManagerStateReducerTests
 {
-    private class NuGetPackageManagerStateReducer
+    [Fact]
+    public void ReduceSetSelectedProjectToModifyAction()
     {
-        [Fact]
-        public void ReduceSetSelectedProjectToModifyAction()
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
+    }
 
-        [Fact]
-        public void ReduceSetNugetQueryAction()
-        {
-            throw new NotImplementedException();
-        }
+    [Fact]
+    public void ReduceSetNugetQueryAction()
+    {
+        throw new NotImplementedException();
+    }
 
-        [Fact]
-        public void ReduceSetIncludePrereleaseAction()
-        {
-            throw new NotImplementedException();
-        }
+    [Fact]
+    public void ReduceSetIncludePrereleaseAction()
+    {
+        throw new NotImplementedException();
+    }
 
-        [Fact]
-        public void ReduceSetMostRecentQueryResultAction()
-        {
-            throw new NotImplementedException();
-        }
+    [Fact]
+    public void ReduceSetMostRecentQueryResultAction()
+    {
+        throw new NotImplementedException();
     }
 }

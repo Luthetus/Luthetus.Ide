@@ -1,6 +1,11 @@
 ﻿
+using Luthetus.Ide.RazorLib.Editors.States;
+
 namespace Luthetus.Ide.Tests.Basis.Editors.States;
 
+/// <summary>
+/// <see cref="EditorSync"/>
+/// </summary>
 public class EditorSyncConstructorTests
 {
     [Fact]

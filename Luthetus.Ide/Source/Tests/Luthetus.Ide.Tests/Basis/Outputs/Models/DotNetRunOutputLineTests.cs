@@ -1,7 +1,11 @@
+using Luthetus.Ide.RazorLib.Outputs.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.Ide.Tests.Basis.Outputs.Models;
 
+/// <summary>
+/// <see cref="DotNetRunOutputLine"/>
+/// </summary>
 public record DotNetRunOutputLineTests
 {
     [Fact]

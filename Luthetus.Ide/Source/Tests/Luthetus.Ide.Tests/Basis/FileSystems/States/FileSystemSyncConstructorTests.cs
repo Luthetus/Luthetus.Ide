@@ -1,5 +1,10 @@
-﻿namespace Luthetus.Ide.Tests.Basis.FileSystems.States;
+﻿using Luthetus.Ide.RazorLib.FileSystems.States;
 
+namespace Luthetus.Ide.Tests.Basis.FileSystems.States;
+
+/// <summary>
+/// <see cref="FileSystemSync"/>
+/// </summary>
 public class FileSystemSyncConstructorTests
 {
     [Fact]

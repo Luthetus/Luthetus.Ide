@@ -4,7 +4,7 @@ namespace Luthetus.Ide.RazorLib.Terminals.States;
 
 public partial record TerminalSessionState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static TerminalSessionState ReduceRegisterTerminalSessionAction(
