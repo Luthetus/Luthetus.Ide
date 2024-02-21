@@ -1,5 +1,4 @@
-﻿using Fluxor;
-using Luthetus.Ide.RazorLib.Terminals.States;
+﻿using Luthetus.Ide.RazorLib.Terminals.States;
 
 namespace Luthetus.Ide.Tests.Basis.Terminals.States;
 

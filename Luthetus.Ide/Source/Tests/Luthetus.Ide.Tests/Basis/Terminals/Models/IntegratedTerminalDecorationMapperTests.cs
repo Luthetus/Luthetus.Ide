@@ -1,5 +1,4 @@
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 

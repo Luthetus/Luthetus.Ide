@@ -1,5 +1,4 @@
-﻿using Fluxor;
-using Luthetus.Ide.RazorLib.Nugets.States;
+﻿using Luthetus.Ide.RazorLib.Nugets.States;
 
 namespace Luthetus.Ide.Tests.Basis.Nugets.States;
 
