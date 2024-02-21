@@ -6,20 +6,20 @@ using System.Collections.Immutable;
 namespace Luthetus.TextEditor.Tests.Basis.FindAlls.States;
 
 /// <summary>
-/// <see cref="TextEditorSearchEngineState"/>
+/// <see cref="TextEditorFindAllState"/>
 /// </summary>
-public class TextEditorSearchEngineStateMainTests
+public class TextEditorFindAllStateMainTests
 {
     /// <summary>
-    /// <see cref="TextEditorSearchEngineState()"/>
+    /// <see cref="TextEditorFindAllState()"/>
     /// <br/>----<br/>
-    /// <see cref="TextEditorSearchEngineState.SearchEngineList"/>
-    /// <see cref="TextEditorSearchEngineState.SearchQuery"/>
+    /// <see cref="TextEditorFindAllState.FindAllList"/>
+    /// <see cref="TextEditorFindAllState.SearchQuery"/>
     /// </summary>
     [Fact]
 	public void Constructor_A()
 	{
-		var searchEngineState = new TextEditorSearchEngineState();
+		var searchEngineState = new TextEditorFindAllState();
 
         Assert.Equal(ImmutableList<ITextEditorSearchEngine>.Empty, searchEngineState.SearchEngineList);
         Assert.Equal(string.Empty, searchEngineState.SearchQuery);
@@ -27,10 +27,10 @@ public class TextEditorSearchEngineStateMainTests
 	}
 
     /// <summary>
-    /// <see cref="TextEditorSearchEngineState(ImmutableList{ITextEditorSearchEngine}, string, TextEditorSearchEngineOptions)"/>
+    /// <see cref="TextEditorFindAllState(ImmutableList{ITextEditorFindAll}, string, TextEditorFindAllOptions)"/>
     /// <br/>----<br/>
-    /// <see cref="TextEditorSearchEngineState.SearchEngineList"/>
-    /// <see cref="TextEditorSearchEngineState.SearchQuery"/>
+    /// <see cref="TextEditorFindAllState.FindAllList"/>
+    /// <see cref="TextEditorFindAllState.SearchQuery"/>
     /// </summary>
     [Fact]
 	public void Constructor_B()
@@ -38,15 +38,18 @@ public class TextEditorSearchEngineStateMainTests
 		var searchEngine = new SearchEngineOverRegisteredViewModels();
 		var searchEngineList = new ITextEditorSearchEngine[] { searchEngine }.ToImmutableList();
         var searchQuery = "AlphabetSoup";
-        var searchOptions = new TextEditorSearchEngineOptions();
+        var startingDirectoryPath = "/";
+        var findAllOptions = new TextEditorFindAllOptions();
 
-        var searchEngineState = new TextEditorSearchEngineState(
+        var findAllState = new TextEditorFindAllState(
             searchEngineList,
             searchQuery,
-            searchOptions);
+            startingDirectoryPath,
+            findAllOptions);
 
-        Assert.Equal(searchEngineList, searchEngineState.SearchEngineList);
-        Assert.Equal(searchQuery, searchEngineState.SearchQuery);
-        Assert.Equal(searchOptions, searchEngineState.Options);
+        Assert.Equal(searchEngineList, findAllState.SearchEngineList);
+        Assert.Equal(searchQuery, findAllState.SearchQuery);
+        Assert.Equal(startingDirectoryPath, findAllState.StartingDirectoryPath);
+        Assert.Equal(findAllOptions, findAllState.Options);
     }
 }

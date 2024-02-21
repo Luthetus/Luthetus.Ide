@@ -22,13 +22,14 @@ public class IOutputParserTests
 			errorMessageTextExpected +
 			projectFilePathTextExpected;
 
-		var dotNetRunOutputParser = new DotNetRunOutputParser(
-			new List<string>(testData));
+		var dotNetRunOutputParser = new DotNetRunOutputParser();
 
-		var outputResult = dotNetRunOutputParser.Parse();
+		var outputResultList = dotNetRunOutputParser.Parse(new List<string>() { testData });
 
-		// Assert filePath
-		var filePathTextActual = outputResult.FilePathTextSpan.GetText();
+		var outputResult = (DotNetRunOutputLine)outputResultList.Single();
+
+        // Assert filePath
+        var filePathTextActual = outputResult.FilePathTextSpan.GetText();
 		ObnoxiouslyWriteToConsole(5, filePathTextActual);
 		Assert.Equal(filePathTextExpected, filePathTextActual);
 
