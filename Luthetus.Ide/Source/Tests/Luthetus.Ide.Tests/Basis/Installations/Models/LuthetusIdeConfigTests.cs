@@ -7,6 +7,9 @@ namespace Luthetus.Ide.Tests.Basis.Installations.Models;
 /// </summary>
 public record LuthetusIdeConfigTests
 {
+    /// <summary>
+    /// <see cref="LuthetusIdeConfig.AddLuthetusTextEditor"/>
+    /// </summary>
     [Fact]
     public void AddLuthetusTextEditor()
     {

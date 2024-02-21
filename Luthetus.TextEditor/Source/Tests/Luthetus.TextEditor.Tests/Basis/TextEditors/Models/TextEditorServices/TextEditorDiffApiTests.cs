@@ -1,6 +1,8 @@
-﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Diffs.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 
@@ -10,7 +12,7 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 public class TextEditorDiffApiTests
 {
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorDiffApi.TextEditorDiffApi(ITextEditorService, Fluxor.IDispatcher)"/>
+    /// <see cref="ITextEditorService.TextEditorDiffApi.TextEditorDiffApi(ITextEditorService, IDispatcher)"/>
     /// </summary>
     [Fact]
     public void Constructor()
@@ -19,7 +21,7 @@ public class TextEditorDiffApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorDiffApi.Register(Common.RazorLib.Keys.Models.Key{RazorLib.Diffs.Models.TextEditorDiffModel}, Common.RazorLib.Keys.Models.Key{TextEditorViewModel}, Common.RazorLib.Keys.Models.Key{TextEditorViewModel})"/>
+    /// <see cref="ITextEditorService.TextEditorDiffApi.Register(Key{TextEditorDiffModel}, Key{TextEditorViewModel}, Key{TextEditorViewModel})"/>
     /// </summary>
     [Fact]
     public void Register()
@@ -28,7 +30,7 @@ public class TextEditorDiffApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorDiffApi.GetOrDefault(Common.RazorLib.Keys.Models.Key{RazorLib.Diffs.Models.TextEditorDiffModel})"/>
+    /// <see cref="ITextEditorService.TextEditorDiffApi.GetOrDefault(Key{TextEditorDiffModel})"/>
     /// </summary>
     [Fact]
     public void FindOrDefault()
@@ -37,7 +39,7 @@ public class TextEditorDiffApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorDiffApi.Dispose(Common.RazorLib.Keys.Models.Key{RazorLib.Diffs.Models.TextEditorDiffModel})"/>
+    /// <see cref="ITextEditorService.TextEditorDiffApi.Dispose(Key{TextEditorDiffModel})"/>
     /// </summary>
     [Fact]
     public void Dispose()
@@ -46,7 +48,7 @@ public class TextEditorDiffApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorDiffApi.Calculate(Common.RazorLib.Keys.Models.Key{RazorLib.Diffs.Models.TextEditorDiffModel}, CancellationToken)"/>
+    /// <see cref="ITextEditorService.TextEditorDiffApi.Calculate(Key{TextEditorDiffModel}, CancellationToken)"/>
     /// </summary>
     [Fact]
     public void Calculate()

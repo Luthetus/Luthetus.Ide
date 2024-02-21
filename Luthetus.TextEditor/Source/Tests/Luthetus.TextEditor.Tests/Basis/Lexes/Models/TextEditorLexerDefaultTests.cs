@@ -1,6 +1,4 @@
-﻿using Xunit;
-
-namespace Luthetus.TextEditor.Tests.Basis.Lexes.Models;
+﻿namespace Luthetus.TextEditor.Tests.Basis.Lexes.Models;
 
 /// <summary>
 /// <see cref="TextEditorLexerDefault"/>

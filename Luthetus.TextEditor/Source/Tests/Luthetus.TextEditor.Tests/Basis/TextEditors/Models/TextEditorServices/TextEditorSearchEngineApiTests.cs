@@ -1,15 +1,17 @@
-﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Xunit;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 
 /// <summary>
-/// <see cref="ITextEditorService.TextEditorSearchEngineApi"/>
+/// <see cref="ITextEditorService.TextEditorFindAllApi"/>
 /// </summary>
 public class TextEditorSearchEngineApiTests
 {
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorSearchEngineApi.TextEditorSearchEngineApi(ITextEditorService, Fluxor.IDispatcher)"/>
+    /// <see cref="ITextEditorService.TextEditorFindAllApi.TextEditorFindAllApi(ITextEditorService, IDispatcher)"/>
     /// </summary>
     [Fact]
     public void Constructor()
@@ -18,7 +20,7 @@ public class TextEditorSearchEngineApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorSearchEngineApi.DisposeAction(Common.RazorLib.Keys.Models.Key{RazorLib.SearchEngines.Models.ITextEditorSearchEngine})"/>
+    /// <see cref="ITextEditorService.TextEditorFindAllApi.DisposeAction(Key{ITextEditorSearchEngine})"/>
     /// </summary>
     [Fact]
     public void DisposeAction()
@@ -27,7 +29,7 @@ public class TextEditorSearchEngineApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorSearchEngineApi.GetOrDefault(Common.RazorLib.Keys.Models.Key{RazorLib.SearchEngines.Models.ITextEditorSearchEngine})"/>
+    /// <see cref="ITextEditorService.TextEditorFindAllApi.GetOrDefault(Key{ITextEditorSearchEngine})"/>
     /// </summary>
     [Fact]
     public void FindOrDefault()
@@ -36,7 +38,7 @@ public class TextEditorSearchEngineApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorSearchEngineApi.Register(RazorLib.SearchEngines.Models.ITextEditorSearchEngine)"/>
+    /// <see cref="ITextEditorService.TextEditorFindAllApi.Register(ITextEditorSearchEngine)"/>
     /// </summary>
     [Fact]
     public void Register()
@@ -45,7 +47,7 @@ public class TextEditorSearchEngineApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorSearchEngineApi."/>
+    /// <see cref="ITextEditorService.TextEditorFindAllApi.SetActiveSearchEngine(Key{ITextEditorSearchEngine})"/>
     /// </summary>
     [Fact]
     public void SetActiveSearchEngine()

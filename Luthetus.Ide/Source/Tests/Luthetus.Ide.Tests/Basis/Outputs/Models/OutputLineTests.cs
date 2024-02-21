@@ -7,6 +7,9 @@ namespace Luthetus.Ide.Tests.Basis.Outputs.Models;
 /// </summary>
 public record OutputLineTests
 {
+    /// <summary>
+    /// <see cref="OutputLine.SourceText"/>
+    /// </summary>
     [Fact]
     public void SourceText()
     {

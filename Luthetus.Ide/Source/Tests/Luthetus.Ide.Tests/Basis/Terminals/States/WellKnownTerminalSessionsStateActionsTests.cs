@@ -7,6 +7,9 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.States;
 /// </summary>
 public partial record WellKnownTerminalSessionsStateActionsTests
 {
+    /// <summary>
+    /// <see cref="WellKnownTerminalSessionsState.SetActiveWellKnownTerminalSessionKey"/>
+    /// </summary>
     [Fact]
     public void SetActiveWellKnownTerminalSessionKey()
     {

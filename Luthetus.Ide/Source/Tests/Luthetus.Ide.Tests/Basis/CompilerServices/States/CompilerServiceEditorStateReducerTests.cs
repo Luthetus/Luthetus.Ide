@@ -7,6 +7,9 @@ namespace Luthetus.Ide.Tests.Basis.CompilerServices.States;
 /// </summary>
 public class CompilerServiceEditorStateReducerTests
 {
+    /// <summary>
+    /// <see cref="CompilerServiceEditorState.Reducer.ReduceSetTextEditorViewModelKeyAction(CompilerServiceEditorState, CompilerServiceEditorState.SetTextEditorViewModelKeyAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceSetTextEditorViewModelKeyAction()
     {

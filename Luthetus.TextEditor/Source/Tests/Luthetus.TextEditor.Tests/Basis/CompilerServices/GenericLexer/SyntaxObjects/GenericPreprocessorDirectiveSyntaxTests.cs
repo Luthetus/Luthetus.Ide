@@ -1,4 +1,6 @@
-﻿using Xunit;
+﻿using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxObjects;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.SyntaxObjects;
@@ -8,38 +10,15 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.SyntaxOb
 /// </summary>
 public class GenericPreprocessorDirectiveSyntaxTests
 {
-	/// <summary>
-	/// <see cref="GenericPreprocessorDirectiveSyntax(RazorLib.Lexes.Models.TextEditorTextSpan, System.Collections.Immutable.ImmutableArray{RazorLib.CompilerServices.GenericLexer.IGenericSyntax})"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="GenericPreprocessorDirectiveSyntax(TextEditorTextSpan, ImmutableArray{IGenericSyntax})"/>
+    /// <br/>----<br/>
+    /// <see cref="GenericPreprocessorDirectiveSyntax.TextSpan"/>
+    /// <see cref="GenericPreprocessorDirectiveSyntax.ChildList"/>
+    /// <see cref="GenericPreprocessorDirectiveSyntax.GenericSyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="GenericPreprocessorDirectiveSyntax.TextSpan"/>
-	/// </summary>
-	[Fact]
-	public void TextSpan()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="GenericPreprocessorDirectiveSyntax.ChildList"/>
-	/// </summary>
-	[Fact]
-	public void ChildList()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="GenericPreprocessorDirectiveSyntax.GenericSyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void GenericSyntaxKind()
 	{
 		throw new NotImplementedException();
 	}

@@ -7,12 +7,18 @@ namespace Luthetus.Ide.Tests.Basis.CompilerServices.Models;
 /// </summary>
 public class CompilerServiceExplorerModelTests
 {
+    /// <summary>
+    /// <see cref="CompilerServiceExplorerModel.AbsolutePath"/>
+    /// </summary>
     [Fact]
     public void AbsolutePath()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="CompilerServiceExplorerModel.IsLoadingCompilerServiceExplorer"/>
+    /// </summary>
     [Fact]
     public void IsLoadingCompilerServiceExplorer()
     {

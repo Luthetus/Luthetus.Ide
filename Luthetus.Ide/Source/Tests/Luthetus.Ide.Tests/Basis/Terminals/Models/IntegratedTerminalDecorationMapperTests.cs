@@ -7,6 +7,9 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 /// </summary>
 public class IntegratedTerminalDecorationMapperTests
 {
+    /// <summary>
+    /// <see cref="IntegratedTerminalDecorationMapper.Map(byte)"/>
+    /// </summary>
     [Fact]
     public void Map()
     {

@@ -1,5 +1,9 @@
-﻿using Xunit;
+﻿using Fluxor;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.TextEditors.States;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.Internals;
 
@@ -8,53 +12,22 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.Internals;
 /// </summary>
 public class DisplayTrackerTests
 {
-	/// <summary>
-	/// <see cref="DisplayTracker(Func{RazorLib.TextEditors.Models.TextEditorViewModel?}, Func{RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel?})"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="DisplayTracker(ITextEditorService, Func{TextEditorViewModel?}, Func{TextEditorModel?})"/>
+    /// <br/>----<br/>
+    /// <see cref="DisplayTracker.GetViewModelFunc"/>
+    /// <see cref="DisplayTracker.GetModelFunc"/>
+    /// <see cref="DisplayTracker.Links"/>
+    /// <see cref="DisplayTracker.IsFirstDisplay"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="DisplayTracker.GetViewModelFunc"/>
-	/// </summary>
-	[Fact]
-	public void GetViewModelFunc()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="DisplayTracker.GetModelFunc"/>
-	/// </summary>
-	[Fact]
-	public void GetModelFunc()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="DisplayTracker.Links"/>
-	/// </summary>
-	[Fact]
-	public void Links()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="DisplayTracker.IsFirstDisplay"/>
-	/// </summary>
-	[Fact]
-	public void IsFirstDisplay()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="DisplayTracker.IncrementLinks(Fluxor.IState{RazorLib.TextEditors.States.TextEditorModelState})"/>
+	/// <see cref="DisplayTracker.IncrementLinks(IState{TextEditorModelState})"/>
 	/// </summary>
 	[Fact]
 	public void IncrementLinks()
@@ -63,7 +36,7 @@ public class DisplayTrackerTests
 	}
 
 	/// <summary>
-	/// <see cref="DisplayTracker.DecrementLinks(Fluxor.IState{RazorLib.TextEditors.States.TextEditorModelState})"/>
+	/// <see cref="DisplayTracker.DecrementLinks(IState{TextEditorModelState})"/>
 	/// </summary>
 	[Fact]
 	public void DecrementLinks()

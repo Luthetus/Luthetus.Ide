@@ -1,5 +1,7 @@
-﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
+﻿using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
+using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.Tests.Basis.Keymaps.Models.Vims;
 
@@ -8,29 +10,14 @@ namespace Luthetus.TextEditor.Tests.Basis.Keymaps.Models.Vims;
 /// </summary>
 public class TextEditorKeymapVimTests
 {
-	/// <summary>
-	/// <see cref="TextEditorKeymapVim()"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorKeymapVim()"/>
+    /// <br/>----<br/>
+    /// <see cref="TextEditorKeymapVim.ActiveVimMode"/>
+    /// <see cref="TextEditorKeymapVim.VimSentence"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorKeymapVim.ActiveVimMode"/>
-	/// </summary>
-	[Fact]
-	public void ActiveVimMode()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorKeymapVim.VimSentence"/>
-	/// </summary>
-	[Fact]
-	public void VimSentence()
 	{
 		throw new NotImplementedException();
 	}
@@ -54,7 +41,7 @@ public class TextEditorKeymapVimTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorKeymapVim.GetCursorCssStyleString(RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel, RazorLib.TextEditors.Models.TextEditorViewModel, RazorLib.Options.Models.TextEditorOptions)"/>
+	/// <see cref="TextEditorKeymapVim.GetCursorCssStyleString(TextEditorModel, TextEditorViewModel, TextEditorOptions)"/>
 	/// </summary>
 	[Fact]
 	public void GetCursorCssStyleString()

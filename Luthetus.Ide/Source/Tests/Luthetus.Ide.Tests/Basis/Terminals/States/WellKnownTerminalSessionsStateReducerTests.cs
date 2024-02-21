@@ -7,6 +7,9 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.States;
 /// </summary>
 public partial record WellKnownTerminalSessionsStateReducerTests
 {
+    /// <summary>
+    /// <see cref="WellKnownTerminalSessionsState.Reducer.ReduceSetActiveTerminalCommandKeyAction(WellKnownTerminalSessionsState, WellKnownTerminalSessionsState.SetActiveWellKnownTerminalSessionKey)"/>
+    /// </summary>
     [Fact]
     public void ReduceSetActiveTerminalCommandKeyAction()
     {

@@ -1,3 +1,4 @@
+using Fluxor;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 namespace Luthetus.Ide.Tests.Basis.DotNetSolutions.States;
@@ -7,6 +8,9 @@ namespace Luthetus.Ide.Tests.Basis.DotNetSolutions.States;
 /// </summary>
 public class DotNetSolutionStateEffectorTests
 {
+    /// <summary>
+    /// <see cref="DotNetSolutionState.Effector.NotifyDotNetSolutionStateStateHasChanged(IDispatcher)"/>
+    /// </summary>
     [Fact]
     public void NotifyDotNetSolutionStateStateHasChanged()
     {

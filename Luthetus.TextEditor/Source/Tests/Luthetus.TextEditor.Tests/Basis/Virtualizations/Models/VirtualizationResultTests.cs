@@ -1,5 +1,6 @@
-﻿using Xunit;
+﻿using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Virtualizations.Models;
 
@@ -8,10 +9,18 @@ namespace Luthetus.TextEditor.Tests.Basis.Virtualizations.Models;
 /// </summary>
 public record VirtualizationResultTests
 {
-	/// <summary>
-	/// <see cref="VirtualizationResult{T}.VirtualizationResult(System.Collections.Immutable.ImmutableArray{VirtualizationEntry{T}}, VirtualizationBoundary, VirtualizationBoundary, VirtualizationBoundary, VirtualizationBoundary, RazorLib.JavaScriptObjects.Models.TextEditorMeasurements, RazorLib.JavaScriptObjects.Models.CharAndRowMeasurements)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="VirtualizationResult{T}.VirtualizationResult(ImmutableArray{VirtualizationEntry{T}}, VirtualizationBoundary, VirtualizationBoundary, VirtualizationBoundary, VirtualizationBoundary, TextEditorMeasurements, CharAndRowMeasurements)"/>
+    /// <br/>----<br/>
+    /// <see cref="VirtualizationResult{T}.EntryList"/>
+    /// <see cref="VirtualizationResult{T}.LeftVirtualizationBoundary"/>
+    /// <see cref="VirtualizationResult{T}.RightVirtualizationBoundary"/>
+    /// <see cref="VirtualizationResult{T}.TopVirtualizationBoundary"/>
+    /// <see cref="VirtualizationResult{T}.BottomVirtualizationBoundary"/>
+    /// <see cref="VirtualizationResult{T}.TextEditorMeasurements"/>
+    /// <see cref="VirtualizationResult{T}.CharAndRowMeasurements"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
 		throw new NotImplementedException();
@@ -22,69 +31,6 @@ public record VirtualizationResultTests
 	/// </summary>
 	[Fact]
 	public void GetEmptyRichCharacters()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="VirtualizationResult{T}.EntryList"/>
-	/// </summary>
-	[Fact]
-	public void EntryList()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="VirtualizationResult{T}.LeftVirtualizationBoundary"/>
-	/// </summary>
-	[Fact]
-	public void LeftVirtualizationBoundary()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="VirtualizationResult{T}.RightVirtualizationBoundary"/>
-	/// </summary>
-	[Fact]
-	public void RightVirtualizationBoundary()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="VirtualizationResult{T}.TopVirtualizationBoundary"/>
-	/// </summary>
-	[Fact]
-	public void TopVirtualizationBoundary()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="VirtualizationResult{T}.BottomVirtualizationBoundary"/>
-	/// </summary>
-	[Fact]
-	public void BottomVirtualizationBoundary()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="VirtualizationResult{T}.TextEditorMeasurements"/>
-	/// </summary>
-	[Fact]
-	public void TextEditorMeasurements()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="VirtualizationResult{T}.CharAndRowMeasurements"/>
-	/// </summary>
-	[Fact]
-	public void CharAndRowMeasurements()
 	{
 		throw new NotImplementedException();
 	}

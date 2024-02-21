@@ -7,6 +7,9 @@ namespace Luthetus.Ide.Tests.Basis.FolderExplorers.States;
 /// </summary>
 public class FolderExplorerStateReducerTests
 {
+    /// <summary>
+    /// <see cref="FolderExplorerState.Reducer.ReduceWithAction"/>
+    /// </summary>
     [Fact]
     public void ReduceWithAction()
     {

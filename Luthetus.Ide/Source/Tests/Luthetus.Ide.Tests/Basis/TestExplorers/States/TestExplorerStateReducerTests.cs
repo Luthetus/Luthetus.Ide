@@ -7,6 +7,9 @@ namespace Luthetus.Ide.Tests.Basis.TestExplorers.States;
 /// </summary>
 public class TestExplorerStateReducerTests
 {
+    /// <summary>
+    /// <see cref="TestExplorerState.Reducer.ReduceWithAction(TestExplorerState, TestExplorerState.WithAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceWithAction()
     {

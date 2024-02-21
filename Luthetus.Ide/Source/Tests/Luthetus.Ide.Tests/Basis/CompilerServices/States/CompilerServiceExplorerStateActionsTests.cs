@@ -7,6 +7,9 @@ namespace Luthetus.Ide.Tests.Basis.CompilerServices.States;
 /// </summary>
 public class CompilerServiceExplorerStateActionsTests
 {
+    /// <summary>
+    /// <see cref="CompilerServiceExplorerState.NewAction"/>
+    /// </summary>
     [Fact]
     public void NewAction()
     {

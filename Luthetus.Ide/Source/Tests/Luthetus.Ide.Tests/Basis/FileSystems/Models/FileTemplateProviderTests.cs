@@ -7,12 +7,18 @@ namespace Luthetus.Ide.Tests.Basis.FileSystems.Models;
 /// </summary>
 public class FileTemplateProviderTests
 {
+    /// <summary>
+    /// <see cref="FileTemplateProvider()"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="FileTemplateProvider.FileTemplatesList"/>
+    /// </summary>
     [Fact]
     public void FileTemplatesList()
     {

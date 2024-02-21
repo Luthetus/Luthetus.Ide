@@ -1,5 +1,4 @@
-﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.Options.States;
+﻿using Luthetus.TextEditor.RazorLib.Options.States;
 
 namespace Luthetus.TextEditor.Tests.Basis.Options.States;
 

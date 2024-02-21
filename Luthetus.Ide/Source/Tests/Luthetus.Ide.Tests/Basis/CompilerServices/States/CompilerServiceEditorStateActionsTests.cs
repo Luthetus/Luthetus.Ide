@@ -7,6 +7,9 @@ namespace Luthetus.Ide.Tests.Basis.CompilerServices.States;
 /// </summary>
 public class CompilerServiceEditorStateActionsTests
 {
+    /// <summary>
+    /// <see cref="CompilerServiceEditorState.SetTextEditorViewModelKeyAction"/>
+    /// </summary>
     [Fact]
     public void SetTextEditorViewModelKeyAction()
     {

@@ -7,12 +7,18 @@ namespace Luthetus.Ide.Tests.Basis.Nugets.Models;
 /// </summary>
 public class NugetResponseTests
 {
+    /// <summary>
+    /// <see cref="NugetResponse.TotalHits"/>
+    /// </summary>
     [Fact]
     public void TotalHits()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="NugetResponse.Data"/>
+    /// </summary>
     [Fact]
     public void Data()
     {

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Components.Rendering;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
@@ -7,12 +8,18 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 /// </summary>
 public abstract class StdTests
 {
+    /// <summary>
+    /// <see cref="Std(IntegratedTerminal)"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="Std.GetRenderTreeBuilder(RenderTreeBuilder, ref int)"/>
+    /// </summary>
     [Fact]
     public void GetRenderTreeBuilder()
     {

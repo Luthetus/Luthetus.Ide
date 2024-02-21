@@ -1,5 +1,4 @@
-﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
@@ -8,38 +7,15 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 /// </summary>
 public class AssociatedNameTokenTests
 {
-	/// <summary>
-	/// <see cref="AssociatedNameToken(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
-	/// </summary>
-	[Fact]
-	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="AssociatedNameToken.TextSpan"/>
-	/// </summary>
-	[Fact]
-	public void TextSpan()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
+    /// <summary>
+    /// <see cref="AssociatedNameToken(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+    /// <br/>----<br/>
+    /// <see cref="AssociatedNameToken.TextSpan"/>
 	/// <see cref="AssociatedNameToken.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="AssociatedNameToken.IsFabricated"/>
 	/// </summary>
-	[Fact]
-	public void IsFabricated()
+    [Fact]
+	public void Constructor()
 	{
 		throw new NotImplementedException();
 	}

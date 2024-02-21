@@ -7,6 +7,9 @@ namespace Luthetus.Ide.Tests.Basis.ProgramExecutions.States;
 /// </summary>
 public class ProgramExecutionStateReducerTests
 {
+    /// <summary>
+    /// <see cref="ProgramExecutionState.Reducer.ReduceSetStartupProjectAbsolutePathAction(ProgramExecutionState, ProgramExecutionState.SetStartupProjectAbsolutePathAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceSetStartupProjectAbsolutePathAction()
     {

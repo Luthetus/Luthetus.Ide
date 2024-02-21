@@ -4,7 +4,7 @@ namespace Luthetus.Ide.RazorLib.Gits.States;
 
 public partial record GitState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static GitState ReduceSetGitStateWithAction(

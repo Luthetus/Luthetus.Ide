@@ -1,4 +1,5 @@
-﻿using Luthetus.Ide.RazorLib.Gits.States;
+﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.Gits.States;
 
 namespace Luthetus.Ide.Tests.Basis.Gits.States;
 
@@ -7,18 +8,27 @@ namespace Luthetus.Ide.Tests.Basis.Gits.States;
 /// </summary>
 public class GitSyncEnqueuesTests
 {
+    /// <summary>
+    /// <see cref="GitSync.RefreshGit(CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void RefreshGit()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="GitSync.GitInit(CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void GitInit()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="GitSync.TryFindGitFolderInDirectory(IAbsolutePath, CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void TryFindGitFolderInDirectory()
     {

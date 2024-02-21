@@ -7,6 +7,9 @@ namespace Luthetus.Ide.Tests.Basis.Gits.States;
 /// </summary>
 public class GitStateReducerTests
 {
+    /// <summary>
+    /// <see cref="GitState.Reducer.ReduceSetGitStateWithAction(GitState, GitState.SetGitStateWithAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceSetGitStateWithAction()
     {

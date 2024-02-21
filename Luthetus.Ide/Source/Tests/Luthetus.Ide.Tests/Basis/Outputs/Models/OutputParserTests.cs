@@ -7,6 +7,9 @@ namespace Luthetus.Ide.Tests.Basis.Outputs.Models;
 /// </summary>
 public class OutputParserTests
 {
+    /// <summary>
+    /// <see cref="OutputParser.Parse(List{string})"/>
+    /// </summary>
     [Fact]
     public void Parse()
     {

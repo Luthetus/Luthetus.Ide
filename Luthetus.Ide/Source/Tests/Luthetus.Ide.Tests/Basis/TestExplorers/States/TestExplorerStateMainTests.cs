@@ -7,18 +7,27 @@ namespace Luthetus.Ide.Tests.Basis.TestExplorers.States;
 /// </summary>
 public class TestExplorerStateMainTests
 {
-    [Fact]
-    public void TreeViewTestExplorerKey()
-    {
-        throw new NotImplementedException();
-    }
-
+    /// <summary>
+    /// <see cref="TestExplorerState()"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TestExplorerState.TreeViewTestExplorerKey"/>
+    /// </summary>
+    [Fact]
+    public void TreeViewTestExplorerKey()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TestExplorerState.ProjectTestModelList"/>
+    /// </summary>
     [Fact]
     public void ProjectTestModelList()
     {

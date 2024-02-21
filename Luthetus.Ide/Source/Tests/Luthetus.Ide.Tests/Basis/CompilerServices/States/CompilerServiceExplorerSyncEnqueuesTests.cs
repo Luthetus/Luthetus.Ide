@@ -7,6 +7,9 @@ namespace Luthetus.Ide.Tests.Basis.CompilerServices.States;
 /// </summary>
 public class CompilerServiceExplorerSyncEnqueuesTests
 {
+    /// <summary>
+    /// <see cref="CompilerServiceExplorerSync.SetCompilerServiceExplorerTreeView()"/>
+    /// </summary>
     [Fact]
     public void SetCompilerServiceExplorerTreeView()
     {

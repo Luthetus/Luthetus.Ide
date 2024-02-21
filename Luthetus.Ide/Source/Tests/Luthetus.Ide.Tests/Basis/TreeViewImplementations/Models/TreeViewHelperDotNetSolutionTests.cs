@@ -7,6 +7,9 @@ namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 /// </summary>
 public partial class TreeViewHelperDotNetSolutionTests
 {
+    /// <summary>
+    /// <see cref="TreeViewHelper.DotNetSolutionLoadChildrenAsync(TreeViewSolution)"/>
+    /// </summary>
     [Fact]
     public void DotNetSolutionLoadChildrenAsync()
     {

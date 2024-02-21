@@ -7,6 +7,9 @@ namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 /// </summary>
 public partial class TreeViewHelperCSharpProjectTests
 {
+    /// <summary>
+    /// <see cref="TreeViewHelper.CSharpProjectLoadChildrenAsync(TreeViewNamespacePath)"/>
+    /// </summary>
     [Fact]
     public void CSharpProjectLoadChildrenAsync()
     {

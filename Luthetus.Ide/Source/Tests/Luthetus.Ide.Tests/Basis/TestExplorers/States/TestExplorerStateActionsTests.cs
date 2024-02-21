@@ -7,6 +7,9 @@ namespace Luthetus.Ide.Tests.Basis.TestExplorers.States;
 /// </summary>
 public partial record TestExplorerStateActionsTests
 {
+    /// <summary>
+    /// <see cref="TestExplorerState.WithAction"/>
+    /// </summary>
     [Fact]
     public void WithAction()
     {

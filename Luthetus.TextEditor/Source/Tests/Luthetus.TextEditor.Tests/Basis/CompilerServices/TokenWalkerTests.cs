@@ -1,6 +1,7 @@
-﻿using Xunit;
+﻿using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
@@ -9,65 +10,18 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 /// </summary>
 public class TokenWalkerTests
 {
-	/// <summary>
-	/// <see cref="TokenWalker(System.Collections.Immutable.ImmutableArray{RazorLib.CompilerServices.Syntax.ISyntaxToken}, LuthDiagnosticBag)"/>
-	/// </summary>
-	[Fact]
-	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
+    /// <summary>
+    /// <see cref="TokenWalker(ImmutableArray{ISyntaxToken}, LuthDiagnosticBag)"/>
+    /// <br/>----<br/>
 	/// <see cref="TokenWalker.TokenList"/>
-	/// </summary>
-	[Fact]
-	public void Tokens()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TokenWalker.Current"/>
-	/// </summary>
-	[Fact]
-	public void Current()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TokenWalker.Next"/>
-	/// </summary>
-	[Fact]
-	public void Next()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TokenWalker.Previous"/>
-	/// </summary>
-	[Fact]
-	public void Previous()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TokenWalker.IsEof"/>
-	/// </summary>
-	[Fact]
-	public void IsEof()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TokenWalker.EOF"/>
-	/// </summary>
-	[Fact]
-	public void EOF()
+    /// <see cref="TokenWalker.Current"/>
+    /// <see cref="TokenWalker.Next"/>
+    /// <see cref="TokenWalker.Previous"/>
+    /// <see cref="TokenWalker.IsEof"/>
+    /// <see cref="TokenWalker.EOF"/>
+    /// </summary>
+    [Fact]
+	public void Constructor()
 	{
 		throw new NotImplementedException();
 	}
@@ -100,7 +54,7 @@ public class TokenWalkerTests
 	}
 
 	/// <summary>
-	/// <see cref="TokenWalker.Match(RazorLib.CompilerServices.Syntax.SyntaxKind)"/>
+	/// <see cref="TokenWalker.Match(SyntaxKind)"/>
 	/// </summary>
 	[Fact]
 	public void Match()
@@ -109,7 +63,7 @@ public class TokenWalkerTests
 	}
 
 	/// <summary>
-	/// <see cref="TokenWalker.MatchRange(IEnumerable{RazorLib.CompilerServices.Syntax.SyntaxKind}, RazorLib.CompilerServices.Syntax.SyntaxKind)"/>
+	/// <see cref="TokenWalker.MatchRange(IEnumerable{SyntaxKind}, SyntaxKind)"/>
 	/// </summary>
 	[Fact]
 	public void MatchRange()
