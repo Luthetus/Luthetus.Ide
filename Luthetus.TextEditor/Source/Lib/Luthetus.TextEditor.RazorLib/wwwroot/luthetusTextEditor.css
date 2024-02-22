@@ -585,7 +585,7 @@
     --luth_te_diff-insertion-background-color: green;
     --luth_te_diff-deletion-background-color: blue;
     --luth_te_diff-modification-background-color: yellow;
-    --luth_te_semantic-diagnostic-error-background-color: rgb(214 48 60);
+    --luth_te_semantic-diagnostic-error-background-color: rgb(200, 70, 70);
     --luth_te_semantic-diagnostic-hint-background-color: #009aab;
     --luth_te_body-background-color: #1E1E1E;
     --luth_te_text-editor-caret-row-border-color-no-focus-within-editor: var(--luth_te_text-editor-cursor-foreground-color);
@@ -668,7 +668,7 @@
     --luth_te_diff-insertion-background-color: green;
     --luth_te_diff-deletion-background-color: blue;
     --luth_te_diff-modification-background-color: yellow;
-    --luth_te_semantic-diagnostic-error-background-color: rgb(214 48 60);
+    --luth_te_semantic-diagnostic-error-background-color: rgb(200, 70, 70);
     --luth_te_semantic-diagnostic-hint-background-color: #009aab;
     --luth_te_body-background-color: rgb(30, 30, 30);
     --luth_te_text-editor-caret-row-border-color-no-focus-within-editor: var(--luth_te_text-editor-cursor-foreground-color);
