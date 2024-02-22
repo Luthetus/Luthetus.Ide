@@ -1,5 +1,4 @@
-﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
+﻿using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Installations.Models;
 

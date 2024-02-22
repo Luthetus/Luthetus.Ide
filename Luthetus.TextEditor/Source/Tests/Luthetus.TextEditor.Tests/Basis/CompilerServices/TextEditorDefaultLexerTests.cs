@@ -1,6 +1,6 @@
-﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
@@ -15,7 +15,7 @@ public class TextEditorDefaultLexerTests
 	[Fact]
 	public void DiagnosticsList()
 	{
-		var defaultLexer = new TextEditorDefaultLexer();
+		var defaultLexer = new LuthLexer(null, null, null);
 
 		Assert.Equal(
 			ImmutableArray<TextEditorDiagnostic>.Empty,

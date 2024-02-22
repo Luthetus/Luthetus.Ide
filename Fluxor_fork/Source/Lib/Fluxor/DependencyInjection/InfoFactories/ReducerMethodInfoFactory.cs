@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
 namespace Fluxor.DependencyInjection.InfoFactories
 {
-	internal static class ReducerMethodInfoFactory
+    internal static class ReducerMethodInfoFactory
 	{
 		internal static ReducerMethodInfo[] Create(
 			IServiceCollection services,

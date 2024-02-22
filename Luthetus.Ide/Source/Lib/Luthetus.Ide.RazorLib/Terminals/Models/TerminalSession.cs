@@ -28,10 +28,7 @@ public class TerminalSession
 
     private readonly ConcurrentQueue<TerminalCommand> _terminalCommandsConcurrentQueue = new();
 
-    /// <summary>
-    /// TODO: Prove that standard error is correctly being redirected to standard out
-    /// </summary>
-    private readonly Dictionary<Key<TerminalCommand>, StringBuilder> _standardOutBuilderMap = new();
+    private readonly Dictionary<Key<TerminalCommand>, List<string>> _standardOutBuilderMap = new();
 
     public TerminalSession(
         string? workingDirectoryAbsolutePathString,
@@ -46,18 +43,14 @@ public class TerminalSession
     }
 
     public Key<TerminalSession> TerminalSessionKey { get; init; } = Key<TerminalSession>.NewKey();
-
-    public ResourceUri ResourceUri => new($"__LUTHETUS_{TerminalSessionKey.Guid}__");
-    public Key<TextEditorViewModel> TextEditorViewModelKey => new(TerminalSessionKey.Guid);
-
     public string? WorkingDirectoryAbsolutePathString { get; private set; }
-
     public TerminalCommand? ActiveTerminalCommand { get; private set; }
+	/// <summary>NOTE: the following did not work => _process?.HasExited ?? false;</summary>
+    public bool HasExecutingProcess { get; private set; }
 
     public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
-
-    /// <summary>NOTE: the following did not work => _process?.HasExited ?? false;</summary>
-    public bool HasExecutingProcess { get; private set; }
+	public ResourceUri ResourceUri => new($"__LUTHETUS_{TerminalSessionKey.Guid}__");
+    public Key<TextEditorViewModel> TextEditorViewModelKey => new(TerminalSessionKey.Guid);
 
     public string ReadStandardOut()
     {
@@ -65,9 +58,21 @@ public class TerminalSession
 
 		lock(_standardOutBuilderMapLock)
 		{
-			output = string.Join(
-	            string.Empty,
-	            _standardOutBuilderMap.Select(x => x.Value.ToString()).ToArray());
+			var entireStdOutStringBuilder = new StringBuilder();
+
+			foreach (var strList in _standardOutBuilderMap.Values)
+			{
+				var perCommandStringBuilder = new StringBuilder();
+	
+				foreach (var str in strList)
+				{
+					perCommandStringBuilder.Append(str);
+				}
+
+				entireStdOutStringBuilder.Append(perCommandStringBuilder.ToString());
+			}
+
+			output = entireStdOutStringBuilder.ToString();
 		}
 
         return output;
@@ -79,16 +84,61 @@ public class TerminalSession
 
 		lock(_standardOutBuilderMapLock)
 		{
-			if (_standardOutBuilderMap.TryGetValue(terminalCommandKey, out var outputBuilder))
-	            output = outputBuilder.ToString();
+			if (_standardOutBuilderMap.TryGetValue(terminalCommandKey, out var strList))
+			{
+				var perCommandStringBuilder = new StringBuilder();
+	
+				foreach (var str in strList)
+				{
+					perCommandStringBuilder.Append(str);
+				}
+
+				output = perCommandStringBuilder.ToString();
+			}
 		}
 
         return output;
     }
 
+	/// <summary>
+	/// Returns the output that occurred in the terminal session
+	/// </summary>
+	public List<string>? GetStandardOut()
+	{
+		var allOutput = (List<string>?)null;
+
+		lock(_standardOutBuilderMapLock)
+		{
+			allOutput = _standardOutBuilderMap
+				.SelectMany(kvp => GetStandardOut(kvp.Key))
+				.ToList();
+		}
+
+        return allOutput;
+	}
+
+	/// <summary>
+	/// Returns the output that occurred as a result of a specific command
+	/// </summary>
+    public List<string>? GetStandardOut(Key<TerminalCommand> terminalCommandKey)
+	{
+		var output = (List<string>?)null;
+
+		lock(_standardOutBuilderMapLock)
+		{
+			if (_standardOutBuilderMap.TryGetValue(terminalCommandKey, out var strList))
+				output = new List<string>(strList); // Shallow copy to hide private memory location
+		}
+
+        return output;
+	}
+
     public Task EnqueueCommandAsync(TerminalCommand terminalCommand)
     {
-        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), BlockingBackgroundTaskWorker.GetQueueKey(),
+		// This is the 'EnqueueCommandAsync' method, that runs terminal command
+        var queueKey = BlockingBackgroundTaskWorker.GetQueueKey();
+
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), queueKey,
             "Enqueue Command",
             async () =>
             {
@@ -115,13 +165,18 @@ public class TerminalSession
                 else if (WorkingDirectoryAbsolutePathString is not null)
                     command = command.WithWorkingDirectory(WorkingDirectoryAbsolutePathString);
 
-                // Push-based event stream
+                // Event stream
                 {
                     var terminalCommandKey = terminalCommand.TerminalCommandKey;
 					
+					// Here, immediately prior to starting the terminal command,
+					// a StringBuilder is being made for the respective terminal command to write to.
+					//
+					// I'll change this to make a new List<string>()
 					lock(_standardOutBuilderMapLock)
 					{
-						_standardOutBuilderMap.TryAdd(terminalCommand.TerminalCommandKey, new StringBuilder());
+						// the _standardOutBuilderMap field declaration needs to be updated accordingly.
+						_standardOutBuilderMap.TryAdd(terminalCommand.TerminalCommandKey, new List<string>());
 					}
 
                     HasExecutingProcess = true;
@@ -130,12 +185,14 @@ public class TerminalSession
                     try
                     {
 						if (terminalCommand.BeginWith is not null)
-                            await terminalCommand.BeginWith.Invoke();
-						
+                            await terminalCommand.BeginWith.Invoke(); // Actually start the terminal command here
+
+						int lineIndex = 0;
+
                         await command.Observe(_commandCancellationTokenSource.Token)
                             .ForEachAsync(cmdEvent =>
                             {
-								var output = (string?)null;
+								var output = (string?)null; // a variable for storing the output
 
                                 switch (cmdEvent)
                                 {
@@ -157,8 +214,8 @@ public class TerminalSession
 								{
 									lock(_standardOutBuilderMapLock)
 									{
-										_standardOutBuilderMap[terminalCommandKey].AppendLine(output);
-									}
+                                        _standardOutBuilderMap[terminalCommandKey].Add(output);
+                                    }
 								}
 
                                 DispatchNewStateKey();
@@ -188,7 +245,7 @@ public class TerminalSession
 		{
 			foreach (var stringBuilder in _standardOutBuilderMap.Values)
 	        {
-	            stringBuilder.Clear();
+	            stringBuilder.Clear(); // .Clear() is a method on List(s) too
 	        }
 		}
 

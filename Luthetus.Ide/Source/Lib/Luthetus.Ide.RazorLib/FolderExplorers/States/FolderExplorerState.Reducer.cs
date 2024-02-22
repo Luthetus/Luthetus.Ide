@@ -4,7 +4,7 @@ namespace Luthetus.Ide.RazorLib.FolderExplorers.States;
 
 public partial record FolderExplorerState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static FolderExplorerState ReduceWithAction(

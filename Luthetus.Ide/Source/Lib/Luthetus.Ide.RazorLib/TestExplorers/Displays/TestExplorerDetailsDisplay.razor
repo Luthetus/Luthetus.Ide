@@ -1,6 +1,6 @@
 @using Luthetus.Ide.RazorLib.TreeViewImplementations.Models
 @using Luthetus.Ide.RazorLib.Terminals.Models;
-@using Luthetus.Ide.RazorLib.Terminals.Displays;
+@using Luthetus.Ide.RazorLib.Outputs.Displays;
 
 <div class="luth_ide_test-explorer-details"
 	 style="@ElementDimensions.StyleString">
@@ -10,13 +10,13 @@
 	<div style="height: 100%;">
 		@if (activeNode is TreeViewStringFragment treeViewStringFragment)
 		{
-			<TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY"
-								   TerminalCommandKey="@treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey"/>
+			<OutputDisplay TerminalSessionKey="TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY"
+						   TerminalCommandKey="@treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey"/>
 		}
 		else if (activeNode is TreeViewProjectTestModel treeViewProjectTestModel)
 		{
-			<TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY"
-								   TerminalCommandKey="@treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey"/>
+			<OutputDisplay TerminalSessionKey="TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY"
+						   TerminalCommandKey="@treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey"/>
 		}
 		else if (activeNode is not null)
 		{

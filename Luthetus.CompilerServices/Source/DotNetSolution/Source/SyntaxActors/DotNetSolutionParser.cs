@@ -1,5 +1,5 @@
 ﻿using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
@@ -7,13 +7,16 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Associated;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 namespace Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 
-public class DotNetSolutionParser : IParser
+public class DotNetSolutionParser : ILuthParser
 {
     private readonly TokenWalker _tokenWalker;
-    private readonly LuthetusDiagnosticBag _diagnosticBag = new();
+    private readonly LuthDiagnosticBag _diagnosticBag = new();
     private readonly Stack<AssociatedEntryGroupBuilder> _associatedEntryGroupBuilderStack = new();
     private readonly List<IDotNetProject> _dotNetProjectList = new();
     private readonly List<NestedProjectEntry> _nestedProjectEntryList = new();
@@ -37,6 +40,12 @@ public class DotNetSolutionParser : IParser
     public AssociatedEntryGroup? NoParentHavingAssociatedEntryGroup => _noParentHavingAssociatedEntryGroup;
     public List<IDotNetProject> DotNetProjectList => _dotNetProjectList;
     public List<NestedProjectEntry> NestedProjectEntryList => _nestedProjectEntryList;
+
+    ILuthBinder ILuthParser.Binder => throw new NotImplementedException();
+
+    ILuthBinderSession ILuthParser.BinderSession => throw new NotImplementedException();
+
+    ILuthLexer ILuthParser.Lexer => throw new NotImplementedException();
 
     public CompilationUnit Parse()
     {
@@ -300,5 +309,10 @@ public class DotNetSolutionParser : IParser
 
             associatedEntryGroupBuilder.Build();
         }
+    }
+
+    CompilationUnit ILuthParser.Parse(ILuthBinder previousBinder, ResourceUri resourceUri)
+    {
+        throw new NotImplementedException();
     }
 }

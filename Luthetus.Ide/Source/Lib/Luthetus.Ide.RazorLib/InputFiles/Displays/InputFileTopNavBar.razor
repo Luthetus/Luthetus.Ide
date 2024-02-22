@@ -45,7 +45,7 @@
                     {
                         foreach (var directory in openedTreeView.Item.AncestorDirectoryList)
                         {
-                            var directoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(directory.Path, true);
+                            var directoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(directory.Value, true);
                             <InputFileAddressHierarchyEntry AbsolutePath="directoryAbsolutePath" />
                         }
 

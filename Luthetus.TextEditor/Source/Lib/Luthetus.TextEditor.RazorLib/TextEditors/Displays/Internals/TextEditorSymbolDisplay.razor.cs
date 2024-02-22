@@ -1,4 +1,4 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Microsoft.AspNetCore.Components;
 

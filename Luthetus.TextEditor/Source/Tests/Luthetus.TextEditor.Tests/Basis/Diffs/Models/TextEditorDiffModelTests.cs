@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Diffs.Models;
@@ -8,47 +9,16 @@ namespace Luthetus.TextEditor.Tests.Basis.Diffs.Models;
 /// </summary>
 public class TextEditorDiffModelTests
 {
-	/// <summary>
-	/// <see cref="TextEditorDiffModel(Common.RazorLib.Keys.Models.Key{TextEditorDiffModel}, Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel})"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorDiffModel(Key{TextEditorDiffModel}, Key{TextEditorViewModel}, Key{TextEditorViewModel})"/>
+    /// <br/>----<br/>
+    /// <see cref="TextEditorDiffModel.DiffKey"/>
+    /// <see cref="TextEditorDiffModel.InViewModelKey"/>
+    /// <see cref="TextEditorDiffModel.OutViewModelKey"/>
+    /// <see cref="TextEditorDiffModel.RenderStateKey"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorDiffModel.DiffKey"/>
-	/// </summary>
-	[Fact]
-	public void DiffKey()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorDiffModel.InViewModelKey"/>
-	/// </summary>
-	[Fact]
-	public void InViewModelKey()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorDiffModel.OutViewModelKey"/>
-	/// </summary>
-	[Fact]
-	public void OutViewModelKey()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorDiffModel.RenderStateKey"/>
-	/// </summary>
-	[Fact]
-	public void RenderStateKey()
 	{
 		throw new NotImplementedException();
 	}

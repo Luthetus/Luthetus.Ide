@@ -6,16 +6,16 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Microsoft.JSInterop;
-using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
-using Luthetus.Common.RazorLib.Contexts.Displays;
 
 namespace Luthetus.Ide.RazorLib.Commands;
 
@@ -47,7 +47,8 @@ public class CommandFactory : ICommandFactory
 	private TreeViewNamespacePath? _nodeOfViewModel = null;
 	private List<TreeViewNoType> _nodeList = new();
     private DialogRecord? _contextSwitchDialog;
-    private DialogRecord? _codeSearchDialog;
+    
+	public DialogRecord? CodeSearchDialog { get; set; }
 
 	public void Initialize()
     {
@@ -183,7 +184,14 @@ public class CommandFactory : ICommandFactory
 	                    focusTextEditorCommand);
 			}
         }
-        // TerminalContext
+        // OutputContext
+        {
+            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+                new KeymapArgument("KeyO", false, true, true, Key<KeymapLayer>.Empty),
+                ConstructFocusContextElementCommand(
+                    ContextFacts.OutputContext, "Focus: Output", "focus-output"));
+        }
+		// TerminalContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
                 new KeymapArgument("KeyT", false, true, true, Key<KeymapLayer>.Empty),
@@ -230,7 +238,7 @@ public class CommandFactory : ICommandFactory
                     focusTextEditorCommand);
         }
 
-		// Add command to bring up a Find dialog. Example: { Ctrl + Shift + f }
+		// Add command to bring up a FindAll dialog. Example: { Ctrl + Shift + f }
 		{
 			var openFindDialogCommand = new CommonCommand(
 	            "Open: Find", "open-find", false,
@@ -245,13 +253,13 @@ public class CommandFactory : ICommandFactory
 	                openFindDialogCommand);
         }
 
-		// Add command to bring up a Code Search dialog. Example: { Ctrl + , }
+		// Add command to bring up a CodeSearch dialog. Example: { Ctrl + , }
 		{
 			var openCodeSearchDialogCommand = new CommonCommand(
 	            "Open: Code Search", "open-code-search", false,
 	            commandArgs => 
 				{
-                    _codeSearchDialog ??= new DialogRecord(
+                    CodeSearchDialog ??= new DialogRecord(
                         Key<DialogRecord>.NewKey(),
 						"Code Search",
                         typeof(CodeSearchDisplay),
@@ -261,7 +269,7 @@ public class CommandFactory : ICommandFactory
                         IsResizable = true
                     };
 
-                    _dispatcher.Dispatch(new DialogState.RegisterAction(_codeSearchDialog));
+                    _dispatcher.Dispatch(new DialogState.RegisterAction(CodeSearchDialog));
                     return Task.CompletedTask;
 				});
 

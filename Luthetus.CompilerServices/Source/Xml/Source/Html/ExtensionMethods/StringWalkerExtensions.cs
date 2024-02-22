@@ -1,5 +1,5 @@
 ﻿using Luthetus.CompilerServices.Lang.Xml.Html.InjectedLanguage;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.CompilerServices.Lang.Xml.Html.ExtensionMethods;
 

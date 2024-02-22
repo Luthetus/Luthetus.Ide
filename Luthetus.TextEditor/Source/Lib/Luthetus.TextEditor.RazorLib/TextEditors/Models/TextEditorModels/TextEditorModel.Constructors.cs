@@ -1,12 +1,13 @@
 ﻿using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
@@ -19,13 +20,13 @@ public partial class TextEditorModel
         string fileExtension,
         string content,
         IDecorationMapper? decorationMapper,
-        ICompilerService? compilerService)
+        ILuthCompilerService? compilerService)
     {
         ResourceUri = resourceUri;
         ResourceLastWriteTime = resourceLastWriteTime;
         FileExtension = fileExtension;
         DecorationMapper = decorationMapper ?? new TextEditorDecorationMapperDefault();
-        CompilerService = compilerService ?? new TextEditorCompilerServiceDefault();
+        CompilerService = compilerService ?? new LuthCompilerService(null, null, null);
 
 		var modifier = new TextEditorModelModifier(this);
 
@@ -53,7 +54,7 @@ public partial class TextEditorModel
 		DateTime resourceLastWriteTime,
 		string fileExtension,
 		IDecorationMapper decorationMapper,
-		ICompilerService compilerService,
+		ILuthCompilerService compilerService,
 		TextEditorSaveFileHelper textEditorSaveFileHelper,
 		int editBlockIndex,
 		(int rowIndex, int rowLength) mostCharactersOnASingleRowTuple,

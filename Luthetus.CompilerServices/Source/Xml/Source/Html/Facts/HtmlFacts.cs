@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.Xml.Html.Facts;
@@ -25,15 +25,15 @@ public static class HtmlFacts
 
     public static readonly ImmutableArray<string> OPEN_TAG_ENDING_OPTIONS = new[]
     {
-    OPEN_TAG_WITH_CHILD_CONTENT_ENDING,
-    OPEN_TAG_SELF_CLOSING_ENDING,
-}.ToImmutableArray();
+        OPEN_TAG_WITH_CHILD_CONTENT_ENDING,
+        OPEN_TAG_SELF_CLOSING_ENDING,
+    }.ToImmutableArray();
 
     public static readonly ImmutableArray<string> TAG_NAME_STOP_DELIMITERS = new[]
-        {
+    {
         ParserFacts.END_OF_FILE.ToString(),
     }
-        .Union(WhitespaceFacts.ALL_LIST.Select(x => x.ToString()))
+    .Union(WhitespaceFacts.ALL_LIST.Select(x => x.ToString()))
         .Union(OPEN_TAG_ENDING_OPTIONS)
         .ToImmutableArray();
 }

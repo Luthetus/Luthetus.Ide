@@ -11,6 +11,6 @@ public static class TerminalSessionFacts
     public static readonly ImmutableArray<Key<TerminalSession>> WELL_KNOWN_TERMINAL_SESSION_KEYS = new[]
     {
         EXECUTION_TERMINAL_SESSION_KEY,
-        GENERAL_TERMINAL_SESSION_KEY
+        GENERAL_TERMINAL_SESSION_KEY,
     }.ToImmutableArray();
 }

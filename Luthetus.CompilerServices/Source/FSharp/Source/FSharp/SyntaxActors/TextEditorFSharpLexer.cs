@@ -2,7 +2,7 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.CompilerServices.Lang.FSharp.FSharp.Facts;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -24,8 +24,8 @@ public class TextEditorFSharpLexer
         "//",
         new[]
         {
-        WhitespaceFacts.CARRIAGE_RETURN.ToString(),
-        WhitespaceFacts.LINE_FEED.ToString()
+            WhitespaceFacts.CARRIAGE_RETURN.ToString(),
+            WhitespaceFacts.LINE_FEED.ToString()
         }.ToImmutableArray(),
         "(*",
         "*)",

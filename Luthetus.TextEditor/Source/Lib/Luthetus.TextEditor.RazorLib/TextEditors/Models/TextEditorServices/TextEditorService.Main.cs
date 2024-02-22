@@ -1,20 +1,21 @@
 using Fluxor;
+using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Storages.States;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
-using Luthetus.TextEditor.RazorLib.SearchEngines.States;
+using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
-using Microsoft.JSInterop;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices.ITextEditorService;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
+using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices.ITextEditorService;
+
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -42,7 +43,7 @@ public partial class TextEditorService : ITextEditorService
         IState<TextEditorDiffState> diffStateWrap,
         IState<ThemeState> themeStateWrap,
         IState<TextEditorOptionsState> optionsStateWrap,
-        IState<TextEditorSearchEngineState> searchEngineStateWrap,
+        IState<TextEditorFindAllState> findAllStateWrap,
         IBackgroundTaskService backgroundTaskService,
         LuthetusTextEditorConfig textEditorOptions,
         ITextEditorRegistryWrap textEditorRegistryWrap,
@@ -57,7 +58,7 @@ public partial class TextEditorService : ITextEditorService
         DiffStateWrap = diffStateWrap;
         ThemeStateWrap = themeStateWrap;
         OptionsStateWrap = optionsStateWrap;
-        SearchEngineStateWrap = searchEngineStateWrap;
+        FindAllStateWrap = findAllStateWrap;
 
         _backgroundTaskService = backgroundTaskService;
         _textEditorOptions = textEditorOptions;
@@ -72,7 +73,7 @@ public partial class TextEditorService : ITextEditorService
         GroupApi = new TextEditorGroupApi(this, _dispatcher);
         DiffApi = new TextEditorDiffApi(this, _dispatcher);
         OptionsApi = new TextEditorOptionsApi(this, _textEditorOptions, _storageService, _storageSync, _dispatcher);
-        SearchEngineApi = new TextEditorSearchEngineApi(this, _dispatcher);
+        FindAllApi = new TextEditorFindAllApi(this, _dispatcher);
     }
 
     public IState<TextEditorModelState> ModelStateWrap { get; }
@@ -81,7 +82,7 @@ public partial class TextEditorService : ITextEditorService
     public IState<TextEditorDiffState> DiffStateWrap { get; }
     public IState<ThemeState> ThemeStateWrap { get; }
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
-    public IState<TextEditorSearchEngineState> SearchEngineStateWrap { get; }
+    public IState<TextEditorFindAllState> FindAllStateWrap { get; }
 
     
 #if DEBUG
@@ -100,7 +101,7 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorGroupApi GroupApi { get; }
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
-    public ITextEditorSearchEngineApi SearchEngineApi { get; }
+    public ITextEditorFindAllApi FindAllApi { get; }
     
     public void Post(string taskDisplayName, TextEditorEdit edit)
     {

@@ -1,8 +1,8 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Expression;
 using Luthetus.CompilerServices.Lang.CSharp.Facts;
 using System.Collections.Immutable;
 
@@ -238,7 +238,7 @@ public static class ParseOthers
                     else if (rightExpressionNode is null)
                         rightExpressionNode = resultingExpression;
                     else
-                        throw new ApplicationException("TODO: Why would this occur?");
+                        model.DiagnosticBag.ReportTodoException(resultingExpression.ConstructTextSpanRecursively(), $"{nameof(HandleExpression)} IdentifierToken issue text:{resultingExpression.ConstructTextSpanRecursively().GetText()}");
 
                     break;
                 case SyntaxKind.PlusToken:
@@ -282,7 +282,7 @@ public static class ParseOthers
                     if (operatorToken is null)
                         operatorToken = tokenCurrent;
                     else
-                        throw new ApplicationException("TODO: Why would this occur?");
+                        model.DiagnosticBag.ReportTodoException(tokenCurrent.TextSpan, $"{nameof(HandleExpression)} DivisionToken issue text:{tokenCurrent.TextSpan.GetText()}");
 
                     break;
                 case SyntaxKind.OpenParenthesisToken:
@@ -314,7 +314,7 @@ public static class ParseOthers
                     else if (rightExpressionNode is null)
                         rightExpressionNode = parenthesizedExpression;
                     else
-                        throw new ApplicationException("TODO: Why would this occur?");
+                        model.DiagnosticBag.ReportTodoException(parenthesizedExpression.ConstructTextSpanRecursively(), $"{nameof(HandleExpression)} OpenParenthesisToken issue text:{parenthesizedExpression.ConstructTextSpanRecursively().GetText()}");
                     break;
                 default:
                     if (tokenCurrent.SyntaxKind == SyntaxKind.DollarSignToken)
@@ -336,7 +336,8 @@ public static class ParseOthers
                 var binaryOperatorNode = model.Binder.BindBinaryOperatorNode(
                     leftExpressionNode,
                     operatorToken,
-                    rightExpressionNode);
+                    rightExpressionNode,
+                    model);
 
                 var binaryExpressionNode = new BinaryExpressionNode(
                     leftExpressionNode,
@@ -387,7 +388,7 @@ public static class ParseOthers
             }
             else
             {
-                throw new ApplicationException("TODO: Why would this occur?");
+                model.DiagnosticBag.ReportTodoException(literalExpressionNode.ConstructTextSpanRecursively(), $"{nameof(HandleExpression)} LiteralExpressionNode issue text:{literalExpressionNode.ConstructTextSpanRecursively().GetText()}");
             }
         }
     }

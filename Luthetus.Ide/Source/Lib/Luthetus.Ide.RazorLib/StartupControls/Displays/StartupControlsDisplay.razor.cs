@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
@@ -15,36 +15,46 @@ public partial class StartupControlsDisplay : FluxorComponent
     private IState<ProgramExecutionState> ProgramExecutionStateWrap { get; set; } = null!;
     [Inject]
     private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
     private readonly Key<TerminalCommand> _newDotNetSolutionTerminalCommandKey = Key<TerminalCommand>.NewKey();
     private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
 
-    private async Task StartProgramWithoutDebuggingOnClick()
+    private TerminalCommand? GetStartProgramTerminalCommand()
     {
         var programExecutionState = ProgramExecutionStateWrap.Value;
 
         if (programExecutionState.StartupProjectAbsolutePath is null)
-            return;
+            return null;
 
         var ancestorDirectory = programExecutionState.StartupProjectAbsolutePath.ParentDirectory;
 
         if (ancestorDirectory is null)
-            return;
+            return null;
 
         var formattedCommand = DotNetCliCommandFormatter.FormatStartProjectWithoutDebugging(
             programExecutionState.StartupProjectAbsolutePath);
 
-        var startProgramWithoutDebuggingCommand = new TerminalCommand(
+        return new TerminalCommand(
             _newDotNetSolutionTerminalCommandKey,
             formattedCommand,
-            ancestorDirectory.Path,
+            ancestorDirectory.Value,
             _newDotNetSolutionCancellationTokenSource.Token);
+    }
+
+    private async Task StartProgramWithoutDebuggingOnClick()
+    {
+        var startProgramTerminalCommand = GetStartProgramTerminalCommand();
+
+        if (startProgramTerminalCommand is null)
+            return;
 
         var executionTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
             TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
 
         await executionTerminalSession
-            .EnqueueCommandAsync(startProgramWithoutDebuggingCommand)
+            .EnqueueCommandAsync(startProgramTerminalCommand)
             .ConfigureAwait(false);
     }
 }

@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
@@ -52,7 +52,7 @@ public partial class TextEditorModelModifier
     private DateTime? _resourceLastWriteTime;
     private string? _fileExtension;
     private IDecorationMapper? _decorationMapper;
-    private ICompilerService? _compilerService;
+    private ILuthCompilerService? _compilerService;
     private TextEditorSaveFileHelper? _textEditorSaveFileHelper;
     private int? _editBlockIndex;
     private (int rowIndex, int rowLength)? _mostCharactersOnASingleRowTuple;
@@ -126,7 +126,7 @@ public partial class TextEditorModelModifier
         _decorationMapper = decorationMapper;
     }
 
-    public void ModifyCompilerService(ICompilerService compilerService)
+    public void ModifyCompilerService(ILuthCompilerService compilerService)
     {
         _compilerService = compilerService;
     }

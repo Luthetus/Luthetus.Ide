@@ -1,11 +1,13 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
 
-public class CSharpProjectResource : ICompilerServiceResource
+public class CSharpProjectResource : ILuthCompilerServiceResource
 {
     public CSharpProjectResource(
         ResourceUri resourceUri,
@@ -17,18 +19,24 @@ public class CSharpProjectResource : ICompilerServiceResource
 
     public ResourceUri ResourceUri { get; }
     public CSharpProjectCompilerService CSharpProjectCompilerService { get; }
-    public CompilationUnit? CompilationUnit { get; internal set; }
-    public ImmutableArray<ISyntaxToken>? SyntaxTokens { get; internal set; }
+    public CompilationUnit? CompilationUnit { get; set; }
+    public ImmutableArray<ISyntaxToken>? SyntaxTokens { get; set; }
     public DotNetSolution.Models.Project.CSharpProject? CSharpProject { get; set; }
+    public ImmutableArray<TextEditorTextSpan> TokenTextSpanList { get; internal set; }
 
-    public ImmutableArray<TextEditorTextSpan> SyntacticTextSpans { get; set; } = ImmutableArray<TextEditorTextSpan>.Empty;
-    public ImmutableArray<ITextEditorSymbol> Symbols => GetSymbols();
+    ILuthCompilerService ILuthCompilerServiceResource.CompilerService => CSharpProjectCompilerService;
+    ImmutableArray<ISyntaxToken> ILuthCompilerServiceResource.SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
+
+    public ImmutableArray<TextEditorDiagnostic> GetDiagnostics()
+    {
+        return ImmutableArray<TextEditorDiagnostic>.Empty;
+    }
 
     /// <summary>
     /// TODO: It might be a useful optimization to evaluate these linq expressions
     /// and store the result as to not re-evaluate the linq expression over and over.
     /// </summary>
-    private ImmutableArray<ITextEditorSymbol> GetSymbols()
+    public ImmutableArray<ITextEditorSymbol> GetSymbols()
     {
         var localCompilationUnit = CompilationUnit;
 
@@ -38,13 +46,8 @@ public class CSharpProjectResource : ICompilerServiceResource
         return localCompilationUnit.Binder.SymbolsList;
     }
 
-    /// <returns>
-    /// The <see cref="ISyntaxNode"/>
-    /// which represents the resource in the compilation result.
-    /// </returns>
-    public Task GetRootSyntaxNodeAsync()
+    public ImmutableArray<TextEditorTextSpan> GetTokenTextSpans()
     {
-        //DotNetCompilerService.Compilation.RootSyntaxNode;
-        return Task.CompletedTask;
+        return TokenTextSpanList;
     }
 }

@@ -1,14 +1,12 @@
-﻿using Fluxor.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace Fluxor
 {
-	/// <summary>
-	/// A class that implements <see cref="IDispatcher"/>
-	/// </summary>
-	public class Dispatcher : IDispatcher
+    /// <summary>
+    /// A class that implements <see cref="IDispatcher"/>
+    /// </summary>
+    public class Dispatcher : IDispatcher
 	{
 		private readonly object SyncRoot = new();
 		private readonly Queue<object> QueuedActions = new Queue<object>();

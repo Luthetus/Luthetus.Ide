@@ -2,11 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace Fluxor.DependencyInjection.InfoFactories
 {
-	internal static class FeatureClassInfoFactory
+    internal static class FeatureClassInfoFactory
 	{
 		internal static FeatureClassInfo[] Create(
 			IServiceCollection services,

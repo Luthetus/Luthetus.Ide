@@ -90,10 +90,10 @@ public static class ContextFacts
         "text-editor",
         Keymap.Empty);
 
-    public static readonly ContextRecord TerminalContext = new(
+    public static readonly ContextRecord OutputContext = new(
         Key<ContextRecord>.NewKey(),
-        "Terminal",
-        "terminal",
+        "Output",
+        "output",
         Keymap.Empty);
 
     public static readonly ContextRecord NuGetPackageManagerContext = new(
@@ -106,6 +106,12 @@ public static class ContextFacts
         Key<ContextRecord>.NewKey(),
         "Git",
         "git",
+        Keymap.Empty);
+    
+    public static readonly ContextRecord TerminalContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Terminal",
+        "terminal",
         Keymap.Empty);
 
     public static readonly ImmutableArray<ContextRecord> AllContextsList = new[]
@@ -123,8 +129,9 @@ public static class ContextFacts
         MainLayoutFooterContext,
         EditorContext,
         TextEditorContext,
-        TerminalContext,
+        OutputContext,
         NuGetPackageManagerContext,
         GitContext,
+        TerminalContext,
     }.ToImmutableArray();
 }

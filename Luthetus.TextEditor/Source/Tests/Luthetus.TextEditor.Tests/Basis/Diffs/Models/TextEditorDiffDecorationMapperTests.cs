@@ -1,5 +1,4 @@
-﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.Diffs.Models;
+﻿using Luthetus.TextEditor.RazorLib.Diffs.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Diffs.Models;
 

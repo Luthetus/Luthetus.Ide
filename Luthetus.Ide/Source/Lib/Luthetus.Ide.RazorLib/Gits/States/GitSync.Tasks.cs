@@ -55,7 +55,7 @@ public partial class GitSync
         var gitStatusCommand = new TerminalCommand(
             GitFacts.GitStatusTerminalCommandKey,
             formattedCommand,
-            gitState.GitFolderAbsolutePath.ParentDirectory.Path,
+            gitState.GitFolderAbsolutePath.ParentDirectory.Value,
             CancellationToken.None,
             async () =>
             {

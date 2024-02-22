@@ -1,6 +1,5 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -46,6 +45,12 @@ public partial class EditorSync
                             model.ResourceUri,
                             CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel)
                         .Invoke(editContext);
+
+					await _textEditorService.ModelApi.AddPresentationModelFactory(
+                            model.ResourceUri,
+                            FindOverlayPresentationFacts.EmptyPresentationModel)
+                        .Invoke(editContext)
+                        .ConfigureAwait(false);
 
                     await _textEditorService.ModelApi.AddPresentationModelFactory(
                             model.ResourceUri,

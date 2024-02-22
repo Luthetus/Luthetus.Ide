@@ -7,12 +7,12 @@ public class CssSyntaxUnit
 {
     public CssSyntaxUnit(
         CssDocumentSyntax cssDocumentSyntax,
-        LuthetusDiagnosticBag diagnosticBag)
+        LuthDiagnosticBag diagnosticBag)
     {
         CssDocumentSyntax = cssDocumentSyntax;
         this.diagnosticBag = diagnosticBag;
     }
 
     public CssDocumentSyntax CssDocumentSyntax { get; }
-    public LuthetusDiagnosticBag diagnosticBag { get; }
+    public LuthDiagnosticBag diagnosticBag { get; }
 }

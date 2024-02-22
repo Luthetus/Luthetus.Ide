@@ -4,17 +4,18 @@ using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Expression;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 
-public partial class CSharpBinder : IBinder
+public partial class CSharpBinder : ILuthBinder
 {
     private readonly Dictionary<string, NamespaceGroupNode> _namespaceGroupNodeMap = CSharpFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
     /// <summary>
@@ -28,7 +29,7 @@ public partial class CSharpBinder : IBinder
     /// inserted for the user if they decide to use that autocomplete option.
     /// </summary>
     private readonly Dictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> _allTypeDefinitions = new();
-    private readonly LuthetusDiagnosticBag _diagnosticBag = new();
+    private readonly LuthDiagnosticBag _diagnosticBag = new();
     private readonly CSharpBoundScope _globalScope = CSharpFacts.Scope.GetInitialGlobalScope();
     private readonly NamespaceStatementNode _topLevelNamespaceStatementNode = CSharpFacts.Namespaces.GetTopLevelNamespaceStatementNode();
 
@@ -50,13 +51,13 @@ public partial class CSharpBinder : IBinder
     public ImmutableDictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions.ToImmutableDictionary();
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList => _diagnosticBag.ToImmutableArray();
 
-    ImmutableArray<ITextEditorSymbol> IBinder.SymbolsList => Symbols
+    ImmutableArray<ITextEditorSymbol> ILuthBinder.SymbolsList => Symbols
         .Select(s => (ITextEditorSymbol)s)
         .ToImmutableArray();
 
-    public BinderSession ConstructBinderSession(ResourceUri resourceUri)
+    public ILuthBinderSession ConstructBinderSession(ResourceUri resourceUri)
     {
-        return new BinderSession(
+        return new CSharpBinderSession(
             resourceUri,
             _globalScope,
             _topLevelNamespaceStatementNode,
@@ -82,39 +83,71 @@ public partial class CSharpBinder : IBinder
     public BinaryOperatorNode BindBinaryOperatorNode(
         IExpressionNode leftExpressionNode,
         ISyntaxToken operatorToken,
-        IExpressionNode rightExpressionNode)
+        IExpressionNode rightExpressionNode,
+        ParserModel parserModel)
     {
-        if (leftExpressionNode.ResultTypeClauseNode.ValueType == typeof(int) &&
-            rightExpressionNode.ResultTypeClauseNode.ValueType == typeof(int))
+        var problematicTextSpan = (TextEditorTextSpan?)null;
+
+        if (leftExpressionNode.ResultTypeClauseNode.ValueType == typeof(int))
         {
-            switch (operatorToken.SyntaxKind)
+            if (rightExpressionNode.ResultTypeClauseNode.ValueType == typeof(int))
             {
-                case SyntaxKind.PlusToken:
-                case SyntaxKind.MinusToken:
-                case SyntaxKind.StarToken:
-                case SyntaxKind.DivisionToken:
-                    return new BinaryOperatorNode(
-                        leftExpressionNode.ResultTypeClauseNode,
-                        operatorToken,
-                        rightExpressionNode.ResultTypeClauseNode,
-                        CSharpFacts.Types.Int.ToTypeClause());
+                switch (operatorToken.SyntaxKind)
+                {
+                    case SyntaxKind.PlusToken:
+                    case SyntaxKind.MinusToken:
+                    case SyntaxKind.StarToken:
+                    case SyntaxKind.DivisionToken:
+                        return new BinaryOperatorNode(
+                            leftExpressionNode.ResultTypeClauseNode,
+                            operatorToken,
+                            rightExpressionNode.ResultTypeClauseNode,
+                            CSharpFacts.Types.Int.ToTypeClause());
+                }
+            }
+            else
+            {
+                problematicTextSpan = rightExpressionNode.ConstructTextSpanRecursively();
             }
         }
-        else if (leftExpressionNode.ResultTypeClauseNode.ValueType == typeof(string) &&
-            rightExpressionNode.ResultTypeClauseNode.ValueType == typeof(string))
+        else if (leftExpressionNode.ResultTypeClauseNode.ValueType == typeof(string))
         {
-            switch (operatorToken.SyntaxKind)
+            if (rightExpressionNode.ResultTypeClauseNode.ValueType == typeof(string))
             {
-                case SyntaxKind.PlusToken:
-                    return new BinaryOperatorNode(
-                        leftExpressionNode.ResultTypeClauseNode,
-                        operatorToken,
-                        rightExpressionNode.ResultTypeClauseNode,
-                        CSharpFacts.Types.String.ToTypeClause());
+                switch (operatorToken.SyntaxKind)
+                {
+                    case SyntaxKind.PlusToken:
+                        return new BinaryOperatorNode(
+                            leftExpressionNode.ResultTypeClauseNode,
+                            operatorToken,
+                            rightExpressionNode.ResultTypeClauseNode,
+                            CSharpFacts.Types.String.ToTypeClause());
+                }
             }
+            else
+            {
+                problematicTextSpan = rightExpressionNode.ConstructTextSpanRecursively();
+            }
+        }
+        else
+        {
+            problematicTextSpan = leftExpressionNode.ConstructTextSpanRecursively();
         }
 
-        throw new NotImplementedException();
+        if (problematicTextSpan is not null)
+        {
+            var errorMessage = $"Operator: {operatorToken.TextSpan.GetText()} is not defined" +
+                $" for types: {leftExpressionNode.ConstructTextSpanRecursively().GetText()}" +
+                $" and {rightExpressionNode.ConstructTextSpanRecursively().GetText()}";
+
+            parserModel.DiagnosticBag.ReportTodoException(problematicTextSpan, errorMessage);
+        }
+
+        return new BinaryOperatorNode(
+            leftExpressionNode.ResultTypeClauseNode,
+            operatorToken,
+            rightExpressionNode.ResultTypeClauseNode,
+            CSharpFacts.Types.Void.ToTypeClause());
     }
 
     /// <summary>TODO: Construct a BoundStringInterpolationExpressionNode and identify the expressions within the string literal. For now I am just making the dollar sign the same color as a string literal.</summary>
@@ -269,7 +302,11 @@ public partial class CSharpBinder : IBinder
             DecorationByte = (byte)GenericDecorationKind.Type
         }), model);
 
-        throw new NotImplementedException();
+        model.DiagnosticBag.ReportTodoException(
+            typeClauseNode.TypeIdentifierToken.TextSpan,
+            $"Implement {nameof(BindInheritanceStatementNode)}");
+
+        return new InheritanceStatementNode(typeClauseNode);
     }
 
     public void BindVariableDeclarationNode(

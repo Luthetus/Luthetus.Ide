@@ -1,11 +1,9 @@
-using Xunit;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -15,7 +13,7 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 public class TypeDefinitionNodeTests
 {
     /// <summary>
-    /// <see cref="TypeDefinitionNode(IdentifierToken, Type?, RazorLib.CompilerServices.Syntax.SyntaxNodes.GenericArgumentsListingNode?, TypeClauseNode?, RazorLib.CompilerServices.CodeBlockNode?)"/>
+    /// <see cref="TypeDefinitionNode(IdentifierToken, Type?, RazorLib.CompilerServices.Syntax.SyntaxNodes.GenericArgumentsListingNode?, TypeClauseNode?, Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.CodeBlockNode?)"/>
     /// <br/>----<br/>
     /// <see cref="TypeDefinitionNode.TypeIdentifierToken"/>
     /// <see cref="TypeDefinitionNode.ValueType"/>

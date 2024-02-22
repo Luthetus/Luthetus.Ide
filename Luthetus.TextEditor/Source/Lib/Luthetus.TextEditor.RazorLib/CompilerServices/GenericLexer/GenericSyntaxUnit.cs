@@ -6,12 +6,12 @@ public class GenericSyntaxUnit
 {
     public GenericSyntaxUnit(
         GenericDocumentSyntax genericDocumentSyntax,
-        LuthetusDiagnosticBag diagnosticBag)
+        LuthDiagnosticBag diagnosticBag)
     {
         GenericDocumentSyntax = genericDocumentSyntax;
         DiagnosticBag = diagnosticBag;
     }
 
     public GenericDocumentSyntax GenericDocumentSyntax { get; }
-    public LuthetusDiagnosticBag DiagnosticBag { get; }
+    public LuthDiagnosticBag DiagnosticBag { get; }
 }

@@ -4,6 +4,9 @@ using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Storages.States;
 using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.Common.RazorLib.Themes.States;
+using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.Tests.Basis.Options.Models;
@@ -14,7 +17,7 @@ namespace Luthetus.Common.Tests.Basis.Options.Models;
 public class AppOptionsServiceTests
 {
     /// <summary>
-    /// <see cref="AppOptionsService(IState{RazorLib.Options.States.AppOptionsState}, IState{RazorLib.Themes.States.ThemeState}, IDispatcher, IStorageService, StorageSync)"/>
+    /// <see cref="AppOptionsService(IState{AppOptionsState}, IState{ThemeState}, IDispatcher, IStorageService, StorageSync)"/>
     /// <br/>----<br/>
     /// <see cref="AppOptionsService.AppOptionsStateWrap"/>
     /// <see cref="AppOptionsService.StorageKey"/>
@@ -34,7 +37,7 @@ public class AppOptionsServiceTests
     }
 
     /// <summary>
-    /// <see cref="AppOptionsService.SetActiveThemeRecordKey(RazorLib.Keys.Models.Key{ThemeRecord}, bool)"/>
+    /// <see cref="AppOptionsService.SetActiveThemeRecordKey(Key{ThemeRecord}, bool)"/>
     /// </summary>
     [Fact]
     public void SetActiveThemeRecordKey()

@@ -1,4 +1,6 @@
-﻿namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+
+namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 
 public interface ISymbol : ITextEditorSymbol
 {

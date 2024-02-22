@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.UnitTesting;
 
 namespace Luthetus.TextEditor.Tests.Basis.UnitTesting;
@@ -8,35 +9,20 @@ namespace Luthetus.TextEditor.Tests.Basis.UnitTesting;
 /// </summary>
 public class TextEditorUnitTestHelperTests
 {
-	/// <summary>
-	/// <see cref="TextEditorUnitTestHelper(IServiceProvider)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorUnitTestHelper(IServiceProvider)"/>
+    /// <br/>----<br/>
+    /// <see cref="TextEditorUnitTestHelper.AutocompleteIndexer"/>
+    /// <see cref="TextEditorUnitTestHelper.TextEditorService"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorUnitTestHelper.AutocompleteIndexer"/>
-	/// </summary>
-	[Fact]
-	public void AutocompleteIndexer()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorUnitTestHelper.TextEditorService"/>
-	/// </summary>
-	[Fact]
-	public void TextEditorService()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorUnitTestHelper.AddLuthetusTextEditorUnitTesting(Microsoft.Extensions.DependencyInjection.IServiceCollection, Common.RazorLib.Installations.Models.LuthetusHostingInformation)"/>
+	/// <see cref="TextEditorUnitTestHelper.AddLuthetusTextEditorUnitTesting(IServiceCollection, LuthetusHostingInformation)"/>
 	/// </summary>
 	[Fact]
 	public void AddLuthetusTextEditorUnitTesting()

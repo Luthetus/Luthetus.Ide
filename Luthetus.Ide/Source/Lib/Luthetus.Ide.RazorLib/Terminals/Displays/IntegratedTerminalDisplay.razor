@@ -1,0 +1,18 @@
+@using Luthetus.Common.RazorLib.Contexts.Displays
+@using Luthetus.Common.RazorLib.Contexts.Models;
+
+<ContextBoundary ContextRecord="ContextFacts.TerminalContext"
+                 ClassCssString="luth_ide_integrated-terminal"
+                 StyleCssString="height: 100%; width: 100%; overflow: auto;">
+
+	<div class="luth_ide_section-title">
+        Terminal
+    </div>
+
+	<div class="luth_ide_section-body" style="width: 100%;">
+		@{ var sequenceCliWrapIntegratedTerminal = 0; }
+		@(new RenderFragment(builder => _integratedTerminal.GetRenderTreeBuilder(
+			builder,
+			ref sequenceCliWrapIntegratedTerminal)))
+    </div>
+</ContextBoundary>

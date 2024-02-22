@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System;
 using System.Threading.Tasks;
 
 namespace Fluxor.Blazor.Web.Middlewares.Routing
 {
-	internal class Effects
+    internal class Effects
 	{
 		private readonly NavigationManager NavigationManager;
 

@@ -11,7 +11,7 @@ namespace Luthetus.Common.Tests.Basis.Tabs.Models;
 public class TabGroupTests
 {
     /// <summary>
-    /// <see cref="TabGroup(Func{TabGroupLoadTabEntriesArgs, Task{TabGroupLoadTabEntriesOutput}}, RazorLib.Keys.Models.Key{TabGroup})"/>
+    /// <see cref="TabGroup(Func{TabGroupLoadTabEntriesArgs, Task{TabGroupLoadTabEntriesOutput}}, Key{TabGroup})"/>
     /// <br/>----<br/>
     /// <see cref="TabGroup.EntryList"/>
     /// <see cref="TabGroup.LoadEntryListAsync()"/>

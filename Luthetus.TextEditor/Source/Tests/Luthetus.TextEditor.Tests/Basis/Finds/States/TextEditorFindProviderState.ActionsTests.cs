@@ -1,8 +1,7 @@
-﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.SearchEngines.States;
-using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
+using Luthetus.TextEditor.RazorLib.FindAlls.States;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
-namespace Luthetus.TextEditor.Tests.Basis.SearchEngines.States;
+namespace Luthetus.TextEditor.Tests.Basis.FindAlls.States;
 
 /// <summary>
 /// <see cref="TextEditorSearchEngineState"/>
@@ -16,7 +15,7 @@ public class TextEditorSearchEngineStateActionsTests
 	public void RegisterAction()
 	{
 		var searchEngine = new SearchEngineOverRegisteredViewModels();
-        var registerAction = new TextEditorSearchEngineState.RegisterAction(searchEngine);
+        var registerAction = new TextEditorFindAllState.RegisterAction(searchEngine);
 		Assert.Equal(searchEngine, registerAction.SearchEngine);
 	}
 
@@ -28,7 +27,7 @@ public class TextEditorSearchEngineStateActionsTests
 	{
         var searchEngine = new SearchEngineOverRegisteredViewModels();
         var searchEngineKey = searchEngine.Key;
-        var disposeAction = new TextEditorSearchEngineState.DisposeAction(searchEngineKey);
+        var disposeAction = new TextEditorFindAllState.DisposeAction(searchEngineKey);
         Assert.Equal(searchEngineKey, disposeAction.SearchEngineKey);
 	}
 
@@ -39,7 +38,7 @@ public class TextEditorSearchEngineStateActionsTests
 	public void SetSearchQueryAction()
 	{
         var searchQuery = "AlphabetSoup";
-        var setSearchQueryAction = new TextEditorSearchEngineState.SetSearchQueryAction(searchQuery);
+        var setSearchQueryAction = new TextEditorFindAllState.SetSearchQueryAction(searchQuery);
         Assert.Equal(searchQuery, setSearchQueryAction.SearchQuery);
 	}
 }

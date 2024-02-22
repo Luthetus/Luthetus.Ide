@@ -2,12 +2,10 @@
 using Fluxor.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Fluxor.DependencyInjection.ServiceRegistration
 {
-	internal static class StoreRegistration
+    internal static class StoreRegistration
 	{
 		public static void Register(
 			IServiceCollection services,

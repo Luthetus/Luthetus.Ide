@@ -15,10 +15,6 @@ public class ContextRecordKeyHeirarchyTests
     [Fact]
     public void TargetKey()
     {
-        /*
-        public Key<ContextRecord> NearestAncestorKey => KeyList[0];
-         */
-
         var contextRecordKeyHeirarchy = new ContextHeirarchy(
             new Key<ContextRecord>[]
             {

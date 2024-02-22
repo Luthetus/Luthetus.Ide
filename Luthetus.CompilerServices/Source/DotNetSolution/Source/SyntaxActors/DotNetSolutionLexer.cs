@@ -1,18 +1,20 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 
-public class DotNetSolutionLexer : ILexer
+public class DotNetSolutionLexer : ILuthLexer
 {
     private readonly StringWalker _stringWalker;
     private readonly List<ISyntaxToken> _syntaxTokens = new();
-    private readonly LuthetusDiagnosticBag _diagnosticBag = new();
+    private readonly LuthDiagnosticBag _diagnosticBag = new();
 
     public DotNetSolutionLexer(ResourceUri resourceUri, string sourceText)
     {
@@ -24,6 +26,8 @@ public class DotNetSolutionLexer : ILexer
     public ImmutableArray<TextEditorDiagnostic> DiagnosticList => _diagnosticBag.ToImmutableArray();
 
     public ResourceUri ResourceUri { get; }
+
+    string ILuthLexer.SourceText => throw new NotImplementedException();
 
     public void Lex()
     {

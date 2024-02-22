@@ -1,5 +1,5 @@
-﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,65 +8,18 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class NamespaceStatementNodeTests
 {
-	/// <summary>
-	/// <see cref="NamespaceStatementNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.KeywordToken, RazorLib.CompilerServices.Syntax.SyntaxTokens.IdentifierToken, System.Collections.Immutable.ImmutableArray{NamespaceEntryNode})"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="NamespaceStatementNode(KeywordToken, IdentifierToken, CodeBlockNode)"/>
+    /// <br/>----<br/>
+    /// <see cref="NamespaceStatementNode.KeywordToken"/>
+    /// <see cref="NamespaceStatementNode.IdentifierToken"/>
+    /// <see cref="NamespaceStatementNode.NamespaceEntryNodeList"/>
+    /// <see cref="NamespaceStatementNode.ChildList"/>
+    /// <see cref="NamespaceStatementNode.IsFabricated"/>
+    /// <see cref="NamespaceStatementNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="NamespaceStatementNode.KeywordToken"/>
-	/// </summary>
-	[Fact]
-	public void KeywordToken()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="NamespaceStatementNode.IdentifierToken"/>
-	/// </summary>
-	[Fact]
-	public void IdentifierToken()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="NamespaceStatementNode.NamespaceEntryNodeList"/>
-	/// </summary>
-	[Fact]
-	public void NamespaceEntryNodeList()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="NamespaceStatementNode.ChildList"/>
-	/// </summary>
-	[Fact]
-	public void ChildList()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="NamespaceStatementNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="NamespaceStatementNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
 	{
 		throw new NotImplementedException();
 	}

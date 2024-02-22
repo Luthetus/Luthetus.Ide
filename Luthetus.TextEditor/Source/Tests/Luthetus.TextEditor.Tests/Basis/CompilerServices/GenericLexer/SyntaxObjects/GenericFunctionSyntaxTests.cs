@@ -1,4 +1,4 @@
-﻿using Xunit;
+﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxObjects;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.SyntaxObjects;
@@ -8,38 +8,15 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.SyntaxOb
 /// </summary>
 public class GenericFunctionSyntaxTests
 {
-	/// <summary>
-	/// <see cref="GenericFunctionSyntax(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="GenericFunctionSyntax(TextEditorTextSpan)"/>
+    /// <br/>----<br/>
+    /// <see cref="GenericFunctionSyntax.TextSpan"/>
+    /// <see cref="GenericFunctionSyntax.ChildList"/>
+    /// <see cref="GenericFunctionSyntax.GenericSyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="GenericFunctionSyntax.TextSpan"/>
-	/// </summary>
-	[Fact]
-	public void TextSpan()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="GenericFunctionSyntax.ChildList"/>
-	/// </summary>
-	[Fact]
-	public void ChildList()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="GenericFunctionSyntax.GenericSyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void GenericSyntaxKind()
 	{
 		throw new NotImplementedException();
 	}

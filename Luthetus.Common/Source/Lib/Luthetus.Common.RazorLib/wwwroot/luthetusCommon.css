@@ -355,6 +355,7 @@ ul.luth_indent-child-content {
     --luth_icon-js-font-color: #519aba;
     --luth_icon-ts-font-color: #37b38b;
     --luth_icon-start-without-debugging-font-color: #37b38b;
+    --luth_icon-start-with-debugging-font-color: #37b38b;
     --luth_toggled-on-background-color: #7f0eb8;
     --luth_toggled-on-hover-background-color: #bb56ac;
     --luth_danger-general-use-color: #b35252;
@@ -436,6 +437,7 @@ ul.luth_indent-child-content {
     --luth_icon-js-font-color: #519aba;
     --luth_icon-ts-font-color: #37b38b;
     --luth_icon-start-without-debugging-font-color: #37b38b;
+    --luth_icon-start-with-debugging-font-color: #37b38b;
     --luth_toggled-on-background-color: #c4eaff;
     --luth_toggled-on-hover-background-color: #67e4ff;
     --luth_danger-general-use-color: #ff8484;

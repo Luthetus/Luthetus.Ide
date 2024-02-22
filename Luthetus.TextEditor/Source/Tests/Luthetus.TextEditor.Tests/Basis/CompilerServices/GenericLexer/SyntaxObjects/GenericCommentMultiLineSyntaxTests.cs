@@ -1,4 +1,4 @@
-﻿using Xunit;
+﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxObjects;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.SyntaxObjects;
@@ -8,38 +8,15 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.SyntaxOb
 /// </summary>
 public class GenericCommentMultiLineSyntaxTests
 {
-	/// <summary>
-	/// <see cref="GenericCommentMultiLineSyntax(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
-	/// </summary>
-	[Fact]
-	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
+    /// <summary>
+    /// <see cref="GenericCommentMultiLineSyntax(TextEditorTextSpan)"/>
+    /// <br/>----<br/>
 	/// <see cref="GenericCommentMultiLineSyntax.TextSpan"/>
-	/// </summary>
-	[Fact]
-	public void TextSpan()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="GenericCommentMultiLineSyntax.ChildList"/>
-	/// </summary>
-	[Fact]
-	public void ChildList()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="GenericCommentMultiLineSyntax.GenericSyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void GenericSyntaxKind()
+    /// </summary>
+    [Fact]
+	public void Constructor()
 	{
 		throw new NotImplementedException();
 	}

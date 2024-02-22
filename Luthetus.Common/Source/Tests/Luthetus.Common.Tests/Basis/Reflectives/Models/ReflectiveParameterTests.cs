@@ -9,7 +9,7 @@ namespace Luthetus.Common.Tests.Basis.Reflectives.Models;
 public class ReflectiveParameterTests
 {
     /// <summary>
-    /// <see cref="ReflectiveParameter(System.Reflection.ConstructorInfo?, Func{object?}?, object?, Type)"/>
+    /// <see cref="ReflectiveParameter(ConstructorInfo?, Func{object?}?, object?, Type)"/>
     /// <br/>----<br/>
     /// <see cref="ReflectiveParameter.ChosenConstructorInfo"/>
     /// <see cref="ReflectiveParameter.ConstructValueFunc"/>

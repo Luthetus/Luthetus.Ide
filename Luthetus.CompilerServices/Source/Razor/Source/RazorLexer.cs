@@ -6,16 +6,18 @@ using Luthetus.CompilerServices.Lang.Razor.Razor.Facts;
 using Luthetus.CompilerServices.Lang.Xml.Html.InjectedLanguage;
 using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.CompilerServices.Lang.Razor;
 
-public class RazorLexer : ILexer
+public class RazorLexer : ILuthLexer
 {
     private readonly StringWalker _stringWalker;
     private readonly List<ISyntaxToken> _syntaxTokens = new();
-    private readonly LuthetusDiagnosticBag _diagnosticBag = new();
+    private readonly LuthDiagnosticBag _diagnosticBag = new();
     private readonly RazorCompilerService _razorCompilerService;
     private readonly CSharpCompilerService _cSharpCompilerService;
     private readonly IEnvironmentProvider _environmentProvider;
@@ -44,6 +46,8 @@ public class RazorLexer : ILexer
     public ImmutableArray<TextEditorDiagnostic> DiagnosticList => _diagnosticBag.ToImmutableArray();
 
     public ImmutableArray<TextEditorTextSpan> TextEditorTextSpans { get; private set; }
+
+    string ILuthLexer.SourceText => throw new NotImplementedException();
 
     public void Lex()
     {

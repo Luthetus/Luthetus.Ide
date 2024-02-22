@@ -1,6 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.Tests.Basis.Options.Models;
 
@@ -10,7 +11,7 @@ namespace Luthetus.Common.Tests.Basis.Options.Models;
 public class CommonOptionsJsonDtoTests
 {
     /// <summary>
-    /// <see cref="CommonOptionsJsonDto(int?, int?, RazorLib.Keys.Models.Key{RazorLib.Themes.Models.ThemeRecord}?, string?)"/>
+    /// <see cref="CommonOptionsJsonDto(int?, int?, Key{ThemeRecord}?, string?)"/>
     /// </summary>
     [Fact]
     public void ConstructorA()

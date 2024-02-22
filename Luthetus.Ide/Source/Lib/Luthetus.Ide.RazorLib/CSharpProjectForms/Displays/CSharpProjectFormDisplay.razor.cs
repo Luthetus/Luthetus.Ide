@@ -138,7 +138,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
                     if (output is not null)
                     {
-                        _viewModel.ProjectTemplateList = DotNetCliOutputLexer.LexDotNetNewListTerminalOutput(output);
+                        _viewModel.ProjectTemplateList = DotNetCliOutputParser.ParseDotNetNewListTerminalOutput(output);
                         await InvokeAsync(StateHasChanged).ConfigureAwait(false);
                     }
                     else
@@ -180,7 +180,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
                     if (output is not null)
                     {
-                        _viewModel.ProjectTemplateList = DotNetCliOutputLexer.LexDotNetNewListTerminalOutput(output);
+                        _viewModel.ProjectTemplateList = DotNetCliOutputParser.ParseDotNetNewListTerminalOutput(output);
                         await InvokeAsync(StateHasChanged).ConfigureAwait(false);
                     }
                     else

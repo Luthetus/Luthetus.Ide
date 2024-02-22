@@ -188,10 +188,14 @@ input[type="checkbox"]{
     padding: var(--luth_ide_input-padding-height) var(--luth_ide_input-padding-width);
 }
 
-.luth_ide_input:focus {
-    outline: solid var(--luth_ide_input-focus-outline-size) var(--luth_primary-emphasis-foreground-color);
-    box-shadow: 0 0 var(--luth_ide_input-focus-box-shadow-blur-radius) var(--luth_primary-emphasis-foreground-color);
-}
+    .luth_ide_input:focus {
+        outline: solid var(--luth_ide_input-focus-outline-size) var(--luth_primary-emphasis-foreground-color);
+        box-shadow: 0 0 var(--luth_ide_input-focus-box-shadow-blur-radius) var(--luth_primary-emphasis-foreground-color);
+    }
+
+    .luth_ide_input:read-only {
+        cursor: default;
+    }
 
 .luth_ide_input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: #8c8c8c;

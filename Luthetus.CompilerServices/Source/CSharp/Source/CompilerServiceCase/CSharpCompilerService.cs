@@ -7,7 +7,9 @@ using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.CompilerServices.Lang.CSharp.RuntimeAssemblies;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -18,11 +20,8 @@ using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 
-public class CSharpCompilerService : ICompilerService
+public sealed class CSharpCompilerService : LuthCompilerService
 {
-    private readonly Dictionary<ResourceUri, CSharpResource> _cSharpResourceMap = new();
-    private readonly object _cSharpResourceMapLock = new();
-    private readonly ITextEditorService _textEditorService;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
     
@@ -32,104 +31,41 @@ public class CSharpCompilerService : ICompilerService
     public readonly CSharpBinder CSharpBinder = new();
 
     public CSharpCompilerService(
-        ITextEditorService textEditorService,
-        IBackgroundTaskService backgroundTaskService,
-        IDispatcher dispatcher)
+            ITextEditorService textEditorService,
+            IBackgroundTaskService backgroundTaskService,
+            IDispatcher dispatcher)
+        : base(
+            textEditorService,
+            (resourceUri, sourceText) => new CSharpLexer(resourceUri, sourceText),
+            lexer => new CSharpParser((CSharpLexer)lexer))
     {
-        _textEditorService = textEditorService;
+        Binder = CSharpBinder;
+
         _backgroundTaskService = backgroundTaskService;
         _dispatcher = dispatcher;
 
         RuntimeAssembliesLoaderFactory.LoadDotNet6(CSharpBinder);
     }
 
-    public event Action? ResourceRegistered;
-    public event Action? ResourceParsed;
-    public event Action? ResourceDisposed;
     public event Action? CursorMovedInSyntaxTree;
 
-    public IBinder? Binder => CSharpBinder;
-
-    public ImmutableArray<ICompilerServiceResource> CompilerServiceResources =>
-        _cSharpResourceMap.Values
-            .Select(csr => (ICompilerServiceResource)csr)
-            .ToImmutableArray();
-
-    public void RegisterResource(ResourceUri resourceUri)
+    public override void RegisterResource(ResourceUri resourceUri)
     {
-        lock (_cSharpResourceMapLock)
+        lock (_resourceMapLock)
         {
-            if (_cSharpResourceMap.ContainsKey(resourceUri))
+            if (_resourceMap.ContainsKey(resourceUri))
                 return;
 
-            _cSharpResourceMap.Add(
+            _resourceMap.Add(
                 resourceUri,
-                new(resourceUri, this));
+                new CSharpResource(resourceUri, this));
         }
 
         QueueParseRequest(resourceUri);
-        ResourceRegistered?.Invoke();
+        OnResourceRegistered();
     }
 
-    public ICompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri)
-    {
-        var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
-
-        if (model is null)
-            return null;
-
-        lock (_cSharpResourceMapLock)
-        {
-            if (!_cSharpResourceMap.ContainsKey(resourceUri))
-                return null;
-
-            return _cSharpResourceMap[resourceUri];
-        }
-    }
-
-    public ImmutableArray<TextEditorTextSpan> GetSyntacticTextSpansFor(ResourceUri resourceUri)
-    {
-        lock (_cSharpResourceMapLock)
-        {
-            if (!_cSharpResourceMap.ContainsKey(resourceUri))
-                return ImmutableArray<TextEditorTextSpan>.Empty;
-
-            return _cSharpResourceMap[resourceUri].SyntacticTextSpans;
-        }
-    }
-
-    public ImmutableArray<ITextEditorSymbol> GetSymbolsFor(ResourceUri resourceUri)
-    {
-        lock (_cSharpResourceMapLock)
-        {
-            if (!_cSharpResourceMap.ContainsKey(resourceUri))
-                return ImmutableArray<ITextEditorSymbol>.Empty;
-
-            return _cSharpResourceMap[resourceUri].Symbols;
-        }
-    }
-
-    public ImmutableArray<TextEditorDiagnostic> GetDiagnosticsFor(ResourceUri resourceUri)
-    {
-        lock (_cSharpResourceMapLock)
-        {
-            if (!_cSharpResourceMap.ContainsKey(resourceUri))
-                return ImmutableArray<TextEditorDiagnostic>.Empty;
-
-            return _cSharpResourceMap[resourceUri].Diagnostics;
-        }
-    }
-
-    public void ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpans)
-    {
-        QueueParseRequest(resourceUri);
-    }
-
-    public void CursorWasModified(ResourceUri resourceUri, TextEditorCursor cursor)
-    {
-    }
-
-    public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
+    public override ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
     {
         var boundScope = CSharpBinder.GetBoundScope(textSpan) as CSharpBoundScope;
 
@@ -156,11 +92,11 @@ public class CSharpCompilerService : ICompilerService
             {
                 var cSharpResource = (CSharpResource?)null;
 
-                lock (_cSharpResourceMapLock)
+                lock (_resourceMapLock)
                 {
-                    if (_cSharpResourceMap.ContainsKey(textSpan.ResourceUri))
+                    if (_resourceMap.ContainsKey(textSpan.ResourceUri))
                     {
-                        cSharpResource = _cSharpResourceMap[textSpan.ResourceUri];
+                        cSharpResource = (CSharpResource)_resourceMap[textSpan.ResourceUri];
                     }
                 }
 
@@ -287,17 +223,7 @@ public class CSharpCompilerService : ICompilerService
         return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToImmutableArray();
     }
 
-    public void DisposeResource(ResourceUri resourceUri)
-    {
-        lock (_cSharpResourceMapLock)
-        {
-            _cSharpResourceMap.Remove(resourceUri);
-        }
-
-        ResourceDisposed?.Invoke();
-    }
-
-    private void QueueParseRequest(ResourceUri resourceUri)
+    protected override void QueueParseRequest(ResourceUri resourceUri)
     {
         _textEditorService.Post(
             nameof(QueueParseRequest),
@@ -335,13 +261,13 @@ public class CSharpCompilerService : ICompilerService
                 }
                 finally
                 {
-                    lock (_cSharpResourceMapLock)
+                    lock (_resourceMapLock)
                     {
-                        if (_cSharpResourceMap.ContainsKey(resourceUri))
+                        if (_resourceMap.ContainsKey(resourceUri))
                         {
-                            var cSharpResource = _cSharpResourceMap[resourceUri];
+                            var cSharpResource = _resourceMap[resourceUri];
 
-                            cSharpResource.SyntaxTokens = lexer.SyntaxTokens;
+                            cSharpResource.SyntaxTokenList = lexer.SyntaxTokens;
 
                             if (compilationUnit is not null)
                                 cSharpResource.CompilationUnit = compilationUnit;
@@ -365,7 +291,7 @@ public class CSharpCompilerService : ICompilerService
                             (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
                     }
 
-                    ResourceParsed?.Invoke();
+                    OnResourceParsed();
                 }
             });
     }

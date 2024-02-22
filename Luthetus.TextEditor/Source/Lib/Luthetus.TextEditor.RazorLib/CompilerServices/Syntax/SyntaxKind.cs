@@ -220,7 +220,6 @@ public enum SyntaxKind
     BinaryOperatorNode,
     BinaryExpressionNode,
     AttributeNode,
-    NamespaceEntryNode,
 
     // Symbols
     TypeSymbol,

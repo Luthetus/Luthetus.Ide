@@ -45,7 +45,7 @@ public partial record CodeSearchState
                 if (parentDirectory is null)
                     return;
 
-                var startingAbsolutePathForSearch = parentDirectory.Path;
+                var startingAbsolutePathForSearch = parentDirectory.Value;
 
                 dispatcher.Dispatch(new WithAction(inState => inState with
                 {

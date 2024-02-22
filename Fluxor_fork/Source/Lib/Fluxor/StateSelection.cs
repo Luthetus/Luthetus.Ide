@@ -1,15 +1,13 @@
-﻿using Fluxor.Extensions;
-using System;
-using System.Threading;
+﻿using System;
 
 namespace Fluxor
 {
-	/// <summary>
-	/// A class that is injected into Blazor components/pages that provides access
-	/// to an <see cref="IFeature{TState}"/> state.
-	/// </summary>
-	/// <typeparam name="TState"></typeparam>
-	public class StateSelection<TState, TValue> : IStateSelection<TState, TValue>
+    /// <summary>
+    /// A class that is injected into Blazor components/pages that provides access
+    /// to an <see cref="IFeature{TState}"/> state.
+    /// </summary>
+    /// <typeparam name="TState"></typeparam>
+    public class StateSelection<TState, TValue> : IStateSelection<TState, TValue>
 	{
 		private readonly IFeature<TState> Feature;
 		private readonly object SyncRoot = new();

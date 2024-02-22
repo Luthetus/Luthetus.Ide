@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.Tests.Basis.Keymaps.Models;
 
@@ -9,7 +10,7 @@ namespace Luthetus.Common.Tests.Basis.Keymaps.Models;
 public class KeymapArgumentTests
 {
     /// <summary>
-    /// <see cref="KeymapArgument(string, bool, bool, bool, RazorLib.Keys.Models.Key{KeymapLayer})"/>
+    /// <see cref="KeymapArgument(string, bool, bool, bool, Key{KeymapLayer})"/>
     /// </summary>
     [Fact]
     public void ConstructorA()
@@ -20,7 +21,7 @@ public class KeymapArgumentTests
             var shiftKey = false;
             var ctrlKey = false;
             var altKey = false;
-            var keymapLayerKey = RazorLib.Keys.Models.Key<KeymapLayer>.Empty;
+            var keymapLayerKey = Key<KeymapLayer>.Empty;
 
             var keymapArgument = new KeymapArgument(
                 code,
@@ -42,7 +43,7 @@ public class KeymapArgumentTests
             var shiftKey = true;
             var ctrlKey = true;
             var altKey = true;
-            var keymapLayerKey = RazorLib.Keys.Models.Key<KeymapLayer>.Empty;
+            var keymapLayerKey = Key<KeymapLayer>.Empty;
 
             var keymapArgument = new KeymapArgument(
                 code,
@@ -73,6 +74,6 @@ public class KeymapArgumentTests
         Assert.False(keymapArgument.ShiftKey);
         Assert.False(keymapArgument.CtrlKey);
         Assert.False(keymapArgument.AltKey);
-        Assert.Equal(RazorLib.Keys.Models.Key<KeymapLayer>.Empty, keymapArgument.LayerKey);
+        Assert.Equal(Key<KeymapLayer>.Empty, keymapArgument.LayerKey);
     }
 }

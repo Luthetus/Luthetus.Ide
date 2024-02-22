@@ -1,7 +1,4 @@
-﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.SearchEngines.States;
-
-namespace Luthetus.TextEditor.Tests.Basis.SearchEngines.States;
+namespace Luthetus.TextEditor.Tests.Basis.FindAlls.States;
 
 /// <summary>
 /// <see cref="TextEditorSearchEngineState"/>

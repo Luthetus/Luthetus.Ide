@@ -1,5 +1,4 @@
-﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+﻿using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Virtualizations.Models;
 
@@ -8,47 +7,16 @@ namespace Luthetus.TextEditor.Tests.Basis.Virtualizations.Models;
 /// </summary>
 public class VirtualizationScrollPositionTests
 {
-	/// <summary>
-	/// <see cref="VirtualizationScrollPosition(double, double, double, double)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="VirtualizationScrollPosition(double, double, double, double)"/>
+    /// <br/>----<br/>
+    /// <see cref="VirtualizationScrollPosition.ScrollLeftInPixels"/>
+    /// <see cref="VirtualizationScrollPosition.ScrollTopInPixels"/>
+    /// <see cref="VirtualizationScrollPosition.ScrollWidthInPixels"/>
+    /// <see cref="VirtualizationScrollPosition.ScrollHeightInPixels"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="VirtualizationScrollPosition.ScrollLeftInPixels"/>
-	/// </summary>
-	[Fact]
-	public void ScrollLeftInPixels()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="VirtualizationScrollPosition.ScrollTopInPixels"/>
-	/// </summary>
-	[Fact]
-	public void ScrollTopInPixels()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="VirtualizationScrollPosition.ScrollWidthInPixels"/>
-	/// </summary>
-	[Fact]
-	public void ScrollWidthInPixels()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="VirtualizationScrollPosition.ScrollHeightInPixels"/>
-	/// </summary>
-	[Fact]
-	public void ScrollHeightInPixels()
 	{
 		throw new NotImplementedException();
 	}

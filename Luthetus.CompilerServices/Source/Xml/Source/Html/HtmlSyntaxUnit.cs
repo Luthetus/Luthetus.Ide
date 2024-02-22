@@ -7,25 +7,25 @@ public class HtmlSyntaxUnit
 {
     public HtmlSyntaxUnit(
         TagNode rootTagSyntax,
-        LuthetusDiagnosticBag diagnosticBag)
+        LuthDiagnosticBag diagnosticBag)
     {
         DiagnosticBag = diagnosticBag;
         RootTagSyntax = rootTagSyntax;
     }
 
     public TagNode RootTagSyntax { get; }
-    public LuthetusDiagnosticBag DiagnosticBag { get; }
+    public LuthDiagnosticBag DiagnosticBag { get; }
 
     public class HtmlSyntaxUnitBuilder
     {
-        public HtmlSyntaxUnitBuilder(TagNode rootTagSyntax, LuthetusDiagnosticBag diagnosticBag)
+        public HtmlSyntaxUnitBuilder(TagNode rootTagSyntax, LuthDiagnosticBag diagnosticBag)
         {
             RootTagSyntax = rootTagSyntax;
             DiagnosticBag = diagnosticBag;
         }
 
         public TagNode RootTagSyntax { get; }
-        public LuthetusDiagnosticBag DiagnosticBag { get; }
+        public LuthDiagnosticBag DiagnosticBag { get; }
 
         public HtmlSyntaxUnit Build()
         {

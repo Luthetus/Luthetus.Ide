@@ -127,7 +127,7 @@ public partial interface IEnvironmentProvider
 
             foreach (var directory in AncestorDirectoryList)
             {
-                var ancestorPath = new AbsolutePath(directory.Path, true, EnvironmentProvider);
+                var ancestorPath = new AbsolutePath(directory.Value, true, EnvironmentProvider);
                 absolutePathStringBuilder.Append(ancestorPath.NameWithExtension);
             }
 

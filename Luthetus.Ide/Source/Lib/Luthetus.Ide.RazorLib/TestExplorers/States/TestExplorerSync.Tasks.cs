@@ -64,7 +64,8 @@ public partial class TestExplorerSync
 							if (output is null)
 								return;
 
-							treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput = DotNetCliOutputLexer.LexDotNetTestListTestsTerminalOutput(output);
+							treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput =
+								DotNetCliOutputParser.ParseDotNetTestListTestsTerminalOutput(output);
 			
 			    			// THINKING_ABOUT_TREE_VIEW();
 							{

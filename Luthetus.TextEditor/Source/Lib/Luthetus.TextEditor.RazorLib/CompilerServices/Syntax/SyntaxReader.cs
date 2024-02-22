@@ -1,49 +1,45 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
-using System.Text;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 public static class SyntaxReader
 {
-    /// <summary>
-    /// This method builds a string of all <see cref="ISyntaxToken"/>(s)
-    /// which make up the given <see cref="ISyntax"/>.
-    /// <br/>
-    /// One can invoke <see cref="Lexes.Models.TextEditorTextSpan.GetText()"/> one by one
-    /// themselves by using a reference to an <see cref="ISyntaxToken"/>'s
-    /// <see cref="Lexes.Models.TextEditorTextSpan"/>
-    /// </summary>
-    public static string GetTextRecursively(this ISyntax syntax)
+    public static TextEditorTextSpan ConstructTextSpanRecursively(this ISyntaxNode node)
     {
-        if (syntax is ISyntaxNode node)
-        {
-            var textBuilder = new StringBuilder();
+        int? minStartingIndexInclusive = null;
+        int? maxEndingIndexExclusive = null;
+        ResourceUri? resourceUri = null;
+        string? sourceText = null;
 
-            foreach (var child in node.ChildList)
+        foreach (var child in node.ChildList)
+        {
+            if (child is ISyntaxToken token)
             {
-                textBuilder.Append(child.GetTextRecursively());
+                minStartingIndexInclusive = minStartingIndexInclusive is null
+                    ? token.TextSpan.StartingIndexInclusive
+                    : Math.Min(token.TextSpan.StartingIndexInclusive, minStartingIndexInclusive.Value);
+
+                maxEndingIndexExclusive = maxEndingIndexExclusive is null
+                    ? token.TextSpan.EndingIndexExclusive
+                    : Math.Min(token.TextSpan.EndingIndexExclusive, maxEndingIndexExclusive.Value);
+
+                resourceUri ??= token.TextSpan.ResourceUri;
+                sourceText ??= token.TextSpan.SourceText;
             }
-
-            if (syntax is FunctionDefinitionNode functionDefinitionNode)
-                textBuilder.Append('\n');
-
-            return textBuilder.ToString();
         }
-        else if (syntax is ISyntaxToken token)
+
+        if (minStartingIndexInclusive is null || maxEndingIndexExclusive is null)
         {
-            // TODO: Don't insert whitespace by way of 'assumption'.
-            // I'm checking if the 'token.SyntaxKind == SyntaxKind.IdentifierToken'.
-            // I really should be looking at the Trivia to ensure there really was a space
-            // there and etc...
-            var additionalEndingText = "";
-
-            if (token.SyntaxKind == SyntaxKind.IdentifierToken)
-                additionalEndingText = " ";
-
-            return token.TextSpan.GetText() + additionalEndingText;
+            minStartingIndexInclusive = 0;
+            maxEndingIndexExclusive = 1;
         }
 
-        throw new ApplicationException(
-            $"The {nameof(SyntaxKind)} of: '{syntax.SyntaxKind}' is unknown.");
+        return new TextEditorTextSpan(
+            minStartingIndexInclusive.Value,
+            maxEndingIndexExclusive.Value,
+            (byte)GenericDecorationKind.None,
+            resourceUri ?? new ResourceUri(string.Empty),
+            sourceText ?? string.Empty);
     }
 }

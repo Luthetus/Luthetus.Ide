@@ -1,4 +1,3 @@
-using Xunit;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Fluxor;
 using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
@@ -44,13 +43,13 @@ public class TextEditorServiceTests
 		Assert.NotNull(textEditorService.DiffStateWrap);
 		Assert.NotNull(textEditorService.ThemeStateWrap);
 		Assert.NotNull(textEditorService.OptionsStateWrap);
-		Assert.NotNull(textEditorService.SearchEngineStateWrap);
+		Assert.NotNull(textEditorService.FindAllStateWrap);
 		Assert.NotNull(textEditorService.ThemeCssClassString);
 		Assert.NotNull(textEditorService.ModelApi);
 		Assert.NotNull(textEditorService.ViewModelApi);
 		Assert.NotNull(textEditorService.GroupApi);
 		Assert.NotNull(textEditorService.DiffApi);
 		Assert.NotNull(textEditorService.OptionsApi);
-		Assert.NotNull(textEditorService.SearchEngineApi);
+		Assert.NotNull(textEditorService.FindAllApi);
 	}
 }

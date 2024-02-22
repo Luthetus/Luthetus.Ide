@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -23,7 +23,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
 	public DateTime ResourceLastWriteTime => _resourceLastWriteTime ?? _textEditorModel.ResourceLastWriteTime;
 	public string FileExtension => _fileExtension ?? _textEditorModel.FileExtension;
 	public IDecorationMapper DecorationMapper => _decorationMapper ?? _textEditorModel.DecorationMapper;
-	public ICompilerService CompilerService => _compilerService ?? _textEditorModel.CompilerService;
+	public ILuthCompilerService CompilerService => _compilerService ?? _textEditorModel.CompilerService;
 	public TextEditorSaveFileHelper TextEditorSaveFileHelper => _textEditorSaveFileHelper ?? _textEditorModel.TextEditorSaveFileHelper;
 	public int EditBlockIndex => _editBlockIndex ?? _textEditorModel.EditBlockIndex;
 	public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple => _mostCharactersOnASingleRowTuple ?? _textEditorModel.MostCharactersOnASingleRowTuple;

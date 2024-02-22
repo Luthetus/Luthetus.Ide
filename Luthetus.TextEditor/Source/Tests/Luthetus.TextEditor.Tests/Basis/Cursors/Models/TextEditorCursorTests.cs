@@ -1,6 +1,5 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Cursors.Models;
 

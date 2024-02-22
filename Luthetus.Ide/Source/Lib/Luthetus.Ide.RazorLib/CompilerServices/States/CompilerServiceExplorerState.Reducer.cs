@@ -4,7 +4,7 @@ namespace Luthetus.Ide.RazorLib.CompilerServices.States;
 
 public partial class CompilerServiceExplorerState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public CompilerServiceExplorerState ReduceNewAction(

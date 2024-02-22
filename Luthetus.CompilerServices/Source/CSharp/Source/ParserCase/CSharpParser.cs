@@ -2,36 +2,42 @@
 using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Expression;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
-public class CSharpParser : IParser
+public class CSharpParser : ILuthParser
 {
     public CSharpParser(CSharpLexer lexer)
     {
         Lexer = lexer;
         Binder = new CSharpBinder();
-        BinderSession = Binder.ConstructBinderSession(lexer.ResourceUri);
+        BinderSession = (CSharpBinderSession)Binder.ConstructBinderSession(lexer.ResourceUri);
     }
 
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; private set; } = ImmutableArray<TextEditorDiagnostic>.Empty;
     public CSharpBinder Binder { get; private set; }
-    public BinderSession BinderSession { get; private set; }
+    public CSharpBinderSession BinderSession { get; private set; }
     public CSharpLexer Lexer { get; }
+
+    ILuthBinder ILuthParser.Binder => Binder;
+    ILuthBinderSession ILuthParser.BinderSession => BinderSession;
+    ILuthLexer ILuthParser.Lexer => Lexer;
 
     /// <summary>This method is used when parsing many files as a single compilation. The first binder instance would be passed to the following parsers. The resourceUri is passed in so if a file is parsed for a second time, the previous symbols can be deleted so they do not duplicate.</summary>
     public CompilationUnit Parse(
-        CSharpBinder previousBinder,
+        ILuthBinder previousBinder,
         ResourceUri resourceUri)
     {
-        Binder = previousBinder;
-        BinderSession = Binder.ConstructBinderSession(resourceUri);
+        Binder = (CSharpBinder)previousBinder;
+        BinderSession = (CSharpBinderSession)Binder.ConstructBinderSession(resourceUri);
         Binder.ClearStateByResourceUri(resourceUri);
         return Parse();
     }
@@ -40,7 +46,7 @@ public class CSharpParser : IParser
     {
         var globalCodeBlockBuilder = new CodeBlockBuilder(null, null);
         var currentCodeBlockBuilder = globalCodeBlockBuilder;
-        var diagnosticBag = new LuthetusDiagnosticBag();
+        var diagnosticBag = new LuthDiagnosticBag();
 
         var model = new ParserModel(
             Binder,

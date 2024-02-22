@@ -13,19 +13,11 @@ public class DialogStateMainTests
 {
     /// <summary>
     /// <see cref="DialogState()"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        var dialogState = new DialogState();
-        Assert.Equal(ImmutableList<DialogRecord>.Empty, dialogState.DialogList);
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="DialogState.DialogList"/>
     /// </summary>
     [Fact]
-    public void DialogList()
+    public void Constructor()
     {
         var dialogState = new DialogState();
         Assert.Equal(ImmutableList<DialogRecord>.Empty, dialogState.DialogList);

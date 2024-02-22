@@ -1,14 +1,12 @@
-﻿using Fluxor.Extensions;
-using Fluxor.UnsupportedClasses;
+﻿using Fluxor.UnsupportedClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace Fluxor
 {
-	/// <see cref="IFeature{TState}"/>
-	public abstract class Feature<TState> : IFeature<TState>
+    /// <see cref="IFeature{TState}"/>
+    public abstract class Feature<TState> : IFeature<TState>
 	{
 		/// <see cref="IFeature.MaximumStateChangedNotificationsPerSecond"/>
 		public byte MaximumStateChangedNotificationsPerSecond { get; set; }

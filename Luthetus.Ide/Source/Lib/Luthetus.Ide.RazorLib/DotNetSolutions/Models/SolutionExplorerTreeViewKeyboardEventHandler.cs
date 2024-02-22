@@ -153,7 +153,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
             var parentDirectory = treeViewNamespacePath
                 .Item.AbsolutePath.AncestorDirectoryList.Last();
 
-            var parentDirectoryAbsolutePath = _environmentProvider.AbsolutePathFactory(parentDirectory.Path, true);
+            var parentDirectoryAbsolutePath = _environmentProvider.AbsolutePathFactory(parentDirectory.Value, true);
 
             pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
                 parentDirectoryAbsolutePath,

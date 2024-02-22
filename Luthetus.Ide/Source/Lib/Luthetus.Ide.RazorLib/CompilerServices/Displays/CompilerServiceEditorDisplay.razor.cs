@@ -5,7 +5,7 @@ using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.States;
 using Luthetus.Ide.RazorLib.Editors.States;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Groups.States;
@@ -21,7 +21,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
     /// <summary>
     /// Start with <see cref="Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase.CSharpCompilerService"/>,
     /// then make <see cref="CompilerServiceEditorDisplay"/> more generic, to accept just an
-    /// <see cref="TextEditor.RazorLib.CompilerServices.ICompilerService"/>
+    /// <see cref="TextEditor.RazorLib.CompilerServices.Interfaces.ILuthCompilerService"/>
     /// (2024-01-28)
     /// </summary>
     [Inject]
@@ -178,7 +178,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
         public TextEditorGroup? EditorTextEditorGroup { get; set; }
         public Key<TextEditorViewModel> ActiveViewModelKey { get; set; }
         public TextEditorViewModel? ViewModel { get; set; }
-        public ICompilerServiceResource? InterfaceCompilerServiceResource { get; set; }
+        public ILuthCompilerServiceResource? InterfaceCompilerServiceResource { get; set; }
         public CSharpResource? CSharpResource { get; set; }
         public TextEditorModel? TextEditorModel { get; set; }
         public int? PrimaryCursorPositionIndex { get; set; }

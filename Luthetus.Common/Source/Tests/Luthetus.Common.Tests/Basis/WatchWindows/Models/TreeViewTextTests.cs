@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.WatchWindows.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.Common.Tests.Basis.WatchWindows.Models;
 
@@ -8,7 +9,7 @@ namespace Luthetus.Common.Tests.Basis.WatchWindows.Models;
 public class TreeViewTextTests
 {
     /// <summary>
-    /// <see cref="TreeViewText(string, bool, bool, RazorLib.ComponentRenderers.Models.ILuthetusCommonComponentRenderers)"/>
+    /// <see cref="TreeViewText(string, bool, bool, ILuthetusCommonComponentRenderers)"/>
     /// </summary>
     [Fact]
     public void Constructor()

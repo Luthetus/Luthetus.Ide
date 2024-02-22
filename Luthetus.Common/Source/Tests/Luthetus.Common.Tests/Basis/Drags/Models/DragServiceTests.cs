@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.Drags.Models;
+using Luthetus.Common.RazorLib.Drags.Displays;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.Tests.Basis.Drags.Models;
@@ -10,7 +11,7 @@ namespace Luthetus.Common.Tests.Basis.Drags.Models;
 public class DragServiceTests
 {
     /// <summary>
-    /// <see cref="DragService(IDispatcher, IState{RazorLib.Drags.Displays.DragState})"/>
+    /// <see cref="DragService(IDispatcher, IState{DragState})"/>
     /// <br/>----<br/>
     /// <see cref="DragService.DragStateWrap"/>
     /// </summary>
@@ -24,7 +25,7 @@ public class DragServiceTests
     }
 
     /// <summary>
-    /// <see cref="DragService.WithAction(Func{RazorLib.Drags.Displays.DragState, RazorLib.Drags.Displays.DragState})"/>
+    /// <see cref="DragService.WithAction(Func{DragState, DragState})"/>
     /// </summary>
     [Fact]
     public void WithAction()

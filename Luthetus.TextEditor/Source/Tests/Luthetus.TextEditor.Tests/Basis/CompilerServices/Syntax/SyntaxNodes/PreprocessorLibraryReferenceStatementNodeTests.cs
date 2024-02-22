@@ -1,5 +1,5 @@
-﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,56 +8,17 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class PreprocessorLibraryReferenceStatementNodeTests
 {
-	/// <summary>
-	/// <see cref="PreprocessorLibraryReferenceStatementNode(RazorLib.CompilerServices.Syntax.ISyntaxToken, RazorLib.CompilerServices.Syntax.ISyntaxToken)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="PreprocessorLibraryReferenceStatementNode(ISyntaxToken, ISyntaxToken)"/>
+    /// <br/>----<br/>
+    /// <see cref="PreprocessorLibraryReferenceStatementNode.IncludeDirectiveSyntaxToken"/>
+    /// <see cref="PreprocessorLibraryReferenceStatementNode.LibraryReferenceSyntaxToken"/>
+    /// <see cref="PreprocessorLibraryReferenceStatementNode.ChildList"/>
+    /// <see cref="PreprocessorLibraryReferenceStatementNode.IsFabricated"/>
+    /// <see cref="PreprocessorLibraryReferenceStatementNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="PreprocessorLibraryReferenceStatementNode.IncludeDirectiveSyntaxToken"/>
-	/// </summary>
-	[Fact]
-	public void IncludeDirectiveSyntaxToken()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="PreprocessorLibraryReferenceStatementNode.LibraryReferenceSyntaxToken"/>
-	/// </summary>
-	[Fact]
-	public void LibraryReferenceSyntaxToken()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="PreprocessorLibraryReferenceStatementNode.ChildList"/>
-	/// </summary>
-	[Fact]
-	public void ChildList()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="PreprocessorLibraryReferenceStatementNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="PreprocessorLibraryReferenceStatementNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
 	{
 		throw new NotImplementedException();
 	}

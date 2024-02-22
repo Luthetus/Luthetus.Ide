@@ -7,7 +7,7 @@ namespace Luthetus.Ide.RazorLib.InputFiles.States;
 
 public partial record InputFileState
 {
-    private static class Reducer
+    public static class Reducer
     {
         [ReducerMethod]
         public static InputFileState ReduceStartInputFileStateFormAction(
@@ -98,7 +98,7 @@ public partial record InputFileState
                 var parentDirectory = currentSelection.Item.AncestorDirectoryList.Last();
 
                 var parentDirectoryAbsolutePath = openParentDirectoryAction.EnvironmentProvider.AbsolutePathFactory(
-                    parentDirectory.Path,
+                    parentDirectory.Value,
                     true);
 
                 parentDirectoryTreeViewModel = new TreeViewAbsolutePath(

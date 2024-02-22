@@ -5,7 +5,7 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 public partial record DotNetSolutionState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static DotNetSolutionState ReduceRegisterAction(

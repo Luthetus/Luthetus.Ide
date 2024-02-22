@@ -1,19 +1,21 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
 
 /// <summary>
-/// (2023-07-23): The <see cref="ICompilerServiceResource"/>
+/// (2023-07-23): The <see cref="ILuthCompilerServiceResource"/>
 /// implementation count is growing rapidly.
 /// <br/><br/>
 /// I'm not sure if I'll need such fine grained implementations of
-/// <see cref="ICompilerServiceResource"/> in the long run.
+/// <see cref="ILuthCompilerServiceResource"/> in the long run.
 /// <br/><br/>
-/// But, for now, a separate <see cref="ICompilerServiceResource"/>
+/// But, for now, a separate <see cref="ILuthCompilerServiceResource"/>
 /// implementation for a .NET Solution, a C# project, a C# class, etc...
 /// <br/><br/>
 /// It all makes things a bit more clear while I figure things out.
@@ -24,7 +26,7 @@ namespace Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
 /// connect to all the various C# Projects.
 /// C# Projects then point to the C# classes and etc...
 /// </summary>
-public class DotNetSolutionResource : ICompilerServiceResource
+public class DotNetSolutionResource : ILuthCompilerServiceResource
 {
     public DotNetSolutionResource(
         ResourceUri resourceUri,
@@ -36,18 +38,18 @@ public class DotNetSolutionResource : ICompilerServiceResource
 
     public ResourceUri ResourceUri { get; }
     public DotNetSolutionCompilerService DotNetSolutionCompilerService { get; }
-    public CompilationUnit? CompilationUnit { get; internal set; }
-    public ImmutableArray<ISyntaxToken>? SyntaxTokenList { get; internal set; }
+    public CompilationUnit? CompilationUnit { get; set; }
+    public ImmutableArray<ISyntaxToken>? SyntaxTokenList { get; set; }
     public DotNetSolutionModel? DotNetSolutionModel { get; set; }
 
-    public ImmutableArray<TextEditorTextSpan> SyntacticTextSpanList => GetSyntacticTextSpans();
-    public ImmutableArray<ITextEditorSymbol> SymbolList => GetSymbols();
+    ILuthCompilerService ILuthCompilerServiceResource.CompilerService => DotNetSolutionCompilerService;
+    ImmutableArray<ISyntaxToken> ILuthCompilerServiceResource.SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
 
     /// <summary>
     /// TODO: It might be a useful optimization to evaluate these linq expressions
     /// and store the result as to not re-evaluate the linq expression over and over.
     /// </summary>
-    private ImmutableArray<TextEditorTextSpan> GetSyntacticTextSpans()
+    public ImmutableArray<TextEditorTextSpan> GetTokenTextSpans()
     {
         var localSyntaxTokens = SyntaxTokenList;
 
@@ -61,7 +63,7 @@ public class DotNetSolutionResource : ICompilerServiceResource
     /// TODO: It might be a useful optimization to evaluate these linq expressions
     /// and store the result as to not re-evaluate the linq expression over and over.
     /// </summary>
-    private ImmutableArray<ITextEditorSymbol> GetSymbols()
+    public ImmutableArray<ITextEditorSymbol> GetSymbols()
     {
         var localCompilationUnit = CompilationUnit;
 
@@ -71,13 +73,8 @@ public class DotNetSolutionResource : ICompilerServiceResource
         return localCompilationUnit.Binder.SymbolsList;
     }
 
-    /// <returns>
-    /// The <see cref="ISyntaxNode"/>
-    /// which represents the resource in the compilation result.
-    /// </returns>
-    public Task GetRootSyntaxNodeAsync()
+    public ImmutableArray<TextEditorDiagnostic> GetDiagnostics()
     {
-        //DotNetCompilerService.Compilation.RootSyntaxNode;
-        return Task.CompletedTask;
+        return ImmutableArray<TextEditorDiagnostic>.Empty;
     }
 }

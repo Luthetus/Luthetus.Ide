@@ -1,5 +1,4 @@
-﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
@@ -8,38 +7,15 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 /// </summary>
 public class OpenAssociatedGroupTokenTests
 {
-	/// <summary>
-	/// <see cref="OpenAssociatedGroupToken(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="OpenAssociatedGroupToken(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+    /// <br/>----<br/>
+    /// <see cref="OpenAssociatedGroupToken.TextSpan"/>
+    /// <see cref="OpenAssociatedGroupToken.IsFabricated"/>
+    /// <see cref="OpenAssociatedGroupToken.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="OpenAssociatedGroupToken.TextSpan"/>
-	/// </summary>
-	[Fact]
-	public void TextSpan()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="OpenAssociatedGroupToken.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="OpenAssociatedGroupToken.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
 	{
 		throw new NotImplementedException();
 	}

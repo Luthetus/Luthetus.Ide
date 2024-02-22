@@ -1,9 +1,7 @@
-﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Expression;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 
@@ -15,7 +13,7 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 public class IfStatementNodeTests
 {
     /// <summary>
-    /// <see cref="IfStatementNode(KeywordToken, IExpressionNode, RazorLib.CompilerServices.CodeBlockNode?)"/>
+    /// <see cref="IfStatementNode(KeywordToken, IExpressionNode, Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.CodeBlockNode?)"/>
     /// <br/>----<br/>
     /// <see cref="IfStatementNode.KeywordToken"/>
     /// <see cref="IfStatementNode.ExpressionNode"/>

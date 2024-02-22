@@ -1,25 +1,26 @@
 using Fluxor;
 using Microsoft.AspNetCore.Components;
-using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
-using Luthetus.TextEditor.RazorLib.SearchEngines.States;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.TextEditor.RazorLib.FindAlls.States;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.Terminals.Displays;
 using Luthetus.Ide.RazorLib.Nugets.Displays;
 using Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 using Luthetus.Ide.RazorLib.CompilerServices.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
-using Luthetus.Ide.RazorLib.Terminals.Displays;
-using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.Outputs.Displays;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.TestExplorers.Displays;
-using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Ide.RazorLib.Gits.Displays;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
@@ -43,36 +44,45 @@ public partial class LuthetusIdeInitializer : ComponentBase
     {
         if (firstRender)
         {
-            if (TextEditorConfig.CustomThemeRecordList is not null)
-            {
-                foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
+            BackgroundTaskService.Enqueue(
+                Key<BackgroundTask>.NewKey(),
+                ContinuousBackgroundTaskWorker.GetQueueKey(),
+                nameof(LuthetusIdeInitializer),
+                () =>
                 {
-                    Dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
-                }
-            }
+                    if (TextEditorConfig.CustomThemeRecordList is not null)
+                    {
+                        foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
+                        {
+                            Dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
+                        }
+                    }
 
-            foreach (var searchEngine in TextEditorConfig.SearchEngineList)
-            {
-                Dispatcher.Dispatch(new TextEditorSearchEngineState.RegisterAction(searchEngine));
-            }
+                    foreach (var searchEngine in TextEditorConfig.SearchEngineList)
+                    {
+                        Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(searchEngine));
+                    }
 
-            foreach (var terminalSessionKey in TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS)
-            {
-                var terminalSession = new TerminalSession(
-                    null,
-                    Dispatcher,
-                    BackgroundTaskService,
-                    LuthetusCommonComponentRenderers)
-                {
-                    TerminalSessionKey = terminalSessionKey
-                };
+                    foreach (var terminalSessionKey in TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS)
+                    {
+                        var terminalSession = new TerminalSession(
+                            null,
+                            Dispatcher,
+                            BackgroundTaskService,
+                            LuthetusCommonComponentRenderers)
+                        {
+                            TerminalSessionKey = terminalSessionKey
+                        };
 
-                Dispatcher.Dispatch(new TerminalSessionState.RegisterTerminalSessionAction(terminalSession));
-            }
+                        Dispatcher.Dispatch(new TerminalSessionState.RegisterTerminalSessionAction(terminalSession));
+                    }
 
-            InitializePanelTabs();
+                    InitializePanelTabs();
 
-            CommandFactory.Initialize();
+                    CommandFactory.Initialize();
+
+                    return Task.CompletedTask;
+                });
         }
 
         await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
@@ -89,6 +99,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
     {
         var leftPanel = PanelFacts.GetLeftPanelRecord(PanelsStateWrap.Value);
 
+        // solutionExplorerPanelTab
         var solutionExplorerPanelTab = new PanelTab(
             Key<PanelTab>.NewKey(),
             leftPanel.ElementDimensions,
@@ -99,9 +110,9 @@ public partial class LuthetusIdeInitializer : ComponentBase
         {
             ContextRecordKey = ContextFacts.SolutionExplorerContext.ContextKey
         };
-
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(leftPanel.Key, solutionExplorerPanelTab, false));
 
+        // folderExplorerPanelTab
         var folderExplorerPanelTab = new PanelTab(
             Key<PanelTab>.NewKey(),
             leftPanel.ElementDimensions,
@@ -112,9 +123,9 @@ public partial class LuthetusIdeInitializer : ComponentBase
         {
             ContextRecordKey = ContextFacts.FolderExplorerContext.ContextKey
         };
-
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(leftPanel.Key, folderExplorerPanelTab, false));
 
+        // SetActivePanelTabAction
         Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(leftPanel.Key, solutionExplorerPanelTab.Key));
     }
 
@@ -122,6 +133,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
     {
         var rightPanel = PanelFacts.GetRightPanelRecord(PanelsStateWrap.Value);
 
+        // compilerServiceExplorerPanelTab
         var compilerServiceExplorerPanelTab = new PanelTab(
             Key<PanelTab>.NewKey(),
             rightPanel.ElementDimensions,
@@ -132,9 +144,9 @@ public partial class LuthetusIdeInitializer : ComponentBase
         {
             ContextRecordKey = ContextFacts.CompilerServiceExplorerContext.ContextKey
         };
-
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, compilerServiceExplorerPanelTab, false));
 
+        // compilerServiceEditorPanelTab
         var compilerServiceEditorPanelTab = new PanelTab(
             Key<PanelTab>.NewKey(),
             rightPanel.ElementDimensions,
@@ -145,9 +157,9 @@ public partial class LuthetusIdeInitializer : ComponentBase
         {
             ContextRecordKey = ContextFacts.CompilerServiceEditorContext.ContextKey
         };
-
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, compilerServiceEditorPanelTab, false));
 
+        // gitChangesPanelTab
         var gitChangesPanelTab = new PanelTab(
             Key<PanelTab>.NewKey(),
             rightPanel.ElementDimensions,
@@ -158,7 +170,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
         {
             ContextRecordKey = ContextFacts.GitContext.ContextKey
         };
-
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, gitChangesPanelTab, false));
     }
 
@@ -166,19 +177,33 @@ public partial class LuthetusIdeInitializer : ComponentBase
     {
         var bottomPanel = PanelFacts.GetBottomPanelRecord(PanelsStateWrap.Value);
 
+        // terminalPanelTab
         var terminalPanelTab = new PanelTab(
             Key<PanelTab>.NewKey(),
             bottomPanel.ElementDimensions,
             new(),
-            typeof(TerminalDisplay),
+            typeof(IntegratedTerminalDisplay),
             typeof(IconFolder),
             "Terminal")
         {
             ContextRecordKey = ContextFacts.TerminalContext.ContextKey
         };
-
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, terminalPanelTab, false));
 
+        // outputPanelTab
+        var outputPanelTab = new PanelTab(
+            Key<PanelTab>.NewKey(),
+            bottomPanel.ElementDimensions,
+            new(),
+            typeof(OutputPanelDisplay),
+            typeof(IconFolder),
+            "Output")
+        {
+            ContextRecordKey = ContextFacts.OutputContext.ContextKey
+        };
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, outputPanelTab, false));
+
+        // nuGetPanelTab
         var nuGetPanelTab = new PanelTab(
             Key<PanelTab>.NewKey(),
             bottomPanel.ElementDimensions,
@@ -189,9 +214,9 @@ public partial class LuthetusIdeInitializer : ComponentBase
         {
             ContextRecordKey = ContextFacts.NuGetPackageManagerContext.ContextKey
         };
-
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, nuGetPanelTab, false));
 
+        // activeContextsPanelTab
         var activeContextsPanelTab = new PanelTab(
             Key<PanelTab>.NewKey(),
             bottomPanel.ElementDimensions,
@@ -202,10 +227,10 @@ public partial class LuthetusIdeInitializer : ComponentBase
         {
             ContextRecordKey = ContextFacts.ActiveContextsContext.ContextKey
         };
-
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, activeContextsPanelTab, false));
 
-		var testExplorerPanelTab = new PanelTab(
+        // testExplorerPanelTab
+        var testExplorerPanelTab = new PanelTab(
             Key<PanelTab>.NewKey(),
             bottomPanel.ElementDimensions,
             new(),
@@ -215,9 +240,9 @@ public partial class LuthetusIdeInitializer : ComponentBase
         {
             ContextRecordKey = ContextFacts.TestExplorerContext.ContextKey
         };
-
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, testExplorerPanelTab, false));
 
-        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(bottomPanel.Key, testExplorerPanelTab.Key));
+        // SetActivePanelTabAction
+        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(bottomPanel.Key, terminalPanelTab.Key));
     }
 }

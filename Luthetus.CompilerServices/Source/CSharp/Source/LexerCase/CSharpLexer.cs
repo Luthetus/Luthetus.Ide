@@ -1,30 +1,34 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 
-public class CSharpLexer : ILexer
+public class CSharpLexer : ILuthLexer
 {
     private readonly StringWalker _stringWalker;
     private readonly List<ISyntaxToken> _syntaxTokens = new();
-    private readonly LuthetusDiagnosticBag _diagnosticBag = new();
+    private readonly LuthDiagnosticBag _diagnosticBag = new();
 
-    public CSharpLexer(
-        ResourceUri resourceUri,
-        string sourceText)
+    public CSharpLexer(ResourceUri resourceUri, string sourceText)
     {
         _stringWalker = new(resourceUri, sourceText);
+
         ResourceUri = resourceUri;
+        SourceText = sourceText;
     }
 
     public ImmutableArray<ISyntaxToken> SyntaxTokens => _syntaxTokens.ToImmutableArray();
     public ImmutableArray<TextEditorDiagnostic> DiagnosticList => _diagnosticBag.ToImmutableArray();
 
     public ResourceUri ResourceUri { get; }
+
+    public string SourceText { get; }
 
     public void Lex()
     {

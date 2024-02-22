@@ -1,11 +1,13 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 
-public class CSharpResource : ICompilerServiceResource
+public class CSharpResource : ILuthCompilerServiceResource
 {
     public CSharpResource(
         ResourceUri resourceUri,
@@ -17,27 +19,25 @@ public class CSharpResource : ICompilerServiceResource
 
     public ResourceUri ResourceUri { get; }
     public CSharpCompilerService CSharpCompilerService { get; }
-    public CompilationUnit? CompilationUnit { get; internal set; }
-    public ImmutableArray<ISyntaxToken> SyntaxTokens { get; internal set; } = ImmutableArray<ISyntaxToken>.Empty;
+    public CompilationUnit? CompilationUnit { get; set; }
+    public ImmutableArray<ISyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
 
-    public ImmutableArray<TextEditorTextSpan> SyntacticTextSpans => GetSyntacticTextSpans();
-    public ImmutableArray<ITextEditorSymbol> Symbols => GetSymbols();
-    public ImmutableArray<TextEditorDiagnostic> Diagnostics => GetDiagnostics();
+    ILuthCompilerService ILuthCompilerServiceResource.CompilerService => CSharpCompilerService;
 
     /// <summary>
     /// TODO: It might be a useful optimization to evaluate these linq expressions
     /// and store the result as to not re-evaluate the linq expression over and over.
     /// </summary>
-    private ImmutableArray<TextEditorTextSpan> GetSyntacticTextSpans()
+    public ImmutableArray<TextEditorTextSpan> GetTokenTextSpans()
     {
-        return SyntaxTokens.Select(st => st.TextSpan).ToImmutableArray();
+        return SyntaxTokenList.Select(st => st.TextSpan).ToImmutableArray();
     }
 
     /// <summary>
     /// TODO: It might be a useful optimization to evaluate these linq expressions
     /// and store the result as to not re-evaluate the linq expression over and over.
     /// </summary>
-    private ImmutableArray<ITextEditorSymbol> GetSymbols()
+    public ImmutableArray<ITextEditorSymbol> GetSymbols()
     {
         var localCompilationUnit = CompilationUnit;
 
@@ -48,12 +48,12 @@ public class CSharpResource : ICompilerServiceResource
             .Where(s => s.TextSpan.ResourceUri == ResourceUri)
             .ToImmutableArray();
     }
-    
+
     /// <summary>
     /// TODO: It might be a useful optimization to evaluate these linq expressions
     /// and store the result as to not re-evaluate the linq expression over and over.
     /// </summary>
-    private ImmutableArray<TextEditorDiagnostic> GetDiagnostics()
+    public ImmutableArray<TextEditorDiagnostic> GetDiagnostics()
     {
         var localCompilationUnit = CompilationUnit;
 
@@ -63,15 +63,5 @@ public class CSharpResource : ICompilerServiceResource
         return localCompilationUnit.DiagnosticsList
             .Where(s => s.TextSpan.ResourceUri == ResourceUri)
             .ToImmutableArray();
-    }
-
-    /// <returns>
-    /// The <see cref="ISyntaxNode"/>
-    /// which represents the resource in the compilation result.
-    /// </returns>
-    public Task GetRootSyntaxNodeAsync()
-    {
-        //CSharpCompilerService.Compilation.RootSyntaxNode;
-        return Task.CompletedTask;
     }
 }

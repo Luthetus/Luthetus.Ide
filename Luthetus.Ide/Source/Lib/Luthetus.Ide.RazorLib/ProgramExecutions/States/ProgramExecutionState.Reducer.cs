@@ -4,7 +4,7 @@ namespace Luthetus.Ide.RazorLib.ProgramExecutions.States;
 
 public partial record ProgramExecutionState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static ProgramExecutionState ReduceSetStartupProjectAbsolutePathAction(

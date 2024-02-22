@@ -1,9 +1,8 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Expression;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
@@ -508,7 +507,12 @@ public class ParseDefaultKeywords
         if (model.TokenWalker.Peek(0).SyntaxKind == SyntaxKind.MemberAccessToken)
         {
             // "explicit namespace qualification" OR "nested class"
-            throw new NotImplementedException();
+
+            var memberAccessToken = (MemberAccessToken)model.TokenWalker.Peek(0);
+
+            model.DiagnosticBag.ReportTodoException(
+                memberAccessToken.TextSpan,
+                $"Implement: \"explicit namespace qualification\" OR \"nested class\"");
         }
 
         // TODO: Fix _cSharpParser.model.Binder.TryGetClassReferenceHierarchically, it broke on (2023-07-26)

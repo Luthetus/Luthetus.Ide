@@ -1,15 +1,14 @@
-﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
 /// <summary>
-/// <see cref="LuthetusDiagnosticBag"/>
+/// <see cref="LuthDiagnosticBag"/>
 /// </summary>
 public class LuthetusDiagnosticBagTests
 {
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.GetEnumerator()"/>
+	/// <see cref="LuthDiagnosticBag.GetEnumerator()"/>
 	/// </summary>
 	[Fact]
 	public void GetEnumerator_ClassDefinedMethod()
@@ -19,7 +18,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.GetEnumerator()"/>
+	/// <see cref="LuthDiagnosticBag.GetEnumerator()"/>
 	/// </summary>
 	[Fact]
 	public void GetEnumerator_ExplicitInterfaceImplementation()
@@ -29,7 +28,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportEndOfFileUnexpected(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// <see cref="LuthDiagnosticBag.ReportEndOfFileUnexpected(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
 	/// </summary>
 	[Fact]
 	public void ReportEndOfFileUnexpected()
@@ -38,7 +37,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportUnexpectedToken(RazorLib.Lexes.Models.TextEditorTextSpan, string, string)"/>
+	/// <see cref="LuthDiagnosticBag.ReportUnexpectedToken(RazorLib.Lexes.Models.TextEditorTextSpan, string, string)"/>
 	/// </summary>
 	[Fact]
 	public void ReportUnexpectedToken_A()
@@ -47,7 +46,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportUnexpectedToken(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// <see cref="LuthDiagnosticBag.ReportUnexpectedToken(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
 	/// </summary>
 	[Fact]
 	public void ReportUnexpectedToken_B()
@@ -56,7 +55,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportUndefinedClass(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// <see cref="LuthDiagnosticBag.ReportUndefinedClass(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
 	/// </summary>
 	[Fact]
 	public void ReportUndefinedClass()
@@ -65,7 +64,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportUndefinedTypeOrNamespace(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// <see cref="LuthDiagnosticBag.ReportUndefinedTypeOrNamespace(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
 	/// </summary>
 	[Fact]
 	public void ReportUndefinedTypeOrNamespace()
@@ -74,7 +73,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportAlreadyDefinedType(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// <see cref="LuthDiagnosticBag.ReportAlreadyDefinedType(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
 	/// </summary>
 	[Fact]
 	public void ReportAlreadyDefinedType()
@@ -83,7 +82,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportUndefinedVariable(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// <see cref="LuthDiagnosticBag.ReportUndefinedVariable(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
 	/// </summary>
 	[Fact]
 	public void ReportUndefinedVariable()
@@ -92,7 +91,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportAlreadyDefinedVariable(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// <see cref="LuthDiagnosticBag.ReportAlreadyDefinedVariable(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
 	/// </summary>
 	[Fact]
 	public void ReportAlreadyDefinedVariable()
@@ -101,7 +100,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportAlreadyDefinedProperty(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// <see cref="LuthDiagnosticBag.ReportAlreadyDefinedProperty(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
 	/// </summary>
 	[Fact]
 	public void ReportAlreadyDefinedProperty()
@@ -110,7 +109,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportUndefinedFunction(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// <see cref="LuthDiagnosticBag.ReportUndefinedFunction(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
 	/// </summary>
 	[Fact]
 	public void ReportUndefinedFunction()
@@ -119,7 +118,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportAlreadyDefinedFunction(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// <see cref="LuthDiagnosticBag.ReportAlreadyDefinedFunction(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
 	/// </summary>
 	[Fact]
 	public void ReportAlreadyDefinedFunction()
@@ -128,7 +127,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportBadFunctionOptionalArgumentDueToMismatchInType(RazorLib.Lexes.Models.TextEditorTextSpan, string, string, string)"/>
+	/// <see cref="LuthDiagnosticBag.ReportBadFunctionOptionalArgumentDueToMismatchInType(RazorLib.Lexes.Models.TextEditorTextSpan, string, string, string)"/>
 	/// </summary>
 	[Fact]
 	public void ReportBadFunctionOptionalArgumentDueToMismatchInType()
@@ -137,7 +136,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportReturnStatementsAreStillBeingImplemented(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// <see cref="LuthDiagnosticBag.ReportReturnStatementsAreStillBeingImplemented(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
 	/// </summary>
 	[Fact]
 	public void ReportReturnStatementsAreStillBeingImplemented()
@@ -146,7 +145,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportTagNameMissing(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// <see cref="LuthDiagnosticBag.ReportTagNameMissing(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
 	/// </summary>
 	[Fact]
 	public void ReportTagNameMissing()
@@ -155,7 +154,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportOpenTagWithUnMatchedCloseTag(string, string, RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// <see cref="LuthDiagnosticBag.ReportOpenTagWithUnMatchedCloseTag(string, string, RazorLib.Lexes.Models.TextEditorTextSpan)"/>
 	/// </summary>
 	[Fact]
 	public void ReportOpenTagWithUnMatchedCloseTag()
@@ -164,7 +163,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportRazorExplicitExpressionPredicateWasExpected(string, string, RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// <see cref="LuthDiagnosticBag.ReportRazorExplicitExpressionPredicateWasExpected(string, string, RazorLib.Lexes.Models.TextEditorTextSpan)"/>
 	/// </summary>
 	[Fact]
 	public void ReportRazorExplicitExpressionPredicateWasExpected()
@@ -173,7 +172,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportRazorCodeBlockWasExpectedToFollowRazorKeyword(string, string, RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// <see cref="LuthDiagnosticBag.ReportRazorCodeBlockWasExpectedToFollowRazorKeyword(string, string, RazorLib.Lexes.Models.TextEditorTextSpan)"/>
 	/// </summary>
 	[Fact]
 	public void ReportRazorCodeBlockWasExpectedToFollowRazorKeyword()
@@ -182,7 +181,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportRazorWhitespaceImmediatelyFollowingTransitionCharacterIsUnexpected(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// <see cref="LuthDiagnosticBag.ReportRazorWhitespaceImmediatelyFollowingTransitionCharacterIsUnexpected(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
 	/// </summary>
 	[Fact]
 	public void ReportRazorWhitespaceImmediatelyFollowingTransitionCharacterIsUnexpected()
@@ -191,7 +190,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportConstructorsNeedToBeWithinTypeDefinition(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// <see cref="LuthDiagnosticBag.ReportConstructorsNeedToBeWithinTypeDefinition(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
 	/// </summary>
 	[Fact]
 	public void ReportConstructorsNeedToBeWithinTypeDefinition()
@@ -200,7 +199,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ReportTodoException(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// <see cref="LuthDiagnosticBag.ReportTodoException(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
 	/// </summary>
 	[Fact]
 	public void ReportTodoException()
@@ -209,7 +208,7 @@ public class LuthetusDiagnosticBagTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusDiagnosticBag.ClearByResourceUri(RazorLib.Lexes.Models.ResourceUri)"/>
+	/// <see cref="LuthDiagnosticBag.ClearByResourceUri(RazorLib.Lexes.Models.ResourceUri)"/>
 	/// </summary>
 	[Fact]
 	public void ClearByResourceUri()

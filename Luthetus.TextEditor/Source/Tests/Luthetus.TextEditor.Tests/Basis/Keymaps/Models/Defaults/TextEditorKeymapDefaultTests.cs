@@ -1,5 +1,7 @@
-﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
+﻿using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
+using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.Tests.Basis.Keymaps.Models.Defaults;
 
@@ -36,7 +38,7 @@ public class TextEditorKeymapDefaultTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorKeymapDefault.GetCursorCssStyleString(RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel, RazorLib.TextEditors.Models.TextEditorViewModel, RazorLib.Options.Models.TextEditorOptions)"/>
+	/// <see cref="TextEditorKeymapDefault.GetCursorCssStyleString(TextEditorModel, TextEditorViewModel, TextEditorOptions)"/>
 	/// </summary>
 	[Fact]
 	public void GetCursorCssStyleString()

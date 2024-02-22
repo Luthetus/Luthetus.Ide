@@ -1,4 +1,4 @@
-﻿using Xunit;
+﻿using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer;
@@ -8,29 +8,14 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer;
 /// </summary>
 public class GenericPreprocessorDefinitionTests
 {
-	/// <summary>
-	/// <see cref="GenericPreprocessorDefinition(string, System.Collections.Immutable.ImmutableArray{DeliminationExtendedSyntaxDefinition})"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="GenericPreprocessorDefinition(string, ImmutableArray{DeliminationExtendedSyntaxDefinition})"/>
+    /// <br/>----<br/>
+    /// <see cref="GenericPreprocessorDefinition.TransitionSubstring"/>
+    /// <see cref="GenericPreprocessorDefinition.DeliminationExtendedSyntaxList"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="GenericPreprocessorDefinition.TransitionSubstring"/>
-	/// </summary>
-	[Fact]
-	public void TransitionSubstring()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="GenericPreprocessorDefinition.DeliminationExtendedSyntaxList"/>
-	/// </summary>
-	[Fact]
-	public void DeliminationExtendedSyntaxList()
 	{
 		throw new NotImplementedException();
 	}

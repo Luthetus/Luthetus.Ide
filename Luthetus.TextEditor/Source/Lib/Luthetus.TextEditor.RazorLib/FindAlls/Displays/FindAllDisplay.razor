@@ -1,0 +1,61 @@
+@using Fluxor.Blazor.Web.Components;
+@using Luthetus.Common.RazorLib.Keys.Models;
+@using Luthetus.Common.RazorLib.Tabs.Displays
+@using Luthetus.Common.RazorLib.Tabs.Models;
+@using Luthetus.TextEditor.RazorLib.FindAlls.Models;
+
+@inherits FluxorComponent
+
+@{
+    var findAllState = TextEditorFindAllStateWrap.Value;
+    var tabGroup = TabStateGroupSelection.Value;
+}
+
+<div class="luth_te_find-all">
+    <div class="luth_te_find-all-body">
+
+		<div class="luth_te_find-all-search-query">
+			SearchQuery:&nbsp;
+			<input class="luth_ide_input luth_ide_input-text"
+				   style="width: 100%;"
+				   placeholder="@nameof(SearchQuery)"
+				   @bind="SearchQuery"
+				   @bind:event="oninput" />
+		</div>
+
+		<div class="luth_te_find-all-starting-directory-path">
+			StartingDirectoryPath:&nbsp;
+			<input class="luth_ide_input luth_ide_input-text"
+				   style="width: 100%;"
+				   placeholder="@nameof(StartingDirectoryPath)"
+				   @bind="StartingDirectoryPath"
+				   @bind:event="oninput" />
+		</div>
+
+		<button class="luth_button"
+                @onclick="() => DoSearchOnClickAsync(findAllState, SearchEngineFileSystem)">
+            Find All
+        </button>
+
+		@if (SearchEngineFileSystem.IsSearching)
+	    {
+	        <IconLoading/>
+	    }
+	    else
+	    {
+	        <div>Not Searching</div>
+	    }
+	
+		<div class="luth_te_search-engine-file-system-results">
+			@{ var localFilePathList = SearchEngineFileSystem.FilePathList.ToArray(); }
+
+			@foreach (var filePath in localFilePathList)
+			{
+				<div style="cursor: pointer;"
+					 @onclick="() => OpenInEditorOnClick(filePath)">
+					@filePath
+				</div>
+			}
+		</div>
+    </div>
+</div>

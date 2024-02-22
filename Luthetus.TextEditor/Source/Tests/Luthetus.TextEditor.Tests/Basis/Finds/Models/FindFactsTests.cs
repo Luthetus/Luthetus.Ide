@@ -1,7 +1,6 @@
-﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
-namespace Luthetus.TextEditor.Tests.Basis.SearchEngines.Models;
+namespace Luthetus.TextEditor.Tests.Basis.FindAlls.Models;
 
 /// <summary>
 /// <see cref="SearchEngineFacts"/>
