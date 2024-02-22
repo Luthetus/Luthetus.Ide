@@ -3,10 +3,10 @@ using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis;
+namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.BinderCase.Custom;
 
 /// <summary>
-/// <see cref="Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.BinderCase.CSharpBinderTests"/>
+/// <see cref="CSharpBinderTests"/>
 /// for tests that are intended to be "1 to 1" foreach public API on the <see cref="CSharp.BinderCase.CSharpBinder"/>
 /// </summary>
 public class CustomBinderTests
@@ -42,7 +42,7 @@ public class MyClass
 
         var aaa = 2;
     }
-    
+
     [Fact]
     public void NamespaceGroupNode_BlockScoped()
     {

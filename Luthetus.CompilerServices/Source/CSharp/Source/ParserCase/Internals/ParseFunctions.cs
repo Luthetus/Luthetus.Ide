@@ -272,7 +272,7 @@ public class ParseFunctions
     {
         var concatenatedGetTextResults = string.Join(
             '\n',
-            functionDefinitionNodes.Select(fd => fd.GetTextRecursively()));
+            functionDefinitionNodes.Select(fd => fd.ConstructTextSpanRecursively().GetText()));
 
         if (SyntaxKind.OpenParenthesisToken == model.TokenWalker.Current.SyntaxKind)
         {

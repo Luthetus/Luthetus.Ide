@@ -7,10 +7,10 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax;
 /// </summary>
 public class SyntaxReaderTests
 {
-	/// <summary>
-	/// <see cref="SyntaxReader.GetTextRecursively(ISyntax)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="SyntaxReader.ConstructTextSpanRecursively(ISyntaxNode)"/>
+    /// </summary>
+    [Fact]
 	public void GetTextRecursively()
 	{
 		throw new NotImplementedException();

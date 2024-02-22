@@ -64,7 +64,9 @@ public static class ParseTokens
         }
         else
         {
-            throw new NotImplementedException();
+            model.DiagnosticBag.ReportTodoException(
+                consumedToken.TextSpan,
+                $"Implement {nameof(ParsePreprocessorDirectiveToken)}");
         }
     }
 
@@ -737,7 +739,9 @@ public static class ParseTokens
             model.SyntaxStack.TryPeek(out syntax) && syntax is IExpressionNode)
         {
             // Mathematical angle bracket
-            throw new NotImplementedException();
+            model.DiagnosticBag.ReportTodoException(
+                consumedOpenAngleBracketToken.TextSpan,
+                $"Implement mathematical angle bracket");
         }
         else
         {
@@ -762,8 +766,9 @@ public static class ParseTokens
         CloseAngleBracketToken consumedCloseAngleBracketToken,
         ParserModel model)
     {
-        // if one: throw new NotImplementedException();
-        // then: lambdas will no longer work. So I'm keeping this method empty.
+        model.DiagnosticBag.ReportTodoException(
+            consumedCloseAngleBracketToken.TextSpan,
+            $"Implement {nameof(ParseCloseAngleBracketToken)}");
     }
 
     public static void ParseOpenSquareBracketToken(
@@ -777,7 +782,9 @@ public static class ParseTokens
             model.SyntaxStack.TryPeek(out syntax) && syntax is IExpressionNode)
         {
             // Mathematical square bracket
-            throw new NotImplementedException();
+            model.DiagnosticBag.ReportTodoException(
+                consumedOpenSquareBracketToken.TextSpan,
+                $"Implement mathematical square bracket");
         }
         else
         {

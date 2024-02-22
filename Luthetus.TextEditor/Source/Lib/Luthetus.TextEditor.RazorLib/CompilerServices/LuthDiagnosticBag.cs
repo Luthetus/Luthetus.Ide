@@ -259,6 +259,7 @@ public class LuthDiagnosticBag : IEnumerable<TextEditorDiagnostic>
     }
 
     /// <summary>
+    /// The text "TODO: " is pre-pended to the provided message.<br/><br/>
     /// Used when the C# Parser has not yet implemented the functionality that one would
     /// expect given the situation.
     /// <br/>
