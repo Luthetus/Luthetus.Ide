@@ -1,4 +1,8 @@
-﻿using Luthetus.Ide.RazorLib.Clipboards.Models;
+﻿using CliWrap;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.Clipboards.Models;
+using Newtonsoft.Json.Linq;
+using System.ComponentModel.DataAnnotations;
 
 namespace Luthetus.Ide.Tests.Basis.Clipboards.Models;
 
@@ -13,7 +17,7 @@ public class ClipboardFactsTests
     [Fact]
     public void Tag()
     {
-        throw new NotImplementedException();
+        Assert.Equal("`'\";luth_clipboard", ClipboardFacts.Tag);
     }
 
     /// <summary>
@@ -22,7 +26,7 @@ public class ClipboardFactsTests
     [Fact]
     public void FieldDelimiter()
     {
-        throw new NotImplementedException();
+        Assert.Equal("_", ClipboardFacts.FieldDelimiter);
     }
 
     /// <summary>
@@ -31,7 +35,7 @@ public class ClipboardFactsTests
     [Fact]
     public void CopyCommand()
     {
-        throw new NotImplementedException();
+        Assert.Equal("copy", ClipboardFacts.CopyCommand);
     }
 
     /// <summary>
@@ -40,7 +44,7 @@ public class ClipboardFactsTests
     [Fact]
     public void CutCommand()
     {
-        throw new NotImplementedException();
+        Assert.Equal("cut", ClipboardFacts.CutCommand);
     }
 
     /// <summary>
@@ -49,7 +53,7 @@ public class ClipboardFactsTests
     [Fact]
     public void AbsolutePathDataType()
     {
-        throw new NotImplementedException();
+        Assert.Equal("absolute-file-path", ClipboardFacts.AbsolutePathDataType);
     }
 
     /// <summary>
@@ -58,7 +62,28 @@ public class ClipboardFactsTests
     [Fact]
     public void FormatPhrase()
     {
-        throw new NotImplementedException();
+        var environmentProvider = new InMemoryEnvironmentProvider();
+        var absolutePath = environmentProvider.AbsolutePathFactory("/unitTesting.txt", false);
+
+        var command = ClipboardFacts.CopyCommand;
+        var dataType = ClipboardFacts.AbsolutePathDataType;
+        var value = absolutePath.Value;
+
+        var actualPhraseString = ClipboardFacts.FormatPhrase(
+            command,
+            dataType,
+            value);
+
+        var expectedPhraseString = 
+            ClipboardFacts.Tag +
+            ClipboardFacts.FieldDelimiter +
+            command +
+            ClipboardFacts.FieldDelimiter +
+            dataType +
+            ClipboardFacts.FieldDelimiter +
+            value;
+
+        Assert.Equal(expectedPhraseString, actualPhraseString);
     }
 
     /// <summary>
@@ -67,6 +92,23 @@ public class ClipboardFactsTests
     [Fact]
     public void TryParseString()
     {
-        throw new NotImplementedException();
+        var environmentProvider = new InMemoryEnvironmentProvider();
+        var absolutePath = environmentProvider.AbsolutePathFactory("/unitTesting.txt", false);
+
+        var command = ClipboardFacts.CopyCommand;
+        var dataType = ClipboardFacts.AbsolutePathDataType;
+        var value = absolutePath.Value;
+
+        var phraseString = ClipboardFacts.FormatPhrase(
+            command,
+            dataType,
+            value);
+
+        Assert.True(ClipboardFacts.TryParseString(phraseString, out var clipboardPhrase) &&
+            clipboardPhrase is not null);
+
+        Assert.Equal(command, clipboardPhrase!.Command);
+        Assert.Equal(dataType, clipboardPhrase.DataType);
+        Assert.Equal(value, clipboardPhrase.Value);
     }
 }

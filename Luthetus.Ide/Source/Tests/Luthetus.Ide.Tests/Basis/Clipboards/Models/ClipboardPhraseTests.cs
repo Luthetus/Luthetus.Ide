@@ -1,4 +1,5 @@
-﻿using Luthetus.Ide.RazorLib.Clipboards.Models;
+﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.Clipboards.Models;
 
 namespace Luthetus.Ide.Tests.Basis.Clipboards.Models;
 
@@ -17,6 +18,20 @@ public class ClipboardPhraseTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        var environmentProvider = new InMemoryEnvironmentProvider();
+        var absolutePath = environmentProvider.AbsolutePathFactory("/unitTesting.txt", false);
+
+        var command = ClipboardFacts.CopyCommand;
+        var dataType = ClipboardFacts.AbsolutePathDataType;
+        var value = absolutePath.Value;
+
+        var clipboardPhrase = new ClipboardPhrase(
+            command,
+            dataType,
+            value);
+
+        Assert.Equal(command, clipboardPhrase!.Command);
+        Assert.Equal(dataType, clipboardPhrase.DataType);
+        Assert.Equal(value, clipboardPhrase.Value);
     }
 }
