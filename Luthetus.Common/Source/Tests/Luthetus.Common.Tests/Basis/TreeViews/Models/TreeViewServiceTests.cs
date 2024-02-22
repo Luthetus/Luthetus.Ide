@@ -2,6 +2,7 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.TreeViews.States;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.Tests.Basis.TreeViews.Models;
@@ -35,7 +36,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.DisposeTreeViewContainer(RazorLib.Keys.Models.Key{TreeViewContainer})"/>
+    /// <see cref="TreeViewService.DisposeTreeViewContainer(Key{TreeViewContainer})"/>
     /// </summary>
     [Fact]
     public void DisposeTreeViewState()
@@ -44,7 +45,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.ReplaceTreeViewContainer(RazorLib.Keys.Models.Key{TreeViewContainer}, TreeViewContainer)"/>
+    /// <see cref="TreeViewService.ReplaceTreeViewContainer(Key{TreeViewContainer}, TreeViewContainer)"/>
     /// </summary>
     [Fact]
     public void ReplaceTreeViewState()
@@ -53,7 +54,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.SetRoot(RazorLib.Keys.Models.Key{TreeViewContainer}, TreeViewNoType)"/>
+    /// <see cref="TreeViewService.SetRoot(Key{TreeViewContainer}, TreeViewNoType)"/>
     /// </summary>
     [Fact]
     public void SetRoot()
@@ -62,7 +63,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.TryGetTreeViewContainer(RazorLib.Keys.Models.Key{TreeViewContainer}, out TreeViewContainer?)"/>
+    /// <see cref="TreeViewService.TryGetTreeViewContainer(Key{TreeViewContainer}, out TreeViewContainer?)"/>
     /// </summary>
     [Fact]
     public void TryGetTreeViewState()
@@ -71,7 +72,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.ReRenderNode(RazorLib.Keys.Models.Key{TreeViewContainer}, TreeViewNoType)"/>
+    /// <see cref="TreeViewService.ReRenderNode(Key{TreeViewContainer}, TreeViewNoType)"/>
     /// </summary>
     [Fact]
     public void ReRenderNode()
@@ -80,7 +81,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.AddChildNode(RazorLib.Keys.Models.Key{TreeViewContainer}, TreeViewNoType, TreeViewNoType)"/>
+    /// <see cref="TreeViewService.AddChildNode(Key{TreeViewContainer}, TreeViewNoType, TreeViewNoType)"/>
     /// </summary>
     [Fact]
     public void AddChildNode()
@@ -89,7 +90,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.SetActiveNode(RazorLib.Keys.Models.Key{TreeViewContainer}, TreeViewNoType?)"/>
+    /// <see cref="TreeViewService.SetActiveNode(Key{TreeViewContainer}, TreeViewNoType?)"/>
     /// </summary>
     [Fact]
     public void SetActiveNode()
@@ -98,7 +99,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.AddSelectedNode(RazorLib.Keys.Models.Key{TreeViewContainer}, TreeViewNoType)"/>
+    /// <see cref="TreeViewService.AddSelectedNode(Key{TreeViewContainer}, TreeViewNoType)"/>
     /// </summary>
     [Fact]
     public void AddSelectedNode()
@@ -107,7 +108,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.RemoveSelectedNode(RazorLib.Keys.Models.Key{TreeViewContainer}, RazorLib.Keys.Models.Key{TreeViewNoType})"/>
+    /// <see cref="TreeViewService.RemoveSelectedNode(Key{TreeViewContainer}, Key{TreeViewNoType})"/>
     /// </summary>
     [Fact]
     public void RemoveSelectedNode()
@@ -116,7 +117,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.ClearSelectedNodes(RazorLib.Keys.Models.Key{TreeViewContainer})"/>
+    /// <see cref="TreeViewService.ClearSelectedNodes(Key{TreeViewContainer})"/>
     /// </summary>
     [Fact]
     public void ClearSelectedNodes()
@@ -125,7 +126,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.MoveLeft(RazorLib.Keys.Models.Key{TreeViewContainer}, bool)"/>
+    /// <see cref="TreeViewService.MoveLeft(Key{TreeViewContainer}, bool)"/>
     /// </summary>
     [Fact]
     public void MoveLeft()
@@ -134,7 +135,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.MoveDown(RazorLib.Keys.Models.Key{TreeViewContainer}, bool)"/>
+    /// <see cref="TreeViewService.MoveDown(Key{TreeViewContainer}, bool)"/>
     /// </summary>
     [Fact]
     public void MoveDown()
@@ -143,7 +144,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.MoveUp(RazorLib.Keys.Models.Key{TreeViewContainer}, bool)"/>
+    /// <see cref="TreeViewService.MoveUp(Key{TreeViewContainer}, bool)"/>
     /// </summary>
     [Fact]
     public void MoveUp()
@@ -152,7 +153,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.MoveRight(RazorLib.Keys.Models.Key{TreeViewContainer}, bool)"/>
+    /// <see cref="TreeViewService.MoveRight(Key{TreeViewContainer}, bool)"/>
     /// </summary>
     [Fact]
     public void MoveRight()
@@ -161,7 +162,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.MoveHome(RazorLib.Keys.Models.Key{TreeViewContainer}, bool)"/>
+    /// <see cref="TreeViewService.MoveHome(Key{TreeViewContainer}, bool)"/>
     /// </summary>
     [Fact]
     public void MoveHome()
@@ -170,7 +171,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.MoveEnd(RazorLib.Keys.Models.Key{TreeViewContainer}, bool)"/>
+    /// <see cref="TreeViewService.MoveEnd(Key{TreeViewContainer}, bool)"/>
     /// </summary>
     [Fact]
     public void MoveEnd()
@@ -188,7 +189,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.GetTreeContainerElementId(RazorLib.Keys.Models.Key{TreeViewContainer})"/>
+    /// <see cref="TreeViewService.GetTreeContainerElementId(Key{TreeViewContainer})"/>
     /// </summary>
     [Fact]
     public void GetTreeContainerElementId()

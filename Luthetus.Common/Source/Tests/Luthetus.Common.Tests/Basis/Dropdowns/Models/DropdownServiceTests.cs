@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,7 +12,7 @@ namespace Luthetus.Common.Tests.Basis.Dropdowns.Models;
 public class DropdownServiceTests
 {
     /// <summary>
-    /// <see cref="DropdownService(IDispatcher, IState{RazorLib.Dropdowns.States.DropdownState})"/>
+    /// <see cref="DropdownService(IDispatcher, IState{DropdownState})"/>
     /// <br/>----<br/>
     /// <see cref="DropdownService.DropdownStateWrap"/>
     /// </summary>

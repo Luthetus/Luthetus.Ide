@@ -14,7 +14,7 @@ namespace Luthetus.Common.Tests.Basis.Reflectives.Models;
 public class ReflectiveModelTests
 {
     /// <summary>
-    /// <see cref="ReflectiveModel(Key{ReflectiveModel}, List{Type}, Guid, Guid, System.Reflection.PropertyInfo[], Dictionary{string, IReflectiveParameter}, IDispatcher)"/>
+    /// <see cref="ReflectiveModel(Key{ReflectiveModel}, List{Type}, Guid, Guid, PropertyInfo[], Dictionary{string, IReflectiveParameter}, IDispatcher)"/>
     /// <br/>----<br/>
     /// <see cref="ReflectiveModel.ChosenType"/>
     /// </summary>

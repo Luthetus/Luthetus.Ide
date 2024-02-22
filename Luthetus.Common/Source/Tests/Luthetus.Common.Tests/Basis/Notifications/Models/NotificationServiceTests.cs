@@ -2,6 +2,7 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Notifications.States;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.Tests.Basis.Notifications.Models;
@@ -12,7 +13,7 @@ namespace Luthetus.Common.Tests.Basis.Notifications.Models;
 public class NotificationServiceTests
 {
     /// <summary>
-    /// <see cref="NotificationService(IDispatcher, IState{RazorLib.Notifications.States.NotificationState})"/>
+    /// <see cref="NotificationService(IDispatcher, IState{NotificationState})"/>
     /// </summary>
     [Fact]
     public void Constructor()

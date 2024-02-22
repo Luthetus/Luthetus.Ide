@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.Common.RazorLib.Themes.States;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Immutable;
 
@@ -12,7 +13,7 @@ namespace Luthetus.Common.Tests.Basis.Themes.Models;
 public class ThemeServiceTests
 {
     /// <summary>
-    /// <see cref="ThemeService(IState{RazorLib.Themes.States.ThemeState}, IDispatcher)"/>
+    /// <see cref="ThemeService(IState{ThemeState}, IDispatcher)"/>
     /// <br/>----<br/>
     /// <see cref="ThemeService.ThemeStateWrap"/>
     /// </summary>
