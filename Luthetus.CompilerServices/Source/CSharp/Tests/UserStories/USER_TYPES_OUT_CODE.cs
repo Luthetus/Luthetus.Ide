@@ -230,87 +230,90 @@ await builder.Build().RunAsync();
     /// While its interesting, it isn't very useful to run since there are
     /// so many redundant syntax(s) being parsed. (It isn't a lean test case).
     /// </summary>
-    [Fact]
-    public void THIS_FILE_ITSELF()
-    {
-        Initialize_USER_TYPES_OUT_CODE(
-            string.Empty,
-            out var textEditorService,
-            out var cSharpCompilerService,
-            out var textEditorModel,
-            out var textEditorViewModel,
-            out var serviceProvider);
+    //[Fact]
+    //public void THIS_FILE_ITSELF()
+    //{
+    //    // After optimizing this test to not parse foreach character of the same identifier,
+    //    // It took 50.9 sec
 
-        var content = VeryLargeTestCase.Value;
+    //    Initialize_USER_TYPES_OUT_CODE(
+    //        string.Empty,
+    //        out var textEditorService,
+    //        out var cSharpCompilerService,
+    //        out var textEditorModel,
+    //        out var textEditorViewModel,
+    //        out var serviceProvider);
 
-        var contiguousLetterOrDigitCount = 0;
-        int i = 0;
+    //    var content = VeryLargeTestCase.Value;
 
-        try
-        {
-            for (; i < content.Length; i++)
-            {
-                char character = content[i];
+    //    var contiguousLetterOrDigitCount = 0;
+    //    int i = 0;
 
-                textEditorService.Post(
-                    nameof(USER_TYPES_OUT_CODE),
-                    async editContext =>
-                    {
-                        await textEditorService.ModelApi.InsertTextFactory(
-                                textEditorModel.ResourceUri,
-                                textEditorViewModel.ViewModelKey,
-                                character.ToString(),
-                                CancellationToken.None)
-                            .Invoke(editContext);
-                    });
+    //    try
+    //    {
+    //        for (; i < content.Length; i++)
+    //        {
+    //            char character = content[i];
 
-                if (char.IsLetterOrDigit(character))
-                {
-                    contiguousLetterOrDigitCount++;
-                }
-                else
-                {
-                    contiguousLetterOrDigitCount = 0;
+    //            textEditorService.Post(
+    //                nameof(USER_TYPES_OUT_CODE),
+    //                async editContext =>
+    //                {
+    //                    await textEditorService.ModelApi.InsertTextFactory(
+    //                            textEditorModel.ResourceUri,
+    //                            textEditorViewModel.ViewModelKey,
+    //                            character.ToString(),
+    //                            CancellationToken.None)
+    //                        .Invoke(editContext);
+    //                });
 
-                    cSharpCompilerService.ResourceWasModified(
-                        textEditorModel.ResourceUri,
-                        ImmutableArray<TextEditorTextSpan>.Empty);
-                }
-            }
+    //            if (char.IsLetterOrDigit(character))
+    //            {
+    //                contiguousLetterOrDigitCount++;
+    //            }
+    //            else
+    //            {
+    //                contiguousLetterOrDigitCount = 0;
 
-            if (contiguousLetterOrDigitCount > 0)
-            {
-                // This implies that an identifier was being 'typed'
-                // and for optimization, no parsing was done while typing the identifier.
-                // 
-                // And since we ended on an identifier, the file has yet to be parsed
-                // for the final time.
-                cSharpCompilerService.ResourceWasModified(
-                        textEditorModel.ResourceUri,
-                        ImmutableArray<TextEditorTextSpan>.Empty);
-            }
-        }
-        catch (AggregateException aggregateException)
-        {
-            if (aggregateException.InnerExceptions.Count > 1)
-                throw;
+    //                cSharpCompilerService.ResourceWasModified(
+    //                    textEditorModel.ResourceUri,
+    //                    ImmutableArray<TextEditorTextSpan>.Empty);
+    //            }
+    //        }
 
-            // Otherwise, presume the inner exception occurred in the C# Compiler Service
-            // and that the inner exception is desired instead of the aggregate.
-            //
-            // Capture a variable to the inner exception, put a breakpoint
-            // on the following 'throw'. Can use debugger to look at the innerException quickly.
-            var innerException = aggregateException.InnerExceptions[0];
-            throw;
-        }
+    //        if (contiguousLetterOrDigitCount > 0)
+    //        {
+    //            // This implies that an identifier was being 'typed'
+    //            // and for optimization, no parsing was done while typing the identifier.
+    //            // 
+    //            // And since we ended on an identifier, the file has yet to be parsed
+    //            // for the final time.
+    //            cSharpCompilerService.ResourceWasModified(
+    //                    textEditorModel.ResourceUri,
+    //                    ImmutableArray<TextEditorTextSpan>.Empty);
+    //        }
+    //    }
+    //    catch (AggregateException aggregateException)
+    //    {
+    //        if (aggregateException.InnerExceptions.Count > 1)
+    //            throw;
+
+    //        // Otherwise, presume the inner exception occurred in the C# Compiler Service
+    //        // and that the inner exception is desired instead of the aggregate.
+    //        //
+    //        // Capture a variable to the inner exception, put a breakpoint
+    //        // on the following 'throw'. Can use debugger to look at the innerException quickly.
+    //        var innerException = aggregateException.InnerExceptions[0];
+    //        throw;
+    //    }
         
 
-        var resultText = textEditorService.ModelApi.GetAllText(textEditorModel.ResourceUri);
-        Assert.Equal(content, resultText);
+    //    var resultText = textEditorService.ModelApi.GetAllText(textEditorModel.ResourceUri);
+    //    Assert.Equal(content, resultText);
 
-        var cSharpResource = (CSharpResource?)cSharpCompilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
-        Assert.NotNull(cSharpResource);
-    }
+    //    var cSharpResource = (CSharpResource?)cSharpCompilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
+    //    Assert.NotNull(cSharpResource);
+    //}
 
     private static void Initialize_USER_TYPES_OUT_CODE(
         string initialContent,
