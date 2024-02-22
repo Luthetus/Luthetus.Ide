@@ -1,8 +1,5 @@
-﻿using CliWrap;
-using Luthetus.Common.RazorLib.FileSystems.Models;
+﻿using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.Clipboards.Models;
-using Newtonsoft.Json.Linq;
-using System.ComponentModel.DataAnnotations;
 
 namespace Luthetus.Ide.Tests.Basis.Clipboards.Models;
 
