@@ -10,7 +10,7 @@ public class CompilerServiceRegistryDefault : ICompilerServiceRegistry
 
     public CompilerServiceRegistryDefault()
     {
-        DefaultCompilerService = new LuthCompilerService(null, null, null);
+        DefaultCompilerService = new LuthCompilerService(null);
     }
 
     public LuthCompilerService DefaultCompilerService { get; }

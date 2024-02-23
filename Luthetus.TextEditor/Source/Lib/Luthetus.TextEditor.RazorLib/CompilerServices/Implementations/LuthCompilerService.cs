@@ -16,22 +16,12 @@ public class LuthCompilerService : ILuthCompilerService
     protected readonly object _resourceMapLock = new();
     protected readonly ITextEditorService _textEditorService;
 
-    /// <summary>
-    /// Takes as arguments the resource uri and the source text.
-    /// </summary>
-    protected readonly Func<ResourceUri, string, ILuthLexer> _getLexerFunc;
-    protected readonly Func<ILuthLexer, ILuthParser> _getParserFunc;
-    protected Func<ILuthBinder> _getBinderFunc;
+    protected LuthCompilerServiceOptions _compilerServiceOptions = new();
 
     /// <param name="getLexerFunc">Takes as arguments the resource uri and the source text.</param>
-    public LuthCompilerService(
-        ITextEditorService textEditorService,
-        Func<ResourceUri, string, ILuthLexer> getLexerFunc,
-        Func<ILuthLexer, ILuthParser> getParserFunc)
+    public LuthCompilerService(ITextEditorService textEditorService)
     {
         _textEditorService = textEditorService;
-        _getLexerFunc = getLexerFunc;
-        _getParserFunc = getParserFunc;
     }
 
     /// <summary>
@@ -47,7 +37,7 @@ public class LuthCompilerService : ILuthCompilerService
     /// </summary>
     public event Action? ResourceDisposed;
 
-    public virtual ILuthBinder? Binder { get; protected set; }
+    public virtual ILuthBinder Binder { get; protected set; } = new LuthBinder();
 
     public virtual ImmutableArray<ILuthCompilerServiceResource> CompilerServiceResources =>
         _resourceMap.Values.ToImmutableArray();
@@ -59,9 +49,11 @@ public class LuthCompilerService : ILuthCompilerService
             if (_resourceMap.ContainsKey(resourceUri))
                 return;
 
-            _resourceMap.Add(
-                resourceUri,
-                new LuthCompilerServiceResource(resourceUri, null));
+            var resource = _compilerServiceOptions.RegisterResourceFunc is not null
+                ? _compilerServiceOptions.RegisterResourceFunc.Invoke(resourceUri)
+                : new LuthCompilerServiceResource(resourceUri, this);
+
+            _resourceMap.Add(resourceUri, resource);
         }
 
         QueueParseRequest(resourceUri);
@@ -84,7 +76,7 @@ public class LuthCompilerService : ILuthCompilerService
         }
     }
 
-    public virtual ImmutableArray<TextEditorTextSpan> GetSyntacticTextSpansFor(ResourceUri resourceUri)
+    public virtual ImmutableArray<TextEditorTextSpan> GetTokenTextSpansFor(ResourceUri resourceUri)
     {
         lock (_resourceMapLock)
         {
@@ -179,29 +171,60 @@ public class LuthCompilerService : ILuthCompilerService
                 if (modelModifier is null)
                     return;
 
-                await _textEditorService.ModelApi.CalculatePresentationModelFactory(
+                await _textEditorService.ModelApi.StartPendingCalculatePresentationModelFactory(
                         modelModifier.ResourceUri,
-                        CompilerServiceDiagnosticPresentationFacts.PresentationKey)
+                        CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+                        CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel)
                     .Invoke(editContext)
                     .ConfigureAwait(false);
 
-                var pendingCalculation = modelModifier.PresentationModelsList.FirstOrDefault(x =>
-                    x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
-                    ?.PendingCalculation;
+                var presentationModel = modelModifier.PresentationModelsList.First(
+                    x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
-                if (pendingCalculation is null)
-                    pendingCalculation = new(modelModifier.GetAllText());
+                if (presentationModel.PendingCalculation is null)
+                    throw new ApplicationException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
 
-                var lexer = _getLexerFunc.Invoke(resourceUri, pendingCalculation.ContentAtRequest);
+                if (_compilerServiceOptions.GetLexerFunc is null)
+                    return;
+
+                ILuthLexer lexer;
+                lock (_resourceMapLock)
+                {
+                    if (!_resourceMap.ContainsKey(resourceUri))
+                        return;
+
+                    var resource = _resourceMap[resourceUri];
+                    lexer = _compilerServiceOptions.GetLexerFunc.Invoke(resource, presentationModel.PendingCalculation.ContentAtRequest);
+                }
+
                 lexer.Lex();
+                lock (_resourceMapLock)
+                {
+                    if (!_resourceMap.ContainsKey(resourceUri))
+                        return;
+
+                    var resource = _resourceMap[resourceUri];
+                    _compilerServiceOptions.OnAfterLexAction?.Invoke(resource, lexer);
+                }
 
                 CompilationUnit? compilationUnit = null;
-
+                // Even if the parser throws an exception, be sure to
+                // make use of the Lexer to do whatever syntax highlighting is possible.
                 try
                 {
-                    // Even if the parser throws an exception, be sure to
-                    // make use of the Lexer to do whatever syntax highlighting is possible.
-                    var parser = _getParserFunc.Invoke(lexer);
+                    if (_compilerServiceOptions.GetParserFunc is null || Binder is null)
+                        return;
+
+                    ILuthParser parser;
+                    lock (_resourceMapLock)
+                    {
+                        if (!_resourceMap.ContainsKey(resourceUri))
+                            return;
+
+                        var resource = _resourceMap[resourceUri];
+                        parser = _compilerServiceOptions.GetParserFunc.Invoke(resource, lexer);
+                    }
+                    
                     compilationUnit = parser.Parse(Binder, resourceUri);
                 }
                 finally
@@ -210,32 +233,27 @@ public class LuthCompilerService : ILuthCompilerService
                     {
                         if (_resourceMap.ContainsKey(resourceUri))
                         {
-                            var compilerServiceResource = _resourceMap[resourceUri];
+                            var resource = _resourceMap[resourceUri];
 
-                            compilerServiceResource.SyntaxTokenList = lexer.SyntaxTokens;
+                            resource.SyntaxTokenList = lexer.SyntaxTokenList;
 
                             if (compilationUnit is not null)
-                                compilerServiceResource.CompilationUnit = compilationUnit;
+                                resource.CompilationUnit = compilationUnit;
+
+                            _compilerServiceOptions.OnAfterParseAction?.Invoke(resource, compilationUnit);
                         }
                     }
 
-                    // TODO: Shouldn't one get a reference to the most recent TextEditorModel instance with the given key and invoke .ApplySyntaxHighlightingAsync() on that?
+                    var diagnosticTextSpans = GetDiagnosticsFor(modelModifier.ResourceUri)
+                        .Select(x => x.TextSpan)
+                        .ToImmutableArray();
+
+                    modelModifier.CompletePendingCalculatePresentationModel(
+                        CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+                        CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel,
+                        diagnosticTextSpans);
+
                     await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
-
-                    var presentationModel = modelModifier.PresentationModelsList.FirstOrDefault(x =>
-                        x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
-
-                    if (presentationModel?.PendingCalculation is not null)
-                    {
-                        presentationModel.PendingCalculation.TextSpanList =
-                            GetDiagnosticsFor(modelModifier.ResourceUri)
-                                .Select(x => x.TextSpan)
-                                .ToImmutableArray();
-
-                        (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
-                            (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
-                    }
-
                     OnResourceParsed();
                 }
             });

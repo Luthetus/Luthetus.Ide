@@ -16,25 +16,17 @@ public class LuthCompilerServiceResource : ILuthCompilerServiceResource
         CompilerService = compilerService;
     }
 
-    public ResourceUri ResourceUri { get; }
-    public ILuthCompilerService CompilerService { get; }
-    public CompilationUnit? CompilationUnit { get; set; }
-    public ImmutableArray<ISyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
+    public virtual ResourceUri ResourceUri { get; }
+    public virtual ILuthCompilerService CompilerService { get; }
+    public virtual CompilationUnit? CompilationUnit { get; set; }
+    public virtual ImmutableArray<ISyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
 
-    /// <summary>
-    /// TODO: It might be a useful optimization to evaluate these linq expressions...
-    /// ...and store the result as to not re-evaluate the linq expression over and over.
-    /// </summary>
-    public ImmutableArray<TextEditorTextSpan> GetTokenTextSpans()
+    public virtual ImmutableArray<TextEditorTextSpan> GetTokenTextSpans()
     {
         return SyntaxTokenList.Select(st => st.TextSpan).ToImmutableArray();
     }
 
-    /// <summary>
-    /// TODO: It might be a useful optimization to evaluate these linq expressions...
-    /// ...and store the result as to not re-evaluate the linq expression over and over.
-    /// </summary>
-    public ImmutableArray<ITextEditorSymbol> GetSymbols()
+    public virtual ImmutableArray<ITextEditorSymbol> GetSymbols()
     {
         var localCompilationUnit = CompilationUnit;
 
@@ -46,11 +38,7 @@ public class LuthCompilerServiceResource : ILuthCompilerServiceResource
             .ToImmutableArray();
     }
 
-    /// <summary>
-    /// TODO: It might be a useful optimization to evaluate these linq expressions...
-    /// ...and store the result as to not re-evaluate the linq expression over and over.
-    /// </summary>
-    public ImmutableArray<TextEditorDiagnostic> GetDiagnostics()
+    public virtual ImmutableArray<TextEditorDiagnostic> GetDiagnostics()
     {
         var localCompilationUnit = CompilationUnit;
 

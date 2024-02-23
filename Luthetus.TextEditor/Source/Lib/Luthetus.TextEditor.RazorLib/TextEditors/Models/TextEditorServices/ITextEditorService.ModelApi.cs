@@ -160,9 +160,22 @@ public partial interface ITextEditorService
             ResourceUri resourceUri,
             TextEditorPresentationModel emptyPresentationModel);
 
-        public TextEditorEdit CalculatePresentationModelFactory(
+        /// <param name="emptyPresentationModel">
+        /// If the presentation model was not found, the empty presentation model will be registered.
+        /// </param>
+        public TextEditorEdit StartPendingCalculatePresentationModelFactory(
             ResourceUri resourceUri,
-            Key<TextEditorPresentationModel> presentationKey);
+            Key<TextEditorPresentationModel> presentationKey,
+            TextEditorPresentationModel emptyPresentationModel);
+        
+        /// <param name="emptyPresentationModel">
+        /// If the presentation model was not found, the empty presentation model will be registered.
+        /// </param>
+        public TextEditorEdit CompletePendingCalculatePresentationModel(
+            ResourceUri resourceUri,
+            Key<TextEditorPresentationModel> presentationKey,
+            TextEditorPresentationModel emptyPresentationModel,
+            ImmutableArray<TextEditorTextSpan> calculatedTextSpans);
         #endregion
 
         #region DELETE_METHODS
@@ -568,9 +581,10 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit CalculatePresentationModelFactory(
+        public TextEditorEdit StartPendingCalculatePresentationModelFactory(
             ResourceUri resourceUri,
-            Key<TextEditorPresentationModel> presentationKey)
+            Key<TextEditorPresentationModel> presentationKey,
+            TextEditorPresentationModel emptyPresentationModel)
         {
             return editContext =>
             {
@@ -579,7 +593,28 @@ public partial interface ITextEditorService
                 if (modelModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.PerformCalculatePresentationModelAction(presentationKey);
+                modelModifier.StartPendingCalculatePresentationModel(presentationKey, emptyPresentationModel);
+                return Task.CompletedTask;
+            };
+        }
+        
+        public TextEditorEdit CompletePendingCalculatePresentationModel(
+            ResourceUri resourceUri,
+            Key<TextEditorPresentationModel> presentationKey,
+            TextEditorPresentationModel emptyPresentationModel,
+            ImmutableArray<TextEditorTextSpan> calculatedTextSpans)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(resourceUri);
+
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.CompletePendingCalculatePresentationModel(
+                    presentationKey,
+                    emptyPresentationModel,
+                    calculatedTextSpans);
 
                 return Task.CompletedTask;
             };

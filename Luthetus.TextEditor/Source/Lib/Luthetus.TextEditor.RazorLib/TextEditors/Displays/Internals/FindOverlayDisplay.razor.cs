@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using System.Collections.Immutable;
 using Fluxor;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -69,29 +70,23 @@ public partial class FindOverlayDisplay : ComponentBase
 						if (!string.IsNullOrWhiteSpace(localInputValue))
 	                        textSpanMatches = modelModifier.FindMatches(localInputValue);
 
-                        await TextEditorService.ModelApi.CalculatePresentationModelFactory(
+                        await TextEditorService.ModelApi.StartPendingCalculatePresentationModelFactory(
 	                            modelModifier.ResourceUri,
-	                            FindOverlayPresentationFacts.PresentationKey)
+	                            FindOverlayPresentationFacts.PresentationKey,
+                                FindOverlayPresentationFacts.EmptyPresentationModel)
                             .Invoke(editContext)
                             .ConfigureAwait(false);
 
-                        var pendingCalculation = modelModifier.PresentationModelsList.FirstOrDefault(x =>
-                            x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey)
-                            ?.PendingCalculation;
+                        var presentationModel = modelModifier.PresentationModelsList.First(
+                            x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
-                        if (pendingCalculation is null)
-                            pendingCalculation = new(modelModifier.GetAllText());
+                        if (presentationModel.PendingCalculation is null)
+                            throw new ApplicationException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
 
-                        var presentationModel = modelModifier.PresentationModelsList.FirstOrDefault(x =>
-                            x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
-
-                        if (presentationModel?.PendingCalculation is not null)
-                        {
-                            presentationModel.PendingCalculation.TextSpanList = textSpanMatches;
-
-                            (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
-                                (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
-                        }
+                        modelModifier.CompletePendingCalculatePresentationModel(
+                            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+                            CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel,
+                            textSpanMatches);
 
 						_activeIndexMatchedTextSpan = null;
 						_decorationByteChangedTargetTextSpan = null;
@@ -149,29 +144,23 @@ public partial class FindOverlayDisplay : ComponentBase
                     if (modelModifier is null)
                         return;
 
-                    await TextEditorService.ModelApi.CalculatePresentationModelFactory(
-                        modelModifier.ResourceUri,
-                        FindOverlayPresentationFacts.PresentationKey)
-                        .Invoke(editContext)
-                        .ConfigureAwait(false);
+                    await TextEditorService.ModelApi.StartPendingCalculatePresentationModelFactory(
+                                modelModifier.ResourceUri,
+                                FindOverlayPresentationFacts.PresentationKey,
+                                FindOverlayPresentationFacts.EmptyPresentationModel)
+                            .Invoke(editContext)
+                            .ConfigureAwait(false);
 
-                    var pendingCalculation = modelModifier.PresentationModelsList.FirstOrDefault(x =>
-                        x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey)
-                        ?.PendingCalculation;
+                    var presentationModel = modelModifier.PresentationModelsList.First(
+                        x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
-                    if (pendingCalculation is null)
-                        pendingCalculation = new(modelModifier.GetAllText());
+                    if (presentationModel.PendingCalculation is null)
+                        throw new ApplicationException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
 
-                    var presentationModel = modelModifier.PresentationModelsList.FirstOrDefault(x =>
-                        x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
-
-                    if (presentationModel?.PendingCalculation is not null)
-                    {
-                        presentationModel.PendingCalculation.TextSpanList = ImmutableArray<TextEditorTextSpan>.Empty;
-
-                        (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
-                            (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
-                    }
+                    modelModifier.CompletePendingCalculatePresentationModel(
+                        CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+                        CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel,
+                        ImmutableArray<TextEditorTextSpan>.Empty);
                 });
         }
     }

@@ -1,5 +1,3 @@
-using Fluxor;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
@@ -7,9 +5,7 @@ using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.CompilerServices.Lang.CSharp.RuntimeAssemblies;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -22,48 +18,28 @@ namespace Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 
 public sealed class CSharpCompilerService : LuthCompilerService
 {
-    private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly IDispatcher _dispatcher;
-    
     /// <summary>
     /// TODO: The CSharpBinder should be private, but for now I'm making it public to be usable in the CompilerServiceExplorer Blazor component.
     /// </summary>
     public readonly CSharpBinder CSharpBinder = new();
 
-    public CSharpCompilerService(
-            ITextEditorService textEditorService,
-            IBackgroundTaskService backgroundTaskService,
-            IDispatcher dispatcher)
-        : base(
-            textEditorService,
-            (resourceUri, sourceText) => new CSharpLexer(resourceUri, sourceText),
-            lexer => new CSharpParser((CSharpLexer)lexer))
+    public CSharpCompilerService(ITextEditorService textEditorService)
+        : base(textEditorService)
     {
         Binder = CSharpBinder;
 
-        _backgroundTaskService = backgroundTaskService;
-        _dispatcher = dispatcher;
+        _compilerServiceOptions = new()
+        {
+            RegisterResourceFunc = resourceUri => new CSharpResource(resourceUri, this),
+            GetLexerFunc = (resource, sourceText) => new CSharpLexer(resource.ResourceUri, sourceText),
+            GetParserFunc = (resource, lexer) => new CSharpParser((CSharpLexer)lexer),
+            GetBinderFunc = (resource, parser) => Binder
+        };
 
         RuntimeAssembliesLoaderFactory.LoadDotNet6(CSharpBinder);
     }
 
     public event Action? CursorMovedInSyntaxTree;
-
-    public override void RegisterResource(ResourceUri resourceUri)
-    {
-        lock (_resourceMapLock)
-        {
-            if (_resourceMap.ContainsKey(resourceUri))
-                return;
-
-            _resourceMap.Add(
-                resourceUri,
-                new CSharpResource(resourceUri, this));
-        }
-
-        QueueParseRequest(resourceUri);
-        OnResourceRegistered();
-    }
 
     public override ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
     {
@@ -221,78 +197,5 @@ public sealed class CSharpCompilerService : LuthCompilerService
             }));
 
         return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToImmutableArray();
-    }
-
-    protected override void QueueParseRequest(ResourceUri resourceUri)
-    {
-        _textEditorService.Post(
-            nameof(QueueParseRequest),
-            async editContext =>
-            {
-                var modelModifier = editContext.GetModelModifier(resourceUri);
-
-                if (modelModifier is null)
-                    return;
-
-                await _textEditorService.ModelApi.CalculatePresentationModelFactory(
-                        modelModifier.ResourceUri,
-                        CompilerServiceDiagnosticPresentationFacts.PresentationKey)
-                    .Invoke(editContext)
-					.ConfigureAwait(false);
-
-                var pendingCalculation = modelModifier.PresentationModelsList.FirstOrDefault(x =>
-                    x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
-                    ?.PendingCalculation;
-
-                if (pendingCalculation is null)
-                    pendingCalculation = new(modelModifier.GetAllText());
-
-                var lexer = new CSharpLexer(resourceUri, pendingCalculation.ContentAtRequest);
-                lexer.Lex();
-
-                CompilationUnit? compilationUnit = null;
-
-                try
-                {
-                    // Even if the parser throws an exception, be sure to
-                    // make use of the Lexer to do whatever syntax highlighting is possible.
-                    var parser = new CSharpParser(lexer);
-                    compilationUnit = parser.Parse(CSharpBinder, resourceUri);
-                }
-                finally
-                {
-                    lock (_resourceMapLock)
-                    {
-                        if (_resourceMap.ContainsKey(resourceUri))
-                        {
-                            var cSharpResource = _resourceMap[resourceUri];
-
-                            cSharpResource.SyntaxTokenList = lexer.SyntaxTokens;
-
-                            if (compilationUnit is not null)
-                                cSharpResource.CompilationUnit = compilationUnit;
-                        }
-                    }
-
-                    // TODO: Shouldn't one get a reference to the most recent TextEditorModel instance with the given key and invoke .ApplySyntaxHighlightingAsync() on that?
-                    await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
-
-                    var presentationModel = modelModifier.PresentationModelsList.FirstOrDefault(x =>
-                        x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
-
-                    if (presentationModel?.PendingCalculation is not null)
-                    {
-                        presentationModel.PendingCalculation.TextSpanList =
-                            GetDiagnosticsFor(modelModifier.ResourceUri)
-                                .Select(x => x.TextSpan)
-                                .ToImmutableArray();
-
-                        (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
-                            (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
-                    }
-
-                    OnResourceParsed();
-                }
-            });
     }
 }

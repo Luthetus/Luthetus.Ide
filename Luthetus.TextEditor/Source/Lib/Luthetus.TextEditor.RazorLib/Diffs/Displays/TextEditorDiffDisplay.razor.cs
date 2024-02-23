@@ -85,9 +85,12 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 
         var token = _calculateDiffCancellationTokenSource.Token;
 
-        _mostRecentDiffResult = TextEditorService.DiffApi.Calculate(
-            TextEditorDiffKey,
-            token);
+        // TODO: This method is being commented out as of (2024-02-23). It needs to be re-written...
+        // ...so that it uses the text editor's edit context by using ITextEditorService.Post()
+        // 
+        //_mostRecentDiffResult = TextEditorService.DiffApi.Calculate(
+        //    TextEditorDiffKey,
+        //    token);
 
         await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }

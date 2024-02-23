@@ -6,18 +6,14 @@ using Luthetus.CompilerServices.Lang.Razor.Razor.Facts;
 using Luthetus.CompilerServices.Lang.Xml.Html.InjectedLanguage;
 using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.CompilerServices.Lang.Razor;
 
-public class RazorLexer : ILuthLexer
+public class RazorLexer : LuthLexer
 {
-    private readonly StringWalker _stringWalker;
-    private readonly List<ISyntaxToken> _syntaxTokens = new();
-    private readonly LuthDiagnosticBag _diagnosticBag = new();
     private readonly RazorCompilerService _razorCompilerService;
     private readonly CSharpCompilerService _cSharpCompilerService;
     private readonly IEnvironmentProvider _environmentProvider;
@@ -28,28 +24,21 @@ public class RazorLexer : ILuthLexer
         RazorCompilerService razorCompilerService,
         CSharpCompilerService cSharpCompilerService,
         IEnvironmentProvider environmentProvider)
+        : base(
+            resourceUri,
+            sourceText,
+            new LuthLexerKeywords(ImmutableArray<string>.Empty, ImmutableArray<string>.Empty, ImmutableArray<string>.Empty))
     {
-        _stringWalker = new(resourceUri, sourceText);
         _environmentProvider = environmentProvider;
-
-        ResourceUri = resourceUri;
         _razorCompilerService = razorCompilerService;
         _cSharpCompilerService = cSharpCompilerService;
+
         RazorSyntaxTree = new RazorSyntaxTree(ResourceUri, _razorCompilerService, _cSharpCompilerService, _environmentProvider);
     }
 
-    public ResourceUri ResourceUri { get; }
-
     public RazorSyntaxTree RazorSyntaxTree { get; private set; }
 
-    public ImmutableArray<ISyntaxToken> SyntaxTokens => _syntaxTokens.ToImmutableArray();
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticList => _diagnosticBag.ToImmutableArray();
-
-    public ImmutableArray<TextEditorTextSpan> TextEditorTextSpans { get; private set; }
-
-    string ILuthLexer.SourceText => throw new NotImplementedException();
-
-    public void Lex()
+    public override void Lex()
     {
         RazorSyntaxTree = new RazorSyntaxTree(ResourceUri, _razorCompilerService, _cSharpCompilerService, _environmentProvider);
 
@@ -72,39 +61,25 @@ public class RazorLexer : ILuthLexer
 
         htmlSyntaxWalker.Visit(syntaxNodeRoot);
 
-        List<TextEditorTextSpan> textEditorTextSpans = new();
-
         // Tag Names
-        {
-            textEditorTextSpans.AddRange(htmlSyntaxWalker.TagNameNodes
-                .Select(tns => tns.TextEditorTextSpan));
-        }
+        _syntaxTokenList.AddRange(
+            htmlSyntaxWalker.TagNameNodes.Select(tns => new BadToken(tns.TextEditorTextSpan)));
 
         // InjectedLanguageFragmentSyntaxes
-        {
-            textEditorTextSpans.AddRange(htmlSyntaxWalker.InjectedLanguageFragmentNodes
-                .Select(ilfs => ilfs.TextEditorTextSpan));
-        }
+        _syntaxTokenList.AddRange(
+            htmlSyntaxWalker.InjectedLanguageFragmentNodes.Select(ilfs => new BadToken(ilfs.TextEditorTextSpan)));
 
         // Attribute Names
-        {
-            textEditorTextSpans.AddRange(htmlSyntaxWalker.AttributeNameNodes
-                .Select(an => an.TextEditorTextSpan));
-        }
+        _syntaxTokenList.AddRange(
+            htmlSyntaxWalker.AttributeNameNodes.Select(an => new BadToken(an.TextEditorTextSpan)));
 
         // Attribute Values
-        {
-            textEditorTextSpans.AddRange(htmlSyntaxWalker.AttributeValueNodes
-                .Select(av => av.TextEditorTextSpan));
-        }
+        _syntaxTokenList.AddRange(
+            htmlSyntaxWalker.AttributeValueNodes.Select(av => new BadToken(av.TextEditorTextSpan)));
 
         // Comments
-        {
-            textEditorTextSpans.AddRange(htmlSyntaxWalker.CommentNodes
-                .Select(c => c.TextEditorTextSpan));
-        }
-
-        TextEditorTextSpans = textEditorTextSpans.ToImmutableArray();
+        _syntaxTokenList.AddRange(
+            htmlSyntaxWalker.CommentNodes.Select(c => new BadToken(c.TextEditorTextSpan)));
 
         RazorSyntaxTree.ParseCodebehind();
     }

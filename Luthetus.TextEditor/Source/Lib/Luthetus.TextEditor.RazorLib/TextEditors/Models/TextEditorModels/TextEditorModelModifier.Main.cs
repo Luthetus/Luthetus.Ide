@@ -904,23 +904,63 @@ public partial class TextEditorModelModifier
             PresentationModelsList.Add(presentationModel);
     }
 
-    public void PerformCalculatePresentationModelAction(
-        Key<TextEditorPresentationModel> presentationKey)
+    public void StartPendingCalculatePresentationModel(
+        Key<TextEditorPresentationModel> presentationKey,
+        TextEditorPresentationModel emptyPresentationModel)
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _presentationModelsList ??= _textEditorModel.PresentationModelsList.ToList();
         }
 
+        // If the presentation model has not yet been registered, then this will register it.
+        PerformRegisterPresentationModelAction(emptyPresentationModel);
+
         var indexOfPresentationModel = _presentationModelsList.FindIndex(
             x => x.TextEditorPresentationKey == presentationKey);
 
-        if (indexOfPresentationModel == -1)
-            return;
+        // The presentation model is expected to always be registered at this point.
+
+        var presentationModel = PresentationModelsList[indexOfPresentationModel];
+        PresentationModelsList[indexOfPresentationModel] = presentationModel with
+        {
+            PendingCalculation = new(this.GetAllText())
+        };
+    }
+    
+    public void CompletePendingCalculatePresentationModel(
+        Key<TextEditorPresentationModel> presentationKey,
+        TextEditorPresentationModel emptyPresentationModel,
+        ImmutableArray<TextEditorTextSpan> calculatedTextSpans)
+    {
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
+        {
+            _presentationModelsList ??= _textEditorModel.PresentationModelsList.ToList();
+        }
+
+        // If the presentation model has not yet been registered, then this will register it.
+        PerformRegisterPresentationModelAction(emptyPresentationModel);
+
+        var indexOfPresentationModel = _presentationModelsList.FindIndex(
+            x => x.TextEditorPresentationKey == presentationKey);
+
+        // The presentation model is expected to always be registered at this point.
 
         var presentationModel = PresentationModelsList[indexOfPresentationModel];
 
-        presentationModel.PendingCalculation = new(this.GetAllText());
+        if (presentationModel.PendingCalculation is null)
+            return;
+
+        var calculation = presentationModel.PendingCalculation with
+        {
+            TextSpanList = calculatedTextSpans
+        };
+
+        PresentationModelsList[indexOfPresentationModel] = presentationModel with
+        {
+            PendingCalculation = null,
+            CompletedCalculation = calculation,
+        };
     }
 
     public void ClearEditBlocks()

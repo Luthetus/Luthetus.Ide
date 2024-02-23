@@ -51,7 +51,7 @@ public class CSharpParser : ILuthParser
         var model = new ParserModel(
             Binder,
             BinderSession,
-            new TokenWalker(Lexer.SyntaxTokens, diagnosticBag),
+            new TokenWalker(Lexer.SyntaxTokenList, diagnosticBag),
             new Stack<ISyntax>(),
             diagnosticBag,
             globalCodeBlockBuilder,
