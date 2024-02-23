@@ -8,11 +8,14 @@ namespace Luthetus.CompilerServices.Lang.Json;
 public sealed class JsonCompilerService : LuthCompilerService
 {
     public JsonCompilerService(ITextEditorService textEditorService)
-        : base(
-            textEditorService,
-            (resourceUri, sourceText) => new TextEditorJsonLexer(resourceUri, sourceText),
-            lexer => new LuthParser(lexer))
+        : base(textEditorService)
     {
+        _compilerServiceOptions = new()
+        {
+            GetLexerFunc = (resource, sourceText) => new TextEditorJsonLexer(resource.ResourceUri, sourceText),
+            GetParserFunc = (resource, lexer) => new LuthParser(lexer),
+            GetBinderFunc = (resource, parser) => Binder
+        };
     }
 
     public override void RegisterResource(ResourceUri resourceUri)

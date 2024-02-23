@@ -7,11 +7,14 @@ namespace Luthetus.CompilerServices.Lang.C;
 public sealed class CCompilerService : LuthCompilerService
 {
     public CCompilerService(ITextEditorService textEditorService)
-        : base(
-            textEditorService,
-            (resourceUri, sourceText) => new CLexer(resourceUri, sourceText),
-            lexer => new LuthParser(lexer))
+        : base(textEditorService)
     {
+        _compilerServiceOptions = new()
+        {
+            GetLexerFunc = (resource, sourceText) => new CLexer(resource.ResourceUri, sourceText),
+            GetParserFunc = (resource, lexer) => new LuthParser(lexer),
+            GetBinderFunc = (resource, parser) => Binder
+        };
     }
 
     public override void RegisterResource(ResourceUri resourceUri)

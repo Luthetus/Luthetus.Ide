@@ -7,13 +7,15 @@ namespace Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
 
 public sealed class DotNetSolutionCompilerService : LuthCompilerService
 {
-    public DotNetSolutionCompilerService(
-            ITextEditorService textEditorService)
-        : base(
-            textEditorService,
-            (resourceUri, sourceText) => new DotNetSolutionLexer(resourceUri, sourceText),
-            lexer => new LuthParser(lexer))
+    public DotNetSolutionCompilerService(ITextEditorService textEditorService)
+        : base(textEditorService)
     {
+        _compilerServiceOptions = new()
+        {
+            GetLexerFunc = (resource, sourceText) => new DotNetSolutionLexer(resource.ResourceUri, sourceText),
+            GetParserFunc = (resource, lexer) => new LuthParser(lexer),
+            GetBinderFunc = (resource, parser) => Binder
+        };
     }
 
     public override void RegisterResource(ResourceUri resourceUri)

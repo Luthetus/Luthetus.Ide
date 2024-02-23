@@ -1,4 +1,5 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -28,11 +29,11 @@ public class LuthBinder : ILuthBinder
 
     public ILuthBinderSession ConstructBinderSession(ResourceUri resourceUri)
     {
-        throw new NotImplementedException();
+        return new LuthBinderSession(resourceUri, null, null, this);
     }
 
     public void ClearStateByResourceUri(ResourceUri resourceUri)
     {
-        throw new NotImplementedException();
+        return;
     }
 }

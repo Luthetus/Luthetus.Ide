@@ -8,11 +8,14 @@ namespace Luthetus.CompilerServices.Lang.Css;
 public sealed class CssCompilerService : LuthCompilerService
 {
     public CssCompilerService(ITextEditorService textEditorService)
-        : base(
-            textEditorService,
-            (resourceUri, sourceText) => new TextEditorCssLexer(resourceUri, sourceText),
-            lexer => new LuthParser(lexer))
+        : base(textEditorService)
     {
+        _compilerServiceOptions = new()
+        {
+            GetLexerFunc = (resource, sourceText) => new TextEditorCssLexer(resource.ResourceUri, sourceText),
+            GetParserFunc = (resource, lexer) => new LuthParser(lexer),
+            GetBinderFunc = (resource, parser) => Binder
+        };
     }
 
     public override void RegisterResource(ResourceUri resourceUri)

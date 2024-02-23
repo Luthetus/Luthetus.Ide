@@ -8,11 +8,14 @@ namespace Luthetus.CompilerServices.Lang.JavaScript;
 public sealed class JavaScriptCompilerService : LuthCompilerService
 {
     public JavaScriptCompilerService(ITextEditorService textEditorService)
-        : base(
-            textEditorService,
-            (resourceUri, sourceText) => new TextEditorJavaScriptLexer(resourceUri, sourceText),
-            lexer => new LuthParser(lexer))
+        : base(textEditorService)
     {
+        _compilerServiceOptions = new()
+        {
+            GetLexerFunc = (resource, sourceText) => new TextEditorJavaScriptLexer(resource.ResourceUri, sourceText),
+            GetParserFunc = (resource, lexer) => new LuthParser(lexer),
+            GetBinderFunc = (resource, parser) => Binder
+        };
     }
 
     public override void RegisterResource(ResourceUri resourceUri)

@@ -28,9 +28,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
 
     public CompilerServiceRegistry(
         ITextEditorService textEditorService,
-        IBackgroundTaskService backgroundTaskService,
-        IEnvironmentProvider environmentProvider,
-        IDispatcher dispatcher)
+        IEnvironmentProvider environmentProvider)
     {
         CSharpCompilerService = new CSharpCompilerService(textEditorService);
         CSharpProjectCompilerService = new CSharpProjectCompilerService(textEditorService);
@@ -39,11 +37,11 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
         FSharpCompilerService = new FSharpCompilerService(textEditorService);
         JavaScriptCompilerService = new JavaScriptCompilerService(textEditorService);
         JsonCompilerService = new JsonCompilerService(textEditorService);
-        RazorCompilerService = new RazorCompilerService(textEditorService, backgroundTaskService, CSharpCompilerService, environmentProvider, dispatcher);
+        RazorCompilerService = new RazorCompilerService(textEditorService, CSharpCompilerService, environmentProvider);
         TypeScriptCompilerService = new TypeScriptCompilerService(textEditorService);
         XmlCompilerService = new XmlCompilerService(textEditorService);
         CCompilerService = new CCompilerService(textEditorService);
-        DefaultCompilerService = new LuthCompilerService(textEditorService, (_, _) => null, _ => null);
+        DefaultCompilerService = new LuthCompilerService(textEditorService);
 
         _map.Add(ExtensionNoPeriodFacts.HTML, XmlCompilerService);
         _map.Add(ExtensionNoPeriodFacts.XML, XmlCompilerService);

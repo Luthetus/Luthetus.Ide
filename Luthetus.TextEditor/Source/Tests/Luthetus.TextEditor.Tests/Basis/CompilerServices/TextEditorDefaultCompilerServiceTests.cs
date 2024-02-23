@@ -32,7 +32,7 @@ public class TextEditorDefaultCompilerServiceTests
     [Fact]
 	public void Constructor()
 	{
-		var compilerServiceDefault = new LuthCompilerService(null, null, null);
+		var compilerServiceDefault = new LuthCompilerService(null);
 
 		Assert.Null(compilerServiceDefault.Binder);
 		Assert.Empty(compilerServiceDefault.CompilerServiceResources);

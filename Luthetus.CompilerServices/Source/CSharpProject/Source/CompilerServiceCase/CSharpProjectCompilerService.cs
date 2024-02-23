@@ -9,13 +9,15 @@ namespace Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
 
 public sealed class CSharpProjectCompilerService : LuthCompilerService
 {
-    public CSharpProjectCompilerService(
-            ITextEditorService textEditorService)
-        : base(
-            textEditorService,
-            (resourceUri, sourceText) => new TextEditorXmlLexer(resourceUri, sourceText),
-            lexer => new LuthParser(lexer))
+    public CSharpProjectCompilerService(ITextEditorService textEditorService)
+        : base(textEditorService)
     {
+        _compilerServiceOptions = new()
+        {
+            GetLexerFunc = (resource, sourceText) => new TextEditorXmlLexer(resource.ResourceUri, sourceText),
+            GetParserFunc = (resource, lexer) => new LuthParser(lexer),
+            GetBinderFunc = (resource, parser) => Binder
+        };
     }
 
     public override void RegisterResource(ResourceUri resourceUri)

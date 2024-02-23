@@ -22,7 +22,7 @@ public class TextEditorModelConstructorsTests
 		var fileExtension = ".txt";
 		var content = "Hello World!";
 		var decorationMapper = new TextEditorDecorationMapperDefault();
-		var compilerService = new LuthCompilerService(null, null, null);
+		var compilerService = new LuthCompilerService(null);
 
         var model = new TextEditorModel(
             resourceUri,
@@ -52,7 +52,7 @@ public class TextEditorModelConstructorsTests
             ".txt",
             "Hello World!",
             new TextEditorDecorationMapperDefault(),
-            new LuthCompilerService(null, null, null));
+            new LuthCompilerService(null));
 
 		var cloneModel = new TextEditorModel(
 			originalModel.ContentList,

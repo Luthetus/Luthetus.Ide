@@ -38,7 +38,7 @@ public class TextEditorModelStateMainTests
             ExtensionNoPeriodFacts.TXT,
             "AlphabetSoup",
             new TextEditorDecorationMapperDefault(),
-            new LuthCompilerService(null, null, null));
+            new LuthCompilerService(null));
 
 		var outModelList = modelState.ModelList.Add(model);
         Assert.NotEqual(ImmutableList<TextEditorModel>.Empty, outModelList);

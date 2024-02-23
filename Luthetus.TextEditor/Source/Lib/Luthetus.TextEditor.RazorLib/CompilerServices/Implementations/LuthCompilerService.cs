@@ -16,21 +16,12 @@ public class LuthCompilerService : ILuthCompilerService
     protected readonly object _resourceMapLock = new();
     protected readonly ITextEditorService _textEditorService;
 
-    /// <summary>
-    /// Takes as arguments the resource uri and the source text.
-    /// </summary>
-    protected readonly Func<ResourceUri, string, ILuthLexer>? _getLexerFunc;
-    protected readonly Func<ILuthLexer, ILuthParser>? _getParserFunc;
+    protected LuthCompilerServiceOptions _compilerServiceOptions = new();
 
     /// <param name="getLexerFunc">Takes as arguments the resource uri and the source text.</param>
-    public LuthCompilerService(
-        ITextEditorService textEditorService,
-        Func<ResourceUri, string, ILuthLexer>? getLexerFunc,
-        Func<ILuthLexer, ILuthParser>? getParserFunc)
+    public LuthCompilerService(ITextEditorService textEditorService)
     {
         _textEditorService = textEditorService;
-        _getLexerFunc = getLexerFunc;
-        _getParserFunc = getParserFunc;
     }
 
     /// <summary>
@@ -46,7 +37,7 @@ public class LuthCompilerService : ILuthCompilerService
     /// </summary>
     public event Action? ResourceDisposed;
 
-    public virtual ILuthBinder? Binder { get; protected set; } = new LuthBinder();
+    public virtual ILuthBinder Binder { get; protected set; } = new LuthBinder();
 
     public virtual ImmutableArray<ILuthCompilerServiceResource> CompilerServiceResources =>
         _resourceMap.Values.ToImmutableArray();
@@ -191,21 +182,47 @@ public class LuthCompilerService : ILuthCompilerService
                 if (pendingCalculation is null)
                     pendingCalculation = new(modelModifier.GetAllText());
 
-                if (_getLexerFunc is null)
+                if (_compilerServiceOptions.GetLexerFunc is null)
                     return;
-                var lexer = _getLexerFunc.Invoke(resourceUri, pendingCalculation.ContentAtRequest);
+
+                ILuthLexer lexer;
+                lock (_resourceMapLock)
+                {
+                    if (!_resourceMap.ContainsKey(resourceUri))
+                        return;
+
+                    var resource = _resourceMap[resourceUri];
+                    lexer = _compilerServiceOptions.GetLexerFunc.Invoke(resource, pendingCalculation.ContentAtRequest);
+                }
+
                 lexer.Lex();
+                lock (_resourceMapLock)
+                {
+                    if (!_resourceMap.ContainsKey(resourceUri))
+                        return;
+
+                    var resource = _resourceMap[resourceUri];
+                    _compilerServiceOptions.OnAfterLexAction?.Invoke(resource, lexer);
+                }
 
                 CompilationUnit? compilationUnit = null;
-                
                 // Even if the parser throws an exception, be sure to
                 // make use of the Lexer to do whatever syntax highlighting is possible.
                 try
                 {
-                    if (_getParserFunc is null || Binder is null)
+                    if (_compilerServiceOptions.GetParserFunc is null || Binder is null)
                         return;
 
-                    var parser = _getParserFunc.Invoke(lexer);
+                    ILuthParser parser;
+                    lock (_resourceMapLock)
+                    {
+                        if (!_resourceMap.ContainsKey(resourceUri))
+                            return;
+
+                        var resource = _resourceMap[resourceUri];
+                        parser = _compilerServiceOptions.GetParserFunc.Invoke(resource, lexer);
+                    }
+                    
                     compilationUnit = parser.Parse(Binder, resourceUri);
                 }
                 finally
@@ -220,6 +237,8 @@ public class LuthCompilerService : ILuthCompilerService
 
                             if (compilationUnit is not null)
                                 resource.CompilationUnit = compilationUnit;
+
+                            _compilerServiceOptions.OnAfterParseAction?.Invoke(resource, compilationUnit);
                         }
                     }
 

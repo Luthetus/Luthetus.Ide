@@ -26,12 +26,17 @@ public sealed class CSharpCompilerService : LuthCompilerService
     public readonly CSharpBinder CSharpBinder = new();
 
     public CSharpCompilerService(ITextEditorService textEditorService)
-        : base(
-            textEditorService,
-            (resourceUri, sourceText) => new CSharpLexer(resourceUri, sourceText),
-            lexer => new CSharpParser((CSharpLexer)lexer))
+        : base(textEditorService)
     {
         Binder = CSharpBinder;
+
+        _compilerServiceOptions = new()
+        {
+            GetLexerFunc = (resource, sourceText) => new CSharpLexer(resource.ResourceUri, sourceText),
+            GetParserFunc = (resource, lexer) => new CSharpParser((CSharpLexer)lexer),
+            GetBinderFunc = (resource, parser) => Binder
+        };
+
         RuntimeAssembliesLoaderFactory.LoadDotNet6(CSharpBinder);
     }
 
