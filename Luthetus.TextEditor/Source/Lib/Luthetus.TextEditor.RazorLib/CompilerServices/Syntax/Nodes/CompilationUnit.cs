@@ -19,7 +19,7 @@ public sealed record CompilationUnit : ISyntaxNode
     {
         RootCodeBlockNode = rootCodeBlockNode ?? new CodeBlockNode(ImmutableArray<ISyntax>.Empty);
         Lexer = lexer ?? new LuthLexer(null, null, null);
-        Parser = parser ?? new LuthParser();
+        Parser = parser ?? new LuthParser(Lexer);
         Binder = binder ?? new LuthBinder();
 
         var diagnosticsListBuilder = new List<TextEditorDiagnostic>();

@@ -367,10 +367,7 @@ await builder.Build().RunAsync();
 
         textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
 
-        cSharpCompilerService = new CSharpCompilerService(
-            textEditorService,
-            backgroundTaskService,
-            serviceProvider.GetRequiredService<IDispatcher>());
+        cSharpCompilerService = new CSharpCompilerService(textEditorService);
 
         var fileExtension = ExtensionNoPeriodFacts.C_SHARP_CLASS;
         var resourceUri = new ResourceUri("/unitTesting.txt");

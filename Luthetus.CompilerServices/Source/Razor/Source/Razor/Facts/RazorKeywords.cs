@@ -15,13 +15,13 @@ public static class RazorKeywords
 
     public static readonly ImmutableArray<string> ALL = new[]
     {
-    PAGE_KEYWORD,
-    NAMESPACE_KEYWORD,
-    FUNCTIONS_KEYWORD,
-    CODE_KEYWORD,
-    INHERITS_KEYWORD,
-    MODEL_KEYWORD,
-    SECTION_KEYWORD,
-    HELPER_KEYWORD,
-}.ToImmutableArray();
+        PAGE_KEYWORD,
+        NAMESPACE_KEYWORD,
+        FUNCTIONS_KEYWORD,
+        CODE_KEYWORD,
+        INHERITS_KEYWORD,
+        MODEL_KEYWORD,
+        SECTION_KEYWORD,
+        HELPER_KEYWORD,
+    }.ToImmutableArray();
 }

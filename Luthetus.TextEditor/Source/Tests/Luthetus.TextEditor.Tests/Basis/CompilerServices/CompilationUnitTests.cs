@@ -29,7 +29,7 @@ public class CompilationUnitTests
 	{
 		var codeBlockNode = new CodeBlockNode(ImmutableArray<ISyntax>.Empty);
 		var lexer = new LuthLexer(null, null, null);
-		var parser = new LuthParser();
+		var parser = new LuthParser(lexer);
 		var binder = new LuthBinder();
 
 		var compilationUnit = new CompilationUnit(

@@ -19,15 +19,14 @@ public class LuthCompilerService : ILuthCompilerService
     /// <summary>
     /// Takes as arguments the resource uri and the source text.
     /// </summary>
-    protected readonly Func<ResourceUri, string, ILuthLexer> _getLexerFunc;
-    protected readonly Func<ILuthLexer, ILuthParser> _getParserFunc;
-    protected Func<ILuthBinder> _getBinderFunc;
+    protected readonly Func<ResourceUri, string, ILuthLexer>? _getLexerFunc;
+    protected readonly Func<ILuthLexer, ILuthParser>? _getParserFunc;
 
     /// <param name="getLexerFunc">Takes as arguments the resource uri and the source text.</param>
     public LuthCompilerService(
         ITextEditorService textEditorService,
-        Func<ResourceUri, string, ILuthLexer> getLexerFunc,
-        Func<ILuthLexer, ILuthParser> getParserFunc)
+        Func<ResourceUri, string, ILuthLexer>? getLexerFunc,
+        Func<ILuthLexer, ILuthParser>? getParserFunc)
     {
         _textEditorService = textEditorService;
         _getLexerFunc = getLexerFunc;
@@ -47,7 +46,7 @@ public class LuthCompilerService : ILuthCompilerService
     /// </summary>
     public event Action? ResourceDisposed;
 
-    public virtual ILuthBinder? Binder { get; protected set; }
+    public virtual ILuthBinder? Binder { get; protected set; } = new LuthBinder();
 
     public virtual ImmutableArray<ILuthCompilerServiceResource> CompilerServiceResources =>
         _resourceMap.Values.ToImmutableArray();
@@ -192,15 +191,20 @@ public class LuthCompilerService : ILuthCompilerService
                 if (pendingCalculation is null)
                     pendingCalculation = new(modelModifier.GetAllText());
 
+                if (_getLexerFunc is null)
+                    return;
                 var lexer = _getLexerFunc.Invoke(resourceUri, pendingCalculation.ContentAtRequest);
                 lexer.Lex();
 
                 CompilationUnit? compilationUnit = null;
-
+                
+                // Even if the parser throws an exception, be sure to
+                // make use of the Lexer to do whatever syntax highlighting is possible.
                 try
                 {
-                    // Even if the parser throws an exception, be sure to
-                    // make use of the Lexer to do whatever syntax highlighting is possible.
+                    if (_getParserFunc is null || Binder is null)
+                        return;
+
                     var parser = _getParserFunc.Invoke(lexer);
                     compilationUnit = parser.Parse(Binder, resourceUri);
                 }
@@ -210,12 +214,12 @@ public class LuthCompilerService : ILuthCompilerService
                     {
                         if (_resourceMap.ContainsKey(resourceUri))
                         {
-                            var compilerServiceResource = _resourceMap[resourceUri];
+                            var resource = _resourceMap[resourceUri];
 
-                            compilerServiceResource.SyntaxTokenList = lexer.SyntaxTokens;
+                            resource.SyntaxTokenList = lexer.SyntaxTokenList;
 
                             if (compilationUnit is not null)
-                                compilerServiceResource.CompilationUnit = compilationUnit;
+                                resource.CompilationUnit = compilationUnit;
                         }
                     }
 

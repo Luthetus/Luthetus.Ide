@@ -7,9 +7,10 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 public interface ILuthLexer
 {
     public ImmutableArray<TextEditorDiagnostic> DiagnosticList { get; }
-    public ImmutableArray<ISyntaxToken> SyntaxTokens { get; }
+    public ImmutableArray<ISyntaxToken> SyntaxTokenList { get; }
     public ResourceUri ResourceUri { get; }
     public string SourceText { get; }
+    public LuthLexerKeywords LexerKeywords { get; }
 
     public void Lex();
 }

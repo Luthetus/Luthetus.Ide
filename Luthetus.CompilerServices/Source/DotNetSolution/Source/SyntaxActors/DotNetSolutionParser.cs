@@ -29,7 +29,7 @@ public class DotNetSolutionParser : ILuthParser
     public DotNetSolutionParser(DotNetSolutionLexer lexer)
     {
         Lexer = lexer;
-        _tokenWalker = new TokenWalker(lexer.SyntaxTokens, _diagnosticBag);
+        _tokenWalker = new TokenWalker(lexer.SyntaxTokenList, _diagnosticBag);
     }
 
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList => _diagnosticBag.ToImmutableArray();

@@ -1,53 +1,46 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.Css.Css.SyntaxActors;
 
-public class TextEditorCssLexer
+public class TextEditorCssLexer : LuthLexer
 {
-    public TextEditorCssLexer(ResourceUri resourceUri)
+    public TextEditorCssLexer(ResourceUri resourceUri, string sourceText)
+        : base(
+            resourceUri,
+            sourceText,
+            new LuthLexerKeywords(ImmutableArray<string>.Empty, ImmutableArray<string>.Empty, ImmutableArray<string>.Empty))
     {
-        ResourceUri = resourceUri;
     }
 
     public Key<RenderState> ModelRenderStateKey { get; private set; } = Key<RenderState>.Empty;
 
-    public ResourceUri ResourceUri { get; }
-
-    public Task<ImmutableArray<TextEditorTextSpan>> Lex(
-        string sourceText,
-        Key<RenderState> modelRenderStateKey)
+    public override void Lex()
     {
         var cssSyntaxUnit = CssSyntaxTree.ParseText(
             ResourceUri,
-            sourceText);
+            SourceText);
 
         var syntaxNodeRoot = cssSyntaxUnit.CssDocumentSyntax;
 
-        var cssSyntaxWalker = new CssSyntaxWalker();
+        var syntaxWalker = new CssSyntaxWalker();
+        syntaxWalker.Visit(syntaxNodeRoot);
 
-        cssSyntaxWalker.Visit(syntaxNodeRoot);
+        _syntaxTokenList.AddRange(
+            syntaxWalker.IdentifierSyntaxes.Select(x => new BadToken(x.TextEditorTextSpan)));
 
-        List<TextEditorTextSpan> textEditorTextSpans = new();
+        _syntaxTokenList.AddRange(
+            syntaxWalker.CommentSyntaxes.Select(x => new BadToken(x.TextEditorTextSpan)));
 
-        textEditorTextSpans.AddRange(
-            cssSyntaxWalker.CssIdentifierSyntaxes.Select(identifier =>
-                identifier.TextEditorTextSpan));
+        _syntaxTokenList.AddRange(
+            syntaxWalker.PropertyNameSyntaxes.Select(x => new BadToken(x.TextEditorTextSpan)));
 
-        textEditorTextSpans.AddRange(
-            cssSyntaxWalker.CssCommentSyntaxes.Select(comment =>
-                comment.TextEditorTextSpan));
-
-        textEditorTextSpans.AddRange(
-            cssSyntaxWalker.CssPropertyNameSyntaxes.Select(propertyName =>
-                propertyName.TextEditorTextSpan));
-
-        textEditorTextSpans.AddRange(
-            cssSyntaxWalker.CssPropertyValueSyntaxes.Select(propertyValue =>
-                propertyValue.TextEditorTextSpan));
-
-        return Task.FromResult(textEditorTextSpans.ToImmutableArray());
+        _syntaxTokenList.AddRange(
+            syntaxWalker.PropertyValueSyntaxes.Select(x => new BadToken(x.TextEditorTextSpan)));
     }
 }

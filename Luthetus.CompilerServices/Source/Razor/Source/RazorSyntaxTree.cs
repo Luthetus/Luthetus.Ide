@@ -1370,7 +1370,7 @@ public class RazorSyntaxTree
 
         lexer.Lex();
 
-        foreach (var lexedTokenTextSpan in lexer.SyntaxTokens.Select(x => x.TextSpan))
+        foreach (var lexedTokenTextSpan in lexer.SyntaxTokenList.Select(x => x.TextSpan))
         {
             var startingIndexInclusive = lexedTokenTextSpan.StartingIndexInclusive +
                                          offsetPositionIndex -

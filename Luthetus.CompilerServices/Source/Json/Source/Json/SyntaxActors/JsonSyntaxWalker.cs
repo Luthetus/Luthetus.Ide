@@ -5,12 +5,12 @@ namespace Luthetus.CompilerServices.Lang.Json.Json.SyntaxActors;
 
 public class JsonSyntaxWalker
 {
-    public List<JsonPropertyKeySyntax> JsonPropertyKeySyntaxes { get; } = new();
-    public List<JsonBooleanSyntax> JsonBooleanSyntaxes { get; } = new();
-    public List<JsonIntegerSyntax> JsonIntegerSyntaxes { get; } = new();
-    public List<JsonNullSyntax> JsonNullSyntaxes { get; } = new();
-    public List<JsonNumberSyntax> JsonNumberSyntaxes { get; } = new();
-    public List<JsonStringSyntax> JsonStringSyntaxes { get; } = new();
+    public List<JsonPropertyKeySyntax> PropertyKeySyntaxes { get; } = new();
+    public List<JsonBooleanSyntax> BooleanSyntaxes { get; } = new();
+    public List<JsonIntegerSyntax> IntegerSyntaxes { get; } = new();
+    public List<JsonNullSyntax> NullSyntaxes { get; } = new();
+    public List<JsonNumberSyntax> NumberSyntaxes { get; } = new();
+    public List<JsonStringSyntax> StringSyntaxes { get; } = new();
 
     public void Visit(IJsonSyntax jsonSyntax)
     {
@@ -46,31 +46,31 @@ public class JsonSyntaxWalker
 
     private void VisitJsonPropertyKeySyntax(JsonPropertyKeySyntax jsonPropertyKeySyntax)
     {
-        JsonPropertyKeySyntaxes.Add(jsonPropertyKeySyntax);
+        PropertyKeySyntaxes.Add(jsonPropertyKeySyntax);
     }
 
     private void VisitJsonBooleanSyntax(JsonBooleanSyntax jsonBooleanSyntax)
     {
-        JsonBooleanSyntaxes.Add(jsonBooleanSyntax);
+        BooleanSyntaxes.Add(jsonBooleanSyntax);
     }
 
     private void VisitJsonIntegerSyntax(JsonIntegerSyntax jsonIntegerSyntax)
     {
-        JsonIntegerSyntaxes.Add(jsonIntegerSyntax);
+        IntegerSyntaxes.Add(jsonIntegerSyntax);
     }
     private void VisitJsonNullSyntax(JsonNullSyntax jsonNullSyntax)
     {
-        JsonNullSyntaxes.Add(jsonNullSyntax);
+        NullSyntaxes.Add(jsonNullSyntax);
     }
 
     private void VisitJsonNumberSyntax(JsonNumberSyntax jsonNumberSyntax)
     {
-        JsonNumberSyntaxes.Add(jsonNumberSyntax);
+        NumberSyntaxes.Add(jsonNumberSyntax);
     }
 
     private void VisitJsonStringSyntax(JsonStringSyntax jsonStringSyntax)
     {
-        JsonStringSyntaxes.Add(jsonStringSyntax);
+        StringSyntaxes.Add(jsonStringSyntax);
     }
 
 }

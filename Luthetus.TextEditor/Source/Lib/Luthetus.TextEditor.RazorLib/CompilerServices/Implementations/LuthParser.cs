@@ -9,6 +9,13 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
 public class LuthParser : ILuthParser
 {
+    public LuthParser(ILuthLexer lexer)
+    {
+        Lexer = lexer;
+        Binder = new LuthBinder();
+        BinderSession = Binder.ConstructBinderSession(lexer.ResourceUri);
+    }
+
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; private set; } = ImmutableArray<TextEditorDiagnostic>.Empty;
     public ILuthBinder Binder { get; private set; }
     public ILuthBinderSession BinderSession { get; private set; }
@@ -25,7 +32,7 @@ public class LuthParser : ILuthParser
         return Parse();
     }
 
-    public CompilationUnit Parse()
+    public virtual CompilationUnit Parse()
     {
         var globalCodeBlockBuilder = new CodeBlockBuilder(null, null);
         var currentCodeBlockBuilder = globalCodeBlockBuilder;
@@ -34,26 +41,13 @@ public class LuthParser : ILuthParser
         var model = new LuthParserModel(
             Binder,
             BinderSession,
-            new TokenWalker(Lexer.SyntaxTokens, diagnosticBag),
+            new TokenWalker(Lexer.SyntaxTokenList, diagnosticBag),
             new Stack<ISyntax>(),
             diagnosticBag,
             globalCodeBlockBuilder,
             currentCodeBlockBuilder,
             null,
             new Stack<Action<CodeBlockNode>>());
-
-        while (true)
-        {
-            var token = model.TokenWalker.Consume();
-
-            switch (token.SyntaxKind)
-            {
-                // TODO: handle various token kinds
-            }
-
-            if (token.SyntaxKind == SyntaxKind.EndOfFileToken)
-                break;
-        }
 
         DiagnosticsList = DiagnosticsList.AddRange(model.DiagnosticBag.ToImmutableArray());
 

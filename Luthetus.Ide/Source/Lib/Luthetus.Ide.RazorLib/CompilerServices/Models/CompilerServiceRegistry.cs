@@ -32,17 +32,17 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
         IEnvironmentProvider environmentProvider,
         IDispatcher dispatcher)
     {
-        CSharpCompilerService = new CSharpCompilerService(textEditorService, backgroundTaskService, dispatcher);
-        CSharpProjectCompilerService = new CSharpProjectCompilerService(textEditorService, backgroundTaskService, dispatcher);
-        CssCompilerService = new CssCompilerService(textEditorService, backgroundTaskService, dispatcher);
-        DotNetSolutionCompilerService = new DotNetSolutionCompilerService(textEditorService, backgroundTaskService, environmentProvider, dispatcher);
-        FSharpCompilerService = new FSharpCompilerService(textEditorService, backgroundTaskService, dispatcher);
-        JavaScriptCompilerService = new JavaScriptCompilerService(textEditorService, backgroundTaskService, dispatcher);
-        JsonCompilerService = new JsonCompilerService(textEditorService, backgroundTaskService, dispatcher);
+        CSharpCompilerService = new CSharpCompilerService(textEditorService);
+        CSharpProjectCompilerService = new CSharpProjectCompilerService(textEditorService);
+        CssCompilerService = new CssCompilerService(textEditorService);
+        DotNetSolutionCompilerService = new DotNetSolutionCompilerService(textEditorService);
+        FSharpCompilerService = new FSharpCompilerService(textEditorService);
+        JavaScriptCompilerService = new JavaScriptCompilerService(textEditorService);
+        JsonCompilerService = new JsonCompilerService(textEditorService);
         RazorCompilerService = new RazorCompilerService(textEditorService, backgroundTaskService, CSharpCompilerService, environmentProvider, dispatcher);
-        TypeScriptCompilerService = new TypeScriptCompilerService(textEditorService, backgroundTaskService, dispatcher);
-        XmlCompilerService = new XmlCompilerService(textEditorService, backgroundTaskService, dispatcher);
-        CCompilerService = new CCompilerService(textEditorService, backgroundTaskService, dispatcher);
+        TypeScriptCompilerService = new TypeScriptCompilerService(textEditorService);
+        XmlCompilerService = new XmlCompilerService(textEditorService);
+        CCompilerService = new CCompilerService(textEditorService);
         DefaultCompilerService = new LuthCompilerService(textEditorService, (_, _) => null, _ => null);
 
         _map.Add(ExtensionNoPeriodFacts.HTML, XmlCompilerService);

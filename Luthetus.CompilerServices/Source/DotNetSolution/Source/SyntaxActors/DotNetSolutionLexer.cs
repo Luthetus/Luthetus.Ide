@@ -1,35 +1,25 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 
-public class DotNetSolutionLexer : ILuthLexer
+public class DotNetSolutionLexer : LuthLexer
 {
-    private readonly StringWalker _stringWalker;
-    private readonly List<ISyntaxToken> _syntaxTokens = new();
-    private readonly LuthDiagnosticBag _diagnosticBag = new();
-
-    public DotNetSolutionLexer(ResourceUri resourceUri, string sourceText)
+    public DotNetSolutionLexer(
+            ResourceUri resourceUri, string sourceText)
+        : base(
+            resourceUri,
+            sourceText,
+            new LuthLexerKeywords(ImmutableArray<string>.Empty, ImmutableArray<string>.Empty, ImmutableArray<string>.Empty))
     {
-        _stringWalker = new(resourceUri, sourceText);
-        ResourceUri = resourceUri;
     }
 
-    public ImmutableArray<ISyntaxToken> SyntaxTokens => _syntaxTokens.ToImmutableArray();
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticList => _diagnosticBag.ToImmutableArray();
-
-    public ResourceUri ResourceUri { get; }
-
-    string ILuthLexer.SourceText => throw new NotImplementedException();
-
-    public void Lex()
+    public override void Lex()
     {
         while (!_stringWalker.IsEof)
         {
@@ -56,7 +46,7 @@ public class DotNetSolutionLexer : ILuthLexer
             _stringWalker.ResourceUri,
             _stringWalker.SourceText);
 
-        _syntaxTokens.Add(new EndOfFileToken(endOfFileTextSpan));
+        _syntaxTokenList.Add(new EndOfFileToken(endOfFileTextSpan));
     }
 
     private void LexHeaderFormatVersion()
@@ -66,14 +56,14 @@ public class DotNetSolutionLexer : ILuthLexer
         _ = _stringWalker.ReadRange(LexSolutionFacts.Header.FORMAT_VERSION_START_TOKEN.Length);
 
         var formatVersionTextSpan = new TextEditorTextSpan(startingPosition, _stringWalker, 0);
-        _syntaxTokens.Add(new AssociatedNameToken(formatVersionTextSpan));
+        _syntaxTokenList.Add(new AssociatedNameToken(formatVersionTextSpan));
 
         _ = _stringWalker.ReadWhitespace();
 
         var numericLiteralToken = _stringWalker.ReadUnsignedNumericLiteral();
         var associatedValueToken = new AssociatedValueToken(numericLiteralToken.TextSpan);
 
-        _syntaxTokens.Add(associatedValueToken);
+        _syntaxTokenList.Add(associatedValueToken);
     }
 
     private void LexHashtagVisualStudioVersion()
@@ -83,14 +73,14 @@ public class DotNetSolutionLexer : ILuthLexer
         _ = _stringWalker.ReadRange(LexSolutionFacts.Header.HASHTAG_VISUAL_STUDIO_VERSION_START_TOKEN.Length);
 
         var vSVersionTextSpan = new TextEditorTextSpan(startingPosition, _stringWalker, 0);
-        _syntaxTokens.Add(new AssociatedNameToken(vSVersionTextSpan));
+        _syntaxTokenList.Add(new AssociatedNameToken(vSVersionTextSpan));
 
         _ = _stringWalker.ReadWhitespace();
 
         var numericLiteralToken = _stringWalker.ReadUnsignedNumericLiteral();
         var associatedValueToken = new AssociatedValueToken(numericLiteralToken.TextSpan);
 
-        _syntaxTokens.Add(associatedValueToken);
+        _syntaxTokenList.Add(associatedValueToken);
     }
 
     private void LexExactVisualStudioVersion()
@@ -100,7 +90,7 @@ public class DotNetSolutionLexer : ILuthLexer
         _ = _stringWalker.ReadRange(LexSolutionFacts.Header.EXACT_VISUAL_STUDIO_VERSION_START_TOKEN.Length);
 
         var versionStringTextSpan = new TextEditorTextSpan(stringStartingPosition, _stringWalker, 0);
-        _syntaxTokens.Add(new AssociatedNameToken(versionStringTextSpan));
+        _syntaxTokenList.Add(new AssociatedNameToken(versionStringTextSpan));
 
         _ = _stringWalker.ReadWhitespace();
 
@@ -118,7 +108,7 @@ public class DotNetSolutionLexer : ILuthLexer
         }
 
         var versionTextSpan = new TextEditorTextSpan(versionIdentifierStartingPosition, _stringWalker, 0);
-        _syntaxTokens.Add(new AssociatedValueToken(versionTextSpan));
+        _syntaxTokenList.Add(new AssociatedValueToken(versionTextSpan));
     }
 
     private void LexMinimumVisualStudioVersion()
@@ -128,7 +118,7 @@ public class DotNetSolutionLexer : ILuthLexer
         _ = _stringWalker.ReadRange(LexSolutionFacts.Header.MINIMUM_VISUAL_STUDIO_VERSION_START_TOKEN.Length);
 
         var versionStringTextSpan = new TextEditorTextSpan(stringStartingPosition, _stringWalker, 0);
-        _syntaxTokens.Add(new AssociatedNameToken(versionStringTextSpan));
+        _syntaxTokenList.Add(new AssociatedNameToken(versionStringTextSpan));
 
         _ = _stringWalker.ReadWhitespace();
 
@@ -146,7 +136,7 @@ public class DotNetSolutionLexer : ILuthLexer
         }
 
         var versionTextSpan = new TextEditorTextSpan(versionIdentifierStartingPosition, _stringWalker, 0);
-        _syntaxTokens.Add(new AssociatedValueToken(versionTextSpan));
+        _syntaxTokenList.Add(new AssociatedValueToken(versionTextSpan));
     }
 
     public void LexProjectDefinitionEntry()
@@ -155,7 +145,7 @@ public class DotNetSolutionLexer : ILuthLexer
         _ = _stringWalker.ReadRange(LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN.Length);
 
         var textSpan = new TextEditorTextSpan(startPosition, _stringWalker, 0);
-        _syntaxTokens.Add(new OpenAssociatedGroupToken(textSpan));
+        _syntaxTokenList.Add(new OpenAssociatedGroupToken(textSpan));
 
         while (!_stringWalker.IsEof)
         {
@@ -172,7 +162,7 @@ public class DotNetSolutionLexer : ILuthLexer
                 _stringWalker.ReadRange(LexSolutionFacts.Project.PROJECT_DEFINITION_END_TOKEN.Length);
 
                 textSpan = new TextEditorTextSpan(startPosition, _stringWalker, 0);
-                _syntaxTokens.Add(new CloseAssociatedGroupToken(textSpan));
+                _syntaxTokenList.Add(new CloseAssociatedGroupToken(textSpan));
                 break;
             }
 
@@ -197,7 +187,7 @@ public class DotNetSolutionLexer : ILuthLexer
         var guidTextSpan = new TextEditorTextSpan(startPosition, _stringWalker, 0);
 
         // guidTextSpan.GetText() == "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC"
-        _syntaxTokens.Add(new AssociatedValueToken(guidTextSpan));
+        _syntaxTokenList.Add(new AssociatedValueToken(guidTextSpan));
 
         _ = _stringWalker.ReadCharacter();
         _ = _stringWalker.ReadCharacter();
@@ -222,7 +212,7 @@ public class DotNetSolutionLexer : ILuthLexer
         var textSpan = new TextEditorTextSpan(startPosition, _stringWalker, 0);
 
         // textSpan.GetText() == "ConsoleApp2"
-        _syntaxTokens.Add(new AssociatedValueToken(textSpan));
+        _syntaxTokenList.Add(new AssociatedValueToken(textSpan));
 
         _ = _stringWalker.ReadCharacter();
 
@@ -236,7 +226,7 @@ public class DotNetSolutionLexer : ILuthLexer
         _ = _stringWalker.ReadRange(LexSolutionFacts.Global.START_TOKEN.Length);
 
         var textSpan = new TextEditorTextSpan(startPosition, _stringWalker, 0);
-        _syntaxTokens.Add(new OpenAssociatedGroupToken(textSpan));
+        _syntaxTokenList.Add(new OpenAssociatedGroupToken(textSpan));
 
         bool BreakPredicate() => _stringWalker.PeekForSubstring(LexSolutionFacts.Global.END_TOKEN);
 
@@ -248,7 +238,7 @@ public class DotNetSolutionLexer : ILuthLexer
                 _stringWalker.ReadRange(LexSolutionFacts.Global.END_TOKEN.Length);
 
                 textSpan = new TextEditorTextSpan(startPosition, _stringWalker, 0);
-                _syntaxTokens.Add(new CloseAssociatedGroupToken(textSpan));
+                _syntaxTokenList.Add(new CloseAssociatedGroupToken(textSpan));
                 break;
             }
             else if (_stringWalker.PeekForSubstring(LexSolutionFacts.GlobalSection.START_TOKEN))
@@ -266,7 +256,7 @@ public class DotNetSolutionLexer : ILuthLexer
         _ = _stringWalker.ReadRange(LexSolutionFacts.GlobalSection.START_TOKEN.Length);
 
         var textSpan = new TextEditorTextSpan(startPosition, _stringWalker, 0);
-        _syntaxTokens.Add(new OpenAssociatedGroupToken(textSpan));
+        _syntaxTokenList.Add(new OpenAssociatedGroupToken(textSpan));
 
         bool BreakPredicate() => _stringWalker.PeekForSubstring(LexSolutionFacts.GlobalSection.END_TOKEN);
 
@@ -278,7 +268,7 @@ public class DotNetSolutionLexer : ILuthLexer
                 _stringWalker.ReadRange(LexSolutionFacts.GlobalSection.END_TOKEN.Length);
 
                 textSpan = new TextEditorTextSpan(startPosition, _stringWalker, 0);
-                _syntaxTokens.Add(new CloseAssociatedGroupToken(textSpan));
+                _syntaxTokenList.Add(new CloseAssociatedGroupToken(textSpan));
                 break;
             }
             else if (outerLoopBreakPredicate.Invoke())
@@ -292,7 +282,7 @@ public class DotNetSolutionLexer : ILuthLexer
                 var globalSectionParameter = _stringWalker.ReadUntil(')');
 
                 textSpan = new TextEditorTextSpan(globalSectionParameterStartPosition, _stringWalker, 0);
-                _syntaxTokens.Add(new AssociatedValueToken(textSpan));
+                _syntaxTokenList.Add(new AssociatedValueToken(textSpan));
 
                 // START_TOKEN_ORDER: 'preSolution' OR 'postSolution'
                 {
@@ -305,7 +295,7 @@ public class DotNetSolutionLexer : ILuthLexer
                     _ = _stringWalker.ReadWhitespace();
 
                     var startOrderTuple = _stringWalker.ReadWordTuple();
-                    _syntaxTokens.Add(new AssociatedValueToken(startOrderTuple.textSpan));
+                    _syntaxTokenList.Add(new AssociatedValueToken(startOrderTuple.textSpan));
                 }
 
                 LexPropertyNameAndValuePairs(() => BreakPredicate() || outerLoopBreakPredicate.Invoke());
@@ -340,7 +330,7 @@ public class DotNetSolutionLexer : ILuthLexer
                 EndingIndexExclusive = propertyNameTextSpan.EndingIndexExclusive - nameTrailingWhitespaceCount
             };
 
-            _syntaxTokens.Add(new AssociatedNameToken(propertyNameTextSpan));
+            _syntaxTokenList.Add(new AssociatedNameToken(propertyNameTextSpan));
 
             if (_stringWalker.IsEof)
                 return;
@@ -362,7 +352,7 @@ public class DotNetSolutionLexer : ILuthLexer
                 EndingIndexExclusive = propertyValueTextSpan.EndingIndexExclusive - valueTrailingWhitespaceCount
             };
 
-            _syntaxTokens.Add(new AssociatedValueToken(propertyValueTextSpan));
+            _syntaxTokenList.Add(new AssociatedValueToken(propertyValueTextSpan));
         }
     }
 }

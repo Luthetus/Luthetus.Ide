@@ -55,6 +55,14 @@ public sealed class RazorCompilerService : LuthCompilerService
         return ImmutableArray<AutocompleteEntry>.Empty;
     }
 
+    /// <summary>
+    /// TODO: Revisit this method for RazorCompilerService...
+    /// ...the issue of 'razorResource.RazorSyntaxTree = lexer.RazorSyntaxTree;'
+    /// and 'razorResource.HtmlSymbols.Clear();'
+    /// These two pieces of custom logic, require the entirety of QueueParseRequest to be
+    /// duplicated here.
+    /// </summary>
+    /// <param name="resourceUri"></param>
     protected override void QueueParseRequest(ResourceUri resourceUri)
     {
         _textEditorService.Post(
@@ -92,7 +100,6 @@ public sealed class RazorCompilerService : LuthCompilerService
                         return;
 
                     var razorResource = (RazorResource)_resourceMap[resourceUri];
-
                     razorResource.HtmlSymbols.Clear();
                 }
 
@@ -105,7 +112,7 @@ public sealed class RazorCompilerService : LuthCompilerService
 
                     var razorResource = (RazorResource)_resourceMap[resourceUri];
 
-                    razorResource.TokenTextSpanList = lexer.TextEditorTextSpans;
+                    razorResource.SyntaxTokenList = lexer.SyntaxTokenList;
                     razorResource.RazorSyntaxTree = lexer.RazorSyntaxTree;
                 }
 

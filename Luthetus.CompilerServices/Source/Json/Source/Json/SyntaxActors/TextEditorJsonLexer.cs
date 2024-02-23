@@ -1,59 +1,52 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.CompilerServices.Lang.Json.Json.SyntaxActors;
 
-public class TextEditorJsonLexer
+public class TextEditorJsonLexer : LuthLexer
 {
-    public TextEditorJsonLexer(ResourceUri resourceUri)
+    public TextEditorJsonLexer(ResourceUri resourceUri, string sourceText)
+        : base(
+            resourceUri,
+            sourceText,
+            new LuthLexerKeywords(ImmutableArray<string>.Empty, ImmutableArray<string>.Empty, ImmutableArray<string>.Empty))
     {
-        ResourceUri = resourceUri;
     }
 
     public Key<RenderState> ModelRenderStateKey { get; private set; } = Key<RenderState>.Empty;
 
-    public ResourceUri ResourceUri { get; }
-
-    public Task<ImmutableArray<TextEditorTextSpan>> Lex(
-        string sourceText,
-        Key<RenderState> modelRenderStateKey)
+    public override void Lex()
     {
-        var jsonSyntaxUnit = JsonSyntaxTree.ParseText(ResourceUri, sourceText);
-
+        var jsonSyntaxUnit = JsonSyntaxTree.ParseText(
+            ResourceUri,
+            SourceText);
+        
         var syntaxNodeRoot = jsonSyntaxUnit.JsonDocumentSyntax;
 
-        var jsonSyntaxWalker = new JsonSyntaxWalker();
+        var syntaxWalker = new JsonSyntaxWalker();
+        syntaxWalker.Visit(syntaxNodeRoot);
 
-        jsonSyntaxWalker.Visit(syntaxNodeRoot);
+        _syntaxTokenList.AddRange(
+            syntaxWalker.PropertyKeySyntaxes.Select(x => new BadToken(x.TextEditorTextSpan)));
 
-        List<TextEditorTextSpan> textEditorTextSpans = new();
+        _syntaxTokenList.AddRange(
+            syntaxWalker.BooleanSyntaxes.Select(x => new BadToken(x.TextEditorTextSpan)));
 
-        textEditorTextSpans.AddRange(
-            jsonSyntaxWalker.JsonPropertyKeySyntaxes.Select(propertyKey =>
-                propertyKey.TextEditorTextSpan));
+        _syntaxTokenList.AddRange(
+            syntaxWalker.IntegerSyntaxes.Select(x => new BadToken(x.TextEditorTextSpan)));
 
-        textEditorTextSpans.AddRange(
-            jsonSyntaxWalker.JsonBooleanSyntaxes.Select(boolean =>
-                boolean.TextEditorTextSpan));
+        _syntaxTokenList.AddRange(
+            syntaxWalker.NullSyntaxes.Select(x => new BadToken(x.TextEditorTextSpan)));
 
-        textEditorTextSpans.AddRange(
-            jsonSyntaxWalker.JsonIntegerSyntaxes.Select(integer =>
-                integer.TextEditorTextSpan));
+        _syntaxTokenList.AddRange(
+            syntaxWalker.NumberSyntaxes.Select(x => new BadToken(x.TextEditorTextSpan)));
 
-        textEditorTextSpans.AddRange(
-            jsonSyntaxWalker.JsonNullSyntaxes.Select(n =>
-                n.TextEditorTextSpan));
-
-        textEditorTextSpans.AddRange(
-            jsonSyntaxWalker.JsonNumberSyntaxes.Select(number =>
-                number.TextEditorTextSpan));
-
-        textEditorTextSpans.AddRange(
-            jsonSyntaxWalker.JsonStringSyntaxes.Select(s =>
-                s.TextEditorTextSpan));
-
-        return Task.FromResult(textEditorTextSpans.ToImmutableArray());
+        _syntaxTokenList.AddRange(
+            syntaxWalker.StringSyntaxes.Select(x => new BadToken(x.TextEditorTextSpan)));
     }
 }
