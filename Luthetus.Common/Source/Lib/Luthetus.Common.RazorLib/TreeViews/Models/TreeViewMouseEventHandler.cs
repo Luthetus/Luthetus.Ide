@@ -45,38 +45,49 @@ public class TreeViewMouseEventHandler
     /// <summary>Used for handing "onmousedown" events within the user interface</summary>
     public virtual void OnMouseDown(TreeViewCommandArgs commandArgs)
     {
-        if (commandArgs.TargetNode is null)
+        if (commandArgs.TargetNode is null || commandArgs.MouseEventArgs is null)
             return;
 
-        TreeViewService.SetActiveNode(
-            commandArgs.TreeViewContainer.Key,
-            commandArgs.TargetNode,
-			commandArgs.MouseEventArgs.CtrlKey || commandArgs.MouseEventArgs.ShiftKey,
-			commandArgs.MouseEventArgs.ShiftKey);
-
-        // Cases where one should not clear the selected nodes
+        if ((commandArgs.MouseEventArgs.Buttons & 1) == 1) // Left Click
         {
-            // { "Ctrl" + "LeftMouseButton" } => MultiSelection;
-            if (commandArgs.MouseEventArgs is not null &&
-                commandArgs.MouseEventArgs.CtrlKey &&
-                commandArgs.TargetNode is not null)
-            {
-                return;
-            }
+            // This boolean asks: Should I ADD this TargetNode to the list of selected nodes,
+            //                    OR
+            //                    Should I CLEAR the list of selected nodes and make this TargetNode the only entry.
+            var addSelectedNodes = commandArgs.MouseEventArgs.CtrlKey || commandArgs.MouseEventArgs.ShiftKey;
 
-            // { "LeftMouseButton" } => ContextMenu; &&
-            // TargetNode is selected
-            if (commandArgs.MouseEventArgs is not null &&
-                (commandArgs.MouseEventArgs.Buttons & 1) != 1 &&
-                commandArgs.TargetNode is not null &&
-                commandArgs.TreeViewContainer.SelectedNodeList.Any(x => x.Key == commandArgs.TargetNode.Key))
+            // This boolean asks: Should I ALSO SELECT the nodes between the currentNode and the targetNode.
+            var selectNodesBetweenCurrentAndNextActiveNode = commandArgs.MouseEventArgs.ShiftKey;
+
+            TreeViewService.SetActiveNode(
+                commandArgs.TreeViewContainer.Key,
+                commandArgs.TargetNode,
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
+        }
+        else // Presume Right Click or Context Menu
+        {
+            if (commandArgs.MouseEventArgs.CtrlKey)
             {
-                // Not pressing the left mouse button
-                // so assume ContextMenu is desired result.
-                return;
+                // Open context menu, but do not move the active node, regardless who the TargetNode is
+            }
+            else
+            {
+                var targetNodeAlreadySelected = commandArgs.TreeViewContainer.SelectedNodeList.Any(x => x.Key == commandArgs.TargetNode.Key);
+                
+                if (targetNodeAlreadySelected)
+                {
+                    // Open context menu, but do not move the active node, regardless who the TargetNode is
+                }
+                else
+                {
+                    // Move the active node, and open context menu
+                    TreeViewService.SetActiveNode(
+                        commandArgs.TreeViewContainer.Key,
+                        commandArgs.TargetNode,
+                        false,
+                        false);
+                }
             }
         }
-
-        // TreeViewService.ClearSelectedNodes(commandArgs.TreeViewContainer.Key);
     }
 }
