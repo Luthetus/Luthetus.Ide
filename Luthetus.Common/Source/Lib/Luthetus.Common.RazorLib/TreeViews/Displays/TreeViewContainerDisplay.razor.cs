@@ -105,16 +105,21 @@ public partial class TreeViewContainerDisplay : FluxorComponent
 
     private async Task HandleTreeViewOnContextMenu(
         MouseEventArgs? mouseEventArgs,
-        TreeViewContainer? treeViewContainer,
+        Key<TreeViewContainer> treeViewContainerKey,
         TreeViewNoType? treeViewMouseWasOver)
     {
-        if (treeViewContainer is null || mouseEventArgs is null)
+        if (treeViewContainerKey == Key<TreeViewContainer>.Empty || mouseEventArgs is null)
+            return;
+
+        var treeViewContainer = TreeViewStateSelection.Value;
+        // Validate that the treeViewContainer did not change out from under us
+        if (treeViewContainer is null || treeViewContainer.Key != treeViewContainerKey)
             return;
 
         ContextMenuFixedPosition contextMenuFixedPosition;
         TreeViewNoType contextMenuTargetTreeViewNoType;
 
-        if (mouseEventArgs.Button == -1)
+        if (mouseEventArgs.Button == -1) // -1 here means ContextMenu event was from keyboard
         {
             if (treeViewContainer.ActiveNode is null)
                 return;

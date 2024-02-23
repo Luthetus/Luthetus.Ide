@@ -39,12 +39,12 @@ public partial class FolderExplorerContextMenu : ComponentBase
 
     private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandArgs)
     {
-        if (treeViewCommandArgs.TargetNode is null)
+        if (treeViewCommandArgs.NodeThatReceivedMouseEvent is null)
             return MenuRecord.Empty;
 
         var menuRecordsList = new List<MenuOptionRecord>();
 
-        var treeViewModel = treeViewCommandArgs.TargetNode;
+        var treeViewModel = treeViewCommandArgs.NodeThatReceivedMouseEvent;
         var parentTreeViewModel = treeViewModel.Parent;
 
         var parentTreeViewAbsolutePath = parentTreeViewModel as TreeViewAbsolutePath;

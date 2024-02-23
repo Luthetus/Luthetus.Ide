@@ -45,7 +45,7 @@ public class TreeViewMouseEventHandler
     /// <summary>Used for handing "onmousedown" events within the user interface</summary>
     public virtual void OnMouseDown(TreeViewCommandArgs commandArgs)
     {
-        if (commandArgs.TargetNode is null || commandArgs.MouseEventArgs is null)
+        if (commandArgs.NodeThatReceivedMouseEvent is null || commandArgs.MouseEventArgs is null)
             return;
 
         if ((commandArgs.MouseEventArgs.Buttons & 1) == 1) // Left Click
@@ -60,7 +60,7 @@ public class TreeViewMouseEventHandler
 
             TreeViewService.SetActiveNode(
                 commandArgs.TreeViewContainer.Key,
-                commandArgs.TargetNode,
+                commandArgs.NodeThatReceivedMouseEvent,
                 addSelectedNodes,
                 selectNodesBetweenCurrentAndNextActiveNode);
         }
@@ -72,7 +72,7 @@ public class TreeViewMouseEventHandler
             }
             else
             {
-                var targetNodeAlreadySelected = commandArgs.TreeViewContainer.SelectedNodeList.Any(x => x.Key == commandArgs.TargetNode.Key);
+                var targetNodeAlreadySelected = commandArgs.TreeViewContainer.SelectedNodeList.Any(x => x.Key == commandArgs.NodeThatReceivedMouseEvent.Key);
                 
                 if (targetNodeAlreadySelected)
                 {
@@ -83,7 +83,7 @@ public class TreeViewMouseEventHandler
                     // Move the active node, and open context menu
                     TreeViewService.SetActiveNode(
                         commandArgs.TreeViewContainer.Key,
-                        commandArgs.TargetNode,
+                        commandArgs.NodeThatReceivedMouseEvent,
                         false,
                         false);
                 }

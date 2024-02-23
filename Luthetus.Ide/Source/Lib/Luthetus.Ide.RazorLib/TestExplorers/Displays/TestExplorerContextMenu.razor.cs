@@ -39,12 +39,12 @@ public partial class TestExplorerContextMenu : ComponentBase
 			return GetMultiSelectionMenuRecord(commandArgs);
 		}
 
-        if (commandArgs.TargetNode is null)
+        if (commandArgs.NodeThatReceivedMouseEvent is null)
             return MenuRecord.Empty;
 
         var menuRecordsList = new List<MenuOptionRecord>();
 
-		if (commandArgs.TargetNode is TreeViewStringFragment treeViewStringFragment)
+		if (commandArgs.NodeThatReceivedMouseEvent is TreeViewStringFragment treeViewStringFragment)
 		{
 			var target = treeViewStringFragment;
 			var fullyQualifiedNameBuilder = new StringBuilder(target.Item.Value);

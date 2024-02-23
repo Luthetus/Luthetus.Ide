@@ -4,30 +4,30 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @{
-    var treeViewState = TreeViewStateSelection.Value;
+    var treeViewContainer = TreeViewStateSelection.Value;
 
-    <div id="@TreeViewService.GetTreeContainerElementId(treeViewState?.Key ?? Key<TreeViewContainer>.Empty)"
-         class="luth_tree-view-state luth_unselectable @GetHasActiveNodeCssClass(treeViewState) @CssClassString"
+    <div id="@TreeViewService.GetTreeContainerElementId(treeViewContainer?.Key ?? Key<TreeViewContainer>.Empty)"
+         class="luth_tree-view-state luth_unselectable @GetHasActiveNodeCssClass(treeViewContainer) @CssClassString"
          style="@CssStyleString"
          tabindex="0"
          @ref="_treeViewStateDisplayElementReference"
-         @onkeydownwithpreventscroll="(e) => HandleTreeViewOnKeyDownWithPreventScroll(e, treeViewState)"
+         @onkeydownwithpreventscroll="(e) => HandleTreeViewOnKeyDownWithPreventScroll(e, treeViewContainer)"
          @oncontextmenu:preventDefault="true"
          @oncontextmenu:stopPropagation="true"
-         @oncontextmenu="(e) => HandleTreeViewOnContextMenu(e, treeViewState, null)">
+         @oncontextmenu="(e) => HandleTreeViewOnContextMenu(e, treeViewContainer?.Key ?? Key<TreeViewContainer>.Empty, null)">
 
-        @if (treeViewState is null)
+        @if (treeViewContainer is null)
         {
-            <div>@nameof(treeViewState) was null</div>
+            <div>@nameof(treeViewContainer) was null</div>
         }
         else
         {
-            <CascadingValue Value="treeViewState">
+            <CascadingValue Value="treeViewContainer">
                 <CascadingValue Name="TreeViewMouseEventHandler" Value="TreeViewMouseEventHandler">
                     <CascadingValue Name="TreeViewKeyboardEventHandler" Value="TreeViewKeyboardEventHandler">
                         <CascadingValue Name="HandleTreeViewOnContextMenu" Value="HandleTreeViewOnContextMenu">
-                            <TreeViewNodeDisplay TreeViewNoType="treeViewState.RootNode"
-                                                 Depth="GetRootDepth(treeViewState.RootNode)"/>
+                            <TreeViewNodeDisplay TreeViewNoType="treeViewContainer.RootNode"
+                                                 Depth="GetRootDepth(treeViewContainer.RootNode)"/>
                         </CascadingValue>
                     </CascadingValue>
                 </CascadingValue>

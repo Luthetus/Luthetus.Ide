@@ -39,12 +39,12 @@ public partial class InputFileContextMenu : ComponentBase
 
     private MenuRecord GetMenuRecord(TreeViewCommandArgs commandArgs)
     {
-        if (commandArgs.TargetNode is null)
+        if (commandArgs.NodeThatReceivedMouseEvent is null)
             return MenuRecord.Empty;
 
         var menuRecordsList = new List<MenuOptionRecord>();
 
-        var treeViewModel = commandArgs.TargetNode;
+        var treeViewModel = commandArgs.NodeThatReceivedMouseEvent;
         var parentTreeViewModel = treeViewModel.Parent;
 
         var parentTreeViewAbsolutePath = parentTreeViewModel as TreeViewAbsolutePath;

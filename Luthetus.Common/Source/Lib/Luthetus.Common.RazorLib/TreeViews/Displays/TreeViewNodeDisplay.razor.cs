@@ -17,7 +17,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
     [CascadingParameter]
     public TreeViewContainer TreeViewContainer { get; set; } = null!;
     [CascadingParameter(Name = "HandleTreeViewOnContextMenu")]
-    public Func<MouseEventArgs, TreeViewContainer?, TreeViewNoType?, Task> HandleTreeViewOnContextMenu { get; set; } = null!;
+    public Func<MouseEventArgs?, Key<TreeViewContainer>, TreeViewNoType?, Task> HandleTreeViewOnContextMenu { get; set; } = null!;
     [CascadingParameter(Name = "TreeViewMouseEventHandler")]
     public TreeViewMouseEventHandler TreeViewMouseEventHandler { get; set; } = null!;
     [CascadingParameter(Name = "TreeViewKeyboardEventHandler")]
@@ -115,7 +115,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
 
     private void ManuallyPropagateOnContextMenu(
         MouseEventArgs mouseEventArgs,
-        TreeViewContainer? treeViewState,
+        TreeViewContainer treeViewContainer,
         TreeViewNoType treeViewNoType)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
@@ -133,7 +133,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
         	"TreeView.ManuallyPropagateOnContextMenu",
 			async () => await HandleTreeViewOnContextMenu.Invoke(
 	                mouseEventArgs,
-	                treeViewState,
+	                treeViewContainer.Key,
 	                treeViewNoType)
                 .ConfigureAwait(false));
     }

@@ -23,7 +23,7 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
     {
         base.OnDoubleClickAsync(commandArgs);
 
-        if (commandArgs.TargetNode is not TreeViewAbsolutePath treeViewAbsolutePath)
+        if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewAbsolutePath treeViewAbsolutePath)
             return Task.CompletedTask;
 
         _editorSync.OpenInEditor(treeViewAbsolutePath.Item, true);
