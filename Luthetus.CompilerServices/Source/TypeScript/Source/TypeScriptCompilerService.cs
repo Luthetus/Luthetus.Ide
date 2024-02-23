@@ -26,10 +26,9 @@ public sealed class TypeScriptCompilerService : LuthCompilerService
             _resourceMap.Add(
                 resourceUri,
                 new TypeScriptResource(resourceUri, this));
-
-            QueueParseRequest(resourceUri);
         }
 
+        QueueParseRequest(resourceUri);
         OnResourceRegistered();
     }
 }

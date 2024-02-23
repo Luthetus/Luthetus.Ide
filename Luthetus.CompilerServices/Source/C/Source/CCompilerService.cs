@@ -24,10 +24,9 @@ public sealed class CCompilerService : LuthCompilerService
             _resourceMap.Add(
                 resourceUri,
                 new CResource(resourceUri, this));
-
-            QueueParseRequest(resourceUri);
         }
 
+        QueueParseRequest(resourceUri);
         OnResourceRegistered();
     }
 }

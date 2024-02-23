@@ -26,10 +26,9 @@ public sealed class XmlCompilerService : LuthCompilerService
             _resourceMap.Add(
                 resourceUri,
                 new LuthCompilerServiceResource(resourceUri, this));
-
-            QueueParseRequest(resourceUri);
         }
 
+        QueueParseRequest(resourceUri);
         OnResourceRegistered();
     }
 }

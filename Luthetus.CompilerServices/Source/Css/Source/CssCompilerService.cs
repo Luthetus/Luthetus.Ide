@@ -25,10 +25,9 @@ public sealed class CssCompilerService : LuthCompilerService
             _resourceMap.Add(
                 resourceUri,
                 new CssResource(resourceUri, this));
-
-            QueueParseRequest(resourceUri);
         }
 
+        QueueParseRequest(resourceUri);
         OnResourceRegistered();
     }
 }

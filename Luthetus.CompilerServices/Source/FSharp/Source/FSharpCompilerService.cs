@@ -26,10 +26,9 @@ public sealed class FSharpCompilerService : LuthCompilerService
             _resourceMap.Add(
                 resourceUri,
                 new FSharpResource(resourceUri, this));
-
-            QueueParseRequest(resourceUri);
         }
 
+        QueueParseRequest(resourceUri);
         OnResourceRegistered();
     }
 }

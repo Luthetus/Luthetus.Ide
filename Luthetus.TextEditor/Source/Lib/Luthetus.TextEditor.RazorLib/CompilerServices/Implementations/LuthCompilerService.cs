@@ -60,7 +60,7 @@ public class LuthCompilerService : ILuthCompilerService
 
             _resourceMap.Add(
                 resourceUri,
-                new LuthCompilerServiceResource(resourceUri, null));
+                new LuthCompilerServiceResource(resourceUri, this));
         }
 
         QueueParseRequest(resourceUri);

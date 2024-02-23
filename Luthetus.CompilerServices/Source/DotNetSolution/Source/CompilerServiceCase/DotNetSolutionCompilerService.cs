@@ -25,11 +25,10 @@ public sealed class DotNetSolutionCompilerService : LuthCompilerService
 
             _resourceMap.Add(
                 resourceUri,
-                new DotNetSolutionResource(resourceUri, this));
-
-            QueueParseRequest(resourceUri);
+                new DotNetSolutionResource(resourceUri, this));    
         }
 
+        QueueParseRequest(resourceUri);
         OnResourceRegistered();
     }
 }

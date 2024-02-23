@@ -25,10 +25,9 @@ public sealed class JsonCompilerService : LuthCompilerService
             _resourceMap.Add(
                 resourceUri,
                 new JsonResource(resourceUri, this));
-
-            QueueParseRequest(resourceUri);
         }
 
+        QueueParseRequest(resourceUri);
         OnResourceRegistered();
     }
 }

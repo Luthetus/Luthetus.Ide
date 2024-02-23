@@ -25,10 +25,9 @@ public sealed class JavaScriptCompilerService : LuthCompilerService
             _resourceMap.Add(
                 resourceUri,
                 new JavaScriptResource(resourceUri, this));
-
-            QueueParseRequest(resourceUri);
         }
 
+        QueueParseRequest(resourceUri);
         OnResourceRegistered();
     }
 }

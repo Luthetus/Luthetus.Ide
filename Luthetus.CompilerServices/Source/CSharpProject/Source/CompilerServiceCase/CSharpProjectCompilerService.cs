@@ -28,10 +28,9 @@ public sealed class CSharpProjectCompilerService : LuthCompilerService
             _resourceMap.Add(
                 resourceUri,
                 new CSharpProjectResource(resourceUri, this));
-
-            QueueParseRequest(resourceUri);
         }
 
+        QueueParseRequest(resourceUri);
         OnResourceRegistered();
     }
 }

@@ -43,10 +43,9 @@ public sealed class RazorCompilerService : LuthCompilerService
             _resourceMap.Add(
                 resourceUri,
                 new RazorResource(resourceUri, this, _textEditorService));
-
-            QueueParseRequest(resourceUri);
         }
 
+        QueueParseRequest(resourceUri);
         OnResourceRegistered();
     }
 
