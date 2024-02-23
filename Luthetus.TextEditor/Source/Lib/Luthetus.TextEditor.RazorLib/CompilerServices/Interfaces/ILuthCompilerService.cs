@@ -32,11 +32,11 @@ public interface ILuthCompilerService
     /// Provides syntax highlighting from the lexing result.
     /// This method is invoked, and applied, before <see cref="GetSymbolsFor"/>
     /// </summary>
-    public ImmutableArray<TextEditorTextSpan> GetSyntacticTextSpansFor(ResourceUri resourceUri);
+    public ImmutableArray<TextEditorTextSpan> GetTokenTextSpansFor(ResourceUri resourceUri);
 
     /// <summary>
     /// Provides syntax highlighting that cannot be determined by lexing alone.
-    /// This method is invoked, and applied, after <see cref="GetSyntacticTextSpansFor"/>
+    /// This method is invoked, and applied, after <see cref="GetTokenTextSpansFor"/>
     /// </summary>
     public ImmutableArray<ITextEditorSymbol> GetSymbolsFor(ResourceUri resourceUri);
 

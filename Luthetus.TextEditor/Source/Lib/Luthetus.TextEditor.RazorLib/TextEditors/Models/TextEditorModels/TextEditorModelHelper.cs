@@ -145,7 +145,7 @@ public static class TextEditorModelHelper
 
 	public static Task ApplySyntaxHighlightingAsync(this ITextEditorModel model)
 	{
-		var syntacticTextSpansList = model.CompilerService.GetSyntacticTextSpansFor(model.ResourceUri);
+		var syntacticTextSpansList = model.CompilerService.GetTokenTextSpansFor(model.ResourceUri);
 		var symbolsList = model.CompilerService.GetSymbolsFor(model.ResourceUri);
 
 		var symbolTextSpansList = symbolsList.Select(s => s.TextSpan);

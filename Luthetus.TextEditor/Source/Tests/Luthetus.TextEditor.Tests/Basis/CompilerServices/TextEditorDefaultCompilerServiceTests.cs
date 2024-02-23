@@ -22,7 +22,7 @@ public class TextEditorDefaultCompilerServiceTests
 	/// <see cref="LuthCompilerService.CompilerServiceResources"/>
 	/// <see cref="LuthCompilerService.RegisterResource(ResourceUri)"/>
 	/// <see cref="LuthCompilerService.GetCompilerServiceResourceFor(ResourceUri)"/>
-	/// <see cref="LuthCompilerService.GetSyntacticTextSpansFor(ResourceUri)"/>
+	/// <see cref="LuthCompilerService.GetTokenTextSpansFor(ResourceUri)"/>
 	/// <see cref="LuthCompilerService.GetSymbolsFor(ResourceUri)"/>
 	/// <see cref="LuthCompilerService.GetDiagnosticsFor(ResourceUri)"/>
 	/// <see cref="LuthCompilerService.ResourceWasModified(ResourceUri, ImmutableArray{TextEditorTextSpan})"/>
@@ -72,7 +72,7 @@ public class TextEditorDefaultCompilerServiceTests
 
 		Assert.Equal(
 			ImmutableArray<TextEditorTextSpan>.Empty,
-            compilerServiceDefault.GetSyntacticTextSpansFor(resourceUri));
+            compilerServiceDefault.GetTokenTextSpansFor(resourceUri));
 		
 		Assert.Equal(
 			ImmutableArray<ITextEditorSymbol>.Empty,

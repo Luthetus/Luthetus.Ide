@@ -83,7 +83,7 @@ public class LuthCompilerService : ILuthCompilerService
         }
     }
 
-    public virtual ImmutableArray<TextEditorTextSpan> GetSyntacticTextSpansFor(ResourceUri resourceUri)
+    public virtual ImmutableArray<TextEditorTextSpan> GetTokenTextSpansFor(ResourceUri resourceUri)
     {
         lock (_resourceMapLock)
         {
