@@ -6,6 +6,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
 public class LuthCompilerServiceOptions
 {
+    public Func<ResourceUri, ILuthCompilerServiceResource>? RegisterResourceFunc { get; init; }
     /// <summary>
     /// Takes as arguments the resource uri and the source text.
     /// </summary>

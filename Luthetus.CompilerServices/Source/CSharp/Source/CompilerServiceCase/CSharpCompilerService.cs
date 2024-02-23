@@ -32,6 +32,7 @@ public sealed class CSharpCompilerService : LuthCompilerService
 
         _compilerServiceOptions = new()
         {
+            RegisterResourceFunc = resourceUri => new CSharpResource(resourceUri, this),
             GetLexerFunc = (resource, sourceText) => new CSharpLexer(resource.ResourceUri, sourceText),
             GetParserFunc = (resource, lexer) => new CSharpParser((CSharpLexer)lexer),
             GetBinderFunc = (resource, parser) => Binder
@@ -41,22 +42,6 @@ public sealed class CSharpCompilerService : LuthCompilerService
     }
 
     public event Action? CursorMovedInSyntaxTree;
-
-    public override void RegisterResource(ResourceUri resourceUri)
-    {
-        lock (_resourceMapLock)
-        {
-            if (_resourceMap.ContainsKey(resourceUri))
-                return;
-
-            _resourceMap.Add(
-                resourceUri,
-                new CSharpResource(resourceUri, this));
-        }
-
-        QueueParseRequest(resourceUri);
-        OnResourceRegistered();
-    }
 
     public override ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
     {

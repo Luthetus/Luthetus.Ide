@@ -1,5 +1,4 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.CompilerServices.Lang.C;
@@ -11,25 +10,10 @@ public sealed class CCompilerService : LuthCompilerService
     {
         _compilerServiceOptions = new()
         {
+            RegisterResourceFunc = resourceUri => new CResource(resourceUri, this),
             GetLexerFunc = (resource, sourceText) => new CLexer(resource.ResourceUri, sourceText),
             GetParserFunc = (resource, lexer) => new LuthParser(lexer),
             GetBinderFunc = (resource, parser) => Binder
         };
-    }
-
-    public override void RegisterResource(ResourceUri resourceUri)
-    {
-        lock (_resourceMapLock)
-        {
-            if (_resourceMap.ContainsKey(resourceUri))
-                return;
-
-            _resourceMap.Add(
-                resourceUri,
-                new CResource(resourceUri, this));
-        }
-
-        QueueParseRequest(resourceUri);
-        OnResourceRegistered();
     }
 }

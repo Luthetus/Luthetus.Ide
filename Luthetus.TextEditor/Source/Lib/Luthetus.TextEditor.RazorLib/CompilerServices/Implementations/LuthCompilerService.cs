@@ -49,9 +49,11 @@ public class LuthCompilerService : ILuthCompilerService
             if (_resourceMap.ContainsKey(resourceUri))
                 return;
 
-            _resourceMap.Add(
-                resourceUri,
-                new LuthCompilerServiceResource(resourceUri, this));
+            var resource = _compilerServiceOptions.RegisterResourceFunc is not null
+                ? _compilerServiceOptions.RegisterResourceFunc.Invoke(resourceUri)
+                : new LuthCompilerServiceResource(resourceUri, this);
+
+            _resourceMap.Add(resourceUri, resource);
         }
 
         QueueParseRequest(resourceUri);

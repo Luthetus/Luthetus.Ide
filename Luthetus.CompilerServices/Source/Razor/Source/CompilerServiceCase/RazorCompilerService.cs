@@ -1,7 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
@@ -22,6 +21,7 @@ public sealed class RazorCompilerService : LuthCompilerService
 
         _compilerServiceOptions = new()
         {
+            RegisterResourceFunc = resourceUri => new RazorResource(resourceUri, this, _textEditorService),
             GetLexerFunc = (resource, sourceText) => 
             {
                 ((RazorResource)resource).HtmlSymbols.Clear();
@@ -45,21 +45,5 @@ public sealed class RazorCompilerService : LuthCompilerService
             },
             OnAfterParseAction = null,
         };
-    }
-
-    public override void RegisterResource(ResourceUri resourceUri)
-    {
-        lock (_resourceMapLock)
-        {
-            if (_resourceMap.ContainsKey(resourceUri))
-                return;
-
-            _resourceMap.Add(
-                resourceUri,
-                new RazorResource(resourceUri, this, _textEditorService));
-        }
-
-        QueueParseRequest(resourceUri);
-        OnResourceRegistered();
     }
 }
