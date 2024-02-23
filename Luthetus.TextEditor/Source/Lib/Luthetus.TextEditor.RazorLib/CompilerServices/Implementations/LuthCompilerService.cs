@@ -171,18 +171,18 @@ public class LuthCompilerService : ILuthCompilerService
                 if (modelModifier is null)
                     return;
 
-                await _textEditorService.ModelApi.CalculatePresentationModelFactory(
+                await _textEditorService.ModelApi.StartPendingCalculatePresentationModelFactory(
                         modelModifier.ResourceUri,
-                        CompilerServiceDiagnosticPresentationFacts.PresentationKey)
+                        CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+                        CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel)
                     .Invoke(editContext)
                     .ConfigureAwait(false);
 
-                var pendingCalculation = modelModifier.PresentationModelsList.FirstOrDefault(x =>
-                    x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
-                    ?.PendingCalculation;
+                var presentationModel = modelModifier.PresentationModelsList.First(
+                    x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
-                if (pendingCalculation is null)
-                    pendingCalculation = new(modelModifier.GetAllText());
+                if (presentationModel.PendingCalculation is null)
+                    throw new ApplicationException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
 
                 if (_compilerServiceOptions.GetLexerFunc is null)
                     return;
@@ -194,7 +194,7 @@ public class LuthCompilerService : ILuthCompilerService
                         return;
 
                     var resource = _resourceMap[resourceUri];
-                    lexer = _compilerServiceOptions.GetLexerFunc.Invoke(resource, pendingCalculation.ContentAtRequest);
+                    lexer = _compilerServiceOptions.GetLexerFunc.Invoke(resource, presentationModel.PendingCalculation.ContentAtRequest);
                 }
 
                 lexer.Lex();
@@ -244,23 +244,16 @@ public class LuthCompilerService : ILuthCompilerService
                         }
                     }
 
-                    // TODO: Shouldn't one get a reference to the most recent TextEditorModel instance with the given key and invoke .ApplySyntaxHighlightingAsync() on that?
+                    var diagnosticTextSpans = GetDiagnosticsFor(modelModifier.ResourceUri)
+                        .Select(x => x.TextSpan)
+                        .ToImmutableArray();
+
+                    modelModifier.CompletePendingCalculatePresentationModel(
+                        CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+                        CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel,
+                        diagnosticTextSpans);
+
                     await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
-
-                    var presentationModel = modelModifier.PresentationModelsList.FirstOrDefault(x =>
-                        x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
-
-                    if (presentationModel?.PendingCalculation is not null)
-                    {
-                        presentationModel.PendingCalculation.TextSpanList =
-                            GetDiagnosticsFor(modelModifier.ResourceUri)
-                                .Select(x => x.TextSpan)
-                                .ToImmutableArray();
-
-                        (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
-                            (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
-                    }
-
                     OnResourceParsed();
                 }
             });

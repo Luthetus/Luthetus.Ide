@@ -159,18 +159,21 @@ public partial class LuthetusIdeInitializer : ComponentBase
         };
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, compilerServiceEditorPanelTab, false));
 
-        // gitChangesPanelTab
-        var gitChangesPanelTab = new PanelTab(
-            Key<PanelTab>.NewKey(),
-            rightPanel.ElementDimensions,
-            new(),
-            typeof(GitChangesDisplay),
-            typeof(IconFolder),
-            "Git")
-        {
-            ContextRecordKey = ContextFacts.GitContext.ContextKey
-        };
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, gitChangesPanelTab, false));
+        // TODO: The ITextEditorDiffApi.Calculate method is being commented out as of (2024-02-23). It needs to be re-written...
+        // ...so that it uses the text editor's edit context by using ITextEditorService.Post()
+        //
+        // // gitChangesPanelTab
+        // var gitChangesPanelTab = new PanelTab(
+        //     Key<PanelTab>.NewKey(),
+        //     rightPanel.ElementDimensions,
+        //     new(),
+        //     typeof(GitChangesDisplay),
+        //     typeof(IconFolder),
+        //     "Git")
+        // {
+        //     ContextRecordKey = ContextFacts.GitContext.ContextKey
+        // };
+        // Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, gitChangesPanelTab, false));
     }
 
     private void InitializeBottomPanelTabs()

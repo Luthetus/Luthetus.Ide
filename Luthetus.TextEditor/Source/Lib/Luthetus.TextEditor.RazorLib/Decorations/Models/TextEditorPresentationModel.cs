@@ -13,6 +13,6 @@ public record TextEditorPresentationModel(
     string CssClassString,
     IDecorationMapper DecorationMapper)
 {
-    public TextEditorPresentationModelCalculation? CompletedCalculation { get; set; }
-    public TextEditorPresentationModelCalculation? PendingCalculation { get; set; }
+    public TextEditorPresentationModelCalculation? CompletedCalculation { get; init; }
+    public TextEditorPresentationModelCalculation? PendingCalculation { get; init; }
 }

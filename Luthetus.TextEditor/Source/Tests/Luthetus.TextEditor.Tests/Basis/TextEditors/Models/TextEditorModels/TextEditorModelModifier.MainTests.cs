@@ -379,7 +379,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.PerformCalculatePresentationModelAction(Key{TextEditorPresentationModel})"/>
+    /// <see cref="TextEditorModelModifier.StartPendingCalculatePresentationModel(Key{TextEditorPresentationModel})"/>
     /// </summary>
     [Fact]
     public void PerformCalculatePresentationModelAction()
