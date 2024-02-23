@@ -78,14 +78,14 @@ public partial class FindOverlayDisplay : ComponentBase
                             .ConfigureAwait(false);
 
                         var presentationModel = modelModifier.PresentationModelsList.First(
-                            x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
+                            x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
                         if (presentationModel.PendingCalculation is null)
                             throw new ApplicationException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
 
                         modelModifier.CompletePendingCalculatePresentationModel(
-                            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
-                            CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel,
+                            FindOverlayPresentationFacts.PresentationKey,
+                            FindOverlayPresentationFacts.EmptyPresentationModel,
                             textSpanMatches);
 
 						_activeIndexMatchedTextSpan = null;
@@ -152,14 +152,14 @@ public partial class FindOverlayDisplay : ComponentBase
                             .ConfigureAwait(false);
 
                     var presentationModel = modelModifier.PresentationModelsList.First(
-                        x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
+                        x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
                     if (presentationModel.PendingCalculation is null)
                         throw new ApplicationException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
 
                     modelModifier.CompletePendingCalculatePresentationModel(
-                        CompilerServiceDiagnosticPresentationFacts.PresentationKey,
-                        CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel,
+                        FindOverlayPresentationFacts.PresentationKey,
+                        FindOverlayPresentationFacts.EmptyPresentationModel,
                         ImmutableArray<TextEditorTextSpan>.Empty);
                 });
         }
