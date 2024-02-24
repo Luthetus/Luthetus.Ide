@@ -1,5 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keymaps.Models;
-using Luthetus.Common.RazorLib.Partitions.Models;
+﻿using Luthetus.Common.RazorLib.Partitions.Models;
 
 namespace Luthetus.Common.Tests.Basis.Partitions.Models;
 
@@ -23,8 +22,43 @@ public class PartitionedImmutableListTests
     [Fact]
     public void IndexOperator()
     {
-        //public TItem this[int index] => throw new NotImplementedException();
-        throw new NotImplementedException();
+        var partitionSize = 5;
+        var partitionedImmutableList = new PartitionedImmutableList<char>(partitionSize);
+
+        // As of writing this, the 'AddRange' method is not implemented.
+        // Therefore, many invocations of 'Add' are performed.
+        partitionedImmutableList = partitionedImmutableList
+            .Add('a').Add('b').Add('c').Add('d').Add('e').Add('f').Add('g').Add('h').Add('i')
+            .Add('j').Add('k').Add('l').Add('m').Add('n').Add('o').Add('p').Add('q').Add('r')
+            .Add('s').Add('t').Add('u').Add('v').Add('w').Add('x').Add('y').Add('z');
+
+        int i = 0;
+        Assert.Equal('a', partitionedImmutableList[i++]);
+        Assert.Equal('b', partitionedImmutableList[i++]);
+        Assert.Equal('c', partitionedImmutableList[i++]);
+        Assert.Equal('d', partitionedImmutableList[i++]);
+        Assert.Equal('e', partitionedImmutableList[i++]);
+        Assert.Equal('f', partitionedImmutableList[i++]);
+        Assert.Equal('g', partitionedImmutableList[i++]);
+        Assert.Equal('h', partitionedImmutableList[i++]);
+        Assert.Equal('i', partitionedImmutableList[i++]);
+        Assert.Equal('j', partitionedImmutableList[i++]);
+        Assert.Equal('k', partitionedImmutableList[i++]);
+        Assert.Equal('l', partitionedImmutableList[i++]);
+        Assert.Equal('m', partitionedImmutableList[i++]);
+        Assert.Equal('n', partitionedImmutableList[i++]);
+        Assert.Equal('o', partitionedImmutableList[i++]);
+        Assert.Equal('p', partitionedImmutableList[i++]);
+        Assert.Equal('q', partitionedImmutableList[i++]);
+        Assert.Equal('r', partitionedImmutableList[i++]);
+        Assert.Equal('s', partitionedImmutableList[i++]);
+        Assert.Equal('t', partitionedImmutableList[i++]);
+        Assert.Equal('u', partitionedImmutableList[i++]);
+        Assert.Equal('v', partitionedImmutableList[i++]);
+        Assert.Equal('w', partitionedImmutableList[i++]);
+        Assert.Equal('x', partitionedImmutableList[i++]);
+        Assert.Equal('y', partitionedImmutableList[i++]);
+        Assert.Equal('z', partitionedImmutableList[i++]);
     }
 
     [Fact]

@@ -1,7 +1,5 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Xml.Linq;
 
 namespace Luthetus.Common.RazorLib.Partitions.Models;
 
@@ -33,7 +31,24 @@ public record PartitionedImmutableList<TItem> : IReadOnlyList<TItem> where TItem
     {
         get
         {
-            throw new NotImplementedException();
+            var rollingCount = 0;
+
+            for (int i = 0; i < PartitionMemoryMap.Count; i++)
+            {
+                var currentPartitionCount = PartitionMemoryMap[i];
+
+                if (rollingCount + currentPartitionCount > index)
+                {
+                    var partition = PartitionList[i];
+                    return partition[index - rollingCount];
+                }
+                else
+                {
+                    rollingCount += currentPartitionCount;
+                }
+            }
+
+            throw new IndexOutOfRangeException();
         }
     }
 
