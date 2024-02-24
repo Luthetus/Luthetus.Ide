@@ -1,7 +1,17 @@
-﻿namespace Luthetus.Common.Tests.Basis.Partitions.Models;
+﻿using Luthetus.Common.RazorLib.Partitions.Models;
+
+namespace Luthetus.Common.Tests.Basis.Partitions.Models;
 
 public class PartitionedImmutableListTests
 {
+    [Fact]
+    public void Constructor()
+    {
+        var partitionSize = 5_000;
+        var partitionedImmutableList = new PartitionedImmutableList<char>(partitionSize);
+        Assert.Equal(partitionSize, partitionedImmutableList.PartitionSize);
+    }
+
     [Fact]
     public void Count()
     {
@@ -24,16 +34,21 @@ public class PartitionedImmutableListTests
     }
 
     [Fact]
-    public void ExplicitInterfaceGetEnumerator()
-    {
-        //IEnumerator IEnumerable.GetEnumerator()
-        throw new NotImplementedException();
-    }
-
-    [Fact]
     public void Add()
     {
-        //public IImmutableList<TItem> Add(TItem value)
+        var partitionSize = 5;
+        var partitionedImmutableList = new PartitionedImmutableList<char>(partitionSize);
+        Assert.Equal(partitionSize, partitionedImmutableList.PartitionSize);
+
+        // Invoke 'Add(...)' one more times than what the partitionSize is.
+        // where each invocation adds a character.
+        // Therefore, the final invocation one can assert that a new partition was
+        // made to hold that final character.
+        for (int i = 0; i <= partitionSize; i++)
+        {
+            partitionedImmutableList.Add('a');
+        }
+
         throw new NotImplementedException();
     }
 
@@ -101,14 +116,14 @@ public class PartitionedImmutableListTests
     }
 
     [Fact]
-    public void RemoveRange()
+    public void RemoveRange_A()
     {
         //public IImmutableList<TItem> RemoveRange(IEnumerable<TItem> items, IEqualityComparer<TItem>? equalityComparer)
         throw new NotImplementedException();
     }
 
     [Fact]
-    public void RemoveRange()
+    public void RemoveRange_B()
     {
         //public IImmutableList<TItem> RemoveRange(int index, int count)
         throw new NotImplementedException();
@@ -125,6 +140,13 @@ public class PartitionedImmutableListTests
     public void SetItem()
     {
         //public IImmutableList<TItem> SetItem(int index, TItem value)
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void ExplicitInterfaceGetEnumerator()
+    {
+        //IEnumerator IEnumerable.GetEnumerator()
         throw new NotImplementedException();
     }
 }
