@@ -33,7 +33,7 @@ public partial class TextEditorModel
 
 		modifier.ModifyContent(content);
 		
-		ContentList = modifier.ContentList.ToImmutableList();
+		ContentList = modifier.ContentList.ToPartitionedImmutableList(PARTITION_SIZE);
 		RowEndingKindCountsList = modifier.RowEndingKindCountsList.ToImmutableList();
 		RowEndingPositionsList = modifier.RowEndingPositionsList.ToImmutableList();
 		TabKeyPositionsList = modifier.TabKeyPositionsList.ToImmutableList();
