@@ -30,8 +30,28 @@ public class PartitionedImmutableListTests
     [Fact]
     public void GetEnumerator()
     {
-        //public IEnumerator<TextEditorDiagnostic> GetEnumerator()
-        throw new NotImplementedException();
+        var partitionSize = 5;
+        var partitionedImmutableList = new PartitionedImmutableList<char>(partitionSize);
+
+        partitionedImmutableList = partitionedImmutableList.Add('a');
+        partitionedImmutableList = partitionedImmutableList.Add('b');
+        partitionedImmutableList = partitionedImmutableList.Add('c');
+
+        // Testing the enumerator here so this foreach use case feels more like a 'for' loop on purpose
+        int count = 0; 
+        foreach (var character in partitionedImmutableList)
+        {
+            if (count == 0)
+                Assert.Equal('a', character);
+            else if (count == 1)
+                Assert.Equal('b', character);
+            else if (count == 2)
+                Assert.Equal('c', character);
+            else
+                throw new ApplicationException("The test case is only 3 letters long as this moment. So this block should never run.");
+
+            count++;
+        }
     }
 
     [Fact]
@@ -65,10 +85,9 @@ public class PartitionedImmutableListTests
 
         // Assertions
         {
-            int count = 0;
-
             for (int i = 0; i < historyPartitionedImmutableList.Count; i++)
             {
+                int count = i;
                 var partitionedList = historyPartitionedImmutableList[i];
 
                 Assert.Equal(partitionSize, partitionedList.PartitionSize);
@@ -84,10 +103,14 @@ public class PartitionedImmutableListTests
                     var expectedPartitionCount = Math.Ceiling((double)count / partitionSize);
                     Assert.Equal(expectedPartitionCount, partitionedList.PartitionList.Count);
 
-                    var countLastPartition = count % ((expectedPartitionCount - 1) * partitionedList.PartitionList.Count);
-                    var lastPartition = partitionedList.PartitionList.Last();
-                    Assert.Equal(countLastPartition, lastPartition.Count);
-                    Assert.Equal(countLastPartition, partitionedList.PartitionMemoryMap[i]);
+                    var countLastPartition = count % partitionSize;
+
+                    if (countLastPartition != 0)
+                    {
+                        var lastPartition = partitionedList.PartitionList.Last();
+                        Assert.Equal(countLastPartition, lastPartition.Count);
+                        Assert.Equal(countLastPartition, partitionedList.PartitionMemoryMap[(int)expectedPartitionCount - 1]);
+                    }
                 }
             }
         }

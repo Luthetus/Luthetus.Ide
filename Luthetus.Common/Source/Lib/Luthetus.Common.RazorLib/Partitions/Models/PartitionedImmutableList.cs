@@ -1,9 +1,11 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Xml.Linq;
 
 namespace Luthetus.Common.RazorLib.Partitions.Models;
 
-public record PartitionedImmutableList<TItem> : IReadOnlyList<TItem>
+public record PartitionedImmutableList<TItem> : IReadOnlyList<TItem> where TItem : notnull
 {
     public PartitionedImmutableList(int partitionSize)
     {
@@ -100,7 +102,13 @@ public record PartitionedImmutableList<TItem> : IReadOnlyList<TItem>
 
     public IEnumerator<TItem> GetEnumerator()
     {
-        throw new NotImplementedException();
+        foreach (var partition in PartitionList)
+        {
+            foreach (var item in partition)
+            {
+                yield return item;
+            }
+        }
     }
 
     public int IndexOf(TItem item, int index, int count, IEqualityComparer<TItem>? equalityComparer)
@@ -160,6 +168,6 @@ public record PartitionedImmutableList<TItem> : IReadOnlyList<TItem>
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-        throw new NotImplementedException();
+        return GetEnumerator();
     }
 }
