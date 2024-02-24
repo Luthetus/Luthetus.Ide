@@ -15,16 +15,25 @@ public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromp
     public bool IncludeCancelOption { get; set; }
     [Parameter, EditorRequired]
     public string Message { get; set; } = null!;
+    /// <summary>
+    /// TODO: I am adding multi-select in treeview. For the delete ContextMenuOption,...
+    /// I'd like to list out each file that is to be deleted.
+    /// If I use the current way of <see cref="Message"/> then all the files
+    /// are written on one line of text. I want newlines between each file.
+    /// (2024-02-23)
+    /// </summary>
+    [Parameter, EditorRequired]
+    public List<string>? ListOfMessages { get; set; } = null;
     [Parameter, EditorRequired]
     public string? AcceptOptionTextOverride { get; set; }
     [Parameter, EditorRequired]
     public string? DeclineOptionTextOverride { get; set; }
     [Parameter, EditorRequired]
-    public Action OnAfterAcceptAction { get; set; } = null!;
+    public Func<Task> OnAfterAcceptFunc { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Action OnAfterDeclineAction { get; set; } = null!;
+    public Func<Task> OnAfterDeclineFunc { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Action OnAfterCancelAction { get; set; } = null!;
+    public Func<Task> OnAfterCancelFunc { get; set; } = null!;
 
     private ElementReference? _declineButtonElementReference;
 
@@ -60,5 +69,29 @@ public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromp
                 await MenuOptionCallbacks.HideWidgetAsync.Invoke().ConfigureAwait(false);
             }
         }
+    }
+
+    private async Task AcceptAsync()
+    {
+        if (MenuOptionCallbacks is not null)
+            await MenuOptionCallbacks.CompleteWidgetAsync.Invoke(() => { }).ConfigureAwait(false);
+
+        await OnAfterAcceptFunc.Invoke().ConfigureAwait(false);
+    }
+
+    private async Task DeclineAsync()
+    {
+        if (MenuOptionCallbacks is not null)
+            await MenuOptionCallbacks.CompleteWidgetAsync.Invoke(() => { }).ConfigureAwait(false);
+
+        await OnAfterDeclineFunc.Invoke().ConfigureAwait(false);
+    }
+
+    private async Task CancelAsync()
+    {
+        if (MenuOptionCallbacks is not null)
+            await MenuOptionCallbacks.CompleteWidgetAsync.Invoke(() => { }).ConfigureAwait(false);
+
+        await OnAfterCancelFunc.Invoke().ConfigureAwait(false);
     }
 }

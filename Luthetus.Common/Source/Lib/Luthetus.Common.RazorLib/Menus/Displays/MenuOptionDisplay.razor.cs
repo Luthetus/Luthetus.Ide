@@ -131,7 +131,7 @@ public partial class MenuOptionDisplay : ComponentBase
         _shouldDisplayWidget = false;
         await InvokeAsync(StateHasChanged).ConfigureAwait(false);
 
-        if (onAfterWidgetHidden is null)
+        if (onAfterWidgetHidden is null) // Only hide the widget
         {
             try
             {
@@ -146,7 +146,7 @@ public partial class MenuOptionDisplay : ComponentBase
                 //             on an ElementReference.
             }
         }
-        else
+        else // Hide the widget AND dispose the menu
         {
             onAfterWidgetHidden.Invoke();
             Dispatcher.Dispatch(new DropdownState.ClearActivesAction());

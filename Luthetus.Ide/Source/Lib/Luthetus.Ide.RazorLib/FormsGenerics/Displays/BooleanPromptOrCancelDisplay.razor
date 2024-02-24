@@ -5,22 +5,37 @@
         @Message
     </div>
 
+    @{ var localListOfMessages = ListOfMessages?.ToArray() ?? Array.Empty<string>(); }
+    @if (ListOfMessages is not null)
+    {
+        <div>
+            <div>Length: @localListOfMessages.Length</div>
+
+            <ul>
+                @foreach (var message in localListOfMessages)
+                {
+                    <li>@message</li>
+                }
+            </ul>
+        </div>
+    }
+
     <div style="display: flex; justify-content: space-between;">
         <button class="luth_button"
-                @onclick="async () => OnAfterAcceptAction()">
+                @onclick="AcceptAsync">
             @(AcceptOptionTextOverride ?? "Accept")
         </button>
 
         <button class="luth_button"
                 @ref="_declineButtonElementReference"
-                @onclick="async () => OnAfterDeclineAction()">
+                @onclick="DeclineAsync">
             @(DeclineOptionTextOverride ?? "Decline")
         </button>
         
         @if (IncludeCancelOption)
         {
             <button class="luth_button"
-                    @onclick="async () => OnAfterCancelAction()">
+                    @onclick="CancelAsync">
                 Cancel
             </button>
         }
