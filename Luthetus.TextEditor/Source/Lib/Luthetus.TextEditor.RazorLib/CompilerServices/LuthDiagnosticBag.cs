@@ -6,11 +6,11 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
 public class LuthDiagnosticBag : IEnumerable<TextEditorDiagnostic>
 {
-    private readonly List<TextEditorDiagnostic> _diagnosticsBag = new();
+    private readonly List<TextEditorDiagnostic> _diagnosticsList = new();
 
     public IEnumerator<TextEditorDiagnostic> GetEnumerator()
     {
-        return _diagnosticsBag.GetEnumerator();
+        return _diagnosticsList.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -296,7 +296,7 @@ public class LuthDiagnosticBag : IEnumerable<TextEditorDiagnostic>
             DecorationByte = (byte)compilerServiceDiagnosticDecorationKind
         };
 
-        _diagnosticsBag.Add(new TextEditorDiagnostic(
+        _diagnosticsList.Add(new TextEditorDiagnostic(
             diagnosticLevel,
             message,
             textSpan,
@@ -305,9 +305,9 @@ public class LuthDiagnosticBag : IEnumerable<TextEditorDiagnostic>
 
     public void ClearByResourceUri(ResourceUri resourceUri)
     {
-        var keep = _diagnosticsBag.Where(x => x.TextSpan.ResourceUri != resourceUri);
+        var keep = _diagnosticsList.Where(x => x.TextSpan.ResourceUri != resourceUri);
 
-        _diagnosticsBag.Clear();
-        _diagnosticsBag.AddRange(keep);
+        _diagnosticsList.Clear();
+        _diagnosticsList.AddRange(keep);
     }
 }
