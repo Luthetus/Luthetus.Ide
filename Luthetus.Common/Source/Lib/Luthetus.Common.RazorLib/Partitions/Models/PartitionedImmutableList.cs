@@ -5,10 +5,20 @@ namespace Luthetus.Common.RazorLib.Partitions.Models;
 
 public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnull
 {
+    /// <summary>
+    /// When a partition runs out space its content is divided amongst
+    /// some amount of partitions.
+    /// If expansion factor is 3, then when a partition expands,
+    /// it will insert 2 addition partitions after itself.
+    /// Then the original partition splits its content into thirds.
+    /// And distributes it across itself, and the other 2 newly inserted partitions.
+    /// </summary>
+    public const int EXPANSION_FACTOR = 3;
+
     public PartitionedImmutableList(int partitionSize)
     {
-        if (partitionSize < 2)
-            throw new ApplicationException("TODO: Should this 'throw new exception' remain here? It is presumed, that a partitionSize < 2 being allowed could result in many 'checks' being necessary throughout the code. I don't have proof of this, I just have a 'worried feeling'");
+        if (partitionSize < EXPANSION_FACTOR)
+            throw new ApplicationException($"Partition size must be equal to or greater than the {nameof(EXPANSION_FACTOR)}:{EXPANSION_FACTOR}.");
 
         PartitionSize = partitionSize;
     }
@@ -43,7 +53,7 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
     }
 
     public int PartitionSize { get; }
-    public ImmutableList<ImmutableList<TItem>> PartitionList { get; private init; } = ImmutableList<ImmutableList<TItem>>.Empty;
+    public ImmutableList<ImmutableList<TItem>> PartitionList { get; init; } = ImmutableList<ImmutableList<TItem>>.Empty;
 
     /// <summary>
     /// Track the 'Count' of each partition in this.
@@ -54,7 +64,7 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
     /// one would read the value at index 0 of this property.
     /// In otherwords, each partition index maps to its corresponding Count.
     /// </summary>
-    public ImmutableList<int> PartitionMemoryMap { get; private init; } = ImmutableList<int>.Empty;
+    public ImmutableList<int> PartitionMemoryMap { get; init; } = ImmutableList<int>.Empty;
 
     public int Count
     {
@@ -185,15 +195,14 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
         for (int i = 0; i < PartitionMemoryMap.Count; i++)
         {
             var currentPartitionCount = PartitionMemoryMap[i];
-            
-            if (currentPartitionCount == PartitionSize)
-            {
-                throw new NotImplementedException("Need more space");
-            }
 
             if (rollingCount + currentPartitionCount >= index)
             {
                 indexPartition = i;
+
+                if (currentPartitionCount == PartitionSize)
+                    ExpandPartition(indexPartition);
+
                 partition = PartitionList[i];
                 offset = index - rollingCount;
             }
@@ -313,4 +322,82 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
 
     void IList<TItem>.Insert(int index, TItem item) => Insert(index, item);
     void IList<TItem>.RemoveAt(int index) => RemoveAt(index);
+
+    private PartitionedImmutableList<TItem> ExpandPartition(int index)
+    {
+        var outPartitionedImmutableList = this;
+
+        if (index <= 0 || index >= outPartitionedImmutableList.PartitionList.Count)
+            throw new IndexOutOfRangeException();
+
+        var outPartitionList = outPartitionedImmutableList.PartitionList;
+
+        // inPartition Contains original text.
+        // The goal is to split the text across 3 partitions.
+        // Allot the original content in 1/3.
+        //
+        // Only 2 partitions need to be inserted because the third partition will just be the
+        // original partition, but with its contents change.
+        var inPartition = outPartitionList[index];
+
+        // The idealSplit likely will not be enough due to integer math losing decimals.
+        // Therefore, give the middle partition any remainder.
+        var idealSplit = inPartition.Count / EXPANSION_FACTOR;
+
+        // Determine the impact of integer math loss of decimal places
+        var charactersLost = inPartition.Count - (idealSplit * EXPANSION_FACTOR);
+
+        var replaceOriginalPartition = inPartition;
+
+        var partitionNewList = new List<ImmutableList<TItem>>();
+        for (int i = 0; i < EXPANSION_FACTOR; i++)
+        {
+            if (i == 0)
+            {
+                replaceOriginalPartition = inPartition
+                    .Take(idealSplit)
+                    .ToImmutableList();
+            }
+            else if (i == 1)
+            {
+                var partitionNew = inPartition
+                    .Skip(idealSplit)
+                    .Take(idealSplit + charactersLost)
+                    .ToImmutableList();
+
+                partitionNewList.Add(partitionNew);
+            }
+            else
+            {
+                var partitionNew = inPartition
+                    .Skip(idealSplit * i + charactersLost)
+                    .Take(idealSplit)
+                    .ToImmutableList();
+
+                partitionNewList.Add(partitionNew);
+            }
+        }
+
+        outPartitionList = outPartitionList.SetItem(index, replaceOriginalPartition);
+        outPartitionList = outPartitionList.InsertRange(index + 1, partitionNewList);
+
+        outPartitionedImmutableList = outPartitionedImmutableList with
+        {
+            PartitionList = outPartitionList
+        };
+        
+        var outPartitionMemoryMap = outPartitionedImmutableList.PartitionMemoryMap
+            .InsertRange(index + 1, new int[partitionNewList.Count]);
+
+        for (int i = index; i < (index + EXPANSION_FACTOR); i++)
+        {
+            var partition = outPartitionedImmutableList.PartitionList[i];
+            outPartitionMemoryMap = outPartitionMemoryMap.SetItem(i, partition.Count);
+        }
+
+        return outPartitionedImmutableList with
+        {
+            PartitionMemoryMap = outPartitionMemoryMap
+        };
+    }
 }
