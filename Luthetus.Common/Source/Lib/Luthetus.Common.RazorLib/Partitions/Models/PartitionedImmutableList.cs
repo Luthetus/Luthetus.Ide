@@ -105,14 +105,30 @@ public record PartitionedImmutableList<TItem> : IReadOnlyList<TItem> where TItem
         }
     }
 
-    public PartitionedImmutableList<TItem> AddRange(IEnumerable<TItem> items)
+    /// <summary>
+    /// TODO: Make <see cref="AddRange"/> optimized if needed. Currently it just foreach invokes the <see cref="Add"/> version.
+    /// </summary>
+    public PartitionedImmutableList<TItem> AddRange(IEnumerable<TItem> itemList)
     {
-        throw new NotImplementedException();
+        var partitionedImmutableList = this;
+
+        foreach (var item in itemList)
+        {
+            partitionedImmutableList = partitionedImmutableList.Add(item);
+        }
+
+        return partitionedImmutableList;
     }
 
+    /// <summary>
+    /// TODO: Should this method maintain the partitions, but just clear them?...
+    /// Or should it return an entirely new instance so that all the memory is freed?
+    /// As of this comment I'm going to return an entirely new instance with the same <see cref="PartitionSize"/>.
+    /// (2024-02-24).
+    /// </summary>
     public PartitionedImmutableList<TItem> Clear()
     {
-        throw new NotImplementedException();
+        return new PartitionedImmutableList<TItem>(PartitionSize);
     }
 
     public IEnumerator<TItem> GetEnumerator()

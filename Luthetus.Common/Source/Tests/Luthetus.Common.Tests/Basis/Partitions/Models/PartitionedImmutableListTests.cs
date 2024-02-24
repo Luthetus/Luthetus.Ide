@@ -15,8 +15,11 @@ public class PartitionedImmutableListTests
     [Fact]
     public void Count()
     {
-        //public int Count => throw new NotImplementedException();
-        throw new NotImplementedException();
+        var partitionSize = 5;
+        var partitionedImmutableList = new PartitionedImmutableList<char>(partitionSize);
+
+        partitionedImmutableList = partitionedImmutableList.AddRange("abcdefghijklmnopqrstuvwxyz");
+        Assert.Equal(26, partitionedImmutableList.Count);
     }
 
     [Fact]
@@ -153,15 +156,51 @@ public class PartitionedImmutableListTests
     [Fact]
     public void AddRange()
     {
-        //public IImmutableList<TItem> AddRange(IEnumerable<TItem> items)
-        throw new NotImplementedException();
+        var partitionSize = 5;
+        var partitionedImmutableList = new PartitionedImmutableList<char>(partitionSize);
+
+        partitionedImmutableList = partitionedImmutableList.AddRange("abcdefghijklmnopqrstuvwxyz");
+
+        int i = 0;
+        Assert.Equal('a', partitionedImmutableList[i++]);
+        Assert.Equal('b', partitionedImmutableList[i++]);
+        Assert.Equal('c', partitionedImmutableList[i++]);
+        Assert.Equal('d', partitionedImmutableList[i++]);
+        Assert.Equal('e', partitionedImmutableList[i++]);
+        Assert.Equal('f', partitionedImmutableList[i++]);
+        Assert.Equal('g', partitionedImmutableList[i++]);
+        Assert.Equal('h', partitionedImmutableList[i++]);
+        Assert.Equal('i', partitionedImmutableList[i++]);
+        Assert.Equal('j', partitionedImmutableList[i++]);
+        Assert.Equal('k', partitionedImmutableList[i++]);
+        Assert.Equal('l', partitionedImmutableList[i++]);
+        Assert.Equal('m', partitionedImmutableList[i++]);
+        Assert.Equal('n', partitionedImmutableList[i++]);
+        Assert.Equal('o', partitionedImmutableList[i++]);
+        Assert.Equal('p', partitionedImmutableList[i++]);
+        Assert.Equal('q', partitionedImmutableList[i++]);
+        Assert.Equal('r', partitionedImmutableList[i++]);
+        Assert.Equal('s', partitionedImmutableList[i++]);
+        Assert.Equal('t', partitionedImmutableList[i++]);
+        Assert.Equal('u', partitionedImmutableList[i++]);
+        Assert.Equal('v', partitionedImmutableList[i++]);
+        Assert.Equal('w', partitionedImmutableList[i++]);
+        Assert.Equal('x', partitionedImmutableList[i++]);
+        Assert.Equal('y', partitionedImmutableList[i++]);
+        Assert.Equal('z', partitionedImmutableList[i++]);
     }
 
     [Fact]
     public void Clear()
     {
-        //public IImmutableList<TItem> Clear()
-        throw new NotImplementedException();
+        var partitionSize = 5;
+        var partitionedImmutableList = new PartitionedImmutableList<char>(partitionSize);
+
+        partitionedImmutableList = partitionedImmutableList.AddRange("abcdefghijklmnopqrstuvwxyz");
+        Assert.NotEmpty(partitionedImmutableList);
+
+        partitionedImmutableList = partitionedImmutableList.Clear();
+        Assert.Empty(partitionedImmutableList);
     }
 
     [Fact]
@@ -244,7 +283,29 @@ public class PartitionedImmutableListTests
     [Fact]
     public void ExplicitInterfaceGetEnumerator()
     {
-        //IEnumerator IEnumerable.GetEnumerator()
-        throw new NotImplementedException();
+        var partitionSize = 5;
+        var partitionedImmutableList = new PartitionedImmutableList<char>(partitionSize);
+
+        partitionedImmutableList = partitionedImmutableList.Add('a');
+        partitionedImmutableList = partitionedImmutableList.Add('b');
+        partitionedImmutableList = partitionedImmutableList.Add('c');
+        
+        var enumerable = (IEnumerable<char>)partitionedImmutableList;
+
+        // Testing the enumerator here so this foreach use case feels more like a 'for' loop on purpose
+        int count = 0;
+        foreach (var character in enumerable)
+        {
+            if (count == 0)
+                Assert.Equal('a', character);
+            else if (count == 1)
+                Assert.Equal('b', character);
+            else if (count == 2)
+                Assert.Equal('c', character);
+            else
+                throw new ApplicationException("The test case is only 3 letters long as this moment. So this block should never run.");
+
+            count++;
+        }
     }
 }
