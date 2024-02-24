@@ -144,7 +144,11 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
 
     public void CopyTo(TItem[] array, int arrayIndex)
     {
-        throw new NotImplementedException();
+        PartitionedImmutableList<TItem> list = this;
+        for (int i = 0; i < list.Count; i++)
+        {
+            array[i] = list[i];
+        }
     }
 
     public IEnumerator<TItem> GetEnumerator()
