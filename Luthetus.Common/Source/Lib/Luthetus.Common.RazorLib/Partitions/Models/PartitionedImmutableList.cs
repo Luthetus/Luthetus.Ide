@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Partitions.Models;
 
-public record PartitionedImmutableList<TItem> : IReadOnlyList<TItem> where TItem : notnull
+public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnull
 {
     public PartitionedImmutableList(int partitionSize)
     {
@@ -12,20 +12,6 @@ public record PartitionedImmutableList<TItem> : IReadOnlyList<TItem> where TItem
 
         PartitionSize = partitionSize;
     }
-
-    public int PartitionSize { get; }
-    public ImmutableList<ImmutableList<TItem>> PartitionList { get; private init; } = ImmutableList<ImmutableList<TItem>>.Empty;
-
-    /// <summary>
-    /// Track the 'Count' of each partition in this.
-    /// Therefore, one can lookup whether a partition is full or not.
-    /// Without iterating through all the partitions just to check a specific one.
-    /// <br/>
-    /// The name 'Map' is used here because to get the Count of the 0th index partition,
-    /// one would read the value at index 0 of this property.
-    /// In otherwords, each partition index maps to its corresponding Count.
-    /// </summary>
-    public ImmutableList<int> PartitionMemoryMap { get; private init; } = ImmutableList<int>.Empty;
 
     public TItem this[int index]
     {
@@ -50,7 +36,25 @@ public record PartitionedImmutableList<TItem> : IReadOnlyList<TItem> where TItem
 
             throw new IndexOutOfRangeException();
         }
+        set
+        {
+            throw new NotImplementedException();
+        }
     }
+
+    public int PartitionSize { get; }
+    public ImmutableList<ImmutableList<TItem>> PartitionList { get; private init; } = ImmutableList<ImmutableList<TItem>>.Empty;
+
+    /// <summary>
+    /// Track the 'Count' of each partition in this.
+    /// Therefore, one can lookup whether a partition is full or not.
+    /// Without iterating through all the partitions just to check a specific one.
+    /// <br/>
+    /// The name 'Map' is used here because to get the Count of the 0th index partition,
+    /// one would read the value at index 0 of this property.
+    /// In otherwords, each partition index maps to its corresponding Count.
+    /// </summary>
+    public ImmutableList<int> PartitionMemoryMap { get; private init; } = ImmutableList<int>.Empty;
 
     public int Count
     {
@@ -69,6 +73,8 @@ public record PartitionedImmutableList<TItem> : IReadOnlyList<TItem> where TItem
             return count;
         }
     }
+
+    public bool IsReadOnly => true;
 
     public PartitionedImmutableList<TItem> Add(TItem value)
     {
@@ -131,6 +137,16 @@ public record PartitionedImmutableList<TItem> : IReadOnlyList<TItem> where TItem
         return new PartitionedImmutableList<TItem>(PartitionSize);
     }
 
+    public bool Contains(TItem item)
+    {
+        return IndexOf(item) != -1;
+    }
+
+    public void CopyTo(TItem[] array, int arrayIndex)
+    {
+        throw new NotImplementedException();
+    }
+
     public IEnumerator<TItem> GetEnumerator()
     {
         foreach (var partition in PartitionList)
@@ -142,57 +158,30 @@ public record PartitionedImmutableList<TItem> : IReadOnlyList<TItem> where TItem
         }
     }
 
-    public int IndexOf(TItem item, int index, int count, IEqualityComparer<TItem>? equalityComparer)
+    public int IndexOf(TItem item)
+    {
+        PartitionedImmutableList<TItem> list = this;
+        for (int i = 0; i < list.Count; i++)
+        {
+            TItem? entry = list[i];
+            if (item.Equals(entry))
+                return i;
+        }
+
+        return -1;
+    }
+
+    public void Insert(int index, TItem item)
     {
         throw new NotImplementedException();
     }
 
-    public PartitionedImmutableList<TItem> Insert(int index, TItem element)
+    public bool Remove(TItem item)
     {
         throw new NotImplementedException();
     }
 
-    public PartitionedImmutableList<TItem> InsertRange(int index, IEnumerable<TItem> items)
-    {
-        throw new NotImplementedException();
-    }
-
-    public int LastIndexOf(TItem item, int index, int count, IEqualityComparer<TItem>? equalityComparer)
-    {
-        throw new NotImplementedException();
-    }
-
-    public PartitionedImmutableList<TItem> Remove(TItem value, IEqualityComparer<TItem>? equalityComparer)
-    {
-        throw new NotImplementedException();
-    }
-
-    public PartitionedImmutableList<TItem> RemoveAll(Predicate<TItem> match)
-    {
-        throw new NotImplementedException();
-    }
-
-    public PartitionedImmutableList<TItem> RemoveAt(int index)
-    {
-        throw new NotImplementedException();
-    }
-
-    public PartitionedImmutableList<TItem> RemoveRange(IEnumerable<TItem> items, IEqualityComparer<TItem>? equalityComparer)
-    {
-        throw new NotImplementedException();
-    }
-
-    public PartitionedImmutableList<TItem> RemoveRange(int index, int count)
-    {
-        throw new NotImplementedException();
-    }
-
-    public PartitionedImmutableList<TItem> Replace(TItem oldValue, TItem newValue, IEqualityComparer<TItem>? equalityComparer)
-    {
-        throw new NotImplementedException();
-    }
-
-    public PartitionedImmutableList<TItem> SetItem(int index, TItem value)
+    public void RemoveAt(int index)
     {
         throw new NotImplementedException();
     }
@@ -201,4 +190,7 @@ public record PartitionedImmutableList<TItem> : IReadOnlyList<TItem> where TItem
     {
         return GetEnumerator();
     }
+
+    void ICollection<TItem>.Add(TItem item) => Add(item);
+    void ICollection<TItem>.Clear() => Clear();
 }

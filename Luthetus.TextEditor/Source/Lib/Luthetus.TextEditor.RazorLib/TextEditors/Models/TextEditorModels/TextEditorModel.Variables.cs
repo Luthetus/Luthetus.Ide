@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Partitions.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -17,9 +18,10 @@ public partial class TextEditorModel
     public const int GUTTER_PADDING_RIGHT_IN_PIXELS = 15;
     public const int MAXIMUM_EDIT_BLOCKS = 10;
     public const int MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN = 5;
+    public const int PARTITION_SIZE = 5_000;
 
     /// <inheritdoc cref="ITextEditorModel.ContentList"/>
-    public ImmutableList<RichCharacter> ContentList = ImmutableList<RichCharacter>.Empty;
+    public PartitionedImmutableList<RichCharacter> ContentList = PartitionedImmutableList<RichCharacter>.Empty;
 	public ImmutableList<EditBlock> EditBlocksList { get; init; } = ImmutableList<EditBlock>.Empty;
     /// <inheritdoc cref="ITextEditorModel.RowEndingPositionsList"/>
 	public ImmutableList<RowEnding> RowEndingPositionsList { get; init; } = ImmutableList<RowEnding>.Empty;

@@ -1,6 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Partitions.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
@@ -65,7 +66,7 @@ public partial class TextEditorModelModifier
     public TextEditorModel ToModel()
     {
         return new TextEditorModel(
-            _contentList is null ? _textEditorModel.ContentList : _contentList.ToImmutableList(),
+            _contentList is null ? _textEditorModel.ContentList : _contentList.ToPartitionedImmutableList(TextEditorModel.PARTITION_SIZE),
             _editBlocksList is null ? _textEditorModel.EditBlocksList : _editBlocksList.ToImmutableList(),
             _rowEndingPositionsList is null ? _textEditorModel.RowEndingPositionsList : _rowEndingPositionsList.ToImmutableList(),
             _rowEndingKindCountsList is null ? _textEditorModel.RowEndingKindCountsList : _rowEndingKindCountsList.ToImmutableList(),
