@@ -34,7 +34,7 @@ public partial class TextEditorModelModifier
         _textEditorModel = textEditorModel;
     }
 
-    private List<RichCharacter>? _contentList;
+    private PartitionedImmutableList<RichCharacter>? _contentList;
     private List<EditBlock>? _editBlocksList;
     private List<RowEnding>? _rowEndingPositionsList;
     private List<(RowEndingKind rowEndingKind, int count)>? _rowEndingKindCountsList;
@@ -87,7 +87,7 @@ public partial class TextEditorModelModifier
 
     public void ClearContentList()
     {
-        _contentList = new();
+        _contentList = TextEditorModel.PARTITION_EMPTY;
     }
 
     public void ClearRowEndingPositionsList()
@@ -181,9 +181,7 @@ public partial class TextEditorModelModifier
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
-            // TODO: Determine which partitions need to be modified...
-            // instead of .ToList() on the entire partitioned immutable list.
-            _contentList ??= _textEditorModel.ContentList.ToList();
+            _contentList ??= _textEditorModel.ContentList;
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
             _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
@@ -248,7 +246,7 @@ public partial class TextEditorModelModifier
 
                 characterCountInserted = rowEndingKindToInsert.AsCharacters().Length;
 
-                _contentList.InsertRange(cursorPositionIndex, richCharacters);
+                _contentList = _contentList.InsertRange(cursorPositionIndex, richCharacters);
 
                 RowEndingPositionsList.Insert(
                     cursorModifier.RowIndex,
@@ -365,9 +363,7 @@ public partial class TextEditorModelModifier
         {
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
             _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
-            // TODO: Determine which partitions need to be modified...
-            // instead of .ToList() on the entire partitioned immutable list.
-            _contentList ??= _textEditorModel.ContentList.ToList();
+            _contentList ??= _textEditorModel.ContentList;
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
         }
 
@@ -534,7 +530,7 @@ public partial class TextEditorModelModifier
 
                 charactersRemovedCount += countToRemoveRange;
 
-                _contentList.RemoveRange(startingIndexToRemoveRange, countToRemoveRange);
+                _contentList = _contentList.RemoveRange(startingIndexToRemoveRange, countToRemoveRange);
 
                 if (moveBackwards)
                     indexToRemove -= countToRemoveRange;
@@ -686,9 +682,7 @@ public partial class TextEditorModelModifier
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
             _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
-            // TODO: Determine which partitions need to be modified...
-            // instead of .ToList() on the entire partitioned immutable list.
-            _contentList ??= _textEditorModel.ContentList.ToList();
+            _contentList ??= _textEditorModel.ContentList;
             _rowEndingKindCountsList ??= _textEditorModel.RowEndingKindCountsList.ToList();
         }
 

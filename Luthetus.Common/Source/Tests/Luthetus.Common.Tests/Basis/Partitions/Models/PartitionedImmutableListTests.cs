@@ -206,77 +206,51 @@ public class PartitionedImmutableListTests
     [Fact]
     public void IndexOf()
     {
-        //public int IndexOf(TItem item, int index, int count, IEqualityComparer<TItem>? equalityComparer)
-        throw new NotImplementedException();
+        var partitionSize = 5;
+        var partitionedImmutableList = new PartitionedImmutableList<char>(partitionSize);
+
+        partitionedImmutableList = partitionedImmutableList.AddRange("abcdefghijklmnopqrstuvwxyz");
+
+        Assert.Equal(25, partitionedImmutableList.IndexOf('z'));
+        Assert.Equal(5, partitionedImmutableList.IndexOf('f'));
+
+        // -1 signifies the entry was not found.
+        Assert.Equal(-1, partitionedImmutableList.IndexOf('3'));
     }
 
     [Fact]
     public void Insert()
     {
-        //public IImmutableList<TItem> Insert(int index, TItem element)
+        var partitionSize = 5;
+        var partitionedImmutableList = new PartitionedImmutableList<char>(partitionSize);
+
+        partitionedImmutableList = partitionedImmutableList.AddRange("abcdefghijklmnopqrstuvwxyz");
+
+        partitionedImmutableList = partitionedImmutableList.Insert(7, '5');
         throw new NotImplementedException();
     }
 
     [Fact]
     public void InsertRange()
     {
-        //public IImmutableList<TItem> InsertRange(int index, IEnumerable<TItem> items)
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void LastIndexOf()
-    {
-        //public int LastIndexOf(TItem item, int index, int count, IEqualityComparer<TItem>? equalityComparer)
         throw new NotImplementedException();
     }
 
     [Fact]
     public void Remove()
     {
-        //public IImmutableList<TItem> Remove(TItem value, IEqualityComparer<TItem>? equalityComparer)
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void RemoveAll()
-    {
-        //public IImmutableList<TItem> RemoveAll(Predicate<TItem> match)
         throw new NotImplementedException();
     }
 
     [Fact]
     public void RemoveAt()
     {
-        //public IImmutableList<TItem> RemoveAt(int index)
         throw new NotImplementedException();
     }
 
     [Fact]
-    public void RemoveRange_A()
+    public void RemoveRange()
     {
-        //public IImmutableList<TItem> RemoveRange(IEnumerable<TItem> items, IEqualityComparer<TItem>? equalityComparer)
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void RemoveRange_B()
-    {
-        //public IImmutableList<TItem> RemoveRange(int index, int count)
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void Replace()
-    {
-        //public IImmutableList<TItem> Replace(TItem oldValue, TItem newValue, IEqualityComparer<TItem>? equalityComparer)
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void SetItem()
-    {
-        //public IImmutableList<TItem> SetItem(int index, TItem value)
         throw new NotImplementedException();
     }
 

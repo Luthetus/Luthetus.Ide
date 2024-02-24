@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Partitions.Models;
@@ -175,19 +176,121 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
         return -1;
     }
 
-    public void Insert(int index, TItem item)
+    public PartitionedImmutableList<TItem> Insert(int index, TItem item)
     {
-        throw new NotImplementedException();
+        var rollingCount = 0;
+        var indexPartition = 0;
+        var partition = (ImmutableList<TItem>?)null;
+        var offset = 0;
+
+        for (int i = 0; i < PartitionMemoryMap.Count; i++)
+        {
+            var currentPartitionCount = PartitionMemoryMap[i];
+            
+            if (currentPartitionCount == PartitionSize)
+            {
+                throw new NotImplementedException("Need more space");
+            }
+
+            if (rollingCount + currentPartitionCount > index)
+            {
+                indexPartition = i;
+                partition = PartitionList[i];
+                offset = index - rollingCount;
+            }
+            else
+            {
+                rollingCount += currentPartitionCount;
+            }
+        }
+
+        if (partition is null)
+            throw new IndexOutOfRangeException();
+
+        partition = partition.Insert(offset, item);
+
+        var outPartitionList = PartitionList.SetItem(indexPartition, partition);
+        var outPartitionMemoryMap = PartitionMemoryMap.SetItem(indexPartition, PartitionMemoryMap[indexPartition] + 1);
+
+        return this with
+        {
+            PartitionList = outPartitionList,
+            PartitionMemoryMap = outPartitionMemoryMap,
+        };
+    }
+    
+    public PartitionedImmutableList<TItem> InsertRange(int index, IEnumerable<TItem> itemList)
+    {
+        var partitionedImmutableList = this;
+
+        foreach (var item in itemList)
+        {
+            partitionedImmutableList = partitionedImmutableList.Insert(index++, item);
+        }
+
+        return partitionedImmutableList;
     }
 
-    public bool Remove(TItem item)
+    public PartitionedImmutableList<TItem> Remove(TItem item)
     {
-        throw new NotImplementedException();
+        PartitionedImmutableList<TItem> list = this;
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (list[i].Equals(item))
+                return RemoveAt(i);
+        }
+
+        return this;
     }
 
-    public void RemoveAt(int index)
+    public PartitionedImmutableList<TItem> RemoveAt(int index)
     {
-        throw new NotImplementedException();
+        var rollingCount = 0;
+        var indexPartition = 0;
+        var partition = (ImmutableList<TItem>?)null;
+        var offset = 0;
+
+        for (int i = 0; i < PartitionMemoryMap.Count; i++)
+        {
+            var currentPartitionCount = PartitionMemoryMap[i];
+
+            if (rollingCount + currentPartitionCount > index)
+            {
+                indexPartition = i;
+                partition = PartitionList[i];
+                offset = index - rollingCount;
+            }
+            else
+            {
+                rollingCount += currentPartitionCount;
+            }
+        }
+
+        if (partition is null)
+            throw new IndexOutOfRangeException();
+
+        partition = partition.RemoveAt(offset);
+
+        var outPartitionList = PartitionList.SetItem(indexPartition, partition);
+        var outPartitionMemoryMap = PartitionMemoryMap.SetItem(indexPartition, PartitionMemoryMap[indexPartition] - 1);
+
+        return this with
+        {
+            PartitionList = outPartitionList,
+            PartitionMemoryMap = outPartitionMemoryMap,
+        };
+    }
+    
+    public PartitionedImmutableList<TItem> RemoveRange(int index, int count)
+    {
+        var partitionedImmutableList = this;
+
+        for (int i = 0; i < count; i++)
+        {
+            partitionedImmutableList = partitionedImmutableList.RemoveAt(index);
+        }
+
+        return partitionedImmutableList;
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -197,4 +300,18 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
 
     void ICollection<TItem>.Add(TItem item) => Add(item);
     void ICollection<TItem>.Clear() => Clear();
+
+    bool ICollection<TItem>.Remove(TItem item)
+    {
+        var index = IndexOf(item);
+
+        if (index == -1)
+            return false;
+
+        RemoveAt(index);
+        return true;
+    }
+
+    void IList<TItem>.Insert(int index, TItem item) => Insert(index, item);
+    void IList<TItem>.RemoveAt(int index) => RemoveAt(index);
 }
