@@ -187,23 +187,29 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
 
     public PartitionedImmutableList<TItem> Insert(int index, TItem item)
     {
+        var outPartitionedImmutableList = this;
+
         var rollingCount = 0;
         var indexPartition = 0;
         var partition = (ImmutableList<TItem>?)null;
         var offset = 0;
 
-        for (int i = 0; i < PartitionMemoryMap.Count; i++)
+        for (int i = 0; i < outPartitionedImmutableList.PartitionMemoryMap.Count; i++)
         {
-            var currentPartitionCount = PartitionMemoryMap[i];
+            var currentPartitionCount = outPartitionedImmutableList.PartitionMemoryMap[i];
 
             if (rollingCount + currentPartitionCount >= index)
             {
                 indexPartition = i;
 
-                if (currentPartitionCount == PartitionSize)
-                    ExpandPartition(indexPartition);
+                if (currentPartitionCount == outPartitionedImmutableList.PartitionSize)
+                {
+                    outPartitionedImmutableList = outPartitionedImmutableList.ExpandPartition(indexPartition);
+                    i -= 1;
+                    continue;
+                }
 
-                partition = PartitionList[i];
+                partition = outPartitionedImmutableList.PartitionList[i];
                 offset = index - rollingCount;
             }
             else
@@ -217,10 +223,15 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
 
         partition = partition.Insert(offset, item);
 
-        var outPartitionList = PartitionList.SetItem(indexPartition, partition);
-        var outPartitionMemoryMap = PartitionMemoryMap.SetItem(indexPartition, PartitionMemoryMap[indexPartition] + 1);
+        var outPartitionList = outPartitionedImmutableList.PartitionList.SetItem(
+            indexPartition,
+            partition);
 
-        return this with
+        var outPartitionMemoryMap = outPartitionedImmutableList.PartitionMemoryMap.SetItem(
+            indexPartition,
+            outPartitionedImmutableList.PartitionMemoryMap[indexPartition] + 1);
+
+        return outPartitionedImmutableList with
         {
             PartitionList = outPartitionList,
             PartitionMemoryMap = outPartitionMemoryMap,
@@ -327,7 +338,7 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
     {
         var outPartitionedImmutableList = this;
 
-        if (index <= 0 || index >= outPartitionedImmutableList.PartitionList.Count)
+        if (index < 0 || index >= outPartitionedImmutableList.PartitionList.Count)
             throw new IndexOutOfRangeException();
 
         var outPartitionList = outPartitionedImmutableList.PartitionList;
