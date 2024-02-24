@@ -181,6 +181,8 @@ public partial class TextEditorModelModifier
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
+            // TODO: Determine which partitions need to be modified...
+            // instead of .ToList() on the entire partitioned immutable list.
             _contentList ??= _textEditorModel.ContentList.ToList();
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
             _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
@@ -363,6 +365,8 @@ public partial class TextEditorModelModifier
         {
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
             _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
+            // TODO: Determine which partitions need to be modified...
+            // instead of .ToList() on the entire partitioned immutable list.
             _contentList ??= _textEditorModel.ContentList.ToList();
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
         }
@@ -682,6 +686,8 @@ public partial class TextEditorModelModifier
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
             _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
+            // TODO: Determine which partitions need to be modified...
+            // instead of .ToList() on the entire partitioned immutable list.
             _contentList ??= _textEditorModel.ContentList.ToList();
             _rowEndingKindCountsList ??= _textEditorModel.RowEndingKindCountsList.ToList();
         }
