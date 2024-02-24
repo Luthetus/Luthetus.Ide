@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Partitions.Models;
 
-public class PartitionedImmutableList<TItem> : IImmutableList<TItem>
+public record PartitionedImmutableList<TItem> : IReadOnlyList<TItem>
 {
     public PartitionedImmutableList(int partitionSize)
     {
@@ -13,10 +13,8 @@ public class PartitionedImmutableList<TItem> : IImmutableList<TItem>
         PartitionSize = partitionSize;
     }
 
-    private ImmutableList<ImmutableList<TItem>> _partitionList = ImmutableList<ImmutableList<TItem>>.Empty;
-
     public int PartitionSize { get; }
-    public int PartitionCount => _partitionList.Count;
+    public ImmutableList<ImmutableList<TItem>> PartitionList { get; private init; } = ImmutableList<ImmutableList<TItem>>.Empty;
 
     /// <summary>
     /// Track the 'Count' of each partition in this.
@@ -27,7 +25,7 @@ public class PartitionedImmutableList<TItem> : IImmutableList<TItem>
     /// one would read the value at index 0 of this property.
     /// In otherwords, each partition index maps to its corresponding Count.
     /// </summary>
-    public ImmutableList<int> PartitionMemoryMap { get; private set; } = ImmutableList<int>.Empty;
+    public ImmutableList<int> PartitionMemoryMap { get; private init; } = ImmutableList<int>.Empty;
 
     public TItem this[int index]
     {
@@ -41,13 +39,12 @@ public class PartitionedImmutableList<TItem> : IImmutableList<TItem>
     {
         get
         {
-            // Case 0 partitions
-            if (PartitionCount == 0)
+            if (PartitionList.Count == 0)
                 return 0;
 
             var count = 0;
 
-            foreach (var partition in _partitionList)
+            foreach (var partition in PartitionList)
             {
                 count += partition.Count;
             }
@@ -56,7 +53,7 @@ public class PartitionedImmutableList<TItem> : IImmutableList<TItem>
         }
     }
 
-    public IImmutableList<TItem> Add(TItem value)
+    public PartitionedImmutableList<TItem> Add(TItem value)
     {
         var indexPartitionFreeSpace = -1;
 
@@ -72,41 +69,31 @@ public class PartitionedImmutableList<TItem> : IImmutableList<TItem>
         {
             var partition = new TItem[] { value }.ToImmutableList();
 
-            // Careful: one must change BOTH '_partitionList' and 'PartitionMemoryMap'
+            return this with
             {
-                _partitionList = _partitionList.Add(partition);
-                PartitionMemoryMap = PartitionMemoryMap.Add(partition.Count);
-            }
-
-            // Awkwardly I need to return 'IImmutableList<TItem>'.
-            // For now return the partition which was changed with its item added.
-            // TODO: Don't inherit IImmutableList? Its odd to have to return one from most methods.
-            return partition;
+                PartitionList = PartitionList.Add(partition),
+                PartitionMemoryMap = PartitionMemoryMap.Add(partition.Count)
+            };
         }
         else
         {
-            var partition = _partitionList[indexPartitionFreeSpace];
+            var partition = PartitionList[indexPartitionFreeSpace];
             partition = partition.Add(value);
 
-            // Careful: one must change BOTH '_partitionList' and 'PartitionMemoryMap'
+            return this with
             {
-                _partitionList = _partitionList.SetItem(indexPartitionFreeSpace, partition);
-                PartitionMemoryMap = PartitionMemoryMap.SetItem(indexPartitionFreeSpace, partition.Count);
-            }
-
-            // Awkwardly I need to return 'IImmutableList<TItem>'.
-            // For now return the partition which was changed with its item added.
-            // TODO: Don't inherit IImmutableList? Its odd to have to return one from most methods.
-            return _partitionList[indexPartitionFreeSpace];
+                PartitionList = PartitionList.SetItem(indexPartitionFreeSpace, partition),
+                PartitionMemoryMap = PartitionMemoryMap.SetItem(indexPartitionFreeSpace, partition.Count)
+            };
         }
     }
 
-    public IImmutableList<TItem> AddRange(IEnumerable<TItem> items)
+    public PartitionedImmutableList<TItem> AddRange(IEnumerable<TItem> items)
     {
         throw new NotImplementedException();
     }
 
-    public IImmutableList<TItem> Clear()
+    public PartitionedImmutableList<TItem> Clear()
     {
         throw new NotImplementedException();
     }
@@ -121,12 +108,12 @@ public class PartitionedImmutableList<TItem> : IImmutableList<TItem>
         throw new NotImplementedException();
     }
 
-    public IImmutableList<TItem> Insert(int index, TItem element)
+    public PartitionedImmutableList<TItem> Insert(int index, TItem element)
     {
         throw new NotImplementedException();
     }
 
-    public IImmutableList<TItem> InsertRange(int index, IEnumerable<TItem> items)
+    public PartitionedImmutableList<TItem> InsertRange(int index, IEnumerable<TItem> items)
     {
         throw new NotImplementedException();
     }
@@ -136,37 +123,37 @@ public class PartitionedImmutableList<TItem> : IImmutableList<TItem>
         throw new NotImplementedException();
     }
 
-    public IImmutableList<TItem> Remove(TItem value, IEqualityComparer<TItem>? equalityComparer)
+    public PartitionedImmutableList<TItem> Remove(TItem value, IEqualityComparer<TItem>? equalityComparer)
     {
         throw new NotImplementedException();
     }
 
-    public IImmutableList<TItem> RemoveAll(Predicate<TItem> match)
+    public PartitionedImmutableList<TItem> RemoveAll(Predicate<TItem> match)
     {
         throw new NotImplementedException();
     }
 
-    public IImmutableList<TItem> RemoveAt(int index)
+    public PartitionedImmutableList<TItem> RemoveAt(int index)
     {
         throw new NotImplementedException();
     }
 
-    public IImmutableList<TItem> RemoveRange(IEnumerable<TItem> items, IEqualityComparer<TItem>? equalityComparer)
+    public PartitionedImmutableList<TItem> RemoveRange(IEnumerable<TItem> items, IEqualityComparer<TItem>? equalityComparer)
     {
         throw new NotImplementedException();
     }
 
-    public IImmutableList<TItem> RemoveRange(int index, int count)
+    public PartitionedImmutableList<TItem> RemoveRange(int index, int count)
     {
         throw new NotImplementedException();
     }
 
-    public IImmutableList<TItem> Replace(TItem oldValue, TItem newValue, IEqualityComparer<TItem>? equalityComparer)
+    public PartitionedImmutableList<TItem> Replace(TItem oldValue, TItem newValue, IEqualityComparer<TItem>? equalityComparer)
     {
         throw new NotImplementedException();
     }
 
-    public IImmutableList<TItem> SetItem(int index, TItem value)
+    public PartitionedImmutableList<TItem> SetItem(int index, TItem value)
     {
         throw new NotImplementedException();
     }

@@ -1,4 +1,5 @@
-﻿using Luthetus.Common.RazorLib.Partitions.Models;
+﻿using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.Partitions.Models;
 
 namespace Luthetus.Common.Tests.Basis.Partitions.Models;
 
@@ -38,7 +39,13 @@ public class PartitionedImmutableListTests
     {
         var partitionSize = 5;
         var partitionedImmutableList = new PartitionedImmutableList<char>(partitionSize);
-        Assert.Equal(partitionSize, partitionedImmutableList.PartitionSize);
+
+        // Each 'Add(...)' invocation should return a new object. So store them all
+        // here and then check that they are all separate instances.
+        var historyPartitionedImmutableList = new List<PartitionedImmutableList<char>>
+        { 
+            partitionedImmutableList
+        };
 
         // Invoke 'Add(...)' one more times than what the partitionSize is.
         // where each invocation adds a character.
@@ -46,10 +53,44 @@ public class PartitionedImmutableListTests
         // made to hold that final character.
         for (int i = 0; i <= partitionSize; i++)
         {
-            partitionedImmutableList.Add('a');
+            // 97 to 122 provides lowercase letters (both sides inclusive) (ASCII)
+            var lowercaseLettersStartPositionInclusive = 97;
+            var lowercaseLettersEndPositionInclusive = 122;
+            var offsetModuloOperand = lowercaseLettersEndPositionInclusive - lowercaseLettersStartPositionInclusive;
+            var character = (char)(lowercaseLettersStartPositionInclusive + (i % offsetModuloOperand));
+
+            partitionedImmutableList = partitionedImmutableList.Add(character);
+            historyPartitionedImmutableList.Add(partitionedImmutableList);
         }
 
-        throw new NotImplementedException();
+        // Assertions
+        {
+            int count = 0;
+
+            for (int i = 0; i < historyPartitionedImmutableList.Count; i++)
+            {
+                var partitionedList = historyPartitionedImmutableList[i];
+
+                Assert.Equal(partitionSize, partitionedList.PartitionSize);
+                Assert.Equal(count, partitionedList.Count);
+
+                if (count == 0)
+                {
+                    Assert.Empty(partitionedList.PartitionList);
+                    Assert.Empty(partitionedList.PartitionMemoryMap);
+                }
+                else
+                {
+                    var expectedPartitionCount = Math.Ceiling((double)count / partitionSize);
+                    Assert.Equal(expectedPartitionCount, partitionedList.PartitionList.Count);
+
+                    var countLastPartition = count % ((expectedPartitionCount - 1) * partitionedList.PartitionList.Count);
+                    var lastPartition = partitionedList.PartitionList.Last();
+                    Assert.Equal(countLastPartition, lastPartition.Count);
+                    Assert.Equal(countLastPartition, partitionedList.PartitionMemoryMap[i]);
+                }
+            }
+        }
     }
 
     [Fact]
