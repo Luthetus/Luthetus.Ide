@@ -29,6 +29,8 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using System.Text;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using System.Xml.Linq;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 
@@ -52,6 +54,10 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private InputFileSync InputFileSync { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
+    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
@@ -163,7 +169,41 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     { nameof(BooleanPromptOrCancelDisplay.ListOfMessages), filenameList },
                     { nameof(IBooleanPromptOrCancelRendererType.AcceptOptionTextOverride), null },
                     { nameof(IBooleanPromptOrCancelRendererType.DeclineOptionTextOverride), null },
-                    { nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptFunc), commandArgs.RestoreFocusToTreeView },
+                    { 
+                        nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptFunc),
+                        async () =>
+                        {
+                            await commandArgs.RestoreFocusToTreeView.Invoke();
+                            BackgroundTaskService.Enqueue(
+                                Key<BackgroundTask>.NewKey(),
+                                ContinuousBackgroundTaskWorker.GetQueueKey(),
+                                "SolutionExplorer_TreeView_MultiSelect_DeleteFiles",
+                                async () =>
+                                {
+                                    foreach (var node in commandArgs.TreeViewContainer.SelectedNodeList)
+                                    {
+                                        var treeViewNamespacePath = (TreeViewNamespacePath)node;
+
+                                        if (treeViewNamespacePath.Item.AbsolutePath.IsDirectory)
+                                            await FileSystemProvider.Directory.DeleteAsync(treeViewNamespacePath.Item.AbsolutePath.Value, true, CancellationToken.None);
+                                        else
+                                            await FileSystemProvider.File.DeleteAsync(treeViewNamespacePath.Item.AbsolutePath.Value);
+
+                                        if (TreeViewService.TryGetTreeViewContainer(commandArgs.TreeViewContainer.Key, out var mostRecentContainer) &&
+                                            mostRecentContainer is not null)
+                                        {
+                                            var localParent = node.Parent;
+
+                                            if (localParent is not null)
+                                            {
+                                                await localParent.LoadChildListAsync();
+                                                TreeViewService.ReRenderNode(mostRecentContainer.Key, localParent);
+                                            }
+                                        }
+                                    }
+                                });
+                        }
+                    },
                     { nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineFunc), commandArgs.RestoreFocusToTreeView },
                     { nameof(IBooleanPromptOrCancelRendererType.OnAfterCancelFunc), commandArgs.RestoreFocusToTreeView },
                 }));
