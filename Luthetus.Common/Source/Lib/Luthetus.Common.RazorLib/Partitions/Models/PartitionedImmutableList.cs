@@ -189,6 +189,9 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
     {
         var outPartitionedImmutableList = this;
 
+        if (outPartitionedImmutableList.PartitionMemoryMap.Count == 0)
+            return outPartitionedImmutableList.Add(item);
+
         var rollingCount = 0;
         var indexPartition = 0;
         var partition = (ImmutableList<TItem>?)null;
