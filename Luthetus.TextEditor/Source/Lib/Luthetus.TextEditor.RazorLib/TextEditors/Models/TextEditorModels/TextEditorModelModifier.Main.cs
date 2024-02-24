@@ -66,7 +66,7 @@ public partial class TextEditorModelModifier
     public TextEditorModel ToModel()
     {
         return new TextEditorModel(
-            _contentList is null ? _textEditorModel.ContentList : _contentList.ToPartitionedImmutableList(TextEditorModel.PARTITION_SIZE),
+            _contentList is null ? _textEditorModel.ContentList : _contentList,
             _editBlocksList is null ? _textEditorModel.EditBlocksList : _editBlocksList.ToImmutableList(),
             _rowEndingPositionsList is null ? _textEditorModel.RowEndingPositionsList : _rowEndingPositionsList.ToImmutableList(),
             _rowEndingKindCountsList is null ? _textEditorModel.RowEndingKindCountsList : _rowEndingKindCountsList.ToImmutableList(),
@@ -285,7 +285,7 @@ public partial class TextEditorModelModifier
                     DecorationByte = default,
                 };
 
-                ContentList.Insert(cursorPositionIndex, richCharacterToInsert);
+                _contentList = ContentList.Insert(cursorPositionIndex, richCharacterToInsert);
 
                 cursorModifier.ColumnIndex++;
                 cursorModifier.PreferredColumnIndex = cursorModifier.ColumnIndex;
@@ -745,7 +745,7 @@ public partial class TextEditorModelModifier
 
             previousCharacter = character;
 
-            ContentList.Add(new RichCharacter
+            _contentList = ContentList.Add(new RichCharacter
             {
                 Value = character,
                 DecorationByte = default,

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Partitions.Models;
@@ -192,7 +191,7 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
                 throw new NotImplementedException("Need more space");
             }
 
-            if (rollingCount + currentPartitionCount > index)
+            if (rollingCount + currentPartitionCount >= index)
             {
                 indexPartition = i;
                 partition = PartitionList[i];
