@@ -1,9 +1,17 @@
-﻿using System.Collections;
+﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
+using System.Collections;
 using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Partitions.Models;
 
-public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnull
+/// <summary>
+/// TODO: I need to handle the partition meta data differently for the text editor...
+/// ...Perhaps it would be preferable to have a generic 'PartitionedImmutableList&gt;RichCharacter&lt;'
+/// type, but I'm finding a it hard to do so without odd looking and confusing code.
+/// So, I'm going to copy and paste the attempt at the generic type here, then just
+/// change the source code to work for the text editor. (2024-02-25)
+/// </summary>
+public record PartitionedRichCharacterList : IList<RichCharacter>
 {
     /// <summary>
     /// When a partition runs out space its content is divided amongst some amount of partitions.
@@ -14,7 +22,7 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
     /// </summary>
     public const int EXPANSION_FACTOR = 3;
 
-    public PartitionedImmutableList(int partitionSize)
+    public PartitionedRichCharacterList(int partitionSize)
     {
         if (partitionSize < EXPANSION_FACTOR)
             throw new ApplicationException($"Partition size must be equal to or greater than the {nameof(EXPANSION_FACTOR)}:{EXPANSION_FACTOR}.");
@@ -22,15 +30,15 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
         PartitionSize = partitionSize;
     }
 
-    public TItem this[int index]
+    public RichCharacter this[int index]
     {
         get
         {
             var rollingCount = 0;
 
-            for (int i = 0; i < PartitionMetadataMap.Count; i++)
+            for (int i = 0; i < PartitionRichCharacterMetadataMap.Count; i++)
             {
-                var currentPartitionCount = PartitionMetadataMap[i].Count;
+                var currentPartitionCount = PartitionRichCharacterMetadataMap[i].Count;
 
                 if (rollingCount + currentPartitionCount > index)
                 {
@@ -52,7 +60,7 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
     }
 
     public int PartitionSize { get; }
-    public ImmutableList<ImmutableList<TItem>> PartitionList { get; init; } = ImmutableList<ImmutableList<TItem>>.Empty;
+    public ImmutableList<ImmutableList<RichCharacter>> PartitionList { get; init; } = ImmutableList<ImmutableList<RichCharacter>>.Empty;
 
     /// <summary>
     /// Track the 'Count' of each partition in this.
@@ -63,7 +71,7 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
     /// one would read the value at index 0 of this property.
     /// In otherwords, each partition index maps to its corresponding Count.
     /// </summary>
-    public ImmutableList<PartitionMetadata> PartitionMetadataMap { get; init; } = ImmutableList<PartitionMetadata>.Empty;
+    public ImmutableList<PartitionRichCharacterMetadata> PartitionRichCharacterMetadataMap { get; init; } = ImmutableList<PartitionRichCharacterMetadata>.Empty;
 
     public int Count
     {
@@ -85,13 +93,13 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
 
     public bool IsReadOnly => true;
 
-    public PartitionedImmutableList<TItem> Add(TItem value)
+    public PartitionedRichCharacterList Add(RichCharacter value)
     {
         var indexPartitionFreeSpace = -1;
 
-        for (int i = 0; i < PartitionMetadataMap.Count; i++)
+        for (int i = 0; i < PartitionRichCharacterMetadataMap.Count; i++)
         {
-            int count = PartitionMetadataMap[i].Count;
+            int count = PartitionRichCharacterMetadataMap[i].Count;
 
             if (count != PartitionSize)
                 indexPartitionFreeSpace = i;
@@ -99,12 +107,12 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
 
         if (indexPartitionFreeSpace == -1)
         {
-            var partition = new TItem[] { value }.ToImmutableList();
+            var partition = new RichCharacter[] { value }.ToImmutableList();
 
             return this with
             {
                 PartitionList = PartitionList.Add(partition),
-                PartitionMetadataMap = PartitionMetadataMap.Add(new(partition.Count))
+                PartitionRichCharacterMetadataMap = PartitionRichCharacterMetadataMap.Add(new(partition.Count))
             };
         }
         else
@@ -115,7 +123,7 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
             return this with
             {
                 PartitionList = PartitionList.SetItem(indexPartitionFreeSpace, partition),
-                PartitionMetadataMap = PartitionMetadataMap.SetItem(indexPartitionFreeSpace, new(partition.Count))
+                PartitionRichCharacterMetadataMap = PartitionRichCharacterMetadataMap.SetItem(indexPartitionFreeSpace, new(partition.Count))
             };
         }
     }
@@ -123,7 +131,7 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
     /// <summary>
     /// TODO: Make <see cref="AddRange"/> optimized if needed. Currently it just foreach invokes the <see cref="Add"/> version.
     /// </summary>
-    public PartitionedImmutableList<TItem> AddRange(IEnumerable<TItem> itemList)
+    public PartitionedRichCharacterList AddRange(IEnumerable<RichCharacter> itemList)
     {
         var partitionedImmutableList = this;
 
@@ -141,26 +149,26 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
     /// As of this comment I'm going to return an entirely new instance with the same <see cref="PartitionSize"/>.
     /// (2024-02-24).
     /// </summary>
-    public PartitionedImmutableList<TItem> Clear()
+    public PartitionedRichCharacterList Clear()
     {
-        return new PartitionedImmutableList<TItem>(PartitionSize);
+        return new PartitionedRichCharacterList(PartitionSize);
     }
 
-    public bool Contains(TItem item)
+    public bool Contains(RichCharacter item)
     {
         return IndexOf(item) != -1;
     }
 
-    public void CopyTo(TItem[] array, int arrayIndex)
+    public void CopyTo(RichCharacter[] array, int arrayIndex)
     {
-        PartitionedImmutableList<TItem> list = this;
+        PartitionedRichCharacterList list = this;
         for (int i = 0; i < list.Count; i++)
         {
             array[i] = list[i];
         }
     }
 
-    public IEnumerator<TItem> GetEnumerator()
+    public IEnumerator<RichCharacter> GetEnumerator()
     {
         foreach (var partition in PartitionList)
         {
@@ -171,12 +179,12 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
         }
     }
 
-    public int IndexOf(TItem item)
+    public int IndexOf(RichCharacter item)
     {
-        PartitionedImmutableList<TItem> list = this;
+        PartitionedRichCharacterList list = this;
         for (int i = 0; i < list.Count; i++)
         {
-            TItem? entry = list[i];
+            RichCharacter? entry = list[i];
             if (item.Equals(entry))
                 return i;
         }
@@ -184,21 +192,21 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
         return -1;
     }
 
-    public PartitionedImmutableList<TItem> Insert(int index, TItem item)
+    public PartitionedRichCharacterList Insert(int index, RichCharacter item)
     {
         var outPartitionedImmutableList = this;
 
-        if (outPartitionedImmutableList.PartitionMetadataMap.Count == 0)
+        if (outPartitionedImmutableList.PartitionRichCharacterMetadataMap.Count == 0)
             return outPartitionedImmutableList.Add(item);
 
         var rollingCount = 0;
         var indexPartition = 0;
-        var partition = (ImmutableList<TItem>?)null;
+        var partition = (ImmutableList<RichCharacter>?)null;
         var offset = 0;
 
-        for (int i = 0; i < outPartitionedImmutableList.PartitionMetadataMap.Count; i++)
+        for (int i = 0; i < outPartitionedImmutableList.PartitionRichCharacterMetadataMap.Count; i++)
         {
-            var currentPartitionCount = outPartitionedImmutableList.PartitionMetadataMap[i].Count;
+            var currentPartitionCount = outPartitionedImmutableList.PartitionRichCharacterMetadataMap[i].Count;
 
             if (rollingCount + currentPartitionCount >= index)
             {
@@ -230,18 +238,18 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
             indexPartition,
             partition);
 
-        var outPartitionMemoryMap = outPartitionedImmutableList.PartitionMetadataMap.SetItem(
+        var outPartitionMemoryMap = outPartitionedImmutableList.PartitionRichCharacterMetadataMap.SetItem(
             indexPartition,
-            new(outPartitionedImmutableList.PartitionMetadataMap[indexPartition].Count + 1));
+            new(outPartitionedImmutableList.PartitionRichCharacterMetadataMap[indexPartition].Count + 1));
 
         return outPartitionedImmutableList with
         {
             PartitionList = outPartitionList,
-            PartitionMetadataMap = outPartitionMemoryMap,
+            PartitionRichCharacterMetadataMap = outPartitionMemoryMap,
         };
     }
     
-    public PartitionedImmutableList<TItem> InsertRange(int index, IEnumerable<TItem> itemList)
+    public PartitionedRichCharacterList InsertRange(int index, IEnumerable<RichCharacter> itemList)
     {
         var partitionedImmutableList = this;
 
@@ -253,9 +261,9 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
         return partitionedImmutableList;
     }
 
-    public PartitionedImmutableList<TItem> Remove(TItem item)
+    public PartitionedRichCharacterList Remove(RichCharacter item)
     {
-        PartitionedImmutableList<TItem> list = this;
+        PartitionedRichCharacterList list = this;
         for (int i = 0; i < list.Count; i++)
         {
             if (list[i].Equals(item))
@@ -265,16 +273,16 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
         return this;
     }
 
-    public PartitionedImmutableList<TItem> RemoveAt(int index)
+    public PartitionedRichCharacterList RemoveAt(int index)
     {
         var rollingCount = 0;
         var indexPartition = 0;
-        var partition = (ImmutableList<TItem>?)null;
+        var partition = (ImmutableList<RichCharacter>?)null;
         var offset = 0;
 
-        for (int i = 0; i < PartitionMetadataMap.Count; i++)
+        for (int i = 0; i < PartitionRichCharacterMetadataMap.Count; i++)
         {
-            var currentPartitionCount = PartitionMetadataMap[i].Count;
+            var currentPartitionCount = PartitionRichCharacterMetadataMap[i].Count;
 
             if (rollingCount + currentPartitionCount > index)
             {
@@ -296,18 +304,18 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
 
         var outPartitionList = PartitionList.SetItem(indexPartition, partition);
 
-        var outPartitionMemoryMap = PartitionMetadataMap.SetItem(
+        var outPartitionMemoryMap = PartitionRichCharacterMetadataMap.SetItem(
             indexPartition,
-            new(PartitionMetadataMap[indexPartition].Count - 1));
+            new(PartitionRichCharacterMetadataMap[indexPartition].Count - 1));
 
         return this with
         {
             PartitionList = outPartitionList,
-            PartitionMetadataMap = outPartitionMemoryMap,
+            PartitionRichCharacterMetadataMap = outPartitionMemoryMap,
         };
     }
     
-    public PartitionedImmutableList<TItem> RemoveRange(int index, int count)
+    public PartitionedRichCharacterList RemoveRange(int index, int count)
     {
         var partitionedImmutableList = this;
 
@@ -324,10 +332,10 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
         return GetEnumerator();
     }
 
-    void ICollection<TItem>.Add(TItem item) => Add(item);
-    void ICollection<TItem>.Clear() => Clear();
+    void ICollection<RichCharacter>.Add(RichCharacter item) => Add(item);
+    void ICollection<RichCharacter>.Clear() => Clear();
 
-    bool ICollection<TItem>.Remove(TItem item)
+    bool ICollection<RichCharacter>.Remove(RichCharacter item)
     {
         var index = IndexOf(item);
 
@@ -338,10 +346,10 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
         return true;
     }
 
-    void IList<TItem>.Insert(int index, TItem item) => Insert(index, item);
-    void IList<TItem>.RemoveAt(int index) => RemoveAt(index);
+    void IList<RichCharacter>.Insert(int index, RichCharacter item) => Insert(index, item);
+    void IList<RichCharacter>.RemoveAt(int index) => RemoveAt(index);
 
-    private PartitionedImmutableList<TItem> ExpandPartition(int index)
+    private PartitionedRichCharacterList ExpandPartition(int index)
     {
         var outPartitionedImmutableList = this;
 
@@ -367,7 +375,7 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
 
         var replaceOriginalPartition = inPartition;
 
-        var partitionNewList = new List<ImmutableList<TItem>>();
+        var partitionNewList = new List<ImmutableList<RichCharacter>>();
         for (int i = 0; i < EXPANSION_FACTOR; i++)
         {
             if (i == 0)
@@ -404,10 +412,10 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
             PartitionList = outPartitionList
         };
 
-        var newPartitionMetadata = partitionNewList.Select(x => new PartitionMetadata(x.Count));
+        var newPartitionRichCharacterMetadata = partitionNewList.Select(x => new PartitionRichCharacterMetadata(x.Count));
 
-        var outPartitionMemoryMap = outPartitionedImmutableList.PartitionMetadataMap
-            .InsertRange(index + 1, newPartitionMetadata);
+        var outPartitionMemoryMap = outPartitionedImmutableList.PartitionRichCharacterMetadataMap
+            .InsertRange(index + 1, newPartitionRichCharacterMetadata);
 
         for (int i = index; i < (index + EXPANSION_FACTOR); i++)
         {
@@ -417,7 +425,7 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
 
         return outPartitionedImmutableList with
         {
-            PartitionMetadataMap = outPartitionMemoryMap
+            PartitionRichCharacterMetadataMap = outPartitionMemoryMap
         };
     }
 }
