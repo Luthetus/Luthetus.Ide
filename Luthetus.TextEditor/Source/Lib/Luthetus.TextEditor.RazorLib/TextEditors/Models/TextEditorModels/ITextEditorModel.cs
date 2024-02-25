@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Partitions.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
@@ -23,7 +24,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 /// </summary>
 public interface ITextEditorModel
 {
-    public PartitionedImmutableList<RichCharacter> ContentList { get; }
+    public PartitionedRichCharacterList ContentList { get; }
 	public IList<EditBlock> EditBlocksList { get; }
     /// <summary>
     /// To get the ending position of RowIndex _rowEndingPositions[RowIndex]<br /><br />

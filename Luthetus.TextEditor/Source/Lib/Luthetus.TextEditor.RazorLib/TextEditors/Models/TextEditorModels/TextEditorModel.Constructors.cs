@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.Common.RazorLib.Partitions.Models;
+using Luthetus.TextEditor.RazorLib.Partitions.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
@@ -33,7 +34,7 @@ public partial class TextEditorModel
 
 		modifier.ModifyContent(content);
 		
-		ContentList = (PartitionedImmutableList<RichCharacter>)modifier.ContentList;
+		ContentList = (PartitionedRichCharacterList)modifier.ContentList;
 		RowEndingKindCountsList = modifier.RowEndingKindCountsList.ToImmutableList();
 		RowEndingPositionsList = modifier.RowEndingPositionsList.ToImmutableList();
 		TabKeyPositionsList = modifier.TabKeyPositionsList.ToImmutableList();
@@ -43,7 +44,7 @@ public partial class TextEditorModel
 	}
 
 	public TextEditorModel(
-		PartitionedImmutableList<RichCharacter> contentList,
+		PartitionedRichCharacterList contentList,
 		ImmutableList<EditBlock> editBlocksList,
 		ImmutableList<RowEnding> rowEndingPositionsList,
 		ImmutableList<(RowEndingKind rowEndingKind, int count)> rowEndingKindCountsList,

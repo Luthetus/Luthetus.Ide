@@ -11,6 +11,7 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.Partitions.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
@@ -34,7 +35,7 @@ public partial class TextEditorModelModifier
         _textEditorModel = textEditorModel;
     }
 
-    private PartitionedImmutableList<RichCharacter>? _contentList;
+    private PartitionedRichCharacterList? _contentList;
     private List<EditBlock>? _editBlocksList;
     private List<RowEnding>? _rowEndingPositionsList;
     private List<(RowEndingKind rowEndingKind, int count)>? _rowEndingKindCountsList;
