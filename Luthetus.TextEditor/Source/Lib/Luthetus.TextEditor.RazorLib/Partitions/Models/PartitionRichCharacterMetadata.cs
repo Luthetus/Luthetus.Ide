@@ -7,7 +7,7 @@ namespace Luthetus.TextEditor.RazorLib.Partitions.Models;
 /// <summary>
 /// Presume all meta-data to be relative to the partition itself, NOT to the
 /// entirety of the text editor.<br/>
-/// For example, if a partition says they have a <see cref="TabKeyPositionsList"/> entry
+/// For example, if a partition says they have a <see cref="TabList"/> entry
 /// at positionIndex '3'. That is the third index of the partition, regardless of however
 /// much text came before the start of this positionIndex.<br/>
 /// To convert meta-data which is relative to a partition, one must sum the count
@@ -32,5 +32,5 @@ public record PartitionRichCharacterMetadata
     public int Count { get; set; }
 
     /// <summary><inheritdoc cref="ITextEditorModel.TabKeyPositionsList"/></summary>
-	public ImmutableList<int> TabKeyPositionsList { get; set; } = ImmutableList<int>.Empty;
+	public ImmutableList<int> TabList { get; set; } = ImmutableList<int>.Empty;
 }

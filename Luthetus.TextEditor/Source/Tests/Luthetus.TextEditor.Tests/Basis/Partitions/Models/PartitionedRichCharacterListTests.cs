@@ -21,8 +21,8 @@ public class PartitionedRichCharacterListTests
 
         Assert.Equal(3, partitionRichCharacterMetadata.Count);
 
-        Assert.Single(partitionRichCharacterMetadata.TabKeyPositionsList);
-        var tabKeyPosition = partitionRichCharacterMetadata.TabKeyPositionsList.Single();
+        Assert.Single(partitionRichCharacterMetadata.TabList);
+        var tabKeyPosition = partitionRichCharacterMetadata.TabList.Single();
         Assert.Equal(0, tabKeyPosition);
     }
 
@@ -42,8 +42,8 @@ public class PartitionedRichCharacterListTests
 
         Assert.Equal(3, partitionRichCharacterMetadata.Count);
 
-        Assert.Single(partitionRichCharacterMetadata.TabKeyPositionsList);
-        var tabKeyPosition = partitionRichCharacterMetadata.TabKeyPositionsList.Single();
+        Assert.Single(partitionRichCharacterMetadata.TabList);
+        var tabKeyPosition = partitionRichCharacterMetadata.TabList.Single();
         Assert.Equal(1, tabKeyPosition);
     }
 
@@ -63,8 +63,8 @@ public class PartitionedRichCharacterListTests
 
         Assert.Equal(3, partitionRichCharacterMetadata.Count);
 
-        Assert.Single(partitionRichCharacterMetadata.TabKeyPositionsList);
-        var tabKeyPosition = partitionRichCharacterMetadata.TabKeyPositionsList.Single();
+        Assert.Single(partitionRichCharacterMetadata.TabList);
+        var tabKeyPosition = partitionRichCharacterMetadata.TabList.Single();
         Assert.Equal(2, tabKeyPosition);
     }
 
@@ -84,8 +84,8 @@ public class PartitionedRichCharacterListTests
 
         Assert.Equal(3, partitionRichCharacterMetadata.Count);
 
-        Assert.Single(partitionRichCharacterMetadata.TabKeyPositionsList);
-        var tabKeyPosition = partitionRichCharacterMetadata.TabKeyPositionsList.Single();
+        Assert.Single(partitionRichCharacterMetadata.TabList);
+        var tabKeyPosition = partitionRichCharacterMetadata.TabList.Single();
         Assert.Equal(0, tabKeyPosition);
     }
 
@@ -105,8 +105,8 @@ public class PartitionedRichCharacterListTests
 
         Assert.Equal(3, partitionRichCharacterMetadata.Count);
 
-        Assert.Single(partitionRichCharacterMetadata.TabKeyPositionsList);
-        var tabKeyPosition = partitionRichCharacterMetadata.TabKeyPositionsList.Single();
+        Assert.Single(partitionRichCharacterMetadata.TabList);
+        var tabKeyPosition = partitionRichCharacterMetadata.TabList.Single();
         Assert.Equal(1, tabKeyPosition);
     }
 
@@ -126,8 +126,8 @@ public class PartitionedRichCharacterListTests
 
         Assert.Equal(3, partitionRichCharacterMetadata.Count);
 
-        Assert.Single(partitionRichCharacterMetadata.TabKeyPositionsList);
-        var tabKeyPosition = partitionRichCharacterMetadata.TabKeyPositionsList.Single();
+        Assert.Single(partitionRichCharacterMetadata.TabList);
+        var tabKeyPosition = partitionRichCharacterMetadata.TabList.Single();
         Assert.Equal(2, tabKeyPosition);
     }
 }
