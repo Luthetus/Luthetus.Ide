@@ -214,6 +214,7 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
 
                 partition = outPartitionedImmutableList.PartitionList[i];
                 offset = index - rollingCount;
+                break;
             }
             else
             {

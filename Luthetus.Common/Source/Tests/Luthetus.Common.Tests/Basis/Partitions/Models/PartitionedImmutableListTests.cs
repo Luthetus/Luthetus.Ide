@@ -221,13 +221,53 @@ public class PartitionedImmutableListTests
     [Fact]
     public void Insert()
     {
-        var partitionSize = 5;
+        var partitionSize = 3;
         var partitionedImmutableList = new PartitionedImmutableList<char>(partitionSize);
+        partitionedImmutableList = partitionedImmutableList.AddRange("abc");
 
-        partitionedImmutableList = partitionedImmutableList.AddRange("abcdefghijklmnopqrstuvwxyz");
+        // Assertions pre invocation
+        {
+            Assert.Single(partitionedImmutableList.PartitionList);
+            var partitionList = partitionedImmutableList.PartitionList[0];
+            Assert.Equal('a', partitionList[0]);
+            Assert.Equal('b', partitionList[1]);
+            Assert.Equal('c', partitionList[2]);
+        }
 
-        partitionedImmutableList = partitionedImmutableList.Insert(7, '5');
-        throw new NotImplementedException();
+        partitionedImmutableList = partitionedImmutableList.Insert(0, '5');
+
+        // Assertions post invocation
+        {
+            Assert.Equal(3, partitionedImmutableList.PartitionList.Count);
+
+            // firstPartitionList
+            {
+                var partitionIndex = 0;
+                var firstPartitionList = partitionedImmutableList.PartitionList[partitionIndex];
+                Assert.Equal(2, firstPartitionList.Count);
+                Assert.Equal(partitionedImmutableList.PartitionMemoryMap[partitionIndex], firstPartitionList.Count);
+                Assert.Equal('5', firstPartitionList[0]);
+                Assert.Equal('a', firstPartitionList[1]);
+            }
+
+            // secondPartitionList
+            {
+                var partitionIndex = 1;
+                var secondPartitionList = partitionedImmutableList.PartitionList[partitionIndex];
+                Assert.Single(secondPartitionList);
+                Assert.Equal(partitionedImmutableList.PartitionMemoryMap[partitionIndex], secondPartitionList.Count);
+                Assert.Equal('b', secondPartitionList[0]);
+            }
+
+            // thirdPartitionList
+            {
+                var partitionIndex = 2;
+                var thirdPartitionList = partitionedImmutableList.PartitionList[partitionIndex];
+                Assert.Single(thirdPartitionList);
+                Assert.Equal(partitionedImmutableList.PartitionMemoryMap[partitionIndex], thirdPartitionList.Count);
+                Assert.Equal('c', thirdPartitionList[0]);
+            }
+        }
     }
 
     [Fact]
