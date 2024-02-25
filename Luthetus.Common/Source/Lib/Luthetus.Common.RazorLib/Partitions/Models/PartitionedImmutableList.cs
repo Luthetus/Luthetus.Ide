@@ -282,6 +282,7 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
                 indexPartition = i;
                 partition = PartitionList[i];
                 offset = index - rollingCount;
+                break;
             }
             else
             {
