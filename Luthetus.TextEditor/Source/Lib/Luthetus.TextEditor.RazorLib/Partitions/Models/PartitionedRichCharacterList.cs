@@ -1,6 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.Partitions.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
-using System;
 using System.Collections;
 using System.Collections.Immutable;
 
@@ -38,9 +37,9 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         {
             var rollingCount = 0;
 
-            for (int i = 0; i < PartitionRichCharacterMetadataMap.Count; i++)
+            for (int i = 0; i < PartitionMetadataMap.Count; i++)
             {
-                var currentPartitionCount = PartitionRichCharacterMetadataMap[i].Count;
+                var currentPartitionCount = PartitionMetadataMap[i].Count;
 
                 if (rollingCount + currentPartitionCount > globalPositionIndex)
                 {
@@ -73,7 +72,7 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
     /// one would read the value at index 0 of this property.
     /// In otherwords, each partition index maps to its corresponding Count.
     /// </summary>
-    public ImmutableList<PartitionRichCharacterMetadata> PartitionRichCharacterMetadataMap { get; init; } = ImmutableList<PartitionRichCharacterMetadata>.Empty;
+    public ImmutableList<PartitionRichCharacterMetadata> PartitionMetadataMap { get; init; } = ImmutableList<PartitionRichCharacterMetadata>.Empty;
 
     public int Count
     {
@@ -99,27 +98,25 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
     {
         var partitionWithFreeSpaceIndex = -1;
 
-        for (int i = 0; i < PartitionRichCharacterMetadataMap.Count; i++)
+        for (int i = 0; i < PartitionMetadataMap.Count; i++)
         {
-            int count = PartitionRichCharacterMetadataMap[i].Count;
+            int count = PartitionMetadataMap[i].Count;
 
             if (count != PartitionSize)
                 partitionWithFreeSpaceIndex = i;
         }
 
         var localPartitionList = PartitionList;
-        var localPartitionRichCharacterMetadataMap = PartitionRichCharacterMetadataMap;
-        var relativePositionIndex = 0;
+        var localPartitionMetadataMap = PartitionMetadataMap;
+        int relativePositionIndex;
 
         if (partitionWithFreeSpaceIndex == -1)
         {
             var partition = new RichCharacter[] { item }.ToImmutableList();
 
-            localPartitionList = localPartitionList
-                .Add(partition);
+            localPartitionList = localPartitionList.Add(partition);
 
-            localPartitionRichCharacterMetadataMap = localPartitionRichCharacterMetadataMap
-                .Add(new(partition.Count));
+            localPartitionMetadataMap = localPartitionMetadataMap.Add(new(partition.Count));
 
             partitionWithFreeSpaceIndex = localPartitionList.Count - 1;
             relativePositionIndex = 0;
@@ -132,7 +129,7 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
             localPartitionList = localPartitionList
                 .SetItem(partitionWithFreeSpaceIndex, partition);
 
-            localPartitionRichCharacterMetadataMap = localPartitionRichCharacterMetadataMap
+            localPartitionMetadataMap = localPartitionMetadataMap
                 .SetItem(partitionWithFreeSpaceIndex, new(partition.Count));
 
             relativePositionIndex = partition.Count - 1;
@@ -141,23 +138,23 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         Add_TabList(
             item,
             partitionWithFreeSpaceIndex,
-            localPartitionRichCharacterMetadataMap,
+            localPartitionMetadataMap,
             relativePositionIndex);
 
         return this with
         {
             PartitionList = localPartitionList,
-            PartitionRichCharacterMetadataMap = localPartitionRichCharacterMetadataMap
+            PartitionMetadataMap = localPartitionMetadataMap
          };
     }
 
     private static void Add_TabList(
         RichCharacter item,
         int indexPartitionFreeSpace,
-        ImmutableList<PartitionRichCharacterMetadata> localPartitionRichCharacterMetadataMap,
+        ImmutableList<PartitionRichCharacterMetadata> localPartitionMetadataMap,
         int relativePositionIndex)
     {
-        var inTabList = localPartitionRichCharacterMetadataMap[indexPartitionFreeSpace].TabList;
+        var inTabList = localPartitionMetadataMap[indexPartitionFreeSpace].TabList;
         var mutableTabList = new List<int>();
 
         for (int i = 0; i < inTabList.Count; i++)
@@ -169,7 +166,7 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         {
             mutableTabList.Add(relativePositionIndex);
 
-            localPartitionRichCharacterMetadataMap[indexPartitionFreeSpace].TabList =
+            localPartitionMetadataMap[indexPartitionFreeSpace].TabList =
                 mutableTabList.ToImmutableList();
         }
     }
@@ -242,7 +239,7 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
     {
         var outPartitionedImmutableList = this;
 
-        if (outPartitionedImmutableList.PartitionRichCharacterMetadataMap.Count == 0)
+        if (outPartitionedImmutableList.PartitionMetadataMap.Count == 0)
             return outPartitionedImmutableList.Add(item);
 
         var rollingCount = 0;
@@ -250,9 +247,9 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         var partition = (ImmutableList<RichCharacter>?)null;
         var relativePositionIndex = 0;
 
-        for (int i = 0; i < outPartitionedImmutableList.PartitionRichCharacterMetadataMap.Count; i++)
+        for (int i = 0; i < outPartitionedImmutableList.PartitionMetadataMap.Count; i++)
         {
-            var currentPartitionCount = outPartitionedImmutableList.PartitionRichCharacterMetadataMap[i].Count;
+            var currentPartitionCount = outPartitionedImmutableList.PartitionMetadataMap[i].Count;
 
             if (rollingCount + currentPartitionCount >= globalPositionIndex)
             {
@@ -280,13 +277,12 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
 
         partition = partition.Insert(relativePositionIndex, item);
 
-        var outPartitionList = outPartitionedImmutableList.PartitionList.SetItem(
-            partitionIndex,
-            partition);
+        var outPartitionList = outPartitionedImmutableList.PartitionList
+            .SetItem(partitionIndex, partition);
 
-        var outPartitionMemoryMap = outPartitionedImmutableList.PartitionRichCharacterMetadataMap.SetItem(
+        var outPartitionMemoryMap = outPartitionedImmutableList.PartitionMetadataMap.SetItem(
             partitionIndex,
-            new(outPartitionedImmutableList.PartitionRichCharacterMetadataMap[partitionIndex].Count + 1));
+            new(outPartitionedImmutableList.PartitionMetadataMap[partitionIndex].Count + 1));
 
         Insert_TabList(
             globalPositionIndex,
@@ -297,7 +293,7 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         return outPartitionedImmutableList with
         {
             PartitionList = outPartitionList,
-            PartitionRichCharacterMetadataMap = outPartitionMemoryMap,
+            PartitionMetadataMap = outPartitionMemoryMap,
         };
     }
 
@@ -328,8 +324,7 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         {
             mutableTabList.Insert(relativeTabIndex, globalPositionIndex);
 
-            outPartitionMemoryMap[partitionIndex].TabList =
-                mutableTabList.ToImmutableList();
+            outPartitionMemoryMap[partitionIndex].TabList = mutableTabList.ToImmutableList();
         }
     }
 
@@ -364,9 +359,9 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         var partition = (ImmutableList<RichCharacter>?)null;
         var offset = 0;
 
-        for (int i = 0; i < PartitionRichCharacterMetadataMap.Count; i++)
+        for (int i = 0; i < PartitionMetadataMap.Count; i++)
         {
-            var currentPartitionCount = PartitionRichCharacterMetadataMap[i].Count;
+            var currentPartitionCount = PartitionMetadataMap[i].Count;
 
             if (rollingCount + currentPartitionCount > index)
             {
@@ -388,19 +383,16 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
 
         var outPartitionList = PartitionList.SetItem(indexPartition, partition);
 
-        var outPartitionMemoryMap = PartitionRichCharacterMetadataMap.SetItem(
+        var outPartitionMemoryMap = PartitionMetadataMap.SetItem(
             indexPartition,
-            new(PartitionRichCharacterMetadataMap[indexPartition].Count - 1));
+            new(PartitionMetadataMap[indexPartition].Count - 1));
 
-        RemoveAt_TabList(
-            index,
-            indexPartition,
-            outPartitionMemoryMap);
+        RemoveAt_TabList(index, indexPartition, outPartitionMemoryMap);
 
         return this with
         {
             PartitionList = outPartitionList,
-            PartitionRichCharacterMetadataMap = outPartitionMemoryMap,
+            PartitionMetadataMap = outPartitionMemoryMap,
         };
     }
 
@@ -427,8 +419,7 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
             mutableTabList.Add(inTabList[i] - 1);
         }
 
-        outPartitionMemoryMap[indexPartition].TabList =
-            mutableTabList.ToImmutableList();
+        outPartitionMemoryMap[indexPartition].TabList = mutableTabList.ToImmutableList();
     }
 
     public PartitionedRichCharacterList RemoveRange(int globalPositionIndex, int count)
@@ -496,25 +487,19 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         {
             if (i == 0)
             {
-                replaceOriginalPartition = inPartition
-                    .Take(idealSplit)
-                    .ToImmutableList();
+                replaceOriginalPartition = inPartition.Take(idealSplit).ToImmutableList();
             }
             else if (i == 1)
             {
                 var partitionNew = inPartition
-                    .Skip(idealSplit)
-                    .Take(idealSplit + charactersLost)
-                    .ToImmutableList();
+                    .Skip(idealSplit).Take(idealSplit + charactersLost).ToImmutableList();
 
                 partitionNewList.Add(partitionNew);
             }
             else
             {
                 var partitionNew = inPartition
-                    .Skip(idealSplit * i + charactersLost)
-                    .Take(idealSplit)
-                    .ToImmutableList();
+                    .Skip(idealSplit * i + charactersLost) .Take(idealSplit) .ToImmutableList();
 
                 partitionNewList.Add(partitionNew);
             }
@@ -528,10 +513,10 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
             PartitionList = outPartitionList
         };
 
-        var newPartitionRichCharacterMetadata = partitionNewList.Select(x => new PartitionRichCharacterMetadata(x.Count));
+        var newPartitionMetadata = partitionNewList.Select(x => new PartitionRichCharacterMetadata(x.Count));
 
-        var outPartitionMemoryMap = outPartitionedImmutableList.PartitionRichCharacterMetadataMap
-            .InsertRange(partitionIndex + 1, newPartitionRichCharacterMetadata);
+        var outPartitionMemoryMap = outPartitionedImmutableList.PartitionMetadataMap
+            .InsertRange(partitionIndex + 1, newPartitionMetadata);
 
         for (int i = partitionIndex; i < (partitionIndex + EXPANSION_FACTOR); i++)
         {
@@ -550,7 +535,7 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
 
         return outPartitionedImmutableList with
         {
-            PartitionRichCharacterMetadataMap = outPartitionMemoryMap
+            PartitionMetadataMap = outPartitionMemoryMap
         };
     }
 
@@ -574,18 +559,14 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
     {
         var rollingCount = 0;
 
-        for (int i = 0; i < PartitionRichCharacterMetadataMap.Count; i++)
+        for (int i = 0; i < PartitionMetadataMap.Count; i++)
         {
-            var currentPartitionCount = PartitionRichCharacterMetadataMap[i].Count;
+            var currentPartitionCount = PartitionMetadataMap[i].Count;
 
             if (rollingCount + currentPartitionCount > index)
-            {
                 return (PartitionList[i], i, rollingCount);
-            }
             else
-            {
                 rollingCount += currentPartitionCount;
-            }
         }
 
         throw new IndexOutOfRangeException();

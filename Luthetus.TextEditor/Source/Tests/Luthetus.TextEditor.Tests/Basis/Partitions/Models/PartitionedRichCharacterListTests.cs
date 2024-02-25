@@ -16,8 +16,8 @@ public class PartitionedRichCharacterListTests
             new string(richCharacterList.Select(x => x.Value).ToArray()),
             new string(partitionedRichCharacterList.Select(x => x.Value).ToArray()));
 
-        Assert.Single(partitionedRichCharacterList.PartitionRichCharacterMetadataMap);
-        var partitionRichCharacterMetadata = partitionedRichCharacterList.PartitionRichCharacterMetadataMap.Single();
+        Assert.Single(partitionedRichCharacterList.PartitionMetadataMap);
+        var partitionRichCharacterMetadata = partitionedRichCharacterList.PartitionMetadataMap.Single();
 
         Assert.Equal(3, partitionRichCharacterMetadata.Count);
 
@@ -37,8 +37,8 @@ public class PartitionedRichCharacterListTests
             new string(richCharacterList.Select(x => x.Value).ToArray()),
             new string(partitionedRichCharacterList.Select(x => x.Value).ToArray()));
 
-        Assert.Single(partitionedRichCharacterList.PartitionRichCharacterMetadataMap);
-        var partitionRichCharacterMetadata = partitionedRichCharacterList.PartitionRichCharacterMetadataMap.Single();
+        Assert.Single(partitionedRichCharacterList.PartitionMetadataMap);
+        var partitionRichCharacterMetadata = partitionedRichCharacterList.PartitionMetadataMap.Single();
 
         Assert.Equal(3, partitionRichCharacterMetadata.Count);
 
@@ -58,8 +58,8 @@ public class PartitionedRichCharacterListTests
             new string(richCharacterList.Select(x => x.Value).ToArray()),
             new string(partitionedRichCharacterList.Select(x => x.Value).ToArray()));
 
-        Assert.Single(partitionedRichCharacterList.PartitionRichCharacterMetadataMap);
-        var partitionRichCharacterMetadata = partitionedRichCharacterList.PartitionRichCharacterMetadataMap.Single();
+        Assert.Single(partitionedRichCharacterList.PartitionMetadataMap);
+        var partitionRichCharacterMetadata = partitionedRichCharacterList.PartitionMetadataMap.Single();
 
         Assert.Equal(3, partitionRichCharacterMetadata.Count);
 
@@ -79,8 +79,8 @@ public class PartitionedRichCharacterListTests
             new string(richCharacterList.Select(x => x.Value).ToArray()),
             new string(partitionedRichCharacterList.Select(x => x.Value).ToArray()));
 
-        Assert.Single(partitionedRichCharacterList.PartitionRichCharacterMetadataMap);
-        var partitionRichCharacterMetadata = partitionedRichCharacterList.PartitionRichCharacterMetadataMap.Single();
+        Assert.Single(partitionedRichCharacterList.PartitionMetadataMap);
+        var partitionRichCharacterMetadata = partitionedRichCharacterList.PartitionMetadataMap.Single();
 
         Assert.Equal(3, partitionRichCharacterMetadata.Count);
 
@@ -100,8 +100,8 @@ public class PartitionedRichCharacterListTests
             new string(richCharacterList.Select(x => x.Value).ToArray()),
             new string(partitionedRichCharacterList.Select(x => x.Value).ToArray()));
 
-        Assert.Single(partitionedRichCharacterList.PartitionRichCharacterMetadataMap);
-        var partitionRichCharacterMetadata = partitionedRichCharacterList.PartitionRichCharacterMetadataMap.Single();
+        Assert.Single(partitionedRichCharacterList.PartitionMetadataMap);
+        var partitionRichCharacterMetadata = partitionedRichCharacterList.PartitionMetadataMap.Single();
 
         Assert.Equal(3, partitionRichCharacterMetadata.Count);
 
@@ -121,8 +121,8 @@ public class PartitionedRichCharacterListTests
             new string(richCharacterList.Select(x => x.Value).ToArray()),
             new string(partitionedRichCharacterList.Select(x => x.Value).ToArray()));
 
-        Assert.Single(partitionedRichCharacterList.PartitionRichCharacterMetadataMap);
-        var partitionRichCharacterMetadata = partitionedRichCharacterList.PartitionRichCharacterMetadataMap.Single();
+        Assert.Single(partitionedRichCharacterList.PartitionMetadataMap);
+        var partitionRichCharacterMetadata = partitionedRichCharacterList.PartitionMetadataMap.Single();
 
         Assert.Equal(3, partitionRichCharacterMetadata.Count);
 
