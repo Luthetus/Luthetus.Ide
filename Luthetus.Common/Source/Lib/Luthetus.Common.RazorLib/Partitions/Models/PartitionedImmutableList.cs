@@ -29,9 +29,9 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
         {
             var rollingCount = 0;
 
-            for (int i = 0; i < PartitionMemoryMap.Count; i++)
+            for (int i = 0; i < PartitionMetadataMap.Count; i++)
             {
-                var currentPartitionCount = PartitionMemoryMap[i];
+                var currentPartitionCount = PartitionMetadataMap[i].Count;
 
                 if (rollingCount + currentPartitionCount > index)
                 {
@@ -64,7 +64,7 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
     /// one would read the value at index 0 of this property.
     /// In otherwords, each partition index maps to its corresponding Count.
     /// </summary>
-    public ImmutableList<int> PartitionMemoryMap { get; init; } = ImmutableList<int>.Empty;
+    public ImmutableList<PartitionMetadata> PartitionMetadataMap { get; init; } = ImmutableList<PartitionMetadata>.Empty;
 
     public int Count
     {
@@ -90,9 +90,9 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
     {
         var indexPartitionFreeSpace = -1;
 
-        for (int i = 0; i < PartitionMemoryMap.Count; i++)
+        for (int i = 0; i < PartitionMetadataMap.Count; i++)
         {
-            int count = PartitionMemoryMap[i];
+            int count = PartitionMetadataMap[i].Count;
 
             if (count != PartitionSize)
                 indexPartitionFreeSpace = i;
@@ -105,7 +105,7 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
             return this with
             {
                 PartitionList = PartitionList.Add(partition),
-                PartitionMemoryMap = PartitionMemoryMap.Add(partition.Count)
+                PartitionMetadataMap = PartitionMetadataMap.Add(new(partition.Count))
             };
         }
         else
@@ -116,7 +116,7 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
             return this with
             {
                 PartitionList = PartitionList.SetItem(indexPartitionFreeSpace, partition),
-                PartitionMemoryMap = PartitionMemoryMap.SetItem(indexPartitionFreeSpace, partition.Count)
+                PartitionMetadataMap = PartitionMetadataMap.SetItem(indexPartitionFreeSpace, new(partition.Count))
             };
         }
     }
@@ -189,7 +189,7 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
     {
         var outPartitionedImmutableList = this;
 
-        if (outPartitionedImmutableList.PartitionMemoryMap.Count == 0)
+        if (outPartitionedImmutableList.PartitionMetadataMap.Count == 0)
             return outPartitionedImmutableList.Add(item);
 
         var rollingCount = 0;
@@ -197,9 +197,9 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
         var partition = (ImmutableList<TItem>?)null;
         var offset = 0;
 
-        for (int i = 0; i < outPartitionedImmutableList.PartitionMemoryMap.Count; i++)
+        for (int i = 0; i < outPartitionedImmutableList.PartitionMetadataMap.Count; i++)
         {
-            var currentPartitionCount = outPartitionedImmutableList.PartitionMemoryMap[i];
+            var currentPartitionCount = outPartitionedImmutableList.PartitionMetadataMap[i].Count;
 
             if (rollingCount + currentPartitionCount >= index)
             {
@@ -231,14 +231,14 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
             indexPartition,
             partition);
 
-        var outPartitionMemoryMap = outPartitionedImmutableList.PartitionMemoryMap.SetItem(
+        var outPartitionMemoryMap = outPartitionedImmutableList.PartitionMetadataMap.SetItem(
             indexPartition,
-            outPartitionedImmutableList.PartitionMemoryMap[indexPartition] + 1);
+            new(outPartitionedImmutableList.PartitionMetadataMap[indexPartition].Count + 1));
 
         return outPartitionedImmutableList with
         {
             PartitionList = outPartitionList,
-            PartitionMemoryMap = outPartitionMemoryMap,
+            PartitionMetadataMap = outPartitionMemoryMap,
         };
     }
     
@@ -273,9 +273,9 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
         var partition = (ImmutableList<TItem>?)null;
         var offset = 0;
 
-        for (int i = 0; i < PartitionMemoryMap.Count; i++)
+        for (int i = 0; i < PartitionMetadataMap.Count; i++)
         {
-            var currentPartitionCount = PartitionMemoryMap[i];
+            var currentPartitionCount = PartitionMetadataMap[i].Count;
 
             if (rollingCount + currentPartitionCount > index)
             {
@@ -296,12 +296,15 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
         partition = partition.RemoveAt(offset);
 
         var outPartitionList = PartitionList.SetItem(indexPartition, partition);
-        var outPartitionMemoryMap = PartitionMemoryMap.SetItem(indexPartition, PartitionMemoryMap[indexPartition] - 1);
+
+        var outPartitionMemoryMap = PartitionMetadataMap.SetItem(
+            indexPartition,
+            new(PartitionMetadataMap[indexPartition].Count - 1));
 
         return this with
         {
             PartitionList = outPartitionList,
-            PartitionMemoryMap = outPartitionMemoryMap,
+            PartitionMetadataMap = outPartitionMemoryMap,
         };
     }
     
@@ -401,19 +404,21 @@ public record PartitionedImmutableList<TItem> : IList<TItem> where TItem : notnu
         {
             PartitionList = outPartitionList
         };
-        
-        var outPartitionMemoryMap = outPartitionedImmutableList.PartitionMemoryMap
-            .InsertRange(index + 1, new int[partitionNewList.Count]);
+
+        var newPartitionMetadata = partitionNewList.Select(x => new PartitionMetadata(x.Count));
+
+        var outPartitionMemoryMap = outPartitionedImmutableList.PartitionMetadataMap
+            .InsertRange(index + 1, newPartitionMetadata);
 
         for (int i = index; i < (index + EXPANSION_FACTOR); i++)
         {
             var partition = outPartitionedImmutableList.PartitionList[i];
-            outPartitionMemoryMap = outPartitionMemoryMap.SetItem(i, partition.Count);
+            outPartitionMemoryMap = outPartitionMemoryMap.SetItem(i, new (partition.Count));
         }
 
         return outPartitionedImmutableList with
         {
-            PartitionMemoryMap = outPartitionMemoryMap
+            PartitionMetadataMap = outPartitionMemoryMap
         };
     }
 }
