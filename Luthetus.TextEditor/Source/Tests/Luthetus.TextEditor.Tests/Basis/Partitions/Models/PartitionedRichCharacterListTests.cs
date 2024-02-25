@@ -69,6 +69,20 @@ public class PartitionedRichCharacterListTests
     }
 
     [Fact]
+    public void Add_Four_Tabs()
+    {
+        var partitionedRichCharacterList = new PartitionedRichCharacterList(3);
+        var richCharacterList = new string('\t', 4).Select(x => new RichCharacter { Value = x }).ToArray();
+        partitionedRichCharacterList = partitionedRichCharacterList.AddRange(richCharacterList);
+
+        var globalMetadataLazy = PartitionedRichCharacterList.GetGlobalMetadataLazy(partitionedRichCharacterList);
+        var globalTabList = globalMetadataLazy.TabListLazy.Value;
+        var globalAllText = globalMetadataLazy.AllText.Value;
+
+        throw new NotImplementedException();
+    }
+
+    [Fact]
     public void Insert_Tab_One_Partitions_Start()
     {
         var partitionedRichCharacterList = new PartitionedRichCharacterList(3);
@@ -140,6 +154,27 @@ public class PartitionedRichCharacterListTests
 
         partitionedRichCharacterList = partitionedRichCharacterList.Insert(
             0, new RichCharacter { Value = '\t' });
+
+        var globalMetadataLazy = PartitionedRichCharacterList.GetGlobalMetadataLazy(partitionedRichCharacterList);
+        var globalTabList = globalMetadataLazy.TabListLazy.Value;
+        var globalAllText = globalMetadataLazy.AllText.Value;
+
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void Insert_Four_Tabs()
+    {
+        var partitionedRichCharacterList = new PartitionedRichCharacterList(3);
+        var richCharacterList = new string('\t', 4).Select(x => new RichCharacter { Value = x }).ToArray();
+        partitionedRichCharacterList = partitionedRichCharacterList.InsertRange(0, richCharacterList);
+
+        partitionedRichCharacterList = partitionedRichCharacterList.Insert(
+            0, new RichCharacter { Value = '\t' });
+
+        var globalMetadataLazy = PartitionedRichCharacterList.GetGlobalMetadataLazy(partitionedRichCharacterList);
+        var globalTabList = globalMetadataLazy.TabListLazy.Value;
+        var globalAllText = globalMetadataLazy.AllText.Value;
 
         throw new NotImplementedException();
     }

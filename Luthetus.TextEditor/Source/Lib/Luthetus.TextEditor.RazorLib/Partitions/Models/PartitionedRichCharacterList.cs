@@ -336,9 +336,10 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         if (item.Value == '\t')
         {
             if (relativeTabIndex == -1)
-                relativeTabIndex = inTabList.Count;
+                mutableTabList.Add(relativePositionIndex);
+            else
+                mutableTabList.Insert(relativeTabIndex, relativePositionIndex);
 
-            mutableTabList.Insert(relativeTabIndex, relativePositionIndex);
             outPartitionMemoryMap[partitionIndex].TabList = mutableTabList.ToImmutableList();
         }
     }

@@ -22,7 +22,13 @@ public record GlobalRichCharacterMetadataLazy
                 rollingCount += metadata.Count;
             }
 
-            throw new IndexOutOfRangeException();
+            return tabList.ToImmutableList();
+        });
+
+        AllText = new Lazy<string>(() =>
+        {
+            return new string(partitionedList.PartitionList
+                .SelectMany(x => x.Select(y => y.Value)).ToArray());
         });
     }
 
@@ -30,4 +36,5 @@ public record GlobalRichCharacterMetadataLazy
 
     /// <summary><inheritdoc cref="ITextEditorModel.TabKeyPositionsList"/></summary>
 	public Lazy<ImmutableList<int>> TabListLazy { get; }
+	public Lazy<string> AllText { get; }
 }
