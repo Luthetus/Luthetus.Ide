@@ -129,8 +129,10 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
             localPartitionList = localPartitionList
                 .SetItem(partitionWithFreeSpaceIndex, partition);
 
+            var metadata = localPartitionMetadataMap[partitionWithFreeSpaceIndex];
+
             localPartitionMetadataMap = localPartitionMetadataMap
-                .SetItem(partitionWithFreeSpaceIndex, new(partition.Count));
+                .SetItem(partitionWithFreeSpaceIndex, metadata with { Count = partition.Count });
 
             relativePositionIndex = partition.Count - 1;
         }
@@ -257,7 +259,9 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
 
                 if (currentPartitionCount == outPartitionedImmutableList.PartitionSize)
                 {
-                    outPartitionedImmutableList = outPartitionedImmutableList.ExpandPartition(partitionIndex);
+                    outPartitionedImmutableList = outPartitionedImmutableList.ExpandPartition(
+                        partitionIndex);
+
                     i -= 1;
                     continue;
                 }
@@ -280,9 +284,10 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         var outPartitionList = outPartitionedImmutableList.PartitionList
             .SetItem(partitionIndex, partition);
 
+        var metadata = outPartitionedImmutableList.PartitionMetadataMap[partitionIndex];
+
         var outPartitionMemoryMap = outPartitionedImmutableList.PartitionMetadataMap.SetItem(
-            partitionIndex,
-            new(outPartitionedImmutableList.PartitionMetadataMap[partitionIndex].Count + 1));
+            partitionIndex, metadata with { Count = metadata.Count + 1 });
 
         Insert_TabList(
             globalPositionIndex,
@@ -323,7 +328,6 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         if (item.Value == '\t')
         {
             mutableTabList.Insert(relativeTabIndex, globalPositionIndex);
-
             outPartitionMemoryMap[partitionIndex].TabList = mutableTabList.ToImmutableList();
         }
     }
@@ -383,9 +387,10 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
 
         var outPartitionList = PartitionList.SetItem(indexPartition, partition);
 
+        var metadata = PartitionMetadataMap[indexPartition];
+
         var outPartitionMemoryMap = PartitionMetadataMap.SetItem(
-            indexPartition,
-            new(PartitionMetadataMap[indexPartition].Count - 1));
+            indexPartition, metadata with { Count = metadata.Count - 1 });
 
         RemoveAt_TabList(index, indexPartition, outPartitionMemoryMap);
 
