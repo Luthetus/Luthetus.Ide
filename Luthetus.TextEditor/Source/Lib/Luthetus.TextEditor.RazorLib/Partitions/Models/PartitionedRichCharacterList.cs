@@ -450,6 +450,11 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         return partitionedImmutableList;
     }
 
+    public static GlobalRichCharacterMetadataLazy GetGlobalMetadataLazy(PartitionedRichCharacterList partitionedList)
+    {
+        return new GlobalRichCharacterMetadataLazy(partitionedList);
+    }
+
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();

@@ -130,4 +130,17 @@ public class PartitionedRichCharacterListTests
         var tabKeyPosition = partitionRichCharacterMetadata.TabList.Single();
         Assert.Equal(2, tabKeyPosition);
     }
+
+    [Fact]
+    public void Insert_Tab_One_Partitions_Expansion()
+    {
+        var partitionedRichCharacterList = new PartitionedRichCharacterList(3);
+        var richCharacterList = "ab\t".Select(x => new RichCharacter { Value = x }).ToArray();
+        partitionedRichCharacterList = partitionedRichCharacterList.InsertRange(0, richCharacterList);
+
+        partitionedRichCharacterList = partitionedRichCharacterList.Insert(
+            0, new RichCharacter { Value = '\t' });
+
+        throw new NotImplementedException();
+    }
 }
