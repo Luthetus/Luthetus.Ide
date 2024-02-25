@@ -18,12 +18,7 @@ public partial class TextEditorModel
     public const int GUTTER_PADDING_RIGHT_IN_PIXELS = 15;
     public const int MAXIMUM_EDIT_BLOCKS = 10;
     public const int MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN = 5;
-
-    /// <summary>
-    /// TODO: Use a large partition size like, "5,000". For now I'm testing
-    /// the partition code and need it to trigger often.
-    /// </summary>
-    public const int PARTITION_SIZE = 50;
+    public const int PARTITION_SIZE = 5_000;
 
     /// <summary>
     /// An 'Empty' pattern cannot be done with <see cref="PartitionedImmutableList{RichCharacter}"/>
