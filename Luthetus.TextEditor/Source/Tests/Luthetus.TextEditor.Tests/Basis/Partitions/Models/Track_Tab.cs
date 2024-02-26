@@ -139,7 +139,7 @@ public class Track_Tab : Track_Tests_Base
             // Partition One
             {
                 var partitionMetadata = partitionContainer.PartitionMetadataMap[0];
-                Assert.Empty(partitionMetadata.TabList);
+                Assert.Single(partitionMetadata.TabList);
             }
             // Partition Two
             {
@@ -149,7 +149,7 @@ public class Track_Tab : Track_Tests_Base
             // Partition Three
             {
                 var partitionMetadata = partitionContainer.PartitionMetadataMap[2];
-                Assert.Equal(2, partitionMetadata.TabList.Count);
+                Assert.Single(partitionMetadata.TabList);
             }
         }
     }
