@@ -8,15 +8,15 @@ namespace Luthetus.TextEditor.RazorLib.Partitions.Models;
 internal class Track
 {
     public static void Add(
-        RichCharacter item,
-        int indexPartitionFreeSpace,
-        ImmutableList<ImmutableList<RichCharacter>> localPartitionList,
-        ImmutableList<PartitionMetadata> localPartitionMetadataMap,
-        int relativePositionIndex)
+        int relativePositionIndex,
+        RichCharacter richCharacter,
+        int partitionIndex,
+        ImmutableList<ImmutableList<RichCharacter>> partitionList,
+        ImmutableList<PartitionMetadata> partitionMetadataMap)
     {
         // TabList
         {
-            var inTabList = localPartitionMetadataMap[indexPartitionFreeSpace].TabList;
+            var inTabList = partitionMetadataMap[partitionIndex].TabList;
             var mutableTabList = new List<int>();
 
             for (int i = 0; i < inTabList.Count; i++)
@@ -24,18 +24,16 @@ internal class Track
                 mutableTabList.Add(inTabList[i]);
             }
 
-            if (item.Value == '\t')
+            if (richCharacter.Value == '\t')
             {
                 mutableTabList.Add(relativePositionIndex);
-
-                localPartitionMetadataMap[indexPartitionFreeSpace].TabList =
-                    mutableTabList.ToImmutableList();
+                partitionMetadataMap[partitionIndex].TabList = mutableTabList.ToImmutableList();
             }
         }
 
         // RowEndingList
         {
-            var inRowEndingList = localPartitionMetadataMap[indexPartitionFreeSpace].RowEndingList;
+            var inRowEndingList = partitionMetadataMap[partitionIndex].RowEndingList;
             var mutableRowEndingList = new List<RowEnding>();
 
             for (int i = 0; i < inRowEndingList.Count; i++)
@@ -43,22 +41,22 @@ internal class Track
                 mutableRowEndingList.Add(inRowEndingList[i]);
             }
 
-            if (item.Value == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
+            if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
             {
                 mutableRowEndingList.Add(new(relativePositionIndex, relativePositionIndex + 1, RowEndingKind.CarriageReturn));
             }
-            else if (item.Value == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
+            else if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
             {
                 var previousCharacter = '\0';
 
                 if (relativePositionIndex > 0)
                 {
-                    var currentPartition = localPartitionList[indexPartitionFreeSpace];
+                    var currentPartition = partitionList[partitionIndex];
                     previousCharacter = currentPartition[relativePositionIndex - 1].Value;
                 }
-                else if (indexPartitionFreeSpace > 0)
+                else if (partitionIndex > 0)
                 {
-                    var previousPartition = localPartitionList[indexPartitionFreeSpace - 1];
+                    var previousPartition = partitionList[partitionIndex - 1];
                     previousCharacter = previousPartition[^1].Value;
                 }
 
@@ -74,25 +72,21 @@ internal class Track
                 }
             }
 
-            localPartitionMetadataMap[indexPartitionFreeSpace].RowEndingList =
-                mutableRowEndingList.ToImmutableList();
+            partitionMetadataMap[partitionIndex].RowEndingList = mutableRowEndingList.ToImmutableList();
         }
     }
 
     public static void Insert(
-        int globalPositionIndex,
-        RichCharacter item,
+        int relativePositionIndex,
+        RichCharacter richCharacter,
         int partitionIndex,
-        ImmutableList<ImmutableList<RichCharacter>> outPartitionList,
-        ImmutableList<PartitionMetadata> outPartitionMemoryMap)
+        ImmutableList<ImmutableList<RichCharacter>> partitionList,
+        ImmutableList<PartitionMetadata> partitionMetadataMap)
     {
         // TabList
         {
-            var inTabList = outPartitionMemoryMap[partitionIndex].TabList;
+            var inTabList = partitionMetadataMap[partitionIndex].TabList;
             var mutableTabList = new List<int>();
-
-            var relativePositionIndex = PartitionContainer.GetRelativePositionIndex(
-                partitionIndex, outPartitionList, outPartitionMemoryMap, globalPositionIndex);
 
             var relativeTabIndex = inTabList.FindIndex(x => x >= relativePositionIndex);
 
@@ -110,26 +104,74 @@ internal class Track
                 mutableTabList.Add(inTabList[i] + 1);
             }
 
-            if (item.Value == '\t')
+            if (richCharacter.Value == '\t')
             {
                 if (relativeTabIndex == -1)
                     mutableTabList.Add(relativePositionIndex);
                 else
                     mutableTabList.Insert(relativeTabIndex, relativePositionIndex);
 
-                outPartitionMemoryMap[partitionIndex].TabList = mutableTabList.ToImmutableList();
+                partitionMetadataMap[partitionIndex].TabList = mutableTabList.ToImmutableList();
             }
+        }
+
+        // RowEndingList
+        {
+            var inRowEndingList = partitionMetadataMap[partitionIndex].RowEndingList;
+            var mutableRowEndingList = new List<RowEnding>();
+
+            for (int i = 0; i < inRowEndingList.Count; i++)
+            {
+                mutableRowEndingList.Add(inRowEndingList[i]);
+            }
+
+            if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
+            {
+                mutableRowEndingList.Add(new(relativePositionIndex, relativePositionIndex + 1, RowEndingKind.CarriageReturn));
+            }
+            else if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
+            {
+                var previousCharacter = '\0';
+
+                if (relativePositionIndex > 0)
+                {
+                    var partition = partitionList[partitionIndex];
+                    previousCharacter = partition[relativePositionIndex - 1].Value;
+                }
+                else if (partitionIndex > 0)
+                {
+                    var previousPartition = partitionList[partitionIndex - 1];
+                    previousCharacter = previousPartition[^1].Value;
+                }
+
+                if (previousCharacter == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
+                {
+                    var lineEnding = mutableRowEndingList[^1];
+                    lineEnding.EndPositionIndexExclusive++;
+                    lineEnding.RowEndingKind = RowEndingKind.CarriageReturnLinefeed;
+                }
+                else
+                {
+                    mutableRowEndingList.Add(new(relativePositionIndex, relativePositionIndex + 1, RowEndingKind.Linefeed));
+                }
+            }
+
+            partitionMetadataMap[partitionIndex].RowEndingList = mutableRowEndingList.ToImmutableList();
         }
     }
 
-    public static void RemoveAt(int globalPositionIndex, int indexPartition, ImmutableList<PartitionMetadata> outPartitionMemoryMap)
+    public static void RemoveAt(
+        int relativePositionIndex,
+        int partitionIndex,
+        ImmutableList<ImmutableList<RichCharacter>> partitionList,
+        ImmutableList<PartitionMetadata> partitionMetadataMap)
     {
         // TabList
         {
-            var inTabList = outPartitionMemoryMap[indexPartition].TabList;
+            var inTabList = partitionMetadataMap[partitionIndex].TabList;
             var mutableTabList = new List<int>();
 
-            var relativeTabIndex = inTabList.FindIndex(x => x >= globalPositionIndex);
+            var relativeTabIndex = inTabList.FindIndex(x => x >= relativePositionIndex);
 
             // Copy over unmodified values
             for (int i = 0; i < relativeTabIndex; i++)
@@ -141,13 +183,13 @@ internal class Track
             for (int i = relativeTabIndex; i < inTabList.Count; i++)
             {
                 // Do not write out the 'removed tab' (if one were removed)
-                if (inTabList[i] == globalPositionIndex)
+                if (inTabList[i] == relativePositionIndex)
                     continue;
 
                 mutableTabList.Add(inTabList[i] - 1);
             }
 
-            outPartitionMemoryMap[indexPartition].TabList = mutableTabList.ToImmutableList();
+            partitionMetadataMap[partitionIndex].TabList = mutableTabList.ToImmutableList();
         }
     }
 
@@ -158,10 +200,10 @@ internal class Track
             List<int> mutableList = new();
             {
                 // TODO: Don't count the tabs, instead divide the original TabList
-                for (int tabCounterIndex = 0; tabCounterIndex < partition.Count; tabCounterIndex++)
+                for (int i = 0; i < partition.Count; i++)
                 {
-                    if (partition[tabCounterIndex].Value == '\t')
-                        mutableList.Add(tabCounterIndex);
+                    if (partition[i].Value == '\t')
+                        mutableList.Add(i);
                 }
             }
 

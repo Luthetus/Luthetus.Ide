@@ -116,60 +116,60 @@ public record PartitionContainer : IList<RichCharacter>
     public PartitionContainer Add(RichCharacter item)
     {
         return Static_Add(item, this);
-        static PartitionContainer Static_Add(RichCharacter item, PartitionContainer container)
+        static PartitionContainer Static_Add(RichCharacter richCharacter, PartitionContainer container)
         {
-            var partitionWithFreeSpaceIndex = -1;
+            var partitionIndex = -1;
 
             for (int i = 0; i < container.PartitionMetadataMap.Count; i++)
             {
                 int count = container.PartitionMetadataMap[i].RelativeCharacterCount;
 
                 if (count != container.PartitionSize)
-                    partitionWithFreeSpaceIndex = i;
+                    partitionIndex = i;
             }
 
-            var localPartitionList = container.PartitionList;
-            var localPartitionMetadataMap = container.PartitionMetadataMap;
+            var partitionList = container.PartitionList;
+            var partitionMetadataMap = container.PartitionMetadataMap;
             int relativePositionIndex;
 
-            if (partitionWithFreeSpaceIndex == -1)
+            if (partitionIndex == -1)
             {
-                var partition = new RichCharacter[] { item }.ToImmutableList();
+                var partition = new RichCharacter[] { richCharacter }.ToImmutableList();
 
-                localPartitionList = localPartitionList.Add(partition);
+                partitionList = partitionList.Add(partition);
 
-                localPartitionMetadataMap = localPartitionMetadataMap.Add(new(partition.Count));
+                partitionMetadataMap = partitionMetadataMap.Add(new(partition.Count));
 
-                partitionWithFreeSpaceIndex = localPartitionList.Count - 1;
+                partitionIndex = partitionList.Count - 1;
                 relativePositionIndex = 0;
             }
             else
             {
-                var partition = localPartitionList[partitionWithFreeSpaceIndex];
-                partition = partition.Add(item);
+                var partition = partitionList[partitionIndex];
+                partition = partition.Add(richCharacter);
 
-                localPartitionList = localPartitionList
-                    .SetItem(partitionWithFreeSpaceIndex, partition);
+                partitionList = partitionList
+                    .SetItem(partitionIndex, partition);
 
-                var metadata = localPartitionMetadataMap[partitionWithFreeSpaceIndex];
+                var metadata = partitionMetadataMap[partitionIndex];
 
-                localPartitionMetadataMap = localPartitionMetadataMap
-                    .SetItem(partitionWithFreeSpaceIndex, metadata with { RelativeCharacterCount = partition.Count });
+                partitionMetadataMap = partitionMetadataMap
+                    .SetItem(partitionIndex, metadata with { RelativeCharacterCount = partition.Count });
 
                 relativePositionIndex = partition.Count - 1;
             }
 
             Track.Add(
-                item,
-                partitionWithFreeSpaceIndex,
-                localPartitionList,
-                localPartitionMetadataMap,
-                relativePositionIndex);
+                relativePositionIndex,
+                richCharacter,
+                partitionIndex,
+                partitionList,
+                partitionMetadataMap);
 
             return container with
             {
-                PartitionList = localPartitionList,
-                PartitionMetadataMap = localPartitionMetadataMap
+                PartitionList = partitionList,
+                PartitionMetadataMap = partitionMetadataMap
             };
         }
     }
@@ -322,13 +322,13 @@ public record PartitionContainer : IList<RichCharacter>
         }
     }
 
-    public PartitionContainer RemoveAt(int index)
+    public PartitionContainer RemoveAt(int globalPositionIndex)
     {
-        return Static_RemoveAt(index, this);
-        static PartitionContainer Static_RemoveAt(int index, PartitionContainer container)
+        return Static_RemoveAt(globalPositionIndex, this);
+        static PartitionContainer Static_RemoveAt(int globalPositionIndex, PartitionContainer container)
         {
             var runningCount = 0;
-            var indexPartition = 0;
+            var partitionIndex = 0;
             var partition = (ImmutableList<RichCharacter>?)null;
             var offset = 0;
 
@@ -336,11 +336,11 @@ public record PartitionContainer : IList<RichCharacter>
             {
                 var currentPartitionCount = container.PartitionMetadataMap[i].RelativeCharacterCount;
 
-                if (runningCount + currentPartitionCount > index)
+                if (runningCount + currentPartitionCount > globalPositionIndex)
                 {
-                    indexPartition = i;
+                    partitionIndex = i;
                     partition = container.PartitionList[i];
-                    offset = index - runningCount;
+                    offset = globalPositionIndex - runningCount;
                     break;
                 }
                 else
@@ -354,19 +354,29 @@ public record PartitionContainer : IList<RichCharacter>
 
             partition = partition.RemoveAt(offset);
 
-            var outPartitionList = container.PartitionList.SetItem(indexPartition, partition);
+            var outPartitionList = container.PartitionList.SetItem(partitionIndex, partition);
 
-            var metadata = container.PartitionMetadataMap[indexPartition];
+            var metadata = container.PartitionMetadataMap[partitionIndex];
 
-            var outPartitionMemoryMap = container.PartitionMetadataMap.SetItem(
-                indexPartition, metadata with { RelativeCharacterCount = metadata.RelativeCharacterCount - 1 });
+            var outPartitionMetadataMap = container.PartitionMetadataMap.SetItem(
+                partitionIndex, metadata with { RelativeCharacterCount = metadata.RelativeCharacterCount - 1 });
 
-            Track.RemoveAt(index, indexPartition, outPartitionMemoryMap);
+            var relativePositionIndex = GetRelativePositionIndex(
+                partitionIndex,
+                outPartitionList,
+                outPartitionMetadataMap,
+                globalPositionIndex);
+
+            Track.RemoveAt(
+                relativePositionIndex,
+                partitionIndex,
+                outPartitionList,
+                outPartitionMetadataMap);
 
             return container with
             {
                 PartitionList = outPartitionList,
-                PartitionMetadataMap = outPartitionMemoryMap,
+                PartitionMetadataMap = outPartitionMetadataMap,
             };
         }
     }
