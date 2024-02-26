@@ -191,6 +191,37 @@ internal class Track
 
             partitionMetadataMap[partitionIndex].TabList = mutableTabList.ToImmutableList();
         }
+
+        // RowEnding
+        {
+            var inRowEndingList = partitionMetadataMap[partitionIndex].RowEndingList;
+            var mutableRowEndingList = new List<RowEnding>();
+
+            var relativeRowEndingIndex = inRowEndingList.FindIndex(x => x.StartPositionIndexInclusive >= relativePositionIndex);
+
+            // Copy over unmodified values
+            for (int i = 0; i < relativeRowEndingIndex; i++)
+            {
+                mutableRowEndingList.Add(inRowEndingList[i]);
+            }
+
+            // Write the shifted values
+            for (int i = relativeRowEndingIndex; i < inRowEndingList.Count; i++)
+            {
+                // Do not write out the 'removed tab' (if one were removed)
+                if (inRowEndingList[i].StartPositionIndexInclusive == relativePositionIndex)
+                    continue;
+
+                var rowEnding = inRowEndingList[i];
+                mutableRowEndingList.Add(rowEnding with
+                {
+                    StartPositionIndexInclusive = rowEnding.StartPositionIndexInclusive - 1,
+                    EndPositionIndexExclusive = rowEnding.EndPositionIndexExclusive - 1,
+                });
+            }
+
+            partitionMetadataMap[partitionIndex].RowEndingList = mutableRowEndingList.ToImmutableList();
+        }
     }
 
     public static List<int> ExpandPartition_Tab(ImmutableList<RichCharacter> partition)
