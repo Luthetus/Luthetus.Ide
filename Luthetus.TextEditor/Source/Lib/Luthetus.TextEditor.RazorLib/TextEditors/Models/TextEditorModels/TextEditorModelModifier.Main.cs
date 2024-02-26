@@ -1,7 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Partitions.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
@@ -40,7 +39,6 @@ public partial class TextEditorModelModifier
     private List<RowEnding>? _rowEndingPositionsList;
     private List<(RowEndingKind rowEndingKind, int count)>? _rowEndingKindCountsList;
     private List<TextEditorPresentationModel>? _presentationModelsList;
-    private List<int>? _tabKeyPositionsList;
 
     private RowEndingKind? _onlyRowEndingKind;
     /// <summary>
@@ -72,7 +70,6 @@ public partial class TextEditorModelModifier
             _rowEndingPositionsList is null ? _textEditorModel.RowEndingPositionsList : _rowEndingPositionsList.ToImmutableList(),
             _rowEndingKindCountsList is null ? _textEditorModel.RowEndingKindCountsList : _rowEndingKindCountsList.ToImmutableList(),
             _presentationModelsList is null ? _textEditorModel.PresentationModelsList : _presentationModelsList.ToImmutableList(),
-            _tabKeyPositionsList is null ? _textEditorModel.TabKeyPositionsList : _tabKeyPositionsList.ToImmutableList(),
             _onlyRowEndingKindWasModified ? _onlyRowEndingKind : _textEditorModel.OnlyRowEndingKind,
             _usingRowEndingKind ?? _textEditorModel.UsingRowEndingKind,
             _resourceUri ?? _textEditorModel.ResourceUri,
@@ -99,11 +96,6 @@ public partial class TextEditorModelModifier
     public void ClearRowEndingKindCountsList()
     {
         _rowEndingKindCountsList = new();
-    }
-
-    public void ClearTabKeyPositionsList()
-    {
-        _tabKeyPositionsList = new();
     }
 
     public void ClearOnlyRowEndingKind()
@@ -184,7 +176,6 @@ public partial class TextEditorModelModifier
         {
             _contentList ??= _textEditorModel.ContentList;
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
-            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
         }
 
@@ -261,25 +252,6 @@ public partial class TextEditorModelModifier
             }
             else
             {
-                if (wasTabCode)
-                {
-                    var index = _tabKeyPositionsList.FindIndex(x => x >= cursorPositionIndex);
-
-                    if (index == -1)
-                    {
-                        TabKeyPositionsList.Add(cursorPositionIndex);
-                    }
-                    else
-                    {
-                        for (var i = index; i < TabKeyPositionsList.Count; i++)
-                        {
-                            _tabKeyPositionsList[i]++;
-                        }
-
-                        TabKeyPositionsList.Insert(index, cursorPositionIndex);
-                    }
-                }
-
                 var richCharacterToInsert = new RichCharacter
                 {
                     Value = characterValueToInsert,
@@ -299,19 +271,6 @@ public partial class TextEditorModelModifier
                     var rowEndingTuple = RowEndingPositionsList[i];
                     rowEndingTuple.StartPositionIndexInclusive += characterCountInserted;
                     rowEndingTuple.EndPositionIndexExclusive += characterCountInserted;
-                }
-            }
-
-            if (!wasTabCode)
-            {
-                var firstTabKeyPositionIndexToModify = _tabKeyPositionsList.FindIndex(x => x >= cursorPositionIndex);
-
-                if (firstTabKeyPositionIndexToModify != -1)
-                {
-                    for (var i = firstTabKeyPositionIndexToModify; i < TabKeyPositionsList.Count; i++)
-                    {
-                        TabKeyPositionsList[i] += characterCountInserted;
-                    }
                 }
             }
 
@@ -363,7 +322,6 @@ public partial class TextEditorModelModifier
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
-            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
             _contentList ??= _textEditorModel.ContentList;
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
         }
@@ -572,16 +530,6 @@ public partial class TextEditorModelModifier
                 rowEndingTuple.EndPositionIndexExclusive -= charactersRemovedCount;
             }
 
-            var firstTabKeyPositionIndexToModify = _tabKeyPositionsList.FindIndex(x => x >= startingPositionIndexToRemoveInclusive);
-
-            if (firstTabKeyPositionIndexToModify != -1)
-            {
-                for (var i = firstTabKeyPositionIndexToModify; i < TabKeyPositionsList.Count; i++)
-                {
-                    TabKeyPositionsList[i] -= charactersRemovedCount;
-                }
-            }
-
             // Reposition the Diagnostic Squigglies
             {
                 var textSpanForInsertion = new TextEditorTextSpan(
@@ -682,7 +630,6 @@ public partial class TextEditorModelModifier
         {
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
-            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
             _contentList ??= _textEditorModel.ContentList;
             _rowEndingKindCountsList ??= _textEditorModel.RowEndingKindCountsList.ToList();
         }
@@ -770,7 +717,6 @@ public partial class TextEditorModelModifier
         ClearContentList();
         ClearRowEndingKindCountsList();
         ClearRowEndingPositionsList();
-        ClearTabKeyPositionsList();
         ClearOnlyRowEndingKind();
         ModifyUsingRowEndingKind(RowEndingKind.Unset);
     }

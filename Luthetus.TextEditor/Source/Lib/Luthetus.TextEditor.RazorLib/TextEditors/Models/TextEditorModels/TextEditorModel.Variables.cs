@@ -38,7 +38,7 @@ public partial class TextEditorModel
 	public ImmutableList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsList { get; init; } = ImmutableList<(RowEndingKind rowEndingKind, int count)>.Empty;
 	public ImmutableList<TextEditorPresentationModel> PresentationModelsList { get; init; } = ImmutableList<TextEditorPresentationModel>.Empty;
     /// <inheritdoc cref="ITextEditorModel.TabKeyPositionsList"/>
-	public ImmutableList<int> TabKeyPositionsList = ImmutableList<int>.Empty;
+	public ImmutableList<int> TabKeyPositionsList => ContentList.GlobalMetadata.TabList.Value;
     /// <inheritdoc cref="ITextEditorModel.OnlyRowEndingKind"/>
     public RowEndingKind? OnlyRowEndingKind { get; init; }
     public RowEndingKind UsingRowEndingKind { get; init; }

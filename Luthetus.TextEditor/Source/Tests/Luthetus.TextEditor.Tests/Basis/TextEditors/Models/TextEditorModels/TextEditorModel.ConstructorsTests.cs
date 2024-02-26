@@ -60,7 +60,6 @@ public class TextEditorModelConstructorsTests
             originalModel.RowEndingPositionsList,
             originalModel.RowEndingKindCountsList,
             originalModel.PresentationModelsList,
-            originalModel.TabKeyPositionsList,
             originalModel.OnlyRowEndingKind,
 			originalModel.UsingRowEndingKind,
 			originalModel.ResourceUri,

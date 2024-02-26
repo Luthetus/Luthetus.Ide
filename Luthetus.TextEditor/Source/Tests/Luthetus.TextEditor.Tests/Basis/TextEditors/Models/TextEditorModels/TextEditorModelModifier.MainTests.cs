@@ -98,15 +98,6 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ClearTabKeyPositionsList()"/>
-    /// </summary>
-    [Fact]
-    public void ClearTabKeyPositionsList()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TextEditorModelModifier.ClearOnlyRowEndingKind()"/>
     /// </summary>
     [Fact]

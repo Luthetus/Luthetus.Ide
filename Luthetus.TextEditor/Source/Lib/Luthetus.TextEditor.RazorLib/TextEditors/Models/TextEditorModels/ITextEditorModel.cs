@@ -8,6 +8,7 @@ using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Partitions.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
@@ -36,7 +37,7 @@ public interface ITextEditorModel
     /// <summary>
     /// Provides exact position index of a tab character
     /// </summary>
-    public IList<int> TabKeyPositionsList { get; }
+    public ImmutableList<int> TabKeyPositionsList { get; }
     /// <summary>
 	/// If there is a mixture of<br/>-Carriage Return<br/>-Linefeed<br/>-CRLF<br/>
 	/// Then this will be null.<br/><br/>
