@@ -3,11 +3,11 @@ using Luthetus.TextEditor.RazorLib.Partitions.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Partitions.Models;
 
-public class Track_RowTests
+public class Track_RowTests : Track_Tests_Base
 {
     #region Add
     [Fact]
-    public void Add_Start()
+    public override void Add_Start()
     {
         var partitionContainer = new PartitionContainer(3);
         var richCharacterList = "\nab".Select(x => new RichCharacter { Value = x }).ToArray();
@@ -28,7 +28,7 @@ public class Track_RowTests
     }
 
     [Fact]
-    public void Add_Middle()
+    public override void Add_Middle()
     {
         var partitionContainer = new PartitionContainer(3);
         var richCharacterList = "a\nb".Select(x => new RichCharacter { Value = x }).ToArray();
@@ -49,7 +49,7 @@ public class Track_RowTests
     }
 
     [Fact]
-    public void Add_End()
+    public override void Add_End()
     {
         var partitionContainer = new PartitionContainer(3);
         var richCharacterList = "ab\n".Select(x => new RichCharacter { Value = x }).ToArray();
@@ -70,7 +70,7 @@ public class Track_RowTests
     }
 
     [Fact]
-    public void Add_Causes_Expansion()
+    public override void Add_Causes_Expansion()
     {
         var partitionContainer = new PartitionContainer(3);
         var richCharacterList = "ab\n".Select(x => new RichCharacter { Value = x }).ToArray();
@@ -87,7 +87,7 @@ public class Track_RowTests
     }
 
     [Fact]
-    public void Add_Four_InARow()
+    public override void Add_Four_InARow()
     {
         var partitionContainer = new PartitionContainer(3);
         var richCharacterList = new string('\n', 4).Select(x => new RichCharacter { Value = x }).ToArray();
@@ -103,7 +103,7 @@ public class Track_RowTests
 
     #region Insert
     [Fact]
-    public void Insert_Start()
+    public override void Insert_Start()
     {
         var partitionContainer = new PartitionContainer(3);
         var richCharacterList = "\nab".Select(x => new RichCharacter { Value = x }).ToArray();
@@ -124,7 +124,7 @@ public class Track_RowTests
     }
 
     [Fact]
-    public void Insert_Middle()
+    public override void Insert_Middle()
     {
         var partitionContainer = new PartitionContainer(3);
         var richCharacterList = "a\nb".Select(x => new RichCharacter { Value = x }).ToArray();
@@ -145,7 +145,7 @@ public class Track_RowTests
     }
 
     [Fact]
-    public void Insert_End()
+    public override void Insert_End()
     {
         var partitionContainer = new PartitionContainer(3);
         var richCharacterList = "ab\n".Select(x => new RichCharacter { Value = x }).ToArray();
@@ -166,7 +166,7 @@ public class Track_RowTests
     }
 
     [Fact]
-    public void Insert_Causes_Expansion()
+    public override void Insert_Causes_Expansion()
     {
         var partitionContainer = new PartitionContainer(3);
         var richCharacterList = "ab\n".Select(x => new RichCharacter { Value = x }).ToArray();
@@ -183,7 +183,7 @@ public class Track_RowTests
     }
 
     [Fact]
-    public void Insert_Four_InARow()
+    public override void Insert_Four_InARow()
     {
         var partitionContainer = new PartitionContainer(3);
         var richCharacterList = new string('\n', 4).Select(x => new RichCharacter { Value = x }).ToArray();
