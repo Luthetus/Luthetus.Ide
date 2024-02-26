@@ -156,6 +156,7 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         FixTrackedPositions.Add(
             item,
             partitionWithFreeSpaceIndex,
+            localPartitionList,
             localPartitionMetadataMap,
             relativePositionIndex);
 

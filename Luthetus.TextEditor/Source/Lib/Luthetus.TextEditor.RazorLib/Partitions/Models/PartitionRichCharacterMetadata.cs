@@ -1,6 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Partitions.Models;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Partitions.Models;
 
@@ -33,4 +34,6 @@ public record PartitionRichCharacterMetadata
 
     /// <summary><inheritdoc cref="ITextEditorModel.TabKeyPositionsList"/></summary>
 	public ImmutableList<int> TabList { get; set; } = ImmutableList<int>.Empty;
+    /// <summary><inheritdoc cref="ITextEditorModel.RowEndingPositionsList"/></summary>
+	public ImmutableList<RowEnding> RowEndingList { get; set; } = ImmutableList<RowEnding>.Empty;
 }
