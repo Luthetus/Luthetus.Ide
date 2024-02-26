@@ -153,7 +153,7 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
             relativePositionIndex = partition.Count - 1;
         }
 
-        Add_TabList(
+        FixTrackedPositions.Add(
             item,
             partitionWithFreeSpaceIndex,
             localPartitionMetadataMap,
@@ -164,29 +164,6 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
             PartitionList = localPartitionList,
             PartitionMetadataMap = localPartitionMetadataMap
          };
-    }
-
-    private static void Add_TabList(
-        RichCharacter item,
-        int indexPartitionFreeSpace,
-        ImmutableList<PartitionRichCharacterMetadata> localPartitionMetadataMap,
-        int relativePositionIndex)
-    {
-        var inTabList = localPartitionMetadataMap[indexPartitionFreeSpace].TabList;
-        var mutableTabList = new List<int>();
-
-        for (int i = 0; i < inTabList.Count; i++)
-        {
-            mutableTabList.Add(inTabList[i]);
-        }
-
-        if (item.Value == '\t')
-        {
-            mutableTabList.Add(relativePositionIndex);
-
-            localPartitionMetadataMap[indexPartitionFreeSpace].TabList =
-                mutableTabList.ToImmutableList();
-        }
     }
 
     /// <summary>
@@ -305,7 +282,7 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         var outPartitionMemoryMap = outPartitionedImmutableList.PartitionMetadataMap.SetItem(
             partitionIndex, metadata with { Count = metadata.Count + 1 });
 
-        Insert_TabList(
+        FixTrackedPositions.Insert(
             globalPositionIndex,
             item,
             partitionIndex,
@@ -317,46 +294,6 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
             PartitionList = outPartitionList,
             PartitionMetadataMap = outPartitionMemoryMap,
         };
-    }
-
-    private static void Insert_TabList(
-        int globalPositionIndex,
-        RichCharacter item,
-        int partitionIndex,
-        ImmutableList<ImmutableList<RichCharacter>> outPartitionList,
-        ImmutableList<PartitionRichCharacterMetadata> outPartitionMemoryMap)
-    {
-        var inTabList = outPartitionMemoryMap[partitionIndex].TabList;
-        var mutableTabList = new List<int>();
-
-        var relativePositionIndex = GetRelativePositionIndex(
-            partitionIndex, outPartitionList, outPartitionMemoryMap, globalPositionIndex);
-
-        var relativeTabIndex = inTabList.FindIndex(x => x >= relativePositionIndex);
-
-        // Copy over unmodified values
-        var copyForLoopUpperLimit = relativeTabIndex == -1 ? inTabList.Count : relativeTabIndex;
-        for (int i = 0; i < copyForLoopUpperLimit; i++)
-        {
-            mutableTabList.Add(inTabList[i]);
-        }
-
-        // Write the shifted values
-        var shiftForLoopLowerLimit = copyForLoopUpperLimit;
-        for (int i = shiftForLoopLowerLimit; i < inTabList.Count; i++)
-        {
-            mutableTabList.Add(inTabList[i] + 1);
-        }
-        
-        if (item.Value == '\t')
-        {
-            if (relativeTabIndex == -1)
-                mutableTabList.Add(relativePositionIndex);
-            else
-                mutableTabList.Insert(relativeTabIndex, relativePositionIndex);
-
-            outPartitionMemoryMap[partitionIndex].TabList = mutableTabList.ToImmutableList();
-        }
     }
 
     public PartitionedRichCharacterList InsertRange(int index, IEnumerable<RichCharacter> itemList)
@@ -428,39 +365,13 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         var outPartitionMemoryMap = PartitionMetadataMap.SetItem(
             indexPartition, metadata with { Count = metadata.Count - 1 });
 
-        RemoveAt_TabList(index, indexPartition, outPartitionMemoryMap);
+        FixTrackedPositions.RemoveAt(index, indexPartition, outPartitionMemoryMap);
 
         return this with
         {
             PartitionList = outPartitionList,
             PartitionMetadataMap = outPartitionMemoryMap,
         };
-    }
-
-    private static void RemoveAt_TabList(int globalPositionIndex, int indexPartition, ImmutableList<PartitionRichCharacterMetadata> outPartitionMemoryMap)
-    {
-        var inTabList = outPartitionMemoryMap[indexPartition].TabList;
-        var mutableTabList = new List<int>();
-
-        var relativeTabIndex = inTabList.FindIndex(x => x >= globalPositionIndex);
-
-        // Copy over unmodified values
-        for (int i = 0; i < relativeTabIndex; i++)
-        {
-            mutableTabList.Add(inTabList[i]);
-        }
-
-        // Write the shifted values
-        for (int i = relativeTabIndex; i < inTabList.Count; i++)
-        {
-            // Do not write out the 'removed tab' (if one were removed)
-            if (inTabList[i] == globalPositionIndex)
-                continue;
-
-            mutableTabList.Add(inTabList[i] - 1);
-        }
-
-        outPartitionMemoryMap[indexPartition].TabList = mutableTabList.ToImmutableList();
     }
 
     public PartitionedRichCharacterList RemoveRange(int globalPositionIndex, int count)
@@ -563,8 +474,7 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         {
             var partition = outPartitionedImmutableList.PartitionList[i];
 
-            // Handle TabList
-            List<int> mutableList = ExpandPartition_TabList(partition);
+            List<int> mutableList = FixTrackedPositions.ExpandPartition(partition);
 
             outPartitionMemoryMap = outPartitionMemoryMap.SetItem(
                 i,
@@ -578,22 +488,6 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         {
             PartitionMetadataMap = outPartitionMemoryMap
         };
-    }
-
-    private static List<int> ExpandPartition_TabList(ImmutableList<RichCharacter> partition)
-    {
-        List<int> mutableList = new();
-        {
-            // TODO: Don't count the tabs, instead divide the original TabList
-
-            for (int tabCounterIndex = 0; tabCounterIndex < partition.Count; tabCounterIndex++)
-            {
-                if (partition[tabCounterIndex].Value == '\t')
-                    mutableList.Add(tabCounterIndex);
-            }
-        }
-
-        return mutableList;
     }
 
     private static (ImmutableList<RichCharacter> partition, int partitionIndex, int rollingCount) GetOffsetPartition(
@@ -616,7 +510,7 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         throw new IndexOutOfRangeException();
     }
     
-    private static int GetRelativePositionIndex(
+    internal static int GetRelativePositionIndex(
         int partitionIndex,
         ImmutableList<ImmutableList<RichCharacter>> partitionList,
         ImmutableList<PartitionRichCharacterMetadata> partitionMetadataMap,
