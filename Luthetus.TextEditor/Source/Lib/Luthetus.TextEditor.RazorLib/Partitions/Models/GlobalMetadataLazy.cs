@@ -25,7 +25,7 @@ public record GlobalMetadataLazy
 
                 tabList.AddRange(metadata.TabList.Select(x => x + runningCount));
 
-                runningCount += metadata.Count;
+                runningCount += metadata.RelativeCharacterCount;
             }
 
             return tabList.ToImmutableList();
@@ -46,7 +46,7 @@ public record GlobalMetadataLazy
                         EndPositionIndexExclusive = x.StartPositionIndexInclusive + runningCount,
                     }));
 
-                runningCount += metadata.Count;
+                runningCount += metadata.RelativeCharacterCount;
             }
 
             return rowEndingList.ToImmutableList();

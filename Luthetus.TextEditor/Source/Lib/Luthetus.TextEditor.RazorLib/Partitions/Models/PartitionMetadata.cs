@@ -26,10 +26,10 @@ public record PartitionMetadata
 {
     public PartitionMetadata(int count)
     {
-        Count = count;
+        RelativeCharacterCount = count;
     }
 
-    public int Count { get; set; }
+    public int RelativeCharacterCount { get; set; }
 
     /// <summary><inheritdoc cref="ITextEditorModel.TabKeyPositionsList"/></summary>
 	public ImmutableList<int> TabList { get; set; } = ImmutableList<int>.Empty;

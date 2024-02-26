@@ -92,7 +92,7 @@ public record PartitionContainer : IList<RichCharacter>
 
             for (int i = 0; i < PartitionMetadataMap.Count; i++)
             {
-                var partitionCount = PartitionMetadataMap[i].Count;
+                var partitionCount = PartitionMetadataMap[i].RelativeCharacterCount;
 
                 if (runningCount + partitionCount > globalPositionIndex)
                 {
@@ -122,7 +122,7 @@ public record PartitionContainer : IList<RichCharacter>
 
             for (int i = 0; i < container.PartitionMetadataMap.Count; i++)
             {
-                int count = container.PartitionMetadataMap[i].Count;
+                int count = container.PartitionMetadataMap[i].RelativeCharacterCount;
 
                 if (count != container.PartitionSize)
                     partitionWithFreeSpaceIndex = i;
@@ -154,7 +154,7 @@ public record PartitionContainer : IList<RichCharacter>
                 var metadata = localPartitionMetadataMap[partitionWithFreeSpaceIndex];
 
                 localPartitionMetadataMap = localPartitionMetadataMap
-                    .SetItem(partitionWithFreeSpaceIndex, metadata with { Count = partition.Count });
+                    .SetItem(partitionWithFreeSpaceIndex, metadata with { RelativeCharacterCount = partition.Count });
 
                 relativePositionIndex = partition.Count - 1;
             }
@@ -240,7 +240,7 @@ public record PartitionContainer : IList<RichCharacter>
 
             for (int i = 0; i < container.PartitionMetadataMap.Count; i++)
             {
-                var currentPartitionCount = container.PartitionMetadataMap[i].Count;
+                var currentPartitionCount = container.PartitionMetadataMap[i].RelativeCharacterCount;
 
                 if (runningCount + currentPartitionCount >= globalPositionIndex)
                 {
@@ -276,7 +276,7 @@ public record PartitionContainer : IList<RichCharacter>
             var metadata = container.PartitionMetadataMap[partitionIndex];
 
             var outPartitionMemoryMap = container.PartitionMetadataMap.SetItem(
-                partitionIndex, metadata with { Count = metadata.Count + 1 });
+                partitionIndex, metadata with { RelativeCharacterCount = metadata.RelativeCharacterCount + 1 });
 
             Track.Insert(
                 globalPositionIndex,
@@ -334,7 +334,7 @@ public record PartitionContainer : IList<RichCharacter>
 
             for (int i = 0; i < container.PartitionMetadataMap.Count; i++)
             {
-                var currentPartitionCount = container.PartitionMetadataMap[i].Count;
+                var currentPartitionCount = container.PartitionMetadataMap[i].RelativeCharacterCount;
 
                 if (runningCount + currentPartitionCount > index)
                 {
@@ -359,7 +359,7 @@ public record PartitionContainer : IList<RichCharacter>
             var metadata = container.PartitionMetadataMap[indexPartition];
 
             var outPartitionMemoryMap = container.PartitionMetadataMap.SetItem(
-                indexPartition, metadata with { Count = metadata.Count - 1 });
+                indexPartition, metadata with { RelativeCharacterCount = metadata.RelativeCharacterCount - 1 });
 
             Track.RemoveAt(index, indexPartition, outPartitionMemoryMap);
 
@@ -478,7 +478,7 @@ public record PartitionContainer : IList<RichCharacter>
 
         for (int i = 0; i < partitionMetadataMap.Count; i++)
         {
-            var currentPartitionCount = partitionMetadataMap[i].Count;
+            var currentPartitionCount = partitionMetadataMap[i].RelativeCharacterCount;
 
             if (runningCount + currentPartitionCount > index)
                 return (partitionList[i], i, runningCount);
