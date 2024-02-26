@@ -158,7 +158,7 @@ public class Track_Tab : Track_Tests_Base
     public override void Insert_Four_InARow()
     {
         // Setup
-        var richCharacterList = new string('\t', 4).Select(x => new RichCharacter { Value = x }).ToArray();
+        var richCharacterList = new string('\t', 3).Select(x => new RichCharacter { Value = x }).ToArray();
         var partitionContainer = new PartitionContainer(3).InsertRange(0, richCharacterList);
         partitionContainer = partitionContainer.Insert(0, new RichCharacter { Value = '\t' });
         // Assert
@@ -166,17 +166,17 @@ public class Track_Tab : Track_Tests_Base
             // Partition One
             {
                 var partitionMetadata = partitionContainer.PartitionMetadataMap[0];
-                Assert.Empty(partitionMetadata.TabList);
+                Assert.Equal(2, partitionMetadata.TabList.Count);
             }
             // Partition Two
             {
                 var partitionMetadata = partitionContainer.PartitionMetadataMap[1];
-                Assert.Empty(partitionMetadata.TabList);
+                Assert.Single(partitionMetadata.TabList);
             }
             // Partition Three
             {
                 var partitionMetadata = partitionContainer.PartitionMetadataMap[2];
-                Assert.Equal(2, partitionMetadata.TabList.Count);
+                Assert.Single(partitionMetadata.TabList);
             }
         }
     }
