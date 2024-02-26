@@ -75,7 +75,7 @@ public class PartitionedRichCharacterListTests
         var richCharacterList = new string('\t', 4).Select(x => new RichCharacter { Value = x }).ToArray();
         partitionedRichCharacterList = partitionedRichCharacterList.AddRange(richCharacterList);
 
-        var globalMetadataLazy = PartitionedRichCharacterList.GetGlobalMetadataLazy(partitionedRichCharacterList);
+        var globalMetadataLazy = partitionedRichCharacterList.GlobalMetadata;
         var globalTabList = globalMetadataLazy.TabList.Value;
         var globalAllText = globalMetadataLazy.AllText.Value;
 
@@ -155,7 +155,7 @@ public class PartitionedRichCharacterListTests
         partitionedRichCharacterList = partitionedRichCharacterList.Insert(
             0, new RichCharacter { Value = '\t' });
 
-        var globalMetadataLazy = PartitionedRichCharacterList.GetGlobalMetadataLazy(partitionedRichCharacterList);
+        var globalMetadataLazy = partitionedRichCharacterList.GlobalMetadata;
         var globalTabList = globalMetadataLazy.TabList.Value;
         var globalAllText = globalMetadataLazy.AllText.Value;
 
@@ -171,7 +171,7 @@ public class PartitionedRichCharacterListTests
 
         // Reading some state so I see it in debugger
         {
-            var globalMetadataLazy = PartitionedRichCharacterList.GetGlobalMetadataLazy(partitionedRichCharacterList);
+            var globalMetadataLazy = partitionedRichCharacterList.GlobalMetadata;
             var globalTabList = globalMetadataLazy.TabList.Value;
             var globalAllText = globalMetadataLazy.AllText.Value;
         }
@@ -181,7 +181,7 @@ public class PartitionedRichCharacterListTests
 
         // Reading some state so I see it in debugger
         {
-            var globalMetadataLazy = PartitionedRichCharacterList.GetGlobalMetadataLazy(partitionedRichCharacterList);
+            var globalMetadataLazy = partitionedRichCharacterList.GlobalMetadata;
             var globalTabList = globalMetadataLazy.TabList.Value;
             var globalAllText = globalMetadataLazy.AllText.Value;
         }

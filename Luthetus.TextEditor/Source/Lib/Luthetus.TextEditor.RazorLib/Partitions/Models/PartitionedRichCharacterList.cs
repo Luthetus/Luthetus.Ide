@@ -23,12 +23,26 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
     /// </summary>
     public const int EXPANSION_FACTOR = 3;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    // This is a record copy constructor
+    public PartitionedRichCharacterList(PartitionedRichCharacterList other)
+    {
+        // Reset the global metadata each time the record 'with' keyword is used.
+        GlobalMetadata = new GlobalRichCharacterMetadataLazy(this);
+    }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
     public PartitionedRichCharacterList(int partitionSize)
     {
         if (partitionSize < EXPANSION_FACTOR)
             throw new ApplicationException($"Partition size must be equal to or greater than the {nameof(EXPANSION_FACTOR)}:{EXPANSION_FACTOR}.");
 
         PartitionSize = partitionSize;
+
+        // TODO: How does one not duplicate this code? It exists in the record copy constructor too...
+        // ...a parameterless constructor was tried and invoked with 'this()' but it gives
+        // an error message specific to usage of record copy constructors.
+        GlobalMetadata = new GlobalRichCharacterMetadataLazy(this);
     }
 
     public int PartitionSize { get; }
@@ -44,6 +58,8 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
     /// In otherwords, each partition index maps to its corresponding Count.
     /// </summary>
     public ImmutableList<PartitionRichCharacterMetadata> PartitionMetadataMap { get; init; } = ImmutableList<PartitionRichCharacterMetadata>.Empty;
+
+    public GlobalRichCharacterMetadataLazy GlobalMetadata { get; }
 
     public int Count
     {
@@ -354,7 +370,7 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
 #if DEBUG // TODO: Delete these variables
             // Reading some state so I see it in debugger
             {
-                var globalMetadataLazy = GetGlobalMetadataLazy(partitionedImmutableList);
+                var globalMetadataLazy = partitionedImmutableList.GlobalMetadata;
                 var globalTabList = globalMetadataLazy.TabList.Value;
                 var globalAllText = globalMetadataLazy.AllText.Value;
             }
@@ -457,11 +473,6 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         }
 
         return partitionedImmutableList;
-    }
-
-    public static GlobalRichCharacterMetadataLazy GetGlobalMetadataLazy(PartitionedRichCharacterList partitionedList)
-    {
-        return new GlobalRichCharacterMetadataLazy(partitionedList);
     }
 
     IEnumerator IEnumerable.GetEnumerator()
