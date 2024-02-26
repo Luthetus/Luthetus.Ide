@@ -10,49 +10,6 @@ internal class PartitionReducer
         RichCharacter richCharacter, PartitionContainer container)
     {
         return ReduceInsert(container.GlobalCharacterCount, richCharacter, container);
-        //var partitionIndex = -1;
-
-        //for (int i = 0; i < container.PartitionMetadataMap.Count; i++)
-        //{
-        //    int count = container.PartitionMetadataMap[i].RelativeCharacterCount;
-        //    if (count != container.PartitionSize)
-        //        partitionIndex = i;
-        //}
-
-        //var partitionList = container.PartitionList;
-        //var partitionMetadataMap = container.PartitionMetadataMap;
-        //int relativePositionIndex;
-
-        //if (partitionIndex == -1)
-        //{
-        //    var partition = new RichCharacter[] { richCharacter }.ToImmutableList();
-        //    partitionList = partitionList.Add(partition);
-
-        //    partitionMetadataMap = partitionMetadataMap.Add(new(partition.Count));
-
-        //    partitionIndex = partitionList.Count - 1;
-        //    relativePositionIndex = 0;
-        //}
-        //else
-        //{
-        //    var partition = partitionList[partitionIndex].Add(richCharacter);
-        //    partitionList = partitionList.SetItem(partitionIndex, partition);
-
-        //    var metadata = partitionMetadataMap[partitionIndex];
-        //    partitionMetadataMap = partitionMetadataMap.SetItem(
-        //        partitionIndex, metadata with { RelativeCharacterCount = partition.Count });
-
-        //    relativePositionIndex = partition.Count - 1;
-        //}
-
-        //Track.Add(
-        //    relativePositionIndex, richCharacter, partitionIndex, partitionList, partitionMetadataMap);
-
-        //return container with
-        //{
-        //    PartitionList = partitionList,
-        //    PartitionMetadataMap = partitionMetadataMap
-        //};
     }
 
     public static PartitionContainer ReduceAddRange(
@@ -147,7 +104,7 @@ internal class PartitionReducer
         var runningCount = 0;
         var partitionIndex = 0;
         var partition = (ImmutableList<RichCharacter>?)null;
-        var offset = 0;
+        var relativePositionIndex = 0;
 
         for (int i = 0; i < container.PartitionMetadataMap.Count; i++)
         {
@@ -156,7 +113,7 @@ internal class PartitionReducer
             {
                 partitionIndex = i;
                 partition = container.PartitionList[i];
-                offset = globalPositionIndex - runningCount;
+                relativePositionIndex = globalPositionIndex - runningCount;
                 break;
             }
             else
@@ -168,18 +125,16 @@ internal class PartitionReducer
         if (partition is null)
             throw new IndexOutOfRangeException();
 
-        partition = partition.RemoveAt(offset);
+        var characterToRemove = partition[relativePositionIndex];
+        partition = partition.RemoveAt(relativePositionIndex);
         var outPartitionList = container.PartitionList.SetItem(partitionIndex, partition);
 
         var metadata = container.PartitionMetadataMap[partitionIndex];
         var outPartitionMetadataMap = container.PartitionMetadataMap.SetItem(
             partitionIndex, metadata with { RelativeCharacterCount = metadata.RelativeCharacterCount - 1 });
 
-        var relativePositionIndex = PartitionContainer.GetRelativePositionIndex(
-            partitionIndex, outPartitionList, outPartitionMetadataMap, globalPositionIndex);
-
         Track.RemoveAt(
-            relativePositionIndex, partitionIndex, outPartitionList, outPartitionMetadataMap);
+            relativePositionIndex, characterToRemove, partitionIndex, outPartitionList, outPartitionMetadataMap);
 
         return container with
         {

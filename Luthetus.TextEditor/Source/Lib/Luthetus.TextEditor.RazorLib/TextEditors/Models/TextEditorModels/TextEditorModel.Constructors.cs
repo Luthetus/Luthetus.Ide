@@ -33,8 +33,6 @@ public partial class TextEditorModel
 		modifier.ModifyContent(content);
 		
 		ContentList = modifier.ContentList;
-		RowEndingKindCountsList = modifier.RowEndingKindCountsList.ToImmutableList();
-		RowEndingPositionsList = modifier.RowEndingPositionsList.ToImmutableList();
 		OnlyRowEndingKind = modifier.OnlyRowEndingKind;
 		UsingRowEndingKind = modifier.UsingRowEndingKind;
 		MostCharactersOnASingleRowTuple = modifier.MostCharactersOnASingleRowTuple;
@@ -43,8 +41,6 @@ public partial class TextEditorModel
 	public TextEditorModel(
 		PartitionContainer contentList,
 		ImmutableList<EditBlock> editBlocksList,
-		ImmutableList<RowEnding> rowEndingPositionsList,
-		ImmutableList<(RowEndingKind rowEndingKind, int count)> rowEndingKindCountsList,
 		ImmutableList<TextEditorPresentationModel> presentationModelsList,
 		RowEndingKind? onlyRowEndingKind,
 		RowEndingKind usingRowEndingKind,
@@ -61,8 +57,6 @@ public partial class TextEditorModel
 
 		ContentList = contentList;
 		EditBlocksList = editBlocksList;
-		RowEndingPositionsList = rowEndingPositionsList;
-		RowEndingKindCountsList = rowEndingKindCountsList;
 		PresentationModelsList = presentationModelsList;
 		OnlyRowEndingKind = onlyRowEndingKind;
 		UsingRowEndingKind = usingRowEndingKind;

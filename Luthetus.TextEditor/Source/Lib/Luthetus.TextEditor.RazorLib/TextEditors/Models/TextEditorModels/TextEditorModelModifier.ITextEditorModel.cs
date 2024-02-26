@@ -14,8 +14,8 @@ public partial class TextEditorModelModifier : ITextEditorModel
 {
 	public PartitionContainer ContentList => _contentList is null ? _textEditorModel.ContentList : _contentList;
 	public IList<EditBlock> EditBlocksList => _editBlocksList is null ? _textEditorModel.EditBlocksList : _editBlocksList;
-	public IList<RowEnding> RowEndingPositionsList => _rowEndingPositionsList is null ? _textEditorModel.RowEndingPositionsList : _rowEndingPositionsList;
-	public IList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsList => _rowEndingKindCountsList is null ? _textEditorModel.RowEndingKindCountsList : _rowEndingKindCountsList;
+	public ImmutableList<RowEnding> RowEndingPositionsList => ContentList.GlobalMetadata.RowEndingList.Value;
+	public ImmutableList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsList => ContentList.GlobalMetadata.RowEndingKindCountList.Value;
 	public IList<TextEditorPresentationModel> PresentationModelsList => _presentationModelsList is null ? _textEditorModel.PresentationModelsList : _presentationModelsList;
 	public ImmutableList<int> TabKeyPositionsList => ContentList.GlobalMetadata.TabList.Value;
 	public RowEndingKind? OnlyRowEndingKind => _onlyRowEndingKindWasModified ? _onlyRowEndingKind : _textEditorModel.OnlyRowEndingKind;

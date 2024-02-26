@@ -34,8 +34,8 @@ public partial class TextEditorModel
 	public ImmutableList<EditBlock> EditBlocksList { get; init; } = ImmutableList<EditBlock>.Empty;
     /// <inheritdoc cref="ITextEditorModel.RowEndingPositionsList"/>
 	public ImmutableList<RowEnding> RowEndingPositionsList => ContentList.GlobalMetadata.RowEndingList.Value;
-    public ImmutableList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsList { get; init; } = ImmutableList<(RowEndingKind rowEndingKind, int count)>.Empty;
-	public ImmutableList<TextEditorPresentationModel> PresentationModelsList { get; init; } = ImmutableList<TextEditorPresentationModel>.Empty;
+    public ImmutableList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsList => ContentList.GlobalMetadata.RowEndingKindCountList.Value;
+    public ImmutableList<TextEditorPresentationModel> PresentationModelsList { get; init; } = ImmutableList<TextEditorPresentationModel>.Empty;
     /// <inheritdoc cref="ITextEditorModel.TabKeyPositionsList"/>
 	public ImmutableList<int> TabKeyPositionsList => ContentList.GlobalMetadata.TabList.Value;
     /// <inheritdoc cref="ITextEditorModel.OnlyRowEndingKind"/>

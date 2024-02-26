@@ -6,11 +6,11 @@ namespace Luthetus.TextEditor.RazorLib.Partitions.Models;
 
 public record GlobalMetadataLazy
 {
-    public GlobalMetadataLazy(PartitionContainer partitionedList)
+    public GlobalMetadataLazy(PartitionContainer container)
     {
         AllText = new Lazy<string>(() =>
         {
-            return new string(partitionedList.PartitionList
+            return new string(container.PartitionList
                 .SelectMany(x => x.Select(y => y.Value)).ToArray());
         });
 
@@ -19,9 +19,9 @@ public record GlobalMetadataLazy
             var tabList = new List<int>();
             var runningCount = 0;
 
-            for (int i = 0; i < partitionedList.PartitionMetadataMap.Count; i++)
+            for (int i = 0; i < container.PartitionMetadataMap.Count; i++)
             {
-                var metadata = partitionedList.PartitionMetadataMap[i];
+                var metadata = container.PartitionMetadataMap[i];
 
                 tabList.AddRange(metadata.TabList.Select(x => x + runningCount));
 
@@ -36,9 +36,9 @@ public record GlobalMetadataLazy
             var rowEndingList = new List<RowEnding>();
             var runningCount = 0;
 
-            for (int i = 0; i < partitionedList.PartitionMetadataMap.Count; i++)
+            for (int i = 0; i < container.PartitionMetadataMap.Count; i++)
             {
-                var metadata = partitionedList.PartitionMetadataMap[i];
+                var metadata = container.PartitionMetadataMap[i];
 
                 rowEndingList.AddRange(metadata.RowEndingList.Select(x => x with 
                     {
@@ -58,9 +58,9 @@ public record GlobalMetadataLazy
             var linefeedRunningCount = 0;
             var carriageReturnLinefeedRunningCount = 0;
 
-            for (int i = 0; i < partitionedList.PartitionMetadataMap.Count; i++)
+            for (int i = 0; i < container.PartitionMetadataMap.Count; i++)
             {
-                var metadata = partitionedList.PartitionMetadataMap[i];
+                var metadata = container.PartitionMetadataMap[i];
 
                 foreach (var rowEndingKindCount in metadata.RowEndingKindCountList)
                 {

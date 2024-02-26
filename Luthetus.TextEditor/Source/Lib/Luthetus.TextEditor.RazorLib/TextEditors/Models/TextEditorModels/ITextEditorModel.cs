@@ -30,8 +30,8 @@ public interface ITextEditorModel
     /// To get the ending position of RowIndex _rowEndingPositions[RowIndex]<br /><br />
     /// _rowEndingPositions returns the start of the NEXT row
     /// </summary>
-    public IList<RowEnding> RowEndingPositionsList { get; }
-	public IList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsList { get; }
+    public ImmutableList<RowEnding> RowEndingPositionsList { get; }
+	public ImmutableList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsList { get; }
 	public IList<TextEditorPresentationModel> PresentationModelsList { get; }
     /// <summary>
     /// Provides exact position index of a tab character
