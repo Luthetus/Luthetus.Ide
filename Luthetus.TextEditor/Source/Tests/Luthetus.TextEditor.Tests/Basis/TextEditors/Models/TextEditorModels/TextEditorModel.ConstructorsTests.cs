@@ -57,10 +57,7 @@ public class TextEditorModelConstructorsTests
 		var cloneModel = new TextEditorModel(
 			originalModel.ContentList,
 			originalModel.EditBlocksList,
-            originalModel.RowEndingPositionsList,
-            originalModel.RowEndingKindCountsList,
             originalModel.PresentationModelsList,
-            originalModel.OnlyRowEndingKind,
 			originalModel.UsingRowEndingKind,
 			originalModel.ResourceUri,
 			originalModel.ResourceLastWriteTime,

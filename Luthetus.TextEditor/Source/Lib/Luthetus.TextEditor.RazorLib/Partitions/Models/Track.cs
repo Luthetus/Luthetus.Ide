@@ -182,12 +182,22 @@ internal class Track
             }
 
             partitionMetadataMap[partitionIndex].RowEndingList = mutableRowEndingList.ToImmutableList();
+            
             partitionMetadataMap[partitionIndex].RowEndingKindCountList = new (RowEndingKind rowEndingKind, int count)[]
             {
                 new (RowEndingKind.CarriageReturn, carriageReturnCount),
                 new (RowEndingKind.Linefeed, linefeedCount),
                 new (RowEndingKind.CarriageReturnLinefeed, carriageReturnLinefeedCount),
             }.ToImmutableList();
+
+            var onlyRowEndingKind = (RowEndingKind?)null;
+            if (partitionMetadataMap[partitionIndex].RowEndingKindCountList.Count == 0)
+            {
+                var firstRowEndingKind = partitionMetadataMap[partitionIndex].RowEndingKindCountList.First().rowEndingKind;
+                if (partitionMetadataMap[partitionIndex].RowEndingKindCountList.All(x => x.rowEndingKind == firstRowEndingKind))
+                    onlyRowEndingKind = firstRowEndingKind;
+            }
+            partitionMetadataMap[partitionIndex].OnlyRowEndingKind = onlyRowEndingKind;
         }
     }
 

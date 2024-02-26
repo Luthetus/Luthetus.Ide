@@ -18,7 +18,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
 	public ImmutableList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsList => ContentList.GlobalMetadata.RowEndingKindCountList.Value;
 	public IList<TextEditorPresentationModel> PresentationModelsList => _presentationModelsList is null ? _textEditorModel.PresentationModelsList : _presentationModelsList;
 	public ImmutableList<int> TabKeyPositionsList => ContentList.GlobalMetadata.TabList.Value;
-	public RowEndingKind? OnlyRowEndingKind => _onlyRowEndingKindWasModified ? _onlyRowEndingKind : _textEditorModel.OnlyRowEndingKind;
+	public RowEndingKind? OnlyRowEndingKind => ContentList.GlobalMetadata.OnlyRowEndingKind.Value;
 	public RowEndingKind UsingRowEndingKind => _usingRowEndingKind ?? _textEditorModel.UsingRowEndingKind;
 	public ResourceUri ResourceUri => _resourceUri ?? _textEditorModel.ResourceUri;
 	public DateTime ResourceLastWriteTime => _resourceLastWriteTime ?? _textEditorModel.ResourceLastWriteTime;

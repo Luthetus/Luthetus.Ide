@@ -37,4 +37,6 @@ public record PartitionMetadata
 	public ImmutableList<RowEnding> RowEndingList { get; set; } = ImmutableList<RowEnding>.Empty;
     /// <summary><inheritdoc cref="ITextEditorModel.RowEndingKindCountsList"/></summary>
     public ImmutableList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountList { get; set; } = ImmutableList<(RowEndingKind rowEndingKind, int count)>.Empty;
+    /// <inheritdoc cref="ITextEditorModel.OnlyRowEndingKind"/>
+    public RowEndingKind? OnlyRowEndingKind { get; set; }
 }

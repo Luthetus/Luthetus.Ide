@@ -39,7 +39,7 @@ public partial class TextEditorModel
     /// <inheritdoc cref="ITextEditorModel.TabKeyPositionsList"/>
 	public ImmutableList<int> TabKeyPositionsList => ContentList.GlobalMetadata.TabList.Value;
     /// <inheritdoc cref="ITextEditorModel.OnlyRowEndingKind"/>
-    public RowEndingKind? OnlyRowEndingKind { get; init; }
+    public RowEndingKind? OnlyRowEndingKind => ContentList.GlobalMetadata.OnlyRowEndingKind.Value;
     public RowEndingKind UsingRowEndingKind { get; init; }
     /// <inheritdoc cref="ITextEditorModel.ResourceUri"/>
     public ResourceUri ResourceUri { get; init; }

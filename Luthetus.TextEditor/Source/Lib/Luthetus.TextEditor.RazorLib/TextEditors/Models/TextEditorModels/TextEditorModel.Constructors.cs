@@ -33,7 +33,6 @@ public partial class TextEditorModel
 		modifier.ModifyContent(content);
 		
 		ContentList = modifier.ContentList;
-		OnlyRowEndingKind = modifier.OnlyRowEndingKind;
 		UsingRowEndingKind = modifier.UsingRowEndingKind;
 		MostCharactersOnASingleRowTuple = modifier.MostCharactersOnASingleRowTuple;
 	}
@@ -42,7 +41,6 @@ public partial class TextEditorModel
 		PartitionContainer contentList,
 		ImmutableList<EditBlock> editBlocksList,
 		ImmutableList<TextEditorPresentationModel> presentationModelsList,
-		RowEndingKind? onlyRowEndingKind,
 		RowEndingKind usingRowEndingKind,
 		ResourceUri resourceUri,
 		DateTime resourceLastWriteTime,
@@ -58,7 +56,6 @@ public partial class TextEditorModel
 		ContentList = contentList;
 		EditBlocksList = editBlocksList;
 		PresentationModelsList = presentationModelsList;
-		OnlyRowEndingKind = onlyRowEndingKind;
 		UsingRowEndingKind = usingRowEndingKind;
 		ResourceUri = resourceUri;
 		ResourceLastWriteTime = resourceLastWriteTime;

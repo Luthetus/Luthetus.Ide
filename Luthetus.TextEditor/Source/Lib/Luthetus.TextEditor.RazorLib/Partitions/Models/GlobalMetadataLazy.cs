@@ -86,6 +86,16 @@ public record GlobalMetadataLazy
                 new (RowEndingKind.CarriageReturnLinefeed, carriageReturnLinefeedRunningCount),
             }.ToImmutableList();
         });
+
+        OnlyRowEndingKind = new Lazy<RowEndingKind?>(() =>
+        {
+            // This line presumes there will always be at least 1 partition.
+            var onlyRowEndingKind = container.PartitionMetadataMap[0].OnlyRowEndingKind;
+            if (container.PartitionMetadataMap.All(x => x.OnlyRowEndingKind == onlyRowEndingKind))
+                return onlyRowEndingKind;
+            else
+                return null;
+        });
     }
 
     public int Count { get; set; }
@@ -95,5 +105,6 @@ public record GlobalMetadataLazy
     /// <summary><inheritdoc cref="ITextEditorModel.RowEndingPositionsList"/></summary>
 	public Lazy<ImmutableList<RowEnding>> RowEndingList { get; }
 	public Lazy<ImmutableList<(RowEndingKind rowEndingKind, int count)>> RowEndingKindCountList { get; }
+    public Lazy<RowEndingKind?> OnlyRowEndingKind { get; init; }
     public Lazy<string> AllText { get; }
 }

@@ -66,54 +66,6 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ClearRowEndingPositionsList()"/>
-    /// </summary>
-    [Fact]
-    public void ClearRowEndingPositionsList()
-    {
-        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
-        var modelModifier = new TextEditorModelModifier(inModel);
-
-        modelModifier.ClearRowEndingPositionsList();
-
-        var outModel = modelModifier.ToModel();
-        Assert.NotEqual(inModel.RowEndingPositionsList, outModel.RowEndingPositionsList);
-        Assert.Equal(ImmutableList<RowEnding>.Empty, outModel.RowEndingPositionsList);
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.ClearRowEndingKindCountsList()"/>
-    /// </summary>
-    [Fact]
-    public void ClearRowEndingKindCountsList()
-    {
-        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
-        var modelModifier = new TextEditorModelModifier(inModel);
-
-        modelModifier.ClearRowEndingKindCountsList();
-
-        var outModel = modelModifier.ToModel();
-        Assert.NotEqual(inModel.RowEndingKindCountsList, outModel.RowEndingKindCountsList);
-        Assert.Equal(ImmutableList<(RowEndingKind rowEndingKind, int count)>.Empty, outModel.RowEndingKindCountsList);
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.ClearOnlyRowEndingKind()"/>
-    /// </summary>
-    [Fact]
-    public void ClearOnlyRowEndingKind()
-    {
-        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
-        var modelModifier = new TextEditorModelModifier(inModel);
-
-        modelModifier.ClearOnlyRowEndingKind();
-
-        var outModel = modelModifier.ToModel();
-        Assert.NotEqual(inModel.OnlyRowEndingKind, outModel.OnlyRowEndingKind);
-        Assert.Null(outModel.OnlyRowEndingKind);
-    }
-
-    /// <summary>
     /// <see cref="TextEditorModelModifier.ModifyUsingRowEndingKind(RowEndingKind)"/>
     /// </summary>
     [Fact]
