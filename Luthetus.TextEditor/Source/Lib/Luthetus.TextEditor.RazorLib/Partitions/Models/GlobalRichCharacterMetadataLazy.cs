@@ -8,7 +8,7 @@ public record GlobalRichCharacterMetadataLazy
 {
     public GlobalRichCharacterMetadataLazy(PartitionedRichCharacterList partitionedList)
     {
-        TabListLazy = new Lazy<ImmutableList<int>>(() =>
+        TabList = new Lazy<ImmutableList<int>>(() =>
         {
             var tabList = new List<int>();
             var rollingCount = 0;
@@ -35,6 +35,6 @@ public record GlobalRichCharacterMetadataLazy
     public int Count { get; set; }
 
     /// <summary><inheritdoc cref="ITextEditorModel.TabKeyPositionsList"/></summary>
-	public Lazy<ImmutableList<int>> TabListLazy { get; }
+	public Lazy<ImmutableList<int>> TabList { get; }
 	public Lazy<string> AllText { get; }
 }

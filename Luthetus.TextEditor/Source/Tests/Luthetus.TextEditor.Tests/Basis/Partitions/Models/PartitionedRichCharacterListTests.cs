@@ -76,7 +76,7 @@ public class PartitionedRichCharacterListTests
         partitionedRichCharacterList = partitionedRichCharacterList.AddRange(richCharacterList);
 
         var globalMetadataLazy = PartitionedRichCharacterList.GetGlobalMetadataLazy(partitionedRichCharacterList);
-        var globalTabList = globalMetadataLazy.TabListLazy.Value;
+        var globalTabList = globalMetadataLazy.TabList.Value;
         var globalAllText = globalMetadataLazy.AllText.Value;
 
         throw new NotImplementedException();
@@ -156,7 +156,7 @@ public class PartitionedRichCharacterListTests
             0, new RichCharacter { Value = '\t' });
 
         var globalMetadataLazy = PartitionedRichCharacterList.GetGlobalMetadataLazy(partitionedRichCharacterList);
-        var globalTabList = globalMetadataLazy.TabListLazy.Value;
+        var globalTabList = globalMetadataLazy.TabList.Value;
         var globalAllText = globalMetadataLazy.AllText.Value;
 
         throw new NotImplementedException();
@@ -169,12 +169,22 @@ public class PartitionedRichCharacterListTests
         var richCharacterList = new string('\t', 4).Select(x => new RichCharacter { Value = x }).ToArray();
         partitionedRichCharacterList = partitionedRichCharacterList.InsertRange(0, richCharacterList);
 
+        // Reading some state so I see it in debugger
+        {
+            var globalMetadataLazy = PartitionedRichCharacterList.GetGlobalMetadataLazy(partitionedRichCharacterList);
+            var globalTabList = globalMetadataLazy.TabList.Value;
+            var globalAllText = globalMetadataLazy.AllText.Value;
+        }
+
         partitionedRichCharacterList = partitionedRichCharacterList.Insert(
             0, new RichCharacter { Value = '\t' });
 
-        var globalMetadataLazy = PartitionedRichCharacterList.GetGlobalMetadataLazy(partitionedRichCharacterList);
-        var globalTabList = globalMetadataLazy.TabListLazy.Value;
-        var globalAllText = globalMetadataLazy.AllText.Value;
+        // Reading some state so I see it in debugger
+        {
+            var globalMetadataLazy = PartitionedRichCharacterList.GetGlobalMetadataLazy(partitionedRichCharacterList);
+            var globalTabList = globalMetadataLazy.TabList.Value;
+            var globalAllText = globalMetadataLazy.AllText.Value;
+        }
 
         throw new NotImplementedException();
     }

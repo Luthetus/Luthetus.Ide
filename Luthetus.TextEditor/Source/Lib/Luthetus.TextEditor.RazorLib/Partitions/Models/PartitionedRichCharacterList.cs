@@ -318,21 +318,20 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
 
         var relativeTabIndex = inTabList.FindIndex(x => x >= relativePositionIndex);
 
-        if (relativeTabIndex != -1)
+        // Copy over unmodified values
+        var copyForLoopUpperLimit = relativeTabIndex == -1 ? inTabList.Count : relativeTabIndex;
+        for (int i = 0; i < copyForLoopUpperLimit; i++)
         {
-            // Copy over unmodified values
-            for (int i = 0; i < relativeTabIndex; i++)
-            {
-                mutableTabList.Add(inTabList[i]);
-            }
-
-            // Write the shifted values
-            for (int i = relativeTabIndex; i < inTabList.Count; i++)
-            {
-                mutableTabList.Add(inTabList[i] + 1);
-            }
+            mutableTabList.Add(inTabList[i]);
         }
 
+        // Write the shifted values
+        var shiftForLoopLowerLimit = copyForLoopUpperLimit;
+        for (int i = shiftForLoopLowerLimit; i < inTabList.Count; i++)
+        {
+            mutableTabList.Add(inTabList[i] + 1);
+        }
+        
         if (item.Value == '\t')
         {
             if (relativeTabIndex == -1)
@@ -351,6 +350,15 @@ public record PartitionedRichCharacterList : IList<RichCharacter>
         foreach (var item in itemList)
         {
             partitionedImmutableList = partitionedImmutableList.Insert(index++, item);
+
+#if DEBUG // TODO: Delete these variables
+            // Reading some state so I see it in debugger
+            {
+                var globalMetadataLazy = GetGlobalMetadataLazy(partitionedImmutableList);
+                var globalTabList = globalMetadataLazy.TabList.Value;
+                var globalAllText = globalMetadataLazy.AllText.Value;
+            }
+#endif
         }
 
         return partitionedImmutableList;
