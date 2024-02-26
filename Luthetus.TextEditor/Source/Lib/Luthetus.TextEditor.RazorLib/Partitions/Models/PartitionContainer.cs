@@ -1,4 +1,5 @@
 ﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
 using System.Collections;
 using System.Collections.Immutable;
 
@@ -33,19 +34,34 @@ public record PartitionContainer : IList<RichCharacter>
 
         PartitionSize = partitionSize;
 
+        PartitionList = new ImmutableList<RichCharacter>[]
+        {
+            ImmutableList<RichCharacter>.Empty,
+        }.ToImmutableList();
+
+        PartitionMetadataMap = new PartitionMetadata[]
+        {
+            new(0)
+            { 
+                RelativeCharacterCount = 0,
+                TabList = ImmutableList<int>.Empty,
+                RowEndingList = ImmutableList<RowEnding>.Empty,
+            },
+        }.ToImmutableList();
+
         // TODO: How does one not duplicate this code? It exists in the record copy constructor too...
         // A parameterless constructor was tried and invoked with 'this()' but it gives an error message specific to usage of record copy constructors.
         GlobalMetadata = new GlobalMetadataLazy(this);
     }
 
     public int PartitionSize { get; }
-    public ImmutableList<ImmutableList<RichCharacter>> PartitionList { get; init; } = ImmutableList<ImmutableList<RichCharacter>>.Empty;
+    public ImmutableList<ImmutableList<RichCharacter>> PartitionList { get; init; }
 
     /// <summary>
     /// Track the 'Count' of each partition in this. Therefore, one can lookup whether a partition is full or not. Without iterating through all the partitions just to check a specific one.<br/>
     /// The name 'Map' is used here because to get the Count of the 0th index partition, one would read the value at index 0 of this property. In otherwords, each partition index maps to its corresponding Count.
     /// </summary>
-    public ImmutableList<PartitionMetadata> PartitionMetadataMap { get; init; } = ImmutableList<PartitionMetadata>.Empty;
+    public ImmutableList<PartitionMetadata> PartitionMetadataMap { get; init; }
 
     public GlobalMetadataLazy GlobalMetadata { get; }
 

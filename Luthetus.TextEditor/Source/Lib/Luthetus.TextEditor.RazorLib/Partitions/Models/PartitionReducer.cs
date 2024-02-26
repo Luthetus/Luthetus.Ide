@@ -1,4 +1,5 @@
 ﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Partitions.Models;
@@ -8,49 +9,50 @@ internal class PartitionReducer
     public static PartitionContainer ReduceAdd(
         RichCharacter richCharacter, PartitionContainer container)
     {
-        var partitionIndex = -1;
+        return ReduceInsert(container.GlobalCharacterCount, richCharacter, container);
+        //var partitionIndex = -1;
 
-        for (int i = 0; i < container.PartitionMetadataMap.Count; i++)
-        {
-            int count = container.PartitionMetadataMap[i].RelativeCharacterCount;
-            if (count != container.PartitionSize)
-                partitionIndex = i;
-        }
+        //for (int i = 0; i < container.PartitionMetadataMap.Count; i++)
+        //{
+        //    int count = container.PartitionMetadataMap[i].RelativeCharacterCount;
+        //    if (count != container.PartitionSize)
+        //        partitionIndex = i;
+        //}
 
-        var partitionList = container.PartitionList;
-        var partitionMetadataMap = container.PartitionMetadataMap;
-        int relativePositionIndex;
+        //var partitionList = container.PartitionList;
+        //var partitionMetadataMap = container.PartitionMetadataMap;
+        //int relativePositionIndex;
 
-        if (partitionIndex == -1)
-        {
-            var partition = new RichCharacter[] { richCharacter }.ToImmutableList();
-            partitionList = partitionList.Add(partition);
+        //if (partitionIndex == -1)
+        //{
+        //    var partition = new RichCharacter[] { richCharacter }.ToImmutableList();
+        //    partitionList = partitionList.Add(partition);
 
-            partitionMetadataMap = partitionMetadataMap.Add(new(partition.Count));
+        //    partitionMetadataMap = partitionMetadataMap.Add(new(partition.Count));
 
-            partitionIndex = partitionList.Count - 1;
-            relativePositionIndex = 0;
-        }
-        else
-        {
-            var partition = partitionList[partitionIndex].Add(richCharacter);
-            partitionList = partitionList.SetItem(partitionIndex, partition);
+        //    partitionIndex = partitionList.Count - 1;
+        //    relativePositionIndex = 0;
+        //}
+        //else
+        //{
+        //    var partition = partitionList[partitionIndex].Add(richCharacter);
+        //    partitionList = partitionList.SetItem(partitionIndex, partition);
 
-            var metadata = partitionMetadataMap[partitionIndex];
-            partitionMetadataMap = partitionMetadataMap.SetItem(
-                partitionIndex, metadata with { RelativeCharacterCount = partition.Count });
+        //    var metadata = partitionMetadataMap[partitionIndex];
+        //    partitionMetadataMap = partitionMetadataMap.SetItem(
+        //        partitionIndex, metadata with { RelativeCharacterCount = partition.Count });
 
-            relativePositionIndex = partition.Count - 1;
-        }
+        //    relativePositionIndex = partition.Count - 1;
+        //}
 
-        Track.Add(
-            relativePositionIndex, richCharacter, partitionIndex, partitionList, partitionMetadataMap);
+        //Track.Add(
+        //    relativePositionIndex, richCharacter, partitionIndex, partitionList, partitionMetadataMap);
 
-        return container with
-        {
-            PartitionList = partitionList,
-            PartitionMetadataMap = partitionMetadataMap
-        };
+        //return container with
+        //{
+        //    PartitionList = partitionList,
+        //    PartitionMetadataMap = partitionMetadataMap
+        //};
     }
 
     public static PartitionContainer ReduceAddRange(
@@ -67,9 +69,6 @@ internal class PartitionReducer
     public static PartitionContainer ReduceInsert(
         int globalPositionIndex, RichCharacter richCharacter, PartitionContainer container)
     {
-        if (container.PartitionMetadataMap.Count == 0)
-            return container.Add(richCharacter);
-
         var runningCount = 0;
         var partitionIndex = 0;
         var partition = (ImmutableList<RichCharacter>?)null;
@@ -256,11 +255,16 @@ internal class PartitionReducer
         for (int i = partitionIndex; i < (partitionIndex + expansionFactor); i++)
         {
             var partition = container.PartitionList[i];
-            List<int> mutableList = Track.ExpandPartition(partition);
+            List<int> tabList = Track.ExpandPartition_Tab(partition);
+            List<RowEnding> rowEndingList = Track.ExpandPartition_RowEnding(partition);
 
             outPartitionMemoryMap = outPartitionMemoryMap.SetItem(
                 i,
-                new(partition.Count) { TabList = mutableList.ToImmutableList() });
+                new(partition.Count)
+                { 
+                    TabList = tabList.ToImmutableList(),
+                    RowEndingList = rowEndingList.ToImmutableList(),
+                });
         }
 
         return container with

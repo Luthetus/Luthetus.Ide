@@ -193,21 +193,50 @@ internal class Track
         }
     }
 
-    public static List<int> ExpandPartition(ImmutableList<RichCharacter> partition)
+    public static List<int> ExpandPartition_Tab(ImmutableList<RichCharacter> partition)
     {
-        // TabList
+        List<int> mutableList = new();
+
+        for (int i = 0; i < partition.Count; i++)
         {
-            List<int> mutableList = new();
+            if (partition[i].Value == '\t')
+                mutableList.Add(i);
+        }
+
+        return mutableList;
+    }
+    
+    public static List<RowEnding> ExpandPartition_RowEnding(ImmutableList<RichCharacter> partition)
+    {
+        List<RowEnding> mutableList = new();
+        var previousCharacter = '\0';
+
+        for (int i = 0; i < partition.Count; i++)
+        {
+            if (partition[i].Value == '\r')
             {
-                // TODO: Don't count the tabs, instead divide the original TabList
-                for (int i = 0; i < partition.Count; i++)
+                mutableList.Add(new RowEnding(i, i + 1, RowEndingKind.CarriageReturn));
+            }
+            else if (partition[i].Value == '\n')
+            {
+                if (previousCharacter == '\r')
                 {
-                    if (partition[i].Value == '\t')
-                        mutableList.Add(i);
+                    var previousCarriageReturn = mutableList[i - 1];
+                    mutableList[i - 1] = previousCarriageReturn with
+                    {
+                        EndPositionIndexExclusive = 1 + previousCarriageReturn.EndPositionIndexExclusive,
+                        RowEndingKind = RowEndingKind.CarriageReturnLinefeed,
+                    };
+                }
+                else
+                {
+                    mutableList.Add(new RowEnding(i, i + 1, RowEndingKind.Linefeed));
                 }
             }
 
-            return mutableList;
+            previousCharacter = partition[i].Value;
         }
+
+        return mutableList;
     }
 }
