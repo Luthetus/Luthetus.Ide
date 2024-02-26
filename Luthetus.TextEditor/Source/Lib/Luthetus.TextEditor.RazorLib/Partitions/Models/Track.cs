@@ -1,19 +1,17 @@
 ﻿using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
-using System;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Partitions.Models;
 
-internal class FixTrackedPositions
+internal class Track
 {
     public static void Add(
         RichCharacter item,
         int indexPartitionFreeSpace,
         ImmutableList<ImmutableList<RichCharacter>> localPartitionList,
-        ImmutableList<PartitionRichCharacterMetadata> localPartitionMetadataMap,
+        ImmutableList<PartitionMetadata> localPartitionMetadataMap,
         int relativePositionIndex)
     {
         // TabList
@@ -86,14 +84,14 @@ internal class FixTrackedPositions
         RichCharacter item,
         int partitionIndex,
         ImmutableList<ImmutableList<RichCharacter>> outPartitionList,
-        ImmutableList<PartitionRichCharacterMetadata> outPartitionMemoryMap)
+        ImmutableList<PartitionMetadata> outPartitionMemoryMap)
     {
         // TabList
         {
             var inTabList = outPartitionMemoryMap[partitionIndex].TabList;
             var mutableTabList = new List<int>();
 
-            var relativePositionIndex = PartitionedRichCharacterList.GetRelativePositionIndex(
+            var relativePositionIndex = PartitionContainer.GetRelativePositionIndex(
                 partitionIndex, outPartitionList, outPartitionMemoryMap, globalPositionIndex);
 
             var relativeTabIndex = inTabList.FindIndex(x => x >= relativePositionIndex);
@@ -124,7 +122,7 @@ internal class FixTrackedPositions
         }
     }
 
-    public static void RemoveAt(int globalPositionIndex, int indexPartition, ImmutableList<PartitionRichCharacterMetadata> outPartitionMemoryMap)
+    public static void RemoveAt(int globalPositionIndex, int indexPartition, ImmutableList<PartitionMetadata> outPartitionMemoryMap)
     {
         // TabList
         {

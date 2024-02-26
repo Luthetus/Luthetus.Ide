@@ -20,17 +20,17 @@ public partial class TextEditorModel
     public const int PARTITION_SIZE = 5_000;
 
     /// <summary>
-    /// An 'Empty' pattern cannot be done with <see cref="PartitionedRichCharacterList"/>
+    /// An 'Empty' pattern cannot be done with <see cref="PartitionContainer"/>
     /// because it currently does not allow for changing partition size.
     /// And since the partition size can be any int, then just one 'Empty' cannot exist.
     /// <br/></br>
     /// That said, the text editor can make its own Empty partition given that it
     /// always will have the <see cref="PARTITION_SIZE"/>
     /// </summary>
-    public static readonly PartitionedRichCharacterList PARTITION_EMPTY = new(PARTITION_SIZE);
+    public static readonly PartitionContainer PARTITION_EMPTY = new(PARTITION_SIZE);
 
     /// <inheritdoc cref="ITextEditorModel.ContentList"/>
-    public PartitionedRichCharacterList ContentList = PARTITION_EMPTY;
+    public PartitionContainer ContentList = PARTITION_EMPTY;
 	public ImmutableList<EditBlock> EditBlocksList { get; init; } = ImmutableList<EditBlock>.Empty;
     /// <inheritdoc cref="ITextEditorModel.RowEndingPositionsList"/>
 	public ImmutableList<RowEnding> RowEndingPositionsList { get; init; } = ImmutableList<RowEnding>.Empty;

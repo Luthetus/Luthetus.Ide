@@ -24,7 +24,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 /// </summary>
 public interface ITextEditorModel
 {
-    public PartitionedRichCharacterList ContentList { get; }
+    public PartitionContainer ContentList { get; }
 	public IList<EditBlock> EditBlocksList { get; }
     /// <summary>
     /// To get the ending position of RowIndex _rowEndingPositions[RowIndex]<br /><br />

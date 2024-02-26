@@ -1,5 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Partitions.Models;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 
@@ -23,9 +22,9 @@ namespace Luthetus.TextEditor.RazorLib.Partitions.Models;
 /// So, I'm going to copy and paste the attempt at the generic type here, then just
 /// change the source code to work for the text editor. (2024-02-25)
 /// </summary>
-public record PartitionRichCharacterMetadata
+public record PartitionMetadata
 {
-    public PartitionRichCharacterMetadata(int count)
+    public PartitionMetadata(int count)
     {
         Count = count;
     }

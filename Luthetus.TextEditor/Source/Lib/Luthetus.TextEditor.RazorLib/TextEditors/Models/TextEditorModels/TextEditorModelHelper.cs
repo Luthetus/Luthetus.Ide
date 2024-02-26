@@ -124,7 +124,7 @@ public static class TextEditorModelHelper
 		{
 			for (var i = textEditorTextSpan.StartingIndexInclusive; i < textEditorTextSpan.EndingIndexExclusive; i++)
 			{
-				if (i >= localContent.Count)
+				if (i >= localContent.GlobalCharacterCount)
 					continue;
 
 				localContent[i].DecorationByte = textEditorTextSpan.DecorationByte;
@@ -133,7 +133,7 @@ public static class TextEditorModelHelper
 			}
 		}
 
-		for (var i = 0; i < localContent.Count - 1; i++)
+		for (var i = 0; i < localContent.GlobalCharacterCount - 1; i++)
 		{
 			if (!positionsPainted.Contains(i))
 			{
@@ -193,7 +193,7 @@ public static class TextEditorModelHelper
 		this ITextEditorModel model,
 		int positionIndex)
 	{
-		if (positionIndex < 0 || positionIndex >= model.ContentList.Count)
+		if (positionIndex < 0 || positionIndex >= model.ContentList.GlobalCharacterCount)
 			return ParserFacts.END_OF_FILE;
 
 		return model.ContentList[positionIndex].Value;
@@ -399,14 +399,14 @@ public static class TextEditorModelHelper
 			positionIndex -= 1;
 		}
 
-		if (positionIndex < 0 || positionIndex >= model.ContentList.Count)
+		if (positionIndex < 0 || positionIndex >= model.ContentList.GlobalCharacterCount)
 			return -1;
 
 		var startingCharacterKind = model.ContentList[positionIndex].GetCharacterKind();
 
 		while (true)
 		{
-			if (positionIndex >= model.ContentList.Count ||
+			if (positionIndex >= model.ContentList.GlobalCharacterCount ||
 				positionIndex > lastPositionIndexOnRow ||
 				positionIndex < startOfRowPositionIndex)
 			{

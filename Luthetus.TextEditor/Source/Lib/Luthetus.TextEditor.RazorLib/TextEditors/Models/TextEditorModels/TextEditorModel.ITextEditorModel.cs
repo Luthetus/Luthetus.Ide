@@ -8,7 +8,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 public partial class TextEditorModel : ITextEditorModel
 {
-    PartitionedRichCharacterList ITextEditorModel.ContentList => ContentList;
+    PartitionContainer ITextEditorModel.ContentList => ContentList;
 	IList<EditBlock> ITextEditorModel.EditBlocksList => EditBlocksList;
 	IList<RowEnding> ITextEditorModel.RowEndingPositionsList => RowEndingPositionsList;
 	IList<(RowEndingKind rowEndingKind, int count)> ITextEditorModel.RowEndingKindCountsList => RowEndingKindCountsList;
@@ -16,5 +16,5 @@ public partial class TextEditorModel : ITextEditorModel
     ImmutableList<int> ITextEditorModel.TabKeyPositionsList => TabKeyPositionsList;
 
     public int RowCount => RowEndingPositionsList.Count;
-    public int DocumentLength => ContentList.Count;
+    public int DocumentLength => ContentList.GlobalCharacterCount;
 }

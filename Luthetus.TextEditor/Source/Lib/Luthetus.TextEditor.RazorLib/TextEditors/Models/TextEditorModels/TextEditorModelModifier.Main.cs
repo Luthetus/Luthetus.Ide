@@ -34,7 +34,7 @@ public partial class TextEditorModelModifier
         _textEditorModel = textEditorModel;
     }
 
-    private PartitionedRichCharacterList? _contentList;
+    private PartitionContainer? _contentList;
     private List<EditBlock>? _editBlocksList;
     private List<RowEnding>? _rowEndingPositionsList;
     private List<(RowEndingKind rowEndingKind, int count)>? _rowEndingKindCountsList;
@@ -208,7 +208,7 @@ public partial class TextEditorModelModifier
             var cursorPositionIndex = startOfRowPositionIndex + cursorModifier.ColumnIndex;
 
             // If cursor is out of bounds then continue
-            if (cursorPositionIndex > ContentList.Count)
+            if (cursorPositionIndex > ContentList.GlobalCharacterCount)
                 continue;
 
             var wasTabCode = false;
@@ -334,7 +334,7 @@ public partial class TextEditorModelModifier
             var cursorPositionIndex = startOfRowPositionIndex + cursorModifier.ColumnIndex;
 
             // If cursor is out of bounds then continue
-            if (cursorPositionIndex > ContentList.Count)
+            if (cursorPositionIndex > ContentList.GlobalCharacterCount)
                 continue;
 
             int startingPositionIndexToRemoveInclusive;
@@ -441,7 +441,7 @@ public partial class TextEditorModelModifier
 
             while (countToRemove-- > 0)
             {
-                if (indexToRemove < 0 || indexToRemove > ContentList.Count - 1)
+                if (indexToRemove < 0 || indexToRemove > ContentList.GlobalCharacterCount - 1)
                     break;
 
                 var characterToDelete = ContentList[indexToRemove];

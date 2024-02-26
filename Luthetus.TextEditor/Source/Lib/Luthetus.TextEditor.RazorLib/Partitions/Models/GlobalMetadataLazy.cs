@@ -4,9 +4,9 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.RazorLib.Partitions.Models;
 
-public record GlobalRichCharacterMetadataLazy
+public record GlobalMetadataLazy
 {
-    public GlobalRichCharacterMetadataLazy(PartitionedRichCharacterList partitionedList)
+    public GlobalMetadataLazy(PartitionContainer partitionedList)
     {
         AllText = new Lazy<string>(() =>
         {
@@ -17,15 +17,15 @@ public record GlobalRichCharacterMetadataLazy
         TabList = new Lazy<ImmutableList<int>>(() =>
         {
             var tabList = new List<int>();
-            var rollingCount = 0;
+            var runningCount = 0;
 
             for (int i = 0; i < partitionedList.PartitionMetadataMap.Count; i++)
             {
                 var metadata = partitionedList.PartitionMetadataMap[i];
 
-                tabList.AddRange(metadata.TabList.Select(x => x + rollingCount));
+                tabList.AddRange(metadata.TabList.Select(x => x + runningCount));
 
-                rollingCount += metadata.Count;
+                runningCount += metadata.Count;
             }
 
             return tabList.ToImmutableList();
@@ -34,7 +34,7 @@ public record GlobalRichCharacterMetadataLazy
         RowEndingList = new Lazy<ImmutableList<RowEnding>>(() =>
         {
             var rowEndingList = new List<RowEnding>();
-            var rollingCount = 0;
+            var runningCount = 0;
 
             for (int i = 0; i < partitionedList.PartitionMetadataMap.Count; i++)
             {
@@ -42,11 +42,11 @@ public record GlobalRichCharacterMetadataLazy
 
                 rowEndingList.AddRange(metadata.RowEndingList.Select(x => x with 
                     {
-                        StartPositionIndexInclusive = x.StartPositionIndexInclusive + rollingCount,
-                        EndPositionIndexExclusive = x.StartPositionIndexInclusive + rollingCount,
+                        StartPositionIndexInclusive = x.StartPositionIndexInclusive + runningCount,
+                        EndPositionIndexExclusive = x.StartPositionIndexInclusive + runningCount,
                     }));
 
-                rollingCount += metadata.Count;
+                runningCount += metadata.Count;
             }
 
             return rowEndingList.ToImmutableList();

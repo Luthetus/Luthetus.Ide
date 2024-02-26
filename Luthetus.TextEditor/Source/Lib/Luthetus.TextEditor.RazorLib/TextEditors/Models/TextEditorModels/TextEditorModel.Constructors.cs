@@ -41,7 +41,7 @@ public partial class TextEditorModel
 	}
 
 	public TextEditorModel(
-		PartitionedRichCharacterList contentList,
+		PartitionContainer contentList,
 		ImmutableList<EditBlock> editBlocksList,
 		ImmutableList<RowEnding> rowEndingPositionsList,
 		ImmutableList<(RowEndingKind rowEndingKind, int count)> rowEndingKindCountsList,
