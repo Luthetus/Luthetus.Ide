@@ -5,33 +5,26 @@ using System.Collections.Immutable;
 namespace Luthetus.TextEditor.RazorLib.Partitions.Models;
 
 /// <summary>
-/// TODO: I need to handle the partition meta data differently for the text editor...
-/// ...Perhaps it would be preferable to have a generic <see cref="PartitionedImmutableList{TItem}"/>
-/// type, but I'm finding a it hard to do so without odd looking and confusing code.
-/// So, I'm going to copy and paste the attempt at the generic type here, then just
-/// change the source code to work for the text editor. (2024-02-25)
+/// TODO: I need to handle the partition meta data differently for the text editor. Perhaps it would be preferable to have a generic <see cref="PartitionedImmutableList{TItem}"/> type, but I'm finding...
+/// it hard to do so without odd looking and confusing code. So, I'm going to copy and paste the attempt at the generic type here, then just change the source code to work for the text editor. (2024-02-25)
 /// </summary>
 public record PartitionContainer : IList<RichCharacter>
 {
     /// <summary>
-    /// When a partition runs out space its content is divided amongst some amount of partitions.
-    /// If expansion factor is 3, then when a partition expands,
-    /// it will insert 2 addition partitions after itself.
-    /// Then the original partition splits its content into thirds.
-    /// And distributes it across itself, and the other 2 newly inserted partitions.
+    /// When a partition runs out space its content is divided amongst some amount of partitions. If expansion factor is 3, then when a partition expands, it will insert
+    /// 2 addition partitions after itself. Then the original partition splits its content into thirds. And distributes it across itself, and the other 2 newly inserted partitions.
     /// </summary>
     public const int EXPANSION_FACTOR = 3;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    // This is a record copy constructor
+    // record copy constructor
     public PartitionContainer(PartitionContainer other)
     {
         PartitionSize = other.PartitionSize;
-
+        PartitionList = other.PartitionList;
+        PartitionMetadataMap = other.PartitionMetadataMap;
         // Reset the global metadata each time the record 'with' keyword is used.
         GlobalMetadata = new GlobalMetadataLazy(this);
     }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
     public PartitionContainer(int partitionSize)
     {
@@ -41,8 +34,7 @@ public record PartitionContainer : IList<RichCharacter>
         PartitionSize = partitionSize;
 
         // TODO: How does one not duplicate this code? It exists in the record copy constructor too...
-        // ...a parameterless constructor was tried and invoked with 'this()' but it gives
-        // an error message specific to usage of record copy constructors.
+        // A parameterless constructor was tried and invoked with 'this()' but it gives an error message specific to usage of record copy constructors.
         GlobalMetadata = new GlobalMetadataLazy(this);
     }
 
@@ -50,13 +42,8 @@ public record PartitionContainer : IList<RichCharacter>
     public ImmutableList<ImmutableList<RichCharacter>> PartitionList { get; init; } = ImmutableList<ImmutableList<RichCharacter>>.Empty;
 
     /// <summary>
-    /// Track the 'Count' of each partition in this.
-    /// Therefore, one can lookup whether a partition is full or not.
-    /// Without iterating through all the partitions just to check a specific one.
-    /// <br/>
-    /// The name 'Map' is used here because to get the Count of the 0th index partition,
-    /// one would read the value at index 0 of this property.
-    /// In otherwords, each partition index maps to its corresponding Count.
+    /// Track the 'Count' of each partition in this. Therefore, one can lookup whether a partition is full or not. Without iterating through all the partitions just to check a specific one.<br/>
+    /// The name 'Map' is used here because to get the Count of the 0th index partition, one would read the value at index 0 of this property. In otherwords, each partition index maps to its corresponding Count.
     /// </summary>
     public ImmutableList<PartitionMetadata> PartitionMetadataMap { get; init; } = ImmutableList<PartitionMetadata>.Empty;
 
@@ -70,7 +57,6 @@ public record PartitionContainer : IList<RichCharacter>
                 return 0;
 
             var count = 0;
-
             foreach (var partition in PartitionList)
             {
                 count += partition.Count;
@@ -81,8 +67,6 @@ public record PartitionContainer : IList<RichCharacter>
     }
 
     public bool IsReadOnly => true;
-
-    int ICollection<RichCharacter>.Count => GlobalCharacterCount;
 
     public RichCharacter this[int globalPositionIndex]
     {
@@ -207,6 +191,8 @@ public record PartitionContainer : IList<RichCharacter>
     {
         return GetEnumerator();
     }
+
+    int ICollection<RichCharacter>.Count => GlobalCharacterCount;
 
     void ICollection<RichCharacter>.Add(RichCharacter item) => Add(item);
     void ICollection<RichCharacter>.Clear() => Clear();

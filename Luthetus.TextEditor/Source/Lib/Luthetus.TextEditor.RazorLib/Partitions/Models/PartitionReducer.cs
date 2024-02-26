@@ -218,16 +218,13 @@ internal class PartitionReducer
         // Therefore, figure out how many characters were lost due to integer math.
         var charactersLost = inPartition.Count - (idealSplit * expansionFactor);
 
-        var replaceOriginalPartition = inPartition;
+        var replaceOriginalPartition = inPartition.Take(idealSplit).ToImmutableList();
 
         var partitionNewList = new List<ImmutableList<RichCharacter>>();
-        for (int i = 0; i < expansionFactor; i++)
+        for (int i = 1; i < expansionFactor; i++)
         {
-            if (i == 0)
-            {
-                replaceOriginalPartition = inPartition.Take(idealSplit).ToImmutableList();
-            }
-            else if (i == 1)
+            // Start this for loop at 1 since the original is re-used.
+            if (i == 1)
             {
                 var partitionNew = inPartition
                     .Skip(idealSplit).Take(idealSplit + charactersLost).ToImmutableList();
