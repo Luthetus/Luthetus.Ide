@@ -51,6 +51,41 @@ public record GlobalMetadataLazy
 
             return rowEndingList.ToImmutableList();
         });
+
+        RowEndingKindCountList = new Lazy<ImmutableList<(RowEndingKind rowEndingKind, int count)>>(() =>
+        {
+            var carriageReturnRunningCount = 0;
+            var linefeedRunningCount = 0;
+            var carriageReturnLinefeedRunningCount = 0;
+
+            for (int i = 0; i < partitionedList.PartitionMetadataMap.Count; i++)
+            {
+                var metadata = partitionedList.PartitionMetadataMap[i];
+
+                foreach (var rowEndingKindCount in metadata.RowEndingKindCountList)
+                {
+                    switch (rowEndingKindCount.rowEndingKind)
+                    {
+                        case RowEndingKind.CarriageReturn:
+                            carriageReturnRunningCount += rowEndingKindCount.count;
+                            break;
+                        case RowEndingKind.Linefeed:
+                            linefeedRunningCount += rowEndingKindCount.count;
+                            break;
+                        case RowEndingKind.CarriageReturnLinefeed:
+                            carriageReturnLinefeedRunningCount += rowEndingKindCount.count;
+                            break;
+                    }
+                }
+            }
+
+            return new (RowEndingKind rowEndingKind, int count)[]
+            {
+                new (RowEndingKind.CarriageReturn, carriageReturnRunningCount),
+                new (RowEndingKind.Linefeed, linefeedRunningCount),
+                new (RowEndingKind.CarriageReturnLinefeed, carriageReturnLinefeedRunningCount),
+            }.ToImmutableList();
+        });
     }
 
     public int Count { get; set; }
@@ -59,5 +94,6 @@ public record GlobalMetadataLazy
 	public Lazy<ImmutableList<int>> TabList { get; }
     /// <summary><inheritdoc cref="ITextEditorModel.RowEndingPositionsList"/></summary>
 	public Lazy<ImmutableList<RowEnding>> RowEndingList { get; }
-	public Lazy<string> AllText { get; }
+	public Lazy<ImmutableList<(RowEndingKind rowEndingKind, int count)>> RowEndingKindCountList { get; }
+    public Lazy<string> AllText { get; }
 }

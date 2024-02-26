@@ -35,4 +35,6 @@ public record PartitionMetadata
 	public ImmutableList<int> TabList { get; set; } = ImmutableList<int>.Empty;
     /// <summary><inheritdoc cref="ITextEditorModel.RowEndingPositionsList"/></summary>
 	public ImmutableList<RowEnding> RowEndingList { get; set; } = ImmutableList<RowEnding>.Empty;
+    /// <summary><inheritdoc cref="ITextEditorModel.RowEndingKindCountsList"/></summary>
+    public ImmutableList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountList { get; set; } = ImmutableList<(RowEndingKind rowEndingKind, int count)>.Empty;
 }
