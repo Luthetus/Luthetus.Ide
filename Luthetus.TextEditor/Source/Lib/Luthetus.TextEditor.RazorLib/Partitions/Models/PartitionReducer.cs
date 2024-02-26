@@ -109,7 +109,7 @@ internal class PartitionReducer
             partitionIndex, metadata with { RelativeCharacterCount = metadata.RelativeCharacterCount + 1 });
 
         Track.Insert(
-            globalPositionIndex, richCharacter, partitionIndex, outPartitionList, outPartitionMemoryMap);
+            relativePositionIndex, richCharacter, partitionIndex, outPartitionList, outPartitionMemoryMap);
 
         return container with
         {
