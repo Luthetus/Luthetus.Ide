@@ -1,6 +1,6 @@
 ﻿namespace Luthetus.TextEditor.Tests.Basis.Partitions.Models;
 
-public class RichCharacterPartitionMetadataTests
+public class PartitionMetadataTests
 {
     [Fact]
     public void Aaa()
