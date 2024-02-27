@@ -43,7 +43,7 @@ public record GlobalMetadataLazy
                 rowEndingList.AddRange(metadata.RowEndingList.Select(x => x with 
                     {
                         StartPositionIndexInclusive = x.StartPositionIndexInclusive + runningCount,
-                        EndPositionIndexExclusive = x.StartPositionIndexInclusive + runningCount,
+                        EndPositionIndexExclusive = x.EndPositionIndexExclusive + runningCount,
                     }));
 
                 runningCount += metadata.RelativeCharacterCount;

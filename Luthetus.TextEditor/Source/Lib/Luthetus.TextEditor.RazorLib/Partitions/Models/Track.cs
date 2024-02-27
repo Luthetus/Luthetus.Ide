@@ -190,13 +190,12 @@ internal class Track
                 new (RowEndingKind.CarriageReturnLinefeed, carriageReturnLinefeedCount),
             }.ToImmutableList();
 
-            var onlyRowEndingKind = (RowEndingKind?)null;
-            if (partitionMetadataMap[partitionIndex].RowEndingKindCountList.Count == 0)
-            {
-                var firstRowEndingKind = partitionMetadataMap[partitionIndex].RowEndingKindCountList.First().rowEndingKind;
-                if (partitionMetadataMap[partitionIndex].RowEndingKindCountList.All(x => x.rowEndingKind == firstRowEndingKind))
-                    onlyRowEndingKind = firstRowEndingKind;
-            }
+            var whereMoreThanOne = partitionMetadataMap[partitionIndex].RowEndingKindCountList.Where(x => x.count > 0).ToList();
+            RowEndingKind? onlyRowEndingKind;
+            if (whereMoreThanOne.Count == 1)
+                onlyRowEndingKind = whereMoreThanOne.Single().rowEndingKind;
+            else
+                onlyRowEndingKind = null;
             partitionMetadataMap[partitionIndex].OnlyRowEndingKind = onlyRowEndingKind;
         }
     }
