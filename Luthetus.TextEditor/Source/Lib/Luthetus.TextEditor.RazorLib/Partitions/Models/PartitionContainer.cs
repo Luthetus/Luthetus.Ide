@@ -78,15 +78,32 @@ public record PartitionContainer : IList<RichCharacter> // TODO: I need to handl
         set => throw new NotImplementedException();
     }
 
-    public PartitionContainer Add(RichCharacter item) => PartitionReducer.ReduceAdd(item, this);
-    public PartitionContainer AddRange(IEnumerable<RichCharacter> itemList) => PartitionReducer.ReduceAddRange(itemList, this);
-    public PartitionContainer Insert(int globalPositionIndex, RichCharacter richCharacter) => PartitionReducer.ReduceInsert(globalPositionIndex, richCharacter, this);
-    public PartitionContainer InsertRange(int index, IEnumerable<RichCharacter> itemList) => PartitionReducer.ReduceInsertRange(index, itemList, this);
-    public PartitionContainer Remove(RichCharacter richCharacter) => PartitionReducer.ReduceRemove(richCharacter, this);
-    public PartitionContainer RemoveAt(int globalPositionIndex) => PartitionReducer.ReduceRemoveAt(globalPositionIndex, this);
-    public PartitionContainer RemoveRange(int globalPositionIndex, int count) => PartitionReducer.ReduceRemoveRange(globalPositionIndex, count, this);
-    public PartitionContainer Clear() => new PartitionContainer(PartitionSize);
-    public bool Contains(RichCharacter item) => IndexOf(item) != -1;
+    public PartitionContainer Add(RichCharacter richCharacter) =>
+        PartitionReducer.ReduceInsert(GlobalCharacterCount, richCharacter, this);
+
+    public PartitionContainer AddRange(IEnumerable<RichCharacter> richCharacterList) =>
+        PartitionReducer.ReduceInsertRange(GlobalCharacterCount, richCharacterList, this);
+
+    public PartitionContainer Insert(int globalPositionIndex, RichCharacter richCharacter) =>
+        PartitionReducer.ReduceInsert(globalPositionIndex, richCharacter, this);
+    
+    public PartitionContainer InsertRange(int index, IEnumerable<RichCharacter> itemList) =>
+        PartitionReducer.ReduceInsertRange(index, itemList, this);
+    
+    public PartitionContainer Remove(RichCharacter richCharacter) =>
+        PartitionReducer.ReduceRemove(richCharacter, this);
+    
+    public PartitionContainer RemoveAt(int globalPositionIndex) =>
+        PartitionReducer.ReduceRemoveAt(globalPositionIndex, this);
+    
+    public PartitionContainer RemoveRange(int globalPositionIndex, int count) =>
+        PartitionReducer.ReduceRemoveRange(globalPositionIndex, count, this);
+    
+    public PartitionContainer Clear() =>
+        new PartitionContainer(PartitionSize);
+    
+    public bool Contains(RichCharacter item) =>
+        IndexOf(item) != -1;
 
     public void CopyTo(RichCharacter[] array, int arrayIndex)
     {

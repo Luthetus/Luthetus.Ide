@@ -72,12 +72,18 @@ public record GlobalMetadataLazy
         });
 
         OnlyRowEndingKind = new Lazy<RowEndingKind?>(() =>
-        {            
-            var onlyRowEndingKind = container.PartitionMetadataMap[0].OnlyRowEndingKind; // This line presumes there will always be at least 1 partition.
-            if (container.PartitionMetadataMap.All(x => x.OnlyRowEndingKind == onlyRowEndingKind))
-                return onlyRowEndingKind;
-            else
-                return null;
+        {
+            var partitionsWithRowEndings = container.PartitionMetadataMap.Where(x => x.RowEndingList.Count > 0).ToList();
+
+            var onlyRowEndingKind = (RowEndingKind?)null;
+            if (partitionsWithRowEndings.Count > 0)
+            {
+                var sampleOnlyRowEndingKind = container.PartitionMetadataMap[0].OnlyRowEndingKind;
+                if (partitionsWithRowEndings.All(x => x.OnlyRowEndingKind == sampleOnlyRowEndingKind))
+                    onlyRowEndingKind = sampleOnlyRowEndingKind;
+            }
+
+            return onlyRowEndingKind;
         });
     }
 

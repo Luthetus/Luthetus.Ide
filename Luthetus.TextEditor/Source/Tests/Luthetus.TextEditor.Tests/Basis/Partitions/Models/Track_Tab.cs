@@ -46,20 +46,16 @@ public class Track_Tab : Track_Tests_Base
         var richCharacterList = "ab\t".Select(x => new RichCharacter { Value = x }).ToArray();
         var partitionContainer = new PartitionContainer(3).AddRange(richCharacterList);
         partitionContainer = partitionContainer.Add(new RichCharacter { Value = '\t' });
-        // Assert
-        {
-            // Partition One
-            {
+        { // Assert
+            { // Partition One
                 var partitionMetadata = partitionContainer.PartitionMetadataMap[0];
                 Assert.Empty(partitionMetadata.TabList);
             }
-            // Partition Two
-            {
+            { // Partition Two
                 var partitionMetadata = partitionContainer.PartitionMetadataMap[1];
                 Assert.Empty(partitionMetadata.TabList);
             }
-            // Partition Three
-            {
+            { // Partition Three
                 var partitionMetadata = partitionContainer.PartitionMetadataMap[2];
                 Assert.Equal(2, partitionMetadata.TabList.Count);
             }
@@ -72,20 +68,16 @@ public class Track_Tab : Track_Tests_Base
         // Setup
         var richCharacterList = new string('\t', 4).Select(x => new RichCharacter { Value = x }).ToArray();
         var partitionContainer = new PartitionContainer(3).AddRange(richCharacterList);
-        // Assert
-        {
-            // Partition One
-            {
+        { // Assert
+            { // Partition One
                 var partitionMetadata = partitionContainer.PartitionMetadataMap[0];
                 Assert.Single(partitionMetadata.TabList);
             }
-            // Partition Two
-            {
+            { // Partition Two
                 var partitionMetadata = partitionContainer.PartitionMetadataMap[1];
                 Assert.Single(partitionMetadata.TabList);
             }
-            // Partition Three
-            {
+            { // Partition Three
                 var partitionMetadata = partitionContainer.PartitionMetadataMap[2];
                 Assert.Equal(2, partitionMetadata.TabList.Count);
             }
@@ -134,20 +126,16 @@ public class Track_Tab : Track_Tests_Base
         var richCharacterList = "ab\t".Select(x => new RichCharacter { Value = x }).ToArray();
         var partitionContainer = new PartitionContainer(3).InsertRange(0, richCharacterList);
         partitionContainer = partitionContainer.Insert(0, new RichCharacter { Value = '\t' });
-        // Assert
-        {
-            // Partition One
-            {
+        { // Assert
+            { // Partition One
                 var partitionMetadata = partitionContainer.PartitionMetadataMap[0];
                 Assert.Single(partitionMetadata.TabList);
             }
-            // Partition Two
-            {
+            { // Partition Two
                 var partitionMetadata = partitionContainer.PartitionMetadataMap[1];
                 Assert.Empty(partitionMetadata.TabList);
             }
-            // Partition Three
-            {
+            { // Partition Three
                 var partitionMetadata = partitionContainer.PartitionMetadataMap[2];
                 Assert.Single(partitionMetadata.TabList);
             }
@@ -161,20 +149,16 @@ public class Track_Tab : Track_Tests_Base
         var richCharacterList = new string('\t', 3).Select(x => new RichCharacter { Value = x }).ToArray();
         var partitionContainer = new PartitionContainer(3).InsertRange(0, richCharacterList);
         partitionContainer = partitionContainer.Insert(0, new RichCharacter { Value = '\t' });
-        // Assert
-        {
-            // Partition One
-            {
+        { // Assert
+            { // Partition One
                 var partitionMetadata = partitionContainer.PartitionMetadataMap[0];
                 Assert.Equal(2, partitionMetadata.TabList.Count);
             }
-            // Partition Two
-            {
+            { // Partition Two
                 var partitionMetadata = partitionContainer.PartitionMetadataMap[1];
                 Assert.Single(partitionMetadata.TabList);
             }
-            // Partition Three
-            {
+            { // Partition Three
                 var partitionMetadata = partitionContainer.PartitionMetadataMap[2];
                 Assert.Single(partitionMetadata.TabList);
             }

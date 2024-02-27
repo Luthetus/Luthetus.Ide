@@ -5,9 +5,7 @@ using System.Collections.Immutable;
 namespace Luthetus.TextEditor.RazorLib.Partitions.Models;
 
 internal class PartitionReducer
-{
-    public static PartitionContainer ReduceAdd(RichCharacter richCharacter, PartitionContainer container) => ReduceInsert(container.GlobalCharacterCount, richCharacter, container);
-    public static PartitionContainer ReduceAddRange(IEnumerable<RichCharacter> richCharacterList, PartitionContainer container) => ReduceInsertRange(container.GlobalCharacterCount, richCharacterList, container);
+{    
     public static PartitionContainer ReduceInsert(int globalPositionIndex, RichCharacter richCharacter, PartitionContainer container)
     {
         int runningCount = 0, partitionIndex = 0, relativePositionIndex = 0;
@@ -118,11 +116,34 @@ internal class PartitionReducer
             if (i == 1) // Start this for loop at 1 since the original is re-used.
             {
                 var partitionNew = originalPartition.Skip(idealSplit).Take(idealSplit + charactersLost).ToImmutableList();
+                
+                // Check for "\r\n" that spans two partitions. If so, move both characters to a single partition.
+                if (partitionNew.Any() && partitionNew[0].Value == '\n')
+                {
+                    if (replaceOriginalPartition.Last().Value == '\r')
+                    {
+                        replaceOriginalPartition = replaceOriginalPartition.Add(partitionNew[0]);
+                        partitionNew = partitionNew.RemoveAt(0);
+                    }
+                }
+
                 partitionNewList.Add(partitionNew);
             }
             else
             {
                 var partitionNew = originalPartition.Skip(idealSplit * i + charactersLost).Take(idealSplit).ToImmutableList();
+
+                // Check for "\r\n" that spans two partitions. If so, move both characters to a single partition.
+                if (partitionNew.Any() && partitionNew[0].Value == '\n')
+                {
+                    var previousPartition = partitionNewList.Last();
+                    if (previousPartition.Last().Value == '\r')
+                    {
+                        partitionNewList[^1] = previousPartition.Add(partitionNew[0]);
+                        partitionNew = partitionNew.RemoveAt(0);
+                    }
+                }
+
                 partitionNewList.Add(partitionNew);
             }
         }
@@ -138,9 +159,15 @@ internal class PartitionReducer
         {
             var partition = container.PartitionList[i];
             List<int> tabList = Track.ExpandPartition_Tab(partition);
-            List<RowEnding> rowEndingList = Track.ExpandPartition_RowEnding(partition);
+            var rowEndingList = Track.ExpandPartition_RowEnding(partition);
             outPartitionMemoryMap = outPartitionMemoryMap.SetItem(i,
-                new(partition.Count) {  TabList = tabList.ToImmutableList(), RowEndingList = rowEndingList.ToImmutableList(), });
+                new(partition.Count)
+                {
+                    TabList = tabList.ToImmutableList(),
+                    RowEndingList = rowEndingList.rowEndingList.ToImmutableList(),
+                    RowEndingKindCountList = rowEndingList.rowEndingCountList,
+                    OnlyRowEndingKind = rowEndingList.onlyRowEndingKind,
+                });
         }
         return container with { PartitionMetadataMap = outPartitionMemoryMap };
     }
