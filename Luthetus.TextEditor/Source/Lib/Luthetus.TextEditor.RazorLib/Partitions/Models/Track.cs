@@ -8,7 +8,7 @@ namespace Luthetus.TextEditor.RazorLib.Partitions.Models;
 
 internal partial class Track
 {
-    public static void Insert(int relativePositionIndex, RichCharacter richCharacter, int partitionIndex, ImmutableList<ImmutableList<RichCharacter>> partitionList, ImmutableList<PartitionMetadata> partitionMetadataMap)
+    public static ImmutableList<PartitionMetadata> Insert(int relativePositionIndex, RichCharacter richCharacter, int partitionIndex, ImmutableList<ImmutableList<RichCharacter>> partitionList, ImmutableList<PartitionMetadata> partitionMetadataMap)
     {
         // TabList
         var shiftTabsOutput = ShiftTabs(
@@ -18,7 +18,11 @@ internal partial class Track
             partitionList,
             partitionMetadataMap,
             true);
-        partitionMetadataMap[partitionIndex].TabList = shiftTabsOutput.MutableTabList.ToImmutableList();
+
+        partitionMetadataMap = partitionMetadataMap.SetItem(partitionIndex, partitionMetadataMap[partitionIndex] with 
+        {
+            TabList = shiftTabsOutput.MutableTabList.ToImmutableList()
+        });
 
         // RowEnding
         var shiftRowsOutput = ShiftRows(
@@ -27,13 +31,19 @@ internal partial class Track
             partitionIndex,
             partitionList,
             partitionMetadataMap,
-            false);
-        partitionMetadataMap[partitionIndex].RowEndingList = shiftRowsOutput.RowEndingList;
-        partitionMetadataMap[partitionIndex].RowEndingKindCountList = shiftRowsOutput.RowEndingKindCountList;
-        partitionMetadataMap[partitionIndex].OnlyRowEndingKind = shiftRowsOutput.OnlyRowEndingKind;
+            true);
+
+        partitionMetadataMap = partitionMetadataMap.SetItem(partitionIndex, partitionMetadataMap[partitionIndex] with 
+        {
+            RowEndingList = shiftRowsOutput.RowEndingList,
+            RowEndingKindCountList = shiftRowsOutput.RowEndingKindCountList,
+            OnlyRowEndingKind = shiftRowsOutput.OnlyRowEndingKind,
+        });
+
+        return partitionMetadataMap;
     }
 
-    public static void RemoveAt(int relativePositionIndex, RichCharacter removedRichCharacter, int partitionIndex, ImmutableList<ImmutableList<RichCharacter>> partitionList, ImmutableList<PartitionMetadata> partitionMetadataMap)
+    public static ImmutableList<PartitionMetadata> RemoveAt(int relativePositionIndex, RichCharacter removedRichCharacter, int partitionIndex, ImmutableList<ImmutableList<RichCharacter>> partitionList, ImmutableList<PartitionMetadata> partitionMetadataMap)
     {
         // TabList
         var shiftTabsOutput = ShiftTabs(
@@ -43,7 +53,11 @@ internal partial class Track
             partitionList,
             partitionMetadataMap,
             false);
-        partitionMetadataMap[partitionIndex].TabList = shiftTabsOutput.MutableTabList.ToImmutableList();
+
+        partitionMetadataMap = partitionMetadataMap.SetItem(partitionIndex, partitionMetadataMap[partitionIndex] with 
+        {
+            TabList = shiftTabsOutput.MutableTabList.ToImmutableList()
+        });
 
         // RowEnding
         var shiftRowsOutput = ShiftRows(
@@ -53,9 +67,15 @@ internal partial class Track
             partitionList,
             partitionMetadataMap,
             false);
-        partitionMetadataMap[partitionIndex].RowEndingList = shiftRowsOutput.RowEndingList;
-        partitionMetadataMap[partitionIndex].RowEndingKindCountList = shiftRowsOutput.RowEndingKindCountList;
-        partitionMetadataMap[partitionIndex].OnlyRowEndingKind = shiftRowsOutput.OnlyRowEndingKind;
+
+        partitionMetadataMap = partitionMetadataMap.SetItem(partitionIndex, partitionMetadataMap[partitionIndex] with
+        {
+            RowEndingList = shiftRowsOutput.RowEndingList,
+            RowEndingKindCountList = shiftRowsOutput.RowEndingKindCountList,
+            OnlyRowEndingKind = shiftRowsOutput.OnlyRowEndingKind,
+        });
+
+        return partitionMetadataMap;
     }
 
     public static List<int> ExpandPartition_Tab(ImmutableList<RichCharacter> partition)
@@ -153,8 +173,6 @@ internal partial class Track
                 mutableTabList.Add(relativePositionIndex);
             else
                 mutableTabList.Insert(relativeTabIndex, relativePositionIndex);
-
-            partitionMetadataMap[partitionIndex].TabList = mutableTabList.ToImmutableList();
         }
 
         return new(relativeTabIndex, mutableTabList);
@@ -193,7 +211,7 @@ internal partial class Track
 
         var relativeRowEndingIndex = inRowEndingList.FindIndex(x => x.StartPositionIndexInclusive >= relativePositionIndex);
         var copyForLoopUpperLimit = relativeRowEndingIndex == -1 ? inRowEndingList.Count : relativeRowEndingIndex;
-        for (int i = 0; i < relativeRowEndingIndex; i++) // Copy over unmodified values
+        for (int i = 0; i < copyForLoopUpperLimit; i++) // Copy over unmodified values
         {
             mutableRowEndingList.Add(inRowEndingList[i] with
             {

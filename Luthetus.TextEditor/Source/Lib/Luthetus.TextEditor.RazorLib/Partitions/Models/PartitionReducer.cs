@@ -37,11 +37,11 @@ internal class PartitionReducer
         var outPartitionList = container.PartitionList.SetItem(partitionIndex, partition.Insert(relativePositionIndex, richCharacter));
 
         var metadata = container.PartitionMetadataMap[partitionIndex];
-        var outPartitionMemoryMap = container.PartitionMetadataMap.SetItem(partitionIndex,
+        var outPartitionMetadataMap = container.PartitionMetadataMap.SetItem(partitionIndex,
             metadata with { RelativeCharacterCount = metadata.RelativeCharacterCount + 1 });
 
-        Track.Insert(relativePositionIndex, richCharacter, partitionIndex, outPartitionList, outPartitionMemoryMap);
-        return container with { PartitionList = outPartitionList, PartitionMetadataMap = outPartitionMemoryMap, };
+        outPartitionMetadataMap = Track.Insert(relativePositionIndex, richCharacter, partitionIndex, outPartitionList, outPartitionMetadataMap);
+        return container with { PartitionList = outPartitionList, PartitionMetadataMap = outPartitionMetadataMap, };
     }
 
     public static PartitionContainer ReduceInsertRange(int index, IEnumerable<RichCharacter> itemList, PartitionContainer container)
@@ -88,7 +88,7 @@ internal class PartitionReducer
         var outPartitionMetadataMap = container.PartitionMetadataMap.SetItem(partitionIndex,
             metadata with { RelativeCharacterCount = metadata.RelativeCharacterCount - 1 });
 
-        Track.RemoveAt(relativePositionIndex, characterToRemove, partitionIndex, outPartitionList, outPartitionMetadataMap);
+        outPartitionMetadataMap = Track.RemoveAt(relativePositionIndex, characterToRemove, partitionIndex, outPartitionList, outPartitionMetadataMap);
         return container with { PartitionList = outPartitionList, PartitionMetadataMap = outPartitionMetadataMap, };
     }
 
@@ -152,7 +152,7 @@ internal class PartitionReducer
         outPartitionList = outPartitionList.InsertRange(partitionIndex + 1, partitionNewList);
         container = container with { PartitionList = outPartitionList };
 
-        var newPartitionMetadata = partitionNewList.Select(x => new PartitionMetadata(x.Count));
+        var newPartitionMetadata = partitionNewList.Select(x => new PartitionMetadata() { RelativeCharacterCount = x.Count });
         var outPartitionMemoryMap = container.PartitionMetadataMap.InsertRange(partitionIndex + 1, newPartitionMetadata);
 
         for (int i = partitionIndex; i < (partitionIndex + expansionFactor); i++)
@@ -161,8 +161,9 @@ internal class PartitionReducer
             List<int> tabList = Track.ExpandPartition_Tab(partition);
             var rowEndingList = Track.ExpandPartition_RowEnding(partition);
             outPartitionMemoryMap = outPartitionMemoryMap.SetItem(i,
-                new(partition.Count)
+                new()
                 {
+                    RelativeCharacterCount = partition.Count,
                     TabList = tabList.ToImmutableList(),
                     RowEndingList = rowEndingList.rowEndingList.ToImmutableList(),
                     RowEndingKindCountList = rowEndingList.rowEndingCountList,
