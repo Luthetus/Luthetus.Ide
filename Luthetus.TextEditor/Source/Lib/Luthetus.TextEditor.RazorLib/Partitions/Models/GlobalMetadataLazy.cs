@@ -7,6 +7,8 @@ public record GlobalMetadataLazy
 {
     public GlobalMetadataLazy(PartitionContainer container)
     {
+        GlobalCharacterCount = new Lazy<int>(() => container.GlobalCharacterCount);
+
         AllText = new Lazy<string>(() => new string(container.PartitionList.SelectMany(x => x.Select(y => y.Value)).ToArray()));
 
         TabList = new Lazy<ImmutableList<int>>(() =>
@@ -87,7 +89,7 @@ public record GlobalMetadataLazy
         });
     }
 
-    public int Count { get; set; }
+    public Lazy<int> GlobalCharacterCount { get; }
 	public Lazy<ImmutableList<int>> TabList { get; } // ITextEditorModel.TabKeyPositionsList
     public Lazy<ImmutableList<RowEnding>> RowEndingList { get; } // ITextEditorModel.RowEndingPositionsList
     public Lazy<ImmutableList<(RowEndingKind rowEndingKind, int count)>> RowEndingKindCountList { get; }

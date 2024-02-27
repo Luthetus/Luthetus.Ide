@@ -90,8 +90,8 @@ public class Track_Tab : Track_Tests_Base
     public override void Insert_At_Start()
     {
         // Setup
-        var richCharacterList = "\tab".Select(x => new RichCharacter { Value = x }).ToArray();
-        var partitionContainer = new PartitionContainer(3).InsertRange(0, richCharacterList);
+        var partitionContainer = new PartitionContainer(3).AddRange("ab".Select(x => new RichCharacter { Value = x }));
+        partitionContainer = partitionContainer.Insert(0, new RichCharacter { Value = '\t' });
         // Assert
         var partitionMetadata = partitionContainer.PartitionMetadataMap.Single();
         Assert.Equal(0, partitionMetadata.TabList.Single());
@@ -101,8 +101,8 @@ public class Track_Tab : Track_Tests_Base
     public override void Insert_At_Middle()
     {
         // Setup
-        var richCharacterList = "a\tb".Select(x => new RichCharacter { Value = x }).ToArray();
-        var partitionContainer = new PartitionContainer(3).InsertRange(0, richCharacterList);
+        var partitionContainer = new PartitionContainer(3).AddRange("ab".Select(x => new RichCharacter { Value = x }));
+        partitionContainer = partitionContainer.Insert(1, new RichCharacter { Value = '\t' });
         // Assert
         var partitionMetadata = partitionContainer.PartitionMetadataMap.Single();
         Assert.Equal(1, partitionMetadata.TabList.Single());
@@ -112,8 +112,8 @@ public class Track_Tab : Track_Tests_Base
     public override void Insert_At_End()
     {
         // Setup
-        var richCharacterList = "ab\t".Select(x => new RichCharacter { Value = x }).ToArray();
-        var partitionContainer = new PartitionContainer(3).InsertRange(0, richCharacterList);
+        var partitionContainer = new PartitionContainer(3).AddRange("ab".Select(x => new RichCharacter { Value = x }));
+        partitionContainer = partitionContainer.Insert(2, new RichCharacter { Value = '\t' });
         // Assert
         var partitionMetadata = partitionContainer.PartitionMetadataMap.Single();
         Assert.Equal(2, partitionMetadata.TabList.Single());
@@ -163,6 +163,67 @@ public class Track_Tab : Track_Tests_Base
                 Assert.Single(partitionMetadata.TabList);
             }
         }
+    }
+    #endregion
+
+    #region Remove
+    [Fact]
+    public override void Remove_At_Start()
+    {
+        // Setup
+        var partitionContainer = new PartitionContainer(3).InsertRange(0, "\tab".Select(x => new RichCharacter { Value = x }));
+        // Pre assertion to ensure a before and after measurement
+        Assert.Equal(0, partitionContainer.PartitionMetadataMap.Single().TabList.Single());
+        partitionContainer = partitionContainer.RemoveAt(0);
+        // Assert
+        Assert.Empty(partitionContainer.PartitionMetadataMap.Single().TabList);
+    }
+
+    [Fact]
+    public override void Remove_At_Middle()
+    {
+        // Setup
+        var partitionContainer = new PartitionContainer(3).InsertRange(0, "a\tb".Select(x => new RichCharacter { Value = x }));
+        // Pre assertion to ensure a before and after measurement
+        Assert.Equal(1, partitionContainer.PartitionMetadataMap.Single().TabList.Single());
+        partitionContainer = partitionContainer.RemoveAt(1);
+        // Assert
+        Assert.Empty(partitionContainer.PartitionMetadataMap.Single().TabList);
+    }
+
+    [Fact]
+    public override void Remove_At_End()
+    {
+        // Setup
+        var partitionContainer = new PartitionContainer(3).InsertRange(0, "ab\t".Select(x => new RichCharacter { Value = x }));
+        // Pre assertion to ensure a before and after measurement
+        Assert.Equal(2, partitionContainer.PartitionMetadataMap.Single().TabList.Single());
+        partitionContainer = partitionContainer.RemoveAt(2);
+        // Assert
+        Assert.Empty(partitionContainer.PartitionMetadataMap.Single().TabList);
+    }
+
+    [Fact]
+    public override void Remove_Causes_Empty_Partition()
+    {
+        // Setup
+        var partitionContainer = new PartitionContainer(3).InsertRange(0, "ab\t\t".Select(x => new RichCharacter { Value = x }));
+        // Pre assertion to ensure a before and after measurement
+        Assert.Equal(2, partitionContainer.PartitionMetadataMap[0].TabList.Single()); // Tab in first partition
+        Assert.Equal(0, partitionContainer.PartitionMetadataMap[1].TabList.Single()); // Tab in second partition
+        partitionContainer = partitionContainer.RemoveAt(3); // Remove the tab from second partition
+        // Assert
+        Assert.Empty(partitionContainer.PartitionMetadataMap[1].TabList); // Second partition does NOT have any tabs.
+    }
+
+    [Fact]
+    public override void Remove_Four_InARow()
+    {
+        // Setup
+        var partitionContainer = new PartitionContainer(3).InsertRange(0, new string('\t', 4).Select(x => new RichCharacter { Value = x }));
+        partitionContainer = partitionContainer.RemoveRange(0, 4);
+        // Assert
+        throw new NotImplementedException();
     }
     #endregion
 }

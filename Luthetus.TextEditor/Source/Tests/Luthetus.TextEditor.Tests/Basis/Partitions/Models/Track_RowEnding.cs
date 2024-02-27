@@ -191,8 +191,8 @@ public class Track_RowEnding : Track_Tests_Base
     public override void Insert_At_Start()
     {
         // Setup
-        var richCharacterList = "\nab".Select(x => new RichCharacter { Value = x }).ToArray();
-        var partitionContainer = new PartitionContainer(3).InsertRange(0, richCharacterList);
+        var partitionContainer = new PartitionContainer(3).AddRange("ab".Select(x => new RichCharacter { Value = x }));
+        partitionContainer = partitionContainer.Insert(0, new RichCharacter { Value = '\n' });
         // Assert
         var partitionMetadata = partitionContainer.PartitionMetadataMap.Single();
         Assert.Equal(0, partitionMetadata.RowEndingList.Single().StartPositionIndexInclusive);
@@ -202,8 +202,8 @@ public class Track_RowEnding : Track_Tests_Base
     public override void Insert_At_Middle()
     {
         // Setup
-        var richCharacterList = "a\nb".Select(x => new RichCharacter { Value = x }).ToArray();
-        var partitionContainer = new PartitionContainer(3).InsertRange(0, richCharacterList);
+        var partitionContainer = new PartitionContainer(3).AddRange("ab".Select(x => new RichCharacter { Value = x }));
+        partitionContainer = partitionContainer.Insert(1, new RichCharacter { Value = '\n' });
         // Assert
         var partitionMetadata = partitionContainer.PartitionMetadataMap.Single();
         Assert.Equal(1, partitionMetadata.RowEndingList.Single().StartPositionIndexInclusive);
@@ -213,8 +213,8 @@ public class Track_RowEnding : Track_Tests_Base
     public override void Insert_At_End()
     {
         // Setup
-        var richCharacterList = "ab\n".Select(x => new RichCharacter { Value = x }).ToArray();
-        var partitionContainer = new PartitionContainer(3).InsertRange(0, richCharacterList);
+        var partitionContainer = new PartitionContainer(3).AddRange("ab".Select(x => new RichCharacter { Value = x }));
+        partitionContainer = partitionContainer.Insert(2, new RichCharacter { Value = '\n' });
         // Assert
         var partitionMetadata = partitionContainer.PartitionMetadataMap.Single();
         Assert.Equal(2, partitionMetadata.RowEndingList.Single().StartPositionIndexInclusive);
@@ -264,6 +264,67 @@ public class Track_RowEnding : Track_Tests_Base
                 Assert.Single(partitionMetadata.RowEndingList);
             }
         }
+    }
+    #endregion
+    
+    #region Remove
+    [Fact]
+    public override void Remove_At_Start()
+    {
+        // Setup
+        var partitionContainer = new PartitionContainer(3).InsertRange(0, "\nab".Select(x => new RichCharacter { Value = x }));
+        // Pre assertion to ensure a before and after measurement
+        Assert.Equal(0, partitionContainer.PartitionMetadataMap.Single().RowEndingList.Single().StartPositionIndexInclusive);
+        Assert.Equal(1, partitionContainer.PartitionMetadataMap.Single().RowEndingList.Single().EndPositionIndexExclusive);
+        partitionContainer = partitionContainer.RemoveAt(0);
+        // Assert
+        Assert.Empty(partitionContainer.PartitionMetadataMap.Single().TabList);
+    }
+
+    [Fact]
+    public override void Remove_At_Middle()
+    {
+        // Setup
+        var partitionContainer = new PartitionContainer(3).InsertRange(0, "a\nb".Select(x => new RichCharacter { Value = x }));
+        // Pre assertion to ensure a before and after measurement
+        Assert.Equal(1, partitionContainer.PartitionMetadataMap.Single().RowEndingList.Single().StartPositionIndexInclusive);
+        Assert.Equal(2, partitionContainer.PartitionMetadataMap.Single().RowEndingList.Single().EndPositionIndexExclusive);
+        partitionContainer = partitionContainer.RemoveAt(1);
+        // Assert
+        Assert.Empty(partitionContainer.PartitionMetadataMap.Single().TabList);
+    }
+
+    [Fact]
+    public override void Remove_At_End()
+    {
+        // Setup
+        var partitionContainer = new PartitionContainer(3).InsertRange(0, "ab\n".Select(x => new RichCharacter { Value = x }));
+        // Pre assertion to ensure a before and after measurement
+        Assert.Equal(2, partitionContainer.PartitionMetadataMap.Single().RowEndingList.Single().StartPositionIndexInclusive);
+        Assert.Equal(3, partitionContainer.PartitionMetadataMap.Single().RowEndingList.Single().EndPositionIndexExclusive);
+        partitionContainer = partitionContainer.RemoveAt(2);
+        // Assert
+        Assert.Empty(partitionContainer.PartitionMetadataMap.Single().TabList);
+    }
+
+    [Fact]
+    public override void Remove_Causes_Empty_Partition()
+    {
+        // Setup
+        var partitionContainer = new PartitionContainer(3).InsertRange(0, "ab\n\n".Select(x => new RichCharacter { Value = x }));
+        partitionContainer = partitionContainer.RemoveAt(3);
+        // Assert
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public override void Remove_Four_InARow()
+    {
+        // Setup
+        var partitionContainer = new PartitionContainer(3).InsertRange(0, new string('\n', 4).Select(x => new RichCharacter { Value = x }));
+        partitionContainer = partitionContainer.RemoveRange(0, 4);
+        // Assert
+        throw new NotImplementedException();
     }
     #endregion
 }

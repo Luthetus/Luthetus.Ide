@@ -1,6 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
+using System;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Partitions.Models;
@@ -9,36 +10,14 @@ internal class Track
 {
     public static void Insert(int relativePositionIndex, RichCharacter richCharacter, int partitionIndex, ImmutableList<ImmutableList<RichCharacter>> partitionList, ImmutableList<PartitionMetadata> partitionMetadataMap)
     {
-        { // TabList
-            var inTabList = partitionMetadataMap[partitionIndex].TabList;
-            var mutableTabList = new List<int>();
-            var relativeTabIndex = inTabList.FindIndex(x => x >= relativePositionIndex);
-            
-            var copyForLoopUpperLimit = relativeTabIndex == -1 ? inTabList.Count : relativeTabIndex; // Copy over unmodified values
-            for (int i = 0; i < copyForLoopUpperLimit; i++)
-                mutableTabList.Add(inTabList[i]);
-
-            var shiftForLoopLowerLimit = copyForLoopUpperLimit; // Write the shifted values
-            for (int i = shiftForLoopLowerLimit; i < inTabList.Count; i++)
-                mutableTabList.Add(inTabList[i] + 1);
-
-            if (richCharacter.Value == '\t')
-            {
-                if (relativeTabIndex == -1)
-                    mutableTabList.Add(relativePositionIndex);
-                else
-                    mutableTabList.Insert(relativeTabIndex, relativePositionIndex);
-
-                partitionMetadataMap[partitionIndex].TabList = mutableTabList.ToImmutableList();
-            }
-        }
+        // TabList
+        var tuple = ShiftTabs(relativePositionIndex, richCharacter, partitionIndex, partitionList, partitionMetadataMap, tabIndex => tabIndex + 1, -1);
+        partitionMetadataMap[partitionIndex].TabList = tuple.mutableTabList.ToImmutableList();
 
         { // Row related tracking
             var inRowEndingList = partitionMetadataMap[partitionIndex].RowEndingList; // RowEndingList, create mutable data
             var mutableRowEndingList = new List<RowEnding>();
-            for (int i = 0; i < inRowEndingList.Count; i++)
-                mutableRowEndingList.Add(inRowEndingList[i]);
-
+            
             var rowEndingKindCountList = partitionMetadataMap[partitionIndex].RowEndingKindCountList; // RowEndingKindCountList, create mutable data
             var carriageReturnCount = 0;
             var linefeedCount = 0;
@@ -58,6 +37,11 @@ internal class Track
                         break;
                 }
             }
+
+            var relativeRowEndingIndex = inRowEndingList.FindIndex(x => x.StartPositionIndexInclusive >= relativePositionIndex);
+            var copyForLoopUpperLimit = relativeRowEndingIndex == -1 ? inRowEndingList.Count : relativeRowEndingIndex;
+            for (int i = 0; i < relativeRowEndingIndex; i++) // Copy over unmodified values
+                mutableRowEndingList.Add(inRowEndingList[i]);
 
             if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
             {
@@ -114,22 +98,9 @@ internal class Track
     public static void RemoveAt(int relativePositionIndex, RichCharacter removedRichCharacter, int partitionIndex, ImmutableList<ImmutableList<RichCharacter>> partitionList, ImmutableList<PartitionMetadata> partitionMetadataMap)
     {
         { // TabList
-            var inTabList = partitionMetadataMap[partitionIndex].TabList;
-            var mutableTabList = new List<int>();
-            var relativeTabIndex = inTabList.FindIndex(x => x >= relativePositionIndex);
-            
-            for (int i = 0; i < relativeTabIndex; i++) // Copy over unmodified values
-                mutableTabList.Add(inTabList[i]);
-
-            for (int i = relativeTabIndex; i < inTabList.Count; i++) // Write the shifted values
-            {
-                if (inTabList[i] == relativePositionIndex) // Do not write out the 'removed tab' (if one were removed)
-                    continue;
-                mutableTabList.Add(inTabList[i] - 1);
-            }
-            partitionMetadataMap[partitionIndex].TabList = mutableTabList.ToImmutableList();
+            var tuple = ShiftTabs(relativePositionIndex, removedRichCharacter, partitionIndex, partitionList, partitionMetadataMap, tabIndex => tabIndex - 1, relativePositionIndex);
+            partitionMetadataMap[partitionIndex].TabList = tuple.mutableTabList.ToImmutableList();
         }
-
 
         { // RowEnding
             var inRowEndingList = partitionMetadataMap[partitionIndex].RowEndingList;
@@ -156,10 +127,12 @@ internal class Track
             }
 
             var relativeRowEndingIndex = inRowEndingList.FindIndex(x => x.StartPositionIndexInclusive >= relativePositionIndex);
+            var copyForLoopUpperLimit = relativeRowEndingIndex == -1 ? inRowEndingList.Count : relativeRowEndingIndex;
             for (int i = 0; i < relativeRowEndingIndex; i++) // Copy over unmodified values
                 mutableRowEndingList.Add(inRowEndingList[i]);
 
-            for (int i = relativeRowEndingIndex; i < inRowEndingList.Count; i++) // Write the shifted values
+            var shiftForLoopLowerLimit = copyForLoopUpperLimit;
+            for (int i = shiftForLoopLowerLimit; i < inRowEndingList.Count; i++) // Write the shifted values
             {
                 if (inRowEndingList[i].StartPositionIndexInclusive == relativePositionIndex) // Do not write out the 'removed tab' (if one were removed)
                 {
@@ -271,5 +244,36 @@ internal class Track
             onlyRowEndingKind = null;
 
         return (mutableList, rowEndingKindCountList, onlyRowEndingKind);
+    }
+
+    private static (int relativeTabIndex, List<int> mutableTabList) ShiftTabs(int relativePositionIndex, RichCharacter richCharacter, int partitionIndex, ImmutableList<ImmutableList<RichCharacter>> partitionList, ImmutableList<PartitionMetadata> partitionMetadataMap, Func<int, int> shiftFunc, int removeTabIndex)
+    {
+        var inTabList = partitionMetadataMap[partitionIndex].TabList;
+        var mutableTabList = new List<int>();
+        var relativeTabIndex = inTabList.FindIndex(x => x >= relativePositionIndex);
+
+        var copyForLoopUpperLimit = relativeTabIndex == -1 ? inTabList.Count : relativeTabIndex; // Copy over unmodified values
+        for (int i = 0; i < copyForLoopUpperLimit; i++)
+            mutableTabList.Add(inTabList[i]);
+
+        var shiftForLoopLowerLimit = copyForLoopUpperLimit; // Write the shifted values
+        for (int i = shiftForLoopLowerLimit; i < inTabList.Count; i++)
+        {
+            if (inTabList[i] == removeTabIndex)
+                continue;
+            mutableTabList.Add(shiftFunc.Invoke(inTabList[i]));
+        }
+
+        if (removeTabIndex == -1 && richCharacter.Value == '\t')
+        {
+            if (relativeTabIndex == -1)
+                mutableTabList.Add(relativePositionIndex);
+            else
+                mutableTabList.Insert(relativeTabIndex, relativePositionIndex);
+
+            partitionMetadataMap[partitionIndex].TabList = mutableTabList.ToImmutableList();
+        }
+
+        return (relativeTabIndex, mutableTabList);
     }
 }
