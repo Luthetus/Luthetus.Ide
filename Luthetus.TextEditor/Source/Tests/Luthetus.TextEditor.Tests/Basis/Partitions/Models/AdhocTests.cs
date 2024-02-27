@@ -69,8 +69,9 @@ public class MyClass
 ".ReplaceLineEndings("\n");
 
         var partitionContainer = new PartitionContainer(5_000)
-            .AddRange(text.Select(x => new RichCharacter { Value = x }))
-            .Insert(60, new RichCharacter { Value = '\n' });
+            .AddRange(text.Select(x => new RichCharacter { Value = x }));
+
+        partitionContainer = partitionContainer.Insert(60, new RichCharacter { Value = '\n' });
 
         var globalMetadata = partitionContainer.GlobalMetadata;
         Assert.Equal(text.Insert(60, "\n"), globalMetadata.AllText.Value);

@@ -220,38 +220,6 @@ internal partial class Track
             });
         }
 
-        var shiftForLoopLowerLimit = copyForLoopUpperLimit;
-        for (int i = shiftForLoopLowerLimit; i < inRowEndingList.Count; i++) // Write the shifted values
-        {
-            if (!isInsertion && inRowEndingList[i].StartPositionIndexInclusive == relativePositionIndex) // Do not write out the 'removed tab' (if one were removed)
-            {
-                if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
-                {
-                    var partition = partitionList[partitionIndex];
-                    if (relativePositionIndex < partition.Count) // relativePositionIndex now points to what was the next character prior to deletion. Check for 'carriage return new line'
-                    {
-                        var nextRichCharacter = partition[relativePositionIndex];
-                        if (nextRichCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
-                            carriageReturnLinefeedCount--; // Trust is being given that the text editor will remove both the carriage return, and the newline, one after another. The newline half of 'carriage return new line' just wouldn't encounter itself in the row ending list, but will move on without errors.
-                        else
-                            carriageReturnCount--;
-                    }
-                }
-                else if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
-                {
-                    linefeedCount--;
-                }
-                continue;
-            }
-
-            var rowEnding = inRowEndingList[i];
-            mutableRowEndingList.Add(rowEnding with
-            {
-                StartPositionIndexInclusive = rowEnding.StartPositionIndexInclusive + (isInsertion ? +1 : -1),
-                EndPositionIndexExclusive = rowEnding.EndPositionIndexExclusive + (isInsertion ? +1 : -1),
-            });
-        }
-
         if (isInsertion)
         {
             if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
@@ -287,6 +255,38 @@ internal partial class Track
                     linefeedCount++;
                 }
             }
+        }
+
+        var shiftForLoopLowerLimit = copyForLoopUpperLimit;
+        for (int i = shiftForLoopLowerLimit; i < inRowEndingList.Count; i++) // Write the shifted values
+        {
+            if (!isInsertion && inRowEndingList[i].StartPositionIndexInclusive == relativePositionIndex) // Do not write out the 'removed tab' (if one were removed)
+            {
+                if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
+                {
+                    var partition = partitionList[partitionIndex];
+                    if (relativePositionIndex < partition.Count) // relativePositionIndex now points to what was the next character prior to deletion. Check for 'carriage return new line'
+                    {
+                        var nextRichCharacter = partition[relativePositionIndex];
+                        if (nextRichCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
+                            carriageReturnLinefeedCount--; // Trust is being given that the text editor will remove both the carriage return, and the newline, one after another. The newline half of 'carriage return new line' just wouldn't encounter itself in the row ending list, but will move on without errors.
+                        else
+                            carriageReturnCount--;
+                    }
+                }
+                else if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
+                {
+                    linefeedCount--;
+                }
+                continue;
+            }
+
+            var rowEnding = inRowEndingList[i];
+            mutableRowEndingList.Add(rowEnding with
+            {
+                StartPositionIndexInclusive = rowEnding.StartPositionIndexInclusive + (isInsertion ? +1 : -1),
+                EndPositionIndexExclusive = rowEnding.EndPositionIndexExclusive + (isInsertion ? +1 : -1),
+            });
         }
 
         var rowEndingList = mutableRowEndingList.ToImmutableList();
