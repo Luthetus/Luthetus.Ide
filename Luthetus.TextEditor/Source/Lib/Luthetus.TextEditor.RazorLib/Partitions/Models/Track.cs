@@ -6,179 +6,56 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Partitions.Models;
 
-internal class Track
+internal partial class Track
 {
     public static void Insert(int relativePositionIndex, RichCharacter richCharacter, int partitionIndex, ImmutableList<ImmutableList<RichCharacter>> partitionList, ImmutableList<PartitionMetadata> partitionMetadataMap)
     {
         // TabList
-        var tuple = ShiftTabs(relativePositionIndex, richCharacter, partitionIndex, partitionList, partitionMetadataMap, tabIndex => tabIndex + 1, -1);
-        partitionMetadataMap[partitionIndex].TabList = tuple.mutableTabList.ToImmutableList();
+        var shiftTabsOutput = ShiftTabs(
+            relativePositionIndex,
+            richCharacter,
+            partitionIndex,
+            partitionList,
+            partitionMetadataMap,
+            true);
+        partitionMetadataMap[partitionIndex].TabList = shiftTabsOutput.MutableTabList.ToImmutableList();
 
-        { // Row related tracking
-            var inRowEndingList = partitionMetadataMap[partitionIndex].RowEndingList; // RowEndingList, create mutable data
-            var mutableRowEndingList = new List<RowEnding>();
-            
-            var rowEndingKindCountList = partitionMetadataMap[partitionIndex].RowEndingKindCountList; // RowEndingKindCountList, create mutable data
-            var carriageReturnCount = 0;
-            var linefeedCount = 0;
-            var carriageReturnLinefeedCount = 0;
-            foreach (var rowEndingKindCount in rowEndingKindCountList)
-            {
-                switch (rowEndingKindCount.rowEndingKind)
-                {
-                    case RowEndingKind.CarriageReturn:
-                        carriageReturnCount += rowEndingKindCount.count;
-                        break;
-                    case RowEndingKind.Linefeed:
-                        linefeedCount += rowEndingKindCount.count;
-                        break;
-                    case RowEndingKind.CarriageReturnLinefeed:
-                        carriageReturnLinefeedCount += rowEndingKindCount.count;
-                        break;
-                }
-            }
-
-            var relativeRowEndingIndex = inRowEndingList.FindIndex(x => x.StartPositionIndexInclusive >= relativePositionIndex);
-            var copyForLoopUpperLimit = relativeRowEndingIndex == -1 ? inRowEndingList.Count : relativeRowEndingIndex;
-            for (int i = 0; i < relativeRowEndingIndex; i++) // Copy over unmodified values
-                mutableRowEndingList.Add(inRowEndingList[i]);
-
-            if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
-            {
-                mutableRowEndingList.Add(new(relativePositionIndex, relativePositionIndex + 1, RowEndingKind.CarriageReturn));
-                carriageReturnCount++;
-            }
-            else if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
-            {
-                var previousCharacter = '\0';
-                if (relativePositionIndex > 0)
-                {
-                    var partition = partitionList[partitionIndex];
-                    previousCharacter = partition[relativePositionIndex - 1].Value;
-                }
-                else if (partitionIndex > 0)
-                {
-                    var previousPartition = partitionList[partitionIndex - 1];
-                    previousCharacter = previousPartition[^1].Value;
-                }
-
-                if (previousCharacter == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
-                {
-                    var lineEnding = mutableRowEndingList[^1];
-                    lineEnding.EndPositionIndexExclusive++;
-                    lineEnding.RowEndingKind = RowEndingKind.CarriageReturnLinefeed;
-                    carriageReturnCount--;
-                    carriageReturnLinefeedCount++;
-                }
-                else
-                {
-                    mutableRowEndingList.Add(new(relativePositionIndex, relativePositionIndex + 1, RowEndingKind.Linefeed));
-                    linefeedCount++;
-                }
-            }
-
-            partitionMetadataMap[partitionIndex].RowEndingList = mutableRowEndingList.ToImmutableList();
-            partitionMetadataMap[partitionIndex].RowEndingKindCountList = new (RowEndingKind rowEndingKind, int count)[]
-            {
-                new (RowEndingKind.CarriageReturn, carriageReturnCount),
-                new (RowEndingKind.Linefeed, linefeedCount),
-                new (RowEndingKind.CarriageReturnLinefeed, carriageReturnLinefeedCount),
-            }.ToImmutableList();
-
-            var whereMoreThanOne = partitionMetadataMap[partitionIndex].RowEndingKindCountList.Where(x => x.count > 0).ToList();
-            RowEndingKind? onlyRowEndingKind;
-            if (whereMoreThanOne.Count == 1)
-                onlyRowEndingKind = whereMoreThanOne.Single().rowEndingKind;
-            else
-                onlyRowEndingKind = null;
-            partitionMetadataMap[partitionIndex].OnlyRowEndingKind = onlyRowEndingKind;
-        }
+        // RowEnding
+        var shiftRowsOutput = ShiftRows(
+            relativePositionIndex,
+            richCharacter,
+            partitionIndex,
+            partitionList,
+            partitionMetadataMap,
+            false);
+        partitionMetadataMap[partitionIndex].RowEndingList = shiftRowsOutput.RowEndingList;
+        partitionMetadataMap[partitionIndex].RowEndingKindCountList = shiftRowsOutput.RowEndingKindCountList;
+        partitionMetadataMap[partitionIndex].OnlyRowEndingKind = shiftRowsOutput.OnlyRowEndingKind;
     }
 
     public static void RemoveAt(int relativePositionIndex, RichCharacter removedRichCharacter, int partitionIndex, ImmutableList<ImmutableList<RichCharacter>> partitionList, ImmutableList<PartitionMetadata> partitionMetadataMap)
     {
-        { // TabList
-            var tuple = ShiftTabs(relativePositionIndex, removedRichCharacter, partitionIndex, partitionList, partitionMetadataMap, tabIndex => tabIndex - 1, relativePositionIndex);
-            partitionMetadataMap[partitionIndex].TabList = tuple.mutableTabList.ToImmutableList();
-        }
+        // TabList
+        var shiftTabsOutput = ShiftTabs(
+            relativePositionIndex,
+            removedRichCharacter,
+            partitionIndex,
+            partitionList,
+            partitionMetadataMap,
+            false);
+        partitionMetadataMap[partitionIndex].TabList = shiftTabsOutput.MutableTabList.ToImmutableList();
 
-        { // RowEnding
-            var inRowEndingList = partitionMetadataMap[partitionIndex].RowEndingList;
-            var mutableRowEndingList = new List<RowEnding>();
-
-            var rowEndingKindCountList = partitionMetadataMap[partitionIndex].RowEndingKindCountList; // RowEndingKindCountList, create mutable data
-            var carriageReturnCount = 0;
-            var linefeedCount = 0;
-            var carriageReturnLinefeedCount = 0;
-            foreach (var rowEndingKindCount in rowEndingKindCountList)
-            {
-                switch (rowEndingKindCount.rowEndingKind)
-                {
-                    case RowEndingKind.CarriageReturn:
-                        carriageReturnCount += rowEndingKindCount.count;
-                        break;
-                    case RowEndingKind.Linefeed:
-                        linefeedCount += rowEndingKindCount.count;
-                        break;
-                    case RowEndingKind.CarriageReturnLinefeed:
-                        carriageReturnLinefeedCount += rowEndingKindCount.count;
-                        break;
-                }
-            }
-
-            var relativeRowEndingIndex = inRowEndingList.FindIndex(x => x.StartPositionIndexInclusive >= relativePositionIndex);
-            var copyForLoopUpperLimit = relativeRowEndingIndex == -1 ? inRowEndingList.Count : relativeRowEndingIndex;
-            for (int i = 0; i < relativeRowEndingIndex; i++) // Copy over unmodified values
-                mutableRowEndingList.Add(inRowEndingList[i]);
-
-            var shiftForLoopLowerLimit = copyForLoopUpperLimit;
-            for (int i = shiftForLoopLowerLimit; i < inRowEndingList.Count; i++) // Write the shifted values
-            {
-                if (inRowEndingList[i].StartPositionIndexInclusive == relativePositionIndex) // Do not write out the 'removed tab' (if one were removed)
-                {
-                    if (removedRichCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
-                    {
-                        var partition = partitionList[partitionIndex];
-                        if (relativePositionIndex < partition.Count) // relativePositionIndex now points to what was the next character prior to deletion. Check for 'carriage return new line'
-                        {
-                            var nextRichCharacter = partition[relativePositionIndex];
-                            if (nextRichCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
-                                carriageReturnLinefeedCount--; // Trust is being given that the text editor will remove both the carriage return, and the newline, one after another. The newline half of 'carriage return new line' just wouldn't encounter itself in the row ending list, but will move on without errors.
-                            else
-                                carriageReturnCount--;
-                        }
-                    }
-                    else if (removedRichCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
-                    {
-                        linefeedCount--;
-                    }
-                    continue;
-                }
-
-                var rowEnding = inRowEndingList[i];
-                mutableRowEndingList.Add(rowEnding with
-                {
-                    StartPositionIndexInclusive = rowEnding.StartPositionIndexInclusive - 1,
-                    EndPositionIndexExclusive = rowEnding.EndPositionIndexExclusive - 1,
-                });
-            }
-
-            partitionMetadataMap[partitionIndex].RowEndingList = mutableRowEndingList.ToImmutableList();
-            partitionMetadataMap[partitionIndex].RowEndingKindCountList = new (RowEndingKind rowEndingKind, int count)[]
-            {
-                new (RowEndingKind.CarriageReturn, carriageReturnCount),
-                new (RowEndingKind.Linefeed, linefeedCount),
-                new (RowEndingKind.CarriageReturnLinefeed, carriageReturnLinefeedCount),
-            }.ToImmutableList();
-
-            var whereMoreThanOne = partitionMetadataMap[partitionIndex].RowEndingKindCountList.Where(x => x.count > 0).ToList();
-            RowEndingKind? onlyRowEndingKind;
-            if (whereMoreThanOne.Count == 1)
-                onlyRowEndingKind = whereMoreThanOne.Single().rowEndingKind;
-            else
-                onlyRowEndingKind = null;
-            partitionMetadataMap[partitionIndex].OnlyRowEndingKind = onlyRowEndingKind;
-        }
+        // RowEnding
+        var shiftRowsOutput = ShiftRows(
+            relativePositionIndex,
+            removedRichCharacter,
+            partitionIndex,
+            partitionList,
+            partitionMetadataMap,
+            false);
+        partitionMetadataMap[partitionIndex].RowEndingList = shiftRowsOutput.RowEndingList;
+        partitionMetadataMap[partitionIndex].RowEndingKindCountList = shiftRowsOutput.RowEndingKindCountList;
+        partitionMetadataMap[partitionIndex].OnlyRowEndingKind = shiftRowsOutput.OnlyRowEndingKind;
     }
 
     public static List<int> ExpandPartition_Tab(ImmutableList<RichCharacter> partition)
@@ -246,7 +123,13 @@ internal class Track
         return (mutableList, rowEndingKindCountList, onlyRowEndingKind);
     }
 
-    private static (int relativeTabIndex, List<int> mutableTabList) ShiftTabs(int relativePositionIndex, RichCharacter richCharacter, int partitionIndex, ImmutableList<ImmutableList<RichCharacter>> partitionList, ImmutableList<PartitionMetadata> partitionMetadataMap, Func<int, int> shiftFunc, int removeTabIndex)
+    private static ShiftTabsOutput ShiftTabs(
+        int relativePositionIndex,
+        RichCharacter richCharacter,
+        int partitionIndex,
+        ImmutableList<ImmutableList<RichCharacter>> partitionList,
+        ImmutableList<PartitionMetadata> partitionMetadataMap,
+        bool isInsertion)
     {
         var inTabList = partitionMetadataMap[partitionIndex].TabList;
         var mutableTabList = new List<int>();
@@ -259,12 +142,12 @@ internal class Track
         var shiftForLoopLowerLimit = copyForLoopUpperLimit; // Write the shifted values
         for (int i = shiftForLoopLowerLimit; i < inTabList.Count; i++)
         {
-            if (inTabList[i] == removeTabIndex)
+            if (!isInsertion && inTabList[i] == relativePositionIndex)
                 continue;
-            mutableTabList.Add(shiftFunc.Invoke(inTabList[i]));
+            mutableTabList.Add(inTabList[i] + (isInsertion ? +1 : -1));
         }
 
-        if (removeTabIndex == -1 && richCharacter.Value == '\t')
+        if (isInsertion && richCharacter.Value == '\t')
         {
             if (relativeTabIndex == -1)
                 mutableTabList.Add(relativePositionIndex);
@@ -274,6 +157,135 @@ internal class Track
             partitionMetadataMap[partitionIndex].TabList = mutableTabList.ToImmutableList();
         }
 
-        return (relativeTabIndex, mutableTabList);
+        return new(relativeTabIndex, mutableTabList);
+    }
+
+    private static ShiftRowsOutput ShiftRows(
+        int relativePositionIndex,
+        RichCharacter richCharacter,
+        int partitionIndex,
+        ImmutableList<ImmutableList<RichCharacter>> partitionList,
+        ImmutableList<PartitionMetadata> partitionMetadataMap,
+        bool isInsertion)
+    {
+        var inRowEndingList = partitionMetadataMap[partitionIndex].RowEndingList; // RowEndingList, create mutable data
+        var mutableRowEndingList = new List<RowEnding>();
+
+        var rowEndingKindCountList = partitionMetadataMap[partitionIndex].RowEndingKindCountList; // RowEndingKindCountList, create mutable data
+        var carriageReturnCount = 0;
+        var linefeedCount = 0;
+        var carriageReturnLinefeedCount = 0;
+        foreach (var rowEndingKindCount in rowEndingKindCountList)
+        {
+            switch (rowEndingKindCount.rowEndingKind)
+            {
+                case RowEndingKind.CarriageReturn:
+                    carriageReturnCount += rowEndingKindCount.count;
+                    break;
+                case RowEndingKind.Linefeed:
+                    linefeedCount += rowEndingKindCount.count;
+                    break;
+                case RowEndingKind.CarriageReturnLinefeed:
+                    carriageReturnLinefeedCount += rowEndingKindCount.count;
+                    break;
+            }
+        }
+
+        var relativeRowEndingIndex = inRowEndingList.FindIndex(x => x.StartPositionIndexInclusive >= relativePositionIndex);
+        var copyForLoopUpperLimit = relativeRowEndingIndex == -1 ? inRowEndingList.Count : relativeRowEndingIndex;
+        for (int i = 0; i < relativeRowEndingIndex; i++) // Copy over unmodified values
+        {
+            mutableRowEndingList.Add(inRowEndingList[i] with
+            {
+                StartPositionIndexInclusive = inRowEndingList[i].StartPositionIndexInclusive,
+                EndPositionIndexExclusive = inRowEndingList[i].EndPositionIndexExclusive,
+            });
+        }
+
+        var shiftForLoopLowerLimit = copyForLoopUpperLimit;
+        for (int i = shiftForLoopLowerLimit; i < inRowEndingList.Count; i++) // Write the shifted values
+        {
+            if (!isInsertion && inRowEndingList[i].StartPositionIndexInclusive == relativePositionIndex) // Do not write out the 'removed tab' (if one were removed)
+            {
+                if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
+                {
+                    var partition = partitionList[partitionIndex];
+                    if (relativePositionIndex < partition.Count) // relativePositionIndex now points to what was the next character prior to deletion. Check for 'carriage return new line'
+                    {
+                        var nextRichCharacter = partition[relativePositionIndex];
+                        if (nextRichCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
+                            carriageReturnLinefeedCount--; // Trust is being given that the text editor will remove both the carriage return, and the newline, one after another. The newline half of 'carriage return new line' just wouldn't encounter itself in the row ending list, but will move on without errors.
+                        else
+                            carriageReturnCount--;
+                    }
+                }
+                else if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
+                {
+                    linefeedCount--;
+                }
+                continue;
+            }
+
+            var rowEnding = inRowEndingList[i];
+            mutableRowEndingList.Add(rowEnding with
+            {
+                StartPositionIndexInclusive = rowEnding.StartPositionIndexInclusive + (isInsertion ? +1 : -1),
+                EndPositionIndexExclusive = rowEnding.EndPositionIndexExclusive + (isInsertion ? +1 : -1),
+            });
+        }
+
+        if (isInsertion)
+        {
+            if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
+            {
+                mutableRowEndingList.Add(new(relativePositionIndex, relativePositionIndex + 1, RowEndingKind.CarriageReturn));
+                carriageReturnCount++;
+            }
+            else if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
+            {
+                var previousCharacter = '\0';
+                if (relativePositionIndex > 0)
+                {
+                    var partition = partitionList[partitionIndex];
+                    previousCharacter = partition[relativePositionIndex - 1].Value;
+                }
+                else if (partitionIndex > 0)
+                {
+                    var previousPartition = partitionList[partitionIndex - 1];
+                    previousCharacter = previousPartition[^1].Value;
+                }
+
+                if (previousCharacter == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
+                {
+                    var lineEnding = mutableRowEndingList[^1];
+                    lineEnding.EndPositionIndexExclusive++;
+                    lineEnding.RowEndingKind = RowEndingKind.CarriageReturnLinefeed;
+                    carriageReturnCount--;
+                    carriageReturnLinefeedCount++;
+                }
+                else
+                {
+                    mutableRowEndingList.Add(new(relativePositionIndex, relativePositionIndex + 1, RowEndingKind.Linefeed));
+                    linefeedCount++;
+                }
+            }
+        }
+
+        var rowEndingList = mutableRowEndingList.ToImmutableList();
+        rowEndingKindCountList = new (RowEndingKind rowEndingKind, int count)[]
+        {
+                new (RowEndingKind.CarriageReturn, carriageReturnCount),
+                new (RowEndingKind.Linefeed, linefeedCount),
+                new (RowEndingKind.CarriageReturnLinefeed, carriageReturnLinefeedCount),
+        }.ToImmutableList();
+
+        var whereMoreThanOne = partitionMetadataMap[partitionIndex].RowEndingKindCountList.Where(x => x.count > 0).ToList();
+        RowEndingKind? onlyRowEndingKind;
+        if (whereMoreThanOne.Count == 1)
+            onlyRowEndingKind = whereMoreThanOne.Single().rowEndingKind;
+        else
+            onlyRowEndingKind = null;
+
+        return new(relativeRowEndingIndex, rowEndingList, rowEndingKindCountList, onlyRowEndingKind);
     }
 }
