@@ -5,26 +5,16 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Partitions.Models;
 
-/// <summary>
-/// TODO: I need to handle the partition meta data differently for the text editor. Perhaps it would be preferable to have a generic <see cref="PartitionedImmutableList{TItem}"/> type, but I'm finding...
-/// it hard to do so without odd looking and confusing code. So, I'm going to copy and paste the attempt at the generic type here, then just change the source code to work for the text editor. (2024-02-25)
-/// </summary>
-public record PartitionContainer : IList<RichCharacter>
+public record PartitionContainer : IList<RichCharacter> // TODO: I need to handle the partition meta data differently for the text editor. Perhaps it would be preferable to have a generic <see cref="PartitionedImmutableList{TItem}"/> type, but I'm finding it hard to do so without odd looking and confusing code. So, I'm going to copy and paste the attempt at the generic type here, then just change the source code to work for the text editor. (2024-02-25)
 {
-    /// <summary>
-    /// When a partition runs out space its content is divided amongst some amount of partitions. If expansion factor is 3, then when a partition expands, it will insert
-    /// 2 addition partitions after itself. Then the original partition splits its content into thirds. And distributes it across itself, and the other 2 newly inserted partitions.
-    /// </summary>
-    public const int EXPANSION_FACTOR = 3;
+    public const int EXPANSION_FACTOR = 3; // When a partition runs out space its content is divided amongst some amount of partitions. If expansion factor is 3, then when a partition expands, it will insert 2 addition partitions after itself. Then the original partition splits its content into thirds. And distributes it across itself, and the other 2 newly inserted partitions.
 
-    // record copy constructor
-    public PartitionContainer(PartitionContainer other)
+    public PartitionContainer(PartitionContainer other) // record copy constructor
     {
         PartitionSize = other.PartitionSize;
         PartitionList = other.PartitionList;
         PartitionMetadataMap = other.PartitionMetadataMap;
-        // Reset the global metadata each time the record 'with' keyword is used.
-        GlobalMetadata = new GlobalMetadataLazy(this);
+        GlobalMetadata = new GlobalMetadataLazy(this); // Reset the global metadata each time the record 'with' keyword is used.
     }
 
     public PartitionContainer(int partitionSize)
@@ -33,36 +23,17 @@ public record PartitionContainer : IList<RichCharacter>
             throw new ApplicationException($"Partition size must be equal to or greater than the {nameof(EXPANSION_FACTOR)}:{EXPANSION_FACTOR}.");
 
         PartitionSize = partitionSize;
-
-        PartitionList = new ImmutableList<RichCharacter>[]
-        {
-            ImmutableList<RichCharacter>.Empty,
-        }.ToImmutableList();
-
+        PartitionList = new ImmutableList<RichCharacter>[] { ImmutableList<RichCharacter>.Empty, }.ToImmutableList();
         PartitionMetadataMap = new PartitionMetadata[]
         {
-            new(0)
-            { 
-                RelativeCharacterCount = 0,
-                TabList = ImmutableList<int>.Empty,
-                RowEndingList = ImmutableList<RowEnding>.Empty,
-            },
+            new(0) { RelativeCharacterCount = 0, TabList = ImmutableList<int>.Empty, RowEndingList = ImmutableList<RowEnding>.Empty, },
         }.ToImmutableList();
-
-        // TODO: How does one not duplicate this code? It exists in the record copy constructor too...
-        // A parameterless constructor was tried and invoked with 'this()' but it gives an error message specific to usage of record copy constructors.
-        GlobalMetadata = new GlobalMetadataLazy(this);
+        GlobalMetadata = new GlobalMetadataLazy(this); // TODO: How does one not duplicate this code? It exists in the record copy constructor too. A parameterless constructor was tried and invoked with 'this()' but it gives an error message specific to usage of record copy constructors.
     }
 
     public int PartitionSize { get; }
     public ImmutableList<ImmutableList<RichCharacter>> PartitionList { get; init; }
-
-    /// <summary>
-    /// Track the 'Count' of each partition in this. Therefore, one can lookup whether a partition is full or not. Without iterating through all the partitions just to check a specific one.<br/>
-    /// The name 'Map' is used here because to get the Count of the 0th index partition, one would read the value at index 0 of this property. In otherwords, each partition index maps to its corresponding Count.
-    /// </summary>
-    public ImmutableList<PartitionMetadata> PartitionMetadataMap { get; init; }
-
+    public ImmutableList<PartitionMetadata> PartitionMetadataMap { get; init; } // Track the 'Count' of each partition in this. Therefore, one can lookup whether a partition is full or not. Without iterating through all the partitions just to check a specific one.<br/>The name 'Map' is used here because to get the Count of the 0th index partition, one would read the value at index 0 of this property. In otherwords, each partition index maps to its corresponding Count.
     public GlobalMetadataLazy GlobalMetadata { get; }
 
     public int GlobalCharacterCount
@@ -89,11 +60,9 @@ public record PartitionContainer : IList<RichCharacter>
         get
         {
             var runningCount = 0;
-
             for (int i = 0; i < PartitionMetadataMap.Count; i++)
             {
                 var partitionCount = PartitionMetadataMap[i].RelativeCharacterCount;
-
                 if (runningCount + partitionCount > globalPositionIndex)
                 {
                     var partition = PartitionList[i];
@@ -104,38 +73,19 @@ public record PartitionContainer : IList<RichCharacter>
                     runningCount += partitionCount;
                 }
             }
-
             throw new IndexOutOfRangeException();
         }
-        set
-        {
-            throw new NotImplementedException();
-        }
+        set => throw new NotImplementedException();
     }
 
-    public PartitionContainer Add(RichCharacter item) =>
-        PartitionReducer.ReduceAdd(item, this);
-
-    public PartitionContainer AddRange(IEnumerable<RichCharacter> itemList) =>
-        PartitionReducer.ReduceAddRange(itemList, this);
-
-    public PartitionContainer Insert(int globalPositionIndex, RichCharacter richCharacter) =>
-        PartitionReducer.ReduceInsert(globalPositionIndex, richCharacter, this);
-
-    public PartitionContainer InsertRange(int index, IEnumerable<RichCharacter> itemList) =>
-        PartitionReducer.ReduceInsertRange(index, itemList, this);
-
-    public PartitionContainer Remove(RichCharacter richCharacter) =>
-        PartitionReducer.ReduceRemove(richCharacter, this);
-
-    public PartitionContainer RemoveAt(int globalPositionIndex) =>
-        PartitionReducer.ReduceRemoveAt(globalPositionIndex, this);
-
-    public PartitionContainer RemoveRange(int globalPositionIndex, int count) =>
-        PartitionReducer.ReduceRemoveRange(globalPositionIndex, count, this);
-
+    public PartitionContainer Add(RichCharacter item) => PartitionReducer.ReduceAdd(item, this);
+    public PartitionContainer AddRange(IEnumerable<RichCharacter> itemList) => PartitionReducer.ReduceAddRange(itemList, this);
+    public PartitionContainer Insert(int globalPositionIndex, RichCharacter richCharacter) => PartitionReducer.ReduceInsert(globalPositionIndex, richCharacter, this);
+    public PartitionContainer InsertRange(int index, IEnumerable<RichCharacter> itemList) => PartitionReducer.ReduceInsertRange(index, itemList, this);
+    public PartitionContainer Remove(RichCharacter richCharacter) => PartitionReducer.ReduceRemove(richCharacter, this);
+    public PartitionContainer RemoveAt(int globalPositionIndex) => PartitionReducer.ReduceRemoveAt(globalPositionIndex, this);
+    public PartitionContainer RemoveRange(int globalPositionIndex, int count) => PartitionReducer.ReduceRemoveRange(globalPositionIndex, count, this);
     public PartitionContainer Clear() => new PartitionContainer(PartitionSize);
-
     public bool Contains(RichCharacter item) => IndexOf(item) != -1;
 
     public void CopyTo(RichCharacter[] array, int arrayIndex)
@@ -167,59 +117,39 @@ public record PartitionContainer : IList<RichCharacter>
             if (item.Equals(entry))
                 return i;
         }
-
         return -1;
     }
 
-    internal static (ImmutableList<RichCharacter> partition, int partitionIndex, int runningCount) GetOffsetPartition(
-        ImmutableList<ImmutableList<RichCharacter>> partitionList,
-        ImmutableList<PartitionMetadata> partitionMetadataMap,
-        int index)
+    internal static (ImmutableList<RichCharacter> partition, int partitionIndex, int runningCount) GetOffsetPartition(ImmutableList<ImmutableList<RichCharacter>> partitionList, ImmutableList<PartitionMetadata> partitionMetadataMap, int index)
     {
         var runningCount = 0;
-
         for (int i = 0; i < partitionMetadataMap.Count; i++)
         {
             var currentPartitionCount = partitionMetadataMap[i].RelativeCharacterCount;
-
             if (runningCount + currentPartitionCount > index)
                 return (partitionList[i], i, runningCount);
             else
                 runningCount += currentPartitionCount;
         }
-
         throw new IndexOutOfRangeException();
     }
     
-    internal static int GetRelativePositionIndex(
-        int partitionIndex,
-        ImmutableList<ImmutableList<RichCharacter>> partitionList,
-        ImmutableList<PartitionMetadata> partitionMetadataMap,
-        int globalPositionIndex)
+    internal static int GetRelativePositionIndex(int partitionIndex, ImmutableList<ImmutableList<RichCharacter>> partitionList, ImmutableList<PartitionMetadata> partitionMetadataMap, int globalPositionIndex)
     {
-        var offsetInfoPartition = GetOffsetPartition(
-            partitionList, partitionMetadataMap, partitionIndex);
-
+        var offsetInfoPartition = GetOffsetPartition(partitionList, partitionMetadataMap, partitionIndex);
         return globalPositionIndex - offsetInfoPartition.runningCount;
     }
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     int ICollection<RichCharacter>.Count => GlobalCharacterCount;
-
     void ICollection<RichCharacter>.Add(RichCharacter item) => Add(item);
     void ICollection<RichCharacter>.Clear() => Clear();
-
     bool ICollection<RichCharacter>.Remove(RichCharacter item)
     {
         var index = IndexOf(item);
-
         if (index == -1)
             return false;
-
         RemoveAt(index);
         return true;
     }

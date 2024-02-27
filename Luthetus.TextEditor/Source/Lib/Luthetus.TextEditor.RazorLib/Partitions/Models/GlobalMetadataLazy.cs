@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.RazorLib.Partitions.Models;
 
@@ -8,26 +7,18 @@ public record GlobalMetadataLazy
 {
     public GlobalMetadataLazy(PartitionContainer container)
     {
-        AllText = new Lazy<string>(() =>
-        {
-            return new string(container.PartitionList
-                .SelectMany(x => x.Select(y => y.Value)).ToArray());
-        });
+        AllText = new Lazy<string>(() => new string(container.PartitionList.SelectMany(x => x.Select(y => y.Value)).ToArray()));
 
         TabList = new Lazy<ImmutableList<int>>(() =>
         {
             var tabList = new List<int>();
             var runningCount = 0;
-
             for (int i = 0; i < container.PartitionMetadataMap.Count; i++)
             {
                 var metadata = container.PartitionMetadataMap[i];
-
                 tabList.AddRange(metadata.TabList.Select(x => x + runningCount));
-
                 runningCount += metadata.RelativeCharacterCount;
             }
-
             return tabList.ToImmutableList();
         });
 
@@ -35,20 +26,16 @@ public record GlobalMetadataLazy
         {
             var rowEndingList = new List<RowEnding>();
             var runningCount = 0;
-
             for (int i = 0; i < container.PartitionMetadataMap.Count; i++)
             {
                 var metadata = container.PartitionMetadataMap[i];
-
                 rowEndingList.AddRange(metadata.RowEndingList.Select(x => x with 
                     {
                         StartPositionIndexInclusive = x.StartPositionIndexInclusive + runningCount,
                         EndPositionIndexExclusive = x.EndPositionIndexExclusive + runningCount,
                     }));
-
                 runningCount += metadata.RelativeCharacterCount;
             }
-
             return rowEndingList.ToImmutableList();
         });
 
@@ -57,11 +44,9 @@ public record GlobalMetadataLazy
             var carriageReturnRunningCount = 0;
             var linefeedRunningCount = 0;
             var carriageReturnLinefeedRunningCount = 0;
-
             for (int i = 0; i < container.PartitionMetadataMap.Count; i++)
             {
                 var metadata = container.PartitionMetadataMap[i];
-
                 foreach (var rowEndingKindCount in metadata.RowEndingKindCountList)
                 {
                     switch (rowEndingKindCount.rowEndingKind)
@@ -78,7 +63,6 @@ public record GlobalMetadataLazy
                     }
                 }
             }
-
             return new (RowEndingKind rowEndingKind, int count)[]
             {
                 new (RowEndingKind.CarriageReturn, carriageReturnRunningCount),
@@ -88,9 +72,8 @@ public record GlobalMetadataLazy
         });
 
         OnlyRowEndingKind = new Lazy<RowEndingKind?>(() =>
-        {
-            // This line presumes there will always be at least 1 partition.
-            var onlyRowEndingKind = container.PartitionMetadataMap[0].OnlyRowEndingKind;
+        {            
+            var onlyRowEndingKind = container.PartitionMetadataMap[0].OnlyRowEndingKind; // This line presumes there will always be at least 1 partition.
             if (container.PartitionMetadataMap.All(x => x.OnlyRowEndingKind == onlyRowEndingKind))
                 return onlyRowEndingKind;
             else
@@ -99,12 +82,9 @@ public record GlobalMetadataLazy
     }
 
     public int Count { get; set; }
-
-    /// <summary><inheritdoc cref="ITextEditorModel.TabKeyPositionsList"/></summary>
-	public Lazy<ImmutableList<int>> TabList { get; }
-    /// <summary><inheritdoc cref="ITextEditorModel.RowEndingPositionsList"/></summary>
-	public Lazy<ImmutableList<RowEnding>> RowEndingList { get; }
-	public Lazy<ImmutableList<(RowEndingKind rowEndingKind, int count)>> RowEndingKindCountList { get; }
+	public Lazy<ImmutableList<int>> TabList { get; } // ITextEditorModel.TabKeyPositionsList
+    public Lazy<ImmutableList<RowEnding>> RowEndingList { get; } // ITextEditorModel.RowEndingPositionsList
+    public Lazy<ImmutableList<(RowEndingKind rowEndingKind, int count)>> RowEndingKindCountList { get; }
     public Lazy<RowEndingKind?> OnlyRowEndingKind { get; init; }
     public Lazy<string> AllText { get; }
 }
