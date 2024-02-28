@@ -1,6 +1,7 @@
 ﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using System.Collections.Immutable;
+using System.Diagnostics;
 
 namespace Luthetus.TextEditor.RazorLib.Partitions.Models;
 
@@ -152,7 +153,13 @@ internal class PartitionReducer
         outPartitionList = outPartitionList.InsertRange(partitionIndex + 1, partitionNewList);
         container = container with { PartitionList = outPartitionList };
 
-        var newPartitionMetadata = partitionNewList.Select(x => new PartitionMetadata() { RelativeCharacterCount = x.Count });
+        var newPartitionMetadata = partitionNewList.Select(x => new PartitionMetadata
+        {
+            RelativeCharacterCount = x.Count,
+            TabList = ImmutableList<int>.Empty,
+            RowEndingList = new RowEnding[] { new(x.Count, x.Count, RowEndingKind.EndOfFile) }.ToImmutableList(),
+        });
+
         var outPartitionMemoryMap = container.PartitionMetadataMap.InsertRange(partitionIndex + 1, newPartitionMetadata);
 
         for (int i = partitionIndex; i < (partitionIndex + expansionFactor); i++)

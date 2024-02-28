@@ -26,7 +26,12 @@ public record PartitionContainer : IList<RichCharacter> // TODO: I need to handl
         PartitionList = new ImmutableList<RichCharacter>[] { ImmutableList<RichCharacter>.Empty, }.ToImmutableList();
         PartitionMetadataMap = new PartitionMetadata[]
         {
-            new() { RelativeCharacterCount = 0, TabList = ImmutableList<int>.Empty, RowEndingList = ImmutableList<RowEnding>.Empty, },
+            new() 
+            {
+                RelativeCharacterCount = 0,
+                TabList = ImmutableList<int>.Empty,
+                RowEndingList = new RowEnding[] { new(0, 0, RowEndingKind.EndOfFile) }.ToImmutableList(),
+            },
         }.ToImmutableList();
         GlobalMetadata = new GlobalMetadataLazy(this); // TODO: How does one not duplicate this code? It exists in the record copy constructor too. A parameterless constructor was tried and invoked with 'this()' but it gives an error message specific to usage of record copy constructors.
     }
