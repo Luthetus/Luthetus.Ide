@@ -297,7 +297,7 @@ internal partial class Track
                 new (RowEndingKind.CarriageReturnLinefeed, carriageReturnLinefeedCount),
         }.ToImmutableList();
 
-        var whereMoreThanOne = partitionMetadataMap[partitionIndex].RowEndingKindCountList.Where(x => x.count > 0).ToList();
+        var whereMoreThanOne = rowEndingKindCountList.Where(x => x.count > 0).ToList();
         RowEndingKind? onlyRowEndingKind;
         if (whereMoreThanOne.Count == 1)
             onlyRowEndingKind = whereMoreThanOne.Single().rowEndingKind;
