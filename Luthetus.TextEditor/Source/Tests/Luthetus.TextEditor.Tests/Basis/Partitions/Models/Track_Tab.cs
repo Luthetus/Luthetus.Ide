@@ -1,5 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Partitions.Models;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Partitions.Models;
 
@@ -7,36 +8,33 @@ public class Track_Tab : Track_Tests_Base
 {
     #region Add
     [Fact]
-    public override void Add_At_Start()
+    public override void Add()
     {
-        // Setup
-        var richCharacterList = "\tab".Select(x => new RichCharacter { Value = x }).ToArray();
-        var partitionContainer = new PartitionContainer(3).AddRange(richCharacterList);
-        // Assert
-        var partitionMetadata = partitionContainer.PartitionMetadataMap.Single();
-        Assert.Equal(0, partitionMetadata.TabList.Single());
-    }
+        // Goal A: Use a for loop to add a tab to the: start, middle and, end of the 'otherCharacters' string.
+        // Goal C: Assert that the tabs were properly tracked.
+        //
+        //  ab            //  ab            //  ab
+        //  ^             //   ^            //    ^
+        //  Add at 0      //  Add at 1      //  Add at 2
 
-    [Fact]
-    public override void Add_At_Middle()
-    {
-        // Setup
-        var richCharacterList = "a\tb".Select(x => new RichCharacter { Value = x }).ToArray();
-        var partitionContainer = new PartitionContainer(3).AddRange(richCharacterList);
-        // Assert
-        var partitionMetadata = partitionContainer.PartitionMetadataMap.Single();
-        Assert.Equal(1, partitionMetadata.TabList.Single());
-    }
+        var otherCharacters = "ab";
 
-    [Fact]
-    public override void Add_At_End()
-    {
-        // Setup
-        var richCharacterList = "ab\t".Select(x => new RichCharacter { Value = x }).ToArray();
-        var partitionContainer = new PartitionContainer(3).AddRange(richCharacterList);
-        // Assert
-        var partitionMetadata = partitionContainer.PartitionMetadataMap.Single();
-        Assert.Equal(2, partitionMetadata.TabList.Single());
+        for (int i = 0; i < otherCharacters.Length; i++)
+        {
+            var richCharacterList = otherCharacters.Insert(i, "\t").Select(x => new RichCharacter { Value = x });
+            var partitionContainer = new PartitionContainer(5_000).AddRange(richCharacterList);
+
+            // PartitionMetadata
+            {
+                var partitionMetadata = partitionContainer.PartitionMetadataMap.Single();
+                Assert.Equal(i, partitionMetadata.TabList.Single());
+            }
+            // GlobalMetadata
+            {
+                var globalMetadata = partitionContainer.GlobalMetadata;
+                Assert.Equal(i, globalMetadata.TabList.Value.Single());
+            }
+        }
     }
 
     [Fact]

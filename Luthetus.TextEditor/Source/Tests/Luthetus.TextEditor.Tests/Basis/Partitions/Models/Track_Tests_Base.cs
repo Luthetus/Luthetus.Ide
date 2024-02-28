@@ -3,9 +3,7 @@
 public abstract class Track_Tests_Base
 {
     #region Add
-    public abstract void Add_At_Start();
-    public abstract void Add_At_Middle();
-    public abstract void Add_At_End();
+    public abstract void Add();
     public abstract void Add_Causes_Expansion();
     public abstract void Add_Four_InARow();
     #endregion

@@ -39,7 +39,7 @@ public class MyClass
         // globalMetadata.RowEndingList
         {
             var rowEndingList = globalMetadata.RowEndingList.Value;
-            Assert.Equal(6, rowEndingList.Count);
+            Assert.Equal(7, rowEndingList.Count);
 
             var i = 0;
             Assert.Equal(new RowEnding(35, 36, RowEndingKind.Linefeed), rowEndingList[i++]);
@@ -48,6 +48,7 @@ public class MyClass
             Assert.Equal(new RowEnding(59, 60, RowEndingKind.Linefeed), rowEndingList[i++]);
             Assert.Equal(new RowEnding(61, 62, RowEndingKind.Linefeed), rowEndingList[i++]);
             Assert.Equal(new RowEnding(63, 64, RowEndingKind.Linefeed), rowEndingList[i++]);
+            Assert.Equal(new RowEnding(64, 64, RowEndingKind.EndOfFile), rowEndingList[i++]);
         }
 
         // globalMetadata.TabList
@@ -93,7 +94,7 @@ public class MyClass
         // globalMetadata.RowEndingList
         {
             var rowEndingList = globalMetadata.RowEndingList.Value;
-            Assert.Equal(7, rowEndingList.Count);
+            Assert.Equal(8, rowEndingList.Count);
 
             var i = 0;
             Assert.Equal(new RowEnding(35, 36, RowEndingKind.CarriageReturn), rowEndingList[i++]);
@@ -103,6 +104,7 @@ public class MyClass
             Assert.Equal(new RowEnding(60, 61, RowEndingKind.CarriageReturn), rowEndingList[i++]);
             Assert.Equal(new RowEnding(62, 63, RowEndingKind.CarriageReturn), rowEndingList[i++]);
             Assert.Equal(new RowEnding(64, 65, RowEndingKind.CarriageReturn), rowEndingList[i++]);
+            Assert.Equal(new RowEnding(65, 65, RowEndingKind.EndOfFile), rowEndingList[i++]);
         }
 
         // globalMetadata.TabList
