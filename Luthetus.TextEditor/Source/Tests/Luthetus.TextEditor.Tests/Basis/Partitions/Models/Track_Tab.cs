@@ -1,5 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Partitions.Models;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Partitions.Models;
 
@@ -163,39 +164,42 @@ public class Track_Tab : Track_Tests_Base
 
     #region Remove
     [Fact]
-    public override void Remove_At_Start()
+    public override void Remove()
     {
-        // Setup
-        var partitionContainer = new PartitionContainer(3).InsertRange(0, "\tab".Select(x => new RichCharacter { Value = x }));
-        // Pre assertion to ensure a before and after measurement
-        Assert.Equal(0, partitionContainer.PartitionMetadataMap.Single().TabList.Single());
-        partitionContainer = partitionContainer.RemoveAt(0);
-        // Assert
-        Assert.Empty(partitionContainer.PartitionMetadataMap.Single().TabList);
-    }
+        // Goal A: Use a for loop to remove a tab at the: start, middle and, end of the 'otherCharacters' string.
+        // Goal C: Assert that the tabs were properly tracked.
+        //
+        // ab             // ab             // ab
+        // ^              //  ^             //   ^
+        // Remove at 0    // Remove at 1    // Remove at 2
 
-    [Fact]
-    public override void Remove_At_Middle()
-    {
-        // Setup
-        var partitionContainer = new PartitionContainer(3).InsertRange(0, "a\tb".Select(x => new RichCharacter { Value = x }));
-        // Pre assertion to ensure a before and after measurement
-        Assert.Equal(1, partitionContainer.PartitionMetadataMap.Single().TabList.Single());
-        partitionContainer = partitionContainer.RemoveAt(1);
-        // Assert
-        Assert.Empty(partitionContainer.PartitionMetadataMap.Single().TabList);
-    }
+        var otherCharacters = "ab";
 
-    [Fact]
-    public override void Remove_At_End()
-    {
-        // Setup
-        var partitionContainer = new PartitionContainer(3).InsertRange(0, "ab\t".Select(x => new RichCharacter { Value = x }));
-        // Pre assertion to ensure a before and after measurement
-        Assert.Equal(2, partitionContainer.PartitionMetadataMap.Single().TabList.Single());
-        partitionContainer = partitionContainer.RemoveAt(2);
-        // Assert
-        Assert.Empty(partitionContainer.PartitionMetadataMap.Single().TabList);
+        for (int i = 0; i < otherCharacters.Length; i++)
+        {
+            var richCharacterList = otherCharacters.Insert(i, "\t").Select(x => new RichCharacter { Value = x });
+            var partitionContainer = new PartitionContainer(5_000).AddRange(richCharacterList);
+            // Assert that the tab was added
+            Assert.Contains(partitionContainer.PartitionMetadataMap.Single().TabList, x => x == i);
+
+            // Remove the tab
+            partitionContainer = partitionContainer.RemoveAt(i);
+            
+            // Assert results
+            //
+            // PartitionMetadata
+            {
+                var partitionMetadata = partitionContainer.PartitionMetadataMap.Single();
+                // Assert the tab was removed.
+                Assert.Empty(partitionMetadata.TabList);
+            }
+            // GlobalMetadata
+            {
+                var globalMetadata = partitionContainer.GlobalMetadata;
+                // Assert the tab was removed.
+                Assert.Empty(globalMetadata.TabList.Value);
+            }
+        }
     }
 
     [Fact]

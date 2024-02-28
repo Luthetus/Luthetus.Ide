@@ -252,45 +252,80 @@ public class Track_RowEnding : Track_Tests_Base
         }
     }
     #endregion
-    
+
     #region Remove
     [Fact]
-    public override void Remove_At_Start()
+    public override void Remove()
     {
-        // Setup
-        var partitionContainer = new PartitionContainer(3).InsertRange(0, "\nab".Select(x => new RichCharacter { Value = x }));
-        // Pre assertion to ensure a before and after measurement
-        Assert.Equal(0, partitionContainer.PartitionMetadataMap.Single().RowEndingList.Single().StartPositionIndexInclusive);
-        Assert.Equal(1, partitionContainer.PartitionMetadataMap.Single().RowEndingList.Single().EndPositionIndexExclusive);
-        partitionContainer = partitionContainer.RemoveAt(0);
-        // Assert
-        Assert.Empty(partitionContainer.PartitionMetadataMap.Single().TabList);
-    }
+        // Goal A: Use a for loop to remove a row ending at the: start, middle and, end of the 'otherCharacters' string.
+        // Goal B: Use an inner for loop to iterate over all possible row ending characters one can type.
+        // Goal C: Assert that the row endings were properly tracked.
+        //
+        // ab             // ab             // ab
+        // ^              //  ^             //   ^
+        // Remove at 0    // Remove at 1    // Remove at 2
 
-    [Fact]
-    public override void Remove_At_Middle()
-    {
-        // Setup
-        var partitionContainer = new PartitionContainer(3).InsertRange(0, "a\nb".Select(x => new RichCharacter { Value = x }));
-        // Pre assertion to ensure a before and after measurement
-        Assert.Equal(1, partitionContainer.PartitionMetadataMap.Single().RowEndingList.Single().StartPositionIndexInclusive);
-        Assert.Equal(2, partitionContainer.PartitionMetadataMap.Single().RowEndingList.Single().EndPositionIndexExclusive);
-        partitionContainer = partitionContainer.RemoveAt(1);
-        // Assert
-        Assert.Empty(partitionContainer.PartitionMetadataMap.Single().TabList);
-    }
+        var otherCharacters = "ab";
 
-    [Fact]
-    public override void Remove_At_End()
-    {
-        // Setup
-        var partitionContainer = new PartitionContainer(3).InsertRange(0, "ab\n".Select(x => new RichCharacter { Value = x }));
-        // Pre assertion to ensure a before and after measurement
-        Assert.Equal(2, partitionContainer.PartitionMetadataMap.Single().RowEndingList.Single().StartPositionIndexInclusive);
-        Assert.Equal(3, partitionContainer.PartitionMetadataMap.Single().RowEndingList.Single().EndPositionIndexExclusive);
-        partitionContainer = partitionContainer.RemoveAt(2);
-        // Assert
-        Assert.Empty(partitionContainer.PartitionMetadataMap.Single().TabList);
+        for (int i = 0; i < otherCharacters.Length; i++)
+        {
+            foreach (var rowEndingKind in RowEndingKind.Unset.GetRowEndingsUserAllowedToUse())
+            {
+                var rowEndingCharacters = rowEndingKind.AsCharacters();
+                var richCharacterList = otherCharacters.Insert(i, rowEndingCharacters).Select(x => new RichCharacter { Value = x });
+                var partitionContainer = new PartitionContainer(5_000).AddRange(richCharacterList);
+                // Assert that the row ending was added
+                Assert.Contains(partitionContainer.PartitionMetadataMap.Single().RowEndingList, x => x.RowEndingKind == rowEndingKind);
+
+                // Remove the row ending
+                partitionContainer = partitionContainer.RemoveAt(i);
+
+                // Assert results
+                //
+                // PartitionMetadata
+                {
+                    var partitionMetadata = partitionContainer.PartitionMetadataMap.Single();
+                    // RowEndingList
+                    {
+                        // Assert the row ending was removed.
+                        Assert.DoesNotContain(partitionMetadata.RowEndingList, x => x.RowEndingKind == rowEndingKind);
+                        // Assert the "EndOFFile" row ending was not erroneously-removed.
+                        var endOfFileRowEnding = partitionMetadata.RowEndingList.Single();
+                        var endOfFileRowEndingRelativePositionIndex = otherCharacters.Length;
+                        Assert.Equal(endOfFileRowEndingRelativePositionIndex, endOfFileRowEnding.StartPositionIndexInclusive);
+                        Assert.Equal(endOfFileRowEndingRelativePositionIndex, endOfFileRowEnding.EndPositionIndexExclusive);
+                    }
+                    // RowEndingKindCountList
+                    foreach (var rowEndingKindCount in partitionMetadata.RowEndingKindCountList)
+                    {
+                        Assert.Equal(0, rowEndingKindCount.count);
+                    }
+                    // OnlyRowEndingKind
+                    Assert.Null(partitionMetadata.OnlyRowEndingKind);
+                }
+                // GlobalMetadata
+                {
+                    var globalMetadata = partitionContainer.GlobalMetadata;
+                    // RowEndingList
+                    {
+                        // Assert the row ending was removed.
+                        Assert.DoesNotContain(globalMetadata.RowEndingList.Value, x => x.RowEndingKind == rowEndingKind);
+                        // Assert the "EndOFFile" row ending was not erroneously-removed.
+                        var endOfFileRowEnding = globalMetadata.RowEndingList.Value.Single();
+                        var endOfFileRowEndingRelativePositionIndex = otherCharacters.Length;
+                        Assert.Equal(endOfFileRowEndingRelativePositionIndex, endOfFileRowEnding.StartPositionIndexInclusive);
+                        Assert.Equal(endOfFileRowEndingRelativePositionIndex, endOfFileRowEnding.EndPositionIndexExclusive);
+                    }
+                    // RowEndingKindCountList
+                    foreach (var rowEndingKindCount in globalMetadata.RowEndingKindCountList.Value)
+                    {
+                        Assert.Equal(0, rowEndingKindCount.count);
+                    }
+                    // OnlyRowEndingKind
+                    Assert.Null(globalMetadata.OnlyRowEndingKind.Value);
+                }
+            }
+        }
     }
 
     [Fact]
