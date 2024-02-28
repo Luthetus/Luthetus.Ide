@@ -14,9 +14,9 @@ public class Track_RowEnding : Track_Tests_Base
         // Goal B: Use an inner for loop to iterate over all possible row ending characters one can type.
         // Goal C: Assert that the row endings were properly tracked.
         //
-        //  ab            //  ab            //  ab
-        //  ^             //   ^            //    ^
-        //  Add at 0      //  Add at 1      //  Add at 2
+        // ab          // ab          // ab
+        // ^           //  ^          //   ^
+        // Add at 0    // Add at 1    // Add at 2
 
         var otherCharacters = "ab";
 
@@ -33,9 +33,9 @@ public class Track_RowEnding : Track_Tests_Base
                     var partitionMetadata = partitionContainer.PartitionMetadataMap.Single();
                     // RowEndingList
                     {
-                        var insertedRowEnding = partitionMetadata.RowEndingList[0];
-                        Assert.Equal(i, insertedRowEnding.StartPositionIndexInclusive);
-                        Assert.Equal(i + rowEndingCharacters.Length, insertedRowEnding.EndPositionIndexExclusive);
+                        var addedRowEnding = partitionMetadata.RowEndingList[0];
+                        Assert.Equal(i, addedRowEnding.StartPositionIndexInclusive);
+                        Assert.Equal(i + rowEndingCharacters.Length, addedRowEnding.EndPositionIndexExclusive);
 
                         var endOfFileRowEnding = partitionMetadata.RowEndingList[1];
                         var endOfFileRowEndingRelativePositionIndex = rowEndingCharacters.Length + otherCharacters.Length;
@@ -58,9 +58,9 @@ public class Track_RowEnding : Track_Tests_Base
                     var globalMetadata = partitionContainer.GlobalMetadata;
                     // RowEndingList
                     {
-                        var insertedRowEnding = globalMetadata.RowEndingList.Value[0];
-                        Assert.Equal(i, insertedRowEnding.StartPositionIndexInclusive);
-                        Assert.Equal(i + rowEndingCharacters.Length, insertedRowEnding.EndPositionIndexExclusive);
+                        var addedRowEnding = globalMetadata.RowEndingList.Value[0];
+                        Assert.Equal(i, addedRowEnding.StartPositionIndexInclusive);
+                        Assert.Equal(i + rowEndingCharacters.Length, addedRowEnding.EndPositionIndexExclusive);
 
                         var endOfFileRowEnding = globalMetadata.RowEndingList.Value[1];
                         var endOfFileRowEndingRelativePositionIndex = rowEndingCharacters.Length + otherCharacters.Length;
@@ -130,36 +130,80 @@ public class Track_RowEnding : Track_Tests_Base
 
     #region Insert
     [Fact]
-    public override void Insert_At_Start()
+    public override void Insert()
     {
-        // Setup
-        var partitionContainer = new PartitionContainer(3).AddRange("ab".Select(x => new RichCharacter { Value = x }));
-        partitionContainer = partitionContainer.Insert(0, new RichCharacter { Value = '\n' });
-        // Assert
-        var partitionMetadata = partitionContainer.PartitionMetadataMap.Single();
-        Assert.Equal(0, partitionMetadata.RowEndingList.Single().StartPositionIndexInclusive);
-    }
+        // Goal A: Use a for loop to insert a row ending to the: start, middle and, end of the 'otherCharacters' string.
+        // Goal B: Use an inner for loop to iterate over all possible row ending characters one can type.
+        // Goal C: Assert that the row endings were properly tracked.
+        //
+        // ab             // ab             // ab
+        // ^              //  ^             //   ^
+        // Insert at 0    // Insert at 1    // Insert at 2
 
-    [Fact]
-    public override void Insert_At_Middle()
-    {
-        // Setup
-        var partitionContainer = new PartitionContainer(3).AddRange("ab".Select(x => new RichCharacter { Value = x }));
-        partitionContainer = partitionContainer.Insert(1, new RichCharacter { Value = '\n' });
-        // Assert
-        var partitionMetadata = partitionContainer.PartitionMetadataMap.Single();
-        Assert.Equal(1, partitionMetadata.RowEndingList.Single().StartPositionIndexInclusive);
-    }
+        var otherCharacters = "ab";
 
-    [Fact]
-    public override void Insert_At_End()
-    {
-        // Setup
-        var partitionContainer = new PartitionContainer(3).AddRange("ab".Select(x => new RichCharacter { Value = x }));
-        partitionContainer = partitionContainer.Insert(2, new RichCharacter { Value = '\n' });
-        // Assert
-        var partitionMetadata = partitionContainer.PartitionMetadataMap.Single();
-        Assert.Equal(2, partitionMetadata.RowEndingList.Single().StartPositionIndexInclusive);
+        for (int i = 0; i < otherCharacters.Length; i++)
+        {
+            foreach (var rowEndingKind in RowEndingKind.Unset.GetRowEndingsUserAllowedToUse())
+            {
+                var rowEndingCharacters = rowEndingKind.AsCharacters();
+
+                var partitionContainer = new PartitionContainer(5_000)
+                    .AddRange(otherCharacters.Select(x => new RichCharacter { Value = x }))
+                    .InsertRange(i, rowEndingCharacters.Select(x => new RichCharacter { Value = x }));
+
+                // PartitionMetadata
+                {
+                    var partitionMetadata = partitionContainer.PartitionMetadataMap.Single();
+                    // RowEndingList
+                    {
+                        var insertedRowEnding = partitionMetadata.RowEndingList[0];
+                        Assert.Equal(i, insertedRowEnding.StartPositionIndexInclusive);
+                        Assert.Equal(i + rowEndingCharacters.Length, insertedRowEnding.EndPositionIndexExclusive);
+
+                        var endOfFileRowEnding = partitionMetadata.RowEndingList[1];
+                        var endOfFileRowEndingRelativePositionIndex = rowEndingCharacters.Length + otherCharacters.Length;
+                        Assert.Equal(endOfFileRowEndingRelativePositionIndex, endOfFileRowEnding.StartPositionIndexInclusive);
+                        Assert.Equal(endOfFileRowEndingRelativePositionIndex, endOfFileRowEnding.EndPositionIndexExclusive);
+                    }
+                    // RowEndingKindCountList
+                    foreach (var rowEndingKindCount in partitionMetadata.RowEndingKindCountList)
+                    {
+                        if (rowEndingKindCount.rowEndingKind == rowEndingKind)
+                            Assert.Equal(1, rowEndingKindCount.count);
+                        else
+                            Assert.Equal(0, rowEndingKindCount.count);
+                    }
+                    // OnlyRowEndingKind
+                    Assert.Equal(rowEndingKind, partitionMetadata.OnlyRowEndingKind);
+                }
+                // GlobalMetadata
+                {
+                    var globalMetadata = partitionContainer.GlobalMetadata;
+                    // RowEndingList
+                    {
+                        var insertedRowEnding = globalMetadata.RowEndingList.Value[0];
+                        Assert.Equal(i, insertedRowEnding.StartPositionIndexInclusive);
+                        Assert.Equal(i + rowEndingCharacters.Length, insertedRowEnding.EndPositionIndexExclusive);
+
+                        var endOfFileRowEnding = globalMetadata.RowEndingList.Value[1];
+                        var endOfFileRowEndingRelativePositionIndex = rowEndingCharacters.Length + otherCharacters.Length;
+                        Assert.Equal(endOfFileRowEndingRelativePositionIndex, endOfFileRowEnding.StartPositionIndexInclusive);
+                        Assert.Equal(endOfFileRowEndingRelativePositionIndex, endOfFileRowEnding.EndPositionIndexExclusive);
+                    }
+                    // RowEndingKindCountList
+                    foreach (var rowEndingKindCount in globalMetadata.RowEndingKindCountList.Value)
+                    {
+                        if (rowEndingKindCount.rowEndingKind == rowEndingKind)
+                            Assert.Equal(1, rowEndingKindCount.count);
+                        else
+                            Assert.Equal(0, rowEndingKindCount.count);
+                    }
+                    // OnlyRowEndingKind
+                    Assert.Equal(rowEndingKind, partitionContainer.GlobalMetadata.OnlyRowEndingKind.Value);
+                }
+            }
+        }
     }
 
     [Fact]

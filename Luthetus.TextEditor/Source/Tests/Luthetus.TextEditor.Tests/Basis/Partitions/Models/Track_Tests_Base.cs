@@ -9,9 +9,7 @@ public abstract class Track_Tests_Base
     #endregion
 
     #region Insert
-    public abstract void Insert_At_Start();
-    public abstract void Insert_At_Middle();
-    public abstract void Insert_At_End();
+    public abstract void Insert();
     public abstract void Insert_Causes_Expansion();
     public abstract void Insert_Four_InARow();
     #endregion
