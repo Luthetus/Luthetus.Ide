@@ -278,7 +278,8 @@ public class Track_RowEnding : Track_Tests_Base
                 Assert.Contains(partitionContainer.PartitionMetadataMap.Single().RowEndingList, x => x.RowEndingKind == rowEndingKind);
 
                 // Remove the row ending
-                partitionContainer = partitionContainer.RemoveAt(i);
+                for (int j = 0; j < rowEndingCharacters.Length; j++)
+                    partitionContainer = partitionContainer.RemoveAt(i);
 
                 // Assert results
                 //
