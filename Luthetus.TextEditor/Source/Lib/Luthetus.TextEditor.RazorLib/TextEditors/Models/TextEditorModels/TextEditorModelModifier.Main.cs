@@ -36,7 +36,16 @@ public partial class TextEditorModelModifier
     // (2024-02-29) Plan to add text editor partitioning #Step 100:
     // --------------------------------------------------
     // Change '_contentList' from 'List<RichCharacter>?' to 'List<List<RichCharacter>>?
-    private ImmutableList<RichCharacter> _contentList = ImmutableList<RichCharacter>.Empty;
+    //
+    // (2024-02-29) Plan to add text editor partitioning #Step 600:
+    // --------------------------------------------------
+    // '_contentList' is supposed to be an expression bound property, that performs
+    // a 'SelectMany()' over the '_partitionList'.
+    //
+    // Currently, this is not the case.
+    //
+    // So I'm going to make the change now.
+    private IReadOnlyList<RichCharacter> _contentList => _partitionList.SelectMany(x => x).ToImmutableList();
     private ImmutableList<ImmutableList<RichCharacter>> _partitionList = ImmutableList<ImmutableList<RichCharacter>>.Empty;
 
     // (2024-02-29) Plan to add text editor partitioning #Step 100:
@@ -792,6 +801,26 @@ public partial class TextEditorModelModifier
 
             previousCharacter = character;
 
+            // (2024-02-29) Plan to add text editor partitioning #Step 700:
+            // --------------------------------------------------
+            // Here 'ContentList.Add(...)' is being invoked.
+            //
+            // Prior to the changes, 'ContentList' was a List<T> and therefore,
+            // the 'Add' could be invoked, without needing to reassign 'ContentList'
+            // to the methods output.
+            //
+            // But, even more important, is that 'ContentList' shouldn't even be modified at
+            // all. It is to be an expression bound property, which is dependent on PartitionList.
+            //
+            // This 'ContentList.Add(...)' invocation does not result in a compilation error.
+            // Could I make a change so that the compiler marks invocations like this as an error?
+            //
+            // I'm going to change 'ContentList' to an 'IReadOnlyList'. This will remove the
+            // 'Add(...)' API, and therefore result in any attempts to invoke that method,
+            // be a compilation error.
+            //
+            // Then, I can look through the compilation errors to find all the places where
+            // I need to make a change.
             ContentList.Add(new RichCharacter
             {
                 Value = character,

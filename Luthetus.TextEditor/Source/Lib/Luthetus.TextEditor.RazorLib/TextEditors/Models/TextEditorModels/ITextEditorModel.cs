@@ -91,7 +91,7 @@ public interface ITextEditorModel
     // Following that change, I want to not touch any of the other tracked data. For example,
     // don't touch 'EditBlocksList'. Provided I do all my code in 'TextEditorModelModifier.Main.cs',
     // then 'EditBlocksList' will not break.
-    public ImmutableList<RichCharacter> ContentList { get; }
+    public IReadOnlyList<RichCharacter> ContentList { get; }
     public ImmutableList<ImmutableList<RichCharacter>> PartitionList { get; }
 	public IList<EditBlock> EditBlocksList { get; }
     /// <summary>
