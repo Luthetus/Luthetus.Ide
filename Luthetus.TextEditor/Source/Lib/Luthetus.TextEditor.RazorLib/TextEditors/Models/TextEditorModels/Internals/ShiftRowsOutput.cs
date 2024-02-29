@@ -1,9 +1,9 @@
 ﻿using Luthetus.TextEditor.RazorLib.Rows.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.Partitions.Models;
+namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.Internals;
 
-internal partial class Track
+public partial class TextEditorModelModifier
 {
     internal class ShiftRowsOutput
     {

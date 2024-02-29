@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -28,7 +29,7 @@ public partial class PresentationLayerGroup : ComponentBase
 
         foreach (var presentationKey in TextEditorPresentationKeys)
         {
-            var textEditorPresentationModel = RenderBatch.Model!.PresentationModelsList.FirstOrDefault(x =>
+            var textEditorPresentationModel = RenderBatch.Model!.PresentationModelList.FirstOrDefault(x =>
                 x.TextEditorPresentationKey == presentationKey);
 
             if (textEditorPresentationModel is not null)

@@ -5,6 +5,7 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 @using Luthetus.TextEditor.RazorLib.Htmls.Models;
 @using System.Text;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.Internals;
 
 <div class="luth_te_text-editor-footer @TextEditorService.ThemeCssClassString">
     <div class="luth_te_text-editor-footer-listing">
@@ -84,8 +85,8 @@
                             length:
                         </div>
                         <div class="luth_te_text-editor-footer-value"
-                             style="@StyleMinWidthFromMaxLengthOfValue(model.DocumentLength)">
-                            @($"{model.DocumentLength}")
+                             style="@StyleMinWidthFromMaxLengthOfValue(model.Content.DocumentLength)">
+                            @($"{model.Content.DocumentLength}")
                         </div>
                     </div>
 
@@ -94,8 +95,8 @@
                             lines:
                         </div>
                         <div class="luth_te_text-editor-footer-value"
-                             style="@StyleMinWidthFromMaxLengthOfValue(model.RowCount)">
-                            @($"{model.RowCount}")
+                             style="@StyleMinWidthFromMaxLengthOfValue(model.Content.RowCount)">
+                            @($"{model.Content.RowCount}")
                         </div>
                     </div>
                 </div>

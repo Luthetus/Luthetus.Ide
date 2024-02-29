@@ -3,6 +3,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.Internals;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
@@ -55,9 +56,9 @@ public class TextEditorModelConstructorsTests
             new LuthCompilerService(null));
 
 		var cloneModel = new TextEditorModel(
-			originalModel.ContentList,
-			originalModel.EditBlocksList,
-            originalModel.PresentationModelsList,
+			originalModel.PartitionContainer,
+			originalModel.EditBlockList,
+            originalModel.PresentationModelList,
 			originalModel.UsingRowEndingKind,
 			originalModel.ResourceUri,
 			originalModel.ResourceLastWriteTime,
@@ -69,11 +70,11 @@ public class TextEditorModelConstructorsTests
 			originalModel.MostCharactersOnASingleRowTuple,
 			originalModel.RenderStateKey);
 
-        Assert.Equal(originalModel.ContentList, cloneModel.ContentList);
-		Assert.Equal(originalModel.EditBlocksList, cloneModel.EditBlocksList);
+        Assert.Equal(originalModel.PartitionContainer, cloneModel.PartitionContainer);
+		Assert.Equal(originalModel.EditBlockList, cloneModel.EditBlockList);
         Assert.Equal(originalModel.RowEndingPositionsList, cloneModel.RowEndingPositionsList);
         Assert.Equal(originalModel.RowEndingKindCountsList, cloneModel.RowEndingKindCountsList);
-        Assert.Equal(originalModel.PresentationModelsList, cloneModel.PresentationModelsList);
+        Assert.Equal(originalModel.PresentationModelList, cloneModel.PresentationModelList);
         Assert.Equal(originalModel.TabKeyPositionsList, cloneModel.TabKeyPositionsList);
         Assert.Equal(originalModel.OnlyRowEndingKind, cloneModel.OnlyRowEndingKind);
 		Assert.Equal(originalModel.UsingRowEndingKind, cloneModel.UsingRowEndingKind);

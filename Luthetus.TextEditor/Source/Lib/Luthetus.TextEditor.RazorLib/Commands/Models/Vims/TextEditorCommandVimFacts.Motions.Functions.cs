@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
@@ -319,7 +319,7 @@ public static partial class TextEditorCommandVimFacts
                         // Anchor went from being the lower bound to the upper bound.
                         var rowDataAnchorIsOn = modelModifier.GetRowInformationFromPositionIndex(previousAnchorPositionIndex.Value);
 
-                        primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier.RowEndingPositionsList[
+                        primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier.RowEndingList[
                             rowDataAnchorIsOn.RowIndex].EndPositionIndexExclusive;
                     }
 
@@ -339,7 +339,7 @@ public static partial class TextEditorCommandVimFacts
                             .EndPositionIndexExclusive;
                     }
 
-                    var endingPositionOfRow = modelModifier.RowEndingPositionsList[primaryCursorModifier.RowIndex]
+                    var endingPositionOfRow = modelModifier.RowEndingList[primaryCursorModifier.RowIndex]
                         .EndPositionIndexExclusive;
 
                     primaryCursorModifier.SelectionEndingPositionIndex = endingPositionOfRow;

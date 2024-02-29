@@ -1,4 +1,5 @@
 ﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.Cursors.Models;
 

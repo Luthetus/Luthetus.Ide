@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using System.Collections.Immutable;
 
@@ -178,7 +178,7 @@ public class LuthCompilerService : ILuthCompilerService
                     .Invoke(editContext)
                     .ConfigureAwait(false);
 
-                var presentationModel = modelModifier.PresentationModelsList.First(
+                var presentationModel = modelModifier.PresentationModelList.First(
                     x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
                 if (presentationModel.PendingCalculation is null)

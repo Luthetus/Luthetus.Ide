@@ -20,7 +20,7 @@
 
         <div class="luth_te_find-overlay-bottom-row">
             @{
-                var findOverlayPresentationModel = RenderBatch.Model!.PresentationModelsList.FirstOrDefault(
+                var findOverlayPresentationModel = RenderBatch.Model!.PresentationModelList.FirstOrDefault(
                     x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
                 var completedCalculation = findOverlayPresentationModel?.CompletedCalculation;

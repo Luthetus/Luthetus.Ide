@@ -11,6 +11,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
@@ -191,7 +192,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                     commandArgs.TextEditorService.Post(
                         nameof(commandDisplayName),
-                        editContext =>
+                        (TextEditors.Models.TextEditorServices.TextEditorEdit)(editContext =>
                         {
                             var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                             var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
@@ -222,7 +223,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             primaryCursorModifier.SelectionAnchorPositionIndex =
                                 startOfRowPositionIndexInclusive;
 
-                            var endOfRowPositionIndexExclusive = modelModifier.RowEndingPositionsList[
+                            var endOfRowPositionIndexExclusive = modelModifier.RowEndingList[
                                     primaryCursorModifier.RowIndex]
                                 .EndPositionIndexExclusive;
 
@@ -230,7 +231,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                                 endOfRowPositionIndexExclusive;
 
                             return Task.CompletedTask;
-                        });
+                        }));
 
                     return Task.CompletedTask;
                 });

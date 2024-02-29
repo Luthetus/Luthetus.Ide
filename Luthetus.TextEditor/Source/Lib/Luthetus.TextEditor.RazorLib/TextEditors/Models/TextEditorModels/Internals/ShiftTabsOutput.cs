@@ -1,8 +1,8 @@
-﻿namespace Luthetus.TextEditor.RazorLib.Partitions.Models;
+﻿namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.Internals;
 
-internal partial class Track
+public partial class TextEditorModelModifier
 {
-    private class ShiftTabsOutput
+    internal class ShiftTabsOutput
     {
         public ShiftTabsOutput(int relativeTabIndex, List<int> mutableTabList)
         {

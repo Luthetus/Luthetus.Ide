@@ -10,12 +10,12 @@ public partial class TextEditorModelModifierTests
     /// <summary>
     /// <see cref="TextEditorModelModifier"/>
     /// <br/>----<br/>
-    /// <see cref="TextEditorModelModifier.ContentList"/>
-	/// <see cref="TextEditorModelModifier.EditBlocksList"/>
-	/// <see cref="TextEditorModelModifier.RowEndingPositionsList"/>
-	/// <see cref="TextEditorModelModifier.RowEndingKindCountsList"/>
-	/// <see cref="TextEditorModelModifier.PresentationModelsList"/>
-	/// <see cref="TextEditorModelModifier.TabKeyPositionsList"/>
+    /// <see cref="TextEditorModelModifier.PartitionContainer"/>
+	/// <see cref="TextEditorModelModifier.EditBlockList"/>
+	/// <see cref="TextEditorModelModifier.RowEndingList"/>
+	/// <see cref="TextEditorModelModifier.RowEndingKindCountList"/>
+	/// <see cref="TextEditorModelModifier.PresentationModelList"/>
+	/// <see cref="TextEditorModelModifier.TabList"/>
 	/// <see cref="TextEditorModelModifier.OnlyRowEndingKind"/>
 	/// <see cref="TextEditorModelModifier.UsingRowEndingKind"/>
 	/// <see cref="TextEditorModelModifier.ResourceUri"/>

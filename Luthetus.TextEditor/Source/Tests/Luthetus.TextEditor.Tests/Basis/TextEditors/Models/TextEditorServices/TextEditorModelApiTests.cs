@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
@@ -545,13 +546,13 @@ public class TextEditorModelApiTests
             out var inViewModel,
             out var serviceProvider);
 
-        Assert.Empty(inModel!.PresentationModelsList);
+        Assert.Empty(inModel!.PresentationModelList);
 
         textEditorService.Post(
             nameof(textEditorService.ModelApi.AddPresentationModelFactory),
             textEditorService.ModelApi.AddPresentationModelFactory(inModel.ResourceUri, DiffPresentationFacts.EmptyOutPresentationModel));
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
-        Assert.NotEmpty(outModel!.PresentationModelsList);
+        Assert.NotEmpty(outModel!.PresentationModelList);
     }
 }

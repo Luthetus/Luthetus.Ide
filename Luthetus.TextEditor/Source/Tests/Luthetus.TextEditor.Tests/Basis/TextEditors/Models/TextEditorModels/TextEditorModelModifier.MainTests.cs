@@ -11,6 +11,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.Internals;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
@@ -31,11 +32,11 @@ public partial class TextEditorModelModifierTests
         var modelModifier = new TextEditorModelModifier(inModel);
 
         var outModel = modelModifier.ToModel();
-        Assert.Equal(inModel.ContentList, outModel.ContentList);
-        Assert.Equal(inModel.EditBlocksList, outModel.EditBlocksList);
+        Assert.Equal(inModel.PartitionContainer, outModel.PartitionContainer);
+        Assert.Equal(inModel.EditBlockList, outModel.EditBlockList);
         Assert.Equal(inModel.RowEndingPositionsList, outModel.RowEndingPositionsList);
         Assert.Equal(inModel.RowEndingKindCountsList, outModel.RowEndingKindCountsList);
-        Assert.Equal(inModel.PresentationModelsList, outModel.PresentationModelsList);
+        Assert.Equal(inModel.PresentationModelList, outModel.PresentationModelList);
         Assert.Equal(inModel.TabKeyPositionsList, outModel.TabKeyPositionsList);
         Assert.Equal(inModel.OnlyRowEndingKind, outModel.OnlyRowEndingKind);
         Assert.Equal(inModel.UsingRowEndingKind, outModel.UsingRowEndingKind);
@@ -61,8 +62,8 @@ public partial class TextEditorModelModifierTests
         modelModifier.ClearContentList();
 
         var outModel = modelModifier.ToModel();
-        Assert.NotEqual(inModel.ContentList, outModel.ContentList);
-        Assert.Equal(ImmutableList<RichCharacter>.Empty, outModel.ContentList);
+        Assert.NotEqual(inModel.PartitionContainer, outModel.PartitionContainer);
+        Assert.Equal(ImmutableList<RichCharacter>.Empty, outModel.PartitionContainer);
     }
 
     /// <summary>

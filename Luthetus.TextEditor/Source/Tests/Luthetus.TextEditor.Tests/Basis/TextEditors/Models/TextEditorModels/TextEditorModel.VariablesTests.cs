@@ -10,11 +10,11 @@ public partial class TextEditorModelVariablesTests
     /// <summary>
     /// <see cref="TextEditorModel"/>
     /// <br/>----<br/>
-    /// <see cref="TextEditorModel.ContentList"/>
-	/// <see cref="TextEditorModel.EditBlocksList"/>
+    /// <see cref="TextEditorModel.PartitionContainer"/>
+	/// <see cref="TextEditorModel.EditBlockList"/>
 	/// <see cref="TextEditorModel.RowEndingPositionsList"/>
 	/// <see cref="TextEditorModel.RowEndingKindCountsList"/>
-	/// <see cref="TextEditorModel.PresentationModelsList"/>
+	/// <see cref="TextEditorModel.PresentationModelList"/>
 	/// <see cref="TextEditorModel.TabKeyPositionsList"/>
 	/// <see cref="TextEditorModel.OnlyRowEndingKind"/>
 	/// <see cref="TextEditorModel.UsingRowEndingKind"/>

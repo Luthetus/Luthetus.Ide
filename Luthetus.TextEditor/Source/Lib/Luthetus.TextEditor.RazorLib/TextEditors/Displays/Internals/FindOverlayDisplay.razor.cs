@@ -3,13 +3,13 @@ using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using System.Collections.Immutable;
 using Fluxor;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -76,7 +76,7 @@ public partial class FindOverlayDisplay : ComponentBase
                             .Invoke(editContext)
                             .ConfigureAwait(false);
 
-                        var presentationModel = modelModifier.PresentationModelsList.First(
+                        var presentationModel = modelModifier.PresentationModelList.First(
                             x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
                         if (presentationModel.PendingCalculation is null)
@@ -150,7 +150,7 @@ public partial class FindOverlayDisplay : ComponentBase
                             .Invoke(editContext)
                             .ConfigureAwait(false);
 
-                    var presentationModel = modelModifier.PresentationModelsList.First(
+                    var presentationModel = modelModifier.PresentationModelList.First(
                         x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
                     if (presentationModel.PendingCalculation is null)
@@ -166,7 +166,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private void MoveActiveIndexMatchedTextSpanUp()
     {
-        var findOverlayPresentationModel = RenderBatch.Model!.PresentationModelsList.FirstOrDefault(
+        var findOverlayPresentationModel = RenderBatch.Model!.PresentationModelList.FirstOrDefault(
             x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
         if (findOverlayPresentationModel is null)
@@ -200,7 +200,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private void MoveActiveIndexMatchedTextSpanDown()
     {
-        var findOverlayPresentationModel = RenderBatch.Model!.PresentationModelsList.FirstOrDefault(
+        var findOverlayPresentationModel = RenderBatch.Model!.PresentationModelList.FirstOrDefault(
             x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
         if (findOverlayPresentationModel is null)
@@ -253,7 +253,7 @@ public partial class FindOverlayDisplay : ComponentBase
                 if (modelModifier is null)
                     return;
 
-                var presentationModel = modelModifier.PresentationModelsList.FirstOrDefault(x =>
+                var presentationModel = modelModifier.PresentationModelList.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
                 if (presentationModel?.CompletedCalculation is not null)

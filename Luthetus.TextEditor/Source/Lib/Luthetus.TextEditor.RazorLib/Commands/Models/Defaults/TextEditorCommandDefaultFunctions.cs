@@ -12,6 +12,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -178,7 +179,7 @@ public class TextEditorCommandDefaultFunctions
                 return Task.CompletedTask;
 
             primaryCursorModifier.SelectionAnchorPositionIndex = 0;
-            primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.DocumentLength;
+            primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.Content.DocumentLength;
 
             return Task.CompletedTask;
         };
@@ -834,7 +835,7 @@ public class TextEditorCommandDefaultFunctions
                     break;
 
                 if (positionIndex <= 0 ||
-                    positionIndex >= modelModifier.DocumentLength)
+                    positionIndex >= modelModifier.Content.DocumentLength)
                     break;
             }
 

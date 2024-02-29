@@ -4,6 +4,7 @@
 @using System.Text;
 @using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 @using Luthetus.Common.RazorLib.Keys.Models;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.Internals;
 
 <div class="luth_te_row-section"
      id="@RenderBatch.ViewModel!.BodyElementId">
@@ -57,7 +58,7 @@
                 </span>
             }
 
-            @if (GlobalShowNewlines && virtualizedRow.Index < RenderBatch.Model!.RowCount - 1)
+            @if (GlobalShowNewlines && virtualizedRow.Index < RenderBatch.Model!.Content.RowCount - 1)
             {
                 var amountOfLeftInCharacterWidthUnits = virtualizedRow.LeftInPixels /
                     RenderBatch.ViewModel.VirtualizationResult!.CharAndRowMeasurements.CharacterWidth;
@@ -66,7 +67,7 @@
 
                 if (amountOfLeftInCharacterWidthUnits < lengthOfRow)
                 {
-                    var rowEndingTuple = RenderBatch.Model!.RowEndingPositionsList[virtualizedRow.Index];
+                    var rowEndingTuple = RenderBatch.Model!.Content.RowEndingList[virtualizedRow.Index];
 
                     <span class="luth_te_newline">
                         @rowEndingTuple.RowEndingKind.AsCharactersHtmlEscaped()

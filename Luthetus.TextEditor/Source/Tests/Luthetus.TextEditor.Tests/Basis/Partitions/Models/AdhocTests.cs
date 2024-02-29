@@ -17,28 +17,29 @@ public class MyClass
 }
 ".ReplaceLineEndings("\n");
 
-        var partitionContainer = new PartitionContainer(5_000).AddRange(text.Select(x => new RichCharacter { Value = x }));
+        var partitionContainer = new PartitionContainer(5_000)
+            .ToPartitionContainerModifier()
+            .AddRange(text.Select(x => new RichCharacter { Value = x }));
 
-        var globalMetadata = partitionContainer.GlobalMetadata;
-        Assert.Equal(text, globalMetadata.AllText.Value);
-        Assert.Equal(64, globalMetadata.GlobalCharacterCount.Value);
-        Assert.Equal(RowEndingKind.Linefeed, globalMetadata.OnlyRowEndingKind.Value);
+        Assert.Equal(text, partitionContainer.AllText);
+        Assert.Equal(64, partitionContainer.Count);
+        Assert.Equal(RowEndingKind.Linefeed, partitionContainer.OnlyRowEndingKind);
 
-        // globalMetadata.RowEndingKindCountList
+        // partitionContainer.RowEndingKindCountList
         {
-            var carriageReturnKindCount = globalMetadata.RowEndingKindCountList.Value[0];
+            var carriageReturnKindCount = partitionContainer.RowEndingKindCountList[0];
             Assert.Equal(0, carriageReturnKindCount.count);
 
-            var linefeedKindCount = globalMetadata.RowEndingKindCountList.Value[1];
+            var linefeedKindCount = partitionContainer.RowEndingKindCountList[1];
             Assert.Equal(6, linefeedKindCount.count);
 
-            var carriageReturnLinefeedKindCount = globalMetadata.RowEndingKindCountList.Value[2];
+            var carriageReturnLinefeedKindCount = partitionContainer.RowEndingKindCountList[2];
             Assert.Equal(0, carriageReturnLinefeedKindCount.count);
         }
 
-        // globalMetadata.RowEndingList
+        // partitionContainer.RowEndingList
         {
-            var rowEndingList = globalMetadata.RowEndingList.Value;
+            var rowEndingList = partitionContainer.RowEndingList;
             Assert.Equal(7, rowEndingList.Count);
 
             var i = 0;
@@ -51,9 +52,9 @@ public class MyClass
             Assert.Equal(new RowEnding(64, 64, RowEndingKind.EndOfFile), rowEndingList[i++]);
         }
 
-        // globalMetadata.TabList
+        // partitionContainer.TabList
         {
-            var tabList = globalMetadata.TabList.Value;
+            var tabList = partitionContainer.TabList;
             Assert.Equal(60, tabList.Single());
         }
     }
@@ -69,31 +70,35 @@ public class MyClass
 }
 ".ReplaceLineEndings("\r");
 
-        var partitionContainer = new PartitionContainer(5_000)
-            .AddRange(text.Select(x => new RichCharacter { Value = x }));
+        var partitionContainer = new PartitionContainer(5_000);
 
-        partitionContainer = partitionContainer.Insert(60, new RichCharacter { Value = '\r' });
+        var partitionContainerModifier = partitionContainer.ToPartitionContainerModifier();
 
-        var globalMetadata = partitionContainer.GlobalMetadata;
-        Assert.Equal(text.Insert(60, "\r"), globalMetadata.AllText.Value);
-        Assert.Equal(65, globalMetadata.GlobalCharacterCount.Value);
-        Assert.Equal(RowEndingKind.CarriageReturn, globalMetadata.OnlyRowEndingKind.Value);
+        partitionContainerModifier
+            .AddRange(text.Select(x => new RichCharacter { Value = x }))
+            .Insert(60, new RichCharacter { Value = '\r' });
 
-        // globalMetadata.RowEndingKindCountList
+        partitionContainer = partitionContainerModifier.ToPartitionContainer();
+
+        Assert.Equal(text.Insert(60, "\r"), partitionContainer.AllText);
+        Assert.Equal(65, partitionContainer.Count);
+        Assert.Equal(RowEndingKind.CarriageReturn, partitionContainer.OnlyRowEndingKind);
+
+        // partitionContainer.RowEndingKindCountList
         {
-            var carriageReturnKindCount = globalMetadata.RowEndingKindCountList.Value[0];
+            var carriageReturnKindCount = partitionContainer.RowEndingKindCountList[0];
             Assert.Equal(7, carriageReturnKindCount.count);
 
-            var linefeedKindCount = globalMetadata.RowEndingKindCountList.Value[1];
+            var linefeedKindCount = partitionContainer.RowEndingKindCountList[1];
             Assert.Equal(0, linefeedKindCount.count);
 
-            var carriageReturnLinefeedKindCount = globalMetadata.RowEndingKindCountList.Value[2];
+            var carriageReturnLinefeedKindCount = partitionContainer.RowEndingKindCountList[2];
             Assert.Equal(0, carriageReturnLinefeedKindCount.count);
         }
 
-        // globalMetadata.RowEndingList
+        // partitionContainer.RowEndingList
         {
-            var rowEndingList = globalMetadata.RowEndingList.Value;
+            var rowEndingList = partitionContainer.RowEndingList;
             Assert.Equal(8, rowEndingList.Count);
 
             var i = 0;
@@ -107,9 +112,9 @@ public class MyClass
             Assert.Equal(new RowEnding(65, 65, RowEndingKind.EndOfFile), rowEndingList[i++]);
         }
 
-        // globalMetadata.TabList
+        // partitionContainer.TabList
         {
-            var tabList = globalMetadata.TabList.Value;
+            var tabList = partitionContainer.TabList;
             Assert.Equal(61, tabList.Single());
         }
     }
@@ -126,30 +131,30 @@ public class MyClass
 ".ReplaceLineEndings("\n");
 
         var partitionContainer = new PartitionContainer(5_000)
-            .AddRange(text.Select(x => new RichCharacter { Value = x }));
+            .ToPartitionContainerModifier()
+            .AddRange(text.Select(x => new RichCharacter { Value = x }))
+            .Insert(60, new RichCharacter { Value = '\n' })
+            .ToPartitionContainer();
 
-        partitionContainer = partitionContainer.Insert(60, new RichCharacter { Value = '\n' });
+        Assert.Equal(text.Insert(60, "\n"), partitionContainer.AllText);
+        Assert.Equal(65, partitionContainer.Count);
+        Assert.Equal(RowEndingKind.Linefeed, partitionContainer.OnlyRowEndingKind);
 
-        var globalMetadata = partitionContainer.GlobalMetadata;
-        Assert.Equal(text.Insert(60, "\n"), globalMetadata.AllText.Value);
-        Assert.Equal(65, globalMetadata.GlobalCharacterCount.Value);
-        Assert.Equal(RowEndingKind.Linefeed, globalMetadata.OnlyRowEndingKind.Value);
-
-        // globalMetadata.RowEndingKindCountList
+        // partitionContainer.RowEndingKindCountList
         {
-            var carriageReturnKindCount = globalMetadata.RowEndingKindCountList.Value[0];
+            var carriageReturnKindCount = partitionContainer.RowEndingKindCountList[0];
             Assert.Equal(0, carriageReturnKindCount.count);
 
-            var linefeedKindCount = globalMetadata.RowEndingKindCountList.Value[1];
+            var linefeedKindCount = partitionContainer.RowEndingKindCountList[1];
             Assert.Equal(7, linefeedKindCount.count);
 
-            var carriageReturnLinefeedKindCount = globalMetadata.RowEndingKindCountList.Value[2];
+            var carriageReturnLinefeedKindCount = partitionContainer.RowEndingKindCountList[2];
             Assert.Equal(0, carriageReturnLinefeedKindCount.count);
         }
 
-        // globalMetadata.RowEndingList
+        // partitionContainer.RowEndingList
         {
-            var rowEndingList = globalMetadata.RowEndingList.Value;
+            var rowEndingList = partitionContainer.RowEndingList;
             Assert.Equal(8, rowEndingList.Count);
 
             var i = 0;
@@ -163,9 +168,9 @@ public class MyClass
             Assert.Equal(new RowEnding(65, 65, RowEndingKind.EndOfFile), rowEndingList[i++]);
         }
 
-        // globalMetadata.TabList
+        // partitionContainer.TabList
         {
-            var tabList = globalMetadata.TabList.Value;
+            var tabList = partitionContainer.TabList;
             Assert.Equal(61, tabList.Single());
         }
     }
@@ -182,31 +187,31 @@ public class MyClass
 ".ReplaceLineEndings("\r\n");
 
         var partitionContainer = new PartitionContainer(5_000)
-            .AddRange(text.Select(x => new RichCharacter { Value = x }));
+            .ToPartitionContainerModifier()
+            .AddRange(text.Select(x => new RichCharacter { Value = x }))
+            .Insert(60, new RichCharacter { Value = '\r' })
+            .Insert(61, new RichCharacter { Value = '\n' })
+            .ToPartitionContainer();
 
-        partitionContainer = partitionContainer.Insert(60, new RichCharacter { Value = '\r' });
-        partitionContainer = partitionContainer.Insert(61, new RichCharacter { Value = '\n' });
+        Assert.Equal(text.Insert(60, "\r\n"), partitionContainer.AllText);
+        Assert.Equal(72, partitionContainer.Count);
+        Assert.Equal(RowEndingKind.CarriageReturnLinefeed, partitionContainer.OnlyRowEndingKind);
 
-        var globalMetadata = partitionContainer.GlobalMetadata;
-        Assert.Equal(text.Insert(60, "\r\n"), globalMetadata.AllText.Value);
-        Assert.Equal(72, globalMetadata.GlobalCharacterCount.Value);
-        Assert.Equal(RowEndingKind.CarriageReturnLinefeed, globalMetadata.OnlyRowEndingKind.Value);
-
-        // globalMetadata.RowEndingKindCountList
+        // partitionContainer.RowEndingKindCountList
         {
-            var carriageReturnKindCount = globalMetadata.RowEndingKindCountList.Value[0];
+            var carriageReturnKindCount = partitionContainer.RowEndingKindCountList[0];
             Assert.Equal(0, carriageReturnKindCount.count);
 
-            var linefeedKindCount = globalMetadata.RowEndingKindCountList.Value[1];
+            var linefeedKindCount = partitionContainer.RowEndingKindCountList[1];
             Assert.Equal(0, linefeedKindCount.count);
 
-            var carriageReturnLinefeedKindCount = globalMetadata.RowEndingKindCountList.Value[2];
+            var carriageReturnLinefeedKindCount = partitionContainer.RowEndingKindCountList[2];
             Assert.Equal(7, carriageReturnLinefeedKindCount.count);
         }
 
-        // globalMetadata.RowEndingList
+        // partitionContainer.RowEndingList
         {
-            var rowEndingList = globalMetadata.RowEndingList.Value;
+            var rowEndingList = partitionContainer.RowEndingList;
             Assert.Equal(8, rowEndingList.Count);
 
             var i = 0;
@@ -220,9 +225,9 @@ public class MyClass
             Assert.Equal(new RowEnding(72, 72, RowEndingKind.EndOfFile), rowEndingList[i++]);
         }
 
-        // globalMetadata.TabList
+        // partitionContainer.TabList
         {
-            var tabList = globalMetadata.TabList.Value;
+            var tabList = partitionContainer.TabList;
             Assert.Equal(66, tabList.Single());
         }
     }

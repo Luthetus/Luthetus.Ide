@@ -12,6 +12,7 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -910,8 +911,8 @@ public partial interface ITextEditorService
                 {
                     verticalStartingIndex = Math.Max(0, verticalStartingIndex);
 
-                    if (verticalStartingIndex + verticalTake > modelModifier.RowEndingPositionsList.Count)
-                        verticalTake = modelModifier.RowEndingPositionsList.Count - verticalStartingIndex;
+                    if (verticalStartingIndex + verticalTake > modelModifier.RowEndingList.Count)
+                        verticalTake = modelModifier.RowEndingList.Count - verticalStartingIndex;
 
                     verticalTake = Math.Max(0, verticalTake);
                 }
@@ -1007,7 +1008,7 @@ public partial interface ITextEditorService
                 var totalWidth = modelModifier.MostCharactersOnASingleRowTuple.rowLength *
                     virtualizationResult.CharAndRowMeasurements.CharacterWidth;
 
-                var totalHeight = modelModifier.RowEndingPositionsList.Count *
+                var totalHeight = modelModifier.RowEndingList.Count *
                     virtualizationResult.CharAndRowMeasurements.RowHeight;
 
                 // Add vertical margin so the user can scroll beyond the final row of content
