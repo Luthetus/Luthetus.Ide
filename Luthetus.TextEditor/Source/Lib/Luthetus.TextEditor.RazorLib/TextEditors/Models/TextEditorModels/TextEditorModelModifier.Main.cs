@@ -288,7 +288,7 @@ public partial class TextEditorModelModifier
 
                 characterCountInserted = rowEndingKindToInsert.AsCharacters().Length;
 
-                _contentList.InsertRange(cursorPositionIndex, richCharacters);
+                PartitionList_InsertRange(cursorPositionIndex, richCharacters);
 
                 RowEndingPositionsList.Insert(
                     cursorModifier.RowIndex,
@@ -327,7 +327,7 @@ public partial class TextEditorModelModifier
                     DecorationByte = default,
                 };
 
-                ContentList.Insert(cursorPositionIndex, richCharacterToInsert);
+                PartitionList_Insert(cursorPositionIndex, richCharacterToInsert);
 
                 cursorModifier.ColumnIndex++;
                 cursorModifier.PreferredColumnIndex = cursorModifier.ColumnIndex;
@@ -579,7 +579,7 @@ public partial class TextEditorModelModifier
 
                 charactersRemovedCount += countToRemoveRange;
 
-                _contentList.RemoveRange(startingIndexToRemoveRange, countToRemoveRange);
+                PartitionList_RemoveRange(startingIndexToRemoveRange, countToRemoveRange);
 
                 if (moveBackwards)
                     indexToRemove -= countToRemoveRange;
@@ -821,7 +821,39 @@ public partial class TextEditorModelModifier
             //
             // Then, I can look through the compilation errors to find all the places where
             // I need to make a change.
-            ContentList.Add(new RichCharacter
+            //
+            // (2024-02-29) Plan to add text editor partitioning #Step 800:
+            // --------------------------------------------------
+            // I made the change from 'ImmutableList<T>' to 'IReadOnlyList<T>'.
+            // 
+            // And now, I'm receiving compilation errors when an attempt is made to
+            // invoke the method 'Add(...)' on 'ContentList'.
+            //
+            // What would I want to change these invocations to?
+            //
+            // The idea of invoking anything on 'ContentList' is likely not the way to go.
+            // Instead I'd be looking to make changes to the 'PartitionList'
+            //
+            // The 'PartitionList' is currently of type 'ImmutableList<ImmutableList<RichCharacter>>'.
+            // Just invoking 'Add(...)' alone on 'PartitionList' will not suffice.
+            //
+            // I noted early on when starting these changes, that if I stay within the 'TextEditorModelModifier.Main.cs',
+            // when changing the partitions, then all the tracked data such as: line endings, tabs, etc...; these will all
+            // continue to work.
+            //
+            // For that reasoning, I don't want to create a 'PartitionContainer' datatype. The internals of
+            // when to create a new partition, when to remove one, or  when to merge, are too specific to the datatype
+            // I'm storing. The 'PartitionContainer' needs to understand what a "\r\n" means for example.
+            // As if one partition ends in a "\r", and the next starts with a "\n", those two characters need to somehow
+            // be moved to the same partition.
+            //
+            // The most clear way to deal with this, as I see it, is to make functions in 'TextEditorModelModifier.Main.cs'
+            // as opposed an entirely new type.
+            //
+            // What I'll aim to do here is: anywhere I get an invocation on 'ContentList' for 'Add', 'Remove', or any other
+            // List modification method, I'm going to make a corresponding method on the 'TextEditorModelModifier'
+            // to handle that scenario.
+            PartitionList_Add(new RichCharacter
             {
                 Value = character,
                 DecorationByte = default,
