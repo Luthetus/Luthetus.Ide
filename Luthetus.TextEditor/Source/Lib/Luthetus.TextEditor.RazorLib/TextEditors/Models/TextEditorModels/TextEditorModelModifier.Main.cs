@@ -46,7 +46,7 @@ public partial class TextEditorModelModifier
     //
     // So I'm going to make the change now.
     private IReadOnlyList<RichCharacter> _contentList => _partitionList.SelectMany(x => x).ToImmutableList();
-    private ImmutableList<ImmutableList<RichCharacter>> _partitionList = ImmutableList<ImmutableList<RichCharacter>>.Empty;
+    private ImmutableList<ImmutableList<RichCharacter>> _partitionList = new ImmutableList<RichCharacter>[] { ImmutableList<RichCharacter>.Empty }.ToImmutableList();
 
     // (2024-02-29) Plan to add text editor partitioning #Step 100:
     // --------------------------------------------------
@@ -116,7 +116,7 @@ public partial class TextEditorModelModifier
         // and dependent on the PartitionList.
         //
         // Therefore, I'm going to change the body of this method to set _partitionList to Empty.
-        _partitionList = ImmutableList<ImmutableList<RichCharacter>>.Empty;
+        _partitionList = new ImmutableList<RichCharacter>[] { ImmutableList<RichCharacter>.Empty }.ToImmutableList();
 
         // (2024-02-29) Plan to add text editor partitioning #Step 500:
         // --------------------------------------------------
