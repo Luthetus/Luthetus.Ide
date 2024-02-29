@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
@@ -90,7 +91,7 @@ public interface ITextEditorModel
     // Following that change, I want to not touch any of the other tracked data. For example,
     // don't touch 'EditBlocksList'. Provided I do all my code in 'TextEditorModelModifier.Main.cs',
     // then 'EditBlocksList' will not break.
-    public IList<RichCharacter> ContentList { get; }
+    public ImmutableList<ImmutableList<RichCharacter>> ContentList { get; }
 	public IList<EditBlock> EditBlocksList { get; }
     /// <summary>
     /// To get the ending position of RowIndex _rowEndingPositions[RowIndex]<br /><br />

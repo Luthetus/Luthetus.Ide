@@ -35,7 +35,7 @@ public partial class TextEditorModel
         // (2024-02-29) Plan to add text editor partitioning #Step 100:
         // --------------------------------------------------
         // Change 'ContentList' from 'List<RichCharacter>?' to 'List<List<RichCharacter>>?
-        ContentList = modifier.ContentList.ToImmutableList();
+        ContentList = modifier.ContentList;
 		RowEndingKindCountsList = modifier.RowEndingKindCountsList.ToImmutableList();
 		RowEndingPositionsList = modifier.RowEndingPositionsList.ToImmutableList();
 		TabKeyPositionsList = modifier.TabKeyPositionsList.ToImmutableList();
@@ -48,7 +48,7 @@ public partial class TextEditorModel
         // (2024-02-29) Plan to add text editor partitioning #Step 100:
         // --------------------------------------------------
         // Change 'contentList' from 'List<RichCharacter>?' to 'List<List<RichCharacter>>?
-        ImmutableList<RichCharacter> contentList,
+        ImmutableList<ImmutableList<RichCharacter>> contentList,
 		ImmutableList<EditBlock> editBlocksList,
 		ImmutableList<RowEnding> rowEndingPositionsList,
 		ImmutableList<(RowEndingKind rowEndingKind, int count)> rowEndingKindCountsList,
