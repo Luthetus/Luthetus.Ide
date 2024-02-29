@@ -35,7 +35,14 @@ public partial class TextEditorModel
         // (2024-02-29) Plan to add text editor partitioning #Step 100:
         // --------------------------------------------------
         // Change 'ContentList' from 'List<RichCharacter>?' to 'List<List<RichCharacter>>?
-        ContentList = modifier.ContentList;
+        //
+        // (2024-02-29) Plan to add text editor partitioning #Step 900:
+        // --------------------------------------------------
+        // I'm receiving a compilation error that 'ContentList' cannot be assigned to,
+        // because it is readonly.
+        //
+        // For this reasoning, I'm going to remove all the code statements
+        // of 'ContentList = modifier.ContentList;'
 		RowEndingKindCountsList = modifier.RowEndingKindCountsList.ToImmutableList();
 		RowEndingPositionsList = modifier.RowEndingPositionsList.ToImmutableList();
 		TabKeyPositionsList = modifier.TabKeyPositionsList.ToImmutableList();
@@ -67,8 +74,13 @@ public partial class TextEditorModel
 		(int rowIndex, int rowLength) mostCharactersOnASingleRowTuple,
 		Key<RenderState>  renderStateKey)
 	{
-
-		ContentList = contentList;
+        // (2024-02-29) Plan to add text editor partitioning #Step 900:
+        // --------------------------------------------------
+        // I'm receiving a compilation error that 'ContentList' cannot be assigned to,
+        // because it is readonly.
+        //
+        // For this reasoning, I'm going to remove all the code statements
+        // of 'ContentList = contentList;'
 		PartitionList = partitionList;
 		EditBlocksList = editBlocksList;
 		RowEndingPositionsList = rowEndingPositionsList;

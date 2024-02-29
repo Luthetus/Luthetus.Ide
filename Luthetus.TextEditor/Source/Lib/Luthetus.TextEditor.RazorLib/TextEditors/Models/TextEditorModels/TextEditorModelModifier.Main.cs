@@ -223,7 +223,14 @@ public partial class TextEditorModelModifier
             //
             // Perhaps I can move the null coallesce assignments for '_contentList',
             // to the 'TextEditorModelModifier' constructor.
-            _contentList ??= _textEditorModel.ContentList;
+            //
+            // (2024-02-29) Plan to add text editor partitioning #Step 900:
+            // --------------------------------------------------
+            // I'm receiving a compilation error that '_contentList' cannot be assigned to,
+            // because it is readonly.
+            //
+            // For this reasoning, I'm going to remove all the code statements
+            // of '_contentList ??= _textEditorModel.ContentList;'
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
             _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
@@ -412,7 +419,14 @@ public partial class TextEditorModelModifier
             //
             // Perhaps I can move the null coallesce assignments for '_contentList',
             // to the 'TextEditorModelModifier' constructor.
-            _contentList ??= _textEditorModel.ContentList;
+            //
+            // (2024-02-29) Plan to add text editor partitioning #Step 900:
+            // --------------------------------------------------
+            // I'm receiving a compilation error that '_contentList' cannot be assigned to,
+            // because it is readonly.
+            //
+            // For this reasoning, I'm going to remove all the code statements
+            // of '_contentList ??= _textEditorModel.ContentList;'
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
         }
 
@@ -738,7 +752,14 @@ public partial class TextEditorModelModifier
             //
             // Perhaps I can move the null coallesce assignments for '_contentList',
             // to the 'TextEditorModelModifier' constructor.
-            _contentList ??= _textEditorModel.ContentList;
+            //
+            // (2024-02-29) Plan to add text editor partitioning #Step 900:
+            // --------------------------------------------------
+            // I'm receiving a compilation error that '_contentList' cannot be assigned to,
+            // because it is readonly.
+            //
+            // For this reasoning, I'm going to remove all the code statements
+            // of '_contentList ??= _textEditorModel.ContentList;'
             _rowEndingKindCountsList ??= _textEditorModel.RowEndingKindCountsList.ToList();
         }
 
