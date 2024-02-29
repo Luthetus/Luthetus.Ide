@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.Partitions.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
@@ -29,10 +30,9 @@ public partial class TextEditorModel
         CompilerService = compilerService ?? new LuthCompilerService(null);
 
 		var modifier = new TextEditorModelModifier(this);
-
 		modifier.ModifyContent(content);
-		
-		ContentList = modifier.ContentList;
+
+        ContentList = modifier.ContentList;
 		UsingRowEndingKind = modifier.UsingRowEndingKind;
 		MostCharactersOnASingleRowTuple = modifier.MostCharactersOnASingleRowTuple;
 	}
@@ -52,7 +52,6 @@ public partial class TextEditorModel
 		(int rowIndex, int rowLength) mostCharactersOnASingleRowTuple,
 		Key<RenderState>  renderStateKey)
 	{
-
 		ContentList = contentList;
 		EditBlocksList = editBlocksList;
 		PresentationModelsList = presentationModelsList;

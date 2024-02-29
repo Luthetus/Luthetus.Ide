@@ -1,5 +1,4 @@
 ﻿using Luthetus.Common.RazorLib.Keyboards.Models;
-using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
@@ -9,7 +8,6 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Partitions.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Microsoft.AspNetCore.Components.Web;
@@ -29,57 +27,57 @@ public partial class TextEditorModelModifier
 {
     private readonly TextEditorModel _textEditorModel;
 
-    public TextEditorModelModifier(TextEditorModel textEditorModel)
+    public TextEditorModelModifier(TextEditorModel model)
     {
-        _textEditorModel = textEditorModel;
+        _textEditorModel = model;
+        _contentList = model.ContentList;
+        _usingRowEndingKind = model.UsingRowEndingKind;
+        _resourceUri = model.ResourceUri;
+        _resourceLastWriteTime = model.ResourceLastWriteTime;
+        _fileExtension = model.FileExtension;
+        _decorationMapper = model.DecorationMapper;
+        _compilerService = model.CompilerService;
+        _textEditorSaveFileHelper = model.TextEditorSaveFileHelper;
+        _editBlockIndex = model.EditBlockIndex;
+        _mostCharactersOnASingleRowTuple = model.MostCharactersOnASingleRowTuple;
     }
 
-    private PartitionContainer? _contentList;
+    private PartitionContainer _contentList;
     private List<EditBlock>? _editBlocksList;
     private List<TextEditorPresentationModel>? _presentationModelsList;
-
-    private RowEndingKind? _usingRowEndingKind;
-    private ResourceUri? _resourceUri;
-    private DateTime? _resourceLastWriteTime;
-    private string? _fileExtension;
-    private IDecorationMapper? _decorationMapper;
-    private ILuthCompilerService? _compilerService;
-    private TextEditorSaveFileHelper? _textEditorSaveFileHelper;
-    private int? _editBlockIndex;
-    private (int rowIndex, int rowLength)? _mostCharactersOnASingleRowTuple;
-    private Key<RenderState>? _renderStateKey = Key<RenderState>.NewKey();
-    private Keymap? _textEditorKeymap;
-    private TextEditorOptions? _textEditorOptions;
+    private RowEndingKind _usingRowEndingKind;
+    private ResourceUri _resourceUri;
+    private DateTime _resourceLastWriteTime;
+    private string _fileExtension;
+    private IDecorationMapper _decorationMapper;
+    private ILuthCompilerService _compilerService;
+    private TextEditorSaveFileHelper _textEditorSaveFileHelper;
+    private int _editBlockIndex;
+    private (int rowIndex, int rowLength) _mostCharactersOnASingleRowTuple;
+    private Key<RenderState> _renderStateKey = Key<RenderState>.NewKey();
 
     public bool WasModified { get; internal set; }
 
     public TextEditorModel ToModel()
     {
         return new TextEditorModel(
-            _contentList is null ? _textEditorModel.ContentList : _contentList,
+            _contentList,
             _editBlocksList is null ? _textEditorModel.EditBlocksList : _editBlocksList.ToImmutableList(),
             _presentationModelsList is null ? _textEditorModel.PresentationModelsList : _presentationModelsList.ToImmutableList(),
-            _usingRowEndingKind ?? _textEditorModel.UsingRowEndingKind,
-            _resourceUri ?? _textEditorModel.ResourceUri,
-            _resourceLastWriteTime ?? _textEditorModel.ResourceLastWriteTime,
-            _fileExtension ?? _textEditorModel.FileExtension,
-            _decorationMapper ?? _textEditorModel.DecorationMapper,
-            _compilerService ?? _textEditorModel.CompilerService,
-            _textEditorSaveFileHelper ?? _textEditorModel.TextEditorSaveFileHelper,
-            _editBlockIndex ?? _textEditorModel.EditBlockIndex,
-            _mostCharactersOnASingleRowTuple ?? _textEditorModel.MostCharactersOnASingleRowTuple,
-            _renderStateKey ?? _textEditorModel.RenderStateKey);
+            _usingRowEndingKind,
+            _resourceUri,
+            _resourceLastWriteTime,
+            _fileExtension,
+            _decorationMapper,
+            _compilerService,
+            _textEditorSaveFileHelper,
+            _editBlockIndex,
+            _mostCharactersOnASingleRowTuple,
+            _renderStateKey);
     }
 
-    public void ClearContentList()
-    {
-        _contentList = TextEditorModel.PARTITION_EMPTY;
-    }
-
-    public void ModifyUsingRowEndingKind(RowEndingKind rowEndingKind)
-    {
-        _usingRowEndingKind = rowEndingKind;
-    }
+    public void ClearContentList() => _contentList = TextEditorModel.PARTITION_EMPTY;
+    public void ModifyUsingRowEndingKind(RowEndingKind rowEndingKind) =>_usingRowEndingKind = rowEndingKind;
 
     public void ModifyResourceData(ResourceUri resourceUri, DateTime resourceLastWriteTime)
     {
@@ -87,19 +85,20 @@ public partial class TextEditorModelModifier
         _resourceLastWriteTime = resourceLastWriteTime;
     }
 
-    public void ModifyDecorationMapper(IDecorationMapper decorationMapper)
-    {
-        _decorationMapper = decorationMapper;
-    }
+    public void ModifyDecorationMapper(IDecorationMapper decorationMapper) => _decorationMapper = decorationMapper;
+    public void ModifyCompilerService(ILuthCompilerService compilerService) => _compilerService = compilerService;
 
-    public void ModifyCompilerService(ILuthCompilerService compilerService)
-    {
-        _compilerService = compilerService;
-    }
-
-    public void ModifyTextEditorSaveFileHelper(TextEditorSaveFileHelper textEditorSaveFileHelper)
-    {
+    public void ModifyTextEditorSaveFileHelper(TextEditorSaveFileHelper textEditorSaveFileHelper) =>
         _textEditorSaveFileHelper = textEditorSaveFileHelper;
+
+    /// <summary>
+    /// Clear the current content, then re-fill the text editor with the provided string.
+    /// </summary>
+    public void ModifyContent(string content)
+    {
+        var cursor = new TextEditorCursor(0, 0, true);
+        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, new() { new(cursor) });
+        EditByInsertion(content, cursorModifierBag, CancellationToken.None);
     }
 
     private void EnsureUndoPoint(TextEditKind textEditKind, string? otherTextEditKindIdentifier = null)
@@ -107,7 +106,6 @@ public partial class TextEditorModelModifier
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _editBlocksList ??= _textEditorModel.EditBlocksList.ToList();
-            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
         }
 
         if (textEditKind == TextEditKind.Other && otherTextEditKindIdentifier is null)
@@ -144,11 +142,7 @@ public partial class TextEditorModelModifier
         TextEditorCursorModifierBag cursorModifierBag,
         CancellationToken cancellationToken)
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _contentList ??= _textEditorModel.ContentList;
-            _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
-        }
+        { /* Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read. */ }
 
         EnsureUndoPoint(TextEditKind.Insertion);
 
@@ -284,11 +278,7 @@ public partial class TextEditorModelModifier
         TextEditorCursorModifierBag cursorModifierBag,
         CancellationToken cancellationToken)
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _contentList ??= _textEditorModel.ContentList;
-            _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
-        }
+        { /* Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read. */ }
 
         EnsureUndoPoint(TextEditKind.Deletion);
 
@@ -428,8 +418,6 @@ public partial class TextEditorModelModifier
 
                     var rowEndingTuple = RowEndingPositionsList[rowEndingTupleIndex];
 
-                    RowEndingPositionsList.RemoveAt(rowEndingTupleIndex);
-
                     var lengthOfRowEnding = rowEndingTuple.RowEndingKind.AsCharacters().Length;
 
                     if (moveBackwards)
@@ -534,10 +522,7 @@ public partial class TextEditorModelModifier
 
     private void CheckRowEndingPositions(bool setUsingRowEndingKind)
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _usingRowEndingKind ??= _textEditorModel.UsingRowEndingKind;
-        }
+        { /* Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read. */ }
 
         var existingRowEndingsList = RowEndingKindCountsList
             .Where(x => x.count > 0)
@@ -765,7 +750,6 @@ public partial class TextEditorModelModifier
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _editBlocksList ??= _textEditorModel.EditBlocksList.ToList();
-            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
         }
 
         _editBlockIndex = 0;
@@ -778,7 +762,6 @@ public partial class TextEditorModelModifier
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _editBlocksList ??= _textEditorModel.EditBlocksList.ToList();
-            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
         }
 
         if (!this.CanUndoEdit())
@@ -804,7 +787,6 @@ public partial class TextEditorModelModifier
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _editBlocksList ??= _textEditorModel.EditBlocksList.ToList();
-            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
         }
         
         if (!this.CanRedoEdit())
