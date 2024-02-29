@@ -31,6 +31,7 @@ public partial class TextEditorModelModifier
     public TextEditorModelModifier(TextEditorModel textEditorModel)
     {
         _textEditorModel = textEditorModel;
+        _partitionList = _textEditorModel.PartitionList;
     }
 
     // (2024-02-29) Plan to add text editor partitioning #Step 100:

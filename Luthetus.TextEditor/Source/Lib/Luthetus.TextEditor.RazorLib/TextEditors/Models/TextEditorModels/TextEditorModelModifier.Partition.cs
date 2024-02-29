@@ -5,6 +5,110 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 public partial class TextEditorModelModifier
 {
+    public void PartitionList_Insert(int globalPositionIndex, RichCharacter richCharacter)
+    {
+        int indexOfPartitionWithAvailableSpace = -1;
+        int relativePositionIndex = -1;
+        var runningCount = 0;
+
+        for (int i = 0; i < _partitionList.Count; i++)
+        {
+            ImmutableList<RichCharacter>? partition = _partitionList[i];
+
+            if (runningCount + partition.Count >= globalPositionIndex)
+            {
+                // This is the partition we want to modify.
+                // But, we must first check if it has available space.
+                if (partition.Count >= TextEditorModel.PARTITION_SIZE)
+                {
+                    indexOfPartitionWithAvailableSpace = i + 1;
+                    relativePositionIndex = 0;
+                    PartitionList_InsertNewPartition(indexOfPartitionWithAvailableSpace);
+                    break;
+                    // (2024-02-29) Plan to add text editor partitioning #Step 1,200:
+                    // --------------------------------------------------
+                    // Here, I inserted a new partition, because the current partition did not have available space.
+                    // But, what if there were an existing 'next' partition, which had available space?
+                }
+
+                relativePositionIndex = globalPositionIndex - runningCount;
+                indexOfPartitionWithAvailableSpace = i;
+                break;
+            }
+            else
+            {
+                runningCount += partition.Count;
+            }
+        }
+
+        if (indexOfPartitionWithAvailableSpace == -1)
+            throw new ApplicationException("if (indexOfPartitionWithAvailableSpace == -1)");
+
+        if (relativePositionIndex == -1)
+            throw new ApplicationException("if (relativePositionIndex == -1)");
+
+        _partitionList = _partitionList.SetItem(
+            indexOfPartitionWithAvailableSpace,
+            _partitionList[indexOfPartitionWithAvailableSpace].Insert(relativePositionIndex, richCharacter));
+    }
+
+    public void PartitionList_RemoveAt(int globalPositionIndex)
+    {
+        int indexOfPartitionWithAvailableSpace = -1;
+        int relativePositionIndex = -1;
+        var runningCount = 0;
+
+        for (int i = 0; i < _partitionList.Count; i++)
+        {
+            ImmutableList<RichCharacter>? partition = _partitionList[i];
+
+            if (runningCount + partition.Count >= globalPositionIndex)
+            {
+                // This is the partition we want to modify.
+                relativePositionIndex = globalPositionIndex - runningCount;
+                indexOfPartitionWithAvailableSpace = i;
+                break;
+            }
+            else
+            {
+                runningCount += partition.Count;
+            }
+        }
+
+        if (indexOfPartitionWithAvailableSpace == -1)
+            throw new ApplicationException("if (indexOfPartitionWithAvailableSpace == -1)");
+
+        if (relativePositionIndex == -1)
+            throw new ApplicationException("if (relativePositionIndex == -1)");
+
+        _partitionList = _partitionList.SetItem(
+            indexOfPartitionWithAvailableSpace,
+            _partitionList[indexOfPartitionWithAvailableSpace].RemoveAt(relativePositionIndex));
+    }
+
+    private void PartitionList_InsertNewPartition(int partitionIndex)
+    {
+        _partitionList = _partitionList.Insert(partitionIndex, ImmutableList<RichCharacter>.Empty);
+    }
+
+    public void PartitionList_InsertRange(int globalPositionIndex, IEnumerable<RichCharacter> richCharacterList)
+    {
+        var offsetIndex = 0;
+
+        foreach (var richCharacter in richCharacterList)
+        {
+            PartitionList_Insert(globalPositionIndex + offsetIndex, richCharacter);
+        }
+    }
+
+    public void PartitionList_RemoveRange(int globalPositionIndex, int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            PartitionList_RemoveAt(globalPositionIndex);
+        }
+    }
+
     // (2024-02-29) Plan to add text editor partitioning #Step 1,000:
     // --------------------------------------------------
     // The 'PartitionList_...(...)' methods are currently un-implemented.
@@ -53,109 +157,5 @@ public partial class TextEditorModelModifier
         //        // I'm going to do this.
         //    }
         //}
-    }
-    
-    public void PartitionList_Insert(int globalPositionIndex, RichCharacter richCharacter)
-    {
-        int indexOfPartitionWithAvailableSpace = -1;
-        int relativePositionIndex = -1;
-        var runningCount = 0;
-
-        for (int i = 0; i < _partitionList.Count; i++)
-        {
-            ImmutableList<RichCharacter>? partition = _partitionList[i];
-
-            if (runningCount + partition.Count > globalPositionIndex)
-            {
-                // This is the partition we want to modify.
-                // But, we must first check if it has available space.
-                if (partition.Count >= TextEditorModel.PARTITION_SIZE)
-                {
-                    indexOfPartitionWithAvailableSpace = i + 1;
-                    relativePositionIndex = 0;
-                    PartitionList_InsertNewPartition(indexOfPartitionWithAvailableSpace);
-                    break;
-                    // (2024-02-29) Plan to add text editor partitioning #Step 1,200:
-                    // --------------------------------------------------
-                    // Here, I inserted a new partition, because the current partition did not have available space.
-                    // But, what if there were an existing 'next' partition, which had available space?
-                }
-
-                relativePositionIndex = partition.Count - runningCount;
-                indexOfPartitionWithAvailableSpace = i;
-                break;
-            }
-            else
-            {
-                runningCount += partition.Count;
-            }
-        }
-
-        if (indexOfPartitionWithAvailableSpace == -1)
-            throw new ApplicationException("if (indexOfPartitionWithAvailableSpace == -1)");
-
-        if (relativePositionIndex == -1)
-            throw new ApplicationException("if (relativePositionIndex == -1)");
-
-        _partitionList.SetItem(
-            indexOfPartitionWithAvailableSpace,
-            _partitionList[indexOfPartitionWithAvailableSpace].Insert(relativePositionIndex, richCharacter));
-    }
-
-    public void PartitionList_InsertRange(int globalPositionIndex, IEnumerable<RichCharacter> richCharacterList)
-    {
-        var offsetIndex = 0;
-
-        foreach (var richCharacter in richCharacterList)
-        {
-            PartitionList_Insert(globalPositionIndex + offsetIndex, richCharacter);
-        }
-    }
-    
-    public void PartitionList_RemoveAt(int globalPositionIndex)
-    {
-        int indexOfPartitionWithAvailableSpace = -1;
-        int relativePositionIndex = -1;
-        var runningCount = 0;
-
-        for (int i = 0; i < _partitionList.Count; i++)
-        {
-            ImmutableList<RichCharacter>? partition = _partitionList[i];
-
-            if (runningCount + partition.Count > globalPositionIndex)
-            {
-                // This is the partition we want to modify.
-                relativePositionIndex = partition.Count - runningCount;
-                indexOfPartitionWithAvailableSpace = i;
-                break;
-            }
-            else
-            {
-                runningCount += partition.Count;
-            }
-        }
-
-        if (indexOfPartitionWithAvailableSpace == -1)
-            throw new ApplicationException("if (indexOfPartitionWithAvailableSpace == -1)");
-
-        if (relativePositionIndex == -1)
-            throw new ApplicationException("if (relativePositionIndex == -1)");
-
-        _partitionList.SetItem(
-            indexOfPartitionWithAvailableSpace,
-            _partitionList[indexOfPartitionWithAvailableSpace].RemoveAt(relativePositionIndex));
-    }
-    
-    public void PartitionList_RemoveRange(int globalPositionIndex, int count)
-    {
-        for (int i = 0; i < count; i++)
-        {
-            PartitionList_RemoveAt(globalPositionIndex);
-        }
-    }
-
-    private void PartitionList_InsertNewPartition(int partitionIndex)
-    {
-        _partitionList = _partitionList.Insert(partitionIndex, ImmutableList<RichCharacter>.Empty);
     }
 }

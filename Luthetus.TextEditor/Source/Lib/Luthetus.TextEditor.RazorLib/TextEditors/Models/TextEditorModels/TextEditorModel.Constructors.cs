@@ -29,7 +29,6 @@ public partial class TextEditorModel
         CompilerService = compilerService ?? new LuthCompilerService(null);
 
 		var modifier = new TextEditorModelModifier(this);
-
 		modifier.ModifyContent(content);
 
         // (2024-02-29) Plan to add text editor partitioning #Step 100:
@@ -43,7 +42,8 @@ public partial class TextEditorModel
         //
         // For this reasoning, I'm going to remove all the code statements
         // of 'ContentList = modifier.ContentList;'
-		RowEndingKindCountsList = modifier.RowEndingKindCountsList.ToImmutableList();
+        PartitionList = modifier.PartitionList;
+        RowEndingKindCountsList = modifier.RowEndingKindCountsList.ToImmutableList();
 		RowEndingPositionsList = modifier.RowEndingPositionsList.ToImmutableList();
 		TabKeyPositionsList = modifier.TabKeyPositionsList.ToImmutableList();
 		OnlyRowEndingKind = modifier.OnlyRowEndingKind;
