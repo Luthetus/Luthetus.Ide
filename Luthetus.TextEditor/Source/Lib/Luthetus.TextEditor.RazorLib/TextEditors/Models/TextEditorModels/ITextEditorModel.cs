@@ -81,6 +81,15 @@ public interface ITextEditorModel
     // If one sets the partition size to 5,000, and has a text editor with 20,000 character in it.
     // Then, every edit to the document would only require an 'ImmutableList<RichCharacter>' to be created with
     // 5,000 entries. This is in constrast to the entire text editor needing to be re-created which would mean 20,000 entries.
+    //
+    // (2024-02-29) Plan to add text editor partitioning #Step 300:
+    // --------------------------------------------------
+    // To finalize the plan for 'ContentList'. I want to
+    // change 'ContentList' from 'List<RichCharacter>?' to 'ImmutableList<ImmutableList<RichCharacter>>?
+    //
+    // Following that change, I want to not touch any of the other tracked data. For example,
+    // don't touch 'EditBlocksList'. Provided I do all my code in 'TextEditorModelModifier.Main.cs',
+    // then 'EditBlocksList' will not break.
     public IList<RichCharacter> ContentList { get; }
 	public IList<EditBlock> EditBlocksList { get; }
     /// <summary>
