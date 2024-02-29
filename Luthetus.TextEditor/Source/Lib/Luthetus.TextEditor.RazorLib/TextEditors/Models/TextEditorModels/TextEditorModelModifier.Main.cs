@@ -78,6 +78,7 @@ public partial class TextEditorModelModifier
     {
         return new TextEditorModel(
             _contentList is null ? _textEditorModel.ContentList : _contentList.ToImmutableList(),
+            _partitionList is null ? _textEditorModel.PartitionList : _partitionList.ToImmutableList(),
             _editBlocksList is null ? _textEditorModel.EditBlocksList : _editBlocksList.ToImmutableList(),
             _rowEndingPositionsList is null ? _textEditorModel.RowEndingPositionsList : _rowEndingPositionsList.ToImmutableList(),
             _rowEndingKindCountsList is null ? _textEditorModel.RowEndingKindCountsList : _rowEndingKindCountsList.ToImmutableList(),
@@ -98,7 +99,21 @@ public partial class TextEditorModelModifier
 
     public void ClearContentList()
     {
-        _contentList = new();
+        // (2024-02-29) Plan to add text editor partitioning #Step 500:
+        // --------------------------------------------------
+        // For the method named 'ClearContentList()', its goal is to clear the ContentList.
+        // 
+        // But, with the changes that are being made, ContentList is now an expression bound property,
+        // and dependent on the PartitionList.
+        //
+        // Therefore, I'm going to change the body of this method to set _partitionList to Empty.
+        _partitionList = ImmutableList<ImmutableList<RichCharacter>>.Empty;
+
+        // (2024-02-29) Plan to add text editor partitioning #Step 500:
+        // --------------------------------------------------
+        // A thought in my head, if this method clears the rich characters,
+        // should it also be clearing the lists which track: line endings, tabs, etc...?
+        // Because upon invoking this method, then those lists would be invalid.
     }
 
     public void ClearRowEndingPositionsList()
@@ -192,7 +207,14 @@ public partial class TextEditorModelModifier
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
-            _contentList ??= _textEditorModel.ContentList.ToList();
+            // (2024-02-29) Plan to add text editor partitioning #Step 500:
+            // --------------------------------------------------
+            // The _contentList and _textEditorModel.ContentList are now the same datatype,
+            // so no ".To...()" method needs to be invoked.
+            //
+            // Perhaps I can move the null coallesce assignments for '_contentList',
+            // to the 'TextEditorModelModifier' constructor.
+            _contentList ??= _textEditorModel.ContentList;
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
             _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
@@ -374,7 +396,14 @@ public partial class TextEditorModelModifier
         {
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
             _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
-            _contentList ??= _textEditorModel.ContentList.ToList();
+            // (2024-02-29) Plan to add text editor partitioning #Step 500:
+            // --------------------------------------------------
+            // The _contentList and _textEditorModel.ContentList are now the same datatype,
+            // so no ".To...()" method needs to be invoked.
+            //
+            // Perhaps I can move the null coallesce assignments for '_contentList',
+            // to the 'TextEditorModelModifier' constructor.
+            _contentList ??= _textEditorModel.ContentList;
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
         }
 
@@ -693,7 +722,14 @@ public partial class TextEditorModelModifier
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
             _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
-            _contentList ??= _textEditorModel.ContentList.ToList();
+            // (2024-02-29) Plan to add text editor partitioning #Step 500:
+            // --------------------------------------------------
+            // The _contentList and _textEditorModel.ContentList are now the same datatype,
+            // so no ".To...()" method needs to be invoked.
+            //
+            // Perhaps I can move the null coallesce assignments for '_contentList',
+            // to the 'TextEditorModelModifier' constructor.
+            _contentList ??= _textEditorModel.ContentList;
             _rowEndingKindCountsList ??= _textEditorModel.RowEndingKindCountsList.ToList();
         }
 
