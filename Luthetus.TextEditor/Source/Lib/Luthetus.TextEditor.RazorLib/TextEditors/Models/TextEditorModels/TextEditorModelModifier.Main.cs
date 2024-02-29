@@ -33,7 +33,18 @@ public partial class TextEditorModelModifier
         _textEditorModel = textEditorModel;
     }
 
+    // (2024-02-29) Plan to add text editor partitioning #Step 100:
+    // --------------------------------------------------
+    // Change '_contentList' from 'List<RichCharacter>?' to 'List<List<RichCharacter>>?
     private List<RichCharacter>? _contentList;
+
+    // (2024-02-29) Plan to add text editor partitioning #Step 100:
+    // --------------------------------------------------
+    // Provided that all edits are performed from this file, (TextEditorModelModifier.Main.cs),
+    // then any tracked data will continue to be tracked without issues.
+    //
+    // For example: '_editBlocksList' ideally would be partitioned too.
+    //              But, it should be left untouched until '_contentList' is partitioned.
     private List<EditBlock>? _editBlocksList;
     private List<RowEnding>? _rowEndingPositionsList;
     private List<(RowEndingKind rowEndingKind, int count)>? _rowEndingKindCountsList;
