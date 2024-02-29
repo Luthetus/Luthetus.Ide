@@ -36,7 +36,8 @@ public partial class TextEditorModelModifier
     // (2024-02-29) Plan to add text editor partitioning #Step 100:
     // --------------------------------------------------
     // Change '_contentList' from 'List<RichCharacter>?' to 'List<List<RichCharacter>>?
-    private ImmutableList<ImmutableList<RichCharacter>>? _contentList;
+    private ImmutableList<RichCharacter> _contentList = ImmutableList<RichCharacter>.Empty;
+    private ImmutableList<ImmutableList<RichCharacter>> _partitionList = ImmutableList<ImmutableList<RichCharacter>>.Empty;
 
     // (2024-02-29) Plan to add text editor partitioning #Step 100:
     // --------------------------------------------------

@@ -48,7 +48,8 @@ public partial class TextEditorModel
         // (2024-02-29) Plan to add text editor partitioning #Step 100:
         // --------------------------------------------------
         // Change 'contentList' from 'List<RichCharacter>?' to 'List<List<RichCharacter>>?
-        ImmutableList<ImmutableList<RichCharacter>> contentList,
+        ImmutableList<RichCharacter> contentList,
+        ImmutableList<ImmutableList<RichCharacter>> partitionList,
 		ImmutableList<EditBlock> editBlocksList,
 		ImmutableList<RowEnding> rowEndingPositionsList,
 		ImmutableList<(RowEndingKind rowEndingKind, int count)> rowEndingKindCountsList,
@@ -68,6 +69,7 @@ public partial class TextEditorModel
 	{
 
 		ContentList = contentList;
+		PartitionList = partitionList;
 		EditBlocksList = editBlocksList;
 		RowEndingPositionsList = rowEndingPositionsList;
 		RowEndingKindCountsList = rowEndingKindCountsList;
