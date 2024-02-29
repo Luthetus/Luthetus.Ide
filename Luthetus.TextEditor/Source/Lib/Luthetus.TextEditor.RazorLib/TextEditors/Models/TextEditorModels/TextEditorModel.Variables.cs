@@ -30,20 +30,26 @@ public partial class TextEditorModel
     public static readonly PartitionContainer PARTITION_EMPTY = new(PARTITION_SIZE);
 
     /// <inheritdoc cref="ITextEditorModel.ContentList"/>
-    public PartitionContainer ContentList = PARTITION_EMPTY;
+    public PartitionContainer ContentList { get; } = PARTITION_EMPTY;
+
 	public ImmutableList<EditBlock> EditBlocksList { get; init; } = ImmutableList<EditBlock>.Empty;
+
     /// <inheritdoc cref="ITextEditorModel.RowEndingPositionsList"/>
 	public ImmutableList<RowEnding> RowEndingPositionsList => ContentList.GlobalMetadata.RowEndingList.Value;
     public ImmutableList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsList => ContentList.GlobalMetadata.RowEndingKindCountList.Value;
     public ImmutableList<TextEditorPresentationModel> PresentationModelsList { get; init; } = ImmutableList<TextEditorPresentationModel>.Empty;
+
     /// <inheritdoc cref="ITextEditorModel.TabKeyPositionsList"/>
 	public ImmutableList<int> TabKeyPositionsList => ContentList.GlobalMetadata.TabList.Value;
+
     /// <inheritdoc cref="ITextEditorModel.OnlyRowEndingKind"/>
     public RowEndingKind? OnlyRowEndingKind => ContentList.GlobalMetadata.OnlyRowEndingKind.Value;
     public RowEndingKind UsingRowEndingKind { get; init; }
+
     /// <inheritdoc cref="ITextEditorModel.ResourceUri"/>
     public ResourceUri ResourceUri { get; init; }
     public DateTime ResourceLastWriteTime { get; init; }
+
     /// <inheritdoc cref="ITextEditorModel.FileExtension"/>
     public string FileExtension { get; init; }
     public IDecorationMapper DecorationMapper { get; init; }
