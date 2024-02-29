@@ -8,7 +8,6 @@ using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.Partitions.Models;
-using Luthetus.TextEditor.RazorLib.Cursors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
