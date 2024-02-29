@@ -1,12 +1,10 @@
 ﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Partitions.Models;
-using Luthetus.TextEditor.RazorLib.Rows.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Partitions.Models;
 
 public class Track_Tab : Track_Tests_Base
 {
-    #region Add
     [Fact]
     public override void Add()
     {
@@ -81,9 +79,7 @@ public class Track_Tab : Track_Tests_Base
             }
         }
     }
-    #endregion
 
-    #region Insert
     [Fact]
     public override void Insert()
     {
@@ -160,9 +156,7 @@ public class Track_Tab : Track_Tests_Base
             }
         }
     }
-    #endregion
 
-    #region Remove
     [Fact]
     public override void Remove()
     {
@@ -224,5 +218,4 @@ public class Track_Tab : Track_Tests_Base
         // Assert
         throw new NotImplementedException();
     }
-    #endregion
 }

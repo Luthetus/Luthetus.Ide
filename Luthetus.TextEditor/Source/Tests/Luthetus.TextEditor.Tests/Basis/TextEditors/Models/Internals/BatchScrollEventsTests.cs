@@ -7,47 +7,17 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.Internals;
 /// </summary>
 public class BatchScrollEventsTests
 {
-	/// <summary>
-	/// <see cref="BatchScrollEvents.ThrottleMutateScrollHorizontalPositionByPixels"/>
-	/// </summary>
-	[Fact]
-	public void ThrottleMutateScrollHorizontalPositionByPixels()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
+    /// <summary>
+    /// <see cref="BatchScrollEvents"/>
+    /// <br/>----<br/>
+    /// <see cref="BatchScrollEvents.ThrottleMutateScrollHorizontalPositionByPixels"/>
 	/// <see cref="BatchScrollEvents.ThrottleMutateScrollVerticalPositionByPixels"/>
-	/// </summary>
-	[Fact]
-	public void ThrottleMutateScrollVerticalPositionByPixels()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="BatchScrollEvents.ThrottleSetScrollPosition"/>
-	/// </summary>
-	[Fact]
-	public void ThrottleSetScrollPosition()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="BatchScrollEvents.MutateScrollHorizontalPositionByPixels"/>
-	/// </summary>
-	[Fact]
-	public void MutateScrollHorizontalPositionByPixels()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="BatchScrollEvents.MutateScrollVerticalPositionByPixels"/>
-	/// </summary>
-	[Fact]
-	public void MutateScrollVerticalPositionByPixels()
+    /// </summary>
+    [Fact]
+	public void Properties()
 	{
 		throw new NotImplementedException();
 	}

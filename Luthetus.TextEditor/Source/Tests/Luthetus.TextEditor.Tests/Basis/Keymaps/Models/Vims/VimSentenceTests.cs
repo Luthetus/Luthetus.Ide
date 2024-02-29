@@ -1,4 +1,7 @@
-﻿using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
+﻿using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Keymaps.Models.Vims;
 
@@ -17,7 +20,7 @@ public class VimSentenceTests
 	}
 
 	/// <summary>
-	/// <see cref="VimSentence.TryLex(TextEditorKeymapVim, Common.RazorLib.Keymaps.Models.KeymapArgument, bool, out RazorLib.Commands.Models.TextEditorCommand?)"/>
+	/// <see cref="VimSentence.TryLex(TextEditorKeymapVim, KeymapArgument, bool, out TextEditorCommand?)"/>
 	/// </summary>
 	[Fact]
 	public void TryLex()
@@ -26,7 +29,7 @@ public class VimSentenceTests
 	}
 
 	/// <summary>
-	/// <see cref="VimSentence.TryParseNextToken(TextEditorKeymapVim, System.Collections.Immutable.ImmutableArray{VimGrammarToken}, int, Common.RazorLib.Keymaps.Models.KeymapArgument, bool, out RazorLib.Commands.Models.TextEditorCommand?)"/>
+	/// <see cref="VimSentence.TryParseNextToken(TextEditorKeymapVim, ImmutableArray{VimGrammarToken}, int, KeymapArgument, bool, out TextEditorCommand?)"/>
 	/// </summary>
 	[Fact]
 	public void TryParseNextToken()

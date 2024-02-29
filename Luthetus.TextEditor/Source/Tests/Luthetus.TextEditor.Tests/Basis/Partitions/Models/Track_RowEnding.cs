@@ -6,7 +6,6 @@ namespace Luthetus.TextEditor.Tests.Basis.Partitions.Models;
 
 public class Track_RowEnding : Track_Tests_Base
 {
-    #region Add
     [Fact]
     public override void Add()
     {
@@ -126,9 +125,7 @@ public class Track_RowEnding : Track_Tests_Base
             }
         }
     }
-    #endregion
 
-    #region Insert
     [Fact]
     public override void Insert()
     {
@@ -251,9 +248,7 @@ public class Track_RowEnding : Track_Tests_Base
             }
         }
     }
-    #endregion
 
-    #region Remove
     [Fact]
     public override void Remove()
     {
@@ -348,5 +343,4 @@ public class Track_RowEnding : Track_Tests_Base
         // Assert
         throw new NotImplementedException();
     }
-    #endregion
 }

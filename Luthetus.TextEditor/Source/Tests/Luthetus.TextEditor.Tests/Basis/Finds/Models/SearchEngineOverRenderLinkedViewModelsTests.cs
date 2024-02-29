@@ -7,29 +7,15 @@ namespace Luthetus.TextEditor.Tests.Basis.FindAlls.Models;
 /// </summary>
 public class SearchEngineOverRenderLinkedViewModelsTests
 {
-	/// <summary>
-	/// <see cref="SearchEngineOverRenderLinkedViewModels.Key"/>
-	/// </summary>
-	[Fact]
-	public void SearchEngineKey()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="SearchEngineOverRenderLinkedViewModels.IconComponentRendererType"/>
-	/// </summary>
-	[Fact]
-	public void IconComponentRendererType()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="SearchEngineOverRenderLinkedViewModels.DisplayName"/>
-	/// </summary>
-	[Fact]
-	public void DisplayName()
+    /// <summary>
+    /// <see cref="SearchEngineOverRegisteredViewModels"/>
+    /// <br/>----<br/>
+    /// <see cref="SearchEngineOverRenderLinkedViewModels.Key"/>
+    /// <see cref="SearchEngineOverRenderLinkedViewModels.IconComponentRendererType"/>
+    /// <see cref="SearchEngineOverRenderLinkedViewModels.DisplayName"/>
+    /// </summary>
+    [Fact]
+	public void Properties()
 	{
 		throw new NotImplementedException();
 	}

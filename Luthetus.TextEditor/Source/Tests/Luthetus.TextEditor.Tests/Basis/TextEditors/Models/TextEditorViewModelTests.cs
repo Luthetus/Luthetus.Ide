@@ -57,120 +57,23 @@ public class TextEditorViewModelTests
 
     /// <summary>
     /// <see cref="TextEditorViewModel.ThrottleRemeasure"/>
-    /// </summary>
-    [Fact]
-	public void ThrottleRemeasure()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.ThrottleCalculateVirtualizationResult"/>
-	/// </summary>
-	[Fact]
-	public void ThrottleCalculateVirtualizationResult()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.PrimaryCursor"/>
-	/// </summary>
-	[Fact]
-	public void PrimaryCursor()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.DisplayTracker"/>
-	/// </summary>
-	[Fact]
-	public void DisplayTracker()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.VirtualizationResult"/>
-	/// </summary>
-	[Fact]
-	public void VirtualizationResult()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.ShowCommandBar"/>
-	/// </summary>
-	[Fact]
-	public void DisplayCommandBar()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.OnSaveRequested"/>
-	/// </summary>
-	[Fact]
-	public void OnSaveRequested()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.GetTabDisplayNameFunc"/>
-	/// </summary>
-	[Fact]
-	public void GetTabDisplayNameFunc()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.FirstPresentationLayerKeysList"/>
-	/// </summary>
-	[Fact]
-	public void FirstPresentationLayerKeysList()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.LastPresentationLayerKeysList"/>
-	/// </summary>
-	[Fact]
-	public void LastPresentationLayerKeysList()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.CommandBarValue"/>
-	/// </summary>
-	[Fact]
-	public void CommandBarValue()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.ShouldSetFocusAfterNextRender"/>
-	/// </summary>
-	[Fact]
-	public void ShouldSetFocusAfterNextRender()
-	{
-		throw new NotImplementedException();
-	}
-
-    /// <summary>
     /// <see cref="TextEditorViewModel.BodyElementId"/>
-    /// <br/>----<br/>
 	/// <see cref="TextEditorViewModel.PrimaryCursorContentId"/>
 	/// <see cref="TextEditorViewModel.GutterElementId"/>
     /// </summary>
     [Fact]
-	public void BodyElementId()
+	public void Properties()
 	{
         TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
@@ -178,9 +81,9 @@ public class TextEditorViewModelTests
             out var inViewModel,
             out var serviceProvider);
 
-		Assert.Equal(
-			$"luth_te_text-editor-content_{inViewModel.ViewModelKey.Guid}",
-			inViewModel.BodyElementId);
+        Assert.Equal(
+            $"luth_te_text-editor-content_{inViewModel.ViewModelKey.Guid}",
+            inViewModel.BodyElementId);
 
         Assert.Equal(
             $"luth_te_text-editor-content_{inViewModel.ViewModelKey.Guid}_primary-cursor",
@@ -189,7 +92,9 @@ public class TextEditorViewModelTests
         Assert.Equal(
             $"luth_te_text-editor-gutter_{inViewModel.ViewModelKey.Guid}",
             inViewModel.GutterElementId);
-    }
+
+        throw new NotImplementedException();
+	}
 
 	/// <summary>
 	/// <see cref="TextEditorViewModel.CursorMovePageTop()"/>

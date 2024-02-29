@@ -7,7 +7,6 @@ namespace Luthetus.TextEditor.Tests.Basis.Installations.Models;
 /// </summary>
 public class ServiceCollectionExtensionsTests
 {
-
 	/// <summary>
 	/// <see cref="ServiceCollectionExtensions.AddLuthetusTextEditor(Microsoft.Extensions.DependencyInjection.IServiceCollection, Common.RazorLib.Installations.Models.LuthetusHostingInformation, Func{LuthetusTextEditorConfig, LuthetusTextEditorConfig}?)"/>
 	/// </summary>

@@ -1,5 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
@@ -14,7 +15,7 @@ namespace Luthetus.TextEditor.Tests.Basis.Options.Models;
 public class TextEditorOptionsTests
 {
     /// <summary>
-    /// <see cref="TextEditorOptions(CommonOptions, bool, bool, int?, double, Common.RazorLib.Keymaps.Models.Keymap, bool)"/>
+    /// <see cref="TextEditorOptions(CommonOptions, bool, bool, int?, double, Keymap, bool)"/>
     /// <br/>----<br/>
     /// <see cref="TextEditorOptions.CommonOptions"/>
     /// <see cref="TextEditorOptions.ShowWhitespace"/>
