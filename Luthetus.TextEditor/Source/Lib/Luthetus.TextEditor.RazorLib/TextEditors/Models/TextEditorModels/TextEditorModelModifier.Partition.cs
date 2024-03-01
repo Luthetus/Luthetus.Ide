@@ -72,7 +72,7 @@ public partial class TextEditorModelModifier
         {
             ImmutableList<RichCharacter>? partition = _partitionList[i];
 
-            if (runningCount + partition.Count >= globalPositionIndex)
+            if (runningCount + partition.Count > globalPositionIndex)
             {
                 // This is the partition we want to modify.
                 relativePositionIndex = globalPositionIndex - runningCount;
