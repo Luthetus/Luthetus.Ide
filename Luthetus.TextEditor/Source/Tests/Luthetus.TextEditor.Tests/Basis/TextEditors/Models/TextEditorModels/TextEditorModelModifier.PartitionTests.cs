@@ -438,10 +438,38 @@ public partial class TextEditorModelModifierTests
                     modifier.PartitionList.First().Count);
 
                 Assert.Equal(
-                    model.PartitionSize / 2,
+                    // This had to be changed to include a '+1' because the insertion already occurred.
+                    model.PartitionSize / 2 + 1,
                     modifier.PartitionList.Last().Count);
             }
         }
+
+        // (2024-02-29) Plan to add text editor partitioning #Step 1,400:
+        // --------------------------------------------------
+        // In the end, we have a PartitionList as follows:
+        //
+        // PartitionList.SetPartitionSize(5);
+        // # {
+        // #     [ 'H', 'e', 'l' ]
+        // #     [ 'l', 'o', ' ' ]
+        // #     [ 'W', 'o', 'r' ]
+        // #     [ 'l', 'd', '!' ]
+        // # }
+        Assert.Equal(
+            "Hel",
+            new string(modifier.PartitionList[0].Select(x => x.Value).ToArray()));
+
+        Assert.Equal(
+            "lo ",
+            new string(modifier.PartitionList[1].Select(x => x.Value).ToArray()));
+
+        Assert.Equal(
+            "Wor",
+            new string(modifier.PartitionList[2].Select(x => x.Value).ToArray()));
+
+        Assert.Equal(
+            "ld!",
+            new string(modifier.PartitionList[3].Select(x => x.Value).ToArray()));
 
         // Assert that the output is correct.
         Assert.Equal(

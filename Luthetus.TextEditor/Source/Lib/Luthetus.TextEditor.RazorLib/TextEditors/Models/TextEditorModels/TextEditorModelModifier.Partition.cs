@@ -23,6 +23,8 @@ public partial class TextEditorModelModifier
                 if (partition.Count >= PartitionSize)
                 {
                     PartitionList_SplitIntoTwoPartitions(i);
+                    i--;
+                    continue;
                     // (2024-02-29) Plan to add text editor partitioning #Step 1,400:
                     // --------------------------------------------------
                     // The method 'PartitionList_SplitIntoTwoPartitions(...)' is presumed
@@ -37,10 +39,6 @@ public partial class TextEditorModelModifier
                     // For this reason, I am going to add code to the constructor, where
                     // if the (PARTITION_SIZE < 2) I will
                     // 'throw new ApplicationException($"{nameof(PARTITION_SIZE)} must be >= 2")'
-                    //
-                    // Furthermore, because the partition at index 'i' now has available space,
-                    // one can complete this if statement and return to the outer code block,
-                    // as if the partition at index 'i' had available space from the start.
                 }
 
                 relativePositionIndex = globalPositionIndex - runningCount;
