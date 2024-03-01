@@ -5,6 +5,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using System.Collections.Immutable;
+using System.Reflection;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
@@ -196,6 +197,16 @@ public static class TextEditorModelHelper
 		var startOfRowPositionIndex = model.GetRowEndingThatCreatedRow(rowIndex).EndPositionIndexExclusive;
 		return startOfRowPositionIndex + columnIndex;
 	}
+
+	public static (int rowIndex, int columnIndex) GetRowAndColumnIndicesFromPositionIndex(
+		this ITextEditorModel model, int positionIndex)
+	{
+        var rowInformation = model.GetRowInformationFromPositionIndex(positionIndex);
+
+		return (
+			rowInformation.RowIndex,
+			positionIndex - rowInformation.RowStartPositionIndexInclusive);
+    }
 
     /// <summary>
     /// To receive a <see cref="string"/> value, one can use <see cref="GetString"/> instead.
