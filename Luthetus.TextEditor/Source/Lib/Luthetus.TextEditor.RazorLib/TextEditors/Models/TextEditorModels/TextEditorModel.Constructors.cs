@@ -20,10 +20,12 @@ public partial class TextEditorModel
         string fileExtension,
         string content,
         IDecorationMapper? decorationMapper,
-        ILuthCompilerService? compilerService)
+        ILuthCompilerService? compilerService,
+		int partitionSize = 5_000)
     {
         ResourceUri = resourceUri;
         ResourceLastWriteTime = resourceLastWriteTime;
+		PartitionSize = partitionSize;
         FileExtension = fileExtension;
         DecorationMapper = decorationMapper ?? new TextEditorDecorationMapperDefault();
         CompilerService = compilerService ?? new LuthCompilerService(null);

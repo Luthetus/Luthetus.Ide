@@ -31,6 +31,7 @@ public partial class TextEditorModelModifier
     public TextEditorModelModifier(TextEditorModel textEditorModel)
     {
         _textEditorModel = textEditorModel;
+        PartitionSize = textEditorModel.PartitionSize;
         _partitionList = _textEditorModel.PartitionList;
     }
 
@@ -48,6 +49,8 @@ public partial class TextEditorModelModifier
     // So I'm going to make the change now.
     private IReadOnlyList<RichCharacter> _contentList => _partitionList.SelectMany(x => x).ToImmutableList();
     private ImmutableList<ImmutableList<RichCharacter>> _partitionList = new ImmutableList<RichCharacter>[] { ImmutableList<RichCharacter>.Empty }.ToImmutableList();
+
+    private int PartitionSize { get; }
 
     // (2024-02-29) Plan to add text editor partitioning #Step 100:
     // --------------------------------------------------

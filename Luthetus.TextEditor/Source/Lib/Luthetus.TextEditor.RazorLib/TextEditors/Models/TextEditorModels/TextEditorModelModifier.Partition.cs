@@ -19,7 +19,7 @@ public partial class TextEditorModelModifier
             {
                 // This is the partition we want to modify.
                 // But, we must first check if it has available space.
-                if (partition.Count >= TextEditorModel.PARTITION_SIZE)
+                if (partition.Count >= PartitionSize)
                 {
                     indexOfPartitionWithAvailableSpace = i + 1;
                     relativePositionIndex = 0;

@@ -17,7 +17,6 @@ public partial class TextEditorModel
     public const int GUTTER_PADDING_RIGHT_IN_PIXELS = 15;
     public const int MAXIMUM_EDIT_BLOCKS = 10;
     public const int MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN = 5;
-    public const int PARTITION_SIZE = 5_000;
 
     // (2024-02-29) Plan to add text editor partitioning #Step 100:
     // --------------------------------------------------
@@ -42,6 +41,7 @@ public partial class TextEditorModel
     /// <inheritdoc cref="ITextEditorModel.ResourceUri"/>
     public ResourceUri ResourceUri { get; init; }
     public DateTime ResourceLastWriteTime { get; init; }
+    public int PartitionSize { get; init; }
     
     /// <inheritdoc cref="ITextEditorModel.FileExtension"/>
     public string FileExtension { get; init; }
