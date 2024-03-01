@@ -94,6 +94,7 @@ public partial class TextEditorModelModifier
     {
         return new TextEditorModel(
             _contentList is null ? _textEditorModel.ContentList : _contentList.ToImmutableList(),
+            PartitionSize,
             _partitionList is null ? _textEditorModel.PartitionList : _partitionList.ToImmutableList(),
             _editBlocksList is null ? _textEditorModel.EditBlocksList : _editBlocksList.ToImmutableList(),
             _rowEndingPositionsList is null ? _textEditorModel.RowEndingPositionsList : _rowEndingPositionsList.ToImmutableList(),

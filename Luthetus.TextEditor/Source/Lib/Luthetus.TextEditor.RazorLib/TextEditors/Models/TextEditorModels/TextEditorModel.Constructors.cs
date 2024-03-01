@@ -25,11 +25,11 @@ public partial class TextEditorModel
     {
         ResourceUri = resourceUri;
         ResourceLastWriteTime = resourceLastWriteTime;
-		PartitionSize = partitionSize;
         FileExtension = fileExtension;
         DecorationMapper = decorationMapper ?? new TextEditorDecorationMapperDefault();
         CompilerService = compilerService ?? new LuthCompilerService(null);
 
+		PartitionSize = partitionSize;
 		var modifier = new TextEditorModelModifier(this);
 		modifier.ModifyContent(content);
 
@@ -58,6 +58,7 @@ public partial class TextEditorModel
         // --------------------------------------------------
         // Change 'contentList' from 'List<RichCharacter>?' to 'List<List<RichCharacter>>?
         IReadOnlyList<RichCharacter> contentList,
+        int partitionSize,
         ImmutableList<ImmutableList<RichCharacter>> partitionList,
 		ImmutableList<EditBlock> editBlocksList,
 		ImmutableList<RowEnding> rowEndingPositionsList,
@@ -83,7 +84,8 @@ public partial class TextEditorModel
         //
         // For this reasoning, I'm going to remove all the code statements
         // of 'ContentList = contentList;'
-		PartitionList = partitionList;
+        PartitionSize = partitionSize;
+        PartitionList = partitionList;
 		EditBlocksList = editBlocksList;
 		RowEndingPositionsList = rowEndingPositionsList;
 		RowEndingKindCountsList = rowEndingKindCountsList;
