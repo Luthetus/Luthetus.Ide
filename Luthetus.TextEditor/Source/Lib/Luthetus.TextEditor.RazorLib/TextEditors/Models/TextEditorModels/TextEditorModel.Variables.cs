@@ -22,7 +22,7 @@ public partial class TextEditorModel
     // --------------------------------------------------
     // Change 'contentList' from 'List<RichCharacter>?' to 'List<List<RichCharacter>>?
     /// <inheritdoc cref="ITextEditorModel.ContentList"/>
-    public IReadOnlyList<RichCharacter> ContentList { get; }
+    public IReadOnlyList<RichCharacter> ContentList { get; } = ImmutableList<RichCharacter>.Empty;
     public ImmutableList<ImmutableList<RichCharacter>> PartitionList { get; } = new ImmutableList<RichCharacter>[] { ImmutableList<RichCharacter>.Empty }.ToImmutableList();
     public ImmutableList<EditBlock> EditBlocksList { get; init; } = ImmutableList<EditBlock>.Empty;
 
