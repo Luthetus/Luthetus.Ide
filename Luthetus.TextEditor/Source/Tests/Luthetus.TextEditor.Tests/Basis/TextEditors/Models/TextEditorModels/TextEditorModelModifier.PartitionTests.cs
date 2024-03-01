@@ -254,14 +254,14 @@ public partial class TextEditorModelModifierTests
         var resourceUri = new ResourceUri("/unitTesting.txt");
         var resourceLastWriteTime = DateTime.UtcNow;
 
-       var model = new TextEditorModel(
-            resourceUri,
-            resourceLastWriteTime,
-            fileExtension,
-            string.Empty,
-            null,
-            null,
-            partitionSize: 5);
+        var model = new TextEditorModel(
+             resourceUri,
+             resourceLastWriteTime,
+             fileExtension,
+             string.Empty,
+             null,
+             null,
+             partitionSize: 5);
 
         var modifier = new TextEditorModelModifier(model);
 
@@ -287,6 +287,63 @@ public partial class TextEditorModelModifierTests
             {
                 // Assert that this loop iteration caused another partition to be made
                 Assert.Equal(2, modifier.PartitionList.Count);
+            }
+        }
+
+        // Assert that the output is correct.
+        Assert.Equal(
+            new string(modifier.ContentList.Select(x => x.Value).ToArray()),
+            sourceText);
+    }
+
+    [Fact]
+    public void PartitionList_Add_SHOULD_INSERT_INTO_PARTITION_WITH_AVAILABLE_SPACE()
+    {
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+
+        var model = new TextEditorModel(
+             resourceUri,
+             resourceLastWriteTime,
+             fileExtension,
+             string.Empty,
+             null,
+             null,
+             partitionSize: 5);
+
+        var modifier = new TextEditorModelModifier(model);
+
+        // Assert that the first partition is empty at the start.
+        Assert.Empty(modifier.PartitionList.First());
+
+        // Assert that more space than just one partition will be needed.
+        var sourceText = "Hello World!";
+        Assert.True(sourceText.Length > model.PartitionSize);
+
+        var firstPartitionStringValue = new string(modifier.PartitionList.First().Select(x => x.Value).ToArray());
+
+        for (int i = 0; i < sourceText.Length; i++)
+        {
+            var firstPartition = modifier.PartitionList.First();
+
+            var richCharacter = new RichCharacter { Value = sourceText[i] };
+            modifier.PartitionList_Add(richCharacter);
+
+            if (i < model.PartitionSize)
+            {
+                // Assert that the first n loops write to the first partition, because it has available space
+                // This is asserted by checking that the string value of the first partition has changed.
+                var newStringValue = new string(modifier.PartitionList.First().Select(x => x.Value).ToArray());
+                Assert.NotEqual(firstPartitionStringValue, newStringValue);
+                firstPartitionStringValue = newStringValue; 
+            }
+            else
+            {
+                // Assert that the last (n + 1) loops do NOT write to the first partition, because it no longer has available space
+                // This is asserted by checking that the string value of the first partition has NOT changed.
+                var newStringValue = new string(modifier.PartitionList.First().Select(x => x.Value).ToArray());
+                Assert.Equal(firstPartitionStringValue, newStringValue);
             }
         }
 
