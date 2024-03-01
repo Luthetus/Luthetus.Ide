@@ -1,4 +1,5 @@
 ﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
+using System.Collections;
 using System.Collections.Immutable;
 using System.Reflection;
 
@@ -22,6 +23,11 @@ public partial class TextEditorModelModifier
                 // But, we must first check if it has available space.
                 if (partition.Count >= PartitionSize)
                 {
+                    // (2024-02-29) Plan to add text editor partitioning #Step 1,700:
+                    // --------------------------------------------------
+                    // If the next partition has space available, then insert onto it,
+                    // as opposed to constructing a new partition.
+
                     PartitionList_SplitIntoTwoPartitions(i);
                     i--;
                     continue;
@@ -134,11 +140,84 @@ public partial class TextEditorModelModifier
 
     public void PartitionList_InsertRange(int globalPositionIndex, IEnumerable<RichCharacter> richCharacterList)
     {
-        var offsetIndex = 0;
+        // (2024-02-29) Plan to add text editor partitioning #Step 1,700:
+        // --------------------------------------------------
+        // It is taking 11 seconds to construct a text editor with 11,000 characters in it.
+        //
+        // I tracked down the cause to this method. For, I commented out the part were
+        // the content is inserted, and it went from taking 11 seconds to 14 miliseconds.
+        //
+        // Goal: Determine how much space is left in a given partition.
+        //
+        //       Then, do a bulk insertion of the 'richCharacterList'.
+        //           Where one takes up to the remaining size of the partition amount of entries.
+        //
+        //       If there are still more RichCharacter(s) to write,
+        //           then determine if the next partition has space that can be written to.
+        //       If not then insert a new partition.
+        //
+        //       Rinse and repeat these steps until all the RichCharacter(s) have been written out.
+        //
+        // (2024-02-29) Plan to add text editor partitioning #Step 1,700:
+        // --------------------------------------------------
+        // I'm going to start by copying and pasting the code from PartitionList_Insert(...)
+        // to this method, and then wrap that code in a while loop.
 
-        foreach (var richCharacter in richCharacterList)
+        var richCharacterEnumerator = richCharacterList.GetEnumerator();
+
+        while (richCharacterEnumerator.MoveNext())
         {
-            PartitionList_Insert(globalPositionIndex + offsetIndex, richCharacter);
+            int indexOfPartitionWithAvailableSpace = -1;
+            int relativePositionIndex = -1;
+            var runningCount = 0;
+            ImmutableList<RichCharacter>? partition;
+
+            for (int i = 0; i < _partitionList.Count; i++)
+            {
+                partition = _partitionList[i];
+
+                if (runningCount + partition.Count >= globalPositionIndex)
+                {
+                    if (partition.Count >= PartitionSize)
+                    {
+                        // (2024-02-29) Plan to add text editor partitioning #Step 1,700:
+                        // --------------------------------------------------
+                        // If the next partition has space available, then insert onto it,
+                        // as opposed to constructing a new partition.
+                        PartitionList_SplitIntoTwoPartitions(i);
+                        i--;
+                        continue;
+                    }
+
+                    relativePositionIndex = globalPositionIndex - runningCount;
+                    indexOfPartitionWithAvailableSpace = i;
+                    break;
+                }
+                else
+                {
+                    runningCount += partition.Count;
+                }
+            }
+
+            if (indexOfPartitionWithAvailableSpace == -1)
+                throw new ApplicationException("if (indexOfPartitionWithAvailableSpace == -1)");
+
+            if (relativePositionIndex == -1)
+                throw new ApplicationException("if (relativePositionIndex == -1)");
+
+            partition = _partitionList[indexOfPartitionWithAvailableSpace];
+            var partitionAvailableSpace = partition.Count - relativePositionIndex;
+
+            var batchInsertRange = new List<RichCharacter> { richCharacterEnumerator.Current };
+
+            while (batchInsertRange.Count != partitionAvailableSpace && richCharacterEnumerator.MoveNext())
+            {
+                batchInsertRange.Add(richCharacterEnumerator.Current);
+            }
+
+            _partitionList = _partitionList.SetItem(
+                indexOfPartitionWithAvailableSpace,
+                _partitionList[indexOfPartitionWithAvailableSpace].InsertRange(relativePositionIndex, batchInsertRange));
         }
     }
 

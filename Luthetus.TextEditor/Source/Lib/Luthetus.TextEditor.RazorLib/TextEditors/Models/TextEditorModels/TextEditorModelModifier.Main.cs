@@ -882,12 +882,13 @@ public partial class TextEditorModelModifier
             // What I'll aim to do here is: anywhere I get an invocation on 'ContentList' for 'Add', 'Remove', or any other
             // List modification method, I'm going to make a corresponding method on the 'TextEditorModelModifier'
             // to handle that scenario.
-            PartitionList_Add(new RichCharacter
-            {
-                Value = character,
-                DecorationByte = default,
-            });
         }
+
+        PartitionList_InsertRange(0, content.Select(x => new RichCharacter
+        {
+            Value = x,
+            DecorationByte = default,
+        }));
 
         _rowEndingKindCountsList.AddRange(new List<(RowEndingKind rowEndingKind, int count)>
         {
