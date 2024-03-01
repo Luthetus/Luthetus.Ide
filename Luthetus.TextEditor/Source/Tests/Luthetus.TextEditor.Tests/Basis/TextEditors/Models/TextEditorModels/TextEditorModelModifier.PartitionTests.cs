@@ -1,10 +1,7 @@
-﻿using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.Characters.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
-using System.Reflection;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
@@ -104,26 +101,26 @@ public partial class TextEditorModelModifierTests
         // # So, we can break down the 'PartitionList_AddRange(...)' invocation to
         //     # 12 invocations of 'PartitionList_Add(...)', one for each character in the string.
         // #
-        // # First 'PartitionList_AddRange(...)' invocation results in the following PartitionList:
+        // # First 'PartitionList_Add(...)' invocation results in the following PartitionList:
         // # {
         // #     [ 'H' ]
         // # }
         // # Once the pattern is well established I'll skip ahead to some unique invocations of 'PartitionList_Add(...)'.
         // #
-        // # Second 'PartitionList_AddRange(...)' invocation results in the following PartitionList:
+        // # Second 'PartitionList_Add(...)' invocation results in the following PartitionList:
         // # {
         // #     [ 'H', 'e' ]
         // # }
         // #
-        // # Third 'PartitionList_AddRange(...)' invocation results in the following PartitionList:
+        // # Third 'PartitionList_Add(...)' invocation results in the following PartitionList:
         // # {
         // #     [ 'H', 'e', 'l' ]
         // # }
         // # With 3 invocations having been performed, I believe the pattern is well established.
         // # we are just adding each character one after another into the first partition.
         // #
-        // # Fifth 'PartitionList_AddRange(...)' invocation and something unique happens:
-        // # UPON-invoking 'PartitionList_AddRange(...)' the PartitionList looks as follows:
+        // # Fifth 'PartitionList_Add(...)' invocation and something unique happens:
+        // # UPON-invoking 'PartitionList_Add(...)' the PartitionList looks as follows:
         // # {
         // #     [ 'H', 'e', 'l', 'l', 'o' ]
         // # }
@@ -139,16 +136,16 @@ public partial class TextEditorModelModifierTests
         // #
         // # Now that space was added to store more characters, the fifth invocation can return to the pattern
         // # that was seen in the first, second, and third invocations.
-        // # Fifth 'PartitionList_AddRange(...)' invocation results in the following PartitionList:
+        // # Fifth 'PartitionList_Add(...)' invocation results in the following PartitionList:
         // # {
         // #     [ 'H', 'e', 'l', 'l', 'o' ],
         // #     [ ' ' ]
         // # }
         // #
         // # The previous example glosses over some details though.
-        // # We can use the Sixth invocation of 'PartitionList_AddRange(...)' to illustrate this.
+        // # We can use the Sixth invocation of 'PartitionList_Add(...)' to illustrate this.
         // # The Sixth invocation needs to add its character to the second partition.
-        // # How would 'PartitionList_AddRange(...)' determine which partition receives the character?
+        // # How would 'PartitionList_Add(...)' determine which partition receives the character?
         // # In the case of 'Add' methods, one expects the entry to be added at the end of the list.
         // # So this results in a degree of simplification.
         // #
@@ -202,10 +199,10 @@ public partial class TextEditorModelModifierTests
         // # Where the inter-partion calculation is to move
         // # a character from one partition to another.
         // #
-        // # We should go back in time, to the fifth invocation of 'PartitionList_AddRange(...)'.
+        // # We should go back in time, to the fifth invocation of 'PartitionList_Add(...)'.
         // # It was the invocation where we added the second partition. 
         // #
-        // # Once again we are here, UPON-invoking 'PartitionList_AddRange(...)' the PartitionList looks as follows:
+        // # Once again we are here, UPON-invoking 'PartitionList_Add(...)' the PartitionList looks as follows:
         // # {
         // #     [ 'H', 'e', 'l', 'l', 'o' ]
         // # }
@@ -247,8 +244,8 @@ public partial class TextEditorModelModifierTests
         // So I'm going to do exactly that:
     }
 
-    [Fact]
-    public void PartitionList_Add_SHOULD_CREATE_MORE_SPACE_IF_NEEDED()
+    [Obsolete($"See: {nameof(PartitionList_Add_SHOULD_CREATE_MORE_SPACE_IF_NEEDED_V2)}"), Fact]
+    public void PartitionList_Add_SHOULD_CREATE_MORE_SPACE_IF_NEEDED_OBSOLETE()
     {
         var fileExtension = ExtensionNoPeriodFacts.TXT;
         var resourceUri = new ResourceUri("/unitTesting.txt");
@@ -351,5 +348,49 @@ public partial class TextEditorModelModifierTests
         Assert.Equal(
             new string(modifier.ContentList.Select(x => x.Value).ToArray()),
             sourceText);
+    }
+
+    [Fact]
+    public void PartitionList_Add_SHOULD_CREATE_MORE_SPACE_IF_NEEDED_V2()
+    {
+        // (2024-02-29) Plan to add text editor partitioning #Step 1,400:
+        // --------------------------------------------------
+        // Now that I've written the following tests:
+        //     -Not enough space, so add a new partition.
+        //         -PartitionList_Add_SHOULD_CREATE_MORE_SPACE_IF_NEEDED();
+        //     -A partition was found which has available space, so add the 'richCharacter' to it.
+        //         --PartitionList_Add_SHOULD_INSERT_INTO_PARTITION_WITH_AVAILABLE_SPACE();
+        //
+        // I want to change the logic for adding a new partition when more space is needed.
+        // I want the partition which is full, to split its content amongst itself, and the newly created partition.
+        // This way, inter-partition calculations can be minimized, upon successive insertions to an initially-full partition.
+        // 
+        // I previously have used an example of invoking 'PartitionList_AddRange(...)',
+        // in which I presume AddRange to be a loop that invokes 'PartitionList_Add(...)',
+        // for each character.
+        //
+        // PartitionList.SetPartitionSize(5);
+        // PartitionList_AddRange("Hello World!");
+        //
+        // # If we skip to the fifth invocation of 'PartitionList_Add(...)'
+        // # Then, the PartitionList looks as follows:
+        // # {
+        // #     [ 'H', 'e', 'l', 'l', 'o' ]
+        // # }
+        // # 
+        // # I want to change the 'create more space' logic, to result in a PartitionList that looks as follows:
+        // # {
+        // #     [ 'H', 'e', 'l' ],
+        // #     [ 'l', 'o' ]
+        // # }
+        // 
+        // I modified the original 'PartitionList_Add_SHOULD_CREATE_MORE_SPACE_IF_NEEDED'
+        // unit test to include the 'Obsolete' attribute like so:
+        // [Obsolete($"See: {nameof(PartitionList_Add_SHOULD_CREATE_MORE_SPACE_IF_NEEDED_V2)}"), Fact]
+        //
+        // Once V2 is finished, I'll go back and delete the original.
+        //
+        // 
+        //
     }
 }
