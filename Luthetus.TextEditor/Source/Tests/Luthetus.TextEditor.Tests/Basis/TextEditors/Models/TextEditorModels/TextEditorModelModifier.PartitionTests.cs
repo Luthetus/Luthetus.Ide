@@ -244,55 +244,6 @@ public partial class TextEditorModelModifierTests
         // So I'm going to do exactly that:
     }
 
-    [Obsolete($"See: {nameof(PartitionList_Add_SHOULD_CREATE_MORE_SPACE_IF_NEEDED_V2)}"), Fact]
-    public void OBSOLETE_PartitionList_Add_SHOULD_CREATE_MORE_SPACE_IF_NEEDED()
-    {
-        var fileExtension = ExtensionNoPeriodFacts.TXT;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
-        var resourceLastWriteTime = DateTime.UtcNow;
-
-        var model = new TextEditorModel(
-             resourceUri,
-             resourceLastWriteTime,
-             fileExtension,
-             string.Empty,
-             null,
-             null,
-             partitionSize: 5);
-
-        var modifier = new TextEditorModelModifier(model);
-
-        // Assert that only one partition exists at the start.
-        Assert.Single(modifier.PartitionList);
-
-        // Assert that more space will be needed.
-        var sourceText = "Hello World!";
-        Assert.True(sourceText.Length > model.PartitionSize);
-
-        for (int i = 0; i < sourceText.Length; i++)
-        {
-            if (i == model.PartitionSize)
-            {
-                // Assert that up until this loop iteration only 1 partition has existed.
-                Assert.Single(modifier.PartitionList);
-            }
-
-            var richCharacter = new RichCharacter { Value = sourceText[i] };
-            modifier.PartitionList_Add(richCharacter);
-
-            if (i == model.PartitionSize)
-            {
-                // Assert that this loop iteration caused another partition to be made
-                Assert.Equal(2, modifier.PartitionList.Count);
-            }
-        }
-
-        // Assert that the output is correct.
-        Assert.Equal(
-            new string(modifier.ContentList.Select(x => x.Value).ToArray()),
-            sourceText);
-    }
-
     [Fact]
     public void PartitionList_Add_SHOULD_INSERT_INTO_PARTITION_WITH_AVAILABLE_SPACE()
     {
