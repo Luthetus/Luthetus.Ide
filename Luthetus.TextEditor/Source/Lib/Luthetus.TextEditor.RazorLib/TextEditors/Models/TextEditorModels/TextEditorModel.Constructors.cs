@@ -84,6 +84,17 @@ public partial class TextEditorModel
         //
         // For this reasoning, I'm going to remove all the code statements
         // of 'ContentList = contentList;'
+        //
+        // (2024-02-29) Plan to add text editor partitioning #Step 1,500:
+        // --------------------------------------------------
+        // When invoking this constructor, one is finalizing their modifications.
+        // Therefore, the ContentList is too finalized.
+        // So, instead of recalculating each time the getter is referenced,
+        // the TextEditorModel should set its ContentList.
+        // 
+        // We need to keep the TextEditorModelModifier using an expression bound property however,
+        // since its content is constantly changing.
+        ContentList = contentList;
         PartitionSize = partitionSize;
         PartitionList = partitionList;
 		EditBlocksList = editBlocksList;
