@@ -30,8 +30,11 @@ public partial class TextEditorModelModifier
 
     public TextEditorModelModifier(TextEditorModel textEditorModel)
     {
-        _textEditorModel = textEditorModel;
+        if (textEditorModel.PartitionSize < 2)
+            throw new ApplicationException($"{nameof(textEditorModel)}.{nameof(PartitionSize)} must be >= 2");
+
         PartitionSize = textEditorModel.PartitionSize;
+        _textEditorModel = textEditorModel;
         _partitionList = _textEditorModel.PartitionList;
     }
 

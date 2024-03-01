@@ -245,7 +245,7 @@ public partial class TextEditorModelModifierTests
     }
 
     [Obsolete($"See: {nameof(PartitionList_Add_SHOULD_CREATE_MORE_SPACE_IF_NEEDED_V2)}"), Fact]
-    public void PartitionList_Add_SHOULD_CREATE_MORE_SPACE_IF_NEEDED_OBSOLETE()
+    public void OBSOLETE_PartitionList_Add_SHOULD_CREATE_MORE_SPACE_IF_NEEDED()
     {
         var fileExtension = ExtensionNoPeriodFacts.TXT;
         var resourceUri = new ResourceUri("/unitTesting.txt");
@@ -388,9 +388,64 @@ public partial class TextEditorModelModifierTests
         // unit test to include the 'Obsolete' attribute like so:
         // [Obsolete($"See: {nameof(PartitionList_Add_SHOULD_CREATE_MORE_SPACE_IF_NEEDED_V2)}"), Fact]
         //
+        // As well, I changed the original test's method name to have the prefix "OBSOLETE_"
+        //
         // Once V2 is finished, I'll go back and delete the original.
-        //
-        // 
-        //
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+
+        var model = new TextEditorModel(
+             resourceUri,
+             resourceLastWriteTime,
+             fileExtension,
+             string.Empty,
+             null,
+             null,
+             partitionSize: 5);
+
+        var modifier = new TextEditorModelModifier(model);
+
+        // Assert that only one partition exists at the start.
+        Assert.Single(modifier.PartitionList);
+
+        // Assert that more space will be needed.
+        var sourceText = "Hello World!";
+        Assert.True(sourceText.Length > model.PartitionSize);
+
+        for (int i = 0; i < sourceText.Length; i++)
+        {
+            if (i == model.PartitionSize)
+            {
+                // Assert that up until this loop iteration only 1 partition has existed.
+                Assert.Single(modifier.PartitionList);
+            }
+
+            var richCharacter = new RichCharacter { Value = sourceText[i] };
+            modifier.PartitionList_Add(richCharacter);
+
+            if (i == model.PartitionSize)
+            {
+                // Assert that this loop iteration caused another partition to be made
+                Assert.Equal(2, modifier.PartitionList.Count);
+
+                // Furthermore, assert that the first partition contains
+                // (PARTITION_SIZE / 2 + (PARTITION_SIZE % 2)) entries, and the second partition contains
+                // (PARTITION_SIZE / 2)
+                Assert.Equal(
+                    model.PartitionSize / 2 + (model.PartitionSize % 2),
+                    modifier.PartitionList.First().Count);
+
+                Assert.Equal(
+                    model.PartitionSize / 2,
+                    modifier.PartitionList.Last().Count);
+            }
+        }
+
+        // Assert that the output is correct.
+        Assert.Equal(
+            new string(modifier.ContentList.Select(x => x.Value).ToArray()),
+            sourceText);
     }
 }

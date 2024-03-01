@@ -1,5 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
 using System.Collections.Immutable;
+using System.Reflection;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
@@ -21,14 +22,25 @@ public partial class TextEditorModelModifier
                 // But, we must first check if it has available space.
                 if (partition.Count >= PartitionSize)
                 {
-                    indexOfPartitionWithAvailableSpace = i + 1;
-                    relativePositionIndex = 0;
-                    PartitionList_InsertNewPartition(indexOfPartitionWithAvailableSpace);
-                    break;
-                    // (2024-02-29) Plan to add text editor partitioning #Step 1,200:
+                    PartitionList_SplitIntoTwoPartitions(i);
+                    // (2024-02-29) Plan to add text editor partitioning #Step 1,400:
                     // --------------------------------------------------
-                    // Here, I inserted a new partition, because the current partition did not have available space.
-                    // But, what if there were an existing 'next' partition, which had available space?
+                    // The method 'PartitionList_SplitIntoTwoPartitions(...)' is presumed
+                    // to result in the partition at index 'i' to have available space.
+                    //
+                    // If the PARTITION_SIZE were '1', then
+                    // The first partition would be repopulated with the same content it original had.
+                    // This is because 'PartitionList_SplitIntoTwoPartitions(...)' currently
+                    // performs an even split into 2, then adds the remainder to the first partition.
+                    // So a PARTITION_SIZE is an even split of '0', and a remainder of '1'.
+                    //
+                    // For this reason, I am going to add code to the constructor, where
+                    // if the (PARTITION_SIZE < 2) I will
+                    // 'throw new ApplicationException($"{nameof(PARTITION_SIZE)} must be >= 2")'
+                    //
+                    // Furthermore, because the partition at index 'i' now has available space,
+                    // one can complete this if statement and return to the outer code block,
+                    // as if the partition at index 'i' had available space from the start.
                 }
 
                 relativePositionIndex = globalPositionIndex - runningCount;
@@ -89,6 +101,37 @@ public partial class TextEditorModelModifier
     private void PartitionList_InsertNewPartition(int partitionIndex)
     {
         _partitionList = _partitionList.Insert(partitionIndex, ImmutableList<RichCharacter>.Empty);
+    }
+    
+    private void PartitionList_SplitIntoTwoPartitions(int partitionIndex)
+    {
+        // (2024-02-29) Plan to add text editor partitioning #Step 1,400:
+        // --------------------------------------------------
+        // This method will change a PartitionList of:
+        // PartitionList.SetPartitionSize(5);
+        // # {
+        // #     [ 'H', 'e', 'l', 'l', 'o' ]
+        // # }
+        //
+        // To a partitionList of:
+        // PartitionList.SetPartitionSize(5);
+        // # {
+        // #     [ 'H', 'e', 'l' ],
+        // #     [ 'l', 'o' ]
+        // # }
+
+        var originalPartition = _partitionList[partitionIndex];
+
+        var firstUnevenSplit = PartitionSize / 2 + (PartitionSize % 2);
+        var secondUnevenSplit = PartitionSize / 2;
+
+        _partitionList = _partitionList.SetItem(
+            partitionIndex,
+            ImmutableList<RichCharacter>.Empty.AddRange(originalPartition.Take(firstUnevenSplit)));
+
+        _partitionList = _partitionList.Insert(
+            partitionIndex + 1,
+            ImmutableList<RichCharacter>.Empty.AddRange(originalPartition.Skip(firstUnevenSplit).Take(secondUnevenSplit)));
     }
 
     public void PartitionList_InsertRange(int globalPositionIndex, IEnumerable<RichCharacter> richCharacterList)
