@@ -167,7 +167,79 @@ public partial class TextEditorModelModifierTests
         // # Insertiion of the comma character results in the following PartitionList:
         // # {
         // #     [ 'H', 'e', 'l', 'l', 'o' ],
-        // #     [ ',', ' ' ] // Initially this new partition is empty.
+        // #     [ ',', ' ' ]
         // # }
+        // # 
+        // # If we insert at index '4' the letter 'z', what occurs?
+        // # 
+        // # Well, the index '4' resides on the first partition.
+        // # And, the first partition is full.
+        // # So, should we once again, create a new partition?
+        // # Perhaps, we could move the letter 'o' to the first index of the second partition.
+        // # If we were to do this it results in the following PartitionList:
+        // # {
+        // #     [ 'H', 'e', 'l', 'l' ],
+        // #     [ 'o', ',', ' ' ]
+        // # }
+        // # 
+        // # Now we have space on the first partition to add the 'z' at index 4.
+        // # If we were to do this it results in the following PartitionList:
+        // # {
+        // #     [ 'H', 'e', 'l', 'l', 'z' ],
+        // #     [ 'o', ',', ' ' ]
+        // # }
+        // # 
+        // # While this algorithm worked, we can consider the worst case scenaro.
+        // # What happens when a user repeatedly type into the first partition?
+        // # We have an algorithm where every typed character results in
+        // # an inter-partition calculation.
+        // # 
+        // # Where the inter-partion calculation is to move
+        // # a character from one partition to another.
+        // #
+        // # We should go back in time, to the fifth invocation of 'PartitionList_AddRange(...)'.
+        // # It was the invocation where we added the second partition. 
+        // #
+        // # Once again we are here, UPON-invoking 'PartitionList_AddRange(...)' the PartitionList looks as follows:
+        // # {
+        // #     [ 'H', 'e', 'l', 'l', 'o' ]
+        // # }
+        // # 
+        // # But, how can we improve the efficiency of the partitions?
+        // # That is to say, how can we decrease inter-partition calculations.
+        // #
+        // # My thought is to still add a new partition like we did.
+        // # But, one step further, is to at the same time, split the
+        // # contents of partition one amongst itself, and the new partition.
+        // # If we were to do this the PartitionList looks as follows:
+        // # {
+        // #     [ 'H', 'e', 'l' ],
+        // #     [ 'l', 'o' ]
+        // # }
+        // #
+        // # An even split could not be made here, since the partition size is 5 and won't divide by 2.
+        // # But, with the split we have, we see that now there are 2 characters which can be typed into
+        // # the first partition, without resulting in an inter-partition calculation.
+        // # And, for the second partition there are 3 characters available.
+        // #
+        // # Contrast this with the first way the new partition was handled.
+        // # In that scenario, every single time a user typed into the first partition,
+        // # and inter-partition calculation needed to be performed.
+        // #
+        // # Furthermore, a partition size of '5' is not a realistic partition size.
+        // # This size is only chosen to aid in illustration.
+        // # I imagine a realtistic partition size to be 5,000 (although I'm not quite sure what it would be myself).
+        // 
+        // Moving on past the example, let's revisit the scenarios that we want to make unit tests for:
+        //     -Not enough space, so add a new partition.
+        //         -PartitionList_Add_SHOULD_CREATE_MORE_SPACE_IF_NEEDED();
+        //     -A partition was found which has available space, so add the 'richCharacter' to it.
+        //         --PartitionList_Add_SHOULD_INSERT_INTO_PARTITION_WITH_AVAILABLE_SPACE();
+        //
+        // I often like to start with a naive, and simple solution (provided that the naive implementation
+        // provides a malleable foundation on which the more complex solution can be built).
+        //
+        // So I'm going to do exactly that:
+
     }
 }
