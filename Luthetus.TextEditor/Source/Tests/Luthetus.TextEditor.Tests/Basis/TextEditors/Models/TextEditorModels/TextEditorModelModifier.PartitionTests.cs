@@ -67,7 +67,107 @@ public partial class TextEditorModelModifierTests
         // We can write out the cases such that, if there isn't enough space, we 'secretly'
         // add a new partition. Then we fall into the second case, 'a partition was found which has space available'.
         // The second case doesn't need to know we had just added that partition.
-
-        
+        //
+        // (2024-02-29) Plan to add text editor partitioning #Step 1,300:
+        // --------------------------------------------------
+        // I want to write some unit tests.
+        //
+        // What are the situation that can occur when invoking the 'PartitionList_Add' method?
+        //     -Not enough space, so add a new partition.
+        //         -PartitionList_Add_SHOULD_CREATE_MORE_SPACE_IF_NEEDED();
+        //     -A partition was found which has available space, so add the 'richCharacter' to it.
+        //         --PartitionList_Add_SHOULD_INSERT_INTO_PARTITION_WITH_AVAILABLE_SPACE();
+        //
+        // I want to add another test, because it should be asserted that the 'PartitionList_Add' method
+        // correctly identifies the partition at which the 'richCharacter' should be inserted.
+        //
+        // Another way of saying this is: the 'PartitionList_Add' needs to map a 'globalPositionIndex'
+        // to a 'partition'. And furthermore, calculate the 'relativePositionIndex' where relativity is
+        // to the 'partition'.
+        //
+        // Example (pseudo code):
+        // --------
+        //
+        // PartitionList.SetPartitionSize(5);
+        // # This results in the following PartitionList:
+        // # {
+        // #     [] // This partition is initially empty.
+        // # }
+        //
+        // PartitionList_AddRange("Hello World!");
+        // # The string "Hello World!" is 12 characters long.
+        // # So, we can break down the 'PartitionList_AddRange(...)' invocation to
+        //     # 12 invocations of 'PartitionList_Add(...)', one for each character in the string.
+        // #
+        // # First 'PartitionList_AddRange(...)' invocation results in the following PartitionList:
+        // # {
+        // #     [ 'H' ]
+        // # }
+        // # Once the pattern is well established I'll skip ahead to some unique invocations of 'PartitionList_Add(...)'.
+        // #
+        // # Second 'PartitionList_AddRange(...)' invocation results in the following PartitionList:
+        // # {
+        // #     [ 'H', 'e' ]
+        // # }
+        // #
+        // # Third 'PartitionList_AddRange(...)' invocation results in the following PartitionList:
+        // # {
+        // #     [ 'H', 'e', 'l' ]
+        // # }
+        // # With 3 invocations having been performed, I believe the pattern is well established.
+        // # we are just adding each character one after another into the first partition.
+        // #
+        // # Fifth 'PartitionList_AddRange(...)' invocation and something unique happens:
+        // # UPON-invoking 'PartitionList_AddRange(...)' the PartitionList looks as follows:
+        // # {
+        // #     [ 'H', 'e', 'l', 'l', 'o' ]
+        // # }
+        // #
+        // # The issue arises however, that the partition size is '5'.
+        // # So, no more space is available in the first partition.
+        // # The fifth invocation of needs to create a new partition and insert it after the first.
+        // # This results in the following PartitionList:
+        // # {
+        // #     [ 'H', 'e', 'l', 'l', 'o' ],
+        // #     [ ] // Initially this new partition is empty.
+        // # }
+        // #
+        // # Now that space was added to store more characters, the fifth invocation can return to the pattern
+        // # that was seen in the first, second, and third invocations.
+        // # Fifth 'PartitionList_AddRange(...)' invocation results in the following PartitionList:
+        // # {
+        // #     [ 'H', 'e', 'l', 'l', 'o' ],
+        // #     [ ' ' ]
+        // # }
+        // #
+        // # The previous example glosses over some details though.
+        // # We can use the Sixth invocation of 'PartitionList_AddRange(...)' to illustrate this.
+        // # The Sixth invocation needs to add its character to the second partition.
+        // # How would 'PartitionList_AddRange(...)' determine which partition receives the character?
+        // # In the case of 'Add' methods, one expects the entry to be added at the end of the list.
+        // # So this results in a degree of simplification.
+        // #
+        // # But, given the output from the fifth invocation how would one insert at index 5, a comma character?
+        // # Well, the index '5' divided by the partition size of '5' is '1'.
+        // # So, we can put the text in the partition with index of '1'.
+        // # Furthermore, the index '5' modulo the partition size '5' is 0. So,
+        // # the relative index within the second partition at which to insert the comma is '0'.
+        // #
+        // # We made a presumption though. The presumption is that all partitions will be filled except for the
+        // # last partition in PartitionList.
+        // #
+        // # If out presumption is true, then the partitions wouldn't be quite as useful.
+        // # By having each partition, NOT, filled. Then one can write to a partition,
+        // # and only need to re-calculate metadata for that one partition which was changed.
+        // #
+        // # Constantly, creating new partitions, or any other inter-partition calculation,
+        // # is costly. Avoiding inter-partition calculations is the goal.
+        // #
+        // # I'll write out the result of having added the comma character.
+        // # Insertiion of the comma character results in the following PartitionList:
+        // # {
+        // #     [ 'H', 'e', 'l', 'l', 'o' ],
+        // #     [ ',', ' ' ] // Initially this new partition is empty.
+        // # }
     }
 }
