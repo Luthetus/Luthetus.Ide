@@ -427,4 +427,39 @@ public partial class TextEditorModelModifierTests
             new string(modifier.ContentList.Select(x => x.Value).ToArray()),
             sourceText);
     }
+
+    [Fact]
+    public void Aaa()
+    {
+        // (2024-02-29) Plan to add text editor partitioning #Step 1,600:
+        // --------------------------------------------------
+        // I ran the Photino.Ide host to see how things were.
+        //
+        // It seems there is a 'backspace' bug when crossing the boundaries of one
+        // partition into the other. But I'm not sure...
+        //
+        // I presume 'delete' would have the same problem, but in the opposite direction.
+        //
+        // A better wording might be to say, "If one has their cursor in the second partion,
+        // at the 0th index of that partition. Then they hit 'backspace'. I believe nothing will
+        // occur."
+        //
+        // So, the user has their cursor in the second partition, but the keyboard event results
+        // in removal of a character in the previous partition.
+        //
+        // Then, it also is presumed that if the user has their cursor at the end of the first partition,
+        // and they hit 'delete', that nothing will occur, just the same.
+        // 
+        // Because they had their cursor in the first partition, but the keyboard event results
+        // in removal of a character in the next partition.
+        //
+        // All in all, I think this boils down to making the following tests:
+        //     -BACKSPACE_REMOVES_CHARACTER_FROM_PREVIOUS_PARTITION()
+        //     -DELETE_REMOVES_CHARACTER_FROM_NEXT_PARTITION()
+        //     -SELECTING_FIRST_CHARACTER_OF_PARTITION_THEN_BACKSPACE_REMOVES_FIRST_CHARACTER()
+        //     -SELECTING_LAST_CHARACTER_OF_PARTITION_THEN_DELETE_REMOVES_LAST_CHARACTER()
+        //     -SELECTION_THAT_SPANS_MORE_THAN_ONE_PARTITION_IS_REMOVED_PROPERLY_WITH_BACKSPACE()
+        //     -SELECTION_THAT_SPANS_MORE_THAN_ONE_PARTITION_IS_REMOVED_PROPERLY_WITH_DELETE()
+        // 
+    }
 }
