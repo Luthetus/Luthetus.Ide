@@ -117,7 +117,7 @@ public class ThrottleController
     private CancellationTokenSource _throttleCancellationTokenSource = new();
     private Task _throttleDelayTask = Task.CompletedTask;
     private Task _previousWorkItemTask = Task.CompletedTask;
-    private SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+    private SemaphoreSlim _semaphoreSlim = new(1, 1);
 
     public void FireAndForget(IThrottleEvent throttleEvent)
     {
@@ -126,7 +126,7 @@ public class ThrottleController
         if (_throttleEventConcurrentQueue.Count > 1)
             return;
 
-        _ = Task.Run(DequeueAsync);
+        _ = Task.Run(DequeueAsync).ConfigureAwait(false);
     }
 
     private async Task DequeueAsync()
@@ -151,10 +151,18 @@ public class ThrottleController
                 if (_throttleEventConcurrentQueue.TryDequeue(out var oldEvent) && oldEvent is not null)
                 {
                     while (oldEvent.ConsecutiveEntryFunc is not null &&
-                            _throttleEventConcurrentQueue.TryDequeue(out var recentEvent) && recentEvent is not null &&
+                            _throttleEventConcurrentQueue.TryPeek(out var recentEvent) && recentEvent is not null &&
                                 oldEvent.Id == recentEvent.Id)
                     {
-                        oldEvent = oldEvent.ConsecutiveEntryFunc.Invoke((oldEvent, recentEvent));
+                        var consecutiveResult = oldEvent.ConsecutiveEntryFunc.Invoke((oldEvent, recentEvent));
+                        
+                        if (consecutiveResult is not null)
+                        {
+                            // Because the 'ConsecutiveEntryFunc' function successfully merged
+                            // the two work items, then dequeue the recentEvent since it will be handled.
+                            _throttleEventConcurrentQueue.TryDequeue(out recentEvent);
+                            oldEvent = consecutiveResult;
+                        }
                     }
 
                     _throttleCancellationTokenSource.Cancel();

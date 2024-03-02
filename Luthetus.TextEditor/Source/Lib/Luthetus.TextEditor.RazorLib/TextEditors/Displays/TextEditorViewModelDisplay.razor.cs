@@ -31,6 +31,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.Common.Tests.Basis.Reactives.Models;
 using System.Security.Cryptography;
+using Luthetus.Common.RazorLib.Commands.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -253,22 +254,65 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             await CursorDisplay.FocusAsync().ConfigureAwait(false);
     }
 
-    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private bool CheckIfKeyboardEventArgsShouldReturnEarly(KeyboardEventArgs keyboardEventArgs)
     {
         if (keyboardEventArgs.Key == "Shift" ||
             keyboardEventArgs.Key == "Control" ||
             keyboardEventArgs.Key == "Alt" ||
             keyboardEventArgs.Key == "Meta")
         {
-            return;
+            return false;
         }
 
         if (keyboardEventArgs.CtrlKey && keyboardEventArgs.AltKey)
         {
             // TODO: This if is a hack to fix the keybind: { Ctrl + Alt + S } causing...
             // ...an 's' to be written out when using Vim keymap.
-            return;
+            return false;
         }
+
+        return true;
+    }
+
+    private bool CheckIfKeyboardEventArgsMapsToCommand(
+        KeyboardEventArgs keyboardEventArgs,
+        bool hasSelection,
+        out Key<KeymapLayer> layerKey,
+        out KeymapArgument keymapArgument,
+        out bool success,
+        out CommandNoType command)
+    {
+        layerKey = ((ITextEditorKeymap)TextEditorService.OptionsStateWrap.Value.Options.Keymap!).GetLayer(hasSelection);
+
+        keymapArgument = keyboardEventArgs.ToKeymapArgument() with
+        {
+            LayerKey = layerKey
+        };
+
+        success = TextEditorService.OptionsStateWrap.Value.Options.Keymap!.Map.TryGetValue(
+            keymapArgument,
+            out command);
+
+        if (!success && keymapArgument.LayerKey != TextEditorKeymapDefaultFacts.DefaultLayer.Key)
+        {
+            _ = TextEditorService.OptionsStateWrap.Value.Options.Keymap!.Map.TryGetValue(
+                keymapArgument with
+                {
+                    LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key,
+                },
+                out command);
+        }
+
+        if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keyboardEventArgs.Code && keyboardEventArgs.ShiftKey)
+            command = TextEditorCommandDefaultFacts.NewLineBelow;
+
+        return command is not null;
+    }
+    
+    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    {
+        if (CheckIfKeyboardEventArgsShouldReturnEarly(keyboardEventArgs))
+            return;
 
         // TODO: I need to figure out how to ensure a TextEditorModel which is available from...
         // ...within a 'TextEditorService.Post' invocation via closure is not used when one...
@@ -279,9 +323,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (resourceUri is null || viewModelKey is null)
             return;
 
-        _throttleControllerUiEvents.FireAndForget(new ThrottleEvent<byte>(
+        _throttleControllerUiEvents.FireAndForget(new ThrottleEvent<KeyboardEventArgs>(
             nameof(HandleContentOnMouseMove),
             TimeSpan.FromMilliseconds(25),
+            0,
             throttleDelayCancellationToken =>
             {
                 TextEditorService.Post(
@@ -301,29 +346,14 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                             return;
 
                         var hasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
-                        var layerKey = ((ITextEditorKeymap)TextEditorService.OptionsStateWrap.Value.Options.Keymap!).GetLayer(hasSelection);
 
-                        var keymapArgument = keyboardEventArgs.ToKeymapArgument() with
-                        {
-                            LayerKey = layerKey
-                        };
-
-                        var success = TextEditorService.OptionsStateWrap.Value.Options.Keymap!.Map.TryGetValue(
-                            keymapArgument,
+                        CheckIfKeyboardEventArgsMapsToCommand(
+                            keyboardEventArgs,
+                            hasSelection,
+                            out var layerKey,
+                            out var keymapArgument,
+                            out var success,
                             out var command);
-
-                        if (!success && keymapArgument.LayerKey != TextEditorKeymapDefaultFacts.DefaultLayer.Key)
-                        {
-                            _ = TextEditorService.OptionsStateWrap.Value.Options.Keymap!.Map.TryGetValue(
-                                keymapArgument with
-                                {
-                                    LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key,
-                                },
-                                out command);
-                        }
-
-                        if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keyboardEventArgs.Code && keyboardEventArgs.ShiftKey)
-                            command = TextEditorCommandDefaultFacts.NewLineBelow;
 
                         if (KeyboardKeyFacts.IsMovementKey(keyboardEventArgs.Key) && command is null)
                         {
@@ -405,6 +435,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                         }
 
                         var afterOnKeyDownAsyncFactory = ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory ?? HandleAfterOnKeyDownAsyncFactory;
+                        var afterOnKeyDownAsyncFactory = ViewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory ?? HandleAfterOnKeyDownRangeAsyncFactory;
 
                         var cursorDisplay = CursorDisplay;
 
@@ -422,7 +453,17 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 return Task.CompletedTask;
             },
-            null));
+            tuple =>
+            {
+                if (tuple.RecentEvent is ThrottleEvent<KeyboardEventArgs> recentEventWithType &&
+                    tuple.OldEvent is ThrottleEvent<KeyboardEventArgs> oldEventWithType)
+                {
+                    if (recentEventWithType.Item.)
+                    {
+
+                    }
+                }
+            }));
     }
 
     private void HandleOnContextMenuAsync()
@@ -439,8 +480,9 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             return;
 
         _throttleControllerUiEvents.FireAndForget(new ThrottleEvent<byte>(
-            nameof(HandleContentOnMouseMove),
+            nameof(HandleContentOnDoubleClick),
             TimeSpan.FromMilliseconds(25),
+            0,
             _ =>
             {
                 TextEditorService.Post(
@@ -527,8 +569,9 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             return;
 
         _throttleControllerUiEvents.FireAndForget(new ThrottleEvent<byte>(
-            nameof(HandleContentOnMouseMove),
+            nameof(HandleContentOnMouseDown),
             TimeSpan.FromMilliseconds(25),
+            0,
             _ =>
             {
                 TextEditorService.Post(
@@ -654,6 +697,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             _throttleControllerUiEvents.FireAndForget(new ThrottleEvent<byte>(
                 nameof(HandleContentOnMouseMove),
                 TimeSpan.FromMilliseconds(25),
+                0,
                 _ =>
                 {
                     TextEditorService.Post(
@@ -833,6 +877,86 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 await setTextEditorMenuKind.Invoke(TextEditorMenuKind.AutoCompleteMenu, true).ConfigureAwait(false);
             }
             else if (IsSyntaxHighlightingInvoker(keyboardEventArgs))
+            {
+                _throttleApplySyntaxHighlighting.FireAndForget(async _ =>
+                {
+                    // The TextEditorModel may have been changed by the time this logic is ran and
+                    // thus the local variables must be updated accordingly.
+                    var model = GetModel();
+                    var viewModel = GetViewModel();
+
+                    if (model is not null)
+                    {
+                        await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
+
+                        if (viewModel is not null && model.CompilerService is not null)
+                            model.CompilerService.ResourceWasModified(model.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
+                    }
+                });
+            }
+        };
+    }
+    
+    public TextEditorEdit HandleAfterOnKeyDownRangeAsyncFactory(
+        ResourceUri resourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        List<KeyboardEventArgs> keyboardEventArgsList,
+        Func<TextEditorMenuKind, bool, Task> setTextEditorMenuKind)
+    {
+        return async editContext =>
+        {
+            var modelModifier = editContext.GetModelModifier(resourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (primaryCursorModifier is null)
+                return;
+
+            var seenIsAutocompleteIndexerInvoker = false;
+            var seenIsAutocompleteMenuInvoker = false;
+            var seenIsSyntaxHighlightingInvoker = false;
+
+            foreach (var keyboardEventArgs in keyboardEventArgsList)
+            {
+                if (!seenIsAutocompleteIndexerInvoker && IsAutocompleteIndexerInvoker(keyboardEventArgs))
+                    seenIsAutocompleteIndexerInvoker = true;
+
+                if (!seenIsAutocompleteMenuInvoker && IsAutocompleteMenuInvoker(keyboardEventArgs))
+                    seenIsAutocompleteMenuInvoker = true;
+                else if (!seenIsSyntaxHighlightingInvoker && IsSyntaxHighlightingInvoker(keyboardEventArgs))
+                    seenIsSyntaxHighlightingInvoker = true;
+            }
+
+            if (seenIsAutocompleteIndexerInvoker)
+            {
+                _ = Task.Run(async () =>
+                {
+                    if (primaryCursorModifier.ColumnIndex > 0)
+                    {
+                        // All keyboardEventArgs that return true from "IsAutocompleteIndexerInvoker"
+                        // are to be 1 character long, as well either specific whitespace or punctuation.
+                        // Therefore 1 character behind might be a word that can be indexed.
+                        var word = modelModifier.ReadPreviousWordOrDefault(
+                            primaryCursorModifier.RowIndex,
+                            primaryCursorModifier.ColumnIndex);
+
+                        if (word is not null)
+                            await AutocompleteIndexer.IndexWordAsync(word).ConfigureAwait(false);
+                    }
+                }).ConfigureAwait(false);
+            }
+
+            if (seenIsAutocompleteMenuInvoker)
+            {
+                await setTextEditorMenuKind.Invoke(TextEditorMenuKind.AutoCompleteMenu, true).ConfigureAwait(false);
+            }
+
+            if (seenIsSyntaxHighlightingInvoker)
             {
                 _throttleApplySyntaxHighlighting.FireAndForget(async _ =>
                 {

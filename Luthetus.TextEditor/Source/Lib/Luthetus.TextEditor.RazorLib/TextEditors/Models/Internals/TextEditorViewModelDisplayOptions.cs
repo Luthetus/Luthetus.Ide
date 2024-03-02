@@ -30,6 +30,22 @@ public class TextEditorViewModelDisplayOptions
         TextEditorEdit>?
         AfterOnKeyDownAsyncFactory { get; set; }
     /// <summary>
+    /// If left null, the default <see cref="HandleAfterOnKeyDownRangeAsync"/> will be used.
+    /// 
+    /// If a batch handling of KeyboardEventArgs is performed, then this method
+    /// will be invoked as opposed to <see cref="AfterOnKeyDownAsyncFactory"/>,
+    /// and a list of <see cref="KeyboardEventArgs"/> will be provided,
+    /// sorted such that the first index represents the first event fired,
+    /// and the last index represents the last event fired.
+    /// </summary>
+    public Func<
+        ResourceUri,
+        Key<TextEditorViewModel>,
+        List<KeyboardEventArgs>,
+        Func<TextEditorMenuKind, bool, Task>,
+        TextEditorEdit>?
+        AfterOnKeyDownRangeAsyncFactory { get; set; }
+    /// <summary>
     /// If set to false the <see cref="TextEditorHeader"/> will NOT render above the text editor.
     /// </summary>
     public bool IncludeHeaderHelperComponent { get; set; } = true;
