@@ -6,8 +6,8 @@ public class ThrottleEvent<T> : IThrottleEvent where T : notnull
         string id,
         TimeSpan throttleTimeSpan,
         T item,
-        Func<CancellationToken, Task> workItem,
-        Func<(IThrottleEvent OldEvent, IThrottleEvent RecentEvent), IThrottleEvent>? consecutiveEntryFunc)
+        Func<IThrottleEvent, CancellationToken, Task> workItem,
+        Func<(IThrottleEvent OldEvent, IThrottleEvent RecentEvent), IThrottleEvent?>? consecutiveEntryFunc)
     {
         Id = id;
         ThrottleTimeSpan = throttleTimeSpan;
@@ -20,8 +20,8 @@ public class ThrottleEvent<T> : IThrottleEvent where T : notnull
 
     public string Id { get; }
     public TimeSpan ThrottleTimeSpan { get; }
-    public Func<CancellationToken, Task> WorkItem { get; }
-    public Func<(IThrottleEvent OldEvent, IThrottleEvent RecentEvent), IThrottleEvent>? ConsecutiveEntryFunc { get; }
+    public Func<IThrottleEvent, CancellationToken, Task> WorkItem { get; }
+    public Func<(IThrottleEvent OldEvent, IThrottleEvent RecentEvent), IThrottleEvent?>? ConsecutiveEntryFunc { get; }
 
     public Type Type => typeof(T);
     object IThrottleEvent.Item => Item;

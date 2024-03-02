@@ -177,7 +177,7 @@ public class ThrottleController
 
                     _previousWorkItemTask = Task.Run(async () =>
                     {
-                        await oldEvent.WorkItem.Invoke(CancellationToken.None);
+                        await oldEvent.WorkItem.Invoke(oldEvent, CancellationToken.None);
                     }, CancellationToken.None);
                 }
                 else
