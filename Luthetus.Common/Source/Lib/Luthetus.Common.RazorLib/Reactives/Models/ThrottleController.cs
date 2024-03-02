@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.Reactives.Models;
+using System.Threading;
 
 namespace Luthetus.Common.Tests.Basis.Reactives.Models;
 
@@ -107,6 +108,68 @@ namespace Luthetus.Common.Tests.Basis.Reactives.Models;
 /// 
 /// This then allows one to attach data to the event by way of the generic type.
 /// </summary>
-public class ThrottleGroup
+public class ThrottleController
 {
+    private readonly object _lockThrottleEventQueue = new();
+    private readonly Queue<IThrottleEvent> _throttleEventQueue = new();
+
+    private CancellationTokenSource _throttleCancellationTokenSource = new();
+    private Task _throttleDelayTask = Task.CompletedTask;
+    private Task _previousWorkItemTask = Task.CompletedTask;
+
+    public void FireAndForget(IThrottleEvent throttleEvent)
+    {
+        lock (_lockThrottleEventQueue)
+        {
+            _throttleEventQueue.Enqueue(throttleEvent);
+
+            if (_throttleEventQueue.TryPeek(out var nextEvent) && nextEvent is not null && nextEvent.Id == throttleEvent.Id)
+            {
+                // _previousWorkItemTask already was assigned to 'ContinueWith(...)' the event.
+                return;
+            }
+
+            _previousWorkItemTask = _previousWorkItemTask.ContinueWith(async previousTask =>
+            {
+                await _throttleDelayTask.ConfigureAwait(false);
+
+                lock (_lockThrottleEventQueue)
+                {
+                    CancellationToken cancellationToken;
+                    var mostRecentEvent = _throttleEventQueue.Dequeue();
+
+                    while (_throttleEventQueue.TryDequeue(out var consecutiveEvent) && consecutiveEvent is not null)
+                    {
+                        if (mostRecentEvent.Id == consecutiveEvent.Id)
+                        {
+                            mostRecentEvent = mostRecentEvent.ConsecutiveEntryFunc.Invoke(
+                                mostRecentEvent,
+                                consecutiveEvent);
+                        }
+                    }
+
+                    _throttleCancellationTokenSource.Cancel();
+                    _throttleCancellationTokenSource = new();
+
+                    cancellationToken = _throttleCancellationTokenSource.Token;
+
+                    _throttleDelayTask = Task.Run(async () =>
+                    {
+                        await Task.Delay(mostRecentEvent.ThrottleTimeSpan).ConfigureAwait(false);
+                    }, cancellationToken);
+
+                    _previousWorkItemTask = mostRecentEvent.WorkItem.Invoke(cancellationToken);
+                }
+
+                await _previousWorkItemTask.ConfigureAwait(false);
+            });
+        }
+
+        _ = Task.Run(async () => await _previousWorkItemTask);
+    }
+
+    public void Dispose()
+    {
+        _throttleCancellationTokenSource.Cancel();
+    }
 }
