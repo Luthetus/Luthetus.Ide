@@ -22,7 +22,7 @@ public partial class TreeViewHelper
             {
                 TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
             })
-            .OrderBy(x => ((TreeViewSolutionFolder)x).Item.AbsolutePath.NameNoExtension)
+            .OrderBy(x => ((TreeViewSolutionFolder)x).Item.DisplayName)
             .ToList();
 
         var childProjects = treeViewSolution.Item.DotNetProjectList
