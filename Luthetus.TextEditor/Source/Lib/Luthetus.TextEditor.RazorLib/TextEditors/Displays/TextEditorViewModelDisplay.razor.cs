@@ -256,24 +256,24 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             await CursorDisplay.FocusAsync().ConfigureAwait(false);
     }
 
-    private bool CheckIfKeyboardEventArgsShouldReturnEarly(KeyboardEventArgs keyboardEventArgs)
+    private bool CheckIfKeyboardEventArgsIsNoise(KeyboardEventArgs keyboardEventArgs)
     {
         if (keyboardEventArgs.Key == "Shift" ||
             keyboardEventArgs.Key == "Control" ||
             keyboardEventArgs.Key == "Alt" ||
             keyboardEventArgs.Key == "Meta")
         {
-            return false;
+            return true;
         }
 
         if (keyboardEventArgs.CtrlKey && keyboardEventArgs.AltKey)
         {
             // TODO: This if is a hack to fix the keybind: { Ctrl + Alt + S } causing...
             // ...an 's' to be written out when using Vim keymap.
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     private bool CheckIfKeyboardEventArgsMapsToCommand(
@@ -318,7 +318,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-        if (CheckIfKeyboardEventArgsShouldReturnEarly(keyboardEventArgs))
+        if (CheckIfKeyboardEventArgsIsNoise(keyboardEventArgs))
             return;
 
         // TODO: I need to figure out how to ensure a TextEditorModel which is available from...
@@ -482,6 +482,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 if (tuple.OldEvent is ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)> oldEventWithType &&
                     tuple.RecentEvent is ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)> recentEventWithType)
                 {
+                    // Avoid taking keypresses such as 'Backspace' and treating them as text.
+                    if (recentEventWithType.Item.keyboardEventsList.Last().Key.Length != 1)
+                        return null;
+
                     // Avoid external state mutations with local variables.
                     var oldEventWithTypeViewModelKey = oldEventWithType.Item.viewModelKey;
                     var recentEventWithTypeViewModelKey = recentEventWithType.Item.viewModelKey;
@@ -568,7 +572,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                                         return Task.CompletedTask;
 
                                     modelModifier.EditByInsertion(
-                                        string.Join(string.Empty, oldEventWithType.Item.keyboardEventsList),
+                                        string.Join(string.Empty, oldEventWithType.Item.keyboardEventsList.Select(x => x.Key)),
                                         cursorModifierBag,
                                         CancellationToken.None);
 
