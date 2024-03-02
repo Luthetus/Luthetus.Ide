@@ -2,7 +2,7 @@
 
 public class Throttle : IThrottle
 {
-    private readonly object _syncRoot = new();
+    private readonly object _lockWorkItemsStack = new();
     private readonly Stack<Func<CancellationToken, Task>> _workItemsStack = new();
     
     private CancellationTokenSource _throttleCancellationTokenSource = new();
@@ -29,7 +29,7 @@ public class Throttle : IThrottle
 
     public void FireAndForget(Func<CancellationToken, Task> workItem)
     {
-        lock (_syncRoot)
+        lock (_lockWorkItemsStack)
         {
             _workItemsStack.Push(workItem);
 
@@ -44,7 +44,7 @@ public class Throttle : IThrottle
             if (ShouldWaitForPreviousWorkItemToComplete)
                 await _previousWorkItemTask.ConfigureAwait(false);
 
-            lock (_syncRoot)
+            lock (_lockWorkItemsStack)
             {
                 CancellationToken cancellationToken;
 
@@ -60,11 +60,12 @@ public class Throttle : IThrottle
                 {
                     await Task.Delay(ThrottleTimeSpan).ConfigureAwait(false);
                 }, cancellationToken);
-
-                _previousWorkItemTask = mostRecentWorkItem.Invoke(cancellationToken);
-            }
             
-            await _previousWorkItemTask.ConfigureAwait(false);
+                _previousWorkItemTask = Task.Run(async () =>
+                {
+                    await mostRecentWorkItem.Invoke(cancellationToken).ConfigureAwait(false);
+                }, cancellationToken);
+            }
         }).ConfigureAwait(false);
     }
 

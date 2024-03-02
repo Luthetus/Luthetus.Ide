@@ -116,6 +116,7 @@ public class ThrottleController
     private CancellationTokenSource _throttleCancellationTokenSource = new();
     private Task _throttleDelayTask = Task.CompletedTask;
     private Task _previousWorkItemTask = Task.CompletedTask;
+    private SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
 
     public void FireAndForget(IThrottleEvent throttleEvent)
     {
@@ -123,49 +124,58 @@ public class ThrottleController
         {
             _throttleEventQueue.Enqueue(throttleEvent);
 
-            if (_throttleEventQueue.TryPeek(out var nextEvent) && nextEvent is not null && nextEvent.Id == throttleEvent.Id)
-            {
-                // _previousWorkItemTask already was assigned to 'ContinueWith(...)' the event.
+            if (_throttleEventQueue.Count > 1)
                 return;
-            }
-
-            _previousWorkItemTask = _previousWorkItemTask.ContinueWith(async previousTask =>
-            {
-                await _throttleDelayTask.ConfigureAwait(false);
-
-                lock (_lockThrottleEventQueue)
-                {
-                    CancellationToken cancellationToken;
-                    var mostRecentEvent = _throttleEventQueue.Dequeue();
-
-                    while (_throttleEventQueue.TryDequeue(out var consecutiveEvent) && consecutiveEvent is not null)
-                    {
-                        if (mostRecentEvent.Id == consecutiveEvent.Id)
-                        {
-                            mostRecentEvent = mostRecentEvent.ConsecutiveEntryFunc.Invoke(
-                                mostRecentEvent,
-                                consecutiveEvent);
-                        }
-                    }
-
-                    _throttleCancellationTokenSource.Cancel();
-                    _throttleCancellationTokenSource = new();
-
-                    cancellationToken = _throttleCancellationTokenSource.Token;
-
-                    _throttleDelayTask = Task.Run(async () =>
-                    {
-                        await Task.Delay(mostRecentEvent.ThrottleTimeSpan).ConfigureAwait(false);
-                    }, cancellationToken);
-
-                    _previousWorkItemTask = mostRecentEvent.WorkItem.Invoke(cancellationToken);
-                }
-
-                await _previousWorkItemTask.ConfigureAwait(false);
-            });
         }
 
-        _ = Task.Run(async () => await _previousWorkItemTask);
+        _ = Task.Run(DequeueAsync);
+    }
+
+    private async Task DequeueAsync()
+    {
+        try
+        {
+            await _semaphoreSlim.WaitAsync();
+
+            await _throttleDelayTask.ConfigureAwait(false);
+            await _previousWorkItemTask.ConfigureAwait(false);
+
+            lock (_lockThrottleEventQueue)
+            {
+                CancellationToken cancellationToken;
+                var mostRecentEvent = _throttleEventQueue.Dequeue();
+
+                while (mostRecentEvent.ConsecutiveEntryFunc is not null &&
+                       _throttleEventQueue.TryDequeue(out var consecutiveEvent) && consecutiveEvent is not null &&
+                           mostRecentEvent.Id == consecutiveEvent.Id)
+                {
+                    consecutiveEvent = _throttleEventQueue.Dequeue();
+                    mostRecentEvent = mostRecentEvent.ConsecutiveEntryFunc.Invoke((mostRecentEvent, consecutiveEvent));
+                }
+
+                _throttleCancellationTokenSource.Cancel();
+                _throttleCancellationTokenSource = new();
+
+                cancellationToken = _throttleCancellationTokenSource.Token;
+
+                _throttleDelayTask = Task.Run(async () =>
+                {
+                    await Task.Delay(mostRecentEvent.ThrottleTimeSpan).ConfigureAwait(false);
+                }, cancellationToken);
+
+                _previousWorkItemTask = Task.Run(async () =>
+                {
+                    await mostRecentEvent.WorkItem.Invoke(cancellationToken);
+                }, cancellationToken);
+
+                //if (_throttleEventQueue.Any())
+                //    _previousWorkItemTask = _previousWorkItemTask.ContinueWith(async _ => await DequeueAsync());
+            }
+        }
+        finally
+        {
+            _semaphoreSlim.Release();
+        }
     }
 
     public void Dispose()

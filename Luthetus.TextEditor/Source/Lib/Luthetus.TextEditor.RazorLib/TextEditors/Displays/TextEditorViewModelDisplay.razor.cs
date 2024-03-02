@@ -29,6 +29,8 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.Common.Tests.Basis.Reactives.Models;
+using System.Security.Cryptography;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -69,6 +71,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private readonly IThrottle _throttleApplySyntaxHighlighting = new Throttle(TimeSpan.FromMilliseconds(500));
     private readonly TimeSpan _onMouseOutTooltipDelay = TimeSpan.FromMilliseconds(1_000);
     private readonly TimeSpan _mouseStoppedMovingDelay = TimeSpan.FromMilliseconds(400);
+    private readonly ThrottleController _throttleControllerUiEvents = new();
     /// <summary>Using this lock in order to avoid the Dispose implementation decrementing when it shouldn't</summary>
     private readonly object _linkedViewModelLock = new();
 
@@ -620,32 +623,41 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
-            TextEditorService.Post(
+            _throttleControllerUiEvents.FireAndForget(new ThrottleEvent<byte>(
                 nameof(HandleContentOnMouseMove),
-                async editContext =>
+                TimeSpan.FromMilliseconds(25),
+                _ =>
                 {
-                    var modelModifier = editContext.GetModelModifier(modelResourceUri, true);
-                    var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
+                    TextEditorService.Post(
+                        nameof(HandleContentOnMouseMove),
+                        async editContext =>
+                        {
+                            var modelModifier = editContext.GetModelModifier(modelResourceUri, true);
+                            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
 
-                    if (modelModifier is null || viewModelModifier is null)
-                        return;
+                            if (modelModifier is null || viewModelModifier is null)
+                                return;
 
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
-                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+                            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (cursorModifierBag is null || primaryCursorModifier is null)
-                        return;
+                            if (cursorModifierBag is null || primaryCursorModifier is null)
+                                return;
 
-                    var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs).ConfigureAwait(false);
+                            var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs).ConfigureAwait(false);
 
-                    primaryCursorModifier.RowIndex = rowAndColumnIndex.rowIndex;
-                    primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
-                    primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
+                            primaryCursorModifier.RowIndex = rowAndColumnIndex.rowIndex;
+                            primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
+                            primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 
-                    CursorDisplay?.PauseBlinkAnimation();
+                            CursorDisplay?.PauseBlinkAnimation();
 
-                    primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
-                });
+                            primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+                        });
+
+                    return Task.CompletedTask;
+                },
+                tuple => tuple.RecentEvent));
         }
         else
         {
