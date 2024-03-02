@@ -113,6 +113,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         editContext =>
                         {
                             ActiveVimMode = VimMode.Insert;
+                            _ = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
                             return Task.CompletedTask;
                         });
 
@@ -139,7 +140,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         nameof(commandDisplayName),
                         editContext =>
                         {
-                            var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+                            var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri, true);
                             var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
 
                             if (modelModifier is null || viewModelModifier is null)
@@ -193,7 +194,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         nameof(commandDisplayName),
                         editContext =>
                         {
-                            var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+                            var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri, true);
                             var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
 
                             if (modelModifier is null || viewModelModifier is null)
@@ -256,7 +257,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         nameof(commandDisplayName),
                         editContext =>
                         {
-                            var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+                            var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri, true);
                             var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
 
                             if (modelModifier is null || viewModelModifier is null)
@@ -742,6 +743,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     editContext =>
                     {
                         ActiveVimMode = VimMode.Normal;
+                        _ = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
                         return Task.CompletedTask;
                     });
 

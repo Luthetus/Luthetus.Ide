@@ -430,7 +430,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             nameof(HandleContentOnDoubleClick),
             async editContext =>
             {
-                var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                var modelModifier = editContext.GetModelModifier(modelResourceUri, true);
                 var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
 
                 if (modelModifier is null || viewModelModifier is null)
@@ -509,7 +509,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             nameof(HandleContentOnMouseDown),
             async editContext =>
             {
-                var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                var modelModifier = editContext.GetModelModifier(modelResourceUri, true);
                 var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
 
                 if (modelModifier is null || viewModelModifier is null)
@@ -624,7 +624,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 nameof(HandleContentOnMouseMove),
                 async editContext =>
                 {
-                    var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                    var modelModifier = editContext.GetModelModifier(modelResourceUri, true);
                     var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
 
                     if (modelModifier is null || viewModelModifier is null)
