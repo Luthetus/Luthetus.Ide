@@ -30,10 +30,7 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.Common.Tests.Basis.Reactives.Models;
-using System.Security.Cryptography;
 using Luthetus.Common.RazorLib.Commands.Models;
-using Microsoft.AspNetCore.Components.Forms;
-using System.Threading;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -553,31 +550,46 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                             _tooltipViewModel = null;
 
-                            oldEventWithType.Item.keyboardEventsList.AddRange(recentEventWithType.Item.keyboardEventsList);
+                            var combinedKeyboardEventArgs = oldEventWithType.Item.keyboardEventsList
+                                .Union(recentEventWithType.Item.keyboardEventsList)
+                                .ToList();
 
-                            TextEditorService.Post(
-                                "batch_" + nameof(HandleOnKeyDown),
-                                editContext =>
+                            var combinedEvent = new ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)>(
+                                oldEventWithType.Id,
+                                oldEventWithType.ThrottleTimeSpan,
+                                (viewModelKey, combinedKeyboardEventArgs),
+                                (combined, _) =>
                                 {
-                                    var modelModifier = editContext.GetModelModifierByViewModelKey(viewModelKey);
-                                    var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-                                    if (modelModifier is null || viewModelModifier is null)
+                                    if (combined is not ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)> combinedWithType)
                                         return Task.CompletedTask;
 
-                                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
-                                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+                                    TextEditorService.Post(
+                                        "batch_" + nameof(HandleOnKeyDown),
+                                        editContext =>
+                                        {
+                                            var modelModifier = editContext.GetModelModifierByViewModelKey(viewModelKey);
+                                            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 
-                                    if (cursorModifierBag is null || primaryCursorModifier is null)
-                                        return Task.CompletedTask;
+                                            if (modelModifier is null || viewModelModifier is null)
+                                                return Task.CompletedTask;
 
-                                    modelModifier.EditByInsertion(
-                                        string.Join(string.Empty, oldEventWithType.Item.keyboardEventsList.Select(x => x.Key)),
-                                        cursorModifierBag,
-                                        CancellationToken.None);
+                                            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                                            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                                            if (cursorModifierBag is null || primaryCursorModifier is null)
+                                                return Task.CompletedTask;
+
+                                            modelModifier.EditByInsertion(
+                                                string.Join(string.Empty, combinedWithType.Item.keyboardEventsList.Select(x => x.Key)),
+                                                cursorModifierBag,
+                                                CancellationToken.None);
+
+                                            return Task.CompletedTask;
+                                        });
 
                                     return Task.CompletedTask;
-                                });
+                                },
+                                null);
                             
                             return (IThrottleEvent?)oldEventWithType;
                         }

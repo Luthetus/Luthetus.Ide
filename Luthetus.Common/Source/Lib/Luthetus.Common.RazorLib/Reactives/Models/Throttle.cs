@@ -59,12 +59,12 @@ public class Throttle : IThrottle
                 _throttleDelayTask = Task.Run(async () =>
                 {
                     await Task.Delay(ThrottleTimeSpan).ConfigureAwait(false);
-                }, cancellationToken);
+                }, CancellationToken.None);
             
                 _previousWorkItemTask = Task.Run(async () =>
                 {
-                    await mostRecentWorkItem.Invoke(cancellationToken).ConfigureAwait(false);
-                }, cancellationToken);
+                    await mostRecentWorkItem.Invoke(CancellationToken.None).ConfigureAwait(false);
+                }, CancellationToken.None);
             }
         }).ConfigureAwait(false);
     }
