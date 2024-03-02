@@ -1,4 +1,5 @@
 ﻿@using Luthetus.TextEditor.RazorLib.Cursors.Models;
+@using Luthetus.TextEditor.RazorLib.Lexes.Models
 
 <div class="luth_te_text-selection-group">
     @if (TextEditorSelectionHelper.HasSelectedText(PrimaryCursor.Selection))
@@ -10,12 +11,20 @@
             RenderBatch.Model!,
             selectionBoundsInPositionIndexUnits);
 
-        for (var i = selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
-             i < selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
-             i++)
-        {
-            var rowIndex = i;
+        var virtualLowerBoundInclusiveRowIndex = RenderBatch.ViewModel!.VirtualizationResult.EntryList.First().Index;
+        var virtualUpperBoundExclusiveRowIndex = 1 + RenderBatch.ViewModel.VirtualizationResult.EntryList.Last().Index;
 
+        int useLowerBoundInclusiveRowIndex = virtualLowerBoundInclusiveRowIndex >= selectionBoundsInRowIndexUnits.lowerRowIndexInclusive
+            ? virtualLowerBoundInclusiveRowIndex
+            : selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
+            
+        int useUpperBoundExclusiveRowIndex = virtualUpperBoundExclusiveRowIndex <= selectionBoundsInRowIndexUnits.upperRowIndexExclusive
+            ? virtualUpperBoundExclusiveRowIndex
+            : selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
+
+        for (var badIndex = useLowerBoundInclusiveRowIndex; badIndex < useUpperBoundExclusiveRowIndex; badIndex++)
+        {
+            var rowIndex = badIndex;
             var textSelectionStyleCss = string.Empty;
 
             if (RenderBatch.Options!.UseMonospaceOptimizations)
