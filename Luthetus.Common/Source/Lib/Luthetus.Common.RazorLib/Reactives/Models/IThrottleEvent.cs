@@ -5,6 +5,6 @@ public interface IThrottleEvent
     string Id { get; }
     TimeSpan ThrottleTimeSpan { get; }
     Func<CancellationToken, Task> WorkItem { get; }
-    Func<(IThrottleEvent RecentEvent, IThrottleEvent OldEvent), IThrottleEvent>? ConsecutiveEntryFunc { get; }
+    Func<(IThrottleEvent OldEvent, IThrottleEvent RecentEvent), IThrottleEvent>? ConsecutiveEntryFunc { get; }
     Type Type { get; }
 }

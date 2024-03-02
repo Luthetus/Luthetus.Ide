@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.Reactives.Models;
+using System.Collections.Concurrent;
 using System.Threading;
 
 namespace Luthetus.Common.Tests.Basis.Reactives.Models;
@@ -110,8 +111,8 @@ namespace Luthetus.Common.Tests.Basis.Reactives.Models;
 /// </summary>
 public class ThrottleController
 {
-    private readonly object _lockThrottleEventQueue = new();
-    private readonly Queue<IThrottleEvent> _throttleEventQueue = new();
+    private readonly object _lockSemaphoreSlim = new();
+    private readonly ConcurrentQueue<IThrottleEvent> _throttleEventConcurrentQueue = new();
 
     private CancellationTokenSource _throttleCancellationTokenSource = new();
     private Task _throttleDelayTask = Task.CompletedTask;
@@ -120,13 +121,10 @@ public class ThrottleController
 
     public void FireAndForget(IThrottleEvent throttleEvent)
     {
-        lock (_lockThrottleEventQueue)
-        {
-            _throttleEventQueue.Enqueue(throttleEvent);
+        _throttleEventConcurrentQueue.Enqueue(throttleEvent);
 
-            if (_throttleEventQueue.Count > 1)
-                return;
-        }
+        if (_throttleEventConcurrentQueue.Count > 1)
+            return;
 
         _ = Task.Run(DequeueAsync);
     }
@@ -135,22 +133,26 @@ public class ThrottleController
     {
         try
         {
+            lock (_lockSemaphoreSlim)
+            {
+                if (_semaphoreSlim.CurrentCount <= 0)
+                    return;
+            }
+
             await _semaphoreSlim.WaitAsync();
 
             await _throttleDelayTask.ConfigureAwait(false);
             await _previousWorkItemTask.ConfigureAwait(false);
 
-            lock (_lockThrottleEventQueue)
-            {
-                CancellationToken cancellationToken;
-                var mostRecentEvent = _throttleEventQueue.Dequeue();
+            CancellationToken cancellationToken;
 
-                while (mostRecentEvent.ConsecutiveEntryFunc is not null &&
-                       _throttleEventQueue.TryDequeue(out var consecutiveEvent) && consecutiveEvent is not null &&
-                           mostRecentEvent.Id == consecutiveEvent.Id)
+            while (_throttleEventConcurrentQueue.TryDequeue(out var oldEvent) && oldEvent is not null)
+            {
+                while (oldEvent.ConsecutiveEntryFunc is not null &&
+                        _throttleEventConcurrentQueue.TryDequeue(out var recentEvent) && recentEvent is not null &&
+                            oldEvent.Id == recentEvent.Id)
                 {
-                    consecutiveEvent = _throttleEventQueue.Dequeue();
-                    mostRecentEvent = mostRecentEvent.ConsecutiveEntryFunc.Invoke((mostRecentEvent, consecutiveEvent));
+                    oldEvent = oldEvent.ConsecutiveEntryFunc.Invoke((oldEvent, recentEvent));
                 }
 
                 _throttleCancellationTokenSource.Cancel();
@@ -160,21 +162,21 @@ public class ThrottleController
 
                 _throttleDelayTask = Task.Run(async () =>
                 {
-                    await Task.Delay(mostRecentEvent.ThrottleTimeSpan).ConfigureAwait(false);
+                    await Task.Delay(oldEvent.ThrottleTimeSpan).ConfigureAwait(false);
                 }, cancellationToken);
 
                 _previousWorkItemTask = Task.Run(async () =>
                 {
-                    await mostRecentEvent.WorkItem.Invoke(cancellationToken);
+                    await oldEvent.WorkItem.Invoke(cancellationToken);
                 }, cancellationToken);
-
-                //if (_throttleEventQueue.Any())
-                //    _previousWorkItemTask = _previousWorkItemTask.ContinueWith(async _ => await DequeueAsync());
             }
         }
         finally
         {
-            _semaphoreSlim.Release();
+            lock (_lockSemaphoreSlim)
+            {
+                _semaphoreSlim.Release();
+            }
         }
     }
 
