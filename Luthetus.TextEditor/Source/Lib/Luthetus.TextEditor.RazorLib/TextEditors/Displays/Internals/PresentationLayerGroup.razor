@@ -22,7 +22,7 @@
 
         @if (completedCalculation is not null)
         {
-            textSpansList = ShiftTextSpans(textModificationList, completedCalculation.TextSpanList);
+            textSpansList = VirtualizeAndShiftTextSpans(textModificationList, completedCalculation.TextSpanList);
 
             <div class="@presentationLayer.CssClassString">
                 @foreach (var textSpan in textSpansList)
