@@ -442,16 +442,16 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                         if (cursorDisplay is not null)
                         {
-                            if (throttleEvent is ThrottleEvent<List<KeyboardEventArgs>> throttleEventKeyboardEventArgsList)
+                            if (throttleEvent is ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)> throttleEventKeyboardEventArgsList)
                             {
-                                if (throttleEventKeyboardEventArgsList.Item.Count > 1)
+                                if (throttleEventKeyboardEventArgsList.Item.keyboardEventsList.Count > 1)
                                 {
                                     var afterOnKeyDownRangeAsyncFactory = ViewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory ?? HandleAfterOnKeyDownRangeAsyncFactory;
 
                                     await afterOnKeyDownRangeAsyncFactory.Invoke(
                                             modelModifier.ResourceUri,
                                             viewModelModifier.ViewModel.ViewModelKey,
-                                            throttleEventKeyboardEventArgsList.Item,
+                                            throttleEventKeyboardEventArgsList.Item.keyboardEventsList,
                                             cursorDisplay.SetShouldDisplayMenuAsync)
                                         .Invoke(editContext)
                                         .ConfigureAwait(false);
