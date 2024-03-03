@@ -27,34 +27,30 @@ public partial class GutterSection : ComponentBase
     [CascadingParameter]
     public TextEditorRenderBatch RenderBatch { get; set; } = null!;
 
-    private double _scrollTop;
+    // private double _scrollTop;
 
-    private readonly IThrottle _throttleSetGutterScrollTopFactory = new Throttle(TimeSpan.FromMilliseconds(1_500));
+    //private readonly IThrottle _throttleSetGutterScrollTopFactory = new Throttle(TimeSpan.FromMilliseconds(500));
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        var viewModel = RenderBatch.ViewModel!;
-
-        var commandArgs = new TextEditorCommandArgs(
-            null, Key<TextEditorViewModel>.Empty, false, null,
-            TextEditorService, null, null, Dispatcher, ServiceProvider, TextEditorConfig);
-
-        if (_scrollTop != viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop)
-        {
-            _throttleSetGutterScrollTopFactory.FireAndForget(_ =>
-            {
-                _scrollTop = viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop;
-
-                // TODO: Does 'SetGutterScrollTopAsync' need to be throttled? 
-                TextEditorService.Post(
-                    nameof(TextEditorService.ViewModelApi.SetGutterScrollTopFactory),
-                    TextEditorService.ViewModelApi.SetGutterScrollTopFactory(
-                        viewModel.GutterElementId,
-                        viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop));
-
-                return Task.CompletedTask;
-            });
-        }
+        //var viewModel = RenderBatch.ViewModel!;
+        //
+        //if (_scrollTop != viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop)
+        //{
+        //    _throttleSetGutterScrollTopFactory.FireAndForget(_ =>
+        //    {
+        //        _scrollTop = viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop;
+        //
+        //        // TODO: Does 'SetGutterScrollTopAsync' need to be throttled? 
+        //        TextEditorService.Post(
+        //            nameof(TextEditorService.ViewModelApi.SetGutterScrollTopFactory),
+        //            TextEditorService.ViewModelApi.SetGutterScrollTopFactory(
+        //                viewModel.GutterElementId,
+        //                viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop));
+        //
+        //        return Task.CompletedTask;
+        //    });
+        //}
 
         return base.OnAfterRenderAsync(firstRender);
     }
