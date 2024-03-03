@@ -28,7 +28,29 @@
         var heightOfGutter = RenderBatch.ViewModel!.VirtualizationResult.EntryList.Length *
                              RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements.RowHeight;
 
-        if (heightOfGutter < RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements.Height)
+        // The scrollbar is off when one uses the 'if (heightOfGutter...)' code to draw the rest of the gutter but empty.
+        // To replicate this, one must scroll to the bottom of a file, then manage to have the gutter not fill the screen.
+        //
+        // But, there is a catch. The bug comes down to whether your virtualization result, has any 'overhang'
+        // at the top of the text editor.
+        //
+        // Because this code just takes the virtualization result height as if it were centered
+        // one ontop of the other with the visible content.
+        //
+        // The solution is to calculate the overhang for any virtualization elements that are rendered at the 'top-offscreen'.
+        //
+        // Editor scrolltop - 0th element's top == topOffscreenOverhang
+        var topOffscreenOverhang = RenderBatch.ViewModel!.VirtualizationResult.EntryList.FirstOrDefault()?.TopInPixels ?? -1;
+
+        if (topOffscreenOverhang != -1)
+        {
+            // If the 'topOffscreenOverhang' was measureable, then subtract from the height of the gutter,
+            // however much of it overhangs the top offscreen.
+            heightOfGutter -= topOffscreenOverhang;
+        }
+
+        // '1' is added to the text editor's height in order to avoid rounding errors
+        if (heightOfGutter < 1 + RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements.Height)
         {
             var remainingHeightToFill = RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements.Height -
                 heightOfGutter +

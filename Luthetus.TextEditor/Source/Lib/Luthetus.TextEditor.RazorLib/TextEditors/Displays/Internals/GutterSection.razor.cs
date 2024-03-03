@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -28,6 +29,8 @@ public partial class GutterSection : ComponentBase
 
     private double _scrollTop;
 
+    private readonly IThrottle _throttleSetGutterScrollTopFactory = new Throttle(TimeSpan.FromMilliseconds(1_500));
+
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         var viewModel = RenderBatch.ViewModel!;
@@ -38,14 +41,19 @@ public partial class GutterSection : ComponentBase
 
         if (_scrollTop != viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop)
         {
-            _scrollTop = viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop;
+            _throttleSetGutterScrollTopFactory.FireAndForget(_ =>
+            {
+                _scrollTop = viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop;
 
-            // TODO: Does 'SetGutterScrollTopAsync' need to be throttled? 
-            TextEditorService.Post(
-                nameof(TextEditorService.ViewModelApi.SetGutterScrollTopFactory),
-                TextEditorService.ViewModelApi.SetGutterScrollTopFactory(
-                    viewModel.GutterElementId,
-                    viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop));
+                // TODO: Does 'SetGutterScrollTopAsync' need to be throttled? 
+                TextEditorService.Post(
+                    nameof(TextEditorService.ViewModelApi.SetGutterScrollTopFactory),
+                    TextEditorService.ViewModelApi.SetGutterScrollTopFactory(
+                        viewModel.GutterElementId,
+                        viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop));
+
+                return Task.CompletedTask;
+            });
         }
 
         return base.OnAfterRenderAsync(firstRender);
