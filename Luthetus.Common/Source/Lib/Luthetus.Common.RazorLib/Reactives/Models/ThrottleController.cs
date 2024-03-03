@@ -112,64 +112,102 @@ namespace Luthetus.Common.Tests.Basis.Reactives.Models;
 public class ThrottleController
 {
     private readonly object _lockSemaphoreSlim = new();
-    private readonly ConcurrentQueue<IThrottleEvent> _throttleEventConcurrentQueue = new();
+    private readonly object _lockThrottleEventQueue = new();
+    private readonly Queue<IThrottleEvent> _throttleEventQueue = new();
+    private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
     private CancellationTokenSource _throttleCancellationTokenSource = new();
     private Task _throttleDelayTask = Task.CompletedTask;
     private Task _previousWorkItemTask = Task.CompletedTask;
-    private SemaphoreSlim _semaphoreSlim = new(1, 1);
 
     public void FireAndForget(IThrottleEvent throttleEvent)
     {
-        _throttleEventConcurrentQueue.Enqueue(throttleEvent);
+        Console.WriteLine("Start_" + nameof(FireAndForget));
 
-        if (_throttleEventConcurrentQueue.Count > 1)
-            return;
+        lock (_lockThrottleEventQueue)
+        {
+            _throttleEventQueue.Enqueue(throttleEvent);
+
+            if (_throttleEventQueue.Count > 1)
+                return;
+        }
 
         _ = Task.Run(DequeueAsync).ConfigureAwait(false);
+
+        Console.WriteLine("End_" + nameof(FireAndForget));
     }
 
     private async Task DequeueAsync()
     {
+        Console.WriteLine("Start_" + nameof(DequeueAsync));
+
         try
         {
+            Console.WriteLine("TryStart_" + nameof(DequeueAsync));
+
+            Console.WriteLine("GrabFirst_lockSemaphoreSlimLock_" + nameof(DequeueAsync));
             lock (_lockSemaphoreSlim)
             {
                 if (_semaphoreSlim.CurrentCount <= 0)
                     return;
             }
+            Console.WriteLine("AfterFirst_lockSemaphoreSlimLock_" + nameof(DequeueAsync));
 
             await _semaphoreSlim.WaitAsync();
+            Console.WriteLine("After__semaphoreSlim.WaitAsync" + nameof(DequeueAsync));
 
             while (true)
             {
+                Console.WriteLine("Start_While_True" + nameof(DequeueAsync));
+
+                Console.WriteLine("await _throttleDelayTask" + nameof(DequeueAsync));
                 await _throttleDelayTask.ConfigureAwait(false);
+
+                Console.WriteLine("await _previousWorkItemTask" + nameof(DequeueAsync));
                 await _previousWorkItemTask.ConfigureAwait(false);
 
                 CancellationToken cancellationToken;
+                IThrottleEvent? oldEvent;
 
-                if (_throttleEventConcurrentQueue.TryDequeue(out var oldEvent) && oldEvent is not null)
+                Console.WriteLine("grab _lockThrottleEventQueue" + nameof(DequeueAsync));
+                lock (_lockThrottleEventQueue)
                 {
-                    while (oldEvent.ConsecutiveEntryFunc is not null &&
-                            _throttleEventConcurrentQueue.TryPeek(out var recentEvent) && recentEvent is not null &&
-                                oldEvent.Id == recentEvent.Id)
+                    if (_throttleEventQueue.TryDequeue(out oldEvent) && oldEvent is not null)
                     {
-                        var consecutiveResult = oldEvent.ConsecutiveEntryFunc.Invoke((oldEvent, recentEvent));
-                        
-                        if (consecutiveResult is not null)
+                        int whileConsecutiveCounter = 0;
+                        while (oldEvent.ConsecutiveEntryFunc is not null &&
+                                _throttleEventQueue.TryPeek(out var recentEvent) && recentEvent is not null &&
+                                    oldEvent.Id == recentEvent.Id)
                         {
-                            // Because the 'ConsecutiveEntryFunc' function successfully merged
-                            // the two work items, then dequeue the recentEvent since it will be handled.
-                            _throttleEventConcurrentQueue.TryDequeue(out recentEvent);
-                            oldEvent = consecutiveResult;
+                            Console.WriteLine($"while consecutive {++whileConsecutiveCounter}" + nameof(DequeueAsync));
+
+                            var consecutiveResult = oldEvent.ConsecutiveEntryFunc.Invoke((oldEvent, recentEvent));
+
+                            if (consecutiveResult is null)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                // Because the 'ConsecutiveEntryFunc' function successfully merged
+                                // the two work items, then dequeue the recentEvent since it will be handled.
+                                _throttleEventQueue.TryDequeue(out recentEvent);
+                                oldEvent = consecutiveResult;
+                            }
                         }
+
+                        _throttleCancellationTokenSource.Cancel();
+                        _throttleCancellationTokenSource = new();
+                        cancellationToken = _throttleCancellationTokenSource.Token;
                     }
+                    else
+                    {
+                        break;
+                    }
+                }
 
-                    _throttleCancellationTokenSource.Cancel();
-                    _throttleCancellationTokenSource = new();
-
-                    cancellationToken = _throttleCancellationTokenSource.Token;
-
+                if (oldEvent is not null)
+                {
                     _throttleDelayTask = Task.Run(async () =>
                     {
                         await Task.Delay(oldEvent.ThrottleTimeSpan).ConfigureAwait(false);
@@ -177,22 +215,22 @@ public class ThrottleController
 
                     _previousWorkItemTask = Task.Run(async () =>
                     {
-                        await oldEvent.WorkItem.Invoke(oldEvent, CancellationToken.None);
+                        await oldEvent.WorkItem.Invoke(oldEvent, CancellationToken.None).ConfigureAwait(false);
                     }, CancellationToken.None);
-                }
-                else
-                {
-                    break;
                 }
             }
         }
         finally
         {
+            Console.WriteLine("FinallyStart_" + nameof(DequeueAsync));
             lock (_lockSemaphoreSlim)
             {
                 _semaphoreSlim.Release();
             }
+            Console.WriteLine("FinallyEnd_" + nameof(DequeueAsync));
         }
+
+        Console.WriteLine("End_" + nameof(DequeueAsync));
     }
 
     public void Dispose()
