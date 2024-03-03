@@ -149,11 +149,8 @@ public class TextEditorCommandDefaultFunctions
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            var onSaveRequestedFunc = viewModelModifier.ViewModel.OnSaveRequested;
-
-            if (onSaveRequestedFunc is not null)
-                onSaveRequestedFunc.Invoke(modelModifier);
-
+            viewModelModifier.ViewModel.OnSaveRequested?.Invoke(modelModifier);
+            modelModifier.SetIsDirtyFalse();
             return Task.CompletedTask;
         };
     }

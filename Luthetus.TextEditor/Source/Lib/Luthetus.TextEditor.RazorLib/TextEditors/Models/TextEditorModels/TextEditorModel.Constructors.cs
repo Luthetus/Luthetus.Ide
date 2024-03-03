@@ -85,7 +85,8 @@ public partial class TextEditorModel
 		ILuthCompilerService compilerService,
 		TextEditorSaveFileHelper textEditorSaveFileHelper,
 		int editBlockIndex,
-		(int rowIndex, int rowLength) mostCharactersOnASingleRowTuple,
+        bool isDirty,
+        (int rowIndex, int rowLength) mostCharactersOnASingleRowTuple,
 		Key<RenderState>  renderStateKey)
 	{
         // (2024-02-29) Plan to add text editor partitioning #Step 900:
@@ -122,6 +123,7 @@ public partial class TextEditorModel
 		CompilerService = compilerService;
 		TextEditorSaveFileHelper = textEditorSaveFileHelper;
 		EditBlockIndex = editBlockIndex;
+        IsDirty = isDirty;
 		MostCharactersOnASingleRowTuple = mostCharactersOnASingleRowTuple;
 		RenderStateKey = renderStateKey;
 	}

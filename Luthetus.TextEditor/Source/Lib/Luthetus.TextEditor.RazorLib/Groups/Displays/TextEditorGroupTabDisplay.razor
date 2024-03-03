@@ -29,6 +29,11 @@
                 <text>
                     @(viewModel.GetTabDisplayNameFunc?.Invoke(textEditorModel) ??
                         textEditorModel.ResourceUri.Value)
+
+                    @if (textEditorModel.IsDirty)
+                    {
+                        <text>*</text>
+                    }
                 </text>
             }
         }

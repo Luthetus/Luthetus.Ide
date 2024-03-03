@@ -31,7 +31,8 @@ public partial class TextEditorModelModifier : ITextEditorModel
 	public ILuthCompilerService CompilerService => _compilerService ?? _textEditorModel.CompilerService;
 	public TextEditorSaveFileHelper TextEditorSaveFileHelper => _textEditorSaveFileHelper ?? _textEditorModel.TextEditorSaveFileHelper;
 	public int EditBlockIndex => _editBlockIndex ?? _textEditorModel.EditBlockIndex;
-	public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple => _mostCharactersOnASingleRowTuple ?? _textEditorModel.MostCharactersOnASingleRowTuple;
+	public bool IsDirty => _isDirty;
+    public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple => _mostCharactersOnASingleRowTuple ?? _textEditorModel.MostCharactersOnASingleRowTuple;
 	public Key<RenderState> RenderStateKey => _renderStateKey ?? _textEditorModel.RenderStateKey;
 
     public int RowCount => RowEndingPositionsList.Count;

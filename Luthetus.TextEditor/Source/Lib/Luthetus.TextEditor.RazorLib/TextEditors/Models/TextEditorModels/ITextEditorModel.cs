@@ -130,7 +130,8 @@ public interface ITextEditorModel
 	public ILuthCompilerService CompilerService { get; }
 	public TextEditorSaveFileHelper TextEditorSaveFileHelper { get; }
 	public int EditBlockIndex { get; }
-	public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple { get; }
+    public bool IsDirty { get; }
+    public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple { get; }
 	public Key<RenderState> RenderStateKey { get; }
 
     public int RowCount { get; }

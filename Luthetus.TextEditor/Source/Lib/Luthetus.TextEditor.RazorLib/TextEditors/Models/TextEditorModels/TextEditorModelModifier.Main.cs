@@ -28,13 +28,15 @@ public partial class TextEditorModelModifier
 {
     private readonly TextEditorModel _textEditorModel;
 
-    public TextEditorModelModifier(TextEditorModel textEditorModel)
+    public TextEditorModelModifier(TextEditorModel model)
     {
-        if (textEditorModel.PartitionSize < 2)
-            throw new ApplicationException($"{nameof(textEditorModel)}.{nameof(PartitionSize)} must be >= 2");
+        if (model.PartitionSize < 2)
+            throw new ApplicationException($"{nameof(model)}.{nameof(PartitionSize)} must be >= 2");
 
-        PartitionSize = textEditorModel.PartitionSize;
-        _textEditorModel = textEditorModel;
+        PartitionSize = model.PartitionSize;
+        _isDirty = model.IsDirty;
+
+        _textEditorModel = model;
         _partitionList = _textEditorModel.PartitionList;
     }
 
@@ -52,8 +54,6 @@ public partial class TextEditorModelModifier
     // So I'm going to make the change now.
     private IReadOnlyList<RichCharacter> _contentList => _partitionList.SelectMany(x => x).ToImmutableList();
     private ImmutableList<ImmutableList<RichCharacter>> _partitionList = new ImmutableList<RichCharacter>[] { ImmutableList<RichCharacter>.Empty }.ToImmutableList();
-
-    private int PartitionSize { get; }
 
     // (2024-02-29) Plan to add text editor partitioning #Step 100:
     // --------------------------------------------------
@@ -83,11 +83,13 @@ public partial class TextEditorModelModifier
     private ILuthCompilerService? _compilerService;
     private TextEditorSaveFileHelper? _textEditorSaveFileHelper;
     private int? _editBlockIndex;
+    private bool _isDirty;
     private (int rowIndex, int rowLength)? _mostCharactersOnASingleRowTuple;
     private Key<RenderState>? _renderStateKey = Key<RenderState>.NewKey();
     private Keymap? _textEditorKeymap;
     private TextEditorOptions? _textEditorOptions;
 
+    private int PartitionSize { get; }
     public bool WasModified { get; internal set; }
 
     public TextEditorModel ToModel()
@@ -110,12 +112,15 @@ public partial class TextEditorModelModifier
             _compilerService ?? _textEditorModel.CompilerService,
             _textEditorSaveFileHelper ?? _textEditorModel.TextEditorSaveFileHelper,
             _editBlockIndex ?? _textEditorModel.EditBlockIndex,
+            IsDirty,
             _mostCharactersOnASingleRowTuple ?? _textEditorModel.MostCharactersOnASingleRowTuple,
             _renderStateKey ?? _textEditorModel.RenderStateKey);
     }
 
-    public void ClearContentList()
+	public void ClearContentList()
     {
+        SetIsDirtyTrue();
+
         // (2024-02-29) Plan to add text editor partitioning #Step 500:
         // --------------------------------------------------
         // For the method named 'ClearContentList()', its goal is to clear the ContentList.
@@ -222,6 +227,8 @@ public partial class TextEditorModelModifier
         TextEditorCursorModifierBag cursorModifierBag,
         CancellationToken cancellationToken)
     {
+        SetIsDirtyTrue();
+
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             // (2024-02-29) Plan to add text editor partitioning #Step 500:
@@ -416,6 +423,8 @@ public partial class TextEditorModelModifier
         TextEditorCursorModifierBag cursorModifierBag,
         CancellationToken cancellationToken)
     {
+        SetIsDirtyTrue();
+
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
@@ -748,6 +757,8 @@ public partial class TextEditorModelModifier
 
     public void ModifyContent(string content)
     {
+        SetIsDirtyTrue();
+
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
@@ -1157,6 +1168,16 @@ public partial class TextEditorModelModifier
         var restoreEditBlock = EditBlocksList[EditBlockIndex];
 
         ModifyContent(restoreEditBlock.ContentSnapshot);
+    }
+
+    public void SetIsDirtyTrue()
+    {
+        _isDirty = true;
+    }
+    
+    public void SetIsDirtyFalse()
+    {
+        _isDirty = false;
     }
 
     public TextEditorModel ForceRerenderAction()

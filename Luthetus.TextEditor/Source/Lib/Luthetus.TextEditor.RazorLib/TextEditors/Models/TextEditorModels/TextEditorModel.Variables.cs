@@ -49,6 +49,7 @@ public partial class TextEditorModel
     public ILuthCompilerService CompilerService { get; init; }
     public TextEditorSaveFileHelper TextEditorSaveFileHelper { get; init; } = new();
     public int EditBlockIndex { get; init; }
+    public bool IsDirty { get; init; }
 	public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple { get; init; }
     public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();
 }
