@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
+using System.Collections.Immutable;
 using System.Reactive.Linq;
 using System.Text;
 
@@ -26,6 +27,7 @@ public class CliWrapIntegratedTerminal : IntegratedTerminal
     }
 
     public PipeSource? StdInPipeSource { get; private set; }
+    public override ImmutableArray<Std> StdList => _stdList.ToImmutableArray();
 
     public void AddStdOut(string content, StdOutKind stdOutKind)
     {
@@ -70,19 +72,6 @@ public class CliWrapIntegratedTerminal : IntegratedTerminal
         }
 
         await StopAsync();
-    }
-
-    public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
-    {
-        var localStdList = new List<Std>(_stdList);
-        foreach (var std in localStdList)
-        {
-            std.GetRenderTreeBuilder(builder, ref sequence);
-            builder.OpenElement(sequence++, "hr");
-            builder.CloseElement();
-        }
-
-        return builder;
     }
 
     public override Task StopAsync(CancellationToken cancellationToken = default)

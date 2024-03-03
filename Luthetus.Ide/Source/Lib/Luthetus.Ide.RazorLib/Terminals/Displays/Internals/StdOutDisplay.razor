@@ -1,0 +1,12 @@
+<div class="@GetCssClass()">
+	@{
+		var stringReader = new StringReader(StdOut.Content);
+	    string? line;
+
+	    while ((line = stringReader.ReadLine()) is not null)
+	    {
+			<text>@line</text>
+			<br/>
+	    }
+	}
+</div>

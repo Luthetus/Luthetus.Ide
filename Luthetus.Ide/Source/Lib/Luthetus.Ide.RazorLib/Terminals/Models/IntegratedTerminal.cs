@@ -2,6 +2,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Concurrent;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
@@ -20,12 +21,13 @@ public abstract class IntegratedTerminal
     public IEnvironmentProvider EnvironmentProvider { get; }
     public ConcurrentQueue<Func<Task>> TaskQueue { get; } = new();
     
+    public abstract ImmutableArray<Std> StdList { get; }
+
     public event Action? StateChanged;
     
     public abstract Task HandleStdInputOnKeyDown(KeyboardEventArgs keyboardEventArgs, StdInRequest stdInRequest, string capturedValue);
     public abstract Task HandleStdQuiescentOnKeyDown(KeyboardEventArgs keyboardEventArgs, StdQuiescent stdQuiescent, string capturedTargetFilePath, string capturedArguments);
     public abstract Task StartAsync(CancellationToken cancellationToken = default);
-    public abstract RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence);
     public abstract Task StopAsync(CancellationToken cancellationToken = default);
 
     protected virtual void InvokeStateChanged()

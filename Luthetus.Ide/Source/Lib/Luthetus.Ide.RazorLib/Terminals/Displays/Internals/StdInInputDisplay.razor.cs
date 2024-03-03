@@ -2,9 +2,9 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace Luthetus.Ide.RazorLib.Terminals.Displays;
+namespace Luthetus.Ide.RazorLib.Terminals.Displays.Internals;
 
-public partial class StdInInputDisplay
+public partial class StdInInputDisplay : ComponentBase
 {
     [Parameter, EditorRequired]
     public IntegratedTerminal IntegratedTerminal { get; set; } = null!;

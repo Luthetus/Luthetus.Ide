@@ -120,8 +120,6 @@ public class ThrottleController
 
     public void FireAndForget(IThrottleEvent throttleEvent)
     {
-        Console.WriteLine("Start_" + nameof(FireAndForget));
-
         lock (_lockThrottleEventQueue)
         {
             _throttleEventQueue.Enqueue(throttleEvent);
@@ -131,43 +129,29 @@ public class ThrottleController
         }
 
         _ = Task.Run(DequeueAsync).ConfigureAwait(false);
-
-        Console.WriteLine("End_" + nameof(FireAndForget));
     }
 
     private async Task DequeueAsync()
     {
-        Console.WriteLine("Start_" + nameof(DequeueAsync));
-
         try
         {
-            Console.WriteLine("TryStart_" + nameof(DequeueAsync));
-
-            Console.WriteLine("GrabFirst_lockSemaphoreSlimLock_" + nameof(DequeueAsync));
             lock (_lockSemaphoreSlim)
             {
                 if (_semaphoreSlim.CurrentCount <= 0)
                     return;
             }
-            Console.WriteLine("AfterFirst_lockSemaphoreSlimLock_" + nameof(DequeueAsync));
 
             await _semaphoreSlim.WaitAsync();
-            Console.WriteLine("After__semaphoreSlim.WaitAsync" + nameof(DequeueAsync));
 
             while (true)
             {
-                Console.WriteLine("Start_While_True" + nameof(DequeueAsync));
-
-                Console.WriteLine("await _throttleDelayTask" + nameof(DequeueAsync));
                 await _throttleDelayTask.ConfigureAwait(false);
 
-                Console.WriteLine("await _previousWorkItemTask" + nameof(DequeueAsync));
                 await _previousWorkItemTask.ConfigureAwait(false);
 
                 CancellationToken cancellationToken;
                 IThrottleEvent? oldEvent;
 
-                Console.WriteLine("grab _lockThrottleEventQueue" + nameof(DequeueAsync));
                 lock (_lockThrottleEventQueue)
                 {
                     if (_throttleEventQueue.TryDequeue(out oldEvent) && oldEvent is not null)
@@ -177,8 +161,6 @@ public class ThrottleController
                                 _throttleEventQueue.TryPeek(out var recentEvent) && recentEvent is not null &&
                                     oldEvent.Id == recentEvent.Id)
                         {
-                            Console.WriteLine($"while consecutive {++whileConsecutiveCounter}" + nameof(DequeueAsync));
-
                             var consecutiveResult = oldEvent.ConsecutiveEntryFunc.Invoke((oldEvent, recentEvent));
 
                             if (consecutiveResult is null)
@@ -220,15 +202,11 @@ public class ThrottleController
         }
         finally
         {
-            Console.WriteLine("FinallyStart_" + nameof(DequeueAsync));
             lock (_lockSemaphoreSlim)
             {
                 _semaphoreSlim.Release();
             }
-            Console.WriteLine("FinallyEnd_" + nameof(DequeueAsync));
         }
-
-        Console.WriteLine("End_" + nameof(DequeueAsync));
     }
 
     public void Dispose()

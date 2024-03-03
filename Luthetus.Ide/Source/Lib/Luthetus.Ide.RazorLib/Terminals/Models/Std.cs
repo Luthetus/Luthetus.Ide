@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Components.Rendering;
-
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public abstract class Std
@@ -11,5 +9,5 @@ public abstract class Std
         _integratedTerminal = integratedTerminal;
     }
 
-    public abstract RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence);
+    public abstract StdKind StdKind { get; }
 }

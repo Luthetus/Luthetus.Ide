@@ -9,8 +9,5 @@ public class StdErr : Std
     {
     }
 
-    public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
-    {
-        return builder;
-    }
+    public override StdKind StdKind => StdKind.StdErr;
 }

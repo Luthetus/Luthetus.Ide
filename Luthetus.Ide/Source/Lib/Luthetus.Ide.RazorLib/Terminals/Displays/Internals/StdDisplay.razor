@@ -1,0 +1,17 @@
+@using Luthetus.Ide.RazorLib.Terminals.Models;
+
+@switch (Std.StdKind)
+{
+	case StdKind.StdErr:
+		<StdErrDisplay StdErr="(StdErr)Std"/>
+		break;
+	case StdKind.StdInRequest:
+		<StdInRequestDisplay StdInRequest="(StdInRequest)Std"/>
+		break;
+	case StdKind.StdOut:
+		<StdOutDisplay StdOut="(StdOut)Std"/>
+		break;
+	case StdKind.StdQuiescent:
+		<StdQuiescentDisplay StdQuiescent="(StdQuiescent)Std"/>
+		break;
+}
