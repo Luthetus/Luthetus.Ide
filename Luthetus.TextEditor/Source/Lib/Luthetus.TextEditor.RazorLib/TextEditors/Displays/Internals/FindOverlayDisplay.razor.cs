@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using System.Collections.Immutable;
 using Fluxor;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 

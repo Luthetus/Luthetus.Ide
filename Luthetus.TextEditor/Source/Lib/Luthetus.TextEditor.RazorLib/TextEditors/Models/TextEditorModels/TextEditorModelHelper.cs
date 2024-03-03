@@ -5,7 +5,6 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using System.Collections.Immutable;
-using System.Reflection;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
