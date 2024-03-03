@@ -39,7 +39,7 @@
         //
         // The solution is to calculate the overhang for any virtualization elements that are rendered at the 'top-offscreen'.
         //
-        // Editor scrolltop - 0th element's top == topOffscreenOverhang
+        // Editor scrolltop - 0th element's top == topOffscreenOverhang (2024-03-02)
         var topOffscreenOverhang = RenderBatch.ViewModel!.VirtualizationResult.EntryList.FirstOrDefault()?.TopInPixels ?? -1;
 
         if (topOffscreenOverhang != -1)
