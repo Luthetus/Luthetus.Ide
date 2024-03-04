@@ -28,6 +28,8 @@ public partial class FindAllDisplay : FluxorComponent
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]
+	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
     private static readonly Key<TabGroup> SelectedSearchEngineTabGroupKey = new(Guid.Parse("92ec8823-79b3-4be3-99c5-1c68d713e685"));
@@ -191,8 +193,8 @@ public partial class FindAllDisplay : FluxorComponent
 			return;
 
         await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
-                resourceUri,
-                ServiceProvider));
+            resourceUri,
+            ServiceProvider));
 
         if (TextEditorConfig.TryRegisterViewModelFunc is not null)
 		{

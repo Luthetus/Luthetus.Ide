@@ -11,6 +11,7 @@ using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.CodeSearches.States;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Displays;
 
@@ -26,7 +27,9 @@ public partial class CodeSearchDisplay : FluxorComponent
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 
 	private readonly TextEditorViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()

@@ -42,18 +42,17 @@
 
         @foreach (var filePath in codeSearchState.ResultList)
         {
-            <div style="cursor: pointer;"
-            @onclick="() => HandleOnClick(filePath)"
-            @ondblclick="() => HandleOnDoubleClick(filePath)">
+            var absolutePath = EnvironmentProvider.AbsolutePathFactory(filePath, false);
 
-                @if (codeSearchState.StartingAbsolutePathForSearch is not null)
-                {
-                    @filePath.Replace(codeSearchState.StartingAbsolutePathForSearch, string.Empty)
-                }
-                else
-                {
-                    @filePath
-                }
+            <div>
+                <label>Open in editor:</label>
+                <button class="luth_button"
+                        style="display: inline; margin-bottom: 15px;"
+                        title="@absolutePath.Value"
+                        @onclick="() => HandleOnClick(filePath)"
+                        @ondblclick="() => HandleOnDoubleClick(filePath)">
+                    @absolutePath.NameWithExtension
+                </button>
             </div>
         }
     </div>

@@ -3,7 +3,8 @@
 @{ var dirtyResourceUriState = DirtyResourceUriStateWrap.Value; }
 
 <button class="luth_button luth_web_dirty-text-editor-models-interactive-icon @CssClassString"
-        style="@CssStyleString">
+        style="@CssStyleString"
+        @onclick="ShowDialogOnClick">
 
     @* TODO: The icons are annoying because they are an integer value. Might need to make them more responsive. This is the <IconBell/> (2023-09-09) *@
     @* The: "calc(0.85em + 4px + 0.7em)" comes from the bottom panel height. I modified it slightly to allow the icon to fit. *@

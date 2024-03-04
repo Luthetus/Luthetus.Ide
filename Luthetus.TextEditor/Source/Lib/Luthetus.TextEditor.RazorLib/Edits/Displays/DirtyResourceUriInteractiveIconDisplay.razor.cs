@@ -19,20 +19,20 @@ public partial class DirtyResourceUriInteractiveIconDisplay : FluxorComponent
     [Parameter]
     public string CssStyleString { get; set; } = string.Empty;
 
-    //private static Key<DialogRecord> _dialogRecordKey = Key<DialogRecord>.NewKey();
+    private static Key<DialogRecord> _dialogRecordKey = Key<DialogRecord>.NewKey();
 
-    //private readonly DialogRecord _dialogRecord = new(
-    //    _dialogRecordKey,
-    //    "Un-saved Files",
-    //    typeof(DirtyTextEditorModelsViewDisplay),
-    //    null,
-    //    null)
-    //{
-    //    IsResizable = true
-    //};
+    private readonly DialogRecord _dialogRecord = new(
+        _dialogRecordKey,
+        "Un-saved Files",
+        typeof(DirtyResourceUriViewDisplay),
+        null,
+        null)
+    {
+        IsResizable = true
+    };
 
-    //private void ShowDialogOnClick()
-    //{
-    //    DialogService.RegisterDialogRecord(_dialogRecord);
-    //}
+    private void ShowDialogOnClick()
+    {
+        DialogService.RegisterDialogRecord(_dialogRecord);
+    }
 }

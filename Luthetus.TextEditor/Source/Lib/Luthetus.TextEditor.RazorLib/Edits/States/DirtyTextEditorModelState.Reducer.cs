@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fluxor;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ public partial record DirtyResourceUriState
 {
     public static class Reducer
     {
+        [ReducerMethod]
         public static DirtyResourceUriState ReduceAddDirtyResourceUriAction(
             DirtyResourceUriState inState,
             AddDirtyResourceUriAction addDirtyResourceUriAction)
@@ -19,7 +21,8 @@ public partial record DirtyResourceUriState
                 DirtyResourceUriList = inState.DirtyResourceUriList.Add(addDirtyResourceUriAction.ResourceUri)
             };
         }
-        
+
+        [ReducerMethod]
         public static DirtyResourceUriState ReduceRemoveDirtyResourceUriAction(
             DirtyResourceUriState inState,
             RemoveDirtyResourceUriAction removeDirtyResourceUriAction)
