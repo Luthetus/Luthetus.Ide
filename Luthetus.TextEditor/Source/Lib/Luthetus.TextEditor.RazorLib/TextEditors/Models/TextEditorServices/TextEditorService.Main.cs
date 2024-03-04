@@ -17,6 +17,7 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices.ITextEditorService;
 
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Edits.States;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -132,6 +133,14 @@ public partial class TextEditorService : ITextEditorService
                         {
                             // Invoking 'GetViewModelModifier' marks the view model to be updated.
                             editContext.GetViewModelModifier(viewModel.ViewModelKey);
+                        }
+
+                        if (modelModifier.WasDirty != modelModifier.IsDirty)
+                        {
+                            if (modelModifier.IsDirty)
+                                _dispatcher.Dispatch(new DirtyResourceUriState.AddDirtyResourceUriAction(modelModifier.ResourceUri));
+                            else
+                                _dispatcher.Dispatch(new DirtyResourceUriState.RemoveDirtyResourceUriAction(modelModifier.ResourceUri));
                         }
                     }
 

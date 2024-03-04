@@ -8,6 +8,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
+using Luthetus.TextEditor.RazorLib.Edits.States;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
@@ -34,6 +35,8 @@ public partial class TextEditorModelModifier
             throw new ApplicationException($"{nameof(model)}.{nameof(PartitionSize)} must be >= 2");
 
         PartitionSize = model.PartitionSize;
+        WasDirty = model.IsDirty;
+
         _isDirty = model.IsDirty;
 
         _textEditorModel = model;
@@ -88,6 +91,12 @@ public partial class TextEditorModelModifier
     private Key<RenderState>? _renderStateKey = Key<RenderState>.NewKey();
     private Keymap? _textEditorKeymap;
     private TextEditorOptions? _textEditorOptions;
+
+    /// <summary>
+    /// This property optimizes the dirty state tracking. If _wasDirty != _isDirty then track the state change.
+    /// This involves writing to dependency injectable state, then triggering a re-render in the <see cref="Edits.Displays.DirtyResourceUriInteractiveIconDisplay"/>
+    /// </summary>
+    public bool WasDirty { get; }
 
     private int PartitionSize { get; }
     public bool WasModified { get; internal set; }
