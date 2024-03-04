@@ -152,14 +152,20 @@ public class ThrottleController
                 CancellationToken cancellationToken;
                 IThrottleEvent? oldEvent;
 
-                lock (_lockThrottleEventQueue)
+                // A lock is not needed for dequeueing from _throttleEventQueue
+                // because the only dequeues are happening here in a SemaphoreSlim.
+                if (_throttleEventQueue.TryDequeue(out oldEvent) && oldEvent is not null)
                 {
-                    if (_throttleEventQueue.TryDequeue(out oldEvent) && oldEvent is not null)
+                    // In order to avoid infinitely writing, then dequeueing over and over.
+                    // Get the current count so there is a maximum amount of times this inner loop will run
+                    // when combining consecutive entries.
+                    int captureQueueCount = _throttleEventQueue.Count;
+
+                    for (int i = 0; i < captureQueueCount; i++)
                     {
-                        int whileConsecutiveCounter = 0;
-                        while (oldEvent.ConsecutiveEntryFunc is not null &&
-                                _throttleEventQueue.TryPeek(out var recentEvent) && recentEvent is not null &&
-                                    oldEvent.Id == recentEvent.Id)
+                        if (oldEvent.ConsecutiveEntryFunc is not null &&
+                            _throttleEventQueue.TryPeek(out var recentEvent) && recentEvent is not null &&
+                                oldEvent.Id == recentEvent.Id)
                         {
                             var consecutiveResult = oldEvent.ConsecutiveEntryFunc.Invoke((oldEvent, recentEvent));
 
@@ -175,15 +181,15 @@ public class ThrottleController
                                 oldEvent = consecutiveResult;
                             }
                         }
+                    }
 
-                        _throttleCancellationTokenSource.Cancel();
-                        _throttleCancellationTokenSource = new();
-                        cancellationToken = _throttleCancellationTokenSource.Token;
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    _throttleCancellationTokenSource.Cancel();
+                    _throttleCancellationTokenSource = new();
+                    cancellationToken = _throttleCancellationTokenSource.Token;
+                }
+                else
+                {
+                    break;
                 }
 
                 if (oldEvent is not null)
