@@ -21,7 +21,7 @@ public partial class TextEditorModel
         string content,
         IDecorationMapper? decorationMapper,
         ILuthCompilerService? compilerService,
-		int partitionSize = 2_048)
+		int partitionSize = 4_096)
     {
         ResourceUri = resourceUri;
         ResourceLastWriteTime = resourceLastWriteTime;

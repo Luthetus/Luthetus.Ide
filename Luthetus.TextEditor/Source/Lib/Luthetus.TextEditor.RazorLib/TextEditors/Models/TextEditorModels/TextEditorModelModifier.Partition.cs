@@ -204,18 +204,20 @@ public partial class TextEditorModelModifier
                 throw new ApplicationException("if (relativePositionIndex == -1)");
 
             partition = _partitionList[indexOfPartitionWithAvailableSpace];
-            var partitionAvailableSpace = partition.Count - relativePositionIndex;
+            var partitionAvailableSpace = PartitionSize - partition.Count;
 
-            var batchInsertRange = new List<RichCharacter> { richCharacterEnumerator.Current };
+            var batchInsertList = new List<RichCharacter> { richCharacterEnumerator.Current };
 
-            while (batchInsertRange.Count != partitionAvailableSpace && richCharacterEnumerator.MoveNext())
+            while ((batchInsertList.Count < partitionAvailableSpace) && richCharacterEnumerator.MoveNext())
             {
-                batchInsertRange.Add(richCharacterEnumerator.Current);
+                batchInsertList.Add(richCharacterEnumerator.Current);
             }
-
+            
             _partitionList = _partitionList.SetItem(
                 indexOfPartitionWithAvailableSpace,
-                _partitionList[indexOfPartitionWithAvailableSpace].InsertRange(relativePositionIndex, batchInsertRange));
+                _partitionList[indexOfPartitionWithAvailableSpace].InsertRange(relativePositionIndex, batchInsertList));
+
+            globalPositionIndex += batchInsertList.Count;
         }
     }
 
