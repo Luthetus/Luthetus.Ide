@@ -116,8 +116,8 @@ public class ThrottleController
     private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
     private CancellationTokenSource _throttleCancellationTokenSource = new();
-    private Task _throttleDelayTask = Task.CompletedTask;
-    private Task _previousWorkItemTask = Task.CompletedTask;
+    private ConfiguredTaskAwaitable _throttleDelayTask = Task.CompletedTask.ConfigureAwait(false);
+    private ConfiguredTaskAwaitable _previousWorkItemTask = Task.CompletedTask.ConfigureAwait(false);
     private ConfiguredTaskAwaitable _dequeueAsyncTask = Task.CompletedTask.ConfigureAwait(false);
 
     public void EnqueueEvent(IThrottleEvent throttleEvent)
@@ -141,7 +141,7 @@ public class ThrottleController
 
         try
         {
-            await _semaphoreSlim.WaitAsync();
+            await _semaphoreSlim.WaitAsync().ConfigureAwait(false);
 
             while (true)
             {
@@ -195,13 +195,13 @@ public class ThrottleController
                 {
                     _throttleDelayTask = Task.Run(async () =>
                     {
-                        await Task.Delay(oldEvent.ThrottleTimeSpan);
-                    });
+                        await Task.Delay(oldEvent.ThrottleTimeSpan).ConfigureAwait(false);
+                    }).ConfigureAwait(false);
 
                     _previousWorkItemTask = Task.Run(async () =>
                     {
-                        await oldEvent.WorkItem.Invoke(oldEvent, CancellationToken.None);
-                    });
+                        await oldEvent.WorkItem.Invoke(oldEvent, CancellationToken.None).ConfigureAwait(false);
+                    }).ConfigureAwait(false);
                 }
             }
         }

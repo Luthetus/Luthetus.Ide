@@ -1,4 +1,6 @@
-﻿namespace Luthetus.Common.RazorLib.Reactives.Models;
+﻿using System.Runtime.CompilerServices;
+
+namespace Luthetus.Common.RazorLib.Reactives.Models;
 
 public class Throttle : IThrottle
 {
@@ -6,8 +8,8 @@ public class Throttle : IThrottle
     private readonly Stack<Func<CancellationToken, Task>> _workItemsStack = new();
 
     private CancellationTokenSource _throttleCancellationTokenSource = new();
-    private Task _throttleDelayTask = Task.CompletedTask;
-    private Task _previousWorkItemTask = Task.CompletedTask;
+    private ConfiguredTaskAwaitable _throttleDelayTask = Task.CompletedTask.ConfigureAwait(false);
+    private ConfiguredTaskAwaitable _previousWorkItemTask = Task.CompletedTask.ConfigureAwait(false);
 
     public bool ShouldWaitForPreviousWorkItemToComplete { get; } = true;
 
@@ -57,13 +59,13 @@ public class Throttle : IThrottle
 
                     _throttleDelayTask = Task.Run(async () =>
                     {
-                        await Task.Delay(ThrottleTimeSpan);
-                    });
+                        await Task.Delay(ThrottleTimeSpan).ConfigureAwait(false);
+                    }).ConfigureAwait(false);
 
                     _previousWorkItemTask = Task.Run(async () =>
                     {
-                        await mostRecentWorkItem.Invoke(CancellationToken.None);
-                    });
+                        await mostRecentWorkItem.Invoke(CancellationToken.None).ConfigureAwait(false);
+                    }).ConfigureAwait(false);
                 }
             }).ConfigureAwait(false);
         }
