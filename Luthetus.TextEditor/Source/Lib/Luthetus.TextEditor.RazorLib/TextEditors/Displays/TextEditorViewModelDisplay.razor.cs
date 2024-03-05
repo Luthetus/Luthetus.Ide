@@ -366,9 +366,12 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         _throttleControllerUiEvents.EnqueueEvent(onKeyDownThrottleEvent);
     }
 
-    private void HandleOnContextMenuAsync()
+    private async Task HandleOnContextMenuAsync()
     {
-        CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.ContextMenu);
+        var localCursorDisplay = CursorDisplay;
+
+        if (localCursorDisplay is not null)
+            await localCursorDisplay.SetShouldDisplayMenuAsync(TextEditorMenuKind.ContextMenu);
     }
 
     private void ReceiveOnDoubleClick(MouseEventArgs mouseEventArgs)
@@ -379,7 +382,15 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        var throttleEvent = new ThrottleEventOnDoubleClick();
+        var throttleEvent = new ThrottleEventOnDoubleClick(
+                mouseEventArgs,
+                CalculateRowAndColumnIndex,
+                _throttleControllerUiEvents,
+                _uiEventsDelay,
+                modelResourceUri,
+                viewModelKey.Value,
+                TextEditorService);
+
         _throttleControllerUiEvents.EnqueueEvent(throttleEvent);
     }
 
@@ -391,7 +402,22 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        var throttleEvent = new ThrottleEventOnMouseDown();
+        var throttleEvent = new ThrottleEventOnMouseDown(
+                mouseEventArgs,
+                CalculateRowAndColumnIndex,
+                () => { CursorDisplay?.PauseBlinkAnimation(); },
+                async (a, b) => 
+                {
+                    var localCursorDisplay = CursorDisplay;
+                    if (localCursorDisplay is not null)
+                        await localCursorDisplay.SetShouldDisplayMenuAsync(a, b);
+                },
+                _throttleControllerUiEvents,
+                _uiEventsDelay,
+                modelResourceUri,
+                viewModelKey.Value,
+                TextEditorService);
+
         _throttleControllerUiEvents.EnqueueEvent(throttleEvent);
     }
 
@@ -448,7 +474,16 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
-            var throttleEvent = new ThrottleEventOnMouseMove();
+            var throttleEvent = new ThrottleEventOnMouseMove(
+                mouseEventArgs,
+                CalculateRowAndColumnIndex,
+                () => { CursorDisplay?.PauseBlinkAnimation(); },
+                _throttleControllerUiEvents,
+                _uiEventsDelay,
+                modelResourceUri,
+                viewModelKey.Value,
+                TextEditorService);
+
             _throttleControllerUiEvents.EnqueueEvent(throttleEvent);
         }
         else
@@ -832,7 +867,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (viewModelKey is null)
             return;
 
-        var throttleEvent = new ThrottleEventOnWheel();
+        var throttleEvent = new ThrottleEventOnWheel(
+            wheelEventArgs,
+            _throttleControllerUiEvents,
+            _uiEventsDelay,
+            viewModelKey.Value,
+            TextEditorService);
+
         _throttleControllerUiEvents.EnqueueEvent(throttleEvent);
     }
 

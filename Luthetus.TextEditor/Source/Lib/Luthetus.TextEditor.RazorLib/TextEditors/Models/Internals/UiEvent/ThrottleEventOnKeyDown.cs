@@ -14,6 +14,8 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 
 public class ThrottleEventOnKeyDown : IThrottleEvent
 {
+    private readonly ThrottleController _throttleControllerUiEvents;
+    private readonly TimeSpan _uiEventsDelay;
     private readonly ITextEditorService _textEditorService;
 
     public ThrottleEventOnKeyDown(
@@ -24,10 +26,13 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
         Key<TextEditorViewModel> viewModelKey,
         ITextEditorService textEditorService)
     {
+        _throttleControllerUiEvents = throttleControllerUiEvents;
+        _uiEventsDelay = uiEventsDelay;
+        _textEditorService = textEditorService;
+        
         KeyboardEventArgs = keyboardEventArgs;
         ResourceUri = resourceUri;
         ViewModelKey = viewModelKey;
-        _textEditorService = textEditorService;
     }
 
     public TimeSpan ThrottleTimeSpan => TimeSpan.Zero;
@@ -39,7 +44,69 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
     {
         if (moreRecentEvent is ThrottleEventOnKeyDown moreRecentEventOnKeyDown)
         {
+            if (true)
+            {
+                // Avoid taking keypresses such as 'Backspace' and treating them as text.
+                if (moreRecentEventOnKeyDown.KeyboardEventArgs.Key.Length != 1)
+                    return null;
+
+                if (_viewModelKey != moreRecentEvent._viewModelKey)
+                {
+                    return null;
+                }
+
+                var badViewModel = _textEditorService.ViewModelApi.GetOrDefault(viewModelKey);
+
+                if (badViewModel is null)
+                    return null;
+
+                var hasSelection = TextEditorSelectionHelper.HasSelectedText(badViewModel.PrimaryCursor.Selection);
+
+                var oldKeyboardEventArgs = oldEventWithType.Item.keyboardEventsList.First();
+                var recentKeyboardEventArgs = oldEventWithType.Item.keyboardEventsList.First();
+
+                var oldEventOnKeyDownKind = GetOnKeyDownKind(
+                    oldKeyboardEventArgs,
+                    hasSelection,
+                    out var oldEventCommand);
+
+                var recentEventOnKeyDownKind = GetOnKeyDownKind(
+                    recentKeyboardEventArgs,
+                    hasSelection,
+                    out var recentEventCommand);
+
+                if (oldEventOnKeyDownKind == OnKeyDownKind.Movement)
+                {
+                    // TODO: Batch 'movement'
+                }
+                else if (oldEventOnKeyDownKind == OnKeyDownKind.ContextMenu)
+                {
+                    // TODO: Decide what 'context menu' means in the context of 'batching'
+                }
+                else if (oldEventOnKeyDownKind == OnKeyDownKind.Command)
+                {
+                    // TODO: Decide what 'command' means in the context of 'batching'
+                }
+                else if (oldEventOnKeyDownKind == OnKeyDownKind.None)
+                {
+                    //var combinedKeyboardEventArgs = new List<KeyboardEventArgs>();
+                    //combinedKeyboardEventArgs.AddRange(oldEventWithType.Item.keyboardEventsList);
+                    //combinedKeyboardEventArgs.AddRange(recentEventWithType.Item.keyboardEventsList);
+
+                    //var combinedEvent = new ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)>(
+                    //    oldEventWithType.Id,
+                    //    oldEventWithType.ThrottleTimeSpan,
+                    //    (viewModelKey, combinedKeyboardEventArgs),
+                    //    (combinedThrottleEvent, throttleCancellationToken) => HandleOnKeyDown(combinedThrottleEvent, resourceUri, viewModelKey, true, throttleCancellationToken),
+                    //    tuple => BatchOnKeyDown(tuple.OldEvent, tuple.RecentEvent, resourceUri, viewModelKey));
+
+                    return (IThrottleEvent?)combinedEvent;
+                }
+            }
+
             return new ThrottleEventOnKeyDownBatch(
+                _throttleControllerUiEvents,
+                _uiEventsDelay,
                 new List<KeyboardEventArgs>() 
                 { 
                     moreRecentEventOnKeyDown.KeyboardEventArgs,
@@ -61,77 +128,6 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
     public Task HandleEvent(CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
-    }
-
-    private IThrottleEvent? BatchOnKeyDown(IThrottleEvent oldEvent, IThrottleEvent recentEvent, ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)
-    {
-        if (oldEvent is ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)> oldEventWithType &&
-            recentEvent is ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)> recentEventWithType)
-        {
-            // Avoid taking keypresses such as 'Backspace' and treating them as text.
-            if (recentEventWithType.Item.keyboardEventsList.Last().Key.Length != 1)
-                return null;
-
-            // Avoid external state mutations with local variables.
-            var oldEventWithTypeViewModelKey = oldEventWithType.Item.viewModelKey;
-            var recentEventWithTypeViewModelKey = recentEventWithType.Item.viewModelKey;
-
-            if (viewModelKey != oldEventWithType.Item.viewModelKey ||
-                oldEventWithType.Item.viewModelKey != recentEventWithType.Item.viewModelKey)
-            {
-                return null;
-            }
-
-            var badViewModel = _textEditorService.ViewModelApi.GetOrDefault(viewModelKey);
-
-            if (badViewModel is null)
-                return null;
-
-            var hasSelection = TextEditorSelectionHelper.HasSelectedText(badViewModel.PrimaryCursor.Selection);
-
-            var oldKeyboardEventArgs = oldEventWithType.Item.keyboardEventsList.First();
-            var recentKeyboardEventArgs = oldEventWithType.Item.keyboardEventsList.First();
-
-            var oldEventOnKeyDownKind = GetOnKeyDownKind(
-                oldKeyboardEventArgs,
-                hasSelection,
-                out var oldEventCommand);
-
-            var recentEventOnKeyDownKind = GetOnKeyDownKind(
-                recentKeyboardEventArgs,
-                hasSelection,
-                out var recentEventCommand);
-
-            if (oldEventOnKeyDownKind == OnKeyDownKind.Movement)
-            {
-                // TODO: Batch 'movement'
-            }
-            else if (oldEventOnKeyDownKind == OnKeyDownKind.ContextMenu)
-            {
-                // TODO: Decide what 'context menu' means in the context of 'batching'
-            }
-            else if (oldEventOnKeyDownKind == OnKeyDownKind.Command)
-            {
-                // TODO: Decide what 'command' means in the context of 'batching'
-            }
-            else if (oldEventOnKeyDownKind == OnKeyDownKind.None)
-            {
-                var combinedKeyboardEventArgs = new List<KeyboardEventArgs>();
-                combinedKeyboardEventArgs.AddRange(oldEventWithType.Item.keyboardEventsList);
-                combinedKeyboardEventArgs.AddRange(recentEventWithType.Item.keyboardEventsList);
-
-                var combinedEvent = new ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)>(
-                    oldEventWithType.Id,
-                    oldEventWithType.ThrottleTimeSpan,
-                    (viewModelKey, combinedKeyboardEventArgs),
-                    (combinedThrottleEvent, throttleCancellationToken) => HandleOnKeyDown(combinedThrottleEvent, resourceUri, viewModelKey, true, throttleCancellationToken),
-                    tuple => BatchOnKeyDown(tuple.OldEvent, tuple.RecentEvent, resourceUri, viewModelKey));
-
-                return (IThrottleEvent?)combinedEvent;
-            }
-        }
-
-        return null;
     }
 
     private Task HandleOnKeyDown(

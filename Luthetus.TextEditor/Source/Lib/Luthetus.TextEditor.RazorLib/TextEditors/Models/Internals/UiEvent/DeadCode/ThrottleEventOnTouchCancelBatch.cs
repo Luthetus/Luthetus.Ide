@@ -3,18 +3,18 @@ using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
+namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent.DeadCode;
 
-public class ThrottleEventOnDoubleClickBatch : IThrottleEvent
+public class ThrottleEventOnTouchCancelBatch : IThrottleEvent
 {
-    public ThrottleEventOnDoubleClickBatch(
+    public ThrottleEventOnTouchCancelBatch(
         ThrottleController throttleControllerUiEvents,
         TimeSpan uiEventsDelay,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         ITextEditorService textEditorService)
     {
-        
+
     }
 
     public TimeSpan ThrottleTimeSpan => throw new NotImplementedException();

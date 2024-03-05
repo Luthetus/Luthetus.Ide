@@ -11,7 +11,6 @@ public class ThrottleEventOnWheel : IThrottleEvent
     private readonly WheelEventArgs _wheelEventArgs;
     private readonly ThrottleController _throttleControllerUiEvents;
     private readonly TimeSpan _uiEventsDelay;
-    private readonly ResourceUri _resourceUri;
     private readonly Key<TextEditorViewModel> _viewModelKey;
     private readonly ITextEditorService _textEditorService;
 
@@ -19,14 +18,12 @@ public class ThrottleEventOnWheel : IThrottleEvent
         WheelEventArgs wheelEventArgs,
         ThrottleController throttleControllerUiEvents,
         TimeSpan uiEventsDelay,
-        ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         ITextEditorService textEditorService)
     {
         _wheelEventArgs = wheelEventArgs;
         _throttleControllerUiEvents = throttleControllerUiEvents;
         _uiEventsDelay = uiEventsDelay;
-        _resourceUri = resourceUri;
         _viewModelKey = viewModelKey;
         _textEditorService = textEditorService;
     }
