@@ -1,8 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using System.Text;
-using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.TextEditor.Tests.UserStories.TextEditors.Models.TextEditorModels;
 
