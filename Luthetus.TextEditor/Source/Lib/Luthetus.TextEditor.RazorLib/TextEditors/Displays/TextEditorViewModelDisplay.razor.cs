@@ -31,6 +31,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.Common.Tests.Basis.Reactives.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -594,12 +595,14 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (resourceUri is null || viewModelKey is null)
             return;
 
-        _throttleControllerUiEvents.EnqueueEvent(new ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)>(
+        var onKeyDownThrottleEvent = new TextEditorOnKeyDownEvent(
             0,
             _uiEventsDelay,
             (viewModelKey.Value, new List<KeyboardEventArgs> { keyboardEventArgs }),
             (throttleEvent, throttleDelayCancellationToken) => HandleOnKeyDown(throttleEvent, resourceUri, viewModelKey.Value, false, throttleDelayCancellationToken),
-            tuple => BatchOnKeyDown(tuple.OldEvent, tuple.RecentEvent, resourceUri, viewModelKey.Value)));
+            tuple => BatchOnKeyDown(tuple.OldEvent, tuple.RecentEvent, resourceUri, viewModelKey.Value));
+
+        _throttleControllerUiEvents.EnqueueEvent();
     }
 
     private void HandleOnContextMenuAsync()
@@ -1241,17 +1244,44 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                !keyboardEventArgs.CtrlKey;
     }
 
-    private async Task HandleOnWheelAsync(WheelEventArgs wheelEventArgs)
+    private void HandleOnWheel(WheelEventArgs wheelEventArgs)
     {
-        var textEditorViewModel = GetViewModel();
+        var viewModelKey = GetViewModel()?.ViewModelKey;
 
-        if (textEditorViewModel is null)
+        if (viewModelKey is null)
             return;
 
-        if (wheelEventArgs.ShiftKey)
-            textEditorViewModel.MutateScrollHorizontalPositionByPixels(wheelEventArgs.DeltaY);
-        else
-            textEditorViewModel.MutateScrollVerticalPositionByPixels(wheelEventArgs.DeltaY);
+        _throttleControllerUiEvents.EnqueueEvent(new ThrottleEvent<WheelEventArgs>(
+            nameof(HandleOnWheel),
+            _uiEventsDelay,
+            0,
+            (throttleEvent, _) =>
+            {
+                TextEditorService.Post(
+                    nameof(HandleOnWheel),
+                    async editContext =>
+                    {
+                        var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
+
+                        if (viewModelModifier is null)
+                            return;
+
+                        if (wheelEventArgs.ShiftKey)
+                            viewModelModifier.ViewModel.MutateScrollHorizontalPositionByPixels(wheelEventArgs.DeltaY);
+                        else
+                            viewModelModifier.ViewModel.MutateScrollVerticalPositionByPixels(wheelEventArgs.DeltaY);
+                    });
+
+                return Task.CompletedTask;
+            },
+            tuple => 
+            {
+                if ()
+                {
+
+                }
+                return tuple.RecentEvent;
+            }));
     }
 
     private Task HandleOnTooltipMouseOverAsync()
