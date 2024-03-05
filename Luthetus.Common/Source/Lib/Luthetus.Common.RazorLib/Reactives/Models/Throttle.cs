@@ -65,7 +65,7 @@ public class Throttle : IThrottle
                         await mostRecentWorkItem.Invoke(CancellationToken.None);
                     });
                 }
-            });
+            }).ConfigureAwait(false);
         }
     }
 

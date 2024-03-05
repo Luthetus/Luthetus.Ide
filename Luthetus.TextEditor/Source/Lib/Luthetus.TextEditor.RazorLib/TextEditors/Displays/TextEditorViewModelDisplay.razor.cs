@@ -562,16 +562,16 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             }
             else if (oldEventOnKeyDownKind == OnKeyDownKind.None)
             {
-                var combinedKeyboardEventArgs = oldEventWithType.Item.keyboardEventsList
-                    .Union(recentEventWithType.Item.keyboardEventsList)
-                    .ToList();
+                var combinedKeyboardEventArgs = new List<KeyboardEventArgs>();
+                combinedKeyboardEventArgs.AddRange(oldEventWithType.Item.keyboardEventsList);
+                combinedKeyboardEventArgs.AddRange(recentEventWithType.Item.keyboardEventsList);
 
                 var combinedEvent = new ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)>(
                     oldEventWithType.Id,
                     oldEventWithType.ThrottleTimeSpan,
                     (viewModelKey, combinedKeyboardEventArgs),
                     (combinedThrottleEvent, throttleCancellationToken) => HandleOnKeyDown(combinedThrottleEvent, resourceUri, viewModelKey, true, throttleCancellationToken),
-                    null);
+                    tuple => BatchOnKeyDown(tuple.OldEvent, tuple.RecentEvent, resourceUri, viewModelKey));
 
                 return (IThrottleEvent?)combinedEvent;
             }
@@ -596,7 +596,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         _throttleControllerUiEvents.EnqueueEvent(new ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)>(
             0,
-            TimeSpan.FromMilliseconds(1_000),
+            TimeSpan.FromMilliseconds(0),
             (viewModelKey.Value, new List<KeyboardEventArgs> { keyboardEventArgs }),
             (throttleEvent, throttleDelayCancellationToken) => HandleOnKeyDown(throttleEvent, resourceUri, viewModelKey.Value, false, throttleDelayCancellationToken),
             tuple => BatchOnKeyDown(tuple.OldEvent, tuple.RecentEvent, resourceUri, viewModelKey.Value)));

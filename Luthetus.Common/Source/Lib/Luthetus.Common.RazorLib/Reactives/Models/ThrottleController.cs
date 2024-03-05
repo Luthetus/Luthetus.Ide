@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.Reactives.Models;
+using System.Runtime.CompilerServices;
 
 namespace Luthetus.Common.Tests.Basis.Reactives.Models;
 
@@ -117,7 +118,7 @@ public class ThrottleController
     private CancellationTokenSource _throttleCancellationTokenSource = new();
     private Task _throttleDelayTask = Task.CompletedTask;
     private Task _previousWorkItemTask = Task.CompletedTask;
-    private Task _dequeueAsyncTask = Task.CompletedTask;
+    private ConfiguredTaskAwaitable _dequeueAsyncTask = Task.CompletedTask.ConfigureAwait(false);
 
     public void EnqueueEvent(IThrottleEvent throttleEvent)
     {
@@ -125,8 +126,8 @@ public class ThrottleController
         {
             _throttleEventQueue.Enqueue(throttleEvent);
 
-            if (_dequeueAsyncTask.IsCompleted)
-                _dequeueAsyncTask = Task.Run(DequeueAsync);
+            if (_dequeueAsyncTask.GetAwaiter().IsCompleted)
+                _dequeueAsyncTask = Task.Run(DequeueAsync).ConfigureAwait(false);
         }
     }
 
@@ -232,7 +233,7 @@ public class ThrottleController
                     //
                     // For this reason, the finishing _dequeueAsyncTask will overwrite itself,
                     // with a new Task.Run(DequeueAsync).
-                    _dequeueAsyncTask = Task.Run(DequeueAsync);
+                    _dequeueAsyncTask = Task.Run(DequeueAsync).ConfigureAwait(false);
                 }
             }
         }
