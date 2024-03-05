@@ -282,9 +282,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             return KeyboardEventArgsKind.Command;
 
         if (keyboardEventArgs.Key.Length == 1)
-        {
             return KeyboardEventArgsKind.Text;
-        }
 
         return KeyboardEventArgsKind.Other;
     }

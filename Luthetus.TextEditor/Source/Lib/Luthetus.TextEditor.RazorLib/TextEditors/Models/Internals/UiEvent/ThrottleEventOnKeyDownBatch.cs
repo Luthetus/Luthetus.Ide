@@ -68,7 +68,7 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
     public Task HandleEvent(CancellationToken cancellationToken)
     {
         _textEditorService.Post(
-            nameof(ThrottleEventOnKeyDown),
+            nameof(ThrottleEventOnKeyDownBatch),
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -97,7 +97,7 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
                 {
                     // TODO: Batch context menu
                 }
-                else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Command || KeyboardEventArgsKind == KeyboardEventArgsKind.None)
+                else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Command || KeyboardEventArgsKind == KeyboardEventArgsKind.Text || KeyboardEventArgsKind == KeyboardEventArgsKind.Other)
                 {
                     if (KeyboardEventArgsKind == KeyboardEventArgsKind.Command)
                     {

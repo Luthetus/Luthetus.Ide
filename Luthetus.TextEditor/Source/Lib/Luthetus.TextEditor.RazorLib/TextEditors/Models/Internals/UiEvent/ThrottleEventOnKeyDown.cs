@@ -101,39 +101,36 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
     {
         if (moreRecentEvent is ThrottleEventOnKeyDown moreRecentEventOnKeyDown)
         {
-            if (true)
+            if (KeyboardEventArgsKind == KeyboardEventArgsKind.Movement)
             {
-                if (KeyboardEventArgsKind == KeyboardEventArgsKind.Movement)
-                {
-                    // TODO: Batch 'movement'
-                }
-                else if (KeyboardEventArgsKind == KeyboardEventArgsKind.ContextMenu)
-                {
-                    // TODO: Decide what 'context menu' means in the context of 'batching'
-                }
-                else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Command)
-                {
-                    // TODO: Decide what 'command' means in the context of 'batching'
-                }
-                else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Text)
-                {
-                    return new ThrottleEventOnKeyDownBatch(
-                        _throttleControllerUiEvents,
-                        _uiEventsDelay,
-                        new List<KeyboardEventArgs>()
-                        {
-                            moreRecentEventOnKeyDown.KeyboardEventArgs,
-                            KeyboardEventArgs
-                        },
-                        KeyboardEventArgsKind,
-                        ViewModelDisplayOptions,
-                        _cursorDisplay,
-                        ResourceUri,
-                        ViewModelKey,
-                        _handleAfterOnKeyDownRangeAsyncFactoryFunc,
-                        _setTooltipViewModel,
-                        _textEditorService);
-                }
+                // TODO: Batch 'movement'
+            }
+            else if (KeyboardEventArgsKind == KeyboardEventArgsKind.ContextMenu)
+            {
+                // TODO: Decide what 'context menu' means in the context of 'batching'
+            }
+            else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Command)
+            {
+                // TODO: Decide what 'command' means in the context of 'batching'
+            }
+            else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Text)
+            {
+                return new ThrottleEventOnKeyDownBatch(
+                    _throttleControllerUiEvents,
+                    _uiEventsDelay,
+                    new List<KeyboardEventArgs>()
+                    {
+                        moreRecentEventOnKeyDown.KeyboardEventArgs,
+                        KeyboardEventArgs
+                    },
+                    KeyboardEventArgsKind,
+                    ViewModelDisplayOptions,
+                    _cursorDisplay,
+                    ResourceUri,
+                    ViewModelKey,
+                    _handleAfterOnKeyDownRangeAsyncFactoryFunc,
+                    _setTooltipViewModel,
+                    _textEditorService);
             }
         }
         
@@ -196,7 +193,7 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                 {
                     await (_cursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.ContextMenu) ?? Task.CompletedTask);
                 }
-                else if (onKeyDownKind == KeyboardEventArgsKind.Command || onKeyDownKind == KeyboardEventArgsKind.Text || onKeyDownKind == KeyboardEventArgsKind.None)
+                else if (onKeyDownKind == KeyboardEventArgsKind.Command || onKeyDownKind == KeyboardEventArgsKind.Text || onKeyDownKind == KeyboardEventArgsKind.Other)
                 {
                     if (onKeyDownKind == KeyboardEventArgsKind.Command)
                     {
@@ -213,7 +210,7 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                                 _textEditorConfig))
                             .ConfigureAwait(false);
                     }
-                    else if (onKeyDownKind == KeyboardEventArgsKind.Text)
+                    else if (onKeyDownKind == KeyboardEventArgsKind.Text || onKeyDownKind == KeyboardEventArgsKind.Other)
                     {
                         if (!TextEditorViewModelDisplay.IsAutocompleteMenuInvoker(KeyboardEventArgs))
                         {
