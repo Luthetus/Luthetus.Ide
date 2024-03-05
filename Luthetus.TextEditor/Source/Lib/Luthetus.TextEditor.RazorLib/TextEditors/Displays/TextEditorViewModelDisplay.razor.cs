@@ -72,6 +72,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private readonly IThrottle _throttleApplySyntaxHighlighting = new Throttle(TimeSpan.FromMilliseconds(500));
     private readonly TimeSpan _onMouseOutTooltipDelay = TimeSpan.FromMilliseconds(1_000);
     private readonly TimeSpan _mouseStoppedMovingDelay = TimeSpan.FromMilliseconds(400);
+    private readonly TimeSpan _uiEventsDelay = TimeSpan.FromMilliseconds(30);
     private readonly ThrottleController _throttleControllerUiEvents = new();
     /// <summary>Using this lock in order to avoid the Dispose implementation decrementing when it shouldn't</summary>
     private readonly object _linkedViewModelLock = new();
@@ -426,8 +427,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                     }
 
                     if (keyboardEventArgs.Key != "Shift" &&
-                    keyboardEventArgs.Key != "Control" &&
-                    keyboardEventArgs.Key != "Alt")
+                        keyboardEventArgs.Key != "Control" &&
+                        keyboardEventArgs.Key != "Alt")
                     {
                         if (command is null ||
                             command is TextEditorCommand commandTextEditor &&
@@ -596,7 +597,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         _throttleControllerUiEvents.EnqueueEvent(new ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)>(
             0,
-            TimeSpan.FromMilliseconds(0),
+            _uiEventsDelay,
             (viewModelKey.Value, new List<KeyboardEventArgs> { keyboardEventArgs }),
             (throttleEvent, throttleDelayCancellationToken) => HandleOnKeyDown(throttleEvent, resourceUri, viewModelKey.Value, false, throttleDelayCancellationToken),
             tuple => BatchOnKeyDown(tuple.OldEvent, tuple.RecentEvent, resourceUri, viewModelKey.Value)));
@@ -617,7 +618,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         _throttleControllerUiEvents.EnqueueEvent(new ThrottleEvent<byte>(
             0,
-            TimeSpan.FromMilliseconds(0),
+            TimeSpan.Zero,
             0,
             (throttleEvent, _) =>
             {
@@ -706,7 +707,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         _throttleControllerUiEvents.EnqueueEvent(new ThrottleEvent<byte>(
             0,
-            TimeSpan.FromMilliseconds(0),
+            TimeSpan.Zero,
             0,
             (throttleEvent, _) =>
             {
@@ -832,7 +833,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         {
             _throttleControllerUiEvents.EnqueueEvent(new ThrottleEvent<byte>(
                 0,
-                TimeSpan.FromMilliseconds(0),
+                _uiEventsDelay,
                 0,
                 (throttleEvent, _) =>
                 {
