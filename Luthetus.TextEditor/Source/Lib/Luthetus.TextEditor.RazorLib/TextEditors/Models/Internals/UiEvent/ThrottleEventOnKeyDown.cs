@@ -17,6 +17,8 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
     private readonly ITextEditorService _textEditorService;
 
     public ThrottleEventOnKeyDown(
+        ThrottleController throttleControllerUiEvents,
+        TimeSpan uiEventsDelay,
         KeyboardEventArgs keyboardEventArgs,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,

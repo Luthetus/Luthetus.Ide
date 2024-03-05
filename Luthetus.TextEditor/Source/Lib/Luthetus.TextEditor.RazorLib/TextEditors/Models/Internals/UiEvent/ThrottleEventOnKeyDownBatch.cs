@@ -8,6 +8,8 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 public class ThrottleEventOnKeyDownBatch : IThrottleEvent
 {
     public ThrottleEventOnKeyDownBatch(
+        ThrottleController throttleControllerUiEvents,
+        TimeSpan uiEventsDelay,
         List<KeyboardEventArgs> keyboardEventArgsList, ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)
     {
         KeyboardEventArgsList = keyboardEventArgsList;
