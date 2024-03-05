@@ -196,7 +196,7 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                 {
                     await (_cursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.ContextMenu) ?? Task.CompletedTask);
                 }
-                else if (onKeyDownKind == KeyboardEventArgsKind.Command || onKeyDownKind == KeyboardEventArgsKind.None)
+                else if (onKeyDownKind == KeyboardEventArgsKind.Command || onKeyDownKind == KeyboardEventArgsKind.Text || onKeyDownKind == KeyboardEventArgsKind.None)
                 {
                     if (onKeyDownKind == KeyboardEventArgsKind.Command)
                     {
