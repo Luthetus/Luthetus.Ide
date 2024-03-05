@@ -1,20 +1,5 @@
 ﻿namespace Luthetus.Common.RazorLib.Reactives.Models;
 
-public class ThrottleEventOnKeyDown : IThrottleEvent
-{
-    public TimeSpan ThrottleTimeSpan => TimeSpan.Zero;
-
-    public IThrottleEvent? CreateBatchEvent(IEnumerable<IThrottleEvent> queue)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task HandleEvent(CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-}
-
 public interface IThrottleEvent
 {
     /// <summary>
@@ -43,7 +28,7 @@ public interface IThrottleEvent
     ///              Instead of invoking 'text.Insert(character)' two times.
     ///              One might want to invoke 'text.InsertRange(bothCharacters)';<br/><br/>
     /// </summary>
-    public IThrottleEvent? CreateBatchEvent(IEnumerable<IThrottleEvent> queue);
+    public IThrottleEvent? BatchOrDefault(IThrottleEvent moreRecentEvent);
 
     /// <summary>
     /// This method is the actual work item that gets awaited in order to handle the event.

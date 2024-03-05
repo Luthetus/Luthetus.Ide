@@ -2,11 +2,63 @@
 
 namespace Luthetus.Common.RazorLib.Reactives.Models;
 
+public class ThrottleEventQueue
+{
+    /// <summary>
+    /// The first item in this list, is the first item in the 'queue'.<br/><br/>
+    /// The last item in this list, is the last item in the 'queue'.<br/><br/>
+    /// </summary>
+    private readonly List<IThrottleEvent> _throttleEventList = new();
+
+    /// <summary>
+    /// When enqueueing an event, a batchFunc is also provided.<br/><br/>
+    /// 
+    /// The batchFunc is to take the 'to-be-queued' entry, and decide if it
+    /// can merge with the last event in the queue, as to make a batched event.<br/><br/>
+    /// 
+    /// This batchFunc is invoked over and over, until either a null 'batch event' is returned.
+    /// Or, there are no more entries in the queue to merge with.<br/><br/>
+    /// 
+    /// When a null 'batch event' is returned, then the last item in the queue remains unchanged,
+    /// and after it the 'to-be-queued' is ultimately queued.<br/><br/>
+    /// 
+    /// Each invocation of the 'batchFunc' will replace the 'to-be-queued' unless the 'batch event'
+    /// returned was null.<br/><br/>
+    /// </summary>
+    public void Enqueue(IThrottleEvent throttleEvent)
+    {
+        for (int i = _throttleEventList.Count - 1; i >= 0; i--)
+        {
+            IThrottleEvent? lastEvent = _throttleEventList[i];
+            var batchEvent = throttleEvent.BatchOrDefault(lastEvent);
+
+            if (batchEvent is null)
+                break;
+
+            _throttleEventList.RemoveAt(i);
+            throttleEvent = batchEvent;
+        }
+        
+        _throttleEventList.Add(throttleEvent);
+    }
+    
+    /// <summary>
+    /// Returns the first entry in the queue, according to 'first in first out'
+    /// </summary>
+    /// <returns></returns>
+    public IThrottleEvent? DequeueOrDefault()
+    {
+        var firstEvent = _throttleEventList[0];
+        _throttleEventList.RemoveAt(0);
+        return firstEvent;
+    }
+}
+
 public class ThrottleController
 {
     private readonly object _lockSemaphoreSlim = new();
     private readonly object _lockThrottleEventQueue = new();
-    private readonly Queue<IThrottleEvent> _throttleEventQueue = new();
+    private readonly ThrottleEventQueue _throttleEventQueue = new();
     private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
     private CancellationTokenSource _throttleCancellationTokenSource = new();
@@ -43,58 +95,27 @@ public class ThrottleController
                 await _previousWorkItemTask;
 
                 CancellationToken cancellationToken;
-                IThrottleEvent? oldEvent;
+                IThrottleEvent? throttleEvent;
 
-                // A lock is not needed for dequeueing from _throttleEventQueue
-                // because the only dequeues are happening here in a SemaphoreSlim.
-                if (_throttleEventQueue.TryDequeue(out oldEvent) && oldEvent is not null)
+                lock (_lockThrottleEventQueue)
                 {
-                    // In order to avoid infinitely writing, then dequeueing over and over.
-                    // Get the current count so there is a maximum amount of times this inner loop will run
-                    // when combining consecutive entries.
-                    int captureQueueCount = _throttleEventQueue.Count;
-
-                    for (int i = 0; i < captureQueueCount; i++)
-                    {
-                        if (oldEvent.ConsecutiveEntryFunc is not null &&
-                            _throttleEventQueue.TryPeek(out var recentEvent) && recentEvent is not null &&
-                                oldEvent.Id == recentEvent.Id)
-                        {
-                            var consecutiveResult = oldEvent.ConsecutiveEntryFunc.Invoke((oldEvent, recentEvent));
-
-                            if (consecutiveResult is null)
-                            {
-                                break;
-                            }
-                            else
-                            {
-                                // Because the 'ConsecutiveEntryFunc' function successfully merged
-                                // the two work items, then dequeue the recentEvent since it will be handled.
-                                _throttleEventQueue.TryDequeue(out recentEvent);
-                                oldEvent = consecutiveResult;
-                            }
-                        }
-                    }
-
-                    _throttleCancellationTokenSource.Cancel();
-                    _throttleCancellationTokenSource = new();
-                    cancellationToken = _throttleCancellationTokenSource.Token;
-                }
-                else
-                {
-                    break;
+                    throttleEvent = _throttleEventQueue.DequeueOrDefault();
                 }
 
-                if (oldEvent is not null)
+                _throttleCancellationTokenSource.Cancel();
+                _throttleCancellationTokenSource = new();
+                cancellationToken = _throttleCancellationTokenSource.Token;
+
+                if (throttleEvent is not null)
                 {
                     _throttleDelayTask = Task.Run(async () =>
                     {
-                        await Task.Delay(oldEvent.ThrottleTimeSpan).ConfigureAwait(false);
+                        await Task.Delay(throttleEvent.ThrottleTimeSpan).ConfigureAwait(false);
                     }).ConfigureAwait(false);
 
                     _previousWorkItemTask = Task.Run(async () =>
                     {
-                        await oldEvent.WorkItem.Invoke(oldEvent, CancellationToken.None).ConfigureAwait(false);
+                        await throttleEvent.HandleEvent(CancellationToken.None).ConfigureAwait(false);
                     }).ConfigureAwait(false);
                 }
             }
