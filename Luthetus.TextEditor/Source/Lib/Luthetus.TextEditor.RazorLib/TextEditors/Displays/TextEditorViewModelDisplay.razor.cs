@@ -596,7 +596,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         _throttleControllerUiEvents.EnqueueEvent(new ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)>(
             0,
-            TimeSpan.FromMilliseconds(25),
+            TimeSpan.FromMilliseconds(1_000),
             (viewModelKey.Value, new List<KeyboardEventArgs> { keyboardEventArgs }),
             (throttleEvent, throttleDelayCancellationToken) => HandleOnKeyDown(throttleEvent, resourceUri, viewModelKey.Value, false, throttleDelayCancellationToken),
             tuple => BatchOnKeyDown(tuple.OldEvent, tuple.RecentEvent, resourceUri, viewModelKey.Value)));
@@ -617,7 +617,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         _throttleControllerUiEvents.EnqueueEvent(new ThrottleEvent<byte>(
             0,
-            TimeSpan.FromMilliseconds(25),
+            TimeSpan.FromMilliseconds(0),
             0,
             (throttleEvent, _) =>
             {
@@ -706,7 +706,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         _throttleControllerUiEvents.EnqueueEvent(new ThrottleEvent<byte>(
             0,
-            TimeSpan.FromMilliseconds(25),
+            TimeSpan.FromMilliseconds(0),
             0,
             (throttleEvent, _) =>
             {
@@ -832,7 +832,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         {
             _throttleControllerUiEvents.EnqueueEvent(new ThrottleEvent<byte>(
                 0,
-                TimeSpan.FromMilliseconds(25),
+                TimeSpan.FromMilliseconds(0),
                 0,
                 (throttleEvent, _) =>
                 {
