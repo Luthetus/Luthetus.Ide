@@ -10,13 +10,10 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 
 public class ThrottleEventOnMouseMove : IThrottleEvent
 {
-    private readonly MouseEventArgs _mouseEventArgs;
     private readonly Func<MouseEventArgs, Task<(int rowIndex, int columnIndex)>> _calculateRowAndColumnIndexFunc;
     private readonly Action _cursorPauseBlinkAnimationAction;
     private readonly ThrottleController _throttleControllerUiEvents;
     private readonly TimeSpan _uiEventsDelay;
-    private readonly ResourceUri _resourceUri;
-    private readonly Key<TextEditorViewModel> _viewModelKey;
     private readonly ITextEditorService _textEditorService;
 
     public ThrottleEventOnMouseMove(
@@ -29,15 +26,20 @@ public class ThrottleEventOnMouseMove : IThrottleEvent
         Key<TextEditorViewModel> viewModelKey,
         ITextEditorService textEditorService)
     {
-        _mouseEventArgs = mouseEventArgs;
         _calculateRowAndColumnIndexFunc = calculateRowAndColumnIndexFunc;
         _cursorPauseBlinkAnimationAction = cursorPauseBlinkAnimationAction;
         _throttleControllerUiEvents = throttleControllerUiEvents;
         _uiEventsDelay = uiEventsDelay;
-        _resourceUri = resourceUri;
-        _viewModelKey = viewModelKey;
         _textEditorService = textEditorService;
+        
+        MouseEventArgs = mouseEventArgs;
+        ResourceUri = resourceUri;
+        ViewModelKey = viewModelKey;
     }
+
+    public MouseEventArgs MouseEventArgs { get; }
+    public ResourceUri ResourceUri { get; }
+    public Key<TextEditorViewModel> ViewModelKey { get; }
 
     public TimeSpan ThrottleTimeSpan => _uiEventsDelay;
 
@@ -52,8 +54,8 @@ public class ThrottleEventOnMouseMove : IThrottleEvent
             nameof(ThrottleEventOnMouseMove),
             async editContext =>
             {
-                var modelModifier = editContext.GetModelModifier(_resourceUri, true);
-                var viewModelModifier = editContext.GetViewModelModifier(_viewModelKey);
+                var modelModifier = editContext.GetModelModifier(ResourceUri, true);
+                var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
 
                 if (modelModifier is null || viewModelModifier is null)
                     return;
@@ -64,7 +66,7 @@ public class ThrottleEventOnMouseMove : IThrottleEvent
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return;
 
-                var rowAndColumnIndex = await _calculateRowAndColumnIndexFunc.Invoke(_mouseEventArgs).ConfigureAwait(false);
+                var rowAndColumnIndex = await _calculateRowAndColumnIndexFunc.Invoke(MouseEventArgs).ConfigureAwait(false);
 
                 primaryCursorModifier.RowIndex = rowAndColumnIndex.rowIndex;
                 primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;

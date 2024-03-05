@@ -10,12 +10,9 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 
 public class ThrottleEventOnDoubleClick : IThrottleEvent
 {
-    private readonly MouseEventArgs _mouseEventArgs;
     private readonly Func<MouseEventArgs, Task<(int rowIndex, int columnIndex)>> _calculateRowAndColumnIndexFunc;
     private readonly ThrottleController _throttleControllerUiEvents;
     private readonly TimeSpan _uiEventsDelay;
-    private readonly ResourceUri _resourceUri;
-    private readonly Key<TextEditorViewModel> _viewModelKey;
     private readonly ITextEditorService _textEditorService;
 
     public ThrottleEventOnDoubleClick(
@@ -27,14 +24,19 @@ public class ThrottleEventOnDoubleClick : IThrottleEvent
         Key<TextEditorViewModel> viewModelKey,
         ITextEditorService textEditorService)
     {
-        _mouseEventArgs = mouseEventArgs;
         _calculateRowAndColumnIndexFunc = calculateRowAndColumnIndexFunc;
         _throttleControllerUiEvents = throttleControllerUiEvents;
         _uiEventsDelay = uiEventsDelay;
-        _resourceUri = resourceUri;
-        _viewModelKey = viewModelKey;
         _textEditorService = textEditorService;
+ 
+        MouseEventArgs = mouseEventArgs;
+        ResourceUri = resourceUri;
+        ViewModelKey = viewModelKey;
     }
+
+    public MouseEventArgs MouseEventArgs { get; }
+    public ResourceUri ResourceUri { get; }
+    public Key<TextEditorViewModel> ViewModelKey { get; }
 
     public TimeSpan ThrottleTimeSpan => TimeSpan.Zero;
 
@@ -49,8 +51,8 @@ public class ThrottleEventOnDoubleClick : IThrottleEvent
             nameof(ThrottleEventOnDoubleClick),
             async editContext =>
             {
-                var modelModifier = editContext.GetModelModifier(_resourceUri, true);
-                var viewModelModifier = editContext.GetViewModelModifier(_viewModelKey);
+                var modelModifier = editContext.GetModelModifier(ResourceUri, true);
+                var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
 
                 if (modelModifier is null || viewModelModifier is null)
                     return;
@@ -63,13 +65,13 @@ public class ThrottleEventOnDoubleClick : IThrottleEvent
 
                 var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
 
-                if ((_mouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
+                if ((MouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
                     return; // Not pressing the left mouse button so assume ContextMenu is desired result.
 
-                if (_mouseEventArgs.ShiftKey)
+                if (MouseEventArgs.ShiftKey)
                     return; // Do not expand selection if user is holding shift
 
-                var rowAndColumnIndex = await _calculateRowAndColumnIndexFunc(_mouseEventArgs).ConfigureAwait(false);
+                var rowAndColumnIndex = await _calculateRowAndColumnIndexFunc(MouseEventArgs).ConfigureAwait(false);
 
                 var lowerColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
                     rowAndColumnIndex.rowIndex,

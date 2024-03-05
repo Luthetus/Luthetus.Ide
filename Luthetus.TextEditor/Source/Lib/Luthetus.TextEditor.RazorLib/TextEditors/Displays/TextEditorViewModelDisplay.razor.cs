@@ -254,7 +254,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             await CursorDisplay.FocusAsync().ConfigureAwait(false);
     }
 
-    public static OnKeyDownKind GetOnKeyDownKind(
+    public static KeyboardEventArgsKind GetOnKeyDownKind(
         KeyboardEventArgs keyboardEventArgs,
         bool hasSelection,
         ITextEditorService textEditorService,
@@ -274,15 +274,20 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         var oldEventIsContextMenu = KeyboardKeyFacts.CheckIsContextMenuEvent(keyboardEventArgs);
 
         if (oldEventIsMovement)
-            return OnKeyDownKind.Movement;
+            return KeyboardEventArgsKind.Movement;
 
         if (oldEventIsContextMenu)
-            return OnKeyDownKind.ContextMenu;
+            return KeyboardEventArgsKind.ContextMenu;
 
         if (oldEventIsCommand)
-            return OnKeyDownKind.Command;
+            return KeyboardEventArgsKind.Command;
 
-        return OnKeyDownKind.None;
+        if (keyboardEventArgs.Key.Length == 1)
+        {
+            return KeyboardEventArgsKind.Text;
+        }
+
+        return KeyboardEventArgsKind.Other;
     }
 
     private bool CheckIfKeyboardEventArgsIsNoise(KeyboardEventArgs keyboardEventArgs)
@@ -358,10 +363,23 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             return;
 
         var onKeyDownThrottleEvent = new ThrottleEventOnKeyDown(
+            _throttleControllerUiEvents,
+            _uiEventsDelay,
             keyboardEventArgs,
+            ViewModelDisplayOptions,
+            CursorDisplay,
             resourceUri,
             viewModelKey.Value,
-            TextEditorService);
+            HandleAfterOnKeyDownAsyncFactory,
+            HandleAfterOnKeyDownRangeAsyncFactory,
+            x => _tooltipViewModel = x,
+            TextEditorService,
+            ClipboardService,
+            HandleMouseStoppedMovingEventAsync,
+            JsRuntime,
+            Dispatcher,
+            ServiceProvider,
+            TextEditorConfig);
 
         _throttleControllerUiEvents.EnqueueEvent(onKeyDownThrottleEvent);
     }
@@ -839,7 +857,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                keyboardEventArgs.CtrlKey && keyboardEventArgs.Key == "y";
     }
 
-    private bool IsAutocompleteMenuInvoker(KeyboardEventArgs keyboardEventArgs)
+    public static bool IsAutocompleteMenuInvoker(KeyboardEventArgs keyboardEventArgs)
     {
         // Is {Ctrl + Space} or LetterOrDigit was hit without Ctrl being held
         return keyboardEventArgs.CtrlKey && keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE ||

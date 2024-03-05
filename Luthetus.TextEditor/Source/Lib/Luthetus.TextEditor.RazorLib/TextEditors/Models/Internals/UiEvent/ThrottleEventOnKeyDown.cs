@@ -1,14 +1,18 @@
-﻿using Luthetus.Common.RazorLib.Keyboards.Models;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 
@@ -16,27 +20,80 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
 {
     private readonly ThrottleController _throttleControllerUiEvents;
     private readonly TimeSpan _uiEventsDelay;
+    private readonly CursorDisplay? _cursorDisplay;
+    private readonly Func<ResourceUri, Key<TextEditorViewModel>, KeyboardEventArgs, Func<TextEditorMenuKind, bool, Task>, TextEditorEdit> _handleAfterOnKeyDownAsyncFactoryFunc;
+    private readonly Func<ResourceUri, Key<TextEditorViewModel>, List<KeyboardEventArgs>, Func<TextEditorMenuKind, bool, Task>, TextEditorEdit> _handleAfterOnKeyDownRangeAsyncFactoryFunc;
+    private readonly Action<TooltipViewModel?> _setTooltipViewModel;
     private readonly ITextEditorService _textEditorService;
+    private readonly IClipboardService _clipboardService;
+    private readonly Func<MouseEventArgs, Task>? _handleMouseStoppedMovingEventAsyncFunc;
+    private readonly IJSRuntime? _jsRuntime;
+    private readonly IDispatcher _dispatcher;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly LuthetusTextEditorConfig _textEditorConfig;
 
     public ThrottleEventOnKeyDown(
         ThrottleController throttleControllerUiEvents,
         TimeSpan uiEventsDelay,
         KeyboardEventArgs keyboardEventArgs,
+        TextEditorViewModelDisplayOptions viewModelDisplayOptions,
+        CursorDisplay? cursorDisplay,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
-        ITextEditorService textEditorService)
+        Func<ResourceUri, Key<TextEditorViewModel>, KeyboardEventArgs, Func<TextEditorMenuKind, bool, Task>, TextEditorEdit> handleAfterOnKeyDownAsyncFactoryFunc,
+        Func<ResourceUri, Key<TextEditorViewModel>, List<KeyboardEventArgs>, Func<TextEditorMenuKind, bool, Task>, TextEditorEdit> handleAfterOnKeyDownRangeAsyncFactoryFunc,
+        Action<TooltipViewModel?> setTooltipViewModel,
+        ITextEditorService textEditorService,
+        IClipboardService clipboardService,
+        Func<MouseEventArgs, Task>? handleMouseStoppedMovingEventAsyncFunc,
+        IJSRuntime? jsRuntime,
+        IDispatcher dispatcher,
+        IServiceProvider serviceProvider,
+        LuthetusTextEditorConfig textEditorConfig)
     {
         _throttleControllerUiEvents = throttleControllerUiEvents;
         _uiEventsDelay = uiEventsDelay;
         _textEditorService = textEditorService;
-        
+        _clipboardService = clipboardService;
+        _handleMouseStoppedMovingEventAsyncFunc = handleMouseStoppedMovingEventAsyncFunc;
+        _jsRuntime = jsRuntime;
+        _dispatcher = dispatcher;
+        _serviceProvider = serviceProvider;
+        _textEditorConfig = textEditorConfig;
+        _cursorDisplay = cursorDisplay;
+        _handleAfterOnKeyDownAsyncFactoryFunc = handleAfterOnKeyDownAsyncFactoryFunc;
+        _handleAfterOnKeyDownRangeAsyncFactoryFunc = handleAfterOnKeyDownRangeAsyncFactoryFunc;
+        _setTooltipViewModel = setTooltipViewModel;
+
         KeyboardEventArgs = keyboardEventArgs;
+        ViewModelDisplayOptions = viewModelDisplayOptions;
         ResourceUri = resourceUri;
         ViewModelKey = viewModelKey;
+
+        var badViewModel = _textEditorService.ViewModelApi.GetOrDefault(ViewModelKey);
+
+        if (badViewModel is not null)
+        {
+            ThinksHasSelection = TextEditorSelectionHelper.HasSelectedText(badViewModel.PrimaryCursor.Selection);
+
+            KeyboardEventArgsKind = TextEditorViewModelDisplay.GetOnKeyDownKind(
+                KeyboardEventArgs,
+                ThinksHasSelection,
+                _textEditorService,
+                out var localCommand);
+
+            Command = localCommand;
+        }
     }
 
     public TimeSpan ThrottleTimeSpan => TimeSpan.Zero;
     public KeyboardEventArgs KeyboardEventArgs { get; }
+    public KeyboardEventArgsKind KeyboardEventArgsKind { get; }
+    public CommandNoType? Command { get; }
+    
+    public bool ThinksHasSelection { get; }
+
+    public TextEditorViewModelDisplayOptions ViewModelDisplayOptions { get; }
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
@@ -46,74 +103,38 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
         {
             if (true)
             {
-                // Avoid taking keypresses such as 'Backspace' and treating them as text.
-                if (moreRecentEventOnKeyDown.KeyboardEventArgs.Key.Length != 1)
-                    return null;
-
-                if (_viewModelKey != moreRecentEvent._viewModelKey)
-                {
-                    return null;
-                }
-
-                var badViewModel = _textEditorService.ViewModelApi.GetOrDefault(viewModelKey);
-
-                if (badViewModel is null)
-                    return null;
-
-                var hasSelection = TextEditorSelectionHelper.HasSelectedText(badViewModel.PrimaryCursor.Selection);
-
-                var oldKeyboardEventArgs = oldEventWithType.Item.keyboardEventsList.First();
-                var recentKeyboardEventArgs = oldEventWithType.Item.keyboardEventsList.First();
-
-                var oldEventOnKeyDownKind = GetOnKeyDownKind(
-                    oldKeyboardEventArgs,
-                    hasSelection,
-                    out var oldEventCommand);
-
-                var recentEventOnKeyDownKind = GetOnKeyDownKind(
-                    recentKeyboardEventArgs,
-                    hasSelection,
-                    out var recentEventCommand);
-
-                if (oldEventOnKeyDownKind == OnKeyDownKind.Movement)
+                if (KeyboardEventArgsKind == KeyboardEventArgsKind.Movement)
                 {
                     // TODO: Batch 'movement'
                 }
-                else if (oldEventOnKeyDownKind == OnKeyDownKind.ContextMenu)
+                else if (KeyboardEventArgsKind == KeyboardEventArgsKind.ContextMenu)
                 {
                     // TODO: Decide what 'context menu' means in the context of 'batching'
                 }
-                else if (oldEventOnKeyDownKind == OnKeyDownKind.Command)
+                else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Command)
                 {
                     // TODO: Decide what 'command' means in the context of 'batching'
                 }
-                else if (oldEventOnKeyDownKind == OnKeyDownKind.None)
+                else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Text)
                 {
-                    //var combinedKeyboardEventArgs = new List<KeyboardEventArgs>();
-                    //combinedKeyboardEventArgs.AddRange(oldEventWithType.Item.keyboardEventsList);
-                    //combinedKeyboardEventArgs.AddRange(recentEventWithType.Item.keyboardEventsList);
-
-                    //var combinedEvent = new ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)>(
-                    //    oldEventWithType.Id,
-                    //    oldEventWithType.ThrottleTimeSpan,
-                    //    (viewModelKey, combinedKeyboardEventArgs),
-                    //    (combinedThrottleEvent, throttleCancellationToken) => HandleOnKeyDown(combinedThrottleEvent, resourceUri, viewModelKey, true, throttleCancellationToken),
-                    //    tuple => BatchOnKeyDown(tuple.OldEvent, tuple.RecentEvent, resourceUri, viewModelKey));
-
-                    return (IThrottleEvent?)combinedEvent;
+                    return new ThrottleEventOnKeyDownBatch(
+                        _throttleControllerUiEvents,
+                        _uiEventsDelay,
+                        new List<KeyboardEventArgs>()
+                        {
+                            moreRecentEventOnKeyDown.KeyboardEventArgs,
+                            KeyboardEventArgs
+                        },
+                        KeyboardEventArgsKind,
+                        ViewModelDisplayOptions,
+                        _cursorDisplay,
+                        ResourceUri,
+                        ViewModelKey,
+                        _handleAfterOnKeyDownRangeAsyncFactoryFunc,
+                        _setTooltipViewModel,
+                        _textEditorService);
                 }
             }
-
-            return new ThrottleEventOnKeyDownBatch(
-                _throttleControllerUiEvents,
-                _uiEventsDelay,
-                new List<KeyboardEventArgs>() 
-                { 
-                    moreRecentEventOnKeyDown.KeyboardEventArgs,
-                    KeyboardEventArgs
-                },
-                ResourceUri,
-                ViewModelKey);
         }
         
         if (moreRecentEvent is ThrottleEventOnKeyDownBatch moreRecentEventOnKeyDownBatch)
@@ -127,22 +148,12 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
 
     public Task HandleEvent(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
-    }
-
-    private Task HandleOnKeyDown(
-        IThrottleEvent throttleEvent,
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        bool isBatched,
-        CancellationToken cancellationToken)
-    {
         _textEditorService.Post(
-            nameof(HandleOnKeyDown),
+            nameof(ThrottleEventOnKeyDown),
             async editContext =>
             {
-                var modelModifier = editContext.GetModelModifier(resourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+                var modelModifier = editContext.GetModelModifier(ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
 
                 if (modelModifier is null || viewModelModifier is null)
                     return;
@@ -158,92 +169,77 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                     return;
 
                 var hasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
-                var throttleEventWithType = (ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)>)throttleEvent;
-                var keyboardEventArgs = throttleEventWithType.Item.keyboardEventsList.First();
-                var onKeyDownKind = GetOnKeyDownKind(keyboardEventArgs, hasSelection, out var command);
+                var onKeyDownKind = TextEditorViewModelDisplay.GetOnKeyDownKind(KeyboardEventArgs, hasSelection, _textEditorService, out var command);
 
-                if (onKeyDownKind == OnKeyDownKind.Movement)
+                if (onKeyDownKind == KeyboardEventArgsKind.Movement)
                 {
-                    if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == keyboardEventArgs.Key ||
-                            KeyboardKeyFacts.MovementKeys.ARROW_UP == keyboardEventArgs.Key) &&
-                        CursorDisplay is not null &&
-                        CursorDisplay.MenuKind == TextEditorMenuKind.AutoCompleteMenu)
+                    if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == KeyboardEventArgs.Key ||
+                            KeyboardKeyFacts.MovementKeys.ARROW_UP == KeyboardEventArgs.Key) &&
+                        _cursorDisplay is not null &&
+                        _cursorDisplay.MenuKind == TextEditorMenuKind.AutoCompleteMenu)
                     {
-                        await CursorDisplay.SetFocusToActiveMenuAsync().ConfigureAwait(false);
+                        await _cursorDisplay.SetFocusToActiveMenuAsync().ConfigureAwait(false);
                     }
                     else
                     {
                         await _textEditorService.ViewModelApi.MoveCursorFactory(
-                                keyboardEventArgs,
+                                KeyboardEventArgs,
                                 modelModifier.ResourceUri,
                                 viewModelModifier.ViewModel.ViewModelKey)
                             .Invoke(editContext)
                             .ConfigureAwait(false);
 
-                        CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None);
+                        await (_cursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None) ?? Task.CompletedTask);
                     }
                 }
-                else if (onKeyDownKind == OnKeyDownKind.ContextMenu)
+                else if (onKeyDownKind == KeyboardEventArgsKind.ContextMenu)
                 {
-                    CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.ContextMenu);
+                    await (_cursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.ContextMenu) ?? Task.CompletedTask);
                 }
-                else if (onKeyDownKind == OnKeyDownKind.Command || onKeyDownKind == OnKeyDownKind.None)
+                else if (onKeyDownKind == KeyboardEventArgsKind.Command || onKeyDownKind == KeyboardEventArgsKind.None)
                 {
-                    if (onKeyDownKind == OnKeyDownKind.Command)
+                    if (onKeyDownKind == KeyboardEventArgsKind.Command)
                     {
                         await command.CommandFunc.Invoke(new TextEditorCommandArgs(
                                 modelModifier.ResourceUri,
                                 viewModelModifier.ViewModel.ViewModelKey,
                                 hasSelection,
-                                ClipboardService,
-                                TextEditorService,
-                                HandleMouseStoppedMovingEventAsync,
-                                JsRuntime,
-                                Dispatcher,
-                                ServiceProvider,
-                                TextEditorConfig))
+                                _clipboardService,
+                                _textEditorService,
+                                _handleMouseStoppedMovingEventAsyncFunc,
+                                _jsRuntime,
+                                _dispatcher,
+                                _serviceProvider,
+                                _textEditorConfig))
                             .ConfigureAwait(false);
                     }
-                    else if (onKeyDownKind == OnKeyDownKind.None)
+                    else if (onKeyDownKind == KeyboardEventArgsKind.Text)
                     {
-                        if (!IsAutocompleteMenuInvoker(keyboardEventArgs))
+                        if (!TextEditorViewModelDisplay.IsAutocompleteMenuInvoker(KeyboardEventArgs))
                         {
-                            if (!KeyboardKeyFacts.IsMetaKey(keyboardEventArgs)
-                                || KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key ||
-                                    KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventArgs.Key ||
-                                    KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key)
+                            if (!KeyboardKeyFacts.IsMetaKey(KeyboardEventArgs)
+                                || KeyboardKeyFacts.MetaKeys.ESCAPE == KeyboardEventArgs.Key ||
+                                    KeyboardKeyFacts.MetaKeys.BACKSPACE == KeyboardEventArgs.Key ||
+                                    KeyboardKeyFacts.MetaKeys.DELETE == KeyboardEventArgs.Key)
                             {
-                                CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None);
+                                await (_cursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None) ?? Task.CompletedTask);
                             }
                         }
 
-                        _tooltipViewModel = null;
+                        _setTooltipViewModel.Invoke(null);
 
-                        if (throttleEvent is ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)> throttleEventKeyboardEventArgsList)
-                        {
-                            if (throttleEventKeyboardEventArgsList.Item.keyboardEventsList.Count > 1)
-                            {
-                                modelModifier.EditByInsertion(
-                                    string.Join(string.Empty, throttleEventKeyboardEventArgsList.Item.keyboardEventsList.Select(x => x.Key)),
-                                    cursorModifierBag,
-                                    CancellationToken.None);
-                            }
-                            else
-                            {
-                                await _textEditorService.ModelApi.HandleKeyboardEventFactory(
-                                        resourceUri,
-                                        viewModelKey,
-                                        keyboardEventArgs,
-                                        CancellationToken.None)
-                                    .Invoke(editContext)
-                                    .ConfigureAwait(false);
-                            }
-                        }
+                        await _textEditorService.ModelApi.HandleKeyboardEventFactory(
+                                ResourceUri,
+                                ViewModelKey,
+                                KeyboardEventArgs,
+                                CancellationToken.None)
+                            .Invoke(editContext)
+                            .ConfigureAwait(false);
                     }
 
-                    if (keyboardEventArgs.Key != "Shift" &&
-                        keyboardEventArgs.Key != "Control" &&
-                        keyboardEventArgs.Key != "Alt")
+                    if (KeyboardEventArgs.Key != "Shift" &&
+                        KeyboardEventArgs.Key != "Control" &&
+                        KeyboardEventArgs.Key != "Alt")
                     {
                         if (command is null ||
                             command is TextEditorCommand commandTextEditor &&
@@ -253,37 +249,19 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                         }
                     }
 
-                    var cursorDisplay = CursorDisplay;
+                    var cursorDisplay = _cursorDisplay;
 
                     if (cursorDisplay is not null)
                     {
-                        if (throttleEvent is ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)> throttleEventKeyboardEventArgsList)
-                        {
-                            if (throttleEventKeyboardEventArgsList.Item.keyboardEventsList.Count > 1)
-                            {
-                                var afterOnKeyDownRangeAsyncFactory = ViewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory ?? HandleAfterOnKeyDownRangeAsyncFactory;
+                        var afterOnKeyDownAsyncFactory = ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory ?? _handleAfterOnKeyDownAsyncFactoryFunc;
 
-                                await afterOnKeyDownRangeAsyncFactory.Invoke(
-                                        modelModifier.ResourceUri,
-                                        viewModelModifier.ViewModel.ViewModelKey,
-                                        throttleEventKeyboardEventArgsList.Item.keyboardEventsList,
-                                        cursorDisplay.SetShouldDisplayMenuAsync)
-                                    .Invoke(editContext)
-                                    .ConfigureAwait(false);
-                            }
-                            else
-                            {
-                                var afterOnKeyDownAsyncFactory = ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory ?? HandleAfterOnKeyDownAsyncFactory;
-
-                                await afterOnKeyDownAsyncFactory.Invoke(
-                                        modelModifier.ResourceUri,
-                                        viewModelModifier.ViewModel.ViewModelKey,
-                                        keyboardEventArgs,
-                                        cursorDisplay.SetShouldDisplayMenuAsync)
-                                    .Invoke(editContext)
-                                    .ConfigureAwait(false);
-                            }
-                        }
+                        await afterOnKeyDownAsyncFactory.Invoke(
+                                modelModifier.ResourceUri,
+                                viewModelModifier.ViewModel.ViewModelKey,
+                                KeyboardEventArgs,
+                                cursorDisplay.SetShouldDisplayMenuAsync)
+                            .Invoke(editContext)
+                            .ConfigureAwait(false);
                     }
                 }
             });

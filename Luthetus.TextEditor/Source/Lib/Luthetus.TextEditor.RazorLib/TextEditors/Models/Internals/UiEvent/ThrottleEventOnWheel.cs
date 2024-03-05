@@ -8,10 +8,8 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 
 public class ThrottleEventOnWheel : IThrottleEvent
 {
-    private readonly WheelEventArgs _wheelEventArgs;
     private readonly ThrottleController _throttleControllerUiEvents;
     private readonly TimeSpan _uiEventsDelay;
-    private readonly Key<TextEditorViewModel> _viewModelKey;
     private readonly ITextEditorService _textEditorService;
 
     public ThrottleEventOnWheel(
@@ -21,12 +19,16 @@ public class ThrottleEventOnWheel : IThrottleEvent
         Key<TextEditorViewModel> viewModelKey,
         ITextEditorService textEditorService)
     {
-        _wheelEventArgs = wheelEventArgs;
         _throttleControllerUiEvents = throttleControllerUiEvents;
         _uiEventsDelay = uiEventsDelay;
-        _viewModelKey = viewModelKey;
         _textEditorService = textEditorService;
+
+        WheelEventArgs = wheelEventArgs;
+        ViewModelKey = viewModelKey;
     }
+
+    public WheelEventArgs WheelEventArgs { get; }
+    public Key<TextEditorViewModel> ViewModelKey { get; }
 
     public TimeSpan ThrottleTimeSpan => _uiEventsDelay;
 
@@ -41,15 +43,15 @@ public class ThrottleEventOnWheel : IThrottleEvent
             nameof(ThrottleEventOnWheel),
             editContext =>
             {
-                var viewModelModifier = editContext.GetViewModelModifier(_viewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
 
                 if (viewModelModifier is null)
                     return Task.CompletedTask;
 
-                if (_wheelEventArgs.ShiftKey)
-                    viewModelModifier.ViewModel.MutateScrollHorizontalPositionByPixels(_wheelEventArgs.DeltaY);
+                if (WheelEventArgs.ShiftKey)
+                    viewModelModifier.ViewModel.MutateScrollHorizontalPositionByPixels(WheelEventArgs.DeltaY);
                 else
-                    viewModelModifier.ViewModel.MutateScrollVerticalPositionByPixels(_wheelEventArgs.DeltaY);
+                    viewModelModifier.ViewModel.MutateScrollVerticalPositionByPixels(WheelEventArgs.DeltaY);
 
                 return Task.CompletedTask;
             });
