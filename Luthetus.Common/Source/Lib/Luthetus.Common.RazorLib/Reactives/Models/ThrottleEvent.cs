@@ -3,7 +3,7 @@
 public class ThrottleEvent<T> : IThrottleEvent where T : notnull
 {
     public ThrottleEvent(
-        string id,
+        byte id,
         TimeSpan throttleTimeSpan,
         T item,
         Func<IThrottleEvent, CancellationToken, Task> workItem,
@@ -18,7 +18,7 @@ public class ThrottleEvent<T> : IThrottleEvent where T : notnull
 
     public T Item { get; }
 
-    public string Id { get; }
+    public byte Id { get; }
     public TimeSpan ThrottleTimeSpan { get; }
     public Func<IThrottleEvent, CancellationToken, Task> WorkItem { get; }
     public Func<(IThrottleEvent OldEvent, IThrottleEvent RecentEvent), IThrottleEvent?>? ConsecutiveEntryFunc { get; }

@@ -594,8 +594,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (resourceUri is null || viewModelKey is null)
             return;
 
-        _throttleControllerUiEvents.FireAndForget(new ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)>(
-            nameof(HandleContentOnMouseMove),
+        _throttleControllerUiEvents.EnqueueEvent(new ThrottleEvent<(Key<TextEditorViewModel> viewModelKey, List<KeyboardEventArgs> keyboardEventsList)>(
+            0,
             TimeSpan.FromMilliseconds(25),
             (viewModelKey.Value, new List<KeyboardEventArgs> { keyboardEventArgs }),
             (throttleEvent, throttleDelayCancellationToken) => HandleOnKeyDown(throttleEvent, resourceUri, viewModelKey.Value, false, throttleDelayCancellationToken),
@@ -615,8 +615,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        _throttleControllerUiEvents.FireAndForget(new ThrottleEvent<byte>(
-            nameof(HandleContentOnDoubleClick),
+        _throttleControllerUiEvents.EnqueueEvent(new ThrottleEvent<byte>(
+            0,
             TimeSpan.FromMilliseconds(25),
             0,
             (throttleEvent, _) =>
@@ -704,8 +704,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        _throttleControllerUiEvents.FireAndForget(new ThrottleEvent<byte>(
-            nameof(HandleContentOnMouseDown),
+        _throttleControllerUiEvents.EnqueueEvent(new ThrottleEvent<byte>(
+            0,
             TimeSpan.FromMilliseconds(25),
             0,
             (throttleEvent, _) =>
@@ -830,8 +830,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
-            _throttleControllerUiEvents.FireAndForget(new ThrottleEvent<byte>(
-                nameof(HandleContentOnMouseMove),
+            _throttleControllerUiEvents.EnqueueEvent(new ThrottleEvent<byte>(
+                0,
                 TimeSpan.FromMilliseconds(25),
                 0,
                 (throttleEvent, _) =>

@@ -2,7 +2,7 @@
 
 public interface IThrottleEvent
 {
-    string Id { get; }
+    byte Id { get; }
     TimeSpan ThrottleTimeSpan { get; }
     object Item { get; }
     Func<IThrottleEvent, CancellationToken, Task> WorkItem { get; }

@@ -117,37 +117,35 @@ public class ThrottleController
     private CancellationTokenSource _throttleCancellationTokenSource = new();
     private Task _throttleDelayTask = Task.CompletedTask;
     private Task _previousWorkItemTask = Task.CompletedTask;
+    private Task _dequeueAsyncTask = Task.CompletedTask;
 
-    public void FireAndForget(IThrottleEvent throttleEvent)
+    public void EnqueueEvent(IThrottleEvent throttleEvent)
     {
         lock (_lockThrottleEventQueue)
         {
             _throttleEventQueue.Enqueue(throttleEvent);
 
-            if (_throttleEventQueue.Count > 1)
-                return;
+            if (_dequeueAsyncTask.IsCompleted)
+                _dequeueAsyncTask = Task.Run(DequeueAsync);
         }
-
-        _ = Task.Run(DequeueAsync).ConfigureAwait(false);
     }
 
     private async Task DequeueAsync()
     {
+        lock (_lockSemaphoreSlim)
+        {
+            if (_semaphoreSlim.CurrentCount <= 0)
+                return;
+        }
+
         try
         {
-            lock (_lockSemaphoreSlim)
-            {
-                if (_semaphoreSlim.CurrentCount <= 0)
-                    return;
-            }
-
             await _semaphoreSlim.WaitAsync();
 
             while (true)
             {
-                await _throttleDelayTask.ConfigureAwait(false);
-
-                await _previousWorkItemTask.ConfigureAwait(false);
+                await _throttleDelayTask;
+                await _previousWorkItemTask;
 
                 CancellationToken cancellationToken;
                 IThrottleEvent? oldEvent;
@@ -196,13 +194,13 @@ public class ThrottleController
                 {
                     _throttleDelayTask = Task.Run(async () =>
                     {
-                        await Task.Delay(oldEvent.ThrottleTimeSpan).ConfigureAwait(false);
-                    }, CancellationToken.None);
+                        await Task.Delay(oldEvent.ThrottleTimeSpan);
+                    });
 
                     _previousWorkItemTask = Task.Run(async () =>
                     {
-                        await oldEvent.WorkItem.Invoke(oldEvent, CancellationToken.None).ConfigureAwait(false);
-                    }, CancellationToken.None);
+                        await oldEvent.WorkItem.Invoke(oldEvent, CancellationToken.None);
+                    });
                 }
             }
         }
@@ -212,7 +210,37 @@ public class ThrottleController
             {
                 _semaphoreSlim.Release();
             }
+
+            lock (_lockThrottleEventQueue)
+            {
+                if (_throttleEventQueue.Count > 0)
+                {
+                    // The _dequeueAsyncTask is started when one enqueues a workitem.
+                    //
+                    // Specifically, if the _dequeueAsyncTask is completed, a task is ran for it.
+                    // otherwise, just let the already running one continue.
+                    //
+                    // But, if the already running _dequeueAsyncTask is in outside of it's
+                    // "consumer" while loop when the enqueue function checks.
+                    //
+                    // Then the enqueue function thinks the _dequeueAsyncTask will handle the work item,
+                    // but in reality the _dequeueAsyncTask is finishing, and will NOT handle the work item.
+                    //
+                    // This could leave "hanging" UI events. Where, the event was enqueue'd
+                    // but this timing issue results in the UI event not being handled, because there
+                    // is no _dequeueAsyncTask to act as a "consumer" in a producer-consumer pattern.
+                    //
+                    // For this reason, the finishing _dequeueAsyncTask will overwrite itself,
+                    // with a new Task.Run(DequeueAsync).
+                    _dequeueAsyncTask = Task.Run(DequeueAsync);
+                }
+            }
         }
+    }
+    
+    public async Task StopAsync()
+    {
+        await _dequeueAsyncTask;
     }
 
     public void Dispose()
