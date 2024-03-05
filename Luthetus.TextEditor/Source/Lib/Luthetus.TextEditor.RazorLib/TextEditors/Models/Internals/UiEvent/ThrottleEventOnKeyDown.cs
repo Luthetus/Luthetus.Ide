@@ -103,7 +103,35 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
         {
             if (KeyboardEventArgsKind == KeyboardEventArgsKind.Movement)
             {
-                // TODO: Batch 'movement'
+                if (moreRecentEventOnKeyDown.KeyboardEventArgsKind == KeyboardEventArgsKind.Movement)
+                {
+                    if (moreRecentEventOnKeyDown.KeyboardEventArgs.Key == KeyboardKeyFacts.MovementKeys.ARROW_RIGHT &&
+                        KeyboardEventArgs.Key == KeyboardKeyFacts.MovementKeys.ARROW_RIGHT &&
+                        false == KeyboardEventArgs.ShiftKey &&
+                        moreRecentEventOnKeyDown.KeyboardEventArgs.ShiftKey == KeyboardEventArgs.ShiftKey &&
+                        false == KeyboardEventArgs.CtrlKey &&
+                        moreRecentEventOnKeyDown.KeyboardEventArgs.CtrlKey == KeyboardEventArgs.CtrlKey &&
+                        false == KeyboardEventArgs.AltKey &&
+                        moreRecentEventOnKeyDown.KeyboardEventArgs.AltKey == KeyboardEventArgs.AltKey)
+                    {
+                        return new ThrottleEventOnKeyDownBatch(
+                            _throttleControllerUiEvents,
+                            _uiEventsDelay,
+                            new List<KeyboardEventArgs>()
+                            {
+                                moreRecentEventOnKeyDown.KeyboardEventArgs,
+                                KeyboardEventArgs
+                            },
+                            KeyboardEventArgsKind,
+                            ViewModelDisplayOptions,
+                            _cursorDisplay,
+                            ResourceUri,
+                            ViewModelKey,
+                            _handleAfterOnKeyDownRangeAsyncFactoryFunc,
+                            _setTooltipViewModel,
+                            _textEditorService);
+                    }
+                }
             }
             else if (KeyboardEventArgsKind == KeyboardEventArgsKind.ContextMenu)
             {
@@ -115,29 +143,64 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
             }
             else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Text)
             {
-                return new ThrottleEventOnKeyDownBatch(
-                    _throttleControllerUiEvents,
-                    _uiEventsDelay,
-                    new List<KeyboardEventArgs>()
-                    {
-                        moreRecentEventOnKeyDown.KeyboardEventArgs,
-                        KeyboardEventArgs
-                    },
-                    KeyboardEventArgsKind,
-                    ViewModelDisplayOptions,
-                    _cursorDisplay,
-                    ResourceUri,
-                    ViewModelKey,
-                    _handleAfterOnKeyDownRangeAsyncFactoryFunc,
-                    _setTooltipViewModel,
-                    _textEditorService);
+                if (moreRecentEventOnKeyDown.KeyboardEventArgsKind == KeyboardEventArgsKind.Text)
+                {
+                    return new ThrottleEventOnKeyDownBatch(
+                        _throttleControllerUiEvents,
+                        _uiEventsDelay,
+                        new List<KeyboardEventArgs>()
+                        {
+                            moreRecentEventOnKeyDown.KeyboardEventArgs,
+                            KeyboardEventArgs
+                        },
+                        KeyboardEventArgsKind,
+                        ViewModelDisplayOptions,
+                        _cursorDisplay,
+                        ResourceUri,
+                        ViewModelKey,
+                        _handleAfterOnKeyDownRangeAsyncFactoryFunc,
+                        _setTooltipViewModel,
+                        _textEditorService);
+                }
             }
         }
         
         if (moreRecentEvent is ThrottleEventOnKeyDownBatch moreRecentEventOnKeyDownBatch)
         {
-            moreRecentEventOnKeyDownBatch.KeyboardEventArgsList.Add(KeyboardEventArgs);
-            return moreRecentEventOnKeyDownBatch;
+            if (KeyboardEventArgsKind == KeyboardEventArgsKind.Movement)
+            {
+                if (moreRecentEventOnKeyDownBatch.KeyboardEventArgsKind == KeyboardEventArgsKind.Movement)
+                {
+                    if (moreRecentEventOnKeyDownBatch.KeyboardEventArgsList.First().Key == KeyboardKeyFacts.MovementKeys.ARROW_RIGHT &&
+                        KeyboardEventArgs.Key == KeyboardKeyFacts.MovementKeys.ARROW_RIGHT &&
+                        false == KeyboardEventArgs.ShiftKey &&
+                        moreRecentEventOnKeyDownBatch.KeyboardEventArgsList.First().ShiftKey == KeyboardEventArgs.ShiftKey &&
+                        false == KeyboardEventArgs.CtrlKey &&
+                        moreRecentEventOnKeyDownBatch.KeyboardEventArgsList.First().CtrlKey == KeyboardEventArgs.CtrlKey &&
+                        false == KeyboardEventArgs.AltKey &&
+                        moreRecentEventOnKeyDownBatch.KeyboardEventArgsList.First().AltKey == KeyboardEventArgs.AltKey)
+                    {
+                        moreRecentEventOnKeyDownBatch.KeyboardEventArgsList.Add(KeyboardEventArgs);
+                        return moreRecentEventOnKeyDownBatch;
+                    }
+                }
+            }
+            else if (KeyboardEventArgsKind == KeyboardEventArgsKind.ContextMenu)
+            {
+                // TODO: Decide what 'context menu' means in the context of 'batching'
+            }
+            else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Command)
+            {
+                // TODO: Decide what 'command' means in the context of 'batching'
+            }
+            else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Text)
+            {
+                if (moreRecentEventOnKeyDownBatch.KeyboardEventArgsKind == KeyboardEventArgsKind.Text)
+                {
+                    moreRecentEventOnKeyDownBatch.KeyboardEventArgsList.Add(KeyboardEventArgs);
+                    return moreRecentEventOnKeyDownBatch;
+                }
+            }
         }
 
         return null;

@@ -381,7 +381,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         _throttleControllerUiEvents.EnqueueEvent(onKeyDownThrottleEvent);
     }
 
-    private async Task HandleOnContextMenuAsync()
+    private async Task ReceiveOnContextMenuAsync()
     {
         var localCursorDisplay = CursorDisplay;
 
@@ -409,7 +409,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         _throttleControllerUiEvents.EnqueueEvent(throttleEvent);
     }
 
-    private void HandleContentOnMouseDown(MouseEventArgs mouseEventArgs)
+    private void ReceiveContentOnMouseDown(MouseEventArgs mouseEventArgs)
     {
         var modelResourceUri = GetModel()?.ResourceUri;
         var viewModelKey = GetViewModel()?.ViewModelKey;
@@ -437,7 +437,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     }
 
     /// <summary>OnMouseUp is un-necessary</summary>
-    private void HandleContentOnMouseMove(MouseEventArgs mouseEventArgs)
+    private void ReceiveContentOnMouseMove(MouseEventArgs mouseEventArgs)
     {
         _userMouseIsInside = true;
         var localThinksLeftMouseButtonIsDown = _thinksLeftMouseButtonIsDown;
@@ -507,7 +507,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         }
     }
 
-    private void HandleContentOnMouseOut(MouseEventArgs mouseEventArgs)
+    private void ReceiveContentOnMouseOut(MouseEventArgs mouseEventArgs)
     {
         _userMouseIsInside = false;
     }
@@ -875,7 +875,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                !keyboardEventArgs.CtrlKey;
     }
 
-    private void HandleOnWheel(WheelEventArgs wheelEventArgs)
+    private void ReceiveOnWheel(WheelEventArgs wheelEventArgs)
     {
         var viewModelKey = GetViewModel()?.ViewModelKey;
 
@@ -912,7 +912,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         return $"height: {heightInPixelsInvariantCulture}px;";
     }
 
-    private Task HandleOnTouchStartAsync(TouchEventArgs touchEventArgs)
+    private Task ReceiveOnTouchStartAsync(TouchEventArgs touchEventArgs)
     {
         _touchStartDateTime = DateTime.UtcNow;
 
@@ -922,7 +922,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         return Task.CompletedTask;
     }
 
-    private async Task HandleOnTouchMoveAsync(TouchEventArgs touchEventArgs)
+    private async Task ReceiveOnTouchMoveAsync(TouchEventArgs touchEventArgs)
     {
         var localThinksTouchIsOccurring = _thinksTouchIsOccurring;
 
@@ -970,7 +970,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             if (startTouchPoint is null)
                 return;
 
-            HandleContentOnMouseDown(new MouseEventArgs
+            ReceiveContentOnMouseDown(new MouseEventArgs
             {
                 Buttons = 1,
                 ClientX = startTouchPoint.ClientX,

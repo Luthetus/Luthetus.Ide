@@ -1,4 +1,5 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+﻿using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -50,17 +51,19 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
 
     public IThrottleEvent? BatchOrDefault(IThrottleEvent moreRecentEvent)
     {
-        if (moreRecentEvent is ThrottleEventOnKeyDown moreRecentEventOnKeyDown)
-        {
-            KeyboardEventArgsList.Insert(0, moreRecentEventOnKeyDown.KeyboardEventArgs);
-            return this;
-        }
+        // TODO: Should this type implement BatchOrDefault, beyond just returning null?
 
-        if (moreRecentEvent is ThrottleEventOnKeyDownBatch moreRecentEventOnKeyDownBatch)
-        {
-            moreRecentEventOnKeyDownBatch.KeyboardEventArgsList.AddRange(KeyboardEventArgsList);
-            return moreRecentEventOnKeyDownBatch;
-        }
+        //if (moreRecentEvent is ThrottleEventOnKeyDown moreRecentEventOnKeyDown)
+        //{
+        //    KeyboardEventArgsList.Insert(0, moreRecentEventOnKeyDown.KeyboardEventArgs);
+        //    return this;
+        //}
+
+        //if (moreRecentEvent is ThrottleEventOnKeyDownBatch moreRecentEventOnKeyDownBatch)
+        //{
+        //    moreRecentEventOnKeyDownBatch.KeyboardEventArgsList.AddRange(KeyboardEventArgsList);
+        //    return moreRecentEventOnKeyDownBatch;
+        //}
 
         return null;
     }
@@ -91,7 +94,12 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
 
                 if (KeyboardEventArgsKind == KeyboardEventArgsKind.Movement)
                 {
-                    // TODO: Batch movement
+                    if (false == KeyboardEventArgsList.First().ShiftKey &&
+                        false == KeyboardEventArgsList.First().CtrlKey &&
+                        false == KeyboardEventArgsList.First().AltKey)
+                    {
+                        // TODO: Continue working on movement.
+                    }
                 }
                 else if (KeyboardEventArgsKind == KeyboardEventArgsKind.ContextMenu)
                 {
