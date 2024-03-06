@@ -33,7 +33,7 @@ public partial class DragInitializer : FluxorComponent
 
     private async Task DispatchSetDragStateActionOnMouseMoveAsync(MouseEventArgs mouseEventArgs)
     {
-        _throttleDispatchSetDragStateActionOnMouseMove.FireAndForget(_ =>
+        _throttleDispatchSetDragStateActionOnMouseMove.PushEvent(_ =>
         {
             if ((mouseEventArgs.Buttons & 1) != 1)
             {
@@ -54,7 +54,7 @@ public partial class DragInitializer : FluxorComponent
 
     private async Task DispatchSetDragStateActionOnMouseUpAsync()
     {
-        _throttleDispatchSetDragStateActionOnMouseMove.FireAndForget(_ =>
+        _throttleDispatchSetDragStateActionOnMouseMove.PushEvent(_ =>
         {
             Dispatcher.Dispatch(ConstructClearDragStateAction());
             return Task.CompletedTask;

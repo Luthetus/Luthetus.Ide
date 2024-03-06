@@ -67,7 +67,7 @@ public partial class ActiveBackgroundTaskDisplay : IDisposable
             _seenBackgroundTasks.Add(executingBackgroundTask);
         }
 
-        _executingBackgroundTaskChangedThrottle.FireAndForget(async _ =>
+        _executingBackgroundTaskChangedThrottle.PushEvent(async _ =>
         {
             await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         });

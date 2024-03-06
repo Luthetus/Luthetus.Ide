@@ -29,7 +29,7 @@ public class Throttle : IThrottle
 
     public TimeSpan ThrottleTimeSpan { get; }
 
-    public void FireAndForget(Func<CancellationToken, Task> workItem)
+    public void PushEvent(Func<CancellationToken, Task> workItem)
     {
         lock (_lockWorkItemsStack)
         {

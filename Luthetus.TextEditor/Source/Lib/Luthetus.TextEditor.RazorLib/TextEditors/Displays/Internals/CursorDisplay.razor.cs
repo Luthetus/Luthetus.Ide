@@ -124,7 +124,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
             if (!Cursor.IsIntersecting)
             {
-                _throttleShouldRevealCursor.FireAndForget(async _ =>
+                _throttleShouldRevealCursor.PushEvent(async _ =>
                 {
                     await JsRuntime.InvokeVoidAsync(
                             "luthetusTextEditor.scrollElementIntoView",

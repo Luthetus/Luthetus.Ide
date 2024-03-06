@@ -145,7 +145,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 
     private async Task ThrottledReRender()
     {
-        _throttleEventCausingReRender.FireAndForget(async _ =>
+        _throttleEventCausingReRender.PushEvent(async _ =>
         {
             _shouldRecalculateViewModel = true;
             await InvokeAsync(StateHasChanged).ConfigureAwait(false);

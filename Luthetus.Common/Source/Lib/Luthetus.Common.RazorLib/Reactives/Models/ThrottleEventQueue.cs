@@ -1,5 +1,9 @@
 ﻿namespace Luthetus.Common.RazorLib.Reactives.Models;
 
+/// <summary>
+/// This type is not thread safe by design.<br/><br/>
+/// The class instance is instead accessed from within a 'lock() { }' by external code.
+/// </summary>
 public class ThrottleEventQueue
 {
     /// <summary>
@@ -8,22 +12,24 @@ public class ThrottleEventQueue
     /// </summary>
     private readonly List<IThrottleEvent> _throttleEventList = new();
 
+    /// <summary>
+    /// Returns the amount of <see cref="IThrottleEvent"/>(s) in the queue.
+    /// </summary>
     public int Count => _throttleEventList.Count;
 
     /// <summary>
     /// When enqueueing an event, a batchFunc is also provided.<br/><br/>
     /// 
-    /// The batchFunc is to take the 'to-be-queued' entry, and decide if it
-    /// can merge with the last event in the queue, as to make a batched event.<br/><br/>
+    /// The batchFunc is to take the 'to-be-queued' entry, and decide if it can merge with the last event in the queue,
+    /// as to make a batched event.<br/><br/>
     /// 
-    /// This batchFunc is invoked over and over, until either a null 'batch event' is returned.
-    /// Or, there are no more entries in the queue to merge with.<br/><br/>
+    /// This batchFunc is invoked over and over, until either a null 'batch event' is returned. Or, there are no more entries in
+    /// the queue to merge with.<br/><br/>
     /// 
-    /// When a null 'batch event' is returned, then the last item in the queue remains unchanged,
-    /// and after it the 'to-be-queued' is ultimately queued.<br/><br/>
+    /// When a null 'batch event' is returned, then the last item in the queue remains unchanged, and after it the 'to-be-queued'
+    /// is ultimately queued.<br/><br/>
     /// 
-    /// Each invocation of the 'batchFunc' will replace the 'to-be-queued' unless the 'batch event'
-    /// returned was null.<br/><br/>
+    /// Each invocation of the 'batchFunc' will replace the 'to-be-queued' unless the 'batch event' returned was null.<br/><br/>
     /// </summary>
     public void Enqueue(IThrottleEvent throttleEvent)
     {
@@ -45,7 +51,6 @@ public class ThrottleEventQueue
     /// <summary>
     /// Returns the first entry in the queue, according to 'first in first out'
     /// </summary>
-    /// <returns></returns>
     public IThrottleEvent? DequeueOrDefault()
     {
         var firstEvent = _throttleEventList[0];

@@ -120,6 +120,18 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
                             cursorModifierBag,
                             CancellationToken.None);
                     }
+                    else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Other)
+                    {
+                        _setTooltipViewModel.Invoke(null);
+
+                        await _textEditorService.ModelApi.HandleKeyboardEventFactory(
+                                ResourceUri,
+                                ViewModelKey,
+                                KeyboardEventArgs,
+                                CancellationToken.None)
+                            .Invoke(editContext)
+                            .ConfigureAwait(false);
+                    }
 
                     primaryCursorModifier.ShouldRevealCursor = true;
 

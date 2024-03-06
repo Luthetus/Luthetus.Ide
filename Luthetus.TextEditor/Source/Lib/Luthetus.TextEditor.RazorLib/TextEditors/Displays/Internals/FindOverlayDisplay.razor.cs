@@ -41,7 +41,7 @@ public partial class FindOverlayDisplay : ComponentBase
         {
             _inputValue = value;
 
-            _throttleInputValueChange.FireAndForget(_ =>
+            _throttleInputValueChange.PushEvent(_ =>
             {
 				TextEditorService.Post(
                     nameof(FindOverlayDisplay),

@@ -253,7 +253,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             await CursorDisplay.FocusAsync().ConfigureAwait(false);
     }
 
-    public static KeyboardEventArgsKind GetOnKeyDownKind(
+    public static KeyboardEventArgsKind GetKeyboardEventArgsKind(
         KeyboardEventArgs keyboardEventArgs,
         bool hasSelection,
         ITextEditorService textEditorService,
@@ -648,7 +648,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             }
             else if (IsSyntaxHighlightingInvoker(keyboardEventArgs))
             {
-                _throttleApplySyntaxHighlighting.FireAndForget(async _ =>
+                _throttleApplySyntaxHighlighting.PushEvent(async _ =>
                 {
                     // The TextEditorModel may have been changed by the time this logic is ran and
                     // thus the local variables must be updated accordingly.
@@ -728,7 +728,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
             if (seenIsSyntaxHighlightingInvoker)
             {
-                _throttleApplySyntaxHighlighting.FireAndForget(async _ =>
+                _throttleApplySyntaxHighlighting.PushEvent(async _ =>
                 {
                     // The TextEditorModel may have been changed by the time this logic is ran and
                     // thus the local variables must be updated accordingly.

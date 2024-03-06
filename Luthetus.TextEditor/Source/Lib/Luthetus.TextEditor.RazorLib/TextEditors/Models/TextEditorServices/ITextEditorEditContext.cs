@@ -29,7 +29,7 @@ public interface ITextEditorEditContext
     public TextEditorViewModelModifier? GetViewModelModifier(Key<TextEditorViewModel> viewModelKey, bool isReadonly = false);
 
     /// <inheritdoc cref="ITextEditorEditContext"/>
-    public TextEditorCursorModifierBag? GetCursorModifierBag(TextEditorViewModel viewModel);
+    public TextEditorCursorModifierBag? GetCursorModifierBag(TextEditorViewModel? viewModel);
 
     /// <summary>
     /// TODO: Caching for this method?<br/>

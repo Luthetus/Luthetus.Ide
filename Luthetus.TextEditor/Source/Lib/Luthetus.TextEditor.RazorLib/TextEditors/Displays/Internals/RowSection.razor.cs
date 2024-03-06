@@ -109,7 +109,7 @@ public partial class RowSection : ComponentBase
         if (model is null || viewModel is null)
             return;
 
-        _throttleVirtualizationDisplayItemsProviderFunc.FireAndForget(_ => 
+        _throttleVirtualizationDisplayItemsProviderFunc.PushEvent(_ => 
         {
             TextEditorService.Post(
                 nameof(VirtualizationDisplayItemsProviderFunc),

@@ -23,5 +23,5 @@ public interface IThrottle : IDisposable
     /// When <see cref="Dispose"/> is invoked, and cancellation tokens
     /// that came from _throttleCancellationTokenSource should be cancelled.
     /// </summary>
-    public void FireAndForget(Func<CancellationToken, Task> workItem);
+    public void PushEvent(Func<CancellationToken, Task> workItem);
 }
