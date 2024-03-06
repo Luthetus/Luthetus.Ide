@@ -101,15 +101,7 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
                     }
                     else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Other)
                     {
-                        _setTooltipViewModel.Invoke(null);
-
-                        await _textEditorService.ModelApi.HandleKeyboardEventFactory(
-                                ResourceUri,
-                                ViewModelKey,
-                                KeyboardEventArgs,
-                                CancellationToken.None)
-                            .Invoke(editContext)
-                            .ConfigureAwait(false);
+                        // TODO: Batch KeyboardEventArgsKind.Other
                     }
 
                     primaryCursorModifier.ShouldRevealCursor = true;
