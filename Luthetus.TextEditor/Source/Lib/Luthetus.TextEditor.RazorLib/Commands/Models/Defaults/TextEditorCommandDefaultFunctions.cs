@@ -741,19 +741,16 @@ public class TextEditorCommandDefaultFunctions
             }
 
             var definitionViewModelKey = definitionViewModels.First().ViewModelKey;
+            
             var definitionViewModelModifier = editContext.GetViewModelModifier(definitionViewModelKey);
+            var definitionCursorModifierBag = editContext.GetCursorModifierBag(definitionViewModelModifier?.ViewModel);
+            var definitionPrimaryCursorModifier = editContext.GetPrimaryCursorModifier(definitionCursorModifierBag);
 
-            if (definitionViewModelModifier is null)
+            if (definitionViewModelModifier is null || definitionCursorModifierBag is null || definitionPrimaryCursorModifier is null)
                 return Task.CompletedTask;
 
             var rowData = definitionModel.GetRowInformationFromPositionIndex(definitionTextSpan.StartingIndexInclusive);
             var columnIndex = definitionTextSpan.StartingIndexInclusive - rowData.RowStartPositionIndexInclusive;
-
-            var definitionCursorModifierBag = editContext.GetCursorModifierBag(definitionViewModelModifier.ViewModel);
-            var definitionPrimaryCursorModifier = editContext.GetPrimaryCursorModifier(definitionCursorModifierBag);
-
-            if (definitionPrimaryCursorModifier is null)
-                return Task.CompletedTask;
 
             definitionPrimaryCursorModifier.SelectionAnchorPositionIndex = null;
             definitionPrimaryCursorModifier.RowIndex = rowData.RowIndex;

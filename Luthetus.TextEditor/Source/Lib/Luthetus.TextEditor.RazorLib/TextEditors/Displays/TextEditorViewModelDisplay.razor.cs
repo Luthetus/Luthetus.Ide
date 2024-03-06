@@ -612,14 +612,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         {
             var modelModifier = editContext.GetModelModifier(resourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
             // Indexing can be invoked and this method still check for syntax highlighting and such
@@ -677,14 +673,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         {
             var modelModifier = editContext.GetModelModifier(resourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
             var seenIsAutocompleteIndexerInvoker = false;

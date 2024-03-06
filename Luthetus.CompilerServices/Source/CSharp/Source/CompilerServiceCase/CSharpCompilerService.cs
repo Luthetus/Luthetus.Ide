@@ -163,15 +163,10 @@ public sealed class CSharpCompilerService : LuthCompilerService
 
                                 foreach (var unsafeViewModel in viewModelList)
                                 {
-                                    var viewModelModifier = editContext.GetViewModelModifier(
-                                        unsafeViewModel.ViewModelKey);
+                                    var viewModelModifier = editContext.GetViewModelModifier(unsafeViewModel.ViewModelKey);
+                                    var viewModelCursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 
-                                    if (viewModelModifier is null)
-                                        continue;
-
-                                    var viewModelCursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
-
-                                    if (viewModelCursorModifierBag is null)
+                                    if (viewModelModifier is null || viewModelCursorModifierBag is null)
                                         continue;
 
                                     foreach (var cursorModifier in viewModelCursorModifierBag.List)

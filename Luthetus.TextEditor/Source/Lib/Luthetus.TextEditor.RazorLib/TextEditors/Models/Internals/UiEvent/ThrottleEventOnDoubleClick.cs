@@ -53,14 +53,10 @@ public class ThrottleEventOnDoubleClick : IThrottleEvent
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri, true);
                 var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
-
-                if (modelModifier is null || viewModelModifier is null)
-                    return;
-
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (cursorModifierBag is null || primaryCursorModifier is null)
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return;
 
                 var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
@@ -88,8 +84,8 @@ public class ThrottleEventOnDoubleClick : IThrottleEvent
                     false);
 
                 higherColumnIndexExpansion = higherColumnIndexExpansion == -1
-                        ? modelModifier.GetLengthOfRow(rowAndColumnIndex.rowIndex)
-                        : higherColumnIndexExpansion;
+                    ? modelModifier.GetLengthOfRow(rowAndColumnIndex.rowIndex)
+                    : higherColumnIndexExpansion;
 
                 // Move user's cursor position to the higher expansion
                 {

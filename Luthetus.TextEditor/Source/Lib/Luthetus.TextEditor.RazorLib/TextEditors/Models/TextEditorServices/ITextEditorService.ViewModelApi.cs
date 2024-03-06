@@ -535,14 +535,10 @@ public partial interface ITextEditorService
             {
                 var modelModifier = editContext.GetModelModifier(modelResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-                if (modelModifier is null || viewModelModifier is null)
-                    return Task.CompletedTask;
-
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (cursorModifierBag is null || primaryCursorModifier is null)
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
                 return MoveCursorUnsafeFactory(keyboardEventArgs, modelResourceUri, viewModelKey, primaryCursorModifier)
@@ -765,14 +761,10 @@ public partial interface ITextEditorService
             {
                 var modelModifier = editContext.GetModelModifier(modelResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-                if (modelModifier is null || viewModelModifier is null)
-                    return Task.CompletedTask;
-
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (cursorModifierBag is null || primaryCursorModifier is null)
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
                 return CursorMovePageTopUnsafeFactory(modelResourceUri, viewModelKey, primaryCursorModifier)
@@ -813,14 +805,10 @@ public partial interface ITextEditorService
             {
                 var modelModifier = editContext.GetModelModifier(modelResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-                if (modelModifier is null || viewModelModifier is null)
-                    return Task.CompletedTask;
-
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (cursorModifierBag is null || primaryCursorModifier is null)
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
                 return CursorMovePageBottomUnsafeFactory(modelResourceUri, viewModelKey, primaryCursorModifier)
@@ -866,14 +854,10 @@ public partial interface ITextEditorService
 
                 var modelModifier = editContext.GetModelModifier(modelResourceUri, true);
                 var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-                if (modelModifier is null || viewModelModifier is null)
-                    return;
-
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (cursorModifierBag is null || primaryCursorModifier is null)
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return;
 
                 var textEditorMeasurements = await _textEditorService.ViewModelApi
@@ -1096,14 +1080,10 @@ public partial interface ITextEditorService
 
                 var modelModifier = editContext.GetModelModifier(modelResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-                if (modelModifier is null || viewModelModifier is null)
-                    return;
-
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (cursorModifierBag is null || primaryCursorModifier is null)
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return;
 
                 var options = _textEditorService.OptionsApi.GetOptions();

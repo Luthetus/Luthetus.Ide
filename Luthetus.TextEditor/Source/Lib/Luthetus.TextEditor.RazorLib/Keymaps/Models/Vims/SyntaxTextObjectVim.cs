@@ -52,22 +52,16 @@ public static class SyntaxTextObjectVim
     }
 
     public static TextEditorEdit MoveCursorOneColumnLeftFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
             commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
@@ -85,22 +79,16 @@ public static class SyntaxTextObjectVim
     }
 
     public static TextEditorEdit MoveCursorOneRowDownFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
             return commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
@@ -116,22 +104,16 @@ public static class SyntaxTextObjectVim
     }
 
     public static TextEditorEdit MoveCursorOneRowUpFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
             return commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
@@ -147,22 +129,16 @@ public static class SyntaxTextObjectVim
     }
 
     public static TextEditorEdit MoveCursorOneColumnRightFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
             return commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
@@ -178,22 +154,16 @@ public static class SyntaxTextObjectVim
     }
 
     public static TextEditorEdit MoveCursorEndCurrentLineFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
             return commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
@@ -209,22 +179,16 @@ public static class SyntaxTextObjectVim
     }
 
     public static TextEditorEdit MoveCursorStartCurrentLineFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
             return commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(

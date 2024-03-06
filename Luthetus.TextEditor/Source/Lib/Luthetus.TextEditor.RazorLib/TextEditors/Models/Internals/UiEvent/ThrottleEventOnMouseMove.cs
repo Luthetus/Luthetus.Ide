@@ -55,14 +55,10 @@ public class ThrottleEventOnMouseMove : IThrottleEvent
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri, true);
                 var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
-
-                if (modelModifier is null || viewModelModifier is null)
-                    return;
-
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (cursorModifierBag is null || primaryCursorModifier is null)
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return;
 
                 var rowAndColumnIndex = await _calculateRowAndColumnIndexFunc.Invoke(MouseEventArgs).ConfigureAwait(false);
