@@ -45,14 +45,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
-
-                if (modelModifier is null || viewModelModifier is null)
-                    return;
-
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (cursorModifierBag is null || primaryCursorModifier is null)
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return;
 
                 var textEditorCommandArgsForMotion = new TextEditorCommandArgs(
