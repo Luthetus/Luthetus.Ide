@@ -58,7 +58,7 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
     public Task HandleEvent(CancellationToken cancellationToken)
     {
         _textEditorService.Post(
-            nameof(ThrottleEventOnKeyDownBatch),
+            $"OnKeyDown_{KeyboardEventArgsKind}_Batch:{KeyboardEventArgsList.Count}",
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -71,46 +71,62 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
 
                 var hasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
 
-                if (KeyboardEventArgsKind == KeyboardEventArgsKind.Movement)
+                var shouldInvokeAfterOnKeyDownAsync = false;
+                
+                if (KeyboardEventArgsKind == KeyboardEventArgsKind.Command)
                 {
-                    if (false == KeyboardEventArgsList.First().ShiftKey &&
-                        false == KeyboardEventArgsList.First().CtrlKey &&
-                        false == KeyboardEventArgsList.First().AltKey)
+                    shouldInvokeAfterOnKeyDownAsync = true;
+                    // TODO: Batch command
+                }
+                else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Movement)
+                {
+                    if (_cursorDisplay is null || _cursorDisplay.MenuKind != TextEditorMenuKind.AutoCompleteMenu)
                     {
-                        // TODO: Continue working on movement.
+                        // Don't do this foreach loop if the autocomplete menu is showing.
+                        foreach (var keyboardEventArgs in KeyboardEventArgsList)
+                        {
+                            await _textEditorService.ViewModelApi.MoveCursorFactory(
+                                    keyboardEventArgs,
+                                    modelModifier.ResourceUri,
+                                    viewModelModifier.ViewModel.ViewModelKey)
+                                .Invoke(editContext)
+                                .ConfigureAwait(false);
+                        }
                     }
+
+                    await (_cursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None) ?? Task.CompletedTask);
                 }
                 else if (KeyboardEventArgsKind == KeyboardEventArgsKind.ContextMenu)
                 {
                     // TODO: Batch context menu
                 }
-                else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Command || KeyboardEventArgsKind == KeyboardEventArgsKind.Text || KeyboardEventArgsKind == KeyboardEventArgsKind.Other)
+                else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Text)
                 {
-                    if (KeyboardEventArgsKind == KeyboardEventArgsKind.Command)
-                    {
-                        // TODO: Bath command
-                    }
-                    else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Text)
-                    {
-                        _setTooltipViewModel.Invoke(null);
+                    shouldInvokeAfterOnKeyDownAsync = true;
 
-                        modelModifier.EditByInsertion(
-                            string.Join(string.Empty, KeyboardEventArgsList.Select(x => x.Key)),
-                            cursorModifierBag,
-                            CancellationToken.None);
-                    }
-                    else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Other)
-                    {
-                        // TODO: Batch KeyboardEventArgsKind.Other
-                    }
+                    _setTooltipViewModel.Invoke(null);
 
+                    modelModifier.EditByInsertion(
+                        string.Join(string.Empty, KeyboardEventArgsList.Select(x => x.Key)),
+                        cursorModifierBag,
+                        CancellationToken.None);
+                }
+                else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Other)
+                {
+                    shouldInvokeAfterOnKeyDownAsync = true;
+                    // TODO: Batch KeyboardEventArgsKind.Other
+                }
+
+                if (shouldInvokeAfterOnKeyDownAsync)
+                {
                     primaryCursorModifier.ShouldRevealCursor = true;
 
                     var cursorDisplay = _cursorDisplay;
 
                     if (cursorDisplay is not null)
                     {
-                        var afterOnKeyDownRangeAsyncFactory = ViewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory ?? _handleAfterOnKeyDownRangeAsyncFactoryFunc;
+                        var afterOnKeyDownRangeAsyncFactory = ViewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory
+                            ?? _handleAfterOnKeyDownRangeAsyncFactoryFunc;
 
                         await afterOnKeyDownRangeAsyncFactory.Invoke(
                                 modelModifier.ResourceUri,

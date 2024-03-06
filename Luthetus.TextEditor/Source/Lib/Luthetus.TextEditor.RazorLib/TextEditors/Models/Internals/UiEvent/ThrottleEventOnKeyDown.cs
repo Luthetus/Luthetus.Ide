@@ -214,10 +214,8 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                             .ConfigureAwait(false);
                         break;
                     case KeyboardEventArgsKind.Movement:
-                        if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == KeyboardEventArgs.Key ||
-                                    KeyboardKeyFacts.MovementKeys.ARROW_UP == KeyboardEventArgs.Key) &&
-                                _cursorDisplay is not null &&
-                                _cursorDisplay.MenuKind == TextEditorMenuKind.AutoCompleteMenu)
+                        if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == KeyboardEventArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == KeyboardEventArgs.Key) &&
+                             _cursorDisplay is not null && _cursorDisplay.MenuKind == TextEditorMenuKind.AutoCompleteMenu)
                         {
                             await _cursorDisplay.SetFocusToActiveMenuAsync().ConfigureAwait(false);
                         }
@@ -238,6 +236,8 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                         break;
                     case KeyboardEventArgsKind.Text:
                     case KeyboardEventArgsKind.Other:
+                        shouldInvokeAfterOnKeyDownAsync = true;
+
                         if (!TextEditorViewModelDisplay.IsAutocompleteMenuInvoker(KeyboardEventArgs))
                         {
                             if (KeyboardKeyFacts.MetaKeys.ESCAPE == KeyboardEventArgs.Key ||
@@ -273,7 +273,8 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
 
                     if (cursorDisplay is not null)
                     {
-                        var afterOnKeyDownAsyncFactory = ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory ?? _handleAfterOnKeyDownAsyncFactoryFunc;
+                        var afterOnKeyDownAsyncFactory = ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory
+                            ?? _handleAfterOnKeyDownAsyncFactoryFunc;
 
                         await afterOnKeyDownAsyncFactory.Invoke(
                                 modelModifier.ResourceUri,
