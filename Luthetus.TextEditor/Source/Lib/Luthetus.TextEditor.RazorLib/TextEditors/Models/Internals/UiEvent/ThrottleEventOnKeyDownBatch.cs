@@ -52,19 +52,6 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
     public IThrottleEvent? BatchOrDefault(IThrottleEvent moreRecentEvent)
     {
         // TODO: Should this type implement BatchOrDefault, beyond just returning null?
-
-        //if (moreRecentEvent is ThrottleEventOnKeyDown moreRecentEventOnKeyDown)
-        //{
-        //    KeyboardEventArgsList.Insert(0, moreRecentEventOnKeyDown.KeyboardEventArgs);
-        //    return this;
-        //}
-
-        //if (moreRecentEvent is ThrottleEventOnKeyDownBatch moreRecentEventOnKeyDownBatch)
-        //{
-        //    moreRecentEventOnKeyDownBatch.KeyboardEventArgsList.AddRange(KeyboardEventArgsList);
-        //    return moreRecentEventOnKeyDownBatch;
-        //}
-
         return null;
     }
 
@@ -76,18 +63,10 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
-
-                if (modelModifier is null || viewModelModifier is null)
-                    return;
-
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
-
-                if (cursorModifierBag is null)
-                    return;
-
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (primaryCursorModifier is null)
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return;
 
                 var hasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
