@@ -55,7 +55,7 @@ public class ThrottleEventOnMouseDown : IThrottleEvent
                 if ((MouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
                     return; // Not pressing the left mouse button so assume ContextMenu is desired result.
 
-                await _events.CursorSetShouldDisplayMenuAsyncFunc.Invoke(TextEditorMenuKind.None, false);
+                await _events.CursorSetShouldDisplayMenuAsyncFunc.Invoke(TextEditorMenuKind.None, false).ConfigureAwait(false);
 
                 // Remember the current cursor position prior to doing anything
                 var inRowIndex = primaryCursorModifier.RowIndex;

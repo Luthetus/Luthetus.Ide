@@ -77,7 +77,7 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
                         }
                     }
 
-                    await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None) ?? Task.CompletedTask);
+                    await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None) ?? Task.CompletedTask).ConfigureAwait(false);
                 }
                 else if (KeyboardEventArgsKind == KeyboardEventArgsKind.ContextMenu)
                 {

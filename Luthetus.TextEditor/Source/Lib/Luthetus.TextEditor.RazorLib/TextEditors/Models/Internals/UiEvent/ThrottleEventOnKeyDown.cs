@@ -178,11 +178,13 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                                 .Invoke(editContext)
                                 .ConfigureAwait(false);
 
-                            await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None) ?? Task.CompletedTask);
+                            await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None) ?? Task.CompletedTask)
+                                .ConfigureAwait(false);
                         }
                         break;
                     case KeyboardEventArgsKind.ContextMenu:
-                        await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.ContextMenu) ?? Task.CompletedTask);
+                        await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.ContextMenu) ?? Task.CompletedTask)
+                            .ConfigureAwait(false);
                         break;
                     case KeyboardEventArgsKind.Text:
                     case KeyboardEventArgsKind.Other:
@@ -195,7 +197,8 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                                 KeyboardKeyFacts.MetaKeys.DELETE == KeyboardEventArgs.Key ||
                                 !KeyboardKeyFacts.IsMetaKey(KeyboardEventArgs))
                             {
-                                await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None) ?? Task.CompletedTask);
+                                await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None) ?? Task.CompletedTask)
+                                    .ConfigureAwait(false);
                             }
                         }
 
