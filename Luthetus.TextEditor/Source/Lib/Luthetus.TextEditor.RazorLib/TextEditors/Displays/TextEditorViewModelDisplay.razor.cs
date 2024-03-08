@@ -232,7 +232,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 nextViewModelKey = nextViewModel.ViewModelKey;
 
             var linkedViewModelKey = _linkedViewModel?.ViewModelKey ?? Key<TextEditorViewModel>.Empty;
-
             var viewKeyChanged = nextViewModelKey != linkedViewModelKey;
 
             if (viewKeyChanged)
@@ -393,18 +392,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             viewModelKey.Value));
     }
 
-    private string GetGlobalHeightInPixelsStyling()
-    {
-        var heightInPixels = TextEditorService.OptionsStateWrap.Value.Options.TextEditorHeightInPixels;
-
-        if (heightInPixels is null)
-            return string.Empty;
-
-        var heightInPixelsInvariantCulture = heightInPixels.Value.ToCssValue();
-
-        return $"height: {heightInPixelsInvariantCulture}px;";
-    }
-
     private Task ReceiveOnTouchStartAsync(TouchEventArgs touchEventArgs)
     {
         _touchStartDateTime = DateTime.UtcNow;
@@ -442,6 +429,18 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         _previousTouchEventArgs = touchEventArgs;
         return Task.CompletedTask;
+    }
+
+    private string GetGlobalHeightInPixelsStyling()
+    {
+        var heightInPixels = TextEditorService.OptionsStateWrap.Value.Options.TextEditorHeightInPixels;
+
+        if (heightInPixels is null)
+            return string.Empty;
+
+        var heightInPixelsInvariantCulture = heightInPixels.Value.ToCssValue();
+
+        return $"height: {heightInPixelsInvariantCulture}px;";
     }
 
     private void ClearTouch(TouchEventArgs touchEventArgs)
