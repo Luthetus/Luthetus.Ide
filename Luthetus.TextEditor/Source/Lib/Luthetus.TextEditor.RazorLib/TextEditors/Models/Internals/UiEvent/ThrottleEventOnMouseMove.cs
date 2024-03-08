@@ -49,7 +49,7 @@ public class ThrottleEventOnMouseMove : IThrottleEvent
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return;
 
-                var rowAndColumnIndex = await _events.CalculateRowAndColumnIndexFunc.Invoke(MouseEventArgs).ConfigureAwait(false);
+                var rowAndColumnIndex = await _events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
 
                 primaryCursorModifier.RowIndex = rowAndColumnIndex.rowIndex;
                 primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;

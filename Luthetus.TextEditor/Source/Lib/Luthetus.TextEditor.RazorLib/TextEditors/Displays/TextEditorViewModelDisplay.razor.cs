@@ -440,8 +440,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 if (!cancellationToken.IsCancellationRequested && _userMouseIsInside)
                 {
-                    await HandleOnTooltipMouseOverAsync().ConfigureAwait(false);
-                    await HandleMouseStoppedMovingEventAsync(mouseEventArgs).ConfigureAwait(false);
+                    await _events.HandleOnTooltipMouseOverAsync().ConfigureAwait(false);
+                    await _events.HandleMouseStoppedMovingEventAsync(mouseEventArgs).ConfigureAwait(false);
                 }
             });
         }
@@ -474,195 +474,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     {
         _userMouseIsInside = false;
     }
-
-    private async Task<(int rowIndex, int columnIndex)> CalculateRowAndColumnIndex(MouseEventArgs mouseEventArgs)
-    {
-        var model = GetModel();
-        var viewModel = GetViewModel();
-        var globalTextEditorOptions = TextEditorService.OptionsStateWrap.Value.Options;
-
-        if (model is null || viewModel is null)
-            return (0, 0);
-
-        var charMeasurements = viewModel.VirtualizationResult.CharAndRowMeasurements;
-
-        var relativeCoordinatesOnClick = await JsRuntime.InvokeAsync<RelativeCoordinates>(
-                "luthetusTextEditor.getRelativePosition",
-                viewModel.BodyElementId,
-                mouseEventArgs.ClientX,
-                mouseEventArgs.ClientY)
-            .ConfigureAwait(false);
-
-        var positionX = relativeCoordinatesOnClick.RelativeX;
-        var positionY = relativeCoordinatesOnClick.RelativeY;
-
-        // Scroll position offset
-        {
-            positionX += relativeCoordinatesOnClick.RelativeScrollLeft;
-            positionY += relativeCoordinatesOnClick.RelativeScrollTop;
-        }
-
-        var rowIndex = (int)(positionY / charMeasurements.RowHeight);
-
-        rowIndex = rowIndex > model.RowCount - 1
-            ? model.RowCount - 1
-            : rowIndex;
-
-        int columnIndexInt;
-
-        if (!globalTextEditorOptions.UseMonospaceOptimizations)
-        {
-            var guid = Guid.NewGuid();
-
-            columnIndexInt = await JsRuntime.InvokeAsync<int>(
-                    "luthetusTextEditor.calculateProportionalColumnIndex",
-                    ProportionalFontMeasurementsContainerElementId,
-                    $"luth_te_proportional-font-measurement-parent_{_textEditorHtmlElementId}_{guid}",
-                    $"luth_te_proportional-font-measurement-cursor_{_textEditorHtmlElementId}_{guid}",
-                    positionX,
-                    charMeasurements.CharacterWidth,
-                    model.GetLine(rowIndex))
-                .ConfigureAwait(false);
-
-            if (columnIndexInt == -1)
-            {
-                var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
-                columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
-            }
-        }
-        else
-        {
-            var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
-            columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
-        }
-
-        var lengthOfRow = model.GetLengthOfRow(rowIndex);
-
-        // Tab key column offset
-        {
-            var parameterForGetTabsCountOnSameRowBeforeCursor = columnIndexInt > lengthOfRow
-                ? lengthOfRow
-                : columnIndexInt;
-
-            var tabsOnSameRowBeforeCursor = model.GetTabsCountOnSameRowBeforeCursor(
-                rowIndex,
-                parameterForGetTabsCountOnSameRowBeforeCursor);
-
-            // 1 of the character width is already accounted for
-            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
-
-            columnIndexInt -= extraWidthPerTabKey * tabsOnSameRowBeforeCursor;
-        }
-
-        columnIndexInt = columnIndexInt > lengthOfRow
-            ? lengthOfRow
-            : columnIndexInt;
-
-        rowIndex = Math.Max(rowIndex, 0);
-        columnIndexInt = Math.Max(columnIndexInt, 0);
-
-        return (rowIndex, columnIndexInt);
-    }
     
-    private async Task HandleMouseStoppedMovingEventAsync(MouseEventArgs mouseEventArgs)
-    {
-        var model = GetModel();
-        var viewModel = GetViewModel();
-
-        if (model is null || viewModel is null)
-            return;
-
-        // Lazily calculate row and column index a second time. Otherwise one has to calculate it every mouse moved event.
-        var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs).ConfigureAwait(false);
-
-        // TODO: (2023-05-28) This shouldn't be re-calcuated in the best case scenario. That is to say, the previous line invokes 'CalculateRowAndColumnIndex(...)' which also invokes this logic
-        var relativeCoordinatesOnClick = await JsRuntime.InvokeAsync<RelativeCoordinates>(
-                "luthetusTextEditor.getRelativePosition",
-                viewModel.BodyElementId,
-                mouseEventArgs.ClientX,
-                mouseEventArgs.ClientY)
-            .ConfigureAwait(false);
-
-        var cursorPositionIndex = model.GetPositionIndex(new TextEditorCursor(
-            rowAndColumnIndex.rowIndex,
-            rowAndColumnIndex.columnIndex,
-            true));
-
-        var foundMatch = false;
-
-        var symbols = model.CompilerService.GetSymbolsFor(model.ResourceUri);
-        var diagnostics = model.CompilerService.GetDiagnosticsFor(model.ResourceUri);
-
-        if (diagnostics.Length != 0)
-        {
-            foreach (var diagnostic in diagnostics)
-            {
-                if (cursorPositionIndex >= diagnostic.TextSpan.StartingIndexInclusive &&
-                    cursorPositionIndex < diagnostic.TextSpan.EndingIndexExclusive)
-                {
-                    // Prefer showing a diagnostic over a symbol when both exist at the mouse location.
-                    foundMatch = true;
-
-                    var parameterMap = new Dictionary<string, object?>
-                    {
-                        {
-                            nameof(ITextEditorDiagnosticRenderer.Diagnostic),
-                            diagnostic
-                        }
-                    };
-
-                    _tooltipViewModel = new(
-                        LuthetusTextEditorComponentRenderers.DiagnosticRendererType,
-                        parameterMap,
-                        relativeCoordinatesOnClick,
-                        null,
-                        HandleOnTooltipMouseOverAsync);
-                }
-            }
-        }
-
-        if (!foundMatch && symbols.Length != 0)
-        {
-            foreach (var symbol in symbols)
-            {
-                if (cursorPositionIndex >= symbol.TextSpan.StartingIndexInclusive &&
-                    cursorPositionIndex < symbol.TextSpan.EndingIndexExclusive)
-                {
-                    foundMatch = true;
-
-                    var parameters = new Dictionary<string, object?>
-                    {
-                        {
-                            nameof(ITextEditorSymbolRenderer.Symbol),
-                            symbol
-                        }
-                    };
-
-                    _tooltipViewModel = new(
-                        LuthetusTextEditorComponentRenderers.SymbolRendererType,
-                        parameters,
-                        relativeCoordinatesOnClick,
-                        null,
-                        HandleOnTooltipMouseOverAsync);
-                }
-            }
-        }
-
-        if (!foundMatch)
-        {
-            if (_tooltipViewModel is null)
-                return; // Avoid the re-render if nothing changed
-
-            _tooltipViewModel = null;
-        }
-
-        // TODO: Measure the tooltip, and reposition if it would go offscreen.
-
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
-    }
-
-    
-
     private void ReceiveOnWheel(WheelEventArgs wheelEventArgs)
     {
         var viewModelKey = GetViewModel()?.ViewModelKey;
@@ -674,14 +486,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             wheelEventArgs,
             _events,
             viewModelKey.Value));
-    }
-
-    private Task HandleOnTooltipMouseOverAsync()
-    {
-        _onMouseOutTooltipCancellationTokenSource.Cancel();
-        _onMouseOutTooltipCancellationTokenSource = new();
-
-        return Task.CompletedTask;
     }
 
     private string GetGlobalHeightInPixelsStyling()
@@ -864,9 +668,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         public IDispatcher Dispatcher => _viewModelDisplay.Dispatcher;
         public IServiceProvider ServiceProvider => _viewModelDisplay.ServiceProvider;
         public LuthetusTextEditorConfig TextEditorConfig => _viewModelDisplay.TextEditorConfig;
-
-        public Func<MouseEventArgs, Task>? HandleMouseStoppedMovingEventAsyncFunc => _viewModelDisplay.HandleMouseStoppedMovingEventAsync;
-        public Func<MouseEventArgs, Task<(int rowIndex, int columnIndex)>> CalculateRowAndColumnIndexFunc => _viewModelDisplay.CalculateRowAndColumnIndex;
 
         public Action CursorPauseBlinkAnimationAction 
         { 
@@ -1058,7 +859,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             };
         }
 
-        private bool IsSyntaxHighlightingInvoker(KeyboardEventArgs keyboardEventArgs)
+        public bool IsSyntaxHighlightingInvoker(KeyboardEventArgs keyboardEventArgs)
         {
             return keyboardEventArgs.Key == ";" ||
                    KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code) ||
@@ -1082,11 +883,205 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         /// are to be 1 character long, as well either whitespace or punctuation.
         /// Therefore 1 character behind might be a word that can be indexed.
         /// </summary>
-        private bool IsAutocompleteIndexerInvoker(KeyboardEventArgs keyboardEventArgs)
+        public bool IsAutocompleteIndexerInvoker(KeyboardEventArgs keyboardEventArgs)
         {
             return (KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code) ||
                     KeyboardKeyFacts.IsPunctuationCharacter(keyboardEventArgs.Key.First())) &&
                    !keyboardEventArgs.CtrlKey;
+        }
+
+        public async Task HandleMouseStoppedMovingEventAsync(MouseEventArgs mouseEventArgs)
+        {
+            var model = _viewModelDisplay.GetModel();
+            var viewModel = _viewModelDisplay.GetViewModel();
+
+            if (model is null || viewModel is null)
+                return;
+
+            // Lazily calculate row and column index a second time. Otherwise one has to calculate it every mouse moved event.
+            var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs).ConfigureAwait(false);
+
+            // TODO: (2023-05-28) This shouldn't be re-calcuated in the best case scenario. That is to say, the previous line invokes 'CalculateRowAndColumnIndex(...)' which also invokes this logic
+            var relativeCoordinatesOnClick = await JsRuntime.InvokeAsync<RelativeCoordinates>(
+                    "luthetusTextEditor.getRelativePosition",
+                    viewModel.BodyElementId,
+                    mouseEventArgs.ClientX,
+                    mouseEventArgs.ClientY)
+                .ConfigureAwait(false);
+
+            var cursorPositionIndex = model.GetPositionIndex(new TextEditorCursor(
+                rowAndColumnIndex.rowIndex,
+                rowAndColumnIndex.columnIndex,
+                true));
+
+            var foundMatch = false;
+
+            var symbols = model.CompilerService.GetSymbolsFor(model.ResourceUri);
+            var diagnostics = model.CompilerService.GetDiagnosticsFor(model.ResourceUri);
+
+            if (diagnostics.Length != 0)
+            {
+                foreach (var diagnostic in diagnostics)
+                {
+                    if (cursorPositionIndex >= diagnostic.TextSpan.StartingIndexInclusive &&
+                        cursorPositionIndex < diagnostic.TextSpan.EndingIndexExclusive)
+                    {
+                        // Prefer showing a diagnostic over a symbol when both exist at the mouse location.
+                        foundMatch = true;
+
+                        var parameterMap = new Dictionary<string, object?>
+                    {
+                        {
+                            nameof(ITextEditorDiagnosticRenderer.Diagnostic),
+                            diagnostic
+                        }
+                    };
+
+                        _viewModelDisplay._tooltipViewModel = new(
+                            _viewModelDisplay.LuthetusTextEditorComponentRenderers.DiagnosticRendererType,
+                            parameterMap,
+                            relativeCoordinatesOnClick,
+                            null,
+                            HandleOnTooltipMouseOverAsync);
+                    }
+                }
+            }
+
+            if (!foundMatch && symbols.Length != 0)
+            {
+                foreach (var symbol in symbols)
+                {
+                    if (cursorPositionIndex >= symbol.TextSpan.StartingIndexInclusive &&
+                        cursorPositionIndex < symbol.TextSpan.EndingIndexExclusive)
+                    {
+                        foundMatch = true;
+
+                        var parameters = new Dictionary<string, object?>
+                    {
+                        {
+                            nameof(ITextEditorSymbolRenderer.Symbol),
+                            symbol
+                        }
+                    };
+
+                        _viewModelDisplay._tooltipViewModel = new(
+                            _viewModelDisplay.LuthetusTextEditorComponentRenderers.SymbolRendererType,
+                            parameters,
+                            relativeCoordinatesOnClick,
+                            null,
+                            HandleOnTooltipMouseOverAsync);
+                    }
+                }
+            }
+
+            if (!foundMatch)
+            {
+                if (_viewModelDisplay._tooltipViewModel is null)
+                    return; // Avoid the re-render if nothing changed
+
+                _viewModelDisplay._tooltipViewModel = null;
+            }
+
+            // TODO: Measure the tooltip, and reposition if it would go offscreen.
+
+            await _viewModelDisplay.InvokeAsync(_viewModelDisplay.StateHasChanged).ConfigureAwait(false);
+        }
+
+        public Task HandleOnTooltipMouseOverAsync()
+        {
+            _viewModelDisplay._onMouseOutTooltipCancellationTokenSource.Cancel();
+            _viewModelDisplay._onMouseOutTooltipCancellationTokenSource = new();
+
+            return Task.CompletedTask;
+        }
+
+        public async Task<(int rowIndex, int columnIndex)> CalculateRowAndColumnIndex(MouseEventArgs mouseEventArgs)
+        {
+            var model = _viewModelDisplay.GetModel();
+            var viewModel = _viewModelDisplay.GetViewModel();
+            var globalTextEditorOptions = TextEditorService.OptionsStateWrap.Value.Options;
+
+            if (model is null || viewModel is null)
+                return (0, 0);
+
+            var charMeasurements = viewModel.VirtualizationResult.CharAndRowMeasurements;
+
+            var relativeCoordinatesOnClick = await JsRuntime.InvokeAsync<RelativeCoordinates>(
+                    "luthetusTextEditor.getRelativePosition",
+                    viewModel.BodyElementId,
+                    mouseEventArgs.ClientX,
+                    mouseEventArgs.ClientY)
+                .ConfigureAwait(false);
+
+            var positionX = relativeCoordinatesOnClick.RelativeX;
+            var positionY = relativeCoordinatesOnClick.RelativeY;
+
+            // Scroll position offset
+            {
+                positionX += relativeCoordinatesOnClick.RelativeScrollLeft;
+                positionY += relativeCoordinatesOnClick.RelativeScrollTop;
+            }
+
+            var rowIndex = (int)(positionY / charMeasurements.RowHeight);
+
+            rowIndex = rowIndex > model.RowCount - 1
+                ? model.RowCount - 1
+                : rowIndex;
+
+            int columnIndexInt;
+
+            if (!globalTextEditorOptions.UseMonospaceOptimizations)
+            {
+                var guid = Guid.NewGuid();
+
+                columnIndexInt = await JsRuntime.InvokeAsync<int>(
+                        "luthetusTextEditor.calculateProportionalColumnIndex",
+                        _viewModelDisplay.ProportionalFontMeasurementsContainerElementId,
+                        $"luth_te_proportional-font-measurement-parent_{_viewModelDisplay._textEditorHtmlElementId}_{guid}",
+                        $"luth_te_proportional-font-measurement-cursor_{_viewModelDisplay._textEditorHtmlElementId}_{guid}",
+                        positionX,
+                        charMeasurements.CharacterWidth,
+                        model.GetLine(rowIndex))
+                    .ConfigureAwait(false);
+
+                if (columnIndexInt == -1)
+                {
+                    var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
+                    columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
+                }
+            }
+            else
+            {
+                var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
+                columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
+            }
+
+            var lengthOfRow = model.GetLengthOfRow(rowIndex);
+
+            // Tab key column offset
+            {
+                var parameterForGetTabsCountOnSameRowBeforeCursor = columnIndexInt > lengthOfRow
+                    ? lengthOfRow
+                    : columnIndexInt;
+
+                var tabsOnSameRowBeforeCursor = model.GetTabsCountOnSameRowBeforeCursor(
+                    rowIndex,
+                    parameterForGetTabsCountOnSameRowBeforeCursor);
+
+                // 1 of the character width is already accounted for
+                var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+
+                columnIndexInt -= extraWidthPerTabKey * tabsOnSameRowBeforeCursor;
+            }
+
+            columnIndexInt = columnIndexInt > lengthOfRow
+                ? lengthOfRow
+                : columnIndexInt;
+
+            rowIndex = Math.Max(rowIndex, 0);
+            columnIndexInt = Math.Max(columnIndexInt, 0);
+
+            return (rowIndex, columnIndexInt);
         }
     }
 }

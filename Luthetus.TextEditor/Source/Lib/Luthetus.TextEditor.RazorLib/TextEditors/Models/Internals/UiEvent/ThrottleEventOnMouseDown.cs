@@ -62,7 +62,7 @@ public class ThrottleEventOnMouseDown : IThrottleEvent
                 var inColumnIndex = primaryCursorModifier.ColumnIndex;
 
                 // Move the cursor position
-                var rowAndColumnIndex = await _events.CalculateRowAndColumnIndexFunc.Invoke(MouseEventArgs).ConfigureAwait(false);
+                var rowAndColumnIndex = await _events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
                 primaryCursorModifier.RowIndex = rowAndColumnIndex.rowIndex;
                 primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
                 primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;

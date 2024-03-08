@@ -58,7 +58,7 @@ public class ThrottleEventOnDoubleClick : IThrottleEvent
                 if (MouseEventArgs.ShiftKey)
                     return; // Do not expand selection if user is holding shift
 
-                var rowAndColumnIndex = await _events.CalculateRowAndColumnIndexFunc.Invoke(MouseEventArgs).ConfigureAwait(false);
+                var rowAndColumnIndex = await _events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
 
                 var lowerColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
                     rowAndColumnIndex.rowIndex,

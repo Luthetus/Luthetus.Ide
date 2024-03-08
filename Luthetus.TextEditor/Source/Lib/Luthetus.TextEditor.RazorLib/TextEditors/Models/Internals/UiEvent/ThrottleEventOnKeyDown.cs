@@ -156,7 +156,7 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                                 definiteHasSelection,
                                 _events.ClipboardService,
                                 _events.TextEditorService,
-                                _events.HandleMouseStoppedMovingEventAsyncFunc,
+                                _events.HandleMouseStoppedMovingEventAsync,
                                 _events.JsRuntime,
                                 _events.Dispatcher,
                                 _events.ServiceProvider,
