@@ -33,7 +33,7 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
         {
             TentativeHasSelection = TextEditorSelectionHelper.HasSelectedText(badViewModel.PrimaryCursor.Selection);
 
-            TentativeKeyboardEventArgsKind = GetKeyboardEventArgsKind(
+            TentativeKeyboardEventArgsKind = TextEditorEventsUtils.GetKeyboardEventArgsKind(
                 KeyboardEventArgs,
                 TentativeHasSelection,
                 _events.TextEditorService,
@@ -140,7 +140,7 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                 // But have a previous event pending, that will result in a future selection when this event is handled.
                 var definiteHasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
 
-                var definiteKeyboardEventArgsKind = TextEditorViewModelDisplay.GetKeyboardEventArgsKind(
+                var definiteKeyboardEventArgsKind = TextEditorEventsUtils.GetKeyboardEventArgsKind(
                     KeyboardEventArgs, definiteHasSelection, _events.TextEditorService, out var command);
 
                 var shouldInvokeAfterOnKeyDownAsync = false;
