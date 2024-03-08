@@ -1,26 +1,20 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 
 public class ThrottleEventOnWheel : IThrottleEvent
 {
-    private readonly ThrottleController _throttleControllerUiEvents;
-    private readonly TimeSpan _uiEventsDelay;
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
 
     public ThrottleEventOnWheel(
         WheelEventArgs wheelEventArgs,
-        ThrottleController throttleControllerUiEvents,
-        TimeSpan uiEventsDelay,
-        Key<TextEditorViewModel> viewModelKey,
-        ITextEditorService textEditorService)
+        TextEditorViewModelDisplay.TextEditorEvents events,
+        Key<TextEditorViewModel> viewModelKey)
     {
-        _throttleControllerUiEvents = throttleControllerUiEvents;
-        _uiEventsDelay = uiEventsDelay;
-        _textEditorService = textEditorService;
+        _events = events;
 
         WheelEventArgs = wheelEventArgs;
         ViewModelKey = viewModelKey;
@@ -29,7 +23,7 @@ public class ThrottleEventOnWheel : IThrottleEvent
     public WheelEventArgs WheelEventArgs { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
-    public TimeSpan ThrottleTimeSpan => _uiEventsDelay;
+    public TimeSpan ThrottleTimeSpan => _events.ThrottleDelayDefault;
 
     public IThrottleEvent? BatchOrDefault(IThrottleEvent moreRecentEvent)
     {
@@ -38,7 +32,7 @@ public class ThrottleEventOnWheel : IThrottleEvent
 
     public Task HandleEvent(CancellationToken cancellationToken)
     {
-        _textEditorService.Post(
+        _events.TextEditorService.Post(
             nameof(ThrottleEventOnWheel),
             editContext =>
             {

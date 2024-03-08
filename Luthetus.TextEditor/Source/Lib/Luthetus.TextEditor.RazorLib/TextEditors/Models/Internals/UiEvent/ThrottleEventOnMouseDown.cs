@@ -2,8 +2,8 @@
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
@@ -13,27 +13,21 @@ public class ThrottleEventOnMouseDown : IThrottleEvent
     private readonly Func<MouseEventArgs, Task<(int rowIndex, int columnIndex)>> _calculateRowAndColumnIndexFunc;
     private readonly Action _cursorPauseBlinkAnimationAction;
     private readonly Func<TextEditorMenuKind, bool, Task> _cursorSetShouldDisplayMenuAsyncFunc;
-    private readonly ThrottleController _throttleControllerUiEvents;
-    private readonly TimeSpan _uiEventsDelay;
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
 
     public ThrottleEventOnMouseDown(
         MouseEventArgs mouseEventArgs,
         Func<MouseEventArgs, Task<(int rowIndex, int columnIndex)>> calculateRowAndColumnIndexFunc,
         Action cursorPauseBlinkAnimationAction,
         Func<TextEditorMenuKind, bool, Task> cursorSetShouldDisplayMenuAsyncFunc,
-        ThrottleController throttleControllerUiEvents,
-        TimeSpan uiEventsDelay,
+        TextEditorViewModelDisplay.TextEditorEvents events,
         ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        ITextEditorService textEditorService)
+        Key<TextEditorViewModel> viewModelKey)
     {
         _calculateRowAndColumnIndexFunc = calculateRowAndColumnIndexFunc;
         _cursorPauseBlinkAnimationAction = cursorPauseBlinkAnimationAction;
         _cursorSetShouldDisplayMenuAsyncFunc = cursorSetShouldDisplayMenuAsyncFunc;
-        _throttleControllerUiEvents = throttleControllerUiEvents;
-        _uiEventsDelay = uiEventsDelay;
-        _textEditorService = textEditorService;
+        _events = events;
         
         MouseEventArgs = mouseEventArgs;
         ResourceUri = resourceUri;
@@ -53,7 +47,7 @@ public class ThrottleEventOnMouseDown : IThrottleEvent
 
     public Task HandleEvent(CancellationToken cancellationToken)
     {
-        _textEditorService.Post(
+        _events.TextEditorService.Post(
             nameof(ThrottleEventOnMouseDown),
             async editContext =>
             {

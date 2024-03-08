@@ -30,6 +30,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
+using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -66,15 +67,36 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     [Parameter]
     public TextEditorViewModelDisplayOptions ViewModelDisplayOptions { get; set; } = new();
 
+    public class TextEditorEvents
+    {
+        private readonly TextEditorViewModelDisplay _viewModelDisplay;
+
+        public TextEditorEvents(TextEditorViewModelDisplay viewModelDisplay)
+        {
+            _viewModelDisplay = viewModelDisplay;
+        }
+
+        public ThrottleController Controller { get; } = new();
+        public TimeSpan ThrottleDelayDefault { get; } = TimeSpan.FromMilliseconds(30);
+
+        public TextEditorViewModelDisplayOptions ViewModelDisplayOptions => _viewModelDisplay.ViewModelDisplayOptions;
+        public CursorDisplay? CursorDisplay => _viewModelDisplay.CursorDisplay;
+        public ITextEditorService TextEditorService => _viewModelDisplay.TextEditorService;
+        public IClipboardService ClipboardService => _viewModelDisplay.ClipboardService;
+        public IJSRuntime JsRuntime => _viewModelDisplay.JsRuntime;
+        public IDispatcher Dispatcher => _viewModelDisplay.Dispatcher;
+        public IServiceProvider ServiceProvider => _viewModelDisplay.ServiceProvider;
+        public LuthetusTextEditorConfig TextEditorConfig => _viewModelDisplay.TextEditorConfig;
+    }
+
     private readonly Guid _textEditorHtmlElementId = Guid.NewGuid();
     private readonly IThrottle _throttleApplySyntaxHighlighting = new Throttle(TimeSpan.FromMilliseconds(500));
     private readonly TimeSpan _onMouseOutTooltipDelay = TimeSpan.FromMilliseconds(1_000);
     private readonly TimeSpan _mouseStoppedMovingDelay = TimeSpan.FromMilliseconds(400);
-    private readonly TimeSpan _uiEventsDelay = TimeSpan.FromMilliseconds(30);
-    private readonly ThrottleController _throttleControllerUiEvents = new();
     /// <summary>Using this lock in order to avoid the Dispose implementation decrementing when it shouldn't</summary>
     private readonly object _linkedViewModelLock = new();
 
+    private TextEditorEvents _events = null!;
     /// <summary>This accounts for one who might hold down Left Mouse Button from outside the TextEditorDisplay's content div then move their mouse over the content div while holding the Left Mouse Button down.</summary>
     private bool _thinksLeftMouseButtonIsDown;
     private bool _thinksTouchIsOccurring;
@@ -106,6 +128,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
+        _events = new(this);
+
         ConstructRenderBatch();
 
         TextEditorViewModelsStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
@@ -360,25 +384,16 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             return;
 
         var onKeyDownThrottleEvent = new ThrottleEventOnKeyDown(
-            _throttleControllerUiEvents,
-            _uiEventsDelay,
+            _events,
             keyboardEventArgs,
-            ViewModelDisplayOptions,
-            CursorDisplay,
             resourceUri,
             viewModelKey.Value,
             HandleAfterOnKeyDownAsyncFactory,
             HandleAfterOnKeyDownRangeAsyncFactory,
             x => _tooltipViewModel = x,
-            TextEditorService,
-            ClipboardService,
-            HandleMouseStoppedMovingEventAsync,
-            JsRuntime,
-            Dispatcher,
-            ServiceProvider,
-            TextEditorConfig);
+            HandleMouseStoppedMovingEventAsync);
 
-        _throttleControllerUiEvents.EnqueueEvent(onKeyDownThrottleEvent);
+        _events.Controller.EnqueueEvent(onKeyDownThrottleEvent);
     }
 
     private async Task ReceiveOnContextMenuAsync()
@@ -398,15 +413,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             return;
 
         var throttleEvent = new ThrottleEventOnDoubleClick(
-                mouseEventArgs,
-                CalculateRowAndColumnIndex,
-                _throttleControllerUiEvents,
-                _uiEventsDelay,
-                modelResourceUri,
-                viewModelKey.Value,
-                TextEditorService);
+            mouseEventArgs,
+            CalculateRowAndColumnIndex,
+            _events,
+            modelResourceUri,
+            viewModelKey.Value);
 
-        _throttleControllerUiEvents.EnqueueEvent(throttleEvent);
+        _events.Controller.EnqueueEvent(throttleEvent);
     }
 
     private void ReceiveContentOnMouseDown(MouseEventArgs mouseEventArgs)
@@ -427,13 +440,11 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                     if (localCursorDisplay is not null)
                         await localCursorDisplay.SetShouldDisplayMenuAsync(a, b);
                 },
-                _throttleControllerUiEvents,
-                _uiEventsDelay,
+                _events,
                 modelResourceUri,
-                viewModelKey.Value,
-                TextEditorService);
+                viewModelKey.Value);
 
-        _throttleControllerUiEvents.EnqueueEvent(throttleEvent);
+        _events.Controller.EnqueueEvent(throttleEvent);
     }
 
     /// <summary>OnMouseUp is un-necessary</summary>
@@ -493,13 +504,11 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 mouseEventArgs,
                 CalculateRowAndColumnIndex,
                 () => { CursorDisplay?.PauseBlinkAnimation(); },
-                _throttleControllerUiEvents,
-                _uiEventsDelay,
+                _events,
                 modelResourceUri,
-                viewModelKey.Value,
-                TextEditorService);
+                viewModelKey.Value);
 
-            _throttleControllerUiEvents.EnqueueEvent(throttleEvent);
+            _events.Controller.EnqueueEvent(throttleEvent);
         }
         else
         {
@@ -876,12 +885,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         var throttleEvent = new ThrottleEventOnWheel(
             wheelEventArgs,
-            _throttleControllerUiEvents,
-            _uiEventsDelay,
-            viewModelKey.Value,
-            TextEditorService);
+            _events,
+            viewModelKey.Value);
 
-        _throttleControllerUiEvents.EnqueueEvent(throttleEvent);
+        _events.Controller.EnqueueEvent(throttleEvent);
     }
 
     private Task HandleOnTooltipMouseOverAsync()
