@@ -10,17 +10,14 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 
 public class ThrottleEventOnDoubleClick : IThrottleEvent
 {
-    private readonly Func<MouseEventArgs, Task<(int rowIndex, int columnIndex)>> _calculateRowAndColumnIndexFunc;
     private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
 
     public ThrottleEventOnDoubleClick(
         MouseEventArgs mouseEventArgs,
-        Func<MouseEventArgs, Task<(int rowIndex, int columnIndex)>> calculateRowAndColumnIndexFunc,
         TextEditorViewModelDisplay.TextEditorEvents events,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
-        _calculateRowAndColumnIndexFunc = calculateRowAndColumnIndexFunc;
         _events = events;
 
         MouseEventArgs = mouseEventArgs;
@@ -61,7 +58,7 @@ public class ThrottleEventOnDoubleClick : IThrottleEvent
                 if (MouseEventArgs.ShiftKey)
                     return; // Do not expand selection if user is holding shift
 
-                var rowAndColumnIndex = await _calculateRowAndColumnIndexFunc(MouseEventArgs).ConfigureAwait(false);
+                var rowAndColumnIndex = await _events.CalculateRowAndColumnIndexFunc.Invoke(MouseEventArgs).ConfigureAwait(false);
 
                 var lowerColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
                     rowAndColumnIndex.rowIndex,

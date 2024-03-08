@@ -9,21 +9,16 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 
 public class ThrottleEventOnMouseMove : IThrottleEvent
 {
-    private readonly Func<MouseEventArgs, Task<(int rowIndex, int columnIndex)>> _calculateRowAndColumnIndexFunc;
-    private readonly Action _cursorPauseBlinkAnimationAction;
     private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
 
     public ThrottleEventOnMouseMove(
         MouseEventArgs mouseEventArgs,
-        Func<MouseEventArgs, Task<(int rowIndex, int columnIndex)>> calculateRowAndColumnIndexFunc,
-        Action cursorPauseBlinkAnimationAction,
         TextEditorViewModelDisplay.TextEditorEvents events,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
-        _calculateRowAndColumnIndexFunc = calculateRowAndColumnIndexFunc;
-        _cursorPauseBlinkAnimationAction = cursorPauseBlinkAnimationAction;
         _events = events;
+
         MouseEventArgs = mouseEventArgs;
         ResourceUri = resourceUri;
         ViewModelKey = viewModelKey;
@@ -54,13 +49,13 @@ public class ThrottleEventOnMouseMove : IThrottleEvent
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return;
 
-                var rowAndColumnIndex = await _calculateRowAndColumnIndexFunc.Invoke(MouseEventArgs).ConfigureAwait(false);
+                var rowAndColumnIndex = await _events.CalculateRowAndColumnIndexFunc.Invoke(MouseEventArgs).ConfigureAwait(false);
 
                 primaryCursorModifier.RowIndex = rowAndColumnIndex.rowIndex;
                 primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
                 primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 
-                _cursorPauseBlinkAnimationAction.Invoke();
+                _events.CursorPauseBlinkAnimationAction.Invoke();
 
                 primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
             });

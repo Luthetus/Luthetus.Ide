@@ -10,23 +10,14 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 
 public class ThrottleEventOnMouseDown : IThrottleEvent
 {
-    private readonly Func<MouseEventArgs, Task<(int rowIndex, int columnIndex)>> _calculateRowAndColumnIndexFunc;
-    private readonly Action _cursorPauseBlinkAnimationAction;
-    private readonly Func<TextEditorMenuKind, bool, Task> _cursorSetShouldDisplayMenuAsyncFunc;
     private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
 
     public ThrottleEventOnMouseDown(
         MouseEventArgs mouseEventArgs,
-        Func<MouseEventArgs, Task<(int rowIndex, int columnIndex)>> calculateRowAndColumnIndexFunc,
-        Action cursorPauseBlinkAnimationAction,
-        Func<TextEditorMenuKind, bool, Task> cursorSetShouldDisplayMenuAsyncFunc,
         TextEditorViewModelDisplay.TextEditorEvents events,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
-        _calculateRowAndColumnIndexFunc = calculateRowAndColumnIndexFunc;
-        _cursorPauseBlinkAnimationAction = cursorPauseBlinkAnimationAction;
-        _cursorSetShouldDisplayMenuAsyncFunc = cursorSetShouldDisplayMenuAsyncFunc;
         _events = events;
         
         MouseEventArgs = mouseEventArgs;
@@ -64,19 +55,19 @@ public class ThrottleEventOnMouseDown : IThrottleEvent
                 if ((MouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
                     return; // Not pressing the left mouse button so assume ContextMenu is desired result.
 
-                await _cursorSetShouldDisplayMenuAsyncFunc.Invoke(TextEditorMenuKind.None, false);
+                await _events.CursorSetShouldDisplayMenuAsyncFunc.Invoke(TextEditorMenuKind.None, false);
 
                 // Remember the current cursor position prior to doing anything
                 var inRowIndex = primaryCursorModifier.RowIndex;
                 var inColumnIndex = primaryCursorModifier.ColumnIndex;
 
                 // Move the cursor position
-                var rowAndColumnIndex = await _calculateRowAndColumnIndexFunc.Invoke(MouseEventArgs).ConfigureAwait(false);
+                var rowAndColumnIndex = await _events.CalculateRowAndColumnIndexFunc.Invoke(MouseEventArgs).ConfigureAwait(false);
                 primaryCursorModifier.RowIndex = rowAndColumnIndex.rowIndex;
                 primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
                 primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 
-                _cursorPauseBlinkAnimationAction.Invoke();
+                _events.CursorPauseBlinkAnimationAction.Invoke();
 
                 var cursorPositionIndex = modelModifier.GetPositionIndex(new TextEditorCursor(
                     rowAndColumnIndex.rowIndex,

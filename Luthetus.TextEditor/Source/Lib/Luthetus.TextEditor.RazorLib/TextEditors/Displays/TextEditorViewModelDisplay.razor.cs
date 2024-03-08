@@ -30,24 +30,23 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
 public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    protected IState<TextEditorModelState> TextEditorModelStateWrap { get; set; } = null!;
+    private IState<TextEditorModelState> TextEditorModelStateWrap { get; set; } = null!;
     [Inject]
-    protected IState<TextEditorViewModelState> TextEditorViewModelsStateWrap { get; set; } = null!;
+    private IState<TextEditorViewModelState> TextEditorViewModelsStateWrap { get; set; } = null!;
     [Inject]
-    protected IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
+    private IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]
-    protected ITextEditorService TextEditorService { get; set; } = null!;
+    private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IAutocompleteIndexer AutocompleteIndexer { get; set; } = null!;
     [Inject]
@@ -66,28 +65,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     
     [Parameter]
     public TextEditorViewModelDisplayOptions ViewModelDisplayOptions { get; set; } = new();
-
-    public class TextEditorEvents
-    {
-        private readonly TextEditorViewModelDisplay _viewModelDisplay;
-
-        public TextEditorEvents(TextEditorViewModelDisplay viewModelDisplay)
-        {
-            _viewModelDisplay = viewModelDisplay;
-        }
-
-        public ThrottleController Controller { get; } = new();
-        public TimeSpan ThrottleDelayDefault { get; } = TimeSpan.FromMilliseconds(30);
-
-        public TextEditorViewModelDisplayOptions ViewModelDisplayOptions => _viewModelDisplay.ViewModelDisplayOptions;
-        public CursorDisplay? CursorDisplay => _viewModelDisplay.CursorDisplay;
-        public ITextEditorService TextEditorService => _viewModelDisplay.TextEditorService;
-        public IClipboardService ClipboardService => _viewModelDisplay.ClipboardService;
-        public IJSRuntime JsRuntime => _viewModelDisplay.JsRuntime;
-        public IDispatcher Dispatcher => _viewModelDisplay.Dispatcher;
-        public IServiceProvider ServiceProvider => _viewModelDisplay.ServiceProvider;
-        public LuthetusTextEditorConfig TextEditorConfig => _viewModelDisplay.TextEditorConfig;
-    }
 
     private readonly Guid _textEditorHtmlElementId = Guid.NewGuid();
     private readonly IThrottle _throttleApplySyntaxHighlighting = new Throttle(TimeSpan.FromMilliseconds(500));
@@ -283,7 +260,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         ITextEditorService textEditorService,
         out CommandNoType command)
     {
-        var oldEventIsCommand = CheckIfKeyboardEventArgsMapsToCommand(
+        var eventIsCommand = CheckIfKeyboardEventArgsMapsToCommand(
             keyboardEventArgs,
             hasSelection,
             textEditorService,
@@ -292,17 +269,17 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             out var success,
             out command);
 
-        var oldEventIsMovement = CheckIfKeyboardEventArgsMapsToMovement(keyboardEventArgs, command);
+        var eventIsMovement = CheckIfKeyboardEventArgsMapsToMovement(keyboardEventArgs, command);
 
-        var oldEventIsContextMenu = KeyboardKeyFacts.CheckIsContextMenuEvent(keyboardEventArgs);
+        var eventIsContextMenu = KeyboardKeyFacts.CheckIsContextMenuEvent(keyboardEventArgs);
 
-        if (oldEventIsMovement)
+        if (eventIsMovement)
             return KeyboardEventArgsKind.Movement;
 
-        if (oldEventIsContextMenu)
+        if (eventIsContextMenu)
             return KeyboardEventArgsKind.ContextMenu;
 
-        if (oldEventIsCommand)
+        if (eventIsCommand)
             return KeyboardEventArgsKind.Command;
 
         if (keyboardEventArgs.Key.Length == 1)
@@ -383,17 +360,11 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (resourceUri is null || viewModelKey is null)
             return;
 
-        var onKeyDownThrottleEvent = new ThrottleEventOnKeyDown(
+        _events.Controller.EnqueueEvent(new ThrottleEventOnKeyDown(
             _events,
             keyboardEventArgs,
             resourceUri,
-            viewModelKey.Value,
-            HandleAfterOnKeyDownAsyncFactory,
-            HandleAfterOnKeyDownRangeAsyncFactory,
-            x => _tooltipViewModel = x,
-            HandleMouseStoppedMovingEventAsync);
-
-        _events.Controller.EnqueueEvent(onKeyDownThrottleEvent);
+            viewModelKey.Value));
     }
 
     private async Task ReceiveOnContextMenuAsync()
@@ -412,14 +383,11 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        var throttleEvent = new ThrottleEventOnDoubleClick(
+        _events.Controller.EnqueueEvent(new ThrottleEventOnDoubleClick(
             mouseEventArgs,
-            CalculateRowAndColumnIndex,
             _events,
             modelResourceUri,
-            viewModelKey.Value);
-
-        _events.Controller.EnqueueEvent(throttleEvent);
+            viewModelKey.Value));
     }
 
     private void ReceiveContentOnMouseDown(MouseEventArgs mouseEventArgs)
@@ -430,21 +398,11 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        var throttleEvent = new ThrottleEventOnMouseDown(
-                mouseEventArgs,
-                CalculateRowAndColumnIndex,
-                () => { CursorDisplay?.PauseBlinkAnimation(); },
-                async (a, b) => 
-                {
-                    var localCursorDisplay = CursorDisplay;
-                    if (localCursorDisplay is not null)
-                        await localCursorDisplay.SetShouldDisplayMenuAsync(a, b);
-                },
-                _events,
-                modelResourceUri,
-                viewModelKey.Value);
-
-        _events.Controller.EnqueueEvent(throttleEvent);
+        _events.Controller.EnqueueEvent(new ThrottleEventOnMouseDown(
+            mouseEventArgs,
+            _events,
+            modelResourceUri,
+            viewModelKey.Value));
     }
 
     /// <summary>OnMouseUp is un-necessary</summary>
@@ -500,15 +458,11 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
-            var throttleEvent = new ThrottleEventOnMouseMove(
+            _events.Controller.EnqueueEvent(new ThrottleEventOnMouseMove(
                 mouseEventArgs,
-                CalculateRowAndColumnIndex,
-                () => { CursorDisplay?.PauseBlinkAnimation(); },
                 _events,
                 modelResourceUri,
-                viewModelKey.Value);
-
-            _events.Controller.EnqueueEvent(throttleEvent);
+                viewModelKey.Value));
         }
         else
         {
@@ -883,12 +837,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (viewModelKey is null)
             return;
 
-        var throttleEvent = new ThrottleEventOnWheel(
+        _events.Controller.EnqueueEvent(new ThrottleEventOnWheel(
             wheelEventArgs,
             _events,
-            viewModelKey.Value);
-
-        _events.Controller.EnqueueEvent(throttleEvent);
+            viewModelKey.Value));
     }
 
     private Task HandleOnTooltipMouseOverAsync()
@@ -921,23 +873,23 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         return Task.CompletedTask;
     }
 
-    private async Task ReceiveOnTouchMoveAsync(TouchEventArgs touchEventArgs)
+    private Task ReceiveOnTouchMoveAsync(TouchEventArgs touchEventArgs)
     {
         var localThinksTouchIsOccurring = _thinksTouchIsOccurring;
 
         if (!_thinksTouchIsOccurring)
-            return;
+            return Task.CompletedTask;
 
         var previousTouchPoint = _previousTouchEventArgs?.ChangedTouches.FirstOrDefault(x => x.Identifier == 0);
         var currentTouchPoint = touchEventArgs.ChangedTouches.FirstOrDefault(x => x.Identifier == 0);
 
         if (previousTouchPoint is null || currentTouchPoint is null)
-            return;
+            return Task.CompletedTask;
 
         var viewModel = GetViewModel();
 
         if (viewModel is null)
-            return;
+            return Task.CompletedTask;
 
         // Natural scrolling for touch devices
         var diffX = previousTouchPoint.ClientX - currentTouchPoint.ClientX;
@@ -947,6 +899,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         viewModel.MutateScrollVerticalPositionByPixels(diffY);
 
         _previousTouchEventArgs = touchEventArgs;
+        return Task.CompletedTask;
     }
 
     private void ClearTouch(TouchEventArgs touchEventArgs)
@@ -1032,5 +985,94 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         }
 
         _mouseStoppedMovingCancellationTokenSource.Cancel();
+    }
+
+    /// <summary>
+    /// The goal of this class is to allow external classes to access private members of the <see cref="TextEditorViewModelDisplay"/>.<br/><br/>
+    /// 
+    /// The reason for this class is that handling of UI events continues to necesitate more complexity.
+    /// At the time of making this class, a <see cref="ThrottleController"/> is being written,
+    /// to handle UI events in the order that they occurred, yet each one is individually throttled at a different timespan.<br/><br/>
+    /// 
+    /// The issue that was encountered is that, when moving the UI event code to a different class, one needed to
+    /// somehow access all the dependency injected state from that instantiated class. This led to massive constructors
+    /// where one would just be passing the '[Inject]' attribute marked properties due to them being private in the <see cref="TextEditorViewModelDisplay"/>.<br/><br/>
+    /// 
+    /// Refutations: why not just make the '[Inject]' attribute marked properties public and then pass a reference to the
+    /// <see cref="TextEditorViewModelDisplay"/> when constructing the external event classes?<br/><br/>
+    /// 
+    /// Response to refutations: Creation of this class allows for a "trust" system of sorts. The text editor is okay
+    /// with the event classes seeing these private, and dependency injected properties. Otherwise,
+    /// one just lets anyone see these if they're public.<br/><br/>
+    /// 
+    /// Remarks: this class is not tied to any <see cref="TextEditorModel"/>, nor <see cref="TextEditorViewModel"/>.
+    /// It has the same relationship to the models/viewmodels as the <see cref="TextEditorViewModelDisplay"/> does.
+    /// That is to say, a <see cref="TextEditorViewModelDisplay"/> gets constructed, then if one chooses to do so,
+    /// can swap out the parameter for 'TextEditorViewModel'. This change then gets propogated to this class.<br/><br/>
+    /// </summary>
+    public class TextEditorEvents
+    {
+        private readonly TextEditorViewModelDisplay _viewModelDisplay;
+
+        public TextEditorEvents(TextEditorViewModelDisplay viewModelDisplay)
+        {
+            _viewModelDisplay = viewModelDisplay;
+        }
+
+        public ThrottleController Controller { get; } = new();
+        public TimeSpan ThrottleDelayDefault { get; } = TimeSpan.FromMilliseconds(30);
+
+        public TextEditorViewModelDisplayOptions ViewModelDisplayOptions => _viewModelDisplay.ViewModelDisplayOptions;
+        public CursorDisplay? CursorDisplay => _viewModelDisplay.CursorDisplay;
+        public ITextEditorService TextEditorService => _viewModelDisplay.TextEditorService;
+        public IClipboardService ClipboardService => _viewModelDisplay.ClipboardService;
+        public IJSRuntime JsRuntime => _viewModelDisplay.JsRuntime;
+        public IDispatcher Dispatcher => _viewModelDisplay.Dispatcher;
+        public IServiceProvider ServiceProvider => _viewModelDisplay.ServiceProvider;
+        public LuthetusTextEditorConfig TextEditorConfig => _viewModelDisplay.TextEditorConfig;
+
+        public Func<ResourceUri, Key<TextEditorViewModel>, KeyboardEventArgs, Func<TextEditorMenuKind, bool, Task>, TextEditorEdit> HandleAfterOnKeyDownAsyncFactoryFunc =>
+            ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory ?? _viewModelDisplay.HandleAfterOnKeyDownAsyncFactory;
+
+        public Func<ResourceUri, Key<TextEditorViewModel>, List<KeyboardEventArgs>, Func<TextEditorMenuKind, bool, Task>, TextEditorEdit> HandleAfterOnKeyDownRangeAsyncFactoryFunc =>
+            ViewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory ?? _viewModelDisplay.HandleAfterOnKeyDownRangeAsyncFactory;
+
+        public Func<MouseEventArgs, Task>? HandleMouseStoppedMovingEventAsyncFunc => _viewModelDisplay.HandleMouseStoppedMovingEventAsync;
+
+        public Func<MouseEventArgs, Task<(int rowIndex, int columnIndex)>> CalculateRowAndColumnIndexFunc => _viewModelDisplay.CalculateRowAndColumnIndex;
+
+        public Action CursorPauseBlinkAnimationAction 
+        { 
+            get
+            {
+                var localCursorDisplay = CursorDisplay;
+
+                if (localCursorDisplay is not null)
+                    return localCursorDisplay.PauseBlinkAnimation;
+
+                return () => { };
+            }
+        }
+
+        public Action<TooltipViewModel?> SetTooltipViewModel 
+        { 
+            get
+            {
+                return x => _viewModelDisplay._tooltipViewModel = x;
+            }
+        }
+
+        public Func<TextEditorMenuKind, bool, Task> CursorSetShouldDisplayMenuAsyncFunc 
+        { 
+            get
+            {
+                return async (a, b) =>
+                {
+                    var localCursorDisplay = CursorDisplay;
+                    if (localCursorDisplay is not null)
+                        await localCursorDisplay.SetShouldDisplayMenuAsync(a, b);
+                };
+            }
+        }
     }
 }

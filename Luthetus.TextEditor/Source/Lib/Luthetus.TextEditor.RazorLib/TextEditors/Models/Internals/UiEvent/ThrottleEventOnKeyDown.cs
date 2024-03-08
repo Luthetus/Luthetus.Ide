@@ -6,7 +6,6 @@ using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.AspNetCore.Components.Web;
 using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
 
@@ -15,26 +14,14 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 public class ThrottleEventOnKeyDown : IThrottleEvent
 {
     private readonly TextEditorEvents _events;
-    private readonly Func<ResourceUri, Key<TextEditorViewModel>, KeyboardEventArgs, Func<TextEditorMenuKind, bool, Task>, TextEditorEdit> _handleAfterOnKeyDownAsyncFactoryFunc;
-    private readonly Func<ResourceUri, Key<TextEditorViewModel>, List<KeyboardEventArgs>, Func<TextEditorMenuKind, bool, Task>, TextEditorEdit> _handleAfterOnKeyDownRangeAsyncFactoryFunc;
-    private readonly Action<TooltipViewModel?> _setTooltipViewModel;
-    private readonly Func<MouseEventArgs, Task>? _handleMouseStoppedMovingEventAsyncFunc;
 
     public ThrottleEventOnKeyDown(
         TextEditorEvents events,
         KeyboardEventArgs keyboardEventArgs,
         ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        Func<ResourceUri, Key<TextEditorViewModel>, KeyboardEventArgs, Func<TextEditorMenuKind, bool, Task>, TextEditorEdit> handleAfterOnKeyDownAsyncFactoryFunc,
-        Func<ResourceUri, Key<TextEditorViewModel>, List<KeyboardEventArgs>, Func<TextEditorMenuKind, bool, Task>, TextEditorEdit> handleAfterOnKeyDownRangeAsyncFactoryFunc,
-        Action<TooltipViewModel?> setTooltipViewModel,
-        Func<MouseEventArgs, Task>? handleMouseStoppedMovingEventAsyncFunc)
+        Key<TextEditorViewModel> viewModelKey)
     {
         _events = events;
-        _handleMouseStoppedMovingEventAsyncFunc = handleMouseStoppedMovingEventAsyncFunc;
-        _handleAfterOnKeyDownAsyncFactoryFunc = handleAfterOnKeyDownAsyncFactoryFunc;
-        _handleAfterOnKeyDownRangeAsyncFactoryFunc = handleAfterOnKeyDownRangeAsyncFactoryFunc;
-        _setTooltipViewModel = setTooltipViewModel;
 
         KeyboardEventArgs = keyboardEventArgs;
         ResourceUri = resourceUri;
@@ -100,9 +87,7 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                             },
                             TentativeKeyboardEventArgsKind,
                             ResourceUri,
-                            ViewModelKey,
-                            _handleAfterOnKeyDownRangeAsyncFactoryFunc,
-                            _setTooltipViewModel);
+                            ViewModelKey);
                     }
                     break;
                 case KeyboardEventArgsKind.ContextMenu:
@@ -171,7 +156,7 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                                 definiteHasSelection,
                                 _events.ClipboardService,
                                 _events.TextEditorService,
-                                _handleMouseStoppedMovingEventAsyncFunc,
+                                _events.HandleMouseStoppedMovingEventAsyncFunc,
                                 _events.JsRuntime,
                                 _events.Dispatcher,
                                 _events.ServiceProvider,
@@ -214,7 +199,7 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                             }
                         }
 
-                        _setTooltipViewModel.Invoke(null);
+                        _events.SetTooltipViewModel.Invoke(null);
 
                         await _events.TextEditorService.ModelApi.HandleKeyboardEventFactory(
                                 ResourceUri,
@@ -238,10 +223,7 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
 
                     if (cursorDisplay is not null)
                     {
-                        var afterOnKeyDownAsyncFactory = _events.ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory
-                            ?? _handleAfterOnKeyDownAsyncFactoryFunc;
-
-                        await afterOnKeyDownAsyncFactory.Invoke(
+                        await _events.HandleAfterOnKeyDownAsyncFactoryFunc.Invoke(
                                 modelModifier.ResourceUri,
                                 viewModelModifier.ViewModel.ViewModelKey,
                                 KeyboardEventArgs,

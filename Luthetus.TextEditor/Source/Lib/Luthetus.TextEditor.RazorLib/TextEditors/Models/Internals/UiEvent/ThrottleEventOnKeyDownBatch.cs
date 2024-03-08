@@ -3,7 +3,6 @@ using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
@@ -11,26 +10,20 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 public class ThrottleEventOnKeyDownBatch : IThrottleEvent
 {
     private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
-    private readonly Func<ResourceUri, Key<TextEditorViewModel>, List<KeyboardEventArgs>, Func<TextEditorMenuKind, bool, Task>, TextEditorEdit> _handleAfterOnKeyDownRangeAsyncFactoryFunc;
-    private readonly Action<TooltipViewModel?> _setTooltipViewModel;
 
     public ThrottleEventOnKeyDownBatch(
         TextEditorViewModelDisplay.TextEditorEvents events,
         List<KeyboardEventArgs> keyboardEventArgsList,
         KeyboardEventArgsKind keyboardEventArgsKind,
         ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        Func<ResourceUri, Key<TextEditorViewModel>, List<KeyboardEventArgs>, Func<TextEditorMenuKind, bool, Task>, TextEditorEdit> handleAfterOnKeyDownRangeAsyncFactoryFunc,
-        Action<TooltipViewModel?> setTooltipViewModel)
+        Key<TextEditorViewModel> viewModelKey)
     {
         _events = events;
+
         KeyboardEventArgsList = keyboardEventArgsList;
         KeyboardEventArgsKind = keyboardEventArgsKind;
         ResourceUri = resourceUri;
         ViewModelKey = viewModelKey;
-        
-        _handleAfterOnKeyDownRangeAsyncFactoryFunc = handleAfterOnKeyDownRangeAsyncFactoryFunc;
-        _setTooltipViewModel = setTooltipViewModel;
     }
 
     public TimeSpan ThrottleTimeSpan => TimeSpan.Zero;
@@ -94,7 +87,7 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
                 {
                     shouldInvokeAfterOnKeyDownAsync = true;
 
-                    _setTooltipViewModel.Invoke(null);
+                    _events.SetTooltipViewModel.Invoke(null);
 
                     modelModifier.EditByInsertion(
                         string.Join(string.Empty, KeyboardEventArgsList.Select(x => x.Key)),
@@ -115,10 +108,7 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
 
                     if (cursorDisplay is not null)
                     {
-                        var afterOnKeyDownRangeAsyncFactory = _events.ViewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory
-                            ?? _handleAfterOnKeyDownRangeAsyncFactoryFunc;
-
-                        await afterOnKeyDownRangeAsyncFactory.Invoke(
+                        await _events.HandleAfterOnKeyDownRangeAsyncFactoryFunc.Invoke(
                                 modelModifier.ResourceUri,
                                 viewModelModifier.ViewModel.ViewModelKey,
                                 KeyboardEventArgsList,
