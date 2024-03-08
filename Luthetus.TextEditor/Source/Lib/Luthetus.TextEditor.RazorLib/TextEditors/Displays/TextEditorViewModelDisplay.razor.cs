@@ -292,6 +292,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             _events,
             modelResourceUri,
             viewModelKey.Value));
+
+        _events.ThinksLeftMouseButtonIsDown = true;
     }
 
     /// <summary>OnMouseUp is un-necessary</summary>
