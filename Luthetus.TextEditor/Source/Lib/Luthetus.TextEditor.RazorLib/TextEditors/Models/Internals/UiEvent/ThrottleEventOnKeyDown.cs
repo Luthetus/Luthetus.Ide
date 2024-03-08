@@ -199,7 +199,7 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                             }
                         }
 
-                        _events.SetTooltipViewModel.Invoke(null);
+                        _events.TooltipViewModel = null;
 
                         await _events.TextEditorService.ModelApi.HandleKeyboardEventFactory(
                                 ResourceUri,

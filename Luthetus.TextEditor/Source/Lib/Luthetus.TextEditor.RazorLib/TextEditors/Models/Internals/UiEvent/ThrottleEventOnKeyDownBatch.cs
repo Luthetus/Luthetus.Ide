@@ -87,7 +87,7 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
                 {
                     shouldInvokeAfterOnKeyDownAsync = true;
 
-                    _events.SetTooltipViewModel.Invoke(null);
+                    _events.TooltipViewModel = null;
 
                     modelModifier.EditByInsertion(
                         string.Join(string.Empty, KeyboardEventArgsList.Select(x => x.Key)),

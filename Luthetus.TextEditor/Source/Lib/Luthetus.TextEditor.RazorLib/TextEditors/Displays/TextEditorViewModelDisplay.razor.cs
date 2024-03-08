@@ -13,22 +13,17 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
-using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
-using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
@@ -67,25 +62,15 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     public TextEditorViewModelDisplayOptions ViewModelDisplayOptions { get; set; } = new();
 
     private readonly Guid _textEditorHtmlElementId = Guid.NewGuid();
-    
-    private readonly TimeSpan _onMouseOutTooltipDelay = TimeSpan.FromMilliseconds(1_000);
-    private readonly TimeSpan _mouseStoppedMovingDelay = TimeSpan.FromMilliseconds(400);
     /// <summary>Using this lock in order to avoid the Dispose implementation decrementing when it shouldn't</summary>
     private readonly object _linkedViewModelLock = new();
 
     private TextEditorEvents _events = null!;
-    /// <summary>This accounts for one who might hold down Left Mouse Button from outside the TextEditorDisplay's content div then move their mouse over the content div while holding the Left Mouse Button down.</summary>
-    private bool _thinksLeftMouseButtonIsDown;
     private bool _thinksTouchIsOccurring;
     private TouchEventArgs? _previousTouchEventArgs = null;
     private DateTime? _touchStartDateTime = null;
     private BodySection? _bodySectionComponent;
     private MeasureCharacterWidthAndRowHeight? _measureCharacterWidthAndRowHeightComponent;
-    private Task _mouseStoppedMovingTask = Task.CompletedTask;
-    private CancellationTokenSource _mouseStoppedMovingCancellationTokenSource = new();
-    private Task _onMouseOutTooltipTask = Task.CompletedTask;
-    private CancellationTokenSource _onMouseOutTooltipCancellationTokenSource = new();
-    private TooltipViewModel? _tooltipViewModel;
     private bool _userMouseIsInside;
     private TextEditorRenderBatch _storedRenderBatch = null!;
     private TextEditorRenderBatch? _previousRenderBatch;
@@ -313,34 +298,34 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private void ReceiveContentOnMouseMove(MouseEventArgs mouseEventArgs)
     {
         _userMouseIsInside = true;
-        var localThinksLeftMouseButtonIsDown = _thinksLeftMouseButtonIsDown;
+        var localThinksLeftMouseButtonIsDown = _events.ThinksLeftMouseButtonIsDown;
 
         // MouseStoppedMovingEvent
         {
-            if (_tooltipViewModel is not null && _onMouseOutTooltipTask.IsCompleted)
+            if (_events.TooltipViewModel is not null && _events.OnMouseOutTooltipTask.IsCompleted)
             {
-                var onMouseOutTooltipCancellationToken = _onMouseOutTooltipCancellationTokenSource.Token;
+                var onMouseOutTooltipCancellationToken = _events.OnMouseOutTooltipCancellationTokenSource.Token;
 
-                _onMouseOutTooltipTask = Task.Run(async () =>
+                _events.OnMouseOutTooltipTask = Task.Run(async () =>
                 {
-                    await Task.Delay(_onMouseOutTooltipDelay, onMouseOutTooltipCancellationToken).ConfigureAwait(false);
+                    await Task.Delay(_events.OnMouseOutTooltipDelay, onMouseOutTooltipCancellationToken).ConfigureAwait(false);
 
                     if (!onMouseOutTooltipCancellationToken.IsCancellationRequested)
                     {
-                        _tooltipViewModel = null;
+                        _events.TooltipViewModel = null;
                         await InvokeAsync(StateHasChanged).ConfigureAwait(false);
                     }
                 });
             }
 
-            _mouseStoppedMovingCancellationTokenSource.Cancel();
-            _mouseStoppedMovingCancellationTokenSource = new();
+            _events.MouseStoppedMovingCancellationTokenSource.Cancel();
+            _events.MouseStoppedMovingCancellationTokenSource = new();
 
-            var cancellationToken = _mouseStoppedMovingCancellationTokenSource.Token;
+            var cancellationToken = _events.MouseStoppedMovingCancellationTokenSource.Token;
 
-            _mouseStoppedMovingTask = Task.Run(async () =>
+            _events.MouseStoppedMovingTask = Task.Run(async () =>
             {
-                await Task.Delay(_mouseStoppedMovingDelay, cancellationToken).ConfigureAwait(false);
+                await Task.Delay(_events.MouseStoppedMovingDelay, cancellationToken).ConfigureAwait(false);
 
                 if (!cancellationToken.IsCancellationRequested && _userMouseIsInside)
                 {
@@ -350,7 +335,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             });
         }
 
-        if (!_thinksLeftMouseButtonIsDown)
+        if (!_events.ThinksLeftMouseButtonIsDown)
             return;
 
         var modelResourceUri = GetModel()?.ResourceUri;
@@ -370,7 +355,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         }
         else
         {
-            _thinksLeftMouseButtonIsDown = false;
+            _events.ThinksLeftMouseButtonIsDown = false;
         }
     }
 
@@ -525,7 +510,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             }
         }
 
-        _mouseStoppedMovingCancellationTokenSource.Cancel();
+        _events.MouseStoppedMovingCancellationTokenSource.Cancel();
     }
 
     /// <summary>
@@ -563,6 +548,16 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         public ThrottleController Controller { get; } = new();
         public TimeSpan ThrottleDelayDefault { get; } = TimeSpan.FromMilliseconds(30);
+        public TimeSpan OnMouseOutTooltipDelay { get; } = TimeSpan.FromMilliseconds(1_000);
+        public TimeSpan MouseStoppedMovingDelay { get; } = TimeSpan.FromMilliseconds(400);
+        public Task MouseStoppedMovingTask { get; set; } = Task.CompletedTask;
+        public Task OnMouseOutTooltipTask { get; set; } = Task.CompletedTask;
+        public CancellationTokenSource OnMouseOutTooltipCancellationTokenSource { get; set; } = new();
+        public CancellationTokenSource MouseStoppedMovingCancellationTokenSource { get; set; } = new();
+        public TooltipViewModel? TooltipViewModel { get; set; }
+
+        /// <summary>This accounts for one who might hold down Left Mouse Button from outside the TextEditorDisplay's content div then move their mouse over the content div while holding the Left Mouse Button down.</summary>
+        public bool ThinksLeftMouseButtonIsDown { get; set; }
 
         public TextEditorViewModelDisplayOptions ViewModelDisplayOptions => _viewModelDisplay.ViewModelDisplayOptions;
         public CursorDisplay? CursorDisplay => _viewModelDisplay.CursorDisplay;
@@ -583,14 +578,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                     return localCursorDisplay.PauseBlinkAnimation;
 
                 return () => { };
-            }
-        }
-
-        public Action<TooltipViewModel?> SetTooltipViewModel 
-        { 
-            get
-            {
-                return x => _viewModelDisplay._tooltipViewModel = x;
             }
         }
 
@@ -776,10 +763,11 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         public bool IsAutocompleteMenuInvoker(KeyboardEventArgs keyboardEventArgs)
         {
             // Is {Ctrl + Space} or LetterOrDigit was hit without Ctrl being held
-            return keyboardEventArgs.CtrlKey && keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE ||
+            return keyboardEventArgs.CtrlKey &&
+                       keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE ||
                    !keyboardEventArgs.CtrlKey &&
-                    !KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code) &&
-                    !KeyboardKeyFacts.IsMetaKey(keyboardEventArgs);
+                       !KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code) &&
+                       !KeyboardKeyFacts.IsMetaKey(keyboardEventArgs);
         }
 
         /// <summary>
@@ -790,8 +778,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         public bool IsAutocompleteIndexerInvoker(KeyboardEventArgs keyboardEventArgs)
         {
             return (KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code) ||
-                    KeyboardKeyFacts.IsPunctuationCharacter(keyboardEventArgs.Key.First())) &&
-                   !keyboardEventArgs.CtrlKey;
+                        KeyboardKeyFacts.IsPunctuationCharacter(keyboardEventArgs.Key.First())) &&
+                    !keyboardEventArgs.CtrlKey;
         }
 
         public async Task HandleMouseStoppedMovingEventAsync(MouseEventArgs mouseEventArgs)
@@ -834,14 +822,14 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                         foundMatch = true;
 
                         var parameterMap = new Dictionary<string, object?>
-                    {
                         {
-                            nameof(ITextEditorDiagnosticRenderer.Diagnostic),
-                            diagnostic
-                        }
-                    };
+                            {
+                                nameof(ITextEditorDiagnosticRenderer.Diagnostic),
+                                diagnostic
+                            }
+                        };
 
-                        _viewModelDisplay._tooltipViewModel = new(
+                        _viewModelDisplay._events.TooltipViewModel = new(
                             _viewModelDisplay.LuthetusTextEditorComponentRenderers.DiagnosticRendererType,
                             parameterMap,
                             relativeCoordinatesOnClick,
@@ -861,14 +849,14 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                         foundMatch = true;
 
                         var parameters = new Dictionary<string, object?>
-                    {
                         {
-                            nameof(ITextEditorSymbolRenderer.Symbol),
-                            symbol
-                        }
-                    };
+                            {
+                                nameof(ITextEditorSymbolRenderer.Symbol),
+                                symbol
+                            }
+                        };
 
-                        _viewModelDisplay._tooltipViewModel = new(
+                        _viewModelDisplay._events.TooltipViewModel = new(
                             _viewModelDisplay.LuthetusTextEditorComponentRenderers.SymbolRendererType,
                             parameters,
                             relativeCoordinatesOnClick,
@@ -880,10 +868,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
             if (!foundMatch)
             {
-                if (_viewModelDisplay._tooltipViewModel is null)
+                if (_viewModelDisplay._events.TooltipViewModel is null)
                     return; // Avoid the re-render if nothing changed
 
-                _viewModelDisplay._tooltipViewModel = null;
+                _viewModelDisplay._events.TooltipViewModel = null;
             }
 
             // TODO: Measure the tooltip, and reposition if it would go offscreen.
@@ -893,8 +881,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         public Task HandleOnTooltipMouseOverAsync()
         {
-            _viewModelDisplay._onMouseOutTooltipCancellationTokenSource.Cancel();
-            _viewModelDisplay._onMouseOutTooltipCancellationTokenSource = new();
+            OnMouseOutTooltipCancellationTokenSource.Cancel();
+            OnMouseOutTooltipCancellationTokenSource = new();
 
             return Task.CompletedTask;
         }
