@@ -188,7 +188,7 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                     case KeyboardEventArgsKind.Other:
                         shouldInvokeAfterOnKeyDownAsync = true;
 
-                        if (!IsAutocompleteMenuInvoker(KeyboardEventArgs))
+                        if (!_events.IsAutocompleteMenuInvoker(KeyboardEventArgs))
                         {
                             if (KeyboardKeyFacts.MetaKeys.ESCAPE == KeyboardEventArgs.Key ||
                                 KeyboardKeyFacts.MetaKeys.BACKSPACE == KeyboardEventArgs.Key ||
@@ -223,7 +223,7 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
 
                     if (cursorDisplay is not null)
                     {
-                        await _events.HandleAfterOnKeyDownAsyncFactoryFunc.Invoke(
+                        await _events.HandleAfterOnKeyDownAsyncFactory(
                                 modelModifier.ResourceUri,
                                 viewModelModifier.ViewModel.ViewModelKey,
                                 KeyboardEventArgs,

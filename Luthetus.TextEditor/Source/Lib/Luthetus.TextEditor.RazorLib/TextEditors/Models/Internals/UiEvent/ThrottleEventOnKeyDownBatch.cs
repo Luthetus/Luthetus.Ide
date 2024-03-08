@@ -108,7 +108,7 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
 
                     if (cursorDisplay is not null)
                     {
-                        await _events.HandleAfterOnKeyDownRangeAsyncFactoryFunc.Invoke(
+                        await _events.HandleAfterOnKeyDownRangeAsyncFactory(
                                 modelModifier.ResourceUri,
                                 viewModelModifier.ViewModel.ViewModelKey,
                                 KeyboardEventArgsList,
