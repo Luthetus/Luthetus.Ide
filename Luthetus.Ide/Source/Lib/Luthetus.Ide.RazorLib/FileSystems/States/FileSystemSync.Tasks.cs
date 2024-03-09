@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 
 namespace Luthetus.Ide.RazorLib.FileSystems.States;
@@ -22,15 +22,12 @@ public partial class FileSystemSync
             await _fileSystemProvider.File.ExistsAsync(absolutePathString))
         {
             await _fileSystemProvider.File.WriteAllTextAsync(absolutePathString, content);
-            notificationMessage = $"successfully saved: {absolutePathString}";
         }
         else
         {
             // TODO: Save As to make new file
-            notificationMessage = "File not found. TODO: Save As";
+			NotificationHelper.DispatchInformative("Save Action", "File not found. TODO: Save As", _luthetusCommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
         }
-
-        NotificationHelper.DispatchInformative("Save Action", notificationMessage, _luthetusCommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
 
         DateTime? fileLastWriteTime = null;
 
