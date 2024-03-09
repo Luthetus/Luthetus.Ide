@@ -4,7 +4,6 @@ using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 
@@ -14,21 +13,21 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
 
     public ThrottleEventOnKeyDownBatch(
         TextEditorViewModelDisplay.TextEditorEvents events,
-        List<KeyboardEventArgs> keyboardEventArgsList,
+        List<ThrottleEventOnKeyDown> throttleEventOnKeyDownList,
         KeyboardEventArgsKind keyboardEventArgsKind,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
         _events = events;
 
-        KeyboardEventArgsList = keyboardEventArgsList;
+        ThrottleEventOnKeyDownList = throttleEventOnKeyDownList;
         KeyboardEventArgsKind = keyboardEventArgsKind;
         ResourceUri = resourceUri;
         ViewModelKey = viewModelKey;
     }
 
     public TimeSpan ThrottleTimeSpan => TimeSpan.Zero;
-    public List<KeyboardEventArgs> KeyboardEventArgsList { get; }
+    public List<ThrottleEventOnKeyDown> ThrottleEventOnKeyDownList { get; }
     public KeyboardEventArgsKind KeyboardEventArgsKind { get; }
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
@@ -42,7 +41,7 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
     public Task HandleEvent(CancellationToken cancellationToken)
     {
         _events.TextEditorService.Post(
-            $"OnKeyDown_{KeyboardEventArgsKind}_Batch:{KeyboardEventArgsList.Count}",
+            $"OnKeyDown_{KeyboardEventArgsKind}_Batch:{ThrottleEventOnKeyDownList.Count}",
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -67,10 +66,10 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
                     if (_events.CursorDisplay is null || _events.CursorDisplay.MenuKind != TextEditorMenuKind.AutoCompleteMenu)
                     {
                         // Don't do this foreach loop if the autocomplete menu is showing.
-                        foreach (var keyboardEventArgs in KeyboardEventArgsList)
+                        foreach (var throttleEventOnKeyDown in ThrottleEventOnKeyDownList)
                         {
                             await _events.TextEditorService.ViewModelApi.MoveCursorFactory(
-                                    keyboardEventArgs,
+                                    throttleEventOnKeyDown.KeyboardEventArgs,
                                     modelModifier.ResourceUri,
                                     viewModelModifier.ViewModel.ViewModelKey)
                                 .Invoke(editContext)
@@ -90,7 +89,7 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
                     _events.TooltipViewModel = null;
 
                     modelModifier.EditByInsertion(
-                        string.Join(string.Empty, KeyboardEventArgsList.Select(x => x.Key)),
+                        string.Join(string.Empty, ThrottleEventOnKeyDownList.Select(x => x.KeyboardEventArgs.Key)),
                         cursorModifierBag,
                         CancellationToken.None);
                 }
@@ -99,24 +98,24 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
                     shouldInvokeAfterOnKeyDownAsync = true;
                     _events.TooltipViewModel = null;
 
-                    var inspectKeyboardEventArgs = KeyboardEventArgsList.First();
-                    if (KeyboardKeyFacts.IsMetaKey(inspectKeyboardEventArgs))
+                    var inspectThrottleEventOnKeyDown = ThrottleEventOnKeyDownList.First();
+                    if (KeyboardKeyFacts.IsMetaKey(inspectThrottleEventOnKeyDown.KeyboardEventArgs))
                     {
-                        if (KeyboardKeyFacts.MetaKeys.BACKSPACE == inspectKeyboardEventArgs.Key)
+                        if (KeyboardKeyFacts.MetaKeys.BACKSPACE == inspectThrottleEventOnKeyDown.KeyboardEventArgs.Key)
                         {
                             modelModifier.PerformDeletions(
-                                inspectKeyboardEventArgs,
+                                inspectThrottleEventOnKeyDown.KeyboardEventArgs,
                                 cursorModifierBag,
-                                KeyboardEventArgsList.Count,
+                                ThrottleEventOnKeyDownList.Count,
                                 CancellationToken.None);
                         }
 
-                        if (KeyboardKeyFacts.MetaKeys.DELETE == inspectKeyboardEventArgs.Key)
+                        if (KeyboardKeyFacts.MetaKeys.DELETE == inspectThrottleEventOnKeyDown.KeyboardEventArgs.Key)
                         {
                             modelModifier.PerformDeletions(
-                                inspectKeyboardEventArgs,
+                                inspectThrottleEventOnKeyDown.KeyboardEventArgs,
                                 cursorModifierBag,
-                                KeyboardEventArgsList.Count,
+                                ThrottleEventOnKeyDownList.Count,
                                 CancellationToken.None);
                         }
                     }
@@ -134,7 +133,7 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
                         await _events.HandleAfterOnKeyDownRangeAsyncFactory(
                                 modelModifier.ResourceUri,
                                 viewModelModifier.ViewModel.ViewModelKey,
-                                KeyboardEventArgsList,
+                                ThrottleEventOnKeyDownList.Select(x => x.KeyboardEventArgs).ToList(),
                                 cursorDisplay.SetShouldDisplayMenuAsync)
                             .Invoke(editContext)
                             .ConfigureAwait(false);
