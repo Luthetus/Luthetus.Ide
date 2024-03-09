@@ -1,4 +1,5 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+﻿using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -86,7 +87,6 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
                 else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Text)
                 {
                     shouldInvokeAfterOnKeyDownAsync = true;
-
                     _events.TooltipViewModel = null;
 
                     modelModifier.EditByInsertion(
@@ -97,6 +97,29 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
                 else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Other)
                 {
                     shouldInvokeAfterOnKeyDownAsync = true;
+                    _events.TooltipViewModel = null;
+
+                    var inspectKeyboardEventArgs = KeyboardEventArgsList.First();
+                    if (KeyboardKeyFacts.IsMetaKey(inspectKeyboardEventArgs))
+                    {
+                        if (KeyboardKeyFacts.MetaKeys.BACKSPACE == inspectKeyboardEventArgs.Key)
+                        {
+                            modelModifier.PerformDeletions(
+                                inspectKeyboardEventArgs,
+                                cursorModifierBag,
+                                KeyboardEventArgsList.Count,
+                                CancellationToken.None);
+                        }
+
+                        if (KeyboardKeyFacts.MetaKeys.DELETE == inspectKeyboardEventArgs.Key)
+                        {
+                            modelModifier.PerformDeletions(
+                                inspectKeyboardEventArgs,
+                                cursorModifierBag,
+                                KeyboardEventArgsList.Count,
+                                CancellationToken.None);
+                        }
+                    }
                     // TODO: Batch KeyboardEventArgsKind.Other
                 }
 

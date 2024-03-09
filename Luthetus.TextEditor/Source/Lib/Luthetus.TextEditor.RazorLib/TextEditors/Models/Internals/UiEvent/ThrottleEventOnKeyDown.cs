@@ -75,7 +75,6 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
             switch (TentativeKeyboardEventArgsKind)
             {
                 case KeyboardEventArgsKind.Text:
-                case KeyboardEventArgsKind.Movement:
                     if (moreRecentEventOnKeyDown.TentativeKeyboardEventArgsKind == TentativeKeyboardEventArgsKind)
                     {
                         return new ThrottleEventOnKeyDownBatch(
@@ -90,6 +89,45 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                             ViewModelKey);
                     }
                     break;
+                case KeyboardEventArgsKind.Movement:
+                    if (moreRecentEventOnKeyDown.TentativeKeyboardEventArgsKind == TentativeKeyboardEventArgsKind &&
+                        KeyAndModifiersAreEqual(KeyboardEventArgs, moreRecentEventOnKeyDown.KeyboardEventArgs))
+                    {
+                        return new ThrottleEventOnKeyDownBatch(
+                            _events,
+                            new List<KeyboardEventArgs>()
+                            {
+                                moreRecentEventOnKeyDown.KeyboardEventArgs,
+                                KeyboardEventArgs
+                            },
+                            TentativeKeyboardEventArgsKind,
+                            ResourceUri,
+                            ViewModelKey);
+                    }
+                    break;
+                case KeyboardEventArgsKind.Other:
+                    if (KeyboardKeyFacts.IsMetaKey(KeyboardEventArgs))
+                    {
+                        if (KeyboardKeyFacts.MetaKeys.BACKSPACE == KeyboardEventArgs.Key ||
+                            KeyboardKeyFacts.MetaKeys.DELETE == KeyboardEventArgs.Key)
+                        {
+                            if (TentativeKeyboardEventArgsKind == moreRecentEventOnKeyDown.TentativeKeyboardEventArgsKind &&
+                                KeyAndModifiersAreEqual(KeyboardEventArgs, moreRecentEventOnKeyDown.KeyboardEventArgs))
+                            {
+                                return new ThrottleEventOnKeyDownBatch(
+                                    _events,
+                                    new List<KeyboardEventArgs>()
+                                    {
+                                    moreRecentEventOnKeyDown.KeyboardEventArgs,
+                                    KeyboardEventArgs
+                                    },
+                                    TentativeKeyboardEventArgsKind,
+                                    ResourceUri,
+                                    ViewModelKey);
+                            }
+                        }
+                    }
+                    break;
                 case KeyboardEventArgsKind.ContextMenu:
                     break;
                 case KeyboardEventArgsKind.Command:
@@ -99,14 +137,37 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
         
         if (moreRecentEvent is ThrottleEventOnKeyDownBatch moreRecentEventOnKeyDownBatch)
         {
+            var inspectKeyboardEventArgs = moreRecentEventOnKeyDownBatch.KeyboardEventArgsList.First();
             switch (TentativeKeyboardEventArgsKind)
             {
-                case KeyboardEventArgsKind.Movement:
                 case KeyboardEventArgsKind.Text:
-                    if (moreRecentEventOnKeyDownBatch.KeyboardEventArgsKind == TentativeKeyboardEventArgsKind)
+                    if (TentativeKeyboardEventArgsKind == moreRecentEventOnKeyDownBatch.KeyboardEventArgsKind)
                     {
                         moreRecentEventOnKeyDownBatch.KeyboardEventArgsList.Add(KeyboardEventArgs);
                         return moreRecentEventOnKeyDownBatch;
+                    }
+                    break;
+                case KeyboardEventArgsKind.Movement:
+                    if (TentativeKeyboardEventArgsKind == moreRecentEventOnKeyDownBatch.KeyboardEventArgsKind &&
+                        KeyAndModifiersAreEqual(KeyboardEventArgs, inspectKeyboardEventArgs))
+                    {
+                        moreRecentEventOnKeyDownBatch.KeyboardEventArgsList.Add(KeyboardEventArgs);
+                        return moreRecentEventOnKeyDownBatch;
+                    }
+                    break;
+                case KeyboardEventArgsKind.Other:
+                    if (KeyboardKeyFacts.IsMetaKey(KeyboardEventArgs))
+                    {
+                        if (KeyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.BACKSPACE ||
+                            KeyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.DELETE)
+                        {
+                            if (TentativeKeyboardEventArgsKind == moreRecentEventOnKeyDownBatch.KeyboardEventArgsKind &&
+                                KeyAndModifiersAreEqual(KeyboardEventArgs, inspectKeyboardEventArgs))
+                            {
+                                moreRecentEventOnKeyDownBatch.KeyboardEventArgsList.Add(KeyboardEventArgs);
+                                return moreRecentEventOnKeyDownBatch;
+                            }
+                        }
                     }
                     break;
                 case KeyboardEventArgsKind.ContextMenu:
@@ -238,5 +299,14 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
             });
 
         return Task.CompletedTask;
+    }
+
+    private bool KeyAndModifiersAreEqual(KeyboardEventArgs x, KeyboardEventArgs y)
+    {
+        return
+            x.Key == y.Key &&
+            x.ShiftKey == y.ShiftKey &&
+            x.CtrlKey == y.CtrlKey &&
+            x.AltKey == y.AltKey;
     }
 }
