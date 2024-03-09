@@ -5,6 +5,7 @@ using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 
@@ -52,6 +53,9 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
             else
             {
                 eventName = firstEntry.KeyboardEventArgs.Key;
+
+                if (string.IsNullOrWhiteSpace(eventName))
+                    eventName = firstEntry.KeyboardEventArgs.Code;
             }
         }
 
@@ -150,7 +154,17 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
                                 CancellationToken.None);
                         }
                     }
-                    // TODO: Batch KeyboardEventArgsKind.Other
+                    else if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == inspectThrottleEventOnKeyDown.KeyboardEventArgs.Code ||
+                             KeyboardKeyFacts.WhitespaceCodes.TAB_CODE == inspectThrottleEventOnKeyDown.KeyboardEventArgs.Code)
+                    {
+                        foreach (var throttleEventOnKeyDown in ThrottleEventOnKeyDownList)
+                        {
+                            modelModifier.HandleKeyboardEvent(
+                                throttleEventOnKeyDown.KeyboardEventArgs,
+                                cursorModifierBag,
+                                CancellationToken.None);
+                        }
+                    }
                 }
 
                 if (shouldInvokeAfterOnKeyDownAsync)

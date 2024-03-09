@@ -127,6 +127,24 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                             }
                         }
                     }
+                    else if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == KeyboardEventArgs.Code ||
+                             KeyboardKeyFacts.WhitespaceCodes.TAB_CODE == KeyboardEventArgs.Code)
+                    {
+                        if (TentativeKeyboardEventArgsKind == moreRecentEventOnKeyDown.TentativeKeyboardEventArgsKind &&
+                            KeyAndModifiersAreEqual(KeyboardEventArgs, moreRecentEventOnKeyDown.KeyboardEventArgs))
+                        {
+                            return new ThrottleEventOnKeyDownBatch(
+                                _events,
+                                new List<ThrottleEventOnKeyDown>()
+                                {
+                                        moreRecentEventOnKeyDown,
+                                        this,
+                                },
+                                TentativeKeyboardEventArgsKind,
+                                ResourceUri,
+                                ViewModelKey);
+                        }
+                    }
                     break;
                 case KeyboardEventArgsKind.ContextMenu:
                     break;
@@ -186,6 +204,16 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                             }
                         }
                     }
+                    else if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == KeyboardEventArgs.Code ||
+                             KeyboardKeyFacts.WhitespaceCodes.TAB_CODE == KeyboardEventArgs.Code)
+                    {
+                        if (TentativeKeyboardEventArgsKind == moreRecentEventOnKeyDownBatch.KeyboardEventArgsKind &&
+                            KeyAndModifiersAreEqual(KeyboardEventArgs, inspectThrottleEventOnKeyDown.KeyboardEventArgs))
+                        {
+                            moreRecentEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
+                            return moreRecentEventOnKeyDownBatch;
+                        }
+                    }
                     break;
                 case KeyboardEventArgsKind.ContextMenu:
                     break;
@@ -218,6 +246,9 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
             else
             {
                 eventName = KeyboardEventArgs.Key;
+
+                if (string.IsNullOrWhiteSpace(eventName))
+                    eventName = KeyboardEventArgs.Code;
             }
         }
 
