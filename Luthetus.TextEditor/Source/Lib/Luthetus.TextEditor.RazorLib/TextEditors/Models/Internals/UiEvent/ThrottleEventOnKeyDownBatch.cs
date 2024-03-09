@@ -169,7 +169,13 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
 
                 if (shouldInvokeAfterOnKeyDownAsync)
                 {
-                    primaryCursorModifier.ShouldRevealCursor = true;
+                    var inspectThrottleEventOnKeyDown = ThrottleEventOnKeyDownList.First();
+
+                    if (inspectThrottleEventOnKeyDown.Command is null ||
+                        inspectThrottleEventOnKeyDown.Command is TextEditorCommand commandTextEditor && commandTextEditor.ShouldScrollCursorIntoView)
+                    {
+                        primaryCursorModifier.ShouldRevealCursor = true;
+                    }
 
                     var cursorDisplay = _events.CursorDisplay;
 
