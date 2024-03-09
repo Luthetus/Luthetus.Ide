@@ -41,8 +41,22 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
 
     public Task HandleEvent(CancellationToken cancellationToken)
     {
+        var eventName = string.Empty;
+        {
+            var firstEntry = ThrottleEventOnKeyDownList.First();
+            if (firstEntry.TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Command &&
+                firstEntry.Command is not null)
+            {
+                eventName = firstEntry.Command.InternalIdentifier;
+            }
+            else
+            {
+                eventName = firstEntry.KeyboardEventArgs.Key;
+            }
+        }
+
         _events.TextEditorService.Post(
-            $"OnKeyDown_{KeyboardEventArgsKind}_Batch:{ThrottleEventOnKeyDownList.Count}",
+            $"okd_batch:{ThrottleEventOnKeyDownList.Count}_{eventName}",
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);

@@ -208,8 +208,21 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
 
     public Task HandleEvent(CancellationToken cancellationToken)
     {
+        var eventName = string.Empty;
+        {
+            if (TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Command &&
+                Command is not null)
+            {
+                eventName = Command.InternalIdentifier;
+            }
+            else
+            {
+                eventName = KeyboardEventArgs.Key;
+            }
+        }
+
         _events.TextEditorService.Post(
-            nameof(ThrottleEventOnKeyDown),
+            $"okd_{eventName}",
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
