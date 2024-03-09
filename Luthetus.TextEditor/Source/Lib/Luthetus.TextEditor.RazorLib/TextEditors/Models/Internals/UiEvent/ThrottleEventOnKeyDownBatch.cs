@@ -1,6 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
@@ -59,7 +60,23 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
                 if (KeyboardEventArgsKind == KeyboardEventArgsKind.Command)
                 {
                     shouldInvokeAfterOnKeyDownAsync = true;
-                    // TODO: Batch command
+                    var inspectThrottleEventOnKeyDown = ThrottleEventOnKeyDownList.First();
+
+                    if (inspectThrottleEventOnKeyDown.Command is not null)
+                    {
+                        await inspectThrottleEventOnKeyDown.Command.CommandFunc.Invoke(new TextEditorCommandArgs(
+                                modelModifier.ResourceUri,
+                                viewModelModifier.ViewModel.ViewModelKey,
+                                hasSelection,
+                                _events.ClipboardService,
+                                _events.TextEditorService,
+                                _events.HandleMouseStoppedMovingEventAsync,
+                                _events.JsRuntime,
+                                _events.Dispatcher,
+                                _events.ServiceProvider,
+                                _events.TextEditorConfig))
+                            .ConfigureAwait(false);
+                    }
                 }
                 else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Movement)
                 {
