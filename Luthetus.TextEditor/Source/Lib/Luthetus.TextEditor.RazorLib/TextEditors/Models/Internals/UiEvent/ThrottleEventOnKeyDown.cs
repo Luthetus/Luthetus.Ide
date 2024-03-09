@@ -196,16 +196,8 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                         inspectThrottleEventOnKeyDown.Command is not null &&
                         Command.InternalIdentifier == inspectThrottleEventOnKeyDown.Command.InternalIdentifier)
                     {
-                        return new ThrottleEventOnKeyDownBatch(
-                            _events,
-                            new List<ThrottleEventOnKeyDown>()
-                            {
-                                inspectThrottleEventOnKeyDown,
-                                this
-                            },
-                            TentativeKeyboardEventArgsKind,
-                            ResourceUri,
-                            ViewModelKey);
+                        moreRecentEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
+                        return moreRecentEventOnKeyDownBatch;
                     }
                     break;
             }
