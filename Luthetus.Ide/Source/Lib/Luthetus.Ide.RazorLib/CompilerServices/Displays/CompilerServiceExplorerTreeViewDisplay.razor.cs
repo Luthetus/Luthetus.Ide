@@ -78,7 +78,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
     private async void RerenderAfterEventWithArgs(object? sender, EventArgs e)
     {
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
@@ -88,7 +88,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 		// The order of 'StateHasChanged(...)' and 'AddActiveDropdownKey(...)' is important.
 		// The ChildContent renders nothing, unless the provider of the child content
 		// re-renders now that there is a given '_mostRecentTreeViewContextMenuCommandArgs'
-		await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+		await InvokeAsync(StateHasChanged);
 
         Dispatcher.Dispatch(new DropdownState.AddActiveAction(
             CompilerServiceExplorerTreeViewContextMenu.ContextMenuEventDropdownKey));

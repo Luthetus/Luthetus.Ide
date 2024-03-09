@@ -34,7 +34,7 @@ public partial class InputTextEditorFontFamily : ComponentBase, IDisposable
 
     private async void OptionsWrapOnStateChanged(object? sender, EventArgs e)
     {
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()

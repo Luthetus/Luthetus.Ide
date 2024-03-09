@@ -67,23 +67,19 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
                 LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.UnitTesting)
             {
                 _ = Task.Run(async () => await ContinuousBackgroundTaskWorker
-                            .StartAsync(CancellationToken.None)
-                            .ConfigureAwait(false))
-                        .ConfigureAwait(false);
+                            .StartAsync(CancellationToken.None));
 
                 _ = Task.Run(async () => await BlockingBackgroundTaskWorker
-                            .StartAsync(CancellationToken.None)
-                            .ConfigureAwait(false))
-                        .ConfigureAwait(false);
+                            .StartAsync(CancellationToken.None));
             }
 
             BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
                 "Initialize Website",
                 async () =>
                 {
-                    await WriteFileSystemInMemoryAsync().ConfigureAwait(false);
+                    await WriteFileSystemInMemoryAsync();
 
-                    await ParseSolutionAsync().ConfigureAwait(false);
+                    await ParseSolutionAsync();
 
                     // This code block is hacky. I want the Solution Explorer to from the get-go be fully expanded, so the user can see 'Program.cs'
                     {
@@ -105,39 +101,34 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
                 });
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task WriteFileSystemInMemoryAsync()
     {
         // Create a Blazor Wasm app
         await WebsiteProjectTemplateFacts.HandleNewCSharpProjectAsync(
-                WebsiteProjectTemplateFacts.BlazorWasmEmptyProjectTemplate.ShortName!,
-                InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_CSPROJ_ABSOLUTE_FILE_PATH,
-                FileSystemProvider,
-                EnvironmentProvider)
-            .ConfigureAwait(false);
+            WebsiteProjectTemplateFacts.BlazorWasmEmptyProjectTemplate.ShortName!,
+            InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_CSPROJ_ABSOLUTE_FILE_PATH,
+            FileSystemProvider,
+            EnvironmentProvider);
 
         await FileSystemProvider.File.WriteAllTextAsync(
-                InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
-                InitialSolutionFacts.PERSON_CS_CONTENTS)
-            .ConfigureAwait(false);
+            InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
+            InitialSolutionFacts.PERSON_CS_CONTENTS);
         
         await FileSystemProvider.File.WriteAllTextAsync(
-                InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CS_ABSOLUTE_FILE_PATH,
-                InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CS_CONTENTS)
-            .ConfigureAwait(false);
+            InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CS_ABSOLUTE_FILE_PATH,
+            InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CS_CONTENTS);
         
         await FileSystemProvider.File.WriteAllTextAsync(
-                InitialSolutionFacts.PERSON_DISPLAY_RAZOR_ABSOLUTE_FILE_PATH,
-                InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CONTENTS)
-            .ConfigureAwait(false);
+            InitialSolutionFacts.PERSON_DISPLAY_RAZOR_ABSOLUTE_FILE_PATH,
+            InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CONTENTS);
         
         // ExampleSolution.sln
         await FileSystemProvider.File.WriteAllTextAsync(
-                InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
-                InitialSolutionFacts.SLN_CONTENTS)
-            .ConfigureAwait(false);
+            InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
+            InitialSolutionFacts.SLN_CONTENTS);
 
         var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
             InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
@@ -158,23 +149,20 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
         var allFiles = new List<string>();
 
         await RecursiveStep(
-                new List<string> { "/" },
-                allFiles)
-            .ConfigureAwait(false);
+            new List<string> { "/" },
+            allFiles);
 
         async Task RecursiveStep(IEnumerable<string> directories, List<string> allFiles)
         {
             foreach (var directory in directories)
             {
                 var childDirectories = await FileSystemProvider.Directory
-                    .GetDirectoriesAsync(directory)
-                    .ConfigureAwait(false);
+                    .GetDirectoriesAsync(directory);
 
                 allFiles.AddRange(await FileSystemProvider.Directory
-                    .GetFilesAsync(directory)
-                    .ConfigureAwait(false));
+                    .GetFilesAsync(directory));
 
-                await RecursiveStep(childDirectories, allFiles).ConfigureAwait(false);
+                await RecursiveStep(childDirectories, allFiles);
             }
         }
 
@@ -182,8 +170,8 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
         {
             var absolutePath = EnvironmentProvider.AbsolutePathFactory(file, false);
             var resourceUri = new ResourceUri(file);
-            var fileLastWriteTime = await FileSystemProvider.File.GetLastWriteTimeAsync(file).ConfigureAwait(false);
-            var content = await FileSystemProvider.File.ReadAllTextAsync(file).ConfigureAwait(false);
+            var fileLastWriteTime = await FileSystemProvider.File.GetLastWriteTimeAsync(file);
+            var content = await FileSystemProvider.File.ReadAllTextAsync(file);
             
             var decorationMapper = DecorationMapperRegistry.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
             var compilerService = CompilerServiceRegistry.GetCompilerService(absolutePath.ExtensionNoPeriod);
@@ -205,26 +193,22 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
                     await TextEditorService.ModelApi.AddPresentationModelFactory(
                             textEditorModel.ResourceUri,
                             CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel)
-                        .Invoke(editContext)
-                        .ConfigureAwait(false);
+                        .Invoke(editContext);
                     
                     await TextEditorService.ModelApi.AddPresentationModelFactory(
                             textEditorModel.ResourceUri,
                             FindOverlayPresentationFacts.EmptyPresentationModel)
-                        .Invoke(editContext)
-                        .ConfigureAwait(false);
+                        .Invoke(editContext);
 
                     await TextEditorService.ModelApi.AddPresentationModelFactory(
                             textEditorModel.ResourceUri,
                             DiffPresentationFacts.EmptyInPresentationModel)
-                        .Invoke(editContext)
-                        .ConfigureAwait(false);
+                        .Invoke(editContext);
 
                     await TextEditorService.ModelApi.AddPresentationModelFactory(
                             textEditorModel.ResourceUri,
                             DiffPresentationFacts.EmptyOutPresentationModel)
-                        .Invoke(editContext)
-                        .ConfigureAwait(false);
+                        .Invoke(editContext);
 
                     textEditorModel.CompilerService.RegisterResource(textEditorModel.ResourceUri);
                 });

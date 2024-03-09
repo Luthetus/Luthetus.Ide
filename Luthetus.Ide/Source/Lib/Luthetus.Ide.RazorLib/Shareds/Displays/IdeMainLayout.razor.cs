@@ -78,8 +78,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         if (firstRender)
         {
-            await TextEditorService.OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
-            await AppOptionsService.SetFromLocalStorageAsync().ConfigureAwait(false);
+            await TextEditorService.OptionsApi.SetFromLocalStorageAsync();
+            await AppOptionsService.SetFromLocalStorageAsync();
 
             string personalTestPath;
 
@@ -89,7 +89,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             personalTestPath = "C:\\Users\\hunte\\Repos\\Luthetus.Ide_Fork\\Luthetus.Ide.sln";
 #endif
 
-            if (await FileSystemProvider.File.ExistsAsync(personalTestPath).ConfigureAwait(false))
+            if (await FileSystemProvider.File.ExistsAsync(personalTestPath))
             {
                 var absolutePath = EnvironmentProvider.AbsolutePathFactory(
                     personalTestPath,
@@ -106,12 +106,12 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async void AppOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
     {
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async void DragStateWrapOnStateChanged(object? sender, EventArgs e)
@@ -119,13 +119,13 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         if (_previousDragStateWrapShouldDisplay != DragStateWrap.Value.ShouldDisplay)
         {
             _previousDragStateWrapShouldDisplay = DragStateWrap.Value.ShouldDisplay;
-            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+            await InvokeAsync(StateHasChanged);
         }
     }
 
     private async void TextEditorOptionsStateWrap_StateChanged(object? sender, EventArgs e)
     {
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()

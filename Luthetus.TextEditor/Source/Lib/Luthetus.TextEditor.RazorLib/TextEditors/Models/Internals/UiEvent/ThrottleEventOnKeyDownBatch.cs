@@ -27,7 +27,7 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
         ViewModelKey = viewModelKey;
     }
 
-    public TimeSpan ThrottleTimeSpan => TimeSpan.Zero;
+    public TimeSpan ThrottleTimeSpan => _events.ThrottleDelayDefault;
     public List<ThrottleEventOnKeyDown> ThrottleEventOnKeyDownList { get; }
     public KeyboardEventArgsKind KeyboardEventArgsKind { get; }
     public ResourceUri ResourceUri { get; }

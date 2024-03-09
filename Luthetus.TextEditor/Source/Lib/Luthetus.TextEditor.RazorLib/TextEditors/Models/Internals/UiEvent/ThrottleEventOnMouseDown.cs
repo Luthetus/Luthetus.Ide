@@ -29,7 +29,7 @@ public class ThrottleEventOnMouseDown : IThrottleEvent
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
-    public TimeSpan ThrottleTimeSpan => TimeSpan.Zero;
+    public TimeSpan ThrottleTimeSpan => _events.ThrottleDelayDefault;
 
     public IThrottleEvent? BatchOrDefault(IThrottleEvent moreRecentEvent)
     {

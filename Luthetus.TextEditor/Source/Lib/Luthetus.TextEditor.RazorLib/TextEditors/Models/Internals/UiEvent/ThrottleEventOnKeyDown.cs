@@ -43,7 +43,7 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
         }
     }
 
-    public TimeSpan ThrottleTimeSpan => TimeSpan.Zero;
+    public TimeSpan ThrottleTimeSpan => _events.ThrottleDelayDefault;
     public KeyboardEventArgs KeyboardEventArgs { get; }
     public CommandNoType? Command { get; }
 

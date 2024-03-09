@@ -36,10 +36,9 @@ public partial class InputFileContent : ComponentBase
         if (!TreeViewService.TryGetTreeViewContainer(TreeViewContainerKey, out _))
         {
             await SetInputFileContentTreeViewRootFunc
-                .Invoke(EnvironmentProvider.HomeDirectoryAbsolutePath)
-                .ConfigureAwait(false);
+                .Invoke(EnvironmentProvider.HomeDirectoryAbsolutePath);
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 }

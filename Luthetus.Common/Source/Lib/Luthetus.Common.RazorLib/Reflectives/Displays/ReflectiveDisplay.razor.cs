@@ -44,10 +44,10 @@ public partial class ReflectiveDisplay : ComponentBase
             // Invoke 'Recover' directly, do not use 'WrapRecover' here.
             _errorBoundaryComponent.Recover();
 
-            await _selectElementReference.FocusAsync().ConfigureAwait(false);
+            await _selectElementReference.FocusAsync();
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private void OnSelectChanged(ChangeEventArgs changeEventArgs)

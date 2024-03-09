@@ -69,11 +69,11 @@ public partial class ActiveBackgroundTaskDisplay : IDisposable
 
         _executingBackgroundTaskChangedThrottle.PushEvent(async _ =>
         {
-            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+            await InvokeAsync(StateHasChanged);
         });
 
         if (_backgroundTaskDialogModel.ReRenderFuncAsync is not null)
-            await _backgroundTaskDialogModel.ReRenderFuncAsync.Invoke().ConfigureAwait(false);
+            await _backgroundTaskDialogModel.ReRenderFuncAsync.Invoke();
     }
 
     public void Dispose()

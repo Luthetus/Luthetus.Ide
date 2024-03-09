@@ -70,7 +70,7 @@ public partial class MenuOptionDisplay : ComponentBase
         {
             try
             {
-                await _topmostElementReference.Value.FocusAsync().ConfigureAwait(false);
+                await _topmostElementReference.Value.FocusAsync();
             }
             catch (Exception)
             {
@@ -81,7 +81,7 @@ public partial class MenuOptionDisplay : ComponentBase
             }
         }
 
-        await base.OnParametersSetAsync().ConfigureAwait(false);
+        await base.OnParametersSetAsync();
     }
 
     private void HandleOnClick()
@@ -129,14 +129,14 @@ public partial class MenuOptionDisplay : ComponentBase
     private async Task HideWidgetAsync(Action? onAfterWidgetHidden)
     {
         _shouldDisplayWidget = false;
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
 
         if (onAfterWidgetHidden is null) // Only hide the widget
         {
             try
             {
                 if (_topmostElementReference.HasValue)
-                    await _topmostElementReference.Value.FocusAsync().ConfigureAwait(false);
+                    await _topmostElementReference.Value.FocusAsync();
             }
             catch (Exception)
             {

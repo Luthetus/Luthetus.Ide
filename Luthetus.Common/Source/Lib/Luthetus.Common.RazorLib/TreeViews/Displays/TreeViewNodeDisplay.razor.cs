@@ -66,10 +66,10 @@ public partial class TreeViewNodeDisplay : ComponentBase
             _previousIsActive = localIsActive;
 
             if (localIsActive)
-                await FocusAsync().ConfigureAwait(false);
+                await FocusAsync();
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task FocusAsync()
@@ -79,7 +79,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
             var localTreeViewTitleElementReference = _treeViewTitleElementReference;
 
             if (localTreeViewTitleElementReference is not null)
-                await localTreeViewTitleElementReference.Value.FocusAsync().ConfigureAwait(false);
+                await localTreeViewTitleElementReference.Value.FocusAsync();
         }
         catch (Exception)
         {
@@ -103,7 +103,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
             	"TreeView.HandleExpansionChevronOnMouseDown",
 				async () => 
 				{
-					await localTreeViewNoType.LoadChildListAsync().ConfigureAwait(false);
+					await localTreeViewNoType.LoadChildListAsync();
 	                TreeViewService.ReRenderNode(TreeViewContainer.Key, localTreeViewNoType);
 				});
         }
@@ -132,10 +132,9 @@ public partial class TreeViewNodeDisplay : ComponentBase
 		BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
         	"TreeView.ManuallyPropagateOnContextMenu",
 			async () => await HandleTreeViewOnContextMenu.Invoke(
-	                mouseEventArgs,
-	                treeViewContainer.Key,
-	                treeViewNoType)
-                .ConfigureAwait(false));
+                mouseEventArgs,
+                treeViewContainer.Key,
+                treeViewNoType));
     }
 
     private void HandleOnClick(MouseEventArgs? mouseEventArgs)

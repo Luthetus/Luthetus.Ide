@@ -63,10 +63,10 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
                     Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(
                         new SearchEngineFileSystem(FileSystemProvider, TextEditorFindAllStateWrap)));
 
-                    await TextEditorService.OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
+                    await TextEditorService.OptionsApi.SetFromLocalStorageAsync();
                 });
 		}
 	
-		await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+		await base.OnAfterRenderAsync(firstRender);
     }
 }

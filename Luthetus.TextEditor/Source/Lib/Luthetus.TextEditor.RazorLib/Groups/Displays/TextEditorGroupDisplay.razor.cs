@@ -43,7 +43,7 @@ public partial class TextEditorGroupDisplay : IDisposable
     }
 
     private async void TextEditorGroupWrapOnStateChanged(object? sender, EventArgs e) =>
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
 
     public void Dispose()
     {

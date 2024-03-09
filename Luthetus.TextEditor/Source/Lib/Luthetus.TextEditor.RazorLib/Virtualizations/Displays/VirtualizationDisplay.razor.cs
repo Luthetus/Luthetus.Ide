@@ -71,16 +71,15 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
                 }
 
                 await JsRuntime.InvokeVoidAsync(
-                        "luthetusTextEditor.initializeVirtualizationIntersectionObserver",
-                        _virtualizationDisplayGuid.ToString(),
-                        DotNetObjectReference.Create(this),
-                        _scrollableParentFinder,
-                        boundaryIdsList)
-                    .ConfigureAwait(false);
+                    "luthetusTextEditor.initializeVirtualizationIntersectionObserver",
+                    _virtualizationDisplayGuid.ToString(),
+                    DotNetObjectReference.Create(this),
+                    _scrollableParentFinder,
+                    boundaryIdsList);
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     [JSInvokable]
@@ -109,8 +108,8 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
                         "luthetusTextEditor.disposeVirtualizationIntersectionObserver",
                         CancellationToken.None,
                         _virtualizationDisplayGuid.ToString())
-                    .ConfigureAwait(false);
-            }, CancellationToken.None).ConfigureAwait(false);
+                    ;
+            }, CancellationToken.None);
         }
     }
 }

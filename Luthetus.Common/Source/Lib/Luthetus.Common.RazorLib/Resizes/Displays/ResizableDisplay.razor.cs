@@ -56,12 +56,11 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
                 if (_previousDragMouseEventArgs is not null && mouseEventArgs is not null)
                 {
                     await _dragEventHandler
-                        .Invoke((_previousDragMouseEventArgs, mouseEventArgs))
-                        .ConfigureAwait(false);
+                        .Invoke((_previousDragMouseEventArgs, mouseEventArgs));
                 }
 
                 _previousDragMouseEventArgs = mouseEventArgs;
-                await ReRenderFuncAsync.Invoke().ConfigureAwait(false);
+                await ReRenderFuncAsync.Invoke();
             }
         }
     }
@@ -662,7 +661,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task DragEventHandlerEastResizeHandleAsync(
@@ -673,7 +672,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task DragEventHandlerSouthResizeHandleAsync(
@@ -684,7 +683,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task DragEventHandlerWestResizeHandleAsync(
@@ -695,7 +694,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task DragEventHandlerNorthEastResizeHandleAsync(
@@ -706,7 +705,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task DragEventHandlerSouthEastResizeHandleAsync(
@@ -717,7 +716,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task DragEventHandlerSouthWestResizeHandleAsync(
@@ -728,7 +727,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task DragEventHandlerNorthWestResizeHandleAsync(
@@ -739,7 +738,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task DragEventHandlerMoveHandleAsync(
@@ -750,7 +749,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     #endregion

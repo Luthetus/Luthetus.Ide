@@ -13,6 +13,6 @@ public partial class StateHasChangedBoundary : ComponentBase
 
     public async Task InvokeStateHasChangedAsync()
     {
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 }

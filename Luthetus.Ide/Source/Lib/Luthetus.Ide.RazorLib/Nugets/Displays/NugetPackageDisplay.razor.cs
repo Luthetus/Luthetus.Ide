@@ -108,6 +108,6 @@ public partial class NugetPackageDisplay : FluxorComponent
         var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
             TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
-        await generalTerminalSession.EnqueueCommandAsync(addNugetPackageReferenceCommand).ConfigureAwait(false);
+        await generalTerminalSession.EnqueueCommandAsync(addNugetPackageReferenceCommand);
     }
 }

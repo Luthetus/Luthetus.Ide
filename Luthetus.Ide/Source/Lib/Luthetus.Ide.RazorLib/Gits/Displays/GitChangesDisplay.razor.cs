@@ -47,14 +47,12 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                         await TextEditorService.ModelApi.AddPresentationModelFactory(
                                 InResourceUri,
                                 DiffPresentationFacts.EmptyInPresentationModel)
-                            .Invoke(editContext)
-                            .ConfigureAwait(false);
+                            .Invoke(editContext);
 
                         await TextEditorService.ModelApi.AddPresentationModelFactory(
                                 InResourceUri,
                                 DiffPresentationFacts.EmptyOutPresentationModel)
-                            .Invoke(editContext)
-                            .ConfigureAwait(false);
+                            .Invoke(editContext);
 
                         var viewModelModifier = editContext.GetViewModelModifier(InViewModelKey);
 
@@ -94,14 +92,12 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                         await TextEditorService.ModelApi.AddPresentationModelFactory(
                                 OutResourceUri,
                                 DiffPresentationFacts.EmptyInPresentationModel)
-                            .Invoke(editContext)
-                            .ConfigureAwait(false);
+                            .Invoke(editContext);
 
                         await TextEditorService.ModelApi.AddPresentationModelFactory(
                                 OutResourceUri,
                                 DiffPresentationFacts.EmptyOutPresentationModel)
-                            .Invoke(editContext)
-                            .ConfigureAwait(false);
+                            .Invoke(editContext);
 
                         var viewModelModifier = editContext.GetViewModelModifier(OutViewModelKey);
 

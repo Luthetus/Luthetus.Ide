@@ -86,8 +86,7 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
                     cursorModifierBag,
                     localInputValue,
                     CancellationToken.None)
-                .Invoke(editContext)
-                .ConfigureAwait(false);
+                .Invoke(editContext);
 
             modelModifier.CompilerService.ResourceWasModified(
                 _textSpanTuple.TextEditorTextSpan.ResourceUri,

@@ -45,7 +45,7 @@ public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromp
             {
                 try
                 {
-                    await _declineButtonElementReference.Value.FocusAsync().ConfigureAwait(false);
+                    await _declineButtonElementReference.Value.FocusAsync();
                 }
                 catch (Exception)
                 {
@@ -57,7 +57,7 @@ public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromp
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
@@ -66,7 +66,7 @@ public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromp
         {
             if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
             {
-                await MenuOptionCallbacks.HideWidgetAsync.Invoke().ConfigureAwait(false);
+                await MenuOptionCallbacks.HideWidgetAsync.Invoke();
             }
         }
     }
@@ -74,24 +74,24 @@ public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromp
     private async Task AcceptAsync()
     {
         if (MenuOptionCallbacks is not null)
-            await MenuOptionCallbacks.CompleteWidgetAsync.Invoke(() => { }).ConfigureAwait(false);
+            await MenuOptionCallbacks.CompleteWidgetAsync.Invoke(() => { });
 
-        await OnAfterAcceptFunc.Invoke().ConfigureAwait(false);
+        await OnAfterAcceptFunc.Invoke();
     }
 
     private async Task DeclineAsync()
     {
         if (MenuOptionCallbacks is not null)
-            await MenuOptionCallbacks.CompleteWidgetAsync.Invoke(() => { }).ConfigureAwait(false);
+            await MenuOptionCallbacks.CompleteWidgetAsync.Invoke(() => { });
 
-        await OnAfterDeclineFunc.Invoke().ConfigureAwait(false);
+        await OnAfterDeclineFunc.Invoke();
     }
 
     private async Task CancelAsync()
     {
         if (MenuOptionCallbacks is not null)
-            await MenuOptionCallbacks.CompleteWidgetAsync.Invoke(() => { }).ConfigureAwait(false);
+            await MenuOptionCallbacks.CompleteWidgetAsync.Invoke(() => { });
 
-        await OnAfterCancelFunc.Invoke().ConfigureAwait(false);
+        await OnAfterCancelFunc.Invoke();
     }
 }

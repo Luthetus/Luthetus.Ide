@@ -51,7 +51,7 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 		// The order of 'StateHasChanged(...)' and 'AddActiveDropdownKey(...)' is important.
 		// The ChildContent renders nothing, unless the provider of the child content
 		// re-renders now that there is a given '_mostRecentTreeViewContextMenuCommandArgs'
-		await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+		await InvokeAsync(StateHasChanged);
 
         Dispatcher.Dispatch(new DropdownState.AddActiveAction(
             TestExplorerContextMenu.ContextMenuEventDropdownKey));

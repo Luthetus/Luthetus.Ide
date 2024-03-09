@@ -52,7 +52,7 @@ public partial class TextEditorGroupTabDisplay : ComponentBase, IDisposable
 
     private async void TextEditorViewModelStateWrap_StateChanged(object? sender, EventArgs e)
     {
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()

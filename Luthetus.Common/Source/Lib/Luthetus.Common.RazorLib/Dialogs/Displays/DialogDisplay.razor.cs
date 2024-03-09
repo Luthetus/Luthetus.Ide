@@ -62,27 +62,26 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         if (firstRender)
         {
             await JsRuntime.InvokeVoidAsync(
-                    "luthetusTextEditor.focusHtmlElementById",
-                    DialogRecord.FocusPointHtmlElementId)
-            .ConfigureAwait(false);
+                "luthetusTextEditor.focusHtmlElementById",
+                DialogRecord.FocusPointHtmlElementId);
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async void DialogStateIsActiveSelection_SelectedValueChanged(object? sender, bool e)
     {
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async void AppOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
     {
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task ReRenderAsync()
     {
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     private void SubscribeMoveHandle()

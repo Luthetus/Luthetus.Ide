@@ -69,10 +69,10 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     {
         if (firstRender)
         {
-            await ReadProjectTemplates().ConfigureAwait(false);
+            await ReadProjectTemplates();
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private string GetIsActiveCssClassString(CSharpProjectFormPanelKind panelKind) =>
@@ -87,7 +87,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                     return;
 
                 _viewModel.ParentDirectoryNameValue = afp.Value;
-                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+                await InvokeAsync(StateHasChanged);
             },
             afp =>
             {
@@ -107,11 +107,11 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.Photino)
         {
             _viewModel.ProjectTemplateList = WebsiteProjectTemplateFacts.WebsiteProjectTemplatesContainer.ToList();
-            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+            await InvokeAsync(StateHasChanged);
         }
         else
         {
-            await EnqueueDotNetNewListAsync().ConfigureAwait(false);
+            await EnqueueDotNetNewListAsync();
         }
     }
 
@@ -121,7 +121,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         {
             // Render UI loading icon
             _viewModel.IsReadingProjectTemplates = true;
-            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+            await InvokeAsync(StateHasChanged);
 
             var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewList();
 
@@ -139,21 +139,21 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                     if (output is not null)
                     {
                         _viewModel.ProjectTemplateList = DotNetCliOutputParser.ParseDotNetNewListTerminalOutput(output);
-                        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+                        await InvokeAsync(StateHasChanged);
                     }
                     else
                     {
-                        await EnqueueDotnetNewListDeprecatedAsync().ConfigureAwait(false);
+                        await EnqueueDotnetNewListDeprecatedAsync();
                     }
                 });
 
-            await generalTerminalSession.EnqueueCommandAsync(newCSharpProjectCommand).ConfigureAwait(false);
+            await generalTerminalSession.EnqueueCommandAsync(newCSharpProjectCommand);
         }
         finally
         {
             // UI loading message
             _viewModel.IsReadingProjectTemplates = false;
-            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+            await InvokeAsync(StateHasChanged);
         }
     }
 
@@ -164,7 +164,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         {
             // UI loading message
             _viewModel.IsReadingProjectTemplates = true;
-            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+            await InvokeAsync(StateHasChanged);
 
             var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewListDeprecated();
             var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
@@ -181,7 +181,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                     if (output is not null)
                     {
                         _viewModel.ProjectTemplateList = DotNetCliOutputParser.ParseDotNetNewListTerminalOutput(output);
-                        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+                        await InvokeAsync(StateHasChanged);
                     }
                     else
                     {
@@ -189,13 +189,13 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                     }
                 });
 
-            await generalTerminalSession.EnqueueCommandAsync(newCSharpProjectCommand).ConfigureAwait(false);
+            await generalTerminalSession.EnqueueCommandAsync(newCSharpProjectCommand);
         }
         finally
         {
             // UI loading message
             _viewModel.IsReadingProjectTemplates = false;
-            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+            await InvokeAsync(StateHasChanged);
         }
     }
 
@@ -248,25 +248,21 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                         });
 
                     await generalTerminalSession
-                        .EnqueueCommandAsync(addExistingProjectToSolutionCommand)
-                        .ConfigureAwait(false);
+                        .EnqueueCommandAsync(addExistingProjectToSolutionCommand);
                 });
 
-            await generalTerminalSession
-                .EnqueueCommandAsync(newCSharpProjectCommand)
-                .ConfigureAwait(false);
+            await generalTerminalSession.EnqueueCommandAsync(newCSharpProjectCommand);
         }
         else
         {
             await WebsiteDotNetCliHelper.StartNewCSharpProjectCommand(
-                    immutableView,
-                    EnvironmentProvider,
-                    FileSystemProvider,
-                    DotNetSolutionSync,
-                    Dispatcher,
-                    DialogRecord,
-                    LuthetusCommonComponentRenderers)
-                .ConfigureAwait(false);
+                immutableView,
+                EnvironmentProvider,
+                FileSystemProvider,
+                DotNetSolutionSync,
+                Dispatcher,
+                DialogRecord,
+                LuthetusCommonComponentRenderers);
         }
     }
 }

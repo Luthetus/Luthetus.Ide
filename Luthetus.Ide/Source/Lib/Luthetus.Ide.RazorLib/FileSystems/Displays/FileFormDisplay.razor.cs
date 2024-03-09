@@ -51,7 +51,7 @@ public partial class FileFormDisplay : ComponentBase, IFileFormRendererType
             {
                 try
                 {
-                    await _inputElementReference.Value.FocusAsync().ConfigureAwait(false);
+                    await _inputElementReference.Value.FocusAsync();
                 }
                 catch (Exception)
                 {
@@ -63,7 +63,7 @@ public partial class FileFormDisplay : ComponentBase, IFileFormRendererType
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
@@ -72,7 +72,7 @@ public partial class FileFormDisplay : ComponentBase, IFileFormRendererType
         {
             if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
             {
-                await MenuOptionCallbacks.HideWidgetAsync.Invoke().ConfigureAwait(false);
+                await MenuOptionCallbacks.HideWidgetAsync.Invoke();
             }
             else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
             {
@@ -80,8 +80,7 @@ public partial class FileFormDisplay : ComponentBase, IFileFormRendererType
                     .Invoke(() => OnAfterSubmitAction.Invoke(
                         _fileName,
                         _fileTemplatesDisplay?.ExactMatchFileTemplate,
-                        _fileTemplatesDisplay?.RelatedMatchFileTemplates ?? ImmutableArray<IFileTemplate>.Empty))
-                    .ConfigureAwait(false);
+                        _fileTemplatesDisplay?.RelatedMatchFileTemplates ?? ImmutableArray<IFileTemplate>.Empty));
             }
         }
     }

@@ -72,11 +72,11 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
             TextEditorModelsCollectionWrapOnStateChanged(null, EventArgs.Empty);
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async void TextEditorDiffWrapOnStateChanged(object? sender, EventArgs e) =>
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
 
     private async void TextEditorModelsCollectionWrapOnStateChanged(object? sender, EventArgs e)
     {
@@ -92,11 +92,11 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
         //    TextEditorDiffKey,
         //    token);
 
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async void TextEditorOptionsStateWrapOnStateChanged(object? sender, EventArgs e) =>
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
 
     private void ShowCalculationOnClick()
     {

@@ -40,14 +40,13 @@ public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRende
             if (AbsolutePath.IsDirectory)
             {
                 var fileSystemEntryList = await FileSystemProvider.Directory
-                    .EnumerateFileSystemEntriesAsync(AbsolutePath.Value)
-                    .ConfigureAwait(false);
+                    .EnumerateFileSystemEntriesAsync(AbsolutePath.Value);
 
                 _countOfImmediateChildren = fileSystemEntryList.Count();
             }
         }
 
-        await base.OnParametersSetAsync().ConfigureAwait(false);
+        await base.OnParametersSetAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -59,7 +58,7 @@ public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRende
             {
                 try
                 {
-                    await _cancelButtonElementReference.Value.FocusAsync().ConfigureAwait(false);
+                    await _cancelButtonElementReference.Value.FocusAsync();
                 }
                 catch (Exception)
                 {
@@ -71,7 +70,7 @@ public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRende
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
@@ -79,7 +78,7 @@ public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRende
         if (MenuOptionCallbacks is not null &&
             keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
-            await MenuOptionCallbacks.HideWidgetAsync.Invoke().ConfigureAwait(false);
+            await MenuOptionCallbacks.HideWidgetAsync.Invoke();
         }
     }
 
@@ -90,14 +89,13 @@ public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRende
         if (MenuOptionCallbacks is not null)
         {
             await MenuOptionCallbacks.CompleteWidgetAsync
-                .Invoke(() => OnAfterSubmitAction.Invoke(localAbsolutePath))
-                .ConfigureAwait(false);
+                .Invoke(() => OnAfterSubmitAction.Invoke(localAbsolutePath));
         }
     }
 
     private async Task CancelOnClick()
     {
         if (MenuOptionCallbacks is not null)
-            await MenuOptionCallbacks.HideWidgetAsync.Invoke().ConfigureAwait(false);
+            await MenuOptionCallbacks.HideWidgetAsync.Invoke();
     }
 }

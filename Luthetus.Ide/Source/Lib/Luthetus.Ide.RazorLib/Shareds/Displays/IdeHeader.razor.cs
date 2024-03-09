@@ -230,7 +230,7 @@ public partial class IdeHeader : FluxorComponent
         try
         {
             if (_buttonFileElementReference is not null)
-                await _buttonFileElementReference.Value.FocusAsync().ConfigureAwait(false);
+                await _buttonFileElementReference.Value.FocusAsync();
         }
         catch (Exception e)
         {
@@ -244,7 +244,7 @@ public partial class IdeHeader : FluxorComponent
         try
         {
             if (_buttonToolsElementReference is not null)
-                await _buttonToolsElementReference.Value.FocusAsync().ConfigureAwait(false);
+                await _buttonToolsElementReference.Value.FocusAsync();
         }
         catch (Exception e)
         {

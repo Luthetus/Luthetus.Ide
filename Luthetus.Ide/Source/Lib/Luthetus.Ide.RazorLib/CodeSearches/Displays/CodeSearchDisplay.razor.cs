@@ -135,6 +135,6 @@ public partial class CodeSearchDisplay : FluxorComponent
 
 	private async Task HandleResizableRowReRenderAsync()
 	{
-		await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+		await InvokeAsync(StateHasChanged);
 	}
 }

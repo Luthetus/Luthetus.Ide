@@ -167,7 +167,7 @@ public partial class FindAllDisplay : FluxorComponent
 
                 Dispatcher.Dispatch(new TabState.RegisterTabGroupAction(tabGroup));
 
-                var entries = await tabGroup.LoadEntryListAsync().ConfigureAwait(false);
+                var entries = await tabGroup.LoadEntryListAsync();
 
                 Dispatcher.Dispatch(new TabState.SetTabEntryListAction(
                     SelectedSearchEngineTabGroupKey,
@@ -182,7 +182,7 @@ public partial class FindAllDisplay : FluxorComponent
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
 	private async Task OpenInEditorOnClick(string filePath)
@@ -223,7 +223,7 @@ public partial class FindAllDisplay : FluxorComponent
         try
         {
             _isSearching = true;
-            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+            await InvokeAsync(StateHasChanged);
 
             _doSearchCancellationTokenSource.Cancel();
             _doSearchCancellationTokenSource = new();
@@ -231,19 +231,18 @@ public partial class FindAllDisplay : FluxorComponent
             var cancellationToken = _doSearchCancellationTokenSource.Token;
 
             await activeSearchEngine
-                .SearchAsync(findAllState.SearchQuery, cancellationToken)
-                .ConfigureAwait(false);
+                .SearchAsync(findAllState.SearchQuery, cancellationToken);
         }
         finally
         {
             _isSearching = false;
-            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+            await InvokeAsync(StateHasChanged);
         }
     }
 
 	private async void On_SearchEngineFileSystem_ProgressOccurred()
 	{
-		await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+		await InvokeAsync(StateHasChanged);
 	}
 
 	protected override void Dispose(bool disposing)

@@ -10,7 +10,7 @@ public partial class BackgroundTaskDialogDisplay : ComponentBase
 
     protected override void OnParametersSet()
     {
-        BackgroundTaskDialogModel.ReRenderFuncAsync = async () => await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        BackgroundTaskDialogModel.ReRenderFuncAsync = async () => await InvokeAsync(StateHasChanged);
         base.OnParametersSet();
     }
 }

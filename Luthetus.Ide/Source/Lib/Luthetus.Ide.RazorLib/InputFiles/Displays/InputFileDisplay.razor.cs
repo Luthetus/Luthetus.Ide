@@ -112,7 +112,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
                 try
                 {
                     if (SearchElementReference is not null)
-                        await SearchElementReference.Value.FocusAsync().ConfigureAwait(false);
+                        await SearchElementReference.Value.FocusAsync();
                 }
                 catch (Exception)
                 {
@@ -180,7 +180,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             true,
             false);
 
-        await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
+        await pseudoRootNode.LoadChildListAsync();
 
         var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(pseudoRootNode.ChildList.ToArray());
 
@@ -211,7 +211,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 				false);
         }
 
-        await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
+        await pseudoRootNode.LoadChildListAsync();
 
         var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
             pseudoRootNode,

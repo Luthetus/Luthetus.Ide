@@ -68,10 +68,9 @@ public partial class TestExplorerContextMenu : ComponentBase
 						BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), BlockingBackgroundTaskWorker.GetQueueKey(),
 				            "RunTestByFullyQualifiedName",
 				            async () => await RunTestByFullyQualifiedName(
-									treeViewStringFragment,
-									fullyQualifiedName,
-									treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory.Value)
-								.ConfigureAwait(false));
+								treeViewStringFragment,
+								fullyQualifiedName,
+								treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory.Value));
 					});
 	
 				menuRecordsList.Add(menuOptionRecord);
@@ -184,8 +183,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 			});
 
         await executionTerminalSession
-			.EnqueueCommandAsync(dotNetTestByFullyQualifiedNameTerminalCommand)
-            .ConfigureAwait(false);
+			.EnqueueCommandAsync(dotNetTestByFullyQualifiedNameTerminalCommand);
 	}
 
     public static string GetContextMenuCssStyleString(TreeViewCommandArgs? commandArgs)
