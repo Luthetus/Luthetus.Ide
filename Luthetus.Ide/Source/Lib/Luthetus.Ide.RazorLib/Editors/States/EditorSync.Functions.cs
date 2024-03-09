@@ -107,12 +107,16 @@ public partial class EditorSync
             nameof(TryRegisterViewModelFunc),
             _textEditorService.ViewModelApi.WithValueFactory(
                 viewModelKey,
-                textEditorViewModel => textEditorViewModel with
+                textEditorViewModel => 
                 {
-                    OnSaveRequested = HandleOnSaveRequested,
-                    GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
-                    ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor,
-                    LastPresentationLayerKeysList = layerLastPresentationKeys.ToImmutableList()
+                    textEditorViewModel.UnsafeState.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
+
+                    return textEditorViewModel with
+                    {
+                        OnSaveRequested = HandleOnSaveRequested,
+                        GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
+                        LastPresentationLayerKeysList = layerLastPresentationKeys.ToImmutableList()
+                    };
                 }));
 
         return Task.FromResult(viewModelKey);

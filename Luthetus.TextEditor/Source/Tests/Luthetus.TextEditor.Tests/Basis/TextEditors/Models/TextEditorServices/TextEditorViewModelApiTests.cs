@@ -91,26 +91,27 @@ public class TextEditorViewModelApiTests
             out var inViewModel,
             out var serviceProvider);
 
-        var oppositeShouldSetFocusAfterNextRender = !inViewModel.ShouldSetFocusAfterNextRender;
+        var oppositeShouldSetFocusAfterNextRender = !inViewModel.UnsafeState.ShouldSetFocusAfterNextRender;
 
         Assert.NotEqual(
             oppositeShouldSetFocusAfterNextRender,
-            inViewModel.ShouldSetFocusAfterNextRender);
+            inViewModel.UnsafeState.ShouldSetFocusAfterNextRender);
 
         textEditorService.Post(
             nameof(textEditorService.ViewModelApi.WithValueFactory),
             textEditorService.ViewModelApi.WithValueFactory(
                 inViewModel.ViewModelKey,
-                inState => inState with
+                inState => 
                 {
-                    ShouldSetFocusAfterNextRender = oppositeShouldSetFocusAfterNextRender
+                    inState.UnsafeState.ShouldSetFocusAfterNextRender = oppositeShouldSetFocusAfterNextRender;
+                    return inState with { };
                 }));
 
         var modifiedViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
 
         Assert.Equal(
             oppositeShouldSetFocusAfterNextRender,
-            modifiedViewModel!.ShouldSetFocusAfterNextRender);
+            modifiedViewModel!.UnsafeState.ShouldSetFocusAfterNextRender);
     }
     
     /// <summary>

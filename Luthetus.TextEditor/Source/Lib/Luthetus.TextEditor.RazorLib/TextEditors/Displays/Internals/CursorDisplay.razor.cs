@@ -118,11 +118,11 @@ public partial class CursorDisplay : ComponentBase, IDisposable
             _previouslyObservedCursorDisplayId = CursorDisplayId;
         }
 
-        if (Cursor.ShouldRevealCursor)
+        if (viewModel.UnsafeState.ShouldRevealCursor)
         {
-            Cursor.ShouldRevealCursor = false;
+            viewModel.UnsafeState.ShouldRevealCursor = false;
 
-            if (!Cursor.IsIntersecting)
+            if (!viewModel.UnsafeState.CursorIsIntersecting)
             {
                 _throttleShouldRevealCursor.PushEvent(async _ =>
                 {
@@ -140,7 +140,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     [JSInvokable]
     public Task OnCursorPassedIntersectionThresholdAsync(bool cursorIsIntersecting)
     {
-        Cursor.IsIntersecting = cursorIsIntersecting;
+        RenderBatch.ViewModel!.UnsafeState.CursorIsIntersecting = cursorIsIntersecting;
         return Task.CompletedTask;
     }
 

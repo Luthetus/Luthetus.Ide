@@ -151,9 +151,9 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatch);
         }
 
-        if (_storedRenderBatch?.ViewModel is not null && _storedRenderBatch.ViewModel.ShouldSetFocusAfterNextRender)
+        if (_storedRenderBatch?.ViewModel is not null && _storedRenderBatch.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender)
         {
-            _storedRenderBatch.ViewModel.ShouldSetFocusAfterNextRender = false;
+            _storedRenderBatch.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender = false;
             await FocusTextEditorAsync().ConfigureAwait(false);
         }
 
@@ -227,7 +227,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 _linkedViewModel = nextViewModel;
 
                 if (nextViewModel is not null)
-                    nextViewModel.PrimaryCursor.ShouldRevealCursor = true;
+                    nextViewModel.UnsafeState.ShouldRevealCursor = true;
             }
         }
     }

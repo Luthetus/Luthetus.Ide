@@ -13,8 +13,6 @@ public class TextEditorCursorModifier
         SelectionAnchorPositionIndex = cursor.Selection.AnchorPositionIndex;
         SelectionEndingPositionIndex = cursor.Selection.EndingPositionIndex;
         Key = cursor.Key;
-        ShouldRevealCursor = cursor.ShouldRevealCursor;
-        IsIntersecting = cursor.IsIntersecting;
     }
 
     public int RowIndex { get; set; }
@@ -40,8 +38,6 @@ public class TextEditorCursorModifier
             new TextEditorSelection(SelectionAnchorPositionIndex, SelectionEndingPositionIndex))
         {
             Key = Key,
-            ShouldRevealCursor = ShouldRevealCursor,
-            IsIntersecting = IsIntersecting,
         };
     }
 
