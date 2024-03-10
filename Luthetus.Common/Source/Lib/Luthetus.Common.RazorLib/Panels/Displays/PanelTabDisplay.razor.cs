@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -94,7 +94,6 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
     private Task HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)
     {
         _thinksLeftMouseButtonIsDown = true;
-
         return Task.CompletedTask;
     }
 

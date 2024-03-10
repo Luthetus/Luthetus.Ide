@@ -1,3 +1,4 @@
+using Luthetus.Common.RazorLib.PolymorphicUis.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
@@ -35,8 +36,19 @@ public record TextEditorViewModelPolymorphicUi : IPolymorphicTab, IPolymorphicDi
 	public string? CssClass { get; }
 	public string? CssStyle { get; }
 	public string Title => GetTitle();
-	public Type RendererType { get; }
-	public Dictionary<string, object?>? ParameterMap { get; }
+	public Type RendererType { get; } = typeof(PolymorphicTabDisplay);
+
+	public Dictionary<string, object?>? ParameterMap => new Dictionary<string, object?>
+	{
+		{
+			nameof(PolymorphicTabDisplay.Tab),
+			this
+		},
+		{
+			nameof(PolymorphicTabDisplay.IsBeingDragged),
+			true
+		}
+	};
 
 	public ElementDimensions DialogElementDimensions { get; }
     public bool DialogIsMinimized { get; set; }
