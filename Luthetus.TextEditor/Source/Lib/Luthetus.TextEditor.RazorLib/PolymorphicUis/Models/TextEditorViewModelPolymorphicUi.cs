@@ -108,6 +108,7 @@ public record TextEditorViewModelPolymorphicUi : IPolymorphicTab, IPolymorphicDi
 
 	public Task TabSetAsActiveAsync()
 	{
+		TextEditorService.GroupApi.SetActiveViewModel(TextEditorGroup.GroupKey, ViewModelKey);
 		return Task.CompletedTask;
 	}
 
