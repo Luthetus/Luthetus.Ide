@@ -52,12 +52,18 @@ public partial class DragInitializer : FluxorComponent
         });
     }
 
-    private async Task DispatchSetDragStateActionOnMouseUpAsync()
+    private Task DispatchSetDragStateActionOnMouseUp()
     {
-        _throttleDispatchSetDragStateActionOnMouseMove.PushEvent(_ =>
+		var dragState = DragStateWrap.Value;
+
+        _throttleDispatchSetDragStateActionOnMouseMove.PushEvent(async _ =>
         {
             Dispatcher.Dispatch(ConstructClearDragStateAction());
-            return Task.CompletedTask;
+			
+			if (dragState.PolymorphicDraggable is not null)
+				await dragState.PolymorphicDraggable.OnDragStopAsync();
         });
+
+		return Task.CompletedTask;
     }
 }

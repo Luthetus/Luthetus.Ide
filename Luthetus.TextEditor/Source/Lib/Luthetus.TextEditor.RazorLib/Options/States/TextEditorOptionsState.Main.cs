@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
@@ -6,11 +6,6 @@ using Luthetus.TextEditor.RazorLib.Options.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Options.States;
 
-/// <summary>
-/// Keep the <see cref="TextEditorOptionsState"/> as a class
-/// as to avoid record value comparisons when Fluxor checks
-/// if the <see cref="FeatureStateAttribute"/> has been replaced.
-/// </summary>
 [FeatureState]
 public partial class TextEditorOptionsState
 {

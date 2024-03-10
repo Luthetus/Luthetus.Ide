@@ -1,17 +1,23 @@
-﻿using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.PolymorphicUis.Models;
+using Microsoft.AspNetCore.Components;
 using Fluxor;
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.States;
 
 namespace Luthetus.TextEditor.RazorLib.Groups.Displays;
 
-public partial class TextEditorGroupDisplay : IDisposable
+public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private IState<TextEditorGroupState> TextEditorGroupStateWrap { get; set; } = null!;
+	[Inject]
+    private IState<TextEditorViewModelState> TextEditorViewModelStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
@@ -44,6 +50,27 @@ public partial class TextEditorGroupDisplay : IDisposable
 
     private async void TextEditorGroupWrapOnStateChanged(object? sender, EventArgs e) =>
         await InvokeAsync(StateHasChanged);
+
+	private ImmutableArray<IPolymorphicTab> GetPolymphoricUiList(TextEditorGroup textEditorGroup)
+	{
+		var viewModelState = TextEditorViewModelStateWrap.Value;
+		var polymphoricUiList = new List<IPolymorphicTab>();
+
+		foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
+		{
+			var polymorphicUi = viewModelState.ViewModelPolymorphicUiList.FirstOrDefault(
+				x => x.ViewModelKey == viewModelKey);
+
+			if (polymorphicUi is not null)
+			{
+				polymorphicUi.TextEditorGroup = textEditorGroup;
+				polymorphicUi.TextEditorService = TextEditorService;
+				polymphoricUiList.Add(polymorphicUi);
+			}
+		}
+
+		return polymphoricUiList.ToImmutableArray();
+	}
 
     public void Dispose()
     {

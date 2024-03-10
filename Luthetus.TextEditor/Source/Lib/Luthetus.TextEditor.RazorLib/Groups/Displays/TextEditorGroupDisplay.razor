@@ -1,4 +1,5 @@
-﻿@using Luthetus.TextEditor.RazorLib.TextEditors.Displays
+@using Luthetus.Common.RazorLib.PolymorphicUis.Displays
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays
 
 <div class="luth_te_text-editor-group @CssClassString"
      style="@CssStyleString">
@@ -11,12 +12,15 @@
     @if (textEditorGroup is not null)
     {
         <div class="luth_te_text-editor-group-tabs-list">
-            @foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
+			
+			<PolymorphicTabListDisplay TabList="@GetPolymphoricUiList(textEditorGroup)"/>
+
+            <!-- @foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
             {
                 <TextEditorGroupTabDisplay @key="viewModelKey"
                                            TextEditorGroup="textEditorGroup"
                                            TextEditorViewModelKey="viewModelKey"/>
-            }
+            } -->
         </div>
         <div class="luth_te_text-editor-group-active-view-model">
             @{

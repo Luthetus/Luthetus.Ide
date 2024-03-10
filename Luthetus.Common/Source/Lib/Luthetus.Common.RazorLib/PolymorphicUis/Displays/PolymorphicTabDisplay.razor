@@ -1,0 +1,7 @@
+@{ var localTab = Tab; }
+
+<button class="luth_polymorphic-tab luth_button"
+        @onclick="async () => await localTab.TabSetAsActiveAsync()">
+
+	@localTab.Title
+</button>

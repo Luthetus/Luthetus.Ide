@@ -3,6 +3,18 @@
 <div class="luth_drag-initializer"
      style="@StyleCss"
      @onmousemove="DispatchSetDragStateActionOnMouseMoveAsync"
-     @onmouseup="DispatchSetDragStateActionOnMouseUpAsync">
+     @onmouseup="DispatchSetDragStateActionOnMouseUp">
     
+	@{
+		var dragState = DragStateWrap.Value;
+		var polymorphicDraggable = dragState.PolymorphicDraggable;
+	}
+
+	@if (polymorphicDraggable is not null)
+	{
+		<div style="polymorphicDraggable.DraggableElementDimensions.StyleString">
+			<DynamicComponent Type="polymorphicDraggable.DraggableRendererType"
+			                  Parameters="polymorphicDraggable.DraggableParameterMap"/>	
+		</div>
+	}
 </div>

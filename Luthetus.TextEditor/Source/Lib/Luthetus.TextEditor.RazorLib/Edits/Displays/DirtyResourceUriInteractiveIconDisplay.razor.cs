@@ -23,7 +23,7 @@ public partial class DirtyResourceUriInteractiveIconDisplay : FluxorComponent
 
     private readonly DialogRecord _dialogRecord = new(
         _dialogRecordKey,
-        "Un-saved Files",
+        "Unsaved Files",
         typeof(DirtyResourceUriViewDisplay),
         null,
         null)
