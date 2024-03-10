@@ -2,6 +2,7 @@
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -21,10 +22,11 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
     [CascadingParameter]
     public TextEditorRenderBatch RenderBatch { get; set; } = null!;
 
+    private readonly Guid _scrollbarGuid = Guid.NewGuid();
+    private readonly IThrottle _throttleScroll = new Throttle(TimeSpan.FromMilliseconds(100));
+
     private bool _thinksLeftMouseButtonIsDown;
     private RelativeCoordinates _relativeCoordinatesOnMouseDown = new(0, 0, 0, 0);
-    private readonly Guid _scrollbarGuid = Guid.NewGuid();
-
     private Func<(MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;
     private MouseEventArgs? _previousDragMouseEventArgs;
 
@@ -149,7 +151,12 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
             if (scrollTop + elementMeasurements.Height > elementMeasurements.ScrollHeight)
                 scrollTop = elementMeasurements.ScrollHeight - elementMeasurements.Height;
 
-            RenderBatch.ViewModel!.SetScrollPosition(null, scrollTop);
+            _throttleScroll.PushEvent(_ => 
+            {
+                RenderBatch.ViewModel!.SetScrollPosition(null, scrollTop);
+                return Task.CompletedTask;
+            });
+            
         }
         else
         {
