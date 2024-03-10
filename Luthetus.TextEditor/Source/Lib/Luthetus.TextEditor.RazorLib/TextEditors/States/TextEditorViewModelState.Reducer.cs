@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
@@ -19,6 +20,9 @@ public partial class TextEditorViewModelState
 
             if (inViewModel is not null)
                 return inState;
+
+            if (registerAction.ViewModelKey == Key<TextEditorViewModel>.Empty)
+                throw new InvalidOperationException($"Provided {nameof(Key<TextEditorViewModel>)} cannot be {nameof(Key<TextEditorViewModel>)}.{Key<TextEditorViewModel>.Empty}");
 
             var viewModel = new TextEditorViewModel(
                 registerAction.ViewModelKey,
