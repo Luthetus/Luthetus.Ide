@@ -1,6 +1,6 @@
 @{ var localTab = Tab; }
 
-<button class="luth_polymorphic-tab luth_button @localTab.TabGetDynamicCss()"
+<button class="luth_polymorphic-tab luth_button @localTab.TabGetDynamicCss() @GetIsBeingDraggedCssClassString()"
 		style="@GetDraggableCssStyleString()"
         @onclick="async () => await localTab.TabSetAsActiveAsync()"
 		@onmousedown:stopPropagation="true"

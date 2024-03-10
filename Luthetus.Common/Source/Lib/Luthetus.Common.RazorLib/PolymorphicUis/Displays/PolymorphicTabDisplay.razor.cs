@@ -152,6 +152,13 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 		return string.Empty;
 	}
 
+	private string GetIsBeingDraggedCssClassString()
+	{
+		return IsBeingDragged
+			? "luth_drag"
+			: string.Empty;
+	}
+
 	public void Dispose()
     {
         DragStateWrap.StateChanged -= DragStateWrapOnStateChanged;
