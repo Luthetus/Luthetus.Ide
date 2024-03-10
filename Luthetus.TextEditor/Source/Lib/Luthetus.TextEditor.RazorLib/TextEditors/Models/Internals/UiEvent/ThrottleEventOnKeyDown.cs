@@ -68,20 +68,20 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
-    public IThrottleEvent? BatchOrDefault(IThrottleEvent moreRecentEvent)
+    public IThrottleEvent? BatchOrDefault(IThrottleEvent oldEvent)
     {
-        if (moreRecentEvent is ThrottleEventOnKeyDown moreRecentEventOnKeyDown)
+        if (oldEvent is ThrottleEventOnKeyDown oldEventOnKeyDown)
         {
             switch (TentativeKeyboardEventArgsKind)
             {
                 case KeyboardEventArgsKind.Text:
-                    if (moreRecentEventOnKeyDown.TentativeKeyboardEventArgsKind == TentativeKeyboardEventArgsKind)
+                    if (oldEventOnKeyDown.TentativeKeyboardEventArgsKind == TentativeKeyboardEventArgsKind)
                     {
                         return new ThrottleEventOnKeyDownBatch(
                             _events,
                             new List<ThrottleEventOnKeyDown>()
                             {
-                                moreRecentEventOnKeyDown,
+                                oldEventOnKeyDown,
                                 this
                             },
                             TentativeKeyboardEventArgsKind,
@@ -90,14 +90,14 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                     }
                     break;
                 case KeyboardEventArgsKind.Movement:
-                    if (moreRecentEventOnKeyDown.TentativeKeyboardEventArgsKind == TentativeKeyboardEventArgsKind &&
-                        KeyAndModifiersAreEqual(KeyboardEventArgs, moreRecentEventOnKeyDown.KeyboardEventArgs))
+                    if (oldEventOnKeyDown.TentativeKeyboardEventArgsKind == TentativeKeyboardEventArgsKind &&
+                        KeyAndModifiersAreEqual(KeyboardEventArgs, oldEventOnKeyDown.KeyboardEventArgs))
                     {
                         return new ThrottleEventOnKeyDownBatch(
                             _events,
                             new List<ThrottleEventOnKeyDown>()
                             {
-                                moreRecentEventOnKeyDown,
+                                oldEventOnKeyDown,
                                 this
                             },
                             TentativeKeyboardEventArgsKind,
@@ -111,14 +111,14 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                         if (KeyboardKeyFacts.MetaKeys.BACKSPACE == KeyboardEventArgs.Key ||
                             KeyboardKeyFacts.MetaKeys.DELETE == KeyboardEventArgs.Key)
                         {
-                            if (TentativeKeyboardEventArgsKind == moreRecentEventOnKeyDown.TentativeKeyboardEventArgsKind &&
-                                KeyAndModifiersAreEqual(KeyboardEventArgs, moreRecentEventOnKeyDown.KeyboardEventArgs))
+                            if (TentativeKeyboardEventArgsKind == oldEventOnKeyDown.TentativeKeyboardEventArgsKind &&
+                                KeyAndModifiersAreEqual(KeyboardEventArgs, oldEventOnKeyDown.KeyboardEventArgs))
                             {
                                 return new ThrottleEventOnKeyDownBatch(
                                     _events,
                                     new List<ThrottleEventOnKeyDown>()
                                     {
-                                        moreRecentEventOnKeyDown,
+                                        oldEventOnKeyDown,
                                         this,
                                     },
                                     TentativeKeyboardEventArgsKind,
@@ -130,14 +130,14 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                     else if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == KeyboardEventArgs.Code ||
                              KeyboardKeyFacts.WhitespaceCodes.TAB_CODE == KeyboardEventArgs.Code)
                     {
-                        if (TentativeKeyboardEventArgsKind == moreRecentEventOnKeyDown.TentativeKeyboardEventArgsKind &&
-                            KeyAndModifiersAreEqual(KeyboardEventArgs, moreRecentEventOnKeyDown.KeyboardEventArgs))
+                        if (TentativeKeyboardEventArgsKind == oldEventOnKeyDown.TentativeKeyboardEventArgsKind &&
+                            KeyAndModifiersAreEqual(KeyboardEventArgs, oldEventOnKeyDown.KeyboardEventArgs))
                         {
                             return new ThrottleEventOnKeyDownBatch(
                                 _events,
                                 new List<ThrottleEventOnKeyDown>()
                                 {
-                                        moreRecentEventOnKeyDown,
+                                        oldEventOnKeyDown,
                                         this,
                                 },
                                 TentativeKeyboardEventArgsKind,
@@ -149,17 +149,17 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                 case KeyboardEventArgsKind.ContextMenu:
                     break;
                 case KeyboardEventArgsKind.Command:
-                    if (TentativeKeyboardEventArgsKind == moreRecentEventOnKeyDown.TentativeKeyboardEventArgsKind &&
-                        KeyAndModifiersAreEqual(KeyboardEventArgs, moreRecentEventOnKeyDown.KeyboardEventArgs) &&
+                    if (TentativeKeyboardEventArgsKind == oldEventOnKeyDown.TentativeKeyboardEventArgsKind &&
+                        KeyAndModifiersAreEqual(KeyboardEventArgs, oldEventOnKeyDown.KeyboardEventArgs) &&
                         Command is not null &&
-                        moreRecentEventOnKeyDown.Command is not null &&
-                        Command.InternalIdentifier == moreRecentEventOnKeyDown.Command.InternalIdentifier)
+                        oldEventOnKeyDown.Command is not null &&
+                        Command.InternalIdentifier == oldEventOnKeyDown.Command.InternalIdentifier)
                     {
                         return new ThrottleEventOnKeyDownBatch(
                             _events,
                             new List<ThrottleEventOnKeyDown>()
                             {
-                                moreRecentEventOnKeyDown,
+                                oldEventOnKeyDown,
                                 this
                             },
                             TentativeKeyboardEventArgsKind,
@@ -170,24 +170,24 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
             }
         }
         
-        if (moreRecentEvent is ThrottleEventOnKeyDownBatch moreRecentEventOnKeyDownBatch)
+        if (oldEvent is ThrottleEventOnKeyDownBatch oldEventOnKeyDownBatch)
         {
-            var inspectThrottleEventOnKeyDown = moreRecentEventOnKeyDownBatch.ThrottleEventOnKeyDownList.First();
+            var inspectThrottleEventOnKeyDown = oldEventOnKeyDownBatch.ThrottleEventOnKeyDownList.First();
             switch (TentativeKeyboardEventArgsKind)
             {
                 case KeyboardEventArgsKind.Text:
-                    if (TentativeKeyboardEventArgsKind == moreRecentEventOnKeyDownBatch.KeyboardEventArgsKind)
+                    if (TentativeKeyboardEventArgsKind == oldEventOnKeyDownBatch.KeyboardEventArgsKind)
                     {
-                        moreRecentEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
-                        return moreRecentEventOnKeyDownBatch;
+                        oldEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
+                        return oldEventOnKeyDownBatch;
                     }
                     break;
                 case KeyboardEventArgsKind.Movement:
-                    if (TentativeKeyboardEventArgsKind == moreRecentEventOnKeyDownBatch.KeyboardEventArgsKind &&
+                    if (TentativeKeyboardEventArgsKind == oldEventOnKeyDownBatch.KeyboardEventArgsKind &&
                         KeyAndModifiersAreEqual(KeyboardEventArgs, inspectThrottleEventOnKeyDown.KeyboardEventArgs))
                     {
-                        moreRecentEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
-                        return moreRecentEventOnKeyDownBatch;
+                        oldEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
+                        return oldEventOnKeyDownBatch;
                     }
                     break;
                 case KeyboardEventArgsKind.Other:
@@ -196,36 +196,36 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
                         if (KeyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.BACKSPACE ||
                             KeyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.DELETE)
                         {
-                            if (TentativeKeyboardEventArgsKind == moreRecentEventOnKeyDownBatch.KeyboardEventArgsKind &&
+                            if (TentativeKeyboardEventArgsKind == oldEventOnKeyDownBatch.KeyboardEventArgsKind &&
                                 KeyAndModifiersAreEqual(KeyboardEventArgs, inspectThrottleEventOnKeyDown.KeyboardEventArgs))
                             {
-                                moreRecentEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
-                                return moreRecentEventOnKeyDownBatch;
+                                oldEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
+                                return oldEventOnKeyDownBatch;
                             }
                         }
                     }
                     else if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == KeyboardEventArgs.Code ||
                              KeyboardKeyFacts.WhitespaceCodes.TAB_CODE == KeyboardEventArgs.Code)
                     {
-                        if (TentativeKeyboardEventArgsKind == moreRecentEventOnKeyDownBatch.KeyboardEventArgsKind &&
+                        if (TentativeKeyboardEventArgsKind == oldEventOnKeyDownBatch.KeyboardEventArgsKind &&
                             KeyAndModifiersAreEqual(KeyboardEventArgs, inspectThrottleEventOnKeyDown.KeyboardEventArgs))
                         {
-                            moreRecentEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
-                            return moreRecentEventOnKeyDownBatch;
+                            oldEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
+                            return oldEventOnKeyDownBatch;
                         }
                     }
                     break;
                 case KeyboardEventArgsKind.ContextMenu:
                     break;
                 case KeyboardEventArgsKind.Command:
-                    if (TentativeKeyboardEventArgsKind == moreRecentEventOnKeyDownBatch.KeyboardEventArgsKind &&
+                    if (TentativeKeyboardEventArgsKind == oldEventOnKeyDownBatch.KeyboardEventArgsKind &&
                         KeyAndModifiersAreEqual(KeyboardEventArgs, inspectThrottleEventOnKeyDown.KeyboardEventArgs) &&
                         Command is not null &&
                         inspectThrottleEventOnKeyDown.Command is not null &&
                         Command.InternalIdentifier == inspectThrottleEventOnKeyDown.Command.InternalIdentifier)
                     {
-                        moreRecentEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
-                        return moreRecentEventOnKeyDownBatch;
+                        oldEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
+                        return oldEventOnKeyDownBatch;
                     }
                     break;
             }

@@ -31,9 +31,9 @@ public class ThrottleEventOnMouseDown : IThrottleEvent
 
     public TimeSpan ThrottleTimeSpan => _events.ThrottleDelayDefault;
 
-    public IThrottleEvent? BatchOrDefault(IThrottleEvent moreRecentEvent)
+    public IThrottleEvent? BatchOrDefault(IThrottleEvent oldEvent)
     {
-        return moreRecentEvent;
+        return this;
     }
 
     public Task HandleEvent(CancellationToken cancellationToken)

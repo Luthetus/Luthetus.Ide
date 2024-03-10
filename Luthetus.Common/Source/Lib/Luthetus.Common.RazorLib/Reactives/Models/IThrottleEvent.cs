@@ -27,8 +27,11 @@ public interface IThrottleEvent
     ///              Perhaps this throttle event also writes out a character.
     ///              Instead of invoking 'text.Insert(character)' two times.
     ///              One might want to invoke 'text.InsertRange(bothCharacters)';<br/><br/>
+    ///              
+    /// Returning null means enqueue the recentEvent without any batching,
+    /// (leave the old event as it was within the queue)
     /// </summary>
-    public IThrottleEvent? BatchOrDefault(IThrottleEvent moreRecentEvent);
+    public IThrottleEvent? BatchOrDefault(IThrottleEvent oldEvent);
 
     /// <summary>
     /// This method is the actual work item that gets awaited in order to handle the event.

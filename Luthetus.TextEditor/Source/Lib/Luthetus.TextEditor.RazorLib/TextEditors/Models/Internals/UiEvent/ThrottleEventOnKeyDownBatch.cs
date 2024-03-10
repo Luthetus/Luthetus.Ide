@@ -33,7 +33,7 @@ public class ThrottleEventOnKeyDownBatch : IThrottleEvent
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
-    public IThrottleEvent? BatchOrDefault(IThrottleEvent moreRecentEvent)
+    public IThrottleEvent? BatchOrDefault(IThrottleEvent oldEvent)
     {
         // TODO: Should this type implement BatchOrDefault, beyond just returning null?
         return null;

@@ -1,5 +1,7 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+﻿using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -25,8 +27,26 @@ public class ThrottleEventOnWheel : IThrottleEvent
 
     public TimeSpan ThrottleTimeSpan => _events.ThrottleDelayDefault;
 
-    public IThrottleEvent? BatchOrDefault(IThrottleEvent moreRecentEvent)
+    public IThrottleEvent? BatchOrDefault(IThrottleEvent oldEvent)
     {
+        if (oldEvent is ThrottleEventOnWheel oldEventOnWheel)
+        {
+            return new ThrottleEventOnWheelBatch(
+                new List<WheelEventArgs>()
+                {
+                    oldEventOnWheel.WheelEventArgs,
+                    WheelEventArgs
+                },
+                _events,
+                ViewModelKey);
+        }
+
+        if (oldEvent is ThrottleEventOnWheelBatch oldEventOnWheelBatch)
+        {
+            oldEventOnWheelBatch.WheelEventArgsList.Add(WheelEventArgs);
+            return oldEventOnWheelBatch;
+        }
+
         return null;
     }
 

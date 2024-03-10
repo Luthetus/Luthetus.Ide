@@ -31,21 +31,21 @@ public class ThrottleEventQueue
     /// 
     /// Each invocation of the 'batchFunc' will replace the 'to-be-queued' unless the 'batch event' returned was null.<br/><br/>
     /// </summary>
-    public void Enqueue(IThrottleEvent throttleEvent)
+    public void Enqueue(IThrottleEvent recentEvent)
     {
         for (int i = _throttleEventList.Count - 1; i >= 0; i--)
         {
-            IThrottleEvent? lastEvent = _throttleEventList[i];
-            var batchEvent = throttleEvent.BatchOrDefault(lastEvent);
+            IThrottleEvent? oldEvent = _throttleEventList[i];
+            var batchEvent = recentEvent.BatchOrDefault(oldEvent);
 
             if (batchEvent is null)
                 break;
 
             _throttleEventList.RemoveAt(i);
-            throttleEvent = batchEvent;
+            recentEvent = batchEvent;
         }
         
-        _throttleEventList.Add(throttleEvent);
+        _throttleEventList.Add(recentEvent);
     }
     
     /// <summary>
