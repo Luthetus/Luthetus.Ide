@@ -129,7 +129,7 @@ public record TextEditorViewModelPolymorphicUi : IPolymorphicTab, IPolymorphicDi
 		return Task.CompletedTask;
 	}
 
-	public Task OnDragStopAsync()
+	public Task OnDragStopAsync(IPolymorphicDropzone? dropzone)
 	{
 		return Task.CompletedTask;
 	}

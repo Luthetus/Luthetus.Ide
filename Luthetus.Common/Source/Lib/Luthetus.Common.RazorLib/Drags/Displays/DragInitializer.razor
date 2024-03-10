@@ -14,8 +14,9 @@
 	{
 		foreach (var dropzone in polymorphicDraggable.DropzoneList)
 		{
-			<div style="@dropzone.DropzoneElementDimensions.StyleString"
-				 class="luth_dropzone">
+			<div style="z-index: @dropzone.MeasuredHtmlElementDimensions.ZIndex; @dropzone.DropzoneElementDimensions.StyleString"
+				 class="luth_dropzone"
+				 @onmouseup="async () => polymorphicDraggable.OnDragStopAsync(dropzone)">
 			</div>
 		}
 

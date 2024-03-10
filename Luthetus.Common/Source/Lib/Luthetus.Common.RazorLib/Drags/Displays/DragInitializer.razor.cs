@@ -59,9 +59,6 @@ public partial class DragInitializer : FluxorComponent
         _throttleDispatchSetDragStateActionOnMouseMove.PushEvent(async _ =>
         {
             Dispatcher.Dispatch(ConstructClearDragStateAction());
-			
-			if (dragState.PolymorphicDraggable is not null)
-				await dragState.PolymorphicDraggable.OnDragStopAsync();
         });
 
 		return Task.CompletedTask;

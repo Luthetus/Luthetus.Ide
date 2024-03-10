@@ -10,6 +10,6 @@ public interface IPolymorphicDraggable : IPolymorphicUiRecord
 	public ElementDimensions DraggableElementDimensions { get; }
 	public ImmutableArray<IPolymorphicDropzone> DropzoneList { get; set; }
 
-	public Task OnDragStopAsync();
+	public Task OnDragStopAsync(IPolymorphicDropzone? dropzone);
 	public Task<ImmutableArray<IPolymorphicDropzone>> GetDropzonesAsync();
 }
