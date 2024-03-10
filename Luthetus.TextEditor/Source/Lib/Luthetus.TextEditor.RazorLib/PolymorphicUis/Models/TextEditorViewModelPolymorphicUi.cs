@@ -6,6 +6,9 @@ using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+using Microsoft.JSInterop;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
 
@@ -28,6 +31,7 @@ public record TextEditorViewModelPolymorphicUi : IPolymorphicTab, IPolymorphicDi
 	/// it will set this type's TextEditorService property.
 	/// </summary>
 	public ITextEditorService? TextEditorService { get; set; }
+	public IJSRuntime? JsRuntime { get; set; }
 
 	public Key<TextEditorViewModel> ViewModelKey { get; }
 	public TextEditorGroup TextEditorGroup { get; set; }
@@ -59,6 +63,7 @@ public record TextEditorViewModelPolymorphicUi : IPolymorphicTab, IPolymorphicDi
 	public Type DraggableRendererType => RendererType;
 	public Dictionary<string, object?> DraggableParameterMap => ParameterMap;
 	public ElementDimensions DraggableElementDimensions => DialogElementDimensions;
+	public ImmutableArray<IPolymorphicDropzone> DropzoneList { get; set; } = ImmutableArray<IPolymorphicDropzone>.Empty;
 
     public ElementDimensions DialogConstructDefaultElementDimensions()
 	{
@@ -127,6 +132,83 @@ public record TextEditorViewModelPolymorphicUi : IPolymorphicTab, IPolymorphicDi
 	public Task OnDragStopAsync()
 	{
 		return Task.CompletedTask;
+	}
+
+	public async Task<ImmutableArray<IPolymorphicDropzone>> GetDropzonesAsync()
+	{
+		if (TextEditorService is null)
+			return ImmutableArray<IPolymorphicDropzone>.Empty;
+
+		var dropzoneList = new List<IPolymorphicDropzone>();
+
+		var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
+            "luthetusIde.measureElementById",
+            $"luth_te_group_{TextEditorGroup.GroupKey.Guid}");
+	
+		var elementDimensions = new ElementDimensions();
+
+		elementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
+
+		// Width
+		{
+			var widthDimensionAttribute = elementDimensions.DimensionAttributeList.First(
+                x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
+
+			widthDimensionAttribute.DimensionUnitList.Clear();
+            widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+            {
+                Value = measuredHtmlElementDimensions.WidthInPixels,
+                DimensionUnitKind = DimensionUnitKind.Pixels
+            });
+		}
+
+		// Height
+		{
+			var heightDimensionAttribute = elementDimensions.DimensionAttributeList.First(
+                x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
+
+			heightDimensionAttribute.DimensionUnitList.Clear();
+            heightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+            {
+                Value = measuredHtmlElementDimensions.HeightInPixels,
+                DimensionUnitKind = DimensionUnitKind.Pixels
+            });
+		}
+
+		// Left
+		{
+			var leftDimensionAttribute = elementDimensions.DimensionAttributeList.First(
+                x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
+
+            leftDimensionAttribute.DimensionUnitList.Clear();
+            leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+            {
+                Value = measuredHtmlElementDimensions.LeftInPixels,
+                DimensionUnitKind = DimensionUnitKind.Pixels
+            });
+		}
+
+		// Top
+		{
+			var topDimensionAttribute = elementDimensions.DimensionAttributeList.First(
+                x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
+
+            topDimensionAttribute.DimensionUnitList.Clear();
+            topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+            {
+                Value = measuredHtmlElementDimensions.TopInPixels,
+                DimensionUnitKind = DimensionUnitKind.Pixels
+            });
+		}
+
+		dropzoneList.Add(new TextEditorViewModelPolymorphicDropzone(
+			measuredHtmlElementDimensions,
+			elementDimensions,
+			TextEditorGroup.GroupKey));
+
+		var result = dropzoneList.ToImmutableArray();
+		DropzoneList = result;
+		return result;
 	}
 
 	private string GetTitle()

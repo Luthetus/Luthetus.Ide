@@ -12,6 +12,13 @@
 
 	@if (polymorphicDraggable is not null)
 	{
+		foreach (var dropzone in polymorphicDraggable.DropzoneList)
+		{
+			<div style="@dropzone.DropzoneElementDimensions.StyleString"
+				 class="luth_dropzone">
+			</div>
+		}
+
 		<div style="polymorphicDraggable.DraggableElementDimensions.StyleString">
 			<DynamicComponent Type="polymorphicDraggable.DraggableRendererType"
 			                  Parameters="polymorphicDraggable.DraggableParameterMap"/>	

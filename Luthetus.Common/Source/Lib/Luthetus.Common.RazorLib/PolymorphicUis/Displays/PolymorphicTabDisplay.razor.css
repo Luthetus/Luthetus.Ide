@@ -1,5 +1,6 @@
 button.luth_polymorphic-tab.luth_drag {
 	overflow: hidden;
+	cursor: default;
 	background-color: var(--luth_button-hover-background-color);
 }
 

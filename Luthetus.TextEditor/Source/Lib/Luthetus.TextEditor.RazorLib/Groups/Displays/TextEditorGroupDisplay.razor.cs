@@ -10,6 +10,7 @@ using Luthetus.Common.RazorLib.PolymorphicUis.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
+using Microsoft.JSInterop;
 
 namespace Luthetus.TextEditor.RazorLib.Groups.Displays;
 
@@ -21,6 +22,8 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     private IState<TextEditorViewModelState> TextEditorViewModelStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+	[Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
 
     /// <summary>
     /// If the provided <see cref="TextEditorGroupKey"/> is registered using the
@@ -44,6 +47,9 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 
 	private PolymorphicTabListDisplay? _polymorphicTabListDisplay;
 
+	private string? _htmlId = null;
+	private string HtmlId => _htmlId ??= $"luth_te_group_{TextEditorGroupKey.Guid}";
+
     protected override void OnInitialized()
     {
         TextEditorGroupStateWrap.StateChanged += TextEditorGroupWrapOnStateChanged;
@@ -57,7 +63,10 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 
 	private async void TextEditorViewModelStateWrapOnStateChanged(object? sender, EventArgs e)
 	{
-		await _polymorphicTabListDisplay.NotifyStateChangedAsync();
+		var localPolymorphicTabListDisplay = _polymorphicTabListDisplay;
+
+		if (localPolymorphicTabListDisplay is not null)
+			await _polymorphicTabListDisplay.NotifyStateChangedAsync();
 	}
 
 	private ImmutableArray<IPolymorphicTab> GetPolymphoricUiList(TextEditorGroup textEditorGroup)
@@ -74,6 +83,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 			{
 				polymorphicUi.TextEditorGroup = textEditorGroup;
 				polymorphicUi.TextEditorService = TextEditorService;
+				polymorphicUi.JsRuntime = JsRuntime;
 				polymphoricUiList.Add(polymorphicUi);
 			}
 		}

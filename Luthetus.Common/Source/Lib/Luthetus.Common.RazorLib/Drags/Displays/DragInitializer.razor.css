@@ -1,8 +1,14 @@
-﻿.luth_drag-initializer {
+.luth_drag-initializer {
     z-index: var(--luth_drag-initializer-z-index);
     width: 100vw;
     height: 100vh;
     position: fixed;
     left: 0;
     top: 0;
+}
+
+.luth_dropzone {
+	background-color: var(--luth_ide_context-boundary-overlay-background-color);
+    opacity: 0.6;
+    cursor: default;
 }

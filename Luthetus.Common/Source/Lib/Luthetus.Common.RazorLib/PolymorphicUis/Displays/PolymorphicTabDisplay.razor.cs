@@ -85,6 +85,8 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
                 "luthetusIde.measureElementById",
                 HtmlId);
 
+			await draggable.GetDropzonesAsync();
+
 			// Width
 			{
 				var widthDimensionAttribute = draggable.DraggableElementDimensions.DimensionAttributeList.First(
