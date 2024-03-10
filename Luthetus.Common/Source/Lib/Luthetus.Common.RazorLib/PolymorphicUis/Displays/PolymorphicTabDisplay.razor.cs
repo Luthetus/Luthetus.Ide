@@ -3,8 +3,10 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Resizes.Models;
+using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 
 namespace Luthetus.Common.RazorLib.PolymorphicUis.Displays;
 
@@ -14,6 +16,8 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
     private IState<DragState> DragStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+	[Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public IPolymorphicTab Tab { get; set; } = null!;
@@ -23,6 +27,12 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
     private bool _thinksLeftMouseButtonIsDown;
 	private Func<(MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;
     private MouseEventArgs? _previousDragMouseEventArgs;
+
+	private string _htmlIdDragged = null;
+	private string _htmlId = null;
+	private string HtmlId => IsBeingDragged
+		? _htmlId ??= $"luth_polymorphic-tab_{Tab.Key}"
+		: _htmlIdDragged ??= $"luth_polymorphic-tab-drag_{Tab.Key}";
 
 	protected override void OnInitialized()
     {
@@ -67,38 +77,70 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
         _thinksLeftMouseButtonIsDown = false;
     }
 
-	private Task HandleOnMouseOutAsync(MouseEventArgs mouseEventArgs)
+	private async Task HandleOnMouseOutAsync(MouseEventArgs mouseEventArgs)
     {
         if (_thinksLeftMouseButtonIsDown && Tab is IPolymorphicDraggable draggable)
         {
-            var leftDimensionAttribute = draggable.DraggableElementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
+			var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
+                "luthetusIde.measureElementById",
+                HtmlId);
 
-            leftDimensionAttribute.DimensionUnitList.Clear();
+			// Width
+			{
+				var widthDimensionAttribute = draggable.DraggableElementDimensions.DimensionAttributeList.First(
+	                x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
+	
+				widthDimensionAttribute.DimensionUnitList.Clear();
+	            widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+	            {
+	                Value = measuredHtmlElementDimensions.WidthInPixels,
+	                DimensionUnitKind = DimensionUnitKind.Pixels
+	            });
+			}
 
-            leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = mouseEventArgs.ClientX,
-                DimensionUnitKind = DimensionUnitKind.Pixels
-            });
+			// Height
+			{
+				var heightDimensionAttribute = draggable.DraggableElementDimensions.DimensionAttributeList.First(
+	                x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
+	
+				heightDimensionAttribute.DimensionUnitList.Clear();
+	            heightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+	            {
+	                Value = measuredHtmlElementDimensions.HeightInPixels,
+	                DimensionUnitKind = DimensionUnitKind.Pixels
+	            });
+			}
 
-            var topDimensionAttribute = draggable.DraggableElementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
+			// Left
+			{
+				var leftDimensionAttribute = draggable.DraggableElementDimensions.DimensionAttributeList.First(
+	                x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
+	
+	            leftDimensionAttribute.DimensionUnitList.Clear();
+	            leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+	            {
+	                Value = mouseEventArgs.ClientX,
+	                DimensionUnitKind = DimensionUnitKind.Pixels
+	            });
+			}
 
-            topDimensionAttribute.DimensionUnitList.Clear();
-
-            topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = mouseEventArgs.ClientY,
-                DimensionUnitKind = DimensionUnitKind.Pixels
-            });
+			// Top
+			{
+				var topDimensionAttribute = draggable.DraggableElementDimensions.DimensionAttributeList.First(
+	                x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
+	
+	            topDimensionAttribute.DimensionUnitList.Clear();
+	            topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+	            {
+	                Value = mouseEventArgs.ClientY,
+	                DimensionUnitKind = DimensionUnitKind.Pixels
+	            });
+			}
 
             draggable.DraggableElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
 
             SubscribeToDragEventForScrolling(draggable);
         }
-
-        return Task.CompletedTask;
     }
 
 	public void SubscribeToDragEventForScrolling(IPolymorphicDraggable draggable)

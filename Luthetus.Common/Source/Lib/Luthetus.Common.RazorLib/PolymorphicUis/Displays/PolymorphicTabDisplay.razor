@@ -2,6 +2,7 @@
 
 <button class="luth_polymorphic-tab luth_button @localTab.TabGetDynamicCss() @GetIsBeingDraggedCssClassString()"
 		style="@GetDraggableCssStyleString()"
+		id="@HtmlId"
         @onclick="async () => await localTab.TabSetAsActiveAsync()"
 		@onmousedown:stopPropagation="true"
         @onmousedown="HandleOnMouseDown"
