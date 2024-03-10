@@ -1,6 +1,6 @@
 @{ var localTab = Tab; }
 
-<button class="luth_polymorphic-tab luth_button"
+<button class="luth_polymorphic-tab luth_button @localTab.TabGetDynamicCss()"
         @onclick="async () => await localTab.TabSetAsActiveAsync()">
 
 	@localTab.Title

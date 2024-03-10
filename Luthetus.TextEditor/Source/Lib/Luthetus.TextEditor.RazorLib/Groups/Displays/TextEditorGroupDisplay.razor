@@ -13,7 +13,8 @@
     {
         <div class="luth_te_text-editor-group-tabs-list">
 			
-			<PolymorphicTabListDisplay TabList="@GetPolymphoricUiList(textEditorGroup)"/>
+			<PolymorphicTabListDisplay @ref="_polymorphicTabListDisplay"
+							           TabList="@GetPolymphoricUiList(textEditorGroup)"/>
 
             <!-- @foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
             {

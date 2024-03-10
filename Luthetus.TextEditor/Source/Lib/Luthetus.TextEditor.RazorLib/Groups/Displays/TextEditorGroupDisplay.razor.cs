@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.PolymorphicUis.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
@@ -41,15 +42,23 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     [Parameter]
     public TextEditorViewModelDisplayOptions ViewModelDisplayOptions { get; set; } = new();
 
+	private PolymorphicTabListDisplay? _polymorphicTabListDisplay;
+
     protected override void OnInitialized()
     {
         TextEditorGroupStateWrap.StateChanged += TextEditorGroupWrapOnStateChanged;
+        TextEditorViewModelStateWrap.StateChanged += TextEditorViewModelStateWrapOnStateChanged;
 
         base.OnInitialized();
     }
 
     private async void TextEditorGroupWrapOnStateChanged(object? sender, EventArgs e) =>
         await InvokeAsync(StateHasChanged);
+
+	private async void TextEditorViewModelStateWrapOnStateChanged(object? sender, EventArgs e)
+	{
+		await _polymorphicTabListDisplay.NotifyStateChangedAsync();
+	}
 
 	private ImmutableArray<IPolymorphicTab> GetPolymphoricUiList(TextEditorGroup textEditorGroup)
 	{
@@ -75,5 +84,6 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         TextEditorGroupStateWrap.StateChanged -= TextEditorGroupWrapOnStateChanged;
+		TextEditorViewModelStateWrap.StateChanged -= TextEditorViewModelStateWrapOnStateChanged;
     }
 }
