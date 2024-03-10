@@ -1,8 +1,11 @@
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.PolymorphicUis.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -32,6 +35,7 @@ public record TextEditorViewModelPolymorphicUi : IPolymorphicTab, IPolymorphicDi
 	/// </summary>
 	public ITextEditorService? TextEditorService { get; set; }
 	public IJSRuntime? JsRuntime { get; set; }
+	public IDialogService DialogService { get; set; }
 
 	public Key<TextEditorViewModel> ViewModelKey { get; }
 	public TextEditorGroup TextEditorGroup { get; set; }
@@ -41,6 +45,13 @@ public record TextEditorViewModelPolymorphicUi : IPolymorphicTab, IPolymorphicDi
 	public string? CssStyle { get; }
 	public string Title => GetTitle();
 	public Type RendererType { get; } = typeof(PolymorphicTabDisplay);
+
+	private readonly TextEditorViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
+	{
+		IncludeHeaderHelperComponent = false,
+	};
+
+	private Key<DialogRecord> _dialogKey = Key<DialogRecord>.NewKey();
 
 	public Dictionary<string, object?>? ParameterMap => new Dictionary<string, object?>
 	{
@@ -131,6 +142,36 @@ public record TextEditorViewModelPolymorphicUi : IPolymorphicTab, IPolymorphicDi
 
 	public Task OnDragStopAsync(IPolymorphicDropzone? dropzone)
 	{
+		if (dropzone is not TextEditorViewModelPolymorphicDropzone textEditorViewModelPolymorphicDropzone)
+			return Task.CompletedTask;
+
+		if (textEditorViewModelPolymorphicDropzone.TextEditorGroupKey is null)
+		{
+			TextEditorService.GroupApi.RemoveViewModel(TextEditorGroup.GroupKey, ViewModelKey);
+
+			var dialogRecord = new DialogRecord(
+    			_dialogKey,
+    			GetTitle(),
+    			typeof(TextEditorViewModelDisplay),
+    			new Dictionary<string, object?>()
+				{
+					{
+						nameof(TextEditorViewModelDisplay.TextEditorViewModelKey),
+						ViewModelKey
+					},
+					{
+						nameof(TextEditorViewModelDisplay.ViewModelDisplayOptions),
+						_textEditorViewModelDisplayOptions
+					}
+				},
+    			null)
+			{
+				IsResizable = true
+			};
+
+			DialogService.RegisterDialogRecord(dialogRecord);
+		}
+
 		return Task.CompletedTask;
 	}
 
@@ -205,6 +246,70 @@ public record TextEditorViewModelPolymorphicUi : IPolymorphicTab, IPolymorphicDi
 			measuredHtmlElementDimensions,
 			elementDimensions,
 			TextEditorGroup.GroupKey));
+
+		// Fallback dropzone
+		{
+			var fallbackElementDimensions = new ElementDimensions();
+
+			fallbackElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
+
+			// Width
+			{
+				var widthDimensionAttribute = fallbackElementDimensions.DimensionAttributeList.First(
+	                x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
+	
+				widthDimensionAttribute.DimensionUnitList.Clear();
+	            widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+	            {
+	                Value = 100,
+	                DimensionUnitKind = DimensionUnitKind.ViewportWidth
+	            });
+			}
+	
+			// Height
+			{
+				var heightDimensionAttribute = fallbackElementDimensions.DimensionAttributeList.First(
+	                x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
+	
+				heightDimensionAttribute.DimensionUnitList.Clear();
+	            heightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+	            {
+	                Value = 100,
+	                DimensionUnitKind = DimensionUnitKind.ViewportHeight
+	            });
+			}
+	
+			// Left
+			{
+				var leftDimensionAttribute = fallbackElementDimensions.DimensionAttributeList.First(
+	                x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
+	
+	            leftDimensionAttribute.DimensionUnitList.Clear();
+	            leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+	            {
+	                Value = 0,
+	                DimensionUnitKind = DimensionUnitKind.Pixels
+	            });
+			}
+	
+			// Top
+			{
+				var topDimensionAttribute = fallbackElementDimensions.DimensionAttributeList.First(
+	                x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
+	
+	            topDimensionAttribute.DimensionUnitList.Clear();
+	            topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+	            {
+	                Value = 0,
+	                DimensionUnitKind = DimensionUnitKind.Pixels
+	            });
+			}
+	
+			dropzoneList.Add(new TextEditorViewModelPolymorphicDropzone(
+				new MeasuredHtmlElementDimensions(0, 0, 0, 0, 0),
+				fallbackElementDimensions,
+				null));
+		}
 
 		var result = dropzoneList.ToImmutableArray();
 		DropzoneList = result;

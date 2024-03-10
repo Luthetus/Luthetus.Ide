@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.PolymorphicUis.Displays;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
@@ -22,6 +23,8 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     private IState<TextEditorViewModelState> TextEditorViewModelStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+	[Inject]
+    private IDialogService DialogService { get; set; } = null!;
 	[Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
@@ -83,6 +86,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 			{
 				polymorphicUi.TextEditorGroup = textEditorGroup;
 				polymorphicUi.TextEditorService = TextEditorService;
+				polymorphicUi.DialogService = DialogService;
 				polymorphicUi.JsRuntime = JsRuntime;
 				polymphoricUiList.Add(polymorphicUi);
 			}

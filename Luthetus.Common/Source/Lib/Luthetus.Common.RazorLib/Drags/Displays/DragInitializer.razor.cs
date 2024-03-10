@@ -28,6 +28,7 @@ public partial class DragInitializer : FluxorComponent
         {
             ShouldDisplay = false,
             MouseEventArgs = null,
+			PolymorphicDraggable = null,
         });
     }
 
