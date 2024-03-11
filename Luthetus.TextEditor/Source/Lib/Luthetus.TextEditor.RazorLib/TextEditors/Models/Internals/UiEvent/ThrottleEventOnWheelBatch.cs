@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 
-public class ThrottleEventOnWheelBatch : IBackgroundTask
+public class ThrottleEventOnWheelBatch : ITextEditorTask
 {
     private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
 
@@ -30,6 +30,49 @@ public class ThrottleEventOnWheelBatch : IBackgroundTask
 
     public TimeSpan ThrottleTimeSpan => _events.ThrottleDelayDefault;
 
+    public Task InvokeWithEditContext(ITextEditorEditContext editContext)
+	{
+		var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
+
+        if (viewModelModifier is null)
+            return Task.CompletedTask;
+
+        double? horizontalMutateScrollPositionByPixels = null;
+        double? verticalMutateScrollPositionByPixels = null;
+
+        foreach (var wheelEventArgs in WheelEventArgsList)
+        {
+            if (wheelEventArgs.ShiftKey)
+            {
+                horizontalMutateScrollPositionByPixels ??= 0;
+                horizontalMutateScrollPositionByPixels += wheelEventArgs.DeltaY;
+            }
+            else
+            {
+                verticalMutateScrollPositionByPixels ??= 0;
+                verticalMutateScrollPositionByPixels += wheelEventArgs.DeltaY;
+            }
+        }
+
+        if (horizontalMutateScrollPositionByPixels is not null)
+        {
+            _events.TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
+                viewModelModifier.ViewModel.BodyElementId,
+                viewModelModifier.ViewModel.GutterElementId,
+                horizontalMutateScrollPositionByPixels.Value);
+        }
+        
+        if (verticalMutateScrollPositionByPixels is not null)
+        {
+            _events.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
+                viewModelModifier.ViewModel.BodyElementId,
+                viewModelModifier.ViewModel.GutterElementId,
+                verticalMutateScrollPositionByPixels.Value);
+        }
+        
+        return Task.CompletedTask;
+	}
+
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
         return null;
@@ -37,51 +80,7 @@ public class ThrottleEventOnWheelBatch : IBackgroundTask
 
     public Task HandleEvent(CancellationToken cancellationToken)
     {
-        _events.TextEditorService.Post(
-            $"ow_batch:{WheelEventArgsList.Count}",
-            editContext =>
-            {
-                var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
-
-                if (viewModelModifier is null)
-                    return Task.CompletedTask;
-
-                double? horizontalMutateScrollPositionByPixels = null;
-                double? verticalMutateScrollPositionByPixels = null;
-
-                foreach (var wheelEventArgs in WheelEventArgsList)
-                {
-                    if (wheelEventArgs.ShiftKey)
-                    {
-                        horizontalMutateScrollPositionByPixels ??= 0;
-                        horizontalMutateScrollPositionByPixels += wheelEventArgs.DeltaY;
-                    }
-                    else
-                    {
-                        verticalMutateScrollPositionByPixels ??= 0;
-                        verticalMutateScrollPositionByPixels += wheelEventArgs.DeltaY;
-                    }
-                }
-
-                if (horizontalMutateScrollPositionByPixels is not null)
-                {
-                    _events.TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
-                        viewModelModifier.ViewModel.BodyElementId,
-                        viewModelModifier.ViewModel.GutterElementId,
-                        horizontalMutateScrollPositionByPixels.Value);
-                }
-                
-                if (verticalMutateScrollPositionByPixels is not null)
-                {
-                    _events.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
-                        viewModelModifier.ViewModel.BodyElementId,
-                        viewModelModifier.ViewModel.GutterElementId,
-                        verticalMutateScrollPositionByPixels.Value);
-                }
-                
-                return Task.CompletedTask;
-            });
-
-        return Task.CompletedTask;
+        throw new NotImplementedException($"{nameof(ITextEditorTask)} should not implement {nameof(HandleEvent)}" +
+			"because they instead are contained within an 'IBackgroundTask' that came from the 'TextEditorService'");
     }
 }

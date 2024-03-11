@@ -103,7 +103,25 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
     public ITextEditorFindAllApi FindAllApi { get; }
-    
+ 
+	/// Goal: Change BackgroundTask to act similarly to IThrottleEvent #Step 600 (2024-03-11)
+	/// -------------------------------------------------------------------------------------
+	/// The TextEditorService's 'Post(...)' method needs to be changed.
+	/// It needs to accept an 'ITextEditorTask', where 'ITextEditorTask'
+	/// inherits 'IBackgroundTask'
+	///
+	/// The reason for this is due to the 'edit context' which all 'TextEditorEdit'
+	/// currently receive.
+	///
+	/// The 'editContext' provides mutable state for the text editor,
+	/// then any mutated state is written out once the 'Post(...)' method is finished.
+	///
+	/// So, in order to provide the 'editContext' to 'IBackgroundTask', some other
+	/// type is needed. I'm unsure if it will be an interface, class, abstract or etc...
+    public void Post(ITextEditorTask textEditorTask)
+	{
+	}
+
     public void Post(string taskDisplayName, TextEditorEdit edit)
     {
         _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),

@@ -35,4 +35,5 @@ public partial interface ITextEditorService
     /// but I need to learn more about it. (2023-12-21)
     /// </summary>
     public void Post(string taskDisplayName, TextEditorEdit textEditorEdit);
+	public void Post(ITextEditorTask textEditorTask);
 }

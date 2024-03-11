@@ -28,9 +28,23 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 /// 	- Inner workings of ThrottleEventQueue
 /// 	- Don't have 'BackgroundTasks' instead the type is a queue in and of itself.
 ///
-// Goal: Change BackgroundTask to act similarly to IThrottleEvent #Step 500 (2024-03-11)
-// -------------------------------------------------------------------------------------
-// ...
+/// Goal: Change BackgroundTask to act similarly to IThrottleEvent #Step 500 (2024-03-11)
+/// -------------------------------------------------------------------------------------
+/// I want to comment out the entirety of 'ThrottleController' and see what errors appear.
+///
+/// Most ideally, I find that the errors are reasonable to fix, so I just fix them then and there.
+///
+/// If all goes well, I can then just delete the 'ThrottleController' source code.
+///
+/// I just got an idea. The TextEditorService has a 'Post()' method. I was thinking,
+/// "well that breaks everything... how am I supposed to batch events if the 'Post()'
+/// itself is too an event.
+///
+/// I can just have 'Post()' define its own even (now called IBackgroundTask)
+/// and the batch method batches the inner event, which likely came from the UI,
+/// and the 'Post()' event just wraps this new batched event instead of the singular one.
+///
+/// The 'Post()' event invoke can just invoke the inner event.
 public class BackgroundTaskQueue : IBackgroundTaskQueue
 {
     private IBackgroundTask? _executingBackgroundTask;

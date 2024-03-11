@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 
-public class ThrottleEventOnWheel : IBackgroundTask
+public class ThrottleEventOnWheel : ITextEditorTask
 {
     private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
 
@@ -31,6 +31,21 @@ public class ThrottleEventOnWheel : IBackgroundTask
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
     public TimeSpan ThrottleTimeSpan => _events.ThrottleDelayDefault;
+
+    public Task InvokeWithEditContext(ITextEditorEditContext editContext)
+	{
+		var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
+
+        if (viewModelModifier is null)
+            return Task.CompletedTask;
+
+        if (WheelEventArgs.ShiftKey)
+            viewModelModifier.ViewModel.MutateScrollHorizontalPositionByPixels(WheelEventArgs.DeltaY);
+        else
+            viewModelModifier.ViewModel.MutateScrollVerticalPositionByPixels(WheelEventArgs.DeltaY);
+
+        return Task.CompletedTask;
+	}
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -57,23 +72,7 @@ public class ThrottleEventOnWheel : IBackgroundTask
 
     public Task HandleEvent(CancellationToken cancellationToken)
     {
-        _events.TextEditorService.Post(
-            nameof(ThrottleEventOnWheel),
-            editContext =>
-            {
-                var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
-
-                if (viewModelModifier is null)
-                    return Task.CompletedTask;
-
-                if (WheelEventArgs.ShiftKey)
-                    viewModelModifier.ViewModel.MutateScrollHorizontalPositionByPixels(WheelEventArgs.DeltaY);
-                else
-                    viewModelModifier.ViewModel.MutateScrollVerticalPositionByPixels(WheelEventArgs.DeltaY);
-
-                return Task.CompletedTask;
-            });
-
-        return Task.CompletedTask;
+        throw new NotImplementedException($"{nameof(ITextEditorTask)} should not implement {nameof(HandleEvent)}" +
+			"because they instead are contained within an 'IBackgroundTask' that came from the 'TextEditorService'");
     }
 }

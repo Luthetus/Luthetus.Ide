@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
@@ -249,11 +249,14 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (resourceUri is null || viewModelKey is null)
             return;
 
-        _events.Controller.EnqueueEvent(new ThrottleEventOnKeyDown(
+		var throttleEventOnKeyDown new ThrottleEventOnKeyDown(
             _events,
             keyboardEventArgs,
             resourceUri,
-            viewModelKey.Value));
+            viewModelKey.Value);
+	
+		TextEditorService.Post();
+        _events.Controller.EnqueueEvent();
     }
 
     private async Task ReceiveOnContextMenuAsync()
@@ -548,7 +551,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             _viewModelDisplay = viewModelDisplay;
         }
 
-        public ThrottleController Controller { get; } = new();
         public TimeSpan ThrottleDelayDefault { get; } = TimeSpan.FromMilliseconds(30);
         public TimeSpan OnMouseOutTooltipDelay { get; } = TimeSpan.FromMilliseconds(1_000);
         public TimeSpan MouseStoppedMovingDelay { get; } = TimeSpan.FromMilliseconds(400);
