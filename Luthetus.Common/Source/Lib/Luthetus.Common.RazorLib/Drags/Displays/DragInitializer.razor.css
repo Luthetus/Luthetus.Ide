@@ -12,3 +12,8 @@
     opacity: 0.6;
     cursor: default;
 }
+
+	.luth_dropzone.luth_active {
+        background-color: var(--luth_button-hover-background-color);
+        box-shadow: 0 0 2px var(--luth_primary-overlay-box-shadow-color);
+    }

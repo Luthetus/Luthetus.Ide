@@ -3,6 +3,7 @@ using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 
 namespace Luthetus.Common.RazorLib.Drags.Displays;
 
@@ -22,8 +23,12 @@ public partial class DragInitializer : FluxorComponent
     /// </summary>
     private IThrottle _throttleDispatchSetDragStateActionOnMouseMove = new Throttle(IThrottle.DefaultThrottleTimeSpan);
 
+	private IPolymorphicDropzone? _onMouseOverDropzone = null;
+
     private DragState.WithAction ConstructClearDragStateAction()
     {
+		_onMouseOverDropzone = null;
+
         return new DragState.WithAction(inState => inState with
         {
             ShouldDisplay = false,
@@ -56,12 +61,24 @@ public partial class DragInitializer : FluxorComponent
     private Task DispatchSetDragStateActionOnMouseUp()
     {
 		var dragState = DragStateWrap.Value;
+		var localOnMouseOverDropzone = _onMouseOverDropzone;
 
         _throttleDispatchSetDragStateActionOnMouseMove.PushEvent(async _ =>
         {
             Dispatcher.Dispatch(ConstructClearDragStateAction());
+
+			var polymorphicDraggable = dragState.PolymorphicDraggable;
+			if (polymorphicDraggable is not null)
+				await polymorphicDraggable.OnDragStopAsync(localOnMouseOverDropzone);
         });
 
 		return Task.CompletedTask;
     }
+
+	private string GetIsActiveCssClass(IPolymorphicDropzone dropzone)
+	{
+		return Object.ReferenceEquals(_onMouseOverDropzone, dropzone)
+			? "luth_active"
+			: string.Empty;
+	}
 }

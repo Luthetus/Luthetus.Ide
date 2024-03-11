@@ -43,6 +43,9 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 
     private async void DragStateWrapOnStateChanged(object? sender, EventArgs e)
     {
+		if (IsBeingDragged)
+			return;
+
         if (!DragStateWrap.Value.ShouldDisplay)
         {
             _dragEventHandler = null;
@@ -69,16 +72,25 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 
 	private void HandleOnMouseDown()
 	{
+		if (IsBeingDragged)
+			return;
+
         _thinksLeftMouseButtonIsDown = true;
 	}
 
 	private void HandleOnMouseUp()
     {
+		if (IsBeingDragged)
+			return;
+
         _thinksLeftMouseButtonIsDown = false;
     }
 
 	private async Task HandleOnMouseOutAsync(MouseEventArgs mouseEventArgs)
     {
+		if (IsBeingDragged)
+			return;
+
         if (_thinksLeftMouseButtonIsDown && Tab is IPolymorphicDraggable draggable)
         {
 			var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
@@ -147,6 +159,9 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 
 	public void SubscribeToDragEventForScrolling(IPolymorphicDraggable draggable)
     {
+		if (IsBeingDragged)
+			return;
+
         _dragEventHandler = DragEventHandlerAsync;
 
         Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
@@ -160,6 +175,9 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 	private Task DragEventHandlerAsync(
         (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs) mouseEventArgsTuple)
     {
+		if (IsBeingDragged)
+			return Task.CompletedTask;
+
         var localThinksLeftMouseButtonIsDown = _thinksLeftMouseButtonIsDown;
 
         if (!localThinksLeftMouseButtonIsDown)

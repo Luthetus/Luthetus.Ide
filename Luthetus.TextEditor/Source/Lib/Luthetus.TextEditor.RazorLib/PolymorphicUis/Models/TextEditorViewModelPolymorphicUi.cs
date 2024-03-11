@@ -186,6 +186,11 @@ public record TextEditorViewModelPolymorphicUi : IPolymorphicTab, IPolymorphicDi
             "luthetusIde.measureElementById",
             $"luth_te_group_{TextEditorGroup.GroupKey.Guid}");
 	
+		measuredHtmlElementDimensions = measuredHtmlElementDimensions with
+		{
+			ZIndex = 1,
+		};
+
 		var elementDimensions = new ElementDimensions();
 
 		elementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
