@@ -21,9 +21,9 @@ public class ThrottleEventOnWheelBatch : ITextEditorTask
         ViewModelKey = viewModelKey;
     }
 
-    public Key<BackgroundTask> BackgroundTaskKey { get; }
-    public Key<BackgroundTaskQueue> QueueKey { get; }
-    public string Name { get; }
+    public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public string Name { get; } = nameof(ThrottleEventOnWheelBatch);
     public Task? WorkProgress { get; }
     public List<WheelEventArgs> WheelEventArgsList { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }

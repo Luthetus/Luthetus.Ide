@@ -118,8 +118,18 @@ public partial class TextEditorService : ITextEditorService
 	///
 	/// So, in order to provide the 'editContext' to 'IBackgroundTask', some other
 	/// type is needed. I'm unsure if it will be an interface, class, abstract or etc...
-    public void Post(ITextEditorTask textEditorTask)
+    public void Post(ITextEditorTask innerTask)
 	{
+		var editContext = new TextEditorEditContext(
+	        this,
+	        AuthenticatedActionKey);
+
+		var textEditorServiceTask = new TextEditorServiceTask(
+			innerTask,
+			editContext,
+			_dispatcher);
+
+		_backgroundTaskService.Enqueue(textEditorServiceTask);
 	}
 
     public void Post(string taskDisplayName, TextEditorEdit edit)

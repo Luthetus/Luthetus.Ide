@@ -44,9 +44,9 @@ public class ThrottleEventOnKeyDown : ITextEditorTask
         }
     }
 
-    public Key<BackgroundTask> BackgroundTaskKey { get; }
-    public Key<BackgroundTaskQueue> QueueKey { get; }
-    public string Name { get; }
+    public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public string Name { get; } = nameof(ThrottleEventOnKeyDown);
     public Task? WorkProgress { get; }
     public TimeSpan ThrottleTimeSpan => _events.ThrottleDelayDefault;
     public KeyboardEventArgs KeyboardEventArgs { get; }

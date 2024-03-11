@@ -249,14 +249,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (resourceUri is null || viewModelKey is null)
             return;
 
-		var throttleEventOnKeyDown new ThrottleEventOnKeyDown(
+		var throttleEventOnKeyDown = new ThrottleEventOnKeyDown(
             _events,
             keyboardEventArgs,
             resourceUri,
             viewModelKey.Value);
 	
-		TextEditorService.Post();
-        _events.Controller.EnqueueEvent();
+		TextEditorService.Post(throttleEventOnKeyDown);
     }
 
     private async Task ReceiveOnContextMenuAsync()
@@ -275,11 +274,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        _events.Controller.EnqueueEvent(new ThrottleEventOnDoubleClick(
+        var throttleEventOnDoubleClick = new ThrottleEventOnDoubleClick(
             mouseEventArgs,
             _events,
             modelResourceUri,
-            viewModelKey.Value));
+            viewModelKey.Value);
+
+		TextEditorService.Post(throttleEventOnDoubleClick);
     }
 
     private void ReceiveContentOnMouseDown(MouseEventArgs mouseEventArgs)
@@ -289,12 +290,14 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         if (modelResourceUri is null || viewModelKey is null)
             return;
-
-        _events.Controller.EnqueueEvent(new ThrottleEventOnMouseDown(
+		
+		var throttleEventOnMouseDown = new ThrottleEventOnMouseDown(
             mouseEventArgs,
             _events,
             modelResourceUri,
-            viewModelKey.Value));
+            viewModelKey.Value);
+
+		TextEditorService.Post(throttleEventOnMouseDown);
 
         _events.ThinksLeftMouseButtonIsDown = true;
     }
@@ -352,11 +355,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
-            _events.Controller.EnqueueEvent(new ThrottleEventOnMouseMove(
+			var throttleEventOnMouseMove = new ThrottleEventOnMouseMove(
                 mouseEventArgs,
                 _events,
                 modelResourceUri,
-                viewModelKey.Value));
+                viewModelKey.Value);
+
+            TextEditorService.Post(throttleEventOnMouseMove);
         }
         else
         {
@@ -376,10 +381,12 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (viewModelKey is null)
             return;
 
-        _events.Controller.EnqueueEvent(new ThrottleEventOnWheel(
+		var throttleEventOnWheel = new ThrottleEventOnWheel(
             wheelEventArgs,
             _events,
-            viewModelKey.Value));
+            viewModelKey.Value);
+
+        TextEditorService.Post(throttleEventOnWheel);
     }
 
     private Task ReceiveOnTouchStartAsync(TouchEventArgs touchEventArgs)

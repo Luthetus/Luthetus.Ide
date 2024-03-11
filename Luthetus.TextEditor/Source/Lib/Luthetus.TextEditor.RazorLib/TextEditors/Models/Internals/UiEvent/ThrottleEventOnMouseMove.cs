@@ -25,9 +25,9 @@ public class ThrottleEventOnMouseMove : ITextEditorTask
         ViewModelKey = viewModelKey;
     }
 
-    public Key<BackgroundTask> BackgroundTaskKey { get; }
-    public Key<BackgroundTaskQueue> QueueKey { get; }
-    public string Name { get; }
+    public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public string Name { get; } = nameof(ThrottleEventOnMouseMove);
     public Task? WorkProgress { get; }
     public MouseEventArgs MouseEventArgs { get; }
     public ResourceUri ResourceUri { get; }
