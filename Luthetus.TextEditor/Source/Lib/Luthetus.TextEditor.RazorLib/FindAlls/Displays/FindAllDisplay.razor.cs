@@ -28,6 +28,8 @@ public partial class FindAllDisplay : FluxorComponent
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]
+	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
     private static readonly Key<TabGroup> SelectedSearchEngineTabGroupKey = new(Guid.Parse("92ec8823-79b3-4be3-99c5-1c68d713e685"));
@@ -165,7 +167,7 @@ public partial class FindAllDisplay : FluxorComponent
 
                 Dispatcher.Dispatch(new TabState.RegisterTabGroupAction(tabGroup));
 
-                var entries = await tabGroup.LoadEntryListAsync().ConfigureAwait(false);
+                var entries = await tabGroup.LoadEntryListAsync();
 
                 Dispatcher.Dispatch(new TabState.SetTabEntryListAction(
                     SelectedSearchEngineTabGroupKey,
@@ -180,7 +182,7 @@ public partial class FindAllDisplay : FluxorComponent
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
 	private async Task OpenInEditorOnClick(string filePath)
@@ -191,8 +193,8 @@ public partial class FindAllDisplay : FluxorComponent
 			return;
 
         await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
-                resourceUri,
-                ServiceProvider));
+            resourceUri,
+            ServiceProvider));
 
         if (TextEditorConfig.TryRegisterViewModelFunc is not null)
 		{
@@ -221,7 +223,7 @@ public partial class FindAllDisplay : FluxorComponent
         try
         {
             _isSearching = true;
-            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+            await InvokeAsync(StateHasChanged);
 
             _doSearchCancellationTokenSource.Cancel();
             _doSearchCancellationTokenSource = new();
@@ -229,19 +231,18 @@ public partial class FindAllDisplay : FluxorComponent
             var cancellationToken = _doSearchCancellationTokenSource.Token;
 
             await activeSearchEngine
-                .SearchAsync(findAllState.SearchQuery, cancellationToken)
-                .ConfigureAwait(false);
+                .SearchAsync(findAllState.SearchQuery, cancellationToken);
         }
         finally
         {
             _isSearching = false;
-            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+            await InvokeAsync(StateHasChanged);
         }
     }
 
 	private async void On_SearchEngineFileSystem_ProgressOccurred()
 	{
-		await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+		await InvokeAsync(StateHasChanged);
 	}
 
 	protected override void Dispose(bool disposing)

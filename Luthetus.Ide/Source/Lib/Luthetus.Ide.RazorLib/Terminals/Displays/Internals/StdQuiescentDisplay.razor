@@ -1,0 +1,20 @@
+@{
+	var workingDirectoryAbsolutePath = IntegratedTerminal.EnvironmentProvider.AbsolutePathFactory(
+		IntegratedTerminal.WorkingDirectory,
+		true);
+
+	var showWorkingDirectory = workingDirectoryAbsolutePath.NameNoExtension;
+	var parentDirectory = workingDirectoryAbsolutePath.ParentDirectory;
+	
+	if (parentDirectory is not null)
+	    showWorkingDirectory = parentDirectory.Value + showWorkingDirectory;
+}
+
+<div>
+	<span class="luth_te_method">
+		@showWorkingDirectory
+	</span>
+
+	<StdQuiescentInputDisplay IntegratedTerminal="IntegratedTerminal"
+							  StdQuiescent="StdQuiescent"/>
+</div>

@@ -1,0 +1,9 @@
+button.luth_polymorphic-tab.luth_drag {
+	overflow: hidden;
+	cursor: default;
+	background-color: var(--luth_button-hover-background-color);
+}
+
+button.luth_polymorphic-tab.luth_drag.luth_active {
+	background-color: var(--luth_toggled-on-hover-background-color);
+}

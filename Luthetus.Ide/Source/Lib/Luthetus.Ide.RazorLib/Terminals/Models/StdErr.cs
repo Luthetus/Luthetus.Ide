@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Components.Rendering;
-
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public class StdErr : Std
@@ -9,8 +7,5 @@ public class StdErr : Std
     {
     }
 
-    public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
-    {
-        return builder;
-    }
+    public override StdKind StdKind => StdKind.StdErr;
 }

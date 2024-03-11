@@ -1,6 +1,3 @@
-using Luthetus.Ide.RazorLib.Terminals.Displays;
-using Microsoft.AspNetCore.Components.Rendering;
-
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public class StdInRequest : Std
@@ -12,14 +9,5 @@ public class StdInRequest : Std
 
     public bool IsCompleted { get; set; }
     public string Value { get; set; } = string.Empty;
-
-    public override RenderTreeBuilder GetRenderTreeBuilder(RenderTreeBuilder builder, ref int sequence)
-    {
-        builder.OpenComponent<StdInInputDisplay>(sequence++);
-        builder.AddAttribute(sequence++, nameof(StdInInputDisplay.IntegratedTerminal), _integratedTerminal);
-        builder.AddAttribute(sequence++, nameof(StdInInputDisplay.StdInRequest), this);
-        builder.CloseComponent();
-
-        return builder;
-    }
+    public override StdKind StdKind => StdKind.StdInRequest;
 }

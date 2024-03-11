@@ -40,8 +40,6 @@ public class TextEditorCursorModifierTests
         Assert.Equal(cursor.Selection.AnchorPositionIndex, cursorModifier.SelectionAnchorPositionIndex);
         Assert.Equal(cursor.Selection.EndingPositionIndex, cursorModifier.SelectionEndingPositionIndex);
         Assert.Equal(cursor.Key, cursorModifier.Key);
-        Assert.Equal(cursor.ShouldRevealCursor, cursorModifier.ShouldRevealCursor);
-        Assert.Equal(cursor.IsIntersecting, cursorModifier.IsIntersecting);
 
         // Assert state mutations
         {
@@ -111,7 +109,5 @@ public class TextEditorCursorModifierTests
         Assert.Equal(cursorModifier.SelectionAnchorPositionIndex, outCursor.Selection.AnchorPositionIndex);
         Assert.Equal(cursorModifier.SelectionEndingPositionIndex, outCursor.Selection.EndingPositionIndex);
         Assert.Equal(cursorModifier.Key, outCursor.Key);
-        Assert.Equal(cursorModifier.ShouldRevealCursor, outCursor.ShouldRevealCursor);
-        Assert.Equal(cursorModifier.IsIntersecting, outCursor.IsIntersecting);
     }
 }

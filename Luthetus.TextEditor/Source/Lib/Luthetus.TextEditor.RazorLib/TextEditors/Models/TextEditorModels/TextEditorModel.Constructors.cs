@@ -20,7 +20,8 @@ public partial class TextEditorModel
         string fileExtension,
         string content,
         IDecorationMapper? decorationMapper,
-        ILuthCompilerService? compilerService)
+        ILuthCompilerService? compilerService,
+		int partitionSize = 4_096)
     {
         ResourceUri = resourceUri;
         ResourceLastWriteTime = resourceLastWriteTime;
@@ -28,12 +29,34 @@ public partial class TextEditorModel
         DecorationMapper = decorationMapper ?? new TextEditorDecorationMapperDefault();
         CompilerService = compilerService ?? new LuthCompilerService(null);
 
+		PartitionSize = partitionSize;
 		var modifier = new TextEditorModelModifier(this);
-
 		modifier.ModifyContent(content);
-		
-		ContentList = modifier.ContentList.ToImmutableList();
-		RowEndingKindCountsList = modifier.RowEndingKindCountsList.ToImmutableList();
+
+        // (2024-02-29) Plan to add text editor partitioning #Step 100:
+        // --------------------------------------------------
+        // Change 'ContentList' from 'List<RichCharacter>?' to 'List<List<RichCharacter>>?
+        //
+        // (2024-02-29) Plan to add text editor partitioning #Step 900:
+        // --------------------------------------------------
+        // I'm receiving a compilation error that 'ContentList' cannot be assigned to,
+        // because it is readonly.
+        //
+        // For this reasoning, I'm going to remove all the code statements
+        // of 'ContentList = modifier.ContentList;'
+        //
+        // (2024-02-29) Plan to add text editor partitioning #Step 1,500:
+        // --------------------------------------------------
+        // When invoking this constructor, one is finalizing their modifications.
+        // Therefore, the ContentList is too finalized.
+        // So, instead of recalculating each time the getter is referenced,
+        // the TextEditorModel should set its ContentList.
+        // 
+        // We need to keep the TextEditorModelModifier using an expression bound property however,
+        // since its content is constantly changing.
+        ContentList = modifier.ContentList;
+        PartitionList = modifier.PartitionList;
+        RowEndingKindCountsList = modifier.RowEndingKindCountsList.ToImmutableList();
 		RowEndingPositionsList = modifier.RowEndingPositionsList.ToImmutableList();
 		TabKeyPositionsList = modifier.TabKeyPositionsList.ToImmutableList();
 		OnlyRowEndingKind = modifier.OnlyRowEndingKind;
@@ -42,7 +65,12 @@ public partial class TextEditorModel
 	}
 
 	public TextEditorModel(
-		ImmutableList<RichCharacter> contentList,
+        // (2024-02-29) Plan to add text editor partitioning #Step 100:
+        // --------------------------------------------------
+        // Change 'contentList' from 'List<RichCharacter>?' to 'List<List<RichCharacter>>?
+        IReadOnlyList<RichCharacter> contentList,
+        int partitionSize,
+        ImmutableList<ImmutableList<RichCharacter>> partitionList,
 		ImmutableList<EditBlock> editBlocksList,
 		ImmutableList<RowEnding> rowEndingPositionsList,
 		ImmutableList<(RowEndingKind rowEndingKind, int count)> rowEndingKindCountsList,
@@ -57,11 +85,30 @@ public partial class TextEditorModel
 		ILuthCompilerService compilerService,
 		TextEditorSaveFileHelper textEditorSaveFileHelper,
 		int editBlockIndex,
-		(int rowIndex, int rowLength) mostCharactersOnASingleRowTuple,
+        bool isDirty,
+        (int rowIndex, int rowLength) mostCharactersOnASingleRowTuple,
 		Key<RenderState>  renderStateKey)
 	{
-
-		ContentList = contentList;
+        // (2024-02-29) Plan to add text editor partitioning #Step 900:
+        // --------------------------------------------------
+        // I'm receiving a compilation error that 'ContentList' cannot be assigned to,
+        // because it is readonly.
+        //
+        // For this reasoning, I'm going to remove all the code statements
+        // of 'ContentList = contentList;'
+        //
+        // (2024-02-29) Plan to add text editor partitioning #Step 1,500:
+        // --------------------------------------------------
+        // When invoking this constructor, one is finalizing their modifications.
+        // Therefore, the ContentList is too finalized.
+        // So, instead of recalculating each time the getter is referenced,
+        // the TextEditorModel should set its ContentList.
+        // 
+        // We need to keep the TextEditorModelModifier using an expression bound property however,
+        // since its content is constantly changing.
+        ContentList = contentList;
+        PartitionSize = partitionSize;
+        PartitionList = partitionList;
 		EditBlocksList = editBlocksList;
 		RowEndingPositionsList = rowEndingPositionsList;
 		RowEndingKindCountsList = rowEndingKindCountsList;
@@ -76,6 +123,7 @@ public partial class TextEditorModel
 		CompilerService = compilerService;
 		TextEditorSaveFileHelper = textEditorSaveFileHelper;
 		EditBlockIndex = editBlockIndex;
+        IsDirty = isDirty;
 		MostCharactersOnASingleRowTuple = mostCharactersOnASingleRowTuple;
 		RenderStateKey = renderStateKey;
 	}

@@ -47,14 +47,10 @@ public partial class ResizableColumn : ComponentBase, IDisposable
             if (_dragEventHandler is not null)
             {
                 if (_previousDragMouseEventArgs is not null && mouseEventArgs is not null)
-                {
-                    await _dragEventHandler
-                        .Invoke((_previousDragMouseEventArgs, mouseEventArgs))
-                        .ConfigureAwait(false);
-                }
+                    await _dragEventHandler.Invoke((_previousDragMouseEventArgs, mouseEventArgs));
 
                 _previousDragMouseEventArgs = mouseEventArgs;
-                await ReRenderFuncAsync.Invoke().ConfigureAwait(false);
+                await ReRenderFuncAsync.Invoke();
             }
         }
     }
@@ -84,7 +80,7 @@ public partial class ResizableColumn : ComponentBase, IDisposable
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()

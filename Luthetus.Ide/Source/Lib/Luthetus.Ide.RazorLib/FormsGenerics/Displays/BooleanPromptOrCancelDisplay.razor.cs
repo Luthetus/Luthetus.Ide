@@ -15,16 +15,25 @@ public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromp
     public bool IncludeCancelOption { get; set; }
     [Parameter, EditorRequired]
     public string Message { get; set; } = null!;
+    /// <summary>
+    /// TODO: I am adding multi-select in treeview. For the delete ContextMenuOption,...
+    /// I'd like to list out each file that is to be deleted.
+    /// If I use the current way of <see cref="Message"/> then all the files
+    /// are written on one line of text. I want newlines between each file.
+    /// (2024-02-23)
+    /// </summary>
+    [Parameter, EditorRequired]
+    public List<string>? ListOfMessages { get; set; } = null;
     [Parameter, EditorRequired]
     public string? AcceptOptionTextOverride { get; set; }
     [Parameter, EditorRequired]
     public string? DeclineOptionTextOverride { get; set; }
     [Parameter, EditorRequired]
-    public Action OnAfterAcceptAction { get; set; } = null!;
+    public Func<Task> OnAfterAcceptFunc { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Action OnAfterDeclineAction { get; set; } = null!;
+    public Func<Task> OnAfterDeclineFunc { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Action OnAfterCancelAction { get; set; } = null!;
+    public Func<Task> OnAfterCancelFunc { get; set; } = null!;
 
     private ElementReference? _declineButtonElementReference;
 
@@ -36,7 +45,7 @@ public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromp
             {
                 try
                 {
-                    await _declineButtonElementReference.Value.FocusAsync().ConfigureAwait(false);
+                    await _declineButtonElementReference.Value.FocusAsync();
                 }
                 catch (Exception)
                 {
@@ -48,7 +57,7 @@ public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromp
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
@@ -57,8 +66,32 @@ public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromp
         {
             if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
             {
-                await MenuOptionCallbacks.HideWidgetAsync.Invoke().ConfigureAwait(false);
+                await MenuOptionCallbacks.HideWidgetAsync.Invoke();
             }
         }
+    }
+
+    private async Task AcceptAsync()
+    {
+        if (MenuOptionCallbacks is not null)
+            await MenuOptionCallbacks.CompleteWidgetAsync.Invoke(() => { });
+
+        await OnAfterAcceptFunc.Invoke();
+    }
+
+    private async Task DeclineAsync()
+    {
+        if (MenuOptionCallbacks is not null)
+            await MenuOptionCallbacks.CompleteWidgetAsync.Invoke(() => { });
+
+        await OnAfterDeclineFunc.Invoke();
+    }
+
+    private async Task CancelAsync()
+    {
+        if (MenuOptionCallbacks is not null)
+            await MenuOptionCallbacks.CompleteWidgetAsync.Invoke(() => { });
+
+        await OnAfterCancelFunc.Invoke();
     }
 }

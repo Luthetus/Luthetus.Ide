@@ -93,7 +93,7 @@ public partial class TextEditorService
             return null;
         }
 
-        public TextEditorCursorModifierBag? GetCursorModifierBag(TextEditorViewModel viewModel)
+        public TextEditorCursorModifierBag? GetCursorModifierBag(TextEditorViewModel? viewModel)
         {
             if (viewModel is not null)
             {

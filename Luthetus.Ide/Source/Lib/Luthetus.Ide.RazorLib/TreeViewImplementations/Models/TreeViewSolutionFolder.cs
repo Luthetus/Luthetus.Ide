@@ -100,25 +100,33 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 
         var childProjectIds = nestedProjectEntries.Select(x => x.ChildProjectIdGuid).ToArray();
 
-        var childProjects = treeViewSolution.Item.DotNetProjectList
+        var childProjectList = treeViewSolution.Item.DotNetProjectList
             .Where(x => childProjectIds.Contains(x.ProjectIdGuid))
             .ToArray();
 
-        var childTreeViews = childProjects.Select(x =>
+        var childTreeViewSolutionFolderList = new List<TreeViewSolutionFolder>();
+        var childTreeViewCSharpProjectList = new List<TreeViewNamespacePath>();
+
+        foreach (var project in childProjectList)
         {
-            if (x.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
-                return ConstructTreeViewSolutionFolder((SolutionFolder)x);
+            if (project.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
+                childTreeViewSolutionFolderList.Add(ConstructTreeViewSolutionFolder((SolutionFolder)project));
             else
-                return ConstructTreeViewCSharpProject((CSharpProject)x);
-        }).ToList();
+                childTreeViewCSharpProjectList.Add(ConstructTreeViewCSharpProject((CSharpProject)project));
+        }
+
+        var childTreeViewList = 
+            childTreeViewSolutionFolderList.OrderBy(x => x.Item.DisplayName).Select(x => (TreeViewNoType)x)
+            .Union(childTreeViewCSharpProjectList.OrderBy(x => x.Item.AbsolutePath.NameNoExtension).Select(x => (TreeViewNoType)x))
+            .ToList();
 
         for (int siblingsIndex = siblingsAndSelfTreeViews.Count - 1; siblingsIndex >= 0; siblingsIndex--)
         {
             var siblingOrSelf = siblingsAndSelfTreeViews[siblingsIndex];
 
-            for (var childrensIndex = 0; childrensIndex < childTreeViews.Count; childrensIndex++)
+            for (var childrensIndex = 0; childrensIndex < childTreeViewList.Count; childrensIndex++)
             {
-                var childTreeView = childTreeViews[childrensIndex];
+                var childTreeView = childTreeViewList[childrensIndex];
 
                 if (siblingOrSelf.Equals(childTreeView))
                 {
@@ -143,7 +151,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 
                     siblingsAndSelfTreeViews.RemoveAt(siblingsIndex);
 
-                    childTreeViews[childrensIndex] = originalTreeView;
+                    childTreeViewList[childrensIndex] = originalTreeView;
                 }
                 else
                 {
@@ -154,10 +162,10 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
             }
         }
 
-        ChildList = childTreeViews;
+        ChildList = childTreeViewList;
     }
 
-    private TreeViewNoType ConstructTreeViewSolutionFolder(SolutionFolder dotNetSolutionFolder)
+    private TreeViewSolutionFolder ConstructTreeViewSolutionFolder(SolutionFolder dotNetSolutionFolder)
     {
         return new TreeViewSolutionFolder(
             dotNetSolutionFolder,
@@ -172,7 +180,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
         };
     }
 
-    private TreeViewNoType ConstructTreeViewCSharpProject(CSharpProject cSharpProject)
+    private TreeViewNamespacePath ConstructTreeViewCSharpProject(CSharpProject cSharpProject)
     {
         var namespacePath = new NamespacePath(
             cSharpProject.AbsolutePath.NameNoExtension,

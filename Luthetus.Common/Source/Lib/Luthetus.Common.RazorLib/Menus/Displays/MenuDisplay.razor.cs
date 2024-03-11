@@ -50,7 +50,7 @@ public partial class MenuDisplay : ComponentBase
             {
                 try
                 {
-                    await _menuDisplayElementReference.Value.FocusAsync().ConfigureAwait(false);
+                    await _menuDisplayElementReference.Value.FocusAsync();
                 }
                 catch (Exception)
                 {
@@ -62,18 +62,18 @@ public partial class MenuDisplay : ComponentBase
             }
             else
             {
-                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+                await InvokeAsync(StateHasChanged);
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     public async Task SetFocusToFirstOptionInMenuAsync()
     {
         _activeMenuOptionRecordIndex = 0;
 
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task RestoreFocusToThisMenuAsync()
@@ -83,7 +83,7 @@ public partial class MenuDisplay : ComponentBase
             try
             {
                 if (_menuDisplayElementReference is not null)
-                    await _menuDisplayElementReference.Value.FocusAsync().ConfigureAwait(false);
+                    await _menuDisplayElementReference.Value.FocusAsync();
             }
             catch (Exception)
             {
@@ -93,7 +93,7 @@ public partial class MenuDisplay : ComponentBase
                 //             on an ElementReference.
             }
 
-            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+            await InvokeAsync(StateHasChanged);
         }
     }
 
@@ -112,7 +112,7 @@ public partial class MenuDisplay : ComponentBase
                 if (DropdownKey != Key<DropdownRecord>.Empty && ReturnFocusToParentFuncAsync is not null)
                 {
                     Dispatcher.Dispatch(new DropdownState.RemoveActiveAction(DropdownKey));
-                    await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);
+                    await ReturnFocusToParentFuncAsync.Invoke();
                 }
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
@@ -140,7 +140,7 @@ public partial class MenuDisplay : ComponentBase
                     Dispatcher.Dispatch(new DropdownState.RemoveActiveAction(DropdownKey));
 
                 if (ReturnFocusToParentFuncAsync is not null)
-                    await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);
+                    await ReturnFocusToParentFuncAsync.Invoke();
 
                 break;
         }

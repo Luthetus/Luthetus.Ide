@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -37,6 +38,8 @@ public partial class RowSection : ComponentBase
     public bool IncludeContextMenuHelperComponent { get; set; }
 
     public CursorDisplay? CursorDisplayComponent { get; private set; }
+
+    private IThrottle _throttleVirtualizationDisplayItemsProviderFunc = new Throttle(TimeSpan.FromMilliseconds(60));
 
     private string GetRowStyleCss(int index, double? virtualizedRowLeftInPixels)
     {
@@ -106,13 +109,16 @@ public partial class RowSection : ComponentBase
         if (model is null || viewModel is null)
             return;
 
-        var primaryCursor = viewModel.PrimaryCursor;
+        _throttleVirtualizationDisplayItemsProviderFunc.PushEvent(_ => 
+        {
+            TextEditorService.Post(
+                nameof(VirtualizationDisplayItemsProviderFunc),
+                TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+                    model.ResourceUri,
+                    viewModel.ViewModelKey,
+                    virtualizationRequest.CancellationToken));
 
-        TextEditorService.Post(
-            nameof(VirtualizationDisplayItemsProviderFunc),
-            TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-                model.ResourceUri,
-                viewModel.ViewModelKey,
-                virtualizationRequest.CancellationToken));
+            return Task.CompletedTask;
+        });
     }
 }

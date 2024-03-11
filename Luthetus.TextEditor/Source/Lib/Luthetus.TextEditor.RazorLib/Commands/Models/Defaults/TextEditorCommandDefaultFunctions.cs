@@ -26,31 +26,20 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static TextEditorEdit CopyFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return async (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
-            var selectedText = TextEditorSelectionHelper.GetSelectedText(
-                primaryCursorModifier,
-                modelModifier);
-
-            selectedText ??= modelModifier.GetLineRange(
-                primaryCursorModifier.RowIndex,
-                1);
+            var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
+            selectedText ??= modelModifier.GetLineRange(primaryCursorModifier.RowIndex, 1);
 
             await commandArgs.ClipboardService.SetClipboard(selectedText).ConfigureAwait(false);
             viewModelModifier.ViewModel.Focus();
@@ -58,22 +47,16 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static TextEditorEdit CutFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return async (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
             if (!TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
@@ -85,14 +68,9 @@ public class TextEditorCommandDefaultFunctions
                 primaryCursorModifier.SelectionEndingPositionIndex = rowInformation.RowEnding.EndPositionIndexExclusive;
             }
 
-            var selectedText = TextEditorSelectionHelper.GetSelectedText(
-                primaryCursorModifier,
-                modelModifier);
-
-            if (selectedText is null)
-                return; // This should never occur
-
+            var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier) ?? string.Empty;
             await commandArgs.ClipboardService.SetClipboard(selectedText).ConfigureAwait(false);
+
             viewModelModifier.ViewModel.Focus();
 
             modelModifier.HandleKeyboardEvent(
@@ -103,136 +81,94 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static TextEditorEdit PasteFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return async (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
             var clipboard = await commandArgs.ClipboardService.ReadClipboard().ConfigureAwait(false);
-
-            modelModifier.EditByInsertion(
-                clipboard,
-                cursorModifierBag,
-                CancellationToken.None);
+            modelModifier.EditByInsertion(clipboard, cursorModifierBag, CancellationToken.None);
         };
     }
 
     public static TextEditorEdit SaveFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            var onSaveRequestedFunc = viewModelModifier.ViewModel.OnSaveRequested;
-
-            if (onSaveRequestedFunc is not null)
-                onSaveRequestedFunc.Invoke(modelModifier);
-
+            viewModelModifier.ViewModel.OnSaveRequested?.Invoke(modelModifier);
+            modelModifier.SetIsDirtyFalse();
             return Task.CompletedTask;
         };
     }
 
     public static TextEditorEdit SelectAllFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
             primaryCursorModifier.SelectionAnchorPositionIndex = 0;
             primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.DocumentLength;
-
             return Task.CompletedTask;
         };
     }
 
     public static TextEditorEdit UndoFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return commandArgs.TextEditorService.ModelApi
-            .UndoEditFactory(modelResourceUri);
+        return commandArgs.TextEditorService.ModelApi.UndoEditFactory(modelResourceUri);
     }
 
     public static TextEditorEdit RedoFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return commandArgs.TextEditorService.ModelApi
-            .RedoEditFactory(modelResourceUri);
+        return commandArgs.TextEditorService.ModelApi.RedoEditFactory(modelResourceUri);
     }
 
     public static TextEditorEdit RemeasureFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
-            editContext.TextEditorService.OptionsApi.SetRenderStateKey(
-                Key<RenderState>.NewKey());
-
+            editContext.TextEditorService.OptionsApi.SetRenderStateKey(Key<RenderState>.NewKey());
             return Task.CompletedTask;
         };
     }
 
     public static TextEditorEdit ScrollLineDownFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
             viewModelModifier.ViewModel.MutateScrollVerticalPositionByLines(1);
@@ -241,22 +177,16 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static TextEditorEdit ScrollLineUpFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
             viewModelModifier.ViewModel.MutateScrollVerticalPositionByLines(-1);
@@ -265,22 +195,16 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static TextEditorEdit ScrollPageDownFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
             viewModelModifier.ViewModel.MutateScrollVerticalPositionByPages(1);
@@ -289,22 +213,16 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static TextEditorEdit ScrollPageUpFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
             viewModelModifier.ViewModel.MutateScrollVerticalPositionByPages(-1);
@@ -313,22 +231,16 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static TextEditorEdit CursorMovePageBottomFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
             if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
@@ -345,22 +257,16 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static TextEditorEdit CursorMovePageTopFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
             if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
@@ -376,30 +282,21 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static TextEditorEdit DuplicateFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            var selectedText = TextEditorSelectionHelper.GetSelectedText(
-                primaryCursorModifier,
-                modelModifier);
+            var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
 
             TextEditorCursor cursorForInsertion;
-
             if (selectedText is null)
             {
                 // Select line
@@ -430,30 +327,22 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static TextEditorEdit IndentMoreFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null ||
-                primaryCursorModifier is null ||
-                !TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
-            {
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
-            }
 
-            var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
-                primaryCursorModifier);
+            if (!TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
+                return Task.CompletedTask;
+
+            var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier);
 
             var selectionBoundsInRowIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
                 modelModifier,
@@ -480,51 +369,36 @@ public class TextEditorCommandDefaultFunctions
             var upperBoundPositionIndexChange = selectionBoundsInRowIndexUnits.upperRowIndexExclusive -
                 selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
 
-            if (primaryCursorModifier.SelectionAnchorPositionIndex <
-                primaryCursorModifier.SelectionEndingPositionIndex)
+            if (primaryCursorModifier.SelectionAnchorPositionIndex < primaryCursorModifier.SelectionEndingPositionIndex)
             {
-                primaryCursorModifier.SelectionAnchorPositionIndex +=
-                    lowerBoundPositionIndexChange;
-
-                primaryCursorModifier.SelectionEndingPositionIndex +=
-                    upperBoundPositionIndexChange;
+                primaryCursorModifier.SelectionAnchorPositionIndex += lowerBoundPositionIndexChange;
+                primaryCursorModifier.SelectionEndingPositionIndex += upperBoundPositionIndexChange;
             }
             else
             {
-                primaryCursorModifier.SelectionAnchorPositionIndex +=
-                    upperBoundPositionIndexChange;
-
-                primaryCursorModifier.SelectionEndingPositionIndex +=
-                    lowerBoundPositionIndexChange;
+                primaryCursorModifier.SelectionAnchorPositionIndex += upperBoundPositionIndexChange;
+                primaryCursorModifier.SelectionEndingPositionIndex += lowerBoundPositionIndexChange;
             }
 
             primaryCursorModifier.SetColumnIndexAndPreferred(1 + primaryCursorModifier.ColumnIndex);
-
             return Task.CompletedTask;
         };
     }
 
     public static TextEditorEdit IndentLessFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
-                primaryCursorModifier);
+            var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier);
 
             var selectionBoundsInRowIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
                 modelModifier,
@@ -580,37 +454,22 @@ public class TextEditorCommandDefaultFunctions
                 {
                     isFirstLoop = false;
 
-                    if (primaryCursorModifier.SelectionAnchorPositionIndex <
-                        primaryCursorModifier.SelectionEndingPositionIndex)
-                    {
-                        primaryCursorModifier.SelectionAnchorPositionIndex -=
-                            removeCharacterCount;
-                    }
+                    if (primaryCursorModifier.SelectionAnchorPositionIndex < primaryCursorModifier.SelectionEndingPositionIndex)
+                        primaryCursorModifier.SelectionAnchorPositionIndex -= removeCharacterCount;
                     else
-                    {
-                        primaryCursorModifier.SelectionEndingPositionIndex -=
-                            removeCharacterCount;
-                    }
+                        primaryCursorModifier.SelectionEndingPositionIndex -= removeCharacterCount;
                 }
 
                 // Modify the upper bound of user's text selection
-                if (primaryCursorModifier.SelectionAnchorPositionIndex <
-                    primaryCursorModifier.SelectionEndingPositionIndex)
-                {
-                    primaryCursorModifier.SelectionEndingPositionIndex -=
-                        removeCharacterCount;
-                }
+                if (primaryCursorModifier.SelectionAnchorPositionIndex < primaryCursorModifier.SelectionEndingPositionIndex)
+                    primaryCursorModifier.SelectionEndingPositionIndex -= removeCharacterCount;
                 else
-                {
-                    primaryCursorModifier.SelectionAnchorPositionIndex -=
-                        removeCharacterCount;
-                }
+                    primaryCursorModifier.SelectionAnchorPositionIndex -= removeCharacterCount;
 
                 // Modify the column index of user's cursor
                 if (i == primaryCursorModifier.RowIndex)
                 {
-                    var nextColumnIndex = primaryCursorModifier.ColumnIndex -
-                        removeCharacterCount;
+                    var nextColumnIndex = primaryCursorModifier.ColumnIndex - removeCharacterCount;
 
                     primaryCursorModifier.RowIndex = primaryCursorModifier.RowIndex;
                     primaryCursorModifier.ColumnIndex = Math.Max(0, nextColumnIndex);
@@ -622,22 +481,16 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static TextEditorEdit ClearTextSelectionFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
             primaryCursorModifier.SelectionAnchorPositionIndex = null;
@@ -646,22 +499,16 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static TextEditorEdit NewLineBelowFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
             primaryCursorModifier.SelectionAnchorPositionIndex = null;
@@ -671,32 +518,22 @@ public class TextEditorCommandDefaultFunctions
             primaryCursorModifier.RowIndex = primaryCursorModifier.RowIndex;
             primaryCursorModifier.ColumnIndex = lengthOfRow;
 
-            modelModifier.EditByInsertion(
-                "\n",
-                cursorModifierBag,
-                CancellationToken.None);
-
+            modelModifier.EditByInsertion("\n", cursorModifierBag, CancellationToken.None);
             return Task.CompletedTask;
         };
     }
 
     public static TextEditorEdit NewLineAboveFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
             primaryCursorModifier.SelectionAnchorPositionIndex = null;
@@ -704,10 +541,7 @@ public class TextEditorCommandDefaultFunctions
             primaryCursorModifier.RowIndex = primaryCursorModifier.RowIndex;
             primaryCursorModifier.ColumnIndex = 0;
 
-            modelModifier.EditByInsertion(
-                "\n",
-                cursorModifierBag,
-                CancellationToken.None);
+            modelModifier.EditByInsertion("\n", cursorModifierBag, CancellationToken.None);
 
             if (primaryCursorModifier.RowIndex > 1)
             {
@@ -720,22 +554,16 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static TextEditorEdit GoToMatchingCharacterFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return async (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
             var cursorPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
@@ -782,16 +610,15 @@ public class TextEditorCommandDefaultFunctions
             if (characterToMatch is null || match is null)
                 return;
 
-            var directionToFindMatchingPunctuationCharacter =
-                KeyboardKeyFacts.DirectionToFindMatchingPunctuationCharacter(characterToMatch.Value);
+            var directionToFindMatchingPunctuationCharacter = KeyboardKeyFacts.DirectionToFindMatchingPunctuationCharacter(
+                characterToMatch.Value);
 
             if (directionToFindMatchingPunctuationCharacter is null)
                 return;
 
-            var unmatchedCharacters =
-                fallbackToPreviousCharacter && directionToFindMatchingPunctuationCharacter == -1
-                    ? 0
-                    : 1;
+            var unmatchedCharacters = fallbackToPreviousCharacter && -1 == directionToFindMatchingPunctuationCharacter
+                ? 0
+                : 1;
 
             while (true)
             {
@@ -833,36 +660,26 @@ public class TextEditorCommandDefaultFunctions
                 if (unmatchedCharacters == 0)
                     break;
 
-                if (positionIndex <= 0 ||
-                    positionIndex >= modelModifier.DocumentLength)
+                if (positionIndex <= 0 || positionIndex >= modelModifier.DocumentLength)
                     break;
             }
 
             if (commandArgs.ShouldSelectText)
-            {
-                primaryCursorModifier.SelectionEndingPositionIndex =
-                    modelModifier.GetPositionIndex(primaryCursorModifier);
-            }
+                primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
         };
     }
 
     public static TextEditorEdit GoToDefinitionFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return Task.CompletedTask;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
             if (modelModifier.CompilerService.Binder is null)
@@ -874,8 +691,7 @@ public class TextEditorCommandDefaultFunctions
             if (wordTextSpan is null)
                 return Task.CompletedTask;
 
-            var definitionTextSpan = modelModifier.CompilerService.Binder.GetDefinition(
-                wordTextSpan);
+            var definitionTextSpan = modelModifier.CompilerService.Binder.GetDefinition(wordTextSpan);
 
             if (definitionTextSpan is null)
                 return Task.CompletedTask;
@@ -886,7 +702,9 @@ public class TextEditorCommandDefaultFunctions
             {
                 if (commandArgs.TextEditorConfig.RegisterModelFunc is not null)
                 {
-                    commandArgs.TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(definitionTextSpan.ResourceUri, commandArgs.ServiceProvider));
+                    commandArgs.TextEditorConfig.RegisterModelFunc.Invoke(
+                        new RegisterModelArgs(definitionTextSpan.ResourceUri, commandArgs.ServiceProvider));
+
                     var definitionModelModifier = editContext.GetModelModifier(definitionTextSpan.ResourceUri);
 
                     if (definitionModel is null)
@@ -923,19 +741,16 @@ public class TextEditorCommandDefaultFunctions
             }
 
             var definitionViewModelKey = definitionViewModels.First().ViewModelKey;
+            
             var definitionViewModelModifier = editContext.GetViewModelModifier(definitionViewModelKey);
+            var definitionCursorModifierBag = editContext.GetCursorModifierBag(definitionViewModelModifier?.ViewModel);
+            var definitionPrimaryCursorModifier = editContext.GetPrimaryCursorModifier(definitionCursorModifierBag);
 
-            if (definitionViewModelModifier is null)
+            if (definitionViewModelModifier is null || definitionCursorModifierBag is null || definitionPrimaryCursorModifier is null)
                 return Task.CompletedTask;
 
             var rowData = definitionModel.GetRowInformationFromPositionIndex(definitionTextSpan.StartingIndexInclusive);
             var columnIndex = definitionTextSpan.StartingIndexInclusive - rowData.RowStartPositionIndexInclusive;
-
-            var definitionCursorModifierBag = editContext.GetCursorModifierBag(definitionViewModelModifier.ViewModel);
-            var definitionPrimaryCursorModifier = editContext.GetPrimaryCursorModifier(definitionCursorModifierBag);
-
-            if (definitionPrimaryCursorModifier is null)
-                return Task.CompletedTask;
 
             definitionPrimaryCursorModifier.SelectionAnchorPositionIndex = null;
             definitionPrimaryCursorModifier.RowIndex = rowData.RowIndex;
@@ -955,9 +770,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static TextEditorEdit ShowFindAllDialogFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (ITextEditorEditContext editContext) =>
         {
@@ -967,22 +780,16 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static TextEditorEdit ShowTooltipByCursorPositionFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorCommandArgs commandArgs)
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return async (ITextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
             if (commandArgs.JsRuntime is null || commandArgs.HandleMouseStoppedMovingEventAsyncFunc is null)

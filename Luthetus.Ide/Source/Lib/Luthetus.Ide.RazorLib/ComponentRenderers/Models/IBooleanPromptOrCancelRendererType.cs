@@ -6,7 +6,7 @@ public interface IBooleanPromptOrCancelRendererType
     public string Message { get; set; }
     public string? AcceptOptionTextOverride { get; set; }
     public string? DeclineOptionTextOverride { get; set; }
-    public Action OnAfterAcceptAction { get; set; }
-    public Action OnAfterDeclineAction { get; set; }
-    public Action OnAfterCancelAction { get; set; }
+    public Func<Task> OnAfterAcceptFunc { get; set; }
+    public Func<Task> OnAfterDeclineFunc { get; set; }
+    public Func<Task> OnAfterCancelFunc { get; set; }
 }

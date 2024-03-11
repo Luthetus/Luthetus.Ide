@@ -52,6 +52,8 @@ public record TextEditorViewModel : IDisposable
             textEditorService,
             () => textEditorService.ViewModelApi.GetOrDefault(viewModelKey),
             () => textEditorService.ViewModelApi.GetModelOrDefault(viewModelKey));
+
+        UnsafeState = new();
     }
 
 
@@ -145,12 +147,7 @@ public record TextEditorViewModel : IDisposable
     /// This property is what the find overlay input element binds to.
     /// </summary>
     public string FindOverlayValue { get; set; } = string.Empty;
-    /// <summary>
-    /// If one opens a file with the 'Enter' key, they might want focus to then be set on that
-    /// newly opened file. However, perhaps one wants the 'Space' key to also open the file,
-    /// but not set focus to it.
-    /// </summary>
-    public bool ShouldSetFocusAfterNextRender { get; set; }
+    public TextEditorViewModelUnsafeState UnsafeState { get; }
 
     public string BodyElementId => $"luth_te_text-editor-content_{ViewModelKey.Guid}";
     public string PrimaryCursorContentId => $"luth_te_text-editor-content_{ViewModelKey.Guid}_primary-cursor";

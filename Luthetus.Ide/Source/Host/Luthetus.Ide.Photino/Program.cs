@@ -42,9 +42,14 @@ class Program
             .SetDevToolsEnabled(true)
             .SetContextMenuEnabled(true)
             .SetUseOsDefaultSize(false)
-            .SetSize(2600, 1800)
+            .SetSize(2600, 2000)
             .SetLeft(50)
-            .SetTop(100);
+            .SetTop(50);
+
+		if (Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) == "C:\\Users\\hunte")
+        {
+            app.MainWindow.SetLeft(1_200);
+		}
 
         var continuousStartCts = new CancellationTokenSource();
         var blockingStartCts = new CancellationTokenSource();

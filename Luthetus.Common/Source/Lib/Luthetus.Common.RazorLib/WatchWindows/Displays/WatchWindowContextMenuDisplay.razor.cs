@@ -41,23 +41,23 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
                     {
                         try
                         {
-                            if (treeViewCommandArgs.TargetNode is null)
+                            if (treeViewCommandArgs.NodeThatReceivedMouseEvent is null)
                                 return;
 
-                            await treeViewCommandArgs.TargetNode.LoadChildListAsync().ConfigureAwait(false);
+                            await treeViewCommandArgs.NodeThatReceivedMouseEvent.LoadChildListAsync();
 
                             TreeViewService.ReRenderNode(
                                 WatchWindowDisplay.TreeViewContainerKey,
-                                treeViewCommandArgs.TargetNode);
+                                treeViewCommandArgs.NodeThatReceivedMouseEvent);
 
-                            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+                            await InvokeAsync(StateHasChanged);
                         }
                         catch (Exception e)
                         {
                             Console.WriteLine(e);
                             throw;
                         }
-                    }, CancellationToken.None).ConfigureAwait(false);
+                    }, CancellationToken.None);
                 }));
 
         return new MenuRecord(menuOptionRecordList.ToImmutableArray());

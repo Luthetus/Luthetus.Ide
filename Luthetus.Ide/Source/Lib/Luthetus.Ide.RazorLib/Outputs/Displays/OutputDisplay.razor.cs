@@ -192,7 +192,7 @@ public partial class OutputDisplay : FluxorComponent
             //        CancellationToken.None,
             //        () => Task.CompletedTask);
 
-            //    await generalTerminalSession.EnqueueCommandAsync(terminalCommand).ConfigureAwait(false);
+            //    await generalTerminalSession.EnqueueCommandAsync(terminalCommand);
             //}
 
             return Task.CompletedTask;

@@ -19,6 +19,85 @@
             Recent Changes:
 			<div>
                 <div>
+                    <div>v <em class="luth_em">0.8.0.0</em> (2024-03-11)</div>
+
+                    <ul>
+                        <li>
+							<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.TextEditor/Source/Lib/Luthetus.TextEditor.RazorLib/TextEditors/Models/TextEditorModels/TextEditorModelModifier.Partition.cs"
+                               target="_blank">
+                                TextEditorModelModifier.Partition.cs
+                            </a>
+                            Text Editor content is partitioned in 4096 character chunks.
+                        </li>
+						<li>
+							<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.TextEditor/Source/Lib/Luthetus.TextEditor.RazorLib/Edits/Displays/DirtyResourceUriInteractiveIconDisplay.razor.cs"
+                               target="_blank">
+                                DirtyResourceUriInteractiveIconDisplay.razor.cs
+                            </a>
+                            Text Editor models which are unsaved now appear in bottom right.
+                        </li>
+						<li>
+							<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.Common/Source/Lib/Luthetus.Common.RazorLib/PolymorphicUis/Displays/PolymorphicTabDisplay.razor.cs"
+                               target="_blank">
+                                PolymorphicTabDisplay.razor.cs
+                            </a>
+                            PolymorphicUi has been started. One can see it in action by
+							dragging a text editor tab off of the editor, and then letting go.
+							This will turn that tab into a dialog.
+                        </li>
+						<li>
+							<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.Common/Source/Lib/Luthetus.Common.RazorLib/Reactives/Models/ThrottleController.cs"
+                               target="_blank">
+                                ThrottleController.cs
+                            </a>
+                            ThrottleController has been started. All UI events are
+							passed through the same throttle. Furthermore, each UI event
+							can specify its own throttle delay, while maintaining
+							the execution by order in which the UI events occurred.
+                        </li>
+						<li>
+							<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.TextEditor/Source/Lib/Luthetus.TextEditor.RazorLib/TextEditors/Models/Internals/UiEvent/ThrottleEventOnKeyDown.cs"
+                               target="_blank">
+                                ThrottleEventOnKeyDown.cs
+                            </a>
+                            Text Editor event batching. By way of the previously mentioned
+							ThrottleController, consecutive UI events which are
+							batchable with one another. Will merge into a batch event.
+							For example, if 20 onkeydown events are waiting in the
+							throttle controller, then 1 onkeydownBatch event will occur
+							which contains all 20 onkeydown events.
+                        </li>
+						<li>
+							<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.Ide/Source/Lib/Luthetus.Ide.RazorLib/DotNetSolutions/Displays/SolutionExplorerContextMenu.razor.cs"
+                               target="_blank">
+                                SolutionExplorerContextMenu.razor.cs
+                            </a>
+                            Solution Explorer multi-select context menu options.
+							If one selects many files/directories, then the 'delete'
+							context menu option will be available. This option will
+							delete all the selected files/directories.
+                        </li>
+						<li>
+                            WASM Performance issues: with this update it seems
+							I introduced a UI thread blockage. Holding down
+							any key while typing in the text editor will freeze
+							the UI as a result (more or less) until one lets go.
+							I wanted to fix this issue before updating the website,
+							but there are so many vital changes in this update,
+							that I want to make them known.
+                        </li>
+						<li>
+                            Native IDE Performance issues: I find any file with more than
+							10,000 characters in it is a bit laggy. I'm still
+							able to myself, use the IDE to develop the IDE, but large
+							files aren't too great of an experience at the moment.
+							I wrote partitioning for text editor content in chunks of
+							4,096 characters. But, still there are many more optimizations
+							I have planned for large files optimization.
+                        </li>
+                    </ul>
+                </div>
+                <div>
                     <div>v <em class="luth_em">0.7.7.0</em> (2024-02-23)</div>
 
                     <ul>

@@ -18,14 +18,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
-
-                if (modelModifier is null || viewModelModifier is null)
-                    return Task.CompletedTask;
-
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (cursorModifierBag is null || primaryCursorModifier is null)
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
                 void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
@@ -50,20 +46,16 @@ public static partial class TextEditorCommandVimFacts
                         false);
 
                     if (columnIndexOfCharacterWithDifferingKind == -1)
-                    {
                         MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
-                    }
                     else
-                    {
-                        MutateIndexCoordinatesAndPreferredColumnIndex(
-                            columnIndexOfCharacterWithDifferingKind);
-                    }
+                        MutateIndexCoordinatesAndPreferredColumnIndex(columnIndexOfCharacterWithDifferingKind);
                 }
 
                 if (TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
                 {
                     primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(
-                        primaryCursorModifier.RowIndex, primaryCursorModifier.ColumnIndex);
+                        primaryCursorModifier.RowIndex,
+                        primaryCursorModifier.ColumnIndex);
                 }
 
                 return Task.CompletedTask;
@@ -80,20 +72,14 @@ public static partial class TextEditorCommandVimFacts
         }
 
         private static async Task PerformEndAsync(
-            TextEditorCommandArgs commandArgs,
-            ITextEditorEditContext editContext,
-            bool isRecursiveCall = false)
+            TextEditorCommandArgs commandArgs, ITextEditorEditContext editContext, bool isRecursiveCall = false)
         {
             var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
             void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
@@ -123,9 +109,8 @@ public static partial class TextEditorCommandVimFacts
                 }
                 else
                 {
-                    var columnsToMoveBy = columnIndexOfCharacterWithDifferingKind -
-                        primaryCursorModifier.ColumnIndex;
-
+                    var columnsToMoveBy = columnIndexOfCharacterWithDifferingKind - primaryCursorModifier.ColumnIndex;
+                    
                     MutateIndexCoordinatesAndPreferredColumnIndex(columnIndexOfCharacterWithDifferingKind);
 
                     if (columnsToMoveBy > 1)
@@ -138,8 +123,7 @@ public static partial class TextEditorCommandVimFacts
                         var currentCharacterKind = modelModifier.GetCharacterKind(positionIndex);
                         var nextCharacterKind = modelModifier.GetCharacterKind(positionIndex + 1);
 
-                        if (nextCharacterKind != CharacterKind.Bad &&
-                            currentCharacterKind == nextCharacterKind)
+                        if (nextCharacterKind != CharacterKind.Bad && currentCharacterKind == nextCharacterKind)
                         {
                             /*
                              * If the cursor is at the end of a word. Then the first End(...)
@@ -172,14 +156,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
-
-                if (modelModifier is null || viewModelModifier is null)
-                    return Task.CompletedTask;
-
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (cursorModifierBag is null || primaryCursorModifier is null)
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
                 void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
@@ -209,17 +189,11 @@ public static partial class TextEditorCommandVimFacts
                     if (columnIndexOfCharacterWithDifferingKind == -1)
                         MutateIndexCoordinatesAndPreferredColumnIndex(0);
                     else
-                    {
-                        MutateIndexCoordinatesAndPreferredColumnIndex(
-                            columnIndexOfCharacterWithDifferingKind);
-                    }
+                        MutateIndexCoordinatesAndPreferredColumnIndex(columnIndexOfCharacterWithDifferingKind);
                 }
 
                 if (TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
-                {
-                    primaryCursorModifier.SelectionEndingPositionIndex =
-                        modelModifier.GetPositionIndex(primaryCursorModifier);
-                }
+                    primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 
                 return Task.CompletedTask;
             };
@@ -231,14 +205,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
-
-                if (modelModifier is null || viewModelModifier is null)
-                    return;
-
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (cursorModifierBag is null || primaryCursorModifier is null)
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return;
 
                 var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
@@ -285,18 +255,14 @@ public static partial class TextEditorCommandVimFacts
             {
                 var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
-
-                if (modelModifier is null || viewModelModifier is null)
-                    return;
-
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (cursorModifierBag is null || primaryCursorModifier is null)
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return;
 
                 var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
-                ?? TextEditorKeymapFacts.DefaultKeymap;
+                    ?? TextEditorKeymapFacts.DefaultKeymap;
 
                 if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;

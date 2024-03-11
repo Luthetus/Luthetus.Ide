@@ -80,15 +80,11 @@ public class TextEditorCommandDefaultFactsTests
 				{
 					var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
 					var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
-
-					if (modelModifier is null || viewModelModifier is null)
-						return Task.CompletedTask;
-
-					var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+					var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 					var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-					if (primaryCursorModifier is null)
-                        return Task.CompletedTask;
+					if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+						return Task.CompletedTask;
 
 					primaryCursorModifier.RowIndex = 1;
 					primaryCursorModifier.SetColumnIndexAndPreferred(9);
@@ -154,14 +150,10 @@ public class TextEditorCommandDefaultFactsTests
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
-
-                    if (modelModifier is null || viewModelModifier is null)
-                        return Task.CompletedTask;
-
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                     var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
                     primaryCursorModifier.RowIndex = 1;
@@ -213,14 +205,10 @@ public class TextEditorCommandDefaultFactsTests
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
-
-                    if (modelModifier is null || viewModelModifier is null)
-                        return;
-
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                     var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return;
 
                     var stringToPaste = "Alphabet Soup\n";
@@ -259,14 +247,10 @@ public class TextEditorCommandDefaultFactsTests
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
-
-                    if (modelModifier is null || viewModelModifier is null)
-                        return;
-
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                     var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return;
 
                     var stringToPaste = "Alphabet Soup\n";
@@ -319,14 +303,10 @@ public class TextEditorCommandDefaultFactsTests
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
-
-                    if (modelModifier is null || viewModelModifier is null)
-                        return Task.CompletedTask;
-
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                     var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
                     viewModelModifier.ViewModel = viewModelModifier.ViewModel with
@@ -408,14 +388,10 @@ public class TextEditorCommandDefaultFactsTests
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
-
-                    if (modelModifier is null || viewModelModifier is null)
-                        return Task.CompletedTask;
-
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                     var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
                     // Select the "Hello" text on the first row
@@ -641,14 +617,10 @@ public class TextEditorCommandDefaultFactsTests
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
-
-                    if (modelModifier is null || viewModelModifier is null)
-                        return Task.CompletedTask;
-
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                     var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
                     primaryCursorModifier.RowIndex = 1;
@@ -695,14 +667,10 @@ public class TextEditorCommandDefaultFactsTests
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
-
-                    if (modelModifier is null || viewModelModifier is null)
-                        return Task.CompletedTask;
-
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                     var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
                     primaryCursorModifier.RowIndex = 1;
@@ -772,14 +740,10 @@ public class TextEditorCommandDefaultFactsTests
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
-
-                    if (modelModifier is null || viewModelModifier is null)
-                        return Task.CompletedTask;
-
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                     var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
                     primaryCursorModifier.RowIndex = 1;
@@ -850,14 +814,10 @@ public class TextEditorCommandDefaultFactsTests
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
-
-                    if (modelModifier is null || viewModelModifier is null)
-                        return Task.CompletedTask;
-
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                     var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
                     primaryCursorModifier.RowIndex = 0;
@@ -928,14 +888,10 @@ public class TextEditorCommandDefaultFactsTests
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
-
-                    if (modelModifier is null || viewModelModifier is null)
-                        return Task.CompletedTask;
-
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                     var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
                     primaryCursorModifier.RowIndex = 0;
@@ -1044,14 +1000,10 @@ public class TextEditorCommandDefaultFactsTests
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
-
-                    if (modelModifier is null || viewModelModifier is null)
-                        return;
-
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                     var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return;
 
                     // Insert a tab character at the start of the row under testing
@@ -1117,14 +1069,10 @@ public class TextEditorCommandDefaultFactsTests
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
-
-                    if (modelModifier is null || viewModelModifier is null)
-                        return Task.CompletedTask;
-
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                     var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
                     // Insert a tab character at the start of the row under testing
@@ -1190,14 +1138,10 @@ public class TextEditorCommandDefaultFactsTests
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
-
-                    if (modelModifier is null || viewModelModifier is null)
-                        return Task.CompletedTask;
-
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                     var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
                     // Insert a tab character at the start of the row under testing
@@ -1288,14 +1232,10 @@ public class TextEditorCommandDefaultFactsTests
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
-
-                    if (modelModifier is null || viewModelModifier is null)
-                        return Task.CompletedTask;
-
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                     var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
                     // Select the "Hello" text on the first row
@@ -1564,14 +1504,10 @@ public class Person
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
-
-                    if (modelModifier is null || viewModelModifier is null)
-                        return Task.CompletedTask;
-
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                     var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
                     modelModifier.ModifyContent(newContent);
@@ -1638,14 +1574,10 @@ public class Person
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
-
-                    if (modelModifier is null || viewModelModifier is null)
-                        return Task.CompletedTask;
-
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                     var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
                     modelModifier.ModifyContent(newContent);

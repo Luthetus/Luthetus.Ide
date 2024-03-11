@@ -1,4 +1,5 @@
-﻿using Fluxor;
+using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -52,7 +53,7 @@ public partial class TextEditorGroupTabDisplay : ComponentBase, IDisposable
 
     private async void TextEditorViewModelStateWrap_StateChanged(object? sender, EventArgs e)
     {
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()

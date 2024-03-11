@@ -31,7 +31,7 @@ public partial class InputFileEditAddress : ComponentBase
             try
             {
                 if (_inputTextEditForAddressElementReference is not null)
-                    await _inputTextEditForAddressElementReference.Value.FocusAsync().ConfigureAwait(false);
+                    await _inputTextEditForAddressElementReference.Value.FocusAsync();
             }
             catch (Exception)
             {
@@ -42,13 +42,13 @@ public partial class InputFileEditAddress : ComponentBase
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task InputTextEditForAddressOnFocusOutAsync()
     {
         if (!_isCancelled)
-            await OnFocusOutCallbackAsync.Invoke(_editForAddressValue).ConfigureAwait(false);
+            await OnFocusOutCallbackAsync.Invoke(_editForAddressValue);
     }
 
     private async Task InputTextEditForAddressOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
@@ -56,11 +56,11 @@ public partial class InputFileEditAddress : ComponentBase
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
             _isCancelled = true;
-            await OnEscapeKeyDownCallbackAsync.Invoke().ConfigureAwait(false);
+            await OnEscapeKeyDownCallbackAsync.Invoke();
         }
         else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
         {
-            await InputTextEditForAddressOnFocusOutAsync().ConfigureAwait(false);
+            await InputTextEditForAddressOnFocusOutAsync();
         }
     }
 }

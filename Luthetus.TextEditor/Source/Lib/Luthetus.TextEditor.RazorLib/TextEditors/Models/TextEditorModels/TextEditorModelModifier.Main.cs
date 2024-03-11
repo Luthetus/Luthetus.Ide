@@ -28,12 +28,42 @@ public partial class TextEditorModelModifier
 {
     private readonly TextEditorModel _textEditorModel;
 
-    public TextEditorModelModifier(TextEditorModel textEditorModel)
+    public TextEditorModelModifier(TextEditorModel model)
     {
-        _textEditorModel = textEditorModel;
+        if (model.PartitionSize < 2)
+            throw new ApplicationException($"{nameof(model)}.{nameof(PartitionSize)} must be >= 2");
+
+        PartitionSize = model.PartitionSize;
+        WasDirty = model.IsDirty;
+
+        _isDirty = model.IsDirty;
+
+        _textEditorModel = model;
+        _partitionList = _textEditorModel.PartitionList;
     }
 
-    private List<RichCharacter>? _contentList;
+    // (2024-02-29) Plan to add text editor partitioning #Step 100:
+    // --------------------------------------------------
+    // Change '_contentList' from 'List<RichCharacter>?' to 'List<List<RichCharacter>>?
+    //
+    // (2024-02-29) Plan to add text editor partitioning #Step 600:
+    // --------------------------------------------------
+    // '_contentList' is supposed to be an expression bound property, that performs
+    // a 'SelectMany()' over the '_partitionList'.
+    //
+    // Currently, this is not the case.
+    //
+    // So I'm going to make the change now.
+    private IReadOnlyList<RichCharacter> _contentList => _partitionList.SelectMany(x => x).ToImmutableList();
+    private ImmutableList<ImmutableList<RichCharacter>> _partitionList = new ImmutableList<RichCharacter>[] { ImmutableList<RichCharacter>.Empty }.ToImmutableList();
+
+    // (2024-02-29) Plan to add text editor partitioning #Step 100:
+    // --------------------------------------------------
+    // Provided that all edits are performed from this file, (TextEditorModelModifier.Main.cs),
+    // then any tracked data will continue to be tracked without issues.
+    //
+    // For example: '_editBlocksList' ideally would be partitioned too.
+    //              But, it should be left untouched until '_contentList' is partitioned.
     private List<EditBlock>? _editBlocksList;
     private List<RowEnding>? _rowEndingPositionsList;
     private List<(RowEndingKind rowEndingKind, int count)>? _rowEndingKindCountsList;
@@ -55,17 +85,27 @@ public partial class TextEditorModelModifier
     private ILuthCompilerService? _compilerService;
     private TextEditorSaveFileHelper? _textEditorSaveFileHelper;
     private int? _editBlockIndex;
+    private bool _isDirty;
     private (int rowIndex, int rowLength)? _mostCharactersOnASingleRowTuple;
     private Key<RenderState>? _renderStateKey = Key<RenderState>.NewKey();
     private Keymap? _textEditorKeymap;
     private TextEditorOptions? _textEditorOptions;
 
+    /// <summary>
+    /// This property optimizes the dirty state tracking. If _wasDirty != _isDirty then track the state change.
+    /// This involves writing to dependency injectable state, then triggering a re-render in the <see cref="Edits.Displays.DirtyResourceUriInteractiveIconDisplay"/>
+    /// </summary>
+    public bool WasDirty { get; }
+
+    private int PartitionSize { get; }
     public bool WasModified { get; internal set; }
 
     public TextEditorModel ToModel()
     {
         return new TextEditorModel(
             _contentList is null ? _textEditorModel.ContentList : _contentList.ToImmutableList(),
+            PartitionSize,
+            _partitionList is null ? _textEditorModel.PartitionList : _partitionList.ToImmutableList(),
             _editBlocksList is null ? _textEditorModel.EditBlocksList : _editBlocksList.ToImmutableList(),
             _rowEndingPositionsList is null ? _textEditorModel.RowEndingPositionsList : _rowEndingPositionsList.ToImmutableList(),
             _rowEndingKindCountsList is null ? _textEditorModel.RowEndingKindCountsList : _rowEndingKindCountsList.ToImmutableList(),
@@ -80,13 +120,30 @@ public partial class TextEditorModelModifier
             _compilerService ?? _textEditorModel.CompilerService,
             _textEditorSaveFileHelper ?? _textEditorModel.TextEditorSaveFileHelper,
             _editBlockIndex ?? _textEditorModel.EditBlockIndex,
+            IsDirty,
             _mostCharactersOnASingleRowTuple ?? _textEditorModel.MostCharactersOnASingleRowTuple,
             _renderStateKey ?? _textEditorModel.RenderStateKey);
     }
 
-    public void ClearContentList()
+	public void ClearContentList()
     {
-        _contentList = new();
+        SetIsDirtyTrue();
+
+        // (2024-02-29) Plan to add text editor partitioning #Step 500:
+        // --------------------------------------------------
+        // For the method named 'ClearContentList()', its goal is to clear the ContentList.
+        // 
+        // But, with the changes that are being made, ContentList is now an expression bound property,
+        // and dependent on the PartitionList.
+        //
+        // Therefore, I'm going to change the body of this method to set _partitionList to Empty.
+        _partitionList = new ImmutableList<RichCharacter>[] { ImmutableList<RichCharacter>.Empty }.ToImmutableList();
+
+        // (2024-02-29) Plan to add text editor partitioning #Step 500:
+        // --------------------------------------------------
+        // A thought in my head, if this method clears the rich characters,
+        // should it also be clearing the lists which track: line endings, tabs, etc...?
+        // Because upon invoking this method, then those lists would be invalid.
     }
 
     public void ClearRowEndingPositionsList()
@@ -178,9 +235,25 @@ public partial class TextEditorModelModifier
         TextEditorCursorModifierBag cursorModifierBag,
         CancellationToken cancellationToken)
     {
+        SetIsDirtyTrue();
+
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
-            _contentList ??= _textEditorModel.ContentList.ToList();
+            // (2024-02-29) Plan to add text editor partitioning #Step 500:
+            // --------------------------------------------------
+            // The _contentList and _textEditorModel.ContentList are now the same datatype,
+            // so no ".To...()" method needs to be invoked.
+            //
+            // Perhaps I can move the null coallesce assignments for '_contentList',
+            // to the 'TextEditorModelModifier' constructor.
+            //
+            // (2024-02-29) Plan to add text editor partitioning #Step 900:
+            // --------------------------------------------------
+            // I'm receiving a compilation error that '_contentList' cannot be assigned to,
+            // because it is readonly.
+            //
+            // For this reasoning, I'm going to remove all the code statements
+            // of '_contentList ??= _textEditorModel.ContentList;'
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
             _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
@@ -204,6 +277,7 @@ public partial class TextEditorModelModifier
                         Key = KeyboardKeyFacts.MetaKeys.DELETE,
                     },
                     cursorModifierBag,
+                    1,
                     CancellationToken.None);
 
                 // Move cursor to lower bound of text selection
@@ -245,7 +319,7 @@ public partial class TextEditorModelModifier
 
                 characterCountInserted = rowEndingKindToInsert.AsCharacters().Length;
 
-                _contentList.InsertRange(cursorPositionIndex, richCharacters);
+                PartitionList_InsertRange(cursorPositionIndex, richCharacters);
 
                 RowEndingPositionsList.Insert(
                     cursorModifier.RowIndex,
@@ -284,7 +358,7 @@ public partial class TextEditorModelModifier
                     DecorationByte = default,
                 };
 
-                ContentList.Insert(cursorPositionIndex, richCharacterToInsert);
+                PartitionList_Insert(cursorPositionIndex, richCharacterToInsert);
 
                 cursorModifier.ColumnIndex++;
                 cursorModifier.PreferredColumnIndex = cursorModifier.ColumnIndex;
@@ -353,270 +427,294 @@ public partial class TextEditorModelModifier
         }
     }
 
-    private void PerformDeletions(
+    public void PerformDeletions(
         KeyboardEventArgs keyboardEventArgs,
         TextEditorCursorModifierBag cursorModifierBag,
+        int count,
         CancellationToken cancellationToken)
     {
+        SetIsDirtyTrue();
+
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
             _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
-            _contentList ??= _textEditorModel.ContentList.ToList();
+            // (2024-02-29) Plan to add text editor partitioning #Step 500:
+            // --------------------------------------------------
+            // The _contentList and _textEditorModel.ContentList are now the same datatype,
+            // so no ".To...()" method needs to be invoked.
+            //
+            // Perhaps I can move the null coallesce assignments for '_contentList',
+            // to the 'TextEditorModelModifier' constructor.
+            //
+            // (2024-02-29) Plan to add text editor partitioning #Step 900:
+            // --------------------------------------------------
+            // I'm receiving a compilation error that '_contentList' cannot be assigned to,
+            // because it is readonly.
+            //
+            // For this reasoning, I'm going to remove all the code statements
+            // of '_contentList ??= _textEditorModel.ContentList;'
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
         }
 
         EnsureUndoPoint(TextEditKind.Deletion);
 
-        foreach (var cursorModifier in cursorModifierBag.List)
+        // Awkward batching foreach loop. Need to continue improving this.
+        // Multi-cursor logic also causes some oddities.
+        // Can one do per multi-cursor the batch entirely then move on to the next cursor?
+        // It is believed one would need to iterate the cursors per batch entry instead. These don't seem equivalent.
+        foreach (var _ in Enumerable.Range(0, count)) 
         {
-            var startOfRowPositionIndex = this.GetRowEndingThatCreatedRow(cursorModifier.RowIndex).EndPositionIndexExclusive;
-            var cursorPositionIndex = startOfRowPositionIndex + cursorModifier.ColumnIndex;
-
-            // If cursor is out of bounds then continue
-            if (cursorPositionIndex > ContentList.Count)
-                continue;
-
-            int startingPositionIndexToRemoveInclusive;
-            int countToRemove;
-            bool moveBackwards;
-
-            // Cannot calculate this after text was deleted - it would be wrong
-            int? selectionUpperBoundRowIndex = null;
-            // Needed for when text selection is deleted
-            (int rowIndex, int columnIndex)? selectionLowerBoundIndexCoordinates = null;
-
-            // TODO: The deletion logic should be the same whether it be 'Delete' 'Backspace' 'CtrlModified' or 'DeleteSelection'. What should change is one needs to calculate the starting and ending index appropriately foreach case.
-            if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
+            foreach (var cursorModifier in cursorModifierBag.List)
             {
-                var lowerPositionIndexInclusiveBound = cursorModifier.SelectionAnchorPositionIndex ?? 0;
-                var upperPositionIndexExclusive = cursorModifier.SelectionEndingPositionIndex;
+                var startOfRowPositionIndex = this.GetRowEndingThatCreatedRow(cursorModifier.RowIndex).EndPositionIndexExclusive;
+                var cursorPositionIndex = startOfRowPositionIndex + cursorModifier.ColumnIndex;
 
-                if (lowerPositionIndexInclusiveBound > upperPositionIndexExclusive)
-                    (lowerPositionIndexInclusiveBound, upperPositionIndexExclusive) = (upperPositionIndexExclusive, lowerPositionIndexInclusiveBound);
+                // If cursor is out of bounds then continue
+                if (cursorPositionIndex > ContentList.Count)
+                    continue;
 
-                var lowerRowMetaData = this.GetRowInformationFromPositionIndex(lowerPositionIndexInclusiveBound);
-                var upperRowMetaData = this.GetRowInformationFromPositionIndex(upperPositionIndexExclusive);
+                int startingPositionIndexToRemoveInclusive;
+                int countToRemove;
+                bool moveBackwards;
 
-                // Value is needed when knowing what row ending positions to update after deletion is done
-                selectionUpperBoundRowIndex = upperRowMetaData.RowIndex;
+                // Cannot calculate this after text was deleted - it would be wrong
+                int? selectionUpperBoundRowIndex = null;
+                // Needed for when text selection is deleted
+                (int rowIndex, int columnIndex)? selectionLowerBoundIndexCoordinates = null;
 
-                // Value is needed when knowing where to position the cursor after deletion is done
-                selectionLowerBoundIndexCoordinates = (lowerRowMetaData.RowIndex,
-                    lowerPositionIndexInclusiveBound - lowerRowMetaData.RowStartPositionIndexInclusive);
-
-                startingPositionIndexToRemoveInclusive = upperPositionIndexExclusive - 1;
-                countToRemove = upperPositionIndexExclusive - lowerPositionIndexInclusiveBound;
-                moveBackwards = true;
-
-                cursorModifier.SelectionAnchorPositionIndex = null;
-            }
-            else if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventArgs.Key)
-            {
-                moveBackwards = true;
-
-                if (keyboardEventArgs.CtrlKey)
+                // TODO: The deletion logic should be the same whether it be 'Delete' 'Backspace' 'CtrlModified' or 'DeleteSelection'. What should change is one needs to calculate the starting and ending index appropriately foreach case.
+                if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
                 {
-                    var columnIndexOfCharacterWithDifferingKind = this.GetColumnIndexOfCharacterWithDifferingKind(
-                        cursorModifier.RowIndex,
-                        cursorModifier.ColumnIndex,
-                        moveBackwards);
+                    var lowerPositionIndexInclusiveBound = cursorModifier.SelectionAnchorPositionIndex ?? 0;
+                    var upperPositionIndexExclusive = cursorModifier.SelectionEndingPositionIndex;
 
-                    columnIndexOfCharacterWithDifferingKind = columnIndexOfCharacterWithDifferingKind == -1
-                        ? 0
-                        : columnIndexOfCharacterWithDifferingKind;
+                    if (lowerPositionIndexInclusiveBound > upperPositionIndexExclusive)
+                        (lowerPositionIndexInclusiveBound, upperPositionIndexExclusive) = (upperPositionIndexExclusive, lowerPositionIndexInclusiveBound);
 
-                    countToRemove = cursorModifier.ColumnIndex -
-                        columnIndexOfCharacterWithDifferingKind;
+                    var lowerRowMetaData = this.GetRowInformationFromPositionIndex(lowerPositionIndexInclusiveBound);
+                    var upperRowMetaData = this.GetRowInformationFromPositionIndex(upperPositionIndexExclusive);
 
-                    countToRemove = countToRemove == 0
-                        ? 1
-                        : countToRemove;
+                    // Value is needed when knowing what row ending positions to update after deletion is done
+                    selectionUpperBoundRowIndex = upperRowMetaData.RowIndex;
+
+                    // Value is needed when knowing where to position the cursor after deletion is done
+                    selectionLowerBoundIndexCoordinates = (lowerRowMetaData.RowIndex,
+                        lowerPositionIndexInclusiveBound - lowerRowMetaData.RowStartPositionIndexInclusive);
+
+                    startingPositionIndexToRemoveInclusive = upperPositionIndexExclusive - 1;
+                    countToRemove = upperPositionIndexExclusive - lowerPositionIndexInclusiveBound;
+                    moveBackwards = true;
+
+                    cursorModifier.SelectionAnchorPositionIndex = null;
+                }
+                else if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventArgs.Key)
+                {
+                    moveBackwards = true;
+
+                    if (keyboardEventArgs.CtrlKey)
+                    {
+                        var columnIndexOfCharacterWithDifferingKind = this.GetColumnIndexOfCharacterWithDifferingKind(
+                            cursorModifier.RowIndex,
+                            cursorModifier.ColumnIndex,
+                            moveBackwards);
+
+                        columnIndexOfCharacterWithDifferingKind = columnIndexOfCharacterWithDifferingKind == -1
+                            ? 0
+                            : columnIndexOfCharacterWithDifferingKind;
+
+                        countToRemove = cursorModifier.ColumnIndex -
+                            columnIndexOfCharacterWithDifferingKind;
+
+                        countToRemove = countToRemove == 0
+                            ? 1
+                            : countToRemove;
+                    }
+                    else
+                    {
+                        countToRemove = 1;
+                    }
+
+                    startingPositionIndexToRemoveInclusive = cursorPositionIndex - 1;
+                }
+                else if (KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key)
+                {
+                    moveBackwards = false;
+
+                    if (keyboardEventArgs.CtrlKey)
+                    {
+                        var columnIndexOfCharacterWithDifferingKind = this.GetColumnIndexOfCharacterWithDifferingKind(
+                            cursorModifier.RowIndex,
+                            cursorModifier.ColumnIndex,
+                            moveBackwards);
+
+                        columnIndexOfCharacterWithDifferingKind = columnIndexOfCharacterWithDifferingKind == -1
+                            ? this.GetLengthOfRow(cursorModifier.RowIndex)
+                            : columnIndexOfCharacterWithDifferingKind;
+
+                        countToRemove = columnIndexOfCharacterWithDifferingKind -
+                            cursorModifier.ColumnIndex;
+
+                        countToRemove = countToRemove == 0
+                            ? 1
+                            : countToRemove;
+                    }
+                    else
+                    {
+                        countToRemove = 1;
+                    }
+
+                    startingPositionIndexToRemoveInclusive = cursorPositionIndex;
                 }
                 else
                 {
-                    countToRemove = 1;
+                    throw new ApplicationException($"The keyboard key: {keyboardEventArgs.Key} was not recognized");
                 }
 
-                startingPositionIndexToRemoveInclusive = cursorPositionIndex - 1;
-            }
-            else if (KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key)
-            {
-                moveBackwards = false;
+                var charactersRemovedCount = 0;
+                var rowsRemovedCount = 0;
 
-                if (keyboardEventArgs.CtrlKey)
+                var indexToRemove = startingPositionIndexToRemoveInclusive;
+
+                while (countToRemove-- > 0)
                 {
-                    var columnIndexOfCharacterWithDifferingKind = this.GetColumnIndexOfCharacterWithDifferingKind(
-                        cursorModifier.RowIndex,
-                        cursorModifier.ColumnIndex,
-                        moveBackwards);
+                    if (indexToRemove < 0 || indexToRemove > ContentList.Count - 1)
+                        break;
 
-                    columnIndexOfCharacterWithDifferingKind = columnIndexOfCharacterWithDifferingKind == -1
-                        ? this.GetLengthOfRow(cursorModifier.RowIndex)
-                        : columnIndexOfCharacterWithDifferingKind;
+                    var characterToDelete = ContentList[indexToRemove];
 
-                    countToRemove = columnIndexOfCharacterWithDifferingKind -
-                        cursorModifier.ColumnIndex;
+                    int startingIndexToRemoveRange;
+                    int countToRemoveRange;
 
-                    countToRemove = countToRemove == 0
-                        ? 1
-                        : countToRemove;
-                }
-                else
-                {
-                    countToRemove = 1;
-                }
+                    if (KeyboardKeyFacts.IsLineEndingCharacter(characterToDelete.Value))
+                    {
+                        rowsRemovedCount++;
 
-                startingPositionIndexToRemoveInclusive = cursorPositionIndex;
-            }
-            else
-            {
-                throw new ApplicationException($"The keyboard key: {keyboardEventArgs.Key} was not recognized");
-            }
+                        // rep.positionIndex == indexToRemove + 1
+                        //     ^is for backspace
+                        //
+                        // rep.positionIndex == indexToRemove + 2
+                        //     ^is for delete
+                        var rowEndingTupleIndex = _rowEndingPositionsList.FindIndex(rep =>
+                            rep.EndPositionIndexExclusive == indexToRemove + 1 ||
+                            rep.EndPositionIndexExclusive == indexToRemove + 2);
 
-            var charactersRemovedCount = 0;
-            var rowsRemovedCount = 0;
+                        var rowEndingTuple = RowEndingPositionsList[rowEndingTupleIndex];
 
-            var indexToRemove = startingPositionIndexToRemoveInclusive;
+                        RowEndingPositionsList.RemoveAt(rowEndingTupleIndex);
 
-            while (countToRemove-- > 0)
-            {
-                if (indexToRemove < 0 || indexToRemove > ContentList.Count - 1)
-                    break;
+                        var lengthOfRowEnding = rowEndingTuple.RowEndingKind.AsCharacters().Length;
 
-                var characterToDelete = ContentList[indexToRemove];
+                        if (moveBackwards)
+                            startingIndexToRemoveRange = indexToRemove - (lengthOfRowEnding - 1);
+                        else
+                            startingIndexToRemoveRange = indexToRemove;
 
-                int startingIndexToRemoveRange;
-                int countToRemoveRange;
+                        countToRemove -= lengthOfRowEnding - 1;
+                        countToRemoveRange = lengthOfRowEnding;
 
-                if (KeyboardKeyFacts.IsLineEndingCharacter(characterToDelete.Value))
-                {
-                    rowsRemovedCount++;
+                        MutateRowEndingKindCount(rowEndingTuple.RowEndingKind, -1);
+                    }
+                    else
+                    {
+                        if (characterToDelete.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+                            TabKeyPositionsList.Remove(indexToRemove);
 
-                    // rep.positionIndex == indexToRemove + 1
-                    //     ^is for backspace
-                    //
-                    // rep.positionIndex == indexToRemove + 2
-                    //     ^is for delete
-                    var rowEndingTupleIndex = _rowEndingPositionsList.FindIndex(rep =>
-                        rep.EndPositionIndexExclusive == indexToRemove + 1 ||
-                        rep.EndPositionIndexExclusive == indexToRemove + 2);
+                        startingIndexToRemoveRange = indexToRemove;
+                        countToRemoveRange = 1;
+                    }
 
-                    var rowEndingTuple = RowEndingPositionsList[rowEndingTupleIndex];
+                    charactersRemovedCount += countToRemoveRange;
 
-                    RowEndingPositionsList.RemoveAt(rowEndingTupleIndex);
-
-                    var lengthOfRowEnding = rowEndingTuple.RowEndingKind.AsCharacters().Length;
+                    PartitionList_RemoveRange(startingIndexToRemoveRange, countToRemoveRange);
 
                     if (moveBackwards)
-                        startingIndexToRemoveRange = indexToRemove - (lengthOfRowEnding - 1);
-                    else
-                        startingIndexToRemoveRange = indexToRemove;
+                        indexToRemove -= countToRemoveRange;
+                }
 
-                    countToRemove -= lengthOfRowEnding - 1;
-                    countToRemoveRange = lengthOfRowEnding;
+                if (charactersRemovedCount == 0 && rowsRemovedCount == 0)
+                    return;
 
-                    MutateRowEndingKindCount(rowEndingTuple.RowEndingKind, -1);
+                if (moveBackwards && !selectionUpperBoundRowIndex.HasValue)
+                {
+                    var startOfCurrentRowPositionIndex = this
+                        .GetRowEndingThatCreatedRow(cursorModifier.RowIndex - rowsRemovedCount)
+                        .EndPositionIndexExclusive;
+
+                    var endingPositionIndex = cursorPositionIndex - charactersRemovedCount;
+                
+                    cursorModifier.RowIndex -= rowsRemovedCount;
+                    cursorModifier.SetColumnIndexAndPreferred(endingPositionIndex - startOfCurrentRowPositionIndex);
+                }
+
+                int firstRowIndexToModify;
+
+                if (selectionUpperBoundRowIndex.HasValue)
+                {
+                    firstRowIndexToModify = selectionLowerBoundIndexCoordinates!.Value.rowIndex;
+                    cursorModifier.RowIndex = selectionLowerBoundIndexCoordinates!.Value.rowIndex;
+                    cursorModifier.SetColumnIndexAndPreferred(selectionLowerBoundIndexCoordinates!.Value.columnIndex);
                 }
                 else
                 {
-                    if (characterToDelete.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
-                        TabKeyPositionsList.Remove(indexToRemove);
-
-                    startingIndexToRemoveRange = indexToRemove;
-                    countToRemoveRange = 1;
+                    firstRowIndexToModify = cursorModifier.RowIndex;
                 }
 
-                charactersRemovedCount += countToRemoveRange;
-
-                _contentList.RemoveRange(startingIndexToRemoveRange, countToRemoveRange);
-
-                if (moveBackwards)
-                    indexToRemove -= countToRemoveRange;
-            }
-
-            if (charactersRemovedCount == 0 && rowsRemovedCount == 0)
-                return;
-
-            if (moveBackwards && !selectionUpperBoundRowIndex.HasValue)
-            {
-                var startOfCurrentRowPositionIndex = this
-                    .GetRowEndingThatCreatedRow(cursorModifier.RowIndex - rowsRemovedCount)
-                    .EndPositionIndexExclusive;
-
-                var endingPositionIndex = cursorPositionIndex - charactersRemovedCount;
-                
-                cursorModifier.RowIndex -= rowsRemovedCount;
-                cursorModifier.SetColumnIndexAndPreferred(endingPositionIndex - startOfCurrentRowPositionIndex);
-            }
-
-            int firstRowIndexToModify;
-
-            if (selectionUpperBoundRowIndex.HasValue)
-            {
-                firstRowIndexToModify = selectionLowerBoundIndexCoordinates!.Value.rowIndex;
-                cursorModifier.RowIndex = selectionLowerBoundIndexCoordinates!.Value.rowIndex;
-                cursorModifier.SetColumnIndexAndPreferred(selectionLowerBoundIndexCoordinates!.Value.columnIndex);
-            }
-            else
-            {
-                firstRowIndexToModify = cursorModifier.RowIndex;
-            }
-
-            for (var i = firstRowIndexToModify; i < RowEndingPositionsList.Count; i++)
-            {
-                var rowEndingTuple = RowEndingPositionsList[i];
-                rowEndingTuple.StartPositionIndexInclusive -= charactersRemovedCount;
-                rowEndingTuple.EndPositionIndexExclusive -= charactersRemovedCount;
-            }
-
-            var firstTabKeyPositionIndexToModify = _tabKeyPositionsList.FindIndex(x => x >= startingPositionIndexToRemoveInclusive);
-
-            if (firstTabKeyPositionIndexToModify != -1)
-            {
-                for (var i = firstTabKeyPositionIndexToModify; i < TabKeyPositionsList.Count; i++)
+                for (var i = firstRowIndexToModify; i < RowEndingPositionsList.Count; i++)
                 {
-                    TabKeyPositionsList[i] -= charactersRemovedCount;
+                    var rowEndingTuple = RowEndingPositionsList[i];
+                    rowEndingTuple.StartPositionIndexInclusive -= charactersRemovedCount;
+                    rowEndingTuple.EndPositionIndexExclusive -= charactersRemovedCount;
                 }
-            }
 
-            // Reposition the Diagnostic Squigglies
-            {
-                var textSpanForInsertion = new TextEditorTextSpan(
-                    cursorPositionIndex,
-                    cursorPositionIndex + charactersRemovedCount,
-                    0,
-                    new(string.Empty),
-                    string.Empty);
+                var firstTabKeyPositionIndexToModify = _tabKeyPositionsList.FindIndex(x => x >= startingPositionIndexToRemoveInclusive);
 
-                var textModification = new TextEditorTextModification(false, textSpanForInsertion);
-
-                foreach (var presentationModel in PresentationModelsList)
+                if (firstTabKeyPositionIndexToModify != -1)
                 {
-                    presentationModel.CompletedCalculation?.TextModificationsSinceRequestList.Add(textModification);
-                    presentationModel.PendingCalculation?.TextModificationsSinceRequestList.Add(textModification);
+                    for (var i = firstTabKeyPositionIndexToModify; i < TabKeyPositionsList.Count; i++)
+                    {
+                        TabKeyPositionsList[i] -= charactersRemovedCount;
+                    }
                 }
-            }
-        }
 
-        // TODO: Fix tracking the MostCharactersOnASingleRowTuple this way is possibly inefficient - should instead only check the rows that changed
-        {
-            (int rowIndex, int rowLength) localMostCharactersOnASingleRowTuple = (0, 0);
-
-            for (var i = 0; i < RowEndingPositionsList.Count; i++)
-            {
-                var lengthOfRow = this.GetLengthOfRow(i);
-
-                if (lengthOfRow > localMostCharactersOnASingleRowTuple.rowLength)
+                // Reposition the Diagnostic Squigglies
                 {
-                    localMostCharactersOnASingleRowTuple = (i, lengthOfRow);
+                    var textSpanForInsertion = new TextEditorTextSpan(
+                        cursorPositionIndex,
+                        cursorPositionIndex + charactersRemovedCount,
+                        0,
+                        new(string.Empty),
+                        string.Empty);
+
+                    var textModification = new TextEditorTextModification(false, textSpanForInsertion);
+
+                    foreach (var presentationModel in PresentationModelsList)
+                    {
+                        presentationModel.CompletedCalculation?.TextModificationsSinceRequestList.Add(textModification);
+                        presentationModel.PendingCalculation?.TextModificationsSinceRequestList.Add(textModification);
+                    }
                 }
             }
 
-            localMostCharactersOnASingleRowTuple = (localMostCharactersOnASingleRowTuple.rowIndex,
-                localMostCharactersOnASingleRowTuple.rowLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+            // TODO: Fix tracking the MostCharactersOnASingleRowTuple this way is possibly inefficient - should instead only check the rows that changed
+            {
+                (int rowIndex, int rowLength) localMostCharactersOnASingleRowTuple = (0, 0);
 
-            _mostCharactersOnASingleRowTuple = localMostCharactersOnASingleRowTuple;
+                for (var i = 0; i < RowEndingPositionsList.Count; i++)
+                {
+                    var lengthOfRow = this.GetLengthOfRow(i);
+
+                    if (lengthOfRow > localMostCharactersOnASingleRowTuple.rowLength)
+                    {
+                        localMostCharactersOnASingleRowTuple = (i, lengthOfRow);
+                    }
+                }
+
+                localMostCharactersOnASingleRowTuple = (localMostCharactersOnASingleRowTuple.rowIndex,
+                    localMostCharactersOnASingleRowTuple.rowLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+
+                _mostCharactersOnASingleRowTuple = localMostCharactersOnASingleRowTuple;
+            }
         }
     }
 
@@ -676,12 +774,28 @@ public partial class TextEditorModelModifier
 
     public void ModifyContent(string content)
     {
+        SetIsDirtyTrue();
+
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
             _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
-            _contentList ??= _textEditorModel.ContentList.ToList();
+            // (2024-02-29) Plan to add text editor partitioning #Step 500:
+            // --------------------------------------------------
+            // The _contentList and _textEditorModel.ContentList are now the same datatype,
+            // so no ".To...()" method needs to be invoked.
+            //
+            // Perhaps I can move the null coallesce assignments for '_contentList',
+            // to the 'TextEditorModelModifier' constructor.
+            //
+            // (2024-02-29) Plan to add text editor partitioning #Step 900:
+            // --------------------------------------------------
+            // I'm receiving a compilation error that '_contentList' cannot be assigned to,
+            // because it is readonly.
+            //
+            // For this reasoning, I'm going to remove all the code statements
+            // of '_contentList ??= _textEditorModel.ContentList;'
             _rowEndingKindCountsList ??= _textEditorModel.RowEndingKindCountsList.ToList();
         }
 
@@ -744,12 +858,65 @@ public partial class TextEditorModelModifier
 
             previousCharacter = character;
 
-            ContentList.Add(new RichCharacter
-            {
-                Value = character,
-                DecorationByte = default,
-            });
+            // (2024-02-29) Plan to add text editor partitioning #Step 700:
+            // --------------------------------------------------
+            // Here 'ContentList.Add(...)' is being invoked.
+            //
+            // Prior to the changes, 'ContentList' was a List<T> and therefore,
+            // the 'Add' could be invoked, without needing to reassign 'ContentList'
+            // to the methods output.
+            //
+            // But, even more important, is that 'ContentList' shouldn't even be modified at
+            // all. It is to be an expression bound property, which is dependent on PartitionList.
+            //
+            // This 'ContentList.Add(...)' invocation does not result in a compilation error.
+            // Could I make a change so that the compiler marks invocations like this as an error?
+            //
+            // I'm going to change 'ContentList' to an 'IReadOnlyList'. This will remove the
+            // 'Add(...)' API, and therefore result in any attempts to invoke that method,
+            // be a compilation error.
+            //
+            // Then, I can look through the compilation errors to find all the places where
+            // I need to make a change.
+            //
+            // (2024-02-29) Plan to add text editor partitioning #Step 800:
+            // --------------------------------------------------
+            // I made the change from 'ImmutableList<T>' to 'IReadOnlyList<T>'.
+            // 
+            // And now, I'm receiving compilation errors when an attempt is made to
+            // invoke the method 'Add(...)' on 'ContentList'.
+            //
+            // What would I want to change these invocations to?
+            //
+            // The idea of invoking anything on 'ContentList' is likely not the way to go.
+            // Instead I'd be looking to make changes to the 'PartitionList'
+            //
+            // The 'PartitionList' is currently of type 'ImmutableList<ImmutableList<RichCharacter>>'.
+            // Just invoking 'Add(...)' alone on 'PartitionList' will not suffice.
+            //
+            // I noted early on when starting these changes, that if I stay within the 'TextEditorModelModifier.Main.cs',
+            // when changing the partitions, then all the tracked data such as: line endings, tabs, etc...; these will all
+            // continue to work.
+            //
+            // For that reasoning, I don't want to create a 'PartitionContainer' datatype. The internals of
+            // when to create a new partition, when to remove one, or  when to merge, are too specific to the datatype
+            // I'm storing. The 'PartitionContainer' needs to understand what a "\r\n" means for example.
+            // As if one partition ends in a "\r", and the next starts with a "\n", those two characters need to somehow
+            // be moved to the same partition.
+            //
+            // The most clear way to deal with this, as I see it, is to make functions in 'TextEditorModelModifier.Main.cs'
+            // as opposed an entirely new type.
+            //
+            // What I'll aim to do here is: anywhere I get an invocation on 'ContentList' for 'Add', 'Remove', or any other
+            // List modification method, I'm going to make a corresponding method on the 'TextEditorModelModifier'
+            // to handle that scenario.
         }
+
+        PartitionList_InsertRange(0, content.Select(x => new RichCharacter
+        {
+            Value = x,
+            DecorationByte = default,
+        }));
 
         _rowEndingKindCountsList.AddRange(new List<(RowEndingKind rowEndingKind, int count)>
         {
@@ -786,6 +953,7 @@ public partial class TextEditorModelModifier
                 PerformDeletions(
                     keyboardEventArgs,
                     cursorModifierBag,
+                    1,
                     cancellationToken);
             }
         }
@@ -1018,6 +1186,16 @@ public partial class TextEditorModelModifier
         var restoreEditBlock = EditBlocksList[EditBlockIndex];
 
         ModifyContent(restoreEditBlock.ContentSnapshot);
+    }
+
+    public void SetIsDirtyTrue()
+    {
+        _isDirty = true;
+    }
+    
+    public void SetIsDirtyFalse()
+    {
+        _isDirty = false;
     }
 
     public TextEditorModel ForceRerenderAction()

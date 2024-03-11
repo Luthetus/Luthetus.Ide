@@ -1,4 +1,5 @@
-﻿using Fluxor;
+using Fluxor;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
@@ -20,6 +21,9 @@ public partial class TextEditorViewModelState
             if (inViewModel is not null)
                 return inState;
 
+            if (registerAction.ViewModelKey == Key<TextEditorViewModel>.Empty)
+                throw new InvalidOperationException($"Provided {nameof(Key<TextEditorViewModel>)} cannot be {nameof(Key<TextEditorViewModel>)}.{Key<TextEditorViewModel>.Empty}");
+
             var viewModel = new TextEditorViewModel(
                 registerAction.ViewModelKey,
                 registerAction.ResourceUri,
@@ -30,7 +34,14 @@ public partial class TextEditorViewModelState
 
             var outViewModelList = inState.ViewModelList.Add(viewModel);
 
-            return new TextEditorViewModelState { ViewModelList = outViewModelList };
+            var outViewModelPolymorphicUiList = inState.ViewModelPolymorphicUiList.Add(
+				new(viewModel.ViewModelKey));
+
+            return new TextEditorViewModelState
+			{
+				ViewModelList = outViewModelList,
+				ViewModelPolymorphicUiList = outViewModelPolymorphicUiList,
+			};
         }
 
         [ReducerMethod]
@@ -45,9 +56,20 @@ public partial class TextEditorViewModelState
                 return inState;
 
             var outViewModelList = inState.ViewModelList.Remove(inViewModel);
+			
+			var polymorphicUi = inState.ViewModelPolymorphicUiList.FirstOrDefault(
+				x => x.ViewModelKey == disposeAction.ViewModelKey);
+
+			var outViewModelPolymorphicUiList = inState.ViewModelPolymorphicUiList.Remove(
+				polymorphicUi);
+
             inViewModel.Dispose();
 
-            return new TextEditorViewModelState { ViewModelList = outViewModelList };
+            return new TextEditorViewModelState
+			{
+				ViewModelList = outViewModelList,
+				ViewModelPolymorphicUiList = outViewModelPolymorphicUiList,
+			};
         }
 
         [ReducerMethod]
@@ -65,7 +87,11 @@ public partial class TextEditorViewModelState
 
             var outViewModelList = inState.ViewModelList.Replace(inViewModel, outViewModel);
 
-            return new TextEditorViewModelState { ViewModelList = outViewModelList };
+            return new TextEditorViewModelState
+			{
+				ViewModelList = outViewModelList,
+				ViewModelPolymorphicUiList = inState.ViewModelPolymorphicUiList,
+			};
         }
     }
 }

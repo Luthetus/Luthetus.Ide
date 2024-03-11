@@ -134,45 +134,69 @@ public partial class PresentationLayerGroup : ComponentBase
         return presentationModel.DecorationMapper.Map(decorationByte);
     }
 
-    /// <summary>
-    /// TODO: I don't think this logic is correct (ShiftTextSpans). I'm tired at this point, so I will leave this comment so I remember to look at this again. (2023-09-07)
-    /// </summary>
-    private ImmutableArray<TextEditorTextSpan> ShiftTextSpans(
+    private ImmutableArray<TextEditorTextSpan> VirtualizeAndShiftTextSpans(
         TextEditorTextModification[] textModifications,
-        ImmutableArray<TextEditorTextSpan> textSpans)
+        ImmutableArray<TextEditorTextSpan> inTextSpanList)
     {
-        var outTextSpansList = new List<TextEditorTextSpan>();
-
-        foreach (var textSpan in textSpans)
+        // Virtualize the text spans
+        var virtualizedTextSpanList = new List<TextEditorTextSpan>();
+        if (RenderBatch.ViewModel!.VirtualizationResult?.EntryList.Any() ?? false)
         {
-            var startingIndexInclusive = textSpan.StartingIndexInclusive;
-            var endingIndexExclusive = textSpan.EndingIndexExclusive;
+            var lowerBoundRowIndex = RenderBatch.ViewModel.VirtualizationResult.EntryList.First().Index;
+            var upperBoundRowIndex = RenderBatch.ViewModel.VirtualizationResult.EntryList.Last().Index;
+            
+            var lowerBoundRowEndingThatCreatedRow = RenderBatch.Model!.GetRowEndingThatCreatedRow(lowerBoundRowIndex);
+            var upperBoundRowEndingThatCreatedRow = RenderBatch.Model!.GetRowEndingThatCreatedRow(upperBoundRowIndex);
 
-            foreach (var textModification in textModifications)
+            foreach (var textSpan in inTextSpanList)
             {
-                if (textModification.WasInsertion)
+                if (lowerBoundRowEndingThatCreatedRow.StartPositionIndexInclusive <= textSpan.StartingIndexInclusive &&
+                    upperBoundRowEndingThatCreatedRow.StartPositionIndexInclusive >= textSpan.StartingIndexInclusive)
                 {
-                    if (startingIndexInclusive >= textModification.TextEditorTextSpan.StartingIndexInclusive)
-                    {
-                        startingIndexInclusive += textModification.TextEditorTextSpan.Length;
-                        endingIndexExclusive += textModification.TextEditorTextSpan.Length;
-                    }
-                }
-                else // was deletion
-                {
-                    if (startingIndexInclusive >= textModification.TextEditorTextSpan.StartingIndexInclusive)
-                    {
-                        startingIndexInclusive -= textModification.TextEditorTextSpan.Length;
-                        endingIndexExclusive -= textModification.TextEditorTextSpan.Length;
-                    }
+                    virtualizedTextSpanList.Add(textSpan);
                 }
             }
+        }
+        else
+        {
+            // No 'VirtualizationResult', so don't render any text spans.
+            return ImmutableArray<TextEditorTextSpan>.Empty;
+        }
 
-            outTextSpansList.Add(textSpan with
+        var outTextSpansList = new List<TextEditorTextSpan>();
+        // Shift the text spans
+        {
+            foreach (var textSpan in virtualizedTextSpanList)
             {
-                StartingIndexInclusive = startingIndexInclusive,
-                EndingIndexExclusive = endingIndexExclusive
-            });
+                var startingIndexInclusive = textSpan.StartingIndexInclusive;
+                var endingIndexExclusive = textSpan.EndingIndexExclusive;
+
+                foreach (var textModification in textModifications)
+                {
+                    if (textModification.WasInsertion)
+                    {
+                        if (startingIndexInclusive >= textModification.TextEditorTextSpan.StartingIndexInclusive)
+                        {
+                            startingIndexInclusive += textModification.TextEditorTextSpan.Length;
+                            endingIndexExclusive += textModification.TextEditorTextSpan.Length;
+                        }
+                    }
+                    else // was deletion
+                    {
+                        if (startingIndexInclusive >= textModification.TextEditorTextSpan.StartingIndexInclusive)
+                        {
+                            startingIndexInclusive -= textModification.TextEditorTextSpan.Length;
+                            endingIndexExclusive -= textModification.TextEditorTextSpan.Length;
+                        }
+                    }
+                }
+
+                outTextSpansList.Add(textSpan with
+                {
+                    StartingIndexInclusive = startingIndexInclusive,
+                    EndingIndexExclusive = endingIndexExclusive
+                });
+            }
         }
 
         return outTextSpansList.ToImmutableArray();

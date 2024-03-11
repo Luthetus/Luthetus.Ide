@@ -42,14 +42,14 @@ public partial class AutocompleteMenu : ComponentBase
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
-            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true).ConfigureAwait(false);
+            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
     }
 
     private async Task ReturnFocusToThisAsync()
     {
         try
         {
-            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true).ConfigureAwait(false);
+            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
         }
         catch (Exception e)
         {
@@ -141,15 +141,15 @@ public partial class AutocompleteMenu : ComponentBase
         {
             try
             {
-                await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true).ConfigureAwait(false);
-                await menuOptionAction.Invoke().ConfigureAwait(false);
+                await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
+                await menuOptionAction.Invoke();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 throw;
             }
-        }, CancellationToken.None).ConfigureAwait(false);
+        }, CancellationToken.None);
     }
 
     private Task InsertAutocompleteMenuOption(

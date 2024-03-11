@@ -4,7 +4,7 @@
 
 @inherits FluxorComponent
 
-@{ var notificationRecordsCollection = NotificationStateWrap.Value; }
+@{ var notificationState = NotificationStateWrap.Value; }
 
 <div class="luth_web_notifications-view">
     <div class="luth_web_notifications-view-tabs">
@@ -20,16 +20,16 @@
                     -->@switch (notificationsViewKind)
                     {
                         case NotificationsViewKind.Notifications:
-                            @: @notificationRecordsCollection.DefaultList.Count
+                            @: @notificationState.DefaultList.Count
                             break;
                         case NotificationsViewKind.Read:
-                            @: @notificationRecordsCollection.ReadList.Count
+                            @: @notificationState.ReadList.Count
                             break;
                         case NotificationsViewKind.Deleted:
-                            @: @notificationRecordsCollection.DeletedList.Count
+                            @: @notificationState.DeletedList.Count
                             break;
                         case NotificationsViewKind.Archived:
-                            @: @notificationRecordsCollection.ArchivedList.Count
+                            @: @notificationState.ArchivedList.Count
                             break;
                     }<!--
                     -->)
@@ -46,19 +46,19 @@
             switch (_chosenNotificationsViewKind)
             {
                 case NotificationsViewKind.Notifications:
-                    entriesToRenderList = notificationRecordsCollection.DefaultList;
+                    entriesToRenderList = notificationState.DefaultList;
                     clearOnClick = Clear;
                     break;
                 case NotificationsViewKind.Read:
-                    entriesToRenderList = notificationRecordsCollection.ReadList;
+                    entriesToRenderList = notificationState.ReadList;
                     clearOnClick = ClearRead;
                     break;
                 case NotificationsViewKind.Deleted:
-                    entriesToRenderList = notificationRecordsCollection.DeletedList;
+                    entriesToRenderList = notificationState.DeletedList;
                     clearOnClick = ClearDeleted;
                     break;
                 case NotificationsViewKind.Archived:
-                    entriesToRenderList = notificationRecordsCollection.ArchivedList;
+                    entriesToRenderList = notificationState.ArchivedList;
                     clearOnClick = ClearArchived;
                     break;
             }

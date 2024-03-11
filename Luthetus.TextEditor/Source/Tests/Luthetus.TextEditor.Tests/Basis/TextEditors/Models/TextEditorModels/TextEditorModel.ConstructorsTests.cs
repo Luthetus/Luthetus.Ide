@@ -56,6 +56,8 @@ public class TextEditorModelConstructorsTests
 
 		var cloneModel = new TextEditorModel(
 			originalModel.ContentList,
+			originalModel.PartitionSize,
+			originalModel.PartitionList,
 			originalModel.EditBlocksList,
             originalModel.RowEndingPositionsList,
             originalModel.RowEndingKindCountsList,
@@ -70,6 +72,7 @@ public class TextEditorModelConstructorsTests
 			originalModel.CompilerService,
 			originalModel.TextEditorSaveFileHelper,
 			originalModel.EditBlockIndex,
+			originalModel.IsDirty,
 			originalModel.MostCharactersOnASingleRowTuple,
 			originalModel.RenderStateKey);
 
@@ -88,6 +91,7 @@ public class TextEditorModelConstructorsTests
 		Assert.Equal(originalModel.CompilerService, cloneModel.CompilerService);
 		Assert.Equal(originalModel.TextEditorSaveFileHelper, cloneModel.TextEditorSaveFileHelper);
 		Assert.Equal(originalModel.EditBlockIndex, cloneModel.EditBlockIndex);
+		Assert.Equal(originalModel.IsDirty, cloneModel.IsDirty);
 		Assert.Equal(originalModel.MostCharactersOnASingleRowTuple, cloneModel.MostCharactersOnASingleRowTuple);
 		Assert.Equal(originalModel.RenderStateKey, cloneModel.RenderStateKey);
 	}

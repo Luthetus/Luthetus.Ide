@@ -42,7 +42,7 @@ public partial class ContextMenu : ComponentBase
             {
                 try
                 {
-                    await _textEditorContextMenuElementReference.Value.FocusAsync().ConfigureAwait(false);
+                    await _textEditorContextMenuElementReference.Value.FocusAsync();
                 }
                 catch (Exception)
                 {
@@ -54,7 +54,7 @@ public partial class ContextMenu : ComponentBase
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private TextEditorCommandArgs ConstructCommandArgs()
@@ -78,14 +78,14 @@ public partial class ContextMenu : ComponentBase
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
-            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true).ConfigureAwait(false);
+            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
     }
 
     private async Task ReturnFocusToThisAsync()
     {
         try
         {
-            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true).ConfigureAwait(false);
+            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
         }
         catch (Exception e)
         {
@@ -119,32 +119,32 @@ public partial class ContextMenu : ComponentBase
         {
             try
             {
-                await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true).ConfigureAwait(false);
-                await menuOptionAction.Invoke().ConfigureAwait(false);
+                await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
+                await menuOptionAction.Invoke();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 throw;
             }
-        }, CancellationToken.None).ConfigureAwait(false);
+        }, CancellationToken.None);
     }
 
     private async Task CutMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.Cut.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
+        await TextEditorCommandDefaultFacts.Cut.CommandFunc.Invoke(commandArgs);
     }
 
     private async Task CopyMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.Copy.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
+        await TextEditorCommandDefaultFacts.Copy.CommandFunc.Invoke(commandArgs);
     }
 
     private async Task PasteMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.PasteCommand.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
+        await TextEditorCommandDefaultFacts.PasteCommand.CommandFunc.Invoke(commandArgs);
     }
 }

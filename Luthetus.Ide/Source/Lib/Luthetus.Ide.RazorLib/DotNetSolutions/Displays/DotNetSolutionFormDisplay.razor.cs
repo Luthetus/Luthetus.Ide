@@ -66,7 +66,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                     return;
 
                 _parentDirectoryName = absolutePath.Value;
-                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+                await InvokeAsync(StateHasChanged);
             },
             absolutePath =>
             {
@@ -96,9 +96,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
         if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.Photino)
         {
             await HackForWebsite_StartNewDotNetSolutionCommandOnClick(
-                    localSolutionName,
-                    localParentDirectoryName)
-                .ConfigureAwait(false);
+                localSolutionName,
+                localParentDirectoryName);
         }
         else
         {
@@ -137,8 +136,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
             await generalTerminalSession
-                .EnqueueCommandAsync(newDotNetSolutionCommand)
-                .ConfigureAwait(false);
+                .EnqueueCommandAsync(newDotNetSolutionCommand);
         }
     }
 
@@ -151,8 +149,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             EnvironmentProvider.DirectorySeparatorChar;
 
         await FileSystemProvider.Directory
-            .CreateDirectoryAsync(directoryContainingSolution)
-            .ConfigureAwait(false);
+            .CreateDirectoryAsync(directoryContainingSolution);
 
         var localSolutionFilenameWithExtension =
             localSolutionName +
@@ -164,9 +161,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             localSolutionFilenameWithExtension);
 
         await FileSystemProvider.File.WriteAllTextAsync(
-                solutionAbsolutePathString,
-                HackForWebsite_NEW_SOLUTION_TEMPLATE)
-            .ConfigureAwait(false);
+            solutionAbsolutePathString,
+            HackForWebsite_NEW_SOLUTION_TEMPLATE);
 
         // Close Dialog
         Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));

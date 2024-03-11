@@ -38,9 +38,9 @@ public partial class PanelDisplay : FluxorComponent
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender)
-            await PassAlongSizeIfHiddenAsync().ConfigureAwait(false);
+            await PassAlongSizeIfHiddenAsync();
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private string GetPanelPositionCssClass()
@@ -90,13 +90,13 @@ public partial class PanelDisplay : FluxorComponent
                     Purpose = DimensionAttributeModificationPurpose
                 });
 
-                await ReRenderSelfAndAdjacentElementDimensionsFunc.Invoke().ConfigureAwait(false);
+                await ReRenderSelfAndAdjacentElementDimensionsFunc.Invoke();
             }
             else if (activePanelTab is not null && indexOfPreviousPassAlong != -1)
             {
                 adjacentElementSizeDimensionAttribute.DimensionUnitList.RemoveAt(indexOfPreviousPassAlong);
 
-                await ReRenderSelfAndAdjacentElementDimensionsFunc.Invoke().ConfigureAwait(false);
+                await ReRenderSelfAndAdjacentElementDimensionsFunc.Invoke();
             }
         }
     }

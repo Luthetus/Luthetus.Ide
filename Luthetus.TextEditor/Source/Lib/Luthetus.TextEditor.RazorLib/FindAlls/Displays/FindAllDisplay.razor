@@ -47,13 +47,20 @@
 	    }
 	
 		<div class="luth_te_search-engine-file-system-results">
-			@{ var localFilePathList = SearchEngineFileSystem.FilePathList.ToArray(); }
 
+			@{ var localFilePathList = SearchEngineFileSystem.FilePathList.ToArray(); }
 			@foreach (var filePath in localFilePathList)
 			{
-				<div style="cursor: pointer;"
-					 @onclick="() => OpenInEditorOnClick(filePath)">
-					@filePath
+				var absolutePath = EnvironmentProvider.AbsolutePathFactory(filePath, false);
+
+				<div>
+					<label>Open in editor:</label>
+					<button class="luth_button"
+							style="display: inline; margin-bottom: 15px;"
+							title="@absolutePath.Value"
+							@onclick="() => OpenInEditorOnClick(filePath)">
+						@absolutePath.NameWithExtension
+					</button>
 				</div>
 			}
 		</div>

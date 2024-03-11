@@ -40,7 +40,7 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
             {
                 try
                 {
-                    await _cancelButtonElementReference.Value.FocusAsync().ConfigureAwait(false);
+                    await _cancelButtonElementReference.Value.FocusAsync();
                 }
                 catch (Exception)
                 {
@@ -52,7 +52,7 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
@@ -60,7 +60,7 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
         if (MenuOptionCallbacks is not null &&
             keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
-            await MenuOptionCallbacks.HideWidgetAsync.Invoke().ConfigureAwait(false);
+            await MenuOptionCallbacks.HideWidgetAsync.Invoke();
         }
     }
 
@@ -70,15 +70,14 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
 
         if (MenuOptionCallbacks is not null)
         {
-            await MenuOptionCallbacks.CompleteWidgetAsync
-                .Invoke(() => OnAfterSubmitAction.Invoke(localAbsolutePath))
-                .ConfigureAwait(false);
+            await MenuOptionCallbacks.CompleteWidgetAsync.Invoke(
+                () => OnAfterSubmitAction.Invoke(localAbsolutePath));
         }
     }
 
     private async Task CancelOnClick()
     {
         if (MenuOptionCallbacks is not null)
-            await MenuOptionCallbacks.HideWidgetAsync.Invoke().ConfigureAwait(false);
+            await MenuOptionCallbacks.HideWidgetAsync.Invoke();
     }
 }

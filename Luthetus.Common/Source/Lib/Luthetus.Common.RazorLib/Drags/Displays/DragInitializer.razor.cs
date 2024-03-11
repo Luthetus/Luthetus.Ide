@@ -3,6 +3,7 @@ using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 
 namespace Luthetus.Common.RazorLib.Drags.Displays;
 
@@ -22,18 +23,23 @@ public partial class DragInitializer : FluxorComponent
     /// </summary>
     private IThrottle _throttleDispatchSetDragStateActionOnMouseMove = new Throttle(IThrottle.DefaultThrottleTimeSpan);
 
+	private IPolymorphicDropzone? _onMouseOverDropzone = null;
+
     private DragState.WithAction ConstructClearDragStateAction()
     {
+		_onMouseOverDropzone = null;
+
         return new DragState.WithAction(inState => inState with
         {
             ShouldDisplay = false,
             MouseEventArgs = null,
+			PolymorphicDraggable = null,
         });
     }
 
     private async Task DispatchSetDragStateActionOnMouseMoveAsync(MouseEventArgs mouseEventArgs)
     {
-        _throttleDispatchSetDragStateActionOnMouseMove.FireAndForget(_ =>
+        _throttleDispatchSetDragStateActionOnMouseMove.PushEvent(_ =>
         {
             if ((mouseEventArgs.Buttons & 1) != 1)
             {
@@ -52,12 +58,27 @@ public partial class DragInitializer : FluxorComponent
         });
     }
 
-    private async Task DispatchSetDragStateActionOnMouseUpAsync()
+    private Task DispatchSetDragStateActionOnMouseUp()
     {
-        _throttleDispatchSetDragStateActionOnMouseMove.FireAndForget(_ =>
+		var dragState = DragStateWrap.Value;
+		var localOnMouseOverDropzone = _onMouseOverDropzone;
+
+        _throttleDispatchSetDragStateActionOnMouseMove.PushEvent(async _ =>
         {
             Dispatcher.Dispatch(ConstructClearDragStateAction());
-            return Task.CompletedTask;
+
+			var polymorphicDraggable = dragState.PolymorphicDraggable;
+			if (polymorphicDraggable is not null)
+				await polymorphicDraggable.OnDragStopAsync(localOnMouseOverDropzone);
         });
+
+		return Task.CompletedTask;
     }
+
+	private string GetIsActiveCssClass(IPolymorphicDropzone dropzone)
+	{
+		return Object.ReferenceEquals(_onMouseOverDropzone, dropzone)
+			? "luth_active"
+			: string.Empty;
+	}
 }

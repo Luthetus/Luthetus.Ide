@@ -39,12 +39,12 @@ public partial class FolderExplorerContextMenu : ComponentBase
 
     private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandArgs)
     {
-        if (treeViewCommandArgs.TargetNode is null)
+        if (treeViewCommandArgs.NodeThatReceivedMouseEvent is null)
             return MenuRecord.Empty;
 
         var menuRecordsList = new List<MenuOptionRecord>();
 
-        var treeViewModel = treeViewCommandArgs.TargetNode;
+        var treeViewModel = treeViewCommandArgs.NodeThatReceivedMouseEvent;
         var parentTreeViewModel = treeViewModel.Parent;
 
         var parentTreeViewAbsolutePath = parentTreeViewModel as TreeViewAbsolutePath;
@@ -71,17 +71,17 @@ public partial class FolderExplorerContextMenu : ComponentBase
     {
         return new[]
         {
-            MenuOptionsFactory.NewEmptyFile(treeViewModel.Item, async () => await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false)),
-            MenuOptionsFactory.NewDirectory(treeViewModel.Item, async () => await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false)),
+            MenuOptionsFactory.NewEmptyFile(treeViewModel.Item, async () => await ReloadTreeViewModel(treeViewModel)),
+            MenuOptionsFactory.NewDirectory(treeViewModel.Item, async () => await ReloadTreeViewModel(treeViewModel)),
             MenuOptionsFactory.PasteClipboard(treeViewModel.Item, async () => 
             {
                 var localParentOfCutFile = ParentOfCutFile;
                 ParentOfCutFile = null;
 
                 if (localParentOfCutFile is not null)
-                    await ReloadTreeViewModel(localParentOfCutFile).ConfigureAwait(false);
+                    await ReloadTreeViewModel(localParentOfCutFile);
 
-                await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false);
+                await ReloadTreeViewModel(treeViewModel);
             }),
         };
     }
@@ -101,8 +101,8 @@ public partial class FolderExplorerContextMenu : ComponentBase
                 ParentOfCutFile = parentTreeViewModel;
                 return Task.CompletedTask;
             }),
-            MenuOptionsFactory.DeleteFile(treeViewModel.Item, async () => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
-            MenuOptionsFactory.RenameFile(treeViewModel.Item, Dispatcher, async ()  => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false))
+            MenuOptionsFactory.DeleteFile(treeViewModel.Item, async () => await ReloadTreeViewModel(parentTreeViewModel)),
+            MenuOptionsFactory.RenameFile(treeViewModel.Item, Dispatcher, async ()  => await ReloadTreeViewModel(parentTreeViewModel))
         };
     }
 
@@ -131,7 +131,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
         if (treeViewModel is null)
             return;
 
-        await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
+        await treeViewModel.LoadChildListAsync();
 
         TreeViewService.ReRenderNode(
             FolderExplorerState.TreeViewContentStateKey,

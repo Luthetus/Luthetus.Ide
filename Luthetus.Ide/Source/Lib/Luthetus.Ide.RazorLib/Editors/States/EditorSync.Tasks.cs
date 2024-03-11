@@ -77,12 +77,12 @@ public partial class EditorSync
                             "Reload"
                         },
                         {
-                            nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptAction),
-                            new Action(() =>
+                            nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptFunc),
+                            new Func<Task>(() =>
                             {
 								BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
                                     "Check If Contexts Were Modified",
-                                    (async () =>
+                                    async () =>
                                     {
                                         dispatcher.Dispatch(new NotificationState.DisposeAction(
                                             notificationInformativeKey));
@@ -103,15 +103,19 @@ public partial class EditorSync
 
                                                 await textEditorModel.ApplySyntaxHighlightingAsync();
                                             });
-                                    }));
+                                    });
+
+                                return Task.CompletedTask;
                             })
                         },
                         {
-                            nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineAction),
-                            new Action(() =>
+                            nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineFunc),
+                            new Func<Task>(() =>
                             {
                                 dispatcher.Dispatch(new NotificationState.DisposeAction(
                                     notificationInformativeKey));
+
+                                return Task.CompletedTask;
                             })
                         },
                 },

@@ -1,5 +1,8 @@
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models;
+@using Luthetus.Ide.RazorLib.Terminals.Displays.Internals
+@using Luthetus.Ide.RazorLib.Terminals.Models
+@using System.Collections.Immutable
 
 <ContextBoundary ContextRecord="ContextFacts.TerminalContext"
                  ClassCssString="luth_ide_integrated-terminal"
@@ -10,9 +13,15 @@
     </div>
 
 	<div class="luth_ide_section-body" style="width: 100%;">
-		@{ var sequenceCliWrapIntegratedTerminal = 0; }
-		@(new RenderFragment(builder => _integratedTerminal.GetRenderTreeBuilder(
-			builder,
-			ref sequenceCliWrapIntegratedTerminal)))
+		<CascadingValue Value="_integratedTerminal">
+			@{
+				var localStdList = _integratedTerminal.StdList;
+		        foreach (var std in localStdList)
+		        {
+					<StdDisplay Std="std"/>
+					<hr/>
+		        }
+			}
+		</CascadingValue>
     </div>
 </ContextBoundary>

@@ -20,7 +20,7 @@ public class TreeViewCommandArgsTests
     /// <br/>----<br/>
     /// <see cref="TreeViewCommandArgs.TreeViewService"/>
     /// <see cref="TreeViewCommandArgs.TreeViewContainer"/>
-    /// <see cref="TreeViewCommandArgs.TargetNode"/>
+    /// <see cref="TreeViewCommandArgs.NodeThatReceivedMouseEvent"/>
     /// <see cref="TreeViewCommandArgs.RestoreFocusToTreeView"/>
     /// </summary>
     [Fact]
@@ -71,7 +71,7 @@ public class TreeViewCommandArgsTests
             null,
             null);
 
-        Assert.True(targetNode == treeViewCommandArgs.TargetNode);
+        Assert.True(targetNode == treeViewCommandArgs.NodeThatReceivedMouseEvent);
         Assert.NotNull(treeViewCommandArgs.RestoreFocusToTreeView);
     }
 }

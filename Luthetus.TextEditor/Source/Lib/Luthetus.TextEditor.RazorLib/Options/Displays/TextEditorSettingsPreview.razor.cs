@@ -49,9 +49,9 @@ public partial class TextEditorSettingsPreview : ComponentBase
                 SettingsPreviewTextEditorResourceUri,
                 new TextEditorCategory(nameof(TextEditorSettingsPreview)));
 
-            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+            await InvokeAsync(StateHasChanged);
         }
 
-        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(false);
+        await base.OnAfterRenderAsync(firstRender);
     }
 }

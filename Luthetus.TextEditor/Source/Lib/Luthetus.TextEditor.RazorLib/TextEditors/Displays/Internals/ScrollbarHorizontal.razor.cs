@@ -2,6 +2,7 @@
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -21,10 +22,11 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
     [CascadingParameter]
     public TextEditorRenderBatch RenderBatch { get; set; } = null!;
 
+    private readonly Guid _scrollbarGuid = Guid.NewGuid();
+    private readonly IThrottle _throttleScroll = new Throttle(TimeSpan.FromMilliseconds(100));
+
     private bool _thinksLeftMouseButtonIsDown;
     private RelativeCoordinates _relativeCoordinatesOnMouseDown = new(0, 0, 0, 0);
-    private readonly Guid _scrollbarGuid = Guid.NewGuid();
-
     private Func<(MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;
     private MouseEventArgs? _previousDragMouseEventArgs;
 
@@ -83,8 +85,7 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
                 "luthetusTextEditor.getRelativePosition",
                 ScrollbarSliderElementId,
                 mouseEventArgs.ClientX,
-                mouseEventArgs.ClientY)
-            .ConfigureAwait(false);
+                mouseEventArgs.ClientY);
 
         SubscribeToDragEventForScrolling();
     }
@@ -104,11 +105,11 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
             {
                 if (_previousDragMouseEventArgs is not null && mouseEventArgs is not null)
                 {
-                    await _dragEventHandler.Invoke((_previousDragMouseEventArgs, mouseEventArgs)).ConfigureAwait(false);
+                    await _dragEventHandler.Invoke((_previousDragMouseEventArgs, mouseEventArgs));
                 }
 
                 _previousDragMouseEventArgs = mouseEventArgs;
-                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+                await InvokeAsync(StateHasChanged);
             }
         }
     }
@@ -136,11 +137,10 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgsTuple.secondMouseEventArgs.Buttons & 1) == 1)
         {
             var relativeCoordinatesOfDragEvent = await JsRuntime.InvokeAsync<RelativeCoordinates>(
-                    "luthetusTextEditor.getRelativePosition",
-                    ScrollbarElementId,
-                    mouseEventArgsTuple.secondMouseEventArgs.ClientX,
-                    mouseEventArgsTuple.secondMouseEventArgs.ClientY)
-                .ConfigureAwait(false);
+                "luthetusTextEditor.getRelativePosition",
+                ScrollbarElementId,
+                mouseEventArgsTuple.secondMouseEventArgs.ClientX,
+                mouseEventArgsTuple.secondMouseEventArgs.ClientY);
 
             var xPosition = relativeCoordinatesOfDragEvent.RelativeX - _relativeCoordinatesOnMouseDown.RelativeX;
 
@@ -163,7 +163,11 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
                     RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements.Width;
             }
 
-            RenderBatch.ViewModel!.SetScrollPosition(scrollLeft, null);
+            _throttleScroll.PushEvent(_ =>
+            {
+                RenderBatch.ViewModel!.SetScrollPosition(scrollLeft, null);
+                return Task.CompletedTask;
+            });
         }
         else
         {

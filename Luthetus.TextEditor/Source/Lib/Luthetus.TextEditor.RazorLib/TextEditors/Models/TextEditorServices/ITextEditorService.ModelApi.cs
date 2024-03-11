@@ -370,21 +370,13 @@ public partial interface ITextEditorService
             {
                 var modelModifier = editContext.GetModelModifierByViewModelKey(viewModelKey);
                 var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-                if (modelModifier is null || viewModelModifier is null)
-                    return Task.CompletedTask;
-
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (cursorModifierBag is null || primaryCursorModifier is null)
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.EditByInsertion(
-                    content,
-                    cursorModifierBag,
-                    cancellationToken);
-
+                modelModifier.EditByInsertion(content, cursorModifierBag, cancellationToken);
                 return Task.CompletedTask;
             };
         }
@@ -402,11 +394,7 @@ public partial interface ITextEditorService
                 if (modelModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.EditByInsertion(
-                    content,
-                    cursorModifierBag,
-                    cancellationToken);
-
+                modelModifier.EditByInsertion(content, cursorModifierBag, cancellationToken);
                 return Task.CompletedTask;
             };
         }
@@ -421,21 +409,13 @@ public partial interface ITextEditorService
             {
                 var modelModifier = editContext.GetModelModifierByViewModelKey(viewModelKey);
                 var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-                if (modelModifier is null || viewModelModifier is null)
-                    return Task.CompletedTask;
-
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (cursorModifierBag is null || primaryCursorModifier is null)
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.HandleKeyboardEvent(
-                    keyboardEventArgs,
-                    cursorModifierBag,
-                    cancellationToken);
-
+                modelModifier.HandleKeyboardEvent(keyboardEventArgs, cursorModifierBag, cancellationToken);
                 return Task.CompletedTask;
             };
         }
@@ -454,11 +434,7 @@ public partial interface ITextEditorService
                 if (modelModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.HandleKeyboardEvent(
-                    keyboardEventArgs,
-                    cursorModifierBag,
-                    cancellationToken);
-
+                modelModifier.HandleKeyboardEvent(keyboardEventArgs, cursorModifierBag, cancellationToken);
                 return Task.CompletedTask;
             };
         }
@@ -473,21 +449,13 @@ public partial interface ITextEditorService
             {
                 var modelModifier = editContext.GetModelModifierByViewModelKey(viewModelKey);
                 var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-                if (modelModifier is null || viewModelModifier is null)
-                    return Task.CompletedTask;
-
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (cursorModifierBag is null || primaryCursorModifier is null)
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.DeleteByRange(
-                    count,
-                    cursorModifierBag,
-                    cancellationToken);
-
+                modelModifier.DeleteByRange(count, cursorModifierBag, cancellationToken);
                 return Task.CompletedTask;
             };
         }
@@ -505,11 +473,7 @@ public partial interface ITextEditorService
                 if (modelModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.DeleteByRange(
-                    count,
-                    cursorModifierBag,
-                    cancellationToken);
-
+                modelModifier.DeleteByRange(count, cursorModifierBag, cancellationToken);
                 return Task.CompletedTask;
             };
         }
@@ -524,21 +488,13 @@ public partial interface ITextEditorService
             {
                 var modelModifier = editContext.GetModelModifierByViewModelKey(viewModelKey);
                 var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-                if (modelModifier is null || viewModelModifier is null)
-                    return Task.CompletedTask;
-
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (cursorModifierBag is null || primaryCursorModifier is null)
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.DeleteTextByMotion(
-                    motionKind,
-                    cursorModifierBag,
-                    cancellationToken);
-
+                modelModifier.DeleteTextByMotion(motionKind, cursorModifierBag, cancellationToken);
                 return Task.CompletedTask;
             };
         }
@@ -556,11 +512,7 @@ public partial interface ITextEditorService
                 if (modelModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.DeleteTextByMotion(
-                    motionKind,
-                    cursorModifierBag,
-                    cancellationToken);
-
+                modelModifier.DeleteTextByMotion(motionKind, cursorModifierBag, cancellationToken);
                 return Task.CompletedTask;
             };
         }

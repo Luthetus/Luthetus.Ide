@@ -88,7 +88,18 @@ public static class TextEditorModelHelper
 
 			var endOfRowExclusive = model.RowEndingPositionsList[i].EndPositionIndexExclusive;
 
-			var row = model.ContentList
+            // (2024-02-29) Plan to add text editor partitioning #Step 400:
+            // --------------------------------------------------
+            // After changing 'ContentList' to an ImmutableList<ImmutableList<RichCharacter>>,
+            // a lot of the code broke, understandably.
+            //
+            // I'm thinking that 'ContentList' should be the an expression bound property
+            // that performs a 'SelectMany' on the partitions to pull out all the RichCharacter(s).
+            //
+            // If I go down that route, that means I need a new name for what the list of partitions will be called.
+            // I want to make 'PartitionList' a datatype of ImmutableList<ImmutableList<RichCharacter>>.
+			// Then make 'ContentList' a List<RichCharacter>;
+            var row = model.ContentList
 				.Skip(startOfRowInclusive)
 				.Take(endOfRowExclusive - startOfRowInclusive)
 				.ToList();
@@ -185,6 +196,16 @@ public static class TextEditorModelHelper
 		var startOfRowPositionIndex = model.GetRowEndingThatCreatedRow(rowIndex).EndPositionIndexExclusive;
 		return startOfRowPositionIndex + columnIndex;
 	}
+
+	public static (int rowIndex, int columnIndex) GetRowAndColumnIndicesFromPositionIndex(
+		this ITextEditorModel model, int positionIndex)
+	{
+        var rowInformation = model.GetRowInformationFromPositionIndex(positionIndex);
+
+		return (
+			rowInformation.RowIndex,
+			positionIndex - rowInformation.RowStartPositionIndexInclusive);
+    }
 
     /// <summary>
     /// To receive a <see cref="string"/> value, one can use <see cref="GetString"/> instead.

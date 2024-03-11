@@ -29,7 +29,7 @@ public partial record CodeSearchState
             SearchEffect searchEffect,
             IDispatcher dispatcher)
         {
-            _throttle.FireAndForget(async _ =>
+            _throttle.PushEvent(async _ =>
             {
                 dispatcher.Dispatch(new ClearResultListAction());
 

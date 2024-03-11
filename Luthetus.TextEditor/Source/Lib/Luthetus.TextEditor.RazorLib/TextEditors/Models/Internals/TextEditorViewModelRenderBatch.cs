@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -9,7 +10,8 @@ public record TextEditorRenderBatch(
     TextEditorViewModel? ViewModel,
     TextEditorOptions? Options,
     string FontFamily,
-    int FontSizeInPixels)
+    int FontSizeInPixels,
+    TextEditorViewModelDisplay.TextEditorEvents Events)
 {
     public const string DEFAULT_FONT_FAMILY = "monospace";
 

@@ -113,6 +113,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         editContext =>
                         {
                             ActiveVimMode = VimMode.Insert;
+                            _ = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
                             return Task.CompletedTask;
                         });
 
@@ -139,16 +140,12 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         nameof(commandDisplayName),
                         editContext =>
                         {
-                            var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+                            var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri, true);
                             var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
-
-                            if (modelModifier is null || viewModelModifier is null)
-                                return Task.CompletedTask;
-
-                            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                            if (cursorModifierBag is null || primaryCursorModifier is null)
+                            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                                 return Task.CompletedTask;
 
                             if (ActiveVimMode == VimMode.Visual)
@@ -193,16 +190,12 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         nameof(commandDisplayName),
                         editContext =>
                         {
-                            var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+                            var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri, true);
                             var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
-
-                            if (modelModifier is null || viewModelModifier is null)
-                                return Task.CompletedTask;
-
-                            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                            if (cursorModifierBag is null || primaryCursorModifier is null)
+                            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                                 return Task.CompletedTask;
 
                             if (ActiveVimMode == VimMode.VisualLine)
@@ -219,16 +212,12 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                                 primaryCursorModifier.RowIndex,
                                 0);
 
-                            primaryCursorModifier.SelectionAnchorPositionIndex =
-                                startOfRowPositionIndexInclusive;
+                            primaryCursorModifier.SelectionAnchorPositionIndex = startOfRowPositionIndexInclusive;
 
-                            var endOfRowPositionIndexExclusive = modelModifier.RowEndingPositionsList[
-                                    primaryCursorModifier.RowIndex]
+                            var endOfRowPositionIndexExclusive = modelModifier.RowEndingPositionsList[primaryCursorModifier.RowIndex]
                                 .EndPositionIndexExclusive;
 
-                            primaryCursorModifier.SelectionEndingPositionIndex =
-                                endOfRowPositionIndexExclusive;
-
+                            primaryCursorModifier.SelectionEndingPositionIndex = endOfRowPositionIndexExclusive;
                             return Task.CompletedTask;
                         });
 
@@ -256,16 +245,12 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         nameof(commandDisplayName),
                         editContext =>
                         {
-                            var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+                            var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri, true);
                             var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
-
-                            if (modelModifier is null || viewModelModifier is null)
-                                return Task.CompletedTask;
-
-                            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                            if (cursorModifierBag is null || primaryCursorModifier is null)
+                            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                                 return Task.CompletedTask;
 
                             editContext.TextEditorService.ViewModelApi.WithValueFactory(
@@ -303,14 +288,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         {
                             var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                             var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
-
-                            if (modelModifier is null || viewModelModifier is null)
-                                return;
-
-                            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                            if (cursorModifierBag is null || primaryCursorModifier is null)
+                            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                                 return;
 
                             await commandArgs.TextEditorService.ModelApi
@@ -345,14 +326,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         {
                             var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                             var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
-
-                            if (modelModifier is null || viewModelModifier is null)
-                                return;
-
-                            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                            if (cursorModifierBag is null || primaryCursorModifier is null)
+                            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                                 return;
 
                             await commandArgs.TextEditorService.ModelApi
@@ -742,6 +719,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     editContext =>
                     {
                         ActiveVimMode = VimMode.Normal;
+                        _ = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
                         return Task.CompletedTask;
                     });
 

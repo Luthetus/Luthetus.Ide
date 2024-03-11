@@ -19,7 +19,7 @@ The individual libraries used in Luthetus.Ide are available as NuGet Packages.
 
 There is a README.md for each of the libraries to aid in installation:
 
--  [Luthetus.Common](./Luthetus.Common/README.md)
+- [Luthetus.Common](./Luthetus.Common/README.md)
 - [Luthetus.TextEditor](./Luthetus.TextEditor/README.md)
 - [Luthetus.CompilerServices](./Luthetus.CompilerServices/README.md)
 

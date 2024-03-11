@@ -58,7 +58,8 @@ public class TextEditorRenderBatchTests
             inViewModel,
             options,
             fontFamily,
-            fontSizeInPixels);
+            fontSizeInPixels,
+            null);
 
         Assert.Equal(inModel, renderBatch.Model);
 		Assert.Equal(inViewModel, renderBatch.ViewModel);
@@ -77,7 +78,8 @@ public class TextEditorRenderBatchTests
 					inViewModel,
 					options,
 					fontFamily,
-					fontSizeInPixels)
+					fontSizeInPixels,
+                    null)
 				.IsValid);
 
             // ViewModel is null
@@ -86,7 +88,8 @@ public class TextEditorRenderBatchTests
                     null,
                     options,
                     fontFamily,
-                    fontSizeInPixels)
+                    fontSizeInPixels,
+                    null)
                 .IsValid);
 
             // Options is null
@@ -95,7 +98,8 @@ public class TextEditorRenderBatchTests
                     inViewModel,
                     null,
                     fontFamily,
-                    fontSizeInPixels)
+                    fontSizeInPixels,
+                    null)
                 .IsValid);
         }
 	}

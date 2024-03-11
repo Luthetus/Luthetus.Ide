@@ -5,7 +5,7 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Common.RazorLib.Notifications.Displays;
+namespace Luthetus.Common.RazorLib.Icons.Displays;
 
 public partial class IconBadgeDisplay : FluxorComponent
 {

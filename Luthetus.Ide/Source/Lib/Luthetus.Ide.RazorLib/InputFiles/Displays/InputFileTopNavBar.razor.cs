@@ -42,13 +42,13 @@ public partial class InputFileTopNavBar : ComponentBase
     private async Task HandleBackButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.MoveBackwardsInHistoryAction());
-        await ChangeContentRootToOpenedTreeView().ConfigureAwait(false);
+        await ChangeContentRootToOpenedTreeView();
     }
 
     private async Task HandleForwardButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.MoveForwardsInHistoryAction());
-        await ChangeContentRootToOpenedTreeView().ConfigureAwait(false);
+        await ChangeContentRootToOpenedTreeView();
     }
 
     private async Task HandleUpwardButtonOnClick()
@@ -60,13 +60,13 @@ public partial class InputFileTopNavBar : ComponentBase
             EnvironmentProvider,
             BackgroundTaskService));
 
-        await ChangeContentRootToOpenedTreeView().ConfigureAwait(false);
+        await ChangeContentRootToOpenedTreeView();
     }
 
     private async Task HandleRefreshButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction(BackgroundTaskService));
-        await ChangeContentRootToOpenedTreeView().ConfigureAwait(false);
+        await ChangeContentRootToOpenedTreeView();
     }
 
     private bool GetHandleBackButtonIsDisabled() => !InputFileState.CanMoveBackwardsInHistory;
@@ -79,7 +79,7 @@ public partial class InputFileTopNavBar : ComponentBase
         try
         {
             if (localSearchElementReference is not null)
-                await localSearchElementReference.Value.FocusAsync().ConfigureAwait(false);
+                await localSearchElementReference.Value.FocusAsync();
         }
         catch (Exception)
         {
@@ -95,16 +95,16 @@ public partial class InputFileTopNavBar : ComponentBase
         var openedTreeView = InputFileState.GetOpenedTreeView();
 
         if (openedTreeView?.Item is not null)
-            await SetInputFileContentTreeViewRootFunc.Invoke(openedTreeView.Item).ConfigureAwait(false);
+            await SetInputFileContentTreeViewRootFunc.Invoke(openedTreeView.Item);
     }
 
     private async Task InputFileEditAddressOnFocusOutCallbackAsync(string address)
     {
         try
         {
-            if (!await FileSystemProvider.Directory.ExistsAsync(address).ConfigureAwait(false))
+            if (!await FileSystemProvider.Directory.ExistsAsync(address))
             {
-                if (await FileSystemProvider.File.ExistsAsync(address).ConfigureAwait(false))
+                if (await FileSystemProvider.File.ExistsAsync(address))
                     throw new ApplicationException($"Address provided was a file. Provide a directory instead. {address}");
 
                 throw new ApplicationException($"Address provided does not exist. {address}");
@@ -113,7 +113,7 @@ public partial class InputFileTopNavBar : ComponentBase
             var absolutePath = EnvironmentProvider.AbsolutePathFactory(address, true);
             _showInputTextEditForAddress = false;
 
-            await SetInputFileContentTreeViewRootFunc.Invoke(absolutePath).ConfigureAwait(false);
+            await SetInputFileContentTreeViewRootFunc.Invoke(absolutePath);
         }
         catch (Exception exception)
         {
@@ -124,6 +124,6 @@ public partial class InputFileTopNavBar : ComponentBase
     private async Task HideInputFileEditAddressAsync()
     {
         _showInputTextEditForAddress = false;
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged);
     }
 }
