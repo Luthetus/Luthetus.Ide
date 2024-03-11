@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -24,8 +24,11 @@ public class BackgroundTaskServiceSynchronous : IBackgroundTaskService
         SetExecutingBackgroundTask(backgroundTask.QueueKey, backgroundTask);
 
         backgroundTask
-            .InvokeWorkItem(CancellationToken.None)
+            .HandleEvent(CancellationToken.None)
             .Wait();
+
+		// Don't await Task.Delay(backgroundTask.ThrottleTimeSpan) for
+		// this BackgroundTaskServiceSynchronous implementation.
 
         SetExecutingBackgroundTask(backgroundTask.QueueKey, null);
     }

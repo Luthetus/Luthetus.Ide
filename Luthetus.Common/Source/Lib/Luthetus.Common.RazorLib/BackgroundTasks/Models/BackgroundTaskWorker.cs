@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -37,7 +37,17 @@ public class BackgroundTaskWorker : BackgroundService
                     _hasActiveExecutionActive = true;
 
                     BackgroundTaskService.SetExecutingBackgroundTask(QueueKey, backgroundTask);
-                    await backgroundTask.InvokeWorkItem(cancellationToken).ConfigureAwait(false);
+
+					// TODO: Should '.ConfigureAwait(false)' be used here?
+					//
+					// TODO: Should Task.WhenAll be used here so the delay runs concurrently...
+					// ...with the 'HandleEvent'?
+					//
+					// TODO: Could it be that the reason for ThrottleController locking the UI thread...
+					// ...was because I was using Task.WhenAll, and once the tasks actually got awaited,
+					// they both finished synchronously somehow, therefore an await never occurred?
+                    await backgroundTask.HandleEvent(cancellationToken).ConfigureAwait(false);
+					await Task.Delay(backgroundTask.ThrottleTimeSpan);
                 }
                 catch (Exception ex)
                 {

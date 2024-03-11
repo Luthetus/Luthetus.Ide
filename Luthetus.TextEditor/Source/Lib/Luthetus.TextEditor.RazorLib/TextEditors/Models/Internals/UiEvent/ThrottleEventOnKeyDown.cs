@@ -1,7 +1,8 @@
-﻿using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -11,7 +12,7 @@ using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewMod
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 
-public class ThrottleEventOnKeyDown : IThrottleEvent
+public class ThrottleEventOnKeyDown : IBackgroundTask
 {
     private readonly TextEditorEvents _events;
 
@@ -43,6 +44,10 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
         }
     }
 
+    public Key<BackgroundTask> BackgroundTaskKey { get; }
+    public Key<BackgroundTaskQueue> QueueKey { get; }
+    public string Name { get; }
+    public Task? WorkProgress { get; }
     public TimeSpan ThrottleTimeSpan => _events.ThrottleDelayDefault;
     public KeyboardEventArgs KeyboardEventArgs { get; }
     public CommandNoType? Command { get; }
@@ -68,7 +73,7 @@ public class ThrottleEventOnKeyDown : IThrottleEvent
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
-    public IThrottleEvent? BatchOrDefault(IThrottleEvent oldEvent)
+    public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
         if (oldEvent is ThrottleEventOnKeyDown oldEventOnKeyDown)
         {

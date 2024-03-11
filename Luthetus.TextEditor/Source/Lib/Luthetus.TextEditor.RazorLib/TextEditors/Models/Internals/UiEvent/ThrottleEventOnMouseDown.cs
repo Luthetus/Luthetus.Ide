@@ -1,5 +1,6 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
@@ -8,7 +9,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 
-public class ThrottleEventOnMouseDown : IThrottleEvent
+public class ThrottleEventOnMouseDown : IBackgroundTask
 {
     private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
 
@@ -25,13 +26,17 @@ public class ThrottleEventOnMouseDown : IThrottleEvent
         ViewModelKey = viewModelKey;
     }
 
+    public Key<BackgroundTask> BackgroundTaskKey { get; }
+    public Key<BackgroundTaskQueue> QueueKey { get; }
+    public string Name { get; }
+    public Task? WorkProgress { get; }
     public MouseEventArgs MouseEventArgs { get; }
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
     public TimeSpan ThrottleTimeSpan => _events.ThrottleDelayDefault;
 
-    public IThrottleEvent? BatchOrDefault(IThrottleEvent oldEvent)
+    public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
         return this;
     }

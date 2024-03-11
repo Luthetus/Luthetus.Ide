@@ -1,4 +1,6 @@
-﻿namespace Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+
+namespace Luthetus.Common.RazorLib.Reactives.Models;
 
 /// <summary>
 /// This type is not thread safe by design.<br/><br/>
@@ -10,10 +12,10 @@ public class ThrottleEventQueue
     /// The first item in this list, is the first item in the 'queue'.<br/><br/>
     /// The last item in this list, is the last item in the 'queue'.<br/><br/>
     /// </summary>
-    private readonly List<IThrottleEvent> _throttleEventList = new();
+    private readonly List<IBackgroundTask> _throttleEventList = new();
 
     /// <summary>
-    /// Returns the amount of <see cref="IThrottleEvent"/>(s) in the queue.
+    /// Returns the amount of <see cref="IBackgroundTask"/>(s) in the queue.
     /// </summary>
     public int Count => _throttleEventList.Count;
 
@@ -31,11 +33,11 @@ public class ThrottleEventQueue
     /// 
     /// Each invocation of the 'batchFunc' will replace the 'to-be-queued' unless the 'batch event' returned was null.<br/><br/>
     /// </summary>
-    public void Enqueue(IThrottleEvent recentEvent)
+    public void Enqueue(IBackgroundTask recentEvent)
     {
         for (int i = _throttleEventList.Count - 1; i >= 0; i--)
         {
-            IThrottleEvent? oldEvent = _throttleEventList[i];
+            IBackgroundTask? oldEvent = _throttleEventList[i];
             var batchEvent = recentEvent.BatchOrDefault(oldEvent);
 
             if (batchEvent is null)
@@ -51,7 +53,7 @@ public class ThrottleEventQueue
     /// <summary>
     /// Returns the first entry in the queue, according to 'first in first out'
     /// </summary>
-    public IThrottleEvent? DequeueOrDefault()
+    public IBackgroundTask? DequeueOrDefault()
     {
         var firstEvent = _throttleEventList[0];
         _throttleEventList.RemoveAt(0);
