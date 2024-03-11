@@ -1,4 +1,5 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Reactives.Models;
 
@@ -18,6 +19,8 @@ public class ThrottleEventQueue
     /// Returns the amount of <see cref="IBackgroundTask"/>(s) in the queue.
     /// </summary>
     public int Count => _throttleEventList.Count;
+
+	public ImmutableArray<IBackgroundTask> ThrottleEventList => _throttleEventList.ToImmutableArray();
 
     /// <summary>
     /// When enqueueing an event, a batchFunc is also provided.<br/><br/>
@@ -55,6 +58,9 @@ public class ThrottleEventQueue
     /// </summary>
     public IBackgroundTask? DequeueOrDefault()
     {
+		if (_throttleEventList.Count <= 0)
+			return null;
+
         var firstEvent = _throttleEventList[0];
         _throttleEventList.RemoveAt(0);
         return firstEvent;

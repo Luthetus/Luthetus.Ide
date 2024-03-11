@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -39,7 +39,7 @@ public class BackgroundTaskService : IBackgroundTaskService
         var queue = _queueMap[queueKey];
 
         await queue.WorkItemsQueueSemaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
-        _ = queue.BackgroundTasks.TryDequeue(out var backgroundTask);
+        var backgroundTask = queue.BackgroundTasks.DequeueOrDefault();
 
         return backgroundTask;
     }
@@ -68,7 +68,7 @@ public class BackgroundTaskService : IBackgroundTaskService
         _enqueuesAreDisabled = true;
 
         // TODO: Polling solution for now, perhaps change to a more optimal solution? (2023-11-19)
-        while (_queueMap.Values.SelectMany(x => x.BackgroundTasks).Any())
+        while (_queueMap.Values.SelectMany(x => x.BackgroundTasks.ThrottleEventList).Any())
         {
             await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken).ConfigureAwait(false);
         }

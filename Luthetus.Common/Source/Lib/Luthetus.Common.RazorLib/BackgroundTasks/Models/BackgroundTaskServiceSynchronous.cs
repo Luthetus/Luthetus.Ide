@@ -73,7 +73,7 @@ public class BackgroundTaskServiceSynchronous : IBackgroundTaskService
         _enqueuesAreDisabled = true;
 
         // TODO: Polling solution for now, perhaps change to a more optimal solution? (2023-11-19)
-        while (_queueMap.Values.SelectMany(x => x.BackgroundTasks).Any())
+        while (_queueMap.Values.SelectMany(x => x.BackgroundTasks.ThrottleEventList).Any())
         {
             await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken).ConfigureAwait(false);
         }

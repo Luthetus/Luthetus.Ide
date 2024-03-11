@@ -1,5 +1,6 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using System.Collections.Concurrent;
+using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
@@ -27,7 +28,9 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 /// 	- Inner workings of ThrottleEventQueue
 /// 	- Don't have 'BackgroundTasks' instead the type is a queue in and of itself.
 ///
-/// I want to change 
+// Goal: Change BackgroundTask to act similarly to IThrottleEvent #Step 500 (2024-03-11)
+// -------------------------------------------------------------------------------------
+// ...
 public class BackgroundTaskQueue : IBackgroundTaskQueue
 {
     private IBackgroundTask? _executingBackgroundTask;
@@ -45,7 +48,7 @@ public class BackgroundTaskQueue : IBackgroundTaskQueue
     /// TODO: Concern - one could access this property by casting
     /// an <see cref="IBackgroundTaskQueue"/> as a <see cref="BackgroundTaskQueue"/>
     /// </summary>
-    public ConcurrentQueue<IBackgroundTask> BackgroundTasks { get; } = new();
+    public ThrottleEventQueue BackgroundTasks { get; } = new();
     /// <summary>
     /// TODO: Concern - one could access this property by casting
     /// an <see cref="IBackgroundTaskQueue"/> as a <see cref="BackgroundTaskQueue"/>
