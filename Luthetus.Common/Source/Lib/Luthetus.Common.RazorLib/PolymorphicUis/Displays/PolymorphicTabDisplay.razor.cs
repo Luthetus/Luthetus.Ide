@@ -78,10 +78,13 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
         await Tab.TabCloseAsync();
 	}
 
-	private void HandleOnMouseDown()
+	private async Task HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)
 	{
 		if (IsBeingDragged)
 			return;
+
+		if (mouseEventArgs.Button == 1)
+            await CloseTabOnClickAsync();
 
         _thinksLeftMouseButtonIsDown = true;
 	}
