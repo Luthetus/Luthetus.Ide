@@ -10,4 +10,11 @@
         @onmouseout="HandleOnMouseOutAsync">
 
 	@localTab.Title
+
+	<button class="luth_button luth_button-close"
+            @onclick:stopPropagation="true"
+            @onclick="CloseTabOnClickAsync">
+        
+        <IconClose/>
+    </button>
 </button>

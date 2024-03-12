@@ -134,12 +134,6 @@ public record TextEditorViewModelPolymorphicUi : IPolymorphicTab, IPolymorphicDi
         return elementDimensions;
 	}
 
-	public Task TabSetAsActiveAsync()
-	{
-		TextEditorService.GroupApi.SetActiveViewModel(TextEditorGroup.GroupKey, ViewModelKey);
-		return Task.CompletedTask;
-	}
-
 	public Task OnDragStopAsync(IPolymorphicDropzone? dropzone)
 	{
 		if (dropzone is not TextEditorViewModelPolymorphicDropzone textEditorViewModelPolymorphicDropzone)
@@ -349,10 +343,22 @@ public record TextEditorViewModelPolymorphicUi : IPolymorphicTab, IPolymorphicDi
 		}
 	}
 
+	public Task TabSetAsActiveAsync()
+	{
+		TextEditorService.GroupApi.SetActiveViewModel(TextEditorGroup.GroupKey, ViewModelKey);
+		return Task.CompletedTask;
+	}
+
 	public string TabGetDynamicCss()
 	{
 		return TextEditorGroup.ActiveViewModelKey == ViewModelKey
 			? "luth_active"
 		    : string.Empty;
+	}
+
+	public Task TabCloseAsync()
+	{
+		TextEditorService.GroupApi.RemoveViewModel(TextEditorGroup.GroupKey, ViewModelKey);
+		return Task.CompletedTask;
 	}
 }
