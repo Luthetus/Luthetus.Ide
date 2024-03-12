@@ -19,7 +19,9 @@ public class BackgroundTaskServiceSynchronous : IBackgroundTaskService
 
         var queue = _queueMap[backgroundTask.QueueKey];
 
-        queue.BackgroundTasks.Enqueue(backgroundTask);
+		// TODO: Why enqueue when no dequeue happens? Also StopAsync seems nonsensical
+		// for the same reason. This is the synchronous version.
+        queue.Enqueue(backgroundTask);
 
         SetExecutingBackgroundTask(backgroundTask.QueueKey, backgroundTask);
 
@@ -73,7 +75,7 @@ public class BackgroundTaskServiceSynchronous : IBackgroundTaskService
         _enqueuesAreDisabled = true;
 
         // TODO: Polling solution for now, perhaps change to a more optimal solution? (2023-11-19)
-        while (_queueMap.Values.SelectMany(x => x.BackgroundTasks.ThrottleEventList).Any())
+        while (_queueMap.Values.SelectMany(x => x.ThrottleEventList).Any())
         {
             await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken).ConfigureAwait(false);
         }

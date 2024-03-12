@@ -24,12 +24,12 @@ public class TextEditorServiceTask : ITextEditorTask
 
 	private ITextEditorTask _innerTask;
 
-    public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
+    public Key<BackgroundTask> BackgroundTaskKey => _innerTask.BackgroundTaskKey;
     public Key<BackgroundTaskQueue> QueueKey => _innerTask.QueueKey;
     public string Name => _innerTask.Name;
     public Task? WorkProgress => _innerTask.WorkProgress;
 
-    public TimeSpan ThrottleTimeSpan => TimeSpan.Zero;
+    public TimeSpan ThrottleTimeSpan => _innerTask.ThrottleTimeSpan;
 
     public Task InvokeWithEditContext(ITextEditorEditContext editContext)
 	{
@@ -42,13 +42,13 @@ public class TextEditorServiceTask : ITextEditorTask
 		{
 			var batchResult = _innerTask.BatchOrDefault(oldTextEditorServiceTask._innerTask);
 			
-			if (batchResult is not null && batchResult is TextEditorServiceTask batchResultTextEditorServiceTask)
+			if (batchResult is not null && batchResult is ITextEditorTask batchResultTextEditorTask)
 			{
-				_innerTask = batchResultTextEditorServiceTask;
+				_innerTask = batchResultTextEditorTask;
 				return this;
 			}
 		}
-        
+
 		return null;
     }
 

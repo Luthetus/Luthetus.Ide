@@ -30,7 +30,7 @@ public class ThrottleEventOnKeyDownBatch : ITextEditorTask
 
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public string Name { get; } = nameof(ThrottleEventOnKeyDownBatch);
+    public string Name => nameof(ThrottleEventOnKeyDownBatch) + $"_{ThrottleEventOnKeyDownList.Count}";
     public Task? WorkProgress { get; }
     public TimeSpan ThrottleTimeSpan => _events.ThrottleDelayDefault;
     public List<ThrottleEventOnKeyDown> ThrottleEventOnKeyDownList { get; }

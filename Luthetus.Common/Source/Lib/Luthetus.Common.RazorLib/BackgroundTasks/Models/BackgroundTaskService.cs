@@ -19,8 +19,8 @@ public class BackgroundTaskService : IBackgroundTaskService
 
         var queue = _queueMap[backgroundTask.QueueKey];
 
-        queue.BackgroundTasks.Enqueue(backgroundTask);
-        queue.WorkItemsQueueSemaphoreSlim.Release();
+        queue.Enqueue(backgroundTask);
+        queue.WorkItemAvailableSemaphoreSlim.Release();
     }
 
     public void Enqueue(
@@ -38,8 +38,8 @@ public class BackgroundTaskService : IBackgroundTaskService
     {
         var queue = _queueMap[queueKey];
 
-        await queue.WorkItemsQueueSemaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
-        var backgroundTask = queue.BackgroundTasks.DequeueOrDefault();
+        await queue.WorkItemAvailableSemaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
+        var backgroundTask = queue.DequeueOrDefault();
 
         return backgroundTask;
     }
@@ -68,7 +68,7 @@ public class BackgroundTaskService : IBackgroundTaskService
         _enqueuesAreDisabled = true;
 
         // TODO: Polling solution for now, perhaps change to a more optimal solution? (2023-11-19)
-        while (_queueMap.Values.SelectMany(x => x.BackgroundTasks.ThrottleEventList).Any())
+        while (_queueMap.Values.SelectMany(x => x.ThrottleEventList).Any())
         {
             await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken).ConfigureAwait(false);
         }

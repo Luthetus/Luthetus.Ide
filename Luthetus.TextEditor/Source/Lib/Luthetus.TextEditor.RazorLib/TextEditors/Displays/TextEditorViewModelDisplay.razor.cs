@@ -238,7 +238,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             await CursorDisplay.FocusAsync();
     }
 
-    private void ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private async Task ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (TextEditorEventsUtils.CheckIfKeyboardEventArgsIsNoise(keyboardEventArgs))
             return;
@@ -254,8 +254,14 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             keyboardEventArgs,
             resourceUri,
             viewModelKey.Value);
-	
+
 		TextEditorService.Post(throttleEventOnKeyDown);
+
+		//_ = Task.Run(() => TextEditorService.Post(throttleEventOnKeyDown));
+	
+		//await Task.Yield();
+
+		//Console.WriteLine("Post");
     }
 
     private async Task ReceiveOnContextMenuAsync()

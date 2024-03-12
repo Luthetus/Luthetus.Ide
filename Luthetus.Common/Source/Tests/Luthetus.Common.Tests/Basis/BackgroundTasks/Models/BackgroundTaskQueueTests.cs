@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,10 +51,10 @@ public class BackgroundTaskQueueTests
     }
 
     /// <summary>
-    /// <see cref="BackgroundTaskQueue.WorkItemsQueueSemaphoreSlim"/>
+    /// <see cref="BackgroundTaskQueue.WorkItemAvailableSemaphoreSlim"/>
     /// </summary>
     [Fact]
-    public void WorkItemsQueueSemaphoreSlim()
+    public void WorkItemAvailableSemaphoreSlim()
     {
         /*
         Thoughts for this test as of (2023-11-20)
