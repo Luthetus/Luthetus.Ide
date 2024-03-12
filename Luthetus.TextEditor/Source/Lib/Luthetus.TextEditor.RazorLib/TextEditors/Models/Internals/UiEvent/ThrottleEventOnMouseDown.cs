@@ -46,6 +46,8 @@ public class ThrottleEventOnMouseDown : ITextEditorTask
         if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
             return;
 
+		viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = false;
+
         var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
 
         if ((MouseEventArgs.Buttons & 1) != 1 && hasSelectedText)

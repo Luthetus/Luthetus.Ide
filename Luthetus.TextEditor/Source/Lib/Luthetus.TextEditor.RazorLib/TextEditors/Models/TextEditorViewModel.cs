@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
@@ -154,56 +154,48 @@ public record TextEditorViewModel : IDisposable
     public string GutterElementId => $"luth_te_text-editor-gutter_{ViewModelKey.Guid}";
     public string FindOverlayId => $"luth_te_find-overlay_{ViewModelKey.Guid}";
 
-    public void MutateScrollHorizontalPositionByPixels(double pixels)
+    public TextEditorEdit MutateScrollHorizontalPositionByPixelsFactory(double pixels)
     {
-        TextEditorService.Post(
-            nameof(MutateScrollHorizontalPositionByPixels),
-            TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
-                BodyElementId,
-                GutterElementId,
-                pixels));
+        return TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
+            BodyElementId,
+            GutterElementId,
+            pixels);
     }
 
-    public void MutateScrollVerticalPositionByPixels(double pixels)
+    public TextEditorEdit MutateScrollVerticalPositionByPixelsFactory(double pixels)
     {
-        TextEditorService.Post(
-            nameof(MutateScrollVerticalPositionByPixels),
-            TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
-                BodyElementId,
-                GutterElementId,
-                pixels));
+        return TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
+            BodyElementId,
+            GutterElementId,
+            pixels);
     }
 
-    public void MutateScrollVerticalPositionByPages(double pages)
+    public TextEditorEdit MutateScrollVerticalPositionByPagesFactory(double pages)
     {
-        MutateScrollVerticalPositionByPixels(
+        return MutateScrollVerticalPositionByPixelsFactory(
             pages * VirtualizationResult.TextEditorMeasurements.Height);
     }
 
-    public void MutateScrollVerticalPositionByLines(double lines)
+    public TextEditorEdit MutateScrollVerticalPositionByLinesFactory(double lines)
     {
-        MutateScrollVerticalPositionByPixels(
+        return MutateScrollVerticalPositionByPixelsFactory(
             lines * VirtualizationResult.CharAndRowMeasurements.RowHeight);
     }
 
     /// <summary>If a parameter is null the JavaScript will not modify that value</summary>
-    public void SetScrollPosition(double? scrollLeft, double? scrollTop)
+    public TextEditorEdit SetScrollPositionFactory(double? scrollLeft, double? scrollTop)
     {
-        TextEditorService.Post(
-            nameof(SetScrollPosition),
-            TextEditorService.ViewModelApi.SetScrollPositionFactory(
-                BodyElementId,
-                GutterElementId,
-                scrollLeft,
-                scrollTop));
+        return TextEditorService.ViewModelApi.SetScrollPositionFactory(
+	        BodyElementId,
+	        GutterElementId,
+	        scrollLeft,
+	        scrollTop);
     }
 
-    public void Focus()
+    public TextEditorEdit FocusFactory()
     {
-        TextEditorService.Post(
-            nameof(Focus),
-            TextEditorService.ViewModelApi.FocusPrimaryCursorFactory(
-                PrimaryCursorContentId));
+        return TextEditorService.ViewModelApi.FocusPrimaryCursorFactory(
+        	PrimaryCursorContentId);
     }
 
     public void Dispose()

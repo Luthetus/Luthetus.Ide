@@ -1,79 +1,50 @@
-using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 
-public class ThrottleEventOnWheel : ITextEditorTask
+public class ThrottleEventOnScrollVertical : ITextEditorTask
 {
     private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
 
-    public ThrottleEventOnWheel(
-        WheelEventArgs wheelEventArgs,
+    public ThrottleEventOnScrollVertical(
+		double scrollTop,
         TextEditorViewModelDisplay.TextEditorEvents events,
         Key<TextEditorViewModel> viewModelKey)
     {
         _events = events;
 
-        WheelEventArgs = wheelEventArgs;
+		ScrollTop = scrollTop;
         ViewModelKey = viewModelKey;
     }
 
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public string Name { get; } = nameof(ThrottleEventOnWheel);
+    public string Name { get; } = nameof(ThrottleEventOnScrollVertical);
     public Task? WorkProgress { get; }
-    public WheelEventArgs WheelEventArgs { get; }
+	public double ScrollTop { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
     public TimeSpan ThrottleTimeSpan => _events.ThrottleDelayDefault;
 
     public async Task InvokeWithEditContext(ITextEditorEditContext editContext)
 	{
-		var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
+        var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
 
         if (viewModelModifier is null)
             return;
 
-        if (WheelEventArgs.ShiftKey)
-		{
-            await viewModelModifier.ViewModel.MutateScrollHorizontalPositionByPixelsFactory(WheelEventArgs.DeltaY)
-				.Invoke(editContext)
-				.ConfigureAwait(false);
-		}
-        else
-		{
-            await viewModelModifier.ViewModel.MutateScrollVerticalPositionByPixelsFactory(WheelEventArgs.DeltaY)
-				.Invoke(editContext)
-				.ConfigureAwait(false);
-		}
+		await viewModelModifier.ViewModel!.SetScrollPositionFactory(null, ScrollTop)
+			.Invoke(editContext)
+			.ConfigureAwait(false);
 	}
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
-        if (oldEvent is ThrottleEventOnWheel oldEventOnWheel)
-        {
-            return new ThrottleEventOnWheelBatch(
-                new List<WheelEventArgs>()
-                {
-                    oldEventOnWheel.WheelEventArgs,
-                    WheelEventArgs
-                },
-                _events,
-                ViewModelKey);
-        }
-
-        if (oldEvent is ThrottleEventOnWheelBatch oldEventOnWheelBatch)
-        {
-            oldEventOnWheelBatch.WheelEventArgsList.Add(WheelEventArgs);
-            return oldEventOnWheelBatch;
-        }
-
-        return null;
+		return this;
     }
 
     public Task HandleEvent(CancellationToken cancellationToken)

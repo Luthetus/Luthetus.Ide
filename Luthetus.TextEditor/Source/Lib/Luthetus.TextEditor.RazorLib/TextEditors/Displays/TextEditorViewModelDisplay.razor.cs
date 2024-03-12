@@ -405,33 +405,42 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         return Task.CompletedTask;
     }
 
-    private Task ReceiveOnTouchMoveAsync(TouchEventArgs touchEventArgs)
+    private async Task ReceiveOnTouchMoveAsync(TouchEventArgs touchEventArgs)
     {
         var localThinksTouchIsOccurring = _thinksTouchIsOccurring;
 
         if (!_thinksTouchIsOccurring)
-            return Task.CompletedTask;
+            return;
 
         var previousTouchPoint = _previousTouchEventArgs?.ChangedTouches.FirstOrDefault(x => x.Identifier == 0);
         var currentTouchPoint = touchEventArgs.ChangedTouches.FirstOrDefault(x => x.Identifier == 0);
 
         if (previousTouchPoint is null || currentTouchPoint is null)
-            return Task.CompletedTask;
+            return;
 
         var viewModel = GetViewModel();
 
         if (viewModel is null)
-            return Task.CompletedTask;
+            return;
 
         // Natural scrolling for touch devices
         var diffX = previousTouchPoint.ClientX - currentTouchPoint.ClientX;
         var diffY = previousTouchPoint.ClientY - currentTouchPoint.ClientY;
 
-        viewModel.MutateScrollHorizontalPositionByPixels(diffX);
-        viewModel.MutateScrollVerticalPositionByPixels(diffY);
+		TextEditorService.Post(
+            nameof(QueueRemeasureBackgroundTask),
+            async editContext =>
+			{
+				await viewModel.MutateScrollHorizontalPositionByPixelsFactory(diffX)
+					.Invoke(editContext)
+					.ConfigureAwait(false);
+
+				await viewModel.MutateScrollVerticalPositionByPixelsFactory(diffY)
+					.Invoke(editContext)
+					.ConfigureAwait(false);
+			});
 
         _previousTouchEventArgs = touchEventArgs;
-        return Task.CompletedTask;
     }
 
     private string GetGlobalHeightInPixelsStyling()
