@@ -5,6 +5,7 @@
 		id="@HtmlId"
         @onclick="async () => await localTab.TabSetAsActiveAsync()"
 		@onmousedown:stopPropagation="true"
+		@onmousedown:preventDefault="true"
         @onmousedown="HandleOnMouseDownAsync"
         @onmouseup="HandleOnMouseUp"
         @onmouseout="HandleOnMouseOutAsync">
