@@ -107,6 +107,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
         {
             ContextRecordKey = ContextFacts.SolutionExplorerContext.ContextKey
         };
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(solutionExplorerPanelTab));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(leftPanel.Key, solutionExplorerPanelTab, false));
 
         // folderExplorerPanelTab
@@ -118,6 +119,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
         {
             ContextRecordKey = ContextFacts.FolderExplorerContext.ContextKey
         };
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(folderExplorerPanelTab));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(leftPanel.Key, folderExplorerPanelTab, false));
 
         // SetActivePanelTabAction
@@ -137,6 +139,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
         {
             ContextRecordKey = ContextFacts.CompilerServiceExplorerContext.ContextKey
         };
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(compilerServiceExplorerPanelTab));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, compilerServiceExplorerPanelTab, false));
 
         // compilerServiceEditorPanelTab
@@ -148,6 +151,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
         {
             ContextRecordKey = ContextFacts.CompilerServiceEditorContext.ContextKey
         };
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(compilerServiceEditorPanelTab));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, compilerServiceEditorPanelTab, false));
 
         // TODO: The ITextEditorDiffApi.Calculate method is being commented out as of (2024-02-23). It needs to be re-written...
@@ -162,6 +166,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
         // {
         //     ContextRecordKey = ContextFacts.GitContext.ContextKey
         // };
+        // Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(gitChangesPanelTab));
         // Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, gitChangesPanelTab, false));
     }
 
@@ -178,6 +183,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
         {
             ContextRecordKey = ContextFacts.TerminalContext.ContextKey
         };
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(terminalPanelTab));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, terminalPanelTab, false));
 
         // outputPanelTab
@@ -189,6 +195,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
         {
             ContextRecordKey = ContextFacts.OutputContext.ContextKey
         };
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(outputPanelTab));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, outputPanelTab, false));
 
         // nuGetPanelTab
@@ -200,6 +207,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
         {
             ContextRecordKey = ContextFacts.NuGetPackageManagerContext.ContextKey
         };
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(nuGetPanelTab));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, nuGetPanelTab, false));
 
         // activeContextsPanelTab
@@ -211,6 +219,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
         {
             ContextRecordKey = ContextFacts.ActiveContextsContext.ContextKey
         };
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(activeContextsPanelTab));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, activeContextsPanelTab, false));
 
         // testExplorerPanelTab
@@ -222,6 +231,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
         {
             ContextRecordKey = ContextFacts.TestExplorerContext.ContextKey
         };
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(testExplorerPanelTab));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, testExplorerPanelTab, false));
 
         // SetActivePanelTabAction

@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.FileSystems.Displays;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
@@ -24,9 +25,11 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
-public partial class IdeHeader : FluxorComponent
+public partial class IdeHeader : ComponentBase
 {
     [Inject]
+    private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
+	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
@@ -55,12 +58,17 @@ public partial class IdeHeader : FluxorComponent
     private MenuRecord _menuTools = new(ImmutableArray<MenuOptionRecord>.Empty);
     private ElementReference? _buttonToolsElementReference;
 
+	private Key<DropdownRecord> _dropdownKeyView = Key<DropdownRecord>.NewKey();
+    private MenuRecord _menuView = new(ImmutableArray<MenuOptionRecord>.Empty);
+    private ElementReference? _buttonViewElementReference;
+
 	private ActiveBackgroundTaskDisplay _activeBackgroundTaskDisplayComponent;
 
     protected override Task OnInitializedAsync()
     {
         InitializeMenuFile();
 		InitializeMenuTools();
+		InitializeMenuView();
 
         return base.OnInitializedAsync();
     }
@@ -217,6 +225,27 @@ public partial class IdeHeader : FluxorComponent
         _menuTools = new MenuRecord(menuOptionsList.ToImmutableArray());
     }
 
+	private void InitializeMenuView()
+    {
+        var menuOptionsList = new List<MenuOptionRecord>();
+		var panelsState = PanelsStateWrap.Value;
+
+		foreach (var panel in panelsState.PanelList)
+		{
+            var menuOptionPanel = new MenuOptionRecord(
+				panel.Title,
+                MenuOptionKind.Delete,
+                () => { });
+
+            menuOptionsList.Add(menuOptionPanel);
+		}
+
+		if (menuOptionsList.Count == 0)
+			_menuView = MenuRecord.Empty;
+		else
+			_menuView = new MenuRecord(menuOptionsList.ToImmutableArray());
+    }
+
     private void AddActiveDropdownKey(Key<DropdownRecord> dropdownKey)
     {
         Dispatcher.Dispatch(new DropdownState.AddActiveAction(dropdownKey));
@@ -245,6 +274,20 @@ public partial class IdeHeader : FluxorComponent
         {
             if (_buttonToolsElementReference is not null)
                 await _buttonToolsElementReference.Value.FocusAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+	private async Task RestoreFocusToButtonDisplayComponentViewAsync()
+    {
+        try
+        {
+            if (_buttonViewElementReference is not null)
+                await _buttonViewElementReference.Value.FocusAsync();
         }
         catch (Exception e)
         {

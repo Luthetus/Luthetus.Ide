@@ -6,6 +6,9 @@ namespace Luthetus.Common.RazorLib.Panels.States;
 
 public partial record PanelsState
 {
+    public record RegisterPanelAction(Panel Panel);
+    public record DisposePanelAction(Key<Panel> PanelKey);
+
     public record RegisterPanelGroupAction(PanelGroup PanelGroup);
     public record DisposePanelGroupAction(Key<PanelGroup> PanelGroupKey);
 
