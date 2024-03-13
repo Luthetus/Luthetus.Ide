@@ -82,7 +82,7 @@ public record Panel : IPolymorphicTab, IPolymorphicDialog, IPolymorphicDraggable
     public string DialogFocusPointHtmlElementId => $"luth_dialog-focus-point_{Key.Guid}";
 
 	public Type DraggableRendererType => RendererType;
-	public Dictionary<string, object?> DraggableParameterMap => ParameterMap;
+	public Dictionary<string, object?> DraggableParameterMap => TabParameterMap;
 	public ElementDimensions DraggableElementDimensions => DialogElementDimensions;
 	public ImmutableArray<IPolymorphicDropzone> DropzoneList { get; set; } = ImmutableArray<IPolymorphicDropzone>.Empty;
 
@@ -173,80 +173,7 @@ public record Panel : IPolymorphicTab, IPolymorphicDialog, IPolymorphicDraggable
 
 	public async Task<ImmutableArray<IPolymorphicDropzone>> GetDropzonesAsync()
 	{
-		return ImmutableArray<IPolymorphicDropzone>.Empty;
-
-		/*
 		var dropzoneList = new List<IPolymorphicDropzone>();
-
-		var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
-            "luthetusIde.measureElementById",
-            $"luth_te_group_{TextEditorGroup.GroupKey.Guid}");
-	
-		measuredHtmlElementDimensions = measuredHtmlElementDimensions with
-		{
-			ZIndex = 1,
-		};
-
-		var elementDimensions = new ElementDimensions();
-
-		elementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
-
-		// Width
-		{
-			var widthDimensionAttribute = elementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-			widthDimensionAttribute.DimensionUnitList.Clear();
-            widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = measuredHtmlElementDimensions.WidthInPixels,
-                DimensionUnitKind = DimensionUnitKind.Pixels
-            });
-		}
-
-		// Height
-		{
-			var heightDimensionAttribute = elementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
-
-			heightDimensionAttribute.DimensionUnitList.Clear();
-            heightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = measuredHtmlElementDimensions.HeightInPixels,
-                DimensionUnitKind = DimensionUnitKind.Pixels
-            });
-		}
-
-		// Left
-		{
-			var leftDimensionAttribute = elementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
-
-            leftDimensionAttribute.DimensionUnitList.Clear();
-            leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = measuredHtmlElementDimensions.LeftInPixels,
-                DimensionUnitKind = DimensionUnitKind.Pixels
-            });
-		}
-
-		// Top
-		{
-			var topDimensionAttribute = elementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
-
-            topDimensionAttribute.DimensionUnitList.Clear();
-            topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = measuredHtmlElementDimensions.TopInPixels,
-                DimensionUnitKind = DimensionUnitKind.Pixels
-            });
-		}
-
-		dropzoneList.Add(new PanelDropzone(
-			measuredHtmlElementDimensions,
-			elementDimensions,
-			TextEditorGroup.GroupKey));
 
 		// Fallback dropzone
 		{
@@ -315,7 +242,6 @@ public record Panel : IPolymorphicTab, IPolymorphicDialog, IPolymorphicDraggable
 		var result = dropzoneList.ToImmutableArray();
 		DropzoneList = result;
 		return result;
-		*/
 	}
 
 	public Task TabSetAsActiveAsync()
