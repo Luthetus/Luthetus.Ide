@@ -31,8 +31,8 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 	private string _htmlIdDragged = null;
 	private string _htmlId = null;
 	private string HtmlId => IsBeingDragged
-		? _htmlId ??= $"luth_polymorphic-tab_{Tab.Key}"
-		: _htmlIdDragged ??= $"luth_polymorphic-tab-drag_{Tab.Key}";
+		? _htmlId ??= $"luth_polymorphic-tab_{Tab.PolymorphicUiKey}"
+		: _htmlIdDragged ??= $"luth_polymorphic-tab-drag_{Tab.PolymorphicUiKey}";
 
 	protected override void OnInitialized()
     {

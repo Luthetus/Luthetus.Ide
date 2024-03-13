@@ -1,4 +1,4 @@
-﻿<button class="luth_ide_panel-tab luth_button luth_tab luth_unselectable @IsActiveCssClassString"
+<button class="luth_ide_panel-tab luth_button luth_tab luth_unselectable @IsActiveCssClassString"
         @onclick="DispatchSetActivePanelTabActionOnClick"
         @onmousedown:stopPropagation="true"
         @onmousedown="HandleOnMouseDownAsync"
@@ -7,7 +7,7 @@
         @onmouseout="HandleOnMouseOutAsync">
     
     <span>
-        @PanelTab.DisplayName
+        @PanelTab.Title
     </span>
 </button>
 
@@ -16,6 +16,6 @@
     <div class="luth_ide_panel-tab-drag-display"
          style="@PanelTab.BeingDraggedDimensions.StyleString">
 
-        @PanelTab.DisplayName
+        @PanelTab.Title
     </div>
 }

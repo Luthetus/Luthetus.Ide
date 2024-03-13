@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -9,24 +9,24 @@ using System.Collections.Immutable;
 namespace Luthetus.Common.Tests.Basis.Panels.Models;
 
 /// <summary>
-/// <see cref="PanelTab"/>
+/// <see cref="Panel"/>
 /// </summary>
-public class PanelTabTests
+public class PanelTests
 {
     /// <summary>
-    /// <see cref="PanelTab(Key{PanelTab}, ElementDimensions, ElementDimensions, Type, Type, string)"/>
+    /// <see cref="Panel(Key{Panel}, ElementDimensions, ElementDimensions, Type, Type, string)"/>
     /// <br/>----<br/>
-    /// <see cref="PanelTab.IsBeingDragged"/>
-    /// <see cref="PanelTab.ContextRecordKey"/>
+    /// <see cref="Panel.IsBeingDragged"/>
+    /// <see cref="Panel.ContextRecordKey"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
         var samplePanelGroup = new PanelGroup(
             PanelFacts.LeftPanelRecordKey,
-            Key<PanelTab>.Empty,
+            Key<Panel>.Empty,
             new ElementDimensions(),
-            ImmutableArray<PanelTab>.Empty);
+            ImmutableArray<Panel>.Empty);
 
         var leftPanelGroupWidth = samplePanelGroup.ElementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
@@ -46,7 +46,7 @@ public class PanelTabTests
             }
         });
 
-        var key = Key<PanelTab>.NewKey();
+        var key = Key<Panel>.NewKey();
         var elementDimensions = samplePanelGroup.ElementDimensions;
         var beingDraggedDimensions = new ElementDimensions();
         var contentRendererType = typeof(IconCSharpClass);
@@ -55,7 +55,7 @@ public class PanelTabTests
         var isBeingDragged = false;
         var contextRecordKey = ContextFacts.SolutionExplorerContext.ContextKey;
 
-        var samplePanelTab = new PanelTab(
+        var samplePanel = new Panel(
             key,
             elementDimensions,
             beingDraggedDimensions,
@@ -69,13 +69,13 @@ public class PanelTabTests
             ContextRecordKey = contextRecordKey,
         };
 
-        Assert.Equal(key, samplePanelTab.Key);
-        Assert.Equal(elementDimensions, samplePanelTab.ElementDimensions);
-        Assert.Equal(beingDraggedDimensions, samplePanelTab.BeingDraggedDimensions);
-        Assert.Equal(contentRendererType, samplePanelTab.ContentRendererType);
-        Assert.Equal(iconRendererType, samplePanelTab.IconRendererType);
-        Assert.Equal(displayName, samplePanelTab.DisplayName);
-        Assert.Equal(isBeingDragged, samplePanelTab.IsBeingDragged);
-        Assert.Equal(contextRecordKey, samplePanelTab.ContextRecordKey);
+        Assert.Equal(key, samplePanel.Key);
+        Assert.Equal(elementDimensions, samplePanel.ElementDimensions);
+        Assert.Equal(beingDraggedDimensions, samplePanel.BeingDraggedDimensions);
+        Assert.Equal(contentRendererType, samplePanel.ContentRendererType);
+        Assert.Equal(iconRendererType, samplePanel.IconRendererType);
+        Assert.Equal(displayName, samplePanel.DisplayName);
+        Assert.Equal(isBeingDragged, samplePanel.IsBeingDragged);
+        Assert.Equal(contextRecordKey, samplePanel.ContextRecordKey);
     }
 }

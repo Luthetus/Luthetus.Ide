@@ -20,7 +20,7 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public PanelTab PanelTab { get; set; } = null!;
+    public Panel PanelTab { get; set; } = null!;
     [Parameter, EditorRequired]
     public PanelGroup PanelRecord { get; set; } = null!;
 
@@ -81,7 +81,7 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
         {
             Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(
                 PanelRecord.Key,
-                Key<PanelTab>.Empty));
+                Key<Panel>.Empty));
         }
         else
         {

@@ -1,0 +1,104 @@
+.luth_ide_panel {
+    display: flex;
+}
+
+.luth_ide_panel-tabs {
+    position: relative;
+    background-color: var(--luth_ide_panel-background-color);
+}
+
+.luth_ide_panel-tabs-justify-end {
+    position: absolute;
+    right: calc(3ch + 3px);
+    top: 0;
+}
+
+.luth_ide_panel-tab {
+    padding: 1px;
+    font-size: var(--luth_ide_panel-tabs-font-size);
+    display: inline-flex !important;
+    border: none !important;
+    position: relative;
+}
+
+.luth_ide_panel-tab-dropzone {
+    width: 100%;
+    height: 50%;
+    position: absolute;
+    left: 0;
+    z-index: 100;
+    background-color: var(--luth_primary-hover-background-color);
+    opacity: 0.6;
+}
+
+    .luth_ide_panel-tab-dropzone:hover {
+        background-color: var(--luth_button-hover-background-color);
+        box-shadow: 0 0 2px var(--luth_primary-overlay-box-shadow-color);
+    }
+
+.luth_ide_panel-tab-dropzone-top {
+    top: 0;
+}
+
+.luth_ide_panel-tab-dropzone-bottom {
+    top: 50%;
+}
+
+.luth_ide_panel-tab-drag-display {
+    position: fixed;
+    min-width: 10ch;
+    min-height: 2em;
+    background-color: var(--luth_tertiary-background-color);
+    color: var(--luth_tertiary-foreground-color);
+}
+
+.luth_ide_panel_left .luth_ide_panel-tabs .luth_ide_panel-tab span {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+
+.luth_ide_panel_right {
+    flex-direction: row-reverse;
+}
+
+.luth_ide_panel_right .luth_ide_panel-tabs .luth_ide_panel-tab span {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+}
+
+.luth_ide_panel_bottom {
+    flex-direction: column-reverse;
+}
+
+.luth_ide_panel_left .luth_ide_panel-tabs {
+    width: calc(var(--luth_ide_panel-tabs-font-size) + var(--luth_ide_panel-tabs-margin) + var(--luth_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.luth_ide_panel_left .luth_ide_panel-body {
+    width: calc(100% - var(--luth_ide_panel-tabs-font-size) - var(--luth_ide_panel-tabs-margin) - var(--luth_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.luth_ide_panel_right .luth_ide_panel-tabs {
+    width: calc(var(--luth_ide_panel-tabs-font-size) + var(--luth_ide_panel-tabs-margin) + var(--luth_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.luth_ide_panel_right .luth_ide_panel-body {
+    width: calc(100% - var(--luth_ide_panel-tabs-font-size) - var(--luth_ide_panel-tabs-margin) - var(--luth_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.luth_ide_panel_bottom .luth_ide_panel-tabs {
+    height: calc(var(--luth_ide_panel-tabs-font-size) + var(--luth_ide_panel-tabs-margin) + var(--luth_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.luth_ide_panel_bottom .luth_ide_panel-body {
+    height: calc(100% - var(--luth_ide_panel-tabs-font-size) - var(--luth_ide_panel-tabs-margin) - var(--luth_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.luth_ide_panel_bottom .luth_ide_panel-tab:not(:first-of-type) {
+    border-left: 2px solid var(--luth_primary-border-color) !important;
+}

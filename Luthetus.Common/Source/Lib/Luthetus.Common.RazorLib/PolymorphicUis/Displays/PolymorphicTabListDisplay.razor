@@ -2,7 +2,7 @@
 	@{ var localTabList = TabList; }
 	@foreach (var tab in localTabList)
 	{
-		<PolymorphicTabDisplay @key="tab.Key"
+		<PolymorphicTabDisplay @key="tab.PolymorphicUiKey"
 							   Tab="tab"/>
 	}
 </div>

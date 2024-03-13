@@ -1,12 +1,17 @@
-﻿using Fluxor;
+using Luthetus.Common.RazorLib.PolymorphicUis.Models;
+using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Panels.Models;
+using Luthetus.Common.RazorLib.PolymorphicUis.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
+using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Panels.Displays;
 
@@ -16,6 +21,10 @@ public partial class PanelDisplay : FluxorComponent
     private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IDialogService DialogService { get; set; } = null!;
+    [Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<PanelGroup> PanelGroupKey { get; set; } = Key<PanelGroup>.Empty;
@@ -42,6 +51,22 @@ public partial class PanelDisplay : FluxorComponent
 
         await base.OnAfterRenderAsync(firstRender);
     }
+
+	private ImmutableArray<IPolymorphicTab> GetTabList(PanelGroup panelGroup)
+	{
+		var polymphoricUiList = new List<IPolymorphicTab>();
+
+		foreach (var panel in panelGroup.TabList)
+		{
+			panel.PanelGroup = panelGroup;
+			panel.Dispatcher = Dispatcher;
+			panel.DialogService = DialogService;
+			panel.JsRuntime = JsRuntime;
+			polymphoricUiList.Add(panel);
+		}
+
+		return polymphoricUiList.ToImmutableArray();
+	}
 
     private string GetPanelPositionCssClass()
     {
@@ -101,7 +126,7 @@ public partial class PanelDisplay : FluxorComponent
         }
     }
 
-    private string GetElementDimensionsStyleString(PanelGroup? panelRecord, PanelTab? activePanelTab)
+    private string GetElementDimensionsStyleString(PanelGroup? panelRecord, Panel? activePanelTab)
     {
         if (activePanelTab is null)
         {
