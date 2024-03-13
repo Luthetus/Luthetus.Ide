@@ -1,7 +1,7 @@
 @{ var localTab = Tab; }
 
-<button class="luth_polymorphic-tab luth_button @localTab.TabGetDynamicCss() @GetIsBeingDraggedCssClassString()"
-		style="@GetDraggableCssStyleString()"
+<button class="luth_polymorphic-tab luth_button luth_unselectable @localTab.TabGetDynamicCss() @GetIsBeingDraggedCssClassString() @CssClassString"
+		style="@GetDraggableCssStyleString() @CssStyleString"
 		id="@HtmlId"
         @onclick="async () => await localTab.TabSetAsActiveAsync()"
 		@onmousedown:stopPropagation="true"
@@ -10,12 +10,15 @@
         @onmouseup="HandleOnMouseUp"
         @onmouseout="HandleOnMouseOutAsync">
 
-	@localTab.Title
+	<span>@localTab.Title</span>
 
-	<button class="luth_button luth_button-close"
-            @onclick:stopPropagation="true"
-            @onclick="CloseTabOnClickAsync">
-        
-        <IconClose/>
-    </button>
+	@if (ShouldDisplayCloseButton)
+	{
+		<button class="luth_button luth_button-close"
+	            @onclick:stopPropagation="true"
+	            @onclick="CloseTabOnClickAsync">
+	        
+	        <IconClose/>
+    	</button>
+	}
 </button>

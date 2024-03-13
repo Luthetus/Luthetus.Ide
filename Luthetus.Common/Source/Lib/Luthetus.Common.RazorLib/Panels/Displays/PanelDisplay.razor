@@ -21,14 +21,19 @@
 
         @if (panelGroup is not null)
         {
-			<PolymorphicTabListDisplay TabList="GetTabList(panelGroup)"/>
+			var tabList = GetTabList(panelGroup);
 
-            <!-- foreach (var panelTab in panelGroup.TabList)
+			foreach (var panelTab in tabList)
             {
-                <PanelTabDisplay @key="panelTab.Key"
-                                 PanelTab="panelTab"
-                                 PanelRecord="panelGroup" />
-            } -->
+                <PolymorphicTabDisplay @key="panelTab.PolymorphicUiKey"
+                                       Tab="panelTab"
+									   CssClassString="luth_ide_panel-tab"
+									   CssStyleString=""
+									   ShouldDisplayCloseButton="false" />
+            }
+
+			<!-- <PolymorphicTabListDisplay TabList=""
+									        CssClassString="@PanelPositionCssClass"/> -->
         }
 
         <div class="luth_ide_panel-tabs-justify-end"

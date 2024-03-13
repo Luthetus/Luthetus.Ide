@@ -21,7 +21,14 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 
 	[Parameter, EditorRequired]
 	public IPolymorphicTab Tab { get; set; } = null!;
-	[Parameter, EditorRequired]
+
+	[Parameter]
+	public string CssClassString { get; set; }
+	[Parameter]
+	public bool ShouldDisplayCloseButton { get; set; } = true;
+	[Parameter]
+	public string CssStyleString { get; set; }
+	[Parameter]
 	public bool IsBeingDragged { get; set; }
 
     private bool _thinksLeftMouseButtonIsDown;

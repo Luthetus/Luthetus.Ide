@@ -8,6 +8,9 @@ public partial class PolymorphicTabListDisplay : ComponentBase
 {
 	[Parameter, EditorRequired]
 	public ImmutableArray<IPolymorphicTab> TabList { get; set; } = ImmutableArray<IPolymorphicTab>.Empty;
+	
+	[Parameter]
+	public string CssClassString { get; set; } = string.Empty;
 
 	public async Task NotifyStateChangedAsync()
 	{
