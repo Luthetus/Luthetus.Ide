@@ -64,6 +64,7 @@ public partial record TextEditorViewModelPolymorphicUi : IPolymorphicDraggable
 			return ImmutableArray<IPolymorphicDropzone>.Empty;
 
 		var dropzoneList = new List<IPolymorphicDropzone>();
+		AddFallbackDropzone(dropzoneList);
 
 		var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
             "luthetusIde.measureElementById",
@@ -134,8 +135,6 @@ public partial record TextEditorViewModelPolymorphicUi : IPolymorphicDraggable
 			measuredHtmlElementDimensions,
 			elementDimensions,
 			TextEditorGroup.GroupKey));
-
-		AddFallbackDropzone(dropzoneList);
 
 		var result = dropzoneList.ToImmutableArray();
 		DropzoneList = result;

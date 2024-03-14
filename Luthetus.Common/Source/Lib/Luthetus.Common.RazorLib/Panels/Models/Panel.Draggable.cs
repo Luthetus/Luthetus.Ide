@@ -54,6 +54,7 @@ public partial record Panel : IPolymorphicDraggable
 	public async Task<ImmutableArray<IPolymorphicDropzone>> GetDropzonesAsync()
 	{
 		var dropzoneList = new List<IPolymorphicDropzone>();
+		AddFallbackDropzone(dropzoneList);
 
 		var panelGroupHtmlIdTupleList = new (Key<PanelGroup> PanelGroupKey, string HtmlElementId)[]
 		{
@@ -134,8 +135,6 @@ public partial record Panel : IPolymorphicDraggable
 				elementDimensions,
 				panelGroupHtmlIdTuple.PanelGroupKey));
 		}
-
-		AddFallbackDropzone(dropzoneList);
 
 		var result = dropzoneList.ToImmutableArray();
 		DropzoneList = result;
