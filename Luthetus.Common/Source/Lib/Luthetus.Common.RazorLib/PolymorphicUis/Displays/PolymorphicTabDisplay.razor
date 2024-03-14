@@ -1,9 +1,9 @@
 @{ var localTab = Tab; }
 
-<button class="luth_polymorphic-tab luth_button luth_unselectable @localTab.TabGetDynamicCss() @GetIsBeingDraggedCssClassString() @CssClassString"
+<button class="luth_polymorphic-tab luth_button luth_unselectable @IsActiveCssClass @localTab.TabGetDynamicCss() @GetIsBeingDraggedCssClassString() @CssClassString"
 		style="@GetDraggableCssStyleString() @CssStyleString"
 		id="@HtmlId"
-        @onclick="async () => await localTab.TabSetAsActiveAsync()"
+        @onclick="localTab.TabOnClickAsync"
 		@onmousedown:stopPropagation="true"
 		@onmousedown:preventDefault="true"
         @onmousedown="HandleOnMouseDownAsync"

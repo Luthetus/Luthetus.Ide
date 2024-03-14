@@ -41,6 +41,10 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 		? _htmlId ??= $"luth_polymorphic-tab_{Tab.PolymorphicUiKey}"
 		: _htmlIdDragged ??= $"luth_polymorphic-tab-drag_{Tab.PolymorphicUiKey}";
 
+	private string IsActiveCssClass => Tab.TabIsActive
+		? "luth_active"
+	    : string.Empty;
+
 	protected override void OnInitialized()
     {
         DragStateWrap.StateChanged += DragStateWrapOnStateChanged;

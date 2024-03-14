@@ -7,6 +7,7 @@ using Luthetus.Common.RazorLib.PolymorphicUis.Displays;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using Fluxor;
 
@@ -74,6 +75,8 @@ public record Panel : IPolymorphicTab, IPolymorphicDialog, IPolymorphicDraggable
 			true
 		}
 	};
+
+	public bool TabIsActive => PanelGroup.ActiveTabKey == Key;
 
 	public ElementDimensions DialogElementDimensions { get; }
     public bool DialogIsMinimized { get; set; }
@@ -244,17 +247,19 @@ public record Panel : IPolymorphicTab, IPolymorphicDialog, IPolymorphicDraggable
 		return result;
 	}
 
-	public Task TabSetAsActiveAsync()
+	public Task TabOnClickAsync(MouseEventArgs mouseEventArgs)
 	{
-		Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(PanelGroup.Key, Key));
+		if (TabIsActive)
+			Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(PanelGroup.Key, Key<Panel>.Empty));
+		else
+			Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(PanelGroup.Key, Key));
+		
 		return Task.CompletedTask;
 	}
 
 	public string TabGetDynamicCss()
 	{
-		return PanelGroup.ActiveTabKey == Key
-			? "luth_active"
-		    : string.Empty;
+		return string.Empty;
 	}
 
 	public Task TabCloseAsync()

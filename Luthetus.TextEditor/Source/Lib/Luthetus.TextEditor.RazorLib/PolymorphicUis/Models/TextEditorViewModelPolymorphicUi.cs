@@ -11,6 +11,7 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
@@ -64,6 +65,8 @@ public record TextEditorViewModelPolymorphicUi : IPolymorphicTab, IPolymorphicDi
 			true
 		}
 	};
+
+	public bool TabIsActive => TextEditorGroup.ActiveViewModelKey == ViewModelKey;
 
 	public ElementDimensions DialogElementDimensions { get; }
     public bool DialogIsMinimized { get; set; }
@@ -343,17 +346,17 @@ public record TextEditorViewModelPolymorphicUi : IPolymorphicTab, IPolymorphicDi
 		}
 	}
 
-	public Task TabSetAsActiveAsync()
+	public Task TabOnClickAsync(MouseEventArgs mouseEventArgs)
 	{
-		TextEditorService.GroupApi.SetActiveViewModel(TextEditorGroup.GroupKey, ViewModelKey);
+		if (!TabIsActive)
+			TextEditorService.GroupApi.SetActiveViewModel(TextEditorGroup.GroupKey, ViewModelKey);
+		
 		return Task.CompletedTask;
 	}
 
 	public string TabGetDynamicCss()
 	{
-		return TextEditorGroup.ActiveViewModelKey == ViewModelKey
-			? "luth_active"
-		    : string.Empty;
+		return string.Empty;
 	}
 
 	public Task TabCloseAsync()
