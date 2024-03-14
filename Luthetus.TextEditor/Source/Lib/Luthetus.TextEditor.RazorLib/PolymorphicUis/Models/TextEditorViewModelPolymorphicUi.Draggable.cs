@@ -23,7 +23,7 @@ public partial record TextEditorViewModelPolymorphicUi : IPolymorphicDraggable
 	public ElementDimensions DraggableElementDimensions => DialogElementDimensions;
 	public ImmutableArray<IPolymorphicDropzone> DropzoneList { get; set; } = ImmutableArray<IPolymorphicDropzone>.Empty;
 
-	public Task OnDragStopAsync(IPolymorphicDropzone? dropzone)
+	public Task OnDragStopAsync(MouseEventArgs mouseEventArgs, IPolymorphicDropzone? dropzone)
 	{
 		if (dropzone is not TextEditorViewModelPolymorphicDropzone textEditorViewModelPolymorphicDropzone)
 			return Task.CompletedTask;
@@ -33,7 +33,7 @@ public partial record TextEditorViewModelPolymorphicUi : IPolymorphicDraggable
 			TextEditorService.GroupApi.RemoveViewModel(TextEditorGroup.GroupKey, ViewModelKey);
 
 			var dialogRecord = new DialogRecord(
-    			_dialogKey,
+    			DialogKey,
     			GetTitle(),
     			typeof(TextEditorViewModelDisplay),
     			new Dictionary<string, object?>()

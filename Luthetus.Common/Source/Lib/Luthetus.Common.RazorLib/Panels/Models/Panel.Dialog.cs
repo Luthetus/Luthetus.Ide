@@ -15,7 +15,7 @@ namespace Luthetus.Common.RazorLib.Panels.Models;
 
 public partial record Panel : IPolymorphicDialog
 {
-	private Key<DialogRecord> _dialogKey = Key<DialogRecord>.NewKey();
+	public Key<DialogRecord> DialogKey { get; } = Key<DialogRecord>.NewKey();
 
 	public ElementDimensions DialogElementDimensions { get; }
     public bool DialogIsMinimized { get; set; }

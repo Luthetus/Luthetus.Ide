@@ -21,7 +21,7 @@ public partial record Panel : IPolymorphicDraggable
 	public ElementDimensions DraggableElementDimensions => DialogElementDimensions;
 	public ImmutableArray<IPolymorphicDropzone> DropzoneList { get; set; } = ImmutableArray<IPolymorphicDropzone>.Empty;
 
-	public Task OnDragStopAsync(IPolymorphicDropzone? dropzone)
+	public Task OnDragStopAsync(MouseEventArgs mouseEventArgs, IPolymorphicDropzone? dropzone)
 	{
 		if (dropzone is not PanelDropzone panelDropzone)
 			return Task.CompletedTask;
@@ -33,7 +33,7 @@ public partial record Panel : IPolymorphicDraggable
 				Key));
 
 			var dialogRecord = new DialogRecord(
-    			_dialogKey,
+    			DialogKey,
     			Title,
     			ContentRendererType,
     			ParameterMap,
@@ -46,17 +46,21 @@ public partial record Panel : IPolymorphicDraggable
 		}
 		else
 		{
-			if (panelDropzone.PanelGroupKey != PanelGroup.Key)
-			{
-				Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
-					PanelGroup.Key,
-					Key));
+			Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
+				PanelGroup.Key,
+				Key));
 
-				Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
-					panelDropzone.PanelGroupKey.Value,
-					this,
-					true));
-			}
+			var verticalHalfwayPoint = dropzone.MeasuredHtmlElementDimensions.TopInPixels +
+				(dropzone.MeasuredHtmlElementDimensions.HeightInPixels / 2);
+
+			var insertAtIndexZero = mouseEventArgs.ClientY < verticalHalfwayPoint
+				? true
+				: false;
+
+			Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+				panelDropzone.PanelGroupKey.Value,
+				this,
+				insertAtIndexZero));
 		}
 
 		return Task.CompletedTask;

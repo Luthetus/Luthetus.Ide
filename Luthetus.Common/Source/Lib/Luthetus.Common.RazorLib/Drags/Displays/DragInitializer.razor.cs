@@ -58,7 +58,7 @@ public partial class DragInitializer : FluxorComponent
         });
     }
 
-    private Task DispatchSetDragStateActionOnMouseUp()
+    private Task DispatchSetDragStateActionOnMouseUp(MouseEventArgs mouseEventArgs)
     {
 		var dragState = DragStateWrap.Value;
 		var localOnMouseOverDropzone = _onMouseOverDropzone;
@@ -69,7 +69,7 @@ public partial class DragInitializer : FluxorComponent
 
 			var polymorphicDraggable = dragState.PolymorphicDraggable;
 			if (polymorphicDraggable is not null)
-				await polymorphicDraggable.OnDragStopAsync(localOnMouseOverDropzone);
+				await polymorphicDraggable.OnDragStopAsync(mouseEventArgs, localOnMouseOverDropzone);
         });
 
 		return Task.CompletedTask;

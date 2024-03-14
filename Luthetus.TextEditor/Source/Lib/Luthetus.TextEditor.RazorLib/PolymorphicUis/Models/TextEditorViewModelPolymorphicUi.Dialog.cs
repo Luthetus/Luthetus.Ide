@@ -18,7 +18,7 @@ namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
 
 public partial record TextEditorViewModelPolymorphicUi : IPolymorphicDialog
 {
-	private Key<DialogRecord> _dialogKey = Key<DialogRecord>.NewKey();
+	public Key<DialogRecord> DialogKey { get; } = Key<DialogRecord>.NewKey();
 
 	public ElementDimensions DialogElementDimensions { get; }
     public bool DialogIsMinimized { get; set; }
