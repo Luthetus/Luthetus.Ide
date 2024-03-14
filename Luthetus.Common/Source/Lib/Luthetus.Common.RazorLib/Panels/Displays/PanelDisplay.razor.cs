@@ -68,6 +68,11 @@ public partial class PanelDisplay : FluxorComponent
 		return polymphoricUiList.ToImmutableArray();
 	}
 
+    private string GetHtmlId()
+	{
+		return GetPanelPositionCssClass();
+	}
+
     private string GetPanelPositionCssClass()
     {
         var position = string.Empty;
