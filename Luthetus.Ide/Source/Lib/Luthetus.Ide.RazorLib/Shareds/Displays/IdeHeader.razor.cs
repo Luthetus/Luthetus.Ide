@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.States;
+using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
@@ -235,7 +236,21 @@ public partial class IdeHeader : ComponentBase
             var menuOptionPanel = new MenuOptionRecord(
 				panel.Title,
                 MenuOptionKind.Delete,
-                () => { });
+                () => 
+				{
+					var panelGroup = panel.PanelGroup;
+
+					if (panelGroup is not null)
+					{
+						Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(panelGroup.Key, panel.Key));
+					}
+					else
+					{
+						Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(PanelFacts.LeftPanelRecordKey, panel, true));
+						Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(PanelFacts.LeftPanelRecordKey, panel.Key));
+					}
+					
+				});
 
             menuOptionsList.Add(menuOptionPanel);
 		}

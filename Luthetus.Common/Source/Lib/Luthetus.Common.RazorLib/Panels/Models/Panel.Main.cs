@@ -48,7 +48,7 @@ public partial record Panel : IPolymorphicUiRecord
 	public IJSRuntime? JsRuntime { get; set; }
 	public IDialogService DialogService { get; set; }
 	public IDispatcher Dispatcher { get; set; }
-	public PanelGroup PanelGroup { get; set; }
+	public PanelGroup? PanelGroup { get; set; }
 
     /// <summary>
     /// TODO: In progress feature: working on keymap that sets focus to a context record...

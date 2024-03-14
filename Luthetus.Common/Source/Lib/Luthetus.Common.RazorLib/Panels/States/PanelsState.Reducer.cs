@@ -82,6 +82,7 @@ public partial record PanelsState
                 : inPanelGroup.TabList.Length;
 
             outTabList = inPanelGroup.TabList.Insert(insertionPoint, registerPanelTabAction.PanelTab);
+			registerPanelTabAction.PanelTab.PanelGroup = inPanelGroup;
 
             var outPanelGroupList = inState.PanelGroupList.Replace(inPanelGroup, inPanelGroup with
             {
@@ -112,6 +113,7 @@ public partial record PanelsState
                 return inState;
 
             var outTabList = inPanelGroup.TabList.Remove(panelTab);
+			panelTab.PanelGroup = null;
 
             var outPanelGroupList = inState.PanelGroupList.Replace(inPanelGroup, inPanelGroup with
             {
