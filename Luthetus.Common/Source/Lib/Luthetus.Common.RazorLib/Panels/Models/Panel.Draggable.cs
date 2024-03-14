@@ -46,6 +46,17 @@ public partial record Panel : IPolymorphicDraggable
 		}
 		else
 		{
+			if (panelDropzone.PanelGroupKey != PanelGroup.Key)
+			{
+				Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
+					PanelGroup.Key,
+					Key));
+
+				Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+					panelDropzone.PanelGroupKey.Value,
+					this,
+					true));
+			}
 		}
 
 		return Task.CompletedTask;
