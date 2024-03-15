@@ -21,6 +21,9 @@ public class TextEditorViewModelPolymorphicDropzone : IPolymorphicDropzone
 
 	public MeasuredHtmlElementDimensions MeasuredHtmlElementDimensions { get; }
 	public ElementDimensions DropzoneElementDimensions { get; }
+
+	public string? CssClassString { get; set; }
+
 	/// <summary>
 	/// If the group key is not null, then upon mouse up, add the view model to the group,
 	/// and set the view model key as being active.

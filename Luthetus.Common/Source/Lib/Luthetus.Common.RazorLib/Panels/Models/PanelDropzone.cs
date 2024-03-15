@@ -25,4 +25,6 @@ public class PanelDropzone : IPolymorphicDropzone
 	/// and set the panel key as being active.
 	/// </summary>
 	public Key<PanelGroup>? PanelGroupKey { get; }
+
+	public string? CssClassString { get; set; }
 }

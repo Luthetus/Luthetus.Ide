@@ -62,6 +62,7 @@ public partial class PanelDisplay : FluxorComponent
 			panel.Dispatcher = Dispatcher;
 			panel.DialogService = DialogService;
 			panel.JsRuntime = JsRuntime;
+			panel.IsDialog = false;
 			polymphoricUiList.Add(panel);
 		}
 

@@ -7,4 +7,6 @@ public interface IPolymorphicDropzone
 {
 	public MeasuredHtmlElementDimensions MeasuredHtmlElementDimensions { get; }
 	public ElementDimensions DropzoneElementDimensions { get; }
+
+	public string? CssClassString { get; set; }
 }

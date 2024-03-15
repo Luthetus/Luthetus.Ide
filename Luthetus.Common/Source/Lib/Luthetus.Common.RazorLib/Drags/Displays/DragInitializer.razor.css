@@ -17,3 +17,9 @@
         background-color: var(--luth_button-hover-background-color);
         box-shadow: 0 0 2px var(--luth_primary-overlay-box-shadow-color);
     }
+
+.luth_dropzone.luth_dropzone-fallback {
+	background-color: transparent;
+    box-shadow: none;
+    opacity: 0;
+}

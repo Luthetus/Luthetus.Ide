@@ -234,6 +234,9 @@ public partial record Panel : IPolymorphicDraggable
 		dropzoneList.Add(new PanelDropzone(
 			new MeasuredHtmlElementDimensions(0, 0, 0, 0, 0),
 			fallbackElementDimensions,
-			null));
+			null)
+			{
+				CssClassString = "luth_dropzone-fallback"
+			});
 	}
 }
