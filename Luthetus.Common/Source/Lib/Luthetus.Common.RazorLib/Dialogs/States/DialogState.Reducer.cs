@@ -17,6 +17,8 @@ public partial record DialogState
 
             var outDialogList = inState.DialogList.Add(registerAction.Entry);
 
+			registerAction.Entry.IsDialog = true;
+
             return inState with 
             {
                 DialogList = outDialogList,
@@ -62,6 +64,8 @@ public partial record DialogState
                 return inState;
 
             var outDialogList = inState.DialogList.Remove(inDialog);
+
+			inDialog.IsDialog = false;
 
             return inState with { DialogList = outDialogList };
         }

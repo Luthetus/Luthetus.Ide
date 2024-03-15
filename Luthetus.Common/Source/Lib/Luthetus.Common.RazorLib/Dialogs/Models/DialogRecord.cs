@@ -28,6 +28,7 @@ public record DialogRecord : IPolymorphicDialog
     public Type DialogRendererType { get; init; }
     public Dictionary<string, object?>? DialogParameterMap { get; init; }
     public string? DialogCssClassString { get; set; }
+	public bool IsDialog { get; set; }
 
 	public Key<IPolymorphicUiRecord> PolymorphicUiKey { get; }
 	public string? CssClass { get; }

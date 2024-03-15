@@ -32,6 +32,8 @@ public partial class IdeHeader : ComponentBase
     [Inject]
     private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
 	[Inject]
+    private IState<DialogState> DialogStateWrap { get; set; } = null!;
+	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
@@ -229,6 +231,7 @@ public partial class IdeHeader : ComponentBase
     {
         var menuOptionsList = new List<MenuOptionRecord>();
 		var panelsState = PanelsStateWrap.Value;
+		var dialogState = DialogStateWrap.Value;
 
 		foreach (var panel in panelsState.PanelList)
 		{
@@ -245,10 +248,16 @@ public partial class IdeHeader : ComponentBase
 					}
 					else
 					{
-						Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(PanelFacts.LeftPanelRecordKey, panel, true));
-						Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(PanelFacts.LeftPanelRecordKey, panel.Key));
+						if (dialogState.DialogList.Any(x => x.PolymorphicUiKey == panel.PolymorphicUiKey))
+						{
+							Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(panel.PolymorphicUiKey));
+						}
+						else
+						{
+							Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(PanelFacts.LeftPanelRecordKey, panel, true));
+							Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(PanelFacts.LeftPanelRecordKey, panel.Key));
+						}
 					}
-					
 				});
 
             menuOptionsList.Add(menuOptionPanel);

@@ -28,6 +28,7 @@ public partial record TextEditorViewModelPolymorphicUi : IPolymorphicDialog
     public bool DialogIsResizable { get; set; }
     public string DialogCssClassString { get; set; }
     public string DialogFocusPointHtmlElementId => $"luth_dialog-focus-point_{PolymorphicUiKey.Guid}";
+	public bool IsDialog { get; set; }
 
 	public ElementDimensions DialogConstructDefaultElementDimensions()
 	{

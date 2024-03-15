@@ -25,6 +25,7 @@ public partial record Panel : IPolymorphicDialog
     public bool DialogIsMaximized { get; set; }
 	public bool DialogIsResizable { get; set; } = true;
     public string DialogFocusPointHtmlElementId => $"luth_dialog-focus-point_{Key.Guid}";
+	public bool IsDialog { get; set; }
 
 	public ElementDimensions DialogConstructDefaultElementDimensions()
 	{

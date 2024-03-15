@@ -13,6 +13,8 @@ public interface IPolymorphicDialog : IPolymorphicUiRecord
     public string DialogCssClassString { get; set; }
     public string DialogFocusPointHtmlElementId => $"luth_dialog-focus-point_{PolymorphicUiKey.Guid}";
 
+	public bool IsDialog { get; set; }
+
     public ElementDimensions DialogConstructDefaultElementDimensions();
 	
 	public IPolymorphicDialog DialogSetIsMaximized(bool isMaximized);
