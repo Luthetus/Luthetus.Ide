@@ -28,32 +28,56 @@ public partial record Panel : IPolymorphicDraggable
 		if (dropzone is not PanelDropzone panelDropzone)
 			return Task.CompletedTask;
 
-		if (panelDropzone.PanelGroupKey is null)
+		if (_isDialog)
 		{
-			Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
-				PanelGroup.Key,
-				Key));
+			if (panelDropzone.PanelGroupKey is not null)
+			{
+				DialogService.DisposeDialogRecord(PolymorphicUiKey);
 
-			_isDialog = true;
-			DialogService.RegisterDialogRecord(this);
+				_isDialog = false;
+
+				var verticalHalfwayPoint = dropzone.MeasuredHtmlElementDimensions.TopInPixels +
+					(dropzone.MeasuredHtmlElementDimensions.HeightInPixels / 2);
+		
+					var insertAtIndexZero = mouseEventArgs.ClientY < verticalHalfwayPoint
+						? true
+						: false;
+		
+					Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+						panelDropzone.PanelGroupKey.Value,
+						this,
+						insertAtIndexZero));
+			}
 		}
 		else
 		{
-			Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
-				PanelGroup.Key,
-				Key));
-
-			var verticalHalfwayPoint = dropzone.MeasuredHtmlElementDimensions.TopInPixels +
-				(dropzone.MeasuredHtmlElementDimensions.HeightInPixels / 2);
-
-			var insertAtIndexZero = mouseEventArgs.ClientY < verticalHalfwayPoint
-				? true
-				: false;
-
-			Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
-				panelDropzone.PanelGroupKey.Value,
-				this,
-				insertAtIndexZero));
+			if (panelDropzone.PanelGroupKey is null)
+			{
+				Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
+					PanelGroup.Key,
+					Key));
+	
+				_isDialog = true;
+				DialogService.RegisterDialogRecord(this);
+			}
+			else
+			{
+				Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
+					PanelGroup.Key,
+					Key));
+	
+				var verticalHalfwayPoint = dropzone.MeasuredHtmlElementDimensions.TopInPixels +
+					(dropzone.MeasuredHtmlElementDimensions.HeightInPixels / 2);
+	
+				var insertAtIndexZero = mouseEventArgs.ClientY < verticalHalfwayPoint
+					? true
+					: false;
+	
+				Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+					panelDropzone.PanelGroupKey.Value,
+					this,
+					insertAtIndexZero));
+			}
 		}
 
 		return Task.CompletedTask;
