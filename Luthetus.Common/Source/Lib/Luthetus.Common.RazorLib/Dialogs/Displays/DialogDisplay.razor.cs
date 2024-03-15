@@ -85,7 +85,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         await InvokeAsync(StateHasChanged);
     }
 
-    private void SubscribeMoveHandle()
+    private async Task SubscribeMoveHandleAsync()
     {
         _resizableDisplay?.SubscribeToDragEventWithMoveHandle();
     }

@@ -11,11 +11,12 @@
     {
         <ResizableDisplay @ref="_resizableDisplay"
                           ElementDimensions="DialogRecord.DialogElementDimensions"
-                          ReRenderFuncAsync="ReRenderAsync"/>
+                          ReRenderFuncAsync="ReRenderAsync"
+						  PolymorphicUi="DialogRecord"/>
     }
 
     <div class="luth_dialog-display-toolbar"
-         @onmousedown="SubscribeMoveHandle">
+         @onmousedown="SubscribeMoveHandleAsync">
         <div class="luth_dialog-display-title luth_unselectable"
              style="@DialogTitleCssStyleString"
              title="@DialogRecord.Title">
