@@ -90,9 +90,9 @@ public partial record Panel : IPolymorphicDraggable
 
 		var panelGroupHtmlIdTupleList = new (Key<PanelGroup> PanelGroupKey, string HtmlElementId)[]
 		{
-			(PanelFacts.LeftPanelRecordKey, "luth_ide_panel_left"),
-			(PanelFacts.RightPanelRecordKey, "luth_ide_panel_right"),
-			(PanelFacts.BottomPanelRecordKey, "luth_ide_panel_bottom"),
+			(PanelFacts.LeftPanelRecordKey, "luth_ide_panel_left_tabs"),
+			(PanelFacts.RightPanelRecordKey, "luth_ide_panel_right_tabs"),
+			(PanelFacts.BottomPanelRecordKey, "luth_ide_panel_bottom_tabs"),
 		};
 
 		foreach (var panelGroupHtmlIdTuple in panelGroupHtmlIdTupleList)

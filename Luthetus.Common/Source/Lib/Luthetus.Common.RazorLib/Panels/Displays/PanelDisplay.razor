@@ -14,11 +14,17 @@
         activePanelTab = panelGroup.TabList.FirstOrDefault(x => x.Key == panelGroup.ActiveTabKey);
 }
 
+@{
+	var localPanelPositionCssClass = PanelPositionCssClass;
+	var htmlIdTabs = localPanelPositionCssClass + "_tabs";
+}
+
 <div class="luth_ide_panel @PanelPositionCssClass @CssClassString"
      style="@GetElementDimensionsStyleString(panelGroup, activePanelTab)"
 	 id="@GetHtmlId()">
     
-    <div class="luth_ide_panel-tabs">
+    <div class="luth_ide_panel-tabs"
+		 id="@htmlIdTabs">
 
         @if (panelGroup is not null)
         {
