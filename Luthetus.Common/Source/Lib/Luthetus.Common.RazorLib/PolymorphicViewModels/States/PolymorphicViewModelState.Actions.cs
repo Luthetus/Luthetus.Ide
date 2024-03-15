@@ -1,3 +1,5 @@
+using Luthetus.Common.RazorLib.Utility.Models;
+
 namespace Luthetus.Common.RazorLib.PolymorphicViewModels.States;
 
 public partial record PolymorphicViewModelState

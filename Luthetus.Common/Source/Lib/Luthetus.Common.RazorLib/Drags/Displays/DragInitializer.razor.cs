@@ -3,7 +3,7 @@ using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Reactives.Models;
-using Luthetus.Common.RazorLib.PolymorphicUis.Models;
+using Luthetus.Common.RazorLib.Drags.Models;
 
 namespace Luthetus.Common.RazorLib.Drags.Displays;
 
@@ -23,7 +23,7 @@ public partial class DragInitializer : FluxorComponent
     /// </summary>
     private IThrottle _throttleDispatchSetDragStateActionOnMouseMove = new Throttle(IThrottle.DefaultThrottleTimeSpan);
 
-	private IPolymorphicDropzone? _onMouseOverDropzone = null;
+	private IDropzoneViewModel? _onMouseOverDropzone = null;
 
     private DragState.WithAction ConstructClearDragStateAction()
     {
@@ -34,6 +34,7 @@ public partial class DragInitializer : FluxorComponent
             ShouldDisplay = false,
             MouseEventArgs = null,
 			PolymorphicDraggable = null,
+			DropzoneViewModelList = null,
         });
     }
 
@@ -75,9 +76,9 @@ public partial class DragInitializer : FluxorComponent
 		return Task.CompletedTask;
     }
 
-	private string GetIsActiveCssClass(IPolymorphicDropzone dropzone)
+	private string GetIsActiveCssClass(IDropzoneViewModel dropzone)
 	{
-		return Object.ReferenceEquals(_onMouseOverDropzone, dropzone)
+		return _onMouseOverDropzone.Key == dropzone.Key
 			? "luth_active"
 			: string.Empty;
 	}

@@ -1,10 +1,10 @@
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Resizes.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
 
 namespace Luthetus.Common.RazorLib.Resizes.Displays;
 
@@ -21,7 +21,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
     public Func<Task> ReRenderFuncAsync { get; set; } = null!;
 
 	[Parameter]
-    public IPolymorphicUiRecord PolymorphicUi { get; set; } = null!;
+    public IPolymorphicViewModel PolymorphicViewModel { get; set; } = null!;
 
     public const double RESIZE_HANDLE_SQUARE_PIXELS = 10;
 
@@ -78,7 +78,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
         {
             ShouldDisplay = true,
             MouseEventArgs = null,
-			PolymorphicDraggable = PolymorphicUi as IPolymorphicDraggable,
+			DraggableViewModel = PolymorphicViewModel.DraggableViewModel,
         }));
     }
 

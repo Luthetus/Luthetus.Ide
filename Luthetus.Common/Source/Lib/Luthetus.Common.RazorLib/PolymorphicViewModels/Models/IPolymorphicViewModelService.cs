@@ -1,3 +1,6 @@
 namespace Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
 
-public record FullTypeName(string Value);
+public interface IPolymorphicViewModelService
+{
+	
+}

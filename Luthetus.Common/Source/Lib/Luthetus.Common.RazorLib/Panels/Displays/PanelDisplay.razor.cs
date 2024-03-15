@@ -1,4 +1,3 @@
-using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Dimensions.Models;
@@ -6,8 +5,9 @@ using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Panels.Models;
-using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Tabs.Models;
+using Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -20,7 +20,7 @@ public partial class PanelDisplay : FluxorComponent
     [Inject]
     private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
 	[Inject]
-    private IState<PolymorphicUiState> PolymorphicUiStateWrap { get; set; } = null!;
+    private IPolymorphicViewModelService PolymorphicViewModelService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -54,9 +54,9 @@ public partial class PanelDisplay : FluxorComponent
         await base.OnAfterRenderAsync(firstRender);
     }
 
-	private ImmutableArray<IPolymorphicTab> GetTabList(PanelGroup panelGroup)
+	private ImmutableArray<ITabViewModel> GetTabList(PanelGroup panelGroup)
 	{
-		var polymphoricUiList = new List<IPolymorphicTab>();
+		var tabViewModelList = new List<ITabViewModel>();
 
 		foreach (var panel in panelGroup.TabList)
 		{
@@ -65,10 +65,10 @@ public partial class PanelDisplay : FluxorComponent
 			panel.DialogService = DialogService;
 			panel.JsRuntime = JsRuntime;
 			panel.IsDialog = false;
-			polymphoricUiList.Add(panel);
+			tabViewModelList.Add(panel);
 		}
 
-		return polymphoricUiList.ToImmutableArray();
+		return tabViewModelList.ToImmutableArray();
 	}
 
     private string GetHtmlId()

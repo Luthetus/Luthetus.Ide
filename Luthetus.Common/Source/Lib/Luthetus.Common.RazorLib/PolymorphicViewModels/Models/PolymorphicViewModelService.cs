@@ -1,6 +1,6 @@
 namespace Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
 
-public class PolymorphicUiStateService
+public class PolymorphicViewModelService : IPolymorphicViewModelService
 {
 	
 }

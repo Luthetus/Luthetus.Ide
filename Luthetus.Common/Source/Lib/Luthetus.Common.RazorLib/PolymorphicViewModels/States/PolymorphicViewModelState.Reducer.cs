@@ -1,32 +1,30 @@
-using Luthetus.Common.RazorLib.PolymorphicViewModels.States;
-
-namespace Luthetus.TextEditor.RazorLib.PolymorphicViewModels.States;
+namespace Luthetus.Common.RazorLib.PolymorphicViewModels.States;
 
 public partial record PolymorphicViewModelState
 {
 	public static class Reducer
 	{
 		[ReducerMethod]
-		public static PolymorphicUiState ReduceRegisterAction(
-			PolymorphicUiState inPolymorphicUiState,
+		public static PolymorphicViewModelState ReduceRegisterAction(
+			PolymorphicViewModelState inPolymorphicViewModelState,
 			RegisterAction registerAction)
 		{
-			return inPolymorphicUiState with
+			return inPolymorphicViewModelState with
 			{
-				Map = inPolymorphicUiState.Map.Add(
+				Map = inPolymorphicViewModelState.Map.Add(
 					registerAction.FullTypeName,
-					registerAction.PolymorphicUiRecord);
+					registerAction.PolymorphicUiRecord)
 			};
 		}
 
 		[ReducerMethod]
-		public static PolymorphicUiState ReduceDisposeAction(
-			PolymorphicUiState inPolymorphicUiState,
+		public static PolymorphicViewModelState ReduceDisposeAction(
+			PolymorphicViewModelState inPolymorphicViewModelState,
 			RegisterAction registerAction)
 		{
-			return inPolymorphicUiState with
+			return inPolymorphicViewModelState with
 			{
-				Map = inPolymorphicUiState.Map.Remove(registerAction.FullTypeName);
+				Map = inPolymorphicViewModelState.Map.Remove(registerAction.FullTypeName)
 			};
 		}
 	}

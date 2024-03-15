@@ -1,9 +1,7 @@
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.Common.RazorLib.PolymorphicUis.Displays;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Microsoft.JSInterop;
@@ -39,7 +37,6 @@ public partial record Panel
 	}
 
 	public Key<Panel> Key { get; }
-	public Key<IPolymorphicUiRecord> PolymorphicUiKey { get; } = Key<IPolymorphicUiRecord>.NewKey();
 	public string? CssClass { get; }
 	public string? CssStyle { get; }
 	public string Title { get; }

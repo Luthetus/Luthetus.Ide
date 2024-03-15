@@ -1,9 +1,9 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Resizes.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+using Luthetus.Common.RazorLib.Tabs.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -20,7 +20,7 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
     private IJSRuntime JsRuntime { get; set; } = null!;
 
 	[Parameter, EditorRequired]
-	public IPolymorphicTab Tab { get; set; } = null!;
+	public ITabViewModel TabViewModel { get; set; } = null!;
 
 	[Parameter]
 	public string CssClassString { get; set; }
@@ -38,10 +38,10 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 	private string _htmlIdDragged = null;
 	private string _htmlId = null;
 	private string HtmlId => IsBeingDragged
-		? _htmlId ??= $"luth_polymorphic-tab_{Tab.PolymorphicUiKey}"
-		: _htmlIdDragged ??= $"luth_polymorphic-tab-drag_{Tab.PolymorphicUiKey}";
+		? _htmlId ??= $"luth_polymorphic-tab_{TabViewModel.Key}"
+		: _htmlIdDragged ??= $"luth_polymorphic-tab-drag_{TabViewModel.Key}";
 
-	private string IsActiveCssClass => Tab.TabIsActive
+	private string IsActiveCssClass => TabViewModel.TabIsActive
 		? "luth_active"
 	    : string.Empty;
 
@@ -86,7 +86,7 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 		if (IsBeingDragged)
 			return;
 
-        await Tab.TabCloseAsync();
+        await TabViewModel.TabCloseAsync();
 	}
 
 	private async Task HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)

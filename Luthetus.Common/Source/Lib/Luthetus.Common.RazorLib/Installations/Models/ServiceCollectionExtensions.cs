@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
@@ -53,7 +53,8 @@ public static class ServiceCollectionExtensions
             .AddSingleton(hostingInformation.BackgroundTaskService)
             .AddSingleton<ILuthetusCommonComponentRenderers>(_ => _commonRendererTypes)
             .AddCommonFactories(hostingInformation, commonConfig)
-            .AddScoped<StorageSync>();
+            .AddScoped<StorageSync>()
+            .AddScoped<IPolymorphicViewModelService, PolymorphicViewModelService>();
 
         return services;
     }

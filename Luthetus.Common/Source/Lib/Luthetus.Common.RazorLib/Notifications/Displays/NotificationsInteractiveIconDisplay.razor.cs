@@ -3,7 +3,6 @@ using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.States;
-using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Common.RazorLib.Notifications.Displays;
@@ -20,8 +19,8 @@ public partial class NotificationsInteractiveIconDisplay : FluxorComponent
     [Parameter]
     public string CssStyleString { get; set; } = string.Empty;
 
-    private readonly DialogRecord NotificationsViewDisplayDialogRecord = new(
-        Key<IPolymorphicUiRecord>.NewKey(),
+    private readonly IDialogViewModel NotificationsViewDisplayDialogRecord = new(
+        Key<IDialogViewModel>.NewKey(),
         "Notifications",
         typeof(NotificationsViewDisplay),
         null,
