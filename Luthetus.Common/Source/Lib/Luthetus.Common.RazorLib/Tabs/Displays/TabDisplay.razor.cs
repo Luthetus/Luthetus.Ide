@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
-namespace Luthetus.Common.RazorLib.PolymorphicUis.Displays;
+namespace Luthetus.Common.RazorLib.Tabs.Displays;
 
 public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 {

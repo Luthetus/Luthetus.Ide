@@ -17,7 +17,7 @@ namespace Luthetus.Common.RazorLib.Panels.Models;
 /// Each PanelTab maintains its own element dimensions as
 /// each panel might need different amounts of space to be functionally usable.
 /// </summary>
-public partial record Panel : IPolymorphicUiRecord
+public partial record Panel
 {
 	public ElementDimensions ElementDimensions { get; }
     public ElementDimensions BeingDraggedDimensions { get; }

@@ -2,7 +2,7 @@ using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 
-namespace Luthetus.Common.RazorLib.PolymorphicUis.Displays;
+namespace Luthetus.Common.RazorLib.Tabs.Displays;
 
 public partial class PolymorphicTabListDisplay : ComponentBase
 {

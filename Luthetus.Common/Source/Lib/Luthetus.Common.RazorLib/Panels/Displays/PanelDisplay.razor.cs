@@ -19,6 +19,8 @@ public partial class PanelDisplay : FluxorComponent
 {
     [Inject]
     private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
+	[Inject]
+    private IState<PolymorphicUiState> PolymorphicUiStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]

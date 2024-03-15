@@ -12,17 +12,17 @@ public partial record DialogState
             DialogState inState,
             RegisterAction registerAction)
         {
-            if (inState.DialogList.Any(x => x.PolymorphicUiKey == registerAction.Entry.PolymorphicUiKey))
+            if (inState.DialogList.Any(x => x.DialogKey == registerAction.Dialog.DialogKey))
                 return inState;
 
-            var outDialogList = inState.DialogList.Add(registerAction.Entry);
+            var outDialogList = inState.DialogList.Add(registerAction.Dialog);
 
-			registerAction.Entry.IsDialog = true;
+			registerAction.Dialog.IsDialog = true;
 
             return inState with 
             {
                 DialogList = outDialogList,
-                ActiveDialogKey = registerAction.Entry.PolymorphicUiKey,
+                ActiveDialogKey = registerAction.Dialog.DialogKey,
             };
         }
 
@@ -32,7 +32,7 @@ public partial record DialogState
             SetIsMaximizedAction setIsMaximizedAction)
         {
             var inDialog = inState.DialogList.FirstOrDefault(
-                x => x.PolymorphicUiKey == setIsMaximizedAction.PolymorphicUiKey);
+                x => x.DialogKey == setIsMaximizedAction.DialogKey);
 
             if (inDialog is null)
                 return inState;
@@ -49,7 +49,7 @@ public partial record DialogState
             DialogState inState,
             SetActiveDialogKeyAction setActiveDialogKeyAction)
         {
-            return inState with { ActiveDialogKey = setActiveDialogKeyAction.PolymorphicUiKey };
+            return inState with { ActiveDialogKey = setActiveDialogKeyAction.DialogKey };
         }
 
         [ReducerMethod]
@@ -58,7 +58,7 @@ public partial record DialogState
             DisposeAction disposeAction)
         {
             var inDialog = inState.DialogList.FirstOrDefault(
-                x => x.PolymorphicUiKey == disposeAction.PolymorphicUiKey);
+                x => x.DialogKey == disposeAction.DialogKey);
 
             if (inDialog is null)
                 return inState;
