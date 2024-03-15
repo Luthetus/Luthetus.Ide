@@ -15,15 +15,15 @@ namespace Luthetus.Common.RazorLib.Panels.Models;
 
 public partial record Panel : IPolymorphicDialog
 {
-	public Key<IPolymorphicUiRecord> DialogKey { get; } = Key<IPolymorphicUiRecord>.NewKey();
+	public Key<IPolymorphicUiRecord> DialogKey => PolymorphicUiKey;
 
     public string? DialogCssClassString { get; set; }
-	public Type DialogRendererType { get; }
-	public Dictionary<string, object?>? DialogParameterMap { get; }
-	public ElementDimensions DialogElementDimensions { get; }
+	public Type DialogRendererType => ContentRendererType;
+	public Dictionary<string, object?>? DialogParameterMap => ParameterMap;
+	public ElementDimensions DialogElementDimensions { get; set; }
     public bool DialogIsMinimized { get; set; }
     public bool DialogIsMaximized { get; set; }
-    public bool DialogIsResizable { get; set; }
+	public bool DialogIsResizable { get; set; } = true;
     public string DialogFocusPointHtmlElementId => $"luth_dialog-focus-point_{Key.Guid}";
 
 	public ElementDimensions DialogConstructDefaultElementDimensions()

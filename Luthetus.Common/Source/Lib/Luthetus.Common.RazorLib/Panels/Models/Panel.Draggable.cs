@@ -16,10 +16,12 @@ namespace Luthetus.Common.RazorLib.Panels.Models;
 public partial record Panel : IPolymorphicDraggable
 {
 	public bool IsBeingDragged { get; set; }
-	public Type DraggableRendererType => RendererType;
+	public Type DraggableRendererType => _isDialog ? null : RendererType;
 	public Dictionary<string, object?> DraggableParameterMap => TabParameterMap;
-	public ElementDimensions DraggableElementDimensions => DialogElementDimensions;
+	public ElementDimensions DraggableElementDimensions { get; set; }
 	public ImmutableArray<IPolymorphicDropzone> DropzoneList { get; set; } = ImmutableArray<IPolymorphicDropzone>.Empty;
+
+	private bool _isDialog;
 
 	public Task OnDragStopAsync(MouseEventArgs mouseEventArgs, IPolymorphicDropzone? dropzone)
 	{
@@ -32,15 +34,8 @@ public partial record Panel : IPolymorphicDraggable
 				PanelGroup.Key,
 				Key));
 
-			var dialogRecord = new DialogRecord(
-    			DialogKey,
-    			Title,
-    			ContentRendererType,
-    			ParameterMap,
-    			null,
-				true);
-
-			DialogService.RegisterDialogRecord(dialogRecord);
+			_isDialog = true;
+			DialogService.RegisterDialogRecord(this);
 		}
 		else
 		{

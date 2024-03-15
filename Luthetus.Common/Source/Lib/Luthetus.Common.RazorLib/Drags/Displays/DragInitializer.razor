@@ -21,9 +21,12 @@
 			</div>
 		}
 
-		<div style="polymorphicDraggable.DraggableElementDimensions.StyleString">
-			<DynamicComponent Type="polymorphicDraggable.DraggableRendererType"
-			                  Parameters="polymorphicDraggable.DraggableParameterMap"/>	
-		</div>
+		if (polymorphicDraggable.DraggableRendererType is not null)
+		{
+			<div style="polymorphicDraggable.DraggableElementDimensions.StyleString">
+				<DynamicComponent Type="polymorphicDraggable.DraggableRendererType"
+				                  Parameters="polymorphicDraggable.DraggableParameterMap"/>	
+			</div>
+		}
 	}
 </div>

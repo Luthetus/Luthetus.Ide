@@ -34,6 +34,7 @@ public partial record Panel : IPolymorphicUiRecord
 		ContentRendererType = contentRendererType;
 		Title = title;
 
+		DraggableElementDimensions = DialogConstructDefaultElementDimensions();
 		DialogElementDimensions = DialogConstructDefaultElementDimensions();
 	}
 
