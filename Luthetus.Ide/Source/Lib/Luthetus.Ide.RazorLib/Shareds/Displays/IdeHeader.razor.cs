@@ -1,5 +1,4 @@
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
+using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
@@ -23,6 +22,8 @@ using Luthetus.Ide.RazorLib.Commands;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Collections.Immutable;
+using Fluxor;
+using Fluxor.Blazor.Web.Components;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -47,9 +48,9 @@ public partial class IdeHeader : ComponentBase
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
-	private static readonly Key<DialogRecord> _infoDialogKey = Key<DialogRecord>.NewKey();
-	private static readonly Key<DialogRecord> _newDotNetSolutionDialogKey = Key<DialogRecord>.NewKey();
-	private static readonly Key<DialogRecord> _permissionsDialogKey = Key<DialogRecord>.NewKey();
+	private static readonly Key<IPolymorphicUiRecord> _infoDialogKey = Key<IPolymorphicUiRecord>.NewKey();
+	private static readonly Key<IPolymorphicUiRecord> _newDotNetSolutionDialogKey = Key<IPolymorphicUiRecord>.NewKey();
+	private static readonly Key<IPolymorphicUiRecord> _permissionsDialogKey = Key<IPolymorphicUiRecord>.NewKey();
 
     private Key<DropdownRecord> _dropdownKeyFile = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
@@ -164,14 +165,12 @@ public partial class IdeHeader : ComponentBase
                 () =>
 				{
 					CommandFactory.CodeSearchDialog ??= new DialogRecord(
-                        Key<DialogRecord>.NewKey(),
+                        Key<IPolymorphicUiRecord>.NewKey(),
 						"Code Search",
                         typeof(CodeSearchDisplay),
                         null,
-                        null)
-                    {
-                        IsResizable = true
-                    };
+                        null,
+						true);
 
                     Dispatcher.Dispatch(new DialogState.RegisterAction(CommandFactory.CodeSearchDialog));
 				});
@@ -318,10 +317,8 @@ public partial class IdeHeader : ComponentBase
             "New .NET Solution",
             typeof(DotNetSolutionFormDisplay),
             null,
-            null)
-        {
-            IsResizable = true
-        };
+            null,
+			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }
@@ -333,10 +330,8 @@ public partial class IdeHeader : ComponentBase
             "Info",
             typeof(IdeInfoDisplay),
             null,
-            null)
-        {
-            IsResizable = true
-        };
+            null,
+			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }
@@ -348,10 +343,8 @@ public partial class IdeHeader : ComponentBase
             "Permissions",
             typeof(PermissionsDisplay),
             null,
-            null)
-        {
-            IsResizable = true
-        };
+            null,
+			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }

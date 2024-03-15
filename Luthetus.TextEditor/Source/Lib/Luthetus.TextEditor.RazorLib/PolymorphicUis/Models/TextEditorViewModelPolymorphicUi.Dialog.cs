@@ -18,12 +18,15 @@ namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
 
 public partial record TextEditorViewModelPolymorphicUi : IPolymorphicDialog
 {
-	public Key<DialogRecord> DialogKey { get; } = Key<DialogRecord>.NewKey();
+	public Key<IPolymorphicUiRecord> DialogKey { get; } = Key<IPolymorphicUiRecord>.NewKey();
 
+	public Type DialogRendererType { get; }
+	public Dictionary<string, object?>? DialogParameterMap { get; }
 	public ElementDimensions DialogElementDimensions { get; }
     public bool DialogIsMinimized { get; set; }
     public bool DialogIsMaximized { get; set; }
     public bool DialogIsResizable { get; set; }
+    public string DialogCssClassString { get; set; }
     public string DialogFocusPointHtmlElementId => $"luth_dialog-focus-point_{PolymorphicUiKey.Guid}";
 
 	public ElementDimensions DialogConstructDefaultElementDimensions()
@@ -82,5 +85,13 @@ public partial record TextEditorViewModelPolymorphicUi : IPolymorphicDialog
         }
 
         return elementDimensions;
+	}
+
+	public IPolymorphicDialog DialogSetIsMaximized(bool isMaximized)
+	{
+		return this with
+		{
+			DialogIsMaximized = isMaximized
+		};
 	}
 }

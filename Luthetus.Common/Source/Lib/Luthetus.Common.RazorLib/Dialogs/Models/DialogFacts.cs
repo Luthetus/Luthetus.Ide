@@ -1,8 +1,9 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.PolymorphicUis.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.Dialogs.Models;
 
 public static class DialogFacts
 {
-    public static readonly Key<DialogRecord> InputFileDialogKey = Key<DialogRecord>.NewKey();
+    public static readonly Key<IPolymorphicUiRecord> InputFileDialogKey = Key<IPolymorphicUiRecord>.NewKey();
 }

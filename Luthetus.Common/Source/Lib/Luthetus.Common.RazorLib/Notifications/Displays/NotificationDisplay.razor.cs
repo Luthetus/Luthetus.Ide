@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Options.States;
@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 
 namespace Luthetus.Common.RazorLib.Notifications.Displays;
 
@@ -32,7 +33,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     private const int COUNT_OF_CONTROL_BUTTONS = 2;
 
     private readonly CancellationTokenSource _notificationOverlayCancellationTokenSource = new();
-    private readonly Key<DialogRecord> _dialogKey = Key<DialogRecord>.NewKey();
+    private readonly Key<IPolymorphicUiRecord> _dialogKey = Key<IPolymorphicUiRecord>.NewKey();
 
     private string CssStyleString => GetCssStyleString();
 
@@ -153,10 +154,8 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
             NotificationRecord.Title,
             NotificationRecord.RendererType,
             NotificationRecord.ParameterMap,
-            NotificationRecord.CssClassString)
-        {
-            IsResizable = true
-        };
+            NotificationRecord.CssClassString,
+			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
 

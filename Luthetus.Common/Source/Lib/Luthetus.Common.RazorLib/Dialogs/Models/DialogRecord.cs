@@ -1,22 +1,46 @@
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 
 namespace Luthetus.Common.RazorLib.Dialogs.Models;
 
-public record DialogRecord(
-    Key<DialogRecord> Key,
-    string Title,
-    Type RendererType,
-    Dictionary<string, object?>? Parameters,
-    string? CssClassString)
+public record DialogRecord : IPolymorphicDialog
 {
-    public ElementDimensions ElementDimensions { get; init; } = ConstructDefaultDialogDimensions();
-    public bool IsMinimized { get; set; }
-    public bool IsMaximized { get; set; }
-    public bool IsResizable { get; set; }
-    public string FocusPointHtmlElementId => $"luth_dialog-focus-point_{Key.Guid}";
+	public DialogRecord(
+        Key<IPolymorphicUiRecord> polymorphicUiKey,
+        string title,
+        Type dialogRendererType,
+        Dictionary<string, object?>? dialogParameterMap,
+        string? cssClassString,
+		bool isResizable)
+    {
+		PolymorphicUiKey = polymorphicUiKey;
+		Title = title;
+		DialogRendererType = dialogRendererType;
+		DialogParameterMap = dialogParameterMap;
+		CssClass = cssClassString;
+		DialogCssClassString = cssClassString;
+		DialogIsResizable = isResizable;
+		DialogElementDimensions = DialogConstructDefaultElementDimensions();
+	}
 
-    public static ElementDimensions ConstructDefaultDialogDimensions()
+    public string Title { get; init; }
+    public Type DialogRendererType { get; init; }
+    public Dictionary<string, object?>? DialogParameterMap { get; init; }
+    public string? DialogCssClassString { get; set; }
+
+	public Key<IPolymorphicUiRecord> PolymorphicUiKey { get; }
+	public string? CssClass { get; }
+	public string? CssStyle { get; }
+	public Type RendererType { get; }
+
+    public ElementDimensions DialogElementDimensions { get; init; }
+    public bool DialogIsMinimized { get; set; }
+    public bool DialogIsMaximized { get; set; }
+    public bool DialogIsResizable { get; set; }
+    public string DialogFocusPointHtmlElementId => $"luth_dialog-focus-point_{PolymorphicUiKey.Guid}";
+
+    public ElementDimensions DialogConstructDefaultElementDimensions()
     {
         var elementDimensions = new ElementDimensions
         {
@@ -73,4 +97,12 @@ public record DialogRecord(
 
         return elementDimensions;
     }
+
+	public IPolymorphicDialog DialogSetIsMaximized(bool isMaximized)
+	{
+		return this with
+		{
+			DialogIsMaximized = isMaximized
+		};
+	}
 }

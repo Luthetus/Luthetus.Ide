@@ -37,10 +37,8 @@ public partial record Panel : IPolymorphicDraggable
     			Title,
     			ContentRendererType,
     			ParameterMap,
-    			null)
-			{
-				IsResizable = true
-			};
+    			null,
+				true);
 
 			DialogService.RegisterDialogRecord(dialogRecord);
 		}

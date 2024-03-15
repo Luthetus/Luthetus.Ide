@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.Htmls.Models;
@@ -27,10 +27,8 @@ public partial record InputFileSync
             "Input File",
             _ideComponentRenderers.InputFileRendererType,
             null,
-            HtmlFacts.Classes.DIALOG_PADDING_0)
-        {
-            IsResizable = true
-        };
+            HtmlFacts.Classes.DIALOG_PADDING_0,
+			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(inputFileDialog));
 

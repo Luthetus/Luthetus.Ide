@@ -1,11 +1,7 @@
-﻿using Fluxor;
+using Fluxor;
 using System.Text.Json;
 using Luthetus.Common.RazorLib.Storages.States;
 using Luthetus.Common.RazorLib.Dialogs.States;
-using Luthetus.TextEditor.RazorLib.Options.Models;
-using Luthetus.TextEditor.RazorLib.Options.States;
-using static Luthetus.Common.RazorLib.Contexts.States.ContextState;
-using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
@@ -13,7 +9,12 @@ using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.PolymorphicUis.Models;
+using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.Options.States;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using static Luthetus.Common.RazorLib.Contexts.States.ContextState;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -79,14 +80,12 @@ public partial interface ITextEditorService
         public void ShowSettingsDialog(bool? isResizableOverride = null, string? cssClassString = null)
         {
             var settingsDialog = new DialogRecord(
-                Key<DialogRecord>.NewKey(),
+                Key<IPolymorphicUiRecord>.NewKey(),
                 "Text Editor Settings",
                 _textEditorConfig.SettingsDialogConfig.ComponentRendererType,
                 null,
-                cssClassString)
-            {
-                IsResizable = isResizableOverride ?? _textEditorConfig.SettingsDialogConfig.ComponentIsResizable
-            };
+                cssClassString,
+				isResizableOverride ?? _textEditorConfig.SettingsDialogConfig.ComponentIsResizable);
 
             _dispatcher.Dispatch(new DialogState.RegisterAction(settingsDialog));
         }
@@ -94,14 +93,12 @@ public partial interface ITextEditorService
         public void ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null)
         {
             _findAllDialog ??= new DialogRecord(
-                Key<DialogRecord>.NewKey(),
+                Key<IPolymorphicUiRecord>.NewKey(),
                 "Find All",
                 _textEditorConfig.FindAllDialogConfig.ComponentRendererType,
                 null,
-                cssClassString)
-            {
-                IsResizable = isResizableOverride ?? _textEditorConfig.FindAllDialogConfig.ComponentIsResizable
-            };
+                cssClassString,
+				isResizableOverride ?? _textEditorConfig.FindAllDialogConfig.ComponentIsResizable);
 
             _dispatcher.Dispatch(new DialogState.RegisterAction(_findAllDialog));
         }

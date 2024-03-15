@@ -47,10 +47,8 @@ public partial record TextEditorViewModelPolymorphicUi : IPolymorphicDraggable
 						_textEditorViewModelDisplayOptions
 					}
 				},
-    			null)
-			{
-				IsResizable = true
-			};
+    			null,
+				true);
 
 			DialogService.RegisterDialogRecord(dialogRecord);
 		}

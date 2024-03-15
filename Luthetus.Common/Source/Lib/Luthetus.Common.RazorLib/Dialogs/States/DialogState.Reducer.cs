@@ -1,4 +1,5 @@
-﻿using Fluxor;
+using Fluxor;
+using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 
 namespace Luthetus.Common.RazorLib.Dialogs.States;
 
@@ -11,7 +12,7 @@ public partial record DialogState
             DialogState inState,
             RegisterAction registerAction)
         {
-            if (inState.DialogList.Any(x => x.Key == registerAction.Entry.Key))
+            if (inState.DialogList.Any(x => x.PolymorphicUiKey == registerAction.Entry.PolymorphicUiKey))
                 return inState;
 
             var outDialogList = inState.DialogList.Add(registerAction.Entry);
@@ -19,7 +20,7 @@ public partial record DialogState
             return inState with 
             {
                 DialogList = outDialogList,
-                ActiveDialogKey = registerAction.Entry.Key,
+                ActiveDialogKey = registerAction.Entry.PolymorphicUiKey,
             };
         }
 
@@ -29,15 +30,14 @@ public partial record DialogState
             SetIsMaximizedAction setIsMaximizedAction)
         {
             var inDialog = inState.DialogList.FirstOrDefault(
-                x => x.Key == setIsMaximizedAction.Key);
+                x => x.PolymorphicUiKey == setIsMaximizedAction.PolymorphicUiKey);
 
             if (inDialog is null)
                 return inState;
 
-            var outDialogList = inState.DialogList.Replace(inDialog, inDialog with
-            {
-                IsMaximized = setIsMaximizedAction.IsMaximized
-            });
+            var outDialogList = inState.DialogList.Replace(
+				inDialog,
+				inDialog.DialogSetIsMaximized(setIsMaximizedAction.IsMaximized));
 
             return inState with { DialogList = outDialogList };
         }
@@ -47,7 +47,7 @@ public partial record DialogState
             DialogState inState,
             SetActiveDialogKeyAction setActiveDialogKeyAction)
         {
-            return inState with { ActiveDialogKey = setActiveDialogKeyAction.DialogKey };
+            return inState with { ActiveDialogKey = setActiveDialogKeyAction.PolymorphicUiKey };
         }
 
         [ReducerMethod]
@@ -56,7 +56,7 @@ public partial record DialogState
             DisposeAction disposeAction)
         {
             var inDialog = inState.DialogList.FirstOrDefault(
-                x => x.Key == disposeAction.Key);
+                x => x.PolymorphicUiKey == disposeAction.PolymorphicUiKey);
 
             if (inDialog is null)
                 return inState;

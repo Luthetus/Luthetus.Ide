@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Ide.RazorLib.InputFiles.States;
@@ -48,7 +48,7 @@ public partial class InputFileBottomControls : ComponentBase
         if (valid)
         {
             if (DialogRecord is not null)
-                Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
+                Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.PolymorphicUiKey));
 
             await InputFileState.OnAfterSubmitFunc
                 .Invoke(InputFileState.SelectedTreeViewModel?.Item);
@@ -64,7 +64,7 @@ public partial class InputFileBottomControls : ComponentBase
     private Task CancelOnClick()
     {
         if (DialogRecord is not null)
-            Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
+            Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.PolymorphicUiKey));
 
         return Task.CompletedTask;
     }

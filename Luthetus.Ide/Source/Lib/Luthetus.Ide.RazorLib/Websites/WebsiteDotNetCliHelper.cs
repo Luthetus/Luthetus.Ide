@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
@@ -54,7 +54,7 @@ public class WebsiteDotNetCliHelper
             environmentProvider);
 
         // Close Dialog
-        dispatcher.Dispatch(new DialogState.DisposeAction(dialogRecord.Key));
+        dispatcher.Dispatch(new DialogState.DisposeAction(dialogRecord.PolymorphicUiKey));
         NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", luthetusCommonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
     }
 }

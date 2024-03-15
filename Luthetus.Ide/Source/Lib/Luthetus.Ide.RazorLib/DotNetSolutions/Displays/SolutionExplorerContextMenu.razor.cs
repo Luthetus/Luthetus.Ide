@@ -1,11 +1,7 @@
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
-using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.Ide.RazorLib.ProgramExecutions.States;
-using Luthetus.Ide.RazorLib.InputFiles.States;
-using Luthetus.Ide.RazorLib.InputFiles.Models;
+using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
@@ -17,18 +13,23 @@ using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
+using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.ProgramExecutions.States;
+using Luthetus.Ide.RazorLib.InputFiles.States;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.CSharpProjectForms.Displays;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
-using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 
@@ -60,8 +61,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     [Parameter, EditorRequired]
     public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
 
-	private static readonly Key<DialogRecord> _solutionEditorDialogKey = Key<DialogRecord>.NewKey();
-	private static readonly Key<DialogRecord> _newCSharpProjectDialogKey = Key<DialogRecord>.NewKey();
+	private static readonly Key<IPolymorphicUiRecord> _solutionEditorDialogKey = Key<IPolymorphicUiRecord>.NewKey();
+	private static readonly Key<IPolymorphicUiRecord> _newCSharpProjectDialogKey = Key<IPolymorphicUiRecord>.NewKey();
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
@@ -414,10 +415,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     dotNetSolutionModel.Key
                 },
             },
-            null)
-        {
-            IsResizable = true
-        };
+            null,
+			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }
@@ -480,10 +479,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     new ResourceUri(dotNetSolutionModel.NamespacePath.AbsolutePath.Value)
                 },
             },
-            null)
-        {
-            IsResizable = true
-        };
+            null,
+			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }

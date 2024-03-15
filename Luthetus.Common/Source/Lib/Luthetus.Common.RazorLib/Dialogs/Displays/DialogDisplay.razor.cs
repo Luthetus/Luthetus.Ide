@@ -1,6 +1,7 @@
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 using Luthetus.Common.RazorLib.Htmls.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
@@ -27,15 +28,15 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     private IJSRuntime JsRuntime { get; set; } = null!;
 
     [Parameter]
-    public DialogRecord DialogRecord { get; set; } = null!;
+    public IPolymorphicDialog DialogRecord { get; set; } = null!;
 
     private const int COUNT_OF_CONTROL_BUTTONS = 2;
 
     private ResizableDisplay? _resizableDisplay;
 
-    private string ElementDimensionsStyleCssString => DialogRecord.ElementDimensions.StyleString;
+    private string ElementDimensionsStyleCssString => DialogRecord.DialogElementDimensions.StyleString;
 
-    private string IsMaximizedStyleCssString => DialogRecord.IsMaximized
+    private string IsMaximizedStyleCssString => DialogRecord.DialogIsMaximized
         ? CommonConfig.DialogServiceOptions.IsMaximizedStyleCssString
         : string.Empty;
 
@@ -52,7 +53,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
         DialogStateIsActiveSelection.SelectedValueChanged += DialogStateIsActiveSelection_SelectedValueChanged;
 
-        DialogStateIsActiveSelection.Select(dialogState => dialogState.ActiveDialogKey == DialogRecord.Key);
+        DialogStateIsActiveSelection.Select(dialogState => dialogState.ActiveDialogKey == DialogRecord.PolymorphicUiKey);
 
         base.OnInitialized();
     }
@@ -63,7 +64,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         {
             await JsRuntime.InvokeVoidAsync(
                 "luthetusTextEditor.focusHtmlElementById",
-                DialogRecord.FocusPointHtmlElementId);
+                DialogRecord.DialogFocusPointHtmlElementId);
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -92,13 +93,13 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     private void ToggleIsMaximized()
     {
         DialogService.SetDialogRecordIsMaximized(
-            DialogRecord.Key,
-            !DialogRecord.IsMaximized);
+            DialogRecord.PolymorphicUiKey,
+            !DialogRecord.DialogIsMaximized);
     }
 
     private void DispatchDisposeDialogRecordAction()
     {
-        DialogService.DisposeDialogRecord(DialogRecord.Key);
+        DialogService.DisposeDialogRecord(DialogRecord.PolymorphicUiKey);
     }
 
     private string GetCssClassForDialogStateIsActiveSelection(bool isActive)
@@ -110,12 +111,12 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     private void HandleOnFocusIn()
     {
-        Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(DialogRecord.Key));
+        Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(DialogRecord.PolymorphicUiKey));
     }
 
     private void HandleOnMouseDown()
     {
-        Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(DialogRecord.Key));
+        Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(DialogRecord.PolymorphicUiKey));
     }
 
     public void Dispose()

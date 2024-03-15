@@ -15,8 +15,11 @@ namespace Luthetus.Common.RazorLib.Panels.Models;
 
 public partial record Panel : IPolymorphicDialog
 {
-	public Key<DialogRecord> DialogKey { get; } = Key<DialogRecord>.NewKey();
+	public Key<IPolymorphicUiRecord> DialogKey { get; } = Key<IPolymorphicUiRecord>.NewKey();
 
+    public string? DialogCssClassString { get; set; }
+	public Type DialogRendererType { get; }
+	public Dictionary<string, object?>? DialogParameterMap { get; }
 	public ElementDimensions DialogElementDimensions { get; }
     public bool DialogIsMinimized { get; set; }
     public bool DialogIsMaximized { get; set; }
@@ -79,5 +82,13 @@ public partial record Panel : IPolymorphicDialog
         }
 
         return elementDimensions;
+	}
+
+	public IPolymorphicDialog DialogSetIsMaximized(bool isMaximized)
+	{
+		return this with
+		{
+			DialogIsMaximized = isMaximized
+		};
 	}
 }

@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
@@ -109,7 +109,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 () =>
                 {
                     // Close Dialog
-                    Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
+                    Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.PolymorphicUiKey));
 
                     // Open the created .NET Solution
                     var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
@@ -165,7 +165,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             HackForWebsite_NEW_SOLUTION_TEMPLATE);
 
         // Close Dialog
-        Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
+        Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.PolymorphicUiKey));
 
         NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", LuthetusCommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
 

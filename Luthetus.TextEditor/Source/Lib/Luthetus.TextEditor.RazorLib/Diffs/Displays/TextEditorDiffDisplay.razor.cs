@@ -1,12 +1,13 @@
-﻿using Fluxor;
+using Fluxor;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
-using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Displays;
 
@@ -44,14 +45,12 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     public int TabIndex { get; set; } = -1;
 
     private DialogRecord _detailsDialogRecord = new(
-            Key<DialogRecord>.NewKey(),
+            Key<IPolymorphicUiRecord>.NewKey(),
             "Diff Details",
             typeof(DiffDetailsDisplay),
             null,
-            null)
-    {
-        IsResizable = true,
-    };
+            null,
+			true);
 
     private CancellationTokenSource _calculateDiffCancellationTokenSource = new();
     private TextEditorDiffResult? _mostRecentDiffResult;
@@ -100,11 +99,11 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 
     private void ShowCalculationOnClick()
     {
-        DialogService.DisposeDialogRecord(_detailsDialogRecord.Key);
+        DialogService.DisposeDialogRecord(_detailsDialogRecord.PolymorphicUiKey);
 
         _detailsDialogRecord = _detailsDialogRecord with
         {
-            Parameters = new Dictionary<string, object?>
+            DialogParameterMap = new Dictionary<string, object?>
             {
                 {
                     nameof(DiffDetailsDisplay.DiffModelKey),

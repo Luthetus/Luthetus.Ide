@@ -1,19 +1,20 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
+using Fluxor;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
+using Luthetus.Common.RazorLib.PolymorphicUis.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.WatchWindows.Displays;
+using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
-using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.Common.RazorLib.WatchWindows.Displays;
-using Luthetus.Common.RazorLib.Clipboards.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
-using Fluxor;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
@@ -169,7 +170,7 @@ public partial class TextEditorHeader : ComponentBase
             true);
 
         var dialogRecord = new DialogRecord(
-            Key<DialogRecord>.NewKey(),
+            Key<IPolymorphicUiRecord>.NewKey(),
             $"WatchWindow: {model.ResourceUri}",
             typeof(WatchWindowDisplay),
             new Dictionary<string, object?>
@@ -179,10 +180,8 @@ public partial class TextEditorHeader : ComponentBase
                     watchWindowObject
                 }
             },
-            null)
-        {
-            IsResizable = true
-        };
+            null,
+			true);
 
         DialogService.RegisterDialogRecord(dialogRecord);
     }

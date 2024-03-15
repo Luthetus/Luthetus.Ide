@@ -2,8 +2,9 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Ide.RazorLib.Shareds.Models;
+using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Ide.RazorLib.Shareds.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 
@@ -14,7 +15,7 @@ public partial class ActiveBackgroundTaskDisplay : IDisposable
     [Inject]
     public IDialogService DialogService { get; set; } = null!;
 
-	private static readonly Key<DialogRecord> _backgroundTaskDialogKey = Key<DialogRecord>.NewKey();
+	private static readonly Key<IPolymorphicUiRecord> _backgroundTaskDialogKey = Key<IPolymorphicUiRecord>.NewKey();
 
     private readonly IThrottle _executingBackgroundTaskChangedThrottle = new Throttle(TimeSpan.FromMilliseconds(1000));
     private readonly List<IBackgroundTask> _seenBackgroundTasks = new List<IBackgroundTask>();
@@ -45,10 +46,8 @@ public partial class ActiveBackgroundTaskDisplay : IDisposable
                     _backgroundTaskDialogModel
                 }
             },
-            null)
-        {
-            IsResizable = true
-        });
+            null,
+			true));
     }
 
     private async void ContinuousBackgroundTaskWorker_ExecutingBackgroundTaskChanged()

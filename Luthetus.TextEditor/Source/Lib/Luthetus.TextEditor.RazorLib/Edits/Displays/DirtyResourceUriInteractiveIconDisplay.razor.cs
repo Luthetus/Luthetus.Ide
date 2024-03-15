@@ -2,6 +2,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 using Luthetus.TextEditor.RazorLib.Edits.States;
 using Microsoft.AspNetCore.Components;
 
@@ -19,17 +20,15 @@ public partial class DirtyResourceUriInteractiveIconDisplay : FluxorComponent
     [Parameter]
     public string CssStyleString { get; set; } = string.Empty;
 
-    private static Key<DialogRecord> _dialogRecordKey = Key<DialogRecord>.NewKey();
+    private static Key<IPolymorphicUiRecord> _dialogRecordKey = Key<IPolymorphicUiRecord>.NewKey();
 
     private readonly DialogRecord _dialogRecord = new(
         _dialogRecordKey,
         "Unsaved Files",
         typeof(DirtyResourceUriViewDisplay),
         null,
-        null)
-    {
-        IsResizable = true
-    };
+        null,
+		true);
 
     private void ShowDialogOnClick()
     {

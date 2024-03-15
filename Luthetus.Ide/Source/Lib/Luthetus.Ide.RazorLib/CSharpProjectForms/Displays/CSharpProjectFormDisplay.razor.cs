@@ -242,7 +242,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                         immutableView.NewCSharpProjectCancellationTokenSource.Token,
                         () =>
                         {
-                            Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
+                            Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.PolymorphicUiKey));
                             DotNetSolutionSync.SetDotNetSolution(immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath);
                             return Task.CompletedTask;
                         });

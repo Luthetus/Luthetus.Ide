@@ -1,16 +1,16 @@
 @using Luthetus.Common.RazorLib.Resizes.Displays
 
-<div class="luth_dialog-display @DialogRecord.CssClassString @GetCssClassForDialogStateIsActiveSelection(DialogStateIsActiveSelection.Value)"
+<div class="luth_dialog-display @DialogRecord.DialogCssClassString @GetCssClassForDialogStateIsActiveSelection(DialogStateIsActiveSelection.Value)"
      style="@ElementDimensionsStyleCssString @IsMaximizedStyleCssString"
-     id="@DialogRecord.FocusPointHtmlElementId"
+     id="@DialogRecord.DialogFocusPointHtmlElementId"
      tabindex="-1"
      @onfocusin="HandleOnFocusIn"
      @onmousedown="HandleOnMouseDown">
 
-    @if (DialogRecord.IsResizable && !DialogRecord.IsMaximized)
+    @if (DialogRecord.DialogIsResizable && !DialogRecord.DialogIsMaximized)
     {
         <ResizableDisplay @ref="_resizableDisplay"
-                          ElementDimensions="DialogRecord.ElementDimensions"
+                          ElementDimensions="DialogRecord.DialogElementDimensions"
                           ReRenderFuncAsync="ReRenderAsync"/>
     }
 
@@ -25,12 +25,12 @@
         <div class="luth_dialog-display-buttons"
              @onmousedown:stopPropagation="true">
             
-            @if (DialogRecord.IsResizable)
+            @if (DialogRecord.DialogIsResizable)
             {
                 <button class="luth_button luth_dialog-display-button-entry"
                         @onclick="ToggleIsMaximized">
                     
-                    @if (DialogRecord.IsMaximized)
+                    @if (DialogRecord.DialogIsMaximized)
                     {
                         <IconRestore/>
                     }
@@ -50,9 +50,9 @@
 
     <div class="luth_dialog-display-body">
         <CascadingValue Value="DialogRecord">
-            <DynamicComponent @key="DialogRecord.Key"
-                              Type="DialogRecord.RendererType"
-                              Parameters="DialogRecord.Parameters"/>
+            <DynamicComponent @key="DialogRecord.PolymorphicUiKey"
+                              Type="DialogRecord.DialogRendererType"
+                              Parameters="DialogRecord.DialogParameterMap"/>
         </CascadingValue>
     </div>
 </div>
