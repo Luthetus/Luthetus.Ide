@@ -169,6 +169,7 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 			measuredHtmlElementDimensions,
 			elementDimensions,
 			TextEditorGroup.GroupKey,
+			null,
 			PolymorphicViewModel));
 
 		var result = dropzoneList.ToImmutableArray();
@@ -238,6 +239,7 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 			new MeasuredHtmlElementDimensions(0, 0, 0, 0, 0),
 			fallbackElementDimensions,
 			null,
+			"luth_dropzone-fallback",
 			PolymorphicViewModel));
 	}
 }

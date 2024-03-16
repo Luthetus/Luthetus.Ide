@@ -14,11 +14,13 @@ public class TextEditorDropzoneViewModel : IDropzoneViewModel
 		MeasuredHtmlElementDimensions measuredHtmlElementDimensions,
 		ElementDimensions elementDimensions,
 		Key<TextEditorGroup>? textEditorGroupKey,
+		string? cssClassString,
 		IPolymorphicViewModel? polymorphicViewModel)
 	{
 		MeasuredHtmlElementDimensions = measuredHtmlElementDimensions;
 		DropzoneElementDimensions = elementDimensions;
 		TextEditorGroupKey = textEditorGroupKey;
+		CssClassString = cssClassString;
 		PolymorphicViewModel = polymorphicViewModel;
 	}
 
