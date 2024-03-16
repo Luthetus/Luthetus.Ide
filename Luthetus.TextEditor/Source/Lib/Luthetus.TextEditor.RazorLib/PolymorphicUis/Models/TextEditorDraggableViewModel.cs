@@ -18,19 +18,28 @@ namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
 
 public partial record TextEditorDraggableViewModel : IDraggableViewModel
 {
+	private readonly Func<string> _getTitleFunc;
+
 	public TextEditorDraggableViewModel(
 		Key<TextEditorViewModel> viewModelKey,
 		TextEditorGroup textEditorGroup,
 		TextEditorViewModelDisplayOptions textEditorViewModelDisplayOptions,
+		Func<string> getTitleFunc,
 		ITextEditorService textEditorService,
 		IDialogService dialogService,
-		IJSRuntime jsRuntime)
+		IJSRuntime jsRuntime,
+		IPolymorphicViewModel? polymorphicViewModel)
 	{
 		ViewModelKey = viewModelKey;
 		TextEditorGroup = textEditorGroup;
+		TextEditorViewModelDisplayOptions = textEditorViewModelDisplayOptions;
+		_getTitleFunc = getTitleFunc;
 		TextEditorService = textEditorService;
 		DialogService = dialogService;
 		JsRuntime = jsRuntime;
+		PolymorphicViewModel = polymorphicViewModel;
+
+		Key = new(viewModelKey.Guid);
 	}
 
 	public Key<TextEditorViewModel> ViewModelKey { get; init; }
@@ -44,7 +53,7 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 	public Key<IDraggableViewModel> Key { get; init; }
 	public Type RendererType { get; init; }
 	public Dictionary<string, object?> ParameterMap { get; init; }
-	public ElementDimensions ElementDimensions { get; init; }
+	public ElementDimensions ElementDimensions { get; init; } = IDialogViewModel.ConstructDefaultElementDimensions();
 	public ImmutableArray<IDropzoneViewModel> DropzoneViewModelList { get; set; } = ImmutableArray<IDropzoneViewModel>.Empty;
 
 	public Task OnDragStopAsync(MouseEventArgs mouseEventArgs, IDropzoneViewModel? dropzone)
@@ -56,23 +65,10 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 		{
 			TextEditorService.GroupApi.RemoveViewModel(TextEditorGroup.GroupKey, ViewModelKey);
 
-			var dialogRecord = new DialogViewModel(
-    			Key<IDialogViewModel>.NewKey(),
-    			"TODO: Title",
-    			typeof(TextEditorViewModelDisplay),
-    			new Dictionary<string, object?>()
-				{
-					{
-						nameof(TextEditorViewModelDisplay.TextEditorViewModelKey),
-						ViewModelKey
-					},
-					{
-						nameof(TextEditorViewModelDisplay.ViewModelDisplayOptions),
-						TextEditorViewModelDisplayOptions
-					}
-				},
-    			null,
-				true,
+			var dialogRecord = new TextEditorDialogViewModel(
+				ViewModelKey,
+				TextEditorViewModelDisplayOptions,
+				_getTitleFunc,
 				PolymorphicViewModel);
 
 			DialogService.RegisterDialogRecord(dialogRecord);

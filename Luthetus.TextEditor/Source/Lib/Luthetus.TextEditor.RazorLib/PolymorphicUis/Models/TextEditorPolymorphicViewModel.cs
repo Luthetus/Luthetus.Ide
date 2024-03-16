@@ -40,23 +40,31 @@ public partial record TextEditorPolymorphicViewModel : IPolymorphicViewModel
 			textEditorService,
 			() => GetTitle(),
 			this);
+
+		DraggableViewModel = new TextEditorDraggableViewModel(
+			viewModelKey,
+			textEditorGroup,
+			_textEditorViewModelDisplayOptions,
+			() => GetTitle(),
+			textEditorService,
+			dialogService,
+			jsRuntime,
+			this);
+
+		DialogViewModel = new TextEditorDialogViewModel(
+			viewModelKey,
+			_textEditorViewModelDisplayOptions,
+			() => GetTitle(),
+			this);
 	}
 
-	/// <summary>
-	/// TODO: Aquire access to the TextEditorService via the constructor...
-	/// ...This hack was used instead, because adding the TextEditorService
-	/// to the view model registration logic seems like an odd thing to do.
-	/// This needs to be looked into more.
-	///
-	/// The hack is that: the UI when it sees an instance of this type,
-	/// it will set this type's TextEditorService property.
-	/// </summary>
-	public ITextEditorService? TextEditorService { get; set; }
-	public IJSRuntime? JsRuntime { get; set; }
-	public IDialogService DialogService { get; set; }
+	public ITextEditorService? TextEditorService { get; init; }
+	public TextEditorViewModelDisplayOptions TextEditorViewModelDisplayOptions { get; init; }
+	public IJSRuntime? JsRuntime { get; init; }
+	public IDialogService DialogService { get; init; }
 
-	public Key<TextEditorViewModel> ViewModelKey { get; }
-	public TextEditorGroup TextEditorGroup { get; set; }
+	public Key<TextEditorViewModel> ViewModelKey { get; init; }
+	public TextEditorGroup TextEditorGroup { get; init; }
 
 	public IDialogViewModel? DialogViewModel { get; }
     public IDraggableViewModel? DraggableViewModel { get; }

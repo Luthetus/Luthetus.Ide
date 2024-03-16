@@ -17,10 +17,44 @@ namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
 
 public record TextEditorDialogViewModel : IDialogViewModel
 {
+	private readonly Func<string> _getTitleFunc;
+
+	public TextEditorDialogViewModel(
+		Key<TextEditorViewModel> viewModelKey,
+		TextEditorViewModelDisplayOptions textEditorViewModelDisplayOptions,
+		Func<string> getTitleFunc,
+		IPolymorphicViewModel? polymorphicViewModel)
+	{
+		ViewModelKey = viewModelKey;
+		TextEditorViewModelDisplayOptions = textEditorViewModelDisplayOptions;
+		_getTitleFunc = getTitleFunc;
+		PolymorphicViewModel = polymorphicViewModel;
+
+		Key = new(ViewModelKey.Guid);
+
+		IsResizable = true;
+
+		RendererType = typeof(TextEditorViewModelDisplay);
+
+		ParameterMap = new()
+		{
+			{
+				nameof(TextEditorViewModelDisplay.TextEditorViewModelKey),
+				ViewModelKey
+			},
+			{
+				nameof(TextEditorViewModelDisplay.ViewModelDisplayOptions),
+				TextEditorViewModelDisplayOptions
+			}
+		};
+	}
+
+	public Key<TextEditorViewModel> ViewModelKey { get; init; }
+	public TextEditorViewModelDisplayOptions TextEditorViewModelDisplayOptions { get; init; }
 	public IPolymorphicViewModel? PolymorphicViewModel { get; init; }
-	public Key<IDialogViewModel> Key { get; init; } = Key<IDialogViewModel>.NewKey();
+	public Key<IDialogViewModel> Key { get; init; }
 	public Type RendererType { get; init; }
-	public string Title { get; init; }
+	public string Title => _getTitleFunc.Invoke();
 	public Dictionary<string, object?>? ParameterMap { get; init; }
 	public ElementDimensions ElementDimensions { get; init; } = IDialogViewModel.ConstructDefaultElementDimensions();
     public bool IsMinimized { get; init; }
@@ -36,7 +70,8 @@ public record TextEditorDialogViewModel : IDialogViewModel
 
 	public IDialogViewModel SetTitle(string title)
 	{
-		return this with { Title = title };
+		// TODO: How to handle SetTitle?
+		return this;
 	}
 
 	public IDialogViewModel SetIsMinimized(bool isMinimized)

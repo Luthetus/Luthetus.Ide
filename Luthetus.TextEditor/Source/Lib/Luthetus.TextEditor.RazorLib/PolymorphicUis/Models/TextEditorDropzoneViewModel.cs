@@ -23,7 +23,7 @@ public class TextEditorDropzoneViewModel : IDropzoneViewModel
 	}
 
 	public IPolymorphicViewModel? PolymorphicViewModel { get; init; }
-	public Key<IDropzoneViewModel> Key { get; init; }
+	public Key<IDropzoneViewModel> Key { get; init; } = Key<IDropzoneViewModel>.NewKey();
 	public MeasuredHtmlElementDimensions MeasuredHtmlElementDimensions { get; }
 	public ElementDimensions DropzoneElementDimensions { get; }
 

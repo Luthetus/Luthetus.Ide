@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Drags.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.Drags.Displays;
 
@@ -77,7 +78,9 @@ public partial class DragInitializer : FluxorComponent
 
 	private string GetIsActiveCssClass(IDropzoneViewModel dropzone)
 	{
-		return _onMouseOverDropzone.Key == dropzone.Key
+		var onMouseOverDropzoneKey = _onMouseOverDropzone?.Key ?? Key<IDropzoneViewModel>.Empty;
+
+		return onMouseOverDropzoneKey == dropzone.Key
 			? "luth_active"
 			: string.Empty;
 	}
