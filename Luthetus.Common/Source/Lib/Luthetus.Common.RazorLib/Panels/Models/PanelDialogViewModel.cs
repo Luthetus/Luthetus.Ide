@@ -34,6 +34,9 @@ public record PanelDialogViewModel : IDialogViewModel
 		PolymorphicViewModel = polymorphicViewModel;
 
 		Key = new(PanelKey.Guid);
+
+		RendererType = GetRendererType();
+		Title = GetTitle();
 	}
 
 	public Key<Panel> PanelKey { get; init; }
@@ -45,8 +48,8 @@ public record PanelDialogViewModel : IDialogViewModel
 
 	public IPolymorphicViewModel? PolymorphicViewModel { get; init; }
 	public Key<IDialogViewModel> Key { get; init; }
-	public Type RendererType => GetRendererType();
-	public string Title => GetTitle();
+	public Type RendererType { get; }
+	public string Title { get; }
 	public Dictionary<string, object?>? ParameterMap { get; init; }
 	public ElementDimensions ElementDimensions { get; init; } = IDialogViewModel.ConstructDefaultElementDimensions();
     public bool IsMinimized { get; init; }
