@@ -82,6 +82,24 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 		}
 		else if (dropzone is PanelDropzoneViewModel panelDropzone)
 		{
+			if (TextEditorPolymorphicViewModel.TextEditorGroup is not null)
+			{
+				TextEditorPolymorphicViewModel.TextEditorService.GroupApi.RemoveViewModel(
+					TextEditorPolymorphicViewModel.TextEditorGroup.GroupKey,
+					TextEditorPolymorphicViewModel.ViewModelKey);
+			}
+
+			TextEditorPolymorphicViewModel.TextEditorGroup = null;
+
+			TextEditorPolymorphicViewModel.Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+				panelDropzone.PanelGroupKey,
+				new Panel(
+					new Key<Panel>(TextEditorPolymorphicViewModel.ViewModelKey.Guid),
+					new(),
+					typeof(TextEditorViewModelDisplay),
+					TextEditorPolymorphicViewModel.GetTitle()),
+				true));
+
 			return Task.CompletedTask;
 		}
 		else
