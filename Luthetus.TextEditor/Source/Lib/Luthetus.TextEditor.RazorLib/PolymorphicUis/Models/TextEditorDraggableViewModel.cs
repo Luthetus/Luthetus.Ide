@@ -29,20 +29,6 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 		PolymorphicViewModel = textEditorPolymorphicViewModel;
 
 		Key = new(TextEditorPolymorphicViewModel.ViewModelKey.Guid);
-
-		RendererType = typeof(TabDisplay);
-
-		ParameterMap = new Dictionary<string, object?>
-		{
-			{
-				nameof(TabDisplay.TabViewModel),
-				PolymorphicViewModel.TabViewModel
-			},
-			{
-				nameof(TabDisplay.IsBeingDragged),
-				true
-			}
-		};
 	}
 
 	public TextEditorPolymorphicViewModel TextEditorPolymorphicViewModel { get; init; }
@@ -61,8 +47,14 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 		{
 			if (textEditorDropzoneViewModel.TextEditorGroupKey is null)
 			{
-				TextEditorPolymorphicViewModel.TextEditorService.GroupApi.RemoveViewModel(TextEditorPolymorphicViewModel.TextEditorGroup.GroupKey, TextEditorPolymorphicViewModel.ViewModelKey);
+				if (TextEditorPolymorphicViewModel.TextEditorGroup is not null)
+				{
+					TextEditorPolymorphicViewModel.TextEditorService.GroupApi.RemoveViewModel(
+						TextEditorPolymorphicViewModel.TextEditorGroup.GroupKey,
+						TextEditorPolymorphicViewModel.ViewModelKey);
+				}
 	
+				TextEditorPolymorphicViewModel.TextEditorGroup = null;
 				TextEditorPolymorphicViewModel.ActiveViewModelType = typeof(IDialogViewModel);
 
 				TextEditorPolymorphicViewModel.DialogService.RegisterDialogRecord(
@@ -70,9 +62,19 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 			}
 			else
 			{
-				if (TextEditorPolymorphicViewModel.TextEditorGroup.GroupKey != textEditorDropzoneViewModel.TextEditorGroupKey.Value)
+				TextEditorPolymorphicViewModel.DialogService.DisposeDialogRecord(
+					TextEditorPolymorphicViewModel.DialogViewModel.Key);
+
+				var textEditorGroupKey = TextEditorPolymorphicViewModel.TextEditorGroup?.GroupKey ?? Key<TextEditorGroup>.Empty;
+
+				if (textEditorDropzoneViewModel.TextEditorGroupKey.Value != Key<TextEditorGroup>.Empty &&
+				    textEditorGroupKey != textEditorDropzoneViewModel.TextEditorGroupKey.Value)
 				{
-					
+					TextEditorPolymorphicViewModel.ActiveViewModelType = typeof(ITabViewModel);
+
+					TextEditorPolymorphicViewModel.TextEditorService.GroupApi.AddViewModel(
+						textEditorDropzoneViewModel.TextEditorGroupKey.Value,
+						TextEditorPolymorphicViewModel.ViewModelKey);
 				}
 			}
 

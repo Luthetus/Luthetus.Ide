@@ -48,7 +48,7 @@ public partial record TextEditorPolymorphicViewModel : IPolymorphicViewModel
 	}
 
 	public Key<TextEditorViewModel> ViewModelKey { get; init; }
-	public TextEditorGroup TextEditorGroup { get; init; }
+	public TextEditorGroup? TextEditorGroup { get; set; }
 	public ITextEditorService? TextEditorService { get; init; }
 	public IDispatcher Dispatcher { get; init; }
 	public IState<PanelsState> PanelsStateWrap { get; init; }
