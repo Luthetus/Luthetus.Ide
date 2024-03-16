@@ -21,6 +21,8 @@ public class PanelTabViewModel : ITabViewModel
 		PanelsStateWrap = panelsStateWrap;
 		Dispatcher = dispatcher;
 		PolymorphicViewModel = polymorphicViewModel;
+
+		Key = new Key<ITabViewModel>(PanelKey.Guid);
 	}
 
 	public Key<Panel> PanelKey { get; }
@@ -30,7 +32,7 @@ public class PanelTabViewModel : ITabViewModel
 
 	public IPolymorphicViewModel? PolymorphicViewModel { get; init; }
 	public Key<ITabViewModel> Key { get; }
-	public string Title { get; init; }
+	public string Title => GetTitle();
 
 	public PanelGroup? GetPanelGroup()
 	{
@@ -40,6 +42,17 @@ public class PanelTabViewModel : ITabViewModel
 	public Panel? GetPanel(PanelGroup panelGroup)
 	{
 		return panelGroup.TabList.FirstOrDefault(x => x.Key == PanelKey);
+	}
+
+	public string GetTitle()
+	{
+		var panelGroup = GetPanelGroup();
+		var panel = GetPanel(panelGroup);
+		
+		if (panelGroup is null || panel is null)
+			return "__NOT_FOUND__";
+
+		return panel.Title;
 	}
 
 	public bool GetIsActive()

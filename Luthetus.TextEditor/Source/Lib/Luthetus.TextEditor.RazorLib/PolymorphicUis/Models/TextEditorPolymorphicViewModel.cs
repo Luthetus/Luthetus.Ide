@@ -33,6 +33,13 @@ public partial record TextEditorPolymorphicViewModel : IPolymorphicViewModel
 		TextEditorService = textEditorService;
 		DialogService = dialogService;
 		JsRuntime = jsRuntime;
+
+		TabViewModel = new TextEditorTabViewModel(
+			viewModelKey,
+			textEditorGroup,
+			textEditorService,
+			() => GetTitle(),
+			this);
 	}
 
 	/// <summary>

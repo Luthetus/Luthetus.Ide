@@ -19,16 +19,22 @@ namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
 
 public partial record TextEditorTabViewModel : ITabViewModel
 {
+	private readonly Func<string> _getTitleFunc;
+
 	public TextEditorTabViewModel(
 		Key<TextEditorViewModel> viewModelKey,
 		TextEditorGroup textEditorGroup,
 		ITextEditorService textEditorService,
+		Func<string> getTitleFunc,
 		IPolymorphicViewModel? polymorphicViewModel)
 	{
 		ViewModelKey = viewModelKey;
 		TextEditorGroup = textEditorGroup;
 		TextEditorService = textEditorService;
+		_getTitleFunc = getTitleFunc;
 		PolymorphicViewModel = polymorphicViewModel;
+
+		Key = new(viewModelKey.Guid);
 	}
 
 	public Key<TextEditorViewModel> ViewModelKey { get; }
@@ -37,7 +43,7 @@ public partial record TextEditorTabViewModel : ITabViewModel
 
 	public IPolymorphicViewModel? PolymorphicViewModel { get; }
 	public Key<ITabViewModel> Key { get; }
-	public string Title { get; init; }
+	public string Title => _getTitleFunc.Invoke();
 
 	public Dictionary<string, object?>? TabParameterMap => new Dictionary<string, object?>
 	{

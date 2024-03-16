@@ -8,11 +8,12 @@
 	@{
 		var dragState = DragStateWrap.Value;
 		var draggableViewModel = dragState.DraggableViewModel;
-		var dropzoneViewModelList = draggableViewModel.DropzoneViewModelList;
 	}
 
 	@if (draggableViewModel is not null)
 	{
+		var dropzoneViewModelList = draggableViewModel.DropzoneViewModelList;
+
 		foreach (var dropzone in dropzoneViewModelList)
 		{
 			<div style="z-index: @dropzone.MeasuredHtmlElementDimensions.ZIndex; @dropzone.DropzoneElementDimensions.StyleString"
