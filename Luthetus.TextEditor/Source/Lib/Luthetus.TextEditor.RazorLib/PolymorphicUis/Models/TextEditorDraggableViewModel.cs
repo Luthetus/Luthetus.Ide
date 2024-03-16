@@ -22,32 +22,12 @@ namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
 
 public partial record TextEditorDraggableViewModel : IDraggableViewModel
 {
-	private readonly Func<string> _getTitleFunc;
-
-	public TextEditorDraggableViewModel(
-		Key<TextEditorViewModel> viewModelKey,
-		TextEditorGroup textEditorGroup,
-		TextEditorViewModelDisplayOptions textEditorViewModelDisplayOptions,
-		Func<string> getTitleFunc,
-		ITextEditorService textEditorService,
-		IDispatcher dispatcher,
-		IState<PanelsState> panelsStateWrap,
-		IDialogService dialogService,
-		IJSRuntime jsRuntime,
-		IPolymorphicViewModel? polymorphicViewModel)
+	public TextEditorDraggableViewModel(TextEditorPolymorphicViewModel textEditorPolymorphicViewModel)
 	{
-		ViewModelKey = viewModelKey;
-		TextEditorGroup = textEditorGroup;
-		TextEditorViewModelDisplayOptions = textEditorViewModelDisplayOptions;
-		_getTitleFunc = getTitleFunc;
-		PanelsStateWrap = panelsStateWrap;
-		TextEditorService = textEditorService;
-		Dispatcher = dispatcher;
-		DialogService = dialogService;
-		JsRuntime = jsRuntime;
-		PolymorphicViewModel = polymorphicViewModel;
+		TextEditorPolymorphicViewModel = textEditorPolymorphicViewModel;
+		PolymorphicViewModel = textEditorPolymorphicViewModel;
 
-		Key = new(viewModelKey.Guid);
+		Key = new(TextEditorPolymorphicViewModel.ViewModelKey.Guid);
 
 		ParameterMap = new Dictionary<string, object?>
 		{
@@ -62,15 +42,7 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 		};
 	}
 
-	public Key<TextEditorViewModel> ViewModelKey { get; init; }
-	public TextEditorGroup TextEditorGroup { get; init; }
-	public TextEditorViewModelDisplayOptions TextEditorViewModelDisplayOptions { get; init; }
-	public ITextEditorService TextEditorService { get; init; }
-	public IDispatcher Dispatcher { get; init; }
-	public IState<PanelsState> PanelsStateWrap { get; init; }
-	public IDialogService DialogService { get; init; }
-	public IJSRuntime JsRuntime { get; init; }
-
+	public TextEditorPolymorphicViewModel TextEditorPolymorphicViewModel { get; init; }
 	public IPolymorphicViewModel? PolymorphicViewModel { get; init; }
 	public Key<IDraggableViewModel> Key { get; init; }
 	public Type RendererType { get; init; } = typeof(TabDisplay);
@@ -82,37 +54,48 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 
 	public Task OnDragStopAsync(MouseEventArgs mouseEventArgs, IDropzoneViewModel? dropzone)
 	{
-		if (dropzone is not TextEditorDropzoneViewModel textEditorDropzoneViewModel)
-			return Task.CompletedTask;
-
-		if (textEditorDropzoneViewModel.TextEditorGroupKey is null)
+		if (dropzone is TextEditorDropzoneViewModel textEditorDropzoneViewModel)
 		{
-			TextEditorService.GroupApi.RemoveViewModel(TextEditorGroup.GroupKey, ViewModelKey);
+			if (textEditorDropzoneViewModel.TextEditorGroupKey is null)
+			{
+				TextEditorPolymorphicViewModel.TextEditorService.GroupApi.RemoveViewModel(TextEditorPolymorphicViewModel.TextEditorGroup.GroupKey, TextEditorPolymorphicViewModel.ViewModelKey);
+	
+				var dialogRecord = new TextEditorDialogViewModel(TextEditorPolymorphicViewModel);
+	
+				TextEditorPolymorphicViewModel.DialogService.RegisterDialogRecord(dialogRecord);
+			}
+			else
+			{
+				if (TextEditorPolymorphicViewModel.TextEditorGroup.GroupKey != textEditorDropzoneViewModel.TextEditorGroupKey.Value)
+				{
+					
+				}
+			}
 
-			var dialogRecord = new TextEditorDialogViewModel(
-				ViewModelKey,
-				TextEditorViewModelDisplayOptions,
-				_getTitleFunc,
-				PolymorphicViewModel);
-
-			DialogService.RegisterDialogRecord(dialogRecord);
+			return Task.CompletedTask;
 		}
-
-		return Task.CompletedTask;
+		else if (dropzone is PanelDropzoneViewModel panelDropzone)
+		{
+			return Task.CompletedTask;
+		}
+		else
+		{
+			return Task.CompletedTask;
+		}
 	}
 
 	public async Task<ImmutableArray<IDropzoneViewModel>> GetDropzonesAsync()
 	{
-		if (TextEditorService is null)
+		if (TextEditorPolymorphicViewModel.TextEditorService is null)
 			return ImmutableArray<IDropzoneViewModel>.Empty;
 
 		var dropzoneList = new List<IDropzoneViewModel>();
 		AddFallbackDropzone(dropzoneList);
 		await AddPanelDropzonesAsync(dropzoneList);
 
-		var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
+		var measuredHtmlElementDimensions = await TextEditorPolymorphicViewModel.JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
             "luthetusIde.measureElementById",
-            $"luth_te_group_{TextEditorGroup.GroupKey.Guid}");
+            $"luth_te_group_{TextEditorPolymorphicViewModel.TextEditorGroup.GroupKey.Guid}");
 	
 		measuredHtmlElementDimensions = measuredHtmlElementDimensions with
 		{
@@ -178,11 +161,9 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 		dropzoneList.Add(new TextEditorDropzoneViewModel(
 			measuredHtmlElementDimensions,
 			elementDimensions,
-			TextEditorGroup.GroupKey,
+			TextEditorPolymorphicViewModel.TextEditorGroup.GroupKey,
 			null,
-			PolymorphicViewModel));
-
-		Console.WriteLine($"dropzoneList.Count:{dropzoneList.Count}");
+			TextEditorPolymorphicViewModel));
 
 		var result = dropzoneList.ToImmutableArray();
 		DropzoneViewModelList = result;
@@ -198,15 +179,11 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 			(PanelFacts.BottomPanelRecordKey, "luth_ide_panel_bottom_tabs"),
 		};
 
-		Console.WriteLine("start foreach");
 		foreach (var panelGroupHtmlIdTuple in panelGroupHtmlIdTupleList)
 		{
-			Console.WriteLine(panelGroupHtmlIdTuple.HtmlElementId);
-			var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
+			var measuredHtmlElementDimensions = await TextEditorPolymorphicViewModel.JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
 	            "luthetusIde.measureElementById",
 	            panelGroupHtmlIdTuple.HtmlElementId);
-
-			Console.WriteLine(panelGroupHtmlIdTuple.HtmlElementId);
 	
 			measuredHtmlElementDimensions = measuredHtmlElementDimensions with
 			{
@@ -271,17 +248,15 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 	
 			dropzoneList.Add(new PanelDropzoneViewModel(
 				panelGroupHtmlIdTuple.PanelGroupKey,
-				PanelsStateWrap,
-				Dispatcher,
-				DialogService,
-				JsRuntime,
+				TextEditorPolymorphicViewModel.PanelsStateWrap,
+				TextEditorPolymorphicViewModel.Dispatcher,
+				TextEditorPolymorphicViewModel.DialogService,
+				TextEditorPolymorphicViewModel.JsRuntime,
 				measuredHtmlElementDimensions,
 				elementDimensions,
 				null,
 				PolymorphicViewModel));
 		}
-
-		Console.WriteLine($"dropzoneList.Count:{dropzoneList.Count}");
 	}
 
 	private void AddFallbackDropzone(List<IDropzoneViewModel> dropzoneList)
@@ -347,6 +322,6 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 			fallbackElementDimensions,
 			null,
 			"luth_dropzone-fallback",
-			PolymorphicViewModel));
+			TextEditorPolymorphicViewModel));
 	}
 }

@@ -17,20 +17,12 @@ namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
 
 public record TextEditorDialogViewModel : IDialogViewModel
 {
-	private readonly Func<string> _getTitleFunc;
-
-	public TextEditorDialogViewModel(
-		Key<TextEditorViewModel> viewModelKey,
-		TextEditorViewModelDisplayOptions textEditorViewModelDisplayOptions,
-		Func<string> getTitleFunc,
-		IPolymorphicViewModel? polymorphicViewModel)
+	public TextEditorDialogViewModel(TextEditorPolymorphicViewModel textEditorPolymorphicViewModel)
 	{
-		ViewModelKey = viewModelKey;
-		TextEditorViewModelDisplayOptions = textEditorViewModelDisplayOptions;
-		_getTitleFunc = getTitleFunc;
-		PolymorphicViewModel = polymorphicViewModel;
+		TextEditorPolymorphicViewModel = textEditorPolymorphicViewModel;
+		PolymorphicViewModel = textEditorPolymorphicViewModel;
 
-		Key = new(ViewModelKey.Guid);
+		Key = new(TextEditorPolymorphicViewModel.ViewModelKey.Guid);
 
 		IsResizable = true;
 
@@ -40,21 +32,20 @@ public record TextEditorDialogViewModel : IDialogViewModel
 		{
 			{
 				nameof(TextEditorViewModelDisplay.TextEditorViewModelKey),
-				ViewModelKey
+				TextEditorPolymorphicViewModel.ViewModelKey
 			},
 			{
 				nameof(TextEditorViewModelDisplay.ViewModelDisplayOptions),
-				TextEditorViewModelDisplayOptions
+				TextEditorPolymorphicViewModel.TextEditorViewModelDisplayOptions
 			}
 		};
 	}
 
-	public Key<TextEditorViewModel> ViewModelKey { get; init; }
-	public TextEditorViewModelDisplayOptions TextEditorViewModelDisplayOptions { get; init; }
+	public TextEditorPolymorphicViewModel TextEditorPolymorphicViewModel { get; init; }
 	public IPolymorphicViewModel? PolymorphicViewModel { get; init; }
 	public Key<IDialogViewModel> Key { get; init; }
 	public Type RendererType { get; init; }
-	public string Title => _getTitleFunc.Invoke();
+	public string Title => TextEditorPolymorphicViewModel.GetTitle();
 	public Dictionary<string, object?>? ParameterMap { get; init; }
 	public ElementDimensions ElementDimensions { get; init; } = IDialogViewModel.ConstructDefaultElementDimensions();
     public bool IsMinimized { get; init; }

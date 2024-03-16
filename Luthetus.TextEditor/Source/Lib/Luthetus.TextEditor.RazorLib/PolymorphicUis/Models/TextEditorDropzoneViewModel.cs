@@ -15,15 +15,17 @@ public class TextEditorDropzoneViewModel : IDropzoneViewModel
 		ElementDimensions elementDimensions,
 		Key<TextEditorGroup>? textEditorGroupKey,
 		string? cssClassString,
-		IPolymorphicViewModel? polymorphicViewModel)
+		TextEditorPolymorphicViewModel textEditorPolymorphicViewModel)
 	{
 		MeasuredHtmlElementDimensions = measuredHtmlElementDimensions;
 		DropzoneElementDimensions = elementDimensions;
 		TextEditorGroupKey = textEditorGroupKey;
 		CssClassString = cssClassString;
-		PolymorphicViewModel = polymorphicViewModel;
+		TextEditorPolymorphicViewModel = textEditorPolymorphicViewModel;
+		PolymorphicViewModel = textEditorPolymorphicViewModel;
 	}
 
+	public TextEditorPolymorphicViewModel TextEditorPolymorphicViewModel { get; init; }
 	public IPolymorphicViewModel? PolymorphicViewModel { get; init; }
 	public Key<IDropzoneViewModel> Key { get; init; } = Key<IDropzoneViewModel>.NewKey();
 	public MeasuredHtmlElementDimensions MeasuredHtmlElementDimensions { get; }

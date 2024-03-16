@@ -40,41 +40,18 @@ public partial record TextEditorPolymorphicViewModel : IPolymorphicViewModel
 		DialogService = dialogService;
 		JsRuntime = jsRuntime;
 
-		TabViewModel = new TextEditorTabViewModel(
-			viewModelKey,
-			textEditorGroup,
-			textEditorService,
-			() => GetTitle(),
-			this);
-
-		DraggableViewModel = new TextEditorDraggableViewModel(
-			viewModelKey,
-			textEditorGroup,
-			_textEditorViewModelDisplayOptions,
-			() => GetTitle(),
-			textEditorService,
-			Dispatcher,
-			PanelsStateWrap,
-			dialogService,
-			jsRuntime,
-			this);
-
-		DialogViewModel = new TextEditorDialogViewModel(
-			viewModelKey,
-			_textEditorViewModelDisplayOptions,
-			() => GetTitle(),
-			this);
+		TabViewModel = new TextEditorTabViewModel(this);
+		DraggableViewModel = new TextEditorDraggableViewModel(this);
+		DialogViewModel = new TextEditorDialogViewModel(this);
 	}
-
-	public ITextEditorService? TextEditorService { get; init; }
-	public IDispatcher Dispatcher { get; init; }
-	public IState<PanelsState> PanelsStateWrap { get; init; }
-	public TextEditorViewModelDisplayOptions TextEditorViewModelDisplayOptions { get; init; }
-	public IJSRuntime? JsRuntime { get; init; }
-	public IDialogService DialogService { get; init; }
 
 	public Key<TextEditorViewModel> ViewModelKey { get; init; }
 	public TextEditorGroup TextEditorGroup { get; init; }
+	public ITextEditorService? TextEditorService { get; init; }
+	public IDispatcher Dispatcher { get; init; }
+	public IState<PanelsState> PanelsStateWrap { get; init; }
+	public IJSRuntime? JsRuntime { get; init; }
+	public IDialogService DialogService { get; init; }
 
 	public IDialogViewModel? DialogViewModel { get; }
     public IDraggableViewModel? DraggableViewModel { get; }
@@ -82,12 +59,12 @@ public partial record TextEditorPolymorphicViewModel : IPolymorphicViewModel
     public INotificationViewModel? NotificationViewModel { get; }
     public ITabViewModel? TabViewModel { get; }
 
-	private readonly TextEditorViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
+	public TextEditorViewModelDisplayOptions TextEditorViewModelDisplayOptions { get; } = new()
 	{
 		IncludeHeaderHelperComponent = false,
 	};
 
-	private string GetTitle()
+	public string GetTitle()
 	{
 		if (TextEditorService is null)
 			return "TextEditorService was null";

@@ -19,43 +19,30 @@ namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
 
 public partial record TextEditorTabViewModel : ITabViewModel
 {
-	private readonly Func<string> _getTitleFunc;
-
-	public TextEditorTabViewModel(
-		Key<TextEditorViewModel> viewModelKey,
-		TextEditorGroup textEditorGroup,
-		ITextEditorService textEditorService,
-		Func<string> getTitleFunc,
-		IPolymorphicViewModel? polymorphicViewModel)
+	public TextEditorTabViewModel(TextEditorPolymorphicViewModel textEditorPolymorphicViewModel)
 	{
-		ViewModelKey = viewModelKey;
-		TextEditorGroup = textEditorGroup;
-		TextEditorService = textEditorService;
-		_getTitleFunc = getTitleFunc;
-		PolymorphicViewModel = polymorphicViewModel;
+		TextEditorPolymorphicViewModel = textEditorPolymorphicViewModel;
+		PolymorphicViewModel = textEditorPolymorphicViewModel;
 
-		Key = new(viewModelKey.Guid);
+		Key = new(TextEditorPolymorphicViewModel.ViewModelKey.Guid);
 	}
 
-	public Key<TextEditorViewModel> ViewModelKey { get; }
-	public TextEditorGroup TextEditorGroup { get; }
-	public ITextEditorService TextEditorService { get; }
-
+	public TextEditorPolymorphicViewModel TextEditorPolymorphicViewModel { get; init; }
 	public IPolymorphicViewModel? PolymorphicViewModel { get; }
 	public Key<ITabViewModel> Key { get; }
-	public string Title => _getTitleFunc.Invoke();
+	public string Title => TextEditorPolymorphicViewModel.GetTitle();
 
 	public Dictionary<string, object?>? ParameterMap { get; }
 
 	public bool GetIsActive()
 	{
-		return TextEditorGroup.ActiveViewModelKey == ViewModelKey;
+		return TextEditorPolymorphicViewModel.TextEditorGroup.ActiveViewModelKey == TextEditorPolymorphicViewModel.ViewModelKey;
 	}
 
 	public Task OnClickAsync(MouseEventArgs mouseEventArgs)
 	{
 		if (!GetIsActive())
-			TextEditorService.GroupApi.SetActiveViewModel(TextEditorGroup.GroupKey, ViewModelKey);
+			TextEditorPolymorphicViewModel.TextEditorService.GroupApi.SetActiveViewModel(TextEditorPolymorphicViewModel.TextEditorGroup.GroupKey, TextEditorPolymorphicViewModel.ViewModelKey);
 		
 		return Task.CompletedTask;
 	}
@@ -67,7 +54,7 @@ public partial record TextEditorTabViewModel : ITabViewModel
 
 	public Task CloseAsync()
 	{
-		TextEditorService.GroupApi.RemoveViewModel(TextEditorGroup.GroupKey, ViewModelKey);
+		TextEditorPolymorphicViewModel.TextEditorService.GroupApi.RemoveViewModel(TextEditorPolymorphicViewModel.TextEditorGroup.GroupKey, TextEditorPolymorphicViewModel.ViewModelKey);
 		return Task.CompletedTask;
 	}
 }
