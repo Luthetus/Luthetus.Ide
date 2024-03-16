@@ -32,8 +32,6 @@ public partial record TextEditorTabViewModel : ITabViewModel
 	public Key<ITabViewModel> Key { get; }
 	public string Title => TextEditorPolymorphicViewModel.GetTitle();
 
-	public Dictionary<string, object?>? ParameterMap { get; }
-
 	public bool GetIsActive()
 	{
 		return TextEditorPolymorphicViewModel.TextEditorGroup.ActiveViewModelKey == TextEditorPolymorphicViewModel.ViewModelKey;

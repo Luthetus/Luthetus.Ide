@@ -74,6 +74,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
     {
         _dragEventHandler = dragEventHandler;
 
+		PolymorphicViewModel.DraggableViewModel.GetDropzonesAsync();
+
         Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
         {
             ShouldDisplay = true,

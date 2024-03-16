@@ -43,6 +43,8 @@ public partial record TextEditorPolymorphicViewModel : IPolymorphicViewModel
 		TabViewModel = new TextEditorTabViewModel(this);
 		DraggableViewModel = new TextEditorDraggableViewModel(this);
 		DialogViewModel = new TextEditorDialogViewModel(this);
+
+		ActiveViewModelType = typeof(ITabViewModel);
 	}
 
 	public Key<TextEditorViewModel> ViewModelKey { get; init; }
@@ -53,6 +55,7 @@ public partial record TextEditorPolymorphicViewModel : IPolymorphicViewModel
 	public IJSRuntime? JsRuntime { get; init; }
 	public IDialogService DialogService { get; init; }
 
+	public Type? ActiveViewModelType { get; set; }
 	public IDialogViewModel? DialogViewModel { get; }
     public IDraggableViewModel? DraggableViewModel { get; }
     public IDropzoneViewModel? DropzoneViewModel { get; }

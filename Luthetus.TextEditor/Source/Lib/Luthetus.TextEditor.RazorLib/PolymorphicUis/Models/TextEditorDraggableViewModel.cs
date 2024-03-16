@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Tabs.Displays;
+using Luthetus.Common.RazorLib.Tabs.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
@@ -29,6 +30,8 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 
 		Key = new(TextEditorPolymorphicViewModel.ViewModelKey.Guid);
 
+		RendererType = typeof(TabDisplay);
+
 		ParameterMap = new Dictionary<string, object?>
 		{
 			{
@@ -45,9 +48,9 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 	public TextEditorPolymorphicViewModel TextEditorPolymorphicViewModel { get; init; }
 	public IPolymorphicViewModel? PolymorphicViewModel { get; init; }
 	public Key<IDraggableViewModel> Key { get; init; }
-	public Type RendererType { get; init; } = typeof(TabDisplay);
+	public Type RendererType { get; set; }
 
-	public Dictionary<string, object?>? ParameterMap { get; }
+	public Dictionary<string, object?>? ParameterMap { get; set; }
 
 	public ElementDimensions ElementDimensions { get; init; } = IDialogViewModel.ConstructDefaultElementDimensions();
 	public ImmutableArray<IDropzoneViewModel> DropzoneViewModelList { get; set; } = ImmutableArray<IDropzoneViewModel>.Empty;
@@ -60,9 +63,10 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 			{
 				TextEditorPolymorphicViewModel.TextEditorService.GroupApi.RemoveViewModel(TextEditorPolymorphicViewModel.TextEditorGroup.GroupKey, TextEditorPolymorphicViewModel.ViewModelKey);
 	
-				var dialogRecord = new TextEditorDialogViewModel(TextEditorPolymorphicViewModel);
-	
-				TextEditorPolymorphicViewModel.DialogService.RegisterDialogRecord(dialogRecord);
+				TextEditorPolymorphicViewModel.ActiveViewModelType = typeof(IDialogViewModel);
+
+				TextEditorPolymorphicViewModel.DialogService.RegisterDialogRecord(
+					TextEditorPolymorphicViewModel.DialogViewModel);
 			}
 			else
 			{
@@ -88,6 +92,28 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 	{
 		if (TextEditorPolymorphicViewModel.TextEditorService is null)
 			return ImmutableArray<IDropzoneViewModel>.Empty;
+
+		if (TextEditorPolymorphicViewModel.ActiveViewModelType == typeof(ITabViewModel))
+		{
+			RendererType = typeof(TabDisplay);
+
+			ParameterMap = new Dictionary<string, object?>
+			{
+				{
+					nameof(TabDisplay.TabViewModel),
+					PolymorphicViewModel.TabViewModel
+				},
+				{
+					nameof(TabDisplay.IsBeingDragged),
+					true
+				}
+			};
+		}
+		else if (TextEditorPolymorphicViewModel.ActiveViewModelType == typeof(IDialogViewModel))
+		{
+			RendererType = null;
+			ParameterMap = null;
+		}
 
 		var dropzoneList = new List<IDropzoneViewModel>();
 		AddFallbackDropzone(dropzoneList);
