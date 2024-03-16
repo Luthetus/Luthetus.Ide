@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
 using Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
+using Luthetus.Common.RazorLib.PolymorphicViewModels.States;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -21,6 +22,8 @@ public partial class PanelDisplay : FluxorComponent
     private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+	[Inject]
+    private IState<PolymorphicViewModelState> PolymorphicViewModelStateWrap { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
     [Inject]
@@ -54,21 +57,32 @@ public partial class PanelDisplay : FluxorComponent
 
 	private ImmutableArray<ITabViewModel> GetTabList(PanelGroup panelGroup)
 	{
+		var polymorphicViewModelState = PolymorphicViewModelStateWrap.Value;
 		var tabViewModelList = new List<ITabViewModel>();
 
 		foreach (var panel in panelGroup.TabList)
 		{
 			panel.PanelGroup = panelGroup;
 
-			var panelPolymorphicViewModel = new PanelPolymorphicViewModel(
-				panel.Key,
-				PanelGroupKey,
-				PanelsStateWrap,
-				Dispatcher,
-				DialogService,
-				JsRuntime);
+			IPolymorphicViewModel polymorphicViewModel;
 
-			tabViewModelList.Add(panelPolymorphicViewModel.TabViewModel);
+			if (!polymorphicViewModelState.Map.TryGetValue(panel.Key.Guid, out polymorphicViewModel) ||
+				polymorphicViewModel is null)
+			{
+				polymorphicViewModel = new PanelPolymorphicViewModel(
+					panel.Key,
+					PanelGroupKey,
+					PanelsStateWrap,
+					Dispatcher,
+					DialogService,
+					JsRuntime);
+
+				Dispatcher.Dispatch(new PolymorphicViewModelState.RegisterAction(
+					panel.Key.Guid,
+					polymorphicViewModel));
+			}
+
+			tabViewModelList.Add(polymorphicViewModel.TabViewModel);
 		}
 
 		return tabViewModelList.ToImmutableArray();

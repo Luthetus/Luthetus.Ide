@@ -4,7 +4,6 @@ using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Fluxor;
 using Microsoft.JSInterop;
@@ -22,6 +21,7 @@ public class PanelPolymorphicViewModel : IPolymorphicViewModel
 		IJSRuntime? jsRuntime)
 	{
 		PanelKey = panelKey;
+		Guid = PanelKey.Guid;
 		PanelGroupKey = panelGroupKey;
 		PanelsStateWrap = panelsStateWrap;
 		Dispatcher = dispatcher;
@@ -54,6 +54,7 @@ public class PanelPolymorphicViewModel : IPolymorphicViewModel
 			this);
 	}
 
+	public Guid Guid { get; }
 	public Key<Panel> PanelKey { get; }
 	public Key<PanelGroup> PanelGroupKey { get; }
 	public IState<PanelsState> PanelsStateWrap { get; }

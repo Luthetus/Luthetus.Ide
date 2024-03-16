@@ -7,6 +7,12 @@ namespace Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
 
 public record PolymorphicViewModel : IPolymorphicViewModel
 {
+	public PolymorphicViewModel(Guid guid)
+	{
+		Guid = guid;
+	}
+
+	public Guid Guid { get; init; }
 	public IDialogViewModel? DialogViewModel { get; init; }
     public IDraggableViewModel? DraggableViewModel { get; init; }
     public IDropzoneViewModel? DropzoneViewModel { get; init; }

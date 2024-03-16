@@ -6,7 +6,7 @@ using Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
+namespace Luthetus.TextEditor.RazorLib.PolymorphicViewModels.Models;
 
 public class TextEditorDropzoneViewModel : IDropzoneViewModel
 {

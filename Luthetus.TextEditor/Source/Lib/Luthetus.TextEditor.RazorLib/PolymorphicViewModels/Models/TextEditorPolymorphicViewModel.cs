@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using Fluxor;
 
-namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
+namespace Luthetus.TextEditor.RazorLib.PolymorphicViewModels.Models;
 
 public partial record TextEditorPolymorphicViewModel : IPolymorphicViewModel
 {
@@ -33,6 +33,7 @@ public partial record TextEditorPolymorphicViewModel : IPolymorphicViewModel
 		IJSRuntime jsRuntime)
 	{
 		ViewModelKey = viewModelKey;
+		Guid = ViewModelKey.Guid;
 		TextEditorGroup = textEditorGroup;
 		TextEditorService = textEditorService;
 		Dispatcher = dispatcher;
@@ -47,6 +48,7 @@ public partial record TextEditorPolymorphicViewModel : IPolymorphicViewModel
 		ActiveViewModelType = typeof(ITabViewModel);
 	}
 
+	public Guid Guid { get; }
 	public Key<TextEditorViewModel> ViewModelKey { get; init; }
 	public TextEditorGroup? TextEditorGroup { get; set; }
 	public ITextEditorService? TextEditorService { get; init; }

@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using Fluxor;
 
-namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
+namespace Luthetus.TextEditor.RazorLib.PolymorphicViewModels.Models;
 
 public partial record TextEditorDraggableViewModel : IDraggableViewModel
 {

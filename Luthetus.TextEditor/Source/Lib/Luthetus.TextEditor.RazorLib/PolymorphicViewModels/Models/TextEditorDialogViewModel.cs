@@ -13,7 +13,7 @@ using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
+namespace Luthetus.TextEditor.RazorLib.PolymorphicViewModels.Models;
 
 public record TextEditorDialogViewModel : IDialogViewModel
 {
