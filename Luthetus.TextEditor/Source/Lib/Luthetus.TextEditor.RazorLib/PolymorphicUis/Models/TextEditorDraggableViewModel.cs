@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+using Luthetus.Common.RazorLib.Tabs.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
@@ -40,6 +41,18 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 		PolymorphicViewModel = polymorphicViewModel;
 
 		Key = new(viewModelKey.Guid);
+
+		ParameterMap = new Dictionary<string, object?>
+		{
+			{
+				nameof(TabDisplay.TabViewModel),
+				PolymorphicViewModel.TabViewModel
+			},
+			{
+				nameof(TabDisplay.IsBeingDragged),
+				true
+			}
+		};
 	}
 
 	public Key<TextEditorViewModel> ViewModelKey { get; init; }
@@ -51,8 +64,10 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 
 	public IPolymorphicViewModel? PolymorphicViewModel { get; init; }
 	public Key<IDraggableViewModel> Key { get; init; }
-	public Type RendererType { get; init; }
-	public Dictionary<string, object?> ParameterMap { get; init; }
+	public Type RendererType { get; init; } = typeof(TabDisplay);
+
+	public Dictionary<string, object?>? ParameterMap { get; }
+
 	public ElementDimensions ElementDimensions { get; init; } = IDialogViewModel.ConstructDefaultElementDimensions();
 	public ImmutableArray<IDropzoneViewModel> DropzoneViewModelList { get; set; } = ImmutableArray<IDropzoneViewModel>.Empty;
 

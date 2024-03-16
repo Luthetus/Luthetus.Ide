@@ -14,20 +14,20 @@
 	{
 		var dropzoneViewModelList = draggableViewModel.DropzoneViewModelList;
 
+		if (draggableViewModel.RendererType is not null)
+		{
+			<div style="draggableViewModel.ElementDimensions.StyleString">
+				<DynamicComponent Type="draggableViewModel.RendererType"
+				                  Parameters="draggableViewModel.ParameterMap"/>	
+			</div>
+		}
+
 		foreach (var dropzone in dropzoneViewModelList)
 		{
 			<div style="z-index: @dropzone.MeasuredHtmlElementDimensions.ZIndex; @dropzone.DropzoneElementDimensions.StyleString"
 				 class="luth_dropzone @GetIsActiveCssClass(dropzone) @dropzone.CssClassString"
 				 @onmouseover="() => _onMouseOverDropzone = dropzone"
 				 @onmouseover:stopPropagation="true">
-			</div>
-		}
-
-		if (draggableViewModel.RendererType is not null)
-		{
-			<div style="draggableViewModel.ElementDimensions.StyleString">
-				<DynamicComponent Type="draggableViewModel.RendererType"
-				                  Parameters="draggableViewModel.ParameterMap"/>	
 			</div>
 		}
 	}

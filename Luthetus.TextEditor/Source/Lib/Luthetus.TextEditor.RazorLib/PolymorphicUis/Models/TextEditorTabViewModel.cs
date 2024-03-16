@@ -45,17 +45,7 @@ public partial record TextEditorTabViewModel : ITabViewModel
 	public Key<ITabViewModel> Key { get; }
 	public string Title => _getTitleFunc.Invoke();
 
-	public Dictionary<string, object?>? TabParameterMap => new Dictionary<string, object?>
-	{
-		{
-			nameof(TabDisplay.TabViewModel),
-			this
-		},
-		{
-			nameof(TabDisplay.IsBeingDragged),
-			true
-		}
-	};
+	public Dictionary<string, object?>? ParameterMap { get; }
 
 	public bool GetIsActive()
 	{
