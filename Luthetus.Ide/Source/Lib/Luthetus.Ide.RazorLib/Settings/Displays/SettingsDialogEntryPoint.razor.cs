@@ -11,13 +11,14 @@ public partial class SettingsDialogEntryPoint : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    private DialogRecord _dialogRecord = new(
-        Key<IPolymorphicUiRecord>.NewKey(),
+    private IDialogViewModel _dialogRecord = new DialogViewModel(
+        Key<IDialogViewModel>.NewKey(),
         "Settings",
         typeof(SettingsDisplay),
         null,
         null,
-		true);
+		true,
+		null);
 
     public void DispatchRegisterDialogRecordAction() =>
         Dispatcher.Dispatch(new DialogState.RegisterAction(_dialogRecord));

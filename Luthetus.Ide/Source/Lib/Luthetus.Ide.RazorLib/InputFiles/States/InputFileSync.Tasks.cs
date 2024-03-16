@@ -2,9 +2,9 @@ using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.Htmls.Models;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
 using System.Collections.Immutable;
 using static Luthetus.Ide.RazorLib.InputFiles.States.InputFileState;
-using Luthetus.Ide.RazorLib.InputFiles.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.States;
 
@@ -22,13 +22,14 @@ public partial record InputFileSync
             selectionIsValidFunc,
             inputFilePatternsList));
 
-        var inputFileDialog = new DialogRecord(
+        var inputFileDialog = new DialogViewModel(
             DialogFacts.InputFileDialogKey,
             "Input File",
             _ideComponentRenderers.InputFileRendererType,
             null,
             HtmlFacts.Classes.DIALOG_PADDING_0,
-			true);
+			true,
+			null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(inputFileDialog));
 

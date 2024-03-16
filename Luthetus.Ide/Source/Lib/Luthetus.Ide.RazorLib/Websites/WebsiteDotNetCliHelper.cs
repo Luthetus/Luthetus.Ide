@@ -19,7 +19,7 @@ public class WebsiteDotNetCliHelper
         IFileSystemProvider fileSystemProvider,
         DotNetSolutionSync dotNetSolutionSync,
         IDispatcher dispatcher,
-        DialogRecord dialogRecord,
+        IDialogViewModel dialogRecord,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
     {
         var directoryContainingProject = environmentProvider
@@ -54,7 +54,7 @@ public class WebsiteDotNetCliHelper
             environmentProvider);
 
         // Close Dialog
-        dispatcher.Dispatch(new DialogState.DisposeAction(dialogRecord.PolymorphicUiKey));
+        dispatcher.Dispatch(new DialogState.DisposeAction(dialogRecord.Key));
         NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", luthetusCommonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
     }
 }

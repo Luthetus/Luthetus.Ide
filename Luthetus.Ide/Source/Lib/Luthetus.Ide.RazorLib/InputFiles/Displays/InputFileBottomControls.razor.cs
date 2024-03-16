@@ -13,7 +13,7 @@ public partial class InputFileBottomControls : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [CascadingParameter]
-    public DialogRecord? DialogRecord { get; set; }
+    public IDialogViewModel? DialogRecord { get; set; }
     [CascadingParameter]
     public InputFileState InputFileState { get; set; } = null!;
 
@@ -48,7 +48,7 @@ public partial class InputFileBottomControls : ComponentBase
         if (valid)
         {
             if (DialogRecord is not null)
-                Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.PolymorphicUiKey));
+                Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
 
             await InputFileState.OnAfterSubmitFunc
                 .Invoke(InputFileState.SelectedTreeViewModel?.Item);
@@ -64,7 +64,7 @@ public partial class InputFileBottomControls : ComponentBase
     private Task CancelOnClick()
     {
         if (DialogRecord is not null)
-            Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.PolymorphicUiKey));
+            Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
 
         return Task.CompletedTask;
     }

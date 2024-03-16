@@ -11,21 +11,23 @@ public partial class IdeImportExportButtons : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    private DialogRecord _importDialogRecord = new(
-        Key<IPolymorphicUiRecord>.NewKey(),
+    private IDialogViewModel _importDialogRecord = new DialogViewModel(
+        Key<IDialogViewModel>.NewKey(),
         "Import",
         typeof(IdeImportDisplay),
         null,
         null,
-		true);
+		true,
+		null);
 
-    private DialogRecord _exportDialogRecord = new(
-        Key<IPolymorphicUiRecord>.NewKey(),
+    private IDialogViewModel _exportDialogRecord = new DialogViewModel(
+        Key<IDialogViewModel>.NewKey(),
         "Export",
         typeof(IdeExportDisplay),
         null,
         null,
-		true);
+		true,
+		null);
 
     private void ImportOnClick()
     {

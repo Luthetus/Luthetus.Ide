@@ -84,7 +84,8 @@ public partial interface ITextEditorService
                 _textEditorConfig.SettingsDialogConfig.ComponentRendererType,
                 null,
                 cssClassString,
-				isResizableOverride ?? _textEditorConfig.SettingsDialogConfig.ComponentIsResizable);
+				isResizableOverride ?? _textEditorConfig.SettingsDialogConfig.ComponentIsResizable,
+				null);
 
             _dispatcher.Dispatch(new DialogState.RegisterAction(settingsDialog));
         }
@@ -97,7 +98,8 @@ public partial interface ITextEditorService
                 _textEditorConfig.FindAllDialogConfig.ComponentRendererType,
                 null,
                 cssClassString,
-				isResizableOverride ?? _textEditorConfig.FindAllDialogConfig.ComponentIsResizable);
+				isResizableOverride ?? _textEditorConfig.FindAllDialogConfig.ComponentIsResizable,
+				null);
 
             _dispatcher.Dispatch(new DialogState.RegisterAction(_findAllDialog));
         }

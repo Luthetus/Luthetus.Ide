@@ -39,7 +39,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     private InputFileSync InputFileSync { get; set; } = null!;
 
     [CascadingParameter]
-    public DialogRecord DialogRecord { get; set; } = null!;
+    public IDialogViewModel DialogRecord { get; set; } = null!;
 
     private string _solutionName = string.Empty;
     private string _parentDirectoryName = string.Empty;
@@ -109,7 +109,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 () =>
                 {
                     // Close Dialog
-                    Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.PolymorphicUiKey));
+                    Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
 
                     // Open the created .NET Solution
                     var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
@@ -165,7 +165,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             HackForWebsite_NEW_SOLUTION_TEMPLATE);
 
         // Close Dialog
-        Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.PolymorphicUiKey));
+        Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
 
         NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", LuthetusCommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
 

@@ -49,9 +49,9 @@ public partial class IdeHeader : ComponentBase
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
-	private static readonly Key<IPolymorphicUiRecord> _infoDialogKey = Key<IPolymorphicUiRecord>.NewKey();
-	private static readonly Key<IPolymorphicUiRecord> _newDotNetSolutionDialogKey = Key<IPolymorphicUiRecord>.NewKey();
-	private static readonly Key<IPolymorphicUiRecord> _permissionsDialogKey = Key<IPolymorphicUiRecord>.NewKey();
+	private static readonly Key<IDialogViewModel> _infoDialogKey = Key<IDialogViewModel>.NewKey();
+	private static readonly Key<IDialogViewModel> _newDotNetSolutionDialogKey = Key<IDialogViewModel>.NewKey();
+	private static readonly Key<IDialogViewModel> _permissionsDialogKey = Key<IDialogViewModel>.NewKey();
 
     private Key<DropdownRecord> _dropdownKeyFile = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
@@ -165,13 +165,14 @@ public partial class IdeHeader : ComponentBase
                 MenuOptionKind.Delete,
                 () =>
 				{
-					CommandFactory.CodeSearchDialog ??= new DialogRecord(
-                        Key<IPolymorphicUiRecord>.NewKey(),
+					CommandFactory.CodeSearchDialog ??= new DialogViewModel(
+                        Key<IDialogViewModel>.NewKey(),
 						"Code Search",
                         typeof(CodeSearchDisplay),
                         null,
                         null,
-						true);
+						true,
+						null);
 
                     Dispatcher.Dispatch(new DialogState.RegisterAction(CommandFactory.CodeSearchDialog));
 				});
@@ -247,11 +248,11 @@ public partial class IdeHeader : ComponentBase
 					}
 					else
 					{
-						if (dialogState.DialogList.Any(x => x.PolymorphicUiKey == panel.PolymorphicUiKey))
-						{
-							Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(panel.PolymorphicUiKey));
-						}
-						else
+						//if (dialogState.DialogList.Any(x => x.Key == panel.Key))
+						//{
+						//	Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(panel.Key));
+						//}
+						//else
 						{
 							Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(PanelFacts.LeftPanelRecordKey, panel, true));
 							Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(PanelFacts.LeftPanelRecordKey, panel.Key));
@@ -320,39 +321,42 @@ public partial class IdeHeader : ComponentBase
 
     private void OpenNewDotNetSolutionDialog()
     {
-        var dialogRecord = new DialogRecord(
+        var dialogRecord = new DialogViewModel(
             _newDotNetSolutionDialogKey,
             "New .NET Solution",
             typeof(DotNetSolutionFormDisplay),
             null,
             null,
-			true);
+			true,
+			null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }
 
     private void OpenInfoDialogOnClick()
     {
-        var dialogRecord = new DialogRecord(
+        var dialogRecord = new DialogViewModel(
             _infoDialogKey,
             "Info",
             typeof(IdeInfoDisplay),
             null,
             null,
-			true);
+			true,
+			null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }
 
     private void ShowPermissionsDialog()
     {
-        var dialogRecord = new DialogRecord(
+        var dialogRecord = new DialogViewModel(
             _permissionsDialogKey,
             "Permissions",
             typeof(PermissionsDisplay),
             null,
             null,
-			true);
+			true,
+			null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }

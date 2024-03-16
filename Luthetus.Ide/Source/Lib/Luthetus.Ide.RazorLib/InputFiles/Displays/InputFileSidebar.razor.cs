@@ -40,7 +40,7 @@ public partial class InputFileSidebar : ComponentBase
     [CascadingParameter]
     public InputFileState InputFileState { get; set; } = null!;
     [CascadingParameter]
-    public DialogRecord DialogRecord { get; set; } = null!;
+    public IDialogViewModel DialogRecord { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;

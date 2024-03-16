@@ -143,12 +143,12 @@ public partial class InputFileContextMenu : ComponentBase
 
     public static string GetContextMenuCssStyleString(
         TreeViewCommandArgs? commandArgs,
-        DialogRecord dialogRecord)
+        IDialogViewModel dialogRecord)
     {
         if (commandArgs?.ContextMenuFixedPosition is null)
             return "display: none;";
 
-        if (dialogRecord.DialogIsMaximized)
+        if (dialogRecord.IsMaximized)
         {
             return
                 $"left: {commandArgs.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;" +
@@ -157,7 +157,7 @@ public partial class InputFileContextMenu : ComponentBase
         }
             
         var dialogLeftDimensionAttribute = dialogRecord
-            .DialogElementDimensions
+            .ElementDimensions
             .DimensionAttributeList
             .First(x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
 
@@ -184,7 +184,7 @@ public partial class InputFileContextMenu : ComponentBase
         }
 
         var dialogTopDimensionAttribute = dialogRecord
-            .DialogElementDimensions
+            .ElementDimensions
             .DimensionAttributeList
             .First(x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
 

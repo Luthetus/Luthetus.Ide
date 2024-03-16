@@ -46,9 +46,9 @@ public class CommandFactory : ICommandFactory
 
 	private TreeViewNamespacePath? _nodeOfViewModel = null;
 	private List<TreeViewNoType> _nodeList = new();
-    private DialogRecord? _contextSwitchDialog;
+    private IDialogViewModel? _contextSwitchDialog;
     
-	public DialogRecord? CodeSearchDialog { get; set; }
+	public IDialogViewModel? CodeSearchDialog { get; set; }
 
 	public void Initialize()
     {
@@ -259,13 +259,14 @@ public class CommandFactory : ICommandFactory
 	            "Open: Code Search", "open-code-search", false,
 	            commandArgs => 
 				{
-                    CodeSearchDialog ??= new DialogRecord(
-                        Key<IPolymorphicUiRecord>.NewKey(),
+                    CodeSearchDialog ??= new DialogViewModel(
+                        Key<IDialogViewModel>.NewKey(),
 						"Code Search",
                         typeof(CodeSearchDisplay),
                         null,
                         null,
-						true);
+						true,
+						null);
 
                     _dispatcher.Dispatch(new DialogState.RegisterAction(CodeSearchDialog));
                     return Task.CompletedTask;
@@ -282,13 +283,14 @@ public class CommandFactory : ICommandFactory
 	            "Open: Context Switch", "open-context-switch", false,
 	            commandArgs => 
 				{
-                    _contextSwitchDialog ??= new DialogRecord(
-                        Key<IPolymorphicUiRecord>.NewKey(),
+                    _contextSwitchDialog ??= new DialogViewModel(
+                        Key<IDialogViewModel>.NewKey(),
 						"Context Switch",
                         typeof(ContextSwitchDisplay),
                         null,
                         null,
-						true);
+						true,
+						null);
 
                     _dispatcher.Dispatch(new DialogState.RegisterAction(_contextSwitchDialog));
                     return Task.CompletedTask;

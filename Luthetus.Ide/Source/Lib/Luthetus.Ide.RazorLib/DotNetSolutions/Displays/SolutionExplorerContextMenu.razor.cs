@@ -60,8 +60,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     [Parameter, EditorRequired]
     public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
 
-	private static readonly Key<IPolymorphicUiRecord> _solutionEditorDialogKey = Key<IPolymorphicUiRecord>.NewKey();
-	private static readonly Key<IPolymorphicUiRecord> _newCSharpProjectDialogKey = Key<IPolymorphicUiRecord>.NewKey();
+	private static readonly Key<IDialogViewModel> _solutionEditorDialogKey = Key<IDialogViewModel>.NewKey();
+	private static readonly Key<IDialogViewModel> _newCSharpProjectDialogKey = Key<IDialogViewModel>.NewKey();
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
@@ -403,7 +403,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
     private void OpenNewCSharpProjectDialog(DotNetSolutionModel dotNetSolutionModel)
     {
-        var dialogRecord = new DialogRecord(
+        var dialogRecord = new DialogViewModel(
             _newCSharpProjectDialogKey,
             "New C# Project",
             typeof(CSharpProjectFormDisplay),
@@ -415,7 +415,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 },
             },
             null,
-			true);
+			true,
+			null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }
@@ -463,7 +464,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
     private void OpenSolutionEditorDialog(DotNetSolutionModel dotNetSolutionModel)
     {
-        var dialogRecord = new DialogRecord(
+        var dialogRecord = new DialogViewModel(
             _solutionEditorDialogKey,
             "Solution Editor",
             typeof(SolutionEditorDisplay),
@@ -479,7 +480,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 },
             },
             null,
-			true);
+			true,
+			null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }

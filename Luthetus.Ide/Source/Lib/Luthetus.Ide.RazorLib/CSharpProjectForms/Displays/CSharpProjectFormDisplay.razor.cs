@@ -49,7 +49,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private InputFileSync InputFileSync { get; set; } = null!;
 
     [CascadingParameter]
-    public DialogRecord DialogRecord { get; set; } = null!;
+    public IDialogViewModel DialogRecord { get; set; } = null!;
 
     [Parameter]
     public Key<DotNetSolutionModel> DotNetSolutionModelKey { get; set; }
@@ -242,7 +242,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                         immutableView.NewCSharpProjectCancellationTokenSource.Token,
                         () =>
                         {
-                            Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.PolymorphicUiKey));
+                            Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
                             DotNetSolutionSync.SetDotNetSolution(immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath);
                             return Task.CompletedTask;
                         });

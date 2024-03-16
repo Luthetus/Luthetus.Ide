@@ -89,13 +89,14 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
     private void OpenNewDotNetSolutionDialog()
     {
-        var dialogRecord = new DialogRecord(
-            Key<IPolymorphicUiRecord>.NewKey(),
+        var dialogRecord = new DialogViewModel(
+            Key<IDialogViewModel>.NewKey(),
             "New .NET Solution",
             typeof(DotNetSolutionFormDisplay),
             null,
             null,
-			true);
+			true,
+			null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(
             dialogRecord));

@@ -168,8 +168,8 @@ public partial class TextEditorHeader : ComponentBase
             "TextEditorRenderBatch",
             true);
 
-        var dialogRecord = new DialogRecord(
-            Key<IPolymorphicUiRecord>.NewKey(),
+        var dialogRecord = new DialogViewModel(
+            Key<IDialogViewModel>.NewKey(),
             $"WatchWindow: {model.ResourceUri}",
             typeof(WatchWindowDisplay),
             new Dictionary<string, object?>
@@ -180,7 +180,8 @@ public partial class TextEditorHeader : ComponentBase
                 }
             },
             null,
-			true);
+			true,
+			null);
 
         DialogService.RegisterDialogRecord(dialogRecord);
     }
