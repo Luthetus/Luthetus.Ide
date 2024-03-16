@@ -1,4 +1,4 @@
-﻿@using Fluxor.Blazor.Web.Components;
+@using Fluxor.Blazor.Web.Components;
 @using Luthetus.Common.RazorLib.Notifications.Models;
 @using System.Collections.Immutable;
 
@@ -40,7 +40,7 @@
 
     <div class="luth_web_notifications-view-body">
         @{
-            var entriesToRenderList = ImmutableList<NotificationRecord>.Empty;
+            var entriesToRenderList = ImmutableList<INotificationViewModel>.Empty;
             var clearOnClick = new Action(() => { });
 
             switch (_chosenNotificationsViewKind)

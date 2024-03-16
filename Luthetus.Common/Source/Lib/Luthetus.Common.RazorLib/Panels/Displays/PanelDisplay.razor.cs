@@ -19,8 +19,6 @@ public partial class PanelDisplay : FluxorComponent
 {
     [Inject]
     private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
-	[Inject]
-    private IPolymorphicViewModelService PolymorphicViewModelService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -61,11 +59,16 @@ public partial class PanelDisplay : FluxorComponent
 		foreach (var panel in panelGroup.TabList)
 		{
 			panel.PanelGroup = panelGroup;
-			panel.Dispatcher = Dispatcher;
-			panel.DialogService = DialogService;
-			panel.JsRuntime = JsRuntime;
-			panel.IsDialog = false;
-			tabViewModelList.Add(panel);
+
+			var panelPolymorphicViewModel = new PanelPolymorphicViewModel(
+				panel.Key,
+				PanelGroupKey,
+				PanelsStateWrap,
+				Dispatcher,
+				DialogService,
+				JsRuntime);
+
+			tabViewModelList.Add(panelPolymorphicViewModel.TabViewModel);
 		}
 
 		return tabViewModelList.ToImmutableArray();

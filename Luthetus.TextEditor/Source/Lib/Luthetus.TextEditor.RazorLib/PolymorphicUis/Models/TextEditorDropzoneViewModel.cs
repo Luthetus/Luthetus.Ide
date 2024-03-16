@@ -1,23 +1,29 @@
+using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
 
-public class TextEditorViewModelPolymorphicDropzone : IPolymorphicDropzone
+public class TextEditorDropzoneViewModel : IDropzoneViewModel
 {
-	public TextEditorViewModelPolymorphicDropzone(
+	public TextEditorDropzoneViewModel(
 		MeasuredHtmlElementDimensions measuredHtmlElementDimensions,
 		ElementDimensions elementDimensions,
-		Key<TextEditorGroup>? textEditorGroupKey)
+		Key<TextEditorGroup>? textEditorGroupKey,
+		IPolymorphicViewModel? polymorphicViewModel)
 	{
 		MeasuredHtmlElementDimensions = measuredHtmlElementDimensions;
 		DropzoneElementDimensions = elementDimensions;
 		TextEditorGroupKey = textEditorGroupKey;
+		PolymorphicViewModel = polymorphicViewModel;
 	}
 
+	public IPolymorphicViewModel? PolymorphicViewModel { get; init; }
+	public Key<IDropzoneViewModel> Key { get; init; }
 	public MeasuredHtmlElementDimensions MeasuredHtmlElementDimensions { get; }
 	public ElementDimensions DropzoneElementDimensions { get; }
 

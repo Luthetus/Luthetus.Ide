@@ -33,8 +33,7 @@ public partial class DragInitializer : FluxorComponent
         {
             ShouldDisplay = false,
             MouseEventArgs = null,
-			PolymorphicDraggable = null,
-			DropzoneViewModelList = null,
+			DraggableViewModel = null,
         });
     }
 
@@ -68,9 +67,9 @@ public partial class DragInitializer : FluxorComponent
         {
             Dispatcher.Dispatch(ConstructClearDragStateAction());
 
-			var polymorphicDraggable = dragState.PolymorphicDraggable;
-			if (polymorphicDraggable is not null)
-				await polymorphicDraggable.OnDragStopAsync(mouseEventArgs, localOnMouseOverDropzone);
+			var draggableViewModel = dragState.DraggableViewModel;
+			if (draggableViewModel is not null)
+				await draggableViewModel.OnDragStopAsync(mouseEventArgs, localOnMouseOverDropzone);
         });
 
 		return Task.CompletedTask;

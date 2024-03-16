@@ -1,12 +1,13 @@
+using Luthetus.Common.RazorLib.Tabs.Models;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Tabs.Displays;
 
-public partial class PolymorphicTabListDisplay : ComponentBase
+public partial class TabListDisplay : ComponentBase
 {
 	[Parameter, EditorRequired]
-	public ImmutableArray<IPolymorphicTab> TabList { get; set; } = ImmutableArray<IPolymorphicTab>.Empty;
+	public ImmutableArray<ITabViewModel> TabList { get; set; } = ImmutableArray<ITabViewModel>.Empty;
 	
 	[Parameter]
 	public string CssClassString { get; set; } = string.Empty;

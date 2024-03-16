@@ -67,7 +67,7 @@ public partial interface ITextEditorService
             _dispatcher = dispatcher;
         }
 
-        private DialogRecord? _findAllDialog;
+        private IDialogViewModel? _findAllDialog;
 
         public void WriteToStorage()
         {
@@ -78,8 +78,8 @@ public partial interface ITextEditorService
 
         public void ShowSettingsDialog(bool? isResizableOverride = null, string? cssClassString = null)
         {
-            var settingsDialog = new DialogRecord(
-                Key<IPolymorphicUiRecord>.NewKey(),
+            var settingsDialog = new DialogViewModel(
+                Key<IDialogViewModel>.NewKey(),
                 "Text Editor Settings",
                 _textEditorConfig.SettingsDialogConfig.ComponentRendererType,
                 null,
@@ -91,8 +91,8 @@ public partial interface ITextEditorService
 
         public void ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null)
         {
-            _findAllDialog ??= new DialogRecord(
-                Key<IPolymorphicUiRecord>.NewKey(),
+            _findAllDialog ??= new DialogViewModel(
+                Key<IDialogViewModel>.NewKey(),
                 "Find All",
                 _textEditorConfig.FindAllDialogConfig.ComponentRendererType,
                 null,

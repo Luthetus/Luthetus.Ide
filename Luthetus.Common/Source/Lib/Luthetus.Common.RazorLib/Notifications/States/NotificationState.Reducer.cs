@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using System.Collections.Immutable;
 
@@ -178,7 +178,7 @@ public partial record NotificationState
         {
             return inState with
             {
-                DefaultList = ImmutableList<NotificationRecord>.Empty
+                DefaultList = ImmutableList<INotificationViewModel>.Empty
             };
         }
         
@@ -188,7 +188,7 @@ public partial record NotificationState
         {
             return inState with
             {
-                ReadList = ImmutableList<NotificationRecord>.Empty
+                ReadList = ImmutableList<INotificationViewModel>.Empty
             };
         }
         
@@ -198,7 +198,7 @@ public partial record NotificationState
         {
             return inState with
             {
-                DeletedList = ImmutableList<NotificationRecord>.Empty
+                DeletedList = ImmutableList<INotificationViewModel>.Empty
             };
         }
 
@@ -208,7 +208,7 @@ public partial record NotificationState
         {
             return inState with
             {
-                ArchivedList = ImmutableList<NotificationRecord>.Empty
+                ArchivedList = ImmutableList<INotificationViewModel>.Empty
             };
         }
     }

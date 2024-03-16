@@ -15,12 +15,8 @@ namespace Luthetus.Common.RazorLib.Panels.Models;
 /// Each PanelTab maintains its own element dimensions as
 /// each panel might need different amounts of space to be functionally usable.
 /// </summary>
-public partial record Panel
+public record Panel
 {
-	public ElementDimensions ElementDimensions { get; }
-    public ElementDimensions BeingDraggedDimensions { get; }
-    public Type IconRendererType { get; }
-
 	public Panel(
 		Key<Panel> key,
 		ElementDimensions elementDimensions,
@@ -31,21 +27,19 @@ public partial record Panel
 		ElementDimensions = elementDimensions;
 		ContentRendererType = contentRendererType;
 		Title = title;
-
-		DraggableElementDimensions = DialogConstructDefaultElementDimensions();
-		DialogElementDimensions = DialogConstructDefaultElementDimensions();
 	}
+
+	public ElementDimensions ElementDimensions { get; }
+    public ElementDimensions BeingDraggedDimensions { get; }
+    public Type IconRendererType { get; }
 
 	public Key<Panel> Key { get; }
 	public string? CssClass { get; }
 	public string? CssStyle { get; }
 	public string Title { get; }
 	public Type ContentRendererType { get; }
-	public Type RendererType { get; } = typeof(PolymorphicTabDisplay);
+	public Type RendererType { get; }
 
-	public IJSRuntime? JsRuntime { get; set; }
-	public IDialogService DialogService { get; set; }
-	public IDispatcher Dispatcher { get; set; }
 	public PanelGroup? PanelGroup { get; set; }
 
     /// <summary>

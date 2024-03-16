@@ -1,9 +1,9 @@
 @{ var localTabViewModel = TabViewModel; }
 
-<button class="luth_polymorphic-tab luth_button luth_unselectable @IsActiveCssClass @localTabViewModel.TabGetDynamicCss() @GetIsBeingDraggedCssClassString() @CssClassString"
+<button class="luth_polymorphic-tab luth_button luth_unselectable @IsActiveCssClass @localTabViewModel.GetDynamicCss() @GetIsBeingDraggedCssClassString() @CssClassString"
 		style="@GetDraggableCssStyleString() @CssStyleString"
 		id="@HtmlId"
-        @onclick="localTabViewModel.TabOnClickAsync"
+        @onclick="localTabViewModel.OnClickAsync"
 		@onmousedown:stopPropagation="true"
 		@onmousedown:preventDefault="true"
         @onmousedown="HandleOnMouseDownAsync"

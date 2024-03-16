@@ -11,17 +11,15 @@ public partial record DialogState
             DialogState inState,
             RegisterAction registerAction)
         {
-            if (inState.DialogList.Any(x => x.DialogKey == registerAction.Dialog.DialogKey))
+            if (inState.DialogList.Any(x => x.Key == registerAction.Dialog.Key))
                 return inState;
 
             var outDialogList = inState.DialogList.Add(registerAction.Dialog);
 
-			registerAction.Dialog.IsDialog = true;
-
             return inState with 
             {
                 DialogList = outDialogList,
-                ActiveDialogKey = registerAction.Dialog.DialogKey,
+                ActiveDialogKey = registerAction.Dialog.Key,
             };
         }
 
@@ -31,14 +29,14 @@ public partial record DialogState
             SetIsMaximizedAction setIsMaximizedAction)
         {
             var inDialog = inState.DialogList.FirstOrDefault(
-                x => x.DialogKey == setIsMaximizedAction.DialogKey);
+                x => x.Key == setIsMaximizedAction.DialogKey);
 
             if (inDialog is null)
                 return inState;
 
             var outDialogList = inState.DialogList.Replace(
 				inDialog,
-				inDialog.DialogSetIsMaximized(setIsMaximizedAction.IsMaximized));
+				inDialog.SetIsMaximized(setIsMaximizedAction.IsMaximized));
 
             return inState with { DialogList = outDialogList };
         }
@@ -57,14 +55,12 @@ public partial record DialogState
             DisposeAction disposeAction)
         {
             var inDialog = inState.DialogList.FirstOrDefault(
-                x => x.DialogKey == disposeAction.DialogKey);
+                x => x.Key == disposeAction.DialogKey);
 
             if (inDialog is null)
                 return inState;
 
             var outDialogList = inState.DialogList.Remove(inDialog);
-
-			inDialog.IsDialog = false;
 
             return inState with { DialogList = outDialogList };
         }

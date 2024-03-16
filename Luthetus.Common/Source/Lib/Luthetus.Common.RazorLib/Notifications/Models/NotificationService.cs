@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.States;
 
@@ -18,12 +18,12 @@ public class NotificationService : INotificationService
 
     public IState<NotificationState> NotificationStateWrap { get; }
 
-    public void RegisterNotificationRecord(NotificationRecord notificationRecord)
+    public void RegisterNotificationRecord(INotificationViewModel notificationViewModel)
     {
-        _dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
+        _dispatcher.Dispatch(new NotificationState.RegisterAction(notificationViewModel));
     }
 
-    public void DisposeNotificationRecord(Key<NotificationRecord> notificationKey)
+    public void DisposeNotificationRecord(Key<INotificationViewModel> notificationKey)
     {
         _dispatcher.Dispatch(new NotificationState.DisposeAction(notificationKey));
     }

@@ -1,34 +1,31 @@
-using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib.Groups.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
+using Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
-using Microsoft.JSInterop;
-using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
+namespace Luthetus.Common.RazorLib.Dialogs.Models;
 
-public partial record TextEditorViewModelPolymorphicUi : IPolymorphicDialog
+public interface IDialogViewModel
 {
-	public Key<IPolymorphicUiRecord> DialogKey { get; } = Key<IPolymorphicUiRecord>.NewKey();
+	public IPolymorphicViewModel? PolymorphicViewModel { get; }
+	public Key<IDialogViewModel> Key { get; }
+	public Type RendererType { get; }
+	public Dictionary<string, object?>? ParameterMap { get; }
+	public ElementDimensions ElementDimensions { get; }
+	public string Title { get; }
+	public bool IsMinimized { get; }
+    public bool IsMaximized { get; }
+    public bool IsResizable { get; }
+    public string CssClassString { get; }
+    public string FocusPointHtmlElementId { get; }
 
-	public Type DialogRendererType { get; }
-	public Dictionary<string, object?>? DialogParameterMap { get; }
-	public ElementDimensions DialogElementDimensions { get; }
-    public bool DialogIsMinimized { get; set; }
-    public bool DialogIsMaximized { get; set; }
-    public bool DialogIsResizable { get; set; }
-    public string DialogCssClassString { get; set; }
-    public string DialogFocusPointHtmlElementId => $"luth_dialog-focus-point_{PolymorphicUiKey.Guid}";
-	public bool IsDialog { get; set; }
+	public IDialogViewModel SetParameterMap(Dictionary<string, object?>? parameterMap);
+	public IDialogViewModel SetTitle(string title);    
+	public IDialogViewModel SetIsMinimized(bool isMinimized);
+	public IDialogViewModel SetIsMaximized(bool isMaximized);
+	public IDialogViewModel SetIsResizable(bool isResizable);
+	public IDialogViewModel SetCssClassString(string cssClassString);
 
-	public ElementDimensions DialogConstructDefaultElementDimensions()
+	public static ElementDimensions ConstructDefaultElementDimensions()
 	{
 		var elementDimensions = new ElementDimensions
         {
@@ -85,12 +82,5 @@ public partial record TextEditorViewModelPolymorphicUi : IPolymorphicDialog
 
         return elementDimensions;
 	}
-
-	public IPolymorphicDialog DialogSetIsMaximized(bool isMaximized)
-	{
-		return this with
-		{
-			DialogIsMaximized = isMaximized
-		};
-	}
 }
+

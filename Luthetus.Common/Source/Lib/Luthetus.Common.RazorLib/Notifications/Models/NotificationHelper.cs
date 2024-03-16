@@ -14,8 +14,8 @@ public static class NotificationHelper
         IDispatcher dispatcher,
         TimeSpan? notificationOverlayLifespan)
     {
-        var notificationInformative = new NotificationRecord(
-            Key<NotificationRecord>.NewKey(),
+        var notificationInformative = new NotificationViewModel(
+            Key<INotificationViewModel>.NewKey(),
             title,
             luthetusCommonComponentRenderers.InformativeNotificationRendererType,
             new Dictionary<string, object?>
@@ -27,7 +27,8 @@ public static class NotificationHelper
             },
             notificationOverlayLifespan,
             true,
-            null);
+            null,
+			null);
 
         dispatcher.Dispatch(new NotificationState.RegisterAction(notificationInformative));
     }
@@ -39,7 +40,7 @@ public static class NotificationHelper
         IDispatcher dispatcher,
         TimeSpan? notificationOverlayLifespan)
     {
-        var notificationError = new NotificationRecord(Key<NotificationRecord>.NewKey(),
+        var notificationError = new NotificationViewModel(Key<INotificationViewModel>.NewKey(),
             title,
             luthetusCommonComponentRenderers.ErrorNotificationRendererType,
             new Dictionary<string, object?>
@@ -48,7 +49,8 @@ public static class NotificationHelper
             },
             notificationOverlayLifespan,
             true,
-            IErrorNotificationRendererType.CSS_CLASS_STRING);
+            IErrorNotificationRendererType.CSS_CLASS_STRING,
+			null);
 
         dispatcher.Dispatch(new NotificationState.RegisterAction(notificationError));
     }
@@ -70,7 +72,7 @@ public static class NotificationHelper
         IDispatcher dispatcher,
         TimeSpan? notificationOverlayLifespan)
     {
-        var notificationError = new NotificationRecord(Key<NotificationRecord>.NewKey(),
+        var notificationError = new NotificationViewModel(Key<INotificationViewModel>.NewKey(),
             title,
             luthetusCommonComponentRenderers.ErrorNotificationRendererType,
             new Dictionary<string, object?>
@@ -79,7 +81,8 @@ public static class NotificationHelper
             },
             notificationOverlayLifespan,
             true,
-            IErrorNotificationRendererType.CSS_CLASS_STRING);
+            IErrorNotificationRendererType.CSS_CLASS_STRING,
+			null);
 
         dispatcher.Dispatch(new NotificationState.RegisterAction(notificationError));
     }

@@ -1,8 +1,11 @@
-using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Drags.Models;
+using Luthetus.Common.RazorLib.Tabs.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 
 namespace Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
 
-public class PolymorphicViewModel
+public record PolymorphicViewModel : IPolymorphicViewModel
 {
 	public IDialogViewModel? DialogViewModel { get; init; }
     public IDraggableViewModel? DraggableViewModel { get; init; }
@@ -13,30 +16,30 @@ public class PolymorphicViewModel
 	public PolymorphicViewModel WithDialogViewModel(
 		Func<PolymorphicViewModel, IDialogViewModel> dialogViewModelFactory)
 	{
-		DialogViewModel = dialogViewModelFactory.Invoke(this);
+		return this with { DialogViewModel = dialogViewModelFactory.Invoke(this) };
 	}
 
 	public PolymorphicViewModel WithDraggableViewModel(
 		Func<PolymorphicViewModel, IDraggableViewModel> draggableViewModelFactory)
 	{
-		DraggableViewModel = draggableViewModelFactory.Invoke(this);
+		return this with { DraggableViewModel = draggableViewModelFactory.Invoke(this) };
 	}
 
 	public PolymorphicViewModel WithDropzoneViewModel(
 		Func<PolymorphicViewModel, IDropzoneViewModel> dropzoneViewModelFactory)
 	{
-		DropzoneViewModel = dropzoneViewModelFactory.Invoke(this);
+		return this with { DropzoneViewModel = dropzoneViewModelFactory.Invoke(this) };
 	}
 
 	public PolymorphicViewModel WithNotificationViewModel(
 		Func<PolymorphicViewModel, INotificationViewModel> notificationViewModelFactory)
 	{
-		NotificationViewModel = notificationViewModelFactory.Invoke(this);
+		return this with { NotificationViewModel = notificationViewModelFactory.Invoke(this) };
 	}
 
 	public PolymorphicViewModel WithTabViewModel(
 		Func<PolymorphicViewModel, ITabViewModel> tabViewModelFactory)
 	{
-		TabViewModel = tabViewModelFactory.Invoke(this);
+		return this with { TabViewModel = tabViewModelFactory.Invoke(this) };
 	}
 }

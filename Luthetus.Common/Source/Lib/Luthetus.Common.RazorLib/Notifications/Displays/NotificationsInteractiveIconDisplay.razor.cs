@@ -19,13 +19,14 @@ public partial class NotificationsInteractiveIconDisplay : FluxorComponent
     [Parameter]
     public string CssStyleString { get; set; } = string.Empty;
 
-    private readonly IDialogViewModel NotificationsViewDisplayDialogRecord = new(
+    private readonly DialogViewModel NotificationsViewDisplayDialogRecord = new(
         Key<IDialogViewModel>.NewKey(),
         "Notifications",
         typeof(NotificationsViewDisplay),
         null,
         null,
-		true);
+		true,
+		null);
 
     private void ShowNotificationsViewDisplayOnClick()
     {

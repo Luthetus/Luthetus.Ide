@@ -19,15 +19,16 @@ public partial class DirtyResourceUriInteractiveIconDisplay : FluxorComponent
     [Parameter]
     public string CssStyleString { get; set; } = string.Empty;
 
-    private static Key<IPolymorphicUiRecord> _dialogRecordKey = Key<IPolymorphicUiRecord>.NewKey();
+    private static Key<IDialogViewModel> _dialogRecordKey = Key<IDialogViewModel>.NewKey();
 
-    private readonly DialogRecord _dialogRecord = new(
+    private readonly IDialogViewModel _dialogRecord = new DialogViewModel(
         _dialogRecordKey,
         "Unsaved Files",
         typeof(DirtyResourceUriViewDisplay),
         null,
         null,
-		true);
+		true,
+		null);
 
     private void ShowDialogOnClick()
     {

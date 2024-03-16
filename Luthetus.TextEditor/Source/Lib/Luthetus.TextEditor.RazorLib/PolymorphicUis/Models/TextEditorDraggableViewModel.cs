@@ -1,38 +1,64 @@
+using Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
+using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
-using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
 
-public partial record TextEditorViewModelPolymorphicUi : IPolymorphicDraggable
+public partial record TextEditorDraggableViewModel : IDraggableViewModel
 {
-	public Type DraggableRendererType => RendererType;
-	public Dictionary<string, object?> DraggableParameterMap => TabParameterMap;
-	public ElementDimensions DraggableElementDimensions => DialogElementDimensions;
-	public ImmutableArray<IPolymorphicDropzone> DropzoneList { get; set; } = ImmutableArray<IPolymorphicDropzone>.Empty;
-
-	public Task OnDragStopAsync(MouseEventArgs mouseEventArgs, IPolymorphicDropzone? dropzone)
+	public TextEditorDraggableViewModel(
+		Key<TextEditorViewModel> viewModelKey,
+		TextEditorGroup textEditorGroup,
+		TextEditorViewModelDisplayOptions textEditorViewModelDisplayOptions,
+		ITextEditorService textEditorService,
+		IDialogService dialogService,
+		IJSRuntime jsRuntime)
 	{
-		if (dropzone is not TextEditorViewModelPolymorphicDropzone textEditorViewModelPolymorphicDropzone)
+		ViewModelKey = viewModelKey;
+		TextEditorGroup = textEditorGroup;
+		TextEditorService = textEditorService;
+		DialogService = dialogService;
+		JsRuntime = jsRuntime;
+	}
+
+	public Key<TextEditorViewModel> ViewModelKey { get; init; }
+	public TextEditorGroup TextEditorGroup { get; init; }
+	public TextEditorViewModelDisplayOptions TextEditorViewModelDisplayOptions { get; init; }
+	public ITextEditorService TextEditorService { get; init; }
+	public IDialogService DialogService { get; init; }
+	public IJSRuntime JsRuntime { get; init; }
+
+	public IPolymorphicViewModel? PolymorphicViewModel { get; init; }
+	public Key<IDraggableViewModel> Key { get; init; }
+	public Type RendererType { get; init; }
+	public Dictionary<string, object?> ParameterMap { get; init; }
+	public ElementDimensions ElementDimensions { get; init; }
+	public ImmutableArray<IDropzoneViewModel> DropzoneViewModelList { get; set; } = ImmutableArray<IDropzoneViewModel>.Empty;
+
+	public Task OnDragStopAsync(MouseEventArgs mouseEventArgs, IDropzoneViewModel? dropzone)
+	{
+		if (dropzone is not TextEditorDropzoneViewModel textEditorDropzoneViewModel)
 			return Task.CompletedTask;
 
-		if (textEditorViewModelPolymorphicDropzone.TextEditorGroupKey is null)
+		if (textEditorDropzoneViewModel.TextEditorGroupKey is null)
 		{
 			TextEditorService.GroupApi.RemoveViewModel(TextEditorGroup.GroupKey, ViewModelKey);
 
-			var dialogRecord = new DialogRecord(
-    			DialogKey,
-    			GetTitle(),
+			var dialogRecord = new DialogViewModel(
+    			Key<IDialogViewModel>.NewKey(),
+    			"TODO: Title",
     			typeof(TextEditorViewModelDisplay),
     			new Dictionary<string, object?>()
 				{
@@ -42,11 +68,12 @@ public partial record TextEditorViewModelPolymorphicUi : IPolymorphicDraggable
 					},
 					{
 						nameof(TextEditorViewModelDisplay.ViewModelDisplayOptions),
-						_textEditorViewModelDisplayOptions
+						TextEditorViewModelDisplayOptions
 					}
 				},
     			null,
-				true);
+				true,
+				PolymorphicViewModel);
 
 			DialogService.RegisterDialogRecord(dialogRecord);
 		}
@@ -54,12 +81,12 @@ public partial record TextEditorViewModelPolymorphicUi : IPolymorphicDraggable
 		return Task.CompletedTask;
 	}
 
-	public async Task<ImmutableArray<IPolymorphicDropzone>> GetDropzonesAsync()
+	public async Task<ImmutableArray<IDropzoneViewModel>> GetDropzonesAsync()
 	{
 		if (TextEditorService is null)
-			return ImmutableArray<IPolymorphicDropzone>.Empty;
+			return ImmutableArray<IDropzoneViewModel>.Empty;
 
-		var dropzoneList = new List<IPolymorphicDropzone>();
+		var dropzoneList = new List<IDropzoneViewModel>();
 		AddFallbackDropzone(dropzoneList);
 
 		var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
@@ -127,17 +154,18 @@ public partial record TextEditorViewModelPolymorphicUi : IPolymorphicDraggable
             });
 		}
 
-		dropzoneList.Add(new TextEditorViewModelPolymorphicDropzone(
+		dropzoneList.Add(new TextEditorDropzoneViewModel(
 			measuredHtmlElementDimensions,
 			elementDimensions,
-			TextEditorGroup.GroupKey));
+			TextEditorGroup.GroupKey,
+			PolymorphicViewModel));
 
 		var result = dropzoneList.ToImmutableArray();
-		DropzoneList = result;
+		DropzoneViewModelList = result;
 		return result;
 	}
 
-	private void AddFallbackDropzone(List<IPolymorphicDropzone> dropzoneList)
+	private void AddFallbackDropzone(List<IDropzoneViewModel> dropzoneList)
 	{
 		var fallbackElementDimensions = new ElementDimensions();
 
@@ -195,9 +223,10 @@ public partial record TextEditorViewModelPolymorphicUi : IPolymorphicDraggable
             });
 		}
 
-		dropzoneList.Add(new TextEditorViewModelPolymorphicDropzone(
+		dropzoneList.Add(new TextEditorDropzoneViewModel(
 			new MeasuredHtmlElementDimensions(0, 0, 0, 0, 0),
 			fallbackElementDimensions,
-			null));
+			null,
+			PolymorphicViewModel));
 	}
 }

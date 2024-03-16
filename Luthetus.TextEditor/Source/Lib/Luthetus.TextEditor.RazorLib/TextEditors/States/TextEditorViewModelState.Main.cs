@@ -11,9 +11,7 @@ public partial class TextEditorViewModelState
     public TextEditorViewModelState()
     {
         ViewModelList = ImmutableList<TextEditorViewModel>.Empty;
-        ViewModelPolymorphicUiList = ImmutableList<TextEditorViewModelPolymorphicUi>.Empty;
     }
 
     public ImmutableList<TextEditorViewModel> ViewModelList { get; init; }
-    public ImmutableList<TextEditorViewModelPolymorphicUi> ViewModelPolymorphicUiList { get; init; }
 }

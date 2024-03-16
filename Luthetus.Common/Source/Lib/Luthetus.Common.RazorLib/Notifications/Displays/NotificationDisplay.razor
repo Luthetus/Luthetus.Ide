@@ -1,10 +1,10 @@
-﻿<div class="luth_notification @(NotificationRecord.CssClassString ?? string.Empty)"
+<div class="luth_notification @(NotificationViewModel.CssClassString ?? string.Empty)"
      style="@CssStyleString">
     <div class="luth_notification-toolbar">
         <div class="luth_notification-title luth_unselectable"
              style="@NotificationTitleCssStyleString"
-             title="@NotificationRecord.Title">
-            @NotificationRecord.Title
+             title="@NotificationViewModel.Title">
+            @NotificationViewModel.Title
         </div>
 
         <div class="luth_notification-control-buttons">
@@ -18,9 +18,9 @@
     </div>
 
     <div class="luth_notification-body">
-        <CascadingValue Value="NotificationRecord">
-            <DynamicComponent Type="NotificationRecord.RendererType"
-                              Parameters="NotificationRecord.ParameterMap"/>
+        <CascadingValue Value="NotificationViewModel">
+            <DynamicComponent Type="NotificationViewModel.RendererType"
+                              Parameters="NotificationViewModel.ParameterMap"/>
         </CascadingValue>
     </div>
 </div>

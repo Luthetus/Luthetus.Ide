@@ -43,13 +43,14 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     [Parameter]
     public int TabIndex { get; set; } = -1;
 
-    private DialogRecord _detailsDialogRecord = new(
-            Key<IPolymorphicUiRecord>.NewKey(),
+    private IDialogViewModel _detailsDialogRecord = new DialogViewModel(
+            Key<IDialogViewModel>.NewKey(),
             "Diff Details",
             typeof(DiffDetailsDisplay),
             null,
             null,
-			true);
+			true,
+			null);
 
     private CancellationTokenSource _calculateDiffCancellationTokenSource = new();
     private TextEditorDiffResult? _mostRecentDiffResult;
@@ -98,11 +99,10 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 
     private void ShowCalculationOnClick()
     {
-        DialogService.DisposeDialogRecord(_detailsDialogRecord.PolymorphicUiKey);
+        DialogService.DisposeDialogRecord(_detailsDialogRecord.Key);
 
-        _detailsDialogRecord = _detailsDialogRecord with
-        {
-            DialogParameterMap = new Dictionary<string, object?>
+        _detailsDialogRecord = _detailsDialogRecord.SetParameterMap(
+			new Dictionary<string, object?>
             {
                 {
                     nameof(DiffDetailsDisplay.DiffModelKey),
@@ -112,8 +112,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
                     nameof(DiffDetailsDisplay.DiffResult),
                     _mostRecentDiffResult
                 }
-            }
-        };
+            });
 
         DialogService.RegisterDialogRecord(_detailsDialogRecord);
     }

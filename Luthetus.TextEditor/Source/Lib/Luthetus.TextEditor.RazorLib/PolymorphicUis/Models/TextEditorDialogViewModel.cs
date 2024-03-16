@@ -1,41 +1,33 @@
+using Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
+using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+using Luthetus.TextEditor.RazorLib.Diffs.Displays;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
+using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components.Web;
+using System.Collections.Immutable;
 
-namespace Luthetus.Common.RazorLib.Dialogs.Models;
+namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
 
-public record DialogViewModel : IDialogViewModel
+public record TextEditorDialogViewModel : IDialogViewModel
 {
-	public DialogViewModel(
-		Key<IDialogViewModel> key,
-		string title,
-		Type rendererType,
-		Dictionary<string, object?>? parameterMap,
-		string cssClassString,
-		bool isResizable,
-		IPolymorphicViewModel? polymorphicViewModel)
-	{
-		Key = key;
-		Title = title;
-		RendererType = rendererType;
-		ParameterMap = parameterMap;
-		CssClassString = cssClassString;
-		IsResizable = isResizable;
-		PolymorphicViewModel = polymorphicViewModel;
-	}
-
 	public IPolymorphicViewModel? PolymorphicViewModel { get; init; }
-	public Key<IDialogViewModel> Key { get; init; }
+	public Key<IDialogViewModel> Key { get; init; } = Key<IDialogViewModel>.NewKey();
 	public Type RendererType { get; init; }
+	public string Title { get; init; }
 	public Dictionary<string, object?>? ParameterMap { get; init; }
-	public ElementDimensions ElementDimensions { get; init; }
-    public string Title { get; init; }
+	public ElementDimensions ElementDimensions { get; init; } = IDialogViewModel.ConstructDefaultElementDimensions();
     public bool IsMinimized { get; init; }
     public bool IsMaximized { get; init; }
     public bool IsResizable { get; init; }
     public string CssClassString { get; init; }
-
-    public virtual string FocusPointHtmlElementId => $"luth_dialog-focus-point_{Key.Guid}";
+    public string FocusPointHtmlElementId => $"luth_dialog-focus-point_{Key.Guid}";
 
 	public IDialogViewModel SetParameterMap(Dictionary<string, object?>? parameterMap)
 	{
@@ -51,7 +43,7 @@ public record DialogViewModel : IDialogViewModel
 	{
 		return this with { IsMinimized = isMinimized };
 	}
-
+	
 	public IDialogViewModel SetIsMaximized(bool isMaximized)
 	{
 		return this with { IsMaximized = isMaximized };

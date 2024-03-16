@@ -53,8 +53,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton(hostingInformation.BackgroundTaskService)
             .AddSingleton<ILuthetusCommonComponentRenderers>(_ => _commonRendererTypes)
             .AddCommonFactories(hostingInformation, commonConfig)
-            .AddScoped<StorageSync>()
-            .AddScoped<IPolymorphicViewModelService, PolymorphicViewModelService>();
+            .AddScoped<StorageSync>();
 
         return services;
     }

@@ -9,10 +9,9 @@ namespace Luthetus.Common.RazorLib.Drags.Displays;
 public partial record DragState(
     bool ShouldDisplay,
     MouseEventArgs? MouseEventArgs,
-	IDraggableViewModel? DraggableViewModel,
-	ImmutableArray<IDropzoneViewModel>? DropzoneViewModelList)
+	IDraggableViewModel? DraggableViewModel)
 {
-    public DragState() : this (false, null, null, null)
+    public DragState() : this (false, null, null)
     {
         
     }

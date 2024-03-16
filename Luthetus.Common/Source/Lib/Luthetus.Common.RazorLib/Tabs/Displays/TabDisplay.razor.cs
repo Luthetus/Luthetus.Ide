@@ -1,6 +1,7 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Drags.Displays;
+using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Resizes.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
@@ -10,7 +11,7 @@ using Microsoft.JSInterop;
 
 namespace Luthetus.Common.RazorLib.Tabs.Displays;
 
-public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
+public partial class TabDisplay : ComponentBase, IDisposable
 {
 	[Inject]
     private IState<DragState> DragStateWrap { get; set; } = null!;
@@ -41,7 +42,7 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 		? _htmlId ??= $"luth_polymorphic-tab_{TabViewModel.Key}"
 		: _htmlIdDragged ??= $"luth_polymorphic-tab-drag_{TabViewModel.Key}";
 
-	private string IsActiveCssClass => TabViewModel.TabIsActive
+	private string IsActiveCssClass => TabViewModel.GetIsActive()
 		? "luth_active"
 	    : string.Empty;
 
@@ -86,7 +87,7 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 		if (IsBeingDragged)
 			return;
 
-        await TabViewModel.TabCloseAsync();
+        await TabViewModel.CloseAsync();
 	}
 
 	private async Task HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)
@@ -113,7 +114,9 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 		if (IsBeingDragged)
 			return;
 
-        if (_thinksLeftMouseButtonIsDown && Tab is IPolymorphicDraggable draggable)
+		var draggable = TabViewModel.PolymorphicViewModel.DraggableViewModel;
+
+        if (_thinksLeftMouseButtonIsDown && draggable is not null)
         {
 			var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
                 "luthetusIde.measureElementById",
@@ -123,7 +126,7 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 
 			// Width
 			{
-				var widthDimensionAttribute = draggable.DraggableElementDimensions.DimensionAttributeList.First(
+				var widthDimensionAttribute = draggable.ElementDimensions.DimensionAttributeList.First(
 	                x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
 	
 				widthDimensionAttribute.DimensionUnitList.Clear();
@@ -136,7 +139,7 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 
 			// Height
 			{
-				var heightDimensionAttribute = draggable.DraggableElementDimensions.DimensionAttributeList.First(
+				var heightDimensionAttribute = draggable.ElementDimensions.DimensionAttributeList.First(
 	                x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
 	
 				heightDimensionAttribute.DimensionUnitList.Clear();
@@ -149,7 +152,7 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 
 			// Left
 			{
-				var leftDimensionAttribute = draggable.DraggableElementDimensions.DimensionAttributeList.First(
+				var leftDimensionAttribute = draggable.ElementDimensions.DimensionAttributeList.First(
 	                x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
 	
 	            leftDimensionAttribute.DimensionUnitList.Clear();
@@ -162,7 +165,7 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 
 			// Top
 			{
-				var topDimensionAttribute = draggable.DraggableElementDimensions.DimensionAttributeList.First(
+				var topDimensionAttribute = draggable.ElementDimensions.DimensionAttributeList.First(
 	                x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
 	
 	            topDimensionAttribute.DimensionUnitList.Clear();
@@ -173,13 +176,13 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 	            });
 			}
 
-            draggable.DraggableElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
+            draggable.ElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
 
             SubscribeToDragEventForScrolling(draggable);
         }
     }
 
-	public void SubscribeToDragEventForScrolling(IPolymorphicDraggable draggable)
+	public void SubscribeToDragEventForScrolling(IDraggableViewModel draggable)
     {
 		if (IsBeingDragged)
 			return;
@@ -190,7 +193,7 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
         {
             ShouldDisplay = true,
             MouseEventArgs = null,
-			PolymorphicDraggable = draggable
+			DraggableViewModel = draggable,
         }));
     }
 
@@ -205,13 +208,15 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
         if (!localThinksLeftMouseButtonIsDown)
             return Task.CompletedTask;
 
+		var draggable = TabViewModel.PolymorphicViewModel.DraggableViewModel;
+
         // Buttons is a bit flag '& 1' gets if left mouse button is held
-        if (Tab is IPolymorphicDraggable draggable &&
+        if (draggable is not null &&
 			localThinksLeftMouseButtonIsDown &&
             (mouseEventArgsTuple.secondMouseEventArgs.Buttons & 1) == 1)
         {
             ResizeHelper.Move(
-                draggable.DraggableElementDimensions,
+                draggable.ElementDimensions,
                 mouseEventArgsTuple.firstMouseEventArgs,
                 mouseEventArgsTuple.secondMouseEventArgs);
         }
@@ -227,10 +232,12 @@ public partial class PolymorphicTabDisplay : ComponentBase, IDisposable
 
 	private string GetDraggableCssStyleString()
 	{
+		var draggable = TabViewModel.PolymorphicViewModel.DraggableViewModel;
+		
 		if (IsBeingDragged &&
-			Tab is IPolymorphicDraggable draggable)
+			draggable is not null)
 		{
-			return draggable.DraggableElementDimensions.StyleString;
+			return draggable.ElementDimensions.StyleString;
 		}
 
 		return string.Empty;
