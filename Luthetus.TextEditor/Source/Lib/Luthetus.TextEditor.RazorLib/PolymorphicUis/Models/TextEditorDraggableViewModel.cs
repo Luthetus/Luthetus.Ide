@@ -108,7 +108,7 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 
 		var dropzoneList = new List<IDropzoneViewModel>();
 		AddFallbackDropzone(dropzoneList);
-		AddPanelDropzones(dropzoneList);
+		await AddPanelDropzonesAsync(dropzoneList);
 
 		var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
             "luthetusIde.measureElementById",
@@ -182,25 +182,31 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 			null,
 			PolymorphicViewModel));
 
+		Console.WriteLine($"dropzoneList.Count:{dropzoneList.Count}");
+
 		var result = dropzoneList.ToImmutableArray();
 		DropzoneViewModelList = result;
 		return result;
 	}
 
-	private async Task AddPanelDropzones(List<IDropzoneViewModel> dropzoneList)
+	private async Task AddPanelDropzonesAsync(List<IDropzoneViewModel> dropzoneList)
 	{
 		var panelGroupHtmlIdTupleList = new (Key<PanelGroup> PanelGroupKey, string HtmlElementId)[]
 		{
-			(PanelFacts.LeftPanelRecordKey, "luth_ide_panel_left"),
-			(PanelFacts.RightPanelRecordKey, "luth_ide_panel_right"),
-			(PanelFacts.BottomPanelRecordKey, "luth_ide_panel_bottom"),
+			(PanelFacts.LeftPanelRecordKey, "luth_ide_panel_left_tabs"),
+			(PanelFacts.RightPanelRecordKey, "luth_ide_panel_right_tabs"),
+			(PanelFacts.BottomPanelRecordKey, "luth_ide_panel_bottom_tabs"),
 		};
 
+		Console.WriteLine("start foreach");
 		foreach (var panelGroupHtmlIdTuple in panelGroupHtmlIdTupleList)
 		{
+			Console.WriteLine(panelGroupHtmlIdTuple.HtmlElementId);
 			var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
 	            "luthetusIde.measureElementById",
 	            panelGroupHtmlIdTuple.HtmlElementId);
+
+			Console.WriteLine(panelGroupHtmlIdTuple.HtmlElementId);
 	
 			measuredHtmlElementDimensions = measuredHtmlElementDimensions with
 			{
@@ -274,6 +280,8 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 				null,
 				PolymorphicViewModel));
 		}
+
+		Console.WriteLine($"dropzoneList.Count:{dropzoneList.Count}");
 	}
 
 	private void AddFallbackDropzone(List<IDropzoneViewModel> dropzoneList)
