@@ -34,6 +34,24 @@ public class PanelPolymorphicViewModel : IPolymorphicViewModel
 			PanelsStateWrap,
 			Dispatcher,
 			this);
+
+		DraggableViewModel = new PanelDraggableViewModel(
+			PanelKey,
+			PanelGroupKey,
+			PanelsStateWrap,
+			Dispatcher,
+			DialogService,
+			JsRuntime,
+			this);
+
+		DialogViewModel = new PanelDialogViewModel(
+			PanelKey,
+			PanelGroupKey,
+			PanelsStateWrap,
+			Dispatcher,
+			DialogService,
+			JsRuntime,
+			this);
 	}
 
 	public Key<Panel> PanelKey { get; }
