@@ -5,6 +5,8 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Tabs.Displays;
+using Luthetus.Common.RazorLib.Panels.Models;
+using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
@@ -14,6 +16,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
+using Fluxor;
 
 namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
 
@@ -27,6 +30,8 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 		TextEditorViewModelDisplayOptions textEditorViewModelDisplayOptions,
 		Func<string> getTitleFunc,
 		ITextEditorService textEditorService,
+		IDispatcher dispatcher,
+		IState<PanelsState> panelsStateWrap,
 		IDialogService dialogService,
 		IJSRuntime jsRuntime,
 		IPolymorphicViewModel? polymorphicViewModel)
@@ -35,7 +40,9 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 		TextEditorGroup = textEditorGroup;
 		TextEditorViewModelDisplayOptions = textEditorViewModelDisplayOptions;
 		_getTitleFunc = getTitleFunc;
+		PanelsStateWrap = panelsStateWrap;
 		TextEditorService = textEditorService;
+		Dispatcher = dispatcher;
 		DialogService = dialogService;
 		JsRuntime = jsRuntime;
 		PolymorphicViewModel = polymorphicViewModel;
@@ -59,6 +66,8 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 	public TextEditorGroup TextEditorGroup { get; init; }
 	public TextEditorViewModelDisplayOptions TextEditorViewModelDisplayOptions { get; init; }
 	public ITextEditorService TextEditorService { get; init; }
+	public IDispatcher Dispatcher { get; init; }
+	public IState<PanelsState> PanelsStateWrap { get; init; }
 	public IDialogService DialogService { get; init; }
 	public IJSRuntime JsRuntime { get; init; }
 
@@ -99,6 +108,7 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 
 		var dropzoneList = new List<IDropzoneViewModel>();
 		AddFallbackDropzone(dropzoneList);
+		AddPanelDropzones(dropzoneList);
 
 		var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
             "luthetusIde.measureElementById",
@@ -175,6 +185,95 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 		var result = dropzoneList.ToImmutableArray();
 		DropzoneViewModelList = result;
 		return result;
+	}
+
+	private async Task AddPanelDropzones(List<IDropzoneViewModel> dropzoneList)
+	{
+		var panelGroupHtmlIdTupleList = new (Key<PanelGroup> PanelGroupKey, string HtmlElementId)[]
+		{
+			(PanelFacts.LeftPanelRecordKey, "luth_ide_panel_left"),
+			(PanelFacts.RightPanelRecordKey, "luth_ide_panel_right"),
+			(PanelFacts.BottomPanelRecordKey, "luth_ide_panel_bottom"),
+		};
+
+		foreach (var panelGroupHtmlIdTuple in panelGroupHtmlIdTupleList)
+		{
+			var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
+	            "luthetusIde.measureElementById",
+	            panelGroupHtmlIdTuple.HtmlElementId);
+	
+			measuredHtmlElementDimensions = measuredHtmlElementDimensions with
+			{
+				ZIndex = 1,
+			};
+
+			var elementDimensions = new ElementDimensions();
+
+			elementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
+	
+			// Width
+			{
+				var widthDimensionAttribute = elementDimensions.DimensionAttributeList.First(
+	                x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
+	
+				widthDimensionAttribute.DimensionUnitList.Clear();
+	            widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+	            {
+	                Value = measuredHtmlElementDimensions.WidthInPixels,
+	                DimensionUnitKind = DimensionUnitKind.Pixels
+	            });
+			}
+	
+			// Height
+			{
+				var heightDimensionAttribute = elementDimensions.DimensionAttributeList.First(
+	                x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
+	
+				heightDimensionAttribute.DimensionUnitList.Clear();
+	            heightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+	            {
+	                Value = measuredHtmlElementDimensions.HeightInPixels,
+	                DimensionUnitKind = DimensionUnitKind.Pixels
+	            });
+			}
+	
+			// Left
+			{
+				var leftDimensionAttribute = elementDimensions.DimensionAttributeList.First(
+	                x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
+	
+	            leftDimensionAttribute.DimensionUnitList.Clear();
+	            leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+	            {
+	                Value = measuredHtmlElementDimensions.LeftInPixels,
+	                DimensionUnitKind = DimensionUnitKind.Pixels
+	            });
+			}
+	
+			// Top
+			{
+				var topDimensionAttribute = elementDimensions.DimensionAttributeList.First(
+	                x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
+	
+	            topDimensionAttribute.DimensionUnitList.Clear();
+	            topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+	            {
+	                Value = measuredHtmlElementDimensions.TopInPixels,
+	                DimensionUnitKind = DimensionUnitKind.Pixels
+	            });
+			}
+	
+			dropzoneList.Add(new PanelDropzoneViewModel(
+				panelGroupHtmlIdTuple.PanelGroupKey,
+				PanelsStateWrap,
+				Dispatcher,
+				DialogService,
+				JsRuntime,
+				measuredHtmlElementDimensions,
+				elementDimensions,
+				null,
+				PolymorphicViewModel));
+		}
 	}
 
 	private void AddFallbackDropzone(List<IDropzoneViewModel> dropzoneList)

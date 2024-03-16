@@ -2,6 +2,7 @@ using Luthetus.Common.RazorLib.Tabs.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
@@ -16,6 +17,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
+using Fluxor;
 
 namespace Luthetus.TextEditor.RazorLib.PolymorphicUis.Models;
 
@@ -25,12 +27,16 @@ public partial record TextEditorPolymorphicViewModel : IPolymorphicViewModel
 		Key<TextEditorViewModel> viewModelKey,
 		TextEditorGroup textEditorGroup,
 		ITextEditorService textEditorService,
+		IDispatcher dispatcher,
+		IState<PanelsState> panelsStateWrap,
 		IDialogService dialogService,
 		IJSRuntime jsRuntime)
 	{
 		ViewModelKey = viewModelKey;
 		TextEditorGroup = textEditorGroup;
 		TextEditorService = textEditorService;
+		Dispatcher = dispatcher;
+		PanelsStateWrap = panelsStateWrap;
 		DialogService = dialogService;
 		JsRuntime = jsRuntime;
 
@@ -47,6 +53,8 @@ public partial record TextEditorPolymorphicViewModel : IPolymorphicViewModel
 			_textEditorViewModelDisplayOptions,
 			() => GetTitle(),
 			textEditorService,
+			Dispatcher,
+			PanelsStateWrap,
 			dialogService,
 			jsRuntime,
 			this);
@@ -59,6 +67,8 @@ public partial record TextEditorPolymorphicViewModel : IPolymorphicViewModel
 	}
 
 	public ITextEditorService? TextEditorService { get; init; }
+	public IDispatcher Dispatcher { get; init; }
+	public IState<PanelsState> PanelsStateWrap { get; init; }
 	public TextEditorViewModelDisplayOptions TextEditorViewModelDisplayOptions { get; init; }
 	public IJSRuntime? JsRuntime { get; init; }
 	public IDialogService DialogService { get; init; }

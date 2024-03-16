@@ -5,6 +5,7 @@ using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Tabs.Displays;
 using Luthetus.Common.RazorLib.Tabs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -21,11 +22,14 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     [Inject]
     private IState<TextEditorGroupState> TextEditorGroupStateWrap { get; set; } = null!;
 	[Inject]
-    private IState<TextEditorViewModelState> TextEditorViewModelStateWrap { get; set; } = null!;
+    private IState<TextEditorViewModelState> TextEditorViewModelStateWrap { get; set; } = null!;	[Inject]
+    private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
     private IDialogService DialogService { get; set; } = null!;
+	[Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
@@ -84,6 +88,8 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 				viewModelKey,
 				textEditorGroup,
 				TextEditorService,
+				Dispatcher,
+				PanelsStateWrap,
 				DialogService,
 				JsRuntime);
 
