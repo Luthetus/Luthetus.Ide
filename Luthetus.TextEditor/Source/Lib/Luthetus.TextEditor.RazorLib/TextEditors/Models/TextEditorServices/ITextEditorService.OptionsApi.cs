@@ -14,6 +14,7 @@ using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using static Luthetus.Common.RazorLib.Contexts.States.ContextState;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -67,7 +68,7 @@ public partial interface ITextEditorService
             _dispatcher = dispatcher;
         }
 
-        private IDialogViewModel? _findAllDialog;
+        private IDialog? _findAllDialog;
 
         public void WriteToStorage()
         {
@@ -79,13 +80,12 @@ public partial interface ITextEditorService
         public void ShowSettingsDialog(bool? isResizableOverride = null, string? cssClassString = null)
         {
             var settingsDialog = new DialogViewModel(
-                Key<IDialogViewModel>.NewKey(),
+                Key<IDynamicViewModel>.NewKey(),
                 "Text Editor Settings",
                 _textEditorConfig.SettingsDialogConfig.ComponentRendererType,
                 null,
                 cssClassString,
-				isResizableOverride ?? _textEditorConfig.SettingsDialogConfig.ComponentIsResizable,
-				null);
+				isResizableOverride ?? _textEditorConfig.SettingsDialogConfig.ComponentIsResizable);
 
             _dispatcher.Dispatch(new DialogState.RegisterAction(settingsDialog));
         }
@@ -93,13 +93,12 @@ public partial interface ITextEditorService
         public void ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null)
         {
             _findAllDialog ??= new DialogViewModel(
-                Key<IDialogViewModel>.NewKey(),
+                Key<IDynamicViewModel>.NewKey(),
                 "Find All",
                 _textEditorConfig.FindAllDialogConfig.ComponentRendererType,
                 null,
                 cssClassString,
-				isResizableOverride ?? _textEditorConfig.FindAllDialogConfig.ComponentIsResizable,
-				null);
+				isResizableOverride ?? _textEditorConfig.FindAllDialogConfig.ComponentIsResizable);
 
             _dispatcher.Dispatch(new DialogState.RegisterAction(_findAllDialog));
         }

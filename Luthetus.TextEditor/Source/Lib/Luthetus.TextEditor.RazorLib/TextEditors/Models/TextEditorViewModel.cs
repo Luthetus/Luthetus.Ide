@@ -8,6 +8,18 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.Common.RazorLib.Panels.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
+using Microsoft.AspNetCore.Components.Web;
+using Luthetus.Common.RazorLib.Contexts.Models;
+using Fluxor;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Microsoft.JSInterop;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
+using Luthetus.Common.RazorLib.Panels.States;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
+using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -155,7 +167,33 @@ public record TextEditorViewModel  : ITextEditorTab, IPanelTab, IDialog, IDrag, 
     public string GutterElementId => $"luth_te_text-editor-gutter_{ViewModelKey.Guid}";
     public string FindOverlayId => $"luth_te_find-overlay_{ViewModelKey.Guid}";
 
-    public TextEditorEdit MutateScrollHorizontalPositionByPixelsFactory(double pixels)
+	public Key<Panel> Key { get; }
+
+	public Key<ContextRecord> ContextRecordKey { get; }
+
+	public IDispatcher Dispatcher { get; set; }
+	public IDialogService DialogService { get; set; }
+	public JSRuntime JsRuntime { get; set; }
+	public ITabGroup TabGroup { get; set; }
+
+	public Key<IDynamicViewModel> DynamicViewModelKey { get; }
+
+	public string Title { get; }
+
+	public Type ComponentType { get; }
+
+	public Dictionary<string, object?>? ComponentParameterMap { get; }
+
+	public string? CssClass { get; set; }
+	public string? CssStyle { get; set; }
+	public ElementDimensions ElementDimensions { get; set; }
+	public bool DialogIsMinimized { get; set; }
+	public bool DialogIsMaximized { get; set; }
+	public bool DialogIsResizable { get; set; }
+	public string DialogFocusPointHtmlElementId { get; set; }
+	public ImmutableArray<IDropzone> DropzoneList { get; set; }
+
+	public TextEditorEdit MutateScrollHorizontalPositionByPixelsFactory(double pixels)
     {
         return TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
             BodyElementId,
@@ -199,66 +237,121 @@ public record TextEditorViewModel  : ITextEditorTab, IPanelTab, IDialog, IDrag, 
         	PrimaryCursorContentId);
     }
 
-	public Task OnDragStopAsync(MouseEventArgs mouseEventArgs, IDropzoneViewModel? dropzone)
+	public Task OnDragStopAsync(MouseEventArgs mouseEventArgs, IDropzone? dropzone)
 	{
-		if (dropzone is TextEditorDropzoneViewModel textEditorDropzoneViewModel)
+		var localTextEditorGroup = TabGroup as TextEditorGroup;
+		var localPanelGroup = TabGroup as PanelGroup;
+
+		if (dropzone is TextEditorGroupDropzone textEditorGroupDropzone)
 		{
-			if (textEditorDropzoneViewModel.TextEditorGroupKey is null)
+			// Create Dialog
+			if (textEditorGroupDropzone.TextEditorGroupKey == Key<TextEditorGroup>.Empty)
 			{
-				if (TextEditorPolymorphicViewModel.TextEditorGroup is not null)
+				// Delete the current UI
 				{
-					TextEditorPolymorphicViewModel.TextEditorService.GroupApi.RemoveViewModel(
-						TextEditorPolymorphicViewModel.TextEditorGroup.GroupKey,
-						TextEditorPolymorphicViewModel.ViewModelKey);
-				}
-	
-				TextEditorPolymorphicViewModel.TextEditorGroup = null;
-				TextEditorPolymorphicViewModel.ActiveViewModelType = typeof(IDialogViewModel);
+					if (localTextEditorGroup is not null)
+					{
+						TextEditorService.GroupApi.RemoveViewModel(
+							localTextEditorGroup.GroupKey,
+							ViewModelKey);
+					}
+					else if (localPanelGroup is not null)
+					{
+						throw new NotImplementedException();
+					}
+					else
+					{
+						// Is a dialog
+						//
+						// Already a dialog, so nothing needs to be done here.
+						return Task.CompletedTask;
+					}
 
-				TextEditorPolymorphicViewModel.DialogService.RegisterDialogRecord(
-					TextEditorPolymorphicViewModel.DialogViewModel);
+					TabGroup = null;
+				}
+
+				DialogService.RegisterDialogRecord(this);
 			}
-			else
+
+			// Create TextEditor Tab
 			{
-				TextEditorPolymorphicViewModel.DialogService.DisposeDialogRecord(
-					TextEditorPolymorphicViewModel.DialogViewModel.Key);
-
-				var textEditorGroupKey = TextEditorPolymorphicViewModel.TextEditorGroup?.GroupKey ?? Key<TextEditorGroup>.Empty;
-
-				if (textEditorDropzoneViewModel.TextEditorGroupKey.Value != Key<TextEditorGroup>.Empty &&
-				    textEditorGroupKey != textEditorDropzoneViewModel.TextEditorGroupKey.Value)
+				// Check if to-be group is the same as current group.
 				{
-					TextEditorPolymorphicViewModel.ActiveViewModelType = typeof(ITabViewModel);
-
-					TextEditorPolymorphicViewModel.TextEditorService.GroupApi.AddViewModel(
-						textEditorDropzoneViewModel.TextEditorGroupKey.Value,
-						TextEditorPolymorphicViewModel.ViewModelKey);
+					if (localTextEditorGroup is not null)
+					{
+						if (localTextEditorGroup.GroupKey == textEditorGroupDropzone.TextEditorGroupKey)
+							return Task.CompletedTask;
+					}
 				}
+
+				// Delete the current UI
+				{
+					if (localTextEditorGroup is not null)
+					{
+						TextEditorService.GroupApi.RemoveViewModel(
+							localTextEditorGroup.GroupKey,
+							ViewModelKey);
+					}
+					else if (localPanelGroup is not null)
+					{
+						throw new NotImplementedException();
+					}
+					else
+					{
+						// Is a dialog
+						DialogService.DisposeDialogRecord(DynamicViewModelKey);
+					}
+					
+					TabGroup = null;
+				}
+
+				TextEditorService.GroupApi.AddViewModel(
+					textEditorGroupDropzone.TextEditorGroupKey,
+					ViewModelKey);
 			}
 
 			return Task.CompletedTask;
 		}
-		else if (dropzone is PanelDropzoneViewModel panelDropzone)
+
+		// Create Panel Tab
+		if (dropzone is PanelGroupDropzone panelDropzone)
 		{
-			if (TextEditorPolymorphicViewModel.TextEditorGroup is not null)
+			// Delete the current UI
 			{
-				TextEditorPolymorphicViewModel.TextEditorService.GroupApi.RemoveViewModel(
-					TextEditorPolymorphicViewModel.TextEditorGroup.GroupKey,
-					TextEditorPolymorphicViewModel.ViewModelKey);
+				if (localTextEditorGroup is not null)
+				{
+					TextEditorService.GroupApi.RemoveViewModel(
+						localTextEditorGroup.GroupKey,
+						ViewModelKey);
+				}
+				else if (localPanelGroup is not null)
+				{
+					throw new NotImplementedException();
+				}
+				else
+				{
+					// Is a dialog
+					DialogService.DisposeDialogRecord(DynamicViewModelKey);
+				}
+
+				TabGroup = null;
 			}
 
-			TextEditorPolymorphicViewModel.TextEditorGroup = null;
-
-			TextEditorPolymorphicViewModel.Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+			Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
 				panelDropzone.PanelGroupKey,
 				new Panel(
-					new Key<Panel>(TextEditorPolymorphicViewModel.ViewModelKey.Guid),
-					new(),
+					Title,
+					new Key<Panel>(ViewModelKey.Guid),
+					DynamicViewModelKey,
+					Key<ContextRecord>.Empty,
 					typeof(TextEditorViewModelDisplay),
-					TextEditorPolymorphicViewModel.GetTitle())
+					new Dictionary<string, object?>
 					{
-						ParameterMap = TextEditorPolymorphicViewModel.DialogViewModel.ParameterMap
-					},
+						{
+							nameof(TextEditorViewModelDisplay.TextEditorViewModelKey),
+							ViewModelKey
+						},
+					}),
 				true));
 
 			return Task.CompletedTask;
@@ -269,40 +362,31 @@ public record TextEditorViewModel  : ITextEditorTab, IPanelTab, IDialog, IDrag, 
 		}
 	}
 
-	public async Task<ImmutableArray<IDropzoneViewModel>> GetDropzonesAsync()
+	public async Task<ImmutableArray<IDropzone>> GetDropzonesAsync()
 	{
-		if (TextEditorPolymorphicViewModel.TextEditorService is null)
-			return ImmutableArray<IDropzoneViewModel>.Empty;
+		if (TextEditorService is null)
+			return ImmutableArray<IDropzone>.Empty;
 
-		if (TextEditorPolymorphicViewModel.ActiveViewModelType == typeof(ITabViewModel))
+		if (TabGroup is not null)
 		{
-			RendererType = typeof(TabDisplay);
-
-			ParameterMap = new Dictionary<string, object?>
-			{
-				{
-					nameof(TabDisplay.TabViewModel),
-					PolymorphicViewModel.TabViewModel
-				},
-				{
-					nameof(TabDisplay.IsBeingDragged),
-					true
-				}
-			};
+			// TODO: Setup the component that renders while dragging
+			//
+			// throw new NotImplementedException();
 		}
-		else if (TextEditorPolymorphicViewModel.ActiveViewModelType == typeof(IDialogViewModel))
+		else
 		{
-			RendererType = null;
-			ParameterMap = null;
+			// TODO: Setup the component that renders while dragging
+			//
+			// throw new NotImplementedException();
 		}
 
-		var dropzoneList = new List<IDropzoneViewModel>();
+		var dropzoneList = new List<IDropzone>();
 		AddFallbackDropzone(dropzoneList);
 		await AddPanelDropzonesAsync(dropzoneList);
 
-		var measuredHtmlElementDimensions = await TextEditorPolymorphicViewModel.JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
+		var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
             "luthetusIde.measureElementById",
-            $"luth_te_group_{TextEditorPolymorphicViewModel.TextEditorGroup.GroupKey.Guid}");
+            $"luth_te_group_{TextEditorService.GroupStateWrap.Value.GroupList.Single().GroupKey.Guid}");
 	
 		measuredHtmlElementDimensions = measuredHtmlElementDimensions with
 		{
@@ -365,19 +449,17 @@ public record TextEditorViewModel  : ITextEditorTab, IPanelTab, IDialog, IDrag, 
             });
 		}
 
-		dropzoneList.Add(new TextEditorDropzoneViewModel(
+		dropzoneList.Add(new TextEditorGroupDropzone(
 			measuredHtmlElementDimensions,
-			elementDimensions,
-			TextEditorPolymorphicViewModel.TextEditorGroup.GroupKey,
-			null,
-			TextEditorPolymorphicViewModel));
+			TextEditorService.GroupStateWrap.Value.GroupList.Single().GroupKey,
+			elementDimensions));
 
 		var result = dropzoneList.ToImmutableArray();
-		DropzoneViewModelList = result;
+		DropzoneList = result;
 		return result;
 	}
 
-	private async Task AddPanelDropzonesAsync(List<IDropzoneViewModel> dropzoneList)
+	private async Task AddPanelDropzonesAsync(List<IDropzone> dropzoneList)
 	{
 		var panelGroupHtmlIdTupleList = new (Key<PanelGroup> PanelGroupKey, string HtmlElementId)[]
 		{
@@ -388,7 +470,7 @@ public record TextEditorViewModel  : ITextEditorTab, IPanelTab, IDialog, IDrag, 
 
 		foreach (var panelGroupHtmlIdTuple in panelGroupHtmlIdTupleList)
 		{
-			var measuredHtmlElementDimensions = await TextEditorPolymorphicViewModel.JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
+			var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
 	            "luthetusIde.measureElementById",
 	            panelGroupHtmlIdTuple.HtmlElementId);
 	
@@ -453,20 +535,14 @@ public record TextEditorViewModel  : ITextEditorTab, IPanelTab, IDialog, IDrag, 
 	            });
 			}
 	
-			dropzoneList.Add(new PanelDropzoneViewModel(
-				panelGroupHtmlIdTuple.PanelGroupKey,
-				TextEditorPolymorphicViewModel.PanelsStateWrap,
-				TextEditorPolymorphicViewModel.Dispatcher,
-				TextEditorPolymorphicViewModel.DialogService,
-				TextEditorPolymorphicViewModel.JsRuntime,
+			dropzoneList.Add(new PanelGroupDropzone(
 				measuredHtmlElementDimensions,
-				elementDimensions,
-				null,
-				PolymorphicViewModel));
+				panelGroupHtmlIdTuple.PanelGroupKey,
+				elementDimensions));
 		}
 	}
 
-	private void AddFallbackDropzone(List<IDropzoneViewModel> dropzoneList)
+	private void AddFallbackDropzone(List<IDropzone> dropzoneList)
 	{
 		var fallbackElementDimensions = new ElementDimensions();
 
@@ -524,16 +600,39 @@ public record TextEditorViewModel  : ITextEditorTab, IPanelTab, IDialog, IDrag, 
             });
 		}
 
-		dropzoneList.Add(new TextEditorDropzoneViewModel(
+		dropzoneList.Add(new TextEditorGroupDropzone(
 			new MeasuredHtmlElementDimensions(0, 0, 0, 0, 0),
-			fallbackElementDimensions,
-			null,
-			"luth_dropzone-fallback",
-			TextEditorPolymorphicViewModel));
+			Key<TextEditorGroup>.Empty,
+			fallbackElementDimensions));
 	}
 
     public void Dispose()
     {
         DisplayTracker.Dispose();
     }
+
+	public IDialog SetIsMaximized(bool isMaximized)
+	{
+		throw new NotImplementedException();
+	}
+
+	public IDialog SetParameterMap(Dictionary<string, object?>? componentParameterMap)
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task OnDragStartAsync(MouseEventArgs mouseEventArgs)
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task OnDragEndAsync(MouseEventArgs mouseEventArgs, IDropzone? dropzone)
+	{
+		throw new NotImplementedException();
+	}
+
+	Task<ImmutableArray<IDropzone>> IDrag.GetDropzonesAsync()
+	{
+		throw new NotImplementedException();
+	}
 }

@@ -2,25 +2,27 @@
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
 
-namespace Luthetus.Common.RazorLib.Panels.Models;
+namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-public class PanelGroupDropzone : IDropzone
+public class TextEditorGroupDropzone : IDropzone
 {
-	public PanelGroupDropzone(
+	public TextEditorGroupDropzone(
 		MeasuredHtmlElementDimensions measuredHtmlElementDimensions,
-		Key<PanelGroup> panelGroupKey,
+		Key<TextEditorGroup> textEditorGroupKey,
 		ElementDimensions elementDimensions)
 	{
 		MeasuredHtmlElementDimensions = measuredHtmlElementDimensions;
-		PanelGroupKey = panelGroupKey;
+		TextEditorGroupKey = textEditorGroupKey;
 		ElementDimensions = elementDimensions;
 	}
 
 	public MeasuredHtmlElementDimensions MeasuredHtmlElementDimensions { get; }
-    public Key<PanelGroup> PanelGroupKey { get; }
+	public Key<TextEditorGroup> TextEditorGroupKey { get; }
 	public Key<IDropzone> DropzoneKey { get; }
 	public ElementDimensions ElementDimensions { get; }
 	public string CssClass { get; }
 	public string CssStyle { get; }
 }
+
