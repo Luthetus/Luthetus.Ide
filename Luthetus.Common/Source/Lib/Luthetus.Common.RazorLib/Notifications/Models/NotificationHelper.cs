@@ -1,5 +1,6 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.States;
 
@@ -15,7 +16,7 @@ public static class NotificationHelper
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationInformative = new NotificationViewModel(
-            Key<INotificationViewModel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
             title,
             luthetusCommonComponentRenderers.InformativeNotificationRendererType,
             new Dictionary<string, object?>
@@ -27,8 +28,7 @@ public static class NotificationHelper
             },
             notificationOverlayLifespan,
             true,
-            null,
-			null);
+            null);
 
         dispatcher.Dispatch(new NotificationState.RegisterAction(notificationInformative));
     }
@@ -40,7 +40,7 @@ public static class NotificationHelper
         IDispatcher dispatcher,
         TimeSpan? notificationOverlayLifespan)
     {
-        var notificationError = new NotificationViewModel(Key<INotificationViewModel>.NewKey(),
+        var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
             luthetusCommonComponentRenderers.ErrorNotificationRendererType,
             new Dictionary<string, object?>
@@ -49,8 +49,7 @@ public static class NotificationHelper
             },
             notificationOverlayLifespan,
             true,
-            IErrorNotificationRendererType.CSS_CLASS_STRING,
-			null);
+            IErrorNotificationRendererType.CSS_CLASS_STRING);
 
         dispatcher.Dispatch(new NotificationState.RegisterAction(notificationError));
     }
@@ -72,7 +71,7 @@ public static class NotificationHelper
         IDispatcher dispatcher,
         TimeSpan? notificationOverlayLifespan)
     {
-        var notificationError = new NotificationViewModel(Key<INotificationViewModel>.NewKey(),
+        var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
             luthetusCommonComponentRenderers.ErrorNotificationRendererType,
             new Dictionary<string, object?>
@@ -81,8 +80,7 @@ public static class NotificationHelper
             },
             notificationOverlayLifespan,
             true,
-            IErrorNotificationRendererType.CSS_CLASS_STRING,
-			null);
+            IErrorNotificationRendererType.CSS_CLASS_STRING);
 
         dispatcher.Dispatch(new NotificationState.RegisterAction(notificationError));
     }

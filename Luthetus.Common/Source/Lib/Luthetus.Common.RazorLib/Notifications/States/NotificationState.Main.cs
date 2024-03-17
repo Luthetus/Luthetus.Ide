@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 using Fluxor;
-using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Notifications.States;
 
@@ -11,16 +11,16 @@ namespace Luthetus.Common.RazorLib.Notifications.States;
 /// </summary>
 [FeatureState]
 public partial record NotificationState(
-    ImmutableList<INotificationViewModel> DefaultList,
-    ImmutableList<INotificationViewModel> ReadList,
-    ImmutableList<INotificationViewModel> ArchivedList,
-    ImmutableList<INotificationViewModel> DeletedList)
+    ImmutableList<INotification> DefaultList,
+    ImmutableList<INotification> ReadList,
+    ImmutableList<INotification> ArchivedList,
+    ImmutableList<INotification> DeletedList)
 {
     public NotificationState() : this(
-        ImmutableList<INotificationViewModel>.Empty,
-        ImmutableList<INotificationViewModel>.Empty,
-        ImmutableList<INotificationViewModel>.Empty,
-        ImmutableList<INotificationViewModel>.Empty)
+        ImmutableList<INotification>.Empty,
+        ImmutableList<INotification>.Empty,
+        ImmutableList<INotification>.Empty,
+        ImmutableList<INotification>.Empty)
     {
         
     }

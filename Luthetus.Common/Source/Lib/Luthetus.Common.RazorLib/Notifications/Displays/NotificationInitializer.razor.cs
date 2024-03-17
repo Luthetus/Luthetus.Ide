@@ -29,7 +29,7 @@ public partial class NotificationInitializer : FluxorComponent
 
             foreach (var notification in notificationState.DefaultList)
             {
-                Dispatcher.Dispatch(new NotificationState.DisposeAction(notification.Key));
+                Dispatcher.Dispatch(new NotificationState.DisposeAction(notification.DynamicViewModelKey));
             }
         }
 

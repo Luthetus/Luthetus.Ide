@@ -8,7 +8,7 @@ public interface IBackgroundTaskQueue
     public Key<BackgroundTaskQueue> Key { get; }
     public string DisplayName { get; }
     public int CountOfBackgroundTasks { get; }
-	public ImmutableArray<IBackgroundTask> ThrottleEventList { get; }
+	public ImmutableArray<IBackgroundTask> BackgroundTasks { get; }
     public IBackgroundTask? ExecutingBackgroundTask { get; }
 
     public event Action? ExecutingBackgroundTaskChanged;

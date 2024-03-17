@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Components.Web;
+
 namespace Luthetus.Common.RazorLib.Dynamics.Models;
 
 public interface ITabGroup

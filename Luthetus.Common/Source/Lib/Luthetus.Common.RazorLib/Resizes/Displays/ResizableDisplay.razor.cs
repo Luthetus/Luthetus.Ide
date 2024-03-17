@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Resizes.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Resizes.Displays;
 
@@ -21,7 +21,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
     public Func<Task> ReRenderFuncAsync { get; set; } = null!;
 
 	[Parameter]
-    public IPolymorphicViewModel PolymorphicViewModel { get; set; } = null!;
+    public IDrag? Drag { get; set; } = null!;
 
     public const double RESIZE_HANDLE_SQUARE_PIXELS = 10;
 
@@ -74,13 +74,14 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
     {
         _dragEventHandler = dragEventHandler;
 
-		PolymorphicViewModel.DraggableViewModel.GetDropzonesAsync();
+        if (Drag is not null)
+            Drag.GetDropzonesAsync();
 
         Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
         {
             ShouldDisplay = true,
             MouseEventArgs = null,
-			DraggableViewModel = PolymorphicViewModel.DraggableViewModel,
+			Drag = Drag,
         }));
     }
 

@@ -1,5 +1,6 @@
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
@@ -26,7 +27,7 @@ public class PanelTests
             PanelFacts.LeftPanelRecordKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
-            ImmutableArray<Panel>.Empty);
+            ImmutableArray<IPanelTab>.Empty);
 
         var leftPanelGroupWidth = samplePanelGroup.ElementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
@@ -47,35 +48,26 @@ public class PanelTests
         });
 
         var key = Key<Panel>.NewKey();
+        var dynamicViewModelKey = Key<IDynamicViewModel>.NewKey();
         var elementDimensions = samplePanelGroup.ElementDimensions;
         var beingDraggedDimensions = new ElementDimensions();
         var contentRendererType = typeof(IconCSharpClass);
-        var iconRendererType = typeof(IconFolder);
         var displayName = "Solution Explorer";
-        var isBeingDragged = false;
         var contextRecordKey = ContextFacts.SolutionExplorerContext.ContextKey;
 
         var samplePanel = new Panel(
-            key,
-            elementDimensions,
-            beingDraggedDimensions,
-            // Awkwardly need to provide a type here. Will provide an Icon but this usually
-            // would be more along the lines of "typeof(SolutionExplorerDisplay)"
-            contentRendererType,
-            iconRendererType,
-            displayName)
-        {
-            IsBeingDragged = isBeingDragged,
-            ContextRecordKey = contextRecordKey,
-        };
+			displayName,
+			key,
+			dynamicViewModelKey,
+			contextRecordKey,
+			contentRendererType,
+            new());
 
         Assert.Equal(key, samplePanel.Key);
+        Assert.Equal(dynamicViewModelKey, samplePanel.DynamicViewModelKey);
         Assert.Equal(elementDimensions, samplePanel.ElementDimensions);
-        Assert.Equal(beingDraggedDimensions, samplePanel.BeingDraggedDimensions);
-        Assert.Equal(contentRendererType, samplePanel.ContentRendererType);
-        Assert.Equal(iconRendererType, samplePanel.IconRendererType);
-        Assert.Equal(displayName, samplePanel.DisplayName);
-        Assert.Equal(isBeingDragged, samplePanel.IsBeingDragged);
+        Assert.Equal(contentRendererType, samplePanel.ComponentType);
+        Assert.Equal(displayName, samplePanel.Title);
         Assert.Equal(contextRecordKey, samplePanel.ContextRecordKey);
     }
 }

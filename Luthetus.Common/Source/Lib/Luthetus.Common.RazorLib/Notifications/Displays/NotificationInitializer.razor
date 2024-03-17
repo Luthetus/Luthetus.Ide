@@ -7,7 +7,7 @@
     var index = i;
     var notification = notificationState.DefaultList[index];
     
-    <NotificationDisplay @key="notification.Key" 
-                         NotificationRecord="notification"
+    <NotificationDisplay @key="notification.DynamicViewModelKey" 
+                         Notification="notification"
                          Index="index"/>
 }

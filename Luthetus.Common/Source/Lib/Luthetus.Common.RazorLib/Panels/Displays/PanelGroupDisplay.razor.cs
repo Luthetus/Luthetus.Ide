@@ -6,13 +6,11 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.Common.RazorLib.Tabs.Models;
-using Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
-using Luthetus.Common.RazorLib.PolymorphicViewModels.States;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Panels.Displays;
 
@@ -22,8 +20,6 @@ public partial class PanelGroupDisplay : FluxorComponent
     private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-	[Inject]
-    private IState<PolymorphicViewModelState> PolymorphicViewModelStateWrap { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
     [Inject]
@@ -55,44 +51,17 @@ public partial class PanelGroupDisplay : FluxorComponent
         await base.OnAfterRenderAsync(firstRender);
     }
 
-	private ImmutableArray<ITabViewModel> GetTabList(PanelGroup panelGroup)
+	private ImmutableArray<IPanelTab> GetTabList(PanelGroup panelGroup)
 	{
-		var polymorphicViewModelState = PolymorphicViewModelStateWrap.Value;
-		var tabViewModelList = new List<ITabViewModel>();
+		var tabList = new List<IPanelTab>();
 
-		foreach (var panel in panelGroup.TabList)
+		foreach (var panelTab in panelGroup.TabList)
 		{
-			panel.PanelGroup = panelGroup;
-
-			IPolymorphicViewModel polymorphicViewModel;
-
-			if (!polymorphicViewModelState.Map.TryGetValue(panel.Key.Guid, out polymorphicViewModel) ||
-				polymorphicViewModel is null)
-			{
-				polymorphicViewModel = new PanelPolymorphicViewModel(
-					panel.Key,
-					PanelGroupKey,
-					PanelsStateWrap,
-					Dispatcher,
-					DialogService,
-					JsRuntime);
-
-				Dispatcher.Dispatch(new PolymorphicViewModelState.RegisterAction(
-					panel.Key.Guid,
-					polymorphicViewModel));
-			}
-
-			polymorphicViewModel.TabViewModel.ContainerDescriptor = "panel";
-
-			if (polymorphicViewModel.TabViewModel is IPanelContainableTab panelContainableTab)
-			{
-				panelContainableTab.Panel = panel;
-				panelContainableTab.PanelGroup = PanelsStateWrap.Value.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
-				tabViewModelList.Add(polymorphicViewModel.TabViewModel);
-			}
+            panelTab.TabGroup = panelGroup;
+			tabList.Add(panelTab);
 		}
 
-		return tabViewModelList.ToImmutableArray();
+		return tabList.ToImmutableArray();
 	}
 
     private string GetHtmlId()
@@ -158,7 +127,7 @@ public partial class PanelGroupDisplay : FluxorComponent
         }
     }
 
-    private string GetElementDimensionsStyleString(PanelGroup? panelGroup, Panel? activePanelTab)
+    private string GetElementDimensionsStyleString(PanelGroup? panelGroup, IPanelTab? activePanelTab)
     {
         if (activePanelTab is null)
         {

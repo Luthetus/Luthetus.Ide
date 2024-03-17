@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Fluxor;
 using Luthetus.Common.RazorLib.Notifications.Displays;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.Tests.Basis.Dialogs.Models;
 
@@ -56,11 +57,11 @@ public class DialogServiceTests
         Assert.NotEmpty(dialogService.DialogStateWrap.Value.DialogList);
         Assert.Single(dialogService.DialogStateWrap.Value.DialogList);
 
-        Assert.False(dialogRecord.IsMaximized);
-        dialogService.SetDialogRecordIsMaximized(dialogRecord.Key, true);
+        Assert.False(dialogRecord.DialogIsMaximized);
+        dialogService.SetDialogRecordIsMaximized(dialogRecord.DynamicViewModelKey, true);
 
         dialogRecord = dialogService.DialogStateWrap.Value.DialogList.Single();
-        Assert.True(dialogRecord.IsMaximized);
+        Assert.True(dialogRecord.DialogIsMaximized);
     }
 
     /// <summary>
@@ -78,14 +79,14 @@ public class DialogServiceTests
         Assert.NotEmpty(dialogService.DialogStateWrap.Value.DialogList);
         Assert.Contains(dialogService.DialogStateWrap.Value.DialogList, x => x == dialogRecord);
 
-        dialogService.DisposeDialogRecord(dialogRecord.Key);
+        dialogService.DisposeDialogRecord(dialogRecord.DynamicViewModelKey);
         
         Assert.Empty(dialogService.DialogStateWrap.Value.DialogList);
     }
 
     private void InitializeDialogServiceTests(
         out IDialogService dialogService,
-        out DialogRecord sampleDialogRecord,
+        out IDialog sampleDialogRecord,
         out ServiceProvider serviceProvider)
     {
         var services = new ServiceCollection()
@@ -99,7 +100,7 @@ public class DialogServiceTests
 
         dialogService = serviceProvider.GetRequiredService<IDialogService>();
 
-        sampleDialogRecord = new DialogRecord(Key<DialogRecord>.NewKey(), "Test title",
+        sampleDialogRecord = new DialogViewModel(Key<IDynamicViewModel>.NewKey(), "Test title",
             typeof(CommonInformativeNotificationDisplay),
             new Dictionary<string, object?>
             {
@@ -108,6 +109,7 @@ public class DialogServiceTests
                     "Test message"
                 }
             },
-            null);
+            null,
+            true);
     }
 }

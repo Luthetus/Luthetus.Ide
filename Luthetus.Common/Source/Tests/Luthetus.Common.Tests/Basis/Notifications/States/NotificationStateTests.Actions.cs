@@ -1,4 +1,5 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+﻿using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Notifications.States;
@@ -30,8 +31,8 @@ public class NotificationStateActionsTests
     {
         InitializeNotificationStateActionsTests(out var notificationRecord);
 
-        var disposeAction = new NotificationState.DisposeAction(notificationRecord.Key);
-        Assert.Equal(notificationRecord.Key, disposeAction.Key);
+        var disposeAction = new NotificationState.DisposeAction(notificationRecord.DynamicViewModelKey);
+        Assert.Equal(notificationRecord.DynamicViewModelKey, disposeAction.Key);
     }
 
     /// <summary>
@@ -42,8 +43,8 @@ public class NotificationStateActionsTests
     {
         InitializeNotificationStateActionsTests(out var notificationRecord);
 
-        var makeReadAction = new NotificationState.MakeReadAction(notificationRecord.Key);
-        Assert.Equal(notificationRecord.Key, makeReadAction.Key);
+        var makeReadAction = new NotificationState.MakeReadAction(notificationRecord.DynamicViewModelKey);
+        Assert.Equal(notificationRecord.DynamicViewModelKey, makeReadAction.Key);
     }
 
     /// <summary>
@@ -54,8 +55,8 @@ public class NotificationStateActionsTests
     {
         InitializeNotificationStateActionsTests(out var notificationRecord);
 
-        var undoMakeReadAction = new NotificationState.UndoMakeReadAction(notificationRecord.Key);
-        Assert.Equal(notificationRecord.Key, undoMakeReadAction.Key);
+        var undoMakeReadAction = new NotificationState.UndoMakeReadAction(notificationRecord.DynamicViewModelKey);
+        Assert.Equal(notificationRecord.DynamicViewModelKey, undoMakeReadAction.Key);
     }
 
     /// <summary>
@@ -66,8 +67,8 @@ public class NotificationStateActionsTests
     {
         InitializeNotificationStateActionsTests(out var notificationRecord);
 
-        var makeDeletedAction = new NotificationState.MakeDeletedAction(notificationRecord.Key);
-        Assert.Equal(notificationRecord.Key, makeDeletedAction.Key);
+        var makeDeletedAction = new NotificationState.MakeDeletedAction(notificationRecord.DynamicViewModelKey);
+        Assert.Equal(notificationRecord.DynamicViewModelKey, makeDeletedAction.Key);
     }
 
     /// <summary>
@@ -78,8 +79,8 @@ public class NotificationStateActionsTests
     {
         InitializeNotificationStateActionsTests(out var notificationRecord);
 
-        var undoMakeDeletedAction = new NotificationState.UndoMakeDeletedAction(notificationRecord.Key);
-        Assert.Equal(notificationRecord.Key, undoMakeDeletedAction.Key);
+        var undoMakeDeletedAction = new NotificationState.UndoMakeDeletedAction(notificationRecord.DynamicViewModelKey);
+        Assert.Equal(notificationRecord.DynamicViewModelKey, undoMakeDeletedAction.Key);
     }
 
     /// <summary>
@@ -90,8 +91,8 @@ public class NotificationStateActionsTests
     {
         InitializeNotificationStateActionsTests(out var notificationRecord);
 
-        var makeArchivedAction = new NotificationState.MakeArchivedAction(notificationRecord.Key);
-        Assert.Equal(notificationRecord.Key, makeArchivedAction.Key);
+        var makeArchivedAction = new NotificationState.MakeArchivedAction(notificationRecord.DynamicViewModelKey);
+        Assert.Equal(notificationRecord.DynamicViewModelKey, makeArchivedAction.Key);
     }
 
     /// <summary>
@@ -102,8 +103,8 @@ public class NotificationStateActionsTests
     {
         InitializeNotificationStateActionsTests(out var notificationRecord);
 
-        var undoMakeArchivedAction = new NotificationState.UndoMakeArchivedAction(notificationRecord.Key);
-        Assert.Equal(notificationRecord.Key, undoMakeArchivedAction.Key);
+        var undoMakeArchivedAction = new NotificationState.UndoMakeArchivedAction(notificationRecord.DynamicViewModelKey);
+        Assert.Equal(notificationRecord.DynamicViewModelKey, undoMakeArchivedAction.Key);
     }
 
     /// <summary>
@@ -155,10 +156,10 @@ public class NotificationStateActionsTests
     }
 
     private void InitializeNotificationStateActionsTests(
-        out NotificationRecord sampleNotificationRecord)
+        out INotification sampleNotificationRecord)
     {
-        sampleNotificationRecord = new NotificationRecord(
-            Key<NotificationRecord>.NewKey(),
+        sampleNotificationRecord = new NotificationViewModel(
+            Key<IDynamicViewModel>.NewKey(),
             "Test title",
             typeof(CommonInformativeNotificationDisplay),
             new Dictionary<string, object?>

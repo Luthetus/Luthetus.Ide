@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Drags.Displays;
 
@@ -24,7 +25,7 @@ public partial class DragInitializer : FluxorComponent
     /// </summary>
     private IThrottle _throttleDispatchSetDragStateActionOnMouseMove = new Throttle(IThrottle.DefaultThrottleTimeSpan);
 
-	private IDropzoneViewModel? _onMouseOverDropzone = null;
+	private IDropzone? _onMouseOverDropzone = null;
 
     private DragState.WithAction ConstructClearDragStateAction()
     {
@@ -34,7 +35,7 @@ public partial class DragInitializer : FluxorComponent
         {
             ShouldDisplay = false,
             MouseEventArgs = null,
-			DraggableViewModel = null,
+			Drag = null,
         });
     }
 
@@ -68,20 +69,20 @@ public partial class DragInitializer : FluxorComponent
         {
             Dispatcher.Dispatch(ConstructClearDragStateAction());
 
-			var draggableViewModel = dragState.DraggableViewModel;
+			var draggableViewModel = dragState.Drag;
 			if (draggableViewModel is not null)
-				await draggableViewModel.OnDragStopAsync(mouseEventArgs, localOnMouseOverDropzone);
+				await draggableViewModel.OnDragEndAsync(mouseEventArgs, localOnMouseOverDropzone);
         });
 
 		return Task.CompletedTask;
     }
 
-	private string GetIsActiveCssClass(IDropzoneViewModel dropzone)
+	private string GetIsActiveCssClass(IDropzone dropzone)
 	{
-		var onMouseOverDropzoneKey = _onMouseOverDropzone?.Key ?? Key<IDropzoneViewModel>.Empty;
+		var onMouseOverDropzoneKey = _onMouseOverDropzone?.DropzoneKey ?? Key<IDropzone>.Empty;
 
-		return onMouseOverDropzoneKey == dropzone.Key
-			? "luth_active"
+		return onMouseOverDropzoneKey == dropzone.DropzoneKey
+            ? "luth_active"
 			: string.Empty;
 	}
 }

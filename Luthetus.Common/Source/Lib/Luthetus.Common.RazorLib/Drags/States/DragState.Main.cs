@@ -1,7 +1,6 @@
 using Fluxor;
 using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Immutable;
-using Luthetus.Common.RazorLib.Drags.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Drags.Displays;
 
@@ -9,7 +8,7 @@ namespace Luthetus.Common.RazorLib.Drags.Displays;
 public partial record DragState(
     bool ShouldDisplay,
     MouseEventArgs? MouseEventArgs,
-	IDraggableViewModel? DraggableViewModel)
+	IDrag? Drag)
 {
     public DragState() : this (false, null, null)
     {

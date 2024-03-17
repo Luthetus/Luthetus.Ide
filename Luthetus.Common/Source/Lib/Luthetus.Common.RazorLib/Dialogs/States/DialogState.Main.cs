@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.Dialogs.States;
@@ -10,10 +11,10 @@ public partial record DialogState
 {
     public DialogState()
     {
-        DialogList = ImmutableList<IDialogViewModel>.Empty;
+        DialogList = ImmutableList<IDialog>.Empty;
     }
 
-    public ImmutableList<IDialogViewModel> DialogList { get; init; }
+    public ImmutableList<IDialog> DialogList { get; init; }
     /// <summary>
     /// The active dialog is either:<br/><br/>
     /// -the one which has focus within it,<br/>
@@ -25,5 +26,5 @@ public partial record DialogState
     /// dialogs is hidden by the other. To be able to 'bring to front'
     /// the dialog one is interested in by setting focus to it, is useful.
     /// </summary>
-    public Key<IDialogViewModel> ActiveDialogKey { get; init; }
+    public Key<IDynamicViewModel> ActiveDialogKey { get; init; }
 }

@@ -1,4 +1,5 @@
 @using Fluxor.Blazor.Web.Components;
+@using Luthetus.Common.RazorLib.Dynamics.Models
 @using Luthetus.Common.RazorLib.Notifications.Models;
 @using System.Collections.Immutable;
 
@@ -40,7 +41,7 @@
 
     <div class="luth_web_notifications-view-body">
         @{
-            var entriesToRenderList = ImmutableList<INotificationViewModel>.Empty;
+            var entriesToRenderList = ImmutableList<INotification>.Empty;
             var clearOnClick = new Action(() => { });
 
             switch (_chosenNotificationsViewKind)
@@ -70,12 +71,12 @@
 
             foreach (var entry in entriesToRenderList)
             {
-                <div @key="entry.Key"
+                <div @key="entry.DynamicViewModelKey"
                      class="luth_web_notifications-view-body-entry">
                     
                     <CascadingValue Value="entry">
-                        <DynamicComponent Type="entry.RendererType"
-                                          Parameters="entry.ParameterMap" />
+                        <DynamicComponent Type="entry.ComponentType"
+                                          Parameters="entry.ComponentParameterMap" />
                     </CascadingValue>
                 </div>
 

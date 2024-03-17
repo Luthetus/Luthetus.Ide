@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.Common.RazorLib.Notifications.Models;
@@ -71,8 +72,8 @@ public class NotificationServiceTests
 
         Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultList);
 
-        var notificationRecord = new NotificationRecord(
-            Key<NotificationRecord>.NewKey(),
+        var notificationRecord = new NotificationViewModel(
+            Key<IDynamicViewModel>.NewKey(),
             "Test",
             typeof(CommonInformativeNotificationDisplay),
             new Dictionary<string, object?>
@@ -113,8 +114,8 @@ public class NotificationServiceTests
 
         Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultList);
 
-        var notificationRecord = new NotificationRecord(
-            Key<NotificationRecord>.NewKey(),
+        var notificationRecord = new NotificationViewModel(
+            Key<IDynamicViewModel>.NewKey(),
             "Test",
             typeof(CommonInformativeNotificationDisplay),
             new Dictionary<string, object?>
@@ -135,7 +136,7 @@ public class NotificationServiceTests
         Assert.Contains(notificationService.NotificationStateWrap.Value.DefaultList,
             x => x == notificationRecord);
 
-        notificationService.DisposeNotificationRecord(notificationRecord.Key);
+        notificationService.DisposeNotificationRecord(notificationRecord.DynamicViewModelKey);
 
         Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultList);
     }

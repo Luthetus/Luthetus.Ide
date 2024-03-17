@@ -1059,7 +1059,7 @@ public class ResizeHelperTests
 
     private void InitializeResizeHelperTests(out ElementDimensions elementDimensions)
     {
-        elementDimensions = DialogRecord.ConstructDefaultDialogDimensions();
+        elementDimensions = DialogHelper.ConstructDefaultElementDimensions();
 
         // Width
         {

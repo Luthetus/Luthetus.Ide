@@ -8,7 +8,7 @@
 
     var panelGroup = panelsState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
-    Panel? activePanelTab = null;
+    IPanelTab? activePanelTab = null;
 
     if (panelGroup is not null)
         activePanelTab = panelGroup.TabList.FirstOrDefault(x => x.Key == panelGroup.ActiveTabKey);
@@ -33,7 +33,7 @@
 			foreach (var panelTab in tabList)
             {
                 <TabDisplay @key="panelTab.Key"
-                            TabViewModel="panelTab"
+                            Tab="panelTab"
 							CssClassString="luth_ide_panel-tab"
 							CssStyleString=""
 							ShouldDisplayCloseButton="false" />
@@ -65,8 +65,8 @@
     <div class="luth_ide_panel-body">
         @if (activePanelTab is not null)
         {
-            <DynamicComponent Type="activePanelTab.ContentRendererType"
-                              Parameters="activePanelTab.ParameterMap"/>
+            <DynamicComponent Type="activePanelTab.ComponentType"
+                              Parameters="activePanelTab.ComponentParameterMap" />
         }
     </div>
     

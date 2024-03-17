@@ -8,6 +8,7 @@ using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using Fluxor;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Panels.Models;
 
@@ -16,51 +17,75 @@ public record Panel : IPanelTab, IDialog, IDrag
 	public Panel(
 		string title,
 		Key<Panel> key,
-		Key<ContextRecord>? contextRecordKey,
+		Key<IDynamicViewModel> dynamicViewModelKey,
+		Key<ContextRecord> contextRecordKey,
 		Type componentType,
 		Dictionary<string, object?>? componentParameterMap)
 	{
 		Title = title;
 		Key = key;
+		DynamicViewModelKey = dynamicViewModelKey;
 		ContextRecordKey = contextRecordKey;
 		ComponentType = componentType;
 		ComponentParameterMap = componentParameterMap;
 	}
 
-	public string Title { get; }
+    public string Title { get; }
 	public Key<Panel> Key { get; }
+	public Key<IDynamicViewModel> DynamicViewModelKey { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
+	public IDispatcher Dispatcher { get; set; }
+    public IDialogService DialogService { get; set; }
+    public JSRuntime JsRuntime { get; set; }
 	public Type ComponentType { get; }
-	public Dictionary<string, object?>? ComponentParameterMap { get; }
+	public Dictionary<string, object?>? ComponentParameterMap { get; set; }
 	public string? CssClass { get; }
 	public string? CssStyle { get; }
-
 	public ITabGroup? TabGroup { get; set; }
+    string? IDynamicViewModel.CssClass { get; set; }
+    string? IDynamicViewModel.CssStyle { get; set; }
 
-	public Task OnDragStopAsync(MouseEventArgs mouseEventArgs, IDropzoneViewModel? dropzone)
+    public bool DialogIsMinimized { get; set; }
+    public bool DialogIsMaximized { get; set; }
+    public bool DialogIsResizable { get; set; }
+    public string DialogFocusPointHtmlElementId { get; set; }
+    public ElementDimensions ElementDimensions { get; set; }
+
+	public ImmutableArray<IDropzone> DropzoneList { get; set; } = new();
+
+	public IDialog SetParameterMap(Dictionary<string, object?>? componentParameterMap)
 	{
-		if (dropzone is not PanelDropzoneViewModel panelDropzone)
-			return Task.CompletedTask;
-		
-		var panelGroup = GetPanelGroup();
-		var panel = GetPanel(panelGroup);
-		
-		if (panelGroup is null || panel is null)
+		ComponentParameterMap = componentParameterMap;
+		return this;
+	}
+
+	public IDialog SetIsMaximized(bool isMaximized)
+	{
+		DialogIsMaximized = isMaximized;
+		return this;
+	}
+
+	public Task OnDragStopAsync(MouseEventArgs mouseEventArgs, IDropzone? dropzone)
+	{
+		if (TabGroup is not PanelGroup panelGroup)
 			return Task.CompletedTask;
 
-		if (panelDropzone.PanelGroupKey == Key<PanelGroup>.Empty)
+		if (dropzone is not PanelGroupDropzone panelGroupDropzone)
+			return Task.CompletedTask;
+		
+		if (panelGroupDropzone.PanelGroupKey == Key<PanelGroup>.Empty)
 		{
 			Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
-				PanelGroupKey,
-				PanelKey));
+				panelGroup.Key,
+				Key));
 
-			DialogService.RegisterDialogRecord(PolymorphicViewModel.DialogViewModel);
+			DialogService.RegisterDialogRecord(this);
 		}
 		else
 		{
 			Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
-				PanelGroupKey,
-				PanelKey));
+				panelGroup.Key,
+				Key));
 
 			var verticalHalfwayPoint = dropzone.MeasuredHtmlElementDimensions.TopInPixels +
 				(dropzone.MeasuredHtmlElementDimensions.HeightInPixels / 2);
@@ -70,17 +95,17 @@ public record Panel : IPanelTab, IDialog, IDrag
 				: false;
 
 			Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
-				panelDropzone.PanelGroupKey,
-				panel,
+				panelGroupDropzone.PanelGroupKey,
+				this,
 				insertAtIndexZero));
 		}
 
 		return Task.CompletedTask;
 	}
 
-	public async Task<ImmutableArray<IDropzoneViewModel>> GetDropzonesAsync()
+	public async Task<ImmutableArray<IDropzone>> GetDropzonesAsync()
 	{
-		var dropzoneList = new List<IDropzoneViewModel>();
+		var dropzoneList = new List<IDropzone>();
 		AddFallbackDropzone(dropzoneList);
 
 		var panelGroupHtmlIdTupleList = new (Key<PanelGroup> PanelGroupKey, string HtmlElementId)[]
@@ -157,24 +182,17 @@ public record Panel : IPanelTab, IDialog, IDrag
 	            });
 			}
 	
-			dropzoneList.Add(new PanelDropzoneViewModel(
-				panelGroupHtmlIdTuple.PanelGroupKey,
-				PanelsStateWrap,
-				Dispatcher,
-				DialogService,
-				JsRuntime,
+			dropzoneList.Add(new PanelGroupDropzone(
 				measuredHtmlElementDimensions,
-				elementDimensions,
-				null,
-				PolymorphicViewModel));
+				panelGroupHtmlIdTuple.PanelGroupKey));
 		}
 
 		var result = dropzoneList.ToImmutableArray();
-		DropzoneViewModelList = result;
+		DropzoneList = result;
 		return result;
 	}
 
-	private void AddFallbackDropzone(List<IDropzoneViewModel> dropzoneList)
+	private void AddFallbackDropzone(List<IDropzone> dropzoneList)
 	{
 		var fallbackElementDimensions = new ElementDimensions();
 
@@ -232,15 +250,18 @@ public record Panel : IPanelTab, IDialog, IDrag
             });
 		}
 
-		dropzoneList.Add(new PanelDropzoneViewModel(
-			Key<PanelGroup>.Empty,
-			PanelsStateWrap,
-			Dispatcher,
-			DialogService,
-			JsRuntime,
+		dropzoneList.Add(new PanelGroupDropzone(
 			new MeasuredHtmlElementDimensions(0, 0, 0, 0, 0),
-			fallbackElementDimensions,
-			"luth_dropzone-fallback",
-			PolymorphicViewModel));
+			Key<PanelGroup>.Empty));
 	}
+
+    public Task OnDragStartAsync(MouseEventArgs mouseEventArgs)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task OnDragEndAsync(MouseEventArgs mouseEventArgs, IDropzone? dropzone)
+    {
+        throw new NotImplementedException();
+    }
 }

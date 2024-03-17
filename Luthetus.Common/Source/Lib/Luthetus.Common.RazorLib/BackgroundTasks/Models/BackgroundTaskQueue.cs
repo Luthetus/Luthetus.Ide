@@ -99,7 +99,7 @@ public class BackgroundTaskQueue : IBackgroundTaskQueue
 
     public int CountOfBackgroundTasks => _backgroundTasks.Count;
 
-	public ImmutableArray<IBackgroundTask> ThrottleEventList => _backgroundTasks.ThrottleEventList;
+	public ImmutableArray<IBackgroundTask> BackgroundTasks => _backgroundTasks.ThrottleEventList;
 
     public event Action? ExecutingBackgroundTaskChanged;
 

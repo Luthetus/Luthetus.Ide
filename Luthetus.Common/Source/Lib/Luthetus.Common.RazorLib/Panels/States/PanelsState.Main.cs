@@ -29,7 +29,7 @@ public partial record PanelsState(
         }.ToImmutableArray();
     }
 
-    public (Panel PanelTab, PanelGroup PanelGroup)? DragEventArgs { get; set; }
+    public (IPanelTab PanelTab, PanelGroup PanelGroup)? DragEventArgs { get; set; }
 
     private static PanelGroup ConstructTopLeftGroup()
     {
@@ -37,7 +37,7 @@ public partial record PanelsState(
             PanelFacts.LeftPanelRecordKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
-            ImmutableArray<Panel>.Empty);
+            ImmutableArray<IPanelTab>.Empty);
 
         var leftPanelGroupWidth = leftPanelGroup.ElementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
@@ -66,7 +66,7 @@ public partial record PanelsState(
             PanelFacts.RightPanelRecordKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
-            ImmutableArray<Panel>.Empty);
+            ImmutableArray<IPanelTab>.Empty);
 
         var rightPanelGroupWidth = rightPanelGroup.ElementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
@@ -95,7 +95,7 @@ public partial record PanelsState(
             PanelFacts.BottomPanelRecordKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
-            ImmutableArray<Panel>.Empty);
+            ImmutableArray<IPanelTab>.Empty);
 
         var bottomPanelGroupHeight = bottomPanelGroup.ElementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Height);

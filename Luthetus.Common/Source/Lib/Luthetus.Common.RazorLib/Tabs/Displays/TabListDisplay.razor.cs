@@ -1,4 +1,4 @@
-using Luthetus.Common.RazorLib.Tabs.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 

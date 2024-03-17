@@ -1,69 +1,69 @@
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
 
 namespace Luthetus.Common.RazorLib.Dialogs.Models;
 
-public record DialogViewModel : IDialogViewModel
+public record DialogViewModel : IDialog
 {
 	public DialogViewModel(
-		Key<IDialogViewModel> key,
+		Key<IDynamicViewModel> dynamicViewModelKey,
 		string title,
-		Type rendererType,
-		Dictionary<string, object?>? parameterMap,
-		string cssClassString,
-		bool isResizable,
-		IPolymorphicViewModel? polymorphicViewModel)
+		Type componentType,
+		Dictionary<string, object?>? componentParameterMap,
+		string cssClass,
+		bool isResizable)
 	{
-		Key = key;
+		DynamicViewModelKey = dynamicViewModelKey;
 		Title = title;
-		RendererType = rendererType;
-		ParameterMap = parameterMap;
-		CssClassString = cssClassString;
-		IsResizable = isResizable;
-		PolymorphicViewModel = polymorphicViewModel;
+        ComponentType = componentType;
+        ComponentParameterMap = componentParameterMap;
+        CssClass = cssClass;
+		DialogIsResizable = isResizable;
 	}
 
-	public IPolymorphicViewModel? PolymorphicViewModel { get; init; }
-	public Key<IDialogViewModel> Key { get; init; }
-	public Type RendererType { get; init; }
-	public Dictionary<string, object?>? ParameterMap { get; init; }
-	public ElementDimensions ElementDimensions { get; init; }
-    public string Title { get; init; }
-    public bool IsMinimized { get; init; }
-    public bool IsMaximized { get; init; }
-    public bool IsResizable { get; init; }
-    public string CssClassString { get; init; }
+	public Key<IDynamicViewModel> DynamicViewModelKey { get; }
+	public bool DialogIsMinimized { get; set; }
+    public bool DialogIsMaximized { get; set; }
+    public bool DialogIsResizable { get; set; }
+    public string DialogFocusPointHtmlElementId { get; set; }
+    public Key<IDialog> DialogKey { get; }
+    public ElementDimensions ElementDimensions { get; set; }
+    public string Title { get; set; }
+    public Type ComponentType { get; }
+    public Dictionary<string, object?>? ComponentParameterMap { get; init; }
+    public string CssClass { get; set; }
+    public string? CssStyle { get; set; }
 
-    public virtual string FocusPointHtmlElementId => $"luth_dialog-focus-point_{Key.Guid}";
+    public virtual string FocusPointHtmlElementId => $"luth_dialog-focus-point_{DynamicViewModelKey.Guid}";
 
-	public IDialogViewModel SetParameterMap(Dictionary<string, object?>? parameterMap)
+	public IDialog SetParameterMap(Dictionary<string, object?>? componentParameterMap)
 	{
-		return this with { ParameterMap = parameterMap };
+		return this with { ComponentParameterMap = componentParameterMap };
 	}
 
-	public IDialogViewModel SetTitle(string title)
+	public IDialog SetTitle(string title)
 	{
 		return this with { Title = title };
 	}
 
-	public IDialogViewModel SetIsMinimized(bool isMinimized)
+	public IDialog SetIsMinimized(bool isMinimized)
 	{
-		return this with { IsMinimized = isMinimized };
+		return this with { DialogIsMinimized = isMinimized };
 	}
 
-	public IDialogViewModel SetIsMaximized(bool isMaximized)
+	public IDialog SetIsMaximized(bool isMaximized)
 	{
-		return this with { IsMaximized = isMaximized };
+		return this with { DialogIsMaximized = isMaximized };
 	}
 
-	public IDialogViewModel SetIsResizable(bool isResizable)
+	public IDialog SetIsResizable(bool isResizable)
 	{
-		return this with { IsResizable = isResizable };
+		return this with { DialogIsResizable = isResizable };
 	}
 
-	public IDialogViewModel SetCssClassString(string cssClassString)
+	public IDialog SetCssClassString(string cssClassString)
 	{
-		return this with { CssClassString = cssClassString };
+		return this with { CssClass = cssClassString };
 	}
 }

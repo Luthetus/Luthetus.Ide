@@ -3,18 +3,15 @@ using Fluxor;
 using System.Collections.Immutable;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Tabs.Displays;
-using Luthetus.Common.RazorLib.Tabs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.Common.RazorLib.PolymorphicViewModels.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib.PolymorphicViewModels.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Groups.Displays;
 
@@ -24,8 +21,6 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     private IState<TextEditorGroupState> TextEditorGroupStateWrap { get; set; } = null!;
 	[Inject]
     private IState<TextEditorViewModelState> TextEditorViewModelStateWrap { get; set; } = null!;
-	[Inject]
-    private IState<PolymorphicViewModelState> PolymorphicViewModelStateWrap { get; set; } = null!;
 	[Inject]
     private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
     [Inject]
@@ -81,42 +76,23 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 			await _tabListDisplay.NotifyStateChangedAsync();
 	}
 
-	private ImmutableArray<ITabViewModel> GetPolymphoricUiList(TextEditorGroup textEditorGroup)
+	private ImmutableArray<ITab> GetPolymphoricUiList(TextEditorGroup textEditorGroup)
 	{
 		var viewModelState = TextEditorViewModelStateWrap.Value;
-		var polymorphicViewModelState = PolymorphicViewModelStateWrap.Value;
-		var polymorphicViewModelList = new List<ITabViewModel>();
+		var tabList = new List<ITab>();
 
 		foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
 		{
-			TextEditorPolymorphicViewModel textEditorPolymorphicViewModel;
-
-			if (polymorphicViewModelState.Map.TryGetValue(viewModelKey, out var polymorphicViewModel) &&
-				polymorphicViewModel is not null)
-			{
-				textEditorPolymorphicViewModel = (TextEditorPolymorphicViewModel)polymorphicViewModel;
+            var viewModel = viewModelState.ViewModelList.FirstOrDefault(x => x.ViewModelKey == viewModelKey);
+            if (viewModel is not null)
+            {
+                viewModel.TabGroup = textEditorGroup;
 			}
-			else
-			{
-				textEditorPolymorphicViewModel = new TextEditorPolymorphicViewModel(
-					viewModelKey,
-					textEditorGroup,
-					TextEditorService,
-					Dispatcher,
-					PanelsStateWrap,
-					DialogService,
-					JsRuntime);
-
-				Dispatcher.Dispatch(new PolymorphicViewModelState.RegisterAction(
-					viewModelKey.Guid,
-					textEditorPolymorphicViewModel));
-			}
-
 			textEditorPolymorphicViewModel.TabViewModel.ContainerDescriptor = "textEditor";
-			polymorphicViewModelList.Add(textEditorPolymorphicViewModel.TabViewModel);
+			tabList.Add(textEditorPolymorphicViewModel.TabViewModel);
 		}
 
-		return polymorphicViewModelList.ToImmutableArray();
+		return tabList.ToImmutableArray();
 	}
 
     public void Dispose()

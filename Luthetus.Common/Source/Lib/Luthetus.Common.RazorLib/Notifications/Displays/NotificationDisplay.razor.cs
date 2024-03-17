@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Notifications.Displays;
 
@@ -20,7 +21,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public INotificationViewModel NotificationViewModel  { get; set; } = null!;
+    public INotification Notification  { get; set; } = null!;
     [Parameter, EditorRequired]
     public int Index { get; set; }
 
@@ -32,7 +33,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     private const int COUNT_OF_CONTROL_BUTTONS = 2;
 
     private readonly CancellationTokenSource _notificationOverlayCancellationTokenSource = new();
-    private readonly Key<IDialogViewModel> _dialogKey = Key<IDialogViewModel>.NewKey();
+    private readonly Key<IDialog> _dialogKey = Key<IDialog>.NewKey();
 
     private string CssStyleString => GetCssStyleString();
 
@@ -60,9 +61,9 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     {
         if (firstRender)
         {
-            var notificationViewModel = NotificationViewModel;
+            var localNotification = Notification;
 
-            if (notificationViewModel.NotificationOverlayLifespan is not null)
+            if (localNotification.NotificationOverlayLifespan is not null)
             {
                 // ICommonBackgroundTaskQueue does not work well here because
                 // this Task does not need to be tracked.
@@ -71,7 +72,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
                     try
                     {
                         await Task.Delay(
-                            notificationViewModel.NotificationOverlayLifespan.Value,
+                            localNotification.NotificationOverlayLifespan.Value,
                             _notificationOverlayCancellationTokenSource.Token);
 
                         HandleShouldNoLongerRender();
@@ -130,7 +131,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 
     private void HandleShouldNoLongerRender()
     {
-        if (NotificationViewModel.DeleteNotificationAfterOverlayIsDismissed)
+        if (Notification.DeleteNotificationAfterOverlayIsDismissed)
             DeleteNotification();
         else
             MarkNotificationAsRead();
@@ -138,24 +139,23 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 
     private void DeleteNotification()
     {
-        Dispatcher.Dispatch(new NotificationState.MakeDeletedAction(NotificationViewModel.Key));
+        Dispatcher.Dispatch(new NotificationState.MakeDeletedAction(Notification.DynamicViewModelKey));
     }
 
     private void MarkNotificationAsRead()
     {
-        Dispatcher.Dispatch(new NotificationState.MakeReadAction(NotificationViewModel.Key));
+        Dispatcher.Dispatch(new NotificationState.MakeReadAction(Notification.DynamicViewModelKey));
     }
 
     private void ChangeNotificationToDialog()
     {
         var dialogRecord = new DialogViewModel(
-            _dialogKey,
-            NotificationViewModel.Title,
-            NotificationViewModel.RendererType,
-            NotificationViewModel.ParameterMap,
-            NotificationViewModel.CssClassString,
-			true,
-			NotificationViewModel.PolymorphicViewModel);
+			Notification.DynamicViewModelKey,
+            Notification.Title,
+            Notification.ComponentType,
+            Notification.ComponentParameterMap,
+            Notification.CssClass,
+			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
 

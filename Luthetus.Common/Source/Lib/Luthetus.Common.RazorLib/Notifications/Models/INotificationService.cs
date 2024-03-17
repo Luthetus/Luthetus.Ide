@@ -1,4 +1,5 @@
 using Fluxor;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.States;
 
@@ -12,6 +13,6 @@ public interface INotificationService
 {
     public IState<NotificationState> NotificationStateWrap { get; }
 
-    public void RegisterNotificationRecord(INotificationViewModel notificationViewModel);
-    public void DisposeNotificationRecord(Key<INotificationViewModel> notificationKey);
+    public void RegisterNotificationRecord(INotification notification);
+    public void DisposeNotificationRecord(Key<IDynamicViewModel> dynamicViewModelKey);
 }

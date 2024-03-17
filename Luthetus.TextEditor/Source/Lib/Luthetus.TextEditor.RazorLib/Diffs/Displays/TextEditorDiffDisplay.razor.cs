@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Displays;
 
@@ -43,14 +44,13 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     [Parameter]
     public int TabIndex { get; set; } = -1;
 
-    private IDialogViewModel _detailsDialogRecord = new DialogViewModel(
-            Key<IDialogViewModel>.NewKey(),
-            "Diff Details",
-            typeof(DiffDetailsDisplay),
-            null,
-            null,
-			true,
-			null);
+    private IDialog _detailsDialogRecord = new DialogViewModel(
+        Key<IDynamicViewModel>.NewKey(),
+        "Diff Details",
+        typeof(DiffDetailsDisplay),
+        null,
+        null,
+        true);
 
     private CancellationTokenSource _calculateDiffCancellationTokenSource = new();
     private TextEditorDiffResult? _mostRecentDiffResult;
@@ -99,7 +99,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 
     private void ShowCalculationOnClick()
     {
-        DialogService.DisposeDialogRecord(_detailsDialogRecord.Key);
+        DialogService.DisposeDialogRecord(_detailsDialogRecord.DynamicViewModelKey);
 
         _detailsDialogRecord = _detailsDialogRecord.SetParameterMap(
 			new Dictionary<string, object?>

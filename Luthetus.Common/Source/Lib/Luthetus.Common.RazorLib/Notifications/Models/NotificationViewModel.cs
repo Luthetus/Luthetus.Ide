@@ -1,36 +1,37 @@
-using Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.Notifications.Models;
 
-public class NotificationViewModel : INotificationViewModel
+public class NotificationViewModel : INotification
 {
 	public NotificationViewModel(
-		Key<INotificationViewModel> key,
+		Key<IDynamicViewModel> dynamicViewModelKey,
         string title,
-        Type rendererType,
-        Dictionary<string, object?>? parameterMap,
+        Type componentType,
+        Dictionary<string, object?>? componentParameterMap,
         TimeSpan? notificationOverlayLifespan,
         bool deleteNotificationAfterOverlayIsDismissed,
-        string? cssClassString,
-		IPolymorphicViewModel? polymorphicViewModel)
+        string? cssClassString)
 	{
-		Key = key;
+		DynamicViewModelKey = dynamicViewModelKey;
 		Title = title;
-		RendererType = rendererType;
-		ParameterMap = parameterMap;
+        ComponentType = componentType;
+        ComponentParameterMap = componentParameterMap;
 		NotificationOverlayLifespan = notificationOverlayLifespan;
 		DeleteNotificationAfterOverlayIsDismissed = deleteNotificationAfterOverlayIsDismissed;
 		CssClassString = cssClassString;
-		PolymorphicViewModel = polymorphicViewModel;
 	}
 	
-	public IPolymorphicViewModel? PolymorphicViewModel { get; init; }
-	public Key<INotificationViewModel> Key { get; init; }
+	public Key<IDynamicViewModel> DynamicViewModelKey { get; }
 	public TimeSpan? NotificationOverlayLifespan { get; init; }
     public bool DeleteNotificationAfterOverlayIsDismissed { get; init; }
 	public string? CssClassString { get; init; }
 	public string Title { get; init; }
-    public Type RendererType { get; init; }
-    public Dictionary<string, object?>? ParameterMap { get; init; }
+    public Type ComponentType { get; init; }
+    public Dictionary<string, object?>? ComponentParameterMap { get; init; }
+    public string? CssClass { get; set; }
+    public string? CssStyle { get; set; }
+	public ElementDimensions ElementDimensions { get; set; }
 }

@@ -1,5 +1,6 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.Dialogs.Models;
@@ -18,22 +19,22 @@ public class DialogService : IDialogService
 
     public IState<DialogState> DialogStateWrap { get; }
 
-    public void RegisterDialogRecord(IDialogViewModel dialogRecord)
+    public void RegisterDialogRecord(IDialog dialogRecord)
     {
         _dispatcher.Dispatch(new DialogState.RegisterAction(
             dialogRecord));
     }
 
-    public void SetDialogRecordIsMaximized(Key<IDialogViewModel> dialogKey, bool isMaximized)
+    public void SetDialogRecordIsMaximized(Key<IDynamicViewModel> dynamicViewModelKey, bool isMaximized)
     {
         _dispatcher.Dispatch(new DialogState.SetIsMaximizedAction(
-            dialogKey,
+            dynamicViewModelKey,
             isMaximized));
     }
 
-    public void DisposeDialogRecord(Key<IDialogViewModel> dialogKey)
+    public void DisposeDialogRecord(Key<IDynamicViewModel> dynamicViewModelKey)
     {
         _dispatcher.Dispatch(new DialogState.DisposeAction(
-            dialogKey));
+            dynamicViewModelKey));
     }
 }

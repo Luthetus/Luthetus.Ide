@@ -1,5 +1,6 @@
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 
@@ -21,7 +22,7 @@ public class DialogRecordTests
     [Fact]
     public void Constructor()
     {
-        var dialogRecord = new DialogRecord(Key<DialogRecord>.NewKey(), "Test title",
+        var dialogRecord = new DialogViewModel(Key<IDynamicViewModel>.NewKey(), "Test title",
             typeof(CommonInformativeNotificationDisplay),
             new Dictionary<string, object?>
             {
@@ -30,41 +31,42 @@ public class DialogRecordTests
                     "Test message"
                 }
             },
-            null);
+            null,
+            true);
 
         Assert.Equal(ElementPositionKind.Fixed, dialogRecord.ElementDimensions.ElementPositionKind);
 
         // IsMinimized
         {
-            Assert.False(dialogRecord.IsMinimized);
+            Assert.False(dialogRecord.DialogIsMinimized);
          
-            dialogRecord.IsMinimized = true;
-            Assert.True(dialogRecord.IsMinimized);
+            dialogRecord.DialogIsMinimized = true;
+            Assert.True(dialogRecord.DialogIsMinimized);
 
-            dialogRecord.IsMinimized = false;
-            Assert.False(dialogRecord.IsMinimized);
+            dialogRecord.DialogIsMinimized = false;
+            Assert.False(dialogRecord.DialogIsMinimized);
         }
 
         // IsMaximized
         {
-            Assert.False(dialogRecord.IsMaximized);
+            Assert.False(dialogRecord.DialogIsMaximized);
          
-            dialogRecord.IsMaximized = true;
-            Assert.True(dialogRecord.IsMaximized);
+            dialogRecord.DialogIsMaximized = true;
+            Assert.True(dialogRecord.DialogIsMaximized);
 
-            dialogRecord.IsMaximized = false;
-            Assert.False(dialogRecord.IsMaximized);
+            dialogRecord.DialogIsMaximized = false;
+            Assert.False(dialogRecord.DialogIsMaximized);
         }
 
         // IsResizable
         {
-            Assert.False(dialogRecord.IsResizable);
+            Assert.False(dialogRecord.DialogIsResizable);
          
-            dialogRecord.IsResizable = true;
-            Assert.True(dialogRecord.IsResizable);
+            dialogRecord.DialogIsResizable = true;
+            Assert.True(dialogRecord.DialogIsResizable);
 
-            dialogRecord.IsResizable = false;
-            Assert.False(dialogRecord.IsResizable);
+            dialogRecord.DialogIsResizable = false;
+            Assert.False(dialogRecord.DialogIsResizable);
         }
     }
     
@@ -74,7 +76,7 @@ public class DialogRecordTests
     [Fact]
     public void ConstructDefaultDialogDimensions()
     {
-        var defaultDialogDimensions = DialogRecord.ConstructDefaultDialogDimensions();
+        var defaultDialogDimensions = DialogHelper.ConstructDefaultElementDimensions();
 
         Assert.Equal(ElementPositionKind.Fixed, defaultDialogDimensions.ElementPositionKind);
 

@@ -1,30 +1,9 @@
-using Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.Dialogs.Models;
 
-public interface IDialogViewModel
+public static class DialogHelper
 {
-	public IPolymorphicViewModel? PolymorphicViewModel { get; }
-	public Key<IDialogViewModel> Key { get; }
-	public Type RendererType { get; }
-	public Dictionary<string, object?>? ParameterMap { get; }
-	public ElementDimensions ElementDimensions { get; }
-	public string Title { get; }
-	public bool IsMinimized { get; }
-    public bool IsMaximized { get; }
-    public bool IsResizable { get; }
-    public string CssClassString { get; }
-    public string FocusPointHtmlElementId { get; }
-
-	public IDialogViewModel SetParameterMap(Dictionary<string, object?>? parameterMap);
-	public IDialogViewModel SetTitle(string title);    
-	public IDialogViewModel SetIsMinimized(bool isMinimized);
-	public IDialogViewModel SetIsMaximized(bool isMaximized);
-	public IDialogViewModel SetIsResizable(bool isResizable);
-	public IDialogViewModel SetCssClassString(string cssClassString);
-
 	public static ElementDimensions ConstructDefaultElementDimensions()
 	{
 		var elementDimensions = new ElementDimensions

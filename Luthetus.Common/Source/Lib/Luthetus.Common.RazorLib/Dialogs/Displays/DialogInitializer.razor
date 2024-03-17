@@ -4,6 +4,6 @@
 
 @foreach (var dialog in dialogList)
 {
-    <DialogDisplay @key="dialog.Key" 
-                   DialogViewModel="dialog" />
+    <DialogDisplay @key="dialog.DynamicViewModelKey" 
+                   Dialog="dialog" />
 }

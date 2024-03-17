@@ -11,7 +11,7 @@ public partial record DialogState
             DialogState inState,
             RegisterAction registerAction)
         {
-            if (inState.DialogList.Any(x => x.Key == registerAction.Dialog.Key))
+            if (inState.DialogList.Any(x => x.DynamicViewModelKey == registerAction.Dialog.DynamicViewModelKey))
                 return inState;
 
             var outDialogList = inState.DialogList.Add(registerAction.Dialog);
@@ -19,7 +19,7 @@ public partial record DialogState
             return inState with 
             {
                 DialogList = outDialogList,
-                ActiveDialogKey = registerAction.Dialog.Key,
+                ActiveDialogKey = registerAction.Dialog.DynamicViewModelKey,
             };
         }
 
@@ -29,7 +29,7 @@ public partial record DialogState
             SetIsMaximizedAction setIsMaximizedAction)
         {
             var inDialog = inState.DialogList.FirstOrDefault(
-                x => x.Key == setIsMaximizedAction.DialogKey);
+                x => x.DynamicViewModelKey == setIsMaximizedAction.DynamicViewModelKey);
 
             if (inDialog is null)
                 return inState;
@@ -46,7 +46,7 @@ public partial record DialogState
             DialogState inState,
             SetActiveDialogKeyAction setActiveDialogKeyAction)
         {
-            return inState with { ActiveDialogKey = setActiveDialogKeyAction.DialogKey };
+            return inState with { ActiveDialogKey = setActiveDialogKeyAction.DynamicViewModelKey };
         }
 
         [ReducerMethod]
@@ -55,7 +55,7 @@ public partial record DialogState
             DisposeAction disposeAction)
         {
             var inDialog = inState.DialogList.FirstOrDefault(
-                x => x.Key == disposeAction.DialogKey);
+                x => x.DynamicViewModelKey == disposeAction.DynamicViewModelKey);
 
             if (inDialog is null)
                 return inState;

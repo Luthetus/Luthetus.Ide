@@ -1,13 +1,12 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Drags.Displays;
-using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Resizes.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
-using Luthetus.Common.RazorLib.Tabs.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Tabs.Displays;
 
@@ -39,10 +38,10 @@ public partial class TabDisplay : ComponentBase, IDisposable
 	private string _htmlIdDragged = null;
 	private string _htmlId = null;
 	private string HtmlId => IsBeingDragged
-		? _htmlId ??= $"luth_polymorphic-tab_{Tab.Key}"
-		: _htmlIdDragged ??= $"luth_polymorphic-tab-drag_{Tab.Key}";
+		? _htmlId ??= $"luth_polymorphic-tab_{Tab.DynamicViewModelKey}"
+		: _htmlIdDragged ??= $"luth_polymorphic-tab-drag_{Tab.DynamicViewModelKey}";
 
-	private string IsActiveCssClass => Tab.GetIsActive()
+	private string IsActiveCssClass => Tab.TabGroup.GetIsActive(Tab)
 		? "luth_active"
 	    : string.Empty;
 
@@ -87,7 +86,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 		if (IsBeingDragged)
 			return;
 
-        await Tab.CloseAsync();
+        await Tab.TabGroup.CloseAsync(Tab);
 	}
 
 	private async Task HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)
@@ -114,9 +113,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 		if (IsBeingDragged)
 			return;
 
-		var draggable = Tab.PolymorphicViewModel.DraggableViewModel;
-
-        if (_thinksLeftMouseButtonIsDown && draggable is not null)
+        if (_thinksLeftMouseButtonIsDown && Tab is IDrag draggable)
         {
 			var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
                 "luthetusIde.measureElementById",
@@ -182,7 +179,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
         }
     }
 
-	public void SubscribeToDragEventForScrolling(IDraggableViewModel draggable)
+	public void SubscribeToDragEventForScrolling(IDrag draggable)
     {
 		if (IsBeingDragged)
 			return;
@@ -193,7 +190,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
         {
             ShouldDisplay = true,
             MouseEventArgs = null,
-			DraggableViewModel = draggable,
+			Drag = draggable,
         }));
     }
 
@@ -208,10 +205,8 @@ public partial class TabDisplay : ComponentBase, IDisposable
         if (!localThinksLeftMouseButtonIsDown)
             return Task.CompletedTask;
 
-		var draggable = Tab.PolymorphicViewModel.DraggableViewModel;
-
         // Buttons is a bit flag '& 1' gets if left mouse button is held
-        if (draggable is not null &&
+        if (Tab is IDrag draggable &&
 			localThinksLeftMouseButtonIsDown &&
             (mouseEventArgsTuple.secondMouseEventArgs.Buttons & 1) == 1)
         {
@@ -232,13 +227,8 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
 	private string GetDraggableCssStyleString()
 	{
-		var draggable = Tab.PolymorphicViewModel.DraggableViewModel;
-		
-		if (IsBeingDragged &&
-			draggable is not null)
-		{
+		if (IsBeingDragged && Tab is IDrag draggable)
 			return draggable.ElementDimensions.StyleString;
-		}
 
 		return string.Empty;
 	}
