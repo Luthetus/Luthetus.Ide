@@ -119,7 +119,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
                 "luthetusIde.measureElementById",
                 HtmlId);
 
-			await draggable.GetDropzonesAsync();
+			await draggable.OnDragStartAsync();
 
 			// Width
 			{
@@ -211,7 +211,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
             (mouseEventArgsTuple.secondMouseEventArgs.Buttons & 1) == 1)
         {
             ResizeHelper.Move(
-                draggable.ElementDimensions,
+                draggable.DragElementDimensions,
                 mouseEventArgsTuple.firstMouseEventArgs,
                 mouseEventArgsTuple.secondMouseEventArgs);
         }
@@ -228,7 +228,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 	private string GetDraggableCssStyleString()
 	{
 		if (IsBeingDragged && Tab is IDrag draggable)
-			return draggable.ElementDimensions.StyleString;
+			return draggable.DragElementDimensions.StyleString;
 
 		return string.Empty;
 	}

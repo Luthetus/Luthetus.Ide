@@ -10,11 +10,10 @@ public interface IDrag : IDynamicViewModel
 
 	public Type DragComponentType { get; }
 	public Dictionary<string, object?>? DragComponentParameterMap { get; }
+	public ElementDimensions DragElementDimensions { get; set; }
 	public string? DragCssClass { get; set; }
 	public string? DragCssStyle { get; set; }
-	public ElementDimensions DragElementDimensions { get; set; }
 
-	public Task OnDragStartAsync(MouseEventArgs mouseEventArgs);
+	public Task OnDragStartAsync();
 	public Task OnDragEndAsync(MouseEventArgs mouseEventArgs, IDropzone? dropzone);
-    public Task<ImmutableArray<IDropzone>> GetDropzonesAsync();
 }

@@ -69,13 +69,13 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
         }
     }
 
-    private void SubscribeToDragEvent(
+    private async Task SubscribeToDragEventAsync(
         Func<(MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task> dragEventHandler)
     {
         _dragEventHandler = dragEventHandler;
 
         if (Drag is not null)
-            Drag.GetDropzonesAsync();
+            await Drag.OnDragStartAsync();
 
         Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
         {
@@ -87,7 +87,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
 
     public void SubscribeToDragEventWithMoveHandle()
     {
-        SubscribeToDragEvent(DragEventHandlerMoveHandleAsync);
+        SubscribeToDragEventAsync(DragEventHandlerMoveHandleAsync);
     }
 
     #region ResizeHandleStyleCss

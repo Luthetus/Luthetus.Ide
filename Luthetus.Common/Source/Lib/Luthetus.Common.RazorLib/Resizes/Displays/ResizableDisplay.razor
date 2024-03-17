@@ -3,42 +3,42 @@
     @* Cardinal Resize Handles *@
     <div class="luth_resize-handle luth_resize-handle-north luth_resize-handle-cardinal"
          style="@GetNorthResizeHandleStyleCss()"
-         @onmousedown="() => SubscribeToDragEvent(DragEventHandlerNorthResizeHandleAsync)">
+         @onmousedown="async () => await SubscribeToDragEventAsync(DragEventHandlerNorthResizeHandleAsync)">
     </div>
 
     <div class="luth_resize-handle luth_resize-handle-east luth_resize-handle-cardinal"
          style="@GetEastResizeHandleStyleCss()"
-         @onmousedown="() => SubscribeToDragEvent(DragEventHandlerEastResizeHandleAsync)">
+         @onmousedown="async () => await SubscribeToDragEventAsync(DragEventHandlerEastResizeHandleAsync)">
     </div>
 
     <div class="luth_resize-handle luth_resize-handle-south luth_resize-handle-cardinal"
          style="@GetSouthResizeHandleStyleCss()"
-         @onmousedown="() => SubscribeToDragEvent(DragEventHandlerSouthResizeHandleAsync)">
+         @onmousedown="async () => await SubscribeToDragEventAsync(DragEventHandlerSouthResizeHandleAsync)">
     </div>
 
     <div class="luth_resize-handle luth_resize-handle-west luth_resize-handle-cardinal"
          style="@GetWestResizeHandleStyleCss()"
-         @onmousedown="() => SubscribeToDragEvent(DragEventHandlerWestResizeHandleAsync)">
+         @onmousedown="async () => await SubscribeToDragEventAsync(DragEventHandlerWestResizeHandleAsync)">
     </div>
     
     @* Diagonal Resize Handles *@
     <div class="luth_resize-handle luth_resize-handle-north-east luth_resize-handle-diagonal"
          style="@GetNorthEastResizeHandleStyleCss()"
-         @onmousedown="() => SubscribeToDragEvent(DragEventHandlerNorthEastResizeHandleAsync)">
+         @onmousedown="async () => await SubscribeToDragEventAsync(DragEventHandlerNorthEastResizeHandleAsync)">
     </div>
 
     <div class="luth_resize-handle luth_resize-handle-south-east luth_resize-handle-diagonal"
          style="@GetSouthEastResizeHandleStyleCss()"
-         @onmousedown="() => SubscribeToDragEvent(DragEventHandlerSouthEastResizeHandleAsync)">
+         @onmousedown="async () => await SubscribeToDragEventAsync(DragEventHandlerSouthEastResizeHandleAsync)">
     </div>
 
     <div class="luth_resize-handle luth_resize-handle-south-west luth_resize-handle-diagonal"
          style="@GetSouthWestResizeHandleStyleCss()"
-         @onmousedown="() => SubscribeToDragEvent(DragEventHandlerSouthWestResizeHandleAsync)">
+         @onmousedown="async () => await SubscribeToDragEventAsync(DragEventHandlerSouthWestResizeHandleAsync)">
     </div>
 
     <div class="luth_resize-handle luth_resize-handle-north-west luth_resize-handle-diagonal"
          style="@GetNorthWestResizeHandleStyleCss()"
-         @onmousedown="() => SubscribeToDragEvent(DragEventHandlerNorthWestResizeHandleAsync)">
+         @onmousedown="async () => await SubscribeToDragEventAsync(DragEventHandlerNorthWestResizeHandleAsync)">
     </div>
 </div>

@@ -77,7 +77,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 			await _tabListDisplay.NotifyStateChangedAsync();
 	}
 
-	private ImmutableArray<ITab> GetPolymphoricUiList(TextEditorGroup textEditorGroup)
+	private ImmutableArray<ITab> GetTabList(TextEditorGroup textEditorGroup)
 	{
 		var viewModelState = TextEditorViewModelStateWrap.Value;
 		var tabList = new List<ITab>();
@@ -88,11 +88,12 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
             
             if (viewModel is not null)
             {
-                viewModel.TabGroup = textEditorGroup;
-				viewModel.Dispatcher = Dispatcher;
-                viewModel.DialogService = DialogService;
-                viewModel.JsRuntime = JsRuntime;
-				tabList.Add(viewModel);
+                viewModel.DynamicViewModelAdapter.TabGroup = textEditorGroup;
+				viewModel.DynamicViewModelAdapter.TextEditorService = TextEditorService;
+				viewModel.DynamicViewModelAdapter.Dispatcher = Dispatcher;
+                viewModel.DynamicViewModelAdapter.DialogService = DialogService;
+				viewModel.DynamicViewModelAdapter.JsRuntime = JsRuntime;
+				tabList.Add(viewModel.DynamicViewModelAdapter);
             }
 		}
 

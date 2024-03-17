@@ -1,3 +1,4 @@
+@using Luthetus.Common.RazorLib.Dynamics.Models
 @using Luthetus.Common.RazorLib.Resizes.Displays
 
 <div class="luth_dialog-display @Dialog.CssClass @GetCssClassForDialogStateIsActiveSelection(DialogStateIsActiveSelection.Value)"
@@ -10,9 +11,9 @@
     @if (Dialog.DialogIsResizable && !Dialog.DialogIsMaximized)
     {
         <ResizableDisplay @ref="_resizableDisplay"
-                          ElementDimensions="Dialog.ElementDimensions"
+                          ElementDimensions="Dialog.DialogElementDimensions"
                           ReRenderFuncAsync="ReRenderAsync"
-                          PolymorphicViewModel="Dialog.DialogPolymorphicViewModel" />
+                          Drag="Dialog as IDrag" />
     }
 
     <div class="luth_dialog-display-toolbar"

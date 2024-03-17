@@ -158,7 +158,7 @@ public partial class InputFileContextMenu : ComponentBase
         }
             
         var dialogLeftDimensionAttribute = dialogRecord
-            .ElementDimensions
+            .DialogElementDimensions
             .DimensionAttributeList
             .First(x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
 
@@ -185,7 +185,7 @@ public partial class InputFileContextMenu : ComponentBase
         }
 
         var dialogTopDimensionAttribute = dialogRecord
-            .ElementDimensions
+            .DialogElementDimensions
             .DimensionAttributeList
             .First(x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
 

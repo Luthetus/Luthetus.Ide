@@ -48,7 +48,7 @@ public record Panel : IPanelTab, IDialog, IDrag
     public bool DialogIsMaximized { get; set; }
     public bool DialogIsResizable { get; set; }
     public string DialogFocusPointHtmlElementId { get; set; }
-    public ElementDimensions ElementDimensions { get; set; } = new();
+    public ElementDimensions DialogElementDimensions { get; set; } = new();
 
 	public ImmutableArray<IDropzone> DropzoneList { get; set; } = new();
 
@@ -82,14 +82,102 @@ public record Panel : IPanelTab, IDialog, IDrag
 		return this;
 	}
 
-	public Task OnDragStopAsync(MouseEventArgs mouseEventArgs, IDropzone? dropzone)
-	{
+    public async Task OnDragStartAsync()
+    {
+		var dropzoneList = new List<IDropzone>();
+		AddFallbackDropzone(dropzoneList);
+
+		var panelGroupHtmlIdTupleList = new (Key<PanelGroup> PanelGroupKey, string HtmlElementId)[]
+		{
+			(PanelFacts.LeftPanelRecordKey, "luth_ide_panel_left_tabs"),
+			(PanelFacts.RightPanelRecordKey, "luth_ide_panel_right_tabs"),
+			(PanelFacts.BottomPanelRecordKey, "luth_ide_panel_bottom_tabs"),
+		};
+
+		foreach (var panelGroupHtmlIdTuple in panelGroupHtmlIdTupleList)
+		{
+			var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
+				"luthetusIde.measureElementById",
+				panelGroupHtmlIdTuple.HtmlElementId);
+
+			measuredHtmlElementDimensions = measuredHtmlElementDimensions with
+			{
+				ZIndex = 1,
+			};
+
+			var elementDimensions = new ElementDimensions();
+
+			elementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
+
+			// Width
+			{
+				var widthDimensionAttribute = elementDimensions.DimensionAttributeList.First(
+					x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
+
+				widthDimensionAttribute.DimensionUnitList.Clear();
+				widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+				{
+					Value = measuredHtmlElementDimensions.WidthInPixels,
+					DimensionUnitKind = DimensionUnitKind.Pixels
+				});
+			}
+
+			// Height
+			{
+				var heightDimensionAttribute = elementDimensions.DimensionAttributeList.First(
+					x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
+
+				heightDimensionAttribute.DimensionUnitList.Clear();
+				heightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+				{
+					Value = measuredHtmlElementDimensions.HeightInPixels,
+					DimensionUnitKind = DimensionUnitKind.Pixels
+				});
+			}
+
+			// Left
+			{
+				var leftDimensionAttribute = elementDimensions.DimensionAttributeList.First(
+					x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
+
+				leftDimensionAttribute.DimensionUnitList.Clear();
+				leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+				{
+					Value = measuredHtmlElementDimensions.LeftInPixels,
+					DimensionUnitKind = DimensionUnitKind.Pixels
+				});
+			}
+
+			// Top
+			{
+				var topDimensionAttribute = elementDimensions.DimensionAttributeList.First(
+					x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
+
+				topDimensionAttribute.DimensionUnitList.Clear();
+				topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+				{
+					Value = measuredHtmlElementDimensions.TopInPixels,
+					DimensionUnitKind = DimensionUnitKind.Pixels
+				});
+			}
+
+			dropzoneList.Add(new PanelGroupDropzone(
+				measuredHtmlElementDimensions,
+				panelGroupHtmlIdTuple.PanelGroupKey,
+				elementDimensions));
+		}
+
+		DropzoneList = dropzoneList.ToImmutableArray();
+	}
+
+    public Task OnDragEndAsync(MouseEventArgs mouseEventArgs, IDropzone? dropzone)
+    {
 		if (TabGroup is not PanelGroup panelGroup)
 			return Task.CompletedTask;
 
 		if (dropzone is not PanelGroupDropzone panelGroupDropzone)
 			return Task.CompletedTask;
-		
+
 		if (panelGroupDropzone.PanelGroupKey == Key<PanelGroup>.Empty)
 		{
 			Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
@@ -120,96 +208,6 @@ public record Panel : IPanelTab, IDialog, IDrag
 		return Task.CompletedTask;
 	}
 
-	public async Task<ImmutableArray<IDropzone>> GetDropzonesAsync()
-	{
-		var dropzoneList = new List<IDropzone>();
-		AddFallbackDropzone(dropzoneList);
-
-		var panelGroupHtmlIdTupleList = new (Key<PanelGroup> PanelGroupKey, string HtmlElementId)[]
-		{
-			(PanelFacts.LeftPanelRecordKey, "luth_ide_panel_left_tabs"),
-			(PanelFacts.RightPanelRecordKey, "luth_ide_panel_right_tabs"),
-			(PanelFacts.BottomPanelRecordKey, "luth_ide_panel_bottom_tabs"),
-		};
-
-		foreach (var panelGroupHtmlIdTuple in panelGroupHtmlIdTupleList)
-		{
-			var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
-	            "luthetusIde.measureElementById",
-	            panelGroupHtmlIdTuple.HtmlElementId);
-	
-			measuredHtmlElementDimensions = measuredHtmlElementDimensions with
-			{
-				ZIndex = 1,
-			};
-
-			var elementDimensions = new ElementDimensions();
-
-			elementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
-	
-			// Width
-			{
-				var widthDimensionAttribute = elementDimensions.DimensionAttributeList.First(
-	                x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
-	
-				widthDimensionAttribute.DimensionUnitList.Clear();
-	            widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-	            {
-	                Value = measuredHtmlElementDimensions.WidthInPixels,
-	                DimensionUnitKind = DimensionUnitKind.Pixels
-	            });
-			}
-	
-			// Height
-			{
-				var heightDimensionAttribute = elementDimensions.DimensionAttributeList.First(
-	                x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
-	
-				heightDimensionAttribute.DimensionUnitList.Clear();
-	            heightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-	            {
-	                Value = measuredHtmlElementDimensions.HeightInPixels,
-	                DimensionUnitKind = DimensionUnitKind.Pixels
-	            });
-			}
-	
-			// Left
-			{
-				var leftDimensionAttribute = elementDimensions.DimensionAttributeList.First(
-	                x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
-	
-	            leftDimensionAttribute.DimensionUnitList.Clear();
-	            leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-	            {
-	                Value = measuredHtmlElementDimensions.LeftInPixels,
-	                DimensionUnitKind = DimensionUnitKind.Pixels
-	            });
-			}
-	
-			// Top
-			{
-				var topDimensionAttribute = elementDimensions.DimensionAttributeList.First(
-	                x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
-	
-	            topDimensionAttribute.DimensionUnitList.Clear();
-	            topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-	            {
-	                Value = measuredHtmlElementDimensions.TopInPixels,
-	                DimensionUnitKind = DimensionUnitKind.Pixels
-	            });
-			}
-	
-			dropzoneList.Add(new PanelGroupDropzone(
-				measuredHtmlElementDimensions,
-				panelGroupHtmlIdTuple.PanelGroupKey,
-				elementDimensions));
-		}
-
-		var result = dropzoneList.ToImmutableArray();
-		DropzoneList = result;
-		return result;
-	}
-
 	private void AddFallbackDropzone(List<IDropzone> dropzoneList)
 	{
 		var fallbackElementDimensions = new ElementDimensions();
@@ -219,71 +217,61 @@ public record Panel : IPanelTab, IDialog, IDrag
 		// Width
 		{
 			var widthDimensionAttribute = fallbackElementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
+				x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
 
 			widthDimensionAttribute.DimensionUnitList.Clear();
-            widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = 100,
-                DimensionUnitKind = DimensionUnitKind.ViewportWidth
-            });
+			widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+			{
+				Value = 100,
+				DimensionUnitKind = DimensionUnitKind.ViewportWidth
+			});
 		}
 
 		// Height
 		{
 			var heightDimensionAttribute = fallbackElementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
+				x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
 
 			heightDimensionAttribute.DimensionUnitList.Clear();
-            heightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = 100,
-                DimensionUnitKind = DimensionUnitKind.ViewportHeight
-            });
+			heightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+			{
+				Value = 100,
+				DimensionUnitKind = DimensionUnitKind.ViewportHeight
+			});
 		}
 
 		// Left
 		{
 			var leftDimensionAttribute = fallbackElementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
+				x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
 
-            leftDimensionAttribute.DimensionUnitList.Clear();
-            leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = 0,
-                DimensionUnitKind = DimensionUnitKind.Pixels
-            });
+			leftDimensionAttribute.DimensionUnitList.Clear();
+			leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+			{
+				Value = 0,
+				DimensionUnitKind = DimensionUnitKind.Pixels
+			});
 		}
 
 		// Top
 		{
 			var topDimensionAttribute = fallbackElementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
+				x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
 
-            topDimensionAttribute.DimensionUnitList.Clear();
-            topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = 0,
-                DimensionUnitKind = DimensionUnitKind.Pixels
-            });
+			topDimensionAttribute.DimensionUnitList.Clear();
+			topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
+			{
+				Value = 0,
+				DimensionUnitKind = DimensionUnitKind.Pixels
+			});
 		}
 
 		dropzoneList.Add(new PanelGroupDropzone(
 			new MeasuredHtmlElementDimensions(0, 0, 0, 0, 0),
 			Key<PanelGroup>.Empty,
 			fallbackElementDimensions)
-			{
-				CssClass = "luth_dropzone-fallback"
-			});
+		{
+			CssClass = "luth_dropzone-fallback"
+		});
 	}
-
-    public Task OnDragStartAsync(MouseEventArgs mouseEventArgs)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task OnDragEndAsync(MouseEventArgs mouseEventArgs, IDropzone? dropzone)
-    {
-        throw new NotImplementedException();
-    }
 }

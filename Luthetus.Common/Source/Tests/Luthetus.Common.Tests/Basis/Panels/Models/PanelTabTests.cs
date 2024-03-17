@@ -49,7 +49,6 @@ public class PanelTests
 
         var key = Key<Panel>.NewKey();
         var dynamicViewModelKey = Key<IDynamicViewModel>.NewKey();
-        var elementDimensions = samplePanelGroup.ElementDimensions;
         var beingDraggedDimensions = new ElementDimensions();
         var contentRendererType = typeof(IconCSharpClass);
         var displayName = "Solution Explorer";
@@ -65,7 +64,6 @@ public class PanelTests
 
         Assert.Equal(key, samplePanel.Key);
         Assert.Equal(dynamicViewModelKey, samplePanel.DynamicViewModelKey);
-        Assert.Equal(elementDimensions, samplePanel.ElementDimensions);
         Assert.Equal(contentRendererType, samplePanel.ComponentType);
         Assert.Equal(displayName, samplePanel.Title);
         Assert.Equal(contextRecordKey, samplePanel.ContextRecordKey);

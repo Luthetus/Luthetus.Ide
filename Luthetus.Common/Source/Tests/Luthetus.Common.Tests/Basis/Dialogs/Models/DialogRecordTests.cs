@@ -34,7 +34,7 @@ public class DialogRecordTests
             null,
             true);
 
-        Assert.Equal(ElementPositionKind.Fixed, dialogRecord.ElementDimensions.ElementPositionKind);
+        Assert.Equal(ElementPositionKind.Fixed, dialogRecord.DialogElementDimensions.ElementPositionKind);
 
         // IsMinimized
         {
