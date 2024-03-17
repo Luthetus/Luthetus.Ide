@@ -117,13 +117,7 @@ public class PanelGroup : ITabGroup
 		if (tab is not IPanelTab panelTab)
 			return Task.CompletedTask;
 
-		var panelGroup = GetPanelGroup();
-		var panel = GetPanel(panelGroup);
-		
-		if (panelGroup is null || panel is null)
-			return false;
-
-		return panelGroup.ActiveTabKey == panel.Key;
+		return panelGroup.ActiveTabKey == panelTab.Key;
 	}
 
 	public Task OnClickAsync(ITab tab, MouseEventArgs mouseEventArgs)
@@ -134,7 +128,7 @@ public class PanelGroup : ITabGroup
 		if (GetIsActive())
 			Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(PanelGroupKey, Key<Panel>.Empty));
 		else
-			Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(PanelGroupKey, PanelKey));
+			Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(PanelGroupKey, panelTab.Key));
 		
 		return Task.CompletedTask;
 	}
@@ -149,7 +143,7 @@ public class PanelGroup : ITabGroup
 		if (tab is not IPanelTab panelTab)
 			return Task.CompletedTask;
 
-		Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(PanelGroupKey, PanelKey));
+		Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(PanelGroupKey, panelTab.Key));
 		return Task.CompletedTask;
 	}
 }
@@ -198,16 +192,20 @@ public interface ITabGroup
 	public Task CloseAsync(ITab tab);
 }
 
-public interface ITab
+public interface IDialog : IDynamicViewModel
 {
-	public string Title { get; }
+}
+
+public interface ITab : IDynamicViewModel
+{
 }
 
 public interface IPanelTab : ITab
 {
+	public Key<Panel> Key { get; }
 }
 
-public class Panel : IPanelTab
+public class Panel : IPanelTab, IDialog, IDrag
 {
 }
 
@@ -216,7 +214,15 @@ public interface ITextEditorTab : ITab
 	public Key<TextEditorViewModel> ViewModelKey { get; }
 }
 
-public class TextEditorViewModel : ITextEditorTab, IPanelTab, IDialog, IDrag, IDropzone
+public class TextEditorViewModel : IDynamicViewModel, ITextEditorTab, IPanelTab, IDialog, IDrag
 {
-	
+	public Type ComponentType { get; }
+	public Dictionary<string, object?>? ComponentParameterMap { get; }
+}
+
+public interface IDynamicViewModel
+{
+	public string Title { get; }
+	public Type ComponentType { get; }
+	public Dictionary<string, object?>? ComponentParameterMap { get; }
 }
