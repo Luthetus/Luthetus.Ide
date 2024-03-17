@@ -15,8 +15,9 @@ namespace Luthetus.Common.RazorLib.Panels.Models;
 /// Each PanelTab maintains its own element dimensions as
 /// each panel might need different amounts of space to be functionally usable.
 /// </summary>
-public record Panel
+public record Panel : IPanelTab
 {
+public string Title { get; }
 	public Panel(
 		Key<Panel> key,
 		ElementDimensions elementDimensions,
@@ -24,11 +25,9 @@ public record Panel
 		string title)
 	{
 		Key = key;
-		ElementDimensions = elementDimensions;
 		ContentRendererType = contentRendererType;
 		Title = title;
 	}
-
 	public ElementDimensions ElementDimensions { get; }
     public ElementDimensions BeingDraggedDimensions { get; }
     public Type IconRendererType { get; }
@@ -37,9 +36,8 @@ public record Panel
 	public string? CssClass { get; }
 	public string? CssStyle { get; }
 	public string Title { get; }
-	public Type ContentRendererType { get; }
-	public Type RendererType { get; }
-	public Dictionary<string, object?>? ParameterMap { get; init; }
+	public Type ComponentType { get; }
+	public Dictionary<string, object?>? ComponentParameterMap { get; }
 
 	public PanelGroup? PanelGroup { get; set; }
 

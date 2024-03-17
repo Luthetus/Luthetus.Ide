@@ -1,4 +1,4 @@
-﻿@using Luthetus.Common.RazorLib.Contexts.Displays
+@using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models;
 @using Luthetus.Common.RazorLib.Dimensions.Models;
 @using Luthetus.Common.RazorLib.Installations.Displays
@@ -46,7 +46,7 @@
                               BottomElementDimensions="PanelFacts.GetBottomPanelRecord(PanelsStateWrap.Value).ElementDimensions"
                               ReRenderFuncAsync="_bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync" />
 
-                <PanelDisplay PanelGroupKey="PanelFacts.BottomPanelRecordKey"
+                <PanelGroupDisplay PanelGroupKey="PanelFacts.BottomPanelRecordKey"
                               CssClassString="luth_ide_footer"
                               AdjacentElementDimensions="_bodyElementDimensions"
                               DimensionAttributeKind="DimensionAttributeKind.Height"
@@ -56,7 +56,7 @@
                         <Luthetus.TextEditor.RazorLib.Edits.Displays.DirtyResourceUriInteractiveIconDisplay CssStyleString="margin-right: 15px;" />
                         <Luthetus.Common.RazorLib.Notifications.Displays.NotificationsInteractiveIconDisplay/>
                     </JustifyEndRenderFragment>
-                </PanelDisplay>
+                </PanelGroupDisplay>
             </StateHasChangedBoundary>
         }
         else

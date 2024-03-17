@@ -200,6 +200,14 @@ public interface ITab : IDynamicViewModel
 {
 }
 
+public interface INotification : IDynamicViewModel
+{
+}
+
+public interface IDrag
+{
+}
+
 public interface IPanelTab : ITab
 {
 	public Key<Panel> Key { get; }
@@ -226,3 +234,6 @@ public interface IDynamicViewModel
 	public Type ComponentType { get; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; }
 }
+
+// Delete IPolymorphicViewModel, use the 'Dynamic' naming instead.
+// Furthermore, change the directory and namespace names to reflect this.

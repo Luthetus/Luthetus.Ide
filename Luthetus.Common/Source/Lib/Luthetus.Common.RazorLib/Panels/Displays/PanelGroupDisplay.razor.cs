@@ -16,7 +16,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Panels.Displays;
 
-public partial class PanelDisplay : FluxorComponent
+public partial class PanelGroupDisplay : FluxorComponent
 {
     [Inject]
     private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
@@ -118,12 +118,12 @@ public partial class PanelDisplay : FluxorComponent
     {
         var panelsState = PanelsStateWrap.Value;
 
-        var panelRecord = panelsState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
+        var panelGroup = panelsState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
-        if (panelRecord is not null)
+        if (panelGroup is not null)
         {
-            var activePanelTab = panelRecord.TabList.FirstOrDefault(
-                x => x.Key == panelRecord.ActiveTabKey);
+            var activePanelTab = panelGroup.TabList.FirstOrDefault(
+                x => x.Key == panelGroup.ActiveTabKey);
 
             var adjacentElementSizeDimensionAttribute = AdjacentElementDimensions.DimensionAttributeList.First(
                 x => x.DimensionAttributeKind == DimensionAttributeKind);
@@ -133,16 +133,16 @@ public partial class PanelDisplay : FluxorComponent
 
             if (activePanelTab is null && indexOfPreviousPassAlong == -1)
             {
-                var panelRecordSizeDimensionsAttribute = panelRecord.ElementDimensions.DimensionAttributeList.First(
+                var panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.DimensionAttributeList.First(
                     x => x.DimensionAttributeKind == DimensionAttributeKind);
 
-                var panelRecordPercentageSize = panelRecordSizeDimensionsAttribute.DimensionUnitList.First(
+                var panelGroupPercentageSize = panelGroupSizeDimensionsAttribute.DimensionUnitList.First(
                     x => x.DimensionUnitKind == DimensionUnitKind.Percentage);
 
                 adjacentElementSizeDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
                 {
-                    Value = panelRecordPercentageSize.Value,
-                    DimensionUnitKind = panelRecordPercentageSize.DimensionUnitKind,
+                    Value = panelGroupPercentageSize.Value,
+                    DimensionUnitKind = panelGroupPercentageSize.DimensionUnitKind,
                     DimensionOperatorKind = DimensionOperatorKind.Add,
                     Purpose = DimensionAttributeModificationPurpose
                 });
@@ -158,7 +158,7 @@ public partial class PanelDisplay : FluxorComponent
         }
     }
 
-    private string GetElementDimensionsStyleString(PanelGroup? panelRecord, Panel? activePanelTab)
+    private string GetElementDimensionsStyleString(PanelGroup? panelGroup, Panel? activePanelTab)
     {
         if (activePanelTab is null)
         {
@@ -168,16 +168,16 @@ public partial class PanelDisplay : FluxorComponent
                    " + var(--luth_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo))";
         }
 
-        return panelRecord?.ElementDimensions.StyleString ?? string.Empty;
+        return panelGroup?.ElementDimensions.StyleString ?? string.Empty;
     }
 
     private Task TopDropzoneOnMouseUp(MouseEventArgs mouseEventArgs)
     {
         var panelsState = PanelsStateWrap.Value;
 
-        var panelRecord = panelsState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
+        var panelGroup = panelsState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
-        if (panelRecord is null)
+        if (panelGroup is null)
             return Task.CompletedTask;
 
         var panelDragEventArgs = panelsState.DragEventArgs;
@@ -189,7 +189,7 @@ public partial class PanelDisplay : FluxorComponent
                 panelDragEventArgs.Value.PanelTab.Key));
 
             Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
-                panelRecord.Key,
+                panelGroup.Key,
                 panelDragEventArgs.Value.PanelTab,
                 true));
 
@@ -209,9 +209,9 @@ public partial class PanelDisplay : FluxorComponent
     {
         var panelsState = PanelsStateWrap.Value;
 
-        var panelRecord = panelsState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
+        var panelGroup = panelsState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
-        if (panelRecord is null)
+        if (panelGroup is null)
             return Task.CompletedTask;
 
         var panelDragEventArgs = panelsState.DragEventArgs;
@@ -223,7 +223,7 @@ public partial class PanelDisplay : FluxorComponent
                 panelDragEventArgs.Value.PanelTab.Key));
 
             Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
-                panelRecord.Key,
+                panelGroup.Key,
                 panelDragEventArgs.Value.PanelTab,
                 false));
 
