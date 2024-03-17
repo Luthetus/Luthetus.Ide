@@ -89,7 +89,10 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
             if (viewModel is not null)
             {
                 viewModel.TabGroup = textEditorGroup;
-			    tabList.Add(viewModel);
+				viewModel.Dispatcher = Dispatcher;
+                viewModel.DialogService = DialogService;
+                viewModel.JsRuntime = JsRuntime;
+				tabList.Add(viewModel);
             }
 		}
 

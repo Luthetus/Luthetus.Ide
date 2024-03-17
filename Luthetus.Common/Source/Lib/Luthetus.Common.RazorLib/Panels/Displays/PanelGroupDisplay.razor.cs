@@ -58,6 +58,9 @@ public partial class PanelGroupDisplay : FluxorComponent
 		foreach (var panelTab in panelGroup.TabList)
 		{
             panelTab.TabGroup = panelGroup;
+            panelTab.Dispatcher = Dispatcher;
+            panelTab.DialogService = DialogService;
+			panelTab.JsRuntime = JsRuntime;
 			tabList.Add(panelTab);
 		}
 

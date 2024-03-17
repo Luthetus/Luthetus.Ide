@@ -28,8 +28,8 @@ public record DialogViewModel : IDialog
     public bool DialogIsResizable { get; set; }
     public string DialogFocusPointHtmlElementId { get; set; }
     public Key<IDialog> DialogKey { get; }
-    public ElementDimensions ElementDimensions { get; set; }
-    public string Title { get; set; }
+    public ElementDimensions ElementDimensions { get; set; } = new();
+	public string Title { get; set; }
     public Type ComponentType { get; }
     public Dictionary<string, object?>? ComponentParameterMap { get; init; }
     public string CssClass { get; set; }

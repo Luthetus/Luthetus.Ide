@@ -1,3 +1,4 @@
+using Luthetus.Common.RazorLib.Dimensions.Models;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 
@@ -7,7 +8,13 @@ public interface IDrag : IDynamicViewModel
 {
     public ImmutableArray<IDropzone> DropzoneList { get; set; }
 
-    public Task OnDragStartAsync(MouseEventArgs mouseEventArgs);
+	public Type DragComponentType { get; }
+	public Dictionary<string, object?>? DragComponentParameterMap { get; }
+	public string? DragCssClass { get; set; }
+	public string? DragCssStyle { get; set; }
+	public ElementDimensions DragElementDimensions { get; set; }
+
+	public Task OnDragStartAsync(MouseEventArgs mouseEventArgs);
 	public Task OnDragEndAsync(MouseEventArgs mouseEventArgs, IDropzone? dropzone);
     public Task<ImmutableArray<IDropzone>> GetDropzonesAsync();
 }

@@ -20,6 +20,7 @@ using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+using Luthetus.Common.RazorLib.Tabs.Displays;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -173,12 +174,12 @@ public record TextEditorViewModel  : ITextEditorTab, IPanelTab, IDialog, IDrag, 
 
 	public IDispatcher Dispatcher { get; set; }
 	public IDialogService DialogService { get; set; }
-	public JSRuntime JsRuntime { get; set; }
+	public IJSRuntime JsRuntime { get; set; }
 	public ITabGroup TabGroup { get; set; }
 
 	public Key<IDynamicViewModel> DynamicViewModelKey { get; }
 
-	public string Title { get; }
+	public string Title => GetTitle();
 
 	public Type ComponentType { get; }
 
@@ -186,12 +187,30 @@ public record TextEditorViewModel  : ITextEditorTab, IPanelTab, IDialog, IDrag, 
 
 	public string? CssClass { get; set; }
 	public string? CssStyle { get; set; }
-	public ElementDimensions ElementDimensions { get; set; }
+	public ElementDimensions ElementDimensions { get; set; } = new();
 	public bool DialogIsMinimized { get; set; }
 	public bool DialogIsMaximized { get; set; }
 	public bool DialogIsResizable { get; set; }
 	public string DialogFocusPointHtmlElementId { get; set; }
 	public ImmutableArray<IDropzone> DropzoneList { get; set; }
+
+	public Type DragComponentType { get; } = typeof(TabDisplay);
+
+	public Dictionary<string, object?>? DragComponentParameterMap => new()
+	{
+		{
+			nameof(TabDisplay.Tab),
+			this
+		},
+		{
+			nameof(TabDisplay.IsBeingDragged),
+			true
+		}
+	};
+
+	public string? DragCssClass { get; set; }
+	public string? DragCssStyle { get; set; }
+	public ElementDimensions DragElementDimensions { get; set; } = new();
 
 	public TextEditorEdit MutateScrollHorizontalPositionByPixelsFactory(double pixels)
     {
@@ -603,7 +622,10 @@ public record TextEditorViewModel  : ITextEditorTab, IPanelTab, IDialog, IDrag, 
 		dropzoneList.Add(new TextEditorGroupDropzone(
 			new MeasuredHtmlElementDimensions(0, 0, 0, 0, 0),
 			Key<TextEditorGroup>.Empty,
-			fallbackElementDimensions));
+			fallbackElementDimensions)
+			{
+				CssClass = "luth_dropzone-fallback"
+			});
 	}
 
     public void Dispose()
@@ -631,8 +653,31 @@ public record TextEditorViewModel  : ITextEditorTab, IPanelTab, IDialog, IDrag, 
 		throw new NotImplementedException();
 	}
 
-	Task<ImmutableArray<IDropzone>> IDrag.GetDropzonesAsync()
+	private string GetTitle()
 	{
-		throw new NotImplementedException();
+		if (TextEditorService is null)
+			return "TextEditorService was null";
+
+		var model = TextEditorService.ViewModelApi.GetModelOrDefault(ViewModelKey);
+		var viewModel = TextEditorService.ViewModelApi.GetOrDefault(ViewModelKey);
+
+		if (viewModel is null)
+		{
+			return "ViewModel not found";
+		}
+		else if (model is null)
+		{
+			return "Model not found";
+		}
+		else
+		{
+			var displayName = viewModel.GetTabDisplayNameFunc?.Invoke(model)
+				?? model.ResourceUri.Value;
+
+			if (model.IsDirty)
+				displayName += '*';
+
+			return displayName;
+		}
 	}
 }

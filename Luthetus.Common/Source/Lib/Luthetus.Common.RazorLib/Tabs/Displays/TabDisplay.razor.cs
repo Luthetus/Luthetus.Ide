@@ -41,7 +41,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 		? _htmlId ??= $"luth_polymorphic-tab_{Tab.DynamicViewModelKey}"
 		: _htmlIdDragged ??= $"luth_polymorphic-tab-drag_{Tab.DynamicViewModelKey}";
 
-	private string IsActiveCssClass => Tab.TabGroup.GetIsActive(Tab)
+	private string IsActiveCssClass => (Tab.TabGroup?.GetIsActive(Tab) ?? false)
 		? "luth_active"
 	    : string.Empty;
 
@@ -123,7 +123,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
 			// Width
 			{
-				var widthDimensionAttribute = draggable.ElementDimensions.DimensionAttributeList.First(
+				var widthDimensionAttribute = draggable.DragElementDimensions.DimensionAttributeList.First(
 	                x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
 	
 				widthDimensionAttribute.DimensionUnitList.Clear();
@@ -136,7 +136,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
 			// Height
 			{
-				var heightDimensionAttribute = draggable.ElementDimensions.DimensionAttributeList.First(
+				var heightDimensionAttribute = draggable.DragElementDimensions.DimensionAttributeList.First(
 	                x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
 	
 				heightDimensionAttribute.DimensionUnitList.Clear();
@@ -149,7 +149,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
 			// Left
 			{
-				var leftDimensionAttribute = draggable.ElementDimensions.DimensionAttributeList.First(
+				var leftDimensionAttribute = draggable.DragElementDimensions.DimensionAttributeList.First(
 	                x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
 	
 	            leftDimensionAttribute.DimensionUnitList.Clear();
@@ -162,7 +162,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
 			// Top
 			{
-				var topDimensionAttribute = draggable.ElementDimensions.DimensionAttributeList.First(
+				var topDimensionAttribute = draggable.DragElementDimensions.DimensionAttributeList.First(
 	                x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
 	
 	            topDimensionAttribute.DimensionUnitList.Clear();
@@ -173,7 +173,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 	            });
 			}
 
-            draggable.ElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
+            draggable.DragElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
 
             SubscribeToDragEventForScrolling(draggable);
         }

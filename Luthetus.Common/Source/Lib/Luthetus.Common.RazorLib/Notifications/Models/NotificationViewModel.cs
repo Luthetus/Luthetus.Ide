@@ -33,5 +33,5 @@ public class NotificationViewModel : INotification
     public Dictionary<string, object?>? ComponentParameterMap { get; init; }
     public string? CssClass { get; set; }
     public string? CssStyle { get; set; }
-	public ElementDimensions ElementDimensions { get; set; }
+	public ElementDimensions ElementDimensions { get; set; } = new();
 }

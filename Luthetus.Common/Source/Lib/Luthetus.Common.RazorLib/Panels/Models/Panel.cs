@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Tabs.Displays;
 
 namespace Luthetus.Common.RazorLib.Panels.Models;
 
@@ -36,22 +37,38 @@ public record Panel : IPanelTab, IDialog, IDrag
     public Key<ContextRecord> ContextRecordKey { get; }
 	public IDispatcher Dispatcher { get; set; }
     public IDialogService DialogService { get; set; }
-    public JSRuntime JsRuntime { get; set; }
+    public IJSRuntime JsRuntime { get; set; }
 	public Type ComponentType { get; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; set; }
-	public string? CssClass { get; }
-	public string? CssStyle { get; }
+	public string? CssClass { get; set; }
+	public string? CssStyle { get; set; }
 	public ITabGroup? TabGroup { get; set; }
-    string? IDynamicViewModel.CssClass { get; set; }
-    string? IDynamicViewModel.CssStyle { get; set; }
 
     public bool DialogIsMinimized { get; set; }
     public bool DialogIsMaximized { get; set; }
     public bool DialogIsResizable { get; set; }
     public string DialogFocusPointHtmlElementId { get; set; }
-    public ElementDimensions ElementDimensions { get; set; }
+    public ElementDimensions ElementDimensions { get; set; } = new();
 
 	public ImmutableArray<IDropzone> DropzoneList { get; set; } = new();
+
+	public Type DragComponentType { get; } = typeof(TabDisplay);
+
+	public Dictionary<string, object?>? DragComponentParameterMap => new()
+	{
+		{
+			nameof(TabDisplay.Tab),
+			this
+		},
+		{
+			nameof(TabDisplay.IsBeingDragged),
+			true
+		}
+	};
+
+	public string? DragCssClass { get; set; }
+	public string? DragCssStyle { get; set; }
+	public ElementDimensions DragElementDimensions { get; set; } = new();
 
 	public IDialog SetParameterMap(Dictionary<string, object?>? componentParameterMap)
 	{
@@ -254,7 +271,10 @@ public record Panel : IPanelTab, IDialog, IDrag
 		dropzoneList.Add(new PanelGroupDropzone(
 			new MeasuredHtmlElementDimensions(0, 0, 0, 0, 0),
 			Key<PanelGroup>.Empty,
-			fallbackElementDimensions));
+			fallbackElementDimensions)
+			{
+				CssClass = "luth_dropzone-fallback"
+			});
 	}
 
     public Task OnDragStartAsync(MouseEventArgs mouseEventArgs)

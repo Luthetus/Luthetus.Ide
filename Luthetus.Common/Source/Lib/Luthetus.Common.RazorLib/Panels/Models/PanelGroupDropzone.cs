@@ -21,6 +21,6 @@ public class PanelGroupDropzone : IDropzone
     public Key<PanelGroup> PanelGroupKey { get; }
 	public Key<IDropzone> DropzoneKey { get; }
 	public ElementDimensions ElementDimensions { get; }
-	public string CssClass { get; }
+	public string CssClass { get; init; }
 	public string CssStyle { get; }
 }
