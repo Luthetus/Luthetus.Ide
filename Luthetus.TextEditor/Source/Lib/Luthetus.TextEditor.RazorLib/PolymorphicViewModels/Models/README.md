@@ -208,6 +208,10 @@ public interface IDrag
 {
 }
 
+public interface IDropzone
+{
+}
+
 public interface IPanelTab : ITab
 {
 	public Key<Panel> Key { get; }
@@ -222,10 +226,8 @@ public interface ITextEditorTab : ITab
 	public Key<TextEditorViewModel> ViewModelKey { get; }
 }
 
-public class TextEditorViewModel : IDynamicViewModel, ITextEditorTab, IPanelTab, IDialog, IDrag
+public class TextEditorViewModel : ITextEditorTab, IPanelTab, IDialog, IDrag
 {
-	public Type ComponentType { get; }
-	public Dictionary<string, object?>? ComponentParameterMap { get; }
 }
 
 public interface IDynamicViewModel
