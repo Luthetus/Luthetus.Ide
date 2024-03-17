@@ -107,26 +107,70 @@ within 'tab'.
 2024-03-17
 ----------
 
-Concern, implementing the 'ITabGroup', and other interfacecs on the 'TextEditorGroup', and etc...
+Concern, implementing the 'ITabGroup', and other interfaces on the 'TextEditorGroup', and etc...
 	is coupling the UI logic and data logic inappropriately?
+
+public class PanelGroup : ITabGroup
+{
+	public bool GetIsActive(ITab tab)
+	{
+		if (tab is not IPanelTab panelTab)
+			return Task.CompletedTask;
+
+		var panelGroup = GetPanelGroup();
+		var panel = GetPanel(panelGroup);
+		
+		if (panelGroup is null || panel is null)
+			return false;
+
+		return panelGroup.ActiveTabKey == panel.Key;
+	}
+
+	public Task OnClickAsync(ITab tab, MouseEventArgs mouseEventArgs)
+	{
+		if (tab is not IPanelTab panelTab)
+			return Task.CompletedTask;
+
+		if (GetIsActive())
+			Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(PanelGroupKey, Key<Panel>.Empty));
+		else
+			Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(PanelGroupKey, PanelKey));
+		
+		return Task.CompletedTask;
+	}
+
+	public string GetDynamicCss(ITab tab)
+	{
+		return string.Empty;
+	}
+
+	public Task CloseAsync(ITab tab)
+	{
+		if (tab is not IPanelTab panelTab)
+			return Task.CompletedTask;
+
+		Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(PanelGroupKey, PanelKey));
+		return Task.CompletedTask;
+	}
+}
 
 public class TextEditorGroup : ITabGroup
 {
 	public bool GetIsActive(ITab tab)
 	{
-		if (tab is not TextEditorViewModel viewModel)
+		if (tab is not ITextEditorTab textEditorTab)
 			return Task.CompletedTask;
 
-		return ActiveViewModelKey == viewModel.ViewModelKey;
+		return ActiveViewModelKey == textEditorTab.ViewModelKey;
 	}
 
 	public Task OnClickAsync(ITab tab, MouseEventArgs mouseEventArgs)
 	{
-		if (tab is not TextEditorViewModel viewModel)
+		if (tab is not ITextEditorTab textEditorTab)
 			return Task.CompletedTask;
 
 		if (!GetIsActive(tab))
-			TextEditorService.GroupApi.SetActiveViewModel(GroupKey, viewModel.ViewModelKey);
+			TextEditorService.GroupApi.SetActiveViewModel(GroupKey, textEditorTab.ViewModelKey);
 	
 		return Task.CompletedTask;
 	}
@@ -138,10 +182,10 @@ public class TextEditorGroup : ITabGroup
 
 	public Task CloseAsync(ITab tab)
 	{
-		if (tab is not TextEditorViewModel viewModel)
+		if (tab is not ITextEditorGroupTab textEditorTab)
 			return Task.CompletedTask;
 
-		TextEditorService.GroupApi.RemoveViewModel(GroupKey, viewModel.ViewModelKey);
+		TextEditorService.GroupApi.RemoveViewModel(GroupKey, textEditorTab.ViewModelKey);
 		return Task.CompletedTask;
 	}
 }
@@ -159,7 +203,20 @@ public interface ITab
 	public string Title { get; }
 }
 
-public class TextEditorViewModel : IPanelGroupTab, ITextEditorGroupTab, IDialog, IDrag, IDropzone
+public interface IPanelTab : ITab
+{
+}
+
+public class Panel : IPanelTab
+{
+}
+
+public interface ITextEditorTab : ITab
+{
+	public Key<TextEditorViewModel> ViewModelKey { get; }
+}
+
+public class TextEditorViewModel : ITextEditorTab, IPanelTab, IDialog, IDrag, IDropzone
 {
 	
 }
