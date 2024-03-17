@@ -21,7 +21,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
     private IJSRuntime JsRuntime { get; set; } = null!;
 
 	[Parameter, EditorRequired]
-	public ITabViewModel TabViewModel { get; set; } = null!;
+	public ITab Tab { get; set; } = null!;
 
 	[Parameter]
 	public string CssClassString { get; set; }
@@ -39,10 +39,10 @@ public partial class TabDisplay : ComponentBase, IDisposable
 	private string _htmlIdDragged = null;
 	private string _htmlId = null;
 	private string HtmlId => IsBeingDragged
-		? _htmlId ??= $"luth_polymorphic-tab_{TabViewModel.Key}"
-		: _htmlIdDragged ??= $"luth_polymorphic-tab-drag_{TabViewModel.Key}";
+		? _htmlId ??= $"luth_polymorphic-tab_{Tab.Key}"
+		: _htmlIdDragged ??= $"luth_polymorphic-tab-drag_{Tab.Key}";
 
-	private string IsActiveCssClass => TabViewModel.GetIsActive()
+	private string IsActiveCssClass => Tab.GetIsActive()
 		? "luth_active"
 	    : string.Empty;
 
@@ -87,7 +87,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 		if (IsBeingDragged)
 			return;
 
-        await TabViewModel.CloseAsync();
+        await Tab.CloseAsync();
 	}
 
 	private async Task HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)
@@ -114,7 +114,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 		if (IsBeingDragged)
 			return;
 
-		var draggable = TabViewModel.PolymorphicViewModel.DraggableViewModel;
+		var draggable = Tab.PolymorphicViewModel.DraggableViewModel;
 
         if (_thinksLeftMouseButtonIsDown && draggable is not null)
         {
@@ -208,7 +208,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
         if (!localThinksLeftMouseButtonIsDown)
             return Task.CompletedTask;
 
-		var draggable = TabViewModel.PolymorphicViewModel.DraggableViewModel;
+		var draggable = Tab.PolymorphicViewModel.DraggableViewModel;
 
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (draggable is not null &&
@@ -232,7 +232,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
 	private string GetDraggableCssStyleString()
 	{
-		var draggable = TabViewModel.PolymorphicViewModel.DraggableViewModel;
+		var draggable = Tab.PolymorphicViewModel.DraggableViewModel;
 		
 		if (IsBeingDragged &&
 			draggable is not null)

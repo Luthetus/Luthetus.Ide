@@ -1,4 +1,4 @@
-namespace Luthetus.Common.RazorLib.PolymorphicViewModels.Models;
+namespace Luthetus.Common.RazorLib.Dynamics.Models;
 
 public interface IDrag
 {

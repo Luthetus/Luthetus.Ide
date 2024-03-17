@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
+namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 public class TextEditorViewModelModifier
 {
@@ -7,9 +7,6 @@ public class TextEditorViewModelModifier
         ViewModel = viewModel;
     }
 
-    /// <summary>
-    /// TODO: Make this private
-    /// </summary>
     public TextEditorViewModel ViewModel { get; set; }
     public bool WasModified { get; internal set; }
 }

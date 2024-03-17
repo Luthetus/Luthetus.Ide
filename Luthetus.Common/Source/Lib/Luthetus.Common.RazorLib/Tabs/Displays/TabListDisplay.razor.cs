@@ -7,7 +7,7 @@ namespace Luthetus.Common.RazorLib.Tabs.Displays;
 public partial class TabListDisplay : ComponentBase
 {
 	[Parameter, EditorRequired]
-	public ImmutableArray<ITabViewModel> TabList { get; set; } = ImmutableArray<ITabViewModel>.Empty;
+	public ImmutableArray<ITab> TabList { get; set; } = ImmutableArray<ITab>.Empty;
 	
 	[Parameter]
 	public string CssClassString { get; set; } = string.Empty;
