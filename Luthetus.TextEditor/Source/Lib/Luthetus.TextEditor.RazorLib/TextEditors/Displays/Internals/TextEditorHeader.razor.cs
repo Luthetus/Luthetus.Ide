@@ -15,6 +15,7 @@ using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -169,7 +170,7 @@ public partial class TextEditorHeader : ComponentBase
             true);
 
         var dialogRecord = new DialogViewModel(
-            Key<IDialogViewModel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
             $"WatchWindow: {model.ResourceUri}",
             typeof(WatchWindowDisplay),
             new Dictionary<string, object?>
@@ -180,8 +181,7 @@ public partial class TextEditorHeader : ComponentBase
                 }
             },
             null,
-			true,
-			null);
+			true);
 
         DialogService.RegisterDialogRecord(dialogRecord);
     }

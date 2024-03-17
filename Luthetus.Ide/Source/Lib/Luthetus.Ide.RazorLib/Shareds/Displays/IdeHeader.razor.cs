@@ -23,6 +23,7 @@ using Microsoft.JSInterop;
 using System.Collections.Immutable;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -49,9 +50,9 @@ public partial class IdeHeader : ComponentBase
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
-	private static readonly Key<IDialogViewModel> _infoDialogKey = Key<IDialogViewModel>.NewKey();
-	private static readonly Key<IDialogViewModel> _newDotNetSolutionDialogKey = Key<IDialogViewModel>.NewKey();
-	private static readonly Key<IDialogViewModel> _permissionsDialogKey = Key<IDialogViewModel>.NewKey();
+	private static readonly Key<IDynamicViewModel> _infoDialogKey = Key<IDynamicViewModel>.NewKey();
+	private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
+	private static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
 
     private Key<DropdownRecord> _dropdownKeyFile = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
@@ -166,13 +167,12 @@ public partial class IdeHeader : ComponentBase
                 () =>
 				{
 					CommandFactory.CodeSearchDialog ??= new DialogViewModel(
-                        Key<IDialogViewModel>.NewKey(),
+                        Key<IDynamicViewModel>.NewKey(),
 						"Code Search",
                         typeof(CodeSearchDisplay),
                         null,
                         null,
-						true,
-						null);
+						true);
 
                     Dispatcher.Dispatch(new DialogState.RegisterAction(CommandFactory.CodeSearchDialog));
 				});
@@ -240,7 +240,7 @@ public partial class IdeHeader : ComponentBase
                 MenuOptionKind.Delete,
                 () => 
 				{
-					var panelGroup = panel.PanelGroup;
+					var panelGroup = panel.TabGroup as PanelGroup;
 
 					if (panelGroup is not null)
 					{
@@ -327,8 +327,7 @@ public partial class IdeHeader : ComponentBase
             typeof(DotNetSolutionFormDisplay),
             null,
             null,
-			true,
-			null);
+			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }
@@ -341,8 +340,7 @@ public partial class IdeHeader : ComponentBase
             typeof(IdeInfoDisplay),
             null,
             null,
-			true,
-			null);
+			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }
@@ -355,8 +353,7 @@ public partial class IdeHeader : ComponentBase
             typeof(PermissionsDisplay),
             null,
             null,
-			true,
-			null);
+			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }

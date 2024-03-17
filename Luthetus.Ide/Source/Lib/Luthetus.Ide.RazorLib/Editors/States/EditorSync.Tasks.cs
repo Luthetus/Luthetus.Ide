@@ -10,6 +10,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Ide.RazorLib.Editors.States;
 
@@ -60,7 +61,7 @@ public partial class EditorSync
         if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime &&
             _ideComponentRenderers.BooleanPromptOrCancelRendererType is not null)
         {
-            var notificationInformativeKey = Key<INotificationViewModel>.NewKey();
+            var notificationInformativeKey = Key<IDynamicViewModel>.NewKey();
 
             var notificationInformative = new NotificationViewModel(
                 notificationInformativeKey,
@@ -121,8 +122,7 @@ public partial class EditorSync
                 },
                 TimeSpan.FromSeconds(20),
                 true,
-                null,
-				null);
+                null);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(
                 notificationInformative));

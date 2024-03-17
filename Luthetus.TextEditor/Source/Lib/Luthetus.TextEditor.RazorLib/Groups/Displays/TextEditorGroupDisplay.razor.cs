@@ -12,6 +12,7 @@ using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Groups.Displays;
 
@@ -84,12 +85,12 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 		foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
 		{
             var viewModel = viewModelState.ViewModelList.FirstOrDefault(x => x.ViewModelKey == viewModelKey);
+            
             if (viewModel is not null)
             {
                 viewModel.TabGroup = textEditorGroup;
-			}
-			textEditorPolymorphicViewModel.TabViewModel.ContainerDescriptor = "textEditor";
-			tabList.Add(textEditorPolymorphicViewModel.TabViewModel);
+			    tabList.Add(viewModel);
+            }
 		}
 
 		return tabList.ToImmutableArray();

@@ -16,6 +16,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 
@@ -39,7 +40,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     private InputFileSync InputFileSync { get; set; } = null!;
 
     [CascadingParameter]
-    public IDialogViewModel DialogRecord { get; set; } = null!;
+    public IDialog DialogRecord { get; set; } = null!;
 
     private string _solutionName = string.Empty;
     private string _parentDirectoryName = string.Empty;
@@ -109,7 +110,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 () =>
                 {
                     // Close Dialog
-                    Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
+                    Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
 
                     // Open the created .NET Solution
                     var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
@@ -165,7 +166,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             HackForWebsite_NEW_SOLUTION_TEMPLATE);
 
         // Close Dialog
-        Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
+        Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
 
         NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", LuthetusCommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
 

@@ -20,6 +20,7 @@ using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
 using Luthetus.Ide.RazorLib.Websites;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjectForms.Displays;
 
@@ -49,7 +50,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private InputFileSync InputFileSync { get; set; } = null!;
 
     [CascadingParameter]
-    public IDialogViewModel DialogRecord { get; set; } = null!;
+    public IDialog DialogRecord { get; set; } = null!;
 
     [Parameter]
     public Key<DotNetSolutionModel> DotNetSolutionModelKey { get; set; }
@@ -242,7 +243,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                         immutableView.NewCSharpProjectCancellationTokenSource.Token,
                         () =>
                         {
-                            Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
+                            Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
                             DotNetSolutionSync.SetDotNetSolution(immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath);
                             return Task.CompletedTask;
                         });

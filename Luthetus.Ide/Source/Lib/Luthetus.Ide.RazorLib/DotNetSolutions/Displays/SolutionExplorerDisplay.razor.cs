@@ -15,6 +15,7 @@ using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Editors.States;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 
@@ -90,13 +91,12 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private void OpenNewDotNetSolutionDialog()
     {
         var dialogRecord = new DialogViewModel(
-            Key<IDialogViewModel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
             "New .NET Solution",
             typeof(DotNetSolutionFormDisplay),
             null,
             null,
-			true,
-			null);
+			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(
             dialogRecord));

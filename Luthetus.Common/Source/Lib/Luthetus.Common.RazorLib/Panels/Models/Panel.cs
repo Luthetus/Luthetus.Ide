@@ -184,7 +184,8 @@ public record Panel : IPanelTab, IDialog, IDrag
 	
 			dropzoneList.Add(new PanelGroupDropzone(
 				measuredHtmlElementDimensions,
-				panelGroupHtmlIdTuple.PanelGroupKey));
+				panelGroupHtmlIdTuple.PanelGroupKey,
+				elementDimensions));
 		}
 
 		var result = dropzoneList.ToImmutableArray();
@@ -252,7 +253,8 @@ public record Panel : IPanelTab, IDialog, IDrag
 
 		dropzoneList.Add(new PanelGroupDropzone(
 			new MeasuredHtmlElementDimensions(0, 0, 0, 0, 0),
-			Key<PanelGroup>.Empty));
+			Key<PanelGroup>.Empty,
+			fallbackElementDimensions));
 	}
 
     public Task OnDragStartAsync(MouseEventArgs mouseEventArgs)

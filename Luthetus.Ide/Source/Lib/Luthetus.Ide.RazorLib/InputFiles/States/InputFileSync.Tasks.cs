@@ -28,8 +28,7 @@ public partial record InputFileSync
             _ideComponentRenderers.InputFileRendererType,
             null,
             HtmlFacts.Classes.DIALOG_PADDING_0,
-			true,
-			null);
+			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(inputFileDialog));
 

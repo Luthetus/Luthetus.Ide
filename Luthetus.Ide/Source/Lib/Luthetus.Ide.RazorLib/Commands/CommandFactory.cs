@@ -16,6 +16,7 @@ using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Ide.RazorLib.Commands;
 
@@ -46,9 +47,9 @@ public class CommandFactory : ICommandFactory
 
 	private TreeViewNamespacePath? _nodeOfViewModel = null;
 	private List<TreeViewNoType> _nodeList = new();
-    private IDialogViewModel? _contextSwitchDialog;
+    private IDialog? _contextSwitchDialog;
     
-	public IDialogViewModel? CodeSearchDialog { get; set; }
+	public IDialog? CodeSearchDialog { get; set; }
 
 	public void Initialize()
     {
@@ -260,13 +261,12 @@ public class CommandFactory : ICommandFactory
 	            commandArgs => 
 				{
                     CodeSearchDialog ??= new DialogViewModel(
-                        Key<IDialogViewModel>.NewKey(),
+                        Key<IDynamicViewModel>.NewKey(),
 						"Code Search",
                         typeof(CodeSearchDisplay),
                         null,
                         null,
-						true,
-						null);
+						true);
 
                     _dispatcher.Dispatch(new DialogState.RegisterAction(CodeSearchDialog));
                     return Task.CompletedTask;
@@ -284,13 +284,12 @@ public class CommandFactory : ICommandFactory
 	            commandArgs => 
 				{
                     _contextSwitchDialog ??= new DialogViewModel(
-                        Key<IDialogViewModel>.NewKey(),
+                        Key<IDynamicViewModel>.NewKey(),
 						"Context Switch",
                         typeof(ContextSwitchDisplay),
                         null,
                         null,
-						true,
-						null);
+						true);
 
                     _dispatcher.Dispatch(new DialogState.RegisterAction(_contextSwitchDialog));
                     return Task.CompletedTask;

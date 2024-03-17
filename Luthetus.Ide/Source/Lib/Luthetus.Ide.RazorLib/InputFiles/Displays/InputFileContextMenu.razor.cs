@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
@@ -143,12 +144,12 @@ public partial class InputFileContextMenu : ComponentBase
 
     public static string GetContextMenuCssStyleString(
         TreeViewCommandArgs? commandArgs,
-        IDialogViewModel dialogRecord)
+        IDialog dialogRecord)
     {
         if (commandArgs?.ContextMenuFixedPosition is null)
             return "display: none;";
 
-        if (dialogRecord.IsMaximized)
+        if (dialogRecord.DialogIsMaximized)
         {
             return
                 $"left: {commandArgs.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;" +

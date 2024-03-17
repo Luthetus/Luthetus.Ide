@@ -29,6 +29,7 @@ using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 
@@ -60,8 +61,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     [Parameter, EditorRequired]
     public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
 
-	private static readonly Key<IDialogViewModel> _solutionEditorDialogKey = Key<IDialogViewModel>.NewKey();
-	private static readonly Key<IDialogViewModel> _newCSharpProjectDialogKey = Key<IDialogViewModel>.NewKey();
+	private static readonly Key<IDynamicViewModel> _solutionEditorDialogKey = Key<IDynamicViewModel>.NewKey();
+	private static readonly Key<IDynamicViewModel> _newCSharpProjectDialogKey = Key<IDynamicViewModel>.NewKey();
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
@@ -415,8 +416,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 },
             },
             null,
-			true,
-			null);
+			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }
@@ -480,8 +480,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 },
             },
             null,
-			true,
-			null);
+			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }
