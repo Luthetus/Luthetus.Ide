@@ -97,7 +97,10 @@ public partial record TextEditorDraggableViewModel : IDraggableViewModel
 					new Key<Panel>(TextEditorPolymorphicViewModel.ViewModelKey.Guid),
 					new(),
 					typeof(TextEditorViewModelDisplay),
-					TextEditorPolymorphicViewModel.GetTitle()),
+					TextEditorPolymorphicViewModel.GetTitle())
+					{
+						ParameterMap = TextEditorPolymorphicViewModel.DialogViewModel.ParameterMap
+					},
 				true));
 
 			return Task.CompletedTask;

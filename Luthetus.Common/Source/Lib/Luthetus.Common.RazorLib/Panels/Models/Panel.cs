@@ -39,6 +39,7 @@ public record Panel
 	public string Title { get; }
 	public Type ContentRendererType { get; }
 	public Type RendererType { get; }
+	public Dictionary<string, object?>? ParameterMap { get; init; }
 
 	public PanelGroup? PanelGroup { get; set; }
 
@@ -49,6 +50,4 @@ public record Panel
     /// then try again to set focus to the now rendered ContextRecord.
     /// </summary>
     public Key<ContextRecord>? ContextRecordKey { get; set; }
-
-	public Dictionary<string, object?>? ParameterMap => new Dictionary<string, object?>();
 }

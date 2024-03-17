@@ -65,7 +65,8 @@
     <div class="luth_ide_panel-body">
         @if (activePanelTab is not null)
         {
-            <DynamicComponent Type="activePanelTab.ContentRendererType"/>
+            <DynamicComponent Type="activePanelTab.ContentRendererType"
+                              Parameters="activePanelTab.ParameterMap"/>
         }
     </div>
     
