@@ -9,7 +9,6 @@ public interface ITabViewModel
 	public IPolymorphicViewModel? PolymorphicViewModel { get; }
 	public Key<ITabViewModel> Key { get; }
 	public string Title { get; }
-	public string ContainerDescriptor { get; set; }
 
 	public bool GetIsActive();
 	public string GetDynamicCss();

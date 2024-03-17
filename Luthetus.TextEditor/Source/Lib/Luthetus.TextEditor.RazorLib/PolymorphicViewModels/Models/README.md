@@ -101,3 +101,65 @@ a 'PanelGroup'?
 
 Tabs know too much, the container should do most of what currently is done
 within 'tab'.
+
+-------------------------------------------------------------------------
+
+2024-03-17
+----------
+
+Concern, implementing the 'ITabGroup', and other interfacecs on the 'TextEditorGroup', and etc...
+	is coupling the UI logic and data logic inappropriately?
+
+public class TextEditorGroup : ITabGroup
+{
+	public bool GetIsActive(ITab tab)
+	{
+		if (tab is not TextEditorViewModel viewModel)
+			return Task.CompletedTask;
+
+		return ActiveViewModelKey == viewModel.ViewModelKey;
+	}
+
+	public Task OnClickAsync(ITab tab, MouseEventArgs mouseEventArgs)
+	{
+		if (tab is not TextEditorViewModel viewModel)
+			return Task.CompletedTask;
+
+		if (!GetIsActive(tab))
+			TextEditorService.GroupApi.SetActiveViewModel(GroupKey, viewModel.ViewModelKey);
+	
+		return Task.CompletedTask;
+	}
+
+	public string GetDynamicCss(ITab tab)
+	{
+		return string.Empty;
+	}
+
+	public Task CloseAsync(ITab tab)
+	{
+		if (tab is not TextEditorViewModel viewModel)
+			return Task.CompletedTask;
+
+		TextEditorService.GroupApi.RemoveViewModel(GroupKey, viewModel.ViewModelKey);
+		return Task.CompletedTask;
+	}
+}
+
+public interface ITabGroup
+{
+	public bool GetIsActive(ITab tab);
+	public string GetDynamicCss(ITab tab);
+    public Task OnClickAsync(ITab tab, MouseEventArgs mouseEventArgs);
+	public Task CloseAsync(ITab tab);
+}
+
+public interface ITab
+{
+	public string Title { get; }
+}
+
+public class TextEditorViewModel : IPanelGroupTab, ITextEditorGroupTab, IDialog, IDrag, IDropzone
+{
+	
+}
