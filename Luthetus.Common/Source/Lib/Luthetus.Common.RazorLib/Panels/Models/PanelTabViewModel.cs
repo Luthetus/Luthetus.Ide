@@ -7,7 +7,7 @@ using Fluxor;
 
 namespace Luthetus.Common.RazorLib.Panels.Models;
 
-public class PanelTabViewModel : ITabViewModel
+public class PanelTabViewModel : ITabViewModel, IPanelContainableTab
 {
 	public PanelTabViewModel(
 		Key<Panel> panelKey,
@@ -33,6 +33,9 @@ public class PanelTabViewModel : ITabViewModel
 	public IPolymorphicViewModel? PolymorphicViewModel { get; init; }
 	public Key<ITabViewModel> Key { get; }
 	public string Title => GetTitle();
+	public string ContainerDescriptor { get; set; }
+	public PanelGroup PanelGroup { get; set; }
+	public Panel Panel { get; set; }
 
 	public PanelGroup? GetPanelGroup()
 	{

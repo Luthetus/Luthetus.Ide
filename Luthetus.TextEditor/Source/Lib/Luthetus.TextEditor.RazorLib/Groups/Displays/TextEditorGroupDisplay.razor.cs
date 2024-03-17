@@ -112,6 +112,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 					textEditorPolymorphicViewModel));
 			}
 
+			textEditorPolymorphicViewModel.TabViewModel.ContainerDescriptor = "textEditor";
 			polymorphicViewModelList.Add(textEditorPolymorphicViewModel.TabViewModel);
 		}
 

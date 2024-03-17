@@ -52,3 +52,52 @@ the 'TextEditorTabViewModel', only understands the 'TextEditorGroup' container.
 
 How can I make 'TextEditorTabViewModel' understand what a 'PanelGroup' container is?
 
+----------------------
+
+Also think about, which came first the chicken or the egg.
+
+The 'TextEditorTabViewModel' can be rendered in a 'PanelGroup' only by
+knowing the 'PanelGroup' class.
+
+Can a tab be rendered by a container, of which, the tab when being written the container
+source code did not exist.
+
+Yes?
+
+Why is the code for the 'tab' so tied to the 'TextEditorTabViewModel'?
+
+The issue is that, 'TextEditorTabViewModel' needs to know who the container is.
+
+'TextEditorTabViewModel' is too tied to a 'TextEditorGroup'.
+
+The 'TextEditorGroup' is not always available.
+
+As a dialog, tab of a panel group, or a notification even, the 'TextEditorGroup' would be null.
+
+--------------------
+
+Panels don't know what a 'text editor' is. The project references go the opposite direction.
+
+Instead of thinking about taking a text editor tab, and converting it to a tab on a panel,
+how do I simply make a text editor tab on a panel from the get go (without this
+conversion logic).
+
+Instead of having 'ITabViewModel', contain all necessary information to render it as the active tab,
+the 'containers' are looking up the actual state, by using a key which is on the tab.
+
+I think if do as was done with the dialog, in the tabs, then this will work.
+
+The container cannot be expected to understand what it is rendering.
+The most obvious showcase of this would be that I want to render
+a 'text editor' in a 'panel', yet 'panel'(s) are in a different project,
+that don't have a reference to the 'text editor' code.
+
+Okay, I think the 'container' needs to be known by the view model.
+And then, the extent of what a view model knows, is limited by whether
+the 'container' understand too what the 'view model' is.
+
+Why is 'Panel.razor' used as the name for the component which renders
+a 'PanelGroup'?
+
+Tabs know too much, the container should do most of what currently is done
+within 'tab'.

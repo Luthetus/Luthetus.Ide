@@ -28,6 +28,7 @@ public class TabViewModel : ITabViewModel
 	public IPolymorphicViewModel? PolymorphicViewModel { get; init; }
 	public Key<ITabViewModel> Key { get; } = Key<ITabViewModel>.NewKey();
 	public string Title { get; init; }
+	public string ContainerDescriptor { get; set; }
 
 	public bool GetIsActive()
 	{

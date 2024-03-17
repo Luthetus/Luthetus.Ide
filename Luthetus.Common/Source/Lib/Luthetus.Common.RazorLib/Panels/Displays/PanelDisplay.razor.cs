@@ -82,7 +82,14 @@ public partial class PanelDisplay : FluxorComponent
 					polymorphicViewModel));
 			}
 
-			tabViewModelList.Add(polymorphicViewModel.TabViewModel);
+			polymorphicViewModel.TabViewModel.ContainerDescriptor = "panel";
+
+			if (polymorphicViewModel.TabViewModel is IPanelContainableTab panelContainableTab)
+			{
+				panelContainableTab.Panel = panel;
+				panelContainableTab.PanelGroup = PanelsStateWrap.Value.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
+				tabViewModelList.Add(polymorphicViewModel.TabViewModel);
+			}
 		}
 
 		return tabViewModelList.ToImmutableArray();
