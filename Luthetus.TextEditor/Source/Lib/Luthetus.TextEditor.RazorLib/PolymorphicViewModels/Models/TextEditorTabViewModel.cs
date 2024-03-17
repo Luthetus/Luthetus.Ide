@@ -34,6 +34,9 @@ public partial record TextEditorTabViewModel : ITabViewModel
 
 	public bool GetIsActive()
 	{
+		if (TextEditorPolymorphicViewModel.TextEditorGroup is null)
+			return false;
+
 		return TextEditorPolymorphicViewModel.TextEditorGroup.ActiveViewModelKey == TextEditorPolymorphicViewModel.ViewModelKey;
 	}
 
