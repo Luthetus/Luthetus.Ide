@@ -78,7 +78,9 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 
 	private ImmutableArray<ITab> GetTabList(TextEditorGroup textEditorGroup)
 	{
-		var viewModelState = TextEditorViewModelStateWrap.Value;
+        textEditorGroup.TextEditorService = TextEditorService;
+
+        var viewModelState = TextEditorViewModelStateWrap.Value;
 		var tabList = new List<ITab>();
 
 		foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
