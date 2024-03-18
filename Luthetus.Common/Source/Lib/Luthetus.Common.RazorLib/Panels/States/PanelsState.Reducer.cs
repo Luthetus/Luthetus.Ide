@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 
 namespace Luthetus.Common.RazorLib.Panels.States;
 
@@ -7,6 +7,35 @@ public partial record PanelsState
     public class Reducer
     {
         [ReducerMethod]
+        public static PanelsState ReduceRegisterPanelAction(
+            PanelsState inState,
+            RegisterPanelAction registerPanelAction)
+        {
+            if (inState.PanelList.Any(x => x.Key == registerPanelAction.Panel.Key))
+                return inState;
+
+            var outPanelList = inState.PanelList.Add(registerPanelAction.Panel);
+
+            return inState with { PanelList = outPanelList };
+        }
+
+        [ReducerMethod]
+        public static PanelsState ReduceDisposePanelAction(
+            PanelsState inState,
+            DisposePanelAction disposePanelAction)
+        {
+            var inPanel = inState.PanelList.FirstOrDefault(
+                x => x.Key == disposePanelAction.PanelKey);
+
+            if (inPanel is null)
+                return inState;
+
+            var outPanelList = inState.PanelList.Remove(inPanel);
+
+            return inState with { PanelList = outPanelList };
+        }
+		
+		[ReducerMethod]
         public static PanelsState ReduceRegisterPanelGroupAction(
             PanelsState inState,
             RegisterPanelGroupAction registerPanelGroupAction)

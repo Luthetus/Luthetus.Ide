@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Common.RazorLib.Reactives.Models;
+namespace Luthetus.Common.RazorLib.Reactives.Models;
 
 public interface IThrottle : IDisposable
 {

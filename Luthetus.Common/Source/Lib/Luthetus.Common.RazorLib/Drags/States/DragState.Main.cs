@@ -1,6 +1,6 @@
-using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 using Fluxor;
 using Microsoft.AspNetCore.Components.Web;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Drags.Displays;
 
@@ -8,7 +8,7 @@ namespace Luthetus.Common.RazorLib.Drags.Displays;
 public partial record DragState(
     bool ShouldDisplay,
     MouseEventArgs? MouseEventArgs,
-	IPolymorphicDraggable? PolymorphicDraggable)
+	IDrag? Drag)
 {
     public DragState() : this (false, null, null)
     {

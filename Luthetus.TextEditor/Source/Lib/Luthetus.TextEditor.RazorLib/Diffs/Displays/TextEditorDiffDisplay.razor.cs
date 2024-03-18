@@ -1,12 +1,13 @@
-﻿using Fluxor;
+using Fluxor;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
-using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Displays;
 
@@ -43,15 +44,13 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     [Parameter]
     public int TabIndex { get; set; } = -1;
 
-    private DialogRecord _detailsDialogRecord = new(
-            Key<DialogRecord>.NewKey(),
-            "Diff Details",
-            typeof(DiffDetailsDisplay),
-            null,
-            null)
-    {
-        IsResizable = true,
-    };
+    private DialogViewModel _detailsDialogRecord = new DialogViewModel(
+        Key<IDynamicViewModel>.NewKey(),
+        "Diff Details",
+        typeof(DiffDetailsDisplay),
+        null,
+        null,
+        true);
 
     private CancellationTokenSource _calculateDiffCancellationTokenSource = new();
     private TextEditorDiffResult? _mostRecentDiffResult;
@@ -100,22 +99,22 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 
     private void ShowCalculationOnClick()
     {
-        DialogService.DisposeDialogRecord(_detailsDialogRecord.Key);
+        DialogService.DisposeDialogRecord(_detailsDialogRecord.DynamicViewModelKey);
 
         _detailsDialogRecord = _detailsDialogRecord with
         {
-            Parameters = new Dictionary<string, object?>
-            {
-                {
-                    nameof(DiffDetailsDisplay.DiffModelKey),
-                    TextEditorDiffKey
-                },
-                {
-                    nameof(DiffDetailsDisplay.DiffResult),
-                    _mostRecentDiffResult
-                }
-            }
-        };
+            ComponentParameterMap = new Dictionary<string, object?>
+			{
+				{
+					nameof(DiffDetailsDisplay.DiffModelKey),
+					TextEditorDiffKey
+				},
+				{
+					nameof(DiffDetailsDisplay.DiffResult),
+					_mostRecentDiffResult
+				}
+			}
+		};
 
         DialogService.RegisterDialogRecord(_detailsDialogRecord);
     }

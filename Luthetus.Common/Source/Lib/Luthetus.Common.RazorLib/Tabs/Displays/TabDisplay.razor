@@ -1,0 +1,24 @@
+@{ var localTabViewModel = Tab; }
+
+<button class="luth_polymorphic-tab luth_button luth_unselectable @IsActiveCssClass @localTabViewModel.TabGroup.GetDynamicCss(localTabViewModel) @GetIsBeingDraggedCssClassString() @CssClassString"
+		style="@GetDraggableCssStyleString() @CssStyleString"
+		id="@HtmlId"
+		@onclick="e => localTabViewModel.TabGroup.OnClickAsync(localTabViewModel, e)"
+		@onmousedown:stopPropagation="true"
+		@onmousedown:preventDefault="true"
+        @onmousedown="HandleOnMouseDownAsync"
+        @onmouseup="HandleOnMouseUp"
+        @onmouseout="HandleOnMouseOutAsync">
+
+	<span>@localTabViewModel.Title</span>
+
+	@if (ShouldDisplayCloseButton)
+	{
+		<button class="luth_button luth_button-close"
+	            @onclick:stopPropagation="true"
+	            @onclick="CloseTabOnClickAsync">
+	        
+	        <IconClose/>
+    	</button>
+	}
+</button>

@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -19,13 +19,18 @@ public class BackgroundTaskServiceSynchronous : IBackgroundTaskService
 
         var queue = _queueMap[backgroundTask.QueueKey];
 
-        queue.BackgroundTasks.Enqueue(backgroundTask);
+		// TODO: Why enqueue when no dequeue happens? Also StopAsync seems nonsensical
+		// for the same reason. This is the synchronous version.
+        queue.Enqueue(backgroundTask);
 
         SetExecutingBackgroundTask(backgroundTask.QueueKey, backgroundTask);
 
         backgroundTask
-            .InvokeWorkItem(CancellationToken.None)
+            .HandleEvent(CancellationToken.None)
             .Wait();
+
+		// Don't await Task.Delay(backgroundTask.ThrottleTimeSpan) for
+		// this BackgroundTaskServiceSynchronous implementation.
 
         SetExecutingBackgroundTask(backgroundTask.QueueKey, null);
     }

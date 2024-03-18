@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Resizes.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Resizes.Displays;
 
@@ -18,6 +19,9 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
     public ElementDimensions ElementDimensions { get; set; } = null!;
     [Parameter, EditorRequired]
     public Func<Task> ReRenderFuncAsync { get; set; } = null!;
+
+	[Parameter]
+    public IDrag? Drag { get; set; } = null!;
 
     public const double RESIZE_HANDLE_SQUARE_PIXELS = 10;
 
@@ -65,21 +69,25 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
         }
     }
 
-    private void SubscribeToDragEvent(
+    private async Task SubscribeToDragEventAsync(
         Func<(MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task> dragEventHandler)
     {
         _dragEventHandler = dragEventHandler;
+
+        if (Drag is not null)
+            await Drag.OnDragStartAsync();
 
         Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
         {
             ShouldDisplay = true,
             MouseEventArgs = null,
+			Drag = Drag,
         }));
     }
 
     public void SubscribeToDragEventWithMoveHandle()
     {
-        SubscribeToDragEvent(DragEventHandlerMoveHandleAsync);
+        SubscribeToDragEventAsync(DragEventHandlerMoveHandleAsync);
     }
 
     #region ResizeHandleStyleCss

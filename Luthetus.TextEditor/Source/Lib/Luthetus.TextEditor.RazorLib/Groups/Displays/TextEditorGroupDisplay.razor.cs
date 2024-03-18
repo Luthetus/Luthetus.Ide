@@ -1,17 +1,17 @@
-using Luthetus.Common.RazorLib.PolymorphicUis.Models;
 using Microsoft.AspNetCore.Components;
 using Fluxor;
 using System.Collections.Immutable;
+using Microsoft.JSInterop;
+using Luthetus.Common.RazorLib.Tabs.Displays;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Panels.States;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.PolymorphicUis.Displays;
-using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
-using Microsoft.JSInterop;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Groups.Displays;
 
@@ -21,10 +21,14 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     private IState<TextEditorGroupState> TextEditorGroupStateWrap { get; set; } = null!;
 	[Inject]
     private IState<TextEditorViewModelState> TextEditorViewModelStateWrap { get; set; } = null!;
+	[Inject]
+    private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
     private IDialogService DialogService { get; set; } = null!;
+	[Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
@@ -48,7 +52,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     [Parameter]
     public TextEditorViewModelDisplayOptions ViewModelDisplayOptions { get; set; } = new();
 
-	private PolymorphicTabListDisplay? _polymorphicTabListDisplay;
+	private TabListDisplay? _tabListDisplay;
 
 	private string? _htmlId = null;
 	private string HtmlId => _htmlId ??= $"luth_te_group_{TextEditorGroupKey.Guid}";
@@ -66,33 +70,33 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 
 	private async void TextEditorViewModelStateWrapOnStateChanged(object? sender, EventArgs e)
 	{
-		var localPolymorphicTabListDisplay = _polymorphicTabListDisplay;
+		var localPolymorphicTabListDisplay = _tabListDisplay;
 
 		if (localPolymorphicTabListDisplay is not null)
-			await _polymorphicTabListDisplay.NotifyStateChangedAsync();
+			await _tabListDisplay.NotifyStateChangedAsync();
 	}
 
-	private ImmutableArray<IPolymorphicTab> GetPolymphoricUiList(TextEditorGroup textEditorGroup)
+	private ImmutableArray<ITab> GetTabList(TextEditorGroup textEditorGroup)
 	{
 		var viewModelState = TextEditorViewModelStateWrap.Value;
-		var polymphoricUiList = new List<IPolymorphicTab>();
+		var tabList = new List<ITab>();
 
 		foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
 		{
-			var polymorphicUi = viewModelState.ViewModelPolymorphicUiList.FirstOrDefault(
-				x => x.ViewModelKey == viewModelKey);
-
-			if (polymorphicUi is not null)
-			{
-				polymorphicUi.TextEditorGroup = textEditorGroup;
-				polymorphicUi.TextEditorService = TextEditorService;
-				polymorphicUi.DialogService = DialogService;
-				polymorphicUi.JsRuntime = JsRuntime;
-				polymphoricUiList.Add(polymorphicUi);
-			}
+            var viewModel = viewModelState.ViewModelList.FirstOrDefault(x => x.ViewModelKey == viewModelKey);
+            
+            if (viewModel is not null)
+            {
+                viewModel.DynamicViewModelAdapter.TabGroup = textEditorGroup;
+				viewModel.DynamicViewModelAdapter.TextEditorService = TextEditorService;
+				viewModel.DynamicViewModelAdapter.Dispatcher = Dispatcher;
+                viewModel.DynamicViewModelAdapter.DialogService = DialogService;
+				viewModel.DynamicViewModelAdapter.JsRuntime = JsRuntime;
+				tabList.Add(viewModel.DynamicViewModelAdapter);
+            }
 		}
 
-		return polymphoricUiList.ToImmutableArray();
+		return tabList.ToImmutableArray();
 	}
 
     public void Dispose()

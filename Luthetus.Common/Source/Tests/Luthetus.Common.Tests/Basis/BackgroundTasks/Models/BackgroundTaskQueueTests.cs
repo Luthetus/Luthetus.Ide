@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,17 +44,21 @@ public class BackgroundTaskQueueTests
         Assert.Empty(queue.BackgroundTasks);
         Assert.Equal(0, queue.CountOfBackgroundTasks);
 
-        queue.BackgroundTasks.Enqueue(backgroundTask);
+        {
+            // Broke this test (2024-03-17)
+            throw new NotImplementedException();
+            // queue.BackgroundTasks.Enqueue(backgroundTask);
+        }
         
         Assert.NotEmpty(queue.BackgroundTasks);
         Assert.Equal(1, queue.CountOfBackgroundTasks);
     }
 
     /// <summary>
-    /// <see cref="BackgroundTaskQueue.WorkItemsQueueSemaphoreSlim"/>
+    /// <see cref="BackgroundTaskQueue.WorkItemAvailableSemaphoreSlim"/>
     /// </summary>
     [Fact]
-    public void WorkItemsQueueSemaphoreSlim()
+    public void WorkItemAvailableSemaphoreSlim()
     {
         /*
         Thoughts for this test as of (2023-11-20)

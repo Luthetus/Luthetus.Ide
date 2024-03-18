@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 
 namespace Luthetus.Common.RazorLib.Dialogs.States;
 
@@ -11,15 +11,15 @@ public partial record DialogState
             DialogState inState,
             RegisterAction registerAction)
         {
-            if (inState.DialogList.Any(x => x.Key == registerAction.Entry.Key))
+            if (inState.DialogList.Any(x => x.DynamicViewModelKey == registerAction.Dialog.DynamicViewModelKey))
                 return inState;
 
-            var outDialogList = inState.DialogList.Add(registerAction.Entry);
+            var outDialogList = inState.DialogList.Add(registerAction.Dialog);
 
             return inState with 
             {
                 DialogList = outDialogList,
-                ActiveDialogKey = registerAction.Entry.Key,
+                ActiveDialogKey = registerAction.Dialog.DynamicViewModelKey,
             };
         }
 
@@ -29,15 +29,14 @@ public partial record DialogState
             SetIsMaximizedAction setIsMaximizedAction)
         {
             var inDialog = inState.DialogList.FirstOrDefault(
-                x => x.Key == setIsMaximizedAction.Key);
+                x => x.DynamicViewModelKey == setIsMaximizedAction.DynamicViewModelKey);
 
             if (inDialog is null)
                 return inState;
 
-            var outDialogList = inState.DialogList.Replace(inDialog, inDialog with
-            {
-                IsMaximized = setIsMaximizedAction.IsMaximized
-            });
+            var outDialogList = inState.DialogList.Replace(
+				inDialog,
+				inDialog.SetDialogIsMaximized(setIsMaximizedAction.IsMaximized));
 
             return inState with { DialogList = outDialogList };
         }
@@ -47,7 +46,7 @@ public partial record DialogState
             DialogState inState,
             SetActiveDialogKeyAction setActiveDialogKeyAction)
         {
-            return inState with { ActiveDialogKey = setActiveDialogKeyAction.DialogKey };
+            return inState with { ActiveDialogKey = setActiveDialogKeyAction.DynamicViewModelKey };
         }
 
         [ReducerMethod]
@@ -56,7 +55,7 @@ public partial record DialogState
             DisposeAction disposeAction)
         {
             var inDialog = inState.DialogList.FirstOrDefault(
-                x => x.Key == disposeAction.Key);
+                x => x.DynamicViewModelKey == disposeAction.DynamicViewModelKey);
 
             if (inDialog is null)
                 return inState;

@@ -3,7 +3,8 @@ using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Reactives.Models;
-using Luthetus.Common.RazorLib.PolymorphicUis.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Drags.Displays;
 
@@ -23,7 +24,7 @@ public partial class DragInitializer : FluxorComponent
     /// </summary>
     private IThrottle _throttleDispatchSetDragStateActionOnMouseMove = new Throttle(IThrottle.DefaultThrottleTimeSpan);
 
-	private IPolymorphicDropzone? _onMouseOverDropzone = null;
+	private IDropzone? _onMouseOverDropzone = null;
 
     private DragState.WithAction ConstructClearDragStateAction()
     {
@@ -33,7 +34,7 @@ public partial class DragInitializer : FluxorComponent
         {
             ShouldDisplay = false,
             MouseEventArgs = null,
-			PolymorphicDraggable = null,
+			Drag = null,
         });
     }
 
@@ -58,7 +59,7 @@ public partial class DragInitializer : FluxorComponent
         });
     }
 
-    private Task DispatchSetDragStateActionOnMouseUp()
+    private Task DispatchSetDragStateActionOnMouseUp(MouseEventArgs mouseEventArgs)
     {
 		var dragState = DragStateWrap.Value;
 		var localOnMouseOverDropzone = _onMouseOverDropzone;
@@ -67,18 +68,20 @@ public partial class DragInitializer : FluxorComponent
         {
             Dispatcher.Dispatch(ConstructClearDragStateAction());
 
-			var polymorphicDraggable = dragState.PolymorphicDraggable;
-			if (polymorphicDraggable is not null)
-				await polymorphicDraggable.OnDragStopAsync(localOnMouseOverDropzone);
+			var draggableViewModel = dragState.Drag;
+			if (draggableViewModel is not null)
+				await draggableViewModel.OnDragEndAsync(mouseEventArgs, localOnMouseOverDropzone);
         });
 
 		return Task.CompletedTask;
     }
 
-	private string GetIsActiveCssClass(IPolymorphicDropzone dropzone)
+	private string GetIsActiveCssClass(IDropzone dropzone)
 	{
-		return Object.ReferenceEquals(_onMouseOverDropzone, dropzone)
-			? "luth_active"
+		var onMouseOverDropzoneKey = _onMouseOverDropzone?.DropzoneKey ?? Key<IDropzone>.Empty;
+
+		return onMouseOverDropzoneKey == dropzone.DropzoneKey
+            ? "luth_active"
 			: string.Empty;
 	}
 }

@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -19,8 +19,8 @@ public class BackgroundTaskService : IBackgroundTaskService
 
         var queue = _queueMap[backgroundTask.QueueKey];
 
-        queue.BackgroundTasks.Enqueue(backgroundTask);
-        queue.WorkItemsQueueSemaphoreSlim.Release();
+        queue.Enqueue(backgroundTask);
+        queue.WorkItemAvailableSemaphoreSlim.Release();
     }
 
     public void Enqueue(
@@ -38,8 +38,8 @@ public class BackgroundTaskService : IBackgroundTaskService
     {
         var queue = _queueMap[queueKey];
 
-        await queue.WorkItemsQueueSemaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
-        _ = queue.BackgroundTasks.TryDequeue(out var backgroundTask);
+        await queue.WorkItemAvailableSemaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
+        var backgroundTask = queue.DequeueOrDefault();
 
         return backgroundTask;
     }

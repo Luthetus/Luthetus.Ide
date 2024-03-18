@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Notifications.Models;
+﻿using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Notifications.States;
 using System.Collections.Immutable;
 
@@ -17,9 +17,9 @@ public class NotificationStateTests
     {
         var notificationState = new NotificationState();
 
-        Assert.Equal(ImmutableList<NotificationRecord>.Empty, notificationState.DefaultList);
-        Assert.Equal(ImmutableList<NotificationRecord>.Empty, notificationState.ReadList);
-        Assert.Equal(ImmutableList<NotificationRecord>.Empty, notificationState.ArchivedList);
-        Assert.Equal(ImmutableList<NotificationRecord>.Empty, notificationState.DeletedList);
+        Assert.Equal(ImmutableList<INotification>.Empty, notificationState.DefaultList);
+        Assert.Equal(ImmutableList<INotification>.Empty, notificationState.ReadList);
+        Assert.Equal(ImmutableList<INotification>.Empty, notificationState.ArchivedList);
+        Assert.Equal(ImmutableList<INotification>.Empty, notificationState.DeletedList);
     }
 }

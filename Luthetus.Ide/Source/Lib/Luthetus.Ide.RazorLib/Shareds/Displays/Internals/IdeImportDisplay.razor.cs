@@ -1,4 +1,5 @@
 using Fluxor;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
@@ -180,8 +181,8 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
             absolutePathString,
             false);
 
-        var notificationRecord = new NotificationRecord(
-            Key<NotificationRecord>.NewKey(),
+        var notificationRecord = new NotificationViewModel(
+            Key<IDynamicViewModel>.NewKey(),
             "A .NET Solution was found",
             typeof(IdePromptOpenSolutionDisplay),
             new Dictionary<string, object?>

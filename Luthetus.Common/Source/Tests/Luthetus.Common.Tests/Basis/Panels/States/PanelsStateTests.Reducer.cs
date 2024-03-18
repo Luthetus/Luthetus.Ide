@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
@@ -91,18 +92,13 @@ public class PanelsStateReducerTests
         {
             var insertAtIndexZero = false;
 
-            var localPanelTab = new PanelTab(
-                    Key<PanelTab>.NewKey(),
-                    panelGroup.ElementDimensions,
-                    new(),
-                    // Awkwardly need to provide a type here. Will provide an Icon but this usually
-                    // would be more along the lines of "typeof(SolutionExplorerDisplay)"
-                    typeof(IconCSharpClass),
-                    typeof(IconFolder),
-                    "Solution Explorer")
-            {
-                ContextRecordKey = ContextFacts.SolutionExplorerContext.ContextKey
-            };
+            var localPanelTab = new Panel(
+                "Solution Explorer",
+                Key<Panel>.NewKey(),
+                Key<IDynamicViewModel>.NewKey(),
+                ContextFacts.SolutionExplorerContext.ContextKey,
+                typeof(IconCSharpClass),
+                new());
 
             dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
                 panelGroup.Key,
@@ -118,18 +114,13 @@ public class PanelsStateReducerTests
         {
             var insertAtIndexZero = true;
 
-            var localPanelTab = new PanelTab(
-                    Key<PanelTab>.NewKey(),
-                    panelGroup.ElementDimensions,
-                    new(),
-                    // Awkwardly need to provide a type here. Will provide an Icon but this usually
-                    // would be more along the lines of "typeof(SolutionExplorerDisplay)"
-                    typeof(IconCSharpClass),
-                    typeof(IconFolder),
-                    "Solution Explorer")
-            {
-                ContextRecordKey = ContextFacts.SolutionExplorerContext.ContextKey
-            };
+            var localPanelTab = new Panel(
+				"Solution Explorer",
+				Key<Panel>.NewKey(),
+                Key<IDynamicViewModel>.NewKey(),
+				ContextFacts.SolutionExplorerContext.ContextKey,
+                typeof(IconCSharpClass),
+                new());
 
             dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
                 panelGroup.Key,
@@ -233,22 +224,17 @@ public class PanelsStateReducerTests
         dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
         Assert.Contains(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
 
-        List<(ContextRecord contextRecord, PanelTab panelTab)> panelTabTupleList = new();
+        List<(ContextRecord contextRecord, IPanelTab panelTab)> panelTabTupleList = new();
 
         foreach (var context in ContextFacts.AllContextsList)
         {
-            var localPanelTab = new PanelTab(
-                Key<PanelTab>.NewKey(),
-                panelGroup.ElementDimensions,
-                new(),
-                // Awkwardly need to provide a type here. Will provide an Icon but this usually
-                // would be more along the lines of "typeof(SolutionExplorerDisplay)"
+            var localPanelTab = new Panel(
+				"Solution Explorer",
+				Key<Panel>.NewKey(),
+				Key<IDynamicViewModel>.NewKey(),
+				context.ContextKey,
                 typeof(IconCSharpClass),
-                typeof(IconFolder),
-                "Solution Explorer")
-            {
-                ContextRecordKey = context.ContextKey
-            };
+                new());
 
             panelTabTupleList.Add((context, localPanelTab));
 
@@ -301,7 +287,7 @@ public class PanelsStateReducerTests
         var dragEventArgs = (panelTab, panelGroup);
         
         dispatcher.Dispatch(new PanelsState.SetDragEventArgsAction(dragEventArgs));
-        Assert.Equal(panelsStateWrap.Value.DragEventArgs, dragEventArgs);
+        Assert.Equal(panelsStateWrap.Value.DragEventArgs!.Value, dragEventArgs);
     }
 
     private void InitializePanelsStateReducerTests(
@@ -309,7 +295,7 @@ public class PanelsStateReducerTests
         out IState<PanelsState> panelsStateWrap,
         out IDispatcher dispatcher,
         out PanelGroup samplePanelGroup,
-        out PanelTab samplePanelTab)
+        out IPanelTab samplePanelTab)
     {
         var services = new ServiceCollection()
             .AddFluxor(options => options.ScanAssemblies(typeof(PanelsState).Assembly));
@@ -324,10 +310,10 @@ public class PanelsStateReducerTests
         dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
 
         samplePanelGroup = new PanelGroup(
-                Key<PanelGroup>.NewKey(),
-                Key<PanelTab>.Empty,
-                new ElementDimensions(),
-                ImmutableArray<PanelTab>.Empty);
+            Key<PanelGroup>.NewKey(),
+            Key<Panel>.Empty,
+            new ElementDimensions(),
+            ImmutableArray<IPanelTab>.Empty);
 
         var samplePanelGroupWidth = samplePanelGroup.ElementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
@@ -347,17 +333,12 @@ public class PanelsStateReducerTests
             }
         });
 
-        samplePanelTab = new PanelTab(
-            Key<PanelTab>.NewKey(),
-            samplePanelGroup.ElementDimensions,
-            new(),
-            // Awkwardly need to provide a type here. Will provide an Icon but this usually
-            // would be more along the lines of "typeof(SolutionExplorerDisplay)"
-            typeof(IconCSharpClass),
-            typeof(IconFolder),
-            "Solution Explorer")
-        {
-            ContextRecordKey = ContextFacts.SolutionExplorerContext.ContextKey
-        };
+        samplePanelTab = new Panel(
+			"Solution Explorer",
+			Key<Panel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
+			ContextFacts.SolutionExplorerContext.ContextKey,
+			typeof(IconCSharpClass),
+            new());
     }
 }

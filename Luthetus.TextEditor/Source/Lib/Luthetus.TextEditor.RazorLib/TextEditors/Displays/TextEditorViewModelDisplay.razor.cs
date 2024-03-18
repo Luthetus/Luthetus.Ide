@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
@@ -238,7 +238,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             await CursorDisplay.FocusAsync();
     }
 
-    private void ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private async Task ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (TextEditorEventsUtils.CheckIfKeyboardEventArgsIsNoise(keyboardEventArgs))
             return;
@@ -249,11 +249,19 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (resourceUri is null || viewModelKey is null)
             return;
 
-        _events.Controller.EnqueueEvent(new ThrottleEventOnKeyDown(
+		var throttleEventOnKeyDown = new ThrottleEventOnKeyDown(
             _events,
             keyboardEventArgs,
             resourceUri,
-            viewModelKey.Value));
+            viewModelKey.Value);
+
+		TextEditorService.Post(throttleEventOnKeyDown);
+
+		//_ = Task.Run(() => TextEditorService.Post(throttleEventOnKeyDown));
+	
+		//await Task.Yield();
+
+		//Console.WriteLine("Post");
     }
 
     private async Task ReceiveOnContextMenuAsync()
@@ -272,11 +280,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        _events.Controller.EnqueueEvent(new ThrottleEventOnDoubleClick(
+        var throttleEventOnDoubleClick = new ThrottleEventOnDoubleClick(
             mouseEventArgs,
             _events,
             modelResourceUri,
-            viewModelKey.Value));
+            viewModelKey.Value);
+
+		TextEditorService.Post(throttleEventOnDoubleClick);
     }
 
     private void ReceiveContentOnMouseDown(MouseEventArgs mouseEventArgs)
@@ -286,12 +296,14 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         if (modelResourceUri is null || viewModelKey is null)
             return;
-
-        _events.Controller.EnqueueEvent(new ThrottleEventOnMouseDown(
+		
+		var throttleEventOnMouseDown = new ThrottleEventOnMouseDown(
             mouseEventArgs,
             _events,
             modelResourceUri,
-            viewModelKey.Value));
+            viewModelKey.Value);
+
+		TextEditorService.Post(throttleEventOnMouseDown);
 
         _events.ThinksLeftMouseButtonIsDown = true;
     }
@@ -349,11 +361,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
-            _events.Controller.EnqueueEvent(new ThrottleEventOnMouseMove(
+			var throttleEventOnMouseMove = new ThrottleEventOnMouseMove(
                 mouseEventArgs,
                 _events,
                 modelResourceUri,
-                viewModelKey.Value));
+                viewModelKey.Value);
+
+            TextEditorService.Post(throttleEventOnMouseMove);
         }
         else
         {
@@ -373,10 +387,12 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (viewModelKey is null)
             return;
 
-        _events.Controller.EnqueueEvent(new ThrottleEventOnWheel(
+		var throttleEventOnWheel = new ThrottleEventOnWheel(
             wheelEventArgs,
             _events,
-            viewModelKey.Value));
+            viewModelKey.Value);
+
+        TextEditorService.Post(throttleEventOnWheel);
     }
 
     private Task ReceiveOnTouchStartAsync(TouchEventArgs touchEventArgs)
@@ -389,33 +405,42 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         return Task.CompletedTask;
     }
 
-    private Task ReceiveOnTouchMoveAsync(TouchEventArgs touchEventArgs)
+    private async Task ReceiveOnTouchMoveAsync(TouchEventArgs touchEventArgs)
     {
         var localThinksTouchIsOccurring = _thinksTouchIsOccurring;
 
         if (!_thinksTouchIsOccurring)
-            return Task.CompletedTask;
+            return;
 
         var previousTouchPoint = _previousTouchEventArgs?.ChangedTouches.FirstOrDefault(x => x.Identifier == 0);
         var currentTouchPoint = touchEventArgs.ChangedTouches.FirstOrDefault(x => x.Identifier == 0);
 
         if (previousTouchPoint is null || currentTouchPoint is null)
-            return Task.CompletedTask;
+            return;
 
         var viewModel = GetViewModel();
 
         if (viewModel is null)
-            return Task.CompletedTask;
+            return;
 
         // Natural scrolling for touch devices
         var diffX = previousTouchPoint.ClientX - currentTouchPoint.ClientX;
         var diffY = previousTouchPoint.ClientY - currentTouchPoint.ClientY;
 
-        viewModel.MutateScrollHorizontalPositionByPixels(diffX);
-        viewModel.MutateScrollVerticalPositionByPixels(diffY);
+		TextEditorService.Post(
+            nameof(QueueRemeasureBackgroundTask),
+            async editContext =>
+			{
+				await viewModel.MutateScrollHorizontalPositionByPixelsFactory(diffX)
+					.Invoke(editContext)
+					.ConfigureAwait(false);
+
+				await viewModel.MutateScrollVerticalPositionByPixelsFactory(diffY)
+					.Invoke(editContext)
+					.ConfigureAwait(false);
+			});
 
         _previousTouchEventArgs = touchEventArgs;
-        return Task.CompletedTask;
     }
 
     private string GetGlobalHeightInPixelsStyling()
@@ -548,7 +573,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             _viewModelDisplay = viewModelDisplay;
         }
 
-        public ThrottleController Controller { get; } = new();
         public TimeSpan ThrottleDelayDefault { get; } = TimeSpan.FromMilliseconds(30);
         public TimeSpan OnMouseOutTooltipDelay { get; } = TimeSpan.FromMilliseconds(1_000);
         public TimeSpan MouseStoppedMovingDelay { get; } = TimeSpan.FromMilliseconds(400);

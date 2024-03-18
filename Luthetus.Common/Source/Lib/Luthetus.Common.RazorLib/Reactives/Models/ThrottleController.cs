@@ -1,7 +1,15 @@
-﻿using System.Runtime.CompilerServices;
+/*
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using System.Runtime.CompilerServices;
 
 namespace Luthetus.Common.RazorLib.Reactives.Models;
 
+/// <summary>
+/// Goal: Change BackgroundTask to act similarly to IThrottleEvent #Step 300 (2024-03-11)
+/// -------------------------------------------------------------------------------------
+/// I want to delete the IThrottleEvent type, and replace all references to it with
+/// <see cref"IBackgroundTask"/>
+/// </summary>
 public class ThrottleController
 {
     private readonly object _lockSemaphoreSlim = new();
@@ -12,7 +20,7 @@ public class ThrottleController
     private CancellationTokenSource _throttleCancellationTokenSource = new();
     private ConfiguredTaskAwaitable _dequeueAsyncTask = Task.CompletedTask.ConfigureAwait(false);
 
-    public void EnqueueEvent(IThrottleEvent throttleEvent)
+    public void EnqueueEvent(IBackgroundTask throttleEvent)
     {
         lock (_lockThrottleEventQueue)
         {
@@ -41,7 +49,7 @@ public class ThrottleController
             while (true)
             {
                 CancellationToken cancellationToken;
-                IThrottleEvent? throttleEvent;
+                IBackgroundTask? throttleEvent;
 
                 lock (_lockThrottleEventQueue)
                 {
@@ -99,3 +107,4 @@ public class ThrottleController
         _throttleCancellationTokenSource.Cancel();
     }
 }
+*/

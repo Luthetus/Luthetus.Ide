@@ -1,0 +1,70 @@
+.luth_polymorphic-tab-list {
+	display: flex;
+}
+
+/* ----------------------------------------- */
+
+.luth_panel-tabs-justify-end {
+    position: absolute;
+    right: calc(3ch + 3px);
+    top: 0;
+}
+
+.luth_panel-tab {
+    padding: 1px;
+    font-size: var(--luth_panel-tabs-font-size);
+    display: inline-flex !important;
+    border: none !important;
+    position: relative;
+}
+
+.luth_panel_left .luth_panel-tabs .luth_panel-tab span {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+
+.luth_panel_right {
+    flex-direction: row-reverse;
+}
+
+.luth_panel_right .luth_panel-tabs .luth_panel-tab span {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+}
+
+.luth_panel_bottom {
+    flex-direction: column-reverse;
+}
+
+.luth_panel_left .luth_panel-tabs {
+    width: calc(var(--luth_panel-tabs-font-size) + var(--luth_panel-tabs-margin) + var(--luth_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.luth_panel_left .luth_panel-body {
+    width: calc(100% - var(--luth_panel-tabs-font-size) - var(--luth_panel-tabs-margin) - var(--luth_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.luth_panel_right .luth_panel-tabs {
+    width: calc(var(--luth_panel-tabs-font-size) + var(--luth_panel-tabs-margin) + var(--luth_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.luth_panel_right .luth_panel-body {
+    width: calc(100% - var(--luth_panel-tabs-font-size) - var(--luth_panel-tabs-margin) - var(--luth_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.luth_ide_panel_bottom .luth_ide_panel-tabs {
+    height: calc(var(--luth_ide_panel-tabs-font-size) + var(--luth_ide_panel-tabs-margin) + var(--luth_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.luth_ide_panel_bottom .luth_ide_panel-body {
+    height: calc(100% - var(--luth_ide_panel-tabs-font-size) - var(--luth_ide_panel-tabs-margin) - var(--luth_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.luth_ide_panel_bottom .luth_ide_panel-tab:not(:first-of-type) {
+    border-left: 2px solid var(--luth_primary-border-color) !important;
+}

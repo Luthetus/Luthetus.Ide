@@ -1,5 +1,6 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.States;
 
@@ -14,8 +15,8 @@ public static class NotificationHelper
         IDispatcher dispatcher,
         TimeSpan? notificationOverlayLifespan)
     {
-        var notificationInformative = new NotificationRecord(
-            Key<NotificationRecord>.NewKey(),
+        var notificationInformative = new NotificationViewModel(
+            Key<IDynamicViewModel>.NewKey(),
             title,
             luthetusCommonComponentRenderers.InformativeNotificationRendererType,
             new Dictionary<string, object?>
@@ -39,7 +40,7 @@ public static class NotificationHelper
         IDispatcher dispatcher,
         TimeSpan? notificationOverlayLifespan)
     {
-        var notificationError = new NotificationRecord(Key<NotificationRecord>.NewKey(),
+        var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
             luthetusCommonComponentRenderers.ErrorNotificationRendererType,
             new Dictionary<string, object?>
@@ -70,7 +71,7 @@ public static class NotificationHelper
         IDispatcher dispatcher,
         TimeSpan? notificationOverlayLifespan)
     {
-        var notificationError = new NotificationRecord(Key<NotificationRecord>.NewKey(),
+        var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
             luthetusCommonComponentRenderers.ErrorNotificationRendererType,
             new Dictionary<string, object?>

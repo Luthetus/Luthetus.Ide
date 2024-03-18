@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -92,7 +92,7 @@ public partial class TEXT_EDITOR_SHOULD_WORK_WITH_LARGE_FILES
 
     //private string _typeCharacterId = "Type a character";
 
-    //private Task TypeCharacterFunc(IThrottleEvent throttleEvent, TextEditorComponent textEditorComponent, CancellationToken cancellationToken)
+    //private Task TypeCharacterFunc(IBackgroundTask throttleEvent, TextEditorComponent textEditorComponent, CancellationToken cancellationToken)
     //{
     //    if (throttleEvent is not ThrottleEvent<List<char>> charEvent)
     //        return Task.CompletedTask;
@@ -105,7 +105,7 @@ public partial class TEXT_EDITOR_SHOULD_WORK_WITH_LARGE_FILES
     //    return Task.CompletedTask;
     //}
     
-    //private IThrottleEvent? BatchTypeCharacterFunc((IThrottleEvent oldEvent, IThrottleEvent recentEvent) tuple, TextEditorComponent textEditorComponent)
+    //private IBackgroundTask? BatchTypeCharacterFunc((IBackgroundTask oldEvent, IBackgroundTask recentEvent) tuple, TextEditorComponent textEditorComponent)
     //{
     //    if (tuple.oldEvent is ThrottleEvent<List<char>> oldCharEvent &&
     //        tuple.recentEvent is ThrottleEvent<List<char>> recentCharEvent)

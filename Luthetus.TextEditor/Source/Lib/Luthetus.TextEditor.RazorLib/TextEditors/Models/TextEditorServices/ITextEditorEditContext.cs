@@ -1,8 +1,9 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.States;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -17,7 +18,13 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// </summary>
 public interface ITextEditorEditContext
 {
+	public Dictionary<ResourceUri, TextEditorModelModifier?> ModelCache { get; }
+    public Dictionary<Key<TextEditorViewModel>, ResourceUri?> ViewModelToModelResourceUriCache { get; }
+    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?> ViewModelCache { get; }
+    public Dictionary<Key<TextEditorViewModel>, TextEditorCursorModifierBag?> CursorModifierBagCache { get; }
+
     public ITextEditorService TextEditorService { get; }
+    public Key<TextEditorAuthenticatedAction> AuthenticatedActionKey { get; }
 
     /// <inheritdoc cref="ITextEditorEditContext"/>
     public TextEditorModelModifier? GetModelModifier(ResourceUri? modelResourceUri, bool isReadonly = false);

@@ -1,36 +1,38 @@
+@using Luthetus.Common.RazorLib.Dynamics.Models
 @using Luthetus.Common.RazorLib.Resizes.Displays
 
-<div class="luth_dialog-display @DialogRecord.CssClassString @GetCssClassForDialogStateIsActiveSelection(DialogStateIsActiveSelection.Value)"
+<div class="luth_dialog-display @Dialog.DialogCssClass @GetCssClassForDialogStateIsActiveSelection(DialogStateIsActiveSelection.Value)"
      style="@ElementDimensionsStyleCssString @IsMaximizedStyleCssString"
-     id="@DialogRecord.FocusPointHtmlElementId"
+     id="@Dialog.DialogFocusPointHtmlElementId"
      tabindex="-1"
      @onfocusin="HandleOnFocusIn"
      @onmousedown="HandleOnMouseDown">
 
-    @if (DialogRecord.IsResizable && !DialogRecord.IsMaximized)
+    @if (Dialog.DialogIsResizable && !Dialog.DialogIsMaximized)
     {
         <ResizableDisplay @ref="_resizableDisplay"
-                          ElementDimensions="DialogRecord.ElementDimensions"
-                          ReRenderFuncAsync="ReRenderAsync"/>
+                          ElementDimensions="Dialog.DialogElementDimensions"
+                          ReRenderFuncAsync="ReRenderAsync"
+                          Drag="Dialog as IDrag" />
     }
 
     <div class="luth_dialog-display-toolbar"
-         @onmousedown="SubscribeMoveHandle">
+         @onmousedown="SubscribeMoveHandleAsync">
         <div class="luth_dialog-display-title luth_unselectable"
              style="@DialogTitleCssStyleString"
-             title="@DialogRecord.Title">
-            @DialogRecord.Title
+             title="@Dialog.Title">
+            @Dialog.Title
         </div>
 
         <div class="luth_dialog-display-buttons"
              @onmousedown:stopPropagation="true">
             
-            @if (DialogRecord.IsResizable)
+            @if (Dialog.DialogIsResizable)
             {
                 <button class="luth_button luth_dialog-display-button-entry"
                         @onclick="ToggleIsMaximized">
-                    
-                    @if (DialogRecord.IsMaximized)
+
+                    @if (Dialog.DialogIsMaximized)
                     {
                         <IconRestore/>
                     }
@@ -49,10 +51,10 @@
     </div>
 
     <div class="luth_dialog-display-body">
-        <CascadingValue Value="DialogRecord">
-            <DynamicComponent @key="DialogRecord.Key"
-                              Type="DialogRecord.RendererType"
-                              Parameters="DialogRecord.Parameters"/>
+        <CascadingValue Value="Dialog">
+            <DynamicComponent @key="Dialog.DynamicViewModelKey"
+                              Type="Dialog.ComponentType"
+                              Parameters="Dialog.ComponentParameterMap" />
         </CascadingValue>
     </div>
 </div>

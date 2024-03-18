@@ -1,0 +1,73 @@
+@using Luthetus.Common.RazorLib.Panels.Models;
+@using Luthetus.Common.RazorLib.Tabs.Displays;
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@{
+    var panelsState = PanelsStateWrap.Value;
+
+    var panelGroup = panelsState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
+
+    IPanelTab? activePanelTab = null;
+
+    if (panelGroup is not null)
+        activePanelTab = panelGroup.TabList.FirstOrDefault(x => x.Key == panelGroup.ActiveTabKey);
+}
+
+@{
+	var localPanelPositionCssClass = PanelPositionCssClass;
+	var htmlIdTabs = localPanelPositionCssClass + "_tabs";
+}
+
+<div class="luth_ide_panel @PanelPositionCssClass @CssClassString"
+     style="@GetElementDimensionsStyleString(panelGroup, activePanelTab)"
+	 id="@GetHtmlId()">
+    
+    <div class="luth_ide_panel-tabs"
+		 id="@htmlIdTabs">
+
+        @if (panelGroup is not null)
+        {
+			var tabList = GetTabList(panelGroup);
+
+			foreach (var panelTab in tabList)
+            {
+                <TabDisplay @key="panelTab.Key"
+                            Tab="panelTab"
+							CssClassString="luth_ide_panel-tab"
+							CssStyleString=""
+							ShouldDisplayCloseButton="false" />
+            }
+        }
+
+        <div class="luth_ide_panel-tabs-justify-end"
+             style="display: flex;">
+            @if (JustifyEndRenderFragment is not null)
+            {
+                @JustifyEndRenderFragment
+            }
+        </div>
+
+        @if (PanelsStateWrap.Value.DragEventArgs is not null)
+        {
+            <div class="luth_ide_panel-tab-dropzone luth_ide_panel-tab-dropzone-top"
+                 @onmouseup:stopPropagation="true"
+                 @onmouseup="TopDropzoneOnMouseUp">
+            </div>
+            
+            <div class="luth_ide_panel-tab-dropzone luth_ide_panel-tab-dropzone-bottom"
+                 @onmouseup:stopPropagation="true"
+                 @onmouseup="BottomDropzoneOnMouseUp">
+            </div>
+        }
+    </div>
+    
+    <div class="luth_ide_panel-body">
+        @if (activePanelTab is not null)
+        {
+            <DynamicComponent Type="activePanelTab.ComponentType"
+                              Parameters="activePanelTab.ComponentParameterMap" />
+        }
+    </div>
+    
+</div>

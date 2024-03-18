@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
@@ -146,13 +147,13 @@ public class PanelsStateActionsTests
 
     private void InitializePanelsStateActionsTests(
         out PanelGroup samplePanelGroup,
-        out PanelTab samplePanelTab)
+        out IPanelTab samplePanelTab)
     {
         samplePanelGroup = new PanelGroup(
                 PanelFacts.LeftPanelRecordKey,
-                Key<PanelTab>.Empty,
+                Key<Panel>.Empty,
                 new ElementDimensions(),
-                ImmutableArray<PanelTab>.Empty);
+                ImmutableArray<IPanelTab>.Empty);
 
         var leftPanelGroupWidth = samplePanelGroup.ElementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
@@ -172,17 +173,12 @@ public class PanelsStateActionsTests
             }
         });
 
-        samplePanelTab = new PanelTab(
-            Key<PanelTab>.NewKey(),
-            samplePanelGroup.ElementDimensions,
-            new(),
-            // Awkwardly need to provide a type here. Will provide an Icon but this usually
-            // would be more along the lines of "typeof(SolutionExplorerDisplay)"
+        samplePanelTab = new Panel(
+			"Solution Explorer",
+			Key<Panel>.NewKey(),
+			Key<IDynamicViewModel>.NewKey(),
+			ContextFacts.SolutionExplorerContext.ContextKey,
             typeof(IconCSharpClass),
-            typeof(IconFolder),
-            "Solution Explorer")
-        {
-            ContextRecordKey = ContextFacts.SolutionExplorerContext.ContextKey
-        };
+            new());
     }
 }

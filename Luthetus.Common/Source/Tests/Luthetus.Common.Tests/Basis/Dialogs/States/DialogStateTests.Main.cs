@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using System.Collections.Immutable;
@@ -20,9 +21,9 @@ public class DialogStateMainTests
     public void Constructor()
     {
         var dialogState = new DialogState();
-        Assert.Equal(ImmutableList<DialogRecord>.Empty, dialogState.DialogList);
+        Assert.Equal(ImmutableList<IDialog>.Empty, dialogState.DialogList);
 
-        var sampleDialogRecord = new DialogRecord(Key<DialogRecord>.NewKey(), "Test title",
+        var sampleDialogRecord = new DialogViewModel(Key<IDynamicViewModel>.NewKey(), "Test title",
             typeof(CommonInformativeNotificationDisplay),
             new Dictionary<string, object?>
             {
@@ -31,7 +32,8 @@ public class DialogStateMainTests
                     "Test message"
                 }
             },
-            null);
+            null,
+            true);
 
         var outDialogList = dialogState.DialogList.Add(sampleDialogRecord);
 

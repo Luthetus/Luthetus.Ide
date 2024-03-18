@@ -1,4 +1,4 @@
-@using Luthetus.Common.RazorLib.PolymorphicUis.Displays
+@using Luthetus.Common.RazorLib.Tabs.Displays
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays
 
 <div class="luth_te_text-editor-group @CssClassString"
@@ -14,8 +14,8 @@
     {
         <div class="luth_te_text-editor-group-tabs-list">
 			
-			<PolymorphicTabListDisplay @ref="_polymorphicTabListDisplay"
-							           TabList="@GetPolymphoricUiList(textEditorGroup)"/>
+			<TabListDisplay @ref="_tabListDisplay"
+							TabList="@GetTabList(textEditorGroup)"/>
         </div>
         <div class="luth_te_text-editor-group-active-view-model">
             @{

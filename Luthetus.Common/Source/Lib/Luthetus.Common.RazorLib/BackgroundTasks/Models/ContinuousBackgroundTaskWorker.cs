@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;

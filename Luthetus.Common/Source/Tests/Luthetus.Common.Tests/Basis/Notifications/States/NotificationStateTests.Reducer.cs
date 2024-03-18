@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.Common.RazorLib.Notifications.Models;
@@ -49,7 +50,7 @@ public class NotificationStateReducerTests
         Assert.Single(notificationStateWrap.Value.DefaultList);
         Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
 
-        dispatcher.Dispatch(new NotificationState.DisposeAction(notificationRecord.Key));
+        dispatcher.Dispatch(new NotificationState.DisposeAction(notificationRecord.DynamicViewModelKey));
         
         Assert.Empty(notificationStateWrap.Value.DefaultList);
     }
@@ -71,7 +72,7 @@ public class NotificationStateReducerTests
         Assert.Single(notificationStateWrap.Value.DefaultList);
         Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
 
-        dispatcher.Dispatch(new NotificationState.MakeReadAction(notificationRecord.Key));
+        dispatcher.Dispatch(new NotificationState.MakeReadAction(notificationRecord.DynamicViewModelKey));
         
         Assert.Empty(notificationStateWrap.Value.DefaultList);
 
@@ -96,14 +97,14 @@ public class NotificationStateReducerTests
         Assert.Single(notificationStateWrap.Value.DefaultList);
         Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
 
-        dispatcher.Dispatch(new NotificationState.MakeReadAction(notificationRecord.Key));
+        dispatcher.Dispatch(new NotificationState.MakeReadAction(notificationRecord.DynamicViewModelKey));
 
         Assert.Empty(notificationStateWrap.Value.DefaultList);
 
         Assert.Single(notificationStateWrap.Value.ReadList);
         Assert.Contains(notificationStateWrap.Value.ReadList, x => x == notificationRecord);
 
-        dispatcher.Dispatch(new NotificationState.UndoMakeReadAction(notificationRecord.Key));
+        dispatcher.Dispatch(new NotificationState.UndoMakeReadAction(notificationRecord.DynamicViewModelKey));
 
         Assert.Empty(notificationStateWrap.Value.ReadList);
 
@@ -128,7 +129,7 @@ public class NotificationStateReducerTests
         Assert.Single(notificationStateWrap.Value.DefaultList);
         Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
 
-        dispatcher.Dispatch(new NotificationState.MakeDeletedAction(notificationRecord.Key));
+        dispatcher.Dispatch(new NotificationState.MakeDeletedAction(notificationRecord.DynamicViewModelKey));
 
         Assert.Empty(notificationStateWrap.Value.DefaultList);
 
@@ -153,14 +154,14 @@ public class NotificationStateReducerTests
         Assert.Single(notificationStateWrap.Value.DefaultList);
         Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
 
-        dispatcher.Dispatch(new NotificationState.MakeDeletedAction(notificationRecord.Key));
+        dispatcher.Dispatch(new NotificationState.MakeDeletedAction(notificationRecord.DynamicViewModelKey));
 
         Assert.Empty(notificationStateWrap.Value.DefaultList);
 
         Assert.Single(notificationStateWrap.Value.DeletedList);
         Assert.Contains(notificationStateWrap.Value.DeletedList, x => x == notificationRecord);
 
-        dispatcher.Dispatch(new NotificationState.UndoMakeDeletedAction(notificationRecord.Key));
+        dispatcher.Dispatch(new NotificationState.UndoMakeDeletedAction(notificationRecord.DynamicViewModelKey));
 
         Assert.Empty(notificationStateWrap.Value.DeletedList);
 
@@ -185,7 +186,7 @@ public class NotificationStateReducerTests
         Assert.Single(notificationStateWrap.Value.DefaultList);
         Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
 
-        dispatcher.Dispatch(new NotificationState.MakeArchivedAction(notificationRecord.Key));
+        dispatcher.Dispatch(new NotificationState.MakeArchivedAction(notificationRecord.DynamicViewModelKey));
 
         Assert.Empty(notificationStateWrap.Value.DefaultList);
 
@@ -210,14 +211,14 @@ public class NotificationStateReducerTests
         Assert.Single(notificationStateWrap.Value.DefaultList);
         Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
 
-        dispatcher.Dispatch(new NotificationState.MakeArchivedAction(notificationRecord.Key));
+        dispatcher.Dispatch(new NotificationState.MakeArchivedAction(notificationRecord.DynamicViewModelKey));
 
         Assert.Empty(notificationStateWrap.Value.DefaultList);
 
         Assert.Single(notificationStateWrap.Value.ArchivedList);
         Assert.Contains(notificationStateWrap.Value.ArchivedList, x => x == notificationRecord);
 
-        dispatcher.Dispatch(new NotificationState.UndoMakeArchivedAction(notificationRecord.Key));
+        dispatcher.Dispatch(new NotificationState.UndoMakeArchivedAction(notificationRecord.DynamicViewModelKey));
 
         Assert.Empty(notificationStateWrap.Value.ArchivedList);
 
@@ -267,8 +268,8 @@ public class NotificationStateReducerTests
 
             // Add second item
             {
-                var sampleNotificationRecord = new NotificationRecord(
-                    Key<NotificationRecord>.NewKey(),
+                var sampleNotificationRecord = new NotificationViewModel(
+                    Key<IDynamicViewModel>.NewKey(),
                     "Test title",
                     typeof(CommonInformativeNotificationDisplay),
                     new Dictionary<string, object?>
@@ -301,8 +302,8 @@ public class NotificationStateReducerTests
 
             // Add second item
             {
-                var sampleNotificationRecord = new NotificationRecord(
-                    Key<NotificationRecord>.NewKey(),
+                var sampleNotificationRecord = new NotificationViewModel(
+                    Key<IDynamicViewModel>.NewKey(),
                     "Test title",
                     typeof(CommonInformativeNotificationDisplay),
                     new Dictionary<string, object?>
@@ -323,8 +324,8 @@ public class NotificationStateReducerTests
             
             // Add third item
             {
-                var sampleNotificationRecord = new NotificationRecord(
-                    Key<NotificationRecord>.NewKey(),
+                var sampleNotificationRecord = new NotificationViewModel(
+                    Key<IDynamicViewModel>.NewKey(),
                     "Test title",
                     typeof(CommonInformativeNotificationDisplay),
                     new Dictionary<string, object?>
@@ -373,7 +374,7 @@ public class NotificationStateReducerTests
             Assert.Empty(notificationStateWrap.Value.ReadList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
-            dispatcher.Dispatch(new NotificationState.MakeReadAction(notificationRecord.Key));
+            dispatcher.Dispatch(new NotificationState.MakeReadAction(notificationRecord.DynamicViewModelKey));
             Assert.Single(notificationStateWrap.Value.ReadList);
             Assert.Contains(notificationStateWrap.Value.ReadList, x => x == notificationRecord);
 
@@ -386,14 +387,14 @@ public class NotificationStateReducerTests
             Assert.Empty(notificationStateWrap.Value.ReadList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
-            dispatcher.Dispatch(new NotificationState.MakeReadAction(notificationRecord.Key));
+            dispatcher.Dispatch(new NotificationState.MakeReadAction(notificationRecord.DynamicViewModelKey));
             Assert.Single(notificationStateWrap.Value.ReadList);
             Assert.Contains(notificationStateWrap.Value.ReadList, x => x == notificationRecord);
 
             // Add second item
             {
-                var sampleNotificationRecord = new NotificationRecord(
-                    Key<NotificationRecord>.NewKey(),
+                var sampleNotificationRecord = new NotificationViewModel(
+                    Key<IDynamicViewModel>.NewKey(),
                     "Test title",
                     typeof(CommonInformativeNotificationDisplay),
                     new Dictionary<string, object?>
@@ -408,7 +409,7 @@ public class NotificationStateReducerTests
                     null);
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
-                dispatcher.Dispatch(new NotificationState.MakeReadAction(sampleNotificationRecord.Key));
+                dispatcher.Dispatch(new NotificationState.MakeReadAction(sampleNotificationRecord.DynamicViewModelKey));
                 Assert.Equal(2, notificationStateWrap.Value.ReadList.Count);
                 Assert.Contains(notificationStateWrap.Value.ReadList, x => x == sampleNotificationRecord);
             }
@@ -422,14 +423,14 @@ public class NotificationStateReducerTests
             Assert.Empty(notificationStateWrap.Value.ReadList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
-            dispatcher.Dispatch(new NotificationState.MakeReadAction(notificationRecord.Key));
+            dispatcher.Dispatch(new NotificationState.MakeReadAction(notificationRecord.DynamicViewModelKey));
             Assert.Single(notificationStateWrap.Value.ReadList);
             Assert.Contains(notificationStateWrap.Value.ReadList, x => x == notificationRecord);
 
             // Add second item
             {
-                var sampleNotificationRecord = new NotificationRecord(
-                    Key<NotificationRecord>.NewKey(),
+                var sampleNotificationRecord = new NotificationViewModel(
+                    Key<IDynamicViewModel>.NewKey(),
                     "Test title",
                     typeof(CommonInformativeNotificationDisplay),
                     new Dictionary<string, object?>
@@ -444,15 +445,15 @@ public class NotificationStateReducerTests
                     null);
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
-                dispatcher.Dispatch(new NotificationState.MakeReadAction(sampleNotificationRecord.Key));
+                dispatcher.Dispatch(new NotificationState.MakeReadAction(sampleNotificationRecord.DynamicViewModelKey));
                 Assert.Equal(2, notificationStateWrap.Value.ReadList.Count);
                 Assert.Contains(notificationStateWrap.Value.ReadList, x => x == sampleNotificationRecord);
             }
 
             // Add third item
             {
-                var sampleNotificationRecord = new NotificationRecord(
-                    Key<NotificationRecord>.NewKey(),
+                var sampleNotificationRecord = new NotificationViewModel(
+                    Key<IDynamicViewModel>.NewKey(),
                     "Test title",
                     typeof(CommonInformativeNotificationDisplay),
                     new Dictionary<string, object?>
@@ -467,7 +468,7 @@ public class NotificationStateReducerTests
                     null);
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
-                dispatcher.Dispatch(new NotificationState.MakeReadAction(sampleNotificationRecord.Key));
+                dispatcher.Dispatch(new NotificationState.MakeReadAction(sampleNotificationRecord.DynamicViewModelKey));
                 Assert.Equal(3, notificationStateWrap.Value.ReadList.Count);
                 Assert.Contains(notificationStateWrap.Value.ReadList, x => x == sampleNotificationRecord);
             }
@@ -502,7 +503,7 @@ public class NotificationStateReducerTests
             Assert.Empty(notificationStateWrap.Value.DeletedList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
-            dispatcher.Dispatch(new NotificationState.MakeDeletedAction(notificationRecord.Key));
+            dispatcher.Dispatch(new NotificationState.MakeDeletedAction(notificationRecord.DynamicViewModelKey));
             Assert.Single(notificationStateWrap.Value.DeletedList);
             Assert.Contains(notificationStateWrap.Value.DeletedList, x => x == notificationRecord);
 
@@ -515,14 +516,14 @@ public class NotificationStateReducerTests
             Assert.Empty(notificationStateWrap.Value.DeletedList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
-            dispatcher.Dispatch(new NotificationState.MakeDeletedAction(notificationRecord.Key));
+            dispatcher.Dispatch(new NotificationState.MakeDeletedAction(notificationRecord.DynamicViewModelKey));
             Assert.Single(notificationStateWrap.Value.DeletedList);
             Assert.Contains(notificationStateWrap.Value.DeletedList, x => x == notificationRecord);
 
             // Add second item
             {
-                var sampleNotificationRecord = new NotificationRecord(
-                    Key<NotificationRecord>.NewKey(),
+                var sampleNotificationRecord = new NotificationViewModel(
+                    Key<IDynamicViewModel>.NewKey(),
                     "Test title",
                     typeof(CommonInformativeNotificationDisplay),
                     new Dictionary<string, object?>
@@ -537,7 +538,7 @@ public class NotificationStateReducerTests
                     null);
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
-                dispatcher.Dispatch(new NotificationState.MakeDeletedAction(sampleNotificationRecord.Key));
+                dispatcher.Dispatch(new NotificationState.MakeDeletedAction(sampleNotificationRecord.DynamicViewModelKey));
                 Assert.Equal(2, notificationStateWrap.Value.DeletedList.Count);
                 Assert.Contains(notificationStateWrap.Value.DeletedList, x => x == sampleNotificationRecord);
             }
@@ -551,14 +552,14 @@ public class NotificationStateReducerTests
             Assert.Empty(notificationStateWrap.Value.DeletedList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
-            dispatcher.Dispatch(new NotificationState.MakeDeletedAction(notificationRecord.Key));
+            dispatcher.Dispatch(new NotificationState.MakeDeletedAction(notificationRecord.DynamicViewModelKey));
             Assert.Single(notificationStateWrap.Value.DeletedList);
             Assert.Contains(notificationStateWrap.Value.DeletedList, x => x == notificationRecord);
 
             // Add second item
             {
-                var sampleNotificationRecord = new NotificationRecord(
-                    Key<NotificationRecord>.NewKey(),
+                var sampleNotificationRecord = new NotificationViewModel(
+                    Key<IDynamicViewModel>.NewKey(),
                     "Test title",
                     typeof(CommonInformativeNotificationDisplay),
                     new Dictionary<string, object?>
@@ -573,15 +574,15 @@ public class NotificationStateReducerTests
                     null);
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
-                dispatcher.Dispatch(new NotificationState.MakeDeletedAction(sampleNotificationRecord.Key));
+                dispatcher.Dispatch(new NotificationState.MakeDeletedAction(sampleNotificationRecord.DynamicViewModelKey));
                 Assert.Equal(2, notificationStateWrap.Value.DeletedList.Count);
                 Assert.Contains(notificationStateWrap.Value.DeletedList, x => x == sampleNotificationRecord);
             }
 
             // Add third item
             {
-                var sampleNotificationRecord = new NotificationRecord(
-                    Key<NotificationRecord>.NewKey(),
+                var sampleNotificationRecord = new NotificationViewModel(
+                    Key<IDynamicViewModel>.NewKey(),
                     "Test title",
                     typeof(CommonInformativeNotificationDisplay),
                     new Dictionary<string, object?>
@@ -596,7 +597,7 @@ public class NotificationStateReducerTests
                     null);
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
-                dispatcher.Dispatch(new NotificationState.MakeDeletedAction(sampleNotificationRecord.Key));
+                dispatcher.Dispatch(new NotificationState.MakeDeletedAction(sampleNotificationRecord.DynamicViewModelKey));
                 Assert.Equal(3, notificationStateWrap.Value.DeletedList.Count);
                 Assert.Contains(notificationStateWrap.Value.DeletedList, x => x == sampleNotificationRecord);
             }
@@ -631,7 +632,7 @@ public class NotificationStateReducerTests
             Assert.Empty(notificationStateWrap.Value.ArchivedList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
-            dispatcher.Dispatch(new NotificationState.MakeArchivedAction(notificationRecord.Key));
+            dispatcher.Dispatch(new NotificationState.MakeArchivedAction(notificationRecord.DynamicViewModelKey));
             Assert.Single(notificationStateWrap.Value.ArchivedList);
             Assert.Contains(notificationStateWrap.Value.ArchivedList, x => x == notificationRecord);
 
@@ -644,14 +645,14 @@ public class NotificationStateReducerTests
             Assert.Empty(notificationStateWrap.Value.ArchivedList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
-            dispatcher.Dispatch(new NotificationState.MakeArchivedAction(notificationRecord.Key));
+            dispatcher.Dispatch(new NotificationState.MakeArchivedAction(notificationRecord.DynamicViewModelKey));
             Assert.Single(notificationStateWrap.Value.ArchivedList);
             Assert.Contains(notificationStateWrap.Value.ArchivedList, x => x == notificationRecord);
 
             // Add second item
             {
-                var sampleNotificationRecord = new NotificationRecord(
-                    Key<NotificationRecord>.NewKey(),
+                var sampleNotificationRecord = new NotificationViewModel(
+                    Key<IDynamicViewModel>.NewKey(),
                     "Test title",
                     typeof(CommonInformativeNotificationDisplay),
                     new Dictionary<string, object?>
@@ -666,7 +667,7 @@ public class NotificationStateReducerTests
                     null);
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
-                dispatcher.Dispatch(new NotificationState.MakeArchivedAction(sampleNotificationRecord.Key));
+                dispatcher.Dispatch(new NotificationState.MakeArchivedAction(sampleNotificationRecord.DynamicViewModelKey));
                 Assert.Equal(2, notificationStateWrap.Value.ArchivedList.Count);
                 Assert.Contains(notificationStateWrap.Value.ArchivedList, x => x == sampleNotificationRecord);
             }
@@ -680,14 +681,14 @@ public class NotificationStateReducerTests
             Assert.Empty(notificationStateWrap.Value.ArchivedList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
-            dispatcher.Dispatch(new NotificationState.MakeArchivedAction(notificationRecord.Key));
+            dispatcher.Dispatch(new NotificationState.MakeArchivedAction(notificationRecord.DynamicViewModelKey));
             Assert.Single(notificationStateWrap.Value.ArchivedList);
             Assert.Contains(notificationStateWrap.Value.ArchivedList, x => x == notificationRecord);
 
             // Add second item
             {
-                var sampleNotificationRecord = new NotificationRecord(
-                    Key<NotificationRecord>.NewKey(),
+                var sampleNotificationRecord = new NotificationViewModel(
+                    Key<IDynamicViewModel>.NewKey(),
                     "Test title",
                     typeof(CommonInformativeNotificationDisplay),
                     new Dictionary<string, object?>
@@ -702,15 +703,15 @@ public class NotificationStateReducerTests
                     null);
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
-                dispatcher.Dispatch(new NotificationState.MakeArchivedAction(sampleNotificationRecord.Key));
+                dispatcher.Dispatch(new NotificationState.MakeArchivedAction(sampleNotificationRecord.DynamicViewModelKey));
                 Assert.Equal(2, notificationStateWrap.Value.ArchivedList.Count);
                 Assert.Contains(notificationStateWrap.Value.ArchivedList, x => x == sampleNotificationRecord);
             }
 
             // Add third item
             {
-                var sampleNotificationRecord = new NotificationRecord(
-                    Key<NotificationRecord>.NewKey(),
+                var sampleNotificationRecord = new NotificationViewModel(
+                    Key<IDynamicViewModel>.NewKey(),
                     "Test title",
                     typeof(CommonInformativeNotificationDisplay),
                     new Dictionary<string, object?>
@@ -725,7 +726,7 @@ public class NotificationStateReducerTests
                     null);
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
-                dispatcher.Dispatch(new NotificationState.MakeArchivedAction(sampleNotificationRecord.Key));
+                dispatcher.Dispatch(new NotificationState.MakeArchivedAction(sampleNotificationRecord.DynamicViewModelKey));
                 Assert.Equal(3, notificationStateWrap.Value.ArchivedList.Count);
                 Assert.Contains(notificationStateWrap.Value.ArchivedList, x => x == sampleNotificationRecord);
             }
@@ -739,7 +740,7 @@ public class NotificationStateReducerTests
         out ServiceProvider serviceProvider,
         out IState<NotificationState> notificationStateWrap,
         out IDispatcher dispatcher, 
-        out NotificationRecord sampleNotificationRecord)
+        out INotification sampleNotificationRecord)
     {
         var services = new ServiceCollection()
             .AddFluxor(options => options.ScanAssemblies(typeof(NotificationState).Assembly));
@@ -753,8 +754,8 @@ public class NotificationStateReducerTests
 
         dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
 
-        sampleNotificationRecord = new NotificationRecord(
-            Key<NotificationRecord>.NewKey(),
+        sampleNotificationRecord = new NotificationViewModel(
+            Key<IDynamicViewModel>.NewKey(),
             "Test title",
             typeof(CommonInformativeNotificationDisplay),
             new Dictionary<string, object?>

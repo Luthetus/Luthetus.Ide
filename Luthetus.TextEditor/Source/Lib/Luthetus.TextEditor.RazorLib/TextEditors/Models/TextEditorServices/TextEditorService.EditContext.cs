@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
@@ -11,10 +11,10 @@ public partial class TextEditorService
 {
     private record TextEditorEditContext : ITextEditorEditContext
     {
-        public readonly Dictionary<ResourceUri, TextEditorModelModifier?> ModelCache = new();
-        public readonly Dictionary<Key<TextEditorViewModel>, ResourceUri?> ViewModelToModelResourceUriCache = new();
-        public readonly Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?> ViewModelCache = new();
-        public readonly Dictionary<Key<TextEditorViewModel>, TextEditorCursorModifierBag?> CursorModifierBagCache = new();
+        public Dictionary<ResourceUri, TextEditorModelModifier?> ModelCache { get; } = new();
+        public Dictionary<Key<TextEditorViewModel>, ResourceUri?> ViewModelToModelResourceUriCache { get; } = new();
+        public Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?> ViewModelCache { get; } = new();
+        public Dictionary<Key<TextEditorViewModel>, TextEditorCursorModifierBag?> CursorModifierBagCache { get; } = new();
 
         public TextEditorEditContext(
             ITextEditorService textEditorService,

@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -10,6 +10,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Ide.RazorLib.Editors.States;
 
@@ -60,9 +61,9 @@ public partial class EditorSync
         if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime &&
             _ideComponentRenderers.BooleanPromptOrCancelRendererType is not null)
         {
-            var notificationInformativeKey = Key<NotificationRecord>.NewKey();
+            var notificationInformativeKey = Key<IDynamicViewModel>.NewKey();
 
-            var notificationInformative = new NotificationRecord(
+            var notificationInformative = new NotificationViewModel(
                 notificationInformativeKey,
                 "File contents were modified on disk",
                 _ideComponentRenderers.BooleanPromptOrCancelRendererType,

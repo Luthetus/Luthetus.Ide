@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,11 +46,11 @@ public class DialogStateReducerTests
         Assert.NotEmpty(dialogStateWrap.Value.DialogList);
         Assert.Single(dialogStateWrap.Value.DialogList);
 
-        Assert.False(dialogRecord.IsMaximized);
-        dispatcher.Dispatch(new DialogState.SetIsMaximizedAction(dialogRecord.Key, true));
+        Assert.False(dialogRecord.DialogIsMaximized);
+        dispatcher.Dispatch(new DialogState.SetIsMaximizedAction(dialogRecord.DynamicViewModelKey, true));
 
         dialogRecord = dialogStateWrap.Value.DialogList.Single();
-        Assert.True(dialogRecord.IsMaximized);
+        Assert.True(dialogRecord.DialogIsMaximized);
     }
 
     /// <summary>
@@ -68,7 +69,7 @@ public class DialogStateReducerTests
         Assert.NotEmpty(dialogStateWrap.Value.DialogList);
         Assert.Contains(dialogStateWrap.Value.DialogList, x => x == dialogRecord);
 
-        dispatcher.Dispatch(new DialogState.DisposeAction(dialogRecord.Key));
+        dispatcher.Dispatch(new DialogState.DisposeAction(dialogRecord.DynamicViewModelKey));
 
         Assert.Empty(dialogStateWrap.Value.DialogList);
     }
@@ -77,7 +78,7 @@ public class DialogStateReducerTests
         out ServiceProvider serviceProvider,
         out IState<DialogState> dialogStateWrap,
         out IDispatcher dispatcher,
-        out DialogRecord sampleDialogRecord)
+        out IDialog sampleDialogRecord)
     {
         var services = new ServiceCollection()
             .AddScoped<IDialogService, DialogService>()
@@ -92,7 +93,7 @@ public class DialogStateReducerTests
 
         dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
 
-        sampleDialogRecord = new DialogRecord(Key<DialogRecord>.NewKey(), "Test title",
+        sampleDialogRecord = new DialogViewModel(Key<IDynamicViewModel>.NewKey(), "Test title",
             typeof(CommonInformativeNotificationDisplay),
             new Dictionary<string, object?>
             {
@@ -101,6 +102,7 @@ public class DialogStateReducerTests
                     "Test message"
                 }
             },
-            null);
+            null,
+            true);
     }
 }

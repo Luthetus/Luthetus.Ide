@@ -63,7 +63,7 @@ public class BackgroundTaskTests
 
         Assert.Null(backgroundTask.WorkProgress);
 
-        await backgroundTask.InvokeWorkItem(CancellationToken.None);
+        await backgroundTask.HandleEvent(CancellationToken.None);
 
         Assert.NotNull(backgroundTask.WorkProgress);
 

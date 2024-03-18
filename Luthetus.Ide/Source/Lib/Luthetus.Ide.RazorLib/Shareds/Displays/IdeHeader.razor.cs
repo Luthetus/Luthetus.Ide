@@ -1,5 +1,3 @@
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
@@ -8,6 +6,8 @@ using Luthetus.Common.RazorLib.FileSystems.Displays;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Panels.States;
+using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
@@ -21,12 +21,18 @@ using Luthetus.Ide.RazorLib.Commands;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Collections.Immutable;
+using Fluxor;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
-public partial class IdeHeader : FluxorComponent
+public partial class IdeHeader : ComponentBase
 {
     [Inject]
+    private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
+	[Inject]
+    private IState<DialogState> DialogStateWrap { get; set; } = null!;
+	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
@@ -43,9 +49,9 @@ public partial class IdeHeader : FluxorComponent
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
-	private static readonly Key<DialogRecord> _infoDialogKey = Key<DialogRecord>.NewKey();
-	private static readonly Key<DialogRecord> _newDotNetSolutionDialogKey = Key<DialogRecord>.NewKey();
-	private static readonly Key<DialogRecord> _permissionsDialogKey = Key<DialogRecord>.NewKey();
+	private static readonly Key<IDynamicViewModel> _infoDialogKey = Key<IDynamicViewModel>.NewKey();
+	private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
+	private static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
 
     private Key<DropdownRecord> _dropdownKeyFile = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
@@ -55,12 +61,17 @@ public partial class IdeHeader : FluxorComponent
     private MenuRecord _menuTools = new(ImmutableArray<MenuOptionRecord>.Empty);
     private ElementReference? _buttonToolsElementReference;
 
+	private Key<DropdownRecord> _dropdownKeyView = Key<DropdownRecord>.NewKey();
+    private MenuRecord _menuView = new(ImmutableArray<MenuOptionRecord>.Empty);
+    private ElementReference? _buttonViewElementReference;
+
 	private ActiveBackgroundTaskDisplay _activeBackgroundTaskDisplayComponent;
 
     protected override Task OnInitializedAsync()
     {
         InitializeMenuFile();
 		InitializeMenuTools();
+		InitializeMenuView();
 
         return base.OnInitializedAsync();
     }
@@ -154,15 +165,13 @@ public partial class IdeHeader : FluxorComponent
                 MenuOptionKind.Delete,
                 () =>
 				{
-					CommandFactory.CodeSearchDialog ??= new DialogRecord(
-                        Key<DialogRecord>.NewKey(),
+					CommandFactory.CodeSearchDialog ??= new DialogViewModel(
+                        Key<IDynamicViewModel>.NewKey(),
 						"Code Search",
                         typeof(CodeSearchDisplay),
                         null,
-                        null)
-                    {
-                        IsResizable = true
-                    };
+                        null,
+						true);
 
                     Dispatcher.Dispatch(new DialogState.RegisterAction(CommandFactory.CodeSearchDialog));
 				});
@@ -217,6 +226,48 @@ public partial class IdeHeader : FluxorComponent
         _menuTools = new MenuRecord(menuOptionsList.ToImmutableArray());
     }
 
+	private void InitializeMenuView()
+    {
+        var menuOptionsList = new List<MenuOptionRecord>();
+		var panelsState = PanelsStateWrap.Value;
+		var dialogState = DialogStateWrap.Value;
+
+		foreach (var panel in panelsState.PanelList)
+		{
+            var menuOptionPanel = new MenuOptionRecord(
+				panel.Title,
+                MenuOptionKind.Delete,
+                () => 
+				{
+					var panelGroup = panel.TabGroup as PanelGroup;
+
+					if (panelGroup is not null)
+					{
+						Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(panelGroup.Key, panel.Key));
+					}
+					else
+					{
+						//if (dialogState.DialogList.Any(x => x.Key == panel.Key))
+						//{
+						//	Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(panel.Key));
+						//}
+						//else
+						{
+							Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(PanelFacts.LeftPanelRecordKey, panel, true));
+							Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(PanelFacts.LeftPanelRecordKey, panel.Key));
+						}
+					}
+				});
+
+            menuOptionsList.Add(menuOptionPanel);
+		}
+
+		if (menuOptionsList.Count == 0)
+			_menuView = MenuRecord.Empty;
+		else
+			_menuView = new MenuRecord(menuOptionsList.ToImmutableArray());
+    }
+
     private void AddActiveDropdownKey(Key<DropdownRecord> dropdownKey)
     {
         Dispatcher.Dispatch(new DropdownState.AddActiveAction(dropdownKey));
@@ -253,47 +304,55 @@ public partial class IdeHeader : FluxorComponent
         }
     }
 
+	private async Task RestoreFocusToButtonDisplayComponentViewAsync()
+    {
+        try
+        {
+            if (_buttonViewElementReference is not null)
+                await _buttonViewElementReference.Value.FocusAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
     private void OpenNewDotNetSolutionDialog()
     {
-        var dialogRecord = new DialogRecord(
+        var dialogRecord = new DialogViewModel(
             _newDotNetSolutionDialogKey,
             "New .NET Solution",
             typeof(DotNetSolutionFormDisplay),
             null,
-            null)
-        {
-            IsResizable = true
-        };
+            null,
+			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }
 
     private void OpenInfoDialogOnClick()
     {
-        var dialogRecord = new DialogRecord(
+        var dialogRecord = new DialogViewModel(
             _infoDialogKey,
             "Info",
             typeof(IdeInfoDisplay),
             null,
-            null)
-        {
-            IsResizable = true
-        };
+            null,
+			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }
 
     private void ShowPermissionsDialog()
     {
-        var dialogRecord = new DialogRecord(
+        var dialogRecord = new DialogViewModel(
             _permissionsDialogKey,
             "Permissions",
             typeof(PermissionsDisplay),
             null,
-            null)
-        {
-            IsResizable = true
-        };
+            null,
+			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }

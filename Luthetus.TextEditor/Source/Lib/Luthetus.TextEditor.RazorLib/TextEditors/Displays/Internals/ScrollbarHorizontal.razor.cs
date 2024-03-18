@@ -1,9 +1,11 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -14,6 +16,8 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
 {
     [Inject]
     private IState<DragState> DragStateWrap { get; set; } = null!;
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -163,11 +167,12 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
                     RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements.Width;
             }
 
-            _throttleScroll.PushEvent(_ =>
-            {
-                RenderBatch.ViewModel!.SetScrollPosition(scrollLeft, null);
-                return Task.CompletedTask;
-            });
+			var throttleEventOnScrollHorizontal = new ThrottleEventOnScrollHorizontal(
+				scrollLeft,
+				RenderBatch.Events,
+				RenderBatch.ViewModel!.ViewModelKey);
+
+			TextEditorService.Post(throttleEventOnScrollHorizontal);
         }
         else
         {

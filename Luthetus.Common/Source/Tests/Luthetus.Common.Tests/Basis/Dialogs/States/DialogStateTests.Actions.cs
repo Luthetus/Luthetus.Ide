@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 
@@ -19,7 +20,7 @@ public class DialogStateActionsTests
         InitializeDialogStateActionsTests(out var dialogRecord);
 
         var registerAction = new DialogState.RegisterAction(dialogRecord);
-        Assert.Equal(dialogRecord, registerAction.Entry);
+        Assert.Equal(dialogRecord, registerAction.Dialog);
     }
 
     /// <summary>
@@ -30,8 +31,8 @@ public class DialogStateActionsTests
     {
         InitializeDialogStateActionsTests(out var dialogRecord);
 
-        var disposeAction = new DialogState.DisposeAction(dialogRecord.Key);
-        Assert.Equal(dialogRecord.Key, disposeAction.Key);
+        var disposeAction = new DialogState.DisposeAction(dialogRecord.DynamicViewModelKey);
+        Assert.Equal(dialogRecord.DynamicViewModelKey, disposeAction.DynamicViewModelKey);
     }
 
     /// <summary>
@@ -44,22 +45,22 @@ public class DialogStateActionsTests
 
         // true
         {
-            var setIsMaximizedAction = new DialogState.SetIsMaximizedAction(dialogRecord.Key, true);
-            Assert.Equal(dialogRecord.Key, setIsMaximizedAction.Key);
+            var setIsMaximizedAction = new DialogState.SetIsMaximizedAction(dialogRecord.DynamicViewModelKey, true);
+            Assert.Equal(dialogRecord.DynamicViewModelKey, setIsMaximizedAction.DynamicViewModelKey);
             Assert.True(setIsMaximizedAction.IsMaximized);
         }
         
         // false
         {
-            var setIsMaximizedAction = new DialogState.SetIsMaximizedAction(dialogRecord.Key, false);
-            Assert.Equal(dialogRecord.Key, setIsMaximizedAction.Key);
+            var setIsMaximizedAction = new DialogState.SetIsMaximizedAction(dialogRecord.DynamicViewModelKey, false);
+            Assert.Equal(dialogRecord.DynamicViewModelKey, setIsMaximizedAction.DynamicViewModelKey);
             Assert.False(setIsMaximizedAction.IsMaximized);
         }
     }
 
-    private void InitializeDialogStateActionsTests(out DialogRecord sampleDialogRecord)
+    private void InitializeDialogStateActionsTests(out IDialog sampleDialogRecord)
     {
-        sampleDialogRecord = new DialogRecord(Key<DialogRecord>.NewKey(), "Test title",
+        sampleDialogRecord = new DialogViewModel(Key<IDynamicViewModel>.NewKey(), "Test title",
             typeof(CommonInformativeNotificationDisplay),
             new Dictionary<string, object?>
             {
@@ -68,6 +69,7 @@ public class DialogStateActionsTests
                     "Test message"
                 }
             },
-            null);
+            null,
+            true);
     }
 }

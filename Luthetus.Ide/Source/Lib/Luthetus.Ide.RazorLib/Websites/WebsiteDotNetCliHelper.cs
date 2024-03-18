@@ -1,7 +1,7 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Ide.RazorLib.CSharpProjectForms.Models;
@@ -19,7 +19,7 @@ public class WebsiteDotNetCliHelper
         IFileSystemProvider fileSystemProvider,
         DotNetSolutionSync dotNetSolutionSync,
         IDispatcher dispatcher,
-        DialogRecord dialogRecord,
+		IDialog dialogRecord,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
     {
         var directoryContainingProject = environmentProvider
@@ -54,7 +54,7 @@ public class WebsiteDotNetCliHelper
             environmentProvider);
 
         // Close Dialog
-        dispatcher.Dispatch(new DialogState.DisposeAction(dialogRecord.Key));
+        dispatcher.Dispatch(new DialogState.DisposeAction(dialogRecord.DynamicViewModelKey));
         NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", luthetusCommonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
     }
 }

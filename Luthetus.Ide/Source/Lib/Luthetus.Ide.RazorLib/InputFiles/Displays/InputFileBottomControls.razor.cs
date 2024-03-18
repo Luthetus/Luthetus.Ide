@@ -1,9 +1,9 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.States;
-using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Ide.RazorLib.InputFiles.States;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.Displays;
 
@@ -13,7 +13,7 @@ public partial class InputFileBottomControls : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [CascadingParameter]
-    public DialogRecord? DialogRecord { get; set; }
+    public IDialog? DialogRecord { get; set; }
     [CascadingParameter]
     public InputFileState InputFileState { get; set; } = null!;
 
@@ -48,7 +48,7 @@ public partial class InputFileBottomControls : ComponentBase
         if (valid)
         {
             if (DialogRecord is not null)
-                Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
+                Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
 
             await InputFileState.OnAfterSubmitFunc
                 .Invoke(InputFileState.SelectedTreeViewModel?.Item);
@@ -64,7 +64,7 @@ public partial class InputFileBottomControls : ComponentBase
     private Task CancelOnClick()
     {
         if (DialogRecord is not null)
-            Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
+            Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
 
         return Task.CompletedTask;
     }

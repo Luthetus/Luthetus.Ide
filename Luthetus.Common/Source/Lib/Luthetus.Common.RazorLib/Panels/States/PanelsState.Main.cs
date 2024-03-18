@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
@@ -11,9 +11,11 @@ namespace Luthetus.Common.RazorLib.Panels.States;
 /// TODO: SphagettiCode - The resizing and hiding/showing is a bit scuffed. (2023-09-19)
 /// </summary>
 [FeatureState]
-public partial record PanelsState(ImmutableArray<PanelGroup> PanelGroupList)
+public partial record PanelsState(
+	ImmutableArray<PanelGroup> PanelGroupList,
+	ImmutableArray<Panel> PanelList)
 {
-    public PanelsState() : this(ImmutableArray<PanelGroup>.Empty)
+    public PanelsState() : this(ImmutableArray<PanelGroup>.Empty, ImmutableArray<Panel>.Empty)
     {
         var topLeftGroup = ConstructTopLeftGroup();
         var topRightGroup = ConstructTopRightGroup();
@@ -27,15 +29,15 @@ public partial record PanelsState(ImmutableArray<PanelGroup> PanelGroupList)
         }.ToImmutableArray();
     }
 
-    public (PanelTab PanelTab, PanelGroup PanelGroup)? DragEventArgs { get; set; }
+    public (IPanelTab PanelTab, PanelGroup PanelGroup)? DragEventArgs { get; set; }
 
     private static PanelGroup ConstructTopLeftGroup()
     {
         var leftPanelGroup = new PanelGroup(
             PanelFacts.LeftPanelRecordKey,
-            Key<PanelTab>.Empty,
+            Key<Panel>.Empty,
             new ElementDimensions(),
-            ImmutableArray<PanelTab>.Empty);
+            ImmutableArray<IPanelTab>.Empty);
 
         var leftPanelGroupWidth = leftPanelGroup.ElementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
@@ -62,9 +64,9 @@ public partial record PanelsState(ImmutableArray<PanelGroup> PanelGroupList)
     {
         var rightPanelGroup = new PanelGroup(
             PanelFacts.RightPanelRecordKey,
-            Key<PanelTab>.Empty,
+            Key<Panel>.Empty,
             new ElementDimensions(),
-            ImmutableArray<PanelTab>.Empty);
+            ImmutableArray<IPanelTab>.Empty);
 
         var rightPanelGroupWidth = rightPanelGroup.ElementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
@@ -91,9 +93,9 @@ public partial record PanelsState(ImmutableArray<PanelGroup> PanelGroupList)
     {
         var bottomPanelGroup = new PanelGroup(
             PanelFacts.BottomPanelRecordKey,
-            Key<PanelTab>.Empty,
+            Key<Panel>.Empty,
             new ElementDimensions(),
-            ImmutableArray<PanelTab>.Empty);
+            ImmutableArray<IPanelTab>.Empty);
 
         var bottomPanelGroupHeight = bottomPanelGroup.ElementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Height);

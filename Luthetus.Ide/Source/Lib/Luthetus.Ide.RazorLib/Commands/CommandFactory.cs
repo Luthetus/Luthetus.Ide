@@ -1,4 +1,5 @@
 using Fluxor;
+using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
@@ -14,8 +15,8 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
-using Microsoft.JSInterop;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Ide.RazorLib.Commands;
 
@@ -46,9 +47,9 @@ public class CommandFactory : ICommandFactory
 
 	private TreeViewNamespacePath? _nodeOfViewModel = null;
 	private List<TreeViewNoType> _nodeList = new();
-    private DialogRecord? _contextSwitchDialog;
+    private IDialog? _contextSwitchDialog;
     
-	public DialogRecord? CodeSearchDialog { get; set; }
+	public IDialog? CodeSearchDialog { get; set; }
 
 	public void Initialize()
     {
@@ -259,15 +260,13 @@ public class CommandFactory : ICommandFactory
 	            "Open: Code Search", "open-code-search", false,
 	            commandArgs => 
 				{
-                    CodeSearchDialog ??= new DialogRecord(
-                        Key<DialogRecord>.NewKey(),
+                    CodeSearchDialog ??= new DialogViewModel(
+                        Key<IDynamicViewModel>.NewKey(),
 						"Code Search",
                         typeof(CodeSearchDisplay),
                         null,
-                        null)
-                    {
-                        IsResizable = true
-                    };
+                        null,
+						true);
 
                     _dispatcher.Dispatch(new DialogState.RegisterAction(CodeSearchDialog));
                     return Task.CompletedTask;
@@ -284,15 +283,13 @@ public class CommandFactory : ICommandFactory
 	            "Open: Context Switch", "open-context-switch", false,
 	            commandArgs => 
 				{
-                    _contextSwitchDialog ??= new DialogRecord(
-                        Key<DialogRecord>.NewKey(),
+                    _contextSwitchDialog ??= new DialogViewModel(
+                        Key<IDynamicViewModel>.NewKey(),
 						"Context Switch",
                         typeof(ContextSwitchDisplay),
                         null,
-                        null)
-                    {
-                        IsResizable = true
-                    };
+                        null,
+						true);
 
                     _dispatcher.Dispatch(new DialogState.RegisterAction(_contextSwitchDialog));
                     return Task.CompletedTask;

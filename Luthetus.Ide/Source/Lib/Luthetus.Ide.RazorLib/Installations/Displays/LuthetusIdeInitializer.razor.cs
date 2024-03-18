@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Themes.States;
-using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -21,6 +20,7 @@ using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 using Luthetus.Ide.RazorLib.Outputs.Displays;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.TestExplorers.Displays;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
 
@@ -99,29 +99,25 @@ public partial class LuthetusIdeInitializer : ComponentBase
         var leftPanel = PanelFacts.GetLeftPanelRecord(PanelsStateWrap.Value);
 
         // solutionExplorerPanelTab
-        var solutionExplorerPanelTab = new PanelTab(
-            Key<PanelTab>.NewKey(),
-            leftPanel.ElementDimensions,
-            new(),
-            typeof(SolutionExplorerDisplay),
-            typeof(IconFolder),
-            "Solution Explorer")
-        {
-            ContextRecordKey = ContextFacts.SolutionExplorerContext.ContextKey
-        };
+        var solutionExplorerPanelTab = new Panel(
+			"Solution Explorer",
+			Key<Panel>.NewKey(),
+			Key<IDynamicViewModel>.NewKey(),
+			ContextFacts.SolutionExplorerContext.ContextKey,
+			typeof(SolutionExplorerDisplay),
+			null);
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(solutionExplorerPanelTab));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(leftPanel.Key, solutionExplorerPanelTab, false));
 
         // folderExplorerPanelTab
-        var folderExplorerPanelTab = new PanelTab(
-            Key<PanelTab>.NewKey(),
-            leftPanel.ElementDimensions,
-            new(),
+        var folderExplorerPanelTab = new Panel(
+			"Folder Explorer",
+            Key<Panel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
+			ContextFacts.FolderExplorerContext.ContextKey,
             typeof(FolderExplorerDisplay),
-            typeof(IconFolder),
-            "Folder Explorer")
-        {
-            ContextRecordKey = ContextFacts.FolderExplorerContext.ContextKey
-        };
+			null);
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(folderExplorerPanelTab));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(leftPanel.Key, folderExplorerPanelTab, false));
 
         // SetActivePanelTabAction
@@ -133,45 +129,40 @@ public partial class LuthetusIdeInitializer : ComponentBase
         var rightPanel = PanelFacts.GetRightPanelRecord(PanelsStateWrap.Value);
 
         // compilerServiceExplorerPanelTab
-        var compilerServiceExplorerPanelTab = new PanelTab(
-            Key<PanelTab>.NewKey(),
-            rightPanel.ElementDimensions,
-            new(),
+        var compilerServiceExplorerPanelTab = new Panel(
+			"Compiler Service Explorer",
+			Key<Panel>.NewKey(),
+			Key<IDynamicViewModel>.NewKey(),
+			ContextFacts.CompilerServiceExplorerContext.ContextKey,
             typeof(CompilerServiceExplorerDisplay),
-            typeof(IconFolder),
-            "Compiler Service Explorer")
-        {
-            ContextRecordKey = ContextFacts.CompilerServiceExplorerContext.ContextKey
-        };
+			null);
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(compilerServiceExplorerPanelTab));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, compilerServiceExplorerPanelTab, false));
 
         // compilerServiceEditorPanelTab
-        var compilerServiceEditorPanelTab = new PanelTab(
-            Key<PanelTab>.NewKey(),
-            rightPanel.ElementDimensions,
-            new(),
+        var compilerServiceEditorPanelTab = new Panel(
+			"Compiler Service Editor",
+			Key<Panel>.NewKey(),
+			Key<IDynamicViewModel>.NewKey(),
+			ContextFacts.CompilerServiceEditorContext.ContextKey,
             typeof(CompilerServiceEditorDisplay),
-            typeof(IconFolder),
-            "Compiler Service Editor")
-        {
-            ContextRecordKey = ContextFacts.CompilerServiceEditorContext.ContextKey
-        };
+            null);
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(compilerServiceEditorPanelTab));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, compilerServiceEditorPanelTab, false));
 
         // TODO: The ITextEditorDiffApi.Calculate method is being commented out as of (2024-02-23). It needs to be re-written...
         // ...so that it uses the text editor's edit context by using ITextEditorService.Post()
         //
         // // gitChangesPanelTab
-        // var gitChangesPanelTab = new PanelTab(
-        //     Key<PanelTab>.NewKey(),
+        // var gitChangesPanelTab = new Panel(
+        //     Key<Panel>.NewKey(),
         //     rightPanel.ElementDimensions,
-        //     new(),
         //     typeof(GitChangesDisplay),
-        //     typeof(IconFolder),
         //     "Git")
         // {
         //     ContextRecordKey = ContextFacts.GitContext.ContextKey
         // };
+        // Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(gitChangesPanelTab));
         // Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, gitChangesPanelTab, false));
     }
 
@@ -180,68 +171,58 @@ public partial class LuthetusIdeInitializer : ComponentBase
         var bottomPanel = PanelFacts.GetBottomPanelRecord(PanelsStateWrap.Value);
 
         // terminalPanelTab
-        var terminalPanelTab = new PanelTab(
-            Key<PanelTab>.NewKey(),
-            bottomPanel.ElementDimensions,
-            new(),
+        var terminalPanelTab = new Panel(
+			"Terminal",
+            Key<Panel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
+			ContextFacts.TerminalContext.ContextKey,
             typeof(IntegratedTerminalDisplay),
-            typeof(IconFolder),
-            "Terminal")
-        {
-            ContextRecordKey = ContextFacts.TerminalContext.ContextKey
-        };
+            null);
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(terminalPanelTab));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, terminalPanelTab, false));
 
         // outputPanelTab
-        var outputPanelTab = new PanelTab(
-            Key<PanelTab>.NewKey(),
-            bottomPanel.ElementDimensions,
-            new(),
+        var outputPanelTab = new Panel(
+			"Output",
+			Key<Panel>.NewKey(),
+			Key<IDynamicViewModel>.NewKey(),
+			ContextFacts.OutputContext.ContextKey,
             typeof(OutputPanelDisplay),
-            typeof(IconFolder),
-            "Output")
-        {
-            ContextRecordKey = ContextFacts.OutputContext.ContextKey
-        };
+            null);
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(outputPanelTab));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, outputPanelTab, false));
 
         // nuGetPanelTab
-        var nuGetPanelTab = new PanelTab(
-            Key<PanelTab>.NewKey(),
-            bottomPanel.ElementDimensions,
-            new(),
+        var nuGetPanelTab = new Panel(
+			"NuGet",
+			Key<Panel>.NewKey(),
+			Key<IDynamicViewModel>.NewKey(),
+			ContextFacts.NuGetPackageManagerContext.ContextKey,
             typeof(NuGetPackageManager),
-            typeof(IconFolder),
-            "NuGet")
-        {
-            ContextRecordKey = ContextFacts.NuGetPackageManagerContext.ContextKey
-        };
+            null);
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(nuGetPanelTab));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, nuGetPanelTab, false));
 
         // activeContextsPanelTab
-        var activeContextsPanelTab = new PanelTab(
-            Key<PanelTab>.NewKey(),
-            bottomPanel.ElementDimensions,
-            new(),
+        var activeContextsPanelTab = new Panel(
+			"Active Contexts",
+			Key<Panel>.NewKey(),
+			Key<IDynamicViewModel>.NewKey(),
+			ContextFacts.ActiveContextsContext.ContextKey,
             typeof(ContextsPanelDisplay),
-            typeof(IconFolder),
-            "Active Contexts")
-        {
-            ContextRecordKey = ContextFacts.ActiveContextsContext.ContextKey
-        };
+            null);
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(activeContextsPanelTab));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, activeContextsPanelTab, false));
 
         // testExplorerPanelTab
-        var testExplorerPanelTab = new PanelTab(
-            Key<PanelTab>.NewKey(),
-            bottomPanel.ElementDimensions,
-            new(),
-            typeof(TestExplorerDisplay),
-            typeof(IconFolder),
-            "Test Explorer")
-        {
-            ContextRecordKey = ContextFacts.TestExplorerContext.ContextKey
-        };
+        var testExplorerPanelTab = new Panel(
+			"Test Explorer",
+            Key<Panel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
+			ContextFacts.TestExplorerContext.ContextKey,
+			typeof(TestExplorerDisplay),
+            null);
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(testExplorerPanelTab));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, testExplorerPanelTab, false));
 
         // SetActivePanelTabAction

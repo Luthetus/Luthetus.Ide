@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Options.States;
@@ -6,9 +6,9 @@ using Luthetus.Common.RazorLib.Htmls.Models;
 using Luthetus.Common.RazorLib.Notifications.States;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Notifications.Displays;
 
@@ -20,7 +20,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public NotificationRecord NotificationRecord { get; set; } = null!;
+    public INotification Notification  { get; set; } = null!;
     [Parameter, EditorRequired]
     public int Index { get; set; }
 
@@ -32,7 +32,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     private const int COUNT_OF_CONTROL_BUTTONS = 2;
 
     private readonly CancellationTokenSource _notificationOverlayCancellationTokenSource = new();
-    private readonly Key<DialogRecord> _dialogKey = Key<DialogRecord>.NewKey();
+    private readonly Key<IDialog> _dialogKey = Key<IDialog>.NewKey();
 
     private string CssStyleString => GetCssStyleString();
 
@@ -60,9 +60,9 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     {
         if (firstRender)
         {
-            var notificationRecord = NotificationRecord;
+            var localNotification = Notification;
 
-            if (notificationRecord.NotificationOverlayLifespan is not null)
+            if (localNotification.NotificationOverlayLifespan is not null)
             {
                 // ICommonBackgroundTaskQueue does not work well here because
                 // this Task does not need to be tracked.
@@ -71,7 +71,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
                     try
                     {
                         await Task.Delay(
-                            notificationRecord.NotificationOverlayLifespan.Value,
+                            localNotification.NotificationOverlayLifespan.Value,
                             _notificationOverlayCancellationTokenSource.Token);
 
                         HandleShouldNoLongerRender();
@@ -130,7 +130,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 
     private void HandleShouldNoLongerRender()
     {
-        if (NotificationRecord.DeleteNotificationAfterOverlayIsDismissed)
+        if (Notification.DeleteNotificationAfterOverlayIsDismissed)
             DeleteNotification();
         else
             MarkNotificationAsRead();
@@ -138,25 +138,23 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 
     private void DeleteNotification()
     {
-        Dispatcher.Dispatch(new NotificationState.MakeDeletedAction(NotificationRecord.Key));
+        Dispatcher.Dispatch(new NotificationState.MakeDeletedAction(Notification.DynamicViewModelKey));
     }
 
     private void MarkNotificationAsRead()
     {
-        Dispatcher.Dispatch(new NotificationState.MakeReadAction(NotificationRecord.Key));
+        Dispatcher.Dispatch(new NotificationState.MakeReadAction(Notification.DynamicViewModelKey));
     }
 
     private void ChangeNotificationToDialog()
     {
-        var dialogRecord = new DialogRecord(
-            _dialogKey,
-            NotificationRecord.Title,
-            NotificationRecord.RendererType,
-            NotificationRecord.ParameterMap,
-            NotificationRecord.CssClassString)
-        {
-            IsResizable = true
-        };
+        var dialogRecord = new DialogViewModel(
+			Notification.DynamicViewModelKey,
+            Notification.Title,
+            Notification.ComponentType,
+            Notification.ComponentParameterMap,
+            Notification.NotificationCssClass,
+			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
 

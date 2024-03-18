@@ -9,7 +9,7 @@
      style="@BodyElementDimensions.StyleString">
 
     <StateHasChangedBoundary @ref="_leftPanelStateHasChangedBoundaryComponent">
-        <PanelDisplay PanelGroupKey="PanelFacts.LeftPanelRecordKey"
+        <PanelGroupDisplay PanelGroupKey="PanelFacts.LeftPanelRecordKey"
                       AdjacentElementDimensions="_editorElementDimensions"
                       DimensionAttributeKind="DimensionAttributeKind.Width"
                       ReRenderSelfAndAdjacentElementDimensionsFunc="ReRenderLeftPanelAndEditor" />
@@ -28,7 +28,7 @@
                      ReRenderFuncAsync="ReRenderEditorAndRightPanel" />
 
     <StateHasChangedBoundary @ref="_rightPanelStateHasChangedBoundaryComponent">
-        <PanelDisplay PanelGroupKey="PanelFacts.RightPanelRecordKey"
+        <PanelGroupDisplay PanelGroupKey="PanelFacts.RightPanelRecordKey"
                       AdjacentElementDimensions="_editorElementDimensions"
                       DimensionAttributeKind="DimensionAttributeKind.Width"
                       ReRenderSelfAndAdjacentElementDimensionsFunc="ReRenderEditorAndRightPanel" />

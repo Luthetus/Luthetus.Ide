@@ -7,23 +7,28 @@
     
 	@{
 		var dragState = DragStateWrap.Value;
-		var polymorphicDraggable = dragState.PolymorphicDraggable;
+		var draggableViewModel = dragState.Drag;
 	}
 
-	@if (polymorphicDraggable is not null)
+	@if (draggableViewModel is not null)
 	{
-		foreach (var dropzone in polymorphicDraggable.DropzoneList)
+		var dropzoneViewModelList = draggableViewModel.DropzoneList;
+
+		if (draggableViewModel.DragComponentType is not null)
 		{
-			<div style="z-index: @dropzone.MeasuredHtmlElementDimensions.ZIndex; @dropzone.DropzoneElementDimensions.StyleString"
-				 class="luth_dropzone @GetIsActiveCssClass(dropzone)"
+			<div style="draggableViewModel.ElementDimensions.StyleString">
+				<DynamicComponent Type="draggableViewModel.DragComponentType"
+								  Parameters="draggableViewModel.DragComponentParameterMap" />
+			</div>
+		}
+
+		foreach (var dropzone in dropzoneViewModelList)
+		{
+			<div style="z-index: @dropzone.MeasuredHtmlElementDimensions.ZIndex; @dropzone.ElementDimensions.StyleString"
+				 class="luth_dropzone @GetIsActiveCssClass(dropzone) @dropzone.CssClass"
 				 @onmouseover="() => _onMouseOverDropzone = dropzone"
 				 @onmouseover:stopPropagation="true">
 			</div>
 		}
-
-		<div style="polymorphicDraggable.DraggableElementDimensions.StyleString">
-			<DynamicComponent Type="polymorphicDraggable.DraggableRendererType"
-			                  Parameters="polymorphicDraggable.DraggableParameterMap"/>	
-		</div>
 	}
 </div>

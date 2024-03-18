@@ -1,5 +1,5 @@
-﻿using Fluxor;
-using Luthetus.Common.RazorLib.Notifications.Models;
+using Fluxor;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Notifications.States;
@@ -24,7 +24,7 @@ public partial record NotificationState
             DisposeAction disposeAction)
         {
             var inNotification = inState.DefaultList.FirstOrDefault(
-                x => x.Key == disposeAction.Key);
+                x => x.DynamicViewModelKey == disposeAction.Key);
 
             if (inNotification is null)
                 return inState;
@@ -40,7 +40,7 @@ public partial record NotificationState
             MakeReadAction makeReadAction)
         {
             var inNotificationIndex = inState.DefaultList.FindIndex(
-                x => x.Key == makeReadAction.Key);
+                x => x.DynamicViewModelKey == makeReadAction.Key);
 
             if (inNotificationIndex == -1)
                 return inState;
@@ -63,7 +63,7 @@ public partial record NotificationState
             UndoMakeReadAction undoMakeReadAction)
         {
             var inNotificationIndex = inState.ReadList.FindIndex(
-                x => x.Key == undoMakeReadAction.Key);
+                x => x.DynamicViewModelKey == undoMakeReadAction.Key);
 
             if (inNotificationIndex == -1)
                 return inState;
@@ -86,7 +86,7 @@ public partial record NotificationState
             MakeDeletedAction makeDeletedAction)
         {
             var inNotificationIndex = inState.DefaultList.FindIndex(
-                x => x.Key == makeDeletedAction.Key);
+                x => x.DynamicViewModelKey == makeDeletedAction.Key);
 
             if (inNotificationIndex == -1)
                 return inState;
@@ -109,7 +109,7 @@ public partial record NotificationState
             UndoMakeDeletedAction undoMakeDeletedAction)
         {
             var inNotificationIndex = inState.DeletedList.FindIndex(
-                x => x.Key == undoMakeDeletedAction.Key);
+                x => x.DynamicViewModelKey == undoMakeDeletedAction.Key);
 
             if (inNotificationIndex == -1)
                 return inState;
@@ -132,7 +132,7 @@ public partial record NotificationState
             MakeArchivedAction makeArchivedAction)
         {
             var inNotificationIndex = inState.DefaultList.FindIndex(
-                x => x.Key == makeArchivedAction.Key);
+                x => x.DynamicViewModelKey == makeArchivedAction.Key);
 
             if (inNotificationIndex == -1)
                 return inState;
@@ -155,7 +155,7 @@ public partial record NotificationState
             UndoMakeArchivedAction undoMakeArchivedAction)
         {
             var inNotificationIndex = inState.ArchivedList.FindIndex(
-                x => x.Key == undoMakeArchivedAction.Key);
+                x => x.DynamicViewModelKey == undoMakeArchivedAction.Key);
 
             if (inNotificationIndex == -1)
                 return inState;
@@ -178,7 +178,7 @@ public partial record NotificationState
         {
             return inState with
             {
-                DefaultList = ImmutableList<NotificationRecord>.Empty
+                DefaultList = ImmutableList<INotification>.Empty
             };
         }
         
@@ -188,7 +188,7 @@ public partial record NotificationState
         {
             return inState with
             {
-                ReadList = ImmutableList<NotificationRecord>.Empty
+                ReadList = ImmutableList<INotification>.Empty
             };
         }
         
@@ -198,7 +198,7 @@ public partial record NotificationState
         {
             return inState with
             {
-                DeletedList = ImmutableList<NotificationRecord>.Empty
+                DeletedList = ImmutableList<INotification>.Empty
             };
         }
 
@@ -208,7 +208,7 @@ public partial record NotificationState
         {
             return inState with
             {
-                ArchivedList = ImmutableList<NotificationRecord>.Empty
+                ArchivedList = ImmutableList<INotification>.Empty
             };
         }
     }
