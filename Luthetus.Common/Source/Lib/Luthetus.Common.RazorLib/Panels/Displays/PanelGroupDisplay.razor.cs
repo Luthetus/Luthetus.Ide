@@ -53,6 +53,8 @@ public partial class PanelGroupDisplay : FluxorComponent
 
 	private ImmutableArray<IPanelTab> GetTabList(PanelGroup panelGroup)
 	{
+		panelGroup.Dispatcher = Dispatcher;
+
 		var tabList = new List<IPanelTab>();
 
 		foreach (var panelTab in panelGroup.TabList)

@@ -175,25 +175,53 @@ public record Panel : IPanelTab, IDialog, IDrag
 
     public Task OnDragEndAsync(MouseEventArgs mouseEventArgs, IDropzone? dropzone)
     {
-		if (TabGroup is not PanelGroup panelGroup)
-			return Task.CompletedTask;
+		var panelGroup = TabGroup as PanelGroup;
 
 		if (dropzone is not PanelGroupDropzone panelGroupDropzone)
 			return Task.CompletedTask;
 
+		// Create Dialog
 		if (panelGroupDropzone.PanelGroupKey == Key<PanelGroup>.Empty)
 		{
-			Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
-				panelGroup.Key,
-				Key));
+			// Delete current UI
+			{
+				if (panelGroup is not null)
+				{
+					Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
+						panelGroup.Key,
+						Key));
+				}
+				else
+				{
+					// Is a dialog
+					//
+					// Already a dialog, so nothing needs to be done
+					return Task.CompletedTask;
+				}
+
+				TabGroup = null;
+			}
 
 			DialogService.RegisterDialogRecord(this);
 		}
-		else
+		
+		// Create Panel Tab
 		{
-			Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
-				panelGroup.Key,
-				Key));
+			// Delete current UI
+			{
+				if (panelGroup is not null)
+				{
+					Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
+						panelGroup.Key,
+						Key));
+				}
+				else
+				{
+					DialogService.DisposeDialogRecord(DynamicViewModelKey);
+				}
+
+				TabGroup = null;
+			}
 
 			var verticalHalfwayPoint = dropzone.MeasuredHtmlElementDimensions.TopInPixels +
 				(dropzone.MeasuredHtmlElementDimensions.HeightInPixels / 2);

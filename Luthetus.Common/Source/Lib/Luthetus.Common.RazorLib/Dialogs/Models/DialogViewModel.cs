@@ -28,7 +28,7 @@ public record DialogViewModel : IDialog
     public bool DialogIsResizable { get; set; }
     public string DialogFocusPointHtmlElementId { get; set; }
     public Key<IDialog> DialogKey { get; }
-    public ElementDimensions DialogElementDimensions { get; set; } = new();
+	public ElementDimensions DialogElementDimensions { get; set; } = DialogHelper.ConstructDefaultElementDimensions();
 	public string Title { get; set; }
     public Type ComponentType { get; }
     public Dictionary<string, object?>? ComponentParameterMap { get; init; }
