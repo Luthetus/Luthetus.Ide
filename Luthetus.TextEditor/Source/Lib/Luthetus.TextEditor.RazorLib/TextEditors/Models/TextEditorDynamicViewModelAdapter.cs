@@ -54,7 +54,7 @@ public class TextEditorDynamicViewModelAdapter : ITextEditorTab, IPanelTab, IDia
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public Key<Panel> Key { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
-    public Key<IDynamicViewModel> DynamicViewModelKey { get; }
+    public Key<IDynamicViewModel> DynamicViewModelKey { get; } = Key<IDynamicViewModel>.NewKey();
 
     public ITabGroup TabGroup { get; set; }
 
