@@ -36,7 +36,7 @@ public partial record DialogState
 
             var outDialogList = inState.DialogList.Replace(
 				inDialog,
-				inDialog.SetIsMaximized(setIsMaximizedAction.IsMaximized));
+				inDialog.SetDialogIsMaximized(setIsMaximizedAction.IsMaximized));
 
             return inState with { DialogList = outDialogList };
         }

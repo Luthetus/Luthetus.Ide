@@ -9,6 +9,4 @@ public interface IDynamicViewModel
 	public string Title { get; }
 	public Type ComponentType { get; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; }
-    public string? CssClass { get; set; }
-    public string? CssStyle { get; set; }
 }

@@ -154,7 +154,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
             Notification.Title,
             Notification.ComponentType,
             Notification.ComponentParameterMap,
-            Notification.CssClass,
+            Notification.NotificationCssClass,
 			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));

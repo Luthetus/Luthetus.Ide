@@ -18,7 +18,7 @@ public record DialogViewModel : IDialog
 		Title = title;
         ComponentType = componentType;
         ComponentParameterMap = componentParameterMap;
-        CssClass = cssClass;
+        DialogCssClass = cssClass;
 		DialogIsResizable = isResizable;
 	}
 
@@ -32,15 +32,10 @@ public record DialogViewModel : IDialog
 	public string Title { get; set; }
     public Type ComponentType { get; }
     public Dictionary<string, object?>? ComponentParameterMap { get; init; }
-    public string CssClass { get; set; }
-    public string? CssStyle { get; set; }
+    public string DialogCssClass { get; set; }
+    public string? DialogCssStyle { get; set; }
 
     public virtual string FocusPointHtmlElementId => $"luth_dialog-focus-point_{DynamicViewModelKey.Guid}";
-
-	public IDialog SetParameterMap(Dictionary<string, object?>? componentParameterMap)
-	{
-		return this with { ComponentParameterMap = componentParameterMap };
-	}
 
 	public IDialog SetTitle(string title)
 	{
@@ -52,7 +47,7 @@ public record DialogViewModel : IDialog
 		return this with { DialogIsMinimized = isMinimized };
 	}
 
-	public IDialog SetIsMaximized(bool isMaximized)
+	public IDialog SetDialogIsMaximized(bool isMaximized)
 	{
 		return this with { DialogIsMaximized = isMaximized };
 	}
@@ -64,6 +59,6 @@ public record DialogViewModel : IDialog
 
 	public IDialog SetCssClassString(string cssClassString)
 	{
-		return this with { CssClass = cssClassString };
+		return this with { DialogCssClass = cssClassString };
 	}
 }

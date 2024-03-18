@@ -1,7 +1,7 @@
 @using Luthetus.Common.RazorLib.Dynamics.Models
 @using Luthetus.Common.RazorLib.Resizes.Displays
 
-<div class="luth_dialog-display @Dialog.CssClass @GetCssClassForDialogStateIsActiveSelection(DialogStateIsActiveSelection.Value)"
+<div class="luth_dialog-display @Dialog.DialogCssClass @GetCssClassForDialogStateIsActiveSelection(DialogStateIsActiveSelection.Value)"
      style="@ElementDimensionsStyleCssString @IsMaximizedStyleCssString"
      id="@Dialog.DialogFocusPointHtmlElementId"
      tabindex="-1"

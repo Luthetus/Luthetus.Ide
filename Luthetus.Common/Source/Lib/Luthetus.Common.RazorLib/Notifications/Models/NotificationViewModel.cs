@@ -34,4 +34,6 @@ public class NotificationViewModel : INotification
     public string? CssClass { get; set; }
     public string? CssStyle { get; set; }
 	public ElementDimensions ElementDimensions { get; set; } = new();
+	public string? NotificationCssClass { get; set; }
+	public string? NotificationCssStyle { get; set; }
 }

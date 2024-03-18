@@ -9,7 +9,8 @@ public interface IDialog : IDynamicViewModel
     public bool DialogIsResizable { get; set; }
     public string DialogFocusPointHtmlElementId { get; set; }
 	public ElementDimensions DialogElementDimensions { get; set; }
+	public string? DialogCssClass { get; set; }
+	public string? DialogCssStyle { get; set; }
 
-	public IDialog SetIsMaximized(bool isMaximized);
-    public IDialog SetParameterMap(Dictionary<string, object?>? componentParameterMap);
+	public IDialog SetDialogIsMaximized(bool isMaximized);
 }

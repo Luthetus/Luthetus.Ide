@@ -44,7 +44,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     [Parameter]
     public int TabIndex { get; set; } = -1;
 
-    private IDialog _detailsDialogRecord = new DialogViewModel(
+    private DialogViewModel _detailsDialogRecord = new DialogViewModel(
         Key<IDynamicViewModel>.NewKey(),
         "Diff Details",
         typeof(DiffDetailsDisplay),
@@ -101,18 +101,20 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     {
         DialogService.DisposeDialogRecord(_detailsDialogRecord.DynamicViewModelKey);
 
-        _detailsDialogRecord = _detailsDialogRecord.SetParameterMap(
-			new Dictionary<string, object?>
-            {
-                {
-                    nameof(DiffDetailsDisplay.DiffModelKey),
-                    TextEditorDiffKey
-                },
-                {
-                    nameof(DiffDetailsDisplay.DiffResult),
-                    _mostRecentDiffResult
-                }
-            });
+        _detailsDialogRecord = _detailsDialogRecord with
+        {
+            ComponentParameterMap = new Dictionary<string, object?>
+			{
+				{
+					nameof(DiffDetailsDisplay.DiffModelKey),
+					TextEditorDiffKey
+				},
+				{
+					nameof(DiffDetailsDisplay.DiffResult),
+					_mostRecentDiffResult
+				}
+			}
+		};
 
         DialogService.RegisterDialogRecord(_detailsDialogRecord);
     }

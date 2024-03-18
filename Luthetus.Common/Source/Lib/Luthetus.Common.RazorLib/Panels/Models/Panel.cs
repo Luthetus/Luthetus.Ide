@@ -15,7 +15,13 @@ namespace Luthetus.Common.RazorLib.Panels.Models;
 
 public record Panel : IPanelTab, IDialog, IDrag
 {
-	public Panel(
+    private readonly Type _dragTabComponentType;
+    private readonly Dictionary<string, object?>? _dragTabComponentParameterMap;
+
+    private readonly Type? _dragDialogComponentType = null;
+    private readonly Dictionary<string, object?>? _dragDialogComponentParameterMap = null;
+
+    public Panel(
 		string title,
 		Key<Panel> key,
 		Key<IDynamicViewModel> dynamicViewModelKey,
@@ -29,7 +35,15 @@ public record Panel : IPanelTab, IDialog, IDrag
 		ContextRecordKey = contextRecordKey;
 		ComponentType = componentType;
 		ComponentParameterMap = componentParameterMap;
-	}
+
+        _dragTabComponentType = typeof(TabDisplay);
+        _dragTabComponentParameterMap = new()
+		{
+			{ nameof(TabDisplay.Tab), this },
+			{ nameof(TabDisplay.IsBeingDragged), true }
+		};
+
+    }
 
     public string Title { get; }
 	public Key<Panel> Key { get; }
@@ -40,43 +54,32 @@ public record Panel : IPanelTab, IDialog, IDrag
     public IJSRuntime JsRuntime { get; set; }
 	public Type ComponentType { get; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; set; }
-	public string? CssClass { get; set; }
-	public string? CssStyle { get; set; }
+	public string? DialogCssClass { get; set; }
+	public string? DialogCssStyle { get; set; }
 	public ITabGroup? TabGroup { get; set; }
 
     public bool DialogIsMinimized { get; set; }
     public bool DialogIsMaximized { get; set; }
-    public bool DialogIsResizable { get; set; }
+	public bool DialogIsResizable { get; set; } = true;
     public string DialogFocusPointHtmlElementId { get; set; }
-    public ElementDimensions DialogElementDimensions { get; set; } = new();
+	public ElementDimensions DialogElementDimensions { get; set; } = DialogHelper.ConstructDefaultElementDimensions();
 
-	public ImmutableArray<IDropzone> DropzoneList { get; set; } = new();
+    public ImmutableArray<IDropzone> DropzoneList { get; set; } = new();
 
-	public Type DragComponentType { get; } = typeof(TabDisplay);
+	public ElementDimensions DragElementDimensions { get; set; } = DialogHelper.ConstructDefaultElementDimensions();
+    
+	public Type DragComponentType => TabGroup is null
+        ? _dragDialogComponentType
+        : _dragTabComponentType;
 
-	public Dictionary<string, object?>? DragComponentParameterMap => new()
-	{
-		{
-			nameof(TabDisplay.Tab),
-			this
-		},
-		{
-			nameof(TabDisplay.IsBeingDragged),
-			true
-		}
-	};
+    public Dictionary<string, object?>? DragComponentParameterMap => TabGroup is null
+        ? _dragDialogComponentParameterMap
+        : _dragTabComponentParameterMap;
 
-	public string? DragCssClass { get; set; }
+    public string? DragCssClass { get; set; }
 	public string? DragCssStyle { get; set; }
-	public ElementDimensions DragElementDimensions { get; set; } = new();
 
-	public IDialog SetParameterMap(Dictionary<string, object?>? componentParameterMap)
-	{
-		ComponentParameterMap = componentParameterMap;
-		return this;
-	}
-
-	public IDialog SetIsMaximized(bool isMaximized)
+    public IDialog SetDialogIsMaximized(bool isMaximized)
 	{
 		DialogIsMaximized = isMaximized;
 		return this;
