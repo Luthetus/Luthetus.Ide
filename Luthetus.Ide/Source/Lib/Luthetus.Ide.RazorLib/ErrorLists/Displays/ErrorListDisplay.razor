@@ -8,7 +8,6 @@
 
 @{
     _ = TerminalSessionWasModifiedStateWrap.Value.EmptyTextHack;
-
 	var outputStrList = new List<string>();
 
     if (terminalSession is not null)
@@ -29,14 +28,21 @@
 <div class="luth_ide_error-list">
 	@{ var outputResultList = OutputParser.Parse(outputStrList); }
 
-	@for (var badI = 0; badI < outputResultList.Count; badI++)
+	@if (ChildContent is not null)
 	{
-		var index = badI;
-		var outputResult = outputResultList[index];
-		<div>
-			<span title="Row Number: @(index + 1)">
-				@((MarkupString)outputResult.SourceText.EscapeHtml())
-			</span>
-		</div>
+		@ChildContent(outputResultList)
+	}
+	else
+	{
+		for (var badI = 0; badI < outputResultList.Count; badI++)
+		{
+			var index = badI;
+			var outputResult = outputResultList[index];
+			<div>
+				<span title="Row Number: @(index + 1)">
+					@((MarkupString)outputResult.SourceText.EscapeHtml())
+				</span>
+			</div>
+		}
 	}
 </div>
