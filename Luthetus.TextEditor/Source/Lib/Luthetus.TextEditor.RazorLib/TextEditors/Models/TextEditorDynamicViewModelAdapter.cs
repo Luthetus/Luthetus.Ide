@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
@@ -83,14 +83,14 @@ public class TextEditorDynamicViewModelAdapter : ITextEditorTab, IPanelTab, IDia
         ? _dragDialogComponentParameterMap
         : _dragTabComponentParameterMap;
 
-
     public string? DragCssClass { get; set; }
     public string? DragCssStyle { get; set; }
 
-    public IDialog SetDialogIsMaximized(bool isMaximized)
-    {
-        throw new NotImplementedException();
-    }
+	public IDialog SetDialogIsMaximized(bool isMaximized)
+	{
+		DialogIsMaximized = isMaximized;
+		return this;
+	}
 
     private string GetTitle()
     {
