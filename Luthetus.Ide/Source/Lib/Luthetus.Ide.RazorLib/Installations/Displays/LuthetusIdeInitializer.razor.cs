@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
@@ -20,7 +21,7 @@ using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 using Luthetus.Ide.RazorLib.Outputs.Displays;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.TestExplorers.Displays;
-using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Ide.RazorLib.ErrorLists.Displays;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
 
@@ -98,63 +99,63 @@ public partial class LuthetusIdeInitializer : ComponentBase
     {
         var leftPanel = PanelFacts.GetLeftPanelRecord(PanelsStateWrap.Value);
 
-        // solutionExplorerPanelTab
-        var solutionExplorerPanelTab = new Panel(
+        // solutionExplorerPanel
+        var solutionExplorerPanel = new Panel(
 			"Solution Explorer",
 			Key<Panel>.NewKey(),
 			Key<IDynamicViewModel>.NewKey(),
 			ContextFacts.SolutionExplorerContext.ContextKey,
 			typeof(SolutionExplorerDisplay),
 			null);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(solutionExplorerPanelTab));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(leftPanel.Key, solutionExplorerPanelTab, false));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(solutionExplorerPanel));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(leftPanel.Key, solutionExplorerPanel, false));
 
-        // folderExplorerPanelTab
-        var folderExplorerPanelTab = new Panel(
+        // folderExplorerPanel
+        var folderExplorerPanel = new Panel(
 			"Folder Explorer",
             Key<Panel>.NewKey(),
             Key<IDynamicViewModel>.NewKey(),
 			ContextFacts.FolderExplorerContext.ContextKey,
             typeof(FolderExplorerDisplay),
 			null);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(folderExplorerPanelTab));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(leftPanel.Key, folderExplorerPanelTab, false));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(folderExplorerPanel));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(leftPanel.Key, folderExplorerPanel, false));
 
         // SetActivePanelTabAction
-        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(leftPanel.Key, solutionExplorerPanelTab.Key));
+        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(leftPanel.Key, solutionExplorerPanel.Key));
     }
 
     private void InitializeRightPanelTabs()
     {
         var rightPanel = PanelFacts.GetRightPanelRecord(PanelsStateWrap.Value);
 
-        // compilerServiceExplorerPanelTab
-        var compilerServiceExplorerPanelTab = new Panel(
+        // compilerServiceExplorerPanel
+        var compilerServiceExplorerPanel = new Panel(
 			"Compiler Service Explorer",
 			Key<Panel>.NewKey(),
 			Key<IDynamicViewModel>.NewKey(),
 			ContextFacts.CompilerServiceExplorerContext.ContextKey,
             typeof(CompilerServiceExplorerDisplay),
 			null);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(compilerServiceExplorerPanelTab));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, compilerServiceExplorerPanelTab, false));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(compilerServiceExplorerPanel));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, compilerServiceExplorerPanel, false));
 
-        // compilerServiceEditorPanelTab
-        var compilerServiceEditorPanelTab = new Panel(
+        // compilerServiceEditorPanel
+        var compilerServiceEditorPanel = new Panel(
 			"Compiler Service Editor",
 			Key<Panel>.NewKey(),
 			Key<IDynamicViewModel>.NewKey(),
 			ContextFacts.CompilerServiceEditorContext.ContextKey,
             typeof(CompilerServiceEditorDisplay),
             null);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(compilerServiceEditorPanelTab));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, compilerServiceEditorPanelTab, false));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(compilerServiceEditorPanel));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, compilerServiceEditorPanel, false));
 
         // TODO: The ITextEditorDiffApi.Calculate method is being commented out as of (2024-02-23). It needs to be re-written...
         // ...so that it uses the text editor's edit context by using ITextEditorService.Post()
         //
-        // // gitChangesPanelTab
-        // var gitChangesPanelTab = new Panel(
+        // // gitChangesPanel
+        // var gitChangesPanel = new Panel(
         //     Key<Panel>.NewKey(),
         //     rightPanel.ElementDimensions,
         //     typeof(GitChangesDisplay),
@@ -162,70 +163,81 @@ public partial class LuthetusIdeInitializer : ComponentBase
         // {
         //     ContextRecordKey = ContextFacts.GitContext.ContextKey
         // };
-        // Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(gitChangesPanelTab));
-        // Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, gitChangesPanelTab, false));
+        // Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(gitChangesPanel));
+        // Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, gitChangesPanel, false));
     }
 
     private void InitializeBottomPanelTabs()
     {
         var bottomPanel = PanelFacts.GetBottomPanelRecord(PanelsStateWrap.Value);
 
-        // terminalPanelTab
-        var terminalPanelTab = new Panel(
+        // terminalPanel
+        var terminalPanel = new Panel(
 			"Terminal",
             Key<Panel>.NewKey(),
             Key<IDynamicViewModel>.NewKey(),
 			ContextFacts.TerminalContext.ContextKey,
             typeof(IntegratedTerminalDisplay),
             null);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(terminalPanelTab));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, terminalPanelTab, false));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(terminalPanel));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, terminalPanel, false));
 
-        // outputPanelTab
-        var outputPanelTab = new Panel(
+		// errorListPanel
+        var errorListPanel = new Panel(
+			"Error List",
+			Key<Panel>.NewKey(),
+			Key<IDynamicViewModel>.NewKey(),
+			ContextFacts.ErrorListContext.ContextKey,
+            typeof(ErrorListDisplay),
+            null);
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(errorListPanel));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, errorListPanel, false));
+
+        // outputPanel
+        var outputPanel = new Panel(
 			"Output",
 			Key<Panel>.NewKey(),
 			Key<IDynamicViewModel>.NewKey(),
 			ContextFacts.OutputContext.ContextKey,
             typeof(OutputPanelDisplay),
             null);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(outputPanelTab));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, outputPanelTab, false));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(outputPanel));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, outputPanel, false));
 
-        // nuGetPanelTab
-        var nuGetPanelTab = new Panel(
+        // nuGetPanel
+        var nuGetPanel = new Panel(
 			"NuGet",
 			Key<Panel>.NewKey(),
 			Key<IDynamicViewModel>.NewKey(),
 			ContextFacts.NuGetPackageManagerContext.ContextKey,
             typeof(NuGetPackageManager),
             null);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(nuGetPanelTab));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, nuGetPanelTab, false));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(nuGetPanel));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, nuGetPanel, false));
 
-        // activeContextsPanelTab
-        var activeContextsPanelTab = new Panel(
+        // activeContextsPanel
+        var activeContextsPanel = new Panel(
 			"Active Contexts",
 			Key<Panel>.NewKey(),
 			Key<IDynamicViewModel>.NewKey(),
 			ContextFacts.ActiveContextsContext.ContextKey,
             typeof(ContextsPanelDisplay),
             null);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(activeContextsPanelTab));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, activeContextsPanelTab, false));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(activeContextsPanel));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, activeContextsPanel, false));
 
-        // testExplorerPanelTab
-        var testExplorerPanelTab = new Panel(
+        // testExplorerPanel
+        var testExplorerPanel = new Panel(
 			"Test Explorer",
             Key<Panel>.NewKey(),
             Key<IDynamicViewModel>.NewKey(),
 			ContextFacts.TestExplorerContext.ContextKey,
 			typeof(TestExplorerDisplay),
             null);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(testExplorerPanelTab));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, testExplorerPanelTab, false));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(testExplorerPanel));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, testExplorerPanel, false));
 
         // SetActivePanelTabAction
-        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(bottomPanel.Key, terminalPanelTab.Key));
+        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(bottomPanel.Key, errorListPanel.Key));
     }
 }

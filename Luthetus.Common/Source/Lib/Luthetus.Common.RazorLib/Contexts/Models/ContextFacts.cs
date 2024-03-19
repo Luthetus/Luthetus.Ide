@@ -90,6 +90,12 @@ public static class ContextFacts
         "text-editor",
         Keymap.Empty);
 
+    public static readonly ContextRecord ErrorListContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Error List",
+        "error-list",
+        Keymap.Empty);
+
     public static readonly ContextRecord OutputContext = new(
         Key<ContextRecord>.NewKey(),
         "Output",
@@ -129,6 +135,7 @@ public static class ContextFacts
         MainLayoutFooterContext,
         EditorContext,
         TextEditorContext,
+		ErrorListContext,
         OutputContext,
         NuGetPackageManagerContext,
         GitContext,

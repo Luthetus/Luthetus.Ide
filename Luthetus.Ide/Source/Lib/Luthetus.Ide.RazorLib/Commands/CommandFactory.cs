@@ -91,7 +91,7 @@ public class CommandFactory : ICommandFactory
         // EditorContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyE", false, true, true, Key<KeymapLayer>.Empty),
+                new KeymapArgument("KeyE", true, true, true, Key<KeymapLayer>.Empty),
                 ConstructFocusContextElementCommand(
                     ContextFacts.EditorContext, "Focus: Editor", "focus-editor"));
         }
@@ -184,6 +184,13 @@ public class CommandFactory : ICommandFactory
 	                    new KeymapArgument("KeyS", true, true, true, Key<KeymapLayer>.Empty),
 	                    focusTextEditorCommand);
 			}
+        }
+        // ErrorListContext
+        {
+            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+                new KeymapArgument("KeyE", false, true, true, Key<KeymapLayer>.Empty),
+                ConstructFocusContextElementCommand(
+                    ContextFacts.ErrorListContext, "Focus: Error List", "error-list"));
         }
         // OutputContext
         {
