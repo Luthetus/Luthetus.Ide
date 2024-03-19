@@ -242,6 +242,7 @@ input[type="checkbox"]{
 .luth_ide_terminal-output-display {
     width: 100%; 
     height: calc(100% - var(--luth_tabs-bar-height));
+	white-space: nowrap;
     font-family: monospace;
 }
 

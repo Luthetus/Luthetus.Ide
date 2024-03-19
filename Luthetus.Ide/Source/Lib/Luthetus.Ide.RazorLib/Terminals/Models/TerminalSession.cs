@@ -23,12 +23,8 @@ public class TerminalSession
     private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
     private readonly object _standardOutBuilderMapLock = new();
-
-    private CancellationTokenSource _commandCancellationTokenSource = new();
-
     private readonly ConcurrentQueue<TerminalCommand> _terminalCommandsConcurrentQueue = new();
-
-    private readonly Dictionary<Key<TerminalCommand>, List<string>> _standardOutBuilderMap = new();
+    private readonly Dictionary<Key<TerminalCommand>, TerminalSessionOutput> _standardOutBuilderMap = new();
 
     public TerminalSession(
         string? workingDirectoryAbsolutePathString,
@@ -42,6 +38,8 @@ public class TerminalSession
         WorkingDirectoryAbsolutePathString = workingDirectoryAbsolutePathString;
     }
 
+	private CancellationTokenSource _commandCancellationTokenSource = new();
+
     public Key<TerminalSession> TerminalSessionKey { get; init; } = Key<TerminalSession>.NewKey();
     public string? WorkingDirectoryAbsolutePathString { get; private set; }
     public TerminalCommand? ActiveTerminalCommand { get; private set; }
@@ -52,6 +50,9 @@ public class TerminalSession
 	public ResourceUri ResourceUri => new($"__LUTHETUS_{TerminalSessionKey.Guid}__");
     public Key<TextEditorViewModel> TextEditorViewModelKey => new(TerminalSessionKey.Guid);
 
+	/// <summary>
+	/// Returns the output that occurred in the terminal session
+	/// </summary>
     public string ReadStandardOut()
     {
 		var output = string.Empty;
@@ -60,11 +61,11 @@ public class TerminalSession
 		{
 			var entireStdOutStringBuilder = new StringBuilder();
 
-			foreach (var strList in _standardOutBuilderMap.Values)
+			foreach (var sessionOutput in _standardOutBuilderMap.Values)
 			{
 				var perCommandStringBuilder = new StringBuilder();
 	
-				foreach (var str in strList)
+				foreach (var str in sessionOutput.TextLineList)
 				{
 					perCommandStringBuilder.Append(str);
 				}
@@ -78,17 +79,20 @@ public class TerminalSession
         return output;
     }
 
+	/// <summary>
+	/// Returns the output that occurred as a result of a specific command
+	/// </summary>
     public string? ReadStandardOut(Key<TerminalCommand> terminalCommandKey)
     {
 		var output = (string?)null;
 
 		lock(_standardOutBuilderMapLock)
 		{
-			if (_standardOutBuilderMap.TryGetValue(terminalCommandKey, out var strList))
+			if (_standardOutBuilderMap.TryGetValue(terminalCommandKey, out var sessionOutput))
 			{
 				var perCommandStringBuilder = new StringBuilder();
 	
-				foreach (var str in strList)
+				foreach (var str in sessionOutput.TextLineList)
 				{
 					perCommandStringBuilder.Append(str);
 				}
@@ -126,8 +130,8 @@ public class TerminalSession
 
 		lock(_standardOutBuilderMapLock)
 		{
-			if (_standardOutBuilderMap.TryGetValue(terminalCommandKey, out var strList))
-				output = new List<string>(strList); // Shallow copy to hide private memory location
+			if (_standardOutBuilderMap.TryGetValue(terminalCommandKey, out var sessionOutput))
+				output = new List<string>(sessionOutput.TextLineList); // Shallow copy to hide private memory location
 		}
 
         return output;
@@ -175,8 +179,7 @@ public class TerminalSession
 					// I'll change this to make a new List<string>()
 					lock(_standardOutBuilderMapLock)
 					{
-						// the _standardOutBuilderMap field declaration needs to be updated accordingly.
-						_standardOutBuilderMap.TryAdd(terminalCommand.TerminalCommandKey, new List<string>());
+						_standardOutBuilderMap.TryAdd(terminalCommand.TerminalCommandKey, new TerminalSessionOutput());
 					}
 
                     HasExecutingProcess = true;
@@ -187,8 +190,6 @@ public class TerminalSession
 						if (terminalCommand.BeginWith is not null)
                             await terminalCommand.BeginWith.Invoke(); // Actually start the terminal command here
 
-						int lineIndex = 0;
-
                         await command.Observe(_commandCancellationTokenSource.Token)
                             .ForEachAsync(cmdEvent =>
                             {
@@ -197,13 +198,23 @@ public class TerminalSession
                                 switch (cmdEvent)
                                 {
                                     case StartedCommandEvent started:
-                                        output = $"> {WorkingDirectoryAbsolutePathString} (PID:{started.ProcessId}) {terminalCommand.FormattedCommand.Value}";
+										lock(_standardOutBuilderMapLock)
+										{
+											output = $"> {terminalCommand.FormattedCommand.Value}";
+	                                        _standardOutBuilderMap[terminalCommandKey].TextLineList.Add(output);
+
+											output = $"> PID:{started.ProcessId} PWD:{WorkingDirectoryAbsolutePathString}";
+	                                        _standardOutBuilderMap[terminalCommandKey].TextLineList.Add(output);
+
+											output = null;
+	                                    }
+
                                         break;
                                     case StandardOutputCommandEvent stdOut:
                                         output = $"{stdOut.Text}";
                                         break;
                                     case StandardErrorCommandEvent stdErr:
-                                        output = $"Err> {stdErr.Text}";
+                                        output = $"{stdErr.Text}";
                                         break;
                                     case ExitedCommandEvent exited:
                                         output = $"Process exited; Code: {exited.ExitCode}";
@@ -214,7 +225,7 @@ public class TerminalSession
 								{
 									lock(_standardOutBuilderMapLock)
 									{
-                                        _standardOutBuilderMap[terminalCommandKey].Add(output);
+                                        _standardOutBuilderMap[terminalCommandKey].TextLineList.Add(output);
                                     }
 								}
 

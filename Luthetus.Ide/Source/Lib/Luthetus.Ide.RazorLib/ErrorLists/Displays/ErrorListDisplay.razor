@@ -38,10 +38,15 @@
 		{
 			var index = badI;
 			var outputResult = outputResultList[index];
-			<div>
-				<span title="Row Number: @(index + 1)">
-					@((MarkupString)outputResult.SourceText.EscapeHtml())
-				</span>
+
+			// TODO: Measure the height of a row
+			<div title="Row Number: @(index + 1)">
+				@((MarkupString)outputResult.SourceText.EscapeHtml())
+
+				@if (outputResult.SourceText.Length == 0)
+				{
+					<br/>
+				}
 			</div>
 		}
 	}
