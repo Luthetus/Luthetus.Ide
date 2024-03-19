@@ -1,5 +1,4 @@
 @using Luthetus.Common.RazorLib.Keys.Models;
-@using Luthetus.TextEditor.RazorLib.TextEditors.Displays
 @using Luthetus.TextEditor.RazorLib.Htmls.Models
 @using Luthetus.Ide.RazorLib.Terminals.Models;
 
@@ -43,19 +42,5 @@
 				</div>
 			}
 		</div>
-    </div>
-    
-    <div class="luth_ide_terminal-output-input-display">
-        @if (terminalSession is not null && AllowInput)
-        {
-            <div>
-                @(terminalSession.WorkingDirectoryAbsolutePathString ?? "null")
-            </div>
-            
-            <div>
-                <TextEditorViewModelDisplay TextEditorViewModelKey="terminalSession.TextEditorViewModelKey"
-                                            ViewModelDisplayOptions="_textEditorViewModelDisplayOptions" />
-            </div>
-        }
     </div>
 </div>        
