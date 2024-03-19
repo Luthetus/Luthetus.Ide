@@ -188,7 +188,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 			Key<Panel>.NewKey(),
 			Key<IDynamicViewModel>.NewKey(),
 			ContextFacts.ErrorListContext.ContextKey,
-            typeof(ErrorListDisplay),
+            typeof(ErrorListPanelDisplay),
             null);
         Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(errorListPanel));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, errorListPanel, false));

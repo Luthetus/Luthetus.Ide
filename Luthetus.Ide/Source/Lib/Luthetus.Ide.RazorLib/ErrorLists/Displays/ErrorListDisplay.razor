@@ -1,20 +1,42 @@
-@using Luthetus.Common.RazorLib.Contexts.Displays
-@using Luthetus.Common.RazorLib.Contexts.Models
 @using Luthetus.Common.RazorLib.Keys.Models;
+@using Luthetus.TextEditor.RazorLib.Htmls.Models
 @using Luthetus.Ide.RazorLib.Terminals.Models;
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-<ContextBoundary ContextRecord="ContextFacts.ErrorListContext"
-                 ClassCssString="luth_ide_error-list"
-                 StyleCssString="height: 100%; width: 100%;">
+@{ var terminalSession = TerminalSessionsStateSelection.Value; }
 
-	<div class="luth_ide_section-title">
-        Error List
-    </div>
+@{
+    _ = TerminalSessionWasModifiedStateWrap.Value.EmptyTextHack;
 
-	<div class="luth_ide_section-body"
-         style="width: 100%;">
-		#TODO: Body
-	</div>
-</ContextBoundary>
+	var outputStrList = new List<string>();
+
+    if (terminalSession is not null)
+    {
+        if (TerminalCommandKey == Key<TerminalCommand>.Empty)
+        {
+            // Render out all of the session's standard output
+            outputStrList = terminalSession.GetStandardOut() ?? new List<string>();
+        }
+        else
+        {
+            // Render out ONLY the standard output from the specified command
+            outputStrList = terminalSession.GetStandardOut(TerminalCommandKey) ?? new List<string>();
+        }
+    }
+}
+
+<div class="luth_ide_error-list">
+	@{ var outputResultList = OutputParser.Parse(outputStrList); }
+
+	@for (var badI = 0; badI < outputResultList.Count; badI++)
+	{
+		var index = badI;
+		var outputResult = outputResultList[index];
+		<div>
+			<span title="Row Number: @(index + 1)">
+				@((MarkupString)outputResult.SourceText.EscapeHtml())
+			</span>
+		</div>
+	}
+</div>

@@ -11,7 +11,7 @@
         @{
             _ = TerminalSessionWasModifiedStateWrap.Value.EmptyTextHack;
 
-			var outputStrList = (List<string>?)null;
+			var outputStrList = new List<string>();
 
             if (terminalSession is not null)
             {
