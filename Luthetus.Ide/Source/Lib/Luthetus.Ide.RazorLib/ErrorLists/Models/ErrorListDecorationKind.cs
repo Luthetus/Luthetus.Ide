@@ -4,4 +4,5 @@ public enum ErrorListDecorationKind
 {
     None,
     Error,
+	Warning,
 }

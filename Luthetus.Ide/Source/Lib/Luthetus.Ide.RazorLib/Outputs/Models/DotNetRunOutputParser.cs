@@ -97,8 +97,19 @@ public class DotNetRunOutputParser : IOutputParser
 							errorKeywordAndErrorCodeTextSpan = new TextEditorTextSpan(
 								startPositionInclusiveErrorKeywordAndErrorCode,
 								stringWalker,
-								(byte)ErrorListDecorationKind.Error);
+								(byte)ErrorListDecorationKind.Warning);
 	
+							// I would rather a warning be incorrectly syntax highlighted as an error,
+							// than for an error to be incorrectly syntax highlighted as a warning.
+							// Therefore, presume warning, then check if the text isn't "warning".
+							if (!errorKeywordAndErrorCodeTextSpan.GetText().StartsWith("warning", StringComparison.InvariantCultureIgnoreCase))
+							{
+								errorKeywordAndErrorCodeTextSpan = errorKeywordAndErrorCodeTextSpan with
+								{
+									DecorationByte = (byte)ErrorListDecorationKind.Error
+								};
+							}
+
 							break;
 						}
 						else if (stringWalker.IsEof)
@@ -131,7 +142,7 @@ public class DotNetRunOutputParser : IOutputParser
 							errorMessageTextSpan = new TextEditorTextSpan(
 								startPositionInclusiveErrorMessage,
 								stringWalker,
-								(byte)ErrorListDecorationKind.Error);
+								errorKeywordAndErrorCodeTextSpan.DecorationByte);
 	
 							break;
 						}

@@ -12,6 +12,7 @@ public class ErrorListDecorationMapper : IDecorationMapper
         {
             ErrorListDecorationKind.None => string.Empty,
             ErrorListDecorationKind.Error => "luth_tree-view-exception",
+            ErrorListDecorationKind.Warning => "luth_te_keyword",
             _ => string.Empty,
         };
     }
