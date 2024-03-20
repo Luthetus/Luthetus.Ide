@@ -2,6 +2,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Outputs.Models;
+using Luthetus.Ide.RazorLib.ErrorLists.Models;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -38,7 +39,7 @@ public partial class ErrorListDisplay : FluxorComponent
 
     protected override void OnInitialized()
     {
-        // Supress un-used service because I'm hackily injecting it so that 'FluxorComponent'
+        // Supress un-used service, because I'm hackily injecting it so that 'FluxorComponent'
 		// subscribes to its state changes, even though in this class its "unused".
         _ = TerminalSessionStateWrap;
 

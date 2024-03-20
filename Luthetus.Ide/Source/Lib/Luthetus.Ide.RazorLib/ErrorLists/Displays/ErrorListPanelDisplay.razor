@@ -1,6 +1,9 @@
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models;
+@using Luthetus.TextEditor.RazorLib.Htmls.Models
 @using Luthetus.Ide.RazorLib.Terminals.Models;
+@using Luthetus.Ide.RazorLib.Outputs.Models;
+@using System.Text;
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -14,6 +17,58 @@
 
     <div class="luth_ide_section-body"
          style="width: 100%;">
-        <ErrorListDisplay TerminalSessionKey="TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY"/>
+        <ErrorListDisplay TerminalSessionKey="TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY"
+						  Context="outputLineList"
+						  OutputParser="_dotNetRunOutputParser">
+			@for (var badI = 0; badI < outputLineList.Count; badI++)
+			{
+				var index = badI;
+				var outputLine = (DotNetRunOutputLine)outputLineList[index];
+
+				var decorationByteList = CalculateDecorationByteList(outputLine);
+	
+				var spanBuilder = new StringBuilder();
+				var columnIndex = 0;
+                var currentDecorationByte = decorationByteList[columnIndex];
+
+				var tabKeyOutput = "&nbsp;&nbsp;&nbsp;&nbsp;";
+				var spaceKeyOutput = "&nbsp;";
+
+				// TODO: Measure the height of a row
+				<div title="Row Number: @(index + 1)">
+					@foreach (var character in outputLine.SourceText)
+	                {
+	                    if (currentDecorationByte == decorationByteList[columnIndex])
+	                    {
+	                        AppendTextEscaped(spanBuilder, character, tabKeyOutput, spaceKeyOutput);
+	                    }
+	                    else
+	                    {
+	                        <span class="@GetCssClass(currentDecorationByte)">
+	                            @((MarkupString)spanBuilder.ToString())
+	                        </span>
+	
+	                        spanBuilder.Clear();
+	
+	                        AppendTextEscaped(spanBuilder, character, tabKeyOutput, spaceKeyOutput);
+	
+	                        currentDecorationByte = decorationByteList[columnIndex];
+	                    }
+
+						columnIndex++;
+	                }
+	
+					<!-- Final grouping of contiguous characters -->
+	                <span class="@GetCssClass(currentDecorationByte)">
+	                    @((MarkupString)spanBuilder.ToString())
+	                </span>
+
+					@if (outputLine.SourceText.Length == 0)
+					{
+						<br/>
+					}
+				</div>
+			}
+		</ErrorListDisplay>
     </div>
 </ContextBoundary>

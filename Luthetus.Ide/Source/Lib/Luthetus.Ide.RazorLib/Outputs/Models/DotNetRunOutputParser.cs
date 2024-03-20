@@ -1,6 +1,7 @@
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+using Luthetus.Ide.RazorLib.ErrorLists.Models;
 
 namespace Luthetus.Ide.RazorLib.Outputs.Models;
 
@@ -96,7 +97,7 @@ public class DotNetRunOutputParser : IOutputParser
 							errorKeywordAndErrorCodeTextSpan = new TextEditorTextSpan(
 								startPositionInclusiveErrorKeywordAndErrorCode,
 								stringWalker,
-								(byte)GenericDecorationKind.None);
+								(byte)ErrorListDecorationKind.Keyword);
 	
 							break;
 						}
@@ -130,7 +131,7 @@ public class DotNetRunOutputParser : IOutputParser
 							errorMessageTextSpan = new TextEditorTextSpan(
 								startPositionInclusiveErrorMessage,
 								stringWalker,
-								(byte)GenericDecorationKind.None);
+								(byte)ErrorListDecorationKind.Keyword);
 	
 							break;
 						}
