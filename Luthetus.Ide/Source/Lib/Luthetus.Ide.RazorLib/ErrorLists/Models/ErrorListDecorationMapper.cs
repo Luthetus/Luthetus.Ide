@@ -11,7 +11,7 @@ public class ErrorListDecorationMapper : IDecorationMapper
         return decoration switch
         {
             ErrorListDecorationKind.None => string.Empty,
-            ErrorListDecorationKind.Keyword => "luth_te_keyword",
+            ErrorListDecorationKind.Error => "luth_tree-view-exception",
             _ => string.Empty,
         };
     }

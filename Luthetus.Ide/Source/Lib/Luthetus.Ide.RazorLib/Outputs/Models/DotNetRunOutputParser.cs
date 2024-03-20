@@ -97,7 +97,7 @@ public class DotNetRunOutputParser : IOutputParser
 							errorKeywordAndErrorCodeTextSpan = new TextEditorTextSpan(
 								startPositionInclusiveErrorKeywordAndErrorCode,
 								stringWalker,
-								(byte)ErrorListDecorationKind.Keyword);
+								(byte)ErrorListDecorationKind.Error);
 	
 							break;
 						}
@@ -131,7 +131,7 @@ public class DotNetRunOutputParser : IOutputParser
 							errorMessageTextSpan = new TextEditorTextSpan(
 								startPositionInclusiveErrorMessage,
 								stringWalker,
-								(byte)ErrorListDecorationKind.Keyword);
+								(byte)ErrorListDecorationKind.Error);
 	
 							break;
 						}
