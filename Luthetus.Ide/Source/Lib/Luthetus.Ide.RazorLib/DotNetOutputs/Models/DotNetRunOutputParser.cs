@@ -13,7 +13,7 @@ public class DotNetRunOutputParser : IOutputParser
 
 		foreach (var str in strList)
 		{
-			var stringWalker = new StringWalker(new ResourceUri("/unitTesting.txt"), str);
+			var stringWalker = new StringWalker(new ResourceUri($"/{nameof(DotNetRunOutputParser)}.txt"), str);
 
 			TextEditorTextSpan filePathTextSpan = new TextEditorTextSpan(0, stringWalker, (byte)GenericDecorationKind.None);
 			TextEditorTextSpan rowAndColumnNumberTextSpan = new TextEditorTextSpan(0, stringWalker, (byte)GenericDecorationKind.None);
@@ -21,6 +21,8 @@ public class DotNetRunOutputParser : IOutputParser
 			TextEditorTextSpan errorMessageTextSpan = new TextEditorTextSpan(0, stringWalker, (byte)GenericDecorationKind.None);
 			TextEditorTextSpan projectFilePathTextSpan = new TextEditorTextSpan(0, stringWalker, (byte)GenericDecorationKind.None);
 	
+			var dotNetRunOutputKind = DotNetRunOutputKind.None;
+
 			while (!stringWalker.IsEof)
 			{
 				// Step 1: Read filePathTextSpan
@@ -93,21 +95,20 @@ public class DotNetRunOutputParser : IOutputParser
 						if (character == ':')
 						{
 							_ = stringWalker.BacktrackCharacter();
+
+							dotNetRunOutputKind = DotNetRunOutputKind.Warning;
 	
 							errorKeywordAndErrorCodeTextSpan = new TextEditorTextSpan(
 								startPositionInclusiveErrorKeywordAndErrorCode,
 								stringWalker,
-								(byte)OutputDecorationKind.Warning);
-	
+								(byte)GenericDecorationKind.None);
+
 							// I would rather a warning be incorrectly syntax highlighted as an error,
 							// than for an error to be incorrectly syntax highlighted as a warning.
 							// Therefore, presume warning, then check if the text isn't "warning".
 							if (!errorKeywordAndErrorCodeTextSpan.GetText().StartsWith("warning", StringComparison.InvariantCultureIgnoreCase))
 							{
-								errorKeywordAndErrorCodeTextSpan = errorKeywordAndErrorCodeTextSpan with
-								{
-									DecorationByte = (byte)OutputDecorationKind.Error
-								};
+								dotNetRunOutputKind = DotNetRunOutputKind.Error;
 							}
 
 							break;
@@ -142,7 +143,7 @@ public class DotNetRunOutputParser : IOutputParser
 							errorMessageTextSpan = new TextEditorTextSpan(
 								startPositionInclusiveErrorMessage,
 								stringWalker,
-								errorKeywordAndErrorCodeTextSpan.DecorationByte);
+								(byte)GenericDecorationKind.None);
 	
 							break;
 						}
@@ -180,8 +181,29 @@ public class DotNetRunOutputParser : IOutputParser
 				_ = stringWalker.ReadCharacter();
 			}
 
+			byte? decorationByteOverride = null;
+
+			if (dotNetRunOutputKind == DotNetRunOutputKind.Error)
+			{
+				decorationByteOverride = (byte)OutputDecorationKind.Error;
+			}
+			else if (dotNetRunOutputKind == DotNetRunOutputKind.Warning)
+			{
+				decorationByteOverride = (byte)OutputDecorationKind.Warning;
+			}
+
+			if (decorationByteOverride is not null)
+			{
+				filePathTextSpan = filePathTextSpan with { DecorationByte = decorationByteOverride.Value };
+				rowAndColumnNumberTextSpan = rowAndColumnNumberTextSpan with { DecorationByte = decorationByteOverride.Value };
+				errorKeywordAndErrorCodeTextSpan = errorKeywordAndErrorCodeTextSpan with { DecorationByte = decorationByteOverride.Value };
+				errorMessageTextSpan = errorMessageTextSpan with { DecorationByte = decorationByteOverride.Value };
+				projectFilePathTextSpan = projectFilePathTextSpan with { DecorationByte = decorationByteOverride.Value };
+			}
+
 			outputList.Add(new DotNetRunOutputLine(
 				str,
+				dotNetRunOutputKind,
 				filePathTextSpan,
 				rowAndColumnNumberTextSpan,
 				errorKeywordAndErrorCodeTextSpan,
