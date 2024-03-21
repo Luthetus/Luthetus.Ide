@@ -33,10 +33,12 @@ public partial class OutputDisplay : FluxorComponent
     public Key<TerminalCommand> TerminalCommandKey { get; set; } = Key<TerminalCommand>.Empty;
     [Parameter]
     public IOutputParser OutputParser { get; set; } = new OutputParser();
+    [Parameter]
+    public RenderFragment<List<IOutputLine>>? ChildContent  { get; set; }
 
     protected override void OnInitialized()
     {
-        // Supress un-used service because I'm hackily injecting it so that 'FluxorComponent'
+        // Supress un-used service, because I'm hackily injecting it so that 'FluxorComponent'
 		// subscribes to its state changes, even though in this class its "unused".
         _ = TerminalSessionStateWrap;
 

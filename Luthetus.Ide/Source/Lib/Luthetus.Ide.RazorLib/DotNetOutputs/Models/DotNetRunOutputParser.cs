@@ -1,9 +1,9 @@
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
-using Luthetus.Ide.RazorLib.ErrorLists.Models;
+using Luthetus.Ide.RazorLib.Outputs.Models;
 
-namespace Luthetus.Ide.RazorLib.Outputs.Models;
+namespace Luthetus.Ide.RazorLib.DotNetOutputs.Models;
 
 public class DotNetRunOutputParser : IOutputParser
 {
@@ -97,7 +97,7 @@ public class DotNetRunOutputParser : IOutputParser
 							errorKeywordAndErrorCodeTextSpan = new TextEditorTextSpan(
 								startPositionInclusiveErrorKeywordAndErrorCode,
 								stringWalker,
-								(byte)ErrorListDecorationKind.Warning);
+								(byte)OutputDecorationKind.Warning);
 	
 							// I would rather a warning be incorrectly syntax highlighted as an error,
 							// than for an error to be incorrectly syntax highlighted as a warning.
@@ -106,7 +106,7 @@ public class DotNetRunOutputParser : IOutputParser
 							{
 								errorKeywordAndErrorCodeTextSpan = errorKeywordAndErrorCodeTextSpan with
 								{
-									DecorationByte = (byte)ErrorListDecorationKind.Error
+									DecorationByte = (byte)OutputDecorationKind.Error
 								};
 							}
 

@@ -1,6 +1,8 @@
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models;
 @using Luthetus.Ide.RazorLib.Terminals.Models;
+@using Luthetus.Ide.RazorLib.DotNetOutputs.Models;
+@using Luthetus.Ide.RazorLib.DotNetOutputs.Displays;
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -34,6 +36,10 @@
             }
         </div>
 
-        <OutputDisplay TerminalSessionKey="WellKnownTerminalSessionsStateWrap.Value.ActiveTerminalSessionKey"/>
+        <OutputDisplay TerminalSessionKey="WellKnownTerminalSessionsStateWrap.Value.ActiveTerminalSessionKey"
+					   Context="outputLineList"
+					   OutputParser="_dotNetRunOutputParser">
+			<DotNetOutputDisplay OutputLineList="outputLineList"/>
+		</OutputDisplay>
     </div>
 </ContextBoundary>

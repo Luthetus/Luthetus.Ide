@@ -28,22 +28,29 @@
         }
 
 		<div class="luth_ide_output-result-list">
-			@{ var outputLineList = OutputParser.Parse(outputStrList); }
+			@{ var outputResultList = OutputParser.Parse(outputStrList); }
 
-			@for (var badI = 0; badI < outputLineList.Count; badI++)
+			@if (ChildContent is not null)
 			{
-				var index = badI;
-				var outputLine = outputLineList[index];
+				@ChildContent(outputResultList)
+			}
+			else
+			{
+				for (var badI = 0; badI < outputResultList.Count; badI++)
+				{
+					var index = badI;
+					var outputResult = outputResultList[index];
 		
-				// TODO: Measure the height of a row
-				<div title="Row Number: @(index + 1)">
-					@((MarkupString)outputLine.SourceText.EscapeHtml())
+					// TODO: Measure the height of a row
+					<div title="Row Number: @(index + 1)">
+						@((MarkupString)outputResult.SourceText.EscapeHtml())
 		
-					@if (outputLine.SourceText.Length == 0)
-					{
-						<br/>
-					}
-				</div>
+						@if (outputResult.SourceText.Length == 0)
+						{
+							<br/>
+						}
+					</div>
+				}
 			}
 		</div>
     </div>
