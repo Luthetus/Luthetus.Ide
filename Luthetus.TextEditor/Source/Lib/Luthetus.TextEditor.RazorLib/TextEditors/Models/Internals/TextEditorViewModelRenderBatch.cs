@@ -48,6 +48,9 @@ public record TextEditorRenderBatch(
 
     private double GetGutterWidthInPixels()
     {
+        if (!ViewModelDisplayOptions.IncludeGutterComponent)
+            return 0;
+
         var mostDigitsInARowLineNumber = Model!.RowCount.ToString().Length;
 
         var gutterWidthInPixels = mostDigitsInARowLineNumber *
