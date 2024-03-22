@@ -1,6 +1,4 @@
-﻿using Luthetus.Ide.RazorLib.Terminals.States;
-
-namespace Luthetus.Ide.Tests.Basis.Terminals.States;
+﻿namespace Luthetus.Ide.Tests.Basis.Terminals.States;
 
 /// <summary>
 /// <see cref="TerminalSessionWasModifiedState.Reducer"/>
