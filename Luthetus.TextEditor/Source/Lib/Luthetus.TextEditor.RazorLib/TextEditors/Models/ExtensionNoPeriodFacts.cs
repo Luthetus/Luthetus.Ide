@@ -21,5 +21,6 @@ public static class ExtensionNoPeriodFacts
     public const string H = "h";
     public const string CPP = "cpp";
     public const string HPP = "hpp";
+    public const string TERMINAL = "terminal";
     public const string TXT = "txt";
 }

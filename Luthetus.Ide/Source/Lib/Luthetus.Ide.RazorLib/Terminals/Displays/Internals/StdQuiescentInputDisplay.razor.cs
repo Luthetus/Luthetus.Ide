@@ -35,7 +35,7 @@ public partial class StdQuiescentInputDisplay : ComponentBase, IDisposable
     {
         if (firstRender)
         {
-            var textEditorModel = new TextEditorModel(ResourceUri, DateTime.UtcNow, "terminal_quiescent", string.Empty, new IntegratedTerminalDecorationMapper(), null);
+            var textEditorModel = new TextEditorModel(ResourceUri, DateTime.UtcNow, "terminal_quiescent", string.Empty, new TerminalDecorationMapper(), null);
             TextEditorService.ModelApi.RegisterCustom(textEditorModel);
         }
 

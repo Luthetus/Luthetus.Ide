@@ -1,6 +1,7 @@
 ﻿using Luthetus.CompilerServices.Lang.Css.Css.Decoration;
 using Luthetus.CompilerServices.Lang.Json.Json.Decoration;
 using Luthetus.CompilerServices.Lang.Xml.Html.Decoration;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -20,6 +21,7 @@ public class DecorationMapperRegistry : IDecorationMapperRegistry
         JsonDecorationMapper = new TextEditorJsonDecorationMapper();
         GenericDecorationMapper = new GenericDecorationMapper();
         HtmlDecorationMapper = new TextEditorHtmlDecorationMapper();
+        TerminalDecorationMapper = new TerminalDecorationMapper();
         DefaultDecorationMapper = new TextEditorDecorationMapperDefault();
 
         _map.Add(ExtensionNoPeriodFacts.HTML, HtmlDecorationMapper);
@@ -45,6 +47,7 @@ public class DecorationMapperRegistry : IDecorationMapperRegistry
     public TextEditorJsonDecorationMapper JsonDecorationMapper { get; }
     public GenericDecorationMapper GenericDecorationMapper { get; }
     public TextEditorHtmlDecorationMapper HtmlDecorationMapper { get; }
+    public TerminalDecorationMapper TerminalDecorationMapper { get; }
     public TextEditorDecorationMapperDefault DefaultDecorationMapper { get; }
 
     public IDecorationMapper GetDecorationMapper(string extensionNoPeriod)

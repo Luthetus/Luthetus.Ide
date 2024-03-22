@@ -3,9 +3,9 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
-public sealed class IntegratedTerminalCompilerService : LuthCompilerService
+public sealed class TerminalCompilerService : LuthCompilerService
 {
-    public IntegratedTerminalCompilerService(ITextEditorService textEditorService)
+    public TerminalCompilerService(ITextEditorService textEditorService)
         : base(textEditorService)
     {
     }

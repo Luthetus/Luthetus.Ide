@@ -2,10 +2,16 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
-public class IntegratedTerminalDecorationMapper : IDecorationMapper
+public class TerminalDecorationMapper : IDecorationMapper
 {
     public string Map(byte decorationByte)
     {
-        throw new NotImplementedException();
+        var decoration = (TerminalDecorationKind)decorationByte;
+
+        return decoration switch
+        {
+            TerminalDecorationKind.None => string.Empty,
+            _ => string.Empty,
+        };
     }
 }

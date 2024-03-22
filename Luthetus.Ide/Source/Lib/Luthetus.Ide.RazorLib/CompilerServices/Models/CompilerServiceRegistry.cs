@@ -10,6 +10,7 @@ using Luthetus.CompilerServices.Lang.Json;
 using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.TypeScript;
 using Luthetus.CompilerServices.Lang.Xml;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -39,6 +40,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
         TypeScriptCompilerService = new TypeScriptCompilerService(textEditorService);
         XmlCompilerService = new XmlCompilerService(textEditorService);
         CCompilerService = new CCompilerService(textEditorService);
+        TerminalCompilerService = new TerminalCompilerService(textEditorService);
         DefaultCompilerService = new LuthCompilerService(textEditorService);
 
         _map.Add(ExtensionNoPeriodFacts.HTML, XmlCompilerService);
@@ -58,6 +60,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
         _map.Add(ExtensionNoPeriodFacts.H, CCompilerService);
         _map.Add(ExtensionNoPeriodFacts.CPP, CCompilerService);
         _map.Add(ExtensionNoPeriodFacts.HPP, CCompilerService);
+        _map.Add(ExtensionNoPeriodFacts.TERMINAL, TerminalCompilerService);
     }
 
     public CSharpCompilerService CSharpCompilerService { get; }
@@ -71,6 +74,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
     public TypeScriptCompilerService TypeScriptCompilerService { get; }
     public XmlCompilerService XmlCompilerService { get; }
     public CCompilerService CCompilerService { get; }
+    public TerminalCompilerService TerminalCompilerService { get; }
     public LuthCompilerService DefaultCompilerService { get; }
 
     public ILuthCompilerService GetCompilerService(string extensionNoPeriod)
