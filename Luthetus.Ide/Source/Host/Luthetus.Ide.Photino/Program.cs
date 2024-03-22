@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -42,13 +42,13 @@ class Program
             .SetDevToolsEnabled(true)
             .SetContextMenuEnabled(true)
             .SetUseOsDefaultSize(false)
-            .SetSize(2600, 2000)
+            .SetSize(2470, 2000)
             .SetLeft(50)
             .SetTop(50);
 
 		if (Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) == "C:\\Users\\hunte")
         {
-            app.MainWindow.SetLeft(1_200);
+            app.MainWindow.SetLeft(1_355);
 		}
 
         var continuousStartCts = new CancellationTokenSource();

@@ -18,10 +18,9 @@ using Luthetus.Ide.RazorLib.Nugets.Displays;
 using Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 using Luthetus.Ide.RazorLib.CompilerServices.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
-using Luthetus.Ide.RazorLib.Outputs.Displays;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.TestExplorers.Displays;
-using Luthetus.Ide.RazorLib.ErrorLists.Displays;
+using System;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
 
@@ -65,7 +64,15 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
                     foreach (var terminalSessionKey in TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS)
                     {
+                        var displayName = $"BAD_WellKnownTerminalSessionKey:{terminalSessionKey.Guid}";
+
+                        if (terminalSessionKey == TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY)
+                            displayName = "Execution";
+                        else if (terminalSessionKey == TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY)
+                            displayName = "General";
+
                         var terminalSession = new TerminalSession(
+                            displayName,
                             null,
                             Dispatcher,
                             BackgroundTaskService,
@@ -171,38 +178,16 @@ public partial class LuthetusIdeInitializer : ComponentBase
     {
         var bottomPanel = PanelFacts.GetBottomPanelRecord(PanelsStateWrap.Value);
 
-        // terminalPanel
-        var terminalPanel = new Panel(
+        // terminalGroupPanel
+        var terminalGroupPanel = new Panel(
 			"Terminal",
             Key<Panel>.NewKey(),
             Key<IDynamicViewModel>.NewKey(),
 			ContextFacts.TerminalContext.ContextKey,
-            typeof(IntegratedTerminalDisplay),
+            typeof(TerminalGroupDisplay),
             null);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(terminalPanel));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, terminalPanel, false));
-
-		//// errorListPanel
-        // var errorListPanel = new Panel(
-		//	"Error List",
-		//	Key<Panel>.NewKey(),
-		//	Key<IDynamicViewModel>.NewKey(),
-		//	ContextFacts.ErrorListContext.ContextKey,
-        //    typeof(ErrorListPanelDisplay),
-        //    null);
-        // Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(errorListPanel));
-        // Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, errorListPanel, false));
-
-        // outputPanel
-        var outputPanel = new Panel(
-			"Output",
-			Key<Panel>.NewKey(),
-			Key<IDynamicViewModel>.NewKey(),
-			ContextFacts.OutputContext.ContextKey,
-            typeof(OutputPanelDisplay),
-            null);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(outputPanel));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, outputPanel, false));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(terminalGroupPanel));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, terminalGroupPanel, false));
 
         // nuGetPanel
         var nuGetPanel = new Panel(
@@ -238,6 +223,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, testExplorerPanel, false));
 
         // SetActivePanelTabAction
-        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(bottomPanel.Key, outputPanel.Key));
+        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(bottomPanel.Key, terminalGroupPanel.Key));
     }
 }

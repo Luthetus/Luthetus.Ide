@@ -1,0 +1,13 @@
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
+
+<div class="luth_ide_terminal">
+    @{
+        var terminalSessionState = TerminalSessionStateWrap.Value;
+        var success = terminalSessionState.TerminalSessionMap.TryGetValue(TerminalSessionKey, out var terminalSession);
+    }
+
+    @if (success && terminalSession is not null)
+    {
+        <TextEditorViewModelDisplay TextEditorViewModelKey="terminalSession.TextEditorViewModelKey" />
+    }
+</div>

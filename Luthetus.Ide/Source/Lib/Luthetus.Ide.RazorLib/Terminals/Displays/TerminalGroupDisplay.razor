@@ -1,0 +1,101 @@
+﻿@using Luthetus.Common.RazorLib.Contexts.Displays
+@using Luthetus.Common.RazorLib.Contexts.Models;
+@using Luthetus.Ide.RazorLib.Terminals.Displays.Internals
+@using Luthetus.Ide.RazorLib.Terminals.Models;
+@using System.Collections.Immutable
+
+<ContextBoundary ContextRecord="ContextFacts.TerminalContext"
+                 ClassCssString="luth_ide_terminal"
+                 StyleCssString="height: 100%; width: 100%; overflow: auto;">
+
+    @{
+        var terminalGroupDisplayState = TerminalGroupDisplayStateWrap.Value;
+        var terminalSessionState = TerminalSessionStateWrap.Value;
+
+        _ = terminalSessionState.TerminalSessionMap.TryGetValue(
+            terminalGroupDisplayState.ActiveTerminalSessionKey,
+            out var activeTerminalSession);
+    }
+
+    <div class="luth_ide_section-title">
+        Terminal
+    </div>
+
+    <div class="luth_ide_section-body">
+
+        <div class="luth_ide_terminal-body"
+             style="@terminalGroupDisplayState.BodyElementDimensions.StyleString">
+
+            @if (activeTerminalSession is null)
+            {
+                @: activeTerminalSession is null
+            }
+            else
+            {
+                <TerminalDisplay TerminalSessionKey="activeTerminalSession.TerminalSessionKey"/>
+            }
+        </div>
+
+        <Luthetus.Common.RazorLib.Resizes.Displays.ResizableColumn LeftElementDimensions="terminalGroupDisplayState.BodyElementDimensions"
+                                                                   RightElementDimensions="terminalGroupDisplayState.TabsElementDimensions"
+                                                                   ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged)" />
+
+        <div class="luth_ide_terminal-tabs"
+             style="@terminalGroupDisplayState.TabsElementDimensions.StyleString">
+            @for (var i = 0; i < TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS.Length; i++)
+            {
+                var index = i;
+                var wellKnownTerminalSessionKey = TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS[index];
+
+                var success = terminalSessionState.TerminalSessionMap.TryGetValue(
+                    wellKnownTerminalSessionKey,
+                    out var terminalSession);
+
+                if (success && terminalSession is not null)
+                {
+                    <button class="luth_button"
+                            @onclick="() => DispatchSetActiveTerminalSessionAction(terminalSession.TerminalSessionKey)">
+                        @terminalSession.DisplayName
+
+                        <button class="luth_button"
+                                @onclick="() => terminalSession.ClearStandardOut()"
+                                @onclick:stopPropagation="true">
+                            Clear
+                        </button>
+
+                        @{
+                            var isKillProcessDisabled = !terminalSession.HasExecutingProcess;
+                        }
+
+                        <button class="luth_button"
+                                disabled=@isKillProcessDisabled
+                                @onclick="() => terminalSession.KillProcess()"
+                                @onclick:stopPropagation="true">
+                            Kill
+                        </button>
+
+                        <div style="margin-left: 15px;">
+                            @if (terminalSession.HasExecutingProcess)
+                            {
+                                <IconLoading />
+                            }
+                            else
+                            {
+                                <IconBlank />
+                            }
+                        </div>
+                    </button>
+                }
+
+                if (i != TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS.Length - 1)
+                {
+                    <text>
+                        &nbsp;
+                        &nbsp;
+                        &nbsp;
+                    </text>
+                }
+            }
+        </div>
+    </div>
+</ContextBoundary>

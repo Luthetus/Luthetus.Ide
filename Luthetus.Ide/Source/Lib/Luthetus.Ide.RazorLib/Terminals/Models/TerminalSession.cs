@@ -12,6 +12,7 @@ using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Reactive.Linq;
 using System.Text;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
@@ -26,28 +27,33 @@ public class TerminalSession
     private readonly Dictionary<Key<TerminalCommand>, TerminalSessionOutput> _standardOutBuilderMap = new();
 
     public TerminalSession(
+        string displayName,
         string? workingDirectoryAbsolutePathString,
         IDispatcher dispatcher,
         IBackgroundTaskService backgroundTaskService,
         ILuthetusCommonComponentRenderers commonComponentRenderers)
     {
+        DisplayName = displayName;
         _dispatcher = dispatcher;
         _backgroundTaskService = backgroundTaskService;
         _commonComponentRenderers = commonComponentRenderers;
         WorkingDirectoryAbsolutePathString = workingDirectoryAbsolutePathString;
+
+        ResourceUri = new($"__LUTHETUS-{TerminalSessionKey.Guid}__");
     }
 
 	private CancellationTokenSource _commandCancellationTokenSource = new();
 
     public Key<TerminalSession> TerminalSessionKey { get; init; } = Key<TerminalSession>.NewKey();
+    public ResourceUri ResourceUri { get; init; }
+    public Key<TextEditorViewModel> TextEditorViewModelKey { get; init; } = Key<TextEditorViewModel>.NewKey();
     public string? WorkingDirectoryAbsolutePathString { get; private set; }
     public TerminalCommand? ActiveTerminalCommand { get; private set; }
 	/// <summary>NOTE: the following did not work => _process?.HasExited ?? false;</summary>
     public bool HasExecutingProcess { get; private set; }
+    public string DisplayName { get; }
 
     public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
-	public ResourceUri ResourceUri => new($"__LUTHETUS_{TerminalSessionKey.Guid}__");
-    public Key<TextEditorViewModel> TextEditorViewModelKey => new(TerminalSessionKey.Guid);
 
 	/// <summary>
 	/// Returns the output that occurred in the terminal session
