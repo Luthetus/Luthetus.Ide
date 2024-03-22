@@ -2,7 +2,6 @@
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -30,19 +29,10 @@ public partial class BodySection : ComponentBase
 
     private string GetBodyStyleCss()
     {
-        var mostDigitsInARowLineNumber = RenderBatch.Model!.RowCount.ToString().Length;
-
-        var gutterWidthInPixels = mostDigitsInARowLineNumber *
-            RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements.CharacterWidth;
-
-        gutterWidthInPixels += TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS +
-            TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS;
-
-        var gutterWidthInPixelsInvariantCulture = gutterWidthInPixels.ToCssValue();
-
-        var left = $"left: {gutterWidthInPixelsInvariantCulture}px;";
+        var gutterWidthInPixelsInvariantCulture = RenderBatch.GutterWidthInPixels.ToCssValue();
 
         var width = $"width: calc(100% - {gutterWidthInPixelsInvariantCulture}px);";
+        var left = $"left: {gutterWidthInPixelsInvariantCulture}px;";
 
         return $"{width} {left}";
     }

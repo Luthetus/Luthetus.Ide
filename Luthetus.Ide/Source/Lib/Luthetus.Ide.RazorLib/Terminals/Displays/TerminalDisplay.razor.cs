@@ -1,20 +1,20 @@
 using Fluxor;
+using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays;
 
-public partial class TerminalDisplay : ComponentBase, IDisposable
+public partial class TerminalDisplay : ComponentBase
 {
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
     private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
     [Inject]
@@ -23,25 +23,15 @@ public partial class TerminalDisplay : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public Key<TerminalSession> TerminalSessionKey { get; set; }
 
-    private readonly object TerminalLock = new();
-
-	private IntegratedTerminal _integratedTerminal = null!;
-    private CancellationTokenSource _terminalCancellationTokenSource = new();
-    private Task _terminalTask = Task.CompletedTask;
     private Key<TerminalSession> _seenTerminalSessionKey;
 
-    protected override void OnInitialized()
+    private TextEditorViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
     {
-        _integratedTerminal = new CliWrapIntegratedTerminal(
-            EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
-            EnvironmentProvider);
-
-        _integratedTerminal.StateChanged += IntegratedTerminal_StateChanged;
-
-        StartTerminal();
-
-        base.OnInitialized();
-    }
+        IncludeHeaderHelperComponent = false,
+        IncludeFooterHelperComponent = false,
+        IncludeGutterComponent = false,
+        ContextRecord = ContextFacts.TerminalContext,
+    };
 
     protected override void OnParametersSet()
     {
@@ -75,50 +65,5 @@ public partial class TerminalDisplay : ComponentBase, IDisposable
         }
 
         base.OnParametersSet();
-    }
-
-    private async void IntegratedTerminal_StateChanged()
-    {
-        await InvokeAsync(StateHasChanged);
-    }
-
-    private void StartTerminal()
-    {
-        if (_terminalTask.IsCompleted)
-        {
-            lock (TerminalLock)
-            {
-                if (_terminalTask.IsCompleted)
-                {
-                    _terminalCancellationTokenSource.Cancel();
-                    _terminalCancellationTokenSource = new();
-
-                    var cancellationToken = _terminalCancellationTokenSource.Token;
-
-                    _terminalTask = Task.Run(async () => 
-                    {
-                        await _integratedTerminal.StartAsync(cancellationToken);
-                    });
-
-                    _terminalTask.ContinueWith(async _ =>
-                    {
-                        // Stop UI rendering the spinner
-                        await InvokeAsync(StateHasChanged);
-                    });
-                }
-            }
-        }
-    }
-
-    private void CancelTerminalOnClick()
-    {
-        _terminalCancellationTokenSource.Cancel();
-        _terminalCancellationTokenSource = new();
-    }
-
-	public void Dispose()
-    {
-        _terminalCancellationTokenSource.Cancel();
-        _integratedTerminal.StateChanged -= IntegratedTerminal_StateChanged;
     }
 }

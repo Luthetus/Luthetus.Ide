@@ -9,11 +9,12 @@
 @{
     var renderBatch = _storedRenderBatch;
 
-    var contextBoundaryStyle = $"{renderBatch.FontSizeInPixelsCssStyleString} {renderBatch.FontFamilyCssStyleString} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
+    var contextBoundaryStyle = $"{renderBatch.FontSizeInPixelsCssStyle} {renderBatch.FontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
     var contextBoundaryClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
+
 }
 
-<ContextBoundary ContextRecord="ContextFacts.TextEditorContext"
+<ContextBoundary ContextRecord="renderBatch.ViewModelDisplayOptions.ContextRecord"
                  ClassCssString="@contextBoundaryClass"
                  StyleCssString="@contextBoundaryStyle">
 
@@ -48,7 +49,7 @@
                  @ontouchcancel="ClearTouch"
                  @ontouchleave="ClearTouch"
                  id="@ContentElementId"
-                 style="@ViewModelDisplayOptions.TextEditorStyleCssString"
+                 style="@(renderBatch.HeightCssStyle) @ViewModelDisplayOptions.TextEditorStyleCssString"
                  class="luth_te_text-editor luth_unselectable @ViewModelDisplayOptions.TextEditorClassCssString"
                  tabindex="-1">
 
@@ -58,7 +59,11 @@
                 @if (renderBatch.IsValid)
                 {
                     <CascadingValue Value="_events.TooltipViewModel">
-                        <GutterSection />
+
+                        @if (ViewModelDisplayOptions.IncludeGutterComponent)
+                        {
+                            <GutterSection />
+                        }
 
                         <BodySection @ref="_bodySectionComponent"
                                      TabIndex="ViewModelDisplayOptions.TabIndex"

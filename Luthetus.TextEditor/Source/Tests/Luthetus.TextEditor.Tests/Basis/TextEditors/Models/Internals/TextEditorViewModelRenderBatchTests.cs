@@ -24,8 +24,8 @@ public class TextEditorRenderBatchTests
     /// <see cref="TextEditorRenderBatch.Options"/>
     /// <see cref="TextEditorRenderBatch.FontFamily"/>
     /// <see cref="TextEditorRenderBatch.FontSizeInPixels"/>
-    /// <see cref="TextEditorRenderBatch.FontFamilyCssStyleString"/>
-    /// <see cref="TextEditorRenderBatch.FontSizeInPixelsCssStyleString"/>
+    /// <see cref="TextEditorRenderBatch.FontFamilyCssStyle"/>
+    /// <see cref="TextEditorRenderBatch.FontSizeInPixelsCssStyle"/>
     /// <see cref="TextEditorRenderBatch.IsValid"/>
     /// </summary>
     [Fact]
@@ -66,8 +66,8 @@ public class TextEditorRenderBatchTests
 		Assert.Equal(options, renderBatch.Options);
 		Assert.Equal(fontFamily, renderBatch.FontFamily);
 		Assert.Equal(fontSizeInPixels, renderBatch.FontSizeInPixels);
-		Assert.Equal($"font-family: {fontFamily};", renderBatch.FontFamilyCssStyleString);
-		Assert.Equal($"font-size: {fontSizeInPixels.ToCssValue()}px;", renderBatch.FontSizeInPixelsCssStyleString);
+		Assert.Equal($"font-family: {fontFamily};", renderBatch.FontFamilyCssStyle);
+		Assert.Equal($"font-size: {fontSizeInPixels.ToCssValue()}px;", renderBatch.FontSizeInPixelsCssStyle);
 		Assert.True(renderBatch.IsValid);
 
         // Assert case(s) where renderBatch.IsValid should be false

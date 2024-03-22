@@ -3,7 +3,6 @@
 }
 
 .luth_te_text-editor {
-    height: calc(100% - var(--luth_te_text-editor-header-height) - var(--luth_te_text-editor-footer-height));
     min-height: var(--luth_te_text-editor-content-min-height);
     color: var(--luth_te_primary-font-color);
     background-color: var(--luth_te_body-background-color);

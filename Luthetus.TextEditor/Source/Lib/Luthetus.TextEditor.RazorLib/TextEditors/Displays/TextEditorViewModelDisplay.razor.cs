@@ -174,6 +174,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             GetOptions(),
             TextEditorRenderBatch.DEFAULT_FONT_FAMILY,
             TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS,
+            ViewModelDisplayOptions,
             _events);
 
         if (!string.IsNullOrWhiteSpace(renderBatch.Options?.CommonOptions?.FontFamily))
