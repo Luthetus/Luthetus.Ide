@@ -10,24 +10,20 @@ namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Displays;
 public partial class TreeViewStringFragmentDisplay : FluxorComponent
 {
 	[Inject]
-    private IStateSelection<TerminalSessionState, TerminalSession?> TerminalSessionsStateSelection { get; set; } = null!;
-	[Inject]
-    private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
-	[Inject]
-    private IState<TerminalSessionWasModifiedState> TerminalSessionWasModifiedStateWrap { get; set; } = null!;
+    private IStateSelection<TerminalSessionState, TerminalSession?> TerminalSessionStateSelection { get; set; } = null!;
+    [Inject]
+    private IState<TerminalSessionState> TerminalSessionsStateWrap { get; set; } = null!;
 
-	[Parameter, EditorRequired]
+    [Parameter, EditorRequired]
 	public TreeViewStringFragment TreeViewStringFragment { get; set; } = null!;
 
-	protected override void OnInitialized()
+    protected override void OnInitialized()
     {
-        // Supress un-used services
-		{
-			_ = TerminalSessionStateWrap;
-			_ = TerminalSessionWasModifiedStateWrap;
-		}
+        // Supress un-used service, because I'm hackily injecting it so that 'FluxorComponent'
+        // subscribes to its state changes, even though in this class its "unused".
+        _ = TerminalSessionsStateWrap;
 
-        TerminalSessionsStateSelection.Select(x =>
+        TerminalSessionStateSelection.Select(x =>
         {
             if (x.TerminalSessionMap.TryGetValue(
 					TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY,

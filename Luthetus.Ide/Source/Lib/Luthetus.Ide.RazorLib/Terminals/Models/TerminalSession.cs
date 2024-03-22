@@ -1,14 +1,13 @@
-using CliWrap;
-using CliWrap.EventStream;
-using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
-using Luthetus.Ide.RazorLib.States.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Ide.RazorLib.Terminals.States;
+using CliWrap;
+using CliWrap.EventStream;
+using Fluxor;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Reactive.Linq;
@@ -283,8 +282,6 @@ public class TerminalSession
 
     private void DispatchNewStateKey()
     {
-        _dispatcher.Dispatch(new TerminalSessionWasModifiedState.SetTerminalSessionStateKeyAction(
-            TerminalSessionKey,
-            Key<StateRecord>.NewKey()));
+        _dispatcher.Dispatch(new TerminalSessionState.NotifyStateChangedAction(TerminalSessionKey));
     }
 }

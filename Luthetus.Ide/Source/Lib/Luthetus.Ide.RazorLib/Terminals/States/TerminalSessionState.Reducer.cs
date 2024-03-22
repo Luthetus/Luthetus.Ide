@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 
 namespace Luthetus.Ide.RazorLib.Terminals.States;
 
@@ -8,8 +8,8 @@ public partial record TerminalSessionState
     {
         [ReducerMethod]
         public static TerminalSessionState ReduceRegisterTerminalSessionAction(
-        TerminalSessionState inState,
-        RegisterTerminalSessionAction registerTerminalSessionAction)
+	        TerminalSessionState inState,
+	        RegisterTerminalSessionAction registerTerminalSessionAction)
         {
             if (inState.TerminalSessionMap.ContainsKey(registerTerminalSessionAction.TerminalSession.TerminalSessionKey))
                 return inState;
@@ -22,16 +22,18 @@ public partial record TerminalSessionState
         }
 
         [ReducerMethod]
-        public static TerminalSessionState ReduceUpdateTerminalSessionStateKeyAction(
+        public static TerminalSessionState ReduceNotifyStateChangedAction(
             TerminalSessionState inState,
-            UpdateTerminalSessionStateKeyAction updateTerminalSessionStateKeyAction)
+            NotifyStateChangedAction notifyStateChangedAction)
         {
-            if (!inState.TerminalSessionMap.ContainsKey(updateTerminalSessionStateKeyAction.TerminalSession.TerminalSessionKey))
+            if (!inState.TerminalSessionMap.ContainsKey(notifyStateChangedAction.TerminalSessionKey))
                 return inState;
 
+			var inTerminalSession = inState.TerminalSessionMap[notifyStateChangedAction.TerminalSessionKey];
+
             var nextMap = inState.TerminalSessionMap.SetItem(
-                updateTerminalSessionStateKeyAction.TerminalSession.TerminalSessionKey,
-                updateTerminalSessionStateKeyAction.TerminalSession);
+				notifyStateChangedAction.TerminalSessionKey,
+                inTerminalSession);
 
             return inState with
             {

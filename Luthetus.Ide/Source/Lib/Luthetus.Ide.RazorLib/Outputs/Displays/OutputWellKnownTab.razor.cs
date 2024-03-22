@@ -1,9 +1,9 @@
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Microsoft.AspNetCore.Components;
+using Fluxor;
+using Fluxor.Blazor.Web.Components;
 
 namespace Luthetus.Ide.RazorLib.Outputs.Displays;
 
@@ -12,9 +12,7 @@ public partial class OutputWellKnownTab : FluxorComponent
     [Inject]
     private IState<WellKnownTerminalSessionsState> WellKnownTerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
-    private IStateSelection<TerminalSessionState, TerminalSession?> TerminalSessionsStateSelection { get; set; } = null!;
-    [Inject]
-    private IState<TerminalSessionWasModifiedState> TerminalSessionWasModifiedStateWrap { get; set; } = null!;
+    private IStateSelection<TerminalSessionState, TerminalSession?> TerminalSessionStateSelection { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -25,14 +23,14 @@ public partial class OutputWellKnownTab : FluxorComponent
 
     private string ActiveTerminalCommandKeyCssClassString => IsActiveTerminalCommandKey
         ? "luth_active"
-        : TerminalSessionWasModifiedStateWrap.Value.EmptyTextHack;
+        : string.Empty;
 
     private bool IsActiveTerminalCommandKey => WellKnownTerminalSessionKey ==
-        WellKnownTerminalSessionsStateWrap.Value.ActiveTerminalSessionKey;
+		WellKnownTerminalSessionsStateWrap.Value.ActiveTerminalSessionKey;
 
     protected override void OnInitialized()
     {
-        TerminalSessionsStateSelection.Select(x =>
+        TerminalSessionStateSelection.Select(x =>
         {
             if (x.TerminalSessionMap.TryGetValue(WellKnownTerminalSessionKey, out var wellKnownTerminalSession))
                 return wellKnownTerminalSession;

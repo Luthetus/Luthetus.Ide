@@ -1,7 +1,7 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @{
-	var terminalSession = TerminalSessionsStateSelection.Value;
+	var terminalSession = TerminalSessionStateSelection.Value;
 
 	var output = terminalSession.ReadStandardOut(
 		TreeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey);

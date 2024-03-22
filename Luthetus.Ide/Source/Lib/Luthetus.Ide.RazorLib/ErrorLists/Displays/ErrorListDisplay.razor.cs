@@ -5,21 +5,16 @@ using Luthetus.Ide.RazorLib.Outputs.Models;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using System.Text;
 
 namespace Luthetus.Ide.RazorLib.ErrorLists.Displays;
 
 public partial class ErrorListDisplay : FluxorComponent
 {
     [Inject]
-    private IStateSelection<TerminalSessionState, TerminalSession?> TerminalSessionsStateSelection { get; set; } = null!;
-    // TODO: Don't inject TerminalSessionsStateWrap. It causes too many unnecessary re-renders
+    private IStateSelection<TerminalSessionState, TerminalSession?> TerminalSessionStateSelection { get; set; } = null!;
     [Inject]
-    private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
-    [Inject]
-    private IState<TerminalSessionWasModifiedState> TerminalSessionWasModifiedStateWrap { get; set; } = null!;
-    
+    private IState<TerminalSessionState> TerminalSessionsStateWrap { get; set; } = null!;
+
     /// <summary>
     /// <see cref="TerminalSessionKey"/> is used to narrow down the terminal session.
     /// </summary>
@@ -39,10 +34,10 @@ public partial class ErrorListDisplay : FluxorComponent
     protected override void OnInitialized()
     {
         // Supress un-used service, because I'm hackily injecting it so that 'FluxorComponent'
-		// subscribes to its state changes, even though in this class its "unused".
-        _ = TerminalSessionStateWrap;
+        // subscribes to its state changes, even though in this class its "unused".
+        _ = TerminalSessionsStateWrap;
 
-        TerminalSessionsStateSelection.Select(x =>
+        TerminalSessionStateSelection.Select(x =>
         {
             if (x.TerminalSessionMap.TryGetValue(TerminalSessionKey, out var terminalSession))
                 return terminalSession;

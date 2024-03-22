@@ -182,16 +182,16 @@ public partial class LuthetusIdeInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(terminalPanel));
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, terminalPanel, false));
 
-		// errorListPanel
-        var errorListPanel = new Panel(
-			"Error List",
-			Key<Panel>.NewKey(),
-			Key<IDynamicViewModel>.NewKey(),
-			ContextFacts.ErrorListContext.ContextKey,
-            typeof(ErrorListPanelDisplay),
-            null);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(errorListPanel));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, errorListPanel, false));
+		//// errorListPanel
+        // var errorListPanel = new Panel(
+		//	"Error List",
+		//	Key<Panel>.NewKey(),
+		//	Key<IDynamicViewModel>.NewKey(),
+		//	ContextFacts.ErrorListContext.ContextKey,
+        //    typeof(ErrorListPanelDisplay),
+        //    null);
+        // Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(errorListPanel));
+        // Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, errorListPanel, false));
 
         // outputPanel
         var outputPanel = new Panel(
@@ -238,6 +238,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, testExplorerPanel, false));
 
         // SetActivePanelTabAction
-        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(bottomPanel.Key, errorListPanel.Key));
+        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(bottomPanel.Key, outputPanel.Key));
     }
 }

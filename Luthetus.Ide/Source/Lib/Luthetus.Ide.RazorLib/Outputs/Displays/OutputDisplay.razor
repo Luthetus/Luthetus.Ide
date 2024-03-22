@@ -4,12 +4,11 @@
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@{ var terminalSession = TerminalSessionsStateSelection.Value; }
+@{ var terminalSession = TerminalSessionStateSelection.Value; }
 
 <div class="luth_ide_terminal-output-display">
     <div class="luth_ide_terminal-output-history-display">
         @{
-            _ = TerminalSessionWasModifiedStateWrap.Value.EmptyTextHack;
 			var outputStrList = new List<string>();
 
             if (terminalSession is not null)
