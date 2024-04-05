@@ -80,25 +80,52 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 							commandArgs.ModelResourceUri,
 							commandArgs.ViewModelKey);
 
+
+						var selectionContainsCurrentRow = false;
+						var selectionRowCount = 0;
+
+						if (throttleEventOnKeyDown.TentativeHasSelection)
+						{
+							var selectionBoundPositionIndices = TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier);
+
+                            var selectionBoundRowIndices = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
+								modelModifier,
+                                selectionBoundPositionIndices);
+
+							if (primaryCursorModifier.RowIndex >= selectionBoundRowIndices.lowerRowIndexInclusive &&
+                                primaryCursorModifier.RowIndex < selectionBoundRowIndices.upperRowIndexExclusive)
+							{
+								selectionContainsCurrentRow = true;
+                            }
+
+							selectionRowCount = selectionBoundRowIndices.upperRowIndexExclusive - selectionBoundRowIndices.lowerRowIndexInclusive;
+                        }
+
 						if (throttleEventOnKeyDown.TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Text ||
 							throttleEventOnKeyDown.TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Other)
 						{
-							// Only the last line of the terminal is editable.
-							if (primaryCursorModifier.RowIndex == modelModifier.RowCount - 1)
+                            // Only the last line of the terminal is editable.
+                            if (primaryCursorModifier.RowIndex == modelModifier.RowCount - 1)
 							{
-								if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+                                // Furthermore, if a selection contains more than 1 row,
+                                // it would therefore edit a line other than the last.
+								if (selectionRowCount == 0 ||
+                                    selectionContainsCurrentRow && selectionRowCount <= 1)
 								{
-									// TODO: Notify the underlying terminal (tty) that the user...
-									//       ...wrote to standard out.
-								}
-								else if (keyboardEventArgs.Code == "Backspace" && primaryCursorModifier.ColumnIndex == 0)
-								{
-									// TODO: Console.Beep(); // ???
-								}
-								else
-								{
-									await throttleEventOnKeyDown.InvokeWithEditContext(editContext);
-								}
+                                    if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+                                    {
+                                        // TODO: Notify the underlying terminal (tty) that the user...
+                                        //       ...wrote to standard out.
+                                    }
+                                    else if (keyboardEventArgs.Code == "Backspace" && primaryCursorModifier.ColumnIndex == 0)
+                                    {
+                                        // TODO: Console.Beep(); // ???
+                                    }
+                                    else
+                                    {
+                                        await throttleEventOnKeyDown.InvokeWithEditContext(editContext);
+                                    }
+                                }
 							}
 						}
 						else
