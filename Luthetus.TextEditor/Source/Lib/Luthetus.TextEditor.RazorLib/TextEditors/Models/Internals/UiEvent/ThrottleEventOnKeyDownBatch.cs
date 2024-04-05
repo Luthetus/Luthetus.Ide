@@ -82,6 +82,7 @@ public class ThrottleEventOnKeyDownBatch : ITextEditorTask
                         hasSelection,
                         _events.ClipboardService,
                         _events.TextEditorService,
+                        _events.Options,
                         _events.HandleMouseStoppedMovingEventAsync,
                         _events.JsRuntime,
                         _events.Dispatcher,

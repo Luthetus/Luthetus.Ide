@@ -53,6 +53,7 @@ public partial class TextEditorHeader : ComponentBase
             hasSelection,
             ClipboardService,
             TextEditorService,
+            RenderBatch.Options ?? TextEditorService.OptionsStateWrap.Value.Options,
             null,
             null,
             Dispatcher,

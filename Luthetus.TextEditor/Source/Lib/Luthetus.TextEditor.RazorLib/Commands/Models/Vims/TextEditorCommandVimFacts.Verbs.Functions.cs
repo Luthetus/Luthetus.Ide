@@ -24,10 +24,8 @@ public static partial class TextEditorCommandVimFacts
         {
             return async editContext =>
             {
-                var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
-                    ?? TextEditorKeymapFacts.DefaultKeymap;
-
-                if (activeKeymap is not TextEditorKeymapVim vimKeymap)
+                var activeKeymap = commandArgs.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+                if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;
 
                 await TextEditorCommandDefaultFunctions
@@ -35,7 +33,7 @@ public static partial class TextEditorCommandVimFacts
                     .Invoke(editContext)
 					.ConfigureAwait(false);
 
-                vimKeymap.ActiveVimMode = VimMode.Insert;
+                keymapVim.ActiveVimMode = VimMode.Insert;
             };
         }
 
@@ -57,6 +55,7 @@ public static partial class TextEditorCommandVimFacts
                     commandArgs.HasTextSelection,
                     commandArgs.ClipboardService,
                     commandArgs.TextEditorService,
+                    commandArgs.Options,
                     commandArgs.HandleMouseStoppedMovingEventAsyncFunc,
                     commandArgs.JsRuntime,
                     commandArgs.Dispatcher,
@@ -104,16 +103,14 @@ public static partial class TextEditorCommandVimFacts
         {
             return async editContext =>
             {
-                var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
-                    ?? TextEditorKeymapFacts.DefaultKeymap;
-
-                if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
+                var activeKeymap = commandArgs.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+                if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;
 
                 var deleteMotion = DeleteMotionCommandConstructor(commandArgs.InnerCommand);
 
                 await deleteMotion.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
-                textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
+                keymapVim.ActiveVimMode = VimMode.Insert;
             };
         }
 
@@ -121,14 +118,12 @@ public static partial class TextEditorCommandVimFacts
         {
             return async editContext =>
             {
-                var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
-                    ?? TextEditorKeymapFacts.DefaultKeymap;
-
-                if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
+                var activeKeymap = commandArgs.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+                if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;
 
                 await TextEditorCommandDefaultFacts.Cut.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
-                textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
+                keymapVim.ActiveVimMode = VimMode.Insert;
             };
         }
 
@@ -145,14 +140,12 @@ public static partial class TextEditorCommandVimFacts
         {
             return async editContext =>
             {
-                var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
-                    ?? TextEditorKeymapFacts.DefaultKeymap;
-
-                if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
+                var activeKeymap = commandArgs.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+                if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;
 
                 await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
-                textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
+                keymapVim.ActiveVimMode = VimMode.Insert;
             };
         }
 
@@ -160,14 +153,12 @@ public static partial class TextEditorCommandVimFacts
         {
             return async editContext =>
             {
-                var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
-                    ?? TextEditorKeymapFacts.DefaultKeymap;
-
-                if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
+                var activeKeymap = commandArgs.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+                if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;
 
                 await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
-                textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
+                keymapVim.ActiveVimMode = VimMode.Insert;
             };
         }
     }

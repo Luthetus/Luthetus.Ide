@@ -5,6 +5,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
@@ -72,4 +73,13 @@ public class TextEditorViewModelDisplayOptions
     public bool IncludeContextMenuHelperComponent { get; set; } = true;
 
     public ContextRecord ContextRecord { get; set; } = ContextFacts.TextEditorContext;
+
+	/// <summary>
+	/// The integrated terminal logic needs a keymap, separate to that of the 'global' keymap used by other text editors.
+	/// Therefore, this property is used to provide the <see cref="Keymaps.Models.Terminals.TextEditorKeymapTerminal"/>
+	/// to the integrated terminal.<br/><br/>
+	/// 
+	/// This property is not intended for use in any other scenario.
+	/// </summary>
+	public Keymap? KeymapOverride { get; set; }
 }

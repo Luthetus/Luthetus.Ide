@@ -90,9 +90,9 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        _events = new(this);
-
         ConstructRenderBatch();
+
+        _events = new(this, _storedRenderBatch);
 
         TextEditorViewModelsStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
         TextEditorOptionsStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
@@ -192,6 +192,17 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 FontSizeInPixels = renderBatch.Options!.CommonOptions.FontSizeInPixels
             };
         }
+        
+        if (renderBatch.ViewModelDisplayOptions.KeymapOverride is not null)
+        {
+            renderBatch = renderBatch with
+            {
+                Options = renderBatch.Options with
+                {
+                    Keymap = renderBatch.ViewModelDisplayOptions.KeymapOverride
+				}
+            };
+        }
 
         _previousRenderBatch = _storedRenderBatch;
         _storedRenderBatch = renderBatch;
@@ -257,12 +268,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             viewModelKey.Value);
 
 		TextEditorService.Post(throttleEventOnKeyDown);
-
-		//_ = Task.Run(() => TextEditorService.Post(throttleEventOnKeyDown));
-	
-		//await Task.Yield();
-
-		//Console.WriteLine("Post");
     }
 
     private async Task ReceiveOnContextMenuAsync()
@@ -569,10 +574,11 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         private readonly TextEditorViewModelDisplay _viewModelDisplay;
         private readonly IThrottle _throttleApplySyntaxHighlighting = new Throttle(TimeSpan.FromMilliseconds(500));
 
-        public TextEditorEvents(TextEditorViewModelDisplay viewModelDisplay)
+        public TextEditorEvents(TextEditorViewModelDisplay viewModelDisplay, TextEditorRenderBatch renderBatch)
         {
             _viewModelDisplay = viewModelDisplay;
-        }
+			Options = renderBatch.Options ?? TextEditorService.OptionsStateWrap.Value.Options;
+		}
 
         public TimeSpan ThrottleDelayDefault { get; } = TimeSpan.FromMilliseconds(30);
         public TimeSpan OnMouseOutTooltipDelay { get; } = TimeSpan.FromMilliseconds(1_000);
@@ -621,8 +627,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             }
         }
 
-        /// <summary>The default <see cref="AfterOnKeyDownAsync"/> will provide syntax highlighting, and autocomplete.<br/><br/>The syntax highlighting occurs on ';', whitespace, paste, undo, redo<br/><br/>The autocomplete occurs on LetterOrDigit typed or { Ctrl + Space }. Furthermore, the autocomplete is done via <see cref="IAutocompleteService"/> and the one can provide their own implementation when registering the Luthetus.TextEditor services using <see cref="LuthetusTextEditorConfig.AutocompleteServiceFactory"/></summary>
-        public TextEditorEdit HandleAfterOnKeyDownAsyncFactory(
+		public TextEditorOptions Options { get; }
+
+		/// <summary>The default <see cref="AfterOnKeyDownAsync"/> will provide syntax highlighting, and autocomplete.<br/><br/>The syntax highlighting occurs on ';', whitespace, paste, undo, redo<br/><br/>The autocomplete occurs on LetterOrDigit typed or { Ctrl + Space }. Furthermore, the autocomplete is done via <see cref="IAutocompleteService"/> and the one can provide their own implementation when registering the Luthetus.TextEditor services using <see cref="LuthetusTextEditorConfig.AutocompleteServiceFactory"/></summary>
+		public TextEditorEdit HandleAfterOnKeyDownAsyncFactory(
             ResourceUri resourceUri,
             Key<TextEditorViewModel> viewModelKey,
             KeyboardEventArgs keyboardEventArgs,

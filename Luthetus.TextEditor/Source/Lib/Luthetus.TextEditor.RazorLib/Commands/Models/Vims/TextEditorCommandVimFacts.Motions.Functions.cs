@@ -211,9 +211,7 @@ public static partial class TextEditorCommandVimFacts
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return;
 
-                var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
-                    ?? TextEditorKeymapFacts.DefaultKeymap;
-
+                var activeKeymap = commandArgs.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
                 if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;
 
@@ -261,9 +259,7 @@ public static partial class TextEditorCommandVimFacts
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return;
 
-                var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
-                    ?? TextEditorKeymapFacts.DefaultKeymap;
-
+                var activeKeymap = commandArgs.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
                 if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;
 

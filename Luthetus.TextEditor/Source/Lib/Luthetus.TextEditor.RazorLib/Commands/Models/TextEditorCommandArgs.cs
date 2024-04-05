@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Fluxor;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models;
 
@@ -19,6 +20,7 @@ public class TextEditorCommandArgs : ICommandArgs
         bool hasTextSelection,
         IClipboardService clipboardService,
         ITextEditorService textEditorService,
+        TextEditorOptions options,
         Func<MouseEventArgs, Task>? handleMouseStoppedMovingEventAsyncFunc,
         IJSRuntime? jsRuntime,
         IDispatcher dispatcher,
@@ -30,7 +32,8 @@ public class TextEditorCommandArgs : ICommandArgs
         HasTextSelection = hasTextSelection;
         ClipboardService = clipboardService;
         TextEditorService = textEditorService;
-        HandleMouseStoppedMovingEventAsyncFunc = handleMouseStoppedMovingEventAsyncFunc;
+		Options = options;
+		HandleMouseStoppedMovingEventAsyncFunc = handleMouseStoppedMovingEventAsyncFunc;
         JsRuntime = jsRuntime;
         Dispatcher = dispatcher;
         ServiceProvider = serviceProvider;
@@ -41,10 +44,17 @@ public class TextEditorCommandArgs : ICommandArgs
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public IClipboardService ClipboardService { get; }
     public ITextEditorService TextEditorService { get; }
+
     /// <summary>
-    /// This property is used so a keyboard event can trigger a tooltip at the cursor's position.
+    /// This property is a snapshot of the text editor's options at time
+    /// of the event.
     /// </summary>
-    public Func<MouseEventArgs, Task>? HandleMouseStoppedMovingEventAsyncFunc { get; }
+	public TextEditorOptions Options { get; }
+
+	/// <summary>
+	/// This property is used so a keyboard event can trigger a tooltip at the cursor's position.
+	/// </summary>
+	public Func<MouseEventArgs, Task>? HandleMouseStoppedMovingEventAsyncFunc { get; }
     public IJSRuntime? JsRuntime { get; }
     public IDispatcher Dispatcher { get; }
     public IServiceProvider ServiceProvider { get; }

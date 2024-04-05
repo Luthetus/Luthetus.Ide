@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models.Terminals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
@@ -30,6 +31,7 @@ public partial class TerminalDisplay : ComponentBase
         IncludeFooterHelperComponent = false,
         IncludeGutterComponent = false,
         ContextRecord = ContextFacts.TerminalContext,
+        KeymapOverride = new TextEditorKeymapTerminal()
     };
 
     protected override void OnParametersSet()
