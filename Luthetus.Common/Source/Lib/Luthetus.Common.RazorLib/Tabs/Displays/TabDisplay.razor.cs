@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Tabs.Models;
 
 namespace Luthetus.Common.RazorLib.Tabs.Displays;
 
@@ -18,6 +21,11 @@ public partial class TabDisplay : ComponentBase, IDisposable
     private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
+	[Inject]
+	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+
+	[CascadingParameter(Name=nameof(HandleTabButtonOnContextMenu)), EditorRequired]
+	public Func<TabContextMenuEventArgs, Task>? HandleTabButtonOnContextMenu { get; set; }
 
 	[Parameter, EditorRequired]
 	public ITab Tab { get; set; } = null!;
@@ -37,6 +45,9 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
 	private string _htmlIdDragged = null;
 	private string _htmlId = null;
+
+	private ElementReference? _tabButtonElementReference;
+
 	private string HtmlId => IsBeingDragged
 		? _htmlId ??= $"luth_polymorphic-tab_{Tab.DynamicViewModelKey}"
 		: _htmlIdDragged ??= $"luth_polymorphic-tab-drag_{Tab.DynamicViewModelKey}";
@@ -94,10 +105,45 @@ public partial class TabDisplay : ComponentBase, IDisposable
 		if (IsBeingDragged)
 			return;
 
+		if (mouseEventArgs.Button == 0)
+	        _thinksLeftMouseButtonIsDown = true;
 		if (mouseEventArgs.Button == 1)
             await CloseTabOnClickAsync();
+		else if (mouseEventArgs.Button == 2)
+			ManuallyPropagateOnContextMenu(mouseEventArgs, Tab);
+	}
 
-        _thinksLeftMouseButtonIsDown = true;
+    private void ManuallyPropagateOnContextMenu(
+        MouseEventArgs mouseEventArgs,
+        ITab tab)
+    {
+		var localHandleTabButtonOnContextMenu = HandleTabButtonOnContextMenu;
+
+		if (localHandleTabButtonOnContextMenu is null)
+			return;
+
+		BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+            "Tab.ManuallyPropagateOnContextMenu",
+            async () => await localHandleTabButtonOnContextMenu.Invoke(
+				new TabContextMenuEventArgs(mouseEventArgs, tab, FocusAsync)));
+    }
+
+	private async Task FocusAsync()
+	{
+		try
+		{
+			var localTabButtonElementReference = _tabButtonElementReference;
+
+			if (localTabButtonElementReference is not null)
+				await localTabButtonElementReference.Value.FocusAsync();
+		}
+		catch (Exception)
+		{
+			// 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
+			//             This bug is seemingly happening randomly. I have a suspicion
+			//             that there are race-condition exceptions occurring with "FocusAsync"
+			//             on an ElementReference.
+		}
 	}
 
 	private void HandleOnMouseUp()

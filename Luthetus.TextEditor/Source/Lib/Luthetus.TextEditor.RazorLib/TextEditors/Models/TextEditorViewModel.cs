@@ -136,7 +136,8 @@ public record TextEditorViewModel : IDisposable
     /// This property contains all data, and logic, necessary to render a text editor from within a dialog,
     /// a panel tab, or a text editor group tab.
     /// </summary>
-    public TextEditorDynamicViewModelAdapter DynamicViewModelAdapter { get; set; }
+    public TextEditorDynamicViewModelAdapter DynamicViewModelAdapter { get; init; }
+    public ImmutableArray<TextEditorWidget> TextEditorWidgetList { get; init; }
 
     public string BodyElementId => $"luth_te_text-editor-content_{ViewModelKey.Guid}";
     public string PrimaryCursorContentId => $"luth_te_text-editor-content_{ViewModelKey.Guid}_primary-cursor";

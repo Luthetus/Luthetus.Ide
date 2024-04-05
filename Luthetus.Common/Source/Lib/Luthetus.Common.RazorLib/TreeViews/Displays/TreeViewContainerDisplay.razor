@@ -23,9 +23,9 @@
         else
         {
             <CascadingValue Value="treeViewContainer">
-                <CascadingValue Name="TreeViewMouseEventHandler" Value="TreeViewMouseEventHandler">
-                    <CascadingValue Name="TreeViewKeyboardEventHandler" Value="TreeViewKeyboardEventHandler">
-                        <CascadingValue Name="HandleTreeViewOnContextMenu" Value="HandleTreeViewOnContextMenu">
+                <CascadingValue Name="@nameof(TreeViewNodeDisplay.TreeViewMouseEventHandler)" Value="TreeViewMouseEventHandler">
+                    <CascadingValue Name="@nameof(TreeViewNodeDisplay.TreeViewKeyboardEventHandler)" Value="TreeViewKeyboardEventHandler">
+                        <CascadingValue Name="@nameof(TreeViewNodeDisplay.HandleTreeViewOnContextMenu)" Value="HandleTreeViewOnContextMenu">
                             <TreeViewNodeDisplay TreeViewNoType="treeViewContainer.RootNode"
                                                  Depth="GetRootDepth(treeViewContainer.RootNode)"/>
                         </CascadingValue>

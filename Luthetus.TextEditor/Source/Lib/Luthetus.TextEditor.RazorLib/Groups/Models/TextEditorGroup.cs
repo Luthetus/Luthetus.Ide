@@ -52,4 +52,14 @@ public record TextEditorGroup(
 		TextEditorService.GroupApi.RemoveViewModel(GroupKey, textEditorTab.ViewModelKey);
 		return Task.CompletedTask;
 	}
+
+	public async Task CloseAllAsync()
+	{
+		var localViewModelKeyList = ViewModelKeyList;
+
+		foreach (var viewModelKey in localViewModelKeyList)
+		{
+			await CloseAsync(new TextEditorDynamicViewModelAdapter(viewModelKey));
+		}
+	}
 }

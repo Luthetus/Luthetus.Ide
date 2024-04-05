@@ -8,4 +8,5 @@ public interface ITabGroup
 	public string GetDynamicCss(ITab tab);
     public Task OnClickAsync(ITab tab, MouseEventArgs mouseEventArgs);
 	public Task CloseAsync(ITab tab);
+	public Task CloseAllAsync();
 }

@@ -3,12 +3,16 @@
 <button class="luth_polymorphic-tab luth_button luth_unselectable @IsActiveCssClass @localTabViewModel.TabGroup.GetDynamicCss(localTabViewModel) @GetIsBeingDraggedCssClassString() @CssClassString"
 		style="@GetDraggableCssStyleString() @CssStyleString"
 		id="@HtmlId"
+		@ref="_tabButtonElementReference"
 		@onclick="e => localTabViewModel.TabGroup.OnClickAsync(localTabViewModel, e)"
 		@onmousedown:stopPropagation="true"
 		@onmousedown:preventDefault="true"
         @onmousedown="HandleOnMouseDownAsync"
         @onmouseup="HandleOnMouseUp"
-        @onmouseout="HandleOnMouseOutAsync">
+        @onmouseout="HandleOnMouseOutAsync"
+		@oncontextmenu:preventDefault="true"
+		@oncontextmenu:stopPropagation="true"
+		@oncontextmenu="e => ManuallyPropagateOnContextMenu(e, localTabViewModel)">
 
 	<span>@localTabViewModel.Title</span>
 

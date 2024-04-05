@@ -1,8 +1,21 @@
+@using Luthetus.Common.RazorLib.Dropdowns.Displays
+@using Luthetus.Common.RazorLib.Dropdowns.Models
+
 <div class="luth_polymorphic-tab-list @CssClassString">
+
 	@{ var localTabList = TabList; }
-	@foreach (var tab in localTabList)
-	{
-		<TabDisplay @key="tab.DynamicViewModelKey"
-					Tab="tab"/>
-	}
+
+	<CascadingValue Name="@nameof(TabDisplay.HandleTabButtonOnContextMenu)" Value="HandleTabButtonOnContextMenu">
+		@foreach (var tab in localTabList)
+		{
+			<TabDisplay @key="tab.DynamicViewModelKey"
+						Tab="tab"/>
+		}
+	</CascadingValue>
+
+	<DropdownDisplay DropdownKey="TabContextMenu.ContextMenuEventDropdownKey"
+                     DropdownPositionKind="DropdownPositionKind.Unset">
+
+        <TabContextMenu TabContextMenuEventArgs="_mostRecentTabContextMenuEventArgs" />
+    </DropdownDisplay>
 </div>

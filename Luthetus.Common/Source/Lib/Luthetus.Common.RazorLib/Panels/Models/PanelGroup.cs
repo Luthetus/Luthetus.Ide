@@ -51,4 +51,14 @@ public record PanelGroup(
 		Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(Key, panelTab.Key));
 		return Task.CompletedTask;
 	}
+
+	public async Task CloseAllAsync()
+	{
+		var localTabList = TabList;
+
+		foreach (var tab in localTabList)
+		{
+			await CloseAsync(tab);
+		}
+	}
 }
