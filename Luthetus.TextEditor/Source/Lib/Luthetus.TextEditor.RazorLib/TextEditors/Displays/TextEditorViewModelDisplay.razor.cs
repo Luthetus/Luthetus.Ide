@@ -25,6 +25,7 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -250,16 +251,16 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             await CursorDisplay.FocusAsync();
     }
 
-    private async Task ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private Task ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (TextEditorEventsUtils.CheckIfKeyboardEventArgsIsNoise(keyboardEventArgs))
-            return;
+            return Task.CompletedTask;
 
         var resourceUri = GetModel()?.ResourceUri;
         var viewModelKey = GetViewModel()?.ViewModelKey;
 
         if (resourceUri is null || viewModelKey is null)
-            return;
+			return Task.CompletedTask;
 
 		var throttleEventOnKeyDown = new ThrottleEventOnKeyDown(
             _events,
@@ -268,7 +269,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             viewModelKey.Value);
 
 		TextEditorService.Post(throttleEventOnKeyDown);
-    }
+		return Task.CompletedTask;
+	}
 
     private async Task ReceiveOnContextMenuAsync()
     {
@@ -580,7 +582,21 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 			Options = renderBatch.Options ?? TextEditorService.OptionsStateWrap.Value.Options;
 		}
 
-        public TimeSpan ThrottleDelayDefault { get; } = TimeSpan.FromMilliseconds(30);
+        /// <summary>
+        /// (2024-04-05) The code I'm writing today feels like spaghetti code / technical debt.
+        /// That being said, I'll call today's hacky code a "technical loan".
+        /// </summary>
+		public TextEditorEvents(TextEditorEvents events, TextEditorKeymapDefault textEditorKeymapDefault)
+		{
+            _viewModelDisplay = events._viewModelDisplay;
+
+            Options = events.Options with
+            {
+                Keymap = textEditorKeymapDefault
+            };
+		}
+
+		public TimeSpan ThrottleDelayDefault { get; } = TimeSpan.FromMilliseconds(30);
         public TimeSpan OnMouseOutTooltipDelay { get; } = TimeSpan.FromMilliseconds(1_000);
         public TimeSpan MouseStoppedMovingDelay { get; } = TimeSpan.FromMilliseconds(400);
         public Task MouseStoppedMovingTask { get; set; } = Task.CompletedTask;
@@ -627,7 +643,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             }
         }
 
-		public TextEditorOptions Options { get; }
+		public TextEditorOptions Options { get; init; }
 
 		/// <summary>The default <see cref="AfterOnKeyDownAsync"/> will provide syntax highlighting, and autocomplete.<br/><br/>The syntax highlighting occurs on ';', whitespace, paste, undo, redo<br/><br/>The autocomplete occurs on LetterOrDigit typed or { Ctrl + Space }. Furthermore, the autocomplete is done via <see cref="IAutocompleteService"/> and the one can provide their own implementation when registering the Luthetus.TextEditor services using <see cref="LuthetusTextEditorConfig.AutocompleteServiceFactory"/></summary>
 		public TextEditorEdit HandleAfterOnKeyDownAsyncFactory(

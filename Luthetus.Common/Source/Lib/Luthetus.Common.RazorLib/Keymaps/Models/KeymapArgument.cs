@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.Common.RazorLib.Keymaps.Models;
 
@@ -14,4 +15,16 @@ public record KeymapArgument(
     {
 
     }
+
+	public KeyboardEventArgs ToKeyboardEventArgs()
+	{
+		return new KeyboardEventArgs()
+		{
+			Code = Code,
+			Key = Code.Replace("Key", string.Empty),
+			ShiftKey = ShiftKey,
+			CtrlKey = CtrlKey,
+			AltKey = AltKey,
+		};
+	}
 }

@@ -6,6 +6,8 @@ using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.Common.RazorLib.Commands.Models;
+using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 
@@ -241,4 +243,9 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.ScrollPageUp);
     }
+
+	public bool TryMap(KeymapArgument keymapArgument, TextEditorEvents events, out CommandNoType? command)
+	{
+        return Map.TryGetValue(keymapArgument, out command);
+	}
 }

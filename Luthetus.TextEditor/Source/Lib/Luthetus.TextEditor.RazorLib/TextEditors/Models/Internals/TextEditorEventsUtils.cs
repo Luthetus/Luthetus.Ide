@@ -8,19 +8,22 @@ using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.AspNetCore.Components.Web;
+using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 public static class TextEditorEventsUtils
 {
     public static KeyboardEventArgsKind GetKeyboardEventArgsKind(
-        KeyboardEventArgs keyboardEventArgs,
+		TextEditorEvents events,
+		KeyboardEventArgs keyboardEventArgs,
         bool hasSelection,
         ITextEditorService textEditorService,
         out CommandNoType command)
     {
         var eventIsCommand = CheckIfKeyboardEventArgsMapsToCommand(
-            keyboardEventArgs,
+			events,
+			keyboardEventArgs,
             hasSelection,
             textEditorService,
             out Key<KeymapLayer> layerKey,
@@ -68,7 +71,8 @@ public static class TextEditorEventsUtils
     }
 
     public static bool CheckIfKeyboardEventArgsMapsToCommand(
-        KeyboardEventArgs keyboardEventArgs,
+		TextEditorEvents events,
+		KeyboardEventArgs keyboardEventArgs,
         bool hasSelection,
         ITextEditorService textEditorService,
         out Key<KeymapLayer> layerKey,
@@ -76,25 +80,27 @@ public static class TextEditorEventsUtils
         out bool success,
         out CommandNoType command)
     {
-        layerKey = ((ITextEditorKeymap)textEditorService.OptionsStateWrap.Value.Options.Keymap!).GetLayer(hasSelection);
+        layerKey = ((ITextEditorKeymap)events.Options.Keymap!).GetLayer(hasSelection);
 
         keymapArgument = keyboardEventArgs.ToKeymapArgument() with
         {
             LayerKey = layerKey
         };
 
-        success = textEditorService.OptionsStateWrap.Value.Options.Keymap!.Map.TryGetValue(
+        success = ((ITextEditorKeymap)events.Options.Keymap!).TryMap(
             keymapArgument,
+            events,
             out command);
 
         if (!success && keymapArgument.LayerKey != TextEditorKeymapDefaultFacts.DefaultLayer.Key)
         {
-            _ = textEditorService.OptionsStateWrap.Value.Options.Keymap!.Map.TryGetValue(
+            _ = ((ITextEditorKeymap)events.Options.Keymap!).TryMap(
                 keymapArgument with
                 {
                     LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key,
                 },
-                out command);
+				events,
+				out command);
         }
 
         if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keyboardEventArgs.Code && keyboardEventArgs.ShiftKey)

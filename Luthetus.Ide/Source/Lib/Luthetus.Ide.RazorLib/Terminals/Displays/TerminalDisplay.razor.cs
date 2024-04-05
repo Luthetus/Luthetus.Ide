@@ -1,6 +1,5 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.Contexts.Models;
-using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
@@ -53,7 +52,7 @@ public partial class TerminalDisplay : ComponentBase
                         "terminal",
                         string.Empty,
                         new TerminalDecorationMapper(),
-                        null);
+                        new TerminalCompilerService(TextEditorService));
 
                     TextEditorService.ModelApi.RegisterCustom(model);
 

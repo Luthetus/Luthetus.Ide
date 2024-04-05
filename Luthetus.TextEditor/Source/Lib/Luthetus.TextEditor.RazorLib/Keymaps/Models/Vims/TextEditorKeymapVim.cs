@@ -11,6 +11,8 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.Common.RazorLib.Commands.Models;
+using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
@@ -956,4 +958,9 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             Map.Add(shiftCtrlKeymapArgument, arrowLeftCommand);
         }
     }
+
+	public bool TryMap(KeymapArgument keymapArgument, TextEditorEvents events, out CommandNoType? command)
+	{
+		return Map.TryGetValue(keymapArgument, out command);
+	}
 }
