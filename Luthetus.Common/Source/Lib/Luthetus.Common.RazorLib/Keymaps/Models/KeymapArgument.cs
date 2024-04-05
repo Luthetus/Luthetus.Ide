@@ -18,10 +18,16 @@ public record KeymapArgument(
 
 	public KeyboardEventArgs ToKeyboardEventArgs()
 	{
+		var key = Code.Replace("Key", string.Empty);
+
+		// The event-code looks like: 'KeyA', 'KeyB', ... 'KeyZ'
+		if (!ShiftKey)
+			key = key.ToLower();
+
 		return new KeyboardEventArgs()
 		{
 			Code = Code,
-			Key = Code.Replace("Key", string.Empty),
+			Key = key,
 			ShiftKey = ShiftKey,
 			CtrlKey = CtrlKey,
 			AltKey = AltKey,
