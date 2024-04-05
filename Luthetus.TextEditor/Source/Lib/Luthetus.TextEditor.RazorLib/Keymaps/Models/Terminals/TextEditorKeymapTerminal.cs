@@ -91,6 +91,10 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 									// TODO: Notify the underlying terminal (tty) that the user...
 									//       ...wrote to standard out.
 								}
+								else if (keyboardEventArgs.Code == "Backspace" && primaryCursorModifier.ColumnIndex == 0)
+								{
+									// TODO: Console.Beep(); // ???
+								}
 								else
 								{
 									await throttleEventOnKeyDown.InvokeWithEditContext(editContext);

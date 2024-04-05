@@ -1,5 +1,6 @@
 ﻿@using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models;
+@using Luthetus.Common.RazorLib.Keys.Models
 @using Luthetus.Ide.RazorLib.Terminals.Displays.Internals
 @using Luthetus.Ide.RazorLib.Terminals.Models;
 @using System.Collections.Immutable
@@ -53,7 +54,11 @@
 
                 if (success && terminalSession is not null)
                 {
-                    <button class="luth_button"
+                    string isActiveCssClass = string.Empty;
+                    if ((activeTerminalSession?.TerminalSessionKey ?? Key<TerminalSession>.Empty) == terminalSession.TerminalSessionKey)
+                        isActiveCssClass = "luth_active";
+
+                    <button class="luth_button @isActiveCssClass"
                             @onclick="() => DispatchSetActiveTerminalSessionAction(terminalSession.TerminalSessionKey)">
                         @terminalSession.DisplayName
 
