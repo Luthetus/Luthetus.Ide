@@ -959,7 +959,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
         }
     }
 
-	public bool TryMap(KeymapArgument keymapArgument, TextEditorEvents events, out CommandNoType? command)
+	public bool TryMap(KeyboardEventArgs keyboardEventArgs, KeymapArgument keymapArgument, TextEditorEvents events, out CommandNoType? command)
 	{
 		return Map.TryGetValue(keymapArgument, out command);
 	}

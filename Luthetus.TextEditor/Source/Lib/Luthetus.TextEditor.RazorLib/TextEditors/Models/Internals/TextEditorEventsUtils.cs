@@ -88,14 +88,16 @@ public static class TextEditorEventsUtils
         };
 
         success = ((ITextEditorKeymap)events.Options.Keymap!).TryMap(
-            keymapArgument,
+			keyboardEventArgs,
+			keymapArgument,
             events,
             out command);
 
         if (!success && keymapArgument.LayerKey != TextEditorKeymapDefaultFacts.DefaultLayer.Key)
         {
             _ = ((ITextEditorKeymap)events.Options.Keymap!).TryMap(
-                keymapArgument with
+				keyboardEventArgs,
+				keymapArgument with
                 {
                     LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key,
                 },

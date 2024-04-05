@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.Common.RazorLib.Commands.Models;
 using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models;
 
@@ -44,5 +45,5 @@ public interface ITextEditorKeymap
 	///         -bool TryMap(KeyboardEventArgs args, out Command command)
 	///		  Could be made, such that 'TryMap' would have a reference to the 'KeyboardEventArgs'
 	/// </summary>
-	public bool TryMap(KeymapArgument keymapArgument, TextEditorEvents events, out CommandNoType? command);
+	public bool TryMap(KeyboardEventArgs keyboardEventArgs, KeymapArgument keymapArgument, TextEditorEvents events, out CommandNoType? command);
 }
