@@ -321,7 +321,7 @@ public class TerminalSession
 		{
 			foreach (var stringBuilder in _standardOutBuilderMap.Values)
 	        {
-	            stringBuilder.Clear(); // .Clear() is a method on List(s) too
+	            stringBuilder.Clear();
 	        }
 		}
 

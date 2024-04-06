@@ -2,11 +2,10 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Ide.RazorLib.Keymaps.Models.Terminals;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.TextEditor.RazorLib.Keymaps.Models.Terminals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays;

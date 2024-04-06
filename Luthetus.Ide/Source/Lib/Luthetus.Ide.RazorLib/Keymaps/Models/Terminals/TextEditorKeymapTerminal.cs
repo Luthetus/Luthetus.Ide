@@ -14,8 +14,12 @@ using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
 using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+using Luthetus.Ide.RazorLib.Keymaps.Models.Defaults;
+using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
-namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Terminals;
+namespace Luthetus.Ide.RazorLib.Keymaps.Models.Terminals;
 
 public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 {
@@ -80,7 +84,6 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 							commandArgs.ModelResourceUri,
 							commandArgs.ViewModelKey);
 
-
 						var selectionContainsCurrentRow = false;
 						var selectionRowCount = 0;
 
@@ -110,7 +113,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
                                 // Furthermore, if a selection contains more than 1 row,
                                 // it would therefore edit a line other than the last.
 								if (selectionRowCount == 0 ||
-                                    selectionContainsCurrentRow && selectionRowCount <= 1)
+                                    selectionContainsCurrentRow && selectionRowCount == 1)
 								{
                                     if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
                                     {
@@ -123,9 +126,59 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
                                     }
                                     else
                                     {
-                                        await throttleEventOnKeyDown.InvokeWithEditContext(editContext);
+										// TODO: This method is an "if, else" nightmare and needs to be cleaned up.
+										//
+										// The "working directory" is written on the last line of the terminal.
+										// Ensure that the user is not about to type over the "working directory"
+
+										var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
+
+										// The final entry of the decoration list is hackily being presumed to be a working directory.
+										var mostRecentWorkingDirectoryText = terminalCompilerService.TerminalDecorationList.Last();
+
+										var primaryCursorModifierPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+
+                                        if (mostRecentWorkingDirectoryText.StartingIndexInclusive >= primaryCursorModifierPositionIndex ||
+                                            mostRecentWorkingDirectoryText.EndingIndexExclusive > primaryCursorModifierPositionIndex)
+										{
+											// Don't let them type
+                                        }
+										else if (mostRecentWorkingDirectoryText.EndingIndexExclusive == primaryCursorModifierPositionIndex &&
+                                                 keyboardEventArgs.Code == "Backspace")
+										{
+                                            // Don't let them type
+                                        }
+                                        else if (throttleEventOnKeyDown.TentativeHasSelection &&
+                                                 mostRecentWorkingDirectoryText.StartingIndexInclusive >= TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier).lowerPositionIndexInclusive)
+                                        {
+                                            // Don't let them type
+                                        }
+										else
+										{
+                                            await throttleEventOnKeyDown.InvokeWithEditContext(editContext);
+                                        }
                                     }
                                 }
+							}
+						}
+						else if (throttleEventOnKeyDown.Command is not null)
+						{
+							if (throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.Copy.InternalIdentifier ||
+								throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.PasteCommand.InternalIdentifier ||
+								throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.SelectAll.InternalIdentifier ||
+								throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollLineDown.InternalIdentifier ||
+								throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollLineUp.InternalIdentifier ||
+								throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollPageDown.InternalIdentifier ||
+								throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollPageUp.InternalIdentifier ||
+								throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageBottom.InternalIdentifier ||
+								throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageTop.InternalIdentifier ||
+								throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ShowFindOverlay.InternalIdentifier)
+                            {
+                                await throttleEventOnKeyDown.InvokeWithEditContext(editContext);
+                            }
+							else
+							{
+								// Don't let them do the command
 							}
 						}
 						else
