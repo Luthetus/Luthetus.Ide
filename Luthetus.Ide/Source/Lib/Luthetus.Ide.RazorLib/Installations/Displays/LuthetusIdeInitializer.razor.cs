@@ -21,6 +21,7 @@ using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.TestExplorers.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
 
@@ -40,6 +41,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ICommandFactory CommandFactory { get; set; } = null!;
+    [Inject]
+    private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -79,7 +82,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
                             Dispatcher,
                             BackgroundTaskService,
                             TextEditorService,
-                            LuthetusCommonComponentRenderers)
+                            LuthetusCommonComponentRenderers,
+                            CompilerServiceRegistry)
                         {
                             TerminalSessionKey = terminalSessionKey
                         };

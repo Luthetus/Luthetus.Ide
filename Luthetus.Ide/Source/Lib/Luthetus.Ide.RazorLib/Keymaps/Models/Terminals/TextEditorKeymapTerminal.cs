@@ -134,8 +134,11 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 
                                         var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
 
+                                        if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
+                                            return;
+
                                         // The final entry of the decoration list is hackily being presumed to be a working directory.
-                                        var mostRecentWorkingDirectoryText = terminalCompilerService.TerminalDecorationList.Last();
+                                        var mostRecentWorkingDirectoryText = terminalResource.ManualDecorationList.Last();
 
 										var input = new TextEditorTextSpan(
 											mostRecentWorkingDirectoryText.EndingIndexExclusive,
@@ -163,8 +166,12 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 
 										var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
 
-										// The final entry of the decoration list is hackily being presumed to be a working directory.
-										var mostRecentWorkingDirectoryText = terminalCompilerService.TerminalDecorationList.Last();
+                                        var terminalResource = terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) as TerminalResource;
+                                        if (terminalResource is null)
+                                            return;
+
+                                        // The final entry of the decoration list is hackily being presumed to be a working directory.
+                                        var mostRecentWorkingDirectoryText = terminalResource.ManualDecorationList.Last();
 
 										var primaryCursorModifierPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 

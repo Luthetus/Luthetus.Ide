@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.Ide.RazorLib.CompilerServices.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
@@ -27,6 +29,7 @@ public class TerminalSession
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly ITextEditorService _textEditorService;
     private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
+    private readonly ICompilerServiceRegistry _compilerServiceRegistry;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
     private readonly object _standardOutBuilderMapLock = new();
     private readonly ConcurrentQueue<TerminalCommand> _terminalCommandsConcurrentQueue = new();
@@ -38,13 +41,15 @@ public class TerminalSession
         IDispatcher dispatcher,
         IBackgroundTaskService backgroundTaskService,
         ITextEditorService textEditorService,
-        ILuthetusCommonComponentRenderers commonComponentRenderers)
+        ILuthetusCommonComponentRenderers commonComponentRenderers,
+        ICompilerServiceRegistry compilerServiceRegistry)
     {
         DisplayName = displayName;
         _dispatcher = dispatcher;
         _backgroundTaskService = backgroundTaskService;
         _textEditorService = textEditorService;
         _commonComponentRenderers = commonComponentRenderers;
+        _compilerServiceRegistry = compilerServiceRegistry;
         WorkingDirectoryAbsolutePathString = workingDirectoryAbsolutePathString;
 
         ResourceUri = new($"__LUTHETUS-{TerminalSessionKey.Guid}__");
@@ -94,15 +99,18 @@ public class TerminalSession
                             .ConfigureAwait(false);
 
                         var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
-                        
-                        terminalCompilerService.TerminalDecorationList.Add(new TextEditorTextSpan(
+
+                        if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
+                            return;
+
+                        terminalResource.ManualDecorationList.Add(new TextEditorTextSpan(
                             startingPositionIndex,
                             modelModifier.GetPositionIndex(primaryCursorModifier),
                             (byte)TerminalDecorationKind.Keyword,
                             ResourceUri,
                             modelModifier.GetAllText()));
 
-                        modelModifier.ApplyDecorationRange(terminalCompilerService.TerminalDecorationList.ToImmutableArray());
+                        modelModifier.ApplyDecorationRange(terminalResource.GetTokenTextSpans());
                     });
             }
         }
@@ -362,7 +370,7 @@ public class TerminalSession
                 new string('=', text.Length) +
                 "\n\n",
             new TerminalDecorationMapper(),
-            new TerminalCompilerService(_textEditorService));
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL));
 
         _textEditorService.ModelApi.RegisterCustom(model);
 
@@ -435,15 +443,18 @@ public class TerminalSession
                     .ConfigureAwait(false);
 
                 var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
+                
+                if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
+                    return;
 
-                terminalCompilerService.TerminalDecorationList.Add(new TextEditorTextSpan(
+                terminalResource.ManualDecorationList.Add(new TextEditorTextSpan(
                     0,
                     modelModifier.GetPositionIndex(primaryCursorModifier),
                     (byte)TerminalDecorationKind.Comment,
                     ResourceUri,
                     modelModifier.GetAllText()));
 
-                modelModifier.ApplyDecorationRange(terminalCompilerService.TerminalDecorationList.ToImmutableArray());
+                modelModifier.ApplyDecorationRange(terminalResource.GetTokenTextSpans());
             });
     }
 }
