@@ -18,16 +18,27 @@ using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.Ide.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
+using Luthetus.Ide.RazorLib.CommandLines.Models;
+using Fluxor;
+using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.Ide.RazorLib.Keymaps.Models.Terminals;
 
 public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 {
-    public TextEditorKeymapTerminal()
+    private readonly IState<TerminalSessionState> _terminalSessionStateWrap;
+    private readonly Key<TerminalSession> _terminalSessionKey;
+
+    public TextEditorKeymapTerminal(
+			IState<TerminalSessionState> terminalSessionStateWrap,
+            Key<TerminalSession> terminalSessionKey)
         : base(
             new Key<Keymap>(Guid.Parse("baf160e1-6b43-494b-99db-0e8c7500facb")),
             "Terminal")
     {
+        _terminalSessionStateWrap = terminalSessionStateWrap;
+        _terminalSessionKey = terminalSessionKey;
     }
 
     public Key<KeymapLayer> GetLayer(bool hasSelection)
@@ -117,8 +128,27 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 								{
                                     if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
                                     {
-                                        // TODO: Notify the underlying terminal (tty) that the user...
-                                        //       ...wrote to standard out.
+                                        // Notify the underlying terminal (tty) that the user wrote to standard out.
+
+                                        var generalTerminalSession = _terminalSessionStateWrap.Value.TerminalSessionMap[_terminalSessionKey];
+
+                                        var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
+
+                                        // The final entry of the decoration list is hackily being presumed to be a working directory.
+                                        var mostRecentWorkingDirectoryText = terminalCompilerService.TerminalDecorationList.Last();
+
+										var input = new TextEditorTextSpan(
+											mostRecentWorkingDirectoryText.EndingIndexExclusive,
+											modelModifier.DocumentLength,
+											0,
+											modelModifier.ResourceUri,
+											modelModifier.GetAllText());
+
+                                        var terminalCommand = new TerminalCommand(
+                                            Key<TerminalCommand>.NewKey(),
+                                            new FormattedCommand(input.GetText(), Array.Empty<string>()));
+
+                                        await generalTerminalSession.EnqueueCommandAsync(terminalCommand);
                                     }
                                     else if (keyboardEventArgs.Code == "Backspace" && primaryCursorModifier.ColumnIndex == 0)
                                     {
