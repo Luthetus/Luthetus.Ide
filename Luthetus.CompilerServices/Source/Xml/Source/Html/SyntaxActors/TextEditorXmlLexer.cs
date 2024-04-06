@@ -2,7 +2,6 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
 
@@ -13,7 +12,7 @@ public class TextEditorXmlLexer : LuthLexer
         : base(
             resourceUri,
             sourceText,
-            new LuthLexerKeywords(ImmutableArray<string>.Empty, ImmutableArray<string>.Empty, ImmutableArray<string>.Empty))
+            LuthLexerKeywords.Empty)
     {
     }
 

@@ -3,7 +3,6 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
@@ -15,7 +14,7 @@ public class DotNetSolutionLexer : LuthLexer
         : base(
             resourceUri,
             sourceText,
-            new LuthLexerKeywords(ImmutableArray<string>.Empty, ImmutableArray<string>.Empty, ImmutableArray<string>.Empty))
+            LuthLexerKeywords.Empty)
     {
     }
 

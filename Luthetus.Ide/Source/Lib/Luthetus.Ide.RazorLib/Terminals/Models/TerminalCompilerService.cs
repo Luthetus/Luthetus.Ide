@@ -12,7 +12,8 @@ public sealed class TerminalCompilerService : LuthCompilerService
     {
         _compilerServiceOptions = new()
         {
-            RegisterResourceFunc = resourceUri => new TerminalResource(resourceUri, this)
+            RegisterResourceFunc = resourceUri => new TerminalResource(resourceUri, this),
+            GetLexerFunc = (resource, sourceText) => new TerminalLexer(resource.ResourceUri, sourceText),
         };
     }
 

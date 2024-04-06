@@ -19,7 +19,7 @@ public class TextEditorDefaultParserTests
 		var defaultLexer = new LuthLexer(
 			new ResourceUri(string.Empty),
             string.Empty,
-			new LuthLexerKeywords(ImmutableArray<string>.Empty, ImmutableArray<string>.Empty, ImmutableArray<string>.Empty));
+			LuthLexerKeywords.Empty);
 
         var defaultParser = new LuthParser(defaultLexer);
 

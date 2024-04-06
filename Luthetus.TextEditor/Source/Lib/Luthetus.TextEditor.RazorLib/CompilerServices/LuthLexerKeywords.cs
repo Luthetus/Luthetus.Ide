@@ -4,6 +4,11 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
 public class LuthLexerKeywords
 {
+    public static readonly LuthLexerKeywords Empty = new LuthLexerKeywords(
+        ImmutableArray<string>.Empty,
+        ImmutableArray<string>.Empty,
+        ImmutableArray<string>.Empty);
+
     public LuthLexerKeywords(
         ImmutableArray<string> nonContextualKeywords,
         ImmutableArray<string> controlKeywords,

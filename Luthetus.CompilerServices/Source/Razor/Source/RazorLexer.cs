@@ -27,7 +27,7 @@ public class RazorLexer : LuthLexer
         : base(
             resourceUri,
             sourceText,
-            new LuthLexerKeywords(ImmutableArray<string>.Empty, ImmutableArray<string>.Empty, ImmutableArray<string>.Empty))
+            LuthLexerKeywords.Empty)
     {
         _environmentProvider = environmentProvider;
         _razorCompilerService = razorCompilerService;
