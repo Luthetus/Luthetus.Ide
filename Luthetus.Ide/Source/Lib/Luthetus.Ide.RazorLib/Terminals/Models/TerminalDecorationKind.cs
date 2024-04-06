@@ -3,4 +3,6 @@
 public enum TerminalDecorationKind
 {
     None,
+    Comment,
+    Keyword,
 }

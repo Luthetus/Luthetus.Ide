@@ -1,0 +1,9 @@
+﻿<div class="luth_te_widget-layer">
+    @foreach (var widget in RenderBatch.ViewModel!.TextEditorWidgetInlineList)
+    {
+        <div class="luth_te_widget">
+            <DynamicComponent Type="widget.ComponentType"
+                              Parameters="widget.ComponentParameterMap" />
+        </div>
+    }
+</div>

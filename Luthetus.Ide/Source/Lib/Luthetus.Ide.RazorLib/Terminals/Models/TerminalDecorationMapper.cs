@@ -11,6 +11,8 @@ public class TerminalDecorationMapper : IDecorationMapper
         return decoration switch
         {
             TerminalDecorationKind.None => string.Empty,
+            TerminalDecorationKind.Comment => "luth_te_comment",
+            TerminalDecorationKind.Keyword => "luth_te_keyword",
             _ => string.Empty,
         };
     }

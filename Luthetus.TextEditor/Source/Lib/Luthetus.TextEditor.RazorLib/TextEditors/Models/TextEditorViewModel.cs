@@ -137,7 +137,8 @@ public record TextEditorViewModel : IDisposable
     /// a panel tab, or a text editor group tab.
     /// </summary>
     public TextEditorDynamicViewModelAdapter DynamicViewModelAdapter { get; init; }
-    public ImmutableArray<TextEditorWidget> TextEditorWidgetList { get; init; }
+    public ImmutableArray<TextEditorWidgetBlock> TextEditorWidgetBlockList { get; init; } = ImmutableArray<TextEditorWidgetBlock>.Empty;
+    public ImmutableArray<TextEditorWidgetInline> TextEditorWidgetInlineList { get; init; } = ImmutableArray<TextEditorWidgetInline>.Empty;
 
     public string BodyElementId => $"luth_te_text-editor-content_{ViewModelKey.Guid}";
     public string PrimaryCursorContentId => $"luth_te_text-editor-content_{ViewModelKey.Guid}_primary-cursor";

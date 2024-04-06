@@ -9,6 +9,7 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.Ide.RazorLib.Terminals.States;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
@@ -20,6 +21,7 @@ public partial class DotNetSolutionSync
     private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
     private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
+    private readonly IState<TerminalSessionState> _terminalSessionStateWrap;
     private readonly ITextEditorService _textEditorService;
     private readonly ICompilerServiceRegistry _interfaceCompilerServiceRegistry;
 
@@ -30,6 +32,7 @@ public partial class DotNetSolutionSync
         ILuthetusCommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
         IState<DotNetSolutionState> dotNetSolutionStateWrap,
+        IState<TerminalSessionState> terminalSessionStateWrap,
         ITextEditorService textEditorService,
         InputFileSync inputFileSync,
         IBackgroundTaskService backgroundTaskService,
@@ -42,6 +45,7 @@ public partial class DotNetSolutionSync
         _commonComponentRenderers = commonComponentRenderers;
         _treeViewService = treeViewService;
         _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
+        _terminalSessionStateWrap = terminalSessionStateWrap;
         _textEditorService = textEditorService;
         
         InputFileSync = inputFileSync;

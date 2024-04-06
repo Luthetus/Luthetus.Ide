@@ -13,6 +13,8 @@ using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.States;
 using static Luthetus.Ide.RazorLib.DotNetSolutions.States.DotNetSolutionState;
+using Luthetus.Ide.RazorLib.CommandLines.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
@@ -171,7 +173,35 @@ public partial class DotNetSolutionSync
 			{
 				StartingAbsolutePathForSearch = parentDirectory.Value
 			}));
-		}
+
+            // Set 'generalTerminalSession' working directory
+            {
+                var generalTerminalSession = _terminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+                var formattedCommand = TerminalCommandFormatter.FormatChangeDirectory(parentDirectory.Value);
+
+                var changeDirectoryCommand = new TerminalCommand(
+                    Key<TerminalCommand>.NewKey(),
+                    formattedCommand,
+                    parentDirectory.Value,
+                    CancellationToken.None);
+
+                await generalTerminalSession.EnqueueCommandAsync(changeDirectoryCommand);
+            }
+
+            // Set 'executionTerminalSession' working directory
+            {
+                var executionTerminalSession = _terminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
+                var formattedCommand = TerminalCommandFormatter.FormatChangeDirectory(parentDirectory.Value);
+
+                var changeDirectoryCommand = new TerminalCommand(
+                    Key<TerminalCommand>.NewKey(),
+                    formattedCommand,
+                    parentDirectory.Value,
+                    CancellationToken.None);
+
+                await executionTerminalSession.EnqueueCommandAsync(changeDirectoryCommand);
+            }
+        }
 
         await SetDotNetSolutionTreeViewAsync(dotNetSolutionModel.Key);
     }
