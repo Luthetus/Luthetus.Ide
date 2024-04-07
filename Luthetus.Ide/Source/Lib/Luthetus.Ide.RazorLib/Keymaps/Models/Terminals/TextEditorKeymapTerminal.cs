@@ -166,7 +166,12 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 
                                         var terminalCommand = new TerminalCommand(
                                             Key<TerminalCommand>.NewKey(),
-                                        formattedCommand);
+                                            formattedCommand,
+											ContinueWith: () =>
+											{
+												terminalResource.TerminalSession.WriteWorkingDirectory();
+												return Task.CompletedTask;
+											});
 
                                         await editContext.TextEditorService.ModelApi.InsertTextFactory(
                                                 modelModifier.ResourceUri,

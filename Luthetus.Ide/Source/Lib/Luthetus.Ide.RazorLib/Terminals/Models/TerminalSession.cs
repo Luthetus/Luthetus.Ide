@@ -75,42 +75,7 @@ public class TerminalSession
 
             if (_previousWorkingDirectoryAbsolutePathString != _workingDirectoryAbsolutePathString)
             {
-                _textEditorService.Post(
-                    nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
-                    async editContext =>
-                    {
-                        var modelModifier = editContext.GetModelModifier(ResourceUri);
-                        var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
-                        var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-                        var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-                        if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                            return;
-
-                        var startingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
-
-                        await _textEditorService.ModelApi.InsertTextFactory(
-                                ResourceUri,
-                                TextEditorViewModelKey,
-                                (WorkingDirectoryAbsolutePathString ?? "null") + '>',
-                                CancellationToken.None)
-                            .Invoke(editContext)
-                            .ConfigureAwait(false);
-
-                        var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
-
-                        if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
-                            return;
-
-                        terminalResource.ManualDecorationTextSpanList.Add(new TextEditorTextSpan(
-                            startingPositionIndex,
-                            modelModifier.GetPositionIndex(primaryCursorModifier),
-                            (byte)TerminalDecorationKind.Keyword,
-                            ResourceUri,
-                            modelModifier.GetAllText()));
-
-                        modelModifier.ApplyDecorationRange(terminalResource.GetTokenTextSpans());
-                    });
+                WriteWorkingDirectory();
             }
         }
     }
@@ -477,6 +442,46 @@ public class TerminalSession
                     0,
                     modelModifier.GetPositionIndex(primaryCursorModifier),
                     (byte)TerminalDecorationKind.Comment,
+                    ResourceUri,
+                    modelModifier.GetAllText()));
+
+                modelModifier.ApplyDecorationRange(terminalResource.GetTokenTextSpans());
+            });
+    }
+
+    public void WriteWorkingDirectory()
+    {
+        _textEditorService.Post(
+            nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
+            async editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    return;
+
+                var startingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+
+                await _textEditorService.ModelApi.InsertTextFactory(
+                        ResourceUri,
+                        TextEditorViewModelKey,
+                        (WorkingDirectoryAbsolutePathString ?? "null") + '>',
+                        CancellationToken.None)
+                    .Invoke(editContext)
+                    .ConfigureAwait(false);
+
+                var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
+
+                if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
+                    return;
+
+                terminalResource.ManualDecorationTextSpanList.Add(new TextEditorTextSpan(
+                    startingPositionIndex,
+                    modelModifier.GetPositionIndex(primaryCursorModifier),
+                    (byte)TerminalDecorationKind.Keyword,
                     ResourceUri,
                     modelModifier.GetAllText()));
 
