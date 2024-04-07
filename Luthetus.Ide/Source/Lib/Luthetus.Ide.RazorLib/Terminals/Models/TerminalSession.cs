@@ -190,7 +190,10 @@ public class TerminalSession
                     terminalCommand.FormattedCommand.ArgumentsList.Any())
                 {
                     // TODO: Don't keep this logic as it is hacky. I'm trying to set myself up to be able to run "gcc" to compile ".c" files. Then I can work on adding symbol related logic like "go to definition" or etc.
-                    WorkingDirectoryAbsolutePathString = terminalCommand.FormattedCommand.ArgumentsList.ElementAt(0);
+                    if (terminalCommand.FormattedCommand.HACK_ArgumentsString is null)
+                        WorkingDirectoryAbsolutePathString = terminalCommand.FormattedCommand.ArgumentsList.ElementAt(0);
+                    else
+                        WorkingDirectoryAbsolutePathString = terminalCommand.FormattedCommand.HACK_ArgumentsString;
                 }
 
                 _terminalCommandsHistory.Add(terminalCommand);

@@ -69,6 +69,9 @@ public class TerminalLexer : LuthLexer
             DecorationByte = (byte)TerminalDecorationKind.TargetFilePath
         });
 
+        // Skip whitespace between TargetFilePath and the arguments
+        _ = _stringWalker.ReadWhitespace();
+
         // Perhaps it makes more sense to lex each argument separately at this step.
         //     However, for now just keep the decoration kind of the arguments as 'None'
         //     and track the arguments as a single 'string' so it can be passed to 'CliWrap'

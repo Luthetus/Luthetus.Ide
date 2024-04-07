@@ -148,7 +148,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 											0,
 											modelModifier.ResourceUri,
 											modelModifier.GetAllText());
-
+										
 										TextEditorTextSpan targetFilePathTextSpan;
 										TextEditorTextSpan argumentsTextSpan;
 
@@ -172,6 +172,8 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 												terminalResource.TerminalSession.WriteWorkingDirectory();
 												return Task.CompletedTask;
 											});
+
+										terminalResource.ManualDecorationTextSpanList.Add(terminalResource.TargetFilePathTextSpan);
 
                                         await editContext.TextEditorService.ModelApi.InsertTextFactory(
                                                 modelModifier.ResourceUri,
