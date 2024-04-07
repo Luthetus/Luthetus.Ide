@@ -286,13 +286,36 @@ public class TerminalSession
                                             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                                                 return;
 
+                                            var startingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+
+                                            var result = output + '\n';
+
+                                            var outputTextSpans = DotNetRunOutputParser.Parse(result);
+
                                             await _textEditorService.ModelApi.InsertTextFactory(
                                                     ResourceUri,
                                                     TextEditorViewModelKey,
-                                                    output + '\n',
+                                                    result,
                                                     CancellationToken.None)
                                                 .Invoke(editContext)
                                                 .ConfigureAwait(false);
+
+                                            var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
+
+                                            if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
+                                                return;
+
+                                            var allText = modelModifier.GetAllText();
+
+                                            terminalResource.ManualDecorationTextSpanList.AddRange(outputTextSpans.Select(x => x with
+                                            {
+                                                StartingIndexInclusive = startingPositionIndex + x.StartingIndexInclusive,
+                                                EndingIndexExclusive = startingPositionIndex + x.EndingIndexExclusive,
+                                                ResourceUri = ResourceUri,
+                                                SourceText = allText,
+                                            }));
+
+                                            modelModifier.ApplyDecorationRange(terminalResource.GetTokenTextSpans());
                                         });
                                 }
 

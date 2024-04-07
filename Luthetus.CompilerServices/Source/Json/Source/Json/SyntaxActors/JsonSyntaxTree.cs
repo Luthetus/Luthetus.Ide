@@ -411,8 +411,8 @@ public class JsonSyntaxTree
 
         var firstWordTuple = stringWalker.ReadWordTuple(new[]
         {
-        ','
-    }.ToImmutableArray());
+            ','
+        }.ToImmutableArray());
 
         if (JsonFacts.NULL_STRING_VALUE == firstWordTuple.value)
         {

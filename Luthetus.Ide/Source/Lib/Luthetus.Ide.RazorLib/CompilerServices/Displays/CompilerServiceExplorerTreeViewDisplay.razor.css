@@ -1,7 +1,12 @@
 .luth_ide_compiler-explorer-tree-view {
-    height: calc(100% - 32px);
+    height: calc(100%);
+}
+
+.luth_ide_compiler-explorer-tree-view-title {
+    height: 2rem;
+    text-wrap: nowrap;
 }
 
 .luth_ide_compiler-explorer-tree-view-body {
-    height: calc(100% - 32px);
+    height: calc(100% - 2rem);
 }

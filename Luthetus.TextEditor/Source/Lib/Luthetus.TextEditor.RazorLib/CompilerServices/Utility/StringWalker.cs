@@ -258,7 +258,10 @@ public class StringWalker
         return textBuilder.ToString();
     }
 
-    /// <summary><see cref="ReadWordTuple"/> will return immediately upon encountering whitespace.</summary>
+    /// <summary>
+    /// This method will return immediately upon encountering whitespace.
+    /// Returns a text span with its <see cref="TextEditorTextSpan.StartingIndexInclusive"/> equal to '-1' if no word was found.
+    /// </summary>
     public (TextEditorTextSpan textSpan, string value) ReadWordTuple(ImmutableArray<char>? additionalCharactersToBreakOnList = null)
     {
         additionalCharactersToBreakOnList ??= ImmutableArray<char>.Empty;

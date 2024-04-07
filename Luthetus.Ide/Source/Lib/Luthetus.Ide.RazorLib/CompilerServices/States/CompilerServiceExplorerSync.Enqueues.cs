@@ -48,6 +48,9 @@ public partial class CompilerServiceExplorerSync
                 var jsonCompilerServiceWatchWindowObject = new WatchWindowObject(
                     _compilerServiceRegistry.JsonCompilerService, _compilerServiceRegistry.JsonCompilerService.GetType(), "JSON", true);
 
+                var terminalCompilerServiceWatchWindowObject = new WatchWindowObject(
+                    _compilerServiceRegistry.TerminalCompilerService, _compilerServiceRegistry.TerminalCompilerService.GetType(), "Terminal", true);
+
                 var rootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
                     new TreeViewReflectionWithView(xmlCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
                     new TreeViewReflectionWithView(dotNetSolutionCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
@@ -58,7 +61,8 @@ public partial class CompilerServiceExplorerSync
                     new TreeViewReflectionWithView(fSharpCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
                     new TreeViewReflectionWithView(javaScriptCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
                     new TreeViewReflectionWithView(typeScriptCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
-                    new TreeViewReflectionWithView(jsonCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers));
+                    new TreeViewReflectionWithView(jsonCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
+                    new TreeViewReflectionWithView(terminalCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers));
 
                 await rootNode.LoadChildListAsync();
 

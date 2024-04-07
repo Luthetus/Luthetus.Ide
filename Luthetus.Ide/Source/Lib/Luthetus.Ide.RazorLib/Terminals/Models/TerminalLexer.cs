@@ -56,7 +56,11 @@ public class TerminalLexer : LuthLexer
         else
         {
             var wordTuple = _stringWalker.ReadWordTuple();
-            _syntaxTokenList.Add(new IdentifierToken(wordTuple.textSpan));
+
+            if (wordTuple.textSpan.StartingIndexInclusive != -1)
+            {
+                _syntaxTokenList.Add(new IdentifierToken(wordTuple.textSpan));
+            }
         }
 
         // Rewrite the token that was read to be an identifier token.
@@ -82,20 +86,20 @@ public class TerminalLexer : LuthLexer
         {
             switch (_stringWalker.CurrentCharacter)
             {
-                case '"':
-                    LuthLexerUtils.LexStringLiteralToken(_stringWalker, _syntaxTokenList);
-                    _syntaxTokenList[^1] = new IdentifierToken(lastEntry.TextSpan with
-                    {
-                        DecorationByte = (byte)TerminalDecorationKind.StringLiteral
-                    });
-                    break;
-                case '\'':
-                    LexStringLiteralTokenWithSingleQuoteDelimiter(_stringWalker, _syntaxTokenList);
-                    _syntaxTokenList[^1] = new IdentifierToken(lastEntry.TextSpan with
-                    {
-                        DecorationByte = (byte)TerminalDecorationKind.StringLiteral
-                    });
-                    break;
+                //case '"':
+                //    LuthLexerUtils.LexStringLiteralToken(_stringWalker, _syntaxTokenList);
+                //    _syntaxTokenList[^1] = new IdentifierToken(lastEntry.TextSpan with
+                //    {
+                //        DecorationByte = (byte)TerminalDecorationKind.StringLiteral
+                //    });
+                //    break;
+                //case '\'':
+                //    LexStringLiteralTokenWithSingleQuoteDelimiter(_stringWalker, _syntaxTokenList);
+                //    _syntaxTokenList[^1] = new IdentifierToken(lastEntry.TextSpan with
+                //    {
+                //        DecorationByte = (byte)TerminalDecorationKind.StringLiteral
+                //    });
+                //    break;
                 default:
                     _ = _stringWalker.ReadCharacter();
                     break;
@@ -106,10 +110,13 @@ public class TerminalLexer : LuthLexer
         {
             // Keep a reference to the target file path text span so the text value can
             //     be passed in to 'CliWrap'.
-            _terminalResource.TargetFilePathTextSpan = _syntaxTokenList[^1].TextSpan;
+            if (_syntaxTokenList[^1].TextSpan.StartingIndexInclusive != -1)
+            {
+                _terminalResource.TargetFilePathTextSpan = _syntaxTokenList[^1].TextSpan;
 
-            _terminalResource.ArgumentsTextSpan = new TextEditorTextSpan(
-                argumentsStartingPositionIndex, _stringWalker, decorationByte: 0);
+                _terminalResource.ArgumentsTextSpan = new TextEditorTextSpan(
+                    argumentsStartingPositionIndex, _stringWalker, decorationByte: 0);
+            }
         }
 
         var endOfFileTextSpan = new TextEditorTextSpan(

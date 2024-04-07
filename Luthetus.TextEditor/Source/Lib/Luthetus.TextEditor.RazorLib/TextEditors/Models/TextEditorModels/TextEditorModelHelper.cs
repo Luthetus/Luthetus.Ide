@@ -135,7 +135,7 @@ public static class TextEditorModelHelper
 		{
 			for (var i = textEditorTextSpan.StartingIndexInclusive; i < textEditorTextSpan.EndingIndexExclusive; i++)
 			{
-				if (i >= localContent.Count)
+				if (i < 0 || i >= localContent.Count)
 					continue;
 
 				localContent[i].DecorationByte = textEditorTextSpan.DecorationByte;

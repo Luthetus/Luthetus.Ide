@@ -7,4 +7,6 @@ public enum TerminalDecorationKind
     Keyword,
     StringLiteral,
     TargetFilePath,
+    Error,
+    Warning,
 }
