@@ -321,7 +321,7 @@ public class TerminalSession
                                             await _textEditorService.ModelApi.InsertTextFactory(
                                                     ResourceUri,
                                                     TextEditorViewModelKey,
-                                                    output,
+                                                    output + '\n',
                                                     CancellationToken.None)
                                                 .Invoke(editContext)
                                                 .ConfigureAwait(false);

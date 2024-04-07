@@ -23,6 +23,7 @@ using Fluxor;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.Ide.RazorLib.Keymaps.Models.Terminals;
 
@@ -165,7 +166,15 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 
                                         var terminalCommand = new TerminalCommand(
                                             Key<TerminalCommand>.NewKey(),
-                                            formattedCommand);
+                                        formattedCommand);
+
+                                        await editContext.TextEditorService.ModelApi.InsertTextFactory(
+                                                modelModifier.ResourceUri,
+												viewModelModifier.ViewModel.ViewModelKey,
+												"\n",
+												CancellationToken.None)
+											.Invoke(editContext)
+											.ConfigureAwait(false);
 
                                         await generalTerminalSession.EnqueueCommandAsync(terminalCommand);
                                     }
