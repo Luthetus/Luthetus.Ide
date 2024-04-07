@@ -18,7 +18,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
@@ -301,11 +300,33 @@ public class TerminalSession
 
 								if (output is not null)
 								{
+                                    // This lock is dead code and should be removed.
 									lock(_standardOutBuilderMapLock)
 									{
                                         _standardOutBuilderMap[terminalCommandKey].TextLineList.Add(output);
                                     }
-								}
+
+                                    _textEditorService.Post(
+                                        nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
+                                        async editContext =>
+                                        {
+                                            var modelModifier = editContext.GetModelModifier(ResourceUri);
+                                            var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
+                                            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+                                            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                                            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                                                return;
+
+                                            await _textEditorService.ModelApi.InsertTextFactory(
+                                                    ResourceUri,
+                                                    TextEditorViewModelKey,
+                                                    output,
+                                                    CancellationToken.None)
+                                                .Invoke(editContext)
+                                                .ConfigureAwait(false);
+                                        });
+                                }
 
                                 DispatchNewStateKey();
                             });

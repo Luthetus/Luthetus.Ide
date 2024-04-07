@@ -177,11 +177,10 @@ public partial class DotNetSolutionSync
             // Set 'generalTerminalSession' working directory
             {
                 var generalTerminalSession = _terminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
-                var formattedCommand = TerminalCommandFormatter.FormatChangeDirectory(parentDirectory.Value);
 
                 var changeDirectoryCommand = new TerminalCommand(
                     Key<TerminalCommand>.NewKey(),
-                    formattedCommand,
+                    new FormattedCommand(string.Empty, new string[] { }),
                     parentDirectory.Value,
                     CancellationToken.None);
 
@@ -191,11 +190,10 @@ public partial class DotNetSolutionSync
             // Set 'executionTerminalSession' working directory
             {
                 var executionTerminalSession = _terminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
-                var formattedCommand = TerminalCommandFormatter.FormatChangeDirectory(parentDirectory.Value);
 
                 var changeDirectoryCommand = new TerminalCommand(
                     Key<TerminalCommand>.NewKey(),
-                    formattedCommand,
+                    new FormattedCommand(string.Empty, new string[] { }),
                     parentDirectory.Value,
                     CancellationToken.None);
 
