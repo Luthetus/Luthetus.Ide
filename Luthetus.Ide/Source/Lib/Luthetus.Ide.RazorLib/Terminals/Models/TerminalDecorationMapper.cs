@@ -13,6 +13,8 @@ public class TerminalDecorationMapper : IDecorationMapper
             TerminalDecorationKind.None => string.Empty,
             TerminalDecorationKind.Comment => "luth_te_comment",
             TerminalDecorationKind.Keyword => "luth_te_keyword",
+            TerminalDecorationKind.StringLiteral => "luth_te_string-literal",
+            TerminalDecorationKind.TargetFilePath => "luth_te_type",
             _ => string.Empty,
         };
     }

@@ -6,6 +6,14 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
+/// <summary>
+/// TODO: Rewrite this class such that the lexed token is returned,...
+///       ...rather than added to the list of 'syntaxTokens'.
+///       |
+///       It is awkward when one wants to use the 'Lex...(...)' method, yet
+///       afterwards needs to replace the last entry of 'syntaxTokens'
+///       with something of a different class, or syntax kind.
+/// </summary>
 public static class LuthLexerUtils
 {
     public static void LexNumericLiteralToken(

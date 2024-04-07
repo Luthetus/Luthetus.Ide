@@ -1,181 +1,91 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public class TerminalLexer : LuthLexer
 {
-    public TerminalLexer(ResourceUri resourceUri, string sourceText)
-        : base(resourceUri, sourceText, LuthLexerKeywords.Empty)
+    private readonly TerminalResource _terminalResource;
+
+    public TerminalLexer(TerminalResource terminalResource, string sourceText)
+        : base(terminalResource.ResourceUri, sourceText, LuthLexerKeywords.Empty)
     {
+        _terminalResource = terminalResource;
     }
 
     public override void Lex()
     {
-        return;
+        // Skip to the 'editable' position index.
+        //     (i.e.): the final line, and the first available column after the working directory text.
+        {
+            // Hackily look at the last entry of the 'manual decoration list' because every
+            //     'working directory text' token is added to this list.
+            var workingDirectoryTextSpan = _terminalResource.ManualDecorationTextSpanList.Last();
+
+            for (int i = 0; i < workingDirectoryTextSpan.EndingIndexExclusive; i++)
+            {
+                if (_stringWalker.IsEof)
+                    break;
+
+                _ = _stringWalker.ReadCharacter();
+            }
+        }
+
+        // Skip and leading whitespace
+        _ = _stringWalker.ReadWhitespace();
+
+        // Lex the first 'word' or string-like token
+        //
+        // Ex:
+        //     cd ..                        // 'cd' would be a word.
+        //     "/dot net/source/" --version // "/dot net/source/" would be a string deliminated with double quotes.
+        //     '/programs/git/' init        // '/programs/git/' would be a string deliminated with single quotes.
+        if (_stringWalker.CurrentCharacter == '"')
+        {
+            LuthLexerUtils.LexStringLiteralToken(_stringWalker, _syntaxTokenList);
+        }
+        else if (_stringWalker.CurrentCharacter == '\'')
+        {
+            LexStringLiteralTokenWithSingleQuoteDelimiter(_stringWalker, _syntaxTokenList);
+        }
+        else
+        {
+            var wordTuple = _stringWalker.ReadWordTuple();
+            _syntaxTokenList.Add(new IdentifierToken(wordTuple.textSpan));
+        }
+
+        // Rewrite the token that was read to be an identifier token.
+        //
+        // This code is a bit odd, and hacky, because the 'LexStringLiteralToken' will construct a string token,
+        //     even though in the this context, we are reading the target file path for the terminal command.
+        var lastEntry = _syntaxTokenList[^1];
+        _syntaxTokenList[^1] = new IdentifierToken(lastEntry.TextSpan with
+        {
+            DecorationByte = (byte)TerminalDecorationKind.TargetFilePath
+        });
+
         while (!_stringWalker.IsEof)
         {
             switch (_stringWalker.CurrentCharacter)
             {
-                /* Lowercase Letters */
-                case 'a':
-                case 'b':
-                case 'c':
-                case 'd':
-                case 'e':
-                case 'f':
-                case 'g':
-                case 'h':
-                case 'i':
-                case 'j':
-                case 'k':
-                case 'l':
-                case 'm':
-                case 'n':
-                case 'o':
-                case 'p':
-                case 'q':
-                case 'r':
-                case 's':
-                case 't':
-                case 'u':
-                case 'v':
-                case 'w':
-                case 'x':
-                case 'y':
-                case 'z':
-                /* Uppercase Letters */
-                case 'A':
-                case 'B':
-                case 'C':
-                case 'D':
-                case 'E':
-                case 'F':
-                case 'G':
-                case 'H':
-                case 'I':
-                case 'J':
-                case 'K':
-                case 'L':
-                case 'M':
-                case 'N':
-                case 'O':
-                case 'P':
-                case 'Q':
-                case 'R':
-                case 'S':
-                case 'T':
-                case 'U':
-                case 'V':
-                case 'W':
-                case 'X':
-                case 'Y':
-                case 'Z':
-                /* Underscore */
-                case '_':
-                    LuthLexerUtils.LexIdentifierOrKeywordOrKeywordContextual(_stringWalker, _syntaxTokenList, LexerKeywords);
-                    break;
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                    LuthLexerUtils.LexNumericLiteralToken(_stringWalker, _syntaxTokenList);
-                    break;
                 case '"':
                     LuthLexerUtils.LexStringLiteralToken(_stringWalker, _syntaxTokenList);
+                    _syntaxTokenList[^1] = new IdentifierToken(lastEntry.TextSpan with
+                    {
+                        DecorationByte = (byte)TerminalDecorationKind.StringLiteral
+                    });
                     break;
-                case '/':
-                    if (_stringWalker.PeekCharacter(1) == '/')
-                        LuthLexerUtils.LexCommentSingleLineToken(_stringWalker, _syntaxTokenList);
-                    else if (_stringWalker.PeekCharacter(1) == '*')
-                        LuthLexerUtils.LexCommentMultiLineToken(_stringWalker, _syntaxTokenList);
-                    else
-                        LuthLexerUtils.LexDivisionToken(_stringWalker, _syntaxTokenList);
-
-                    break;
-                case '+':
-                    if (_stringWalker.PeekCharacter(1) == '+')
-                        LuthLexerUtils.LexPlusPlusToken(_stringWalker, _syntaxTokenList);
-                    else
-                        LuthLexerUtils.LexPlusToken(_stringWalker, _syntaxTokenList);
-
-                    break;
-                case '-':
-                    if (_stringWalker.PeekCharacter(1) == '-')
-                        LuthLexerUtils.LexMinusMinusToken(_stringWalker, _syntaxTokenList);
-                    else
-                        LuthLexerUtils.LexMinusToken(_stringWalker, _syntaxTokenList);
-
-                    break;
-                case '=':
-                    if (_stringWalker.PeekCharacter(1) == '=')
-                        LuthLexerUtils.LexEqualsEqualsToken(_stringWalker, _syntaxTokenList);
-                    else
-                        LuthLexerUtils.LexEqualsToken(_stringWalker, _syntaxTokenList);
-
-                    break;
-                case '?':
-                    if (_stringWalker.PeekCharacter(1) == '?')
-                        LuthLexerUtils.LexQuestionMarkQuestionMarkToken(_stringWalker, _syntaxTokenList);
-                    else
-                        LuthLexerUtils.LexQuestionMarkToken(_stringWalker, _syntaxTokenList);
-
-                    break;
-                case '*':
-                    LuthLexerUtils.LexStarToken(_stringWalker, _syntaxTokenList);
-                    break;
-                case '!':
-                    LuthLexerUtils.LexBangToken(_stringWalker, _syntaxTokenList);
-                    break;
-                case ';':
-                    LuthLexerUtils.LexStatementDelimiterToken(_stringWalker, _syntaxTokenList);
-                    break;
-                case '(':
-                    LuthLexerUtils.LexOpenParenthesisToken(_stringWalker, _syntaxTokenList);
-                    break;
-                case ')':
-                    LuthLexerUtils.LexCloseParenthesisToken(_stringWalker, _syntaxTokenList);
-                    break;
-                case '{':
-                    LuthLexerUtils.LexOpenBraceToken(_stringWalker, _syntaxTokenList);
-                    break;
-                case '}':
-                    LuthLexerUtils.LexCloseBraceToken(_stringWalker, _syntaxTokenList);
-                    break;
-                case '<':
-                    LuthLexerUtils.LexOpenAngleBracketToken(_stringWalker, _syntaxTokenList);
-                    break;
-                case '>':
-                    LuthLexerUtils.LexCloseAngleBracketToken(_stringWalker, _syntaxTokenList);
-                    break;
-                case '[':
-                    LuthLexerUtils.LexOpenSquareBracketToken(_stringWalker, _syntaxTokenList);
-                    break;
-                case ']':
-                    LuthLexerUtils.LexCloseSquareBracketToken(_stringWalker, _syntaxTokenList);
-                    break;
-                case '$':
-                    LuthLexerUtils.LexDollarSignToken(_stringWalker, _syntaxTokenList);
-                    break;
-                case ':':
-                    LuthLexerUtils.LexColonToken(_stringWalker, _syntaxTokenList);
-                    break;
-                case '.':
-                    LuthLexerUtils.LexMemberAccessToken(_stringWalker, _syntaxTokenList);
-                    break;
-                case ',':
-                    LuthLexerUtils.LexCommaToken(_stringWalker, _syntaxTokenList);
-                    break;
-                case '#':
-                    LuthLexerUtils.LexPreprocessorDirectiveToken(_stringWalker, _syntaxTokenList);
+                case '\'':
+                    LexStringLiteralTokenWithSingleQuoteDelimiter(_stringWalker, _syntaxTokenList);
+                    _syntaxTokenList[^1] = new IdentifierToken(lastEntry.TextSpan with
+                    {
+                        DecorationByte = (byte)TerminalDecorationKind.StringLiteral
+                    });
                     break;
                 default:
                     _ = _stringWalker.ReadCharacter();
@@ -191,5 +101,43 @@ public class TerminalLexer : LuthLexer
             _stringWalker.SourceText);
 
         _syntaxTokenList.Add(new EndOfFileToken(endOfFileTextSpan));
+    }
+
+    public static void LexStringLiteralTokenWithSingleQuoteDelimiter(
+        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+    {
+        var entryPositionIndex = stringWalker.PositionIndex;
+
+        // Move past the initial opening character
+        _ = stringWalker.ReadCharacter();
+
+        // Declare outside the while loop to avoid overhead of redeclaring each loop? not sure
+        var wasClosingCharacter = false;
+
+        while (!stringWalker.IsEof)
+        {
+            switch (stringWalker.CurrentCharacter)
+            {
+                case '\'':
+                    wasClosingCharacter = true;
+                    break;
+                default:
+                    break;
+            }
+
+            _ = stringWalker.ReadCharacter();
+
+            if (wasClosingCharacter)
+                break;
+        }
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.StringLiteral,
+            stringWalker.ResourceUri,
+            stringWalker.SourceText);
+
+        syntaxTokens.Add(new StringLiteralToken(textSpan));
     }
 }

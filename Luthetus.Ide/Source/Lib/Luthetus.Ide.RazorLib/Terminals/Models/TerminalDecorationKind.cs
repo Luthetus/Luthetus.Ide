@@ -5,4 +5,6 @@ public enum TerminalDecorationKind
     None,
     Comment,
     Keyword,
+    StringLiteral,
+    TargetFilePath,
 }

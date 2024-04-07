@@ -103,7 +103,7 @@ public class TerminalSession
                         if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
                             return;
 
-                        terminalResource.ManualDecorationList.Add(new TextEditorTextSpan(
+                        terminalResource.ManualDecorationTextSpanList.Add(new TextEditorTextSpan(
                             startingPositionIndex,
                             modelModifier.GetPositionIndex(primaryCursorModifier),
                             (byte)TerminalDecorationKind.Keyword,
@@ -447,7 +447,7 @@ public class TerminalSession
                 if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
                     return;
 
-                terminalResource.ManualDecorationList.Add(new TextEditorTextSpan(
+                terminalResource.ManualDecorationTextSpanList.Add(new TextEditorTextSpan(
                     0,
                     modelModifier.GetPositionIndex(primaryCursorModifier),
                     (byte)TerminalDecorationKind.Comment,

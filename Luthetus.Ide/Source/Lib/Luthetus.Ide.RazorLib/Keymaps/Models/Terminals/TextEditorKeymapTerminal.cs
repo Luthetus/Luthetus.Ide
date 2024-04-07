@@ -22,6 +22,7 @@ using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Fluxor;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Keymaps.Models.Terminals;
 
@@ -138,7 +139,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
                                             return;
 
                                         // The final entry of the decoration list is hackily being presumed to be a working directory.
-                                        var mostRecentWorkingDirectoryText = terminalResource.ManualDecorationList.Last();
+                                        var mostRecentWorkingDirectoryText = terminalResource.ManualDecorationTextSpanList.Last();
 
 										var input = new TextEditorTextSpan(
 											mostRecentWorkingDirectoryText.EndingIndexExclusive,
@@ -171,7 +172,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
                                             return;
 
                                         // The final entry of the decoration list is hackily being presumed to be a working directory.
-                                        var mostRecentWorkingDirectoryText = terminalResource.ManualDecorationList.Last();
+                                        var mostRecentWorkingDirectoryText = terminalResource.ManualDecorationTextSpanList.Last();
 
 										var primaryCursorModifierPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 
@@ -193,6 +194,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 										else
 										{
                                             await throttleEventOnKeyDown.InvokeWithEditContext(editContext);
+											terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
                                         }
                                     }
                                 }
@@ -221,7 +223,15 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 						else
 						{
 							await throttleEventOnKeyDown.InvokeWithEditContext(editContext);
-						}
+
+                            var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
+
+                            var terminalResource = terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) as TerminalResource;
+                            if (terminalResource is null)
+                                return;
+
+                            terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
+                        }
 					});
 
 				return Task.CompletedTask;

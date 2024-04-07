@@ -1,3 +1,5 @@
+using Fluxor;
+using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
@@ -7,13 +9,15 @@ namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public sealed class TerminalCompilerService : LuthCompilerService
 {
-    public TerminalCompilerService(ITextEditorService textEditorService)
+    public TerminalCompilerService(
+            ITextEditorService textEditorService,
+            IState<TerminalSessionState> terminalSessionStateWrap)
         : base(textEditorService)
     {
         _compilerServiceOptions = new()
         {
-            RegisterResourceFunc = resourceUri => new TerminalResource(resourceUri, this),
-            GetLexerFunc = (resource, sourceText) => new TerminalLexer(resource.ResourceUri, sourceText),
+            RegisterResourceFunc = resourceUri => new TerminalResource(resourceUri, this, terminalSessionStateWrap),
+            GetLexerFunc = (resource, sourceText) => new TerminalLexer((TerminalResource)resource, sourceText),
         };
     }
 

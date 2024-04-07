@@ -1,4 +1,5 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.CompilerServices.Lang.C;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
@@ -11,6 +12,7 @@ using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.TypeScript;
 using Luthetus.CompilerServices.Lang.Xml;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -27,7 +29,8 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
 
     public CompilerServiceRegistry(
         ITextEditorService textEditorService,
-        IEnvironmentProvider environmentProvider)
+        IEnvironmentProvider environmentProvider,
+        IState<TerminalSessionState> terminalSessionStateWrap)
     {
         CSharpCompilerService = new CSharpCompilerService(textEditorService);
         CSharpProjectCompilerService = new CSharpProjectCompilerService(textEditorService);
@@ -40,7 +43,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
         TypeScriptCompilerService = new TypeScriptCompilerService(textEditorService);
         XmlCompilerService = new XmlCompilerService(textEditorService);
         CCompilerService = new CCompilerService(textEditorService);
-        TerminalCompilerService = new TerminalCompilerService(textEditorService);
+        TerminalCompilerService = new TerminalCompilerService(textEditorService, terminalSessionStateWrap);
         DefaultCompilerService = new LuthCompilerService(textEditorService);
 
         _map.Add(ExtensionNoPeriodFacts.HTML, XmlCompilerService);
