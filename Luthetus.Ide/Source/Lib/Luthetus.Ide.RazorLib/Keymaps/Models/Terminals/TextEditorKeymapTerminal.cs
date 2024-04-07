@@ -148,9 +148,24 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 											modelModifier.ResourceUri,
 											modelModifier.GetAllText());
 
+										TextEditorTextSpan targetFilePathTextSpan;
+										TextEditorTextSpan argumentsTextSpan;
+
+										lock (terminalResource.UnsafeStateLock)
+										{
+											targetFilePathTextSpan = terminalResource.TargetFilePathTextSpan;
+											argumentsTextSpan = terminalResource.ArgumentsTextSpan;
+                                        }
+
+                                        var formattedCommand = new FormattedCommand(
+											targetFilePathTextSpan.GetText(),
+                                            new string[] { argumentsTextSpan.GetText() });
+
+										formattedCommand.HACK_ArgumentsString = argumentsTextSpan.GetText();
+
                                         var terminalCommand = new TerminalCommand(
                                             Key<TerminalCommand>.NewKey(),
-                                            new FormattedCommand(input.GetText(), Array.Empty<string>()));
+                                            formattedCommand);
 
                                         await generalTerminalSession.EnqueueCommandAsync(terminalCommand);
                                     }

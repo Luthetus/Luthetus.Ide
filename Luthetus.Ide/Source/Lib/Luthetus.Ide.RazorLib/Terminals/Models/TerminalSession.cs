@@ -235,7 +235,12 @@ public class TerminalSession
                 var command = Cli.Wrap(terminalCommand.FormattedCommand.TargetFileName);
 
                 if (terminalCommand.FormattedCommand.ArgumentsList.Any())
-                    command = command.WithArguments(terminalCommand.FormattedCommand.ArgumentsList);
+                {
+                    if (terminalCommand.FormattedCommand.HACK_ArgumentsString is null)
+                        command = command.WithArguments(terminalCommand.FormattedCommand.ArgumentsList);
+                    else
+                        command = command.WithArguments(terminalCommand.FormattedCommand.HACK_ArgumentsString);
+                }
 
                 if (terminalCommand.ChangeWorkingDirectoryTo is not null)
                     command = command.WithWorkingDirectory(terminalCommand.ChangeWorkingDirectoryTo);

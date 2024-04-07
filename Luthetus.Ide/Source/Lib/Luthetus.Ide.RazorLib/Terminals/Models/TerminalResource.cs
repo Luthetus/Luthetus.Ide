@@ -11,6 +11,15 @@ public class TerminalResource : LuthCompilerServiceResource
 {
     private readonly IState<TerminalSessionState> _terminalSessionStateWrap;
 
+    /// <summary>
+    /// The <see cref="ArgumentsTextSpan"/> and <see cref="TargetFilePathTextSpan"/> are currently
+    /// mutable state. If these properties are re-written, then this lock is not needed.<br/><br/>
+    /// 
+    /// This lock is intended to be used only to read or write to <see cref="ArgumentsTextSpan"/> or <see cref="TargetFilePathTextSpan"/>
+    /// and preferably, one would in bulk, read or write both properties from the same lock() { ... }
+    /// </summary>
+    public readonly object UnsafeStateLock = new();
+
     public TerminalResource(
             ResourceUri resourceUri,
             TerminalCompilerService terminalCompilerService,
@@ -21,6 +30,8 @@ public class TerminalResource : LuthCompilerServiceResource
     }
 
     public override ImmutableArray<ISyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
+    public TextEditorTextSpan ArgumentsTextSpan { get; set; } = new TextEditorTextSpan(0, 0, 0, new ResourceUri(string.Empty), string.Empty);
+    public TextEditorTextSpan TargetFilePathTextSpan { get; set; } = new TextEditorTextSpan(0, 0, 0, new ResourceUri(string.Empty), string.Empty);
     public List<TextEditorTextSpan> ManualDecorationTextSpanList { get; } = new List<TextEditorTextSpan>();
 
     public TerminalSession TerminalSession => _terminalSessionStateWrap.Value.TerminalSessionMap.Values.First(

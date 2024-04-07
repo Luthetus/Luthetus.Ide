@@ -69,6 +69,12 @@ public class TerminalLexer : LuthLexer
             DecorationByte = (byte)TerminalDecorationKind.TargetFilePath
         });
 
+        // Perhaps it makes more sense to lex each argument separately at this step.
+        //     However, for now just keep the decoration kind of the arguments as 'None'
+        //     and track the arguments as a single 'string' so it can be passed to 'CliWrap'
+        //     as Cli.Wrap(targetFileName, argumentsString)
+        var argumentsStartingPositionIndex = _stringWalker.PositionIndex;
+
         while (!_stringWalker.IsEof)
         {
             switch (_stringWalker.CurrentCharacter)
@@ -91,6 +97,16 @@ public class TerminalLexer : LuthLexer
                     _ = _stringWalker.ReadCharacter();
                     break;
             }
+        }
+
+        lock (_terminalResource.UnsafeStateLock)
+        {
+            // Keep a reference to the target file path text span so the text value can
+            //     be passed in to 'CliWrap'.
+            _terminalResource.TargetFilePathTextSpan = _syntaxTokenList[^1].TextSpan;
+
+            _terminalResource.ArgumentsTextSpan = new TextEditorTextSpan(
+                argumentsStartingPositionIndex, _stringWalker, decorationByte: 0);
         }
 
         var endOfFileTextSpan = new TextEditorTextSpan(
