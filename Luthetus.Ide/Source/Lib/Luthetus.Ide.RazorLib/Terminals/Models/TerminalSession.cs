@@ -378,13 +378,18 @@ public class TerminalSession
 
     private void CreateTextEditor()
     {
-        var text = "Integrated-Terminal";
+        var line1 = "Integrated-Terminal";
+        var line2 = "Try: cmd /c \"dir\"";
+
+        var longestLineLength = Math.Max(line1.Length, line2.Length);
+
         var model = new TextEditorModel(
             ResourceUri,
             DateTime.UtcNow,
             "terminal",
-            $"{text}\n" +
-                new string('=', text.Length) +
+            $"{line1}\n" +
+                $"{line2}\n" +
+                new string('=', longestLineLength) +
                 "\n\n",
             new TerminalDecorationMapper(),
             _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL));

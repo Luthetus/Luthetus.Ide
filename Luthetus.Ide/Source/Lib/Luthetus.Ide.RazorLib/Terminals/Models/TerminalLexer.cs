@@ -58,9 +58,7 @@ public class TerminalLexer : LuthLexer
             var wordTuple = _stringWalker.ReadWordTuple();
 
             if (wordTuple.textSpan.StartingIndexInclusive != -1)
-            {
                 _syntaxTokenList.Add(new IdentifierToken(wordTuple.textSpan));
-            }
         }
 
         // Rewrite the token that was read to be an identifier token.
