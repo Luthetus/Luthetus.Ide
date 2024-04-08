@@ -183,6 +183,10 @@ em.luth_em {
     color: var(--luth_error-foreground-color)
 }
 
+.luth_tree-view-warning {
+    color: var(--luth_warning-foreground-color)
+}
+
 .luth_context-menu-content {
     z-index: var(--luth_dropdown-display-z-index);
     position: absolute;
@@ -337,6 +341,7 @@ ul.luth_indent-child-content {
     --luth_active-button-primary-font-color: var(--luth_primary-font-color);
     --luth_hr-primary-background-color: currentColor;
     --luth_error-foreground-color: #e55d62;
+    --luth_warning-foreground-color: #c0c03c;
     --luth_outline-color: var(--balc-primary-outline-color);
     --luth_active-but-not-focused-background-color: var(--balc-primary-active-not-focused-background-color);
     --luth_context-menu-background-color: red;
@@ -419,6 +424,7 @@ ul.luth_indent-child-content {
     --luth_active-button-primary-font-color: var(--luth_primary-font-color);
     --luth_hr-primary-background-color: currentColor;
     --luth_error-foreground-color: red;
+    --luth_warning-foreground-color: #8f00d7;
     --luth_outline-color: #33bcec;
     --luth_active-but-not-focused-background-color: #7f8e93;
     --luth_context-menu-background-color: red;

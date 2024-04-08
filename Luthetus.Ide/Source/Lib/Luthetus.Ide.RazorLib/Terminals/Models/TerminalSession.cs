@@ -19,6 +19,8 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
@@ -186,14 +188,19 @@ public class TerminalSession
                 if (terminalCommand.ChangeWorkingDirectoryTo is not null)
                     WorkingDirectoryAbsolutePathString = terminalCommand.ChangeWorkingDirectoryTo;
 
-                if (terminalCommand.FormattedCommand.TargetFileName == "cd" &&
-                    terminalCommand.FormattedCommand.ArgumentsList.Any())
+                if (terminalCommand.FormattedCommand.TargetFileName == "cd")
                 {
                     // TODO: Don't keep this logic as it is hacky. I'm trying to set myself up to be able to run "gcc" to compile ".c" files. Then I can work on adding symbol related logic like "go to definition" or etc.
-                    if (terminalCommand.FormattedCommand.HACK_ArgumentsString is null)
-                        WorkingDirectoryAbsolutePathString = terminalCommand.FormattedCommand.ArgumentsList.ElementAt(0);
-                    else
+                    if (terminalCommand.FormattedCommand.HACK_ArgumentsString is not null)
                         WorkingDirectoryAbsolutePathString = terminalCommand.FormattedCommand.HACK_ArgumentsString;
+                    else if (terminalCommand.FormattedCommand.ArgumentsList.Any())
+                        WorkingDirectoryAbsolutePathString = terminalCommand.FormattedCommand.ArgumentsList.ElementAt(0);
+                }
+                
+                if (terminalCommand.FormattedCommand.TargetFileName == "clear")
+                {
+                    ClearTerminalSession();
+                    return;
                 }
 
                 _terminalCommandsHistory.Add(terminalCommand);
@@ -275,7 +282,7 @@ public class TerminalSession
                                     }
 
                                     _textEditorService.Post(
-                                        nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
+                                        nameof(EnqueueCommandAsync),
                                         async editContext =>
                                         {
                                             var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -307,13 +314,17 @@ public class TerminalSession
 
                                             var allText = modelModifier.GetAllText();
 
-                                            terminalResource.ManualDecorationTextSpanList.AddRange(outputTextSpans.Select(x => x with
+                                            outputTextSpans = outputTextSpans.Select(x => x with
                                             {
                                                 StartingIndexInclusive = startingPositionIndex + x.StartingIndexInclusive,
                                                 EndingIndexExclusive = startingPositionIndex + x.EndingIndexExclusive,
                                                 ResourceUri = ResourceUri,
                                                 SourceText = allText,
-                                            }));
+                                            }).ToList();
+
+                                            terminalResource.ManualDecorationTextSpanList.AddRange(outputTextSpans);
+
+                                            terminalResource.ManualSymbolList.AddRange(outputTextSpans.Select(x => new SourceFileSymbol(x)));
 
                                             modelModifier.ApplyDecorationRange(terminalResource.GetTokenTextSpans());
                                         });
@@ -517,6 +528,45 @@ public class TerminalSession
                     modelModifier.GetAllText()));
 
                 modelModifier.ApplyDecorationRange(terminalResource.GetTokenTextSpans());
+            });
+    }
+    
+    public void ClearTerminalSession()
+    {
+        _textEditorService.Post(
+            nameof(ClearTerminalSession),
+            async editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    return;
+
+                await TextEditorCommandDefaultFunctions.SelectAllFactory(
+                        modelModifier.ResourceUri,
+                        viewModelModifier.ViewModel.ViewModelKey,
+                        null)
+                    .Invoke(editContext)
+                    .ConfigureAwait(false);
+
+                await _textEditorService.ModelApi.DeleteTextByMotionFactory(
+                        modelModifier.ResourceUri,
+                        viewModelModifier.ViewModel.ViewModelKey,
+                        MotionKind.Delete,
+                        CancellationToken.None)
+                    .Invoke(editContext)
+                    .ConfigureAwait(false);
+
+                var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
+
+                if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
+                    return;
+
+                terminalResource.ManualDecorationTextSpanList.Clear();
+                terminalResource.SyntaxTokenList.Clear();
             });
     }
 }

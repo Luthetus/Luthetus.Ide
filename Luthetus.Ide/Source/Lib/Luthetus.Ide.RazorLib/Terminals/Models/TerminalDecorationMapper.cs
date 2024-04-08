@@ -16,7 +16,7 @@ public class TerminalDecorationMapper : IDecorationMapper
             TerminalDecorationKind.StringLiteral => "luth_te_string-literal",
             TerminalDecorationKind.TargetFilePath => "luth_te_type",
             TerminalDecorationKind.Error => "luth_tree-view-exception",
-            TerminalDecorationKind.Warning => "luth_te_variable",
+            TerminalDecorationKind.Warning => "luth_tree-view-warning",
             _ => string.Empty,
         };
     }

@@ -100,6 +100,18 @@
                 </span>
             </text>
             break;
+        case "SourceFileSymbol":
+            <text>
+                <span class="luth_te_keyword">
+                    Open in editor:
+                </span>
+
+                <button class="luth_button luth_te_source-file"
+                        @onclick="() => OpenInEditorOnClick(Symbol.TextSpan.GetText())">
+                    @Symbol.TextSpan.GetText()
+                </button>
+            </text>
+            break;
         default:
             <text>
                 <span class="luth_te_keyword">

@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
@@ -33,6 +34,7 @@ public class TerminalResource : LuthCompilerServiceResource
     public TextEditorTextSpan ArgumentsTextSpan { get; set; } = new TextEditorTextSpan(0, 0, 0, new ResourceUri(string.Empty), string.Empty);
     public TextEditorTextSpan TargetFilePathTextSpan { get; set; } = new TextEditorTextSpan(0, 0, 0, new ResourceUri(string.Empty), string.Empty);
     public List<TextEditorTextSpan> ManualDecorationTextSpanList { get; } = new List<TextEditorTextSpan>();
+    public List<ITextEditorSymbol> ManualSymbolList { get; } = new List<ITextEditorSymbol>();
 
     public TerminalSession TerminalSession => _terminalSessionStateWrap.Value.TerminalSessionMap.Values.First(
         x => x.ResourceUri == ResourceUri);
@@ -44,5 +46,10 @@ public class TerminalResource : LuthCompilerServiceResource
         tokenTextSpanList.AddRange(SyntaxTokenList.Select(st => st.TextSpan));
 
         return tokenTextSpanList.ToImmutableArray();
+    }
+
+    public override ImmutableArray<ITextEditorSymbol> GetSymbols()
+    {
+        return ManualSymbolList.ToImmutableArray();
     }
 }

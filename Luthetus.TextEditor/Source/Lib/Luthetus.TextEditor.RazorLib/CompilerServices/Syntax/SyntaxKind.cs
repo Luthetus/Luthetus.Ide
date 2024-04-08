@@ -231,4 +231,5 @@ public enum SyntaxKind
     StringInterpolationSymbol,
     NamespaceSymbol,
     InjectedLanguageComponentSymbol,
+    SourceFileSymbol,
 }

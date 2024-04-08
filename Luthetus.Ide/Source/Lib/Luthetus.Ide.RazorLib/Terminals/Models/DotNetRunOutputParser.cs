@@ -173,6 +173,17 @@ public static class DotNetRunOutputParser
             _ = stringWalker.ReadCharacter();
         }
 
+        if (errorKeywordAndErrorCodeTextSpan.DecorationByte != 0)
+        {
+            for (int i = textSpanList.Count - 1; i >= 0; i--)
+            {
+                textSpanList[i] = textSpanList[i] with
+                {
+                    DecorationByte = errorKeywordAndErrorCodeTextSpan.DecorationByte
+                };
+            }
+        }
+
         return textSpanList;
     }
 }

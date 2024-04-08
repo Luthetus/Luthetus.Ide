@@ -2,9 +2,9 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 
-public sealed record InjectedLanguageComponentSymbol : ISymbol
+public sealed record SourceFileSymbol : ISymbol
 {
-    public InjectedLanguageComponentSymbol(TextEditorTextSpan textSpan)
+    public SourceFileSymbol(TextEditorTextSpan textSpan)
     {
         TextSpan = textSpan;
     }
@@ -12,5 +12,5 @@ public sealed record InjectedLanguageComponentSymbol : ISymbol
     public TextEditorTextSpan TextSpan { get; init; }
     public string SymbolKindString => SyntaxKind.ToString();
 
-    public SyntaxKind SyntaxKind => SyntaxKind.InjectedLanguageComponentSymbol;
+    public SyntaxKind SyntaxKind => SyntaxKind.SourceFileSymbol;
 }
