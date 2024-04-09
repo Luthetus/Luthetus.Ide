@@ -43,10 +43,10 @@
                 <IdeBody BodyElementDimensions="_bodyElementDimensions" />
 
                 <ResizableRow TopElementDimensions="_bodyElementDimensions"
-                              BottomElementDimensions="PanelFacts.GetBottomPanelRecord(PanelsStateWrap.Value).ElementDimensions"
+                              BottomElementDimensions="PanelFacts.GetBottomPanelGroup(PanelsStateWrap.Value).ElementDimensions"
                               ReRenderFuncAsync="_bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync" />
 
-                <PanelGroupDisplay PanelGroupKey="PanelFacts.BottomPanelRecordKey"
+                <PanelGroupDisplay PanelGroupKey="PanelFacts.BottomPanelGroupKey"
                               CssClassString="luth_ide_footer"
                               AdjacentElementDimensions="_bodyElementDimensions"
                               DimensionAttributeKind="DimensionAttributeKind.Height"

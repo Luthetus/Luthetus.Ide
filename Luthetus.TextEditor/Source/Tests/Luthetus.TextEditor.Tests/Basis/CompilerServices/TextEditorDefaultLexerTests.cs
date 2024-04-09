@@ -15,10 +15,11 @@ public class TextEditorDefaultLexerTests
 	[Fact]
 	public void DiagnosticsList()
 	{
-		var defaultLexer = new LuthLexer(null, null, null);
+        throw new NotImplementedException("Test was broken on (2024-04-08)");
+        //var defaultLexer = new LuthLexer(null, null, null);
 
-		Assert.Equal(
-			ImmutableArray<TextEditorDiagnostic>.Empty,
-			defaultLexer.DiagnosticList);
-	}
+        //Assert.Equal(
+        //	ImmutableArray<TextEditorDiagnostic>.Empty,
+        //	defaultLexer.DiagnosticList);
+    }
 }

@@ -5,18 +5,12 @@ using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.Drags.Models;
 
-public class DropzoneViewModel : IDropzone
-{
-	public DropzoneViewModel()
-	{
-	}
-	
-	public Key<IDropzone> Key { get; init; }
-	public MeasuredHtmlElementDimensions MeasuredHtmlElementDimensions { get; init; }
-	public ElementDimensions DropzoneElementDimensions { get; init; }
-	public string? CssClassString { get; init; }
-	public Key<IDropzone> DropzoneKey { get; }
-	public ElementDimensions ElementDimensions { get; }
-	public string CssClass { get; }
-	public string CssStyle { get; }
-}
+public record DropzoneViewModel(
+		Key<IDropzone> Key,
+		MeasuredHtmlElementDimensions MeasuredHtmlElementDimensions,
+		ElementDimensions DropzoneElementDimensions,
+        Key<IDropzone> DropzoneKey,
+        ElementDimensions ElementDimensions,
+        string CssClass,
+        string CssStyle)
+	: IDropzone;

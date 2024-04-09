@@ -95,84 +95,85 @@ public class TextEditorCommandVimFactsMotionsTests
         out TextEditorCommandArgs textEditorCommandArgs,
         out IServiceProvider serviceProvider)
     {
-        var services = new ServiceCollection()
-            .AddSingleton<LuthetusCommonConfig>()
-            .AddSingleton<LuthetusTextEditorConfig>()
-            .AddScoped<IStorageService, DoNothingStorageService>()
-            .AddScoped<IJSRuntime, TextEditorTestingJsRuntime>()
-            .AddScoped<StorageSync>()
-            .AddScoped<IBackgroundTaskService>(_ => new BackgroundTaskServiceSynchronous())
-            .AddScoped<ITextEditorRegistryWrap, TextEditorRegistryWrap>()
-            .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistryDefault>()
-            .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistryDefault>()
-            .AddScoped<ITextEditorService, TextEditorService>()
-            .AddScoped<IClipboardService, InMemoryClipboardService>()
-            .AddFluxor(options => options.ScanAssemblies(
-                typeof(LuthetusCommonConfig).Assembly,
-                typeof(LuthetusTextEditorConfig).Assembly));
+        throw new NotImplementedException("Test was broken on (2024-04-08)");
+        //var services = new ServiceCollection()
+        //    .AddSingleton<LuthetusCommonConfig>()
+        //    .AddSingleton<LuthetusTextEditorConfig>()
+        //    .AddScoped<IStorageService, DoNothingStorageService>()
+        //    .AddScoped<IJSRuntime, TextEditorTestingJsRuntime>()
+        //    .AddScoped<StorageSync>()
+        //    .AddScoped<IBackgroundTaskService>(_ => new BackgroundTaskServiceSynchronous())
+        //    .AddScoped<ITextEditorRegistryWrap, TextEditorRegistryWrap>()
+        //    .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistryDefault>()
+        //    .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistryDefault>()
+        //    .AddScoped<ITextEditorService, TextEditorService>()
+        //    .AddScoped<IClipboardService, InMemoryClipboardService>()
+        //    .AddFluxor(options => options.ScanAssemblies(
+        //        typeof(LuthetusCommonConfig).Assembly,
+        //        typeof(LuthetusTextEditorConfig).Assembly));
 
-        serviceProvider = services.BuildServiceProvider();
+        //serviceProvider = services.BuildServiceProvider();
 
-        var store = serviceProvider.GetRequiredService<IStore>();
-        store.InitializeAsync().Wait();
+        //var store = serviceProvider.GetRequiredService<IStore>();
+        //store.InitializeAsync().Wait();
 
-        var backgroundTaskService = serviceProvider.GetRequiredService<IBackgroundTaskService>();
+        //var backgroundTaskService = serviceProvider.GetRequiredService<IBackgroundTaskService>();
 
-        var continuousQueue = new BackgroundTaskQueue(
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
-            ContinuousBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
+        //var continuousQueue = new BackgroundTaskQueue(
+        //    ContinuousBackgroundTaskWorker.GetQueueKey(),
+        //    ContinuousBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
 
-        backgroundTaskService.RegisterQueue(continuousQueue);
+        //backgroundTaskService.RegisterQueue(continuousQueue);
 
-        var blockingQueue = new BackgroundTaskQueue(
-            BlockingBackgroundTaskWorker.GetQueueKey(),
-            BlockingBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
+        //var blockingQueue = new BackgroundTaskQueue(
+        //    BlockingBackgroundTaskWorker.GetQueueKey(),
+        //    BlockingBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
 
-        backgroundTaskService.RegisterQueue(blockingQueue);
+        //backgroundTaskService.RegisterQueue(blockingQueue);
 
-        var textEditorRegistryWrap = serviceProvider.GetRequiredService<ITextEditorRegistryWrap>();
+        //var textEditorRegistryWrap = serviceProvider.GetRequiredService<ITextEditorRegistryWrap>();
 
-        textEditorRegistryWrap.DecorationMapperRegistry = serviceProvider
-            .GetRequiredService<IDecorationMapperRegistry>();
+        //textEditorRegistryWrap.DecorationMapperRegistry = serviceProvider
+        //    .GetRequiredService<IDecorationMapperRegistry>();
 
-        textEditorRegistryWrap.CompilerServiceRegistry = serviceProvider
-            .GetRequiredService<ICompilerServiceRegistry>();
+        //textEditorRegistryWrap.CompilerServiceRegistry = serviceProvider
+        //    .GetRequiredService<ICompilerServiceRegistry>();
 
-        textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
+        //textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
 
-        model = new TextEditorModel(
-            new ResourceUri($"/{nameof(InitializeTextEditorCommandVimFactsMotionsTests)}.txt"),
-            DateTime.UtcNow,
-            ExtensionNoPeriodFacts.TXT,
-            TestConstants.SOURCE_TEXT,
-            null,
-            null);
+        //model = new TextEditorModel(
+        //    new ResourceUri($"/{nameof(InitializeTextEditorCommandVimFactsMotionsTests)}.txt"),
+        //    DateTime.UtcNow,
+        //    ExtensionNoPeriodFacts.TXT,
+        //    TestConstants.SOURCE_TEXT,
+        //    null,
+        //    null);
 
-        textEditorService.ModelApi.RegisterCustom(model);
+        //textEditorService.ModelApi.RegisterCustom(model);
 
-        model = textEditorService.ModelApi.GetOrDefault(model.ResourceUri)
-           ?? throw new ArgumentNullException();
+        //model = textEditorService.ModelApi.GetOrDefault(model.ResourceUri)
+        //   ?? throw new ArgumentNullException();
 
-        var viewModelKey = Key<TextEditorViewModel>.NewKey();
+        //var viewModelKey = Key<TextEditorViewModel>.NewKey();
 
-        textEditorService.ViewModelApi.Register(
-            viewModelKey,
-            model.ResourceUri,
-            new TextEditorCategory("UnitTesting"));
+        //textEditorService.ViewModelApi.Register(
+        //    viewModelKey,
+        //    model.ResourceUri,
+        //    new TextEditorCategory("UnitTesting"));
 
-        viewModel = textEditorService.ViewModelApi.GetOrDefault(viewModelKey)
-           ?? throw new ArgumentNullException();
+        //viewModel = textEditorService.ViewModelApi.GetOrDefault(viewModelKey)
+        //   ?? throw new ArgumentNullException();
 
-        textEditorCommandArgs = new TextEditorCommandArgs(
-            model.ResourceUri,
-            viewModel.ViewModelKey,
-            false,
-            serviceProvider.GetRequiredService<IClipboardService>(),
-            textEditorService,
-            (MouseEventArgs m) => Task.CompletedTask,
-            serviceProvider.GetRequiredService<IJSRuntime>(),
-            serviceProvider.GetRequiredService<IDispatcher>(),
-            serviceProvider.GetRequiredService<IServiceProvider>(),
-            serviceProvider.GetRequiredService<LuthetusTextEditorConfig>());
+        //textEditorCommandArgs = new TextEditorCommandArgs(
+        //    model.ResourceUri,
+        //    viewModel.ViewModelKey,
+        //    false,
+        //    serviceProvider.GetRequiredService<IClipboardService>(),
+        //    textEditorService,
+        //    (MouseEventArgs m) => Task.CompletedTask,
+        //    serviceProvider.GetRequiredService<IJSRuntime>(),
+        //    serviceProvider.GetRequiredService<IDispatcher>(),
+        //    serviceProvider.GetRequiredService<IServiceProvider>(),
+        //    serviceProvider.GetRequiredService<LuthetusTextEditorConfig>());
     }
 }

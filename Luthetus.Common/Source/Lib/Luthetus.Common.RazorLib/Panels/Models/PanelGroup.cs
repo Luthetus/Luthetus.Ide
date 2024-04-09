@@ -15,7 +15,11 @@ public record PanelGroup(
 	    ImmutableArray<IPanelTab> TabList)
 	: ITabGroup
 {
-    public IDispatcher Dispatcher { get; set; }
+    /// <summary>
+    /// TODO: Make this property immutable. Until then in a hack needs to be done where this gets set...
+	///       ...for Luthetus.Ide this is done in LuthetusIdeInitializer.razor.cs (2024-04-08)
+    /// </summary>
+    public IDispatcher Dispatcher { get; set; } = null!;
 
     public bool GetIsActive(ITab tab)
 	{

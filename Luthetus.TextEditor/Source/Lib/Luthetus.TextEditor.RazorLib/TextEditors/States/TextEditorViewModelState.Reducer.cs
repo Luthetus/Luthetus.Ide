@@ -28,6 +28,9 @@ public partial class TextEditorViewModelState
                 registerAction.ViewModelKey,
                 registerAction.ResourceUri,
                 registerAction.TextEditorService,
+                registerAction.Dispatcher,
+                registerAction.DialogService,
+                registerAction.JsRuntime,
                 VirtualizationResult<List<RichCharacter>>.GetEmptyRichCharacters(),
                 false,
                 registerAction.Category);

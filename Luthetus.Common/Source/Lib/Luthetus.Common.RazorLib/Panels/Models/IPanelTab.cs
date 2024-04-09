@@ -11,7 +11,7 @@ public interface IPanelTab : ITab
 {
     public Key<Panel> Key { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
-    public IDispatcher Dispatcher { get; set; }
-    public IDialogService DialogService { get; set; }
-    public IJSRuntime JsRuntime { get; set; }
+    public IDispatcher Dispatcher { get; }
+    public IDialogService DialogService { get; }
+    public IJSRuntime JsRuntime { get; }
 }

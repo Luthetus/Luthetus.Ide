@@ -12,6 +12,7 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -186,6 +187,7 @@ public partial interface ITextEditorService
         private readonly IState<TextEditorViewModelState> _viewModelStateWrap;
         private readonly IState<TextEditorModelState> _modelStateWrap;
         private readonly IDispatcher _dispatcher;
+        private readonly IDialogService _dialogService;
 
         // TODO: Perhaps do not reference IJSRuntime but instead wrap it in a 'IUiProvider' or something like that. The 'IUiProvider' would then expose methods that allow the TextEditorViewModel to adjust the scrollbars. 
         private readonly IJSRuntime _jsRuntime;
@@ -196,7 +198,8 @@ public partial interface ITextEditorService
             IState<TextEditorViewModelState> viewModelStateWrap,
             IState<TextEditorModelState> modelStateWrap,
             IJSRuntime jsRuntime,
-            IDispatcher dispatcher)
+            IDispatcher dispatcher,
+            IDialogService dialogService)
         {
             _textEditorService = textEditorService;
             _backgroundTaskService = backgroundTaskService;
@@ -204,6 +207,7 @@ public partial interface ITextEditorService
             _modelStateWrap = modelStateWrap;
             _jsRuntime = jsRuntime;
             _dispatcher = dispatcher;
+            _dialogService = dialogService;
         }
 
         private Task _cursorShouldBlinkTask = Task.CompletedTask;
@@ -271,7 +275,10 @@ public partial interface ITextEditorService
                 viewModelKey,
                 resourceUri,
                 category,
-                _textEditorService));
+                _textEditorService,
+                _dispatcher,
+                _dialogService,
+                _jsRuntime));
         }
         #endregion
 

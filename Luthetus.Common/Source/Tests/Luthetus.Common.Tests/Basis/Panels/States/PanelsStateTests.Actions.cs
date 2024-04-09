@@ -149,36 +149,37 @@ public class PanelsStateActionsTests
         out PanelGroup samplePanelGroup,
         out IPanelTab samplePanelTab)
     {
-        samplePanelGroup = new PanelGroup(
-                PanelFacts.LeftPanelRecordKey,
-                Key<Panel>.Empty,
-                new ElementDimensions(),
-                ImmutableArray<IPanelTab>.Empty);
+        throw new NotImplementedException("Test was broken on (2024-04-08)");
+        //     samplePanelGroup = new PanelGroup(
+        //             PanelFacts.LeftPanelRecordKey,
+        //             Key<Panel>.Empty,
+        //             new ElementDimensions(),
+        //             ImmutableArray<IPanelTab>.Empty);
 
-        var leftPanelGroupWidth = samplePanelGroup.ElementDimensions.DimensionAttributeList
-            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
+        //     var leftPanelGroupWidth = samplePanelGroup.ElementDimensions.DimensionAttributeList
+        //         .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
 
-        leftPanelGroupWidth.DimensionUnitList.AddRange(new[]
-        {
-            new DimensionUnit
-            {
-                Value = 33.3333,
-                DimensionUnitKind = DimensionUnitKind.Percentage
-            },
-            new DimensionUnit
-            {
-                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
-        });
+        //     leftPanelGroupWidth.DimensionUnitList.AddRange(new[]
+        //     {
+        //         new DimensionUnit
+        //         {
+        //             Value = 33.3333,
+        //             DimensionUnitKind = DimensionUnitKind.Percentage
+        //         },
+        //         new DimensionUnit
+        //         {
+        //             Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+        //             DimensionUnitKind = DimensionUnitKind.Pixels,
+        //             DimensionOperatorKind = DimensionOperatorKind.Subtract
+        //         }
+        //     });
 
-        samplePanelTab = new Panel(
-			"Solution Explorer",
-			Key<Panel>.NewKey(),
-			Key<IDynamicViewModel>.NewKey(),
-			ContextFacts.SolutionExplorerContext.ContextKey,
-            typeof(IconCSharpClass),
-            new());
+        //     samplePanelTab = new Panel(
+        //"Solution Explorer",
+        //Key<Panel>.NewKey(),
+        //Key<IDynamicViewModel>.NewKey(),
+        //ContextFacts.SolutionExplorerContext.ContextKey,
+        //         typeof(IconCSharpClass),
+        //         new());
     }
 }

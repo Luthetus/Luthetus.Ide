@@ -2,7 +2,6 @@
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using System.Collections.Immutable;
-using Luthetus.Common.RazorLib.RenderStates.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Groups.Models;
 
@@ -22,30 +21,31 @@ public class TextEditorGroupTests
     [Fact]
 	public void Constructor()
 	{
-		var groupKey = Key<TextEditorGroup>.NewKey();
-		var activeViewModelKey = Key<TextEditorViewModel>.NewKey();
-		var viewModelKeyList = new Key<TextEditorViewModel>[] { activeViewModelKey }.ToImmutableList();
-        var renderStateKey = Key<RenderState>.NewKey();
+		throw new NotImplementedException("Test was broken on (2024-04-08)");
+		//var groupKey = Key<TextEditorGroup>.NewKey();
+		//var activeViewModelKey = Key<TextEditorViewModel>.NewKey();
+		//var viewModelKeyList = new Key<TextEditorViewModel>[] { activeViewModelKey }.ToImmutableList();
+  //      var renderStateKey = Key<RenderState>.NewKey();
 
-        var group = new TextEditorGroup(
-            groupKey,
-            activeViewModelKey,
-			viewModelKeyList)
-		{
-			RenderStateKey = renderStateKey
-        };
+  //      var group = new TextEditorGroup(
+  //          groupKey,
+  //          activeViewModelKey,
+		//	viewModelKeyList)
+		//{
+		//	RenderStateKey = renderStateKey
+  //      };
 
-		Assert.Equal(groupKey, group.GroupKey);
-		Assert.Equal(activeViewModelKey, group.ActiveViewModelKey);
-		Assert.Equal(viewModelKeyList, group.ViewModelKeyList);
-		Assert.Equal(renderStateKey, group.RenderStateKey);
+		//Assert.Equal(groupKey, group.GroupKey);
+		//Assert.Equal(activeViewModelKey, group.ActiveViewModelKey);
+		//Assert.Equal(viewModelKeyList, group.ViewModelKeyList);
+		//Assert.Equal(renderStateKey, group.RenderStateKey);
 
-        // Assert that the default value for TextEditorGroup.RenderStateKey
-        // is NOT Key<RenderState>.Empty
-        {
-            Assert.NotEqual(
-                Key<RenderState>.Empty,
-                new TextEditorGroup(groupKey, activeViewModelKey, viewModelKeyList).RenderStateKey);
-        }
+  //      // Assert that the default value for TextEditorGroup.RenderStateKey
+  //      // is NOT Key<RenderState>.Empty
+  //      {
+  //          Assert.NotEqual(
+  //              Key<RenderState>.Empty,
+  //              new TextEditorGroup(groupKey, activeViewModelKey, viewModelKeyList).RenderStateKey);
+  //      }
 	}
 }

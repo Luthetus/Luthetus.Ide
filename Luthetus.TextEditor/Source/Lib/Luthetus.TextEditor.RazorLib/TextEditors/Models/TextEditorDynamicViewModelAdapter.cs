@@ -28,9 +28,19 @@ public class TextEditorDynamicViewModelAdapter : ITextEditorTab, IPanelTab, IDia
     private readonly Type? _dragDialogComponentType = null;
     private readonly Dictionary<string, object?>? _dragDialogComponentParameterMap = null;
 
-    public TextEditorDynamicViewModelAdapter(Key<TextEditorViewModel> viewModelKey)
+    public TextEditorDynamicViewModelAdapter(
+        Key<TextEditorViewModel> viewModelKey,
+        ITextEditorService textEditorService,
+        IDispatcher dispatcher,
+        IDialogService dialogService,
+        IJSRuntime jsRuntime)
     {
         ViewModelKey = viewModelKey;
+
+        TextEditorService = textEditorService;
+        Dispatcher = dispatcher;
+        DialogService = dialogService;
+        JsRuntime = jsRuntime;
 
         ComponentType = typeof(TextEditorViewModelDisplay);
         ComponentParameterMap = new()
@@ -44,19 +54,21 @@ public class TextEditorDynamicViewModelAdapter : ITextEditorTab, IPanelTab, IDia
             { nameof(TabDisplay.Tab), this },
             { nameof(TabDisplay.IsBeingDragged), true }
         };
+
+        DialogFocusPointHtmlElementId = $"luth_dialog-focus-point_{DynamicViewModelKey.Guid}";
     }
 
-    public ITextEditorService TextEditorService { get; set; }
-    public IDispatcher Dispatcher { get; set; }
-    public IDialogService DialogService { get; set; }
-    public IJSRuntime JsRuntime { get; set; }
+    public ITextEditorService TextEditorService { get; }
+    public IDispatcher Dispatcher { get; }
+    public IDialogService DialogService { get; }
+    public IJSRuntime JsRuntime { get; }
 
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public Key<Panel> Key { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
     public Key<IDynamicViewModel> DynamicViewModelKey { get; } = Key<IDynamicViewModel>.NewKey();
 
-    public ITabGroup TabGroup { get; set; }
+    public ITabGroup? TabGroup { get; set; }
 
     public string Title => GetTitle();
 
@@ -70,7 +82,7 @@ public class TextEditorDynamicViewModelAdapter : ITextEditorTab, IPanelTab, IDia
     public bool DialogIsMinimized { get; set; }
     public bool DialogIsMaximized { get; set; }
     public bool DialogIsResizable { get; set; } = true;
-    public string DialogFocusPointHtmlElementId { get; set; }
+    public string DialogFocusPointHtmlElementId { get; init; }
     public ImmutableArray<IDropzone> DropzoneList { get; set; }
 
     public ElementDimensions DragElementDimensions { get; set; } = DialogHelper.ConstructDefaultElementDimensions();
@@ -329,7 +341,10 @@ public class TextEditorDynamicViewModelAdapter : ITextEditorTab, IPanelTab, IDia
                             nameof(TextEditorViewModelDisplay.TextEditorViewModelKey),
                             ViewModelKey
                         },
-                    }),
+                    },
+                    Dispatcher,
+                    DialogService,
+                    JsRuntime),
                 true));
 
             return Task.CompletedTask;
@@ -411,9 +426,9 @@ public class TextEditorDynamicViewModelAdapter : ITextEditorTab, IPanelTab, IDia
     {
         var panelGroupHtmlIdTupleList = new (Key<PanelGroup> PanelGroupKey, string HtmlElementId)[]
         {
-            (PanelFacts.LeftPanelRecordKey, "luth_ide_panel_left_tabs"),
-            (PanelFacts.RightPanelRecordKey, "luth_ide_panel_right_tabs"),
-            (PanelFacts.BottomPanelRecordKey, "luth_ide_panel_bottom_tabs"),
+            (PanelFacts.LeftPanelGroupKey, "luth_ide_panel_left_tabs"),
+            (PanelFacts.RightPanelGroupKey, "luth_ide_panel_right_tabs"),
+            (PanelFacts.BottomPanelGroupKey, "luth_ide_panel_bottom_tabs"),
         };
 
         foreach (var panelGroupHtmlIdTuple in panelGroupHtmlIdTupleList)
@@ -486,7 +501,10 @@ public class TextEditorDynamicViewModelAdapter : ITextEditorTab, IPanelTab, IDia
             dropzoneList.Add(new PanelGroupDropzone(
                 measuredHtmlElementDimensions,
                 panelGroupHtmlIdTuple.PanelGroupKey,
-                elementDimensions));
+                elementDimensions,
+                Key<IDropzone>.NewKey(),
+                null,
+                null));
         }
     }
 }

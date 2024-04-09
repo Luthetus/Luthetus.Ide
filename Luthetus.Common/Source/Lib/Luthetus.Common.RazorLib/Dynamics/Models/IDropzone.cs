@@ -9,6 +9,6 @@ public interface IDropzone
     public Key<IDropzone> DropzoneKey { get; }
     public MeasuredHtmlElementDimensions MeasuredHtmlElementDimensions { get; }
     public ElementDimensions ElementDimensions { get; }
-    public string CssClass { get; }
-    public string CssStyle { get; }
+    public string? CssClass { get; }
+    public string? CssStyle { get; }
 }

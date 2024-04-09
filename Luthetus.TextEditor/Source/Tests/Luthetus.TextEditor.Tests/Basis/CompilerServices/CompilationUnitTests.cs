@@ -27,28 +27,29 @@ public class CompilationUnitTests
     [Fact]
 	public void Constructor()
 	{
-		var codeBlockNode = new CodeBlockNode(ImmutableArray<ISyntax>.Empty);
-		var lexer = new LuthLexer(null, null, null);
-		var parser = new LuthParser(lexer);
-		var binder = new LuthBinder();
+        throw new NotImplementedException("Test was broken on (2024-04-08)");
+        //var codeBlockNode = new CodeBlockNode(ImmutableArray<ISyntax>.Empty);
+        //var lexer = new LuthLexer(null, null, null);
+        //var parser = new LuthParser(lexer);
+        //var binder = new LuthBinder();
 
-		var compilationUnit = new CompilationUnit(
-            codeBlockNode,
-            lexer,
-            parser,
-            binder);
+        //var compilationUnit = new CompilationUnit(
+        //          codeBlockNode,
+        //          lexer,
+        //          parser,
+        //          binder);
 
-		Assert.Equal(codeBlockNode, compilationUnit.RootCodeBlockNode);
-		Assert.Equal(lexer, compilationUnit.Lexer);
-		Assert.Equal(parser, compilationUnit.Parser);
-		Assert.Equal(binder, compilationUnit.Binder);
+        //Assert.Equal(codeBlockNode, compilationUnit.RootCodeBlockNode);
+        //Assert.Equal(lexer, compilationUnit.Lexer);
+        //Assert.Equal(parser, compilationUnit.Parser);
+        //Assert.Equal(binder, compilationUnit.Binder);
 
-		Assert.Equal(SyntaxKind.CompilationUnit, compilationUnit.SyntaxKind);
-		Assert.False(compilationUnit.IsFabricated);
+        //Assert.Equal(SyntaxKind.CompilationUnit, compilationUnit.SyntaxKind);
+        //Assert.False(compilationUnit.IsFabricated);
 
-		Assert.Empty(compilationUnit.DiagnosticsList);
+        //Assert.Empty(compilationUnit.DiagnosticsList);
 
-		Assert.Single(compilationUnit.ChildList);
-		Assert.Equal(codeBlockNode, compilationUnit.ChildList.Single());
-	}
+        //Assert.Single(compilationUnit.ChildList);
+        //Assert.Equal(codeBlockNode, compilationUnit.ChildList.Single());
+    }
 }

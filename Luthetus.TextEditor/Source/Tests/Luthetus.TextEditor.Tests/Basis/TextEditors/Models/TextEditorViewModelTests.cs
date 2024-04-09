@@ -20,30 +20,31 @@ public class TextEditorViewModelTests
     [Fact]
 	public void Constructor()
 	{
-        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
-            out var textEditorService,
-            out var inModel,
-			out _,
-            out var serviceProvider);
+        throw new NotImplementedException("Test was broken on (2024-04-08)");
+  //      TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+  //          out var textEditorService,
+  //          out var inModel,
+		//	out _,
+  //          out var serviceProvider);
 
-		var viewModelKey = Common.RazorLib.Keys.Models.Key<TextEditorViewModel>.NewKey();
-		var resourceUri = inModel.ResourceUri;
-		var virtualizationResult = VirtualizationResult<List<RichCharacter>>.GetEmptyRichCharacters();
-		var displayCommandBar = false;
+		//var viewModelKey = Common.RazorLib.Keys.Models.Key<TextEditorViewModel>.NewKey();
+		//var resourceUri = inModel.ResourceUri;
+		//var virtualizationResult = VirtualizationResult<List<RichCharacter>>.GetEmptyRichCharacters();
+		//var displayCommandBar = false;
 
-        var viewModel = new TextEditorViewModel(
-			viewModelKey,
-			resourceUri,
-			textEditorService,
-            virtualizationResult,
-            displayCommandBar,
-            new TextEditorCategory("UnitTesting"));
+  //      var viewModel = new TextEditorViewModel(
+		//	viewModelKey,
+		//	resourceUri,
+		//	textEditorService,
+  //          virtualizationResult,
+  //          displayCommandBar,
+  //          new TextEditorCategory("UnitTesting"));
 
-        Assert.Equal(viewModelKey, viewModel.ViewModelKey);
-        Assert.Equal(resourceUri, viewModel.ResourceUri);
-        Assert.Equal(textEditorService, viewModel.TextEditorService);
-        Assert.Equal(virtualizationResult, viewModel.VirtualizationResult);
-		Assert.Equal(displayCommandBar, viewModel.ShowCommandBar);
+  //      Assert.Equal(viewModelKey, viewModel.ViewModelKey);
+  //      Assert.Equal(resourceUri, viewModel.ResourceUri);
+  //      Assert.Equal(textEditorService, viewModel.TextEditorService);
+  //      Assert.Equal(virtualizationResult, viewModel.VirtualizationResult);
+		//Assert.Equal(displayCommandBar, viewModel.ShowCommandBar);
 	}
 
     /// <summary>

@@ -27,22 +27,23 @@ public class TextEditorGroupStateMainTests
 	[Fact]
 	public void GroupList()
 	{
-        var groupState = new TextEditorGroupState();
-        Assert.Equal(ImmutableList<TextEditorGroup>.Empty, groupState.GroupList);
+        throw new NotImplementedException("Test was broken on (2024-04-08)");
+  //      var groupState = new TextEditorGroupState();
+  //      Assert.Equal(ImmutableList<TextEditorGroup>.Empty, groupState.GroupList);
 
-		var group = new TextEditorGroup(
-			Key<TextEditorGroup>.NewKey(),
-			Key<TextEditorViewModel>.Empty,
-			new Key<TextEditorViewModel>[0].ToImmutableList());
+		//var group = new TextEditorGroup(
+		//	Key<TextEditorGroup>.NewKey(),
+		//	Key<TextEditorViewModel>.Empty,
+		//	new Key<TextEditorViewModel>[0].ToImmutableList());
 
-		var outGroupList = groupState.GroupList.Add(group);
-        Assert.NotEqual(ImmutableList<TextEditorGroup>.Empty, outGroupList);
+		//var outGroupList = groupState.GroupList.Add(group);
+  //      Assert.NotEqual(ImmutableList<TextEditorGroup>.Empty, outGroupList);
 
-		var outGroupState = new TextEditorGroupState
-        {
-			GroupList = outGroupList
-		};
+		//var outGroupState = new TextEditorGroupState
+  //      {
+		//	GroupList = outGroupList
+		//};
 
-        Assert.Equal(outGroupList, outGroupState.GroupList);
+  //      Assert.Equal(outGroupList, outGroupState.GroupList);
 	}
 }

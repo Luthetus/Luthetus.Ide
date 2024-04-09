@@ -504,143 +504,145 @@ public class TextEditorCommandDefaultFactsTests
 	/// <see cref="TextEditorCommandDefaultFacts.Redo"/>
 	/// </summary>
 	[Fact]
-    public async Task Redo()
+    public Task Redo()
     {
-        // Able to redo
-        {
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        throw new NotImplementedException("Test was broken on (2024-04-08)");
+        //// Able to redo
+        //{
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            // Modify text, as to create an edit which one can then undo
-            {
-                var cursor = new TextEditorCursor(0, 0, true);
+        //    // Modify text, as to create an edit which one can then undo
+        //    {
+        //        var cursor = new TextEditorCursor(0, 0, true);
 
-                var cursorModificationBag = new TextEditorCursorModifierBag(
-                    Key<TextEditorViewModel>.Empty,
-                    new List<TextEditorCursorModifier> { new TextEditorCursorModifier(cursor) });
+        //        var cursorModificationBag = new TextEditorCursorModifierBag(
+        //            Key<TextEditorViewModel>.Empty,
+        //            new List<TextEditorCursorModifier> { new TextEditorCursorModifier(cursor) });
 
-                textEditorService.Post(
-                    nameof(TextEditorCommandDefaultFactsTests),
-                    textEditorService.ModelApi.InsertTextUnsafeFactory(
-                        inModel.ResourceUri,
-                        cursorModificationBag,
-                        "zyx",
-                        CancellationToken.None));
-            }
+        //        textEditorService.Post(
+        //            nameof(TextEditorCommandDefaultFactsTests),
+        //            textEditorService.ModelApi.InsertTextUnsafeFactory(
+        //                inModel.ResourceUri,
+        //                cursorModificationBag,
+        //                "zyx",
+        //                CancellationToken.None));
+        //    }
 
-            // Capture the current text, as to later be used after the
-            // Redo invocation to Assert the text has been re-edited.
-            var refModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
-            Assert.NotNull(refModel);
-            var refText = refModel!.GetAllText();
+        //    // Capture the current text, as to later be used after the
+        //    // Redo invocation to Assert the text has been re-edited.
+        //    var refModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        //    Assert.NotNull(refModel);
+        //    var refText = refModel!.GetAllText();
 
-            // Undo the previous edit, as to be able to redo an edit
-            {
-                await TextEditorCommandDefaultFacts.Undo.CommandFunc.Invoke(textEditorCommandArgs);
-            }
-            
-            // Redo the previous edit
-            {
-                await TextEditorCommandDefaultFacts.Redo.CommandFunc.Invoke(textEditorCommandArgs);
-            }
+        //    // Undo the previous edit, as to be able to redo an edit
+        //    {
+        //        await TextEditorCommandDefaultFacts.Undo.CommandFunc.Invoke(textEditorCommandArgs);
+        //    }
 
-            // Assert that the text was re-edited
-            {
-                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
-                Assert.NotNull(outModel);
+        //    // Redo the previous edit
+        //    {
+        //        await TextEditorCommandDefaultFacts.Redo.CommandFunc.Invoke(textEditorCommandArgs);
+        //    }
 
-                var outText = outModel!.GetAllText();
-                Assert.Equal(refText, outText);
-            }
-        }
+        //    // Assert that the text was re-edited
+        //    {
+        //        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        //        Assert.NotNull(outModel);
 
-        // Cannot redo
-        {
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        //        var outText = outModel!.GetAllText();
+        //        Assert.Equal(refText, outText);
+        //    }
+        //}
 
-            // Capture the current text, as to later be used after the
-            // Redo invocation to Assert the text had not changed.
-            var refModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
-            Assert.NotNull(refModel);
-            var refText = refModel!.GetAllText();
+        //// Cannot redo
+        //{
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            // Invoke the command
-            await TextEditorCommandDefaultFacts.Redo.CommandFunc.Invoke(textEditorCommandArgs);
+        //    // Capture the current text, as to later be used after the
+        //    // Redo invocation to Assert the text had not changed.
+        //    var refModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        //    Assert.NotNull(refModel);
+        //    var refText = refModel!.GetAllText();
 
-            // Capture the text, now that the Redo command was invoked.
-            var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
-            Assert.NotNull(outModel);
-            var outText = outModel!.GetAllText();
+        //    // Invoke the command
+        //    await TextEditorCommandDefaultFacts.Redo.CommandFunc.Invoke(textEditorCommandArgs);
 
-            // Assert that the text immediately BEFORE invoking the 'Redo' command
-            // is equal to the text which one gets AFTER invoking 'Redo'
-            //
-            // This asserts that the 'cannot redo' case does not modify the text in any way.
-            Assert.Equal(refText, outText);
-        }
-	}
+        //    // Capture the text, now that the Redo command was invoked.
+        //    var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        //    Assert.NotNull(outModel);
+        //    var outText = outModel!.GetAllText();
+
+        //    // Assert that the text immediately BEFORE invoking the 'Redo' command
+        //    // is equal to the text which one gets AFTER invoking 'Redo'
+        //    //
+        //    // This asserts that the 'cannot redo' case does not modify the text in any way.
+        //    Assert.Equal(refText, outText);
+        //}
+    }
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.Duplicate"/>
 	/// </summary>
 	[Fact]
-    public async Task Duplicate()
+    public Task Duplicate()
     {
-        // No selection
-        {
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        throw new NotImplementedException("Test was broken on (2024-04-08)");
+        //// No selection
+        //{
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            // Duplicate with the default Cursor position. This should duplicate the
-            // first row, including its line endings.
-            await TextEditorCommandDefaultFacts.Duplicate.CommandFunc.Invoke(textEditorCommandArgs);
+        //    // Duplicate with the default Cursor position. This should duplicate the
+        //    // first row, including its line endings.
+        //    await TextEditorCommandDefaultFacts.Duplicate.CommandFunc.Invoke(textEditorCommandArgs);
 
-            var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
-            Assert.NotNull(outModel);
-            var outText = outModel!.GetAllText();
-            Assert.Equal("Hello World!\n" + TestConstants.SOURCE_TEXT, outText);
-        }
+        //    var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        //    Assert.NotNull(outModel);
+        //    var outText = outModel!.GetAllText();
+        //    Assert.Equal("Hello World!\n" + TestConstants.SOURCE_TEXT, outText);
+        //}
 
-        // With selection
-        {
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        //// With selection
+        //{
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.Post(
-                nameof(TextEditorCommandDefaultFactsTests),
-                editContext =>
-                {
-                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
-                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+        //    textEditorService.Post(
+        //        nameof(TextEditorCommandDefaultFactsTests),
+        //        editContext =>
+        //        {
+        //            var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+        //            var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+        //            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+        //            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                        return Task.CompletedTask;
+        //            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+        //                return Task.CompletedTask;
 
-                    primaryCursorModifier.RowIndex = 1;
-                    primaryCursorModifier.SetColumnIndexAndPreferred(9);
-                    primaryCursorModifier.SelectionAnchorPositionIndex = 15;
-                    primaryCursorModifier.SelectionEndingPositionIndex = 22;
+        //            primaryCursorModifier.RowIndex = 1;
+        //            primaryCursorModifier.SetColumnIndexAndPreferred(9);
+        //            primaryCursorModifier.SelectionAnchorPositionIndex = 15;
+        //            primaryCursorModifier.SelectionEndingPositionIndex = 22;
 
-                    return Task.CompletedTask;
-                });
+        //            return Task.CompletedTask;
+        //        });
 
-            // Duplicate with the text selected.
-            // This should duplicate the text 'Pillows' on the second row.
-            await TextEditorCommandDefaultFacts.Duplicate.CommandFunc.Invoke(textEditorCommandArgs);
+        //    // Duplicate with the text selected.
+        //    // This should duplicate the text 'Pillows' on the second row.
+        //    await TextEditorCommandDefaultFacts.Duplicate.CommandFunc.Invoke(textEditorCommandArgs);
 
-            var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
-            Assert.NotNull(outModel);
-            var outText = outModel!.GetAllText();
-            Assert.Equal(TestConstants.SOURCE_TEXT.Insert(22, "Pillows"), outText);
-        }
-	}
+        //    var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        //    Assert.NotNull(outModel);
+        //    var outText = outModel!.GetAllText();
+        //    Assert.Equal(TestConstants.SOURCE_TEXT.Insert(22, "Pillows"), outText);
+        //}
+    }
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.IndentMore"/>
@@ -1270,209 +1272,211 @@ public class TextEditorCommandDefaultFactsTests
 	/// <see cref="TextEditorCommandDefaultFacts.NewLineBelow"/>
 	/// </summary>
 	[Fact]
-    public async Task NewLineBelow()
+    public Task NewLineBelow()
     {
-        // RowIndex == 0 && ColumnIndex == 0
-        {
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        throw new NotImplementedException("Test was broken on (2024-04-08)");
+        //// RowIndex == 0 && ColumnIndex == 0
+        //{
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+        //    await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
 
-            throw new NotImplementedException();
-        }
+        //    throw new NotImplementedException();
+        //}
 
-        // RowIndex is firstRow
-        {
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        //// RowIndex is firstRow
+        //{
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+        //    await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
 
-            throw new NotImplementedException();
-        }
+        //    throw new NotImplementedException();
+        //}
 
-        // RowIndex is not firstRow, nor lastRow
-        {
+        //// RowIndex is not firstRow, nor lastRow
+        //{
 
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+        //    await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
 
-            throw new NotImplementedException();
-        }
+        //    throw new NotImplementedException();
+        //}
 
-        // RowIndex is lastRow
-        {
+        //// RowIndex is lastRow
+        //{
 
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+        //    await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
 
-            throw new NotImplementedException();
-        }
-        
-        // RowIndex == document.RowCount
-        //
-        // That is to say, the final character in the document is a line ending.
-        // Because a cursor can go 1 character further than the document's length,
-        // what happens here?
-        {
+        //    throw new NotImplementedException();
+        //}
 
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        //// RowIndex == document.RowCount
+        ////
+        //// That is to say, the final character in the document is a line ending.
+        //// Because a cursor can go 1 character further than the document's length,
+        //// what happens here?
+        //{
 
-            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            throw new NotImplementedException();
-        }
+        //    await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
 
-        // Cursor exists at the start of a row
-        // (Note: the cursor is at a column index of 0)
-        {
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        //    throw new NotImplementedException();
+        //}
 
-            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+        //// Cursor exists at the start of a row
+        //// (Note: the cursor is at a column index of 0)
+        //{
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            throw new NotImplementedException();
-        }
+        //    await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
 
-        // Cursor exists at neither the start of a row, nor the end of a row
-        {
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        //    throw new NotImplementedException();
+        //}
 
-            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+        //// Cursor exists at neither the start of a row, nor the end of a row
+        //{
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            throw new NotImplementedException();
-        }
+        //    await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
 
-        // Cursor exists at the end of a row
-        // (Note: the cursor is immediately before a line ending)
-        {
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        //    throw new NotImplementedException();
+        //}
 
-            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+        //// Cursor exists at the end of a row
+        //// (Note: the cursor is immediately before a line ending)
+        //{
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            throw new NotImplementedException();
-        }
+        //    await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+
+        //    throw new NotImplementedException();
+        //}
     }
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.NewLineAbove"/>
 	/// </summary>
 	[Fact]
-    public async Task NewLineAbove()
+    public Task NewLineAbove()
     {
-        // RowIndex == 0 && ColumnIndex == 0
-        {
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        throw new NotImplementedException("Test was broken on (2024-04-08)");
+        //// RowIndex == 0 && ColumnIndex == 0
+        //{
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+        //    await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
 
-            throw new NotImplementedException();
-        }
+        //    throw new NotImplementedException();
+        //}
 
-        // RowIndex is firstRow
-        {
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        //// RowIndex is firstRow
+        //{
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+        //    await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
 
-            throw new NotImplementedException();
-        }
+        //    throw new NotImplementedException();
+        //}
 
-        // RowIndex is not firstRow, nor lastRow
-        {
+        //// RowIndex is not firstRow, nor lastRow
+        //{
 
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+        //    await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
 
-            throw new NotImplementedException();
-        }
+        //    throw new NotImplementedException();
+        //}
 
-        // RowIndex is lastRow
-        {
+        //// RowIndex is lastRow
+        //{
 
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+        //    await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
 
-            throw new NotImplementedException();
-        }
+        //    throw new NotImplementedException();
+        //}
 
-        // RowIndex == document.RowCount
-        //
-        // That is to say, the final character in the document is a line ending.
-        // Because a cursor can go 1 character further than the document's length,
-        // what happens here?
-        {
+        //// RowIndex == document.RowCount
+        ////
+        //// That is to say, the final character in the document is a line ending.
+        //// Because a cursor can go 1 character further than the document's length,
+        //// what happens here?
+        //{
 
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+        //    await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
 
-            throw new NotImplementedException();
-        }
+        //    throw new NotImplementedException();
+        //}
 
-        // Cursor exists at the start of a row
-        // (Note: the cursor is at a column index of 0)
-        {
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        //// Cursor exists at the start of a row
+        //// (Note: the cursor is at a column index of 0)
+        //{
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+        //    await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
 
-            throw new NotImplementedException();
-        }
+        //    throw new NotImplementedException();
+        //}
 
-        // Cursor exists at neither the start of a row, nor the end of a row
-        {
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        //// Cursor exists at neither the start of a row, nor the end of a row
+        //{
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+        //    await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
 
-            throw new NotImplementedException();
-        }
+        //    throw new NotImplementedException();
+        //}
 
-        // Cursor exists at the end of a row
-        // (Note: the cursor is immediately before a line ending)
-        {
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
+        //// Cursor exists at the end of a row
+        //// (Note: the cursor is immediately before a line ending)
+        //{
+        //    InitializeTextEditorCommandDefaultFactsTests(
+        //        out var textEditorService, out var inModel, out var inViewModel,
+        //        out var textEditorCommandArgs, out var serviceProvider);
 
-            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+        //    await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
 
-            throw new NotImplementedException();
-        }
-	}
+        //    throw new NotImplementedException();
+        //}
+    }
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.GoToMatchingCharacterFactory(bool)"/>
@@ -1627,7 +1631,7 @@ public class Person
 	/// <see cref="TextEditorCommandDefaultFacts.GoToDefinition"/>
 	/// </summary>
 	[Fact]
-    public async Task GoToDefinition()
+    public Task GoToDefinition()
     {
 		throw new NotImplementedException();
 	}
@@ -1636,7 +1640,7 @@ public class Person
     /// <see cref="TextEditorCommandDefaultFacts.ShowFindAllDialog"/>
     /// </summary>
     [Fact]
-    public async Task ShowFindDialog()
+    public Task ShowFindDialog()
     {
         throw new NotImplementedException();
     }
@@ -1645,7 +1649,7 @@ public class Person
 	/// <see cref="TextEditorCommandDefaultFacts.Remeasure"/>
 	/// </summary>
 	[Fact]
-    public async Task Remeasure()
+    public Task Remeasure()
     {
         throw new NotImplementedException();
     }
@@ -1654,7 +1658,7 @@ public class Person
     /// <see cref="TextEditorCommandDefaultFacts.ShowTooltipByCursorPosition"/>
     /// </summary>
     [Fact]
-    public async Task ShowTooltipByCursorPosition()
+    public Task ShowTooltipByCursorPosition()
     {
         throw new NotImplementedException();
     }
@@ -1663,7 +1667,7 @@ public class Person
 	/// <see cref="TextEditorCommandDefaultFacts.ScrollLineDown"/>
 	/// </summary>
 	[Fact]
-    public async Task ScrollLineDown()
+    public Task ScrollLineDown()
     {
         throw new NotImplementedException();
     }
@@ -1672,7 +1676,7 @@ public class Person
     /// <see cref="TextEditorCommandDefaultFacts.ScrollLineUp"/>
     /// </summary>
     [Fact]
-    public async Task ScrollLineUp()
+    public Task ScrollLineUp()
     {
         throw new NotImplementedException();
     }
@@ -1681,7 +1685,7 @@ public class Person
     /// <see cref="TextEditorCommandDefaultFacts.ScrollPageDown"/>
     /// </summary>
     [Fact]
-    public async Task ScrollPageDown()
+    public Task ScrollPageDown()
     {
         throw new NotImplementedException();
     }
@@ -1690,7 +1694,7 @@ public class Person
     /// <see cref="TextEditorCommandDefaultFacts.ScrollPageUp"/>
     /// </summary>
     [Fact]
-    public async Task ScrollPageUp()
+    public Task ScrollPageUp()
     {
         throw new NotImplementedException();
     }
@@ -1699,7 +1703,7 @@ public class Person
     /// <see cref="TextEditorCommandDefaultFacts.CursorMovePageBottom"/>
     /// </summary>
     [Fact]
-    public async Task CursorMovePageBottom()
+    public Task CursorMovePageBottom()
     {
         throw new NotImplementedException();
     }
@@ -1708,7 +1712,7 @@ public class Person
     /// <see cref="TextEditorCommandDefaultFacts.CursorMovePageTop"/>
     /// </summary>
     [Fact]
-    public async Task CursorMovePageTop()
+    public Task CursorMovePageTop()
     {
         throw new NotImplementedException();
     }
@@ -1720,84 +1724,85 @@ public class Person
         out TextEditorCommandArgs textEditorCommandArgs,
         out IServiceProvider serviceProvider)
     {
-        var services = new ServiceCollection()
-            .AddSingleton<LuthetusCommonConfig>()
-            .AddSingleton<LuthetusTextEditorConfig>()
-            .AddScoped<IStorageService, DoNothingStorageService>()
-            .AddScoped<IJSRuntime, TextEditorTestingJsRuntime>()
-            .AddScoped<StorageSync>()
-            .AddScoped<IBackgroundTaskService>(_ => new BackgroundTaskServiceSynchronous())
-            .AddScoped<ITextEditorRegistryWrap, TextEditorRegistryWrap>()
-            .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistryDefault>()
-            .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistryDefault>()
-            .AddScoped<ITextEditorService, TextEditorService>()
-            .AddScoped<IClipboardService, InMemoryClipboardService>()
-            .AddFluxor(options => options.ScanAssemblies(
-                typeof(LuthetusCommonConfig).Assembly,
-                typeof(LuthetusTextEditorConfig).Assembly));
+        throw new NotImplementedException("Test was broken on (2024-04-08)");
+        //      var services = new ServiceCollection()
+        //          .AddSingleton<LuthetusCommonConfig>()
+        //          .AddSingleton<LuthetusTextEditorConfig>()
+        //          .AddScoped<IStorageService, DoNothingStorageService>()
+        //          .AddScoped<IJSRuntime, TextEditorTestingJsRuntime>()
+        //          .AddScoped<StorageSync>()
+        //          .AddScoped<IBackgroundTaskService>(_ => new BackgroundTaskServiceSynchronous())
+        //          .AddScoped<ITextEditorRegistryWrap, TextEditorRegistryWrap>()
+        //          .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistryDefault>()
+        //          .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistryDefault>()
+        //          .AddScoped<ITextEditorService, TextEditorService>()
+        //          .AddScoped<IClipboardService, InMemoryClipboardService>()
+        //          .AddFluxor(options => options.ScanAssemblies(
+        //              typeof(LuthetusCommonConfig).Assembly,
+        //              typeof(LuthetusTextEditorConfig).Assembly));
 
-        serviceProvider = services.BuildServiceProvider();
+        //      serviceProvider = services.BuildServiceProvider();
 
-        var store = serviceProvider.GetRequiredService<IStore>();
-        store.InitializeAsync().Wait();
+        //      var store = serviceProvider.GetRequiredService<IStore>();
+        //      store.InitializeAsync().Wait();
 
-        var backgroundTaskService = serviceProvider.GetRequiredService<IBackgroundTaskService>();
+        //      var backgroundTaskService = serviceProvider.GetRequiredService<IBackgroundTaskService>();
 
-        var continuousQueue = new BackgroundTaskQueue(
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
-            ContinuousBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
+        //      var continuousQueue = new BackgroundTaskQueue(
+        //          ContinuousBackgroundTaskWorker.GetQueueKey(),
+        //          ContinuousBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
 
-        backgroundTaskService.RegisterQueue(continuousQueue);
+        //      backgroundTaskService.RegisterQueue(continuousQueue);
 
-        var blockingQueue = new BackgroundTaskQueue(
-            BlockingBackgroundTaskWorker.GetQueueKey(),
-            BlockingBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
+        //      var blockingQueue = new BackgroundTaskQueue(
+        //          BlockingBackgroundTaskWorker.GetQueueKey(),
+        //          BlockingBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
 
-        backgroundTaskService.RegisterQueue(blockingQueue);
+        //      backgroundTaskService.RegisterQueue(blockingQueue);
 
-        var textEditorRegistryWrap = serviceProvider.GetRequiredService<ITextEditorRegistryWrap>();
+        //      var textEditorRegistryWrap = serviceProvider.GetRequiredService<ITextEditorRegistryWrap>();
 
-        textEditorRegistryWrap.DecorationMapperRegistry = serviceProvider
-            .GetRequiredService<IDecorationMapperRegistry>();
+        //      textEditorRegistryWrap.DecorationMapperRegistry = serviceProvider
+        //          .GetRequiredService<IDecorationMapperRegistry>();
 
-        textEditorRegistryWrap.CompilerServiceRegistry = serviceProvider
-            .GetRequiredService<ICompilerServiceRegistry>();
+        //      textEditorRegistryWrap.CompilerServiceRegistry = serviceProvider
+        //          .GetRequiredService<ICompilerServiceRegistry>();
 
-        textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
+        //      textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
 
-		model = new TextEditorModel(
-            new ResourceUri($"/{nameof(InitializeTextEditorCommandDefaultFactsTests)}.txt"),
-            DateTime.UtcNow,
-            ExtensionNoPeriodFacts.TXT,
-            TestConstants.SOURCE_TEXT,
-            null,
-            null);
+        //model = new TextEditorModel(
+        //          new ResourceUri($"/{nameof(InitializeTextEditorCommandDefaultFactsTests)}.txt"),
+        //          DateTime.UtcNow,
+        //          ExtensionNoPeriodFacts.TXT,
+        //          TestConstants.SOURCE_TEXT,
+        //          null,
+        //          null);
 
-        textEditorService.ModelApi.RegisterCustom(model);
+        //      textEditorService.ModelApi.RegisterCustom(model);
 
-        model = textEditorService.ModelApi.GetOrDefault(model.ResourceUri)
-           ?? throw new ArgumentNullException();
+        //      model = textEditorService.ModelApi.GetOrDefault(model.ResourceUri)
+        //         ?? throw new ArgumentNullException();
 
-        var viewModelKey = Key<TextEditorViewModel>.NewKey();
+        //      var viewModelKey = Key<TextEditorViewModel>.NewKey();
 
-        textEditorService.ViewModelApi.Register(
-            viewModelKey,
-            model.ResourceUri,
-            new TextEditorCategory("UnitTesting"));
+        //      textEditorService.ViewModelApi.Register(
+        //          viewModelKey,
+        //          model.ResourceUri,
+        //          new TextEditorCategory("UnitTesting"));
 
-        viewModel = textEditorService.ViewModelApi.GetOrDefault(viewModelKey)
-           ?? throw new ArgumentNullException();
+        //      viewModel = textEditorService.ViewModelApi.GetOrDefault(viewModelKey)
+        //         ?? throw new ArgumentNullException();
 
-        textEditorCommandArgs = new TextEditorCommandArgs(
-            model.ResourceUri,
-            viewModel.ViewModelKey,
-            false,
-            serviceProvider.GetRequiredService<IClipboardService>(),
-            textEditorService,
-            (MouseEventArgs m) => Task.CompletedTask,
-            serviceProvider.GetRequiredService<IJSRuntime>(),
-            serviceProvider.GetRequiredService<IDispatcher>(),
-            serviceProvider.GetRequiredService<IServiceProvider>(),
-            serviceProvider.GetRequiredService<LuthetusTextEditorConfig>());
+        //      textEditorCommandArgs = new TextEditorCommandArgs(
+        //          model.ResourceUri,
+        //          viewModel.ViewModelKey,
+        //          false,
+        //          serviceProvider.GetRequiredService<IClipboardService>(),
+        //          textEditorService,
+        //          (MouseEventArgs m) => Task.CompletedTask,
+        //          serviceProvider.GetRequiredService<IJSRuntime>(),
+        //          serviceProvider.GetRequiredService<IDispatcher>(),
+        //          serviceProvider.GetRequiredService<IServiceProvider>(),
+        //          serviceProvider.GetRequiredService<LuthetusTextEditorConfig>());
     }
 }

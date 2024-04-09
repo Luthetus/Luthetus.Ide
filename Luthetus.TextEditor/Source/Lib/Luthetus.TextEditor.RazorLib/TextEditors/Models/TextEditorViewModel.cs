@@ -9,6 +9,9 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
+using Microsoft.JSInterop;
+using Fluxor;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -29,6 +32,9 @@ public record TextEditorViewModel : IDisposable
         Key<TextEditorViewModel> viewModelKey,
         ResourceUri resourceUri,
         ITextEditorService textEditorService,
+        IDispatcher dispatcher,
+        IDialogService dialogService,
+        IJSRuntime jsRuntime,
         VirtualizationResult<List<RichCharacter>> virtualizationResult,
         bool displayCommandBar,
         TextEditorCategory category)
@@ -53,7 +59,13 @@ public record TextEditorViewModel : IDisposable
             () => textEditorService.ViewModelApi.GetModelOrDefault(viewModelKey));
 
         UnsafeState = new();
-        DynamicViewModelAdapter = new(ViewModelKey);
+        
+        DynamicViewModelAdapter = new TextEditorDynamicViewModelAdapter(
+            ViewModelKey,
+            TextEditorService,
+            dispatcher,
+            dialogService,
+            jsRuntime);
 	}
 
     /// <summary>

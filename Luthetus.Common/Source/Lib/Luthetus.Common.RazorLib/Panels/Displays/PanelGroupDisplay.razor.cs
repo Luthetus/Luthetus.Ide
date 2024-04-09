@@ -52,16 +52,11 @@ public partial class PanelGroupDisplay : FluxorComponent
 
 	private ImmutableArray<IPanelTab> GetTabList(PanelGroup panelGroup)
 	{
-		panelGroup.Dispatcher = Dispatcher;
-
 		var tabList = new List<IPanelTab>();
 
 		foreach (var panelTab in panelGroup.TabList)
 		{
             panelTab.TabGroup = panelGroup;
-            panelTab.Dispatcher = Dispatcher;
-            panelTab.DialogService = DialogService;
-			panelTab.JsRuntime = JsRuntime;
 			tabList.Add(panelTab);
 		}
 
@@ -77,11 +72,11 @@ public partial class PanelGroupDisplay : FluxorComponent
     {
         var position = string.Empty;
 
-        if (PanelFacts.LeftPanelRecordKey == PanelGroupKey)
+        if (PanelFacts.LeftPanelGroupKey == PanelGroupKey)
             position = "left";
-        else if (PanelFacts.RightPanelRecordKey == PanelGroupKey)
+        else if (PanelFacts.RightPanelGroupKey == PanelGroupKey)
             position = "right";
-        else if (PanelFacts.BottomPanelRecordKey == PanelGroupKey)
+        else if (PanelFacts.BottomPanelGroupKey == PanelGroupKey)
             position = "bottom";
 
         return $"luth_ide_panel_{position}";

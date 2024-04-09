@@ -13,7 +13,7 @@ public class TextEditorLexerDefaultTests
     /// <see cref="TextEditorLexerDefault.Lex(string, Key{RenderState})"/>
     /// </summary>
     [Fact]
-	public async Task Constructor()
+	public Task Constructor()
 	{
         throw new NotImplementedException();
 	}

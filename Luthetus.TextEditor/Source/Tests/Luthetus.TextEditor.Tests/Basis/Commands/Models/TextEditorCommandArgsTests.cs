@@ -6,11 +6,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
-using Fluxor;
-using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
-using Luthetus.Common.RazorLib.Misc;
-using Microsoft.Extensions.DependencyInjection;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Commands.Models;
 
@@ -38,46 +33,48 @@ public class TextEditorCommandArgsTests
     [Fact]
 	public void Constructor()
 	{
-        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
-            out var textEditorService,
-            out var inModel,
-            out var inViewModel,
-            out var serviceProvider);
+        throw new NotImplementedException("Test was broken on (2024-04-08)");
+        //      TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+        //          out var textEditorService,
+        //          out var inModel,
+        //          out var inViewModel,
+        //          out var serviceProvider);
 
-        ResourceUri modelResourceUri = new ResourceUri("/unitTesting.txt");
-        Key<TextEditorViewModel> viewModelKey = Key<TextEditorViewModel>.NewKey();
-        bool hasTextSelection = false;
-        IClipboardService clipboardService = new InMemoryClipboardService();
-        // ITextEditorService textEditorService; // defined via invoking 'InitializeTextEditorServicesTestsHelper'
-        Func<MouseEventArgs, Task>? handleMouseStoppedMovingEventAsyncFunc = mouseEventArgs => Task.CompletedTask;
-        IJSRuntime? jsRuntime = new DoNothingJsRuntime();
-        IDispatcher dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
-        LuthetusTextEditorConfig textEditorConfig = serviceProvider.GetRequiredService<LuthetusTextEditorConfig>();
-        Action<ResourceUri>? registerModelAction = resourceUri => { };
-        Action<ResourceUri>? registerViewModelAction = resourceUri => { };
-        Action<Key<TextEditorViewModel>>? showViewModelAction = viewModelKey => { };
+        //      ResourceUri modelResourceUri = new ResourceUri("/unitTesting.txt");
+        //      Key<TextEditorViewModel> viewModelKey = Key<TextEditorViewModel>.NewKey();
+        //      bool hasTextSelection = false;
+        //      IClipboardService clipboardService = new InMemoryClipboardService();
+        //      // ITextEditorService textEditorService; // defined via invoking 'InitializeTextEditorServicesTestsHelper'
+        //      Func<MouseEventArgs, Task>? handleMouseStoppedMovingEventAsyncFunc = mouseEventArgs => Task.CompletedTask;
+        //      IJSRuntime? jsRuntime = new DoNothingJsRuntime();
+        //      IDispatcher dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+        //      LuthetusTextEditorConfig textEditorConfig = serviceProvider.GetRequiredService<LuthetusTextEditorConfig>();
+        //      Action<ResourceUri>? registerModelAction = resourceUri => { };
+        //      Action<ResourceUri>? registerViewModelAction = resourceUri => { };
+        //      Action<Key<TextEditorViewModel>>? showViewModelAction = viewModelKey => { };
 
-        var commandArgs = new TextEditorCommandArgs(
-            modelResourceUri,
-            viewModelKey,
-            hasTextSelection,
-            clipboardService,
-            textEditorService,
-            handleMouseStoppedMovingEventAsyncFunc,
-            jsRuntime,
-            dispatcher,
-            serviceProvider,
-            textEditorConfig);
+        //      var commandArgs = new TextEditorCommandArgs(
+        //          modelResourceUri,
+        //          viewModelKey,
+        //          hasTextSelection,
+        //          clipboardService,
+        //          textEditorService,
+        //          TextEditorOptions,
+        //          handleMouseStoppedMovingEventAsyncFunc,
+        //          jsRuntime,
+        //          dispatcher,
+        //          serviceProvider,
+        //          textEditorConfig);
 
-		Assert.Equal(modelResourceUri, commandArgs.ModelResourceUri);
-		Assert.Equal(viewModelKey, commandArgs.ViewModelKey);
-		Assert.Equal(hasTextSelection, commandArgs.HasTextSelection);
-        Assert.Equal(clipboardService, commandArgs.ClipboardService);
-        Assert.Equal(textEditorService, commandArgs.TextEditorService);
-        Assert.Equal(handleMouseStoppedMovingEventAsyncFunc, commandArgs.HandleMouseStoppedMovingEventAsyncFunc);
-        Assert.Equal(jsRuntime, commandArgs.JsRuntime);
-        Assert.Equal(dispatcher, commandArgs.Dispatcher);
-        Assert.Equal(serviceProvider, commandArgs.ServiceProvider);
-        Assert.Equal(textEditorConfig, commandArgs.TextEditorConfig);
-	}
+        //Assert.Equal(modelResourceUri, commandArgs.ModelResourceUri);
+        //Assert.Equal(viewModelKey, commandArgs.ViewModelKey);
+        //Assert.Equal(hasTextSelection, commandArgs.HasTextSelection);
+        //      Assert.Equal(clipboardService, commandArgs.ClipboardService);
+        //      Assert.Equal(textEditorService, commandArgs.TextEditorService);
+        //      Assert.Equal(handleMouseStoppedMovingEventAsyncFunc, commandArgs.HandleMouseStoppedMovingEventAsyncFunc);
+        //      Assert.Equal(jsRuntime, commandArgs.JsRuntime);
+        //      Assert.Equal(dispatcher, commandArgs.Dispatcher);
+        //      Assert.Equal(serviceProvider, commandArgs.ServiceProvider);
+        //      Assert.Equal(textEditorConfig, commandArgs.TextEditorConfig);
+    }
 }

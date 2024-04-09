@@ -5,22 +5,22 @@ namespace Luthetus.Common.RazorLib.Panels.Models;
 
 public static class PanelFacts
 {
-    public static readonly Key<PanelGroup> LeftPanelRecordKey = Key<PanelGroup>.NewKey();
-    public static readonly Key<PanelGroup> RightPanelRecordKey = Key<PanelGroup>.NewKey();
-    public static readonly Key<PanelGroup> BottomPanelRecordKey = Key<PanelGroup>.NewKey();
+    public static readonly Key<PanelGroup> LeftPanelGroupKey = Key<PanelGroup>.NewKey();
+    public static readonly Key<PanelGroup> RightPanelGroupKey = Key<PanelGroup>.NewKey();
+    public static readonly Key<PanelGroup> BottomPanelGroupKey = Key<PanelGroup>.NewKey();
 
-    public static PanelGroup GetLeftPanelRecord(PanelsState panelsState)
+    public static PanelGroup GetTopLeftPanelGroup(PanelsState panelsState)
     {
-        return panelsState.PanelGroupList.First(x => x.Key == LeftPanelRecordKey);
+        return panelsState.PanelGroupList.First(x => x.Key == LeftPanelGroupKey);
     }
 
-    public static PanelGroup GetRightPanelRecord(PanelsState panelsState)
+    public static PanelGroup GetTopRightPanelGroup(PanelsState panelsState)
     {
-        return panelsState.PanelGroupList.First(x => x.Key == RightPanelRecordKey);
+        return panelsState.PanelGroupList.First(x => x.Key == RightPanelGroupKey);
     }
 
-    public static PanelGroup GetBottomPanelRecord(PanelsState panelsState)
+    public static PanelGroup GetBottomPanelGroup(PanelsState panelsState)
     {
-        return panelsState.PanelGroupList.First(x => x.Key == BottomPanelRecordKey);
+        return panelsState.PanelGroupList.First(x => x.Key == BottomPanelGroupKey);
     }
 }

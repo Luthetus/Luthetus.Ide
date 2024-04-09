@@ -158,82 +158,83 @@ public partial class TextEditorModelModifierTests
     [Fact]
     public void BACKSPACE_REMOVES_CHARACTER_FROM_PREVIOUS_PARTITION()
     {
-        var fileExtension = ExtensionNoPeriodFacts.TXT;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
-        var resourceLastWriteTime = DateTime.UtcNow;
-        var sourceText = "Hello World!";
+        throw new NotImplementedException("Test was broken on (2024-04-08)");
+        //var fileExtension = ExtensionNoPeriodFacts.TXT;
+        //var resourceUri = new ResourceUri("/unitTesting.txt");
+        //var resourceLastWriteTime = DateTime.UtcNow;
+        //var sourceText = "Hello World!";
 
-        var model = new TextEditorModel(
-             resourceUri,
-             resourceLastWriteTime,
-             fileExtension,
-             sourceText,
-             null,
-             null,
-             partitionSize: 5);
+        //var model = new TextEditorModel(
+        //     resourceUri,
+        //     resourceLastWriteTime,
+        //     fileExtension,
+        //     sourceText,
+        //     null,
+        //     null,
+        //     partitionSize: 5);
 
-        var modifier = new TextEditorModelModifier(model);
+        //var modifier = new TextEditorModelModifier(model);
 
-        // Assert that there is more than one partition.
-        Assert.True(modifier.PartitionList.Count > 1);
+        //// Assert that there is more than one partition.
+        //Assert.True(modifier.PartitionList.Count > 1);
 
-        // Get the count for first partition, so one can put a cursor, at this value.
-        // This is equivalent to the second partition at a relative position index of 0.
-        // That is to say, we want a cursor between the first and second partitions.
-        var countFirstPartition = modifier.PartitionList[0].Count;
+        //// Get the count for first partition, so one can put a cursor, at this value.
+        //// This is equivalent to the second partition at a relative position index of 0.
+        //// That is to say, we want a cursor between the first and second partitions.
+        //var countFirstPartition = modifier.PartitionList[0].Count;
 
-        var rowAndColumnIndicesTuple = model.GetRowAndColumnIndicesFromPositionIndex(countFirstPartition);
+        //var rowAndColumnIndicesTuple = model.GetRowAndColumnIndicesFromPositionIndex(countFirstPartition);
 
-        var cursor = new TextEditorCursor(
-            rowAndColumnIndicesTuple.rowIndex,
-            rowAndColumnIndicesTuple.columnIndex,
-            true);
+        //var cursor = new TextEditorCursor(
+        //    rowAndColumnIndicesTuple.rowIndex,
+        //    rowAndColumnIndicesTuple.columnIndex,
+        //    true);
 
-        var cursorModifierBag = new TextEditorCursorModifierBag(
-            Key<TextEditorViewModel>.Empty,
-            new List<TextEditorCursorModifier> { new(cursor) });
+        //var cursorModifierBag = new TextEditorCursorModifierBag(
+        //    Key<TextEditorViewModel>.Empty,
+        //    new List<TextEditorCursorModifier> { new(cursor) });
 
-        // Prior to the backspace, PartitionList is as follows:
-        //
-        // PartitionList.SetPartitionSize(5);
-        // # {
-        // #     [ 'H', 'e', 'l' ]
-        // #     [ 'l', 'o', ' ' ]
-        // #     [ 'W', 'o', 'r' ]
-        // #     [ 'l', 'd', '!' ]
-        // # }
+        //// Prior to the backspace, PartitionList is as follows:
+        ////
+        //// PartitionList.SetPartitionSize(5);
+        //// # {
+        //// #     [ 'H', 'e', 'l' ]
+        //// #     [ 'l', 'o', ' ' ]
+        //// #     [ 'W', 'o', 'r' ]
+        //// #     [ 'l', 'd', '!' ]
+        //// # }
 
-        modifier.DeleteTextByMotion(MotionKind.Backspace, cursorModifierBag, CancellationToken.None);
+        //modifier.DeleteTextByMotion(MotionKind.Backspace, cursorModifierBag, CancellationToken.None);
 
-        // After the backspace, PartitionList is as follows:
-        //
-        // PartitionList.SetPartitionSize(5);
-        // # {
-        // #     [ 'H', 'e', ]
-        // #     [ 'l', 'o', ' ' ]
-        // #     [ 'W', 'o', 'r' ]
-        // #     [ 'l', 'd', '!' ]
-        // # }
-        Assert.Equal(
-            "He",
-            new string(modifier.PartitionList[0].Select(x => x.Value).ToArray()));
+        //// After the backspace, PartitionList is as follows:
+        ////
+        //// PartitionList.SetPartitionSize(5);
+        //// # {
+        //// #     [ 'H', 'e', ]
+        //// #     [ 'l', 'o', ' ' ]
+        //// #     [ 'W', 'o', 'r' ]
+        //// #     [ 'l', 'd', '!' ]
+        //// # }
+        //Assert.Equal(
+        //    "He",
+        //    new string(modifier.PartitionList[0].Select(x => x.Value).ToArray()));
 
-        Assert.Equal(
-            "lo ",
-            new string(modifier.PartitionList[1].Select(x => x.Value).ToArray()));
+        //Assert.Equal(
+        //    "lo ",
+        //    new string(modifier.PartitionList[1].Select(x => x.Value).ToArray()));
 
-        Assert.Equal(
-            "Wor",
-            new string(modifier.PartitionList[2].Select(x => x.Value).ToArray()));
+        //Assert.Equal(
+        //    "Wor",
+        //    new string(modifier.PartitionList[2].Select(x => x.Value).ToArray()));
 
-        Assert.Equal(
-            "ld!",
-            new string(modifier.PartitionList[3].Select(x => x.Value).ToArray()));
+        //Assert.Equal(
+        //    "ld!",
+        //    new string(modifier.PartitionList[3].Select(x => x.Value).ToArray()));
 
-        // Assert that the output is correct.
-        Assert.Equal(
-            "Helo World!",
-            new string(modifier.ContentList.Select(x => x.Value).ToArray()));
+        //// Assert that the output is correct.
+        //Assert.Equal(
+        //    "Helo World!",
+        //    new string(modifier.ContentList.Select(x => x.Value).ToArray()));
     }
 
     /// <summary>
@@ -245,82 +246,83 @@ public partial class TextEditorModelModifierTests
     [Fact]
     public void DELETE_REMOVES_CHARACTER_FROM_NEXT_PARTITION()
     {
-        var fileExtension = ExtensionNoPeriodFacts.TXT;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
-        var resourceLastWriteTime = DateTime.UtcNow;
-        var sourceText = "Hello World!";
+        throw new NotImplementedException("Test was broken on (2024-04-08)");
+        //var fileExtension = ExtensionNoPeriodFacts.TXT;
+        //var resourceUri = new ResourceUri("/unitTesting.txt");
+        //var resourceLastWriteTime = DateTime.UtcNow;
+        //var sourceText = "Hello World!";
 
-        var model = new TextEditorModel(
-             resourceUri,
-             resourceLastWriteTime,
-             fileExtension,
-             sourceText,
-             null,
-             null,
-             partitionSize: 5);
+        //var model = new TextEditorModel(
+        //     resourceUri,
+        //     resourceLastWriteTime,
+        //     fileExtension,
+        //     sourceText,
+        //     null,
+        //     null,
+        //     partitionSize: 5);
 
-        var modifier = new TextEditorModelModifier(model);
+        //var modifier = new TextEditorModelModifier(model);
 
-        // Assert that there is more than one partition.
-        Assert.True(modifier.PartitionList.Count > 1);
+        //// Assert that there is more than one partition.
+        //Assert.True(modifier.PartitionList.Count > 1);
 
-        // Get the count for first partition, so one can put a cursor, at this value.
-        // This is equivalent to the second partition at a relative position index of 0.
-        // That is to say, we want a cursor between the first and second partitions.
-        var countFirstPartition = modifier.PartitionList[0].Count;
+        //// Get the count for first partition, so one can put a cursor, at this value.
+        //// This is equivalent to the second partition at a relative position index of 0.
+        //// That is to say, we want a cursor between the first and second partitions.
+        //var countFirstPartition = modifier.PartitionList[0].Count;
 
-        var rowAndColumnIndicesTuple = model.GetRowAndColumnIndicesFromPositionIndex(countFirstPartition);
+        //var rowAndColumnIndicesTuple = model.GetRowAndColumnIndicesFromPositionIndex(countFirstPartition);
 
-        var cursor = new TextEditorCursor(
-            rowAndColumnIndicesTuple.rowIndex,
-            rowAndColumnIndicesTuple.columnIndex,
-            true);
+        //var cursor = new TextEditorCursor(
+        //    rowAndColumnIndicesTuple.rowIndex,
+        //    rowAndColumnIndicesTuple.columnIndex,
+        //    true);
 
-        var cursorModifierBag = new TextEditorCursorModifierBag(
-            Key<TextEditorViewModel>.Empty,
-            new List<TextEditorCursorModifier> { new(cursor) });
+        //var cursorModifierBag = new TextEditorCursorModifierBag(
+        //    Key<TextEditorViewModel>.Empty,
+        //    new List<TextEditorCursorModifier> { new(cursor) });
 
-        // Prior to the delete, PartitionList is as follows:
-        //
-        // PartitionList.SetPartitionSize(5);
-        // # {
-        // #     [ 'H', 'e', 'l' ]
-        // #     [ 'l', 'o', ' ' ]
-        // #     [ 'W', 'o', 'r' ]
-        // #     [ 'l', 'd', '!' ]
-        // # }
+        //// Prior to the delete, PartitionList is as follows:
+        ////
+        //// PartitionList.SetPartitionSize(5);
+        //// # {
+        //// #     [ 'H', 'e', 'l' ]
+        //// #     [ 'l', 'o', ' ' ]
+        //// #     [ 'W', 'o', 'r' ]
+        //// #     [ 'l', 'd', '!' ]
+        //// # }
 
-        modifier.DeleteTextByMotion(MotionKind.Delete, cursorModifierBag, CancellationToken.None);
+        //modifier.DeleteTextByMotion(MotionKind.Delete, cursorModifierBag, CancellationToken.None);
 
-        // After the delete, PartitionList is as follows:
-        //
-        // PartitionList.SetPartitionSize(5);
-        // # {
-        // #     [ 'H', 'e', 'l' ]
-        // #     [ 'o', ' ', ]
-        // #     [ 'W', 'o', 'r' ]
-        // #     [ 'l', 'd', '!' ]
-        // # }
-        Assert.Equal(
-            "Hel",
-            new string(modifier.PartitionList[0].Select(x => x.Value).ToArray()));
+        //// After the delete, PartitionList is as follows:
+        ////
+        //// PartitionList.SetPartitionSize(5);
+        //// # {
+        //// #     [ 'H', 'e', 'l' ]
+        //// #     [ 'o', ' ', ]
+        //// #     [ 'W', 'o', 'r' ]
+        //// #     [ 'l', 'd', '!' ]
+        //// # }
+        //Assert.Equal(
+        //    "Hel",
+        //    new string(modifier.PartitionList[0].Select(x => x.Value).ToArray()));
 
-        Assert.Equal(
-            "o ",
-            new string(modifier.PartitionList[1].Select(x => x.Value).ToArray()));
+        //Assert.Equal(
+        //    "o ",
+        //    new string(modifier.PartitionList[1].Select(x => x.Value).ToArray()));
 
-        Assert.Equal(
-            "Wor",
-            new string(modifier.PartitionList[2].Select(x => x.Value).ToArray()));
+        //Assert.Equal(
+        //    "Wor",
+        //    new string(modifier.PartitionList[2].Select(x => x.Value).ToArray()));
 
-        Assert.Equal(
-            "ld!",
-            new string(modifier.PartitionList[3].Select(x => x.Value).ToArray()));
+        //Assert.Equal(
+        //    "ld!",
+        //    new string(modifier.PartitionList[3].Select(x => x.Value).ToArray()));
 
-        // Assert that the output is correct.
-        Assert.Equal(
-            "Helo World!",
-            new string(modifier.ContentList.Select(x => x.Value).ToArray()));
+        //// Assert that the output is correct.
+        //Assert.Equal(
+        //    "Helo World!",
+        //    new string(modifier.ContentList.Select(x => x.Value).ToArray()));
     }
 
     [Fact]

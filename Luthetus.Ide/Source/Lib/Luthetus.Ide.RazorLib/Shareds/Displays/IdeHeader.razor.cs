@@ -234,7 +234,15 @@ public partial class IdeHeader : ComponentBase
             var menuOptionPermissions = new MenuOptionRecord(
 				"BackgroundTasks",
                 MenuOptionKind.Delete,
-                () => _activeBackgroundTaskDisplayComponent.ShowBackgroundTaskDialogOnClick());
+                () => 
+                {
+                    var localActiveBackgroundTaskDisplayComponent = _activeBackgroundTaskDisplayComponent;
+
+                    if (localActiveBackgroundTaskDisplayComponent is null)
+                        return Task.CompletedTask;
+
+                    return localActiveBackgroundTaskDisplayComponent.ShowBackgroundTaskDialogOnClick();
+                });
 
             menuOptionsList.Add(menuOptionPermissions);
         }
@@ -269,8 +277,8 @@ public partial class IdeHeader : ComponentBase
 						//}
 						//else
 						{
-							Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(PanelFacts.LeftPanelRecordKey, panel, true));
-							Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(PanelFacts.LeftPanelRecordKey, panel.Key));
+							Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, panel, true));
+							Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, panel.Key));
 						}
 					}
 

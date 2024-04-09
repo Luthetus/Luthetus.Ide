@@ -9,13 +9,13 @@
      style="@BodyElementDimensions.StyleString">
 
     <StateHasChangedBoundary @ref="_leftPanelStateHasChangedBoundaryComponent">
-        <PanelGroupDisplay PanelGroupKey="PanelFacts.LeftPanelRecordKey"
+        <PanelGroupDisplay PanelGroupKey="PanelFacts.LeftPanelGroupKey"
                       AdjacentElementDimensions="_editorElementDimensions"
                       DimensionAttributeKind="DimensionAttributeKind.Width"
                       ReRenderSelfAndAdjacentElementDimensionsFunc="ReRenderLeftPanelAndEditor" />
      </StateHasChangedBoundary>
 
-    <ResizableColumn LeftElementDimensions="@PanelFacts.GetLeftPanelRecord(PanelsStateWrap.Value).ElementDimensions"
+    <ResizableColumn LeftElementDimensions="PanelFacts.GetTopLeftPanelGroup(PanelsStateWrap.Value).ElementDimensions"
                      RightElementDimensions="_editorElementDimensions"
                      ReRenderFuncAsync="ReRenderLeftPanelAndEditor" />
 
@@ -24,11 +24,11 @@
     </StateHasChangedBoundary>
     
     <ResizableColumn LeftElementDimensions="_editorElementDimensions"
-                     RightElementDimensions="@PanelFacts.GetRightPanelRecord(PanelsStateWrap.Value).ElementDimensions"
+                     RightElementDimensions="PanelFacts.GetTopRightPanelGroup(PanelsStateWrap.Value).ElementDimensions"
                      ReRenderFuncAsync="ReRenderEditorAndRightPanel" />
 
     <StateHasChangedBoundary @ref="_rightPanelStateHasChangedBoundaryComponent">
-        <PanelGroupDisplay PanelGroupKey="PanelFacts.RightPanelRecordKey"
+        <PanelGroupDisplay PanelGroupKey="PanelFacts.RightPanelGroupKey"
                       AdjacentElementDimensions="_editorElementDimensions"
                       DimensionAttributeKind="DimensionAttributeKind.Width"
                       ReRenderSelfAndAdjacentElementDimensionsFunc="ReRenderEditorAndRightPanel" />

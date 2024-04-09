@@ -1,11 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Fluxor;
 using System.Collections.Immutable;
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Tabs.Displays;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Panels.States;
-using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.Groups.States;
@@ -21,16 +18,8 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     private IState<TextEditorGroupState> TextEditorGroupStateWrap { get; set; } = null!;
 	[Inject]
     private IState<TextEditorViewModelState> TextEditorViewModelStateWrap { get; set; } = null!;
-	[Inject]
-    private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-    private IDialogService DialogService { get; set; } = null!;
-	[Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-	[Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
 
     /// <summary>
     /// If the provided <see cref="TextEditorGroupKey"/> is registered using the
@@ -70,16 +59,14 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 
 	private async void TextEditorViewModelStateWrapOnStateChanged(object? sender, EventArgs e)
 	{
-		var localPolymorphicTabListDisplay = _tabListDisplay;
+		var localTabListDisplay = _tabListDisplay;
 
-		if (localPolymorphicTabListDisplay is not null)
-			await _tabListDisplay.NotifyStateChangedAsync();
+		if (localTabListDisplay is not null)
+			await localTabListDisplay.NotifyStateChangedAsync();
 	}
 
 	private ImmutableArray<ITab> GetTabList(TextEditorGroup textEditorGroup)
 	{
-        textEditorGroup.TextEditorService = TextEditorService;
-
         var viewModelState = TextEditorViewModelStateWrap.Value;
 		var tabList = new List<ITab>();
 
@@ -90,10 +77,6 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
             if (viewModel is not null)
             {
                 viewModel.DynamicViewModelAdapter.TabGroup = textEditorGroup;
-				viewModel.DynamicViewModelAdapter.TextEditorService = TextEditorService;
-				viewModel.DynamicViewModelAdapter.Dispatcher = Dispatcher;
-                viewModel.DynamicViewModelAdapter.DialogService = DialogService;
-				viewModel.DynamicViewModelAdapter.JsRuntime = JsRuntime;
 				tabList.Add(viewModel.DynamicViewModelAdapter);
             }
 		}

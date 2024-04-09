@@ -34,7 +34,7 @@ public partial record PanelsState(
     private static PanelGroup ConstructTopLeftGroup()
     {
         var leftPanelGroup = new PanelGroup(
-            PanelFacts.LeftPanelRecordKey,
+            PanelFacts.LeftPanelGroupKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
             ImmutableArray<IPanelTab>.Empty);
@@ -63,7 +63,7 @@ public partial record PanelsState(
     private static PanelGroup ConstructTopRightGroup()
     {
         var rightPanelGroup = new PanelGroup(
-            PanelFacts.RightPanelRecordKey,
+            PanelFacts.RightPanelGroupKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
             ImmutableArray<IPanelTab>.Empty);
@@ -92,7 +92,7 @@ public partial record PanelsState(
     private static PanelGroup ConstructBottomGroup()
     {
         var bottomPanelGroup = new PanelGroup(
-            PanelFacts.BottomPanelRecordKey,
+            PanelFacts.BottomPanelGroupKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
             ImmutableArray<IPanelTab>.Empty);

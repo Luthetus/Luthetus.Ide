@@ -15,9 +15,9 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices.ITextEditorService;
-
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Edits.States;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -30,6 +30,7 @@ public partial class TextEditorService : ITextEditorService
 
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
+    private readonly IDialogService _dialogService;
     private readonly LuthetusTextEditorConfig _textEditorOptions;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
     private readonly IStorageService _storageService;
@@ -51,7 +52,8 @@ public partial class TextEditorService : ITextEditorService
         IStorageService storageService,
         IJSRuntime jsRuntime,
         StorageSync storageSync,
-        IDispatcher dispatcher)
+        IDispatcher dispatcher,
+        IDialogService dialogService)
     {
         ModelStateWrap = modelStateWrap;
         ViewModelStateWrap = viewModelStateWrap;
@@ -68,10 +70,11 @@ public partial class TextEditorService : ITextEditorService
         _jsRuntime = jsRuntime;
         _storageSync = storageSync;
         _dispatcher = dispatcher;
+        _dialogService = dialogService;
 
         ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap.DecorationMapperRegistry, _textEditorRegistryWrap.CompilerServiceRegistry, _backgroundTaskService, _dispatcher);
-        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, ViewModelStateWrap, ModelStateWrap, _jsRuntime, _dispatcher);
-        GroupApi = new TextEditorGroupApi(this, _dispatcher);
+        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, ViewModelStateWrap, ModelStateWrap, _jsRuntime, _dispatcher, _dialogService);
+        GroupApi = new TextEditorGroupApi(this, _dispatcher, _dialogService, _jsRuntime);
         DiffApi = new TextEditorDiffApi(this, _dispatcher);
         OptionsApi = new TextEditorOptionsApi(this, _textEditorOptions, _storageService, _storageSync, _dispatcher);
         FindAllApi = new TextEditorFindAllApi(this, _dispatcher);

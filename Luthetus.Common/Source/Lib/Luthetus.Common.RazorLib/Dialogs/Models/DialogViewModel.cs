@@ -29,7 +29,7 @@ public record DialogViewModel : IDialog
     public Type ComponentType { get; }
     public Dictionary<string, object?>? ComponentParameterMap { get; init; }
 	public string Title { get; set; }
-    public string DialogFocusPointHtmlElementId { get; set; }
+    public string DialogFocusPointHtmlElementId { get; init; }
     public string? DialogCssClass { get; set; }
     public string? DialogCssStyle { get; set; }
 	public bool DialogIsMinimized { get; set; }

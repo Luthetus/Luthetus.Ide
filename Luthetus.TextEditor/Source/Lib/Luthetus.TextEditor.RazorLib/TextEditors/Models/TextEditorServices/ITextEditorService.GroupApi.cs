@@ -3,6 +3,8 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Microsoft.JSInterop;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -28,12 +30,20 @@ public partial interface ITextEditorService
     public class TextEditorGroupApi : ITextEditorGroupApi
     {
         private readonly IDispatcher _dispatcher;
+        private readonly IDialogService _dialogService;
+        private readonly IJSRuntime _jsRuntime;
         private readonly ITextEditorService _textEditorService;
-
-        public TextEditorGroupApi(ITextEditorService textEditorService, IDispatcher dispatcher)
+        
+        public TextEditorGroupApi(
+            ITextEditorService textEditorService,
+            IDispatcher dispatcher,
+            IDialogService dialogService,
+            IJSRuntime jsRuntime)
         {
             _textEditorService = textEditorService;
             _dispatcher = dispatcher;
+            _dialogService = dialogService;
+            _jsRuntime = jsRuntime;
         }
 
         public void SetActiveViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
@@ -55,7 +65,11 @@ public partial interface ITextEditorService
             var textEditorGroup = new TextEditorGroup(
                 textEditorGroupKey,
                 Key<TextEditorViewModel>.Empty,
-                ImmutableList<Key<TextEditorViewModel>>.Empty);
+                ImmutableList<Key<TextEditorViewModel>>.Empty,
+                _textEditorService,
+                _dispatcher,
+                _dialogService,
+                _jsRuntime);
 
             _dispatcher.Dispatch(new TextEditorGroupState.RegisterAction(textEditorGroup));
         }

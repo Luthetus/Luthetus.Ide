@@ -29,25 +29,26 @@ public class TextEditorModelStateMainTests
 	[Fact]
 	public void ModelList()
 	{
-        var modelState = new TextEditorModelState();
-        Assert.Equal(ImmutableList<TextEditorModel>.Empty, modelState.ModelList);
+        throw new NotImplementedException("Test was broken on (2024-04-08)");
+        //      var modelState = new TextEditorModelState();
+        //      Assert.Equal(ImmutableList<TextEditorModel>.Empty, modelState.ModelList);
 
-		var model = new TextEditorModel(
-            new ResourceUri("/unitTesting.txt"),
-            DateTime.UtcNow,
-            ExtensionNoPeriodFacts.TXT,
-            "AlphabetSoup",
-            new TextEditorDecorationMapperDefault(),
-            new LuthCompilerService(null));
+        //var model = new TextEditorModel(
+        //          new ResourceUri("/unitTesting.txt"),
+        //          DateTime.UtcNow,
+        //          ExtensionNoPeriodFacts.TXT,
+        //          "AlphabetSoup",
+        //          new TextEditorDecorationMapperDefault(),
+        //          new LuthCompilerService(null));
 
-		var outModelList = modelState.ModelList.Add(model);
-        Assert.NotEqual(ImmutableList<TextEditorModel>.Empty, outModelList);
+        //var outModelList = modelState.ModelList.Add(model);
+        //      Assert.NotEqual(ImmutableList<TextEditorModel>.Empty, outModelList);
 
-		var outModelState = new TextEditorModelState
-		{
-			ModelList = outModelList
-		};
+        //var outModelState = new TextEditorModelState
+        //{
+        //	ModelList = outModelList
+        //};
 
-		Assert.Equal(outModelList, outModelState.ModelList);
-	}
+        //Assert.Equal(outModelList, outModelState.ModelList);
+    }
 }

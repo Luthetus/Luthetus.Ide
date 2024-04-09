@@ -32,74 +32,75 @@ public class TextEditorDefaultCompilerServiceTests
     [Fact]
 	public void Constructor()
 	{
-		var compilerServiceDefault = new LuthCompilerService(null);
+        throw new NotImplementedException("Test was broken on (2024-04-08)");
+        //var compilerServiceDefault = new LuthCompilerService(null);
 
-		Assert.Null(compilerServiceDefault.Binder);
-		Assert.Empty(compilerServiceDefault.CompilerServiceResources);
+        //Assert.Null(compilerServiceDefault.Binder);
+        //Assert.Empty(compilerServiceDefault.CompilerServiceResources);
 
-		var registeredResourcesCounter = 0;
-		void OnResourceRegistered()
-		{
-			registeredResourcesCounter++;
+        //var registeredResourcesCounter = 0;
+        //void OnResourceRegistered()
+        //{
+        //	registeredResourcesCounter++;
 
-        }
-		
-		var parsedResourcesCounter = 0;
-		void OnResourceParsed()
-		{
-            parsedResourcesCounter++;
-        }
-		
-		var disposedResourcesCounter = 0;
-		void OnResourceDisposed()
-		{
-            disposedResourcesCounter++;
-        }
+        //      }
 
-		compilerServiceDefault.ResourceRegistered += OnResourceRegistered;
-		compilerServiceDefault.ResourceParsed += OnResourceParsed;
-		compilerServiceDefault.ResourceDisposed += OnResourceDisposed;
+        //var parsedResourcesCounter = 0;
+        //void OnResourceParsed()
+        //{
+        //          parsedResourcesCounter++;
+        //      }
 
-		var resourceUri = new ResourceUri("/unitTesting.txt");
+        //var disposedResourcesCounter = 0;
+        //void OnResourceDisposed()
+        //{
+        //          disposedResourcesCounter++;
+        //      }
 
-        compilerServiceDefault.RegisterResource(resourceUri);
-		
-		// The default compiler service should do nothing
-		Assert.Empty(compilerServiceDefault.CompilerServiceResources);
+        //compilerServiceDefault.ResourceRegistered += OnResourceRegistered;
+        //compilerServiceDefault.ResourceParsed += OnResourceParsed;
+        //compilerServiceDefault.ResourceDisposed += OnResourceDisposed;
 
-		var compilerServiceResource = compilerServiceDefault.GetCompilerServiceResourceFor(resourceUri);
-		Assert.Null(compilerServiceResource);
+        //var resourceUri = new ResourceUri("/unitTesting.txt");
 
-		Assert.Equal(
-			ImmutableArray<TextEditorTextSpan>.Empty,
-            compilerServiceDefault.GetTokenTextSpansFor(resourceUri));
-		
-		Assert.Equal(
-			ImmutableArray<ITextEditorSymbol>.Empty,
-            compilerServiceDefault.GetSymbolsFor(resourceUri));
-		
-		Assert.Equal(
-			ImmutableArray<TextEditorDiagnostic>.Empty,
-            compilerServiceDefault.GetDiagnosticsFor(resourceUri));
-		
-		Assert.Equal(
-			ImmutableArray<AutocompleteEntry>.Empty,
-            compilerServiceDefault.GetAutocompleteEntries(
-				"AlphabetSoup",
-				TextEditorTextSpan.FabricateTextSpan("unit-test")));
+        //      compilerServiceDefault.RegisterResource(resourceUri);
 
-		compilerServiceDefault.ResourceWasModified(
-			resourceUri,
-			ImmutableArray<TextEditorTextSpan>.Empty);
-		
-		compilerServiceDefault.DisposeResource(resourceUri);
+        //// The default compiler service should do nothing
+        //Assert.Empty(compilerServiceDefault.CompilerServiceResources);
 
-        compilerServiceDefault.ResourceRegistered -= OnResourceRegistered;
-		compilerServiceDefault.ResourceParsed -= OnResourceParsed;
-		compilerServiceDefault.ResourceDisposed -= OnResourceDisposed;
+        //var compilerServiceResource = compilerServiceDefault.GetCompilerServiceResourceFor(resourceUri);
+        //Assert.Null(compilerServiceResource);
 
-		Assert.Equal(1, registeredResourcesCounter);
-		Assert.Equal(1, parsedResourcesCounter);
-		Assert.Equal(1, disposedResourcesCounter);
-	}
+        //Assert.Equal(
+        //	ImmutableArray<TextEditorTextSpan>.Empty,
+        //          compilerServiceDefault.GetTokenTextSpansFor(resourceUri));
+
+        //Assert.Equal(
+        //	ImmutableArray<ITextEditorSymbol>.Empty,
+        //          compilerServiceDefault.GetSymbolsFor(resourceUri));
+
+        //Assert.Equal(
+        //	ImmutableArray<TextEditorDiagnostic>.Empty,
+        //          compilerServiceDefault.GetDiagnosticsFor(resourceUri));
+
+        //Assert.Equal(
+        //	ImmutableArray<AutocompleteEntry>.Empty,
+        //          compilerServiceDefault.GetAutocompleteEntries(
+        //		"AlphabetSoup",
+        //		TextEditorTextSpan.FabricateTextSpan("unit-test")));
+
+        //compilerServiceDefault.ResourceWasModified(
+        //	resourceUri,
+        //	ImmutableArray<TextEditorTextSpan>.Empty);
+
+        //compilerServiceDefault.DisposeResource(resourceUri);
+
+        //      compilerServiceDefault.ResourceRegistered -= OnResourceRegistered;
+        //compilerServiceDefault.ResourceParsed -= OnResourceParsed;
+        //compilerServiceDefault.ResourceDisposed -= OnResourceDisposed;
+
+        //Assert.Equal(1, registeredResourcesCounter);
+        //Assert.Equal(1, parsedResourcesCounter);
+        //Assert.Equal(1, disposedResourcesCounter);
+    }
 }
