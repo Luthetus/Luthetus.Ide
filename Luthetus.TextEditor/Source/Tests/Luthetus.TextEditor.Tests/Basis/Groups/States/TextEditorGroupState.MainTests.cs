@@ -1,8 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using System.Collections.Immutable;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Groups.States;
 

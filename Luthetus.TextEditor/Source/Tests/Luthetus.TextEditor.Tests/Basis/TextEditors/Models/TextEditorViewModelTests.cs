@@ -1,7 +1,5 @@
 ﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
-using Luthetus.TextEditor.RazorLib.Characters.Models;
-using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 

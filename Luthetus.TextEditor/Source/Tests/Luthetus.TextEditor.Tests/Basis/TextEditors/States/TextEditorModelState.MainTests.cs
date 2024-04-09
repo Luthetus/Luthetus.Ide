@@ -1,10 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.Decorations.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.States;
 
