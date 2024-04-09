@@ -234,7 +234,7 @@ public partial class IdeHeader : ComponentBase
             var menuOptionPermissions = new MenuOptionRecord(
 				"BackgroundTasks",
                 MenuOptionKind.Delete,
-                _activeBackgroundTaskDisplayComponent.ShowBackgroundTaskDialogOnClick);
+                () => _activeBackgroundTaskDisplayComponent.ShowBackgroundTaskDialogOnClick());
 
             menuOptionsList.Add(menuOptionPermissions);
         }
