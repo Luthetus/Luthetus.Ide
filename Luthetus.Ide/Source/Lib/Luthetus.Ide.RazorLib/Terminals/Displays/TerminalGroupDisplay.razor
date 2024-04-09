@@ -10,11 +10,11 @@
 
     @{
         var terminalGroupDisplayState = TerminalGroupDisplayStateWrap.Value;
-        var terminalSessionState = TerminalSessionStateWrap.Value;
+        var terminalState = TerminalStateWrap.Value;
 
-        _ = terminalSessionState.TerminalSessionMap.TryGetValue(
-            terminalGroupDisplayState.ActiveTerminalSessionKey,
-            out var activeTerminalSession);
+        _ = terminalState.TerminalMap.TryGetValue(
+                terminalGroupDisplayState.ActiveTerminalKey,
+                out var activeTerminal);
     }
 
     <div class="luth_ide_section-title">
@@ -26,13 +26,13 @@
         <div class="luth_ide_terminal-body"
              style="@terminalGroupDisplayState.BodyElementDimensions.StyleString">
 
-            @if (activeTerminalSession is null)
+            @if (activeTerminal is null)
             {
-                @: activeTerminalSession is null
+                @: activeTerminal was null
             }
             else
             {
-                <TerminalDisplay TerminalSessionKey="activeTerminalSession.TerminalSessionKey"/>
+                <TerminalDisplay TerminalKey="activeTerminal.Key"/>
             }
         </div>
 
@@ -42,44 +42,43 @@
 
         <div class="luth_ide_terminal-tabs"
              style="@terminalGroupDisplayState.TabsElementDimensions.StyleString">
-            @for (var i = 0; i < TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS.Length; i++)
+            @for (var i = 0; i < TerminalFacts.WELL_KNOWN_TERMINAL_KEYS.Length; i++)
             {
                 var index = i;
-                var wellKnownTerminalSessionKey = TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS[index];
+                var wellKnownTerminalKey = TerminalFacts.WELL_KNOWN_TERMINAL_KEYS[index];
 
-                var success = terminalSessionState.TerminalSessionMap.TryGetValue(
-                    wellKnownTerminalSessionKey,
-                    out var terminalSession);
+                var success = terminalState.TerminalMap.TryGetValue(
+                    wellKnownTerminalKey,
+                    out var terminal);
 
-                if (success && terminalSession is not null)
+                if (success && terminal is not null)
                 {
                     string isActiveCssClass = string.Empty;
-                    if ((activeTerminalSession?.TerminalSessionKey ?? Key<TerminalSession>.Empty) == terminalSession.TerminalSessionKey)
+                    if ((activeTerminal?.Key ?? Key<Terminal>.Empty) == terminal.Key)
                         isActiveCssClass = "luth_active";
 
                     <button class="luth_button @isActiveCssClass"
-                            @onclick="() => DispatchSetActiveTerminalSessionAction(terminalSession.TerminalSessionKey)">
-                        @terminalSession.DisplayName
+                            @onclick="() => DispatchSetActiveTerminalAction(terminal.Key)">
+
+                        @terminal.DisplayName
 
                         <button class="luth_button"
-                                @onclick="() => terminalSession.ClearStandardOut()"
+                                @onclick="() => terminal.ClearStandardOut()"
                                 @onclick:stopPropagation="true">
                             Clear
                         </button>
 
-                        @{
-                            var isKillProcessDisabled = !terminalSession.HasExecutingProcess;
-                        }
+                        @{ var isKillProcessDisabled = !terminal.HasExecutingProcess; }
 
                         <button class="luth_button"
                                 disabled=@isKillProcessDisabled
-                                @onclick="() => terminalSession.KillProcess()"
+                                @onclick="() => terminal.KillProcess()"
                                 @onclick:stopPropagation="true">
                             Kill
                         </button>
 
                         <div style="margin-left: 15px;">
-                            @if (terminalSession.HasExecutingProcess)
+                            @if (terminal.HasExecutingProcess)
                             {
                                 <IconLoading />
                             }
@@ -91,7 +90,7 @@
                     </button>
                 }
 
-                if (i != TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS.Length - 1)
+                if (i != TerminalFacts.WELL_KNOWN_TERMINAL_KEYS.Length - 1)
                 {
                     <text>
                         &nbsp;

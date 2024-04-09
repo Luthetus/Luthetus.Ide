@@ -10,7 +10,7 @@ namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public class TerminalResource : LuthCompilerServiceResource
 {
-    private readonly IState<TerminalSessionState> _terminalSessionStateWrap;
+    private readonly IState<TerminalState> _terminalStateWrap;
 
     /// <summary>
     /// The <see cref="ArgumentsTextSpan"/> and <see cref="TargetFilePathTextSpan"/> are currently
@@ -24,10 +24,10 @@ public class TerminalResource : LuthCompilerServiceResource
     public TerminalResource(
             ResourceUri resourceUri,
             TerminalCompilerService terminalCompilerService,
-            IState<TerminalSessionState> terminalSessionStateWrap)
+            IState<TerminalState> terminalStateWrap)
         : base(resourceUri, terminalCompilerService)
     {
-        _terminalSessionStateWrap = terminalSessionStateWrap;
+        _terminalStateWrap = terminalStateWrap;
     }
 
     public override ImmutableArray<ISyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
@@ -36,7 +36,7 @@ public class TerminalResource : LuthCompilerServiceResource
     public List<TextEditorTextSpan> ManualDecorationTextSpanList { get; } = new List<TextEditorTextSpan>();
     public List<ITextEditorSymbol> ManualSymbolList { get; } = new List<ITextEditorSymbol>();
 
-    public TerminalSession TerminalSession => _terminalSessionStateWrap.Value.TerminalSessionMap.Values.First(
+    public Terminal Terminal => _terminalStateWrap.Value.TerminalMap.Values.First(
         x => x.ResourceUri == ResourceUri);
 
     public override ImmutableArray<TextEditorTextSpan> GetTokenTextSpans()

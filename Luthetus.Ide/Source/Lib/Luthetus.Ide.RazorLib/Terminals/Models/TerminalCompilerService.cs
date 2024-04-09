@@ -11,12 +11,12 @@ public sealed class TerminalCompilerService : LuthCompilerService
 {
     public TerminalCompilerService(
             ITextEditorService textEditorService,
-            IState<TerminalSessionState> terminalSessionStateWrap)
+            IState<TerminalState> terminalStateWrap)
         : base(textEditorService)
     {
         _compilerServiceOptions = new()
         {
-            RegisterResourceFunc = resourceUri => new TerminalResource(resourceUri, this, terminalSessionStateWrap),
+            RegisterResourceFunc = resourceUri => new TerminalResource(resourceUri, this, terminalStateWrap),
             GetLexerFunc = (resource, sourceText) => new TerminalLexer((TerminalResource)resource, sourceText),
         };
     }

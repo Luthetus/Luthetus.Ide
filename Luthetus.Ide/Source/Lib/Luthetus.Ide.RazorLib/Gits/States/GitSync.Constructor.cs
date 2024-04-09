@@ -7,20 +7,20 @@ namespace Luthetus.Ide.RazorLib.Gits.States;
 
 public partial class GitSync
 {
-    private readonly IState<TerminalSessionState> _terminalSessionStateWrap;
+    private readonly IState<TerminalState> _terminalStateWrap;
     private readonly IState<GitState> _gitStateWrap;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
 
     public GitSync(
-        IState<TerminalSessionState> terminalSessionStateWrap,
+        IState<TerminalState> terminalStateWrap,
         IState<GitState> gitStateWrap,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         IBackgroundTaskService backgroundTaskService,
         IDispatcher dispatcher)
     {
-        _terminalSessionStateWrap = terminalSessionStateWrap;
+        _terminalStateWrap = terminalStateWrap;
         _gitStateWrap = gitStateWrap;
         _fileSystemProvider = fileSystemProvider;
         _environmentProvider = environmentProvider;

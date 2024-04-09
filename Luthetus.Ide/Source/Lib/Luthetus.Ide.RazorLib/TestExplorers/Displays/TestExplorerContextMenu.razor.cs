@@ -19,7 +19,7 @@ namespace Luthetus.Ide.RazorLib.TestExplorers.Displays;
 public partial class TestExplorerContextMenu : ComponentBase
 {
     [Inject]
-    private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
+    private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
 	[Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
@@ -184,8 +184,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 			return;
 		}
 
-		var executionTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
-            TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
+		var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
 
         var dotNetTestByFullyQualifiedNameTerminalCommand = new TerminalCommand(
             treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey,
@@ -195,14 +194,13 @@ public partial class TestExplorerContextMenu : ComponentBase
             () => Task.CompletedTask,
 			() =>
 			{
-				executionTerminalSession.ClearStandardOut(
+				executionTerminal.ClearStandardOut(
 					treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey);
 
                 return Task.CompletedTask;
 			});
 
-        await executionTerminalSession
-			.EnqueueCommandAsync(dotNetTestByFullyQualifiedNameTerminalCommand);
+        await executionTerminal.EnqueueCommandAsync(dotNetTestByFullyQualifiedNameTerminalCommand);
 	}
 
     public static string GetContextMenuCssStyleString(TreeViewCommandArgs? commandArgs)

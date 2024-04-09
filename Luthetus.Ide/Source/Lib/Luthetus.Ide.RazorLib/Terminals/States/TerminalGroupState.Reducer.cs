@@ -7,13 +7,13 @@ public partial record class TerminalGroupState
     public static class Reducer
     {
         [ReducerMethod]
-        public static TerminalGroupState ReduceSetActiveTerminalSessionAction(
+        public static TerminalGroupState ReduceSetActiveTerminalAction(
             TerminalGroupState inState,
-            SetActiveTerminalSessionAction setActiveTerminalSessionAction)
+            SetActiveTerminalAction setActiveTerminalAction)
         {
             return inState with
             {
-                ActiveTerminalSessionKey = setActiveTerminalSessionAction.TerminalSessionKey
+                ActiveTerminalKey = setActiveTerminalAction.TerminalKey
             };
         }
     }

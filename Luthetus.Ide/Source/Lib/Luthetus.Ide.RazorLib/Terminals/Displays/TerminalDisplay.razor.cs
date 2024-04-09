@@ -13,10 +13,20 @@ namespace Luthetus.Ide.RazorLib.Terminals.Displays;
 public partial class TerminalDisplay : FluxorComponent
 {
     [Inject]
-    private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
+    private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
 
+    /// <summary>
+    /// All the output from the terminal session will be displayed in a read-only text editor.
+    /// </summary>
     [Parameter, EditorRequired]
-    public Key<TerminalSession> TerminalSessionKey { get; set; }
+    public Key<Terminal> TerminalKey { get; set; }
+    
+    /// <summary>
+    /// Filter the output from a terminal session such that,
+    /// only the output of the specified terminal command will be shown.
+    /// </summary>
+    [Parameter]
+    public Key<TerminalCommand> TerminalCommandKey { get; set; } = Key<TerminalCommand>.Empty;
 
     private TextEditorViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
     {
@@ -26,13 +36,13 @@ public partial class TerminalDisplay : FluxorComponent
         ContextRecord = ContextFacts.TerminalContext,
     };
 
-    private Key<TerminalSession> _seenTerminalSessionKey;
+    private Key<Terminal> _seenTerminalKey;
 
     protected override void OnParametersSet()
     {
-        if (_seenTerminalSessionKey != TerminalSessionKey)
+        if (_seenTerminalKey != TerminalKey)
         {
-            _seenTerminalSessionKey = TerminalSessionKey;
+            _seenTerminalKey = TerminalKey;
 
             _textEditorViewModelDisplayOptions = new()
             {
@@ -40,7 +50,7 @@ public partial class TerminalDisplay : FluxorComponent
                 IncludeFooterHelperComponent = false,
                 IncludeGutterComponent = false,
                 ContextRecord = ContextFacts.TerminalContext,
-                KeymapOverride = new TextEditorKeymapTerminal(TerminalSessionStateWrap, TerminalSessionKey)
+                KeymapOverride = new TextEditorKeymapTerminal(TerminalStateWrap, TerminalKey)
             };
         }
 

@@ -22,7 +22,7 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 public partial class DotNetSolutionFormDisplay : FluxorComponent
 {
     [Inject]
-    private IState<TerminalSessionState> TerminalSessionsStateWrap { get; set; } = null!;
+    private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -132,11 +132,9 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                     return Task.CompletedTask;
                 });
 
-            var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
-                TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+            var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
 
-            await generalTerminalSession
-                .EnqueueCommandAsync(newDotNetSolutionCommand);
+            await generalTerminal.EnqueueCommandAsync(newDotNetSolutionCommand);
         }
     }
 

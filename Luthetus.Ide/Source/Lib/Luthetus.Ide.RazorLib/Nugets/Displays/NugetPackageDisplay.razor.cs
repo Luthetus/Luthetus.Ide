@@ -21,7 +21,7 @@ public partial class NugetPackageDisplay : FluxorComponent
     [Inject]
     private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
+    private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
     [Inject]
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
@@ -105,9 +105,7 @@ public partial class NugetPackageDisplay : FluxorComponent
                 return Task.CompletedTask;
             });
 
-        var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
-            TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
-
-        await generalTerminalSession.EnqueueCommandAsync(addNugetPackageReferenceCommand);
+        var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
+        await generalTerminal.EnqueueCommandAsync(addNugetPackageReferenceCommand);
     }
 }

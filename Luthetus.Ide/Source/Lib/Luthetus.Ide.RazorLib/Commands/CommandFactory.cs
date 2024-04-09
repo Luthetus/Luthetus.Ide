@@ -350,7 +350,8 @@ public class CommandFactory : ICommandFactory
 			{
 				if (_treeViewService.TryGetTreeViewContainer(
 						DotNetSolutionState.TreeViewSolutionExplorerStateKey,
-						out var treeViewContainer))
+						out var treeViewContainer) &&
+                    treeViewContainer is not null)
 				{
 					await RecursiveGetFlattenedTree(treeViewContainer.RootNode, textEditorViewModel);
 				}

@@ -28,18 +28,18 @@ namespace Luthetus.Ide.RazorLib.Keymaps.Models.Terminals;
 
 public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 {
-    private readonly IState<TerminalSessionState> _terminalSessionStateWrap;
-    private readonly Key<TerminalSession> _terminalSessionKey;
+    private readonly IState<TerminalState> _terminalStateWrap;
+    private readonly Key<Terminal> _terminalKey;
 
     public TextEditorKeymapTerminal(
-			IState<TerminalSessionState> terminalSessionStateWrap,
-            Key<TerminalSession> terminalSessionKey)
+			IState<TerminalState> terminalStateWrap,
+            Key<Terminal> terminalKey)
         : base(
             new Key<Keymap>(Guid.Parse("baf160e1-6b43-494b-99db-0e8c7500facb")),
             "Terminal")
     {
-        _terminalSessionStateWrap = terminalSessionStateWrap;
-        _terminalSessionKey = terminalSessionKey;
+        _terminalStateWrap = terminalStateWrap;
+        _terminalKey = terminalKey;
     }
 
     public Key<KeymapLayer> GetLayer(bool hasSelection)
@@ -130,9 +130,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
                                     if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
                                     {
                                         // Notify the underlying terminal (tty) that the user wrote to standard out.
-
-                                        var generalTerminalSession = _terminalSessionStateWrap.Value.TerminalSessionMap[_terminalSessionKey];
-
+                                        var generalTerminal = _terminalStateWrap.Value.TerminalMap[_terminalKey];
                                         var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
 
                                         if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
@@ -168,7 +166,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
                                             formattedCommand,
 											ContinueWith: () =>
 											{
-												terminalResource.TerminalSession.WriteWorkingDirectory();
+												terminalResource.Terminal.WriteWorkingDirectory();
 												return Task.CompletedTask;
 											});
 
@@ -182,7 +180,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 											.Invoke(editContext)
 											.ConfigureAwait(false);
 
-                                        await generalTerminalSession.EnqueueCommandAsync(terminalCommand);
+                                        await generalTerminal.EnqueueCommandAsync(terminalCommand);
                                     }
                                     else if (keyboardEventArgs.Code == "Backspace" && primaryCursorModifier.ColumnIndex == 0)
                                     {

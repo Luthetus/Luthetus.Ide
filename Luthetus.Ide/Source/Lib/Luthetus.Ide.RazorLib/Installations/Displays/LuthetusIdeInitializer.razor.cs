@@ -73,16 +73,16 @@ public partial class LuthetusIdeInitializer : ComponentBase
                         Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(searchEngine));
                     }
 
-                    foreach (var terminalSessionKey in TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS)
+                    foreach (var terminalKey in TerminalFacts.WELL_KNOWN_TERMINAL_KEYS)
                     {
-                        var displayName = $"BAD_WellKnownTerminalSessionKey:{terminalSessionKey.Guid}";
+                        var displayName = $"BAD_WellKnownTerminalKey:{terminalKey.Guid}";
 
-                        if (terminalSessionKey == TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY)
+                        if (terminalKey == TerminalFacts.EXECUTION_TERMINAL_KEY)
                             displayName = "Execution";
-                        else if (terminalSessionKey == TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY)
+                        else if (terminalKey == TerminalFacts.GENERAL_TERMINAL_KEY)
                             displayName = "General";
 
-                        var terminalSession = new TerminalSession(
+                        var terminal = new Terminal(
                             displayName,
                             null,
                             Dispatcher,
@@ -91,16 +91,14 @@ public partial class LuthetusIdeInitializer : ComponentBase
                             LuthetusCommonComponentRenderers,
                             CompilerServiceRegistry)
                         {
-                            TerminalSessionKey = terminalSessionKey
+                            Key = terminalKey
                         };
 
-                        Dispatcher.Dispatch(new TerminalSessionState.RegisterTerminalSessionAction(terminalSession));
+                        Dispatcher.Dispatch(new TerminalState.RegisterAction(terminal));
                     }
 
                     InitializePanelTabs();
-
                     CommandFactory.Initialize();
-
                     return Task.CompletedTask;
                 });
         }

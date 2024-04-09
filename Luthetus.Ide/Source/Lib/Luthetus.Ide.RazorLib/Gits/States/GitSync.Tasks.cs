@@ -44,12 +44,11 @@ public partial class GitSync
             return;
         }
 
-        var generalTerminalSession = _terminalSessionStateWrap.Value.TerminalSessionMap[
-            TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+        var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
 
         var formattedCommand = new FormattedCommand(GitCliFacts.TARGET_FILE_NAME, new[]
         {
-                GitCliFacts.STATUS_COMMAND
+            GitCliFacts.STATUS_COMMAND
         });
 
         var gitStatusCommand = new TerminalCommand(
@@ -59,7 +58,7 @@ public partial class GitSync
             CancellationToken.None,
             async () =>
             {
-                var gitStatusOutput = generalTerminalSession.ReadStandardOut(
+                var gitStatusOutput = generalTerminal.ReadStandardOut(
                     GitFacts.GitStatusTerminalCommandKey);
 
                 if (gitStatusOutput is null)
@@ -80,7 +79,7 @@ public partial class GitSync
                     ChangesNotStagedOnAfterCompletedAction);
             });
 
-        await generalTerminalSession.EnqueueCommandAsync(gitStatusCommand);
+        await generalTerminal.EnqueueCommandAsync(gitStatusCommand);
 
         Dispatcher.Dispatch(new SetGitStateWithAction(inGitState =>
         {
@@ -130,7 +129,7 @@ public partial class GitSync
 
         var formattedCommand = new FormattedCommand(GitCliFacts.TARGET_FILE_NAME, new[]
         {
-                GitCliFacts.INIT_COMMAND
+            GitCliFacts.INIT_COMMAND
         });
 
         var gitInitCommand = new TerminalCommand(
@@ -140,10 +139,8 @@ public partial class GitSync
             CancellationToken.None,
             async () => await RefreshGitAsync(cancellationToken));
 
-        var generalTerminalSession = _terminalSessionStateWrap.Value.TerminalSessionMap[
-            TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
-
-        await generalTerminalSession.EnqueueCommandAsync(gitInitCommand);
+        var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
+        await generalTerminal.EnqueueCommandAsync(gitInitCommand);
 
         Dispatcher.Dispatch(new SetGitStateWithAction(inGitState =>
         {

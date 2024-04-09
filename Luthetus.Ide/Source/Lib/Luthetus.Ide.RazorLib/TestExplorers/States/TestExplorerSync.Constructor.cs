@@ -12,7 +12,7 @@ public partial class TestExplorerSync
     private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
     private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
-    private readonly IState<TerminalSessionState> _terminalSessionStateWrap;
+    private readonly IState<TerminalState> _terminalStateWrap;
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly IDispatcher _dispatcher;
 
@@ -21,13 +21,13 @@ public partial class TestExplorerSync
         ITreeViewService treeViewService,
         IBackgroundTaskService backgroundTaskService,
 		IState<DotNetSolutionState> dotNetSolutionStateWrap,
-		IState<TerminalSessionState> terminalSessionStateWrap,
+		IState<TerminalState> terminalStateWrap,
         IDispatcher dispatcher)
     {
 		_commonComponentRenderers = commonComponentRenderers;
         _treeViewService = treeViewService;
         _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
-        _terminalSessionStateWrap = terminalSessionStateWrap;
+        _terminalStateWrap = terminalStateWrap;
         _backgroundTaskService = backgroundTaskService;
         _dispatcher = dispatcher;
     }

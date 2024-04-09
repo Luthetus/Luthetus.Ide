@@ -10,12 +10,12 @@
 	<div style="height: 100%;">
 		@if (activeNode is TreeViewStringFragment treeViewStringFragment)
 		{
-			<TerminalDisplay TerminalSessionKey="TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY"
+			<TerminalDisplay TerminalKey="TerminalFacts.EXECUTION_TERMINAL_KEY"
 						     TerminalCommandKey="@treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey"/>
 		}
 		else if (activeNode is TreeViewProjectTestModel treeViewProjectTestModel)
 		{
-			<TerminalDisplay TerminalSessionKey="TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY"
+			<TerminalDisplay TerminalKey="TerminalFacts.EXECUTION_TERMINAL_KEY"
 						     TerminalCommandKey="@treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey"/>
 		}
 		else if (activeNode is not null)

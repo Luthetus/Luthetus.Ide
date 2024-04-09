@@ -5,5 +5,5 @@ namespace Luthetus.Ide.RazorLib.Terminals.States;
 
 public partial record TerminalGroupState
 {
-    public record SetActiveTerminalSessionAction(Key<TerminalSession> TerminalSessionKey);
+    public record SetActiveTerminalAction(Key<Terminal> TerminalKey);
 }

@@ -26,7 +26,7 @@ namespace Luthetus.Ide.RazorLib.CSharpProjectForms.Displays;
 public partial class CSharpProjectFormDisplay : FluxorComponent
 {
     [Inject]
-    private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
+    private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
     [Inject]
     private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
@@ -125,7 +125,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
             var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewList();
 
-            var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+            var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
 
             var newCSharpProjectCommand = new TerminalCommand(
                 _viewModel.LoadProjectTemplatesTerminalCommandKey,
@@ -134,7 +134,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 _viewModel.NewCSharpProjectCancellationTokenSource.Token,
                 async () =>
                 {
-                    var output = generalTerminalSession.ReadStandardOut(_viewModel.LoadProjectTemplatesTerminalCommandKey);
+                    var output = generalTerminal.ReadStandardOut(_viewModel.LoadProjectTemplatesTerminalCommandKey);
 
                     if (output is not null)
                     {
@@ -147,7 +147,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                     }
                 });
 
-            await generalTerminalSession.EnqueueCommandAsync(newCSharpProjectCommand);
+            await generalTerminal.EnqueueCommandAsync(newCSharpProjectCommand);
         }
         finally
         {
@@ -167,7 +167,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             await InvokeAsync(StateHasChanged);
 
             var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewListDeprecated();
-            var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+            var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
 
             var newCSharpProjectCommand = new TerminalCommand(
                 _viewModel.LoadProjectTemplatesTerminalCommandKey,
@@ -176,7 +176,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 _viewModel.NewCSharpProjectCancellationTokenSource.Token,
                 async () =>
                 {
-                    var output = generalTerminalSession.ReadStandardOut(_viewModel.LoadProjectTemplatesTerminalCommandKey);
+                    var output = generalTerminal.ReadStandardOut(_viewModel.LoadProjectTemplatesTerminalCommandKey);
 
                     if (output is not null)
                     {
@@ -189,7 +189,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                     }
                 });
 
-            await generalTerminalSession.EnqueueCommandAsync(newCSharpProjectCommand);
+            await generalTerminal.EnqueueCommandAsync(newCSharpProjectCommand);
         }
         finally
         {
@@ -226,7 +226,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
         if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Photino)
         {
-            var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+            var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
 
             var newCSharpProjectCommand = new TerminalCommand(
                 immutableView.NewCSharpProjectTerminalCommandKey,
@@ -247,11 +247,10 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                             return Task.CompletedTask;
                         });
 
-                    await generalTerminalSession
-                        .EnqueueCommandAsync(addExistingProjectToSolutionCommand);
+                    await generalTerminal.EnqueueCommandAsync(addExistingProjectToSolutionCommand);
                 });
 
-            await generalTerminalSession.EnqueueCommandAsync(newCSharpProjectCommand);
+            await generalTerminal.EnqueueCommandAsync(newCSharpProjectCommand);
         }
         else
         {

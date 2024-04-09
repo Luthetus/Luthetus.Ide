@@ -99,7 +99,7 @@ public class MenuOptionsFactoryTests
     }
 
     /// <summary>
-    /// <see cref="MenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(TreeViewSolution, TreeViewNamespacePath, TerminalSession, IDispatcher, Func{Task})"/>
+    /// <see cref="MenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(TreeViewSolution, TreeViewNamespacePath, Terminal, IDispatcher, Func{Task})"/>
     /// </summary>
     [Fact]
     public void RemoveCSharpProjectReferenceFromSolution()
@@ -108,7 +108,7 @@ public class MenuOptionsFactoryTests
     }
 
     /// <summary>
-    /// <see cref="MenuOptionsFactory.AddProjectToProjectReference(TreeViewNamespacePath, TerminalSession, IDispatcher, InputFileSync, Func{Task})"/>
+    /// <see cref="MenuOptionsFactory.AddProjectToProjectReference(TreeViewNamespacePath, Terminal, IDispatcher, InputFileSync, Func{Task})"/>
     /// </summary>
     [Fact]
     public void AddProjectToProjectReference()
@@ -117,7 +117,7 @@ public class MenuOptionsFactoryTests
     }
 
     /// <summary>
-    /// <see cref="MenuOptionsFactory.RemoveProjectToProjectReference(TreeViewCSharpProjectToProjectReference, TerminalSession, IDispatcher, Func{Task})"/>
+    /// <see cref="MenuOptionsFactory.RemoveProjectToProjectReference(TreeViewCSharpProjectToProjectReference, Terminal, IDispatcher, Func{Task})"/>
     /// </summary>
     [Fact]
     public void RemoveProjectToProjectReference()
@@ -126,7 +126,7 @@ public class MenuOptionsFactoryTests
     }
 
     /// <summary>
-    /// <see cref="MenuOptionsFactory.MoveProjectToSolutionFolder(TreeViewSolution, TreeViewNamespacePath, TerminalSession, IDispatcher, Func{Task})"/>
+    /// <see cref="MenuOptionsFactory.MoveProjectToSolutionFolder(TreeViewSolution, TreeViewNamespacePath, Terminal, IDispatcher, Func{Task})"/>
     /// </summary>
     [Fact]
     public void MoveProjectToSolutionFolder()
@@ -135,7 +135,7 @@ public class MenuOptionsFactoryTests
     }
 
     /// <summary>
-    /// <see cref="MenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(NamespacePath, TreeViewCSharpProjectNugetPackageReference, TerminalSession, IDispatcher, Func{Task})"/>
+    /// <see cref="MenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(NamespacePath, TreeViewCSharpProjectNugetPackageReference, Terminal, IDispatcher, Func{Task})"/>
     /// </summary>
     [Fact]
     public void RemoveNuGetPackageReferenceFromProject()
@@ -144,7 +144,7 @@ public class MenuOptionsFactoryTests
     }
 
     /// <summary>
-    /// <see cref="MenuOptionsFactory.PerformAddProjectToProjectReference(TreeViewNamespacePath, TerminalSession, IDispatcher, InputFileSync, Func{Task})"/>
+    /// <see cref="MenuOptionsFactory.PerformAddProjectToProjectReference(TreeViewNamespacePath, Terminal, IDispatcher, InputFileSync, Func{Task})"/>
     /// </summary>
     [Fact]
     public void PerformAddProjectToProjectReferenceAction()
@@ -153,7 +153,7 @@ public class MenuOptionsFactoryTests
     }
 
     /// <summary>
-    /// <see cref="MenuOptionsFactory.PerformRemoveProjectToProjectReference(TreeViewCSharpProjectToProjectReference, TerminalSession, IDispatcher, Func{Task})"/>
+    /// <see cref="MenuOptionsFactory.PerformRemoveProjectToProjectReference(TreeViewCSharpProjectToProjectReference, Terminal, IDispatcher, Func{Task})"/>
     /// </summary>
     [Fact]
     public void PerformRemoveProjectToProjectReferenceAction()
@@ -162,7 +162,7 @@ public class MenuOptionsFactoryTests
     }
 
     /// <summary>
-    /// <see cref="MenuOptionsFactory.PerformMoveProjectToSolutionFolder(TreeViewSolution, TreeViewNamespacePath, string, TerminalSession, IDispatcher, Func{Task})"/>
+    /// <see cref="MenuOptionsFactory.PerformMoveProjectToSolutionFolder(TreeViewSolution, TreeViewNamespacePath, string, Terminal, IDispatcher, Func{Task})"/>
     /// </summary>
     [Fact]
     public void PerformMoveProjectToSolutionFolderAction()
@@ -171,7 +171,7 @@ public class MenuOptionsFactoryTests
     }
 
     /// <summary>
-    /// <see cref="MenuOptionsFactory.PerformRemoveNuGetPackageReferenceFromProject(NamespacePath, TreeViewCSharpProjectNugetPackageReference, TerminalSession, IDispatcher, Func{Task})"/>
+    /// <see cref="MenuOptionsFactory.PerformRemoveNuGetPackageReferenceFromProject(NamespacePath, TreeViewCSharpProjectNugetPackageReference, Terminal, IDispatcher, Func{Task})"/>
     /// </summary>
     [Fact]
     public void PerformRemoveNuGetPackageReferenceFromProjectAction()

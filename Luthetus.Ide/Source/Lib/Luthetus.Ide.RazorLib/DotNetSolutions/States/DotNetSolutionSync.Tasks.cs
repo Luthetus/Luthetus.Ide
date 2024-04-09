@@ -174,9 +174,9 @@ public partial class DotNetSolutionSync
 				StartingAbsolutePathForSearch = parentDirectory.Value
 			}));
 
-            // Set 'generalTerminalSession' working directory
+            // Set 'generalTerminal' working directory
             {
-                var generalTerminalSession = _terminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+                var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
 
                 var changeDirectoryCommand = new TerminalCommand(
                     Key<TerminalCommand>.NewKey(),
@@ -184,12 +184,12 @@ public partial class DotNetSolutionSync
                     parentDirectory.Value,
                     CancellationToken.None);
 
-                await generalTerminalSession.EnqueueCommandAsync(changeDirectoryCommand);
+                await generalTerminal.EnqueueCommandAsync(changeDirectoryCommand);
             }
 
-            // Set 'executionTerminalSession' working directory
+            // Set 'executionTerminal' working directory
             {
-                var executionTerminalSession = _terminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
+                var executionTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
 
                 var changeDirectoryCommand = new TerminalCommand(
                     Key<TerminalCommand>.NewKey(),
@@ -197,7 +197,7 @@ public partial class DotNetSolutionSync
                     parentDirectory.Value,
                     CancellationToken.None);
 
-                await executionTerminalSession.EnqueueCommandAsync(changeDirectoryCommand);
+                await executionTerminal.EnqueueCommandAsync(changeDirectoryCommand);
             }
         }
 

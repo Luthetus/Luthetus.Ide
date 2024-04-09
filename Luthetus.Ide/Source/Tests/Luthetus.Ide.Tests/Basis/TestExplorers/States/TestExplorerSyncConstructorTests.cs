@@ -14,7 +14,7 @@ namespace Luthetus.Ide.Tests.Basis.TestExplorers.States;
 public partial class TestExplorerSyncConstructorTests
 {
     /// <summary>
-    /// <see cref="TestExplorerSync(ILuthetusCommonComponentRenderers, ITreeViewService, IBackgroundTaskService, IState{DotNetSolutionState}, IState{TerminalSessionState}, IDispatcher)"/>
+    /// <see cref="TestExplorerSync(ILuthetusCommonComponentRenderers, ITreeViewService, IBackgroundTaskService, IState{DotNetSolutionState}, IState{TerminalState}, IDispatcher)"/>
     /// </summary>
     [Fact]
     public void Constructor()

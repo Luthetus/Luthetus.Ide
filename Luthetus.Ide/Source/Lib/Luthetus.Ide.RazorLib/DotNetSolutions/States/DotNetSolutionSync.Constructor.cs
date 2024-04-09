@@ -21,7 +21,7 @@ public partial class DotNetSolutionSync
     private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
     private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
-    private readonly IState<TerminalSessionState> _terminalSessionStateWrap;
+    private readonly IState<TerminalState> _terminalStateWrap;
     private readonly ITextEditorService _textEditorService;
     private readonly ICompilerServiceRegistry _interfaceCompilerServiceRegistry;
 
@@ -32,7 +32,7 @@ public partial class DotNetSolutionSync
         ILuthetusCommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
         IState<DotNetSolutionState> dotNetSolutionStateWrap,
-        IState<TerminalSessionState> terminalSessionStateWrap,
+        IState<TerminalState> terminalStateWrap,
         ITextEditorService textEditorService,
         InputFileSync inputFileSync,
         IBackgroundTaskService backgroundTaskService,
@@ -45,7 +45,7 @@ public partial class DotNetSolutionSync
         _commonComponentRenderers = commonComponentRenderers;
         _treeViewService = treeViewService;
         _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
-        _terminalSessionStateWrap = terminalSessionStateWrap;
+        _terminalStateWrap = terminalStateWrap;
         _textEditorService = textEditorService;
         
         InputFileSync = inputFileSync;

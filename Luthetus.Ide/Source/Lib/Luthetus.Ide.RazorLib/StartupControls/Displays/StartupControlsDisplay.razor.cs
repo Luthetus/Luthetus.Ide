@@ -14,7 +14,7 @@ public partial class StartupControlsDisplay : FluxorComponent
     [Inject]
     private IState<ProgramExecutionState> ProgramExecutionStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
+    private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -46,13 +46,10 @@ public partial class StartupControlsDisplay : FluxorComponent
     private async Task StartProgramWithoutDebuggingOnClick()
     {
         var startProgramTerminalCommand = GetStartProgramTerminalCommand();
-
         if (startProgramTerminalCommand is null)
             return;
 
-        var executionTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
-            TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
-
-        await executionTerminalSession.EnqueueCommandAsync(startProgramTerminalCommand);
+        var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
+        await executionTerminal.EnqueueCommandAsync(startProgramTerminalCommand);
     }
 }

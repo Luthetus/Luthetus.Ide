@@ -163,7 +163,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(
         TreeViewSolution treeViewSolution,
         TreeViewNamespacePath projectNode,
-        TerminalSession terminalSession,
+        Terminal terminal,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
@@ -180,7 +180,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     new Action<IAbsolutePath>(_ => PerformRemoveCSharpProjectReferenceFromSolution(
                         treeViewSolution,
                         projectNode,
-                        terminalSession,
+                        terminal,
                         dispatcher,
                         onAfterCompletion))
                 },
@@ -189,7 +189,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
     public MenuOptionRecord AddProjectToProjectReference(
         TreeViewNamespacePath projectReceivingReference,
-        TerminalSession terminalSession,
+        Terminal terminal,
         IDispatcher dispatcher,
         InputFileSync inputFileSync,
         Func<Task> onAfterCompletion)
@@ -197,7 +197,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         return new MenuOptionRecord("Add Project Reference", MenuOptionKind.Other,
             OnClickFunc: () => PerformAddProjectToProjectReference(
                 projectReceivingReference,
-                terminalSession,
+                terminal,
                 dispatcher,
                 inputFileSync,
                 onAfterCompletion));
@@ -205,14 +205,14 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
     public MenuOptionRecord RemoveProjectToProjectReference(
         TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
-        TerminalSession terminalSession,
+        Terminal terminal,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Remove Project Reference", MenuOptionKind.Other,
             OnClickFunc: () => PerformRemoveProjectToProjectReference(
                 treeViewCSharpProjectToProjectReference,
-                terminalSession,
+                terminal,
                 dispatcher,
                 onAfterCompletion));
     }
@@ -220,7 +220,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     public MenuOptionRecord MoveProjectToSolutionFolder(
         TreeViewSolution treeViewSolution,
         TreeViewNamespacePath treeViewProjectToMove,
-        TerminalSession terminalSession,
+        Terminal terminal,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
@@ -237,7 +237,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                             treeViewSolution,
                             treeViewProjectToMove,
                             nextName,
-                            terminalSession,
+                            terminal,
                             dispatcher,
                             onAfterCompletion))
                 },
@@ -247,7 +247,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     public MenuOptionRecord RemoveNuGetPackageReferenceFromProject(
         NamespacePath modifyProjectNamespacePath,
         TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
-        TerminalSession terminalSession,
+        Terminal terminal,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
@@ -255,7 +255,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             OnClickFunc: () => PerformRemoveNuGetPackageReferenceFromProject(
                 modifyProjectNamespacePath,
                 treeViewCSharpProjectNugetPackageReference,
-                terminalSession,
+                terminal,
                 dispatcher,
                 onAfterCompletion));
     }
@@ -505,7 +505,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     private void PerformRemoveCSharpProjectReferenceFromSolution(
         TreeViewSolution treeViewSolution,
         TreeViewNamespacePath projectNode,
-        TerminalSession terminalSession,
+        Terminal terminal,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
@@ -526,13 +526,13 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     CancellationToken.None,
                     async () => await onAfterCompletion.Invoke());
 
-                await terminalSession.EnqueueCommandAsync(terminalCommand);
+                await terminal.EnqueueCommandAsync(terminalCommand);
             });
     }
 
     public Task PerformAddProjectToProjectReference(
         TreeViewNamespacePath projectReceivingReference,
-        TerminalSession terminalSession,
+        Terminal terminal,
         IDispatcher dispatcher,
         InputFileSync inputFileSync,
         Func<Task> onAfterCompletion)
@@ -558,7 +558,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         await onAfterCompletion.Invoke();
                     });
 
-                await terminalSession.EnqueueCommandAsync(terminalCommand);
+                await terminal.EnqueueCommandAsync(terminalCommand);
             },
             afp =>
             {
@@ -580,7 +580,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
     public Task PerformRemoveProjectToProjectReference(
         TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
-        TerminalSession terminalSession,
+        Terminal terminal,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
@@ -603,7 +603,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         await onAfterCompletion.Invoke();
                     });
 
-                await terminalSession.EnqueueCommandAsync(removeProjectToProjectReferenceTerminalCommand);
+                await terminal.EnqueueCommandAsync(removeProjectToProjectReferenceTerminalCommand);
             });
 
         return Task.CompletedTask;
@@ -613,7 +613,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         TreeViewSolution treeViewSolution,
         TreeViewNamespacePath treeViewProjectToMove,
         string solutionFolderPath,
-        TerminalSession terminalSession,
+        Terminal terminal,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
@@ -640,9 +640,9 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 PerformRemoveCSharpProjectReferenceFromSolution(
                     treeViewSolution,
                     treeViewProjectToMove,
-                    terminalSession,
+                    terminal,
                     dispatcher,
-                    async () => await terminalSession.EnqueueCommandAsync(moveProjectToSolutionFolderTerminalCommand));
+                    async () => await terminal.EnqueueCommandAsync(moveProjectToSolutionFolderTerminalCommand));
 
                 return Task.CompletedTask;
             });
@@ -651,7 +651,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     public Task PerformRemoveNuGetPackageReferenceFromProject(
         NamespacePath modifyProjectNamespacePath,
         TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
-        TerminalSession terminalSession,
+        Terminal terminal,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
@@ -674,7 +674,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         await onAfterCompletion.Invoke();
                     });
 
-                await terminalSession.EnqueueCommandAsync(removeNugetPackageReferenceFromProjectTerminalCommand);
+                await terminal.EnqueueCommandAsync(removeNugetPackageReferenceFromProjectTerminalCommand);
             });
 
         return Task.CompletedTask;

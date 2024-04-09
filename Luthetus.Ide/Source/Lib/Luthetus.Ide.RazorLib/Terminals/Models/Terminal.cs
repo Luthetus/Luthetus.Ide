@@ -24,7 +24,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
-public class TerminalSession
+public class Terminal
 {
     private readonly IDispatcher _dispatcher;
     private readonly IBackgroundTaskService _backgroundTaskService;
@@ -34,9 +34,9 @@ public class TerminalSession
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
     private readonly object _standardOutBuilderMapLock = new();
     private readonly ConcurrentQueue<TerminalCommand> _terminalCommandsConcurrentQueue = new();
-    private readonly Dictionary<Key<TerminalCommand>, TerminalSessionOutput> _standardOutBuilderMap = new();
+    private readonly Dictionary<Key<TerminalCommand>, TerminalOutput> _standardOutBuilderMap = new();
 
-    public TerminalSession(
+    public Terminal(
         string displayName,
         string? workingDirectoryAbsolutePathString,
         IDispatcher dispatcher,
@@ -53,7 +53,7 @@ public class TerminalSession
         _compilerServiceRegistry = compilerServiceRegistry;
         WorkingDirectoryAbsolutePathString = workingDirectoryAbsolutePathString;
 
-        ResourceUri = new($"__LUTHETUS-{TerminalSessionKey.Guid}__");
+        ResourceUri = new($"__LUTHETUS-{Key.Guid}__");
 
         CreateTextEditor();
     }
@@ -63,7 +63,7 @@ public class TerminalSession
     private string? _previousWorkingDirectoryAbsolutePathString;
     private string? _workingDirectoryAbsolutePathString;
 
-    public Key<TerminalSession> TerminalSessionKey { get; init; } = Key<TerminalSession>.NewKey();
+    public Key<Terminal> Key { get; init; } = Key<Terminal>.NewKey();
     public ResourceUri ResourceUri { get; init; }
     public Key<TextEditorViewModel> TextEditorViewModelKey { get; init; } = Key<TextEditorViewModel>.NewKey();
 
@@ -199,7 +199,7 @@ public class TerminalSession
                 
                 if (terminalCommand.FormattedCommand.TargetFileName == "clear")
                 {
-                    ClearTerminalSession();
+                    ClearTerminal();
                     return;
                 }
 
@@ -231,7 +231,7 @@ public class TerminalSession
 					// I'll change this to make a new List<string>()
 					lock(_standardOutBuilderMapLock)
 					{
-						_standardOutBuilderMap.TryAdd(terminalCommand.TerminalCommandKey, new TerminalSessionOutput());
+						_standardOutBuilderMap.TryAdd(terminalCommand.TerminalCommandKey, new TerminalOutput());
 					}
 
                     HasExecutingProcess = true;
@@ -384,7 +384,7 @@ public class TerminalSession
 
     private void DispatchNewStateKey()
     {
-        _dispatcher.Dispatch(new TerminalSessionState.NotifyStateChangedAction(TerminalSessionKey));
+        _dispatcher.Dispatch(new TerminalState.NotifyStateChangedAction(Key));
     }
 
     private void CreateTextEditor()
@@ -443,7 +443,7 @@ public class TerminalSession
         }.ToImmutableArray();
 
         _textEditorService.Post(
-            nameof(TerminalSession),
+            nameof(Terminal),
             _textEditorService.ViewModelApi.WithValueFactory(
                 TextEditorViewModelKey,
                 textEditorViewModel => textEditorViewModel with
@@ -531,10 +531,10 @@ public class TerminalSession
             });
     }
     
-    public void ClearTerminalSession()
+    public void ClearTerminal()
     {
         _textEditorService.Post(
-            nameof(ClearTerminalSession),
+            nameof(ClearTerminal),
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);

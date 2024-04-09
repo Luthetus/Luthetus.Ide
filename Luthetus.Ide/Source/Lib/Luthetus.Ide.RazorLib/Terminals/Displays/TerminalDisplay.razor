@@ -4,13 +4,13 @@
 
 <div class="luth_ide_terminal">
     @{
-        var terminalSessionState = TerminalSessionStateWrap.Value;
-        var success = terminalSessionState.TerminalSessionMap.TryGetValue(TerminalSessionKey, out var terminalSession);
+        var terminalState = TerminalStateWrap.Value;
+        var success = terminalState.TerminalMap.TryGetValue(TerminalKey, out var terminal);
     }
 
-    @if (success && terminalSession is not null)
+    @if (success && terminal is not null)
     {
-        <TextEditorViewModelDisplay TextEditorViewModelKey="terminalSession.TextEditorViewModelKey"
+        <TextEditorViewModelDisplay TextEditorViewModelKey="terminal.TextEditorViewModelKey"
                                     ViewModelDisplayOptions="_textEditorViewModelDisplayOptions" />
     }
 </div>

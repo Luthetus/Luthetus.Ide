@@ -11,12 +11,12 @@ public partial class TerminalGroupDisplay : ComponentBase
     [Inject]
     private IState<TerminalGroupState> TerminalGroupDisplayStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
+    private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    private void DispatchSetActiveTerminalSessionAction(Key<TerminalSession> terminalSessionKey)
+    private void DispatchSetActiveTerminalAction(Key<Terminal> terminalKey)
     {
-        Dispatcher.Dispatch(new TerminalGroupState.SetActiveTerminalSessionAction(terminalSessionKey));
+        Dispatcher.Dispatch(new TerminalGroupState.SetActiveTerminalAction(terminalKey));
     }
 }

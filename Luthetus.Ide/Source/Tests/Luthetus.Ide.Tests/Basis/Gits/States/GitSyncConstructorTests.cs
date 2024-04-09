@@ -12,7 +12,7 @@ namespace Luthetus.Ide.Tests.Basis.Gits.States;
 public class GitSyncConstructorTests
 {
     /// <summary>
-    /// <see cref="GitSync(IState{TerminalSessionState}, IState{GitState}, IFileSystemProvider, IEnvironmentProvider, IBackgroundTaskService, IDispatcher)"/>
+    /// <see cref="GitSync(IState{TerminalState}, IState{GitState}, IFileSystemProvider, IEnvironmentProvider, IBackgroundTaskService, IDispatcher)"/>
     /// <br/>----<br/>
     /// <see cref="GitSync.BackgroundTaskService"/>
     /// <see cref="GitSync.Dispatcher"/>

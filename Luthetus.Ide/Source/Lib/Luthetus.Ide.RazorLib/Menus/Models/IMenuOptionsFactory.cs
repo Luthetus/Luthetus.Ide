@@ -29,34 +29,34 @@ public interface IMenuOptionsFactory
     public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(
         TreeViewSolution solutionNode,
         TreeViewNamespacePath projectNode,
-        TerminalSession terminalSession,
+        Terminal terminal,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord AddProjectToProjectReference(
         TreeViewNamespacePath projectReceivingReference,
-        TerminalSession terminalSession,
+        Terminal terminal,
         IDispatcher dispatcher,
         InputFileSync inputFileSync,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord RemoveProjectToProjectReference(
         TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
-        TerminalSession terminalSession,
+        Terminal terminal,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord MoveProjectToSolutionFolder(
         TreeViewSolution treeViewSolution,
         TreeViewNamespacePath treeViewProjectToMove,
-        TerminalSession terminalSession,
+        Terminal terminal,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord RemoveNuGetPackageReferenceFromProject(
         NamespacePath modifyProjectNamespacePath,
         TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
-        TerminalSession terminalSession,
+        Terminal terminal,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion);
 }

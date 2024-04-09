@@ -30,7 +30,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
     public CompilerServiceRegistry(
         ITextEditorService textEditorService,
         IEnvironmentProvider environmentProvider,
-        IState<TerminalSessionState> terminalSessionStateWrap)
+        IState<TerminalState> terminalStateWrap)
     {
         CSharpCompilerService = new CSharpCompilerService(textEditorService);
         CSharpProjectCompilerService = new CSharpProjectCompilerService(textEditorService);
@@ -43,7 +43,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
         TypeScriptCompilerService = new TypeScriptCompilerService(textEditorService);
         XmlCompilerService = new XmlCompilerService(textEditorService);
         CCompilerService = new CCompilerService(textEditorService);
-        TerminalCompilerService = new TerminalCompilerService(textEditorService, terminalSessionStateWrap);
+        TerminalCompilerService = new TerminalCompilerService(textEditorService, terminalStateWrap);
         DefaultCompilerService = new LuthCompilerService(textEditorService);
 
         _map.Add(ExtensionNoPeriodFacts.HTML, XmlCompilerService);

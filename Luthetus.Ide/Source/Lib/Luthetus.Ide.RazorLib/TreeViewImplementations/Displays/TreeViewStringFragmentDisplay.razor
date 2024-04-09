@@ -1,14 +1,14 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@{ var terminalSession = TerminalSessionStateSelection.Value; }
+@{ var terminal = TerminalStateSelection.Value; }
 
-@if (terminalSession is null)
+@if (terminal is null)
 {
-	<text>@nameof(terminalSession) was null</text>
+	<text>@nameof(terminal) was null</text>
 }
 else
 {
-	var output = terminalSession.ReadStandardOut(
+	var output = terminal.ReadStandardOut(
 		TreeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey);
 
 	RenderFragment renderFragment = @<text>?</text>;

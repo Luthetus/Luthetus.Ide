@@ -7,9 +7,9 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 namespace Luthetus.Ide.RazorLib.Terminals.States;
 
 [FeatureState]
-public partial record TerminalGroupState(Key<TerminalSession> ActiveTerminalSessionKey)
+public partial record TerminalGroupState(Key<Terminal> ActiveTerminalKey)
 {
-    public TerminalGroupState() : this(TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY)
+    public TerminalGroupState() : this(TerminalFacts.GENERAL_TERMINAL_KEY)
     {
         // _bodyElementDimensions
         {

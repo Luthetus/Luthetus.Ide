@@ -1,3 +1,4 @@
+﻿using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
@@ -5,14 +6,14 @@ using Luthetus.Ide.RazorLib.Terminals.States;
 namespace Luthetus.Ide.Tests.Basis.Terminals.States;
 
 /// <summary>
-/// <see cref="WellKnownTerminalSessionsState"/>
+/// <see cref="TerminalState"/>
 /// </summary>
-public class WellKnownTerminalSessionsStateMainTests
+public class TerminalStateMainTests
 {
     /// <summary>
-    /// <see cref="WellKnownTerminalSessionsState(Key{TerminalSession})"/>
+    /// <see cref="TerminalState(ImmutableDictionary{Key{Terminal}, Terminal})"/>
     /// <br/>----<br/>
-    /// <see cref="WellKnownTerminalSessionsState.ActiveTerminalSessionKey"/>
+    /// <see cref="TerminalState.TerminalMap"/>
     /// </summary>
     [Fact]
     public void Constructor()

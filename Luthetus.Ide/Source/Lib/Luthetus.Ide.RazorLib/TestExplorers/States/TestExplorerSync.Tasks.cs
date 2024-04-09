@@ -47,8 +47,7 @@ public partial class TestExplorerSync
 
             treeViewProjectTestModel.Item.EnqueueDiscoverTestsFunc = async callback =>
 			{
-				var executionTerminalSession = _terminalSessionStateWrap.Value.TerminalSessionMap[
-	            	TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
+				var executionTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
 	
 		        var dotNetTestListTestsCommand = new TerminalCommand(
 		            treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey,
@@ -59,8 +58,7 @@ public partial class TestExplorerSync
 					{
 						try
 						{
-							var output = executionTerminalSession.ReadStandardOut(treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey);
-
+							var output = executionTerminal.ReadStandardOut(treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey);
 							if (output is null)
 								return;
 
@@ -103,13 +101,13 @@ public partial class TestExplorerSync
 						}
 					},
                     () => {
-                        executionTerminalSession.ClearStandardOut(
+                        executionTerminal.ClearStandardOut(
 							treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey);
 
                         return Task.CompletedTask;
                     });
 
-		        await executionTerminalSession.EnqueueCommandAsync(dotNetTestListTestsCommand);
+		        await executionTerminal.EnqueueCommandAsync(dotNetTestListTestsCommand);
 			};				
 		}
 

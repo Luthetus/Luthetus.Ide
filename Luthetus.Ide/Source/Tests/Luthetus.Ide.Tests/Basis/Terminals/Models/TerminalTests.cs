@@ -1,26 +1,23 @@
-using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 
 /// <summary>
-/// <see cref="TerminalSession"/>
+/// <see cref="Terminal"/>
 /// </summary>
-public class TerminalSessionTests
+public class TerminalTests
 {
     /// <summary>
-    /// <see cref="TerminalSession(string?, IDispatcher, IBackgroundTaskService, ILuthetusCommonComponentRenderers)"/>
+    /// <see cref="Terminal(string?, IDispatcher, IBackgroundTaskService, ILuthetusCommonComponentRenderers)"/>
     /// <br/>----<br/>
-    /// <see cref="TerminalSession.TerminalSessionKey"/>
-    /// <see cref="TerminalSession.WorkingDirectoryAbsolutePathString"/>
-    /// <see cref="TerminalSession.ActiveTerminalCommand"/>
-    /// <see cref="TerminalSession.HasExecutingProcess"/>
-    /// <see cref="TerminalSession.TerminalCommandsHistory"/>
-    /// <see cref="TerminalSession.ResourceUri"/>
-    /// <see cref="TerminalSession.TextEditorViewModelKey"/>
+    /// <see cref="Terminal.Key"/>
+    /// <see cref="Terminal.WorkingDirectoryAbsolutePathString"/>
+    /// <see cref="Terminal.ActiveTerminalCommand"/>
+    /// <see cref="Terminal.HasExecutingProcess"/>
+    /// <see cref="Terminal.TerminalCommandsHistory"/>
+    /// <see cref="Terminal.ResourceUri"/>
+    /// <see cref="Terminal.TextEditorViewModelKey"/>
     /// </summary>
     [Fact]
     public void Constructor()
@@ -29,7 +26,7 @@ public class TerminalSessionTests
     }
 
     /// <summary>
-    /// <see cref="TerminalSession.ReadStandardOut()"/>
+    /// <see cref="Terminal.ReadStandardOut()"/>
     /// </summary>
     [Fact]
     public void ReadStandardOut_NO_ARGS()
@@ -38,7 +35,7 @@ public class TerminalSessionTests
     }
 
     /// <summary>
-    /// <see cref="TerminalSession.ReadStandardOut(Key{TerminalCommand})"/>
+    /// <see cref="Terminal.ReadStandardOut(Key{TerminalCommand})"/>
     /// </summary>
     [Fact]
     public void ReadStandardOut_WITH_ARGS()
@@ -47,7 +44,7 @@ public class TerminalSessionTests
     }
 
     /// <summary>
-    /// <see cref="TerminalSession.GetStandardOut()"/>
+    /// <see cref="Terminal.GetStandardOut()"/>
     /// </summary>
     [Fact]
     public void GetStandardOut_NO_ARGS()
@@ -56,7 +53,7 @@ public class TerminalSessionTests
     }
 
     /// <summary>
-    /// <see cref="TerminalSession.GetStandardOut(Key{TerminalCommand})"/>
+    /// <see cref="Terminal.GetStandardOut(Key{TerminalCommand})"/>
     /// </summary>
     [Fact]
     public void GetStandardOut_WITH_ARGS()
@@ -65,7 +62,7 @@ public class TerminalSessionTests
     }
 
     /// <summary>
-    /// <see cref="TerminalSession.EnqueueCommandAsync(TerminalCommand)"/>
+    /// <see cref="Terminal.EnqueueCommandAsync(TerminalCommand)"/>
     /// </summary>
     [Fact]
     public void EnqueueCommandAsync()
@@ -74,7 +71,7 @@ public class TerminalSessionTests
     }
 
     /// <summary>
-    /// <see cref="TerminalSession.ClearStandardOut()"/>
+    /// <see cref="Terminal.ClearStandardOut()"/>
     /// </summary>
     [Fact]
     public void ClearStandardOut_NO_ARGS()
@@ -83,7 +80,7 @@ public class TerminalSessionTests
     }
 
     /// <summary>
-    /// <see cref="TerminalSession.ClearStandardOut(Key{TerminalCommand})"/>
+    /// <see cref="Terminal.ClearStandardOut(Key{TerminalCommand})"/>
     /// </summary>
     [Fact]
     public void ClearStandardOut_WITH_ARGS()
@@ -92,7 +89,7 @@ public class TerminalSessionTests
     }
 
     /// <summary>
-    /// <see cref="TerminalSession.KillProcess()"/>
+    /// <see cref="Terminal.KillProcess()"/>
     /// </summary>
     [Fact]
     public void KillProcess()
