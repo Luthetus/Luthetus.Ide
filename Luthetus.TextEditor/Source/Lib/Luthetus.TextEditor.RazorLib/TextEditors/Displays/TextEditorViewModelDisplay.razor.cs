@@ -413,23 +413,23 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         return Task.CompletedTask;
     }
 
-    private async Task ReceiveOnTouchMoveAsync(TouchEventArgs touchEventArgs)
+    private Task ReceiveOnTouchMoveAsync(TouchEventArgs touchEventArgs)
     {
         var localThinksTouchIsOccurring = _thinksTouchIsOccurring;
 
         if (!_thinksTouchIsOccurring)
-            return;
+             return Task.CompletedTask;
 
         var previousTouchPoint = _previousTouchEventArgs?.ChangedTouches.FirstOrDefault(x => x.Identifier == 0);
         var currentTouchPoint = touchEventArgs.ChangedTouches.FirstOrDefault(x => x.Identifier == 0);
 
         if (previousTouchPoint is null || currentTouchPoint is null)
-            return;
+             return Task.CompletedTask;
 
         var viewModel = GetViewModel();
 
         if (viewModel is null)
-            return;
+			return Task.CompletedTask;
 
         // Natural scrolling for touch devices
         var diffX = previousTouchPoint.ClientX - currentTouchPoint.ClientX;
@@ -449,6 +449,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 			});
 
         _previousTouchEventArgs = touchEventArgs;
+
+        return Task.CompletedTask;
     }
 
     private string GetGlobalHeightInPixelsStyling()

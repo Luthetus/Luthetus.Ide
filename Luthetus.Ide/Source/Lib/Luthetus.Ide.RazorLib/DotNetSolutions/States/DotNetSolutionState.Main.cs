@@ -34,7 +34,7 @@ public partial record DotNetSolutionState(
     public DotNetSolutionModel? DotNetSolutionModel => DotNetSolutionsList.FirstOrDefault(x =>
         x.Key == DotNetSolutionModelKey);
 
-    public static void ShowInputFile(DotNetSolutionSync sync)
+    public static Task ShowInputFile(DotNetSolutionSync sync)
     {
         sync.InputFileSync.RequestInputFileStateForm("Solution Explorer",
             afp =>
@@ -58,5 +58,7 @@ public partial record DotNetSolutionState(
                     ".NET Solution",
                     afp => afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
             }.ToImmutableArray());
+
+        return Task.CompletedTask;
     }
 }

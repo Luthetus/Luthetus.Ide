@@ -11,7 +11,7 @@ public record DialogViewModel : IDialog
 		string title,
 		Type componentType,
 		Dictionary<string, object?>? componentParameterMap,
-		string cssClass,
+		string? cssClass,
 		bool isResizable)
 	{
 		DynamicViewModelKey = dynamicViewModelKey;
@@ -20,22 +20,21 @@ public record DialogViewModel : IDialog
         ComponentParameterMap = componentParameterMap;
         DialogCssClass = cssClass;
 		DialogIsResizable = isResizable;
+
+		DialogFocusPointHtmlElementId = $"luth_dialog-focus-point_{DynamicViewModelKey.Guid}";
 	}
 
 	public Key<IDynamicViewModel> DynamicViewModelKey { get; }
+	public ElementDimensions DialogElementDimensions { get; set; } = DialogHelper.ConstructDefaultElementDimensions();
+    public Type ComponentType { get; }
+    public Dictionary<string, object?>? ComponentParameterMap { get; init; }
+	public string Title { get; set; }
+    public string DialogFocusPointHtmlElementId { get; set; }
+    public string? DialogCssClass { get; set; }
+    public string? DialogCssStyle { get; set; }
 	public bool DialogIsMinimized { get; set; }
     public bool DialogIsMaximized { get; set; }
     public bool DialogIsResizable { get; set; }
-    public string DialogFocusPointHtmlElementId { get; set; }
-    public Key<IDialog> DialogKey { get; }
-	public ElementDimensions DialogElementDimensions { get; set; } = DialogHelper.ConstructDefaultElementDimensions();
-	public string Title { get; set; }
-    public Type ComponentType { get; }
-    public Dictionary<string, object?>? ComponentParameterMap { get; init; }
-    public string DialogCssClass { get; set; }
-    public string? DialogCssStyle { get; set; }
-
-    public virtual string FocusPointHtmlElementId => $"luth_dialog-focus-point_{DynamicViewModelKey.Guid}";
 
 	public IDialog SetTitle(string title)
 	{

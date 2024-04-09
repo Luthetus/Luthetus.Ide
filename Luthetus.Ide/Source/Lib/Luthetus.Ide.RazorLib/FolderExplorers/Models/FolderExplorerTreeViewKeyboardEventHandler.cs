@@ -106,12 +106,12 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         return;
     }
 
-    private void CopyFile(TreeViewCommandArgs commandArgs)
+    private Task CopyFile(TreeViewCommandArgs commandArgs)
     {
         var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
-            return;
+            return Task.CompletedTask;
 
         var copyFileMenuOption = _menuOptionsFactory.CopyFile(
             treeViewAbsolutePath.Item,
@@ -121,7 +121,10 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                 return Task.CompletedTask;
             });
 
-        copyFileMenuOption.OnClick?.Invoke();
+        if (copyFileMenuOption.OnClickFunc is null)
+            return Task.CompletedTask;
+
+        return copyFileMenuOption.OnClickFunc.Invoke();
     }
 
     private Task PasteClipboard(TreeViewCommandArgs commandArgs)
@@ -170,16 +173,18 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                 });
         }
 
-        pasteMenuOptionRecord.OnClick?.Invoke();
-        return Task.CompletedTask;
+        if (pasteMenuOptionRecord.OnClickFunc is null)
+            return Task.CompletedTask;
+
+        return pasteMenuOptionRecord.OnClickFunc.Invoke();
     }
 
-    private void CutFile(TreeViewCommandArgs commandArgs)
+    private Task CutFile(TreeViewCommandArgs commandArgs)
     {
         var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
-            return;
+            return Task.CompletedTask;
 
         var parent = treeViewAbsolutePath.Parent as TreeViewAbsolutePath;
 
@@ -192,7 +197,10 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                 return Task.CompletedTask;
             });
 
-        cutFileOptionRecord.OnClick?.Invoke();
+        if (cutFileOptionRecord.OnClickFunc is null)
+            return Task.CompletedTask;
+
+        return cutFileOptionRecord.OnClickFunc.Invoke();
     }
 
     private void InvokeOpenInEditor(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)

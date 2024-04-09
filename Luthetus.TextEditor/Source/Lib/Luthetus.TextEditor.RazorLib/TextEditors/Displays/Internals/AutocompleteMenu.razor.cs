@@ -135,7 +135,7 @@ public partial class AutocompleteMenu : ComponentBase
         }.ToImmutableArray());
     }
 
-    private void SelectMenuOption(Func<Task> menuOptionAction)
+    private Task SelectMenuOption(Func<Task> menuOptionAction)
     {
         _ = Task.Run(async () =>
         {
@@ -150,6 +150,8 @@ public partial class AutocompleteMenu : ComponentBase
                 throw;
             }
         }, CancellationToken.None);
+
+        return Task.CompletedTask;
     }
 
     private Task InsertAutocompleteMenuOption(

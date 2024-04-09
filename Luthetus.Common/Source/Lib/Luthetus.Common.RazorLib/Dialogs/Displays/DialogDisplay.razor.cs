@@ -80,14 +80,15 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task ReRenderAsync()
+    private Task ReRenderAsync()
     {
-        await InvokeAsync(StateHasChanged);
+        return InvokeAsync(StateHasChanged);
     }
 
-    private async Task SubscribeMoveHandleAsync()
+    private Task SubscribeMoveHandleAsync()
     {
         _resizableDisplay?.SubscribeToDragEventWithMoveHandle();
+        return Task.CompletedTask;
     }
 
     private void ToggleIsMaximized()

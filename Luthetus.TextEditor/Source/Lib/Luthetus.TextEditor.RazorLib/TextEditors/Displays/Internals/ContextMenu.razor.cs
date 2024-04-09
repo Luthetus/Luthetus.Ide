@@ -114,7 +114,7 @@ public partial class ContextMenu : ComponentBase
         return new MenuRecord(menuOptionRecordsList.ToImmutableArray());
     }
 
-    private void SelectMenuOption(Func<Task> menuOptionAction)
+    private Task SelectMenuOption(Func<Task> menuOptionAction)
     {
         _ = Task.Run(async () =>
         {
@@ -129,6 +129,8 @@ public partial class ContextMenu : ComponentBase
                 throw;
             }
         }, CancellationToken.None);
+
+        return Task.CompletedTask;
     }
 
     private async Task CutMenuOption()

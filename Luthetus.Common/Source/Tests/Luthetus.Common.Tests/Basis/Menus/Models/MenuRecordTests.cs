@@ -19,7 +19,7 @@ public class MenuRecordTests
 
         Assert.Equal("No menu options exist for this item.", menuOption.DisplayName);
         Assert.Equal(MenuOptionKind.Other, menuOption.MenuOptionKind);
-        Assert.Null(menuOption.OnClick);
+        Assert.Null(menuOption.OnClickFunc);
         Assert.Null(menuOption.SubMenu);
         Assert.Null(menuOption.WidgetRendererType);
         Assert.Null(menuOption.WidgetParameterMap);

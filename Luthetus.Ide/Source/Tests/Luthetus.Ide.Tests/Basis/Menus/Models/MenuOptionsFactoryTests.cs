@@ -144,7 +144,7 @@ public class MenuOptionsFactoryTests
     }
 
     /// <summary>
-    /// <see cref="MenuOptionsFactory.PerformAddProjectToProjectReferenceAction(TreeViewNamespacePath, TerminalSession, IDispatcher, InputFileSync, Func{Task})"/>
+    /// <see cref="MenuOptionsFactory.PerformAddProjectToProjectReference(TreeViewNamespacePath, TerminalSession, IDispatcher, InputFileSync, Func{Task})"/>
     /// </summary>
     [Fact]
     public void PerformAddProjectToProjectReferenceAction()
@@ -153,7 +153,7 @@ public class MenuOptionsFactoryTests
     }
 
     /// <summary>
-    /// <see cref="MenuOptionsFactory.PerformRemoveProjectToProjectReferenceAction(TreeViewCSharpProjectToProjectReference, TerminalSession, IDispatcher, Func{Task})"/>
+    /// <see cref="MenuOptionsFactory.PerformRemoveProjectToProjectReference(TreeViewCSharpProjectToProjectReference, TerminalSession, IDispatcher, Func{Task})"/>
     /// </summary>
     [Fact]
     public void PerformRemoveProjectToProjectReferenceAction()
@@ -162,7 +162,7 @@ public class MenuOptionsFactoryTests
     }
 
     /// <summary>
-    /// <see cref="MenuOptionsFactory.PerformMoveProjectToSolutionFolderAction(TreeViewSolution, TreeViewNamespacePath, string, TerminalSession, IDispatcher, Func{Task})"/>
+    /// <see cref="MenuOptionsFactory.PerformMoveProjectToSolutionFolder(TreeViewSolution, TreeViewNamespacePath, string, TerminalSession, IDispatcher, Func{Task})"/>
     /// </summary>
     [Fact]
     public void PerformMoveProjectToSolutionFolderAction()
@@ -171,7 +171,7 @@ public class MenuOptionsFactoryTests
     }
 
     /// <summary>
-    /// <see cref="MenuOptionsFactory.PerformRemoveNuGetPackageReferenceFromProjectAction(NamespacePath, TreeViewCSharpProjectNugetPackageReference, TerminalSession, IDispatcher, Func{Task})"/>
+    /// <see cref="MenuOptionsFactory.PerformRemoveNuGetPackageReferenceFromProject(NamespacePath, TreeViewCSharpProjectNugetPackageReference, TerminalSession, IDispatcher, Func{Task})"/>
     /// </summary>
     [Fact]
     public void PerformRemoveNuGetPackageReferenceFromProjectAction()

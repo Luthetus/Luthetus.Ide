@@ -86,9 +86,9 @@ public partial class MenuOptionDisplay : ComponentBase
 
     private void HandleOnClick()
     {
-        if (MenuOptionRecord.OnClick is not null)
+        if (MenuOptionRecord.OnClickFunc is not null)
         {
-            MenuOptionRecord.OnClick.Invoke();
+            MenuOptionRecord.OnClickFunc.Invoke();
             Dispatcher.Dispatch(new DropdownState.ClearActivesAction());
         }
 

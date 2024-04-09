@@ -25,7 +25,7 @@ public partial record CodeSearchState
         }
 
         [EffectMethod]
-        public async Task HandleSearchEffect(
+        public Task HandleSearchEffect(
             SearchEffect searchEffect,
             IDispatcher dispatcher)
         {
@@ -82,6 +82,8 @@ public partial record CodeSearchState
                     }
                 }
             });
+
+            return Task.CompletedTask;
         }
 
         public void Dispose()

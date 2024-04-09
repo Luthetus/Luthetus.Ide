@@ -23,7 +23,7 @@ public partial class FolderExplorerSync
             async () => await SetFolderExplorerTreeViewAsync(folderAbsolutePath));
     }
 
-    public void ShowInputFile()
+    public Task ShowInputFile()
     {
         InputFileSync.RequestInputFileStateForm("Folder Explorer",
             async afp =>
@@ -42,5 +42,7 @@ public partial class FolderExplorerSync
             {
                 new InputFilePattern("Directory", afp => afp.IsDirectory)
             }.ToImmutableArray());
+
+        return Task.CompletedTask;
     }
 }

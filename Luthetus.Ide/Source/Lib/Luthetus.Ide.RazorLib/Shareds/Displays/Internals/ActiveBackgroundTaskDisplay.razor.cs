@@ -33,7 +33,7 @@ public partial class ActiveBackgroundTaskDisplay : IDisposable
         base.OnInitialized();
     }
 
-    public void ShowBackgroundTaskDialogOnClick()
+    public Task ShowBackgroundTaskDialogOnClick()
     {
         DialogService.RegisterDialogRecord(new DialogViewModel(
             _backgroundTaskDialogKey,
@@ -48,6 +48,8 @@ public partial class ActiveBackgroundTaskDisplay : IDisposable
             },
             null,
 			true));
+
+        return Task.CompletedTask;
     }
 
     private async void ContinuousBackgroundTaskWorker_ExecutingBackgroundTaskChanged()

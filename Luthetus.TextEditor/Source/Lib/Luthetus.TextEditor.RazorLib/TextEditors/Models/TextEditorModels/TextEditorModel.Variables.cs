@@ -18,9 +18,6 @@ public partial class TextEditorModel
     public const int MAXIMUM_EDIT_BLOCKS = 10;
     public const int MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN = 5;
 
-    // (2024-02-29) Plan to add text editor partitioning #Step 100:
-    // --------------------------------------------------
-    // Change 'contentList' from 'List<RichCharacter>?' to 'List<List<RichCharacter>>?
     /// <inheritdoc cref="ITextEditorModel.ContentList"/>
     public IReadOnlyList<RichCharacter> ContentList { get; } = ImmutableList<RichCharacter>.Empty;
     public ImmutableList<ImmutableList<RichCharacter>> PartitionList { get; } = new ImmutableList<RichCharacter>[] { ImmutableList<RichCharacter>.Empty }.ToImmutableList();

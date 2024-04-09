@@ -33,7 +33,7 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
             new MenuOptionRecord(
                 "Refresh",
                 MenuOptionKind.Other,
-                OnClick: () =>
+                OnClickFunc: () =>
                 {
                     // ICommonBackgroundTaskQueue does not work well here because
                     // this Task does not need to be tracked.
@@ -58,6 +58,8 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
                             throw;
                         }
                     }, CancellationToken.None);
+
+                    return Task.CompletedTask;
                 }));
 
         return new MenuRecord(menuOptionRecordList.ToImmutableArray());

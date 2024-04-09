@@ -12,9 +12,6 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 public partial class TextEditorModelModifier : ITextEditorModel
 {
-    // (2024-02-29) Plan to add text editor partitioning #Step 100:
-    // --------------------------------------------------
-    // Change 'ContentList' from 'List<RichCharacter>?' to 'List<List<RichCharacter>>?
     public IReadOnlyList<RichCharacter> ContentList => _contentList is null ? _textEditorModel.ContentList : _contentList;
     public ImmutableList<ImmutableList<RichCharacter>> PartitionList => _partitionList is null ? _textEditorModel.PartitionList : _partitionList;
 	public IList<EditBlock> EditBlocksList => _editBlocksList is null ? _textEditorModel.EditBlocksList : _editBlocksList;

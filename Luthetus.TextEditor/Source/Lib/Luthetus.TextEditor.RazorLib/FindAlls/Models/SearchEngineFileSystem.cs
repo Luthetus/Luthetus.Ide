@@ -30,10 +30,10 @@ public class SearchEngineFileSystem : ITextEditorSearchEngine
 	public event Action? ProgressOccurred;
 	public bool IsSearching;
 
-    public async Task SearchAsync(string searchQuery, CancellationToken cancellationToken = default)
+    public Task SearchAsync(string searchQuery, CancellationToken cancellationToken = default)
     {
 		if (_runCount != 0)
-			return;
+			return Task.CompletedTask;
 
 		_runCount++;
 
@@ -50,6 +50,8 @@ public class SearchEngineFileSystem : ITextEditorSearchEngine
 			ProgressOccurred?.Invoke();
 			_runCount--;
 		}).ConfigureAwait(false);
+
+		return Task.CompletedTask;
     }
 
 	private async Task RecursiveSearchAsync(string directoryPath, string searchQuery, CancellationToken cancellationToken = default)

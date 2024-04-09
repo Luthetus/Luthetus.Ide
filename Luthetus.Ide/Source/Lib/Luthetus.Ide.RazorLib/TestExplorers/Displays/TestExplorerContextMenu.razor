@@ -1,5 +1,14 @@
 @using Luthetus.Common.RazorLib.Menus.Displays
 
-<CascadingValue Name="ReturnFocusToParentFuncAsync" Value="TreeViewCommandArgs.RestoreFocusToTreeView.Invoke">
-    <MenuDisplay MenuRecord="GetMenuRecord(TreeViewCommandArgs)"/>
-</CascadingValue>
+@{ var localMenuRecord = _menuRecord; }
+
+@if (localMenuRecord is null)
+{
+    // TODO: Should something be displayed while the MenuRecord is loading?
+}
+else
+{
+    <CascadingValue Name="ReturnFocusToParentFuncAsync" Value="TreeViewCommandArgs.RestoreFocusToTreeView.Invoke">
+        <MenuDisplay MenuRecord="localMenuRecord" />
+    </CascadingValue>
+}

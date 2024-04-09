@@ -35,8 +35,10 @@ public class ThrottleTests
     /// <see cref="Throttle.Dispose()"/>
     /// </summary>
     [Fact]
-    public async Task DisposeAsync()
+    public Task DisposeAsync()
     {
+        throw new NotImplementedException();
+
         var throttle = new Throttle(TimeSpan.FromMilliseconds(1_000));
 
         var counter = 0;

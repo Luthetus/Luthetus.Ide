@@ -22,7 +22,7 @@ public partial class EditorSync
                 editorTextEditorGroupKey));
     }
 
-    public void ShowInputFile()
+    public Task ShowInputFile()
     {
         _inputFileSync.RequestInputFileStateForm("TextEditor",
             afp =>
@@ -41,5 +41,7 @@ public partial class EditorSync
             {
                     new InputFilePattern("File", afp => !afp.IsDirectory)
             }.ToImmutableArray());
+
+        return Task.CompletedTask;
     }
 }

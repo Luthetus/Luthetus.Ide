@@ -23,6 +23,9 @@ using Microsoft.JSInterop;
 using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -47,7 +50,13 @@ public partial class IdeHeader : ComponentBase
     [Inject]
     private ICommandFactory CommandFactory { get; set; } = null!;
     [Inject]
+    private IClipboardService ClipboardService { get; set; } = null!;
+    [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
+	[Inject]
+	private IServiceProvider ServiceProvider { get; set; } = null!;
+	[Inject]
+	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 
 	private static readonly Key<IDynamicViewModel> _infoDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
@@ -100,17 +109,17 @@ public partial class IdeHeader : ComponentBase
             var menuOptionOpenFile = new MenuOptionRecord(
                 "File",
                 MenuOptionKind.Other,
-                () => EditorSync.ShowInputFile());
+                EditorSync.ShowInputFile);
 
             var menuOptionOpenDirectory = new MenuOptionRecord(
                 "Directory",
                 MenuOptionKind.Other,
-                () => FolderExplorerSync.ShowInputFile());
+                FolderExplorerSync.ShowInputFile);
 
             var menuOptionOpenCSharpProject = new MenuOptionRecord(
                 "C# Project - TODO: Adhoc Sln",
                 MenuOptionKind.Other,
-                () => EditorSync.ShowInputFile());
+                EditorSync.ShowInputFile);
 
             var menuOptionOpenDotNetSolution = new MenuOptionRecord(
                 ".NET Solution",
@@ -153,7 +162,11 @@ public partial class IdeHeader : ComponentBase
             var menuOptionFindAll = new MenuOptionRecord(
 				"Find All",
                 MenuOptionKind.Delete,
-                () => TextEditorService.OptionsApi.ShowFindAllDialog());
+                () =>
+                {
+                    TextEditorService.OptionsApi.ShowFindAllDialog();
+                    return Task.CompletedTask;
+                });
 
             menuOptionsList.Add(menuOptionFindAll);
         }
@@ -174,6 +187,7 @@ public partial class IdeHeader : ComponentBase
 						true);
 
                     Dispatcher.Dispatch(new DialogState.RegisterAction(CommandFactory.CodeSearchDialog));
+                    return Task.CompletedTask;
 				});
 
             menuOptionsList.Add(menuOptionPermissions);
@@ -189,37 +203,39 @@ public partial class IdeHeader : ComponentBase
 					var group = TextEditorService.GroupApi.GetOrDefault(EditorSync.EditorTextEditorGroupKey);
 
                     if (group is null)
-                        return;
+                        return Task.CompletedTask;
 
                     var activeViewModel = TextEditorService.ViewModelApi.GetOrDefault(group.ActiveViewModelKey);
 
                     if (activeViewModel is null)
-                        return;
+						return Task.CompletedTask;
 
 					TextEditorCommandDefaultFacts.ShowFindOverlay.CommandFunc.Invoke(
 						new TextEditorCommandArgs(
 							new(string.Empty),
 					        activeViewModel.ViewModelKey,
 					        false,
-					        null,
+							ClipboardService,
 					        TextEditorService,
 							TextEditorService.OptionsStateWrap.Value.Options,
 							null,
 					        JsRuntime,
 					        Dispatcher,
-					        null,
-					        null));
+					        ServiceProvider,
+					        TextEditorConfig));
+
+					return Task.CompletedTask;
 				});
 
             menuOptionsList.Add(menuOptionPermissions);
-        }
+		}
 
 		// Menu Option BackgroundTasks
         {
             var menuOptionPermissions = new MenuOptionRecord(
 				"BackgroundTasks",
                 MenuOptionKind.Delete,
-                () => _activeBackgroundTaskDisplayComponent.ShowBackgroundTaskDialogOnClick());
+                _activeBackgroundTaskDisplayComponent.ShowBackgroundTaskDialogOnClick);
 
             menuOptionsList.Add(menuOptionPermissions);
         }
@@ -258,6 +274,8 @@ public partial class IdeHeader : ComponentBase
 							Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(PanelFacts.LeftPanelRecordKey, panel.Key));
 						}
 					}
+
+                    return Task.CompletedTask;
 				});
 
             menuOptionsList.Add(menuOptionPanel);
@@ -319,7 +337,7 @@ public partial class IdeHeader : ComponentBase
         }
     }
 
-    private void OpenNewDotNetSolutionDialog()
+    private Task OpenNewDotNetSolutionDialog()
     {
         var dialogRecord = new DialogViewModel(
             _newDotNetSolutionDialogKey,
@@ -330,9 +348,10 @@ public partial class IdeHeader : ComponentBase
 			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+        return Task.CompletedTask;
     }
 
-    private void OpenInfoDialogOnClick()
+    private Task OpenInfoDialogOnClick()
     {
         var dialogRecord = new DialogViewModel(
             _infoDialogKey,
@@ -343,9 +362,10 @@ public partial class IdeHeader : ComponentBase
 			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
-    }
+		return Task.CompletedTask;
+	}
 
-    private void ShowPermissionsDialog()
+    private Task ShowPermissionsDialog()
     {
         var dialogRecord = new DialogViewModel(
             _permissionsDialogKey,
@@ -356,5 +376,6 @@ public partial class IdeHeader : ComponentBase
 			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+        return Task.CompletedTask;
     }
 }

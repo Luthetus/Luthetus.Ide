@@ -32,11 +32,23 @@ public partial class TestExplorerContextMenu : ComponentBase
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
     public static readonly Key<TerminalCommand> DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey = Key<TerminalCommand>.NewKey();
 
-    private MenuRecord GetMenuRecord(TreeViewCommandArgs commandArgs, bool isRecursiveCall = false)
+	private MenuRecord? _menuRecord = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Usage of 'OnInitializedAsync' lifecycle method ensure the context menu is only rendered once.
+		// Otherwise, one might have the context menu's options change out from under them.
+        _menuRecord = await GetMenuRecord(TreeViewCommandArgs);
+		await InvokeAsync(StateHasChanged);
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task<MenuRecord> GetMenuRecord(TreeViewCommandArgs commandArgs, bool isRecursiveCall = false)
     {
 		if (!isRecursiveCall && commandArgs.TreeViewContainer.SelectedNodeList.Count > 1)
 		{
-			return GetMultiSelectionMenuRecord(commandArgs);
+			return await GetMultiSelectionMenuRecord(commandArgs);
 		}
 
         if (commandArgs.NodeThatReceivedMouseEvent is null)
@@ -63,14 +75,19 @@ public partial class TestExplorerContextMenu : ComponentBase
 				var menuOptionRecord = new MenuOptionRecord(
 					$"Run: {treeViewStringFragment.Item.Value}",
 					MenuOptionKind.Other,
-					OnClick: () => 
+					OnClickFunc: () => 
 					{
-						BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), BlockingBackgroundTaskWorker.GetQueueKey(),
-				            "RunTestByFullyQualifiedName",
-				            async () => await RunTestByFullyQualifiedName(
-								treeViewStringFragment,
-								fullyQualifiedName,
-								treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory.Value));
+						if (treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory is not null)
+						{
+                            BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), BlockingBackgroundTaskWorker.GetQueueKey(),
+								"RunTestByFullyQualifiedName",
+								async () => await RunTestByFullyQualifiedName(
+									treeViewStringFragment,
+									fullyQualifiedName,
+									treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory.Value));
+                        }
+
+						return Task.CompletedTask;
 					});
 	
 				menuRecordsList.Add(menuOptionRecord);
@@ -91,10 +108,10 @@ public partial class TestExplorerContextMenu : ComponentBase
         return new MenuRecord(menuRecordsList.ToImmutableArray());
     }
 
-	private MenuRecord GetMultiSelectionMenuRecord(TreeViewCommandArgs commandArgs)
+	private async Task<MenuRecord> GetMultiSelectionMenuRecord(TreeViewCommandArgs commandArgs)
 	{
 		var menuOptionRecordList = new List<MenuOptionRecord>();
-		Action runAllOnClicksWithinSelection = () => {};
+		Func<Task> runAllOnClicksWithinSelection = () => Task.CompletedTask;
 		bool runAllOnClicksWithinSelectionHasEffect = false;
 
 		foreach (var node in commandArgs.TreeViewContainer.SelectedNodeList)
@@ -115,14 +132,16 @@ public partial class TestExplorerContextMenu : ComponentBase
 				menuOption = new(
 					treeViewStringFragment.Item.Value,
 				    MenuOptionKind.Other,
-				    SubMenu: GetMenuRecord(innerTreeViewCommandArgs, true));
+				    SubMenu: await GetMenuRecord(innerTreeViewCommandArgs, true));
 
 				var copyRunAllOnClicksWithinSelection = runAllOnClicksWithinSelection;
 
-				runAllOnClicksWithinSelection = () =>
+				runAllOnClicksWithinSelection = async () =>
 				{
-					copyRunAllOnClicksWithinSelection.Invoke();
-					menuOption.SubMenu.MenuOptionList.Single().OnClick.Invoke();
+					await copyRunAllOnClicksWithinSelection.Invoke();
+
+					if (menuOption.SubMenu?.MenuOptionList.Single().OnClickFunc is not null)
+						await menuOption.SubMenu.MenuOptionList.Single().OnClickFunc!.Invoke();
 				};
 
 				runAllOnClicksWithinSelectionHasEffect = true;
@@ -143,7 +162,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 			menuOptionRecordList.Insert(0, new(
 				"Run all OnClicks within selection",
 				MenuOptionKind.Create,
-				OnClick: runAllOnClicksWithinSelection));
+				OnClickFunc: runAllOnClicksWithinSelection));
 		}
 
 		if (!menuOptionRecordList.Any())

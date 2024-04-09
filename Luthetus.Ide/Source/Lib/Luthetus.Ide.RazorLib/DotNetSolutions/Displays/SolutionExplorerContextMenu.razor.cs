@@ -307,7 +307,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             new MenuOptionRecord(
                 "Set as Startup Project",
                 MenuOptionKind.Other,
-                () => Dispatcher.Dispatch(new ProgramExecutionState.SetStartupProjectAbsolutePathAction(treeViewModel.Item.AbsolutePath))),
+                () => 
+                {
+                    Dispatcher.Dispatch(new ProgramExecutionState.SetStartupProjectAbsolutePathAction(treeViewModel.Item.AbsolutePath));
+                    return Task.CompletedTask;
+                }),
             MenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
                 treeViewSolution,
                 treeViewModel,
@@ -402,7 +406,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         };
     }
 
-    private void OpenNewCSharpProjectDialog(DotNetSolutionModel dotNetSolutionModel)
+    private Task OpenNewCSharpProjectDialog(DotNetSolutionModel dotNetSolutionModel)
     {
         var dialogRecord = new DialogViewModel(
             _newCSharpProjectDialogKey,
@@ -419,9 +423,10 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+        return Task.CompletedTask;
     }
 
-    private void AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
+    private Task AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
     {
         InputFileSync.RequestInputFileStateForm("Existing C# Project to add to solution",
             async afp =>
@@ -460,9 +465,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     "C# Project",
                     afp => afp.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
             }.ToImmutableArray());
+
+        return Task.CompletedTask;
     }
 
-    private void OpenSolutionEditorDialog(DotNetSolutionModel dotNetSolutionModel)
+    private Task OpenSolutionEditorDialog(DotNetSolutionModel dotNetSolutionModel)
     {
         var dialogRecord = new DialogViewModel(
             _solutionEditorDialogKey,
@@ -483,6 +490,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+        return Task.CompletedTask;
     }
 
     /// <summary>

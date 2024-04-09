@@ -38,7 +38,7 @@ public partial class DragInitializer : FluxorComponent
         });
     }
 
-    private async Task DispatchSetDragStateActionOnMouseMoveAsync(MouseEventArgs mouseEventArgs)
+    private Task DispatchSetDragStateActionOnMouseMoveAsync(MouseEventArgs mouseEventArgs)
     {
         _throttleDispatchSetDragStateActionOnMouseMove.PushEvent(_ =>
         {
@@ -57,6 +57,8 @@ public partial class DragInitializer : FluxorComponent
 
             return Task.CompletedTask;
         });
+
+        return Task.CompletedTask;
     }
 
     private Task DispatchSetDragStateActionOnMouseUp(MouseEventArgs mouseEventArgs)

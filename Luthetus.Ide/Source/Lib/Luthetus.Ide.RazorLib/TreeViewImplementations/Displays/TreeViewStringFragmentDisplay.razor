@@ -1,44 +1,48 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@{
-	var terminalSession = TerminalSessionStateSelection.Value;
+@{ var terminalSession = TerminalSessionStateSelection.Value; }
 
-	var output = terminalSession.ReadStandardOut(
-		TreeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey);
-}
-
-@{
-	RenderFragment renderFragment = @<text>?</text>;
-}
-
-@if (output is null)
+@if (terminalSession is null)
 {
-	renderFragment = @<text>?</text>;
-}
-else if (!output.Contains("Duration:"))
-{
-	renderFragment = @<IconLoading/>;
+	<text>@nameof(terminalSession) was null</text>
 }
 else
 {
-	if (output.Contains("Passed!"))
+	var output = terminalSession.ReadStandardOut(
+		TreeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey);
+
+	RenderFragment renderFragment = @<text>?</text>;
+
+	if (output is null)
 	{
-		renderFragment = @<em class="luth_em">Passed!</em>;
+		renderFragment = @<text>?</text>;
+	}
+	else if (!output.Contains("Duration:"))
+	{
+		renderFragment = @<IconLoading/>;
 	}
 	else
 	{
-		renderFragment = @<span class="luth_tree-view-exception">Failed!</span>;
+		if (output.Contains("Passed!"))
+		{
+			renderFragment = @<em class="luth_em">Passed!</em>;
+		}
+		else
+		{
+			renderFragment = @<span class="luth_tree-view-exception">Failed!</span>;
+		}
 	}
+
+	<div style="display: flex;">
+		@renderFragment&nbsp;
+		@TreeViewStringFragment.Item.Value
+
+		@if (TreeViewStringFragment.ChildList.Count > 0)
+		{
+			<span title="Count of child nodes">
+				&nbsp;(@(TreeViewStringFragment.ChildList.Count))
+			</span>
+		}
+	</div>
 }
 
-<div style="display: flex;">
-	@renderFragment&nbsp;
-	@TreeViewStringFragment.Item.Value
-
-	@if (TreeViewStringFragment.ChildList.Count > 0)
-	{
-		<span title="Count of child nodes">
-			&nbsp;(@(TreeViewStringFragment.ChildList.Count))
-		</span>
-	}
-</div>

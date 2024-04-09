@@ -42,28 +42,9 @@ public partial class TextEditorModelModifier
         _partitionList = _textEditorModel.PartitionList;
     }
 
-    // (2024-02-29) Plan to add text editor partitioning #Step 100:
-    // --------------------------------------------------
-    // Change '_contentList' from 'List<RichCharacter>?' to 'List<List<RichCharacter>>?
-    //
-    // (2024-02-29) Plan to add text editor partitioning #Step 600:
-    // --------------------------------------------------
-    // '_contentList' is supposed to be an expression bound property, that performs
-    // a 'SelectMany()' over the '_partitionList'.
-    //
-    // Currently, this is not the case.
-    //
-    // So I'm going to make the change now.
     private IReadOnlyList<RichCharacter> _contentList => _partitionList.SelectMany(x => x).ToImmutableList();
     private ImmutableList<ImmutableList<RichCharacter>> _partitionList = new ImmutableList<RichCharacter>[] { ImmutableList<RichCharacter>.Empty }.ToImmutableList();
 
-    // (2024-02-29) Plan to add text editor partitioning #Step 100:
-    // --------------------------------------------------
-    // Provided that all edits are performed from this file, (TextEditorModelModifier.Main.cs),
-    // then any tracked data will continue to be tracked without issues.
-    //
-    // For example: '_editBlocksList' ideally would be partitioned too.
-    //              But, it should be left untouched until '_contentList' is partitioned.
     private List<EditBlock>? _editBlocksList;
     private List<RowEnding>? _rowEndingPositionsList;
     private List<(RowEndingKind rowEndingKind, int count)>? _rowEndingKindCountsList;
@@ -127,23 +108,8 @@ public partial class TextEditorModelModifier
 
 	public void ClearContentList()
     {
-        SetIsDirtyTrue();
-
-        // (2024-02-29) Plan to add text editor partitioning #Step 500:
-        // --------------------------------------------------
-        // For the method named 'ClearContentList()', its goal is to clear the ContentList.
-        // 
-        // But, with the changes that are being made, ContentList is now an expression bound property,
-        // and dependent on the PartitionList.
-        //
-        // Therefore, I'm going to change the body of this method to set _partitionList to Empty.
         _partitionList = new ImmutableList<RichCharacter>[] { ImmutableList<RichCharacter>.Empty }.ToImmutableList();
-
-        // (2024-02-29) Plan to add text editor partitioning #Step 500:
-        // --------------------------------------------------
-        // A thought in my head, if this method clears the rich characters,
-        // should it also be clearing the lists which track: line endings, tabs, etc...?
-        // Because upon invoking this method, then those lists would be invalid.
+        SetIsDirtyTrue();
     }
 
     public void ClearRowEndingPositionsList()
@@ -239,21 +205,6 @@ public partial class TextEditorModelModifier
 
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
-            // (2024-02-29) Plan to add text editor partitioning #Step 500:
-            // --------------------------------------------------
-            // The _contentList and _textEditorModel.ContentList are now the same datatype,
-            // so no ".To...()" method needs to be invoked.
-            //
-            // Perhaps I can move the null coallesce assignments for '_contentList',
-            // to the 'TextEditorModelModifier' constructor.
-            //
-            // (2024-02-29) Plan to add text editor partitioning #Step 900:
-            // --------------------------------------------------
-            // I'm receiving a compilation error that '_contentList' cannot be assigned to,
-            // because it is readonly.
-            //
-            // For this reasoning, I'm going to remove all the code statements
-            // of '_contentList ??= _textEditorModel.ContentList;'
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
             _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
@@ -439,21 +390,6 @@ public partial class TextEditorModelModifier
         {
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
             _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
-            // (2024-02-29) Plan to add text editor partitioning #Step 500:
-            // --------------------------------------------------
-            // The _contentList and _textEditorModel.ContentList are now the same datatype,
-            // so no ".To...()" method needs to be invoked.
-            //
-            // Perhaps I can move the null coallesce assignments for '_contentList',
-            // to the 'TextEditorModelModifier' constructor.
-            //
-            // (2024-02-29) Plan to add text editor partitioning #Step 900:
-            // --------------------------------------------------
-            // I'm receiving a compilation error that '_contentList' cannot be assigned to,
-            // because it is readonly.
-            //
-            // For this reasoning, I'm going to remove all the code statements
-            // of '_contentList ??= _textEditorModel.ContentList;'
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
         }
 
@@ -781,21 +717,6 @@ public partial class TextEditorModelModifier
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
             _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
             _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
-            // (2024-02-29) Plan to add text editor partitioning #Step 500:
-            // --------------------------------------------------
-            // The _contentList and _textEditorModel.ContentList are now the same datatype,
-            // so no ".To...()" method needs to be invoked.
-            //
-            // Perhaps I can move the null coallesce assignments for '_contentList',
-            // to the 'TextEditorModelModifier' constructor.
-            //
-            // (2024-02-29) Plan to add text editor partitioning #Step 900:
-            // --------------------------------------------------
-            // I'm receiving a compilation error that '_contentList' cannot be assigned to,
-            // because it is readonly.
-            //
-            // For this reasoning, I'm going to remove all the code statements
-            // of '_contentList ??= _textEditorModel.ContentList;'
             _rowEndingKindCountsList ??= _textEditorModel.RowEndingKindCountsList.ToList();
         }
 
@@ -857,59 +778,6 @@ public partial class TextEditorModelModifier
                 TabKeyPositionsList.Add(index);
 
             previousCharacter = character;
-
-            // (2024-02-29) Plan to add text editor partitioning #Step 700:
-            // --------------------------------------------------
-            // Here 'ContentList.Add(...)' is being invoked.
-            //
-            // Prior to the changes, 'ContentList' was a List<T> and therefore,
-            // the 'Add' could be invoked, without needing to reassign 'ContentList'
-            // to the methods output.
-            //
-            // But, even more important, is that 'ContentList' shouldn't even be modified at
-            // all. It is to be an expression bound property, which is dependent on PartitionList.
-            //
-            // This 'ContentList.Add(...)' invocation does not result in a compilation error.
-            // Could I make a change so that the compiler marks invocations like this as an error?
-            //
-            // I'm going to change 'ContentList' to an 'IReadOnlyList'. This will remove the
-            // 'Add(...)' API, and therefore result in any attempts to invoke that method,
-            // be a compilation error.
-            //
-            // Then, I can look through the compilation errors to find all the places where
-            // I need to make a change.
-            //
-            // (2024-02-29) Plan to add text editor partitioning #Step 800:
-            // --------------------------------------------------
-            // I made the change from 'ImmutableList<T>' to 'IReadOnlyList<T>'.
-            // 
-            // And now, I'm receiving compilation errors when an attempt is made to
-            // invoke the method 'Add(...)' on 'ContentList'.
-            //
-            // What would I want to change these invocations to?
-            //
-            // The idea of invoking anything on 'ContentList' is likely not the way to go.
-            // Instead I'd be looking to make changes to the 'PartitionList'
-            //
-            // The 'PartitionList' is currently of type 'ImmutableList<ImmutableList<RichCharacter>>'.
-            // Just invoking 'Add(...)' alone on 'PartitionList' will not suffice.
-            //
-            // I noted early on when starting these changes, that if I stay within the 'TextEditorModelModifier.Main.cs',
-            // when changing the partitions, then all the tracked data such as: line endings, tabs, etc...; these will all
-            // continue to work.
-            //
-            // For that reasoning, I don't want to create a 'PartitionContainer' datatype. The internals of
-            // when to create a new partition, when to remove one, or  when to merge, are too specific to the datatype
-            // I'm storing. The 'PartitionContainer' needs to understand what a "\r\n" means for example.
-            // As if one partition ends in a "\r", and the next starts with a "\n", those two characters need to somehow
-            // be moved to the same partition.
-            //
-            // The most clear way to deal with this, as I see it, is to make functions in 'TextEditorModelModifier.Main.cs'
-            // as opposed an entirely new type.
-            //
-            // What I'll aim to do here is: anywhere I get an invocation on 'ContentList' for 'Add', 'Remove', or any other
-            // List modification method, I'm going to make a corresponding method on the 'TextEditorModelModifier'
-            // to handle that scenario.
         }
 
         PartitionList_InsertRange(0, content.Select(x => new RichCharacter
