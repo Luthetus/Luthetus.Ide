@@ -24,7 +24,6 @@ using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
-using Microsoft.Extensions.DependencyInjection;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
