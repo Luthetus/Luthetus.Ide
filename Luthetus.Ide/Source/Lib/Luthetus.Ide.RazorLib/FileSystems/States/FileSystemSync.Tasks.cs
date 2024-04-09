@@ -16,8 +16,6 @@ public partial class FileSystemSync
 
         var absolutePathString = absolutePath.Value;
 
-        string notificationMessage;
-
         if (absolutePathString is not null &&
             await _fileSystemProvider.File.ExistsAsync(absolutePathString))
         {

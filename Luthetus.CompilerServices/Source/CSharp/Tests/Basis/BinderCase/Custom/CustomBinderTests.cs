@@ -39,8 +39,6 @@ public class MyClass
             .Value;
 
         var topLevelTypeDefinitionNodes = namespaceUnderTesting.GetTopLevelTypeDefinitionNodes();
-
-        var aaa = 2;
     }
 
     [Fact]
@@ -72,7 +70,5 @@ public class MyClass
             .Value;
 
         var topLevelTypeDefinitionNodes = namespaceUnderTesting.GetTopLevelTypeDefinitionNodes();
-
-        var aaa = 2;
     }
 }

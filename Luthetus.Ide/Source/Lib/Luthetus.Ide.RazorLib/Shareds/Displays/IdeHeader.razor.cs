@@ -73,7 +73,7 @@ public partial class IdeHeader : ComponentBase
     private MenuRecord _menuView = new(ImmutableArray<MenuOptionRecord>.Empty);
     private ElementReference? _buttonViewElementReference;
 
-	private ActiveBackgroundTaskDisplay _activeBackgroundTaskDisplayComponent;
+	private ActiveBackgroundTaskDisplay? _activeBackgroundTaskDisplayComponent;
 
     protected override Task OnInitializedAsync()
     {

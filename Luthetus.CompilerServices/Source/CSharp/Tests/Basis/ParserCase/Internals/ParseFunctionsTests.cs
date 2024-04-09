@@ -444,6 +444,7 @@ public class ParseFunctionsTests
         throw new NotImplementedException();
     }
 
+    [Fact]
     public void LambdaExpression()
     {
         var resourceUri = new ResourceUri("UnitTests");
@@ -458,6 +459,7 @@ public class ParseFunctionsTests
         throw new NotImplementedException();
     }
 
+    [Fact]
     public void LambdaCodeBlock()
     {
         var resourceUri = new ResourceUri("UnitTests");

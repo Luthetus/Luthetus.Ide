@@ -295,7 +295,7 @@ public class CustomParserTests
 
         var constructorDefinitionNode = (ConstructorDefinitionNode)
             ((TypeDefinitionNode)topCodeBlock.ChildList.Single())
-            .TypeBodyCodeBlockNode.ChildList.Single();
+            .TypeBodyCodeBlockNode!.ChildList.Single();
 
         Assert.Equal(className,
             constructorDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -307,7 +307,7 @@ public class CustomParserTests
             .FunctionArgumentsListingNode
             .FunctionArgumentEntryNodeList);
 
-        Assert.Empty(constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList);
+        Assert.Empty(constructorDefinitionNode.FunctionBodyCodeBlockNode!.ChildList);
         Assert.Null(constructorDefinitionNode.ConstraintNode);
         Assert.False(constructorDefinitionNode.IsFabricated);
         Assert.Equal(SyntaxKind.ConstructorDefinitionNode, constructorDefinitionNode.SyntaxKind);
@@ -468,7 +468,7 @@ public class CustomParserTests
 
         Assert.Null(functionDefinitionNode.GenericArgumentsListingNode);
         Assert.NotNull(functionDefinitionNode.FunctionArgumentsListingNode);
-        Assert.Empty(functionDefinitionNode.FunctionBodyCodeBlockNode.ChildList);
+        Assert.Empty(functionDefinitionNode.FunctionBodyCodeBlockNode!.ChildList);
         Assert.Null(functionDefinitionNode.ConstraintNode);
 
         Assert.False(functionDefinitionNode.IsFabricated);
@@ -1256,7 +1256,7 @@ public class CustomParserTests
         var inheritedTypeClauseNode = typeDefinitionNode.InheritedTypeClauseNode;
         Assert.Equal(
             inheritedTypeClauseText,
-            inheritedTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+            inheritedTypeClauseNode!.TypeIdentifierToken.TextSpan.GetText());
     }
 
     [Fact]
