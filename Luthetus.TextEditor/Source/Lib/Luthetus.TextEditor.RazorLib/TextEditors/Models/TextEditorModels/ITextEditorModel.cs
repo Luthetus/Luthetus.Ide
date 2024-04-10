@@ -23,6 +23,24 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 /// </summary>
 public interface ITextEditorModel
 {
+    /// <summary>
+    /// TODO: This needs to be separated out into an IReadOnlyList&lt;char&gt;...
+    ///       ...and a IReadOnlyList&lt;byte&gt;
+    ///       |
+    ///       This change is needed because, a large part of optimizing the text editor is
+    ///       to reduce the operations done on the entirety of the text editor.
+    ///       |
+    ///       And, currently one invokes textEditorModel.GetAllText() rather frequently, and redundantly.
+    ///       |
+    ///       This invocation of 'GetAllText()' needs to iterate over every character in the text editor,
+    ///       and select its 'Value' property.
+    ///       |
+    ///       This is an operation done on the entirety of the text editor, and therefore
+    ///       it should be optimized.
+    ///       |
+    ///       The result of the change will make 'GetAllText()' simply return a reference
+    ///       to the underlying list of characters.
+    /// </summary>
     public IReadOnlyList<RichCharacter> ContentList { get; }
     public ImmutableList<ImmutableList<RichCharacter>> PartitionList { get; }
 	public IList<EditBlock> EditBlocksList { get; }
