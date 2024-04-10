@@ -26,21 +26,21 @@ public partial class FolderExplorerSync
     public Task ShowInputFile()
     {
         InputFileSync.RequestInputFileStateForm("Folder Explorer",
-            async afp =>
+            async absolutePath =>
             {
-                if (afp is not null)
-                    await SetFolderExplorerAsync(afp);
+                if (absolutePath is not null)
+                    await SetFolderExplorerAsync(absolutePath);
             },
-            afp =>
+            absolutePath =>
             {
-                if (afp is null || !afp.IsDirectory)
+                if (absolutePath is null || !absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(true);
             },
             new[]
             {
-                new InputFilePattern("Directory", afp => afp.IsDirectory)
+                new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
             }.ToImmutableArray());
 
         return Task.CompletedTask;

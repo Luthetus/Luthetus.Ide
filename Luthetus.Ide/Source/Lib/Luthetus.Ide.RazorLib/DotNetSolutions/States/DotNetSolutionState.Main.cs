@@ -37,26 +37,26 @@ public partial record DotNetSolutionState(
     public static Task ShowInputFile(DotNetSolutionSync sync)
     {
         sync.InputFileSync.RequestInputFileStateForm("Solution Explorer",
-            afp =>
+            absolutePath =>
             {
-                if (afp is not null)
-                    sync.SetDotNetSolution(afp);
+                if (absolutePath is not null)
+                    sync.SetDotNetSolution(absolutePath);
 
                 return Task.CompletedTask;
             },
-            afp =>
+            absolutePath =>
             {
-                if (afp is null || afp.IsDirectory)
+                if (absolutePath is null || absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(
-                    afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
+                    absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
             },
             new[]
             {
                 new InputFilePattern(
                     ".NET Solution",
-                    afp => afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
+                    absolutePath => absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
             }.ToImmutableArray());
 
         return Task.CompletedTask;

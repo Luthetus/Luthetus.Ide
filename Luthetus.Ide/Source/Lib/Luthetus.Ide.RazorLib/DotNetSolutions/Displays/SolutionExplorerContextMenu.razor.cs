@@ -429,14 +429,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private Task AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
     {
         InputFileSync.RequestInputFileStateForm("Existing C# Project to add to solution",
-            async afp =>
+            async absolutePath =>
             {
-                if (afp is null)
+                if (absolutePath is null)
                     return;
 
                 var localFormattedAddExistingProjectToSolutionCommand = DotNetCliCommandFormatter.FormatAddExistingProjectToSolution(
                         dotNetSolutionModel.NamespacePath.AbsolutePath.Value,
-                        afp.Value);
+                        absolutePath.Value);
 
                 var addExistingProjectToSolutionTerminalCommand = new TerminalCommand(
                     Key<TerminalCommand>.NewKey(),
@@ -452,18 +452,18 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 await generalTerminal.EnqueueCommandAsync(addExistingProjectToSolutionTerminalCommand);
             },
-            afp =>
+            absolutePath =>
             {
-                if (afp is null || afp.IsDirectory)
+                if (absolutePath is null || absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
-                return Task.FromResult(afp.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
+                return Task.FromResult(absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
             },
             new[]
             {
                 new InputFilePattern(
                     "C# Project",
-                    afp => afp.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+                    absolutePath => absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
             }.ToImmutableArray());
 
         return Task.CompletedTask;

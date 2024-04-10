@@ -25,21 +25,21 @@ public partial class EditorSync
     public Task ShowInputFile()
     {
         _inputFileSync.RequestInputFileStateForm("TextEditor",
-            afp =>
+            absolutePath =>
             {
-                OpenInEditor(afp, true);
+                OpenInEditor(absolutePath, true);
                 return Task.CompletedTask;
             },
-            afp =>
+            absolutePath =>
             {
-                if (afp is null || afp.IsDirectory)
+                if (absolutePath is null || absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(true);
             },
             new[]
             {
-                    new InputFilePattern("File", afp => !afp.IsDirectory)
+                    new InputFilePattern("File", absolutePath => !absolutePath.IsDirectory)
             }.ToImmutableArray());
 
         return Task.CompletedTask;

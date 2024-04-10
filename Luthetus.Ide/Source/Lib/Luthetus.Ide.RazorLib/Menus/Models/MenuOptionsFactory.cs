@@ -116,7 +116,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 { nameof(IDeleteFileFormRendererType.IsDirectory), true },
                 {
                     nameof(IDeleteFileFormRendererType.OnAfterSubmitAction),
-                    new Action<IAbsolutePath>(afp => PerformDeleteFile(afp, onAfterCompletion))
+                    new Action<IAbsolutePath>(x => PerformDeleteFile(x, onAfterCompletion))
                 },
             });
     }
@@ -560,19 +560,19 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
                 await terminal.EnqueueCommandAsync(terminalCommand);
             },
-            afp =>
+            absolutePath =>
             {
-                if (afp is null || afp.IsDirectory)
+                if (absolutePath is null || absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(
-                    afp.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
+                    absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
             },
             (new[]
             {
                 new InputFilePattern(
                     "C# Project",
-                    afp => afp.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+                    absolutePath => absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
             }).ToImmutableArray());
 
         return Task.CompletedTask;
