@@ -2,36 +2,21 @@
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Misc;
-using Luthetus.Common.RazorLib.Storages.Models;
-using Luthetus.Common.RazorLib.Storages.States;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using System.Collections.Immutable;
-using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.Decorations;
-using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
-using Luthetus.Ide.RazorLib.TestExplorers.States;
-using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.CSharpProjectForms.Displays;
-using Luthetus.Ide.RazorLib.FileSystems.Displays;
-using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
-using Luthetus.Ide.RazorLib.Gits.Displays;
-using Luthetus.Ide.RazorLib.InputFiles.Displays;
-using Luthetus.Ide.RazorLib.Nugets.Displays;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Displays;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
 
@@ -120,27 +105,166 @@ public partial class AdhocTest
 
         // ContentList
         {
-            // Index 13 is the index for the class identifier given the current sample text.
-            // It is desired that a variable be made, one can check easily if the decoration byte is set correctly.
-            var indexThirteen = refModel.ContentList[13];
-
+            var contentList = refModel.ContentList;
             Assert.Equal(27, refModel.ContentList.Count);
-            throw new NotImplementedException();
+
+            var i = 0;
+
+            var richCharacter = contentList[i++];
+            Assert.Equal('p', richCharacter.Value);
+            Assert.Equal(1, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('u', richCharacter.Value);
+            Assert.Equal(1, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('b', richCharacter.Value);
+            Assert.Equal(1, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('l', richCharacter.Value);
+            Assert.Equal(1, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('i', richCharacter.Value);
+            Assert.Equal(1, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('c', richCharacter.Value);
+            Assert.Equal(1, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal(' ', richCharacter.Value);
+            Assert.Equal(0, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('c', richCharacter.Value);
+            Assert.Equal(1, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('l', richCharacter.Value);
+            Assert.Equal(1, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('a', richCharacter.Value);
+            Assert.Equal(1, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('s', richCharacter.Value);
+            Assert.Equal(1, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('s', richCharacter.Value);
+            Assert.Equal(1, richCharacter.DecorationByte);
+            
+            richCharacter = contentList[i++];
+            Assert.Equal(' ', richCharacter.Value);
+            Assert.Equal(0, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('M', richCharacter.Value);
+            Assert.Equal(11, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('y', richCharacter.Value);
+            Assert.Equal(11, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('C', richCharacter.Value);
+            Assert.Equal(11, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('l', richCharacter.Value);
+            Assert.Equal(11, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('a', richCharacter.Value);
+            Assert.Equal(11, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('s', richCharacter.Value);
+            Assert.Equal(11, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('s', richCharacter.Value);
+            Assert.Equal(11, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('\n', richCharacter.Value);
+            Assert.Equal(0, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('{', richCharacter.Value);
+            Assert.Equal(0, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('\n', richCharacter.Value);
+            Assert.Equal(0, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('\t', richCharacter.Value);
+            Assert.Equal(0, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('\n', richCharacter.Value);
+            Assert.Equal(0, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('}', richCharacter.Value);
+            Assert.Equal(0, richCharacter.DecorationByte);
+
+            richCharacter = contentList[i++];
+            Assert.Equal('\n', richCharacter.Value);
+            Assert.Equal(0, richCharacter.DecorationByte);
+
+            Assert.Equal(27, i);
         }
 
         // PartitionList
         {
-            throw new NotImplementedException();
+            var partitionList = refModel.PartitionList;
+            Assert.Single(partitionList);
         }
 
         // EditBlocksList
         {
-            throw new NotImplementedException();
+            var editBlocksList = refModel.EditBlocksList;
+            Assert.Empty(editBlocksList);
         }
 
         // RowEndingPositionsList
         {
-            throw new NotImplementedException();
+            var rowEndingPositionsList = refModel.RowEndingPositionsList;
+
+            Assert.Equal(5, rowEndingPositionsList.Count);
+
+            var i = 0;
+
+            var rowEnding = rowEndingPositionsList[i++];
+            Assert.Equal(20, rowEnding.StartPositionIndexInclusive);
+            Assert.Equal(21, rowEnding.EndPositionIndexExclusive);
+            Assert.Equal(RowEndingKind.Linefeed, rowEnding.RowEndingKind);
+
+            rowEnding = rowEndingPositionsList[i++];
+            Assert.Equal(22, rowEnding.StartPositionIndexInclusive);
+            Assert.Equal(23, rowEnding.EndPositionIndexExclusive);
+            Assert.Equal(RowEndingKind.Linefeed, rowEnding.RowEndingKind);
+
+            rowEnding = rowEndingPositionsList[i++];
+            Assert.Equal(24, rowEnding.StartPositionIndexInclusive);
+            Assert.Equal(25, rowEnding.EndPositionIndexExclusive);
+            Assert.Equal(RowEndingKind.Linefeed, rowEnding.RowEndingKind);
+
+            rowEnding = rowEndingPositionsList[i++];
+            Assert.Equal(26, rowEnding.StartPositionIndexInclusive);
+            Assert.Equal(27, rowEnding.EndPositionIndexExclusive);
+            Assert.Equal(RowEndingKind.Linefeed, rowEnding.RowEndingKind);
+
+            rowEnding = rowEndingPositionsList[i++];
+            Assert.Equal(27, rowEnding.StartPositionIndexInclusive);
+            Assert.Equal(27, rowEnding.EndPositionIndexExclusive);
+            Assert.Equal(RowEndingKind.EndOfFile, rowEnding.RowEndingKind);
         }
 
         // RowEndingKindCountsList
