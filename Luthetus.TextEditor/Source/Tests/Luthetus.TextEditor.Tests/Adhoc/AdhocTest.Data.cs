@@ -2,189 +2,70 @@
 
 public partial class AdhocTest
 {
-    public const string _cliWrapIntegratedTerminalSourceText = @"using CliWrap;
-using CliWrap.EventStream;
-using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Common.RazorLib.Keyboards.Models;
-using Microsoft.AspNetCore.Components.Rendering;
-using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Immutable;
-using System.Reactive.Linq;
-using System.Text;
-
-namespace Luthetus.Ide.RazorLib.Terminals.Models;
-
-public class CliWrapIntegratedTerminal : IntegratedTerminal
-{
-    private readonly List<Std> _stdList = new();
     /// <summary>
-    /// https://github.com/Tyrrrz/CliWrap/issues/191
-    /// (Topic is accepting user input with CliWrap)
+    /// <see cref="RazorLib.TextEditors.Models.TextEditorModels.ITextEditorModel.ContentList"/>
+    /// <summary>
+    /// TODO: This needs to be separated out into an IReadOnlyList&lt;char&gt;...
+    ///       ...and a IReadOnlyList&lt;byte&gt;
+    ///       |
+    ///       This change is needed because, a large part of optimizing the text editor is
+    ///       to reduce the operations done on the entirety of the text editor.
+    ///       |
+    ///       And, currently one invokes textEditorModel.GetAllText() rather frequently, and redundantly.
+    ///       |
+    ///       This invocation of 'GetAllText()' needs to iterate over every character in the text editor,
+    ///       and select its 'Value' property.
+    ///       |
+    ///       This is an operation done on the entirety of the text editor, and therefore
+    ///       it should be optimized.
+    ///       |
+    ///       The result of the change will make 'GetAllText()' simply return a reference
+    ///       to the underlying list of characters.
+    /// =================================================================================================
+    /// What might break with this change?:
+    ///     -Decoration, more specifically syntax highlighting, could break with this change.
+    ///         -Could I, prior to making the change, write a unit test that applies syntax highlighting
+    ///             to a simple C# class definition. The, run this test throughout the time I'm making the change,
+    ///             and afterwards to ensure that syntax highlighting was (seemingly) not broken?
+    ///             -SampleText: public class MyClass { }
+    ///             -Determine what the Lexer's syntax tokens are after the 'Lex()' method invocation.
+    ///                  As well, dermine result of the Parser, CompilationUnit, and CSharpResource.
+    ///                  -Save the data so it can be compared against for future tests,
+    ///                       to see if the result erroneously changed.
+    ///     -Regarding 'GetAllText()' method on 'ITextEditorModel'.
+    ///         -What will become of the 'GetAllText()' method after these changes?
+    ///     -Regarding 'PartitionList' property on 'ITextEditorModel'.
+    ///         -This is currently an 'ImmutableList&lt;ImmutableList&lt;RichCharacter&gt;&gt;'
+    ///             -This would need be changed to an 'ImmutableList&lt;ImmutableList&lt;char&gt;&gt;'
+    ///                 -NOTE: The 'PartitionList' is supposed to encompase all the metadata for the text
+    ///                      within that partition.
+    ///                      -This is quite difficult, so to start, I moved the RichCharacters to be partitioned.
+    ///                           and am "globally" tracking the metadata.
+    ///                      -The metadata meaning:
+    ///                           -RowEndingPositionsList
+    ///                           -RowEndingKindCountsList
+    ///                           -TabKeyPositionsList
+    ///                           -OnlyRowEndingKind
+    ///                           -UsingRowEndingKind
+    ///                           -EditBlockIndex
+    ///                           -MostCharactersOnASingleRowTuple
+    ///                           -RowCount
+    ///                           -PartitionLength
+    ///                           -NOTE: Should 'PresentationModelsList' be part of a partition?
+    ///                                -If one were to have a sufficiently-large file C# file.
+    ///                                     Then there might be an overwhelming amount of "squigglies" (diagnostics),
+    ///                                         if they were stored "globally".
+    ///     -How would one lookup the decoration byte for a given character after this change?
+    ///         -The 'CharDecorationByteList' would have an index which is 1 to 1 with the character's index in
+    ///              the list of characters.
+    ///         -Could implicit conversions between byte and char (or vice versa) cause hard to debug confusion?
+    ///              -The implicit conversion of byte and char (and vice versa) should be checked.
+    ///                   -A char is 2 bytes in C#, so it isn't believed that any implicit conversion
+    ///                        would be done (vice versa).
+    ///     -What properties will replace the 'IReadOnlyList&lt;RichCharacter&gt; ContentList' property?
+    ///         -IReadOnlyList&lt;char&gt; CharList
+    ///         -IReadOnlyList&lt;byte&gt; DecorationByteList
     /// </summary>
-    private readonly SemaphoreSlim _stdInputSemaphore = new SemaphoreSlim(0, 1);
-    private readonly StringBuilder _stdInputBuffer = new StringBuilder();
-
-    public CliWrapIntegratedTerminal(string initialWorkingDirectory, IEnvironmentProvider environmentProvider)
-        : base(initialWorkingDirectory, environmentProvider)
-    {
-        _stdList.Add(new StdQuiescent(this));
-    }
-
-    public PipeSource? StdInPipeSource { get; private set; }
-    public override ImmutableArray<Std> StdList => _stdList.ToImmutableArray();
-
-    public void AddStdOut(string content, StdOutKind stdOutKind)
-    {
-        var existingStd = _stdList.LastOrDefault();
-
-        if (existingStd is not null &&
-            existingStd is StdOut existingStdOut &&
-            existingStdOut.StdOutKind == stdOutKind)
-        {
-            existingStdOut.Content += content;
-        }
-        else
-        {
-            _stdList.Add(new StdOut(this, content, stdOutKind));
-        }
-    }
-
-    public void AddStdInRequest()
-    {
-        _stdList.Add(new StdInRequest(this));
-    }
-
-    public override async Task StartAsync(CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
-
-                if (TaskQueue.TryDequeue(out var func))
-                {
-                    await func.Invoke();
-                    _stdList.Add(new StdQuiescent(this));
-                    InvokeStateChanged();
-                }
-            }
-        }
-        catch (TaskCanceledException)
-        {
-            // eat this exception?
-        }
-
-        await StopAsync();
-    }
-
-    public override Task StopAsync(CancellationToken cancellationToken = default)
-    {
-        return Task.CompletedTask;
-    }
-
-    public override Task HandleStdInputOnKeyDown(
-        KeyboardEventArgs keyboardEventArgs,
-        StdInRequest stdInRequest,
-        string capturedValue)
-    {
-        if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
-        {
-            stdInRequest.IsCompleted = true;
-            stdInRequest.Value = capturedValue;
-            InvokeStateChanged();
-
-            _stdInputBuffer.Clear();
-            _stdInputBuffer.AppendLine(capturedValue);
-            _stdInputSemaphore.Release();
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public override Task HandleStdQuiescentOnKeyDown(
-        KeyboardEventArgs keyboardEventArgs,
-        StdQuiescent stdQuiescent,
-        string capturedTargetFilePath,
-        string capturedArguments)
-    {
-        if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
-        {
-            stdQuiescent.IsCompleted = true;
-            stdQuiescent.TargetFilePath = capturedTargetFilePath;
-            stdQuiescent.Arguments = capturedArguments;
-
-            TargetFilePath = capturedTargetFilePath;
-            Arguments = capturedArguments;
-
-            InvokeStateChanged();
-
-            TaskQueue.Enqueue(async () =>
-            {
-                StdInPipeSource = PipeSource.Create(async (destination, cancellationToken) =>
-                {
-                    if (cancellationToken.IsCancellationRequested)
-                        return;
-
-                    _ = Task.Run(() =>
-                    {
-                        // The UI element for stdin should render,
-                        // accept input, and upon 'Enter' key,
-                        // release the '_stdInputSemaphore'
-                        AddStdInRequest();
-                        InvokeStateChanged();
-                        return Task.CompletedTask;
-                    });
-
-                    await _stdInputSemaphore.WaitAsync(cancellationToken);
-                    var data = Encoding.UTF8.GetBytes(_stdInputBuffer.ToString());
-                    await destination.WriteAsync(data, 0, data.Length, cancellationToken);
-                });
-
-                var command = Cli
-                    .Wrap(TargetFilePath)
-                    .WithArguments(Arguments)
-                    .WithStandardInputPipe(StdInPipeSource);
-
-                await command.Observe()
-                    .ForEachAsync(cmdEvent =>
-                    {
-                        var output = (string?)null;
-                        var outputKind = StdOutKind.None;
-
-                        switch (cmdEvent)
-                        {
-                            case StartedCommandEvent started:
-                                output = $""(PID:{started.ProcessId})"";
-                                outputKind = StdOutKind.Started;
-                                break;
-                            case StandardOutputCommandEvent stdOut:
-                                output = $""{stdOut.Text}"";
-                                break;
-                            case StandardErrorCommandEvent stdErr:
-                                output = $""Err> {stdErr.Text}"";
-                                outputKind = StdOutKind.Error;
-                                break;
-                            case ExitedCommandEvent exited:
-                                output = $""Process exited; Code: {exited.ExitCode}"";
-                                outputKind = StdOutKind.Exited;
-                                break;
-                        }
-
-                        if (output is not null)
-                        {
-                            AddStdOut(
-                                $""{output}{Environment.NewLine}"",
-                                outputKind);
-
-                            InvokeStateChanged();
-                        }
-                    });
-            });
-        }
-
-        return Task.CompletedTask;
-    }
-}
-";
+    /// </summary>
+    public const string _contentListChangeSampleText = @"";
 }

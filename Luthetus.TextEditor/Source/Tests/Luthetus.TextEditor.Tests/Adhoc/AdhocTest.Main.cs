@@ -7,7 +7,7 @@ namespace Luthetus.TextEditor.Tests.Adhoc;
 public partial class AdhocTest
 {
     [Fact]
-    public void PARTITITION_CliWrapIntegratedTerminalSourceText()
+    public void PARTITITION_ContentList()
     {
         var fileExtension = ExtensionNoPeriodFacts.TXT;
         var resourceUri = new ResourceUri("/unitTesting.txt");
@@ -17,11 +17,11 @@ public partial class AdhocTest
              resourceUri,
              resourceLastWriteTime,
              fileExtension,
-             _cliWrapIntegratedTerminalSourceText,
+             _contentListChangeSampleText,
              null,
              null);
 
-        Assert.Equal(_cliWrapIntegratedTerminalSourceText, model.GetAllText());
+        Assert.Equal(_contentListChangeSampleText, model.GetAllText());
 
         throw new NotImplementedException();
     }
