@@ -81,24 +81,24 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private void RequestInputFileForParentDirectory(string message)
     {
         InputFileSync.RequestInputFileStateForm(message,
-            async afp =>
+            async absolutePath =>
             {
-                if (afp is null)
+                if (absolutePath is null)
                     return;
 
-                _viewModel.ParentDirectoryNameValue = afp.Value;
+                _viewModel.ParentDirectoryNameValue = absolutePath.Value;
                 await InvokeAsync(StateHasChanged);
             },
-            afp =>
+            absolutePath =>
             {
-                if (afp is null || !afp.IsDirectory)
+                if (absolutePath is null || !absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(true);
             },
             new[]
             {
-                new InputFilePattern("Directory", afp => afp.IsDirectory)
+                new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
             }.ToImmutableArray());
     }
 
@@ -124,7 +124,6 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             await InvokeAsync(StateHasChanged);
 
             var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewList();
-
             var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
 
             var newCSharpProjectCommand = new TerminalCommand(

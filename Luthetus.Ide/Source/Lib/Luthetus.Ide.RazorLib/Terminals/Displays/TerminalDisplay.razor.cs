@@ -16,14 +16,14 @@ public partial class TerminalDisplay : FluxorComponent
     private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
 
     /// <summary>
-    /// All the output from the terminal session will be displayed in a read-only text editor.
+    /// All output from the terminal will be displayed in a read-only text editor.
     /// </summary>
     [Parameter, EditorRequired]
     public Key<Terminal> TerminalKey { get; set; }
     
     /// <summary>
-    /// Filter the output from a terminal session such that,
-    /// only the output of the specified terminal command will be shown.
+    /// Filter the output from a terminal such that,
+    /// only the output of the specified command will be shown.
     /// </summary>
     [Parameter]
     public Key<TerminalCommand> TerminalCommandKey { get; set; } = Key<TerminalCommand>.Empty;
