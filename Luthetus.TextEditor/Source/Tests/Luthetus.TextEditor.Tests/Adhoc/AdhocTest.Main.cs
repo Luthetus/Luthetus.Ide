@@ -17,6 +17,7 @@ using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.Decorations;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
+using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
 
@@ -269,92 +270,128 @@ public partial class AdhocTest
 
         // RowEndingKindCountsList
         {
-            throw new NotImplementedException();
+            var rowEndingKindCountsList = refModel.RowEndingKindCountsList;
+
+            Assert.Equal(3, rowEndingKindCountsList.Count);
+
+            var i = 0;
+
+            var rowEndingKindCountTuple = rowEndingKindCountsList[i++];
+            Assert.Equal(RowEndingKind.CarriageReturn, rowEndingKindCountTuple.rowEndingKind);
+            Assert.Equal(0, rowEndingKindCountTuple.count);
+
+            rowEndingKindCountTuple = rowEndingKindCountsList[i++];
+            Assert.Equal(RowEndingKind.Linefeed, rowEndingKindCountTuple.rowEndingKind);
+            Assert.Equal(4, rowEndingKindCountTuple.count);
+
+            rowEndingKindCountTuple = rowEndingKindCountsList[i++];
+            Assert.Equal(RowEndingKind.CarriageReturnLinefeed, rowEndingKindCountTuple.rowEndingKind);
+            Assert.Equal(0, rowEndingKindCountTuple.count);
         }
 
         // PresentationModelsList
         {
-            throw new NotImplementedException();
+            var presentationModelsList = refModel.PresentationModelsList;
+            Assert.Single(presentationModelsList);
         }
 
         // TabKeyPositionsList
         {
-            throw new NotImplementedException();
+            var tabKeyPositionsList = refModel.TabKeyPositionsList;
+
+            Assert.Single(tabKeyPositionsList);
+
+            var tabKeyPosition = tabKeyPositionsList.Single();
+            Assert.Equal(23, tabKeyPosition);
         }
 
         // OnlyRowEndingKind
         {
-            throw new NotImplementedException();
+            var onlyRowEndingKind = refModel.OnlyRowEndingKind;
+            Assert.Equal(RowEndingKind.Linefeed, onlyRowEndingKind);
         }
 
         // UsingRowEndingKind
         {
-            throw new NotImplementedException();
+            var usingRowEndingKind = refModel.UsingRowEndingKind;
+            Assert.Equal(RowEndingKind.Linefeed, usingRowEndingKind);
         }
 
         // ResourceUri
         {
-            throw new NotImplementedException();
+            var resourceUri = refModel.ResourceUri;
+            Assert.Equal(new ResourceUri("/unitTesting.cs"), resourceUri);
         }
 
         // ResourceLastWriteTime
         {
-            throw new NotImplementedException();
+            // Skip
         }
 
         // PartitionSize
         {
-            throw new NotImplementedException();
+            var partitionSize = refModel.PartitionSize;
+            Assert.Equal(4096, partitionSize);
         }
 
         // FileExtension
         {
-            throw new NotImplementedException();
+            var fileExtension = refModel.FileExtension;
+            Assert.Equal(ExtensionNoPeriodFacts.C_SHARP_CLASS, fileExtension);
         }
 
         // DecorationMapper
         {
-            throw new NotImplementedException();
+            var decorationMapper = refModel.DecorationMapper;
+            Assert.IsType<GenericDecorationMapper>(decorationMapper);
         }
 
         // CompilerService
         {
-            throw new NotImplementedException();
+            var compilerService = refModel.CompilerService;
+            Assert.IsType<CSharpCompilerService>(compilerService);
         }
 
         // TextEditorSaveFileHelper
         {
-            throw new NotImplementedException();
+            var textEditorSaveFileHelper = refModel.TextEditorSaveFileHelper;
+            Assert.NotNull(textEditorSaveFileHelper);
         }
 
         // EditBlockIndex
         {
-            throw new NotImplementedException();
+            var editBlockIndex = refModel.EditBlockIndex;
+            Assert.Equal(0, editBlockIndex);
         }
 
         // IsDirty
         {
-            throw new NotImplementedException();
+            var isDirty = refModel.IsDirty;
+            Assert.False(isDirty);
         }
 
         // MostCharactersOnASingleRowTuple
         {
-            throw new NotImplementedException();
+            var mostCharactersOnASingleRowTuple = refModel.MostCharactersOnASingleRowTuple;
+            Assert.Equal(0, mostCharactersOnASingleRowTuple.rowIndex);
+            Assert.Equal(26, mostCharactersOnASingleRowTuple.rowLength);
         }
 
         // RenderStateKey
         {
-            throw new NotImplementedException();
+            // Skip
         }
 
         // RowCount
         {
-            throw new NotImplementedException();
+            var rowCount = refModel.RowCount;
+            Assert.Equal(5, rowCount);
         }
 
         // DocumentLength
         {
-            throw new NotImplementedException();
+            var documentLength = refModel.DocumentLength;
+            Assert.Equal(27, documentLength);
         }
 
         // cSharpResource
@@ -418,8 +455,8 @@ public partial class AdhocTest
 
         textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
 
-        var fileExtension = ExtensionNoPeriodFacts.TXT;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var fileExtension = ExtensionNoPeriodFacts.C_SHARP_CLASS;
+        var resourceUri = new ResourceUri("/unitTesting.cs");
         var resourceLastWriteTime = DateTime.UtcNow;
         initialContent = "public class MyClass\n{\n\t\n}\n".ReplaceLineEndings("\n");
         var genericDecorationMapper = ((DecorationMapperRegistry)serviceProvider.GetRequiredService<IDecorationMapperRegistry>()).GenericDecorationMapper;
