@@ -18,6 +18,20 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Ide.RazorLib.CompilerServices.Models;
+using Luthetus.Ide.RazorLib.Decorations;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.Installations.Models;
+using Luthetus.Ide.RazorLib.TestExplorers.States;
+using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Ide.RazorLib.CSharpProjectForms.Displays;
+using Luthetus.Ide.RazorLib.FileSystems.Displays;
+using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
+using Luthetus.Ide.RazorLib.Gits.Displays;
+using Luthetus.Ide.RazorLib.InputFiles.Displays;
+using Luthetus.Ide.RazorLib.Nugets.Displays;
+using Luthetus.Ide.RazorLib.TreeViewImplementations.Displays;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
 
@@ -102,6 +116,122 @@ public partial class AdhocTest
             ImmutableArray<TextEditorTextSpan>.Empty);
 
         refModel = textEditorService.ModelApi.GetOrDefault(refModel.ResourceUri) ?? throw new ArgumentNullException();
+        refModel.ApplySyntaxHighlightingAsync().Wait();
+
+        // ContentList
+        {
+            // Index 13 is the index for the class identifier given the current sample text.
+            // It is desired that a variable be made, one can check easily if the decoration byte is set correctly.
+            var indexThirteen = refModel.ContentList[13];
+
+            Assert.Equal(27, refModel.ContentList.Count);
+            throw new NotImplementedException();
+        }
+
+        // PartitionList
+        {
+            throw new NotImplementedException();
+        }
+
+        // EditBlocksList
+        {
+            throw new NotImplementedException();
+        }
+
+        // RowEndingPositionsList
+        {
+            throw new NotImplementedException();
+        }
+
+        // RowEndingKindCountsList
+        {
+            throw new NotImplementedException();
+        }
+
+        // PresentationModelsList
+        {
+            throw new NotImplementedException();
+        }
+
+        // TabKeyPositionsList
+        {
+            throw new NotImplementedException();
+        }
+
+        // OnlyRowEndingKind
+        {
+            throw new NotImplementedException();
+        }
+
+        // UsingRowEndingKind
+        {
+            throw new NotImplementedException();
+        }
+
+        // ResourceUri
+        {
+            throw new NotImplementedException();
+        }
+
+        // ResourceLastWriteTime
+        {
+            throw new NotImplementedException();
+        }
+
+        // PartitionSize
+        {
+            throw new NotImplementedException();
+        }
+
+        // FileExtension
+        {
+            throw new NotImplementedException();
+        }
+
+        // DecorationMapper
+        {
+            throw new NotImplementedException();
+        }
+
+        // CompilerService
+        {
+            throw new NotImplementedException();
+        }
+
+        // TextEditorSaveFileHelper
+        {
+            throw new NotImplementedException();
+        }
+
+        // EditBlockIndex
+        {
+            throw new NotImplementedException();
+        }
+
+        // IsDirty
+        {
+            throw new NotImplementedException();
+        }
+
+        // MostCharactersOnASingleRowTuple
+        {
+            throw new NotImplementedException();
+        }
+
+        // RenderStateKey
+        {
+            throw new NotImplementedException();
+        }
+
+        // RowCount
+        {
+            throw new NotImplementedException();
+        }
+
+        // DocumentLength
+        {
+            throw new NotImplementedException();
+        }
 
         // cSharpResource
         {
@@ -147,36 +277,16 @@ public partial class AdhocTest
         out TextEditorViewModel viewModel,
         out ITextEditorService textEditorService)
     {
+        var backgroundTaskService = new BackgroundTaskServiceSynchronous();
+
         var services = new ServiceCollection()
-            .AddSingleton<LuthetusCommonConfig>()
-            .AddSingleton<LuthetusTextEditorConfig>()
-            .AddScoped<IStorageService, DoNothingStorageService>()
-            .AddScoped<IJSRuntime, TextEditorTestingJsRuntime>()
-            .AddScoped<StorageSync>()
-            .AddScoped<IBackgroundTaskService>(_ => new BackgroundTaskServiceSynchronous())
-            .AddScoped<ITextEditorRegistryWrap, TextEditorRegistryWrap>()
-            .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistryDefault>()
-            .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistryDefault>()
-            .AddScoped<ITextEditorService, TextEditorService>()
-            .AddFluxor(options => options.ScanAssemblies(
-                typeof(LuthetusCommonConfig).Assembly,
-                typeof(LuthetusTextEditorConfig).Assembly));
+            .AddScoped<IJSRuntime, DoNothingJsRuntime>()
+            .AddLuthetusIdeRazorLibServices(
+                new LuthetusHostingInformation(LuthetusHostingKind.UnitTesting, backgroundTaskService));
 
         var serviceProvider = services.BuildServiceProvider();
         var store = serviceProvider.GetRequiredService<IStore>();
         store.InitializeAsync().Wait();
-
-        var backgroundTaskService = serviceProvider.GetRequiredService<IBackgroundTaskService>();
-
-        var continuousQueue = new BackgroundTaskQueue(
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
-            ContinuousBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
-        backgroundTaskService.RegisterQueue(continuousQueue);
-
-        var blockingQueue = new BackgroundTaskQueue(
-            BlockingBackgroundTaskWorker.GetQueueKey(),
-            BlockingBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
-        backgroundTaskService.RegisterQueue(blockingQueue);
 
         var textEditorRegistryWrap = serviceProvider.GetRequiredService<ITextEditorRegistryWrap>();
         textEditorRegistryWrap.DecorationMapperRegistry = serviceProvider.GetRequiredService<IDecorationMapperRegistry>();
@@ -188,16 +298,19 @@ public partial class AdhocTest
         var resourceUri = new ResourceUri("/unitTesting.txt");
         var resourceLastWriteTime = DateTime.UtcNow;
         initialContent = "public class MyClass\n{\n\t\n}\n".ReplaceLineEndings("\n");
+        var genericDecorationMapper = ((DecorationMapperRegistry)serviceProvider.GetRequiredService<IDecorationMapperRegistry>()).GenericDecorationMapper;
+        var cSharpCompilerService = ((CompilerServiceRegistry)serviceProvider.GetRequiredService<ICompilerServiceRegistry>()).CSharpCompilerService;
 
         model = new TextEditorModel(
              resourceUri,
              resourceLastWriteTime,
              fileExtension,
              initialContent,
-             new GenericDecorationMapper(),
-             new CSharpCompilerService(textEditorService));
+             genericDecorationMapper,
+             cSharpCompilerService);
 
         textEditorService.ModelApi.RegisterCustom(model);
+        cSharpCompilerService.RegisterResource(model.ResourceUri);
         model = textEditorService.ModelApi.GetOrDefault(resourceUri) ?? throw new ArgumentNullException();
 
         var viewModelKey = Key<TextEditorViewModel>.NewKey();
