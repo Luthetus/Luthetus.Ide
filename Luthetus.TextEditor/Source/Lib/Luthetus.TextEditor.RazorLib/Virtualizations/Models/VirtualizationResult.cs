@@ -24,8 +24,8 @@ public record VirtualizationResult<T> : IVirtualizationResultWithoutTypeMask
         CharAndRowMeasurements = charAndRowMeasurements;
     }
 
-    public static VirtualizationResult<List<RichCharacter>> GetEmptyRichCharacters() => new(
-        ImmutableArray<VirtualizationEntry<List<RichCharacter>>>.Empty,
+    public static VirtualizationResult<List<char>> GetEmptyRichCharacters() => new(
+        ImmutableArray<VirtualizationEntry<List<char>>>.Empty,
         new VirtualizationBoundary(0, 0, 0, 0),
         new VirtualizationBoundary(0, 0, 0, 0),
         new VirtualizationBoundary(0, 0, 0, 0),

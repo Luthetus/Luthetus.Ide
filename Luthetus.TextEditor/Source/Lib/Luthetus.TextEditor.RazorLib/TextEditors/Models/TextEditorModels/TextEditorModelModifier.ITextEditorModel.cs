@@ -1,6 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
-using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
@@ -12,8 +11,10 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 public partial class TextEditorModelModifier : ITextEditorModel
 {
-    public IReadOnlyList<RichCharacter> ContentList => _contentList is null ? _textEditorModel.ContentList : _contentList;
-    public ImmutableList<ImmutableList<RichCharacter>> PartitionList => _partitionList is null ? _textEditorModel.PartitionList : _partitionList;
+    public IReadOnlyList<char> CharList => _charList is null ? _textEditorModel.CharList : _charList;
+    public List<byte> DecorationByteList => _decorationByteList is null ? _textEditorModel.DecorationByteList : _decorationByteList;
+	public ImmutableList<TextEditorPartition> PartitionList => _partitionList is null ? _textEditorModel.PartitionList : _partitionList;
+	
 	public IList<EditBlock> EditBlocksList => _editBlocksList is null ? _textEditorModel.EditBlocksList : _editBlocksList;
 	public IList<RowEnding> RowEndingPositionsList => _rowEndingPositionsList is null ? _textEditorModel.RowEndingPositionsList : _rowEndingPositionsList;
 	public IList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsList => _rowEndingKindCountsList is null ? _textEditorModel.RowEndingKindCountsList : _rowEndingKindCountsList;
@@ -33,5 +34,5 @@ public partial class TextEditorModelModifier : ITextEditorModel
 	public Key<RenderState> RenderStateKey => _renderStateKey ?? _textEditorModel.RenderStateKey;
 
     public int RowCount => RowEndingPositionsList.Count;
-    public int DocumentLength => ContentList.Count;
+    public int DocumentLength => _charList.Count;
 }

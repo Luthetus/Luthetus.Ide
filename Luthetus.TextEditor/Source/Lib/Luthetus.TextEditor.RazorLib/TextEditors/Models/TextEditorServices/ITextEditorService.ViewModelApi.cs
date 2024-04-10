@@ -955,7 +955,7 @@ public partial interface ITextEditorService
                             .ToList();
 
                         var countTabKeysInVirtualizedRow = horizontallyVirtualizedRow
-                            .Where(x => x.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+                            .Where(x => x == KeyboardKeyFacts.WhitespaceCharacters.TAB)
                             .Count();
 
                         var widthInPixels = (horizontallyVirtualizedRow.Count + (extraWidthPerTabKey * countTabKeysInVirtualizedRow)) *
@@ -986,7 +986,7 @@ public partial interface ITextEditorService
 
                         var topInPixels = rowIndex * virtualizationResult.CharAndRowMeasurements.RowHeight;
 
-                        return new VirtualizationEntry<List<RichCharacter>>(
+                        return new VirtualizationEntry<List<char>>(
                             rowIndex,
                             horizontallyVirtualizedRow,
                             widthInPixels,
@@ -1052,7 +1052,7 @@ public partial interface ITextEditorService
                     0,
                     bottomBoundaryTopInPixels);
 
-                virtualizationResult = new VirtualizationResult<List<RichCharacter>>(
+                virtualizationResult = new VirtualizationResult<List<char>>(
                     virtualizedEntryBag,
                     leftBoundary,
                     rightBoundary,

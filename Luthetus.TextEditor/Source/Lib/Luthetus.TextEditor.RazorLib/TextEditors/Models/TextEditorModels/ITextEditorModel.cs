@@ -41,8 +41,9 @@ public interface ITextEditorModel
     ///       The result of the change will make 'GetAllText()' simply return a reference
     ///       to the underlying list of characters.
     /// </summary>
-    public IReadOnlyList<RichCharacter> ContentList { get; }
-    public ImmutableList<ImmutableList<RichCharacter>> PartitionList { get; }
+    public IReadOnlyList<char> CharList { get; }
+    public List<byte> DecorationByteList { get; }
+    public ImmutableList<TextEditorPartition> PartitionList { get; }
 	public IList<EditBlock> EditBlocksList { get; }
     /// <summary>
     /// To get the ending position of RowIndex _rowEndingPositions[RowIndex]<br /><br />

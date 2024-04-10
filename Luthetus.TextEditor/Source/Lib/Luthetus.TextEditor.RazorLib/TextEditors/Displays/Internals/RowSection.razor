@@ -31,13 +31,23 @@
             @if (virtualizedRow.Item.Any())
             {
                 var spanBuilder = new StringBuilder();
-                var currentDecorationByte = virtualizedRow.Item.First().DecorationByte;
 
-                foreach (var richCharacter in virtualizedRow.Item)
+                @*
+                    Rich characters are being removed. Instead of 1 list of RichCharacters,
+                    there will be 1 list of the char(s) and 1 list of the decoration bytes.
+
+                    TODO: As such, this code broke, and needs to be changed accordingly....
+                          ...Until then the decoration byte of '0' will be used.
+
+                    (2024-04-10)
+                *@
+                var currentDecorationByte = (byte)0;
+
+                foreach (var character in virtualizedRow.Item)
                 {
-                    if (currentDecorationByte == richCharacter.DecorationByte)
+                    if (currentDecorationByte == 0)
                     {
-                        AppendTextEscaped(spanBuilder, richCharacter, TabKeyOutput, SpaceKeyOutput);
+                        AppendTextEscaped(spanBuilder, character, TabKeyOutput, SpaceKeyOutput);
                     }
                     else
                     {
@@ -47,9 +57,9 @@
 
                         spanBuilder.Clear();
 
-                        AppendTextEscaped(spanBuilder, richCharacter, TabKeyOutput, SpaceKeyOutput);
+                        AppendTextEscaped(spanBuilder, character, TabKeyOutput, SpaceKeyOutput);
 
-                        currentDecorationByte = richCharacter.DecorationByte;
+                        currentDecorationByte = 0;
                     }
                 }
 

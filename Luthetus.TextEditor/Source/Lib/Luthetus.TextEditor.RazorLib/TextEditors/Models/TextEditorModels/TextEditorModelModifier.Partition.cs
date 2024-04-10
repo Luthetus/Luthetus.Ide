@@ -13,13 +13,13 @@ public partial class TextEditorModelModifier
 
         for (int i = 0; i < _partitionList.Count; i++)
         {
-            ImmutableList<RichCharacter>? partition = _partitionList[i];
+            TextEditorPartition? partition = _partitionList[i];
 
-            if (runningCount + partition.Count >= globalPositionIndex)
+            if (runningCount + partition.CharList.Count >= globalPositionIndex)
             {
                 // This is the partition we want to modify.
                 // But, we must first check if it has available space.
-                if (partition.Count >= PartitionSize)
+                if (partition.CharList.Count >= PartitionSize)
                 {
                     PartitionList_SplitIntoTwoPartitions(i);
                     i--;
@@ -32,7 +32,7 @@ public partial class TextEditorModelModifier
             }
             else
             {
-                runningCount += partition.Count;
+                runningCount += partition.CharList.Count;
             }
         }
 
@@ -42,9 +42,16 @@ public partial class TextEditorModelModifier
         if (relativePositionIndex == -1)
             throw new ApplicationException("if (relativePositionIndex == -1)");
 
+        var targetPartition = _partitionList[indexOfPartitionWithAvailableSpace];
+
+        targetPartition.DecorationByteList.Insert(relativePositionIndex, richCharacter.DecorationByte);
+
         _partitionList = _partitionList.SetItem(
             indexOfPartitionWithAvailableSpace,
-            _partitionList[indexOfPartitionWithAvailableSpace].Insert(relativePositionIndex, richCharacter));
+            _partitionList[indexOfPartitionWithAvailableSpace] with 
+            {
+                CharList = targetPartition.CharList.Insert(relativePositionIndex, richCharacter.Value)
+            });
     }
 
     public void PartitionList_RemoveAt(int globalPositionIndex)
@@ -55,9 +62,9 @@ public partial class TextEditorModelModifier
 
         for (int i = 0; i < _partitionList.Count; i++)
         {
-            ImmutableList<RichCharacter>? partition = _partitionList[i];
+            TextEditorPartition? partition = _partitionList[i];
 
-            if (runningCount + partition.Count > globalPositionIndex)
+            if (runningCount + partition.CharList.Count > globalPositionIndex)
             {
                 // This is the partition we want to modify.
                 relativePositionIndex = globalPositionIndex - runningCount;
@@ -66,7 +73,7 @@ public partial class TextEditorModelModifier
             }
             else
             {
-                runningCount += partition.Count;
+                runningCount += partition.CharList.Count;
             }
         }
 
@@ -76,14 +83,23 @@ public partial class TextEditorModelModifier
         if (relativePositionIndex == -1)
             throw new ApplicationException("if (relativePositionIndex == -1)");
 
+        var targetPartition = _partitionList[indexOfPartitionWithAvailableSpace];
+
+        targetPartition.DecorationByteList.RemoveAt(relativePositionIndex);
+
+        targetPartition = targetPartition with
+        {
+            CharList = targetPartition.CharList.RemoveAt(relativePositionIndex)
+        };
+
         _partitionList = _partitionList.SetItem(
             indexOfPartitionWithAvailableSpace,
-            _partitionList[indexOfPartitionWithAvailableSpace].RemoveAt(relativePositionIndex));
+            targetPartition);
     }
 
     private void PartitionList_InsertNewPartition(int partitionIndex)
     {
-        _partitionList = _partitionList.Insert(partitionIndex, ImmutableList<RichCharacter>.Empty);
+        _partitionList = _partitionList.Insert(partitionIndex, TextEditorPartition.Empty);
     }
     
     private void PartitionList_SplitIntoTwoPartitions(int partitionIndex)
@@ -93,13 +109,32 @@ public partial class TextEditorModelModifier
         var firstUnevenSplit = PartitionSize / 2 + (PartitionSize % 2);
         var secondUnevenSplit = PartitionSize / 2;
 
-        _partitionList = _partitionList.SetItem(
-            partitionIndex,
-            ImmutableList<RichCharacter>.Empty.AddRange(originalPartition.Take(firstUnevenSplit)));
+        // Replace old
+        {
+            var partition = new TextEditorPartition(
+                ImmutableList<char>.Empty.AddRange(originalPartition.CharList.Take(firstUnevenSplit)),
+                new());
 
-        _partitionList = _partitionList.Insert(
-            partitionIndex + 1,
-            ImmutableList<RichCharacter>.Empty.AddRange(originalPartition.Skip(firstUnevenSplit).Take(secondUnevenSplit)));
+            partition.DecorationByteList.AddRange(originalPartition.CharList.Take(firstUnevenSplit).Select(x => (byte)0));
+
+            _partitionList = _partitionList.SetItem(
+                partitionIndex,
+                partition);
+        }
+
+        // Insert new
+        {
+            var partition = new TextEditorPartition(
+                ImmutableList<char>.Empty.AddRange(originalPartition.CharList.Skip(firstUnevenSplit).Take(secondUnevenSplit)),
+                new());
+
+            partition.DecorationByteList.AddRange(
+                originalPartition.CharList.Skip(firstUnevenSplit).Take(secondUnevenSplit).Select(x => (byte)0));
+
+            _partitionList = _partitionList.Insert(
+                partitionIndex + 1,
+                partition);
+        }
     }
 
     public void PartitionList_InsertRange(int globalPositionIndex, IEnumerable<RichCharacter> richCharacterList)
@@ -111,15 +146,15 @@ public partial class TextEditorModelModifier
             int indexOfPartitionWithAvailableSpace = -1;
             int relativePositionIndex = -1;
             var runningCount = 0;
-            ImmutableList<RichCharacter>? partition;
+            TextEditorPartition? partition;
 
             for (int i = 0; i < _partitionList.Count; i++)
             {
                 partition = _partitionList[i];
 
-                if (runningCount + partition.Count >= globalPositionIndex)
+                if (runningCount + partition.CharList.Count >= globalPositionIndex)
                 {
-                    if (partition.Count >= PartitionSize)
+                    if (partition.CharList.Count >= PartitionSize)
                     {
                         PartitionList_SplitIntoTwoPartitions(i);
                         i--;
@@ -132,7 +167,7 @@ public partial class TextEditorModelModifier
                 }
                 else
                 {
-                    runningCount += partition.Count;
+                    runningCount += partition.CharList.Count;
                 }
             }
 
@@ -143,20 +178,30 @@ public partial class TextEditorModelModifier
                 throw new ApplicationException("if (relativePositionIndex == -1)");
 
             partition = _partitionList[indexOfPartitionWithAvailableSpace];
-            var partitionAvailableSpace = PartitionSize - partition.Count;
+            var partitionAvailableSpace = PartitionSize - partition.CharList.Count;
 
-            var batchInsertList = new List<RichCharacter> { richCharacterEnumerator.Current };
+            var charBatchInsertList = new List<char> { richCharacterEnumerator.Current.Value };
+            var decorationByteBatchInsertList = new List<byte> { richCharacterEnumerator.Current.DecorationByte };
 
-            while ((batchInsertList.Count < partitionAvailableSpace) && richCharacterEnumerator.MoveNext())
+            while ((charBatchInsertList.Count < partitionAvailableSpace) && richCharacterEnumerator.MoveNext())
             {
-                batchInsertList.Add(richCharacterEnumerator.Current);
+                charBatchInsertList.Add(richCharacterEnumerator.Current.Value);
+                decorationByteBatchInsertList.Add(richCharacterEnumerator.Current.DecorationByte);
             }
-            
+
+            var targetPartition = _partitionList[indexOfPartitionWithAvailableSpace];
+
+
+            targetPartition.DecorationByteList.InsertRange(relativePositionIndex, decorationByteBatchInsertList);
+
             _partitionList = _partitionList.SetItem(
                 indexOfPartitionWithAvailableSpace,
-                _partitionList[indexOfPartitionWithAvailableSpace].InsertRange(relativePositionIndex, batchInsertList));
+                targetPartition with 
+                {
+                    CharList = targetPartition.CharList.InsertRange(relativePositionIndex, charBatchInsertList),
+                });
 
-            globalPositionIndex += batchInsertList.Count;
+            globalPositionIndex += charBatchInsertList.Count;
         }
     }
 

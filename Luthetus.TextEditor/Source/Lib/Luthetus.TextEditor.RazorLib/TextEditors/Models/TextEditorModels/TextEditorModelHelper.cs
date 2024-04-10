@@ -65,7 +65,7 @@ public static class TextEditorModelHelper
     /// A count of 1 returns rows[startingRowIndex] only.<br/>
     /// A count of 2 returns rows[startingRowIndex] and rows[startingRowIndex + 1].<br/>
     /// </param>
-    public static List<List<RichCharacter>> GetRows(
+    public static List<List<char>> GetRows(
 		this ITextEditorModel model, int startingRowIndex, int count)
 	{
 		var rowCountAvailable = model.RowEndingPositionsList.Count - startingRowIndex;
@@ -76,7 +76,7 @@ public static class TextEditorModelHelper
 
 		var endingRowIndexExclusive = startingRowIndex + rowCountToReturn;
 
-		var rowsList = new List<List<RichCharacter>>();
+		var rowsList = new List<List<char>>();
 
 		if (rowCountToReturn < 0 || startingRowIndex < 0 || endingRowIndexExclusive < 0)
 			return rowsList;
@@ -88,7 +88,7 @@ public static class TextEditorModelHelper
 
 			var endOfRowExclusive = model.RowEndingPositionsList[i].EndPositionIndexExclusive;
 
-            var row = model.ContentList
+            var row = model.CharList
 				.Skip(startOfRowInclusive)
 				.Take(endOfRowExclusive - startOfRowInclusive)
 				.ToList();
@@ -116,7 +116,8 @@ public static class TextEditorModelHelper
 		this ITextEditorModel model, 
 		IEnumerable<TextEditorTextSpan> textEditorTextSpans)
 	{
-		var localContent = model.ContentList;
+		var localCharList = model.CharList;
+		var localDecorationByteList = model.DecorationByteList;
 
 		var positionsPainted = new HashSet<int>();
 
@@ -124,21 +125,20 @@ public static class TextEditorModelHelper
 		{
 			for (var i = textEditorTextSpan.StartingIndexInclusive; i < textEditorTextSpan.EndingIndexExclusive; i++)
 			{
-				if (i < 0 || i >= localContent.Count)
+				if (i < 0 || i >= localCharList.Count)
 					continue;
 
-				localContent[i].DecorationByte = textEditorTextSpan.DecorationByte;
-
+                localDecorationByteList[i] = textEditorTextSpan.DecorationByte;
 				positionsPainted.Add(i);
 			}
 		}
 
-		for (var i = 0; i < localContent.Count - 1; i++)
+		for (var i = 0; i < localCharList.Count - 1; i++)
 		{
 			if (!positionsPainted.Contains(i))
 			{
-				// DecorationByte of 0 is to be 'None'
-				localContent[i].DecorationByte = 0;
+                // DecorationByte of 0 is to be 'None'
+                localDecorationByteList[i] = 0;
 			}
 		}
 	}
@@ -161,7 +161,7 @@ public static class TextEditorModelHelper
 	/// </summary>
 	public static string GetAllText(this ITextEditorModel model)
 	{
-		return new string(model.ContentList.Select(rc => rc.Value).ToArray());
+        return new string(model.CharList.Select(x => x).ToArray());
 	}
 
 	public static int GetPositionIndex(
@@ -203,10 +203,10 @@ public static class TextEditorModelHelper
 		this ITextEditorModel model,
 		int positionIndex)
 	{
-		if (positionIndex < 0 || positionIndex >= model.ContentList.Count)
+		if (positionIndex < 0 || positionIndex >= model.CharList.Count)
 			return ParserFacts.END_OF_FILE;
 
-		return model.ContentList[positionIndex].Value;
+		return model.CharList[positionIndex];
 	}
 
     /// <summary>
@@ -217,10 +217,10 @@ public static class TextEditorModelHelper
 		int startingPositionIndex,
 		int count)
 	{
-		return new string(model.ContentList
+		return new string(model.CharList
 			.Skip(startingPositionIndex)
 			.Take(count)
-			.Select(rc => rc.Value)
+			.Select(x => x)
 			.ToArray());
 	}
 
@@ -409,21 +409,21 @@ public static class TextEditorModelHelper
 			positionIndex -= 1;
 		}
 
-		if (positionIndex < 0 || positionIndex >= model.ContentList.Count)
+		if (positionIndex < 0 || positionIndex >= model.CharList.Count)
 			return -1;
 
-		var startingCharacterKind = model.ContentList[positionIndex].GetCharacterKind();
+		var startingCharacterKind = CharacterKindHelper.CharToCharacterKind(model.CharList[positionIndex]);
 
 		while (true)
 		{
-			if (positionIndex >= model.ContentList.Count ||
+			if (positionIndex >= model.CharList.Count ||
 				positionIndex > lastPositionIndexOnRow ||
 				positionIndex < startOfRowPositionIndex)
 			{
 				return -1;
 			}
 
-			var currentCharacterKind = model.ContentList[positionIndex].GetCharacterKind();
+			var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(model.CharList[positionIndex]);
 
 			if (currentCharacterKind != startingCharacterKind)
 				break;
@@ -435,11 +435,6 @@ public static class TextEditorModelHelper
 			positionIndex += 1;
 
 		return positionIndex - startOfRowPositionIndex;
-	}
-
-	public static ImmutableArray<RichCharacter> GetAllRichCharacters(this ITextEditorModel model)
-	{
-		return model.ContentList.ToImmutableArray();
 	}
 
 	public static bool CanUndoEdit(this ITextEditorModel model)
@@ -456,7 +451,7 @@ public static class TextEditorModelHelper
 	{
 		try
 		{
-			return model.ContentList[positionIndex].GetCharacterKind();
+			return CharacterKindHelper.CharToCharacterKind(model.CharList[positionIndex]);
 		}
 		catch (ArgumentOutOfRangeException)
 		{

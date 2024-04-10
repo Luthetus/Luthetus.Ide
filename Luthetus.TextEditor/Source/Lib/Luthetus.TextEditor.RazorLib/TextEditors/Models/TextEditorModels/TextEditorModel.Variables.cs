@@ -18,9 +18,10 @@ public partial class TextEditorModel
     public const int MAXIMUM_EDIT_BLOCKS = 10;
     public const int MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN = 5;
 
-    /// <inheritdoc cref="ITextEditorModel.ContentList"/>
-    public IReadOnlyList<RichCharacter> ContentList { get; } = ImmutableList<RichCharacter>.Empty;
-    public ImmutableList<ImmutableList<RichCharacter>> PartitionList { get; } = new ImmutableList<RichCharacter>[] { ImmutableList<RichCharacter>.Empty }.ToImmutableList();
+    public IReadOnlyList<char> CharList { get; init; }
+    public List<byte> DecorationByteList { get; init; }
+    public ImmutableList<TextEditorPartition> PartitionList { get; init; }
+
     public ImmutableList<EditBlock> EditBlocksList { get; init; } = ImmutableList<EditBlock>.Empty;
 
     /// <inheritdoc cref="ITextEditorModel.RowEndingPositionsList"/>
@@ -49,4 +50,7 @@ public partial class TextEditorModel
     public bool IsDirty { get; init; }
 	public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple { get; init; }
     public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();
+
+    public int RowCount => RowEndingPositionsList.Count;
+    public int DocumentLength => CharList.Count;
 }

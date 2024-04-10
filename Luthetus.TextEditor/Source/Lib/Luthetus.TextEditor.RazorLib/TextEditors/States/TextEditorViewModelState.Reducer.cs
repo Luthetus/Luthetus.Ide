@@ -31,7 +31,7 @@ public partial class TextEditorViewModelState
                 registerAction.Dispatcher,
                 registerAction.DialogService,
                 registerAction.JsRuntime,
-                VirtualizationResult<List<RichCharacter>>.GetEmptyRichCharacters(),
+                VirtualizationResult<List<char>>.GetEmptyRichCharacters(),
                 false,
                 registerAction.Category);
 

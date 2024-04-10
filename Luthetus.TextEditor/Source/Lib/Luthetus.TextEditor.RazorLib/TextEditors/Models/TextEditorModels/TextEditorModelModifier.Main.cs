@@ -42,8 +42,27 @@ public partial class TextEditorModelModifier
         _partitionList = _textEditorModel.PartitionList;
     }
 
-    private IReadOnlyList<RichCharacter> _contentList => _partitionList.SelectMany(x => x).ToImmutableList();
-    private ImmutableList<ImmutableList<RichCharacter>> _partitionList = new ImmutableList<RichCharacter>[] { ImmutableList<RichCharacter>.Empty }.ToImmutableList();
+    /// <summary>
+    /// TODO: Awkward naming convention is being used here. This is an expression bound property,...
+    ///       ...with the naming conventions of a private field.
+    ///       |
+    ///       The reason for breaking convention here is that every other purpose of this type is done
+    ///       through a private field.
+    ///       |
+    ///       Need to revisit naming this.
+    /// </summary>
+    private IReadOnlyList<char> _charList => _partitionList.SelectMany(x => x.CharList).ToImmutableList();
+    /// <summary>
+    /// TODO: Awkward naming convention is being used here. This is an expression bound property,...
+    ///       ...with the naming conventions of a private field.
+    ///       |
+    ///       The reason for breaking convention here is that every other purpose of this type is done
+    ///       through a private field.
+    ///       |
+    ///       Need to revisit naming this.
+    /// </summary>
+    private List<byte> _decorationByteList => _partitionList.SelectMany(x => x.DecorationByteList).ToList();
+    private ImmutableList<TextEditorPartition> _partitionList = new TextEditorPartition[] { TextEditorPartition.Empty }.ToImmutableList();
 
     private List<EditBlock>? _editBlocksList;
     private List<RowEnding>? _rowEndingPositionsList;
@@ -84,7 +103,8 @@ public partial class TextEditorModelModifier
     public TextEditorModel ToModel()
     {
         return new TextEditorModel(
-            _contentList is null ? _textEditorModel.ContentList : _contentList.ToImmutableList(),
+            _charList is null ? _textEditorModel.CharList : _charList.ToImmutableList(),
+            _decorationByteList is null ? _textEditorModel.DecorationByteList : _decorationByteList.ToList(),
             PartitionSize,
             _partitionList is null ? _textEditorModel.PartitionList : _partitionList.ToImmutableList(),
             _editBlocksList is null ? _textEditorModel.EditBlocksList : _editBlocksList.ToImmutableList(),
@@ -108,7 +128,7 @@ public partial class TextEditorModelModifier
 
 	public void ClearContentList()
     {
-        _partitionList = new ImmutableList<RichCharacter>[] { ImmutableList<RichCharacter>.Empty }.ToImmutableList();
+        _partitionList = new TextEditorPartition[] { TextEditorPartition.Empty }.ToImmutableList();
         SetIsDirtyTrue();
     }
 
@@ -240,7 +260,7 @@ public partial class TextEditorModelModifier
             var cursorPositionIndex = startOfRowPositionIndex + cursorModifier.ColumnIndex;
 
             // If cursor is out of bounds then continue
-            if (cursorPositionIndex > ContentList.Count)
+            if (cursorPositionIndex > _charList.Count)
                 continue;
 
             var wasTabCode = false;
@@ -407,7 +427,7 @@ public partial class TextEditorModelModifier
                 var cursorPositionIndex = startOfRowPositionIndex + cursorModifier.ColumnIndex;
 
                 // If cursor is out of bounds then continue
-                if (cursorPositionIndex > ContentList.Count)
+                if (cursorPositionIndex > _charList.Count)
                     continue;
 
                 int startingPositionIndexToRemoveInclusive;
@@ -514,15 +534,15 @@ public partial class TextEditorModelModifier
 
                 while (countToRemove-- > 0)
                 {
-                    if (indexToRemove < 0 || indexToRemove > ContentList.Count - 1)
+                    if (indexToRemove < 0 || indexToRemove > _charList.Count - 1)
                         break;
 
-                    var characterToDelete = ContentList[indexToRemove];
+                    var charToDelete = _charList[indexToRemove];
 
                     int startingIndexToRemoveRange;
                     int countToRemoveRange;
 
-                    if (KeyboardKeyFacts.IsLineEndingCharacter(characterToDelete.Value))
+                    if (KeyboardKeyFacts.IsLineEndingCharacter(charToDelete))
                     {
                         rowsRemovedCount++;
 
@@ -553,7 +573,7 @@ public partial class TextEditorModelModifier
                     }
                     else
                     {
-                        if (characterToDelete.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+                        if (charToDelete == KeyboardKeyFacts.WhitespaceCharacters.TAB)
                             TabKeyPositionsList.Remove(indexToRemove);
 
                         startingIndexToRemoveRange = indexToRemove;

@@ -64,11 +64,11 @@ public partial class RowSection : ComponentBase
 
     private void AppendTextEscaped(
         StringBuilder spanBuilder,
-        RichCharacter richCharacter,
+        char character,
         string tabKeyOutput,
         string spaceKeyOutput)
     {
-        switch (richCharacter.Value)
+        switch (character)
         {
             case '\t':
                 spanBuilder.Append(tabKeyOutput);
@@ -96,7 +96,7 @@ public partial class RowSection : ComponentBase
                 spanBuilder.Append("&amp;");
                 break;
             default:
-                spanBuilder.Append(richCharacter.Value);
+                spanBuilder.Append(character);
                 break;
         }
     }
