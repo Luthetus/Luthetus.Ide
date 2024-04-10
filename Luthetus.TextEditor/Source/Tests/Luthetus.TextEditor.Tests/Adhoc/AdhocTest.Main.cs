@@ -18,6 +18,7 @@ using Luthetus.Ide.RazorLib.Decorations;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
 
@@ -400,36 +401,66 @@ public partial class AdhocTest
 
             // CompilationUnit
             {
-                var compilationUnit = cSharpResource.CompilationUnit;
-                throw new NotImplementedException();
+                // Skip
             }
 
             // SyntaxTokenList
             {
                 var syntaxTokenList = cSharpResource.SyntaxTokenList;
-                throw new NotImplementedException();
+
+                Assert.Equal(6, syntaxTokenList.Length);
+
+                var i = 0;
+
+                var token = syntaxTokenList[i++];
+                Assert.Equal(SyntaxKind.PublicTokenKeyword, token.SyntaxKind);
+                Assert.Equal("public", token.TextSpan.GetText());
+
+                token = syntaxTokenList[i++];
+                Assert.Equal(SyntaxKind.ClassTokenKeyword, token.SyntaxKind);
+                Assert.Equal("class", token.TextSpan.GetText());
+
+                token = syntaxTokenList[i++];
+                Assert.Equal(SyntaxKind.IdentifierToken, token.SyntaxKind);
+                Assert.Equal("MyClass", token.TextSpan.GetText());
+
+                token = syntaxTokenList[i++];
+                Assert.Equal(SyntaxKind.OpenBraceToken, token.SyntaxKind);
+                Assert.Equal("{", token.TextSpan.GetText());
+
+                token = syntaxTokenList[i++];
+                Assert.Equal(SyntaxKind.CloseBraceToken, token.SyntaxKind);
+                Assert.Equal("}", token.TextSpan.GetText());
+
+                token = syntaxTokenList[i++];
+                Assert.Equal(SyntaxKind.EndOfFileToken, token.SyntaxKind);
+                Assert.Equal(string.Empty, token.TextSpan.GetText());
+
+                Assert.Equal(6, i);
             }
 
             // GetTokenTextSpans()
             {
-                var tokenTextSpans = cSharpResource.GetTokenTextSpans();
-                throw new NotImplementedException();
+                // Skip
             }
 
             // GetSymbols()
             {
-                var symbols = cSharpResource.GetSymbols();
-                throw new NotImplementedException();
+                var symbolList = cSharpResource.GetSymbols();
+
+                Assert.Single(symbolList);
+
+                var symbol = symbolList.Single();
+                Assert.Equal(SyntaxKind.TypeSymbol, symbol.SyntaxKind);
+                Assert.Equal("MyClass", symbol.TextSpan.GetText());
             }
 
             // GetDiagnostics()
             {
                 var diagnostics = cSharpResource.GetDiagnostics();
-                throw new NotImplementedException();
+                Assert.Empty(diagnostics);
             }
         }
-
-        throw new NotImplementedException();
     }
 
     private static void InitializeTextEditorServicesTestsHelper(
