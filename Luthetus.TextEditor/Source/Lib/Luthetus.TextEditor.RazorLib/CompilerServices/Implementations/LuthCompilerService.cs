@@ -253,7 +253,11 @@ public class LuthCompilerService : ILuthCompilerService
                         CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel,
                         diagnosticTextSpans);
 
-                    await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
+                    await editContext.TextEditorService.ModelApi.ApplySyntaxHighlightingFactory(
+                            resourceUri)
+                        .Invoke(editContext)
+                        .ConfigureAwait(false);
+
                     OnResourceParsed();
                 }
             });

@@ -13,6 +13,7 @@ using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.Common.RazorLib.Commands.Models;
 using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
@@ -301,7 +302,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                                 .Invoke(editContext)
 								.ConfigureAwait(false);
 
-                            await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
+                            await editContext.TextEditorService.ModelApi.ApplySyntaxHighlightingFactory(
+                                    commandArgs.ModelResourceUri)
+                                .Invoke(editContext)
+                                .ConfigureAwait(false);
                         });
                     return Task.CompletedTask;
                 });
@@ -339,7 +343,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                                 .Invoke(editContext)
 								.ConfigureAwait(false);
 
-                            await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
+                            await editContext.TextEditorService.ModelApi.ApplySyntaxHighlightingFactory(
+                                    commandArgs.ModelResourceUri)
+                                .Invoke(editContext)
+                                .ConfigureAwait(false);
                         });
                     return Task.CompletedTask;
                 });

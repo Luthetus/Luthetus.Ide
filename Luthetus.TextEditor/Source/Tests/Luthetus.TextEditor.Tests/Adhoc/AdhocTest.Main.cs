@@ -19,6 +19,8 @@ using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Microsoft.AspNetCore.Components.Forms;
+using System.Reflection;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
 
@@ -103,7 +105,10 @@ public partial class AdhocTest
             ImmutableArray<TextEditorTextSpan>.Empty);
 
         refModel = textEditorService.ModelApi.GetOrDefault(refModel.ResourceUri) ?? throw new ArgumentNullException();
-        refModel.ApplySyntaxHighlightingAsync().Wait();
+
+        textEditorService.Post(
+            nameof(ContentList_Change),
+            textEditorService.ModelApi.ApplySyntaxHighlightingFactory(refModel.ResourceUri));
 
         // ContentList
         {

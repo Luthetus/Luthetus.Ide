@@ -35,7 +35,7 @@ public record TextEditorViewModel : IDisposable
         IDispatcher dispatcher,
         IDialogService dialogService,
         IJSRuntime jsRuntime,
-        VirtualizationResult<List<char>> virtualizationResult,
+        VirtualizationResult<List<RichCharacter>> virtualizationResult,
         bool displayCommandBar,
         TextEditorCategory category)
     {
@@ -98,7 +98,7 @@ public record TextEditorViewModel : IDisposable
     /// Given the dimensions of the rendered text editor, this provides a subset of the file's content, such that "only what is
     /// visible when rendered" is in this. There is some padding of offscreen content so that scrolling is smoother.
     /// </summary>
-    public VirtualizationResult<List<char>> VirtualizationResult { get; init; }
+    public VirtualizationResult<List<RichCharacter>> VirtualizationResult { get; init; }
     /// <summary>
     /// The command bar is referring to the <see cref="Keymaps.Models.Vims.TextEditorKeymapVim"/>.
     /// </summary>

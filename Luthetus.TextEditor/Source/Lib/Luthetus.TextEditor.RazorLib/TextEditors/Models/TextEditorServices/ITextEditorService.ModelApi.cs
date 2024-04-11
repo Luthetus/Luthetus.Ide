@@ -176,6 +176,17 @@ public partial interface ITextEditorService
             Key<TextEditorPresentationModel> presentationKey,
             TextEditorPresentationModel emptyPresentationModel,
             ImmutableArray<TextEditorTextSpan> calculatedTextSpans);
+
+        /// <summary>
+        /// If applying syntax highlighting it may be preferred to use <see cref="ApplySyntaxHighlightingAsync" />.
+        /// It is effectively just invoking the lexer and then <see cref="ApplyDecorationRange" />
+        /// </summary>
+        public TextEditorEdit ApplyDecorationRangeFactory(
+            ResourceUri resourceUri,
+            IEnumerable<TextEditorTextSpan> textSpans);
+
+        public TextEditorEdit ApplySyntaxHighlightingFactory(
+            ResourceUri resourceUri);
         #endregion
 
         #region DELETE_METHODS
@@ -215,12 +226,7 @@ public partial interface ITextEditorService
             // TODO: Do not immediately apply syntax highlighting. Wait until the file is viewed first.
             _textEditorService.Post(
                 nameof(RegisterTemplated),
-                async editContext =>
-                {
-                    // Getting a model modifier marks it to be reloaded (2023-12-28)
-                    _ = editContext.GetModelModifier(model.ResourceUri);
-                    await model.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
-                });
+                ApplySyntaxHighlightingFactory(model.ResourceUri));
         }
 
         public void RegisterTemplated(
@@ -245,12 +251,7 @@ public partial interface ITextEditorService
             // TODO: Do not immediately apply syntax highlighting. Wait until the file is viewed first.
             _textEditorService.Post(
                 nameof(RegisterTemplated),
-                async editContext =>
-                {
-                    // Getting a model modifier marks it to be reloaded (2023-12-28)
-                    _ = editContext.GetModelModifier(model.ResourceUri);
-                    await model.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
-                });
+                ApplySyntaxHighlightingFactory(model.ResourceUri));
         }
         #endregion
 
@@ -569,6 +570,70 @@ public partial interface ITextEditorService
                     calculatedTextSpans);
 
                 return Task.CompletedTask;
+            };
+        }
+
+        public TextEditorEdit ApplyDecorationRangeFactory(
+            ResourceUri resourceUri,
+            IEnumerable<TextEditorTextSpan> textSpans)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(resourceUri);
+
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                var localCharList = modelModifier.CharList;
+                var localDecorationByteList = modelModifier.DecorationByteList;
+
+                var positionsPainted = new HashSet<int>();
+
+                foreach (var textEditorTextSpan in textSpans)
+                {
+                    for (var i = textEditorTextSpan.StartingIndexInclusive; i < textEditorTextSpan.EndingIndexExclusive; i++)
+                    {
+                        if (i < 0 || i >= localCharList.Count)
+                            continue;
+
+                        localDecorationByteList[i] = textEditorTextSpan.DecorationByte;
+                        positionsPainted.Add(i);
+                    }
+                }
+
+                for (var i = 0; i < localCharList.Count - 1; i++)
+                {
+                    if (!positionsPainted.Contains(i))
+                    {
+                        // DecorationByte of 0 is to be 'None'
+                        localDecorationByteList[i] = 0;
+                    }
+                }
+
+                return Task.CompletedTask;
+            };
+        }
+
+        public TextEditorEdit ApplySyntaxHighlightingFactory(
+            ResourceUri resourceUri)
+        {
+            return async editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(resourceUri);
+
+                if (modelModifier is null)
+                    return;
+
+                var syntacticTextSpansList = modelModifier.CompilerService.GetTokenTextSpansFor(modelModifier.ResourceUri);
+                var symbolsList = modelModifier.CompilerService.GetSymbolsFor(modelModifier.ResourceUri);
+
+                var symbolTextSpansList = symbolsList.Select(s => s.TextSpan);
+
+                await ApplyDecorationRangeFactory(
+                        resourceUri,
+                        syntacticTextSpansList.Union(symbolTextSpansList))
+                    .Invoke(editContext)
+                    .ConfigureAwait(false);
             };
         }
         #endregion

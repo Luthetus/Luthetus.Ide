@@ -11,6 +11,7 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.Ide.RazorLib.Editors.States;
 
@@ -102,7 +103,10 @@ public partial class EditorSync
                                                         fileLastWriteTime)
                                                     .Invoke(editContext);
 
-                                                await textEditorModel.ApplySyntaxHighlightingAsync();
+                                                await editContext.TextEditorService.ModelApi.ApplySyntaxHighlightingFactory(
+                                                        textEditorModel.ResourceUri)
+                                                    .Invoke(editContext)
+                                                    .ConfigureAwait(false);
                                             });
                                     });
 

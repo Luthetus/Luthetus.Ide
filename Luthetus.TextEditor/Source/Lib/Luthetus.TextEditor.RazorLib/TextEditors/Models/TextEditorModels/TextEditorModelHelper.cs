@@ -65,7 +65,7 @@ public static class TextEditorModelHelper
     /// A count of 1 returns rows[startingRowIndex] only.<br/>
     /// A count of 2 returns rows[startingRowIndex] and rows[startingRowIndex + 1].<br/>
     /// </param>
-    public static List<List<char>> GetRows(
+    public static List<List<RichCharacter>> GetRows(
 		this ITextEditorModel model, int startingRowIndex, int count)
 	{
 		var rowCountAvailable = model.RowEndingPositionsList.Count - startingRowIndex;
@@ -76,7 +76,7 @@ public static class TextEditorModelHelper
 
 		var endingRowIndexExclusive = startingRowIndex + rowCountToReturn;
 
-		var rowsList = new List<List<char>>();
+		var rowsList = new List<List<RichCharacter>>();
 
 		if (rowCountToReturn < 0 || startingRowIndex < 0 || endingRowIndexExclusive < 0)
 			return rowsList;
@@ -88,10 +88,9 @@ public static class TextEditorModelHelper
 
 			var endOfRowExclusive = model.RowEndingPositionsList[i].EndPositionIndexExclusive;
 
-            var row = model.CharList
-				.Skip(startOfRowInclusive)
-				.Take(endOfRowExclusive - startOfRowInclusive)
-				.ToList();
+            var row = model.GetRichCharacters(
+				skip: startOfRowInclusive,
+				take: endOfRowExclusive - startOfRowInclusive);
 
 			rowsList.Add(row);
 		}
@@ -109,50 +108,6 @@ public static class TextEditorModelHelper
 			.TakeWhile(positionIndex => positionIndex < startOfRowPositionIndex + columnIndex);
 
 		return tabs.Count();
-	}
-
-	/// <summary>If applying syntax highlighting it may be preferred to use <see cref="ApplySyntaxHighlightingAsync" />. It is effectively just invoking the lexer and then <see cref="ApplyDecorationRange" /></summary>
-	public static void ApplyDecorationRange(
-		this ITextEditorModel model, 
-		IEnumerable<TextEditorTextSpan> textEditorTextSpans)
-	{
-		var localCharList = model.CharList;
-		var localDecorationByteList = model.DecorationByteList;
-
-		var positionsPainted = new HashSet<int>();
-
-		foreach (var textEditorTextSpan in textEditorTextSpans)
-		{
-			for (var i = textEditorTextSpan.StartingIndexInclusive; i < textEditorTextSpan.EndingIndexExclusive; i++)
-			{
-				if (i < 0 || i >= localCharList.Count)
-					continue;
-
-                localDecorationByteList[i] = textEditorTextSpan.DecorationByte;
-				positionsPainted.Add(i);
-			}
-		}
-
-		for (var i = 0; i < localCharList.Count - 1; i++)
-		{
-			if (!positionsPainted.Contains(i))
-			{
-                // DecorationByte of 0 is to be 'None'
-                localDecorationByteList[i] = 0;
-			}
-		}
-	}
-
-	public static Task ApplySyntaxHighlightingAsync(this ITextEditorModel model)
-	{
-		var syntacticTextSpansList = model.CompilerService.GetTokenTextSpansFor(model.ResourceUri);
-		var symbolsList = model.CompilerService.GetSymbolsFor(model.ResourceUri);
-
-		var symbolTextSpansList = symbolsList.Select(s => s.TextSpan);
-
-		model.ApplyDecorationRange(syntacticTextSpansList.Union(symbolTextSpansList));
-
-		return Task.CompletedTask;
 	}
 
 	/// <summary>
@@ -578,4 +533,26 @@ public static class TextEditorModelHelper
 
 		return richCharacterList;
 	}
+
+    public static List<RichCharacter> GetRichCharacters(
+		this ITextEditorModel model,
+		int skip,
+		int take)
+    {
+        var richCharacterList = new List<RichCharacter>();
+
+        for (var i = 0; i < take; i++)
+        {
+            if (i >= model.DocumentLength)
+                break;
+
+            richCharacterList.Add(new RichCharacter
+            {
+                Value = model.CharList[skip + i],
+                DecorationByte = model.DecorationByteList[skip + i]
+            });
+        }
+
+        return richCharacterList;
+    }
 }

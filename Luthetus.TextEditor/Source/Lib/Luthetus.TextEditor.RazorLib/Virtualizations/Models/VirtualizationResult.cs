@@ -1,4 +1,5 @@
-﻿using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
+﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
+using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
@@ -23,8 +24,8 @@ public record VirtualizationResult<T> : IVirtualizationResultWithoutTypeMask
         CharAndRowMeasurements = charAndRowMeasurements;
     }
 
-    public static VirtualizationResult<List<char>> GetEmptyRichCharacters() => new(
-        ImmutableArray<VirtualizationEntry<List<char>>>.Empty,
+    public static VirtualizationResult<List<RichCharacter>> GetEmptyRichCharacters() => new(
+        ImmutableArray<VirtualizationEntry<List<RichCharacter>>>.Empty,
         new VirtualizationBoundary(0, 0, 0, 0),
         new VirtualizationBoundary(0, 0, 0, 0),
         new VirtualizationBoundary(0, 0, 0, 0),

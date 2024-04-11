@@ -35,4 +35,6 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
     public int RowCount => RowEndingPositionsList.Count;
     public int DocumentLength => _charList.Count;
+
+
 }

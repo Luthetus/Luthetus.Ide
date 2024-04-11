@@ -699,21 +699,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 }
                 else if (IsSyntaxHighlightingInvoker(keyboardEventArgs))
                 {
-                    _throttleApplySyntaxHighlighting.PushEvent(async _ =>
-                    {
-                        // The TextEditorModel may have been changed by the time this logic is ran and
-                        // thus the local variables must be updated accordingly.
-                        var model = _viewModelDisplay.GetModel();
-                        var viewModel = _viewModelDisplay.GetViewModel();
-
-                        if (model is not null)
-                        {
-                            await modelModifier.ApplySyntaxHighlightingAsync();
-
-                            if (viewModel is not null && model.CompilerService is not null)
-                                model.CompilerService.ResourceWasModified(model.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
-                        }
-                    });
+                    ThrottleApplySyntaxHighlighting(modelModifier);
                 }
             };
         }
@@ -784,21 +770,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 if (seenIsSyntaxHighlightingInvoker)
                 {
-                    _throttleApplySyntaxHighlighting.PushEvent(async _ =>
-                    {
-                        // The TextEditorModel may have been changed by the time this logic is ran and
-                        // thus the local variables must be updated accordingly.
-                        var model = _viewModelDisplay.GetModel();
-                        var viewModel = _viewModelDisplay.GetViewModel();
-
-                        if (model is not null)
-                        {
-                            await modelModifier.ApplySyntaxHighlightingAsync();
-
-                            if (viewModel is not null && model.CompilerService is not null)
-                                model.CompilerService.ResourceWasModified(model.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
-                        }
-                    });
+                    ThrottleApplySyntaxHighlighting(modelModifier);
                 }
             };
         }
@@ -1024,6 +996,15 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             columnIndexInt = Math.Max(columnIndexInt, 0);
 
             return (rowIndex, columnIndexInt);
+        }
+
+        private void ThrottleApplySyntaxHighlighting(TextEditorModelModifier modelModifier)
+        {
+            _throttleApplySyntaxHighlighting.PushEvent(_ =>
+            {
+                modelModifier.CompilerService.ResourceWasModified(modelModifier.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
+                return Task.CompletedTask;
+            });
         }
     }
 }

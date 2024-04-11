@@ -1,3 +1,4 @@
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
@@ -185,7 +186,10 @@ public sealed class CSharpCompilerService : LuthCompilerService
                                         }
                                     }
 
-                                    await modelModifier.ApplySyntaxHighlightingAsync().ConfigureAwait(false);
+                                    await editContext.TextEditorService.ModelApi.ApplySyntaxHighlightingFactory(
+                                            modelModifier.ResourceUri)
+                                        .Invoke(editContext)
+                                        .ConfigureAwait(false);
                                 }
                             });
                     });

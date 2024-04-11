@@ -326,7 +326,11 @@ public class Terminal
 
                                             terminalResource.ManualSymbolList.AddRange(outputTextSpans.Select(x => new SourceFileSymbol(x)));
 
-                                            modelModifier.ApplyDecorationRange(terminalResource.GetTokenTextSpans());
+                                            await editContext.TextEditorService.ModelApi.ApplyDecorationRangeFactory(
+                                                    modelModifier.ResourceUri,
+                                                    terminalResource.GetTokenTextSpans())
+                                                .Invoke(editContext)
+                                                .ConfigureAwait(false);
                                         });
                                 }
 
@@ -487,7 +491,11 @@ public class Terminal
                     ResourceUri,
                     modelModifier.GetAllText()));
 
-                modelModifier.ApplyDecorationRange(terminalResource.GetTokenTextSpans());
+                await editContext.TextEditorService.ModelApi.ApplyDecorationRangeFactory(
+                        modelModifier.ResourceUri,
+                        terminalResource.GetTokenTextSpans())
+                    .Invoke(editContext)
+                    .ConfigureAwait(false);
             });
     }
 
@@ -527,7 +535,11 @@ public class Terminal
                     ResourceUri,
                     modelModifier.GetAllText()));
 
-                modelModifier.ApplyDecorationRange(terminalResource.GetTokenTextSpans());
+                await editContext.TextEditorService.ModelApi.ApplyDecorationRangeFactory(
+                        modelModifier.ResourceUri,
+                        terminalResource.GetTokenTextSpans())
+                    .Invoke(editContext)
+                    .ConfigureAwait(false);
             });
     }
     
