@@ -19,13 +19,27 @@ using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Microsoft.AspNetCore.Components.Forms;
-using System.Reflection;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
 
 public partial class AdhocTest
 {
+    [Fact]
+    public void After_ContentList_Change_TextEditor_Extremely_Slow()
+    {
+        InitializeTextEditorServicesTestsHelper(
+            out var initialContent,
+            out var refModel,
+            out var viewModel,
+            out var textEditorService);
+
+        Assert.Equal(initialContent, refModel.GetAllText());
+
+        refModel.CompilerService.ResourceWasModified(
+            refModel.ResourceUri,
+            ImmutableArray<TextEditorTextSpan>.Empty);
+    }
+
     /// <summary>
     /// <see cref="RazorLib.TextEditors.Models.TextEditorModels.ITextEditorModel.ContentList"/><br/><br/>
     /// TODO: This needs to be separated out into an IReadOnlyList&lt;char&gt;...

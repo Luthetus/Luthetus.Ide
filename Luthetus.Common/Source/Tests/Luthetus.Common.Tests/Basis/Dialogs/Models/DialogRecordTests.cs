@@ -32,7 +32,7 @@ public class DialogRecordTests
                 }
             },
             null,
-            true);
+            false);
 
         Assert.Equal(ElementPositionKind.Fixed, dialogRecord.DialogElementDimensions.ElementPositionKind);
 
