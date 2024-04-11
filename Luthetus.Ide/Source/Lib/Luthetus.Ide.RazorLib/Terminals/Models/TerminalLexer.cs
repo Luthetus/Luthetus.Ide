@@ -61,6 +61,9 @@ public class TerminalLexer : LuthLexer
                 _syntaxTokenList.Add(new IdentifierToken(wordTuple.textSpan));
         }
 
+        if (_syntaxTokenList.Count == 0)
+            return;
+
         // Rewrite the token that was read to be an identifier token.
         //
         // This code is a bit odd, and hacky, because the 'LexStringLiteralToken' will construct a string token,
