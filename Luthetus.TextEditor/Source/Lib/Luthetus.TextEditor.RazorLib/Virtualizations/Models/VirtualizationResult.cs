@@ -1,5 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
-using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
+﻿using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;

@@ -38,13 +38,13 @@ public partial class TextEditorModelModifierTests
         var modifier = new TextEditorModelModifier(model);
 
         // Assert that the first partition is empty at the start.
-        Assert.Empty(modifier.PartitionList.First());
+        Assert.Empty(modifier.PartitionList.First().CharList);
 
         // Assert that more space than just one partition will be needed.
         var sourceText = "Hello World!";
         Assert.True(sourceText.Length > model.PartitionSize);
 
-        var firstPartitionStringValue = new string(modifier.PartitionList.First().Select(x => x.Value).ToArray());
+        var firstPartitionStringValue = new string(modifier.PartitionList.First().CharList.ToArray());
 
         for (int i = 0; i < sourceText.Length; i++)
         {
@@ -57,7 +57,7 @@ public partial class TextEditorModelModifierTests
             {
                 // Assert that the first n loops write to the first partition, because it has available space
                 // This is asserted by checking that the string value of the first partition has changed.
-                var newStringValue = new string(modifier.PartitionList.First().Select(x => x.Value).ToArray());
+                var newStringValue = new string(modifier.PartitionList.First().CharList.ToArray());
                 Assert.NotEqual(firstPartitionStringValue, newStringValue);
                 firstPartitionStringValue = newStringValue; 
             }
@@ -65,7 +65,7 @@ public partial class TextEditorModelModifierTests
             {
                 // Assert that the last (n + 1) loops do NOT write to the first partition, because it no longer has available space
                 // This is asserted by checking that the string value of the first partition has NOT changed.
-                var newStringValue = new string(modifier.PartitionList.First().Select(x => x.Value).ToArray());
+                var newStringValue = new string(modifier.PartitionList.First().CharList.ToArray());
                 Assert.Equal(firstPartitionStringValue, newStringValue);
             }
         }

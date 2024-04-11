@@ -31,7 +31,8 @@ public partial class TextEditorModelModifierTests
         var modelModifier = new TextEditorModelModifier(inModel);
 
         var outModel = modelModifier.ToModel();
-        Assert.Equal(inModel.ContentList, outModel.ContentList);
+        Assert.Equal(inModel.CharList, outModel.CharList);
+        Assert.Equal(inModel.DecorationByteList, outModel.DecorationByteList);
         Assert.Equal(inModel.EditBlocksList, outModel.EditBlocksList);
         Assert.Equal(inModel.RowEndingPositionsList, outModel.RowEndingPositionsList);
         Assert.Equal(inModel.RowEndingKindCountsList, outModel.RowEndingKindCountsList);
@@ -61,8 +62,10 @@ public partial class TextEditorModelModifierTests
         modelModifier.ClearContentList();
 
         var outModel = modelModifier.ToModel();
-        Assert.NotEqual(inModel.ContentList, outModel.ContentList);
-        Assert.Equal(ImmutableList<RichCharacter>.Empty, outModel.ContentList);
+        Assert.NotEqual(inModel.CharList, outModel.CharList);
+        Assert.NotEqual(inModel.DecorationByteList, outModel.DecorationByteList);
+        Assert.Equal(ImmutableList<char>.Empty, outModel.CharList);
+        Assert.Equal(ImmutableList<byte>.Empty, outModel.DecorationByteList);
     }
 
     /// <summary>

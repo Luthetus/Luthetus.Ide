@@ -245,19 +245,19 @@ public class TextEditorModelHelperTests
             // Negative count
             {
                 var rows = model.GetRows(TestConstants.NEGATIVE_ROW_INDEX, -3);
-                Assert.Equal(new List<List<RichCharacter>>(), rows);
+                Assert.Equal(new List<List<char>>(), rows);
             }
 
             // Positive count
             {
                 var rows = model.GetRows(TestConstants.NEGATIVE_ROW_INDEX, 3);
-                Assert.Equal(new List<List<RichCharacter>>(), rows);
+                Assert.Equal(new List<List<char>>(), rows);
 			}
 
             // Zero count
             {
                 var rows = model.GetRows(TestConstants.NEGATIVE_ROW_INDEX, 0);
-                Assert.Equal(new List<List<RichCharacter>>(), rows);
+                Assert.Equal(new List<List<char>>(), rows);
             }
 
             // If the rowIndex is negative, but the row count to read results
@@ -270,7 +270,7 @@ public class TextEditorModelHelperTests
                     TestConstants.NEGATIVE_ROW_INDEX,
                     countNeededToGoFromNegativeStartingIndexToAValidIndex);
 
-                Assert.Equal(new List<List<RichCharacter>>(), rows);
+                Assert.Equal(new List<List<char>>(), rows);
             }
         }
 
@@ -279,7 +279,7 @@ public class TextEditorModelHelperTests
             // Negative count
             {
                 var rows = model.GetRows(TestConstants.FIRST_ROW_INDEX, -3);
-                Assert.Equal(new List<List<RichCharacter>>(), rows);
+                Assert.Equal(new List<List<char>>(), rows);
             }
 
             // Positive count
@@ -289,7 +289,7 @@ public class TextEditorModelHelperTests
                 Assert.Equal(3, rows.Count);
 
                 var text = new string(rows
-                    .SelectMany(row => row.Select(richChar => richChar.Value))
+                    .SelectMany(row => row.Select(x => x))
                     .ToArray());
 
                 Assert.Equal("Hello World!\n7 Pillows\n \n", text);
@@ -298,7 +298,7 @@ public class TextEditorModelHelperTests
             // Zero count
             {
                 var rows = model.GetRows(TestConstants.FIRST_ROW_INDEX, 0);
-                Assert.Equal(new List<List<RichCharacter>>(), rows);
+                Assert.Equal(new List<List<char>>(), rows);
             }
         }
 
@@ -307,7 +307,7 @@ public class TextEditorModelHelperTests
             // Negative count
             {
                 var rows = model.GetRows(TestConstants.ROW_INDEX_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW, -3);
-                Assert.Equal(new List<List<RichCharacter>>(), rows);
+                Assert.Equal(new List<List<char>>(), rows);
             }
 
             // Positive count
@@ -317,7 +317,7 @@ public class TextEditorModelHelperTests
                 Assert.Equal(3, rows.Count);
 
                 var text = new string(rows
-                    .SelectMany(row => row.Select(richChar => richChar.Value))
+                    .SelectMany(row => row.Select(x => x))
                     .ToArray());
 
                 Assert.Equal("7 Pillows\n \n,abc123", text);
@@ -329,7 +329,7 @@ public class TextEditorModelHelperTests
             // Negative count
             {
                 var rows = model.GetRows(TestConstants.LAST_ROW_INDEX, -3);
-                Assert.Equal(new List<List<RichCharacter>>(), rows);
+                Assert.Equal(new List<List<char>>(), rows);
             }
 
             // Positive count
@@ -339,7 +339,7 @@ public class TextEditorModelHelperTests
                 Assert.Single(rows);
 
                 var text = new string(rows
-                    .SelectMany(row => row.Select(richChar => richChar.Value))
+                    .SelectMany(row => row.Select(x => x))
                     .ToArray());
 
                 Assert.Equal(",abc123", text);
@@ -351,13 +351,13 @@ public class TextEditorModelHelperTests
             // Negative count
             {
                 var rows = model.GetRows(TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX, -3);
-                Assert.Equal(new List<List<RichCharacter>>(), rows);
+                Assert.Equal(new List<List<char>>(), rows);
             }
 
             // Positive count
             {
                 var rows = model.GetRows(TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX, 3);
-                Assert.Equal(new List<List<RichCharacter>>(), rows);
+                Assert.Equal(new List<List<char>>(), rows);
             }
         }
     }
@@ -507,9 +507,9 @@ public class TextEditorModelHelperTests
 
             var richCharacterList = model.GetAllRichCharacters();
 
-            Assert.Equal(TestConstants.SOURCE_TEXT.Length, richCharacterList.Length);
+            Assert.Equal(TestConstants.SOURCE_TEXT.Length, richCharacterList.Count);
 
-            for (int i = 0; i < richCharacterList.Length; i++)
+            for (int i = 0; i < richCharacterList.Count; i++)
             {
                 var character = TestConstants.SOURCE_TEXT[i];
                 var richCharacter = richCharacterList[i];

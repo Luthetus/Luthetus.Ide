@@ -689,7 +689,7 @@ public class TextEditorCommandDefaultFactsTests
                 var textOnRow = new string(outModel!
                     .GetRows(1, 1)
                     .Single()
-                    .Select(x => x.Value)
+                    .Select(x => x)
                     .ToArray());
 
                 Assert.Equal("\t7 Pillows\n", textOnRow);
@@ -762,7 +762,7 @@ public class TextEditorCommandDefaultFactsTests
                 var textOnRow = new string(outModel!
                     .GetRows(1, 1)
                     .Single()
-                    .Select(x => x.Value)
+                    .Select(x => x)
                     .ToArray());
 
                 Assert.Equal("\t7 Pillows\n", textOnRow);
@@ -836,7 +836,7 @@ public class TextEditorCommandDefaultFactsTests
 
                 var textOnRow = string.Join(string.Empty, outModel!
                     .GetRows(0, 2)
-                    .SelectMany(x => new string(x.Select(y => y.Value).ToArray()))
+                    .SelectMany(x => new string(x.Select(y => y).ToArray()))
                     .ToArray());
 
                 Assert.Equal("\tHello World!\n\t7 Pillows\n", textOnRow);
@@ -910,7 +910,7 @@ public class TextEditorCommandDefaultFactsTests
 
                 var textOnRow = string.Join(string.Empty, outModel!
                     .GetRows(0, 2)
-                    .SelectMany(x => new string(x.Select(y => y.Value).ToArray()))
+                    .SelectMany(x => new string(x.Select(y => y).ToArray()))
                     .ToArray());
 
                 Assert.Equal("\tHello World!\n\t7 Pillows\n", textOnRow);
@@ -1012,7 +1012,7 @@ public class TextEditorCommandDefaultFactsTests
                             .Invoke(editContext);
 
                         var rowText = new string(
-                            modelModifier.GetRows(1, 1).Single().Select(x => x.Value).ToArray());
+                            modelModifier.GetRows(1, 1).Single().Select(x => x).ToArray());
 
                         Assert.Equal("\t7 Pillows\n", rowText);
                     }
@@ -1040,7 +1040,7 @@ public class TextEditorCommandDefaultFactsTests
             Assert.NotNull(outModel);
 
             var rowText = new string(
-                outModel!.GetRows(1, 1).Single().Select(x => x.Value).ToArray());
+                outModel!.GetRows(1, 1).Single().Select(x => x).ToArray());
             
             Assert.Equal("7 Pillows\n", rowText);
         }
@@ -1081,7 +1081,7 @@ public class TextEditorCommandDefaultFactsTests
                             .Invoke(editContext);
 
                         var rowText = new string(
-                            modelModifier.GetRows(1, 1).Single().Select(x => x.Value).ToArray());
+                            modelModifier.GetRows(1, 1).Single().Select(x => x).ToArray());
 
                         Assert.Equal("    7 Pillows\n", rowText);
                     }
@@ -1109,7 +1109,7 @@ public class TextEditorCommandDefaultFactsTests
             Assert.NotNull(outModel);
 
             var rowText = new string(
-                outModel!.GetRows(1, 1).Single().Select(x => x.Value).ToArray());
+                outModel!.GetRows(1, 1).Single().Select(x => x).ToArray());
 
             Assert.Equal("7 Pillows\n", rowText);
         }
@@ -1150,7 +1150,7 @@ public class TextEditorCommandDefaultFactsTests
                             .Invoke(editContext);
 
                         var rowText = new string(
-                            modelModifier.GetRows(1, 1).Single().Select(x => x.Value).ToArray());
+                            modelModifier.GetRows(1, 1).Single().Select(x => x).ToArray());
 
                         Assert.Equal("\t7 Pillows\n", rowText);
                     }
@@ -1178,7 +1178,7 @@ public class TextEditorCommandDefaultFactsTests
             Assert.NotNull(outModel);
 
             var rowText = new string(
-                outModel!.GetRows(1, 1).Single().Select(x => x.Value).ToArray());
+                outModel!.GetRows(1, 1).Single().Select(x => x).ToArray());
 
             Assert.Equal("7 Pillows\n", rowText);
         }

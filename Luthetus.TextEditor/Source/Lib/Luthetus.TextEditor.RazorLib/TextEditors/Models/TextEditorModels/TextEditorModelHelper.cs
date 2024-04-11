@@ -548,4 +548,34 @@ public static class TextEditorModelHelper
 
 		return model.GetString(startOfRowTuple.EndPositionIndexExclusive, lengthOfRow);
 	}
+	
+	public static RichCharacter? GetRichCharacterOrDefault(
+		this ITextEditorModel model,
+		int positionIndex)
+	{
+		if (positionIndex < 0 || positionIndex > model.DocumentLength - 1)
+			return null;
+
+		return new RichCharacter
+		{
+            Value = model.CharList[positionIndex],
+			DecorationByte = model.DecorationByteList[positionIndex],
+        };
+	}
+	
+	public static List<RichCharacter> GetAllRichCharacters(this ITextEditorModel model)
+	{
+		var richCharacterList = new List<RichCharacter>();
+
+		for (int i = 0; i < model.DocumentLength; i++)
+		{
+			richCharacterList.Add(new RichCharacter
+            {
+                Value = model.CharList[i],
+                DecorationByte = model.DecorationByteList[i],
+            });
+        }
+
+		return richCharacterList;
+	}
 }
