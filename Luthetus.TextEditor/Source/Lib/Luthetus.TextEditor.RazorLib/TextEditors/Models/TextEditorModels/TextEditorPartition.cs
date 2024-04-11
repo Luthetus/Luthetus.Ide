@@ -176,7 +176,6 @@ public class TextEditorPartition
     public List<RichCharacter> GetRichCharacters(int skip, int take)
     {
         var richCharacterList = new List<RichCharacter>();
-        int index = skip;
 
         for (var i = 0; i < take; i++)
         {
@@ -185,8 +184,8 @@ public class TextEditorPartition
 
             richCharacterList.Add(new RichCharacter
             { 
-                Value = CharList[index],
-                DecorationByte = DecorationByteList[index]
+                Value = CharList[skip + i],
+                DecorationByte = DecorationByteList[skip + i]
             });
         }
 
