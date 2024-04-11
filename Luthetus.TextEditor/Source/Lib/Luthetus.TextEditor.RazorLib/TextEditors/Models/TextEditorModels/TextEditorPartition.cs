@@ -112,7 +112,19 @@ public class TextEditorPartition
     /// This is the count of characters in THIS particular partition, the <see cref="TextEditorModel.DocumentLength"/>
     /// contains the whole count of characters across all partitions.
     /// </summary>
-    public int Count { get; }
+    public int Count
+    {
+        get
+        {
+            if (CharList.Count == DecorationByteList.Count)
+                return CharList.Count;
+
+            throw new InvalidOperationException(
+                $"{nameof(CharList)}.{nameof(CharList.Count)} " +
+                $"was not equal to " +
+                $"{nameof(DecorationByteList)}.{nameof(DecorationByteList.Count)}");
+        }
+    }
 
     public TextEditorPartition Insert(
         int relativePositionIndex,

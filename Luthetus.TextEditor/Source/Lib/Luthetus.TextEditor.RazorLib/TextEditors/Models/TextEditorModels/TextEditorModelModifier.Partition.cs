@@ -1,5 +1,4 @@
 ﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
@@ -15,11 +14,11 @@ public partial class TextEditorModelModifier
         {
             TextEditorPartition? partition = _partitionList[i];
 
-            if (runningCount + partition.CharList.Count >= globalPositionIndex)
+            if (runningCount + partition.Count >= globalPositionIndex)
             {
                 // This is the partition we want to modify.
                 // But, we must first check if it has available space.
-                if (partition.CharList.Count >= PartitionSize)
+                if (partition.Count >= PartitionSize)
                 {
                     PartitionList_SplitIntoTwoPartitions(i);
                     i--;
@@ -32,7 +31,7 @@ public partial class TextEditorModelModifier
             }
             else
             {
-                runningCount += partition.CharList.Count;
+                runningCount += partition.Count;
             }
         }
 
@@ -60,7 +59,7 @@ public partial class TextEditorModelModifier
         {
             TextEditorPartition? partition = _partitionList[i];
 
-            if (runningCount + partition.CharList.Count > globalPositionIndex)
+            if (runningCount + partition.Count > globalPositionIndex)
             {
                 // This is the partition we want to modify.
                 relativePositionIndex = globalPositionIndex - runningCount;
@@ -69,7 +68,7 @@ public partial class TextEditorModelModifier
             }
             else
             {
-                runningCount += partition.CharList.Count;
+                runningCount += partition.Count;
             }
         }
 
@@ -140,9 +139,9 @@ public partial class TextEditorModelModifier
             {
                 partition = _partitionList[i];
 
-                if (runningCount + partition.CharList.Count >= globalPositionIndex)
+                if (runningCount + partition.Count >= globalPositionIndex)
                 {
-                    if (partition.CharList.Count >= PartitionSize)
+                    if (partition.Count >= PartitionSize)
                     {
                         PartitionList_SplitIntoTwoPartitions(i);
                         i--;
@@ -155,7 +154,7 @@ public partial class TextEditorModelModifier
                 }
                 else
                 {
-                    runningCount += partition.CharList.Count;
+                    runningCount += partition.Count;
                 }
             }
 
@@ -166,30 +165,23 @@ public partial class TextEditorModelModifier
                 throw new ApplicationException("if (relativePositionIndex == -1)");
 
             partition = _partitionList[indexOfPartitionWithAvailableSpace];
-            var partitionAvailableSpace = PartitionSize - partition.CharList.Count;
+            var partitionAvailableSpace = PartitionSize - partition.Count;
 
-            var charBatchInsertList = new List<char> { richCharacterEnumerator.Current.Value };
-            var decorationByteBatchInsertList = new List<byte> { richCharacterEnumerator.Current.DecorationByte };
+            var richCharacterBatchInsertList = new List<RichCharacter> { richCharacterEnumerator.Current };
 
-            while ((charBatchInsertList.Count < partitionAvailableSpace) && richCharacterEnumerator.MoveNext())
+            while ((richCharacterBatchInsertList.Count < partitionAvailableSpace) && richCharacterEnumerator.MoveNext())
             {
-                charBatchInsertList.Add(richCharacterEnumerator.Current.Value);
-                decorationByteBatchInsertList.Add(richCharacterEnumerator.Current.DecorationByte);
+                richCharacterBatchInsertList.Add(richCharacterEnumerator.Current);
             }
 
             var inPartition = _partitionList[indexOfPartitionWithAvailableSpace];
-            var outPartition = 
-
-            targetPartition.DecorationByteList.InsertRange(relativePositionIndex, decorationByteBatchInsertList);
+            var outPartition = inPartition.InsertRange(relativePositionIndex, richCharacterBatchInsertList);
 
             _partitionList = _partitionList.SetItem(
                 indexOfPartitionWithAvailableSpace,
-                targetPartition with 
-                {
-                    CharList = targetPartition.CharList.InsertRange(relativePositionIndex, charBatchInsertList),
-                });
+                outPartition);
 
-            globalPositionIndex += charBatchInsertList.Count;
+            globalPositionIndex += richCharacterBatchInsertList.Count;
         }
     }
 
