@@ -42,16 +42,12 @@ public partial class TextEditorModelModifier
         if (relativePositionIndex == -1)
             throw new ApplicationException("if (relativePositionIndex == -1)");
 
-        var targetPartition = _partitionList[indexOfPartitionWithAvailableSpace];
-
-        targetPartition.DecorationByteList.Insert(relativePositionIndex, richCharacter.DecorationByte);
+        var inPartition = _partitionList[indexOfPartitionWithAvailableSpace];
+        var outPartition = inPartition.Insert(relativePositionIndex, richCharacter.Value, richCharacter.DecorationByte);
 
         _partitionList = _partitionList.SetItem(
             indexOfPartitionWithAvailableSpace,
-            _partitionList[indexOfPartitionWithAvailableSpace] with 
-            {
-                CharList = targetPartition.CharList.Insert(relativePositionIndex, richCharacter.Value)
-            });
+            outPartition);
     }
 
     public void PartitionList_RemoveAt(int globalPositionIndex)
@@ -83,18 +79,12 @@ public partial class TextEditorModelModifier
         if (relativePositionIndex == -1)
             throw new ApplicationException("if (relativePositionIndex == -1)");
 
-        var targetPartition = _partitionList[indexOfPartitionWithAvailableSpace];
-
-        targetPartition.DecorationByteList.RemoveAt(relativePositionIndex);
-
-        targetPartition = targetPartition with
-        {
-            CharList = targetPartition.CharList.RemoveAt(relativePositionIndex)
-        };
+        var inPartition = _partitionList[indexOfPartitionWithAvailableSpace];
+        var outPartition = inPartition.RemoveAt(relativePositionIndex);
 
         _partitionList = _partitionList.SetItem(
             indexOfPartitionWithAvailableSpace,
-            targetPartition);
+            outPartition);
     }
 
     private void PartitionList_InsertNewPartition(int partitionIndex)
@@ -111,11 +101,11 @@ public partial class TextEditorModelModifier
 
         // Replace old
         {
-            var partition = new TextEditorPartition(
-                ImmutableList<char>.Empty.AddRange(originalPartition.CharList.Take(firstUnevenSplit)),
-                new());
 
-            partition.DecorationByteList.AddRange(originalPartition.CharList.Take(firstUnevenSplit).Select(x => (byte)0));
+            var partition = TextEditorPartition.Empty.AddRange(
+                originalPartition.GetRichCharacters(
+                    skip: 0,
+                    take: firstUnevenSplit));
 
             _partitionList = _partitionList.SetItem(
                 partitionIndex,
@@ -124,12 +114,10 @@ public partial class TextEditorModelModifier
 
         // Insert new
         {
-            var partition = new TextEditorPartition(
-                ImmutableList<char>.Empty.AddRange(originalPartition.CharList.Skip(firstUnevenSplit).Take(secondUnevenSplit)),
-                new());
-
-            partition.DecorationByteList.AddRange(
-                originalPartition.CharList.Skip(firstUnevenSplit).Take(secondUnevenSplit).Select(x => (byte)0));
+            var partition = TextEditorPartition.Empty.AddRange(
+                originalPartition.GetRichCharacters(
+                    skip: firstUnevenSplit,
+                    take: secondUnevenSplit));
 
             _partitionList = _partitionList.Insert(
                 partitionIndex + 1,
@@ -189,8 +177,8 @@ public partial class TextEditorModelModifier
                 decorationByteBatchInsertList.Add(richCharacterEnumerator.Current.DecorationByte);
             }
 
-            var targetPartition = _partitionList[indexOfPartitionWithAvailableSpace];
-
+            var inPartition = _partitionList[indexOfPartitionWithAvailableSpace];
+            var outPartition = 
 
             targetPartition.DecorationByteList.InsertRange(relativePositionIndex, decorationByteBatchInsertList);
 
