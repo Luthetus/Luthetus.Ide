@@ -72,7 +72,7 @@ public partial class TextEditorModelModifierTests
 
         // Assert that the output is correct.
         Assert.Equal(
-            new string(modifier.ContentList.Select(x => x.Value).ToArray()),
+            new string(modifier.CharList.ToArray()),
             sourceText);
     }
 
@@ -122,34 +122,34 @@ public partial class TextEditorModelModifierTests
                 // (PARTITION_SIZE / 2)
                 Assert.Equal(
                     model.PartitionSize / 2 + (model.PartitionSize % 2),
-                    modifier.PartitionList.First().Count);
+                    modifier.PartitionList.First().CharList.Count);
 
                 Assert.Equal(
                     // This had to be changed to include a '+1' because the insertion already occurred.
                     model.PartitionSize / 2 + 1,
-                    modifier.PartitionList.Last().Count);
+                    modifier.PartitionList.Last().CharList.Count);
             }
         }
 
         Assert.Equal(
             "Hel",
-            new string(modifier.PartitionList[0].Select(x => x.Value).ToArray()));
+            new string(modifier.PartitionList[0].CharList.ToArray()));
 
         Assert.Equal(
             "lo ",
-            new string(modifier.PartitionList[1].Select(x => x.Value).ToArray()));
+            new string(modifier.PartitionList[1].CharList.ToArray()));
 
         Assert.Equal(
             "Wor",
-            new string(modifier.PartitionList[2].Select(x => x.Value).ToArray()));
+            new string(modifier.PartitionList[2].CharList.ToArray()));
 
         Assert.Equal(
             "ld!",
-            new string(modifier.PartitionList[3].Select(x => x.Value).ToArray()));
+            new string(modifier.PartitionList[3].CharList.ToArray()));
 
         // Assert that the output is correct.
         Assert.Equal(
-            new string(modifier.ContentList.Select(x => x.Value).ToArray()),
+            new string(modifier.CharList.ToArray()),
             sourceText);
     }
 
