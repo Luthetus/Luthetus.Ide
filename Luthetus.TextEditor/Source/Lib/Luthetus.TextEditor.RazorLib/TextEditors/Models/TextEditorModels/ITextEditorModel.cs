@@ -41,8 +41,8 @@ public interface ITextEditorModel
     ///       The result of the change will make 'GetAllText()' simply return a reference
     ///       to the underlying list of characters.
     /// </summary>
-    public IReadOnlyList<char> CharList { get; }
-    public List<byte> DecorationByteList { get; }
+    public ImmutableList<char> CharList { get; }
+    public ImmutableList<byte> DecorationByteList { get; }
     public ImmutableList<TextEditorPartition> PartitionList { get; }
 	public IList<EditBlock> EditBlocksList { get; }
     /// <summary>

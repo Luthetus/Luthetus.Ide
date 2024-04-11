@@ -45,8 +45,8 @@ public partial class TextEditorModel
 	}
 
 	public TextEditorModel(
-        IReadOnlyList<char> charList,
-        List<byte> decorationByteList,
+        ImmutableList<char> charList,
+        ImmutableList<byte> decorationByteList,
         int partitionSize,
         ImmutableList<TextEditorPartition> partitionList,
 		ImmutableList<EditBlock> editBlocksList,

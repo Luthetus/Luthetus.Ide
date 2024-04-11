@@ -596,7 +596,7 @@ public partial interface ITextEditorService
                         if (i < 0 || i >= localCharList.Count)
                             continue;
 
-                        localDecorationByteList[i] = textEditorTextSpan.DecorationByte;
+                        modelModifier.PartitionList_SetItem(i, null, textEditorTextSpan.DecorationByte);
                         positionsPainted.Add(i);
                     }
                 }
@@ -606,7 +606,7 @@ public partial interface ITextEditorService
                     if (!positionsPainted.Contains(i))
                     {
                         // DecorationByte of 0 is to be 'None'
-                        localDecorationByteList[i] = 0;
+                        modelModifier.PartitionList_SetItem(i, null, 0);
                     }
                 }
 

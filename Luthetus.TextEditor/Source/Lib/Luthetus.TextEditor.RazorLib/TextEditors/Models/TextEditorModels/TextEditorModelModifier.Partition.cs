@@ -49,6 +49,64 @@ public partial class TextEditorModelModifier
             outPartition);
     }
 
+    /// <summary>
+    /// If either character or decoration byte are 'null', then the respective
+    /// collection will be left unchanged.
+    /// 
+    /// i.e.: to change ONLY a character value invoke this method with decorationByte set to null,
+    ///       and only the <see cref="CharList"/> will be changed.
+    /// </summary>
+    public void PartitionList_SetItem(
+        int globalPositionIndex,
+        char? character,
+        byte? decorationByte)
+    {
+        int indexOfPartitionWithAvailableSpace = -1;
+        int relativePositionIndex = -1;
+        var runningCount = 0;
+
+        for (int i = 0; i < _partitionList.Count; i++)
+        {
+            TextEditorPartition? partition = _partitionList[i];
+
+            if (runningCount + partition.Count > globalPositionIndex)
+            {
+                // This is the partition we want to modify.
+                relativePositionIndex = globalPositionIndex - runningCount;
+                indexOfPartitionWithAvailableSpace = i;
+                break;
+            }
+            else
+            {
+                runningCount += partition.Count;
+            }
+        }
+
+        if (indexOfPartitionWithAvailableSpace == -1)
+            throw new ApplicationException("if (indexOfPartitionWithAvailableSpace == -1)");
+
+        if (relativePositionIndex == -1)
+            throw new ApplicationException("if (relativePositionIndex == -1)");
+
+        var inPartition = _partitionList[indexOfPartitionWithAvailableSpace];
+        var outPartition = inPartition.SetItem(relativePositionIndex, character, decorationByte);
+
+        _partitionList = _partitionList.SetItem(
+            indexOfPartitionWithAvailableSpace,
+            outPartition);
+    }
+
+    /// <summary>
+    /// To change ONLY a character value, or ONLY a decorationByte,
+    /// one would need to use the overload: <see cref="PartitionList_SetItem(int, char?, byte?)"/>.
+    /// </summary>
+    public void PartitionList_SetItem(
+        int globalPositionIndex,
+        RichCharacter richCharacter)
+    {
+        PartitionList_SetItem(globalPositionIndex, richCharacter.Value, richCharacter.DecorationByte);
+    }
+
     public void PartitionList_RemoveAt(int globalPositionIndex)
     {
         int indexOfPartitionWithAvailableSpace = -1;

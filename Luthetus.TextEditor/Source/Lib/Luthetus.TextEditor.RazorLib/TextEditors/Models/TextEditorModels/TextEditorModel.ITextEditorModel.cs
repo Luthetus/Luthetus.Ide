@@ -7,8 +7,8 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 public partial class TextEditorModel : ITextEditorModel
 {
-    IReadOnlyList<char> ITextEditorModel.CharList => CharList;
-    List<byte> ITextEditorModel.DecorationByteList => DecorationByteList;
+    ImmutableList<char> ITextEditorModel.CharList => CharList;
+    ImmutableList<byte> ITextEditorModel.DecorationByteList => DecorationByteList;
 
     ImmutableList<TextEditorPartition> ITextEditorModel.PartitionList => PartitionList;
     

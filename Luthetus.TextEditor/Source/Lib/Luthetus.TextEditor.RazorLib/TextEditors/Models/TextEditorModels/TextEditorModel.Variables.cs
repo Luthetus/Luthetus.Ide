@@ -18,8 +18,8 @@ public partial class TextEditorModel
     public const int MAXIMUM_EDIT_BLOCKS = 10;
     public const int MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN = 5;
 
-    public IReadOnlyList<char> CharList { get; init; }
-    public List<byte> DecorationByteList { get; init; }
+    public ImmutableList<char> CharList { get; init; }
+    public ImmutableList<byte> DecorationByteList { get; init; }
     public ImmutableList<TextEditorPartition> PartitionList { get; init; }
 
     public ImmutableList<EditBlock> EditBlocksList { get; init; } = ImmutableList<EditBlock>.Empty;

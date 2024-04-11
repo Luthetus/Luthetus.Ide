@@ -88,7 +88,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 /// </param>
 public class TextEditorPartition
 {
-    private TextEditorPartition(ImmutableList<char> charList, List<byte> decorationByteList)
+    private TextEditorPartition(ImmutableList<char> charList, ImmutableList<byte> decorationByteList)
     {
         CharList = charList;
         DecorationByteList = decorationByteList;
@@ -103,10 +103,10 @@ public class TextEditorPartition
     /// This would then break the <see cref="TextEditorPartition"/> because now the <see cref="CharList"/>
     /// is out of sync with the <see cref="DecorationByteList"/>.
     /// </summary>
-    public static readonly TextEditorPartition Empty = new(ImmutableList<char>.Empty, new());
+    public static readonly TextEditorPartition Empty = new(ImmutableList<char>.Empty, ImmutableList<byte>.Empty);
 
     public ImmutableList<char> CharList { get; }
-    public List<byte> DecorationByteList { get; }
+    public ImmutableList<byte> DecorationByteList { get; }
 
     /// <summary>
     /// This is the count of characters in THIS particular partition, the <see cref="TextEditorModel.DocumentLength"/>
@@ -131,12 +131,9 @@ public class TextEditorPartition
         char character,
         byte decorationByte)
     {
-        var outCharList = CharList.Insert(relativePositionIndex, character);
-
-        var outDecorationByteList = new List<byte>(DecorationByteList);
-        outDecorationByteList.Insert(relativePositionIndex, decorationByte);
-
-        return new TextEditorPartition(outCharList, outDecorationByteList);
+        return new TextEditorPartition(
+            CharList.Insert(relativePositionIndex, character),
+            DecorationByteList.Insert(relativePositionIndex, decorationByte));
     }
 
     public TextEditorPartition Insert(
@@ -150,22 +147,16 @@ public class TextEditorPartition
         int relativePositionIndex,
         IEnumerable<RichCharacter> richCharacterList)
     {
-        var outCharList = CharList.InsertRange(relativePositionIndex, richCharacterList.Select(x => x.Value));
-
-        var outDecorationByteList = new List<byte>(DecorationByteList);
-        outDecorationByteList.InsertRange(relativePositionIndex, richCharacterList.Select(x => x.DecorationByte));
-
-        return new TextEditorPartition(outCharList, outDecorationByteList);
+        return new TextEditorPartition(
+            CharList.InsertRange(relativePositionIndex, richCharacterList.Select(x => x.Value)),
+            DecorationByteList.InsertRange(relativePositionIndex, richCharacterList.Select(x => x.DecorationByte)));
     }
 
     public TextEditorPartition RemoveAt(int relativePositionIndex)
     {
-        var outCharList = CharList.RemoveAt(relativePositionIndex);
-
-        var outDecorationByteList = new List<byte>(DecorationByteList);
-        outDecorationByteList.RemoveAt(relativePositionIndex);
-
-        return new TextEditorPartition(outCharList, outDecorationByteList);
+        return new TextEditorPartition(
+            CharList.RemoveAt(relativePositionIndex),
+            DecorationByteList.RemoveAt(relativePositionIndex));
     }
 
     public TextEditorPartition AddRange(IEnumerable<RichCharacter> richCharacterList)
@@ -204,20 +195,18 @@ public class TextEditorPartition
         char? character,
         byte? decorationByte)
     {
-        var outCharList = CharList;
-        if (character is not null)
-            outCharList = CharList.SetItem(relativePositionIndex, character.Value);
-
-        var outDecorationByteList = new List<byte>(DecorationByteList);
-        if (decorationByte is not null)
-            outDecorationByteList[relativePositionIndex] = decorationByte.Value;
-
-        return new TextEditorPartition(outCharList, outDecorationByteList);
+        return new TextEditorPartition(
+            character is null
+                ? CharList
+                : CharList.SetItem(relativePositionIndex, character.Value),
+            decorationByte is null
+                ? DecorationByteList
+                : DecorationByteList.SetItem(relativePositionIndex, decorationByte.Value));
     }
 
     /// <summary>
     /// To change ONLY a character value, or ONLY a decorationByte,
-    /// one would need to use the other overload: <see cref="SetItem(int, char?, byte?)"/>.
+    /// one would need to use the overload: <see cref="SetItem(int, char?, byte?)"/>.
     /// </summary>
     public TextEditorPartition SetItem(
         int relativePositionIndex,

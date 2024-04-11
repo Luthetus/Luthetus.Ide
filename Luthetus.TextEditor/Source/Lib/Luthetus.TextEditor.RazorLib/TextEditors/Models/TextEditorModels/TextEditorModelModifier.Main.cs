@@ -51,7 +51,7 @@ public partial class TextEditorModelModifier
     ///       |
     ///       Need to revisit naming this.
     /// </summary>
-    private IReadOnlyList<char> _charList => _partitionList.SelectMany(x => x.CharList).ToImmutableList();
+    private ImmutableList<char> _charList => _partitionList.SelectMany(x => x.CharList).ToImmutableList();
     /// <summary>
     /// TODO: Awkward naming convention is being used here. This is an expression bound property,...
     ///       ...with the naming conventions of a private field.
@@ -61,7 +61,7 @@ public partial class TextEditorModelModifier
     ///       |
     ///       Need to revisit naming this.
     /// </summary>
-    private List<byte> _decorationByteList => _partitionList.SelectMany(x => x.DecorationByteList).ToList();
+    private ImmutableList<byte> _decorationByteList => _partitionList.SelectMany(x => x.DecorationByteList).ToImmutableList();
     private ImmutableList<TextEditorPartition> _partitionList = new TextEditorPartition[] { TextEditorPartition.Empty }.ToImmutableList();
 
     private List<EditBlock>? _editBlocksList;
@@ -103,10 +103,10 @@ public partial class TextEditorModelModifier
     public TextEditorModel ToModel()
     {
         return new TextEditorModel(
-            _charList is null ? _textEditorModel.CharList : _charList.ToImmutableList(),
-            _decorationByteList is null ? _textEditorModel.DecorationByteList : _decorationByteList.ToList(),
+            _charList is null ? _textEditorModel.CharList : _charList,
+            _decorationByteList is null ? _textEditorModel.DecorationByteList : _decorationByteList,
             PartitionSize,
-            _partitionList is null ? _textEditorModel.PartitionList : _partitionList.ToImmutableList(),
+            _partitionList is null ? _textEditorModel.PartitionList : _partitionList,
             _editBlocksList is null ? _textEditorModel.EditBlocksList : _editBlocksList.ToImmutableList(),
             _rowEndingPositionsList is null ? _textEditorModel.RowEndingPositionsList : _rowEndingPositionsList.ToImmutableList(),
             _rowEndingKindCountsList is null ? _textEditorModel.RowEndingKindCountsList : _rowEndingKindCountsList.ToImmutableList(),
