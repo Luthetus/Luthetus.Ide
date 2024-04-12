@@ -143,7 +143,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
     private string GetCursorStyleCss()
     {
-        var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements;
+        var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements;
 
         var leftInPixels = 0d;
 
@@ -167,12 +167,12 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         var leftInPixelsInvariantCulture = leftInPixels.ToCssValue();
         var left = $"left: {leftInPixelsInvariantCulture}px;";
 
-        var topInPixelsInvariantCulture = (measurements.RowHeight * Cursor.LineIndex)
+        var topInPixelsInvariantCulture = (measurements.LineHeight * Cursor.LineIndex)
             .ToCssValue();
 
         var top = $"top: {topInPixelsInvariantCulture}px;";
 
-        var heightInPixelsInvariantCulture = measurements.RowHeight.ToCssValue();
+        var heightInPixelsInvariantCulture = measurements.LineHeight.ToCssValue();
         var height = $"height: {heightInPixelsInvariantCulture}px;";
 
         var widthInPixelsInvariantCulture = RenderBatch.Options!.CursorWidthInPixels.ToCssValue();
@@ -188,18 +188,18 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
     private string GetCaretRowStyleCss()
     {
-        var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements;
+        var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements;
 
-        var topInPixelsInvariantCulture = (measurements.RowHeight * Cursor.LineIndex)
+        var topInPixelsInvariantCulture = (measurements.LineHeight * Cursor.LineIndex)
             .ToCssValue();
 
         var top = $"top: {topInPixelsInvariantCulture}px;";
 
-        var heightInPixelsInvariantCulture = measurements.RowHeight.ToCssValue();
+        var heightInPixelsInvariantCulture = measurements.LineHeight.ToCssValue();
         var height = $"height: {heightInPixelsInvariantCulture}px;";
 
         var widthOfBodyInPixelsInvariantCulture =
-            (RenderBatch.Model!.MostCharactersOnASingleRowTuple.rowLength * measurements.CharacterWidth)
+            (RenderBatch.Model!.MostCharactersOnASingleLineTuple.lineLength * measurements.CharacterWidth)
             .ToCssValue();
 
         var width = $"width: {widthOfBodyInPixelsInvariantCulture}px;";
@@ -209,7 +209,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
     private string GetMenuStyleCss()
     {
-        var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements;
+        var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements;
 
         var leftInPixels = 0d;
 
@@ -231,7 +231,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         var leftInPixelsInvariantCulture = leftInPixels.ToCssValue();
         var left = $"left: {leftInPixelsInvariantCulture}px;";
 
-        var topInPixelsInvariantCulture = (measurements.RowHeight * (Cursor.LineIndex + 1))
+        var topInPixelsInvariantCulture = (measurements.LineHeight * (Cursor.LineIndex + 1))
             .ToCssValue();
 
         // Top is 1 row further than the cursor so it does not cover text at cursor position.
@@ -240,7 +240,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         var minWidthInPixelsInvariantCulture = (measurements.CharacterWidth * 16).ToCssValue();
         var minWidth = $"min-Width: {minWidthInPixelsInvariantCulture}px;";
 
-        var minHeightInPixelsInvariantCulture = (measurements.RowHeight * 4).ToCssValue();
+        var minHeightInPixelsInvariantCulture = (measurements.LineHeight * 4).ToCssValue();
         var minHeight = $"min-height: {minHeightInPixelsInvariantCulture}px;";
 
         return $"{left} {top} {minWidth} {minHeight}";

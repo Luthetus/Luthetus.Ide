@@ -28,7 +28,7 @@ public partial class PresentationLayerGroup : ComponentBase
 
         foreach (var presentationKey in TextEditorPresentationKeys)
         {
-            var textEditorPresentationModel = RenderBatch.Model!.PresentationModelsList.FirstOrDefault(x =>
+            var textEditorPresentationModel = RenderBatch.Model!.PresentationModelList.FirstOrDefault(x =>
                 x.TextEditorPresentationKey == presentationKey);
 
             if (textEditorPresentationModel is not null)
@@ -43,14 +43,14 @@ public partial class PresentationLayerGroup : ComponentBase
         int upperPositionIndexExclusive,
         int rowIndex)
     {
-        var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements;
+        var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements;
         var elementMeasurements = RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements;
 
-        if (rowIndex >= RenderBatch.Model!.RowEndingPositionsList.Count)
+        if (rowIndex >= RenderBatch.Model!.LineEndPositionList.Count)
             return string.Empty;
 
         var startOfRowTuple = RenderBatch.Model!.GetLineOpening(rowIndex);
-        var endOfRowTuple = RenderBatch.Model!.RowEndingPositionsList[rowIndex];
+        var endOfRowTuple = RenderBatch.Model!.LineEndPositionList[rowIndex];
 
         var startingColumnIndex = 0;
         var endingColumnIndex = endOfRowTuple.EndPositionIndexExclusive - 1;
@@ -69,11 +69,11 @@ public partial class PresentationLayerGroup : ComponentBase
             fullWidthOfRowIsSelected = false;
         }
 
-        var topInPixelsInvariantCulture = (rowIndex * charMeasurements.RowHeight).ToCssValue();
+        var topInPixelsInvariantCulture = (rowIndex * charMeasurements.LineHeight).ToCssValue();
 
         var top = $"top: {topInPixelsInvariantCulture}px;";
 
-        var heightInPixelsInvariantCulture = charMeasurements.RowHeight.ToCssValue();
+        var heightInPixelsInvariantCulture = charMeasurements.LineHeight.ToCssValue();
 
         var height = $"height: {heightInPixelsInvariantCulture}px;";
 

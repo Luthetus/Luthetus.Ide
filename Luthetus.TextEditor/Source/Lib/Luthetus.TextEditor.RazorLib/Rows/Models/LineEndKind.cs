@@ -1,10 +1,10 @@
 namespace Luthetus.TextEditor.RazorLib.Rows.Models;
 
-public enum RowEndingKind
+public enum LineEndKind
 {
     CarriageReturn,
-    Linefeed,
-    CarriageReturnLinefeed,
+    LineFeed,
+    CarriageReturnLineFeed,
     EndOfFile,
     StartOfFile,
     Unset,

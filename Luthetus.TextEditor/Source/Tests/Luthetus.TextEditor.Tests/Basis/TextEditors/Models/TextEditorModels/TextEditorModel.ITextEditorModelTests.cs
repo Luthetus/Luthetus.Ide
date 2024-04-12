@@ -26,7 +26,7 @@ public class TextEditorModelITextEditorModelTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.RowEndingPositionsList "/>
+	/// <see cref="TextEditorModel.LineEndPositionList "/>
 	/// </summary>
 	[Fact]
 	public void RowEndingPositionsList_InterfaceImplementation()
@@ -35,7 +35,7 @@ public class TextEditorModelITextEditorModelTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.RowEndingKindCountsList"/>
+	/// <see cref="TextEditorModel.LineEndKindCountList"/>
 	/// </summary>
 	[Fact]
 	public void RowEndingKindCountsList_InterfaceImplementation()
@@ -44,7 +44,7 @@ public class TextEditorModelITextEditorModelTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.PresentationModelsList"/>
+	/// <see cref="TextEditorModel.PresentationModelList"/>
 	/// </summary>
 	[Fact]
 	public void PresentationModelsList_InterfaceImplementation()

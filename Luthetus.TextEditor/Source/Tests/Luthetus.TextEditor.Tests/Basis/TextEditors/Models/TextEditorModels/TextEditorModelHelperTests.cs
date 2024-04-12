@@ -31,7 +31,7 @@ public class TextEditorModelHelperTests
 					out var model,
 					out var cursor);
 
-				var expected = new LineEnd(12, 13, RowEndingKind.Linefeed);
+				var expected = new LineEnd(12, 13, LineEndKind.LineFeed);
 
 				// TextEditorModel
 				{
@@ -53,7 +53,7 @@ public class TextEditorModelHelperTests
                     out var model,
                     out var cursor);
 
-                var expected = new LineEnd(12, 13, RowEndingKind.Linefeed);
+                var expected = new LineEnd(12, 13, LineEndKind.LineFeed);
 
                 // TextEditorModel
                 {
@@ -75,7 +75,7 @@ public class TextEditorModelHelperTests
                     out var model,
                     out var cursor);
 
-                var expected = new LineEnd(12, 13, RowEndingKind.Linefeed);
+                var expected = new LineEnd(12, 13, LineEndKind.LineFeed);
 
                 // TextEditorModel
                 {
@@ -97,7 +97,7 @@ public class TextEditorModelHelperTests
                     out var model,
                     out var cursor);
 
-                var expected = new LineEnd(0, 0, RowEndingKind.StartOfFile);
+                var expected = new LineEnd(0, 0, LineEndKind.StartOfFile);
 
                 // TextEditorModel
                 {
@@ -123,7 +123,7 @@ public class TextEditorModelHelperTests
                     out var model,
                     out var cursor);
 
-                var expected = new LineEnd(24, 25, RowEndingKind.Linefeed);
+                var expected = new LineEnd(24, 25, LineEndKind.LineFeed);
 
                 // TextEditorModel
                 {
@@ -148,7 +148,7 @@ public class TextEditorModelHelperTests
                     out var model,
                     out var cursor);
 
-                var expected = new LineEnd(0, 0, RowEndingKind.StartOfFile);
+                var expected = new LineEnd(0, 0, LineEndKind.StartOfFile);
 
                 // TextEditorModel
                 {
@@ -170,7 +170,7 @@ public class TextEditorModelHelperTests
                     out var model,
                     out var cursor);
 
-                var expected = new LineEnd(24, 25, RowEndingKind.Linefeed);
+                var expected = new LineEnd(24, 25, LineEndKind.LineFeed);
 
                 // TextEditorModel
                 {
@@ -232,7 +232,7 @@ public class TextEditorModelHelperTests
     }
 
 	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetRows(ITextEditorModel, int, int)"/>
+	/// <see cref="TextEditorModelHelper.GetLines(ITextEditorModel, int, int)"/>
 	/// </summary>
 	[Fact]
 	public void GetRows()
@@ -244,19 +244,19 @@ public class TextEditorModelHelperTests
         {
             // Negative count
             {
-                var rows = model.GetRows(TestConstants.NEGATIVE_ROW_INDEX, -3);
+                var rows = model.GetLines(TestConstants.NEGATIVE_ROW_INDEX, -3);
                 Assert.Equal(new List<List<RichCharacter>>(), rows);
             }
 
             // Positive count
             {
-                var rows = model.GetRows(TestConstants.NEGATIVE_ROW_INDEX, 3);
+                var rows = model.GetLines(TestConstants.NEGATIVE_ROW_INDEX, 3);
                 Assert.Equal(new List<List<RichCharacter>>(), rows);
 			}
 
             // Zero count
             {
-                var rows = model.GetRows(TestConstants.NEGATIVE_ROW_INDEX, 0);
+                var rows = model.GetLines(TestConstants.NEGATIVE_ROW_INDEX, 0);
                 Assert.Equal(new List<List<RichCharacter>>(), rows);
             }
 
@@ -266,7 +266,7 @@ public class TextEditorModelHelperTests
                 var countNeededToGoFromNegativeStartingIndexToAValidIndex =
                     1 + (-1 * TestConstants.NEGATIVE_ROW_INDEX);
 
-                var rows = model.GetRows(
+                var rows = model.GetLines(
                     TestConstants.NEGATIVE_ROW_INDEX,
                     countNeededToGoFromNegativeStartingIndexToAValidIndex);
 
@@ -278,13 +278,13 @@ public class TextEditorModelHelperTests
         {
             // Negative count
             {
-                var rows = model.GetRows(TestConstants.FIRST_ROW_INDEX, -3);
+                var rows = model.GetLines(TestConstants.FIRST_ROW_INDEX, -3);
                 Assert.Equal(new List<List<RichCharacter>>(), rows);
             }
 
             // Positive count
             {
-                var rows = model.GetRows(TestConstants.FIRST_ROW_INDEX, 3);
+                var rows = model.GetLines(TestConstants.FIRST_ROW_INDEX, 3);
 
                 Assert.Equal(3, rows.Count);
 
@@ -297,7 +297,7 @@ public class TextEditorModelHelperTests
             
             // Zero count
             {
-                var rows = model.GetRows(TestConstants.FIRST_ROW_INDEX, 0);
+                var rows = model.GetLines(TestConstants.FIRST_ROW_INDEX, 0);
                 Assert.Equal(new List<List<RichCharacter>>(), rows);
             }
         }
@@ -306,13 +306,13 @@ public class TextEditorModelHelperTests
         {
             // Negative count
             {
-                var rows = model.GetRows(TestConstants.ROW_INDEX_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW, -3);
+                var rows = model.GetLines(TestConstants.ROW_INDEX_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW, -3);
                 Assert.Equal(new List<List<RichCharacter>>(), rows);
             }
 
             // Positive count
             {
-                var rows = model.GetRows(TestConstants.ROW_INDEX_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW, 3);
+                var rows = model.GetLines(TestConstants.ROW_INDEX_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW, 3);
 
                 Assert.Equal(3, rows.Count);
 
@@ -328,13 +328,13 @@ public class TextEditorModelHelperTests
         {
             // Negative count
             {
-                var rows = model.GetRows(TestConstants.LAST_ROW_INDEX, -3);
+                var rows = model.GetLines(TestConstants.LAST_ROW_INDEX, -3);
                 Assert.Equal(new List<List<RichCharacter>>(), rows);
             }
 
             // Positive count
             {
-                var rows = model.GetRows(TestConstants.LAST_ROW_INDEX, 3);
+                var rows = model.GetLines(TestConstants.LAST_ROW_INDEX, 3);
 
                 Assert.Single(rows);
 
@@ -350,13 +350,13 @@ public class TextEditorModelHelperTests
         {
             // Negative count
             {
-                var rows = model.GetRows(TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX, -3);
+                var rows = model.GetLines(TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX, -3);
                 Assert.Equal(new List<List<RichCharacter>>(), rows);
             }
 
             // Positive count
             {
-                var rows = model.GetRows(TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX, 3);
+                var rows = model.GetLines(TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX, 3);
                 Assert.Equal(new List<List<RichCharacter>>(), rows);
             }
         }

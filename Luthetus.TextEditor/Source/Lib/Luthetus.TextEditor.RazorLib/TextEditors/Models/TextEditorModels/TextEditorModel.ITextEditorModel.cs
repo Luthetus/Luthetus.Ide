@@ -13,11 +13,11 @@ public partial class TextEditorModel : ITextEditorModel
     ImmutableList<TextEditorPartition> ITextEditorModel.PartitionList => PartitionList;
     
     IList<EditBlock> ITextEditorModel.EditBlockList => EditBlocksList;
-	IList<LineEnd> ITextEditorModel.LineEndPositionList => RowEndingPositionsList;
-	IList<(RowEndingKind rowEndingKind, int count)> ITextEditorModel.RowEndingKindCountsList => RowEndingKindCountsList;
-	IList<TextEditorPresentationModel> ITextEditorModel.PresentationModelsList => PresentationModelsList;
+	IList<LineEnd> ITextEditorModel.LineEndPositionList => LineEndPositionList;
+	IList<(LineEndKind lineEndingKind, int count)> ITextEditorModel.LineEndingKindCountsList => LineEndKindCountList;
+	IList<TextEditorPresentationModel> ITextEditorModel.PresentationModelsList => PresentationModelList;
 	IList<int> ITextEditorModel.TabKeyPositionsList => TabKeyPositionsList;
 
-    int ITextEditorModel.RowCount => RowCount;
+    int ITextEditorModel.LineCount => LineCount;
     int ITextEditorModel.DocumentLength => DocumentLength;
 }

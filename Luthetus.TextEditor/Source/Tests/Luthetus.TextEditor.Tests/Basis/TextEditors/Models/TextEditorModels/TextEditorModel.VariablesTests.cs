@@ -26,7 +26,7 @@ public partial class TextEditorModelVariablesTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.RowEndingPositionsList"/>
+	/// <see cref="TextEditorModel.LineEndPositionList"/>
 	/// </summary>
 	[Fact]
 	public void RowEndingPositionsList()
@@ -35,7 +35,7 @@ public partial class TextEditorModelVariablesTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.RowEndingKindCountsList"/>
+	/// <see cref="TextEditorModel.LineEndKindCountList"/>
 	/// </summary>
 	[Fact]
 	public void RowEndingKindCountsList()
@@ -44,7 +44,7 @@ public partial class TextEditorModelVariablesTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.PresentationModelsList"/>
+	/// <see cref="TextEditorModel.PresentationModelList"/>
 	/// </summary>
 	[Fact]
 	public void PresentationModelsList()
@@ -62,7 +62,7 @@ public partial class TextEditorModelVariablesTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.OnlyRowEndingKind"/>
+	/// <see cref="TextEditorModel.OnlyLineEndKind"/>
 	/// </summary>
 	[Fact]
 	public void OnlyRowEndingKind()
@@ -71,7 +71,7 @@ public partial class TextEditorModelVariablesTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.UsingRowEndingKind"/>
+	/// <see cref="TextEditorModel.UsingLineEndKind"/>
 	/// </summary>
 	[Fact]
 	public void UsingRowEndingKind()
@@ -143,7 +143,7 @@ public partial class TextEditorModelVariablesTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.MostCharactersOnASingleRowTuple"/>
+	/// <see cref="TextEditorModel.MostCharactersOnASingleLineTuple"/>
 	/// </summary>
 	[Fact]
 	public void MostCharactersOnASingleRowTuple()
@@ -170,7 +170,7 @@ public partial class TextEditorModelVariablesTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.RowCount"/>
+	/// <see cref="TextEditorModel.LineCount"/>
 	/// </summary>
 	[Fact]
 	public void RowCount()

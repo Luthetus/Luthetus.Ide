@@ -5,7 +5,7 @@ public record LineEnd
     public LineEnd(
         int startPositionIndexInclusive,
         int endPositionIndexExclusive,
-        RowEndingKind rowEndingKind)
+        LineEndKind rowEndingKind)
     {
         StartPositionIndexInclusive = startPositionIndexInclusive;
         EndPositionIndexExclusive = endPositionIndexExclusive;
@@ -24,7 +24,7 @@ public record LineEnd
     public int EndPositionIndexExclusive { get; set; }
     /// <summary>
     /// Given: "Hello World!\nAbc123"<br/>
-    /// Then: \n is <see cref="RowEndingKind.Linefeed"/>
+    /// Then: \n is <see cref="LineEndKind.LineFeed"/>
     /// </summary>
-    public RowEndingKind LineEndKind { get; set; }
+    public LineEndKind LineEndKind { get; set; }
 }

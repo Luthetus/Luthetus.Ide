@@ -13,7 +13,7 @@ public record VirtualizationResult<T> : IVirtualizationResultWithoutTypeMask
         VirtualizationBoundary topVirtualizationBoundary,
         VirtualizationBoundary bottomVirtualizationBoundary,
         TextEditorMeasurements textEditorMeasurements,
-        CharAndRowMeasurements charAndRowMeasurements)
+        CharAndLineMeasurements charAndRowMeasurements)
     {
         EntryList = entries;
         LeftVirtualizationBoundary = leftVirtualizationBoundary;
@@ -21,7 +21,7 @@ public record VirtualizationResult<T> : IVirtualizationResultWithoutTypeMask
         TopVirtualizationBoundary = topVirtualizationBoundary;
         BottomVirtualizationBoundary = bottomVirtualizationBoundary;
         TextEditorMeasurements = textEditorMeasurements;
-        CharAndRowMeasurements = charAndRowMeasurements;
+        CharAndLineMeasurements = charAndRowMeasurements;
     }
 
     public static VirtualizationResult<List<RichCharacter>> GetEmptyRichCharacters() => new(
@@ -31,7 +31,7 @@ public record VirtualizationResult<T> : IVirtualizationResultWithoutTypeMask
         new VirtualizationBoundary(0, 0, 0, 0),
         new VirtualizationBoundary(0, 0, 0, 0),
         new TextEditorMeasurements(0, 0, 0, 0, 0, 0, 0, CancellationToken.None),
-        new CharAndRowMeasurements(0, 0));
+        new CharAndLineMeasurements(0, 0));
 
     public ImmutableArray<VirtualizationEntry<T>> EntryList { get; init; }
     public VirtualizationBoundary LeftVirtualizationBoundary { get; init; }
@@ -39,5 +39,5 @@ public record VirtualizationResult<T> : IVirtualizationResultWithoutTypeMask
     public VirtualizationBoundary TopVirtualizationBoundary { get; init; }
     public VirtualizationBoundary BottomVirtualizationBoundary { get; init; }
     public TextEditorMeasurements TextEditorMeasurements { get; init; }
-    public CharAndRowMeasurements CharAndRowMeasurements { get; set; }
+    public CharAndLineMeasurements CharAndLineMeasurements { get; set; }
 }

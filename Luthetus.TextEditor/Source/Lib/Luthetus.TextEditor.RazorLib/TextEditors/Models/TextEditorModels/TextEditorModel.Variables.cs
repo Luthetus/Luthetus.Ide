@@ -1,6 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
-using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
@@ -25,16 +24,16 @@ public partial class TextEditorModel
     public ImmutableList<EditBlock> EditBlocksList { get; init; } = ImmutableList<EditBlock>.Empty;
 
     /// <inheritdoc cref="ITextEditorModel.LineEndPositionList"/>
-	public ImmutableList<LineEnd> RowEndingPositionsList { get; init; } = ImmutableList<LineEnd>.Empty;
-	public ImmutableList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsList { get; init; } = ImmutableList<(RowEndingKind rowEndingKind, int count)>.Empty;
-	public ImmutableList<TextEditorPresentationModel> PresentationModelsList { get; init; } = ImmutableList<TextEditorPresentationModel>.Empty;
+	public ImmutableList<LineEnd> LineEndPositionList { get; init; } = ImmutableList<LineEnd>.Empty;
+	public ImmutableList<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; init; } = ImmutableList<(LineEndKind lineEndingKind, int count)>.Empty;
+	public ImmutableList<TextEditorPresentationModel> PresentationModelList { get; init; } = ImmutableList<TextEditorPresentationModel>.Empty;
     
     /// <inheritdoc cref="ITextEditorModel.TabKeyPositionsList"/>
 	public ImmutableList<int> TabKeyPositionsList = ImmutableList<int>.Empty;
     
-    /// <inheritdoc cref="ITextEditorModel.OnlyRowEndingKind"/>
-    public RowEndingKind? OnlyRowEndingKind { get; init; }
-    public RowEndingKind UsingRowEndingKind { get; init; }
+    /// <inheritdoc cref="ITextEditorModel.OnlyLineEndKind"/>
+    public LineEndKind? OnlyLineEndKind { get; init; }
+    public LineEndKind UsingLineEndKind { get; init; }
     
     /// <inheritdoc cref="ITextEditorModel.ResourceUri"/>
     public ResourceUri ResourceUri { get; init; }
@@ -48,9 +47,9 @@ public partial class TextEditorModel
     public TextEditorSaveFileHelper TextEditorSaveFileHelper { get; init; } = new();
     public int EditBlockIndex { get; init; }
     public bool IsDirty { get; init; }
-	public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple { get; init; }
+	public (int lineIndex, int lineLength) MostCharactersOnASingleLineTuple { get; init; }
     public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();
 
-    public int RowCount => RowEndingPositionsList.Count;
+    public int LineCount => LineEndPositionList.Count;
     public int DocumentLength => CharList.Count;
 }

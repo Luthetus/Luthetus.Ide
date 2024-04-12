@@ -36,12 +36,12 @@ public partial class TextEditorModel
         CharList = modifier.CharList;
         DecorationByteList = modifier.DecorationByteList;
         PartitionList = modifier.PartitionList;
-        RowEndingKindCountsList = modifier.RowEndingKindCountsList.ToImmutableList();
-		RowEndingPositionsList = modifier.LineEndPositionList.ToImmutableList();
+        LineEndKindCountList = modifier.LineEndingKindCountsList.ToImmutableList();
+		LineEndPositionList = modifier.LineEndPositionList.ToImmutableList();
 		TabKeyPositionsList = modifier.TabKeyPositionsList.ToImmutableList();
-		OnlyRowEndingKind = modifier.OnlyRowEndingKind;
-		UsingRowEndingKind = modifier.UsingRowEndingKind;
-		MostCharactersOnASingleRowTuple = modifier.MostCharactersOnASingleRowTuple;
+		OnlyLineEndKind = modifier.OnlyLineEndKind;
+		UsingLineEndKind = modifier.UsingLineEndKind;
+		MostCharactersOnASingleLineTuple = modifier.MostCharactersOnASingleLineTuple;
 	}
 
 	public TextEditorModel(
@@ -51,11 +51,11 @@ public partial class TextEditorModel
         ImmutableList<TextEditorPartition> partitionList,
 		ImmutableList<EditBlock> editBlocksList,
 		ImmutableList<LineEnd> rowEndingPositionsList,
-		ImmutableList<(RowEndingKind rowEndingKind, int count)> rowEndingKindCountsList,
+		ImmutableList<(LineEndKind rowEndingKind, int count)> rowEndingKindCountsList,
 		ImmutableList<TextEditorPresentationModel> presentationModelsList,
 		ImmutableList<int> tabKeyPositionsList,
-		RowEndingKind? onlyRowEndingKind,
-		RowEndingKind usingRowEndingKind,
+		LineEndKind? onlyRowEndingKind,
+		LineEndKind usingRowEndingKind,
 		ResourceUri resourceUri,
 		DateTime resourceLastWriteTime,
 		string fileExtension,
@@ -72,12 +72,12 @@ public partial class TextEditorModel
         PartitionSize = partitionSize;
         PartitionList = partitionList;
 		EditBlocksList = editBlocksList;
-		RowEndingPositionsList = rowEndingPositionsList;
-		RowEndingKindCountsList = rowEndingKindCountsList;
-		PresentationModelsList = presentationModelsList;
+		LineEndPositionList = rowEndingPositionsList;
+		LineEndKindCountList = rowEndingKindCountsList;
+		PresentationModelList = presentationModelsList;
 		TabKeyPositionsList = tabKeyPositionsList;
-		OnlyRowEndingKind = onlyRowEndingKind;
-		UsingRowEndingKind = usingRowEndingKind;
+		OnlyLineEndKind = onlyRowEndingKind;
+		UsingLineEndKind = usingRowEndingKind;
 		ResourceUri = resourceUri;
 		ResourceLastWriteTime = resourceLastWriteTime;
 		FileExtension = fileExtension;
@@ -86,7 +86,7 @@ public partial class TextEditorModel
 		TextEditorSaveFileHelper = textEditorSaveFileHelper;
 		EditBlockIndex = editBlockIndex;
         IsDirty = isDirty;
-		MostCharactersOnASingleRowTuple = mostCharactersOnASingleRowTuple;
+		MostCharactersOnASingleLineTuple = mostCharactersOnASingleRowTuple;
 		RenderStateKey = renderStateKey;
 	}
 }

@@ -43,12 +43,12 @@ public partial class RowSection : ComponentBase
 
     private string GetRowStyleCss(int index, double? virtualizedRowLeftInPixels)
     {
-        var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements;
+        var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements;
 
-        var topInPixelsInvariantCulture = (index * charMeasurements.RowHeight).ToCssValue();
+        var topInPixelsInvariantCulture = (index * charMeasurements.LineHeight).ToCssValue();
         var top = $"top: {topInPixelsInvariantCulture}px;";
 
-        var heightInPixelsInvariantCulture = charMeasurements.RowHeight.ToCssValue();
+        var heightInPixelsInvariantCulture = charMeasurements.LineHeight.ToCssValue();
         var height = $"height: {heightInPixelsInvariantCulture}px;";
 
         var virtualizedRowLeftInPixelsInvariantCulture = virtualizedRowLeftInPixels.GetValueOrDefault().ToCssValue();

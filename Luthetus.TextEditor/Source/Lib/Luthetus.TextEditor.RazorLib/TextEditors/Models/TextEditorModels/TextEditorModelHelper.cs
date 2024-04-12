@@ -25,7 +25,7 @@ public static class TextEditorModelHelper
 		if (lineIndex > 0)
 			return model.LineEndPositionList[lineIndex - 1];
 
-		return new(0, 0, RowEndingKind.StartOfFile);
+		return new(0, 0, LineEndKind.StartOfFile);
 	}
 
     /// <summary>
@@ -91,7 +91,7 @@ public static class TextEditorModelHelper
     /// A count of 1 returns lines[startingLineIndex] only.<br/>
     /// A count of 2 returns lines[startingLineIndex] and lines[startingLineIndex + 1].<br/>
     /// </param>
-    public static List<List<RichCharacter>> GetRows(this ITextEditorModel model, int startingLineIndex, int count)
+    public static List<List<RichCharacter>> GetLines(this ITextEditorModel model, int startingLineIndex, int count)
 	{
 		var lineCountAvailable = model.LineEndPositionList.Count - startingLineIndex;
 
@@ -196,14 +196,14 @@ public static class TextEditorModelHelper
 
 	public static string GetLineRange(this ITextEditorModel model, int startLineIndex, int count)
 	{
-		if (startLineIndex > model.RowCount - 1)
+		if (startLineIndex > model.LineCount - 1)
 			return string.Empty;
         
 		var startPositionIndexInclusive = model.GetPositionIndex(startLineIndex, 0);
         var lastLineIndexExclusive = startLineIndex + count;
 		int endPositionIndexExclusive;
 
-		if (lastLineIndexExclusive > model.RowCount - 1)
+		if (lastLineIndexExclusive > model.LineCount - 1)
 		{
 			endPositionIndexExclusive = model.DocumentLength;
         }
@@ -513,7 +513,7 @@ public static class TextEditorModelHelper
 
 	public static string GetLine(this ITextEditorModel model, int lineIndex)
 	{
-		if (lineIndex < 0 || lineIndex > model.RowCount - 1)
+		if (lineIndex < 0 || lineIndex > model.LineCount - 1)
 			return string.Empty;
 
 		var priorLineEnd = model.GetLineOpening(lineIndex);

@@ -46,11 +46,11 @@ public interface ITextEditorModel
     public ImmutableList<TextEditorPartition> PartitionList { get; }
 	public IList<EditBlock> EditBlockList { get; }
     /// <summary>
-    /// To get the ending position of RowIndex _rowEndingPositions[RowIndex]<br /><br />
-    /// _rowEndingPositions returns the start of the NEXT row
+    /// To get the ending position of LineIndex _lineEndPositions[LineIndex]<br /><br />
+    /// _lineEndPositions returns the start of the NEXT line
     /// </summary>
     public IList<LineEnd> LineEndPositionList { get; }
-	public IList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsList { get; }
+	public IList<(LineEndKind lineEndingKind, int count)> LineEndingKindCountsList { get; }
 	public IList<TextEditorPresentationModel> PresentationModelsList { get; }
     /// <summary>
     /// Provides exact position index of a tab character
@@ -61,8 +61,8 @@ public interface ITextEditorModel
 	/// Then this will be null.<br/><br/>
 	/// If there are no line endings then this will be null.
 	/// </summary>
-	public RowEndingKind? OnlyRowEndingKind { get; }
-	public RowEndingKind UsingRowEndingKind { get; }
+	public LineEndKind? OnlyLineEndKind { get; }
+	public LineEndKind UsingLineEndKind { get; }
     /// <summary>
     /// TODO: On (2023-10-02) Key&lt;TextEditorModel&gt; was removed, because it felt redundant...
     /// ...given only 1 <see cref="TextEditorModel"/> can exist for a given <see cref="ResourceUri"/>.
@@ -82,9 +82,9 @@ public interface ITextEditorModel
 	public TextEditorSaveFileHelper TextEditorSaveFileHelper { get; }
 	public int EditBlockIndex { get; }
     public bool IsDirty { get; }
-    public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple { get; }
+    public (int lineIndex, int lineLength) MostCharactersOnASingleLineTuple { get; }
 	public Key<RenderState> RenderStateKey { get; }
 
-    public int RowCount { get; }
+    public int LineCount { get; }
     public int DocumentLength { get; }
 }

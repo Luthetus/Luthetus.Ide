@@ -74,7 +74,7 @@ public class TextEditorModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.SetUsingRowEndingKindEnqueue(ResourceUri, RowEndingKind)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.SetUsingRowEndingKindEnqueue(ResourceUri, LineEndKind)"/>
     /// </summary>
     [Fact]
     public void SetUsingRowEndingKind()
@@ -85,20 +85,20 @@ public class TextEditorModelApiTests
             out var inViewModel,
             out var serviceProvider);
 
-        var rowEndingKind = RowEndingKind.CarriageReturn;
+        var rowEndingKind = LineEndKind.CarriageReturn;
 
         // Assert the current values are different from that which will be set.
-        Assert.NotEqual(rowEndingKind, inModel.UsingRowEndingKind);
+        Assert.NotEqual(rowEndingKind, inModel.UsingLineEndKind);
 
         textEditorService.Post(
-            nameof(textEditorService.ModelApi.SetUsingRowEndingKindFactory),
-            textEditorService.ModelApi.SetUsingRowEndingKindFactory(
+            nameof(textEditorService.ModelApi.SetUsingLineEndKindFactory),
+            textEditorService.ModelApi.SetUsingLineEndKindFactory(
                 inModel.ResourceUri, rowEndingKind));
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
 
         // Assert the value is now set
-        Assert.Equal(rowEndingKind, outModel!.UsingRowEndingKind);
+        Assert.Equal(rowEndingKind, outModel!.UsingLineEndKind);
     }
 
     /// <summary>
@@ -551,13 +551,13 @@ public class TextEditorModelApiTests
             out var inViewModel,
             out var serviceProvider);
 
-        Assert.Empty(inModel!.PresentationModelsList);
+        Assert.Empty(inModel!.PresentationModelList);
 
         textEditorService.Post(
             nameof(textEditorService.ModelApi.AddPresentationModelFactory),
             textEditorService.ModelApi.AddPresentationModelFactory(inModel.ResourceUri, DiffPresentationFacts.EmptyOutPresentationModel));
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
-        Assert.NotEmpty(outModel!.PresentationModelsList);
+        Assert.NotEmpty(outModel!.PresentationModelList);
     }
 }

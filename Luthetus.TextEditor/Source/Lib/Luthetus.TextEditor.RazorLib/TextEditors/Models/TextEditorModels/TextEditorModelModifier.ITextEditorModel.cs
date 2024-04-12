@@ -16,12 +16,12 @@ public partial class TextEditorModelModifier : ITextEditorModel
 	public ImmutableList<TextEditorPartition> PartitionList => _partitionList is null ? _textEditorModel.PartitionList : _partitionList;
 	
 	public IList<EditBlock> EditBlockList => _editBlocksList is null ? _textEditorModel.EditBlocksList : _editBlocksList;
-	public IList<LineEnd> LineEndPositionList => _rowEndingPositionsList is null ? _textEditorModel.RowEndingPositionsList : _rowEndingPositionsList;
-	public IList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsList => _rowEndingKindCountsList is null ? _textEditorModel.RowEndingKindCountsList : _rowEndingKindCountsList;
-	public IList<TextEditorPresentationModel> PresentationModelsList => _presentationModelsList is null ? _textEditorModel.PresentationModelsList : _presentationModelsList;
+	public IList<LineEnd> LineEndPositionList => _lineEndingPositionsList is null ? _textEditorModel.LineEndPositionList : _lineEndingPositionsList;
+	public IList<(LineEndKind lineEndingKind, int count)> LineEndingKindCountsList => _lineEndingKindCountsList is null ? _textEditorModel.LineEndKindCountList : _lineEndingKindCountsList;
+	public IList<TextEditorPresentationModel> PresentationModelsList => _presentationModelsList is null ? _textEditorModel.PresentationModelList : _presentationModelsList;
 	public IList<int> TabKeyPositionsList => _tabKeyPositionsList is null ? _textEditorModel.TabKeyPositionsList : _tabKeyPositionsList;
-	public RowEndingKind? OnlyRowEndingKind => _onlyRowEndingKindWasModified ? _onlyRowEndingKind : _textEditorModel.OnlyRowEndingKind;
-	public RowEndingKind UsingRowEndingKind => _usingRowEndingKind ?? _textEditorModel.UsingRowEndingKind;
+	public LineEndKind? OnlyLineEndKind => _onlyLineEndKindWasModified ? _onlyLineEndKind : _textEditorModel.OnlyLineEndKind;
+	public LineEndKind UsingLineEndKind => _usingLineEndKind ?? _textEditorModel.UsingLineEndKind;
 	public ResourceUri ResourceUri => _resourceUri ?? _textEditorModel.ResourceUri;
 	public DateTime ResourceLastWriteTime => _resourceLastWriteTime ?? _textEditorModel.ResourceLastWriteTime;
 	public string FileExtension => _fileExtension ?? _textEditorModel.FileExtension;
@@ -30,10 +30,10 @@ public partial class TextEditorModelModifier : ITextEditorModel
 	public TextEditorSaveFileHelper TextEditorSaveFileHelper => _textEditorSaveFileHelper ?? _textEditorModel.TextEditorSaveFileHelper;
 	public int EditBlockIndex => _editBlockIndex ?? _textEditorModel.EditBlockIndex;
 	public bool IsDirty => _isDirty;
-    public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple => _mostCharactersOnASingleRowTuple ?? _textEditorModel.MostCharactersOnASingleRowTuple;
+    public (int lineIndex, int lineLength) MostCharactersOnASingleLineTuple => _mostCharactersOnASingleLineTuple ?? _textEditorModel.MostCharactersOnASingleLineTuple;
 	public Key<RenderState> RenderStateKey => _renderStateKey ?? _textEditorModel.RenderStateKey;
 
-    public int RowCount => LineEndPositionList.Count;
+    public int LineCount => LineEndPositionList.Count;
     public int DocumentLength => _charList.Count;
 
 

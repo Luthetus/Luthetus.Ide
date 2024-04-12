@@ -33,7 +33,7 @@ public static partial class TextEditorCommandVimFacts
                 var lengthOfRow = modelModifier.GetLengthOfLine(primaryCursorModifier.LineIndex);
 
                 if (primaryCursorModifier.ColumnIndex == lengthOfRow &&
-                    primaryCursorModifier.LineIndex < modelModifier.RowCount - 1)
+                    primaryCursorModifier.LineIndex < modelModifier.LineCount - 1)
                 {
                     MutateIndexCoordinatesAndPreferredColumnIndex(0);
                     primaryCursorModifier.LineIndex++;
@@ -91,7 +91,7 @@ public static partial class TextEditorCommandVimFacts
             var lengthOfRow = modelModifier.GetLengthOfLine(primaryCursorModifier.LineIndex);
 
             if (primaryCursorModifier.ColumnIndex == lengthOfRow &&
-                primaryCursorModifier.LineIndex < modelModifier.RowCount - 1)
+                primaryCursorModifier.LineIndex < modelModifier.LineCount - 1)
             {
                 MutateIndexCoordinatesAndPreferredColumnIndex(0);
                 primaryCursorModifier.LineIndex++;

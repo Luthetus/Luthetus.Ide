@@ -35,7 +35,7 @@ public partial class TextEditorModelModifierTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModelModifier.RowEndingKindCountsList"/>
+	/// <see cref="TextEditorModelModifier.LineEndingKindCountsList"/>
 	/// </summary>
 	[Fact]
 	public void RowEndingKindCountsList()
@@ -62,7 +62,7 @@ public partial class TextEditorModelModifierTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModelModifier.OnlyRowEndingKind"/>
+	/// <see cref="TextEditorModelModifier.OnlyLineEndKind"/>
 	/// </summary>
 	[Fact]
 	public void OnlyRowEndingKind()
@@ -71,7 +71,7 @@ public partial class TextEditorModelModifierTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModelModifier.UsingRowEndingKind"/>
+	/// <see cref="TextEditorModelModifier.UsingLineEndKind"/>
 	/// </summary>
 	[Fact]
 	public void UsingRowEndingKind()
@@ -143,7 +143,7 @@ public partial class TextEditorModelModifierTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModelModifier.MostCharactersOnASingleRowTuple"/>
+	/// <see cref="TextEditorModelModifier.MostCharactersOnASingleLineTuple"/>
 	/// </summary>
 	[Fact]
 	public void MostCharactersOnASingleRowTuple()

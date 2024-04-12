@@ -75,7 +75,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
         TextEditorViewModel textEditorViewModel,
         TextEditorOptions textEditorOptions)
     {
-        var characterWidthInPixels = textEditorViewModel.VirtualizationResult.CharAndRowMeasurements.CharacterWidth;
+        var characterWidthInPixels = textEditorViewModel.VirtualizationResult.CharAndLineMeasurements.CharacterWidth;
 
         switch (ActiveVimMode)
         {

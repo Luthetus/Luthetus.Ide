@@ -182,7 +182,7 @@ public record TextEditorViewModel : IDisposable
     public TextEditorEdit MutateScrollVerticalPositionByLinesFactory(double lines)
     {
         return MutateScrollVerticalPositionByPixelsFactory(
-            lines * VirtualizationResult.CharAndRowMeasurements.RowHeight);
+            lines * VirtualizationResult.CharAndLineMeasurements.LineHeight);
     }
 
     /// <summary>If a parameter is null the JavaScript will not modify that value</summary>

@@ -157,7 +157,7 @@ public sealed class CSharpCompilerService : LuthCompilerService
 
                                 var textToInsert = $"using {x.Key.NamespaceIdentifier};\n";
 
-                                modelModifier.EditByInsertion(
+                                modelModifier.Insert(
                                     textToInsert,
                                     cursorModifierBag,
                                     CancellationToken.None);

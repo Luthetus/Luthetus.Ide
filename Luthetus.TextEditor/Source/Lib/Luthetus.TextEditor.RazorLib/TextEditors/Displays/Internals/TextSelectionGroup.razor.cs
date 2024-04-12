@@ -19,11 +19,11 @@ public partial class TextSelectionGroup : ComponentBase
         int upperPositionIndexExclusive,
         int rowIndex)
     {
-        if (rowIndex >= RenderBatch.Model!.RowEndingPositionsList.Count)
+        if (rowIndex >= RenderBatch.Model!.LineEndPositionList.Count)
             return string.Empty;
 
         var startOfRowTuple = RenderBatch.Model!.GetLineOpening(rowIndex);
-        var endOfRowTuple = RenderBatch.Model!.RowEndingPositionsList[rowIndex];
+        var endOfRowTuple = RenderBatch.Model!.LineEndPositionList[rowIndex];
 
         var selectionStartingColumnIndex = 0;
         var selectionEndingColumnIndex = endOfRowTuple.EndPositionIndexExclusive - 1;
@@ -42,12 +42,12 @@ public partial class TextSelectionGroup : ComponentBase
             fullWidthOfRowIsSelected = false;
         }
 
-        var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements;
+        var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements;
 
-        var topInPixelsInvariantCulture = (rowIndex * charMeasurements.RowHeight).ToCssValue();
+        var topInPixelsInvariantCulture = (rowIndex * charMeasurements.LineHeight).ToCssValue();
         var top = $"top: {topInPixelsInvariantCulture}px;";
 
-        var heightInPixelsInvariantCulture = charMeasurements.RowHeight.ToCssValue();
+        var heightInPixelsInvariantCulture = charMeasurements.LineHeight.ToCssValue();
         var height = $"height: {heightInPixelsInvariantCulture}px;";
 
         var selectionStartInPixels = selectionStartingColumnIndex * charMeasurements.CharacterWidth;

@@ -41,13 +41,13 @@ window.luthetusTextEditor = {
             passive: false,
         });
     },
-    getCharAndRowMeasurementsInPixelsById: function (elementId, amountOfCharactersRendered) {
+    getCharAndLineMeasurementsInPixelsById: function (elementId, amountOfCharactersRendered) {
         let element = document.getElementById(elementId);
 
         if (!element) {
             return {
-                CharacterWidthInPixels: 5,
-                RowHeightInPixels: 5
+                CharacterWidth: 5,
+                LineHeight: 5
             }
         }
         
@@ -55,7 +55,7 @@ window.luthetusTextEditor = {
 
         return {
             CharacterWidth: fontWidth,
-            RowHeight: element.offsetHeight
+            LineHeight: element.offsetHeight
         }
     },
     escapeHtml: function(input)

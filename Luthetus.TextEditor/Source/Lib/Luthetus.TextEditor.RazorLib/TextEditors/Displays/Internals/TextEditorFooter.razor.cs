@@ -23,11 +23,11 @@ public partial class TextEditorFooter : ComponentBase
 
         var rowEndingKindString = (string)(changeEventArgs.Value ?? string.Empty);
 
-        if (Enum.TryParse<RowEndingKind>(rowEndingKindString, out var rowEndingKind))
+        if (Enum.TryParse<LineEndKind>(rowEndingKindString, out var rowEndingKind))
         {
             TextEditorService.Post(
-                nameof(TextEditorService.ModelApi.SetUsingRowEndingKindFactory),
-                TextEditorService.ModelApi.SetUsingRowEndingKindFactory(
+                nameof(TextEditorService.ModelApi.SetUsingLineEndKindFactory),
+                TextEditorService.ModelApi.SetUsingLineEndKindFactory(
                     viewModel.ResourceUri,
                     rowEndingKind));
         }

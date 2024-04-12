@@ -52,9 +52,9 @@ public partial interface ITextEditorService
         public TextEditorEdit UndoEditFactory(
             ResourceUri resourceUri);
 
-        public TextEditorEdit SetUsingRowEndingKindFactory(
+        public TextEditorEdit SetUsingLineEndKindFactory(
             ResourceUri resourceUri,
-            RowEndingKind rowEndingKind);
+            LineEndKind lineEndKind);
 
         public TextEditorEdit SetResourceDataFactory(
             ResourceUri resourceUri,
@@ -297,9 +297,9 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit SetUsingRowEndingKindFactory(
+        public TextEditorEdit SetUsingLineEndKindFactory(
             ResourceUri resourceUri,
-            RowEndingKind rowEndingKind)
+            LineEndKind lineEndKind)
         {
             return editContext =>
             {
@@ -308,7 +308,7 @@ public partial interface ITextEditorService
                 if (modelModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.SetUsingRowEndingKind(rowEndingKind);
+                modelModifier.SetUsingLineEndKind(lineEndKind);
                 return Task.CompletedTask;
             };
         }
@@ -377,7 +377,7 @@ public partial interface ITextEditorService
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.EditByInsertion(content, cursorModifierBag, cancellationToken);
+                modelModifier.Insert(content, cursorModifierBag, cancellationToken);
                 return Task.CompletedTask;
             };
         }
@@ -395,7 +395,7 @@ public partial interface ITextEditorService
                 if (modelModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.EditByInsertion(content, cursorModifierBag, cancellationToken);
+                modelModifier.Insert(content, cursorModifierBag, cancellationToken);
                 return Task.CompletedTask;
             };
         }

@@ -272,7 +272,7 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.MeasureCharacterWidthAndRowHeightAsync(string, int)"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.MeasureCharacterWidthAndLineHeightAsync(string, int)"/>
     /// </summary>
     [Fact]
     public void MeasureCharacterWidthAndRowHeightAsync()

@@ -3,15 +3,15 @@ using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 namespace Luthetus.TextEditor.Tests.Basis.JavaScriptObjects.Models;
 
 /// <summary>
-/// <see cref="CharAndRowMeasurements"/>
+/// <see cref="CharAndLineMeasurements"/>
 /// </summary>
 public class CharAndRowMeasurementsTests
 {
     /// <summary>
-    /// <see cref="CharAndRowMeasurements(double, double)"/>
+    /// <see cref="CharAndLineMeasurements(double, double)"/>
 	/// <br/>----<br/>
-    /// <see cref="CharAndRowMeasurements.CharacterWidth"/>
-    /// <see cref="CharAndRowMeasurements.RowHeight"/>
+    /// <see cref="CharAndLineMeasurements.CharacterWidth"/>
+    /// <see cref="CharAndLineMeasurements.LineHeight"/>
     /// </summary>
     [Fact]
 	public void Constructor()
@@ -19,11 +19,11 @@ public class CharAndRowMeasurementsTests
 		var characterWidth = 10.14;
 		var rowHeight = 33.77;
 
-        var charAndRowMeasurements = new CharAndRowMeasurements(
+        var charAndRowMeasurements = new CharAndLineMeasurements(
             characterWidth,
             rowHeight);
 
 		Assert.Equal(characterWidth, charAndRowMeasurements.CharacterWidth);
-		Assert.Equal(rowHeight, charAndRowMeasurements.RowHeight);
+		Assert.Equal(rowHeight, charAndRowMeasurements.LineHeight);
 	}
 }

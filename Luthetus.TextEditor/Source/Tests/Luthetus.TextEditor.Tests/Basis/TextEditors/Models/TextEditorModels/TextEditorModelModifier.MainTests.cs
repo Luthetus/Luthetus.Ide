@@ -34,12 +34,12 @@ public partial class TextEditorModelModifierTests
         Assert.Equal(inModel.CharList, outModel.CharList);
         Assert.Equal(inModel.DecorationByteList, outModel.DecorationByteList);
         Assert.Equal(inModel.EditBlocksList, outModel.EditBlocksList);
-        Assert.Equal(inModel.RowEndingPositionsList, outModel.RowEndingPositionsList);
-        Assert.Equal(inModel.RowEndingKindCountsList, outModel.RowEndingKindCountsList);
-        Assert.Equal(inModel.PresentationModelsList, outModel.PresentationModelsList);
+        Assert.Equal(inModel.LineEndPositionList, outModel.LineEndPositionList);
+        Assert.Equal(inModel.LineEndKindCountList, outModel.LineEndKindCountList);
+        Assert.Equal(inModel.PresentationModelList, outModel.PresentationModelList);
         Assert.Equal(inModel.TabKeyPositionsList, outModel.TabKeyPositionsList);
-        Assert.Equal(inModel.OnlyRowEndingKind, outModel.OnlyRowEndingKind);
-        Assert.Equal(inModel.UsingRowEndingKind, outModel.UsingRowEndingKind);
+        Assert.Equal(inModel.OnlyLineEndKind, outModel.OnlyLineEndKind);
+        Assert.Equal(inModel.UsingLineEndKind, outModel.UsingLineEndKind);
         Assert.Equal(inModel.ResourceUri, outModel.ResourceUri);
         Assert.Equal(inModel.ResourceLastWriteTime, outModel.ResourceLastWriteTime);
         Assert.Equal(inModel.FileExtension, outModel.FileExtension);
@@ -47,7 +47,7 @@ public partial class TextEditorModelModifierTests
         Assert.Equal(inModel.CompilerService, outModel.CompilerService);
         Assert.Equal(inModel.TextEditorSaveFileHelper, outModel.TextEditorSaveFileHelper);
         Assert.Equal(inModel.EditBlockIndex, outModel.EditBlockIndex);
-        Assert.Equal(inModel.MostCharactersOnASingleRowTuple, outModel.MostCharactersOnASingleRowTuple);
+        Assert.Equal(inModel.MostCharactersOnASingleLineTuple, outModel.MostCharactersOnASingleLineTuple);
     }
 
     /// <summary>
@@ -80,8 +80,8 @@ public partial class TextEditorModelModifierTests
         modelModifier.ClearRowEndingPositionsList();
 
         var outModel = modelModifier.ToModel();
-        Assert.NotEqual(inModel.RowEndingPositionsList, outModel.RowEndingPositionsList);
-        Assert.Equal(ImmutableList<LineEnd>.Empty, outModel.RowEndingPositionsList);
+        Assert.NotEqual(inModel.LineEndPositionList, outModel.LineEndPositionList);
+        Assert.Equal(ImmutableList<LineEnd>.Empty, outModel.LineEndPositionList);
     }
 
     /// <summary>
@@ -96,8 +96,8 @@ public partial class TextEditorModelModifierTests
         modelModifier.ClearRowEndingKindCountsList();
 
         var outModel = modelModifier.ToModel();
-        Assert.NotEqual(inModel.RowEndingKindCountsList, outModel.RowEndingKindCountsList);
-        Assert.Equal(ImmutableList<(RowEndingKind rowEndingKind, int count)>.Empty, outModel.RowEndingKindCountsList);
+        Assert.NotEqual(inModel.LineEndKindCountList, outModel.LineEndKindCountList);
+        Assert.Equal(ImmutableList<(LineEndKind rowEndingKind, int count)>.Empty, outModel.LineEndKindCountList);
     }
 
     /// <summary>
@@ -121,12 +121,12 @@ public partial class TextEditorModelModifierTests
         modelModifier.ClearOnlyRowEndingKind();
 
         var outModel = modelModifier.ToModel();
-        Assert.NotEqual(inModel.OnlyRowEndingKind, outModel.OnlyRowEndingKind);
-        Assert.Null(outModel.OnlyRowEndingKind);
+        Assert.NotEqual(inModel.OnlyLineEndKind, outModel.OnlyLineEndKind);
+        Assert.Null(outModel.OnlyLineEndKind);
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.SetUsingRowEndingKind(RowEndingKind)"/>
+    /// <see cref="TextEditorModelModifier.SetUsingLineEndKind(LineEndKind)"/>
     /// </summary>
     [Fact]
     public void ModifyUsingRowEndingKind()
@@ -134,11 +134,11 @@ public partial class TextEditorModelModifierTests
         TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
         var modelModifier = new TextEditorModelModifier(inModel);
 
-        modelModifier.SetUsingRowEndingKind(RowEndingKind.CarriageReturn);
+        modelModifier.SetUsingLineEndKind(LineEndKind.CarriageReturn);
 
         var outModel = modelModifier.ToModel();
-        Assert.NotEqual(inModel.UsingRowEndingKind, outModel.UsingRowEndingKind);
-        Assert.Equal(RowEndingKind.CarriageReturn, outModel.UsingRowEndingKind);
+        Assert.NotEqual(inModel.UsingLineEndKind, outModel.UsingLineEndKind);
+        Assert.Equal(LineEndKind.CarriageReturn, outModel.UsingLineEndKind);
     }
 
     /// <summary>
@@ -281,7 +281,7 @@ public partial class TextEditorModelModifierTests
         Assert.Equal(0, cursorModifier.LineIndex);
         Assert.Equal(0, cursorModifier.ColumnIndex);
 
-        modelModifier.EditByInsertion("\n", cursorModifierBag, CancellationToken.None);
+        modelModifier.Insert("\n", cursorModifierBag, CancellationToken.None);
 
         var outCursor = cursorModifier.ToCursor();
 

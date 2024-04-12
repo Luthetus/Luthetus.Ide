@@ -94,8 +94,8 @@
                             lines:
                         </div>
                         <div class="luth_te_text-editor-footer-value"
-                             style="@StyleMinWidthFromMaxLengthOfValue(model.RowCount)">
-                            @($"{model.RowCount}")
+                             style="@StyleMinWidthFromMaxLengthOfValue(model.LineCount)">
+                            @($"{model.LineCount}")
                         </div>
                     </div>
                 </div>
@@ -111,7 +111,7 @@
                         }
 
                         <div class="luth_te_text-editor-footer-value"
-                             style="@StyleMinWidthFromMaxLengthOfValue(model.RowCount)">
+                             style="@StyleMinWidthFromMaxLengthOfValue(model.LineCount)">
                             @($"{rowNumber}")
                         </div>
                     </div>
@@ -126,7 +126,7 @@
                         }
 
                         <div class="luth_te_text-editor-footer-value"
-                             style="@StyleMinWidthFromMaxLengthOfValue(model.MostCharactersOnASingleRowTuple.rowLength)">
+                             style="@StyleMinWidthFromMaxLengthOfValue(model.MostCharactersOnASingleLineTuple.lineLength)">
                             @($"{columnNumber}")
                         </div>
                     </div>
@@ -148,21 +148,21 @@
                 </div>
 
                 <div class="luth_te_text-editor-footer-entry">
-                    @if (model.OnlyRowEndingKind is null)
+                    @if (model.OnlyLineEndKind is null)
                     {
                         <text>has:mixed </text>
                     }
                     else
                     {
-                        <text>has:@model.OnlyRowEndingKind.Value.AsFriendlyName() </text>
+                        <text>has:@model.OnlyLineEndKind.Value.AsFriendlyName() </text>
                     }
 
                     use:
                     <select @onchange="SelectRowEndingKindOnChange">
-                        @foreach (var rowEndingKind in RowEndingKind.Linefeed.GetRowEndingsUserAllowedToUse())
+                        @foreach (var rowEndingKind in LineEndKind.LineFeed.GetRowEndingsUserAllowedToUse())
                         {
                             <option value="@rowEndingKind.ToString()"
-                                    selected="@(model.UsingRowEndingKind == rowEndingKind)">
+                                    selected="@(model.UsingLineEndKind == rowEndingKind)">
                                 @rowEndingKind.AsFriendlyName()
                             </option>
                         }

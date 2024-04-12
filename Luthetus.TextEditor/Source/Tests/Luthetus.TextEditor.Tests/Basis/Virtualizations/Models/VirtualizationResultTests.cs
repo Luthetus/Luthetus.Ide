@@ -10,7 +10,7 @@ namespace Luthetus.TextEditor.Tests.Basis.Virtualizations.Models;
 public record VirtualizationResultTests
 {
     /// <summary>
-    /// <see cref="VirtualizationResult{T}.VirtualizationResult(ImmutableArray{VirtualizationEntry{T}}, VirtualizationBoundary, VirtualizationBoundary, VirtualizationBoundary, VirtualizationBoundary, TextEditorMeasurements, CharAndRowMeasurements)"/>
+    /// <see cref="VirtualizationResult{T}.VirtualizationResult(ImmutableArray{VirtualizationEntry{T}}, VirtualizationBoundary, VirtualizationBoundary, VirtualizationBoundary, VirtualizationBoundary, TextEditorMeasurements, CharAndLineMeasurements)"/>
     /// <br/>----<br/>
     /// <see cref="VirtualizationResult{T}.EntryList"/>
     /// <see cref="VirtualizationResult{T}.LeftVirtualizationBoundary"/>
@@ -18,7 +18,7 @@ public record VirtualizationResultTests
     /// <see cref="VirtualizationResult{T}.TopVirtualizationBoundary"/>
     /// <see cref="VirtualizationResult{T}.BottomVirtualizationBoundary"/>
     /// <see cref="VirtualizationResult{T}.TextEditorMeasurements"/>
-    /// <see cref="VirtualizationResult{T}.CharAndRowMeasurements"/>
+    /// <see cref="VirtualizationResult{T}.CharAndLineMeasurements"/>
     /// </summary>
     [Fact]
 	public void Constructor()

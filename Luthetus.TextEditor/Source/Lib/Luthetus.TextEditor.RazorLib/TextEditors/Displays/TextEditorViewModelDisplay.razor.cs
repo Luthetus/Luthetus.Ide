@@ -920,7 +920,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             if (model is null || viewModel is null)
                 return (0, 0);
 
-            var charMeasurements = viewModel.VirtualizationResult.CharAndRowMeasurements;
+            var charMeasurements = viewModel.VirtualizationResult.CharAndLineMeasurements;
 
             var relativeCoordinatesOnClick = await JsRuntime.InvokeAsync<RelativeCoordinates>(
                     "luthetusTextEditor.getRelativePosition",
@@ -937,10 +937,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 positionY += relativeCoordinatesOnClick.RelativeScrollTop;
             }
 
-            var rowIndex = (int)(positionY / charMeasurements.RowHeight);
+            var rowIndex = (int)(positionY / charMeasurements.LineHeight);
 
-            rowIndex = rowIndex > model.RowCount - 1
-                ? model.RowCount - 1
+            rowIndex = rowIndex > model.LineCount - 1
+                ? model.LineCount - 1
                 : rowIndex;
 
             int columnIndexInt;

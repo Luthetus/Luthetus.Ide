@@ -59,7 +59,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
         TextEditorViewModel textEditorViewModel,
         TextEditorOptions textEditorOptions)
     {
-		var characterWidthInPixels = textEditorViewModel.VirtualizationResult.CharAndRowMeasurements.CharacterWidth;
+		var characterWidthInPixels = textEditorViewModel.VirtualizationResult.CharAndLineMeasurements.CharacterWidth;
 		var characterWidthInPixelsInvariantCulture = characterWidthInPixels.ToCssValue();
 		return $"width: {characterWidthInPixelsInvariantCulture}px;";
 	}
@@ -120,7 +120,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 							throttleEventOnKeyDown.TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Other)
 						{
                             // Only the last line of the terminal is editable.
-                            if (primaryCursorModifier.LineIndex == modelModifier.RowCount - 1)
+                            if (primaryCursorModifier.LineIndex == modelModifier.LineCount - 1)
 							{
                                 // Furthermore, if a selection contains more than 1 row,
                                 // it would therefore edit a line other than the last.

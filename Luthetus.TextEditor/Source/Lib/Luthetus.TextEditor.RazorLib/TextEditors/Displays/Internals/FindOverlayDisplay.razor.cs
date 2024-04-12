@@ -165,7 +165,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private void MoveActiveIndexMatchedTextSpanUp()
     {
-        var findOverlayPresentationModel = RenderBatch.Model!.PresentationModelsList.FirstOrDefault(
+        var findOverlayPresentationModel = RenderBatch.Model!.PresentationModelList.FirstOrDefault(
             x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
         if (findOverlayPresentationModel is null)
@@ -199,7 +199,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private void MoveActiveIndexMatchedTextSpanDown()
     {
-        var findOverlayPresentationModel = RenderBatch.Model!.PresentationModelsList.FirstOrDefault(
+        var findOverlayPresentationModel = RenderBatch.Model!.PresentationModelList.FirstOrDefault(
             x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
         if (findOverlayPresentationModel is null)

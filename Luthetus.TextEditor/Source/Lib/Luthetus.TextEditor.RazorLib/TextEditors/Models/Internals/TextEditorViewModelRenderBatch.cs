@@ -51,10 +51,10 @@ public record TextEditorRenderBatch(
         if (!ViewModelDisplayOptions.IncludeGutterComponent)
             return 0;
 
-        var mostDigitsInARowLineNumber = Model!.RowCount.ToString().Length;
+        var mostDigitsInARowLineNumber = Model!.LineCount.ToString().Length;
 
         var gutterWidthInPixels = mostDigitsInARowLineNumber *
-            ViewModel!.VirtualizationResult.CharAndRowMeasurements.CharacterWidth;
+            ViewModel!.VirtualizationResult.CharAndLineMeasurements.CharacterWidth;
 
         gutterWidthInPixels += TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS + TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS;
 

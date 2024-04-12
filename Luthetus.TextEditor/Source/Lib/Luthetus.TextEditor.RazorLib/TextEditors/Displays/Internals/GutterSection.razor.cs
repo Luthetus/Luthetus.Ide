@@ -13,12 +13,12 @@ public partial class GutterSection : ComponentBase
 
     private string GetGutterStyleCss(int index)
     {
-        var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements;
+        var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements;
 
-        var topInPixelsInvariantCulture = (index * measurements.RowHeight).ToCssValue();
+        var topInPixelsInvariantCulture = (index * measurements.LineHeight).ToCssValue();
         var top = $"top: {topInPixelsInvariantCulture}px;";
 
-        var heightInPixelsInvariantCulture = measurements.RowHeight.ToCssValue();
+        var heightInPixelsInvariantCulture = measurements.LineHeight.ToCssValue();
         var height = $"height: {heightInPixelsInvariantCulture}px;";
 
         var widthInPixelsInvariantCulture = RenderBatch.GutterWidthInPixels.ToCssValue();

@@ -94,7 +94,7 @@ public class TextEditorCommandDefaultFunctions
                 return;
 
             var clipboard = await commandArgs.ClipboardService.ReadClipboard().ConfigureAwait(false);
-            modelModifier.EditByInsertion(clipboard, cursorModifierBag, CancellationToken.None);
+            modelModifier.Insert(clipboard, cursorModifierBag, CancellationToken.None);
         };
     }
 
@@ -313,7 +313,7 @@ public class TextEditorCommandDefaultFunctions
                 };
             }
 
-            modelModifier.EditByInsertion(
+            modelModifier.Insert(
                 selectedText,
                 new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier>() { new(cursorForInsertion) }),
                 CancellationToken.None);
@@ -354,7 +354,7 @@ public class TextEditorCommandDefaultFunctions
                     Key<TextEditorViewModel>.Empty,
                     new List<TextEditorCursorModifier> { new TextEditorCursorModifier(insertionCursor) });
 
-                modelModifier.EditByInsertion(
+                modelModifier.Insert(
                     KeyboardKeyFacts.WhitespaceCharacters.TAB.ToString(),
                     insertionCursorModifierBag,
                     CancellationToken.None);
@@ -514,7 +514,7 @@ public class TextEditorCommandDefaultFunctions
             primaryCursorModifier.LineIndex = primaryCursorModifier.LineIndex;
             primaryCursorModifier.ColumnIndex = lengthOfRow;
 
-            modelModifier.EditByInsertion("\n", cursorModifierBag, CancellationToken.None);
+            modelModifier.Insert("\n", cursorModifierBag, CancellationToken.None);
             return Task.CompletedTask;
         };
     }
@@ -537,7 +537,7 @@ public class TextEditorCommandDefaultFunctions
             primaryCursorModifier.LineIndex = primaryCursorModifier.LineIndex;
             primaryCursorModifier.ColumnIndex = 0;
 
-            modelModifier.EditByInsertion("\n", cursorModifierBag, CancellationToken.None);
+            modelModifier.Insert("\n", cursorModifierBag, CancellationToken.None);
 
             if (primaryCursorModifier.LineIndex > 1)
             {
@@ -799,7 +799,7 @@ public class TextEditorCommandDefaultFunctions
             elementPositionInPixels = elementPositionInPixels with
             {
                 Top = elementPositionInPixels.Top +
-                    (.9 * viewModelModifier.ViewModel.VirtualizationResult.CharAndRowMeasurements.RowHeight)
+                    (.9 * viewModelModifier.ViewModel.VirtualizationResult.CharAndLineMeasurements.LineHeight)
             };
 
             await commandArgs.HandleMouseStoppedMovingEventAsyncFunc.Invoke(new MouseEventArgs
