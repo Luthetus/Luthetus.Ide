@@ -581,59 +581,22 @@ public partial class TextEditorModelModifier
                     cursorModifierBag.ViewModelKey,
                     new List<TextEditorCursorModifier> { cursor });
 
+                var valueToInsert = keyboardEventArgs.Key.First().ToString();
+
+                if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+                    valueToInsert = UsingRowEndingKind.AsCharacters();
+                else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.TAB_CODE)
+                    valueToInsert = "\t";
+
                 Insert(
-                    keyboardEventArgs,
+                    valueToInsert,
                     singledCursorModifierBag,
                     cancellationToken);
             }
         }
     }
 
-    public void EditByInsertion(
-        string content,
-        TextEditorCursorModifierBag cursorModifierBag,
-        CancellationToken cancellationToken)
-    {
-        var localContent = content.Replace("\r\n", "\n");
-
-        for (int i = cursorModifierBag.List.Count - 1; i >= 0; i--)
-        {
-            var cursor = cursorModifierBag.List[i];
-
-            var singledCursorModifierBag = new TextEditorCursorModifierBag(
-                cursorModifierBag.ViewModelKey,
-                new List<TextEditorCursorModifier> { cursor });
-
-            PerformInsertions(
-                keyboardEventArgs,
-                singledCursorModifierBag,
-                cancellationToken);
-
-            foreach (var character in localContent)
-            {
-                // TODO: This needs to be rewritten everything should be inserted at the same time not a foreach loop insertion for each character
-                var code = character switch
-                {
-                    '\r' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
-                    '\n' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
-                    '\t' => KeyboardKeyFacts.WhitespaceCodes.TAB_CODE,
-                    ' ' => KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE,
-                    _ => character.ToString(),
-                };
-
-                HandleKeyboardEvent(
-                    new KeyboardEventArgs
-                    {
-                        Code = code,
-                        Key = character.ToString(),
-                    },
-                    singledCursorModifierBag,
-                    CancellationToken.None);
-            }
-        }
-    }
-
-    private void Insert(
+    public void Insert(
         string value,
         TextEditorCursorModifierBag cursorModifierBag,
         CancellationToken cancellationToken)
@@ -649,9 +612,10 @@ public partial class TextEditorModelModifier
 
         EnsureUndoPoint(TextEditKind.Insertion);
 
-        // TODO: This foreach needs to iterate backwards using a for loop in order to support multi-cursor editing.
-        foreach (var cursorModifier in cursorModifierBag.List)
+        for (int i = cursorModifierBag.List.Count - 1; i >= 0; i--)
         {
+            var cursorModifier = cursorModifierBag.List[i];
+
             if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
             {
                 var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
@@ -674,29 +638,44 @@ public partial class TextEditorModelModifier
                 cursorModifier.SetColumnIndexAndPreferred(lowerColumnIndex);
             }
 
-            var startOfRowPositionIndex = this.GetLineStartPositionIndexInclusive(cursorModifier.LineIndex);
-            var cursorPositionIndex = startOfRowPositionIndex + cursorModifier.ColumnIndex;
+            InsertMetaData(value, cursorModifier, cancellationToken);
+            InsertValue(value, cursorModifier, cancellationToken);
+        }
+    }
 
-            // If cursor is out of bounds then continue
-            if (cursorPositionIndex > _charList.Count)
-                continue;
+    private void InsertMetaData(
+        string value,
+        TextEditorCursorModifier cursorModifier,
+        CancellationToken cancellationToken)
+    {
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
+        {
+            _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
+            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
+            _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
+        }
 
-            var wasTabCode = false;
-            var wasEnterCode = false;
+        var startOfRowPositionIndex = this.GetLineStartPositionIndexInclusive(cursorModifier.LineIndex);
+        var cursorPositionIndex = startOfRowPositionIndex + cursorModifier.ColumnIndex;
 
-            var characterValueToInsert = keyboardEventArgs.Key.First();
+        // If cursor is out of bounds then continue
+        if (cursorPositionIndex > _charList.Count)
+            return;
 
-            if (KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code))
-            {
-                characterValueToInsert = KeyboardKeyFacts.ConvertWhitespaceCodeToCharacter(keyboardEventArgs.Code);
+        for (int characterIndex = 0; characterIndex < value.Length; characterIndex++)
+        {
+            char character = value[characterIndex];
 
-                wasTabCode = KeyboardKeyFacts.WhitespaceCodes.TAB_CODE == keyboardEventArgs.Code;
-                wasEnterCode = KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keyboardEventArgs.Code;
-            }
+            var isTab = character == '\t';
+            var isCarriageReturn = character == '\r';
+            var isLinefeed = character == '\n';
+
+            if (isCarriageReturn && characterIndex != value.Length - 1 && value[1 + characterIndex] == '\n')
+                throw new NotImplementedException("CarriageReturn Linefeed was found");
 
             var characterCountInserted = 1;
 
-            if (wasEnterCode)
+            if (isLinefeed || isCarriageReturn)
             {
                 var rowEndingKindToInsert = UsingRowEndingKind;
 
@@ -722,32 +701,24 @@ public partial class TextEditorModelModifier
             }
             else
             {
-                if (wasTabCode)
+                if (isTab)
                 {
                     var index = _tabKeyPositionsList.FindIndex(x => x >= cursorPositionIndex);
 
                     if (index == -1)
                     {
-                        TabKeyPositionsList.Add(cursorPositionIndex);
+                        _tabKeyPositionsList.Add(cursorPositionIndex);
                     }
                     else
                     {
-                        for (var i = index; i < TabKeyPositionsList.Count; i++)
+                        for (var i = index; i < _tabKeyPositionsList.Count; i++)
                         {
                             _tabKeyPositionsList[i]++;
                         }
 
-                        TabKeyPositionsList.Insert(index, cursorPositionIndex);
+                        _tabKeyPositionsList.Insert(index, cursorPositionIndex);
                     }
                 }
-
-                var richCharacterToInsert = new RichCharacter
-                {
-                    Value = characterValueToInsert,
-                    DecorationByte = default,
-                };
-
-                __Insert(cursorPositionIndex, richCharacterToInsert);
 
                 cursorModifier.ColumnIndex++;
                 cursorModifier.PreferredColumnIndex = cursorModifier.ColumnIndex;
@@ -763,7 +734,7 @@ public partial class TextEditorModelModifier
                 }
             }
 
-            if (!wasTabCode)
+            if (!isTab)
             {
                 var firstTabKeyPositionIndexToModify = _tabKeyPositionsList.FindIndex(x => x >= cursorPositionIndex);
 
@@ -793,27 +764,48 @@ public partial class TextEditorModelModifier
                     presentationModel.PendingCalculation?.TextModificationsSinceRequestList.Add(textModification);
                 }
             }
-        }
 
-        // TODO: Fix tracking the MostCharactersOnASingleRowTuple this way is possibly inefficient - should instead only check the rows that changed
-        {
-            (int rowIndex, int rowLength) localMostCharactersOnASingleRowTuple = (0, 0);
-
-            for (var i = 0; i < LineEndPositionList.Count; i++)
+            // TODO: Fix tracking the MostCharactersOnASingleRowTuple this way is possibly inefficient - should instead only check the rows that changed
             {
-                var lengthOfRow = this.GetLengthOfLine(i);
+                (int rowIndex, int rowLength) localMostCharactersOnASingleRowTuple = (0, 0);
 
-                if (lengthOfRow > localMostCharactersOnASingleRowTuple.rowLength)
+                for (var i = 0; i < LineEndPositionList.Count; i++)
                 {
-                    localMostCharactersOnASingleRowTuple = (i, lengthOfRow);
+                    var lengthOfRow = this.GetLengthOfLine(i);
+
+                    if (lengthOfRow > localMostCharactersOnASingleRowTuple.rowLength)
+                    {
+                        localMostCharactersOnASingleRowTuple = (i, lengthOfRow);
+                    }
                 }
+
+                localMostCharactersOnASingleRowTuple = (localMostCharactersOnASingleRowTuple.rowIndex,
+                    localMostCharactersOnASingleRowTuple.rowLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+
+                _mostCharactersOnASingleRowTuple = localMostCharactersOnASingleRowTuple;
             }
-
-            localMostCharactersOnASingleRowTuple = (localMostCharactersOnASingleRowTuple.rowIndex,
-                localMostCharactersOnASingleRowTuple.rowLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
-
-            _mostCharactersOnASingleRowTuple = localMostCharactersOnASingleRowTuple;
         }
+    }
+
+    private void InsertValue(
+        string value,
+        TextEditorCursorModifier cursorModifier,
+        CancellationToken cancellationToken)
+    {
+        var startOfRowPositionIndex = this.GetLineStartPositionIndexInclusive(cursorModifier.LineIndex);
+        var cursorPositionIndex = startOfRowPositionIndex + cursorModifier.ColumnIndex;
+
+        // If cursor is out of bounds then continue
+        if (cursorPositionIndex > _charList.Count)
+            return;
+
+        __InsertRange(
+            cursorPositionIndex,
+            value.Select(character => new RichCharacter
+                {
+                    Value = character,
+                    DecorationByte = 0,
+                }));
     }
 
     public void DeleteTextByMotion(

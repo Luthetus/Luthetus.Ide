@@ -72,10 +72,8 @@ public static class TextEditorModelHelper
 			lineIndex = 0;
 
 		var startOfLineTupleInclusive = model.GetLineOpening(lineIndex);
-
 		// TODO: Index was out of range exception on 2023-04-18
 		var endOfLineTupleExclusive = model.LineEndPositionList[lineIndex];
-
 		var lineLengthWithLineEndings = endOfLineTupleExclusive.EndPositionIndexExclusive - startOfLineTupleInclusive.EndPositionIndexExclusive;
 
 		if (includeLineEndingCharacters)
@@ -102,7 +100,6 @@ public static class TextEditorModelHelper
 			: lineCountAvailable;
 
 		var endingLineIndexExclusive = startingLineIndex + lineCountToReturn;
-
 		var lineList = new List<List<RichCharacter>>();
 
 		if (lineCountToReturn < 0 || startingLineIndex < 0 || endingLineIndexExclusive < 0)
@@ -112,7 +109,6 @@ public static class TextEditorModelHelper
 		{
             // Previous line's end-position-exclusive is this row's start.
             var startOfLineInclusive = model.GetLineStartPositionIndexInclusive(i);
-
 			var endOfLineExclusive = model.LineEndPositionList[i].EndPositionIndexExclusive;
 
             var line = model.GetRichCharacters(
@@ -204,7 +200,6 @@ public static class TextEditorModelHelper
 			return string.Empty;
         
 		var startPositionIndexInclusive = model.GetPositionIndex(startLineIndex, 0);
-
         var lastLineIndexExclusive = startLineIndex + count;
 		int endPositionIndexExclusive;
 
@@ -231,12 +226,11 @@ public static class TextEditorModelHelper
 	{
 		var previousCharacter = model.GetCharacter(positionIndex - 1);
 		var currentCharacter = model.GetCharacter(positionIndex);
-
+        
 		var previousCharacterKind = CharacterKindHelper.CharToCharacterKind(previousCharacter);
 		var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(currentCharacter);
-
+        
 		var lineInformation = model.GetLineInformationFromPositionIndex(positionIndex);
-
 		var columnIndex = positionIndex - lineInformation.LineStartPositionIndexInclusive;
 
 		if (previousCharacterKind == CharacterKind.LetterOrDigit && currentCharacterKind == CharacterKind.LetterOrDigit)
@@ -375,7 +369,6 @@ public static class TextEditorModelHelper
 			return -1;
 
 		var lastPositionIndexOnRow = model.LineEndPositionList[lineIndex].EndPositionIndexExclusive - 1;
-
 		var positionIndex = model.GetPositionIndex(lineIndex, columnIndex);
 
 		if (moveBackwards)
@@ -473,7 +466,6 @@ public static class TextEditorModelHelper
 				wordColumnIndexStartInclusive = 0;
 
 			var wordLength = columnIndex - wordColumnIndexStartInclusive;
-
 			var wordPositionIndexStartInclusive = wordPositionIndexEndExclusive - wordLength;
 
 			return model.GetString(wordPositionIndexStartInclusive, wordLength);
@@ -485,7 +477,6 @@ public static class TextEditorModelHelper
 	public static string? ReadNextWordOrDefault(this ITextEditorModel model, int lineIndex, int columnIndex)
 	{
 		var wordPositionIndexStartInclusive = model.GetPositionIndex(lineIndex, columnIndex);
-
 		var wordCharacterKind = model.GetCharacterKind(wordPositionIndexStartInclusive);
 
 		if (wordCharacterKind == CharacterKind.LetterOrDigit)
