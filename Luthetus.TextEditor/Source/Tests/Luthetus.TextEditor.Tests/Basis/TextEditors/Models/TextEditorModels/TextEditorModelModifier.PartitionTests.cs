@@ -11,7 +11,7 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 public partial class TextEditorModelModifierTests
 {
     /// <summary>
-    /// <see cref="TextEditorModelModifier.PartitionList_Add(RichCharacter)"/>
+    /// <see cref="TextEditorModelModifier.__Add(RichCharacter)"/>
     /// </summary>
     [Fact]
     public void PartitionList_Add()
@@ -51,7 +51,7 @@ public partial class TextEditorModelModifierTests
             var firstPartition = modifier.PartitionList.First();
 
             var richCharacter = new RichCharacter { Value = sourceText[i] };
-            modifier.PartitionList_Add(richCharacter);
+            modifier.__Add(richCharacter);
 
             if (i < model.PartitionSize)
             {
@@ -110,7 +110,7 @@ public partial class TextEditorModelModifierTests
             }
 
             var richCharacter = new RichCharacter { Value = sourceText[i] };
-            modifier.PartitionList_Add(richCharacter);
+            modifier.__Add(richCharacter);
 
             if (i == model.PartitionSize)
             {

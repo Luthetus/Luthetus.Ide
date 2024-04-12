@@ -5,7 +5,7 @@ namespace Luthetus.TextEditor.Tests.Basis.Cursors.Models;
 /// <summary>
 /// <see cref="TextEditorCursorModifier"/>
 /// <br/>----<br/>
-/// <see cref="TextEditorCursorModifier.RowIndex"/>
+/// <see cref="TextEditorCursorModifier.LineIndex"/>
 /// <see cref="TextEditorCursorModifier.ColumnIndex"/>
 /// <see cref="TextEditorCursorModifier.PreferredColumnIndex"/>
 /// <see cref="TextEditorCursorModifier.IsPrimaryCursor"/>
@@ -33,7 +33,7 @@ public class TextEditorCursorModifierTests
 
         var cursorModifier = new TextEditorCursorModifier(cursor);
 
-        Assert.Equal(cursor.RowIndex, cursorModifier.RowIndex);
+        Assert.Equal(cursor.LineIndex, cursorModifier.LineIndex);
         Assert.Equal(cursor.ColumnIndex, cursorModifier.ColumnIndex);
         Assert.Equal(cursor.PreferredColumnIndex, cursorModifier.PreferredColumnIndex);
         Assert.Equal(cursor.IsPrimaryCursor, cursorModifier.IsPrimaryCursor);
@@ -45,9 +45,9 @@ public class TextEditorCursorModifierTests
         {
             // RowIndex
             {
-                var inRowIndex = cursorModifier.RowIndex;
-                cursorModifier.RowIndex++;
-                Assert.Equal(inRowIndex + 1, cursorModifier.RowIndex);
+                var inRowIndex = cursorModifier.LineIndex;
+                cursorModifier.LineIndex++;
+                Assert.Equal(inRowIndex + 1, cursorModifier.LineIndex);
             }
 
             // ColumnIndex
@@ -102,7 +102,7 @@ public class TextEditorCursorModifierTests
 
         var outCursor = cursorModifier.ToCursor();
 
-        Assert.Equal(cursorModifier.RowIndex, outCursor.RowIndex);
+        Assert.Equal(cursorModifier.LineIndex, outCursor.LineIndex);
         Assert.Equal(cursorModifier.ColumnIndex, outCursor.ColumnIndex);
         Assert.Equal(cursorModifier.PreferredColumnIndex, outCursor.PreferredColumnIndex);
         Assert.Equal(cursorModifier.IsPrimaryCursor, outCursor.IsPrimaryCursor);

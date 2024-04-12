@@ -64,14 +64,14 @@
                 var amountOfLeftInCharacterWidthUnits = virtualizedRow.LeftInPixels /
                 RenderBatch.ViewModel.VirtualizationResult!.CharAndRowMeasurements.CharacterWidth;
 
-                var lengthOfRow = RenderBatch.Model!.GetLengthOfRow(virtualizedRow.Index, true);
+                var lengthOfRow = RenderBatch.Model!.GetLengthOfLine(virtualizedRow.Index, true);
 
                 if (amountOfLeftInCharacterWidthUnits < lengthOfRow)
                 {
                     var rowEndingTuple = RenderBatch.Model!.RowEndingPositionsList[virtualizedRow.Index];
 
                     <span class="luth_te_newline">
-                        @rowEndingTuple.RowEndingKind.AsCharactersHtmlEscaped()
+                        @rowEndingTuple.LineEndKind.AsCharactersHtmlEscaped()
                     </span>
                 }
             }

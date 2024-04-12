@@ -308,7 +308,7 @@ public partial interface ITextEditorService
                 if (modelModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.ModifyUsingRowEndingKind(rowEndingKind);
+                modelModifier.SetUsingRowEndingKind(rowEndingKind);
                 return Task.CompletedTask;
             };
         }
@@ -324,7 +324,7 @@ public partial interface ITextEditorService
                 if (modelModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.ModifyResourceData(resourceUri, resourceLastWriteTime);
+                modelModifier.SetResourceData(resourceUri, resourceLastWriteTime);
                 return Task.CompletedTask;
             };
         }
@@ -341,8 +341,8 @@ public partial interface ITextEditorService
                 if (modelModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.ModifyContent(content);
-                modelModifier.ModifyResourceData(resourceUri, resourceLastWriteTime);
+                modelModifier.SetContent(content);
+                modelModifier.SetResourceData(resourceUri, resourceLastWriteTime);
                 return Task.CompletedTask;
             };
         }
@@ -596,7 +596,7 @@ public partial interface ITextEditorService
                         if (i < 0 || i >= localCharList.Count)
                             continue;
 
-                        modelModifier.PartitionList_SetItem(i, null, textEditorTextSpan.DecorationByte);
+                        modelModifier.__SetItem(i, null, textEditorTextSpan.DecorationByte);
                         positionsPainted.Add(i);
                     }
                 }
@@ -606,7 +606,7 @@ public partial interface ITextEditorService
                     if (!positionsPainted.Contains(i))
                     {
                         // DecorationByte of 0 is to be 'None'
-                        modelModifier.PartitionList_SetItem(i, null, 0);
+                        modelModifier.__SetItem(i, null, 0);
                     }
                 }
 

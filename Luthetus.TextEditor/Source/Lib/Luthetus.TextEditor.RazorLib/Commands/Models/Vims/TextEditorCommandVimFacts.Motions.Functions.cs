@@ -30,18 +30,18 @@ public static partial class TextEditorCommandVimFacts
                     primaryCursorModifier.PreferredColumnIndex = columnIndex;
                 }
 
-                var lengthOfRow = modelModifier.GetLengthOfRow(primaryCursorModifier.RowIndex);
+                var lengthOfRow = modelModifier.GetLengthOfLine(primaryCursorModifier.LineIndex);
 
                 if (primaryCursorModifier.ColumnIndex == lengthOfRow &&
-                    primaryCursorModifier.RowIndex < modelModifier.RowCount - 1)
+                    primaryCursorModifier.LineIndex < modelModifier.RowCount - 1)
                 {
                     MutateIndexCoordinatesAndPreferredColumnIndex(0);
-                    primaryCursorModifier.RowIndex++;
+                    primaryCursorModifier.LineIndex++;
                 }
                 else if (primaryCursorModifier.ColumnIndex != lengthOfRow)
                 {
                     var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-                        primaryCursorModifier.RowIndex,
+                        primaryCursorModifier.LineIndex,
                         primaryCursorModifier.ColumnIndex,
                         false);
 
@@ -54,7 +54,7 @@ public static partial class TextEditorCommandVimFacts
                 if (TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
                 {
                     primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(
-                        primaryCursorModifier.RowIndex,
+                        primaryCursorModifier.LineIndex,
                         primaryCursorModifier.ColumnIndex);
                 }
 
@@ -88,18 +88,18 @@ public static partial class TextEditorCommandVimFacts
                 primaryCursorModifier.PreferredColumnIndex = columnIndex;
             }
 
-            var lengthOfRow = modelModifier.GetLengthOfRow(primaryCursorModifier.RowIndex);
+            var lengthOfRow = modelModifier.GetLengthOfLine(primaryCursorModifier.LineIndex);
 
             if (primaryCursorModifier.ColumnIndex == lengthOfRow &&
-                primaryCursorModifier.RowIndex < modelModifier.RowCount - 1)
+                primaryCursorModifier.LineIndex < modelModifier.RowCount - 1)
             {
                 MutateIndexCoordinatesAndPreferredColumnIndex(0);
-                primaryCursorModifier.RowIndex++;
+                primaryCursorModifier.LineIndex++;
             }
             else if (primaryCursorModifier.ColumnIndex != lengthOfRow)
             {
                 var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-                    primaryCursorModifier.RowIndex,
+                    primaryCursorModifier.LineIndex,
                     primaryCursorModifier.ColumnIndex,
                     false);
 
@@ -170,11 +170,11 @@ public static partial class TextEditorCommandVimFacts
 
                 if (primaryCursorModifier.ColumnIndex == 0)
                 {
-                    if (primaryCursorModifier.RowIndex != 0)
+                    if (primaryCursorModifier.LineIndex != 0)
                     {
-                        primaryCursorModifier.RowIndex--;
+                        primaryCursorModifier.LineIndex--;
 
-                        var lengthOfRow = modelModifier.GetLengthOfRow(primaryCursorModifier.RowIndex);
+                        var lengthOfRow = modelModifier.GetLengthOfLine(primaryCursorModifier.LineIndex);
 
                         MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
                     }
@@ -182,7 +182,7 @@ public static partial class TextEditorCommandVimFacts
                 else
                 {
                     var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-                        primaryCursorModifier.RowIndex,
+                        primaryCursorModifier.LineIndex,
                         primaryCursorModifier.ColumnIndex,
                         true);
 
@@ -279,29 +279,28 @@ public static partial class TextEditorCommandVimFacts
                     if (previousAnchorPositionIndex < previousEndingPositionIndex)
                     {
                         // Anchor went from being the lower bound to the upper bound.
-                        var rowDataAnchorIsOn = modelModifier.GetRowInformationFromPositionIndex(previousAnchorPositionIndex.Value);
+                        var rowDataAnchorIsOn = modelModifier.GetLineInformationFromPositionIndex(previousAnchorPositionIndex.Value);
 
-                        primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier.RowEndingPositionsList[
-                            rowDataAnchorIsOn.RowIndex].EndPositionIndexExclusive;
+                        primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier.LineEndPositionList[
+                            rowDataAnchorIsOn.LineIndex].EndPositionIndexExclusive;
                     }
 
-                    var startingPositionOfRow = modelModifier.GetRowEndingThatCreatedRow(primaryCursorModifier.RowIndex)
-                        .EndPositionIndexExclusive;
+                    var rowStartPositionInclusive = modelModifier.GetLineStartPositionIndexInclusive(primaryCursorModifier.LineIndex);
 
-                    primaryCursorModifier.SelectionEndingPositionIndex = startingPositionOfRow;
+                    primaryCursorModifier.SelectionEndingPositionIndex = rowStartPositionInclusive;
                 }
                 else if (nextEndingPositionIndex >= primaryCursorModifier.SelectionAnchorPositionIndex)
                 {
                     if (previousAnchorPositionIndex > previousEndingPositionIndex)
                     {
                         // Anchor went from being the upper bound to the lower bound.
-                        var rowDataAnchorIsOn = modelModifier.GetRowInformationFromPositionIndex(previousAnchorPositionIndex.Value);
+                        var rowDataAnchorIsOn = modelModifier.GetLineInformationFromPositionIndex(previousAnchorPositionIndex.Value);
 
-                        primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier.GetRowEndingThatCreatedRow(rowDataAnchorIsOn.RowIndex - 1)
-                            .EndPositionIndexExclusive;
+                        primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier.GetLineStartPositionIndexInclusive(
+                            rowDataAnchorIsOn.LineIndex - 1);
                     }
 
-                    var endingPositionOfRow = modelModifier.RowEndingPositionsList[primaryCursorModifier.RowIndex]
+                    var endingPositionOfRow = modelModifier.LineEndPositionList[primaryCursorModifier.LineIndex]
                         .EndPositionIndexExclusive;
 
                     primaryCursorModifier.SelectionEndingPositionIndex = endingPositionOfRow;

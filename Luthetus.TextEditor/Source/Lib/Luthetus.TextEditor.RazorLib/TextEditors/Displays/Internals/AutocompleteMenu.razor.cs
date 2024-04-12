@@ -67,7 +67,7 @@ public partial class AutocompleteMenu : ComponentBase
         if (primaryCursor.ColumnIndex > 0)
         {
             var word = RenderBatch.Model!.ReadPreviousWordOrDefault(
-                primaryCursor.RowIndex,
+                primaryCursor.LineIndex,
                 primaryCursor.ColumnIndex);
 
             List<MenuOptionRecord> menuOptionRecordsList = new();

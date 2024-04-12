@@ -10,102 +10,128 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 public static class TextEditorModelHelper
 {
-	/// <summary>
-	/// This returns the position index of the line-ending character which created the row in question.
-	/// To get the first character on the row, add 1 to the position index.
-	/// <br/><br/>
-	/// The cursor is a separate Blazor Component and at times will try to access out of bounds locations.
-	/// <br/><br/>
-	/// When cursor accesses out of bounds location return the final RowIndex, and that row's final ColumnIndex
-	/// </summary>
-	public static RowEnding GetRowEndingThatCreatedRow(
-		this ITextEditorModel model, int rowIndex)
+    /// <summary>
+    /// This method is awkwardly worded, and hard to understand.<br/><br/>
+    /// In short, one provides a rowIndex, and gets the line-ending of the previous row.<br/><br/>
+	/// So, rowIndex of 1 returns the line-ending of row 0.<br/><br/>
+	/// And, rowIndex of 2 returns the line-ending of row 1, etc...<br/><br/>
+	/// rowIndex of 0 returns an object representing the "StartOfFile"<br/><br/>
+    /// </summary>
+    public static LineEnd GetLineOpening(this ITextEditorModel model, int lineIndex)
 	{
-		if (rowIndex > model.RowEndingPositionsList.Count - 1)
-			rowIndex = model.RowEndingPositionsList.Count - 1;
+		if (lineIndex > model.LineEndPositionList.Count - 1)
+			lineIndex = model.LineEndPositionList.Count - 1;
 
-		if (rowIndex > 0)
-			return model.RowEndingPositionsList[rowIndex - 1];
+		if (lineIndex > 0)
+			return model.LineEndPositionList[lineIndex - 1];
 
 		return new(0, 0, RowEndingKind.StartOfFile);
 	}
 
-	/// <summary>Returns the Length of a row however it does not include the line ending characters by default. To include line ending characters the parameter <see cref="includeLineEndingCharacters" /> must be true.</summary>
-	public static int GetLengthOfRow(
-		this ITextEditorModel model, int rowIndex, bool includeLineEndingCharacters = false)
+    /// <summary>
+    /// This method is awkwardly worded, and hard to understand.<br/><br/>
+    /// In short, one provides a rowIndex, and gets the line-ending of that specific row.<br/><br/>
+    /// So, rowIndex of 1 returns the line-ending of row 1.<br/><br/>
+    /// And, rowIndex of 2 returns the line-ending of row 2, etc...<br/><br/>
+    /// The last rowIndex returns an object representing the "EndOfFile"<br/><br/>
+    /// </summary>
+    public static LineEnd GetLineClosing(this ITextEditorModel model, int lineIndex)
+    {
+        if (lineIndex > model.LineEndPositionList.Count - 1)
+            lineIndex = model.LineEndPositionList.Count - 1;
+
+        if (lineIndex >= 0)
+            return model.LineEndPositionList[lineIndex];
+
+        return model.LineEndPositionList[^1];
+    }
+
+    public static int GetLineStartPositionIndexInclusive(this ITextEditorModel model, int lineIndex)
+    {
+        return model.GetLineOpening(lineIndex).EndPositionIndexExclusive;
+    }
+
+    public static int GetLineEndPositionIndexExclusive(this ITextEditorModel model, int lineIndex)
+    {
+        return model.GetLineClosing(lineIndex).EndPositionIndexExclusive;
+    }
+
+    /// <summary>
+	/// Returns the Length of a line however it does not include the line ending characters by default.
+	/// To include line ending characters the parameter <see cref="includeLineEndingCharacters" /> must be true.
+	/// </summary>
+    public static int GetLengthOfLine(this ITextEditorModel model, int lineIndex, bool includeLineEndingCharacters = false)
 	{
-		if (!model.RowEndingPositionsList.Any())
+		if (!model.LineEndPositionList.Any())
 			return 0;
 
-		if (rowIndex > model.RowEndingPositionsList.Count - 1)
-			rowIndex = model.RowEndingPositionsList.Count - 1;
+		if (lineIndex > model.LineEndPositionList.Count - 1)
+			lineIndex = model.LineEndPositionList.Count - 1;
 
-		if (rowIndex < 0)
-			rowIndex = 0;
+		if (lineIndex < 0)
+			lineIndex = 0;
 
-		var startOfRowTupleInclusive = model.GetRowEndingThatCreatedRow(rowIndex);
+		var startOfLineTupleInclusive = model.GetLineOpening(lineIndex);
 
 		// TODO: Index was out of range exception on 2023-04-18
-		var endOfRowTupleExclusive = model.RowEndingPositionsList[rowIndex];
+		var endOfLineTupleExclusive = model.LineEndPositionList[lineIndex];
 
-		var lengthOfRowWithLineEndings = endOfRowTupleExclusive.EndPositionIndexExclusive - startOfRowTupleInclusive.EndPositionIndexExclusive;
+		var lineLengthWithLineEndings = endOfLineTupleExclusive.EndPositionIndexExclusive - startOfLineTupleInclusive.EndPositionIndexExclusive;
 
 		if (includeLineEndingCharacters)
-			return lengthOfRowWithLineEndings;
+			return lineLengthWithLineEndings;
 
-		return lengthOfRowWithLineEndings - endOfRowTupleExclusive.RowEndingKind.AsCharacters().Length;
+		return lineLengthWithLineEndings - endOfLineTupleExclusive.LineEndKind.AsCharacters().Length;
 	}
 
     /// <summary>
-	/// Line endings are included in the individual rows which get returned.
+	/// Line endings are included in the individual lines which get returned.
 	/// </summary>
-	/// <param name="startingRowIndex">The starting index of the rows to return</param>
+	/// <param name="startingLineIndex">The starting index of the lines to return</param>
     /// <param name="count">
     /// A count of 0 returns 0 rows.<br/>
-    /// A count of 1 returns rows[startingRowIndex] only.<br/>
-    /// A count of 2 returns rows[startingRowIndex] and rows[startingRowIndex + 1].<br/>
+    /// A count of 1 returns lines[startingLineIndex] only.<br/>
+    /// A count of 2 returns lines[startingLineIndex] and lines[startingLineIndex + 1].<br/>
     /// </param>
-    public static List<List<RichCharacter>> GetRows(
-		this ITextEditorModel model, int startingRowIndex, int count)
+    public static List<List<RichCharacter>> GetRows(this ITextEditorModel model, int startingLineIndex, int count)
 	{
-		var rowCountAvailable = model.RowEndingPositionsList.Count - startingRowIndex;
+		var lineCountAvailable = model.LineEndPositionList.Count - startingLineIndex;
 
-		var rowCountToReturn = count < rowCountAvailable
+		var lineCountToReturn = count < lineCountAvailable
 			? count
-			: rowCountAvailable;
+			: lineCountAvailable;
 
-		var endingRowIndexExclusive = startingRowIndex + rowCountToReturn;
+		var endingLineIndexExclusive = startingLineIndex + lineCountToReturn;
 
-		var rowsList = new List<List<RichCharacter>>();
+		var lineList = new List<List<RichCharacter>>();
 
-		if (rowCountToReturn < 0 || startingRowIndex < 0 || endingRowIndexExclusive < 0)
-			return rowsList;
+		if (lineCountToReturn < 0 || startingLineIndex < 0 || endingLineIndexExclusive < 0)
+			return lineList;
 
-		for (var i = startingRowIndex; i < endingRowIndexExclusive; i++)
+		for (var i = startingLineIndex; i < endingLineIndexExclusive; i++)
 		{
-			// Previous row's line ending position is this row's start.
-			var startOfRowInclusive = model.GetRowEndingThatCreatedRow(i).EndPositionIndexExclusive;
+            // Previous line's end-position-exclusive is this row's start.
+            var startOfLineInclusive = model.GetLineStartPositionIndexInclusive(i);
 
-			var endOfRowExclusive = model.RowEndingPositionsList[i].EndPositionIndexExclusive;
+			var endOfLineExclusive = model.LineEndPositionList[i].EndPositionIndexExclusive;
 
-            var row = model.GetRichCharacters(
-				skip: startOfRowInclusive,
-				take: endOfRowExclusive - startOfRowInclusive);
+            var line = model.GetRichCharacters(
+				skip: startOfLineInclusive,
+				take: endOfLineExclusive - startOfLineInclusive);
 
-			rowsList.Add(row);
+			lineList.Add(line);
 		}
 
-		return rowsList;
+		return lineList;
 	}
 
-	public static int GetTabsCountOnSameRowBeforeCursor(
-		this ITextEditorModel model, int rowIndex, int columnIndex)
+	public static int GetTabsCountOnSameLineBeforeCursor(this ITextEditorModel model, int rowIndex, int columnIndex)
 	{
-		var startOfRowPositionIndex = model.GetRowEndingThatCreatedRow(rowIndex).EndPositionIndexExclusive;
+		var startOfLinePositionIndex = model.GetLineStartPositionIndexInclusive(rowIndex);
 
 		var tabs = model.TabKeyPositionsList
-			.SkipWhile(positionIndex => positionIndex < startOfRowPositionIndex)
-			.TakeWhile(positionIndex => positionIndex < startOfRowPositionIndex + columnIndex);
+			.SkipWhile(positionIndex => positionIndex < startOfLinePositionIndex)
+			.TakeWhile(positionIndex => positionIndex < startOfLinePositionIndex + columnIndex);
 
 		return tabs.Count();
 	}
@@ -119,44 +145,40 @@ public static class TextEditorModelHelper
         return new string(model.CharList.Select(x => x).ToArray());
 	}
 
-	public static int GetPositionIndex(
-		this ITextEditorModel model, TextEditorCursor textEditorCursor)
+	public static int GetPositionIndex(this ITextEditorModel model, TextEditorCursor cursor)
 	{
-		return model.GetPositionIndex(textEditorCursor.RowIndex, textEditorCursor.ColumnIndex);
+		return model.GetPositionIndex(cursor.LineIndex, cursor.ColumnIndex);
 	}
 	
-	public static int GetPositionIndex(
-		this ITextEditorModel model, TextEditorCursorModifier textEditorCursorModifier)
+	public static int GetPositionIndex(this ITextEditorModel model, TextEditorCursorModifier cursorModifier)
 	{
-		return model.GetPositionIndex(textEditorCursorModifier.RowIndex, textEditorCursorModifier.ColumnIndex);
+		return model.GetPositionIndex(cursorModifier.LineIndex, cursorModifier.ColumnIndex);
 	}
 
 	/// <summary>
 	/// TODO: How should this method handle input which is out of bounds?
 	/// </summary>
-	public static int GetPositionIndex(
-		this ITextEditorModel model, int rowIndex, int columnIndex)
+	public static int GetPositionIndex(this ITextEditorModel model, int lineIndex, int columnIndex)
 	{
-		var startOfRowPositionIndex = model.GetRowEndingThatCreatedRow(rowIndex).EndPositionIndexExclusive;
-		return startOfRowPositionIndex + columnIndex;
+		var lineStartPositionIndexInclusive = model.GetLineStartPositionIndexInclusive(lineIndex);
+		return lineStartPositionIndexInclusive + columnIndex;
 	}
 
-	public static (int rowIndex, int columnIndex) GetRowAndColumnIndicesFromPositionIndex(
-		this ITextEditorModel model, int positionIndex)
+	public static (int lineIndex, int columnIndex) GetLineAndColumnIndicesFromPositionIndex(
+		this ITextEditorModel model,
+		int positionIndex)
 	{
-        var rowInformation = model.GetRowInformationFromPositionIndex(positionIndex);
+        var lineInformation = model.GetLineInformationFromPositionIndex(positionIndex);
 
 		return (
-			rowInformation.RowIndex,
-			positionIndex - rowInformation.RowStartPositionIndexInclusive);
+			lineInformation.LineIndex,
+			positionIndex - lineInformation.LineStartPositionIndexInclusive);
     }
 
     /// <summary>
     /// To receive a <see cref="string"/> value, one can use <see cref="GetString"/> instead.
     /// </summary>
-    public static char GetCharacter(
-		this ITextEditorModel model,
-		int positionIndex)
+    public static char GetCharacter(this ITextEditorModel model, int positionIndex)
 	{
 		if (positionIndex < 0 || positionIndex >= model.CharList.Count)
 			return ParserFacts.END_OF_FILE;
@@ -167,10 +189,7 @@ public static class TextEditorModelHelper
     /// <summary>
     /// To receive a <see cref="char"/> value, one can use <see cref="GetCharacter"/> instead.
     /// </summary>
-    public static string GetString(
-		this ITextEditorModel model,
-		int startingPositionIndex,
-		int count)
+    public static string GetString(this ITextEditorModel model, int startingPositionIndex, int count)
 	{
 		return new string(model.CharList
 			.Skip(startingPositionIndex)
@@ -179,31 +198,35 @@ public static class TextEditorModelHelper
 			.ToArray());
 	}
 
-	public static string GetLineRange(this ITextEditorModel model, int startingRowIndex, int count)
+	public static string GetLineRange(this ITextEditorModel model, int startLineIndex, int count)
 	{
-		if (startingRowIndex > model.RowCount - 1)
+		if (startLineIndex > model.RowCount - 1)
 			return string.Empty;
         
-		var startingPositionIndexInclusive = model.GetPositionIndex(startingRowIndex, 0);
+		var startPositionIndexInclusive = model.GetPositionIndex(startLineIndex, 0);
 
-        var lastRowIndexExclusive = startingRowIndex + count;
-		int endingPositionIndexExclusive;
+        var lastLineIndexExclusive = startLineIndex + count;
+		int endPositionIndexExclusive;
 
-		if (lastRowIndexExclusive > model.RowCount - 1)
+		if (lastLineIndexExclusive > model.RowCount - 1)
 		{
-			endingPositionIndexExclusive = model.DocumentLength;
+			endPositionIndexExclusive = model.DocumentLength;
         }
 		else
 		{
-			endingPositionIndexExclusive = model.GetPositionIndex(lastRowIndexExclusive, 0);
+			endPositionIndexExclusive = model.GetPositionIndex(lastLineIndexExclusive, 0);
         }
 
 		return model.GetString(
-			startingPositionIndexInclusive,
-			endingPositionIndexExclusive - startingPositionIndexInclusive);
+			startPositionIndexInclusive,
+			endPositionIndexExclusive - startPositionIndexInclusive);
 	}
 
-	/// <summary>Given a <see cref="TextEditorModel"/> with a preference for the right side of the cursor, the following conditional branch will play out.<br/><br/>-IF the cursor is amongst a word, that word will be returned.<br/><br/>-ELSE IF the start of a word is to the right of the cursor that word will be returned.<br/><br/>-ELSE IF the end of a word is to the left of the cursor that word will be returned.</summary>
+	/// <summary>
+	/// Given a <see cref="TextEditorModel"/> with a preference for the right side of the cursor, the following conditional branch will play out:<br/><br/>
+	///     -IF the cursor is amongst a word, that word will be returned.<br/><br/>
+	///     -ELSE IF the start of a word is to the right of the cursor that word will be returned.<br/><br/>
+	///     -ELSE IF the end of a word is to the left of the cursor that word will be returned.</summary>
 	public static TextEditorTextSpan? GetWordTextSpan(this ITextEditorModel model, int positionIndex)
 	{
 		var previousCharacter = model.GetCharacter(positionIndex - 1);
@@ -212,14 +235,14 @@ public static class TextEditorModelHelper
 		var previousCharacterKind = CharacterKindHelper.CharToCharacterKind(previousCharacter);
 		var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(currentCharacter);
 
-		var rowInformation = model.GetRowInformationFromPositionIndex(positionIndex);
+		var lineInformation = model.GetLineInformationFromPositionIndex(positionIndex);
 
-		var columnIndex = positionIndex - rowInformation.RowStartPositionIndexInclusive;
+		var columnIndex = positionIndex - lineInformation.LineStartPositionIndexInclusive;
 
 		if (previousCharacterKind == CharacterKind.LetterOrDigit && currentCharacterKind == CharacterKind.LetterOrDigit)
 		{
 			var wordColumnIndexStartInclusive = model.GetColumnIndexOfCharacterWithDifferingKind(
-				rowInformation.RowIndex,
+				lineInformation.LineIndex,
 				columnIndex,
 				true);
 
@@ -227,16 +250,16 @@ public static class TextEditorModelHelper
 				wordColumnIndexStartInclusive = 0;
 
 			var wordColumnIndexEndExclusive = model.GetColumnIndexOfCharacterWithDifferingKind(
-				rowInformation.RowIndex,
+				lineInformation.LineIndex,
 				columnIndex,
 				false);
 
 			if (wordColumnIndexEndExclusive == -1)
-				wordColumnIndexEndExclusive = model.GetLengthOfRow(rowInformation.RowIndex);
+				wordColumnIndexEndExclusive = model.GetLengthOfLine(lineInformation.LineIndex);
 
 			return new TextEditorTextSpan(
-				wordColumnIndexStartInclusive + rowInformation.RowStartPositionIndexInclusive,
-				wordColumnIndexEndExclusive + rowInformation.RowStartPositionIndexInclusive,
+				wordColumnIndexStartInclusive + lineInformation.LineStartPositionIndexInclusive,
+				wordColumnIndexEndExclusive + lineInformation.LineStartPositionIndexInclusive,
 				0,
 				model.ResourceUri,
 				model.GetAllText());
@@ -244,16 +267,16 @@ public static class TextEditorModelHelper
 		else if (currentCharacterKind == CharacterKind.LetterOrDigit)
 		{
 			var wordColumnIndexEndExclusive = model.GetColumnIndexOfCharacterWithDifferingKind(
-				rowInformation.RowIndex,
+				lineInformation.LineIndex,
 				columnIndex,
 				false);
 
 			if (wordColumnIndexEndExclusive == -1)
-				wordColumnIndexEndExclusive = model.GetLengthOfRow(rowInformation.RowIndex);
+				wordColumnIndexEndExclusive = model.GetLengthOfLine(lineInformation.LineIndex);
 
 			return new TextEditorTextSpan(
-				columnIndex + rowInformation.RowStartPositionIndexInclusive,
-				wordColumnIndexEndExclusive + rowInformation.RowStartPositionIndexInclusive,
+				columnIndex + lineInformation.LineStartPositionIndexInclusive,
+				wordColumnIndexEndExclusive + lineInformation.LineStartPositionIndexInclusive,
 				0,
 				model.ResourceUri,
 				model.GetAllText());
@@ -261,7 +284,7 @@ public static class TextEditorModelHelper
 		else if (previousCharacterKind == CharacterKind.LetterOrDigit)
 		{
 			var wordColumnIndexStartInclusive = model.GetColumnIndexOfCharacterWithDifferingKind(
-				rowInformation.RowIndex,
+				lineInformation.LineIndex,
 				columnIndex,
 				true);
 
@@ -269,8 +292,8 @@ public static class TextEditorModelHelper
 				wordColumnIndexStartInclusive = 0;
 
 			return new TextEditorTextSpan(
-				wordColumnIndexStartInclusive + rowInformation.RowStartPositionIndexInclusive,
-				columnIndex + rowInformation.RowStartPositionIndexInclusive,
+				wordColumnIndexStartInclusive + lineInformation.LineStartPositionIndexInclusive,
+				columnIndex + lineInformation.LineStartPositionIndexInclusive,
 				0,
 				model.ResourceUri,
 				model.GetAllText());
@@ -279,9 +302,7 @@ public static class TextEditorModelHelper
 		return null;
 	}
 
-	public static ImmutableArray<TextEditorTextSpan> FindMatches(
-		this ITextEditorModel model,
-		string query)
+	public static ImmutableArray<TextEditorTextSpan> FindMatches(this ITextEditorModel model, string query)
 	{
 		var text = model.GetAllText();
 		var matchedTextSpans = new List<TextEditorTextSpan>();
@@ -313,26 +334,24 @@ public static class TextEditorModelHelper
 		return matchedTextSpans.ToImmutableArray();
 	}
 
-    public static RowInformation GetRowInformationFromPositionIndex(
-		this ITextEditorModel model,
-		int positionIndex)
+    public static RowInformation GetLineInformationFromPositionIndex(this ITextEditorModel model, int positionIndex)
 	{
-		for (var i = model.RowEndingPositionsList.Count - 1; i >= 0; i--)
+		for (var i = model.LineEndPositionList.Count - 1; i >= 0; i--)
 		{
-			var rowEndingTuple = model.RowEndingPositionsList[i];
+			var lineEndTuple = model.LineEndPositionList[i];
 
-			if (positionIndex >= rowEndingTuple.EndPositionIndexExclusive)
+			if (positionIndex >= lineEndTuple.EndPositionIndexExclusive)
 			{
 				return new(
 					i + 1,
-					rowEndingTuple.EndPositionIndexExclusive,
-					i == model.RowEndingPositionsList.Count - 1
-						? rowEndingTuple
-						: model.RowEndingPositionsList[i + 1]);
+					lineEndTuple.EndPositionIndexExclusive,
+					i == model.LineEndPositionList.Count - 1
+						? lineEndTuple
+						: model.LineEndPositionList[i + 1]);
 			}
 		}
 
-		return new(0, 0, model.RowEndingPositionsList[0]);
+		return new(0, 0, model.LineEndPositionList[0]);
 	}
 
 	/// <summary>
@@ -341,24 +360,27 @@ public static class TextEditorModelHelper
 	/// </summary>
 	/// <returns>Will return -1 if no valid result was found.</returns>
 	public static int GetColumnIndexOfCharacterWithDifferingKind(
-		this ITextEditorModel model, int rowIndex, int columnIndex, bool moveBackwards)
+		this ITextEditorModel model,
+		int lineIndex,
+		int columnIndex,
+		bool moveBackwards)
 	{
 		var iterateBy = moveBackwards
 			? -1
 			: 1;
 
-		var startOfRowPositionIndex = model.GetRowEndingThatCreatedRow(rowIndex).EndPositionIndexExclusive;
+		var lineStartPositionIndex = model.GetLineStartPositionIndexInclusive(lineIndex);
 
-		if (rowIndex > model.RowEndingPositionsList.Count - 1)
+		if (lineIndex > model.LineEndPositionList.Count - 1)
 			return -1;
 
-		var lastPositionIndexOnRow = model.RowEndingPositionsList[rowIndex].EndPositionIndexExclusive - 1;
+		var lastPositionIndexOnRow = model.LineEndPositionList[lineIndex].EndPositionIndexExclusive - 1;
 
-		var positionIndex = model.GetPositionIndex(rowIndex, columnIndex);
+		var positionIndex = model.GetPositionIndex(lineIndex, columnIndex);
 
 		if (moveBackwards)
 		{
-			if (positionIndex <= startOfRowPositionIndex)
+			if (positionIndex <= lineStartPositionIndex)
 				return -1;
 
 			positionIndex -= 1;
@@ -367,20 +389,20 @@ public static class TextEditorModelHelper
 		if (positionIndex < 0 || positionIndex >= model.CharList.Count)
 			return -1;
 
-		var startingCharacterKind = CharacterKindHelper.CharToCharacterKind(model.CharList[positionIndex]);
+		var startCharacterKind = CharacterKindHelper.CharToCharacterKind(model.CharList[positionIndex]);
 
 		while (true)
 		{
 			if (positionIndex >= model.CharList.Count ||
 				positionIndex > lastPositionIndexOnRow ||
-				positionIndex < startOfRowPositionIndex)
+				positionIndex < lineStartPositionIndex)
 			{
 				return -1;
 			}
 
 			var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(model.CharList[positionIndex]);
 
-			if (currentCharacterKind != startingCharacterKind)
+			if (currentCharacterKind != startCharacterKind)
 				break;
 
 			positionIndex += iterateBy;
@@ -389,7 +411,7 @@ public static class TextEditorModelHelper
 		if (moveBackwards)
 			positionIndex += 1;
 
-		return positionIndex - startOfRowPositionIndex;
+		return positionIndex - lineStartPositionIndex;
 	}
 
 	public static bool CanUndoEdit(this ITextEditorModel model)
@@ -399,7 +421,7 @@ public static class TextEditorModelHelper
 
 	public static bool CanRedoEdit(this ITextEditorModel model)
 	{
-		return model.EditBlockIndex < model.EditBlocksList.Count - 1;
+		return model.EditBlockIndex < model.EditBlockList.Count - 1;
 	}
 
 	public static CharacterKind GetCharacterKind(this ITextEditorModel model, int positionIndex)
@@ -418,9 +440,12 @@ public static class TextEditorModelHelper
 	}
 
 	public static string? ReadPreviousWordOrDefault(
-		this ITextEditorModel model, int rowIndex, int columnIndex, bool isRecursiveCall = false)
+		this ITextEditorModel model,
+		int lineIndex,
+		int columnIndex,
+		bool isRecursiveCall = false)
 	{
-		var wordPositionIndexEndExclusive = model.GetPositionIndex(rowIndex, columnIndex);
+		var wordPositionIndexEndExclusive = model.GetPositionIndex(lineIndex, columnIndex);
 		var wordCharacterKind = model.GetCharacterKind(wordPositionIndexEndExclusive - 1);
 
 		if (wordCharacterKind == CharacterKind.Punctuation && !isRecursiveCall)
@@ -434,13 +459,13 @@ public static class TextEditorModelHelper
 			var anotherAttemptColumnIndex = columnIndex - 1;
 
 			if (anotherAttemptColumnIndex >= 0)
-				return model.ReadPreviousWordOrDefault(rowIndex, anotherAttemptColumnIndex, true);
+				return model.ReadPreviousWordOrDefault(lineIndex, anotherAttemptColumnIndex, true);
 		}
 
 		if (wordCharacterKind == CharacterKind.LetterOrDigit)
 		{
 			var wordColumnIndexStartInclusive = model.GetColumnIndexOfCharacterWithDifferingKind(
-				rowIndex,
+				lineIndex,
 				columnIndex,
 				true);
 
@@ -457,22 +482,21 @@ public static class TextEditorModelHelper
 		return null;
 	}
 
-	public static string? ReadNextWordOrDefault(
-		this ITextEditorModel model, int rowIndex, int columnIndex)
+	public static string? ReadNextWordOrDefault(this ITextEditorModel model, int lineIndex, int columnIndex)
 	{
-		var wordPositionIndexStartInclusive = model.GetPositionIndex(rowIndex, columnIndex);
+		var wordPositionIndexStartInclusive = model.GetPositionIndex(lineIndex, columnIndex);
 
 		var wordCharacterKind = model.GetCharacterKind(wordPositionIndexStartInclusive);
 
 		if (wordCharacterKind == CharacterKind.LetterOrDigit)
 		{
 			var wordColumnIndexEndExclusive = model.GetColumnIndexOfCharacterWithDifferingKind(
-				rowIndex,
+				lineIndex,
 				columnIndex,
 				false);
 
 			if (wordColumnIndexEndExclusive == -1)
-				wordColumnIndexEndExclusive = model.GetLengthOfRow(rowIndex);
+				wordColumnIndexEndExclusive = model.GetLengthOfLine(lineIndex);
 
 			var wordLength = wordColumnIndexEndExclusive - columnIndex;
 
@@ -482,31 +506,32 @@ public static class TextEditorModelHelper
 		return null;
 	}
 
-	/// <summary>This method returns the text to the left of the cursor in most cases. The method name is as such because of right to left written texts.<br/><br/>One uses this method most often to measure the position of the cursor when rendering the UI for a font-family which is proportional (i.e. not monospace).</summary>
-	public static string GetTextOffsettingCursor(
-		this ITextEditorModel model, TextEditorCursor textEditorCursor)
+	/// <summary>
+	/// This method returns the text to the left of the cursor in most cases.
+	/// The method name is as such because of right to left written texts.<br/><br/>
+	/// One uses this method most often to measure the position of the cursor when rendering the
+	/// UI for a font-family which is proportional (i.e. not monospace).
+	/// </summary>
+	public static string GetTextOffsettingCursor(this ITextEditorModel model, TextEditorCursor textEditorCursor)
 	{
 		var cursorPositionIndex = model.GetPositionIndex(textEditorCursor);
-		var startOfRowTuple = model.GetRowEndingThatCreatedRow(textEditorCursor.RowIndex);
+		var priorLineEnd = model.GetLineOpening(textEditorCursor.LineIndex);
 
-		return model.GetString(startOfRowTuple.EndPositionIndexExclusive, cursorPositionIndex - startOfRowTuple.EndPositionIndexExclusive);
+		return model.GetString(priorLineEnd.EndPositionIndexExclusive, cursorPositionIndex - priorLineEnd.EndPositionIndexExclusive);
 	}
 
-	public static string GetLine(
-		this ITextEditorModel model, int rowIndex)
+	public static string GetLine(this ITextEditorModel model, int lineIndex)
 	{
-		if (rowIndex < 0 || rowIndex > model.RowCount - 1)
+		if (lineIndex < 0 || lineIndex > model.RowCount - 1)
 			return string.Empty;
 
-		var startOfRowTuple = model.GetRowEndingThatCreatedRow(rowIndex);
-		var lengthOfRow = model.GetLengthOfRow(rowIndex, true);
+		var priorLineEnd = model.GetLineOpening(lineIndex);
+		var lengthOfRow = model.GetLengthOfLine(lineIndex, true);
 
-		return model.GetString(startOfRowTuple.EndPositionIndexExclusive, lengthOfRow);
+		return model.GetString(priorLineEnd.EndPositionIndexExclusive, lengthOfRow);
 	}
 	
-	public static RichCharacter? GetRichCharacterOrDefault(
-		this ITextEditorModel model,
-		int positionIndex)
+	public static RichCharacter? GetRichCharacterOrDefault(this ITextEditorModel model, int positionIndex)
 	{
 		if (positionIndex < 0 || positionIndex > model.DocumentLength - 1)
 			return null;
@@ -534,10 +559,7 @@ public static class TextEditorModelHelper
 		return richCharacterList;
 	}
 
-    public static List<RichCharacter> GetRichCharacters(
-		this ITextEditorModel model,
-		int skip,
-		int take)
+    public static List<RichCharacter> GetRichCharacters(this ITextEditorModel model, int skip, int take)
     {
         var richCharacterList = new List<RichCharacter>();
 

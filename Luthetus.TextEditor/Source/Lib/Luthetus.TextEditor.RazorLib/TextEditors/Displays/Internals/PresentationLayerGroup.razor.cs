@@ -49,7 +49,7 @@ public partial class PresentationLayerGroup : ComponentBase
         if (rowIndex >= RenderBatch.Model!.RowEndingPositionsList.Count)
             return string.Empty;
 
-        var startOfRowTuple = RenderBatch.Model!.GetRowEndingThatCreatedRow(rowIndex);
+        var startOfRowTuple = RenderBatch.Model!.GetLineOpening(rowIndex);
         var endOfRowTuple = RenderBatch.Model!.RowEndingPositionsList[rowIndex];
 
         var startingColumnIndex = 0;
@@ -81,7 +81,7 @@ public partial class PresentationLayerGroup : ComponentBase
 
         // startInPixels offset from Tab keys a width of many characters
         {
-            var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabsCountOnSameRowBeforeCursor(
+            var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabsCountOnSameLineBeforeCursor(
                 rowIndex,
                 startingColumnIndex);
 
@@ -98,7 +98,7 @@ public partial class PresentationLayerGroup : ComponentBase
 
         // Tab keys a width of many characters
         {
-            var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabsCountOnSameRowBeforeCursor(
+            var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabsCountOnSameLineBeforeCursor(
                 rowIndex,
                 endingColumnIndex);
 
@@ -142,16 +142,16 @@ public partial class PresentationLayerGroup : ComponentBase
         var virtualizedTextSpanList = new List<TextEditorTextSpan>();
         if (RenderBatch.ViewModel!.VirtualizationResult?.EntryList.Any() ?? false)
         {
-            var lowerBoundRowIndex = RenderBatch.ViewModel.VirtualizationResult.EntryList.First().Index;
-            var upperBoundRowIndex = RenderBatch.ViewModel.VirtualizationResult.EntryList.Last().Index;
+            var lowerLineIndexInclusive = RenderBatch.ViewModel.VirtualizationResult.EntryList.First().Index;
+            var upperLineIndexInclusive = RenderBatch.ViewModel.VirtualizationResult.EntryList.Last().Index;
             
-            var lowerBoundRowEndingThatCreatedRow = RenderBatch.Model!.GetRowEndingThatCreatedRow(lowerBoundRowIndex);
-            var upperBoundRowEndingThatCreatedRow = RenderBatch.Model!.GetRowEndingThatCreatedRow(upperBoundRowIndex);
+            var lowerLineEndingThatCreatedRow = RenderBatch.Model!.GetLineOpening(lowerLineIndexInclusive);
+            var upperLineEndingThatCreatedRow = RenderBatch.Model!.GetLineOpening(upperLineIndexInclusive);
 
             foreach (var textSpan in inTextSpanList)
             {
-                if (lowerBoundRowEndingThatCreatedRow.StartPositionIndexInclusive <= textSpan.StartingIndexInclusive &&
-                    upperBoundRowEndingThatCreatedRow.StartPositionIndexInclusive >= textSpan.StartingIndexInclusive)
+                if (lowerLineEndingThatCreatedRow.StartPositionIndexInclusive <= textSpan.StartingIndexInclusive &&
+                    upperLineEndingThatCreatedRow.StartPositionIndexInclusive >= textSpan.StartingIndexInclusive)
                 {
                     virtualizedTextSpanList.Add(textSpan);
                 }

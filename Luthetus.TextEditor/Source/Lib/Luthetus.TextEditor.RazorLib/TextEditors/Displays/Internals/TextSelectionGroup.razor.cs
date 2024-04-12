@@ -22,7 +22,7 @@ public partial class TextSelectionGroup : ComponentBase
         if (rowIndex >= RenderBatch.Model!.RowEndingPositionsList.Count)
             return string.Empty;
 
-        var startOfRowTuple = RenderBatch.Model!.GetRowEndingThatCreatedRow(rowIndex);
+        var startOfRowTuple = RenderBatch.Model!.GetLineOpening(rowIndex);
         var endOfRowTuple = RenderBatch.Model!.RowEndingPositionsList[rowIndex];
 
         var selectionStartingColumnIndex = 0;
@@ -54,7 +54,7 @@ public partial class TextSelectionGroup : ComponentBase
 
         // selectionStartInPixels offset from Tab keys a width of many characters
         {
-            var tabsOnSameRowBeforeCursor = RenderBatch.Model.GetTabsCountOnSameRowBeforeCursor(
+            var tabsOnSameRowBeforeCursor = RenderBatch.Model.GetTabsCountOnSameLineBeforeCursor(
                 rowIndex,
                 selectionStartingColumnIndex);
 
@@ -73,7 +73,7 @@ public partial class TextSelectionGroup : ComponentBase
 
         // Tab keys a width of many characters
         {
-            var tabsOnSameRowBeforeCursor = RenderBatch.Model.GetTabsCountOnSameRowBeforeCursor(
+            var tabsOnSameRowBeforeCursor = RenderBatch.Model.GetTabsCountOnSameLineBeforeCursor(
                 rowIndex,
                 selectionEndingColumnIndex);
 

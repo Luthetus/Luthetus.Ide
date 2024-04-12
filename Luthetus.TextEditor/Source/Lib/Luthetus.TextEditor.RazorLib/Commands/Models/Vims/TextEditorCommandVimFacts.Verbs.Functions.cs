@@ -76,12 +76,12 @@ public static partial class TextEditorCommandVimFacts
                         await textEditorEdit.Invoke(editContext).ConfigureAwait(false);
                     }).ConfigureAwait(false);
 
-                primaryCursorModifier.RowIndex = inCursor.RowIndex;
+                primaryCursorModifier.LineIndex = inCursor.LineIndex;
                 primaryCursorModifier.ColumnIndex = inCursor.ColumnIndex;
                 primaryCursorModifier.PreferredColumnIndex = inCursor.ColumnIndex;
 
                 var cursorForDeletion = new TextEditorCursor(
-                    motionResult.LowerPositionIndexCursor.RowIndex,
+                    motionResult.LowerPositionIndexCursor.LineIndex,
                     motionResult.LowerPositionIndexCursor.ColumnIndex,
                     true);
 

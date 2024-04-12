@@ -15,8 +15,8 @@ public partial class TextEditorModelModifier : ITextEditorModel
     public ImmutableList<byte> DecorationByteList => _decorationByteList is null ? _textEditorModel.DecorationByteList : _decorationByteList;
 	public ImmutableList<TextEditorPartition> PartitionList => _partitionList is null ? _textEditorModel.PartitionList : _partitionList;
 	
-	public IList<EditBlock> EditBlocksList => _editBlocksList is null ? _textEditorModel.EditBlocksList : _editBlocksList;
-	public IList<RowEnding> RowEndingPositionsList => _rowEndingPositionsList is null ? _textEditorModel.RowEndingPositionsList : _rowEndingPositionsList;
+	public IList<EditBlock> EditBlockList => _editBlocksList is null ? _textEditorModel.EditBlocksList : _editBlocksList;
+	public IList<LineEnd> LineEndPositionList => _rowEndingPositionsList is null ? _textEditorModel.RowEndingPositionsList : _rowEndingPositionsList;
 	public IList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsList => _rowEndingKindCountsList is null ? _textEditorModel.RowEndingKindCountsList : _rowEndingKindCountsList;
 	public IList<TextEditorPresentationModel> PresentationModelsList => _presentationModelsList is null ? _textEditorModel.PresentationModelsList : _presentationModelsList;
 	public IList<int> TabKeyPositionsList => _tabKeyPositionsList is null ? _textEditorModel.TabKeyPositionsList : _tabKeyPositionsList;
@@ -33,7 +33,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple => _mostCharactersOnASingleRowTuple ?? _textEditorModel.MostCharactersOnASingleRowTuple;
 	public Key<RenderState> RenderStateKey => _renderStateKey ?? _textEditorModel.RenderStateKey;
 
-    public int RowCount => RowEndingPositionsList.Count;
+    public int RowCount => LineEndPositionList.Count;
     public int DocumentLength => _charList.Count;
 
 

@@ -4,7 +4,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 public partial class TextEditorModelModifier
 {
-    public void PartitionList_Insert(int globalPositionIndex, RichCharacter richCharacter)
+    public void __Insert(int globalPositionIndex, RichCharacter richCharacter)
     {
         int indexOfPartitionWithAvailableSpace = -1;
         int relativePositionIndex = -1;
@@ -20,7 +20,7 @@ public partial class TextEditorModelModifier
                 // But, we must first check if it has available space.
                 if (partition.Count >= PartitionSize)
                 {
-                    PartitionList_SplitIntoTwoPartitions(i);
+                    __SplitIntoTwoPartitions(i);
                     i--;
                     continue;
                 }
@@ -56,7 +56,7 @@ public partial class TextEditorModelModifier
     /// i.e.: to change ONLY a character value invoke this method with decorationByte set to null,
     ///       and only the <see cref="CharList"/> will be changed.
     /// </summary>
-    public void PartitionList_SetItem(
+    public void __SetItem(
         int globalPositionIndex,
         char? character,
         byte? decorationByte)
@@ -98,16 +98,16 @@ public partial class TextEditorModelModifier
 
     /// <summary>
     /// To change ONLY a character value, or ONLY a decorationByte,
-    /// one would need to use the overload: <see cref="PartitionList_SetItem(int, char?, byte?)"/>.
+    /// one would need to use the overload: <see cref="__SetItem(int, char?, byte?)"/>.
     /// </summary>
-    public void PartitionList_SetItem(
+    public void __SetItem(
         int globalPositionIndex,
         RichCharacter richCharacter)
     {
-        PartitionList_SetItem(globalPositionIndex, richCharacter.Value, richCharacter.DecorationByte);
+        __SetItem(globalPositionIndex, richCharacter.Value, richCharacter.DecorationByte);
     }
 
-    public void PartitionList_RemoveAt(int globalPositionIndex)
+    public void __RemoveAt(int globalPositionIndex)
     {
         int indexOfPartitionWithAvailableSpace = -1;
         int relativePositionIndex = -1;
@@ -144,12 +144,12 @@ public partial class TextEditorModelModifier
             outPartition);
     }
 
-    private void PartitionList_InsertNewPartition(int partitionIndex)
+    private void __InsertNewPartition(int partitionIndex)
     {
         _partitionList = _partitionList.Insert(partitionIndex, TextEditorPartition.Empty);
     }
     
-    private void PartitionList_SplitIntoTwoPartitions(int partitionIndex)
+    private void __SplitIntoTwoPartitions(int partitionIndex)
     {
         var originalPartition = _partitionList[partitionIndex];
 
@@ -182,7 +182,7 @@ public partial class TextEditorModelModifier
         }
     }
 
-    public void PartitionList_InsertRange(int globalPositionIndex, IEnumerable<RichCharacter> richCharacterList)
+    public void __InsertRange(int globalPositionIndex, IEnumerable<RichCharacter> richCharacterList)
     {
         var richCharacterEnumerator = richCharacterList.GetEnumerator();
 
@@ -201,7 +201,7 @@ public partial class TextEditorModelModifier
                 {
                     if (partition.Count >= PartitionSize)
                     {
-                        PartitionList_SplitIntoTwoPartitions(i);
+                        __SplitIntoTwoPartitions(i);
                         i--;
                         continue;
                     }
@@ -243,16 +243,16 @@ public partial class TextEditorModelModifier
         }
     }
 
-    public void PartitionList_RemoveRange(int globalPositionIndex, int count)
+    public void __RemoveRange(int globalPositionIndex, int count)
     {
         for (int i = 0; i < count; i++)
         {
-            PartitionList_RemoveAt(globalPositionIndex);
+            __RemoveAt(globalPositionIndex);
         }
     }
 
-    public void PartitionList_Add(RichCharacter richCharacter)
+    public void __Add(RichCharacter richCharacter)
     {
-        PartitionList_Insert(DocumentLength, richCharacter);
+        __Insert(DocumentLength, richCharacter);
     }
 }

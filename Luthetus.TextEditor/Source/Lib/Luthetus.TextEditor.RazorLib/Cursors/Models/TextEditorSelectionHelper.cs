@@ -131,15 +131,15 @@ public static class TextEditorSelectionHelper
         ITextEditorModel textEditorModel,
         (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) positionIndexBounds)
     {
-        var firstRowToSelectDataInclusive = textEditorModel.GetRowInformationFromPositionIndex(
+        var firstRowToSelectDataInclusive = textEditorModel.GetLineInformationFromPositionIndex(
             positionIndexBounds.lowerPositionIndexInclusive);
 
-        var lastRowToSelectDataExclusive = textEditorModel.GetRowInformationFromPositionIndex(
+        var lastRowToSelectDataExclusive = textEditorModel.GetLineInformationFromPositionIndex(
             positionIndexBounds.upperPositionIndexExclusive);
 
-        var upperRowIndexExclusive = lastRowToSelectDataExclusive.RowIndex + 1;
+        var upperRowIndexExclusive = lastRowToSelectDataExclusive.LineIndex + 1;
 
-        if (lastRowToSelectDataExclusive.RowStartPositionIndexInclusive ==
+        if (lastRowToSelectDataExclusive.LineStartPositionIndexInclusive ==
                 positionIndexBounds.upperPositionIndexExclusive)
         {
             // If the selection ends at the start of a row, then an extra row
@@ -149,7 +149,7 @@ public static class TextEditorSelectionHelper
         }
 
         return (
-            firstRowToSelectDataInclusive.RowIndex,
+            firstRowToSelectDataInclusive.LineIndex,
             upperRowIndexExclusive);
     }
 }

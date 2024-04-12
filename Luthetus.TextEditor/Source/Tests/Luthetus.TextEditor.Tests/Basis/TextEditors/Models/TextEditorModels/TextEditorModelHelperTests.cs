@@ -16,7 +16,7 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 public class TextEditorModelHelperTests
 {
 	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetRowEndingThatCreatedRow(ITextEditorModel, int)"/>
+	/// <see cref="TextEditorModelHelper.GetLineOpening(ITextEditorModel, int)"/>
 	/// </summary>
 	[Fact]
 	public void GetRowEndingThatCreatedRow()
@@ -31,18 +31,18 @@ public class TextEditorModelHelperTests
 					out var model,
 					out var cursor);
 
-				var expected = new RowEnding(12, 13, RowEndingKind.Linefeed);
+				var expected = new LineEnd(12, 13, RowEndingKind.Linefeed);
 
 				// TextEditorModel
 				{
-					var actual = model.GetRowEndingThatCreatedRow(cursor.RowIndex);
+					var actual = model.GetLineOpening(cursor.LineIndex);
                     Assert.Equal(expected, actual);
                 }
 				
 				// TextEditorModelModifier
 				{
 					var modelModifier = new TextEditorModelModifier(model);
-                    var actual = modelModifier.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    var actual = modelModifier.GetLineOpening(cursor.LineIndex);
                     Assert.Equal(expected, actual);
                 }
             }
@@ -53,18 +53,18 @@ public class TextEditorModelHelperTests
                     out var model,
                     out var cursor);
 
-                var expected = new RowEnding(12, 13, RowEndingKind.Linefeed);
+                var expected = new LineEnd(12, 13, RowEndingKind.Linefeed);
 
                 // TextEditorModel
                 {
-                    var actual = model.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    var actual = model.GetLineOpening(cursor.LineIndex);
                     Assert.Equal(expected, actual);
                 }
 
                 // TextEditorModelModifier
                 {
                     var modelModifier = new TextEditorModelModifier(model);
-                    var actual = modelModifier.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    var actual = modelModifier.GetLineOpening(cursor.LineIndex);
                     Assert.Equal(expected, actual);
                 }
             }
@@ -75,18 +75,18 @@ public class TextEditorModelHelperTests
                     out var model,
                     out var cursor);
 
-                var expected = new RowEnding(12, 13, RowEndingKind.Linefeed);
+                var expected = new LineEnd(12, 13, RowEndingKind.Linefeed);
 
                 // TextEditorModel
                 {
-                    var actual = model.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    var actual = model.GetLineOpening(cursor.LineIndex);
                     Assert.Equal(expected, actual);
                 }
 
                 // TextEditorModelModifier
                 {
                     var modelModifier = new TextEditorModelModifier(model);
-                    var actual = modelModifier.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    var actual = modelModifier.GetLineOpening(cursor.LineIndex);
                     Assert.Equal(expected, actual);
                 }
             }
@@ -97,18 +97,18 @@ public class TextEditorModelHelperTests
                     out var model,
                     out var cursor);
 
-                var expected = new RowEnding(0, 0, RowEndingKind.StartOfFile);
+                var expected = new LineEnd(0, 0, RowEndingKind.StartOfFile);
 
                 // TextEditorModel
                 {
-                    var actual = model.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    var actual = model.GetLineOpening(cursor.LineIndex);
                     Assert.Equal(expected, actual);
                 }
 
                 // TextEditorModelModifier
                 {
                     var modelModifier = new TextEditorModelModifier(model);
-                    var actual = modelModifier.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    var actual = modelModifier.GetLineOpening(cursor.LineIndex);
                     Assert.Equal(expected, actual);
                 }
             }
@@ -123,18 +123,18 @@ public class TextEditorModelHelperTests
                     out var model,
                     out var cursor);
 
-                var expected = new RowEnding(24, 25, RowEndingKind.Linefeed);
+                var expected = new LineEnd(24, 25, RowEndingKind.Linefeed);
 
                 // TextEditorModel
                 {
-                    var actual = model.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    var actual = model.GetLineOpening(cursor.LineIndex);
                     Assert.Equal(expected, actual);
                 }
 
                 // TextEditorModelModifier
                 {
                     var modelModifier = new TextEditorModelModifier(model);
-                    var actual = modelModifier.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    var actual = modelModifier.GetLineOpening(cursor.LineIndex);
                     Assert.Equal(expected, actual);
                 }
             }
@@ -148,18 +148,18 @@ public class TextEditorModelHelperTests
                     out var model,
                     out var cursor);
 
-                var expected = new RowEnding(0, 0, RowEndingKind.StartOfFile);
+                var expected = new LineEnd(0, 0, RowEndingKind.StartOfFile);
 
                 // TextEditorModel
                 {
-                    var actual = model.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    var actual = model.GetLineOpening(cursor.LineIndex);
                     Assert.Equal(expected, actual);
                 }
 
                 // TextEditorModelModifier
                 {
                     var modelModifier = new TextEditorModelModifier(model);
-                    var actual = modelModifier.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    var actual = modelModifier.GetLineOpening(cursor.LineIndex);
                     Assert.Equal(expected, actual);
                 }
             }
@@ -170,18 +170,18 @@ public class TextEditorModelHelperTests
                     out var model,
                     out var cursor);
 
-                var expected = new RowEnding(24, 25, RowEndingKind.Linefeed);
+                var expected = new LineEnd(24, 25, RowEndingKind.Linefeed);
 
                 // TextEditorModel
                 {
-                    var actual = model.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    var actual = model.GetLineOpening(cursor.LineIndex);
                     Assert.Equal(expected, actual);
                 }
 
                 // TextEditorModelModifier
                 {
                     var modelModifier = new TextEditorModelModifier(model);
-                    var actual = modelModifier.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    var actual = modelModifier.GetLineOpening(cursor.LineIndex);
                     Assert.Equal(expected, actual);
                 }
             }
@@ -189,7 +189,7 @@ public class TextEditorModelHelperTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetLengthOfRow(ITextEditorModel, int, bool)"/>
+	/// <see cref="TextEditorModelHelper.GetLengthOfLine(ITextEditorModel, int, bool)"/>
 	/// </summary>
 	[Fact]
 	public void GetLengthOfRow()
@@ -200,25 +200,25 @@ public class TextEditorModelHelperTests
         // Negative rowIndex
         {
             // Explanation of result: negative index gets changed to index of 0
-            var lengthOfRow = model.GetLengthOfRow(TestConstants.NEGATIVE_ROW_INDEX);
+            var lengthOfRow = model.GetLengthOfLine(TestConstants.NEGATIVE_ROW_INDEX);
             Assert.Equal(TestConstants.LENGTH_OF_FIRST_ROW, lengthOfRow);
         }
 
 		// First row
 		{
-            var lengthOfRow = model.GetLengthOfRow(TestConstants.FIRST_ROW_INDEX);
+            var lengthOfRow = model.GetLengthOfLine(TestConstants.FIRST_ROW_INDEX);
             Assert.Equal(TestConstants.LENGTH_OF_FIRST_ROW, lengthOfRow);
         }
 
 		// Row which is between first and last row.
 		{
-            var lengthOfRow = model.GetLengthOfRow(TestConstants.ROW_INDEX_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW);
+            var lengthOfRow = model.GetLengthOfLine(TestConstants.ROW_INDEX_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW);
             Assert.Equal(TestConstants.LENGTH_OF_ROW_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW, lengthOfRow);
         }
 
         // Last row
         {
-            var lengthOfRow = model.GetLengthOfRow(TestConstants.LAST_ROW_INDEX);
+            var lengthOfRow = model.GetLengthOfLine(TestConstants.LAST_ROW_INDEX);
             Assert.Equal(TestConstants.LENGTH_OF_LAST_ROW, lengthOfRow);
         }
 
@@ -226,7 +226,7 @@ public class TextEditorModelHelperTests
         {
             // Explanation of result: large out of bounds index gets changed to
             // index of 'model.RowEndingPositionsList.Count - 1'
-            var lengthOfRow = model.GetLengthOfRow(TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX);
+            var lengthOfRow = model.GetLengthOfLine(TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX);
             Assert.Equal(TestConstants.LENGTH_OF_LAST_ROW, lengthOfRow);
         }
     }
@@ -363,7 +363,7 @@ public class TextEditorModelHelperTests
     }
 
 	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetTabsCountOnSameRowBeforeCursor(ITextEditorModel, int, int)"/>
+	/// <see cref="TextEditorModelHelper.GetTabsCountOnSameLineBeforeCursor(ITextEditorModel, int, int)"/>
 	/// </summary>
 	[Fact]
 	public void GetTabsCountOnSameRowBeforeCursor()
@@ -1268,7 +1268,7 @@ public class TextEditorModelHelperTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetRowInformationFromPositionIndex(ITextEditorModel, int)"/>
+	/// <see cref="TextEditorModelHelper.GetLineInformationFromPositionIndex(ITextEditorModel, int)"/>
 	/// </summary>
 	[Fact]
 	public void FindRowInformation()

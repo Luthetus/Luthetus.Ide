@@ -428,9 +428,9 @@ public partial interface ITextEditorService
 				if (viewModelModifier is null)
                     return Task.CompletedTask;
 
-				var rowInformation = modelModifier.GetRowInformationFromPositionIndex(textSpan.StartingIndexInclusive);
-				var rowIndex = rowInformation.RowIndex;
-				var columnIndex = textSpan.StartingIndexInclusive - rowInformation.RowStartPositionIndexInclusive;
+				var rowInformation = modelModifier.GetLineInformationFromPositionIndex(textSpan.StartingIndexInclusive);
+				var rowIndex = rowInformation.LineIndex;
+				var columnIndex = textSpan.StartingIndexInclusive - rowInformation.LineStartPositionIndexInclusive;
 
 				// Unit of measurement is pixels (px)
 				var scrollLeft = new Nullable<double>(columnIndex *
@@ -579,7 +579,7 @@ public partial interface ITextEditorService
                         cursorModifier.SelectionEndingPositionIndex == cursorModifier.SelectionAnchorPositionIndex)
                     {
                         var positionIndex = modelModifier.GetPositionIndex(
-                            cursorModifier.RowIndex,
+                            cursorModifier.LineIndex,
                             cursorModifier.ColumnIndex);
 
                         cursorModifier.SelectionAnchorPositionIndex = positionIndex;
@@ -600,23 +600,23 @@ public partial interface ITextEditorService
                         {
                             var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-                            var lowerRowMetaData = modelModifier.GetRowInformationFromPositionIndex(
+                            var lowerRowMetaData = modelModifier.GetLineInformationFromPositionIndex(
                                 selectionBounds.lowerPositionIndexInclusive);
 
-                            cursorModifier.RowIndex = lowerRowMetaData.RowIndex;
+                            cursorModifier.LineIndex = lowerRowMetaData.LineIndex;
 
                             cursorModifier.ColumnIndex = selectionBounds.lowerPositionIndexInclusive -
-                                lowerRowMetaData.RowStartPositionIndexInclusive;
+                                lowerRowMetaData.LineStartPositionIndexInclusive;
                         }
                         else
                         {
                             if (cursorModifier.ColumnIndex <= 0)
                             {
-                                if (cursorModifier.RowIndex != 0)
+                                if (cursorModifier.LineIndex != 0)
                                 {
-                                    cursorModifier.RowIndex--;
+                                    cursorModifier.LineIndex--;
 
-                                    lengthOfRow = modelModifier.GetLengthOfRow(cursorModifier.RowIndex);
+                                    lengthOfRow = modelModifier.GetLengthOfLine(cursorModifier.LineIndex);
 
                                     MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
                                 }
@@ -630,7 +630,7 @@ public partial interface ITextEditorService
                                 if (keyboardEventArgs.CtrlKey)
                                 {
                                     var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-                                        cursorModifier.RowIndex,
+                                        cursorModifier.LineIndex,
                                         cursorModifier.ColumnIndex,
                                         true);
 
@@ -648,11 +648,11 @@ public partial interface ITextEditorService
 
                         break;
                     case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
-                        if (cursorModifier.RowIndex < modelModifier.RowCount - 1)
+                        if (cursorModifier.LineIndex < modelModifier.RowCount - 1)
                         {
-                            cursorModifier.RowIndex++;
+                            cursorModifier.LineIndex++;
 
-                            lengthOfRow = modelModifier.GetLengthOfRow(cursorModifier.RowIndex);
+                            lengthOfRow = modelModifier.GetLengthOfLine(cursorModifier.LineIndex);
 
                             cursorModifier.ColumnIndex = lengthOfRow < cursorModifier.PreferredColumnIndex
                                 ? lengthOfRow
@@ -661,11 +661,11 @@ public partial interface ITextEditorService
 
                         break;
                     case KeyboardKeyFacts.MovementKeys.ARROW_UP:
-                        if (cursorModifier.RowIndex > 0)
+                        if (cursorModifier.LineIndex > 0)
                         {
-                            cursorModifier.RowIndex--;
+                            cursorModifier.LineIndex--;
 
-                            lengthOfRow = modelModifier.GetLengthOfRow(cursorModifier.RowIndex);
+                            lengthOfRow = modelModifier.GetLengthOfLine(cursorModifier.LineIndex);
 
                             cursorModifier.ColumnIndex = lengthOfRow < cursorModifier.PreferredColumnIndex
                                 ? lengthOfRow
@@ -678,40 +678,40 @@ public partial interface ITextEditorService
                         {
                             var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-                            var upperRowMetaData = modelModifier.GetRowInformationFromPositionIndex(selectionBounds.upperPositionIndexExclusive);
+                            var upperRowMetaData = modelModifier.GetLineInformationFromPositionIndex(selectionBounds.upperPositionIndexExclusive);
 
-                            cursorModifier.RowIndex = upperRowMetaData.RowIndex;
+                            cursorModifier.LineIndex = upperRowMetaData.LineIndex;
 
-                            if (cursorModifier.RowIndex >= modelModifier.RowCount)
+                            if (cursorModifier.LineIndex >= modelModifier.RowCount)
                             {
-                                cursorModifier.RowIndex = modelModifier.RowCount - 1;
+                                cursorModifier.LineIndex = modelModifier.RowCount - 1;
 
-                                var upperRowLength = modelModifier.GetLengthOfRow(cursorModifier.RowIndex);
+                                var upperRowLength = modelModifier.GetLengthOfLine(cursorModifier.LineIndex);
 
                                 cursorModifier.ColumnIndex = upperRowLength;
                             }
                             else
                             {
                                 cursorModifier.ColumnIndex =
-                                    selectionBounds.upperPositionIndexExclusive - upperRowMetaData.RowStartPositionIndexInclusive;
+                                    selectionBounds.upperPositionIndexExclusive - upperRowMetaData.LineStartPositionIndexInclusive;
                             }
                         }
                         else
                         {
-                            lengthOfRow = modelModifier.GetLengthOfRow(cursorModifier.RowIndex);
+                            lengthOfRow = modelModifier.GetLengthOfLine(cursorModifier.LineIndex);
 
                             if (cursorModifier.ColumnIndex >= lengthOfRow &&
-                                cursorModifier.RowIndex < modelModifier.RowCount - 1)
+                                cursorModifier.LineIndex < modelModifier.RowCount - 1)
                             {
                                 MutateIndexCoordinatesAndPreferredColumnIndex(0);
-                                cursorModifier.RowIndex++;
+                                cursorModifier.LineIndex++;
                             }
                             else if (cursorModifier.ColumnIndex != lengthOfRow)
                             {
                                 if (keyboardEventArgs.CtrlKey)
                                 {
                                     var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-                                        cursorModifier.RowIndex,
+                                        cursorModifier.LineIndex,
                                         cursorModifier.ColumnIndex,
                                         false);
 
@@ -733,16 +733,16 @@ public partial interface ITextEditorService
                         break;
                     case KeyboardKeyFacts.MovementKeys.HOME:
                         if (keyboardEventArgs.CtrlKey)
-                            cursorModifier.RowIndex = 0;
+                            cursorModifier.LineIndex = 0;
 
                         MutateIndexCoordinatesAndPreferredColumnIndex(0);
 
                         break;
                     case KeyboardKeyFacts.MovementKeys.END:
                         if (keyboardEventArgs.CtrlKey)
-                            cursorModifier.RowIndex = modelModifier.RowCount - 1;
+                            cursorModifier.LineIndex = modelModifier.RowCount - 1;
 
-                        lengthOfRow = modelModifier.GetLengthOfRow(cursorModifier.RowIndex);
+                        lengthOfRow = modelModifier.GetLengthOfLine(cursorModifier.LineIndex);
 
                         MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
 
@@ -752,7 +752,7 @@ public partial interface ITextEditorService
                 if (keyboardEventArgs.ShiftKey)
                 {
                     cursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(
-                        cursorModifier.RowIndex,
+                        cursorModifier.LineIndex,
                         cursorModifier.ColumnIndex);
                 }
 
@@ -796,7 +796,7 @@ public partial interface ITextEditorService
                 {
                     var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.First();
 
-                    cursorModifier.RowIndex = firstEntry.Index;
+                    cursorModifier.LineIndex = firstEntry.Index;
                     cursorModifier.ColumnIndex = 0;
                 }
 
@@ -839,9 +839,9 @@ public partial interface ITextEditorService
                 if ((viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false))
                 {
                     var lastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.Last();
-                    var lastEntriesRowLength = modelModifier.GetLengthOfRow(lastEntry.Index);
+                    var lastEntriesRowLength = modelModifier.GetLengthOfLine(lastEntry.Index);
 
-                    cursorModifier.RowIndex = lastEntry.Index;
+                    cursorModifier.LineIndex = lastEntry.Index;
                     cursorModifier.ColumnIndex = lastEntriesRowLength;
                 }
 
@@ -901,8 +901,8 @@ public partial interface ITextEditorService
                 {
                     verticalStartingIndex = Math.Max(0, verticalStartingIndex);
 
-                    if (verticalStartingIndex + verticalTake > modelModifier.RowEndingPositionsList.Count)
-                        verticalTake = modelModifier.RowEndingPositionsList.Count - verticalStartingIndex;
+                    if (verticalStartingIndex + verticalTake > modelModifier.LineEndPositionList.Count)
+                        verticalTake = modelModifier.LineEndPositionList.Count - verticalStartingIndex;
 
                     verticalTake = Math.Max(0, verticalTake);
                 }
@@ -936,7 +936,7 @@ public partial interface ITextEditorService
                                     ? maxValidColumnIndex
                                     : localHorizontalStartingIndex;
 
-                            var tabsOnSameRowBeforeCursor = modelModifier.GetTabsCountOnSameRowBeforeCursor(
+                            var tabsOnSameRowBeforeCursor = modelModifier.GetTabsCountOnSameLineBeforeCursor(
                                 rowIndex,
                                 parameterForGetTabsCountOnSameRowBeforeCursor);
 
@@ -973,7 +973,7 @@ public partial interface ITextEditorService
                                     ? maxValidColumnIndex
                                     : localHorizontalStartingIndex;
 
-                            var tabsOnSameRowBeforeCursor = modelModifier.GetTabsCountOnSameRowBeforeCursor(
+                            var tabsOnSameRowBeforeCursor = modelModifier.GetTabsCountOnSameLineBeforeCursor(
                                 rowIndex,
                                 parameterForGetTabsCountOnSameRowBeforeCursor);
 
@@ -998,7 +998,7 @@ public partial interface ITextEditorService
                 var totalWidth = modelModifier.MostCharactersOnASingleRowTuple.rowLength *
                     virtualizationResult.CharAndRowMeasurements.CharacterWidth;
 
-                var totalHeight = modelModifier.RowEndingPositionsList.Count *
+                var totalHeight = modelModifier.LineEndPositionList.Count *
                     virtualizationResult.CharAndRowMeasurements.RowHeight;
 
                 // Add vertical margin so the user can scroll beyond the final row of content

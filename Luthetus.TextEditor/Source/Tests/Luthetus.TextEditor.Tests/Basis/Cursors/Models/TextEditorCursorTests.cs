@@ -11,7 +11,7 @@ public class TextEditorCursorTests
     /// <summary>
     /// <see cref="TextEditorCursor(int, int, int, bool, TextEditorSelection)"/>
     /// <br/>----<br/>
-    /// <see cref="TextEditorCursor.RowIndex"/>
+    /// <see cref="TextEditorCursor.LineIndex"/>
     /// <see cref="TextEditorCursor.ColumnIndex"/>
     /// <see cref="TextEditorCursor.PreferredColumnIndex"/>
     /// <see cref="TextEditorCursor.IsPrimaryCursor"/>
@@ -34,7 +34,7 @@ public class TextEditorCursorTests
             isPrimaryCursor,
             selection);
 
-        Assert.Equal(rowIndex, cursor.RowIndex);
+        Assert.Equal(rowIndex, cursor.LineIndex);
         Assert.Equal(columnIndex, cursor.ColumnIndex);
         Assert.Equal(preferredColumnIndex, cursor.PreferredColumnIndex);
         Assert.Equal(isPrimaryCursor, cursor.IsPrimaryCursor);
@@ -47,7 +47,7 @@ public class TextEditorCursorTests
     /// <summary>
     /// <see cref="TextEditorCursor(bool)"/>
     /// <br/>----<br/>
-    /// <see cref="TextEditorCursor.RowIndex"/>
+    /// <see cref="TextEditorCursor.LineIndex"/>
     /// <see cref="TextEditorCursor.ColumnIndex"/>
     /// <see cref="TextEditorCursor.PreferredColumnIndex"/>
     /// <see cref="TextEditorCursor.IsPrimaryCursor"/>
@@ -61,7 +61,7 @@ public class TextEditorCursorTests
 
         var cursor = new TextEditorCursor(isPrimaryCursor);
 
-        Assert.Equal(0, cursor.RowIndex);
+        Assert.Equal(0, cursor.LineIndex);
         Assert.Equal(0, cursor.ColumnIndex);
         Assert.Equal(0, cursor.PreferredColumnIndex);
         Assert.Equal(isPrimaryCursor, cursor.IsPrimaryCursor);
@@ -74,7 +74,7 @@ public class TextEditorCursorTests
     /// <summary>
     /// <see cref="TextEditorCursor(int, int, bool)"/>
     /// <br/>----<br/>
-    /// <see cref="TextEditorCursor.RowIndex"/>
+    /// <see cref="TextEditorCursor.LineIndex"/>
     /// <see cref="TextEditorCursor.ColumnIndex"/>
     /// <see cref="TextEditorCursor.PreferredColumnIndex"/>
     /// <see cref="TextEditorCursor.IsPrimaryCursor"/>
@@ -93,7 +93,7 @@ public class TextEditorCursorTests
             columnIndex,
             isPrimaryCursor);
 
-        Assert.Equal(rowIndex, cursor.RowIndex);
+        Assert.Equal(rowIndex, cursor.LineIndex);
         Assert.Equal(columnIndex, cursor.ColumnIndex);
         Assert.Equal(columnIndex, cursor.PreferredColumnIndex);
         Assert.Equal(isPrimaryCursor, cursor.IsPrimaryCursor);
@@ -138,7 +138,7 @@ public class TextEditorCursorTests
     [Fact]
     public void Empty()
     {
-        Assert.Equal(0, TextEditorCursor.Empty.RowIndex);
+        Assert.Equal(0, TextEditorCursor.Empty.LineIndex);
         Assert.Equal(0, TextEditorCursor.Empty.ColumnIndex);
         Assert.Equal(0, TextEditorCursor.Empty.PreferredColumnIndex);
         Assert.False(TextEditorCursor.Empty.IsPrimaryCursor);

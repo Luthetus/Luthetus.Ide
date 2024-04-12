@@ -70,12 +70,12 @@ public class ThrottleEventOnDoubleClick : ITextEditorTask
             false);
 
         higherColumnIndexExpansion = higherColumnIndexExpansion == -1
-            ? modelModifier.GetLengthOfRow(rowAndColumnIndex.rowIndex)
+            ? modelModifier.GetLengthOfLine(rowAndColumnIndex.rowIndex)
             : higherColumnIndexExpansion;
 
         // Move user's cursor position to the higher expansion
         {
-            primaryCursorModifier.RowIndex = rowAndColumnIndex.rowIndex;
+            primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
             primaryCursorModifier.ColumnIndex = higherColumnIndexExpansion;
             primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
         }

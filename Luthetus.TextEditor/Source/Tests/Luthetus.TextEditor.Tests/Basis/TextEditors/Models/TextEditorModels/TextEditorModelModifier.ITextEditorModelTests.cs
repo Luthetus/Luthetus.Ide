@@ -17,7 +17,7 @@ public partial class TextEditorModelModifierTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModelModifier.EditBlocksList"/>
+	/// <see cref="TextEditorModelModifier.EditBlockList"/>
 	/// </summary>
 	[Fact]
 	public void EditBlocksList()
@@ -26,7 +26,7 @@ public partial class TextEditorModelModifierTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModelModifier.RowEndingPositionsList"/>
+	/// <see cref="TextEditorModelModifier.LineEndPositionList"/>
 	/// </summary>
 	[Fact]
 	public void RowEndingPositionsList()

@@ -162,7 +162,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             ActiveVimMode = VimMode.Visual;
 
                             var positionIndex = modelModifier.GetPositionIndex(
-                                primaryCursorModifier.RowIndex,
+                                primaryCursorModifier.LineIndex,
                                 primaryCursorModifier.ColumnIndex);
 
                             primaryCursorModifier.SelectionAnchorPositionIndex = positionIndex;
@@ -212,12 +212,12 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             ActiveVimMode = VimMode.VisualLine;
 
                             var startOfRowPositionIndexInclusive = modelModifier.GetPositionIndex(
-                                primaryCursorModifier.RowIndex,
+                                primaryCursorModifier.LineIndex,
                                 0);
 
                             primaryCursorModifier.SelectionAnchorPositionIndex = startOfRowPositionIndexInclusive;
 
-                            var endOfRowPositionIndexExclusive = modelModifier.RowEndingPositionsList[primaryCursorModifier.RowIndex]
+                            var endOfRowPositionIndexExclusive = modelModifier.LineEndPositionList[primaryCursorModifier.LineIndex]
                                 .EndPositionIndexExclusive;
 
                             primaryCursorModifier.SelectionEndingPositionIndex = endOfRowPositionIndexExclusive;

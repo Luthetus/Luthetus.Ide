@@ -12,8 +12,8 @@ public partial class TextEditorModel : ITextEditorModel
 
     ImmutableList<TextEditorPartition> ITextEditorModel.PartitionList => PartitionList;
     
-    IList<EditBlock> ITextEditorModel.EditBlocksList => EditBlocksList;
-	IList<RowEnding> ITextEditorModel.RowEndingPositionsList => RowEndingPositionsList;
+    IList<EditBlock> ITextEditorModel.EditBlockList => EditBlocksList;
+	IList<LineEnd> ITextEditorModel.LineEndPositionList => RowEndingPositionsList;
 	IList<(RowEndingKind rowEndingKind, int count)> ITextEditorModel.RowEndingKindCountsList => RowEndingKindCountsList;
 	IList<TextEditorPresentationModel> ITextEditorModel.PresentationModelsList => PresentationModelsList;
 	IList<int> ITextEditorModel.TabKeyPositionsList => TabKeyPositionsList;

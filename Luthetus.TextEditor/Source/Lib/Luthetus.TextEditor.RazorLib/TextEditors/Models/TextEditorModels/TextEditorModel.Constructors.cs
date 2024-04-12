@@ -31,13 +31,13 @@ public partial class TextEditorModel
 
 		PartitionSize = partitionSize;
 		var modifier = new TextEditorModelModifier(this);
-		modifier.ModifyContent(content);
+		modifier.SetContent(content);
 
         CharList = modifier.CharList;
         DecorationByteList = modifier.DecorationByteList;
         PartitionList = modifier.PartitionList;
         RowEndingKindCountsList = modifier.RowEndingKindCountsList.ToImmutableList();
-		RowEndingPositionsList = modifier.RowEndingPositionsList.ToImmutableList();
+		RowEndingPositionsList = modifier.LineEndPositionList.ToImmutableList();
 		TabKeyPositionsList = modifier.TabKeyPositionsList.ToImmutableList();
 		OnlyRowEndingKind = modifier.OnlyRowEndingKind;
 		UsingRowEndingKind = modifier.UsingRowEndingKind;
@@ -50,7 +50,7 @@ public partial class TextEditorModel
         int partitionSize,
         ImmutableList<TextEditorPartition> partitionList,
 		ImmutableList<EditBlock> editBlocksList,
-		ImmutableList<RowEnding> rowEndingPositionsList,
+		ImmutableList<LineEnd> rowEndingPositionsList,
 		ImmutableList<(RowEndingKind rowEndingKind, int count)> rowEndingKindCountsList,
 		ImmutableList<TextEditorPresentationModel> presentationModelsList,
 		ImmutableList<int> tabKeyPositionsList,

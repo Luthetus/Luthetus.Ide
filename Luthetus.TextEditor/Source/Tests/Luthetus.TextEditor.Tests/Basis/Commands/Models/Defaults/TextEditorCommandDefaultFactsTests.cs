@@ -73,7 +73,7 @@ public class TextEditorCommandDefaultFactsTests
 					if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
 						return Task.CompletedTask;
 
-					primaryCursorModifier.RowIndex = 1;
+					primaryCursorModifier.LineIndex = 1;
 					primaryCursorModifier.SetColumnIndexAndPreferred(9);
 					primaryCursorModifier.SelectionAnchorPositionIndex = 15;
 					primaryCursorModifier.SelectionEndingPositionIndex = 22;
@@ -143,7 +143,7 @@ public class TextEditorCommandDefaultFactsTests
                     if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
-                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.LineIndex = 1;
                     primaryCursorModifier.SetColumnIndexAndPreferred(9);
                     primaryCursorModifier.SelectionAnchorPositionIndex = 15;
                     primaryCursorModifier.SelectionEndingPositionIndex = 22;
@@ -202,7 +202,7 @@ public class TextEditorCommandDefaultFactsTests
                     await clipboardService.SetClipboard(stringToPaste);
                     Assert.Equal(stringToPaste, await clipboardService.ReadClipboard());
 
-                    primaryCursorModifier.RowIndex = 0;
+                    primaryCursorModifier.LineIndex = 0;
                     primaryCursorModifier.SetColumnIndexAndPreferred(0);
 
                     return;
@@ -244,7 +244,7 @@ public class TextEditorCommandDefaultFactsTests
                     await clipboardService.SetClipboard(stringToPaste);
                     Assert.Equal(stringToPaste, await clipboardService.ReadClipboard());
 
-                    primaryCursorModifier.RowIndex = 0;
+                    primaryCursorModifier.LineIndex = 0;
                     primaryCursorModifier.SetColumnIndexAndPreferred(0);
 
                     // Select the first row in its entirety (including line ending)
@@ -358,7 +358,7 @@ public class TextEditorCommandDefaultFactsTests
 
             // Assert that 'SelectAll' does not move the cursor itself, it only should move the selection
             {
-                Assert.Equal(inViewModel.PrimaryCursor.RowIndex, outViewModel!.PrimaryCursor.RowIndex);
+                Assert.Equal(inViewModel.PrimaryCursor.LineIndex, outViewModel!.PrimaryCursor.LineIndex);
                 Assert.Equal(inViewModel.PrimaryCursor.ColumnIndex, outViewModel!.PrimaryCursor.ColumnIndex);
             }
         }
@@ -662,7 +662,7 @@ public class TextEditorCommandDefaultFactsTests
                     if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
-                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.LineIndex = 1;
                     primaryCursorModifier.SetColumnIndexAndPreferred(3);
                     primaryCursorModifier.SelectionAnchorPositionIndex = 15;
                     primaryCursorModifier.SelectionEndingPositionIndex = 16;
@@ -702,7 +702,7 @@ public class TextEditorCommandDefaultFactsTests
                 var primaryCursor = outViewModel!.PrimaryCursor;
 
                 // The row index should be unchanged
-                Assert.Equal(1, primaryCursor.RowIndex);
+                Assert.Equal(1, primaryCursor.LineIndex);
 
                 Assert.Equal(4, primaryCursor.ColumnIndex);
                 // Assert column and preferred indices to ensure both were set,
@@ -735,7 +735,7 @@ public class TextEditorCommandDefaultFactsTests
                     if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
-                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.LineIndex = 1;
                     primaryCursorModifier.SetColumnIndexAndPreferred(0);
                     primaryCursorModifier.SelectionAnchorPositionIndex = 13;
                     primaryCursorModifier.SelectionEndingPositionIndex = 23;
@@ -775,7 +775,7 @@ public class TextEditorCommandDefaultFactsTests
                 var primaryCursor = outViewModel!.PrimaryCursor;
 
                 // The row index should be unchanged
-                Assert.Equal(1, primaryCursor.RowIndex);
+                Assert.Equal(1, primaryCursor.LineIndex);
 
                 Assert.Equal(1, primaryCursor.ColumnIndex);
                 // Assert column and preferred indices to ensure both were set,
@@ -809,7 +809,7 @@ public class TextEditorCommandDefaultFactsTests
                     if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
-                    primaryCursorModifier.RowIndex = 0;
+                    primaryCursorModifier.LineIndex = 0;
                     primaryCursorModifier.SetColumnIndexAndPreferred(0);
                     primaryCursorModifier.SelectionAnchorPositionIndex = 0;
                     primaryCursorModifier.SelectionEndingPositionIndex = 16;
@@ -849,7 +849,7 @@ public class TextEditorCommandDefaultFactsTests
                 var primaryCursor = outViewModel!.PrimaryCursor;
 
                 // The row index should be unchanged
-                Assert.Equal(0, primaryCursor.RowIndex);
+                Assert.Equal(0, primaryCursor.LineIndex);
 
                 Assert.Equal(1, primaryCursor.ColumnIndex);
                 // Assert column and preferred indices to ensure both were set,
@@ -883,7 +883,7 @@ public class TextEditorCommandDefaultFactsTests
                     if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
-                    primaryCursorModifier.RowIndex = 0;
+                    primaryCursorModifier.LineIndex = 0;
                     primaryCursorModifier.SetColumnIndexAndPreferred(0);
                     primaryCursorModifier.SelectionAnchorPositionIndex = 0;
                     primaryCursorModifier.SelectionEndingPositionIndex = 23;
@@ -923,7 +923,7 @@ public class TextEditorCommandDefaultFactsTests
                 var primaryCursor = outViewModel!.PrimaryCursor;
 
                 // The row index should be unchanged
-                Assert.Equal(0, primaryCursor.RowIndex);
+                Assert.Equal(0, primaryCursor.LineIndex);
 
                 Assert.Equal(1, primaryCursor.ColumnIndex);
                 // Assert column and preferred indices to ensure both were set,
@@ -1017,7 +1017,7 @@ public class TextEditorCommandDefaultFactsTests
                         Assert.Equal("\t7 Pillows\n", rowText);
                     }
 
-                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.LineIndex = 1;
                     primaryCursorModifier.SetColumnIndexAndPreferred(4);
                     primaryCursorModifier.SelectionAnchorPositionIndex = 16;
                     primaryCursorModifier.SelectionEndingPositionIndex = 17;
@@ -1086,7 +1086,7 @@ public class TextEditorCommandDefaultFactsTests
                         Assert.Equal("    7 Pillows\n", rowText);
                     }
 
-                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.LineIndex = 1;
                     primaryCursorModifier.SetColumnIndexAndPreferred(7);
                     primaryCursorModifier.SelectionAnchorPositionIndex = 19;
                     primaryCursorModifier.SelectionEndingPositionIndex = 20;
@@ -1155,7 +1155,7 @@ public class TextEditorCommandDefaultFactsTests
                         Assert.Equal("\t7 Pillows\n", rowText);
                     }
 
-                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.LineIndex = 1;
                     primaryCursorModifier.SetColumnIndexAndPreferred(0);
                     primaryCursorModifier.SelectionAnchorPositionIndex = 13;
                     primaryCursorModifier.SelectionEndingPositionIndex = 24;
@@ -1501,12 +1501,12 @@ public class Person
                     if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
-                    modelModifier.ModifyContent(newContent);
+                    modelModifier.SetContent(newContent);
 
                     // Move the cursor to the first curly brace.
                     // In otherwords, the curly brace which opens the 'Person' class.
                     {
-                        primaryCursorModifier.RowIndex = newRowIndex;
+                        primaryCursorModifier.LineIndex = newRowIndex;
                         primaryCursorModifier.SetColumnIndexAndPreferred(newColumnIndex);
                     }
 
@@ -1519,7 +1519,7 @@ public class Person
 
             var refViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
             Assert.NotNull(refViewModel);
-            Assert.Equal(newRowIndex, refViewModel!.PrimaryCursor.RowIndex);
+            Assert.Equal(newRowIndex, refViewModel!.PrimaryCursor.LineIndex);
             Assert.Equal(newColumnIndex, refViewModel!.PrimaryCursor.ColumnIndex);
             Assert.Equal(newColumnIndex, refViewModel!.PrimaryCursor.PreferredColumnIndex);
 
@@ -1536,7 +1536,7 @@ public class Person
 
             var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
             Assert.NotNull(outViewModel);
-            Assert.Equal(7, outViewModel!.PrimaryCursor.RowIndex);
+            Assert.Equal(7, outViewModel!.PrimaryCursor.LineIndex);
             Assert.Equal(0, outViewModel!.PrimaryCursor.ColumnIndex);
             Assert.Equal(0, outViewModel!.PrimaryCursor.ColumnIndex);
         }
@@ -1571,12 +1571,12 @@ public class Person
                     if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
-                    modelModifier.ModifyContent(newContent);
+                    modelModifier.SetContent(newContent);
 
                     // Move the cursor to the first curly brace.
                     // In otherwords, the curly brace which opens the 'Person' class.
                     {
-                        primaryCursorModifier.RowIndex = newRowIndex;
+                        primaryCursorModifier.LineIndex = newRowIndex;
                         primaryCursorModifier.SetColumnIndexAndPreferred(newColumnIndex);
                     }
 
@@ -1589,7 +1589,7 @@ public class Person
 
             var refViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
             Assert.NotNull(refViewModel);
-            Assert.Equal(newRowIndex, refViewModel!.PrimaryCursor.RowIndex);
+            Assert.Equal(newRowIndex, refViewModel!.PrimaryCursor.LineIndex);
             Assert.Equal(newColumnIndex, refViewModel!.PrimaryCursor.ColumnIndex);
             Assert.Equal(newColumnIndex, refViewModel!.PrimaryCursor.PreferredColumnIndex);
 
@@ -1606,7 +1606,7 @@ public class Person
 
             var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
             Assert.NotNull(outViewModel);
-            Assert.Equal(7, outViewModel!.PrimaryCursor.RowIndex);
+            Assert.Equal(7, outViewModel!.PrimaryCursor.LineIndex);
             Assert.Equal(0, outViewModel!.PrimaryCursor.ColumnIndex);
             Assert.Equal(0, outViewModel!.PrimaryCursor.ColumnIndex);
             Assert.Equal(54, outViewModel!.PrimaryCursor.Selection.AnchorPositionIndex);

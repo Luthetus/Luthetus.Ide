@@ -55,12 +55,12 @@ public class ThrottleEventOnMouseDown : ITextEditorTask
         await _events.CursorSetShouldDisplayMenuAsyncFunc.Invoke(TextEditorMenuKind.None, false).ConfigureAwait(false);
 
         // Remember the current cursor position prior to doing anything
-        var inRowIndex = primaryCursorModifier.RowIndex;
+        var inRowIndex = primaryCursorModifier.LineIndex;
         var inColumnIndex = primaryCursorModifier.ColumnIndex;
 
         // Move the cursor position
         var rowAndColumnIndex = await _events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
-        primaryCursorModifier.RowIndex = rowAndColumnIndex.rowIndex;
+        primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
         primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
         primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 

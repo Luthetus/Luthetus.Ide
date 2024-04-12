@@ -46,7 +46,7 @@ public class ThrottleEventOnMouseMove : ITextEditorTask
 
         var rowAndColumnIndex = await _events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
 
-        primaryCursorModifier.RowIndex = rowAndColumnIndex.rowIndex;
+        primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
         primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
         primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 

@@ -50,7 +50,7 @@ public partial class TextSelectionRow : ComponentBase
 
         bool stateHasChanged = false;
 
-        var startOfRowTuple = RenderBatch.Model!.GetRowEndingThatCreatedRow(rowIndex);
+        var startOfRowTuple = RenderBatch.Model!.GetLineOpening(rowIndex);
         var endOfRowTuple = RenderBatch.Model!.RowEndingPositionsList[rowIndex];
 
         var selectionStartingColumnIndex = 0;

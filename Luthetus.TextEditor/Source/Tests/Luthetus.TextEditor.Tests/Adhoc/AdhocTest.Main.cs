@@ -30,7 +30,7 @@ public partial class AdhocTest
         InitializeTextEditorServicesTestsHelper(
             out var initialContent,
             out var refModel,
-            out var viewModel,
+            out var refViewModel,
             out var textEditorService);
 
         Assert.Equal(initialContent, refModel.GetAllText());
@@ -38,6 +38,31 @@ public partial class AdhocTest
         refModel.CompilerService.ResourceWasModified(
             refModel.ResourceUri,
             ImmutableArray<TextEditorTextSpan>.Empty);
+
+        // 270 ms (total)
+
+        textEditorService.Post(
+            nameof(ContentList_Change),
+            textEditorService.ModelApi.ApplySyntaxHighlightingFactory(refModel.ResourceUri));
+
+        // 280 ms (total)
+
+        textEditorService.Post(
+            nameof(After_ContentList_Change_TextEditor_Extremely_Slow),
+            editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(refModel.ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(refViewModel.ViewModelKey);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.ClearContentList;
+
+                return Task.CompletedTask;
+            });
     }
 
     /// <summary>
@@ -273,27 +298,27 @@ public partial class AdhocTest
             var rowEnding = rowEndingPositionsList[i++];
             Assert.Equal(20, rowEnding.StartPositionIndexInclusive);
             Assert.Equal(21, rowEnding.EndPositionIndexExclusive);
-            Assert.Equal(RowEndingKind.Linefeed, rowEnding.RowEndingKind);
+            Assert.Equal(RowEndingKind.Linefeed, rowEnding.LineEndKind);
 
             rowEnding = rowEndingPositionsList[i++];
             Assert.Equal(22, rowEnding.StartPositionIndexInclusive);
             Assert.Equal(23, rowEnding.EndPositionIndexExclusive);
-            Assert.Equal(RowEndingKind.Linefeed, rowEnding.RowEndingKind);
+            Assert.Equal(RowEndingKind.Linefeed, rowEnding.LineEndKind);
 
             rowEnding = rowEndingPositionsList[i++];
             Assert.Equal(24, rowEnding.StartPositionIndexInclusive);
             Assert.Equal(25, rowEnding.EndPositionIndexExclusive);
-            Assert.Equal(RowEndingKind.Linefeed, rowEnding.RowEndingKind);
+            Assert.Equal(RowEndingKind.Linefeed, rowEnding.LineEndKind);
 
             rowEnding = rowEndingPositionsList[i++];
             Assert.Equal(26, rowEnding.StartPositionIndexInclusive);
             Assert.Equal(27, rowEnding.EndPositionIndexExclusive);
-            Assert.Equal(RowEndingKind.Linefeed, rowEnding.RowEndingKind);
+            Assert.Equal(RowEndingKind.Linefeed, rowEnding.LineEndKind);
 
             rowEnding = rowEndingPositionsList[i++];
             Assert.Equal(27, rowEnding.StartPositionIndexInclusive);
             Assert.Equal(27, rowEnding.EndPositionIndexExclusive);
-            Assert.Equal(RowEndingKind.EndOfFile, rowEnding.RowEndingKind);
+            Assert.Equal(RowEndingKind.EndOfFile, rowEnding.LineEndKind);
         }
 
         // RowEndingKindCountsList

@@ -149,8 +149,8 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
         // Tab key column offset
         {
-            var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabsCountOnSameRowBeforeCursor(
-                Cursor.RowIndex,
+            var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabsCountOnSameLineBeforeCursor(
+                Cursor.LineIndex,
                 Cursor.ColumnIndex);
 
             // 1 of the character width is already accounted for
@@ -167,7 +167,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         var leftInPixelsInvariantCulture = leftInPixels.ToCssValue();
         var left = $"left: {leftInPixelsInvariantCulture}px;";
 
-        var topInPixelsInvariantCulture = (measurements.RowHeight * Cursor.RowIndex)
+        var topInPixelsInvariantCulture = (measurements.RowHeight * Cursor.LineIndex)
             .ToCssValue();
 
         var top = $"top: {topInPixelsInvariantCulture}px;";
@@ -190,7 +190,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     {
         var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements;
 
-        var topInPixelsInvariantCulture = (measurements.RowHeight * Cursor.RowIndex)
+        var topInPixelsInvariantCulture = (measurements.RowHeight * Cursor.LineIndex)
             .ToCssValue();
 
         var top = $"top: {topInPixelsInvariantCulture}px;";
@@ -215,8 +215,8 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
         // Tab key column offset
         {
-            var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabsCountOnSameRowBeforeCursor(
-                Cursor.RowIndex,
+            var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabsCountOnSameLineBeforeCursor(
+                Cursor.LineIndex,
                 Cursor.ColumnIndex);
 
             // 1 of the character width is already accounted for
@@ -231,7 +231,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         var leftInPixelsInvariantCulture = leftInPixels.ToCssValue();
         var left = $"left: {leftInPixelsInvariantCulture}px;";
 
-        var topInPixelsInvariantCulture = (measurements.RowHeight * (Cursor.RowIndex + 1))
+        var topInPixelsInvariantCulture = (measurements.RowHeight * (Cursor.LineIndex + 1))
             .ToCssValue();
 
         // Top is 1 row further than the cursor so it does not cover text at cursor position.

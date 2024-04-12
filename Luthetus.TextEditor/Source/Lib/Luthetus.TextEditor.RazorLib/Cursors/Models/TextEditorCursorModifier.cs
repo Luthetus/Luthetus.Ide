@@ -6,7 +6,7 @@ public class TextEditorCursorModifier
 {
     public TextEditorCursorModifier(TextEditorCursor cursor)
     {
-        RowIndex = cursor.RowIndex;
+        LineIndex = cursor.LineIndex;
         ColumnIndex = cursor.ColumnIndex;
         PreferredColumnIndex = cursor.PreferredColumnIndex;
         IsPrimaryCursor = cursor.IsPrimaryCursor;
@@ -15,7 +15,7 @@ public class TextEditorCursorModifier
         Key = cursor.Key;
     }
 
-    public int RowIndex { get; set; }
+    public int LineIndex { get; set; }
     public int ColumnIndex {get; set; }
     public int PreferredColumnIndex {get; set; }
     public bool IsPrimaryCursor {get; set; }
@@ -31,7 +31,7 @@ public class TextEditorCursorModifier
     public TextEditorCursor ToCursor()
     {
         return new TextEditorCursor(
-            RowIndex,
+            LineIndex,
             ColumnIndex,
             PreferredColumnIndex,
             IsPrimaryCursor,

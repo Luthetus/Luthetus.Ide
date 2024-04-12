@@ -684,7 +684,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                             // are to be 1 character long, as well either specific whitespace or punctuation.
                             // Therefore 1 character behind might be a word that can be indexed.
                             var word = modelModifier.ReadPreviousWordOrDefault(
-                                primaryCursorModifier.RowIndex,
+                                primaryCursorModifier.LineIndex,
                                 primaryCursorModifier.ColumnIndex);
 
                             if (word is not null)
@@ -754,7 +754,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                             // are to be 1 character long, as well either specific whitespace or punctuation.
                             // Therefore 1 character behind might be a word that can be indexed.
                             var word = modelModifier.ReadPreviousWordOrDefault(
-                                primaryCursorModifier.RowIndex,
+                                primaryCursorModifier.LineIndex,
                                 primaryCursorModifier.ColumnIndex);
 
                             if (word is not null)
@@ -970,7 +970,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
             }
 
-            var lengthOfRow = model.GetLengthOfRow(rowIndex);
+            var lengthOfRow = model.GetLengthOfLine(rowIndex);
 
             // Tab key column offset
             {
@@ -978,7 +978,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                     ? lengthOfRow
                     : columnIndexInt;
 
-                var tabsOnSameRowBeforeCursor = model.GetTabsCountOnSameRowBeforeCursor(
+                var tabsOnSameRowBeforeCursor = model.GetTabsCountOnSameLineBeforeCursor(
                     rowIndex,
                     parameterForGetTabsCountOnSameRowBeforeCursor);
 

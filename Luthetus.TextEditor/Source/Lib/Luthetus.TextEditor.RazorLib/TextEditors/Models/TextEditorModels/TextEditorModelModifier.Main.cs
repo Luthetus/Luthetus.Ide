@@ -65,7 +65,7 @@ public partial class TextEditorModelModifier
     private ImmutableList<TextEditorPartition> _partitionList = new TextEditorPartition[] { TextEditorPartition.Empty }.ToImmutableList();
 
     private List<EditBlock>? _editBlocksList;
-    private List<RowEnding>? _rowEndingPositionsList;
+    private List<LineEnd>? _rowEndingPositionsList;
     private List<(RowEndingKind rowEndingKind, int count)>? _rowEndingKindCountsList;
     private List<TextEditorPresentationModel>? _presentationModelsList;
     private List<int>? _tabKeyPositionsList;
@@ -153,249 +153,30 @@ public partial class TextEditorModelModifier
         _onlyRowEndingKindWasModified = true;
     }
 
-    public void ModifyUsingRowEndingKind(RowEndingKind rowEndingKind)
+    public void SetUsingRowEndingKind(RowEndingKind rowEndingKind)
     {
         _usingRowEndingKind = rowEndingKind;
     }
 
-    public void ModifyResourceData(ResourceUri resourceUri, DateTime resourceLastWriteTime)
+    public void SetResourceData(ResourceUri resourceUri, DateTime resourceLastWriteTime)
     {
         _resourceUri = resourceUri;
         _resourceLastWriteTime = resourceLastWriteTime;
     }
 
-    public void ModifyDecorationMapper(IDecorationMapper decorationMapper)
+    public void SetDecorationMapper(IDecorationMapper decorationMapper)
     {
         _decorationMapper = decorationMapper;
     }
 
-    public void ModifyCompilerService(ILuthCompilerService compilerService)
+    public void SetCompilerService(ILuthCompilerService compilerService)
     {
         _compilerService = compilerService;
     }
 
-    public void ModifyTextEditorSaveFileHelper(TextEditorSaveFileHelper textEditorSaveFileHelper)
+    public void SetTextEditorSaveFileHelper(TextEditorSaveFileHelper textEditorSaveFileHelper)
     {
         _textEditorSaveFileHelper = textEditorSaveFileHelper;
-    }
-
-    private void EnsureUndoPoint(TextEditKind textEditKind, string? otherTextEditKindIdentifier = null)
-    {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _editBlocksList ??= _textEditorModel.EditBlocksList.ToList();
-            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
-        }
-
-        if (textEditKind == TextEditKind.Other && otherTextEditKindIdentifier is null)
-            TextEditorCommand.ThrowOtherTextEditKindIdentifierWasExpectedException(textEditKind);
-
-        var mostRecentEditBlock = EditBlocksList.LastOrDefault();
-
-        if (mostRecentEditBlock is null || mostRecentEditBlock.TextEditKind != textEditKind)
-        {
-            var newEditBlockIndex = EditBlockIndex;
-
-            EditBlocksList.Insert(newEditBlockIndex, new EditBlock(
-                textEditKind,
-                textEditKind.ToString(),
-                this.GetAllText(),
-                otherTextEditKindIdentifier));
-
-            var removeBlocksStartingAt = newEditBlockIndex + 1;
-
-            _editBlocksList.RemoveRange(removeBlocksStartingAt, EditBlocksList.Count - removeBlocksStartingAt);
-
-            _editBlockIndex++;
-        }
-
-        while (EditBlocksList.Count > TextEditorModel.MAXIMUM_EDIT_BLOCKS && EditBlocksList.Count != 0)
-        {
-            _editBlockIndex--;
-            EditBlocksList.RemoveAt(0);
-        }
-    }
-
-    private void PerformInsertions(
-        KeyboardEventArgs keyboardEventArgs,
-        TextEditorCursorModifierBag cursorModifierBag,
-        CancellationToken cancellationToken)
-    {
-        SetIsDirtyTrue();
-
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
-            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
-            _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
-        }
-
-        EnsureUndoPoint(TextEditKind.Insertion);
-
-        foreach (var cursorModifier in cursorModifierBag.List)
-        {
-            if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
-            {
-                var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
-
-                var lowerRowData = this.GetRowInformationFromPositionIndex(selectionBounds.lowerPositionIndexInclusive);
-                var lowerColumnIndex = selectionBounds.lowerPositionIndexInclusive - lowerRowData.RowStartPositionIndexInclusive;
-
-                PerformDeletions(
-                    new KeyboardEventArgs
-                    {
-                        Code = KeyboardKeyFacts.MetaKeys.DELETE,
-                        Key = KeyboardKeyFacts.MetaKeys.DELETE,
-                    },
-                    cursorModifierBag,
-                    1,
-                    CancellationToken.None);
-
-                // Move cursor to lower bound of text selection
-                cursorModifier.RowIndex = lowerRowData.RowIndex;
-                cursorModifier.SetColumnIndexAndPreferred(lowerColumnIndex);
-            }
-
-            var startOfRowPositionIndex = this.GetRowEndingThatCreatedRow(cursorModifier.RowIndex).EndPositionIndexExclusive;
-            var cursorPositionIndex = startOfRowPositionIndex + cursorModifier.ColumnIndex;
-
-            // If cursor is out of bounds then continue
-            if (cursorPositionIndex > _charList.Count)
-                continue;
-
-            var wasTabCode = false;
-            var wasEnterCode = false;
-
-            var characterValueToInsert = keyboardEventArgs.Key.First();
-
-            if (KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code))
-            {
-                characterValueToInsert = KeyboardKeyFacts.ConvertWhitespaceCodeToCharacter(keyboardEventArgs.Code);
-
-                wasTabCode = KeyboardKeyFacts.WhitespaceCodes.TAB_CODE == keyboardEventArgs.Code;
-                wasEnterCode = KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keyboardEventArgs.Code;
-            }
-
-            var characterCountInserted = 1;
-
-            if (wasEnterCode)
-            {
-                var rowEndingKindToInsert = UsingRowEndingKind;
-
-                var richCharacters = rowEndingKindToInsert.AsCharacters().Select(character => new RichCharacter
-                {
-                    Value = character,
-                    DecorationByte = default,
-                });
-
-                characterCountInserted = rowEndingKindToInsert.AsCharacters().Length;
-
-                PartitionList_InsertRange(cursorPositionIndex, richCharacters);
-
-                RowEndingPositionsList.Insert(
-                    cursorModifier.RowIndex,
-                    new (cursorPositionIndex, cursorPositionIndex + characterCountInserted, rowEndingKindToInsert));
-
-                MutateRowEndingKindCount(rowEndingKindToInsert, 1);
-
-                cursorModifier.RowIndex++;
-                cursorModifier.ColumnIndex = 0;
-                cursorModifier.PreferredColumnIndex = cursorModifier.ColumnIndex;
-            }
-            else
-            {
-                if (wasTabCode)
-                {
-                    var index = _tabKeyPositionsList.FindIndex(x => x >= cursorPositionIndex);
-
-                    if (index == -1)
-                    {
-                        TabKeyPositionsList.Add(cursorPositionIndex);
-                    }
-                    else
-                    {
-                        for (var i = index; i < TabKeyPositionsList.Count; i++)
-                        {
-                            _tabKeyPositionsList[i]++;
-                        }
-
-                        TabKeyPositionsList.Insert(index, cursorPositionIndex);
-                    }
-                }
-
-                var richCharacterToInsert = new RichCharacter
-                {
-                    Value = characterValueToInsert,
-                    DecorationByte = default,
-                };
-
-                PartitionList_Insert(cursorPositionIndex, richCharacterToInsert);
-
-                cursorModifier.ColumnIndex++;
-                cursorModifier.PreferredColumnIndex = cursorModifier.ColumnIndex;
-            }
-
-            // Reposition the Row Endings
-            {
-                for (var i = cursorModifier.RowIndex; i < RowEndingPositionsList.Count; i++)
-                {
-                    var rowEndingTuple = RowEndingPositionsList[i];
-                    rowEndingTuple.StartPositionIndexInclusive += characterCountInserted;
-                    rowEndingTuple.EndPositionIndexExclusive += characterCountInserted;
-                }
-            }
-
-            if (!wasTabCode)
-            {
-                var firstTabKeyPositionIndexToModify = _tabKeyPositionsList.FindIndex(x => x >= cursorPositionIndex);
-
-                if (firstTabKeyPositionIndexToModify != -1)
-                {
-                    for (var i = firstTabKeyPositionIndexToModify; i < TabKeyPositionsList.Count; i++)
-                    {
-                        TabKeyPositionsList[i] += characterCountInserted;
-                    }
-                }
-            }
-
-            // Reposition the Diagnostic Squigglies
-            {
-                var textSpanForInsertion = new TextEditorTextSpan(
-                    cursorPositionIndex,
-                    cursorPositionIndex + characterCountInserted,
-                    0,
-                    new(string.Empty),
-                    string.Empty);
-
-                var textModification = new TextEditorTextModification(true, textSpanForInsertion);
-
-                foreach (var presentationModel in PresentationModelsList)
-                {
-                    presentationModel.CompletedCalculation?.TextModificationsSinceRequestList.Add(textModification);
-                    presentationModel.PendingCalculation?.TextModificationsSinceRequestList.Add(textModification);
-                }
-            }
-        }
-
-        // TODO: Fix tracking the MostCharactersOnASingleRowTuple this way is possibly inefficient - should instead only check the rows that changed
-        {
-            (int rowIndex, int rowLength) localMostCharactersOnASingleRowTuple = (0, 0);
-
-            for (var i = 0; i < RowEndingPositionsList.Count; i++)
-            {
-                var lengthOfRow = this.GetLengthOfRow(i);
-
-                if (lengthOfRow > localMostCharactersOnASingleRowTuple.rowLength)
-                {
-                    localMostCharactersOnASingleRowTuple = (i, lengthOfRow);
-                }
-            }
-
-            localMostCharactersOnASingleRowTuple = (localMostCharactersOnASingleRowTuple.rowIndex,
-                localMostCharactersOnASingleRowTuple.rowLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
-
-            _mostCharactersOnASingleRowTuple = localMostCharactersOnASingleRowTuple;
-        }
     }
 
     public void PerformDeletions(
@@ -423,7 +204,7 @@ public partial class TextEditorModelModifier
         {
             foreach (var cursorModifier in cursorModifierBag.List)
             {
-                var startOfRowPositionIndex = this.GetRowEndingThatCreatedRow(cursorModifier.RowIndex).EndPositionIndexExclusive;
+                var startOfRowPositionIndex = this.GetLineStartPositionIndexInclusive(cursorModifier.LineIndex);
                 var cursorPositionIndex = startOfRowPositionIndex + cursorModifier.ColumnIndex;
 
                 // If cursor is out of bounds then continue
@@ -448,15 +229,15 @@ public partial class TextEditorModelModifier
                     if (lowerPositionIndexInclusiveBound > upperPositionIndexExclusive)
                         (lowerPositionIndexInclusiveBound, upperPositionIndexExclusive) = (upperPositionIndexExclusive, lowerPositionIndexInclusiveBound);
 
-                    var lowerRowMetaData = this.GetRowInformationFromPositionIndex(lowerPositionIndexInclusiveBound);
-                    var upperRowMetaData = this.GetRowInformationFromPositionIndex(upperPositionIndexExclusive);
+                    var lowerRowMetaData = this.GetLineInformationFromPositionIndex(lowerPositionIndexInclusiveBound);
+                    var upperRowMetaData = this.GetLineInformationFromPositionIndex(upperPositionIndexExclusive);
 
                     // Value is needed when knowing what row ending positions to update after deletion is done
-                    selectionUpperBoundRowIndex = upperRowMetaData.RowIndex;
+                    selectionUpperBoundRowIndex = upperRowMetaData.LineIndex;
 
                     // Value is needed when knowing where to position the cursor after deletion is done
-                    selectionLowerBoundIndexCoordinates = (lowerRowMetaData.RowIndex,
-                        lowerPositionIndexInclusiveBound - lowerRowMetaData.RowStartPositionIndexInclusive);
+                    selectionLowerBoundIndexCoordinates = (lowerRowMetaData.LineIndex,
+                        lowerPositionIndexInclusiveBound - lowerRowMetaData.LineStartPositionIndexInclusive);
 
                     startingPositionIndexToRemoveInclusive = upperPositionIndexExclusive - 1;
                     countToRemove = upperPositionIndexExclusive - lowerPositionIndexInclusiveBound;
@@ -471,7 +252,7 @@ public partial class TextEditorModelModifier
                     if (keyboardEventArgs.CtrlKey)
                     {
                         var columnIndexOfCharacterWithDifferingKind = this.GetColumnIndexOfCharacterWithDifferingKind(
-                            cursorModifier.RowIndex,
+                            cursorModifier.LineIndex,
                             cursorModifier.ColumnIndex,
                             moveBackwards);
 
@@ -500,12 +281,12 @@ public partial class TextEditorModelModifier
                     if (keyboardEventArgs.CtrlKey)
                     {
                         var columnIndexOfCharacterWithDifferingKind = this.GetColumnIndexOfCharacterWithDifferingKind(
-                            cursorModifier.RowIndex,
+                            cursorModifier.LineIndex,
                             cursorModifier.ColumnIndex,
                             moveBackwards);
 
                         columnIndexOfCharacterWithDifferingKind = columnIndexOfCharacterWithDifferingKind == -1
-                            ? this.GetLengthOfRow(cursorModifier.RowIndex)
+                            ? this.GetLengthOfLine(cursorModifier.LineIndex)
                             : columnIndexOfCharacterWithDifferingKind;
 
                         countToRemove = columnIndexOfCharacterWithDifferingKind -
@@ -555,11 +336,11 @@ public partial class TextEditorModelModifier
                             rep.EndPositionIndexExclusive == indexToRemove + 1 ||
                             rep.EndPositionIndexExclusive == indexToRemove + 2);
 
-                        var rowEndingTuple = RowEndingPositionsList[rowEndingTupleIndex];
+                        var rowEndingTuple = LineEndPositionList[rowEndingTupleIndex];
 
-                        RowEndingPositionsList.RemoveAt(rowEndingTupleIndex);
+                        LineEndPositionList.RemoveAt(rowEndingTupleIndex);
 
-                        var lengthOfRowEnding = rowEndingTuple.RowEndingKind.AsCharacters().Length;
+                        var lengthOfRowEnding = rowEndingTuple.LineEndKind.AsCharacters().Length;
 
                         if (moveBackwards)
                             startingIndexToRemoveRange = indexToRemove - (lengthOfRowEnding - 1);
@@ -569,7 +350,7 @@ public partial class TextEditorModelModifier
                         countToRemove -= lengthOfRowEnding - 1;
                         countToRemoveRange = lengthOfRowEnding;
 
-                        MutateRowEndingKindCount(rowEndingTuple.RowEndingKind, -1);
+                        MutateRowEndingKindCount(rowEndingTuple.LineEndKind, -1);
                     }
                     else
                     {
@@ -582,7 +363,7 @@ public partial class TextEditorModelModifier
 
                     charactersRemovedCount += countToRemoveRange;
 
-                    PartitionList_RemoveRange(startingIndexToRemoveRange, countToRemoveRange);
+                    __RemoveRange(startingIndexToRemoveRange, countToRemoveRange);
 
                     if (moveBackwards)
                         indexToRemove -= countToRemoveRange;
@@ -593,14 +374,13 @@ public partial class TextEditorModelModifier
 
                 if (moveBackwards && !selectionUpperBoundRowIndex.HasValue)
                 {
-                    var startOfCurrentRowPositionIndex = this
-                        .GetRowEndingThatCreatedRow(cursorModifier.RowIndex - rowsRemovedCount)
-                        .EndPositionIndexExclusive;
+                    var startCurrentRowPositionIndex = this.GetLineStartPositionIndexInclusive(
+                        cursorModifier.LineIndex - rowsRemovedCount);
 
                     var endingPositionIndex = cursorPositionIndex - charactersRemovedCount;
                 
-                    cursorModifier.RowIndex -= rowsRemovedCount;
-                    cursorModifier.SetColumnIndexAndPreferred(endingPositionIndex - startOfCurrentRowPositionIndex);
+                    cursorModifier.LineIndex -= rowsRemovedCount;
+                    cursorModifier.SetColumnIndexAndPreferred(endingPositionIndex - startCurrentRowPositionIndex);
                 }
 
                 int firstRowIndexToModify;
@@ -608,17 +388,17 @@ public partial class TextEditorModelModifier
                 if (selectionUpperBoundRowIndex.HasValue)
                 {
                     firstRowIndexToModify = selectionLowerBoundIndexCoordinates!.Value.rowIndex;
-                    cursorModifier.RowIndex = selectionLowerBoundIndexCoordinates!.Value.rowIndex;
+                    cursorModifier.LineIndex = selectionLowerBoundIndexCoordinates!.Value.rowIndex;
                     cursorModifier.SetColumnIndexAndPreferred(selectionLowerBoundIndexCoordinates!.Value.columnIndex);
                 }
                 else
                 {
-                    firstRowIndexToModify = cursorModifier.RowIndex;
+                    firstRowIndexToModify = cursorModifier.LineIndex;
                 }
 
-                for (var i = firstRowIndexToModify; i < RowEndingPositionsList.Count; i++)
+                for (var i = firstRowIndexToModify; i < LineEndPositionList.Count; i++)
                 {
-                    var rowEndingTuple = RowEndingPositionsList[i];
+                    var rowEndingTuple = LineEndPositionList[i];
                     rowEndingTuple.StartPositionIndexInclusive -= charactersRemovedCount;
                     rowEndingTuple.EndPositionIndexExclusive -= charactersRemovedCount;
                 }
@@ -656,9 +436,9 @@ public partial class TextEditorModelModifier
             {
                 (int rowIndex, int rowLength) localMostCharactersOnASingleRowTuple = (0, 0);
 
-                for (var i = 0; i < RowEndingPositionsList.Count; i++)
+                for (var i = 0; i < LineEndPositionList.Count; i++)
                 {
-                    var lengthOfRow = this.GetLengthOfRow(i);
+                    var lengthOfRow = this.GetLengthOfLine(i);
 
                     if (lengthOfRow > localMostCharactersOnASingleRowTuple.rowLength)
                     {
@@ -672,6 +452,561 @@ public partial class TextEditorModelModifier
                 _mostCharactersOnASingleRowTuple = localMostCharactersOnASingleRowTuple;
             }
         }
+    }
+
+    public void SetContent(string content)
+    {
+        SetIsDirtyTrue();
+
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
+        {
+            _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
+            _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
+            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
+            _rowEndingKindCountsList ??= _textEditorModel.RowEndingKindCountsList.ToList();
+        }
+
+        ClearAllStatesButEditHistory();
+
+        var rowIndex = 0;
+        var previousCharacter = '\0';
+
+        var charactersOnRow = 0;
+
+        var carriageReturnCount = 0;
+        var linefeedCount = 0;
+        var carriageReturnLinefeedCount = 0;
+
+        for (var index = 0; index < content.Length; index++)
+        {
+            var character = content[index];
+
+            charactersOnRow++;
+
+            if (character == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
+            {
+                if (charactersOnRow > MostCharactersOnASingleRowTuple.rowLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
+                    _mostCharactersOnASingleRowTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+
+                LineEndPositionList.Add(new(index, index + 1, RowEndingKind.CarriageReturn));
+                rowIndex++;
+
+                charactersOnRow = 0;
+
+                carriageReturnCount++;
+            }
+            else if (character == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
+            {
+                if (charactersOnRow > MostCharactersOnASingleRowTuple.rowLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
+                    _mostCharactersOnASingleRowTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+
+                if (previousCharacter == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
+                {
+                    var lineEnding = LineEndPositionList[rowIndex - 1];
+                    lineEnding.EndPositionIndexExclusive++;
+                    lineEnding.LineEndKind = RowEndingKind.CarriageReturnLinefeed;
+
+                    carriageReturnCount--;
+                    carriageReturnLinefeedCount++;
+                }
+                else
+                {
+                    LineEndPositionList.Add(new (index, index + 1, RowEndingKind.Linefeed));
+                    rowIndex++;
+
+                    linefeedCount++;
+                }
+
+                charactersOnRow = 0;
+            }
+
+            if (character == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+                TabKeyPositionsList.Add(index);
+
+            previousCharacter = character;
+        }
+
+        __InsertRange(0, content.Select(x => new RichCharacter
+        {
+            Value = x,
+            DecorationByte = default,
+        }));
+
+        _rowEndingKindCountsList.AddRange(new List<(RowEndingKind rowEndingKind, int count)>
+        {
+            (RowEndingKind.CarriageReturn, carriageReturnCount),
+            (RowEndingKind.Linefeed, linefeedCount),
+            (RowEndingKind.CarriageReturnLinefeed, carriageReturnLinefeedCount),
+        });
+
+        CheckRowEndingPositions(true);
+
+        LineEndPositionList.Add(new(content.Length, content.Length, RowEndingKind.EndOfFile));
+    }
+
+    public void ClearAllStatesButEditHistory()
+    {
+        ClearContentList();
+        ClearRowEndingKindCountsList();
+        ClearRowEndingPositionsList();
+        ClearTabKeyPositionsList();
+        ClearOnlyRowEndingKind();
+        SetUsingRowEndingKind(RowEndingKind.Unset);
+    }
+
+    public void HandleKeyboardEvent(
+        KeyboardEventArgs keyboardEventArgs,
+        TextEditorCursorModifierBag cursorModifierBag,
+        CancellationToken cancellationToken)
+    {
+        if (KeyboardKeyFacts.IsMetaKey(keyboardEventArgs))
+        {
+            if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventArgs.Key ||
+                KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key)
+            {
+                PerformDeletions(
+                    keyboardEventArgs,
+                    cursorModifierBag,
+                    1,
+                    cancellationToken);
+            }
+        }
+        else
+        {
+            for (int i = cursorModifierBag.List.Count - 1; i >= 0; i--)
+            {
+                var cursor = cursorModifierBag.List[i];
+
+                var singledCursorModifierBag = new TextEditorCursorModifierBag(
+                    cursorModifierBag.ViewModelKey,
+                    new List<TextEditorCursorModifier> { cursor });
+
+                Insert(
+                    keyboardEventArgs,
+                    singledCursorModifierBag,
+                    cancellationToken);
+            }
+        }
+    }
+
+    public void EditByInsertion(
+        string content,
+        TextEditorCursorModifierBag cursorModifierBag,
+        CancellationToken cancellationToken)
+    {
+        var localContent = content.Replace("\r\n", "\n");
+
+        for (int i = cursorModifierBag.List.Count - 1; i >= 0; i--)
+        {
+            var cursor = cursorModifierBag.List[i];
+
+            var singledCursorModifierBag = new TextEditorCursorModifierBag(
+                cursorModifierBag.ViewModelKey,
+                new List<TextEditorCursorModifier> { cursor });
+
+            PerformInsertions(
+                keyboardEventArgs,
+                singledCursorModifierBag,
+                cancellationToken);
+
+            foreach (var character in localContent)
+            {
+                // TODO: This needs to be rewritten everything should be inserted at the same time not a foreach loop insertion for each character
+                var code = character switch
+                {
+                    '\r' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
+                    '\n' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
+                    '\t' => KeyboardKeyFacts.WhitespaceCodes.TAB_CODE,
+                    ' ' => KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE,
+                    _ => character.ToString(),
+                };
+
+                HandleKeyboardEvent(
+                    new KeyboardEventArgs
+                    {
+                        Code = code,
+                        Key = character.ToString(),
+                    },
+                    singledCursorModifierBag,
+                    CancellationToken.None);
+            }
+        }
+    }
+
+    private void Insert(
+        string value,
+        TextEditorCursorModifierBag cursorModifierBag,
+        CancellationToken cancellationToken)
+    {
+        SetIsDirtyTrue();
+
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
+        {
+            _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
+            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
+            _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
+        }
+
+        EnsureUndoPoint(TextEditKind.Insertion);
+
+        // TODO: This foreach needs to iterate backwards using a for loop in order to support multi-cursor editing.
+        foreach (var cursorModifier in cursorModifierBag.List)
+        {
+            if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
+            {
+                var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
+
+                var lowerRowData = this.GetLineInformationFromPositionIndex(selectionBounds.lowerPositionIndexInclusive);
+                var lowerColumnIndex = selectionBounds.lowerPositionIndexInclusive - lowerRowData.LineStartPositionIndexInclusive;
+
+                PerformDeletions(
+                    new KeyboardEventArgs
+                    {
+                        Code = KeyboardKeyFacts.MetaKeys.DELETE,
+                        Key = KeyboardKeyFacts.MetaKeys.DELETE,
+                    },
+                    cursorModifierBag,
+                    1,
+                    CancellationToken.None);
+
+                // Move cursor to lower bound of text selection
+                cursorModifier.LineIndex = lowerRowData.LineIndex;
+                cursorModifier.SetColumnIndexAndPreferred(lowerColumnIndex);
+            }
+
+            var startOfRowPositionIndex = this.GetLineStartPositionIndexInclusive(cursorModifier.LineIndex);
+            var cursorPositionIndex = startOfRowPositionIndex + cursorModifier.ColumnIndex;
+
+            // If cursor is out of bounds then continue
+            if (cursorPositionIndex > _charList.Count)
+                continue;
+
+            var wasTabCode = false;
+            var wasEnterCode = false;
+
+            var characterValueToInsert = keyboardEventArgs.Key.First();
+
+            if (KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code))
+            {
+                characterValueToInsert = KeyboardKeyFacts.ConvertWhitespaceCodeToCharacter(keyboardEventArgs.Code);
+
+                wasTabCode = KeyboardKeyFacts.WhitespaceCodes.TAB_CODE == keyboardEventArgs.Code;
+                wasEnterCode = KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keyboardEventArgs.Code;
+            }
+
+            var characterCountInserted = 1;
+
+            if (wasEnterCode)
+            {
+                var rowEndingKindToInsert = UsingRowEndingKind;
+
+                var richCharacters = rowEndingKindToInsert.AsCharacters().Select(character => new RichCharacter
+                {
+                    Value = character,
+                    DecorationByte = default,
+                });
+
+                characterCountInserted = rowEndingKindToInsert.AsCharacters().Length;
+
+                __InsertRange(cursorPositionIndex, richCharacters);
+
+                LineEndPositionList.Insert(
+                    cursorModifier.LineIndex,
+                    new(cursorPositionIndex, cursorPositionIndex + characterCountInserted, rowEndingKindToInsert));
+
+                MutateRowEndingKindCount(rowEndingKindToInsert, 1);
+
+                cursorModifier.LineIndex++;
+                cursorModifier.ColumnIndex = 0;
+                cursorModifier.PreferredColumnIndex = cursorModifier.ColumnIndex;
+            }
+            else
+            {
+                if (wasTabCode)
+                {
+                    var index = _tabKeyPositionsList.FindIndex(x => x >= cursorPositionIndex);
+
+                    if (index == -1)
+                    {
+                        TabKeyPositionsList.Add(cursorPositionIndex);
+                    }
+                    else
+                    {
+                        for (var i = index; i < TabKeyPositionsList.Count; i++)
+                        {
+                            _tabKeyPositionsList[i]++;
+                        }
+
+                        TabKeyPositionsList.Insert(index, cursorPositionIndex);
+                    }
+                }
+
+                var richCharacterToInsert = new RichCharacter
+                {
+                    Value = characterValueToInsert,
+                    DecorationByte = default,
+                };
+
+                __Insert(cursorPositionIndex, richCharacterToInsert);
+
+                cursorModifier.ColumnIndex++;
+                cursorModifier.PreferredColumnIndex = cursorModifier.ColumnIndex;
+            }
+
+            // Reposition the Row Endings
+            {
+                for (var i = cursorModifier.LineIndex; i < LineEndPositionList.Count; i++)
+                {
+                    var rowEndingTuple = LineEndPositionList[i];
+                    rowEndingTuple.StartPositionIndexInclusive += characterCountInserted;
+                    rowEndingTuple.EndPositionIndexExclusive += characterCountInserted;
+                }
+            }
+
+            if (!wasTabCode)
+            {
+                var firstTabKeyPositionIndexToModify = _tabKeyPositionsList.FindIndex(x => x >= cursorPositionIndex);
+
+                if (firstTabKeyPositionIndexToModify != -1)
+                {
+                    for (var i = firstTabKeyPositionIndexToModify; i < TabKeyPositionsList.Count; i++)
+                    {
+                        TabKeyPositionsList[i] += characterCountInserted;
+                    }
+                }
+            }
+
+            // Reposition the Diagnostic Squigglies
+            {
+                var textSpanForInsertion = new TextEditorTextSpan(
+                    cursorPositionIndex,
+                    cursorPositionIndex + characterCountInserted,
+                    0,
+                    new(string.Empty),
+                    string.Empty);
+
+                var textModification = new TextEditorTextModification(true, textSpanForInsertion);
+
+                foreach (var presentationModel in PresentationModelsList)
+                {
+                    presentationModel.CompletedCalculation?.TextModificationsSinceRequestList.Add(textModification);
+                    presentationModel.PendingCalculation?.TextModificationsSinceRequestList.Add(textModification);
+                }
+            }
+        }
+
+        // TODO: Fix tracking the MostCharactersOnASingleRowTuple this way is possibly inefficient - should instead only check the rows that changed
+        {
+            (int rowIndex, int rowLength) localMostCharactersOnASingleRowTuple = (0, 0);
+
+            for (var i = 0; i < LineEndPositionList.Count; i++)
+            {
+                var lengthOfRow = this.GetLengthOfLine(i);
+
+                if (lengthOfRow > localMostCharactersOnASingleRowTuple.rowLength)
+                {
+                    localMostCharactersOnASingleRowTuple = (i, lengthOfRow);
+                }
+            }
+
+            localMostCharactersOnASingleRowTuple = (localMostCharactersOnASingleRowTuple.rowIndex,
+                localMostCharactersOnASingleRowTuple.rowLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+
+            _mostCharactersOnASingleRowTuple = localMostCharactersOnASingleRowTuple;
+        }
+    }
+
+    public void DeleteTextByMotion(
+        MotionKind motionKind,
+        TextEditorCursorModifierBag cursorModifierBag,
+        CancellationToken cancellationToken)
+    {
+        var keyboardEventArgs = motionKind switch
+        {
+            MotionKind.Backspace => new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.BACKSPACE },
+            MotionKind.Delete => new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
+            _ => throw new ApplicationException($"The {nameof(MotionKind)}: {motionKind} was not recognized.")
+        };
+        
+        HandleKeyboardEvent(
+            keyboardEventArgs,
+            cursorModifierBag,
+            CancellationToken.None);
+    }
+
+    public void DeleteByRange(
+        int count,
+        TextEditorCursorModifierBag cursorModifierBag,
+        CancellationToken cancellationToken)
+    {
+        for (int cursorIndex = cursorModifierBag.List.Count - 1; cursorIndex >= 0; cursorIndex--)
+        {
+            var cursor = cursorModifierBag.List[cursorIndex];
+
+            var singledCursorModifierBag = new TextEditorCursorModifierBag(
+                cursorModifierBag.ViewModelKey,
+                new List<TextEditorCursorModifier> { cursor });
+
+            // TODO: This needs to be rewritten everything should be deleted at the same time not a foreach loop for each character
+            for (var deleteIndex = 0; deleteIndex < count; deleteIndex++)
+            {
+                HandleKeyboardEvent(
+                    new KeyboardEventArgs
+                    {
+                        Code = KeyboardKeyFacts.MetaKeys.DELETE,
+                        Key = KeyboardKeyFacts.MetaKeys.DELETE,
+                    },
+                    singledCursorModifierBag,
+                    CancellationToken.None);
+            }
+        }
+    }
+
+    public void ClearEditBlocks()
+    {
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
+        {
+            _editBlocksList ??= _textEditorModel.EditBlocksList.ToList();
+            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
+        }
+
+        _editBlockIndex = 0;
+        EditBlockList.Clear();
+    }
+
+    /// <summary>
+    /// The, "if (EditBlockIndex == _editBlocksPersisted.Count)", is done because the active EditBlock is not yet persisted.<br/><br/>
+    /// The active EditBlock is instead being 'created' as the user continues to make edits of the same <see cref="TextEditKind"/>.<br/><br/>
+    /// For complete clarity, this comment refers to one possibly expecting to see, "if (EditBlockIndex == _editBlocksPersisted.Count - 1)".
+    /// </summary>
+    public void UndoEdit()
+    {
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
+        {
+            _editBlocksList ??= _textEditorModel.EditBlocksList.ToList();
+            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
+        }
+
+        if (!this.CanUndoEdit())
+            return;
+
+        if (EditBlockIndex == EditBlockList.Count)
+        {
+            // If the edit block is pending then persist it before
+            // reverting back to the previous persisted edit block.
+            EnsureUndoPoint(TextEditKind.ForcePersistEditBlock);
+            _editBlockIndex--;
+        }
+
+        _editBlockIndex--;
+
+        var restoreEditBlock = EditBlockList[EditBlockIndex];
+
+        SetContent(restoreEditBlock.ContentSnapshot);
+    }
+
+    public void RedoEdit()
+    {
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
+        {
+            _editBlocksList ??= _textEditorModel.EditBlocksList.ToList();
+            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
+        }
+        
+        if (!this.CanRedoEdit())
+            return;
+
+        _editBlockIndex++;
+
+        var restoreEditBlock = EditBlockList[EditBlockIndex];
+
+        SetContent(restoreEditBlock.ContentSnapshot);
+    }
+
+    public void SetIsDirtyTrue()
+    {
+        _isDirty = true;
+    }
+    
+    public void SetIsDirtyFalse()
+    {
+        _isDirty = false;
+    }
+
+    public void PerformRegisterPresentationModelAction(
+    TextEditorPresentationModel presentationModel)
+    {
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
+        {
+            _presentationModelsList ??= _textEditorModel.PresentationModelsList.ToList();
+        }
+
+        if (!PresentationModelsList.Any(x => x.TextEditorPresentationKey == presentationModel.TextEditorPresentationKey))
+            PresentationModelsList.Add(presentationModel);
+    }
+
+    public void StartPendingCalculatePresentationModel(
+        Key<TextEditorPresentationModel> presentationKey,
+        TextEditorPresentationModel emptyPresentationModel)
+    {
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
+        {
+            _presentationModelsList ??= _textEditorModel.PresentationModelsList.ToList();
+        }
+
+        // If the presentation model has not yet been registered, then this will register it.
+        PerformRegisterPresentationModelAction(emptyPresentationModel);
+
+        var indexOfPresentationModel = _presentationModelsList.FindIndex(
+            x => x.TextEditorPresentationKey == presentationKey);
+
+        // The presentation model is expected to always be registered at this point.
+
+        var presentationModel = PresentationModelsList[indexOfPresentationModel];
+        PresentationModelsList[indexOfPresentationModel] = presentationModel with
+        {
+            PendingCalculation = new(this.GetAllText())
+        };
+    }
+
+    public void CompletePendingCalculatePresentationModel(
+        Key<TextEditorPresentationModel> presentationKey,
+        TextEditorPresentationModel emptyPresentationModel,
+        ImmutableArray<TextEditorTextSpan> calculatedTextSpans)
+    {
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
+        {
+            _presentationModelsList ??= _textEditorModel.PresentationModelsList.ToList();
+        }
+
+        // If the presentation model has not yet been registered, then this will register it.
+        PerformRegisterPresentationModelAction(emptyPresentationModel);
+
+        var indexOfPresentationModel = _presentationModelsList.FindIndex(
+            x => x.TextEditorPresentationKey == presentationKey);
+
+        // The presentation model is expected to always be registered at this point.
+
+        var presentationModel = PresentationModelsList[indexOfPresentationModel];
+
+        if (presentationModel.PendingCalculation is null)
+            return;
+
+        var calculation = presentationModel.PendingCalculation with
+        {
+            TextSpanList = calculatedTextSpans
+        };
+
+        PresentationModelsList[indexOfPresentationModel] = presentationModel with
+        {
+            PendingCalculation = null,
+            CompletedCalculation = calculation,
+        };
+    }
+
+    public TextEditorModel ForceRerenderAction()
+    {
+        return ToModel();
     }
 
     private void MutateRowEndingKindCount(RowEndingKind rowEndingKind, int changeBy)
@@ -728,298 +1063,7 @@ public partial class TextEditorModelModifier
         }
     }
 
-    public void ModifyContent(string content)
-    {
-        SetIsDirtyTrue();
-
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
-            _rowEndingPositionsList ??= _textEditorModel.RowEndingPositionsList.ToList();
-            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
-            _rowEndingKindCountsList ??= _textEditorModel.RowEndingKindCountsList.ToList();
-        }
-
-        ModifyResetStateButNotEditHistory();
-
-        var rowIndex = 0;
-        var previousCharacter = '\0';
-
-        var charactersOnRow = 0;
-
-        var carriageReturnCount = 0;
-        var linefeedCount = 0;
-        var carriageReturnLinefeedCount = 0;
-
-        for (var index = 0; index < content.Length; index++)
-        {
-            var character = content[index];
-
-            charactersOnRow++;
-
-            if (character == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
-            {
-                if (charactersOnRow > MostCharactersOnASingleRowTuple.rowLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
-                    _mostCharactersOnASingleRowTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
-
-                RowEndingPositionsList.Add(new(index, index + 1, RowEndingKind.CarriageReturn));
-                rowIndex++;
-
-                charactersOnRow = 0;
-
-                carriageReturnCount++;
-            }
-            else if (character == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
-            {
-                if (charactersOnRow > MostCharactersOnASingleRowTuple.rowLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
-                    _mostCharactersOnASingleRowTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
-
-                if (previousCharacter == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
-                {
-                    var lineEnding = RowEndingPositionsList[rowIndex - 1];
-                    lineEnding.EndPositionIndexExclusive++;
-                    lineEnding.RowEndingKind = RowEndingKind.CarriageReturnLinefeed;
-
-                    carriageReturnCount--;
-                    carriageReturnLinefeedCount++;
-                }
-                else
-                {
-                    RowEndingPositionsList.Add(new (index, index + 1, RowEndingKind.Linefeed));
-                    rowIndex++;
-
-                    linefeedCount++;
-                }
-
-                charactersOnRow = 0;
-            }
-
-            if (character == KeyboardKeyFacts.WhitespaceCharacters.TAB)
-                TabKeyPositionsList.Add(index);
-
-            previousCharacter = character;
-        }
-
-        PartitionList_InsertRange(0, content.Select(x => new RichCharacter
-        {
-            Value = x,
-            DecorationByte = default,
-        }));
-
-        _rowEndingKindCountsList.AddRange(new List<(RowEndingKind rowEndingKind, int count)>
-        {
-            (RowEndingKind.CarriageReturn, carriageReturnCount),
-            (RowEndingKind.Linefeed, linefeedCount),
-            (RowEndingKind.CarriageReturnLinefeed, carriageReturnLinefeedCount),
-        });
-
-        CheckRowEndingPositions(true);
-
-        RowEndingPositionsList.Add(new(content.Length, content.Length, RowEndingKind.EndOfFile));
-    }
-
-    public void ModifyResetStateButNotEditHistory()
-    {
-        ClearContentList();
-        ClearRowEndingKindCountsList();
-        ClearRowEndingPositionsList();
-        ClearTabKeyPositionsList();
-        ClearOnlyRowEndingKind();
-        ModifyUsingRowEndingKind(RowEndingKind.Unset);
-    }
-
-    public void HandleKeyboardEvent(
-        KeyboardEventArgs keyboardEventArgs,
-        TextEditorCursorModifierBag cursorModifierBag,
-        CancellationToken cancellationToken)
-    {
-        if (KeyboardKeyFacts.IsMetaKey(keyboardEventArgs))
-        {
-            if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventArgs.Key ||
-                KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key)
-            {
-                PerformDeletions(
-                    keyboardEventArgs,
-                    cursorModifierBag,
-                    1,
-                    cancellationToken);
-            }
-        }
-        else
-        {
-            for (int i = cursorModifierBag.List.Count - 1; i >= 0; i--)
-            {
-                var cursor = cursorModifierBag.List[i];
-
-                var singledCursorModifierBag = new TextEditorCursorModifierBag(
-                    cursorModifierBag.ViewModelKey,
-                    new List<TextEditorCursorModifier> { cursor });
-
-                PerformInsertions(
-                    keyboardEventArgs,
-                    singledCursorModifierBag,
-                    cancellationToken);
-            }
-        }
-    }
-
-    public void EditByInsertion(
-        string content,
-        TextEditorCursorModifierBag cursorModifierBag,
-        CancellationToken cancellationToken)
-    {
-        var localContent = content.Replace("\r\n", "\n");
-
-        for (int i = cursorModifierBag.List.Count - 1; i >= 0; i--)
-        {
-            var cursor = cursorModifierBag.List[i];
-
-            var singledCursorModifierBag = new TextEditorCursorModifierBag(
-                cursorModifierBag.ViewModelKey,
-                new List<TextEditorCursorModifier> { cursor });
-
-            foreach (var character in localContent)
-            {
-                // TODO: This needs to be rewritten everything should be inserted at the same time not a foreach loop insertion for each character
-                var code = character switch
-                {
-                    '\r' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
-                    '\n' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
-                    '\t' => KeyboardKeyFacts.WhitespaceCodes.TAB_CODE,
-                    ' ' => KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE,
-                    _ => character.ToString(),
-                };
-
-                HandleKeyboardEvent(
-                    new KeyboardEventArgs
-                    {
-                        Code = code,
-                        Key = character.ToString(),
-                    },
-                    singledCursorModifierBag,
-                    CancellationToken.None);
-            }
-        }
-    }
-
-    public void DeleteTextByMotion(
-        MotionKind motionKind,
-        TextEditorCursorModifierBag cursorModifierBag,
-        CancellationToken cancellationToken)
-    {
-        var keyboardEventArgs = motionKind switch
-        {
-            MotionKind.Backspace => new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.BACKSPACE },
-            MotionKind.Delete => new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
-            _ => throw new ApplicationException($"The {nameof(MotionKind)}: {motionKind} was not recognized.")
-        };
-        
-        HandleKeyboardEvent(
-            keyboardEventArgs,
-            cursorModifierBag,
-            CancellationToken.None);
-    }
-
-    public void DeleteByRange(
-        int count,
-        TextEditorCursorModifierBag cursorModifierBag,
-        CancellationToken cancellationToken)
-    {
-        for (int cursorIndex = cursorModifierBag.List.Count - 1; cursorIndex >= 0; cursorIndex--)
-        {
-            var cursor = cursorModifierBag.List[cursorIndex];
-
-            var singledCursorModifierBag = new TextEditorCursorModifierBag(
-                cursorModifierBag.ViewModelKey,
-                new List<TextEditorCursorModifier> { cursor });
-
-            // TODO: This needs to be rewritten everything should be deleted at the same time not a foreach loop for each character
-            for (var deleteIndex = 0; deleteIndex < count; deleteIndex++)
-            {
-                HandleKeyboardEvent(
-                    new KeyboardEventArgs
-                    {
-                        Code = KeyboardKeyFacts.MetaKeys.DELETE,
-                        Key = KeyboardKeyFacts.MetaKeys.DELETE,
-                    },
-                    singledCursorModifierBag,
-                    CancellationToken.None);
-            }
-        }
-    }
-
-    public void PerformRegisterPresentationModelAction(
-        TextEditorPresentationModel presentationModel)
-    {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _presentationModelsList ??= _textEditorModel.PresentationModelsList.ToList();
-        }
-
-        if (!PresentationModelsList.Any(x => x.TextEditorPresentationKey == presentationModel.TextEditorPresentationKey))
-            PresentationModelsList.Add(presentationModel);
-    }
-
-    public void StartPendingCalculatePresentationModel(
-        Key<TextEditorPresentationModel> presentationKey,
-        TextEditorPresentationModel emptyPresentationModel)
-    {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _presentationModelsList ??= _textEditorModel.PresentationModelsList.ToList();
-        }
-
-        // If the presentation model has not yet been registered, then this will register it.
-        PerformRegisterPresentationModelAction(emptyPresentationModel);
-
-        var indexOfPresentationModel = _presentationModelsList.FindIndex(
-            x => x.TextEditorPresentationKey == presentationKey);
-
-        // The presentation model is expected to always be registered at this point.
-
-        var presentationModel = PresentationModelsList[indexOfPresentationModel];
-        PresentationModelsList[indexOfPresentationModel] = presentationModel with
-        {
-            PendingCalculation = new(this.GetAllText())
-        };
-    }
-    
-    public void CompletePendingCalculatePresentationModel(
-        Key<TextEditorPresentationModel> presentationKey,
-        TextEditorPresentationModel emptyPresentationModel,
-        ImmutableArray<TextEditorTextSpan> calculatedTextSpans)
-    {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _presentationModelsList ??= _textEditorModel.PresentationModelsList.ToList();
-        }
-
-        // If the presentation model has not yet been registered, then this will register it.
-        PerformRegisterPresentationModelAction(emptyPresentationModel);
-
-        var indexOfPresentationModel = _presentationModelsList.FindIndex(
-            x => x.TextEditorPresentationKey == presentationKey);
-
-        // The presentation model is expected to always be registered at this point.
-
-        var presentationModel = PresentationModelsList[indexOfPresentationModel];
-
-        if (presentationModel.PendingCalculation is null)
-            return;
-
-        var calculation = presentationModel.PendingCalculation with
-        {
-            TextSpanList = calculatedTextSpans
-        };
-
-        PresentationModelsList[indexOfPresentationModel] = presentationModel with
-        {
-            PendingCalculation = null,
-            CompletedCalculation = calculation,
-        };
-    }
-
-    public void ClearEditBlocks()
+    private void EnsureUndoPoint(TextEditKind textEditKind, string? otherTextEditKindIdentifier = null)
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
@@ -1027,67 +1071,32 @@ public partial class TextEditorModelModifier
             _editBlockIndex ??= _textEditorModel.EditBlockIndex;
         }
 
-        _editBlockIndex = 0;
-        EditBlocksList.Clear();
-    }
+        if (textEditKind == TextEditKind.Other && otherTextEditKindIdentifier is null)
+            TextEditorCommand.ThrowOtherTextEditKindIdentifierWasExpectedException(textEditKind);
 
-    /// <summary>The "if (EditBlockIndex == _editBlocksPersisted.Count)"<br/><br/>Is done because the active EditBlock is not yet persisted.<br/><br/>The active EditBlock is instead being 'created' as the user continues to make edits of the same <see cref="TextEditKind"/><br/><br/>For complete clarity, this comment refers to one possibly expecting to see "if (EditBlockIndex == _editBlocksPersisted.Count - 1)"</summary>
-    public void UndoEdit()
-    {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
+        var mostRecentEditBlock = EditBlockList.LastOrDefault();
+
+        if (mostRecentEditBlock is null || mostRecentEditBlock.TextEditKind != textEditKind)
         {
-            _editBlocksList ??= _textEditorModel.EditBlocksList.ToList();
-            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
+            var newEditBlockIndex = EditBlockIndex;
+
+            EditBlockList.Insert(newEditBlockIndex, new EditBlock(
+                textEditKind,
+                textEditKind.ToString(),
+                this.GetAllText(),
+                otherTextEditKindIdentifier));
+
+            var removeBlocksStartingAt = newEditBlockIndex + 1;
+
+            _editBlocksList.RemoveRange(removeBlocksStartingAt, EditBlockList.Count - removeBlocksStartingAt);
+
+            _editBlockIndex++;
         }
 
-        if (!this.CanUndoEdit())
-            return;
-
-        if (EditBlockIndex == EditBlocksList.Count)
+        while (EditBlockList.Count > TextEditorModel.MAXIMUM_EDIT_BLOCKS && EditBlockList.Count != 0)
         {
-            // If the edit block is pending then persist it before
-            // reverting back to the previous persisted edit block.
-            EnsureUndoPoint(TextEditKind.ForcePersistEditBlock);
             _editBlockIndex--;
+            EditBlockList.RemoveAt(0);
         }
-
-        _editBlockIndex--;
-
-        var restoreEditBlock = EditBlocksList[EditBlockIndex];
-
-        ModifyContent(restoreEditBlock.ContentSnapshot);
-    }
-
-    public void RedoEdit()
-    {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _editBlocksList ??= _textEditorModel.EditBlocksList.ToList();
-            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
-        }
-        
-        if (!this.CanRedoEdit())
-            return;
-
-        _editBlockIndex++;
-
-        var restoreEditBlock = EditBlocksList[EditBlockIndex];
-
-        ModifyContent(restoreEditBlock.ContentSnapshot);
-    }
-
-    public void SetIsDirtyTrue()
-    {
-        _isDirty = true;
-    }
-    
-    public void SetIsDirtyFalse()
-    {
-        _isDirty = false;
-    }
-
-    public TextEditorModel ForceRerenderAction()
-    {
-        return ToModel();
     }
 }

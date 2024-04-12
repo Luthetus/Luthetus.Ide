@@ -107,8 +107,8 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 								modelModifier,
                                 selectionBoundPositionIndices);
 
-							if (primaryCursorModifier.RowIndex >= selectionBoundRowIndices.lowerRowIndexInclusive &&
-                                primaryCursorModifier.RowIndex < selectionBoundRowIndices.upperRowIndexExclusive)
+							if (primaryCursorModifier.LineIndex >= selectionBoundRowIndices.lowerRowIndexInclusive &&
+                                primaryCursorModifier.LineIndex < selectionBoundRowIndices.upperRowIndexExclusive)
 							{
 								selectionContainsCurrentRow = true;
                             }
@@ -120,7 +120,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 							throttleEventOnKeyDown.TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Other)
 						{
                             // Only the last line of the terminal is editable.
-                            if (primaryCursorModifier.RowIndex == modelModifier.RowCount - 1)
+                            if (primaryCursorModifier.LineIndex == modelModifier.RowCount - 1)
 							{
                                 // Furthermore, if a selection contains more than 1 row,
                                 // it would therefore edit a line other than the last.

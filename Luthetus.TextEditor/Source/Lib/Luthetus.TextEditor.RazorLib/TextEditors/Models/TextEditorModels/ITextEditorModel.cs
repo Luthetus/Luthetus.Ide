@@ -44,12 +44,12 @@ public interface ITextEditorModel
     public ImmutableList<char> CharList { get; }
     public ImmutableList<byte> DecorationByteList { get; }
     public ImmutableList<TextEditorPartition> PartitionList { get; }
-	public IList<EditBlock> EditBlocksList { get; }
+	public IList<EditBlock> EditBlockList { get; }
     /// <summary>
     /// To get the ending position of RowIndex _rowEndingPositions[RowIndex]<br /><br />
     /// _rowEndingPositions returns the start of the NEXT row
     /// </summary>
-    public IList<RowEnding> RowEndingPositionsList { get; }
+    public IList<LineEnd> LineEndPositionList { get; }
 	public IList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsList { get; }
 	public IList<TextEditorPresentationModel> PresentationModelsList { get; }
     /// <summary>

@@ -1,15 +1,15 @@
 ﻿namespace Luthetus.TextEditor.RazorLib.Rows.Models;
 
-public record RowEnding
+public record LineEnd
 {
-    public RowEnding(
+    public LineEnd(
         int startPositionIndexInclusive,
         int endPositionIndexExclusive,
         RowEndingKind rowEndingKind)
     {
         StartPositionIndexInclusive = startPositionIndexInclusive;
         EndPositionIndexExclusive = endPositionIndexExclusive;
-        RowEndingKind = rowEndingKind;
+        LineEndKind = rowEndingKind;
     }
 
     /// <summary>
@@ -26,5 +26,5 @@ public record RowEnding
     /// Given: "Hello World!\nAbc123"<br/>
     /// Then: \n is <see cref="RowEndingKind.Linefeed"/>
     /// </summary>
-    public RowEndingKind RowEndingKind { get; set; }
+    public RowEndingKind LineEndKind { get; set; }
 }

@@ -18,7 +18,7 @@ public record VimMotionResult(
         var beforeMotionCursor = cursorModifier.ToCursor();
 
         var beforeMotionPositionIndex = model.GetPositionIndex(
-            beforeMotionCursor.RowIndex,
+            beforeMotionCursor.LineIndex,
             beforeMotionCursor.ColumnIndex);
 
         await motionCommand.Invoke().ConfigureAwait(false);
@@ -26,7 +26,7 @@ public record VimMotionResult(
         var afterMotionCursor = cursorModifier.ToCursor();
 
         var afterMotionPositionIndex = model.GetPositionIndex(
-            afterMotionCursor.RowIndex,
+            afterMotionCursor.LineIndex,
             afterMotionCursor.ColumnIndex);
 
         if (beforeMotionPositionIndex > afterMotionPositionIndex)

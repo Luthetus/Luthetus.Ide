@@ -81,7 +81,7 @@ public partial class TextEditorModelModifierTests
 
         var outModel = modelModifier.ToModel();
         Assert.NotEqual(inModel.RowEndingPositionsList, outModel.RowEndingPositionsList);
-        Assert.Equal(ImmutableList<RowEnding>.Empty, outModel.RowEndingPositionsList);
+        Assert.Equal(ImmutableList<LineEnd>.Empty, outModel.RowEndingPositionsList);
     }
 
     /// <summary>
@@ -126,7 +126,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ModifyUsingRowEndingKind(RowEndingKind)"/>
+    /// <see cref="TextEditorModelModifier.SetUsingRowEndingKind(RowEndingKind)"/>
     /// </summary>
     [Fact]
     public void ModifyUsingRowEndingKind()
@@ -134,7 +134,7 @@ public partial class TextEditorModelModifierTests
         TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
         var modelModifier = new TextEditorModelModifier(inModel);
 
-        modelModifier.ModifyUsingRowEndingKind(RowEndingKind.CarriageReturn);
+        modelModifier.SetUsingRowEndingKind(RowEndingKind.CarriageReturn);
 
         var outModel = modelModifier.ToModel();
         Assert.NotEqual(inModel.UsingRowEndingKind, outModel.UsingRowEndingKind);
@@ -142,7 +142,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ModifyResourceData(ResourceUri, DateTime)"/>
+    /// <see cref="TextEditorModelModifier.SetResourceData(ResourceUri, DateTime)"/>
     /// </summary>
     [Fact]
     public void ModifyResourceData()
@@ -155,7 +155,7 @@ public partial class TextEditorModelModifierTests
         // Add one second to guarantee the date times differ.
         var dateTime = DateTime.UtcNow.AddSeconds(1);
 
-        modelModifier.ModifyResourceData(resourceUri, dateTime);
+        modelModifier.SetResourceData(resourceUri, dateTime);
 
         var outModel = modelModifier.ToModel();
         Assert.NotEqual(inModel.ResourceUri, outModel.ResourceUri);
@@ -165,7 +165,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ModifyDecorationMapper(IDecorationMapper)"/>
+    /// <see cref="TextEditorModelModifier.SetDecorationMapper(IDecorationMapper)"/>
     /// </summary>
     [Fact]
     public void ModifyDecorationMapper()
@@ -174,7 +174,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ModifyCompilerService(ILuthCompilerService)"/>
+    /// <see cref="TextEditorModelModifier.SetCompilerService(ILuthCompilerService)"/>
     /// </summary>
     [Fact]
     public void ModifyCompilerService()
@@ -183,7 +183,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ModifyTextEditorSaveFileHelper(TextEditorSaveFileHelper)"/>
+    /// <see cref="TextEditorModelModifier.SetTextEditorSaveFileHelper(TextEditorSaveFileHelper)"/>
     /// </summary>
     [Fact]
     public void ModifyTextEditorSaveFileHelper()
@@ -192,7 +192,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ModifyContent(string)"/>
+    /// <see cref="TextEditorModelModifier.SetContent(string)"/>
     /// </summary>
     [Fact]
     public void ModifyContent()
@@ -201,7 +201,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ModifyResetStateButNotEditHistory()"/>
+    /// <see cref="TextEditorModelModifier.ClearAllStatesButEditHistory()"/>
     /// </summary>
     [Fact]
     public void ModifyResetStateButNotEditHistory()
@@ -232,7 +232,7 @@ public partial class TextEditorModelModifierTests
                 cursorModifier
             });
 
-        Assert.Equal(0, cursorModifier.RowIndex);
+        Assert.Equal(0, cursorModifier.LineIndex);
         Assert.Equal(0, cursorModifier.ColumnIndex);
 
         modelModifier.HandleKeyboardEvent(
@@ -246,7 +246,7 @@ public partial class TextEditorModelModifierTests
 
         var outCursor = cursorModifier.ToCursor();
 
-        Assert.Equal(1, outCursor.RowIndex);
+        Assert.Equal(1, outCursor.LineIndex);
         Assert.Equal(0, outCursor.ColumnIndex);
 
         var outModel = modelModifier.ToModel();
@@ -278,14 +278,14 @@ public partial class TextEditorModelModifierTests
                 cursorModifier
             });
 
-        Assert.Equal(0, cursorModifier.RowIndex);
+        Assert.Equal(0, cursorModifier.LineIndex);
         Assert.Equal(0, cursorModifier.ColumnIndex);
 
         modelModifier.EditByInsertion("\n", cursorModifierBag, CancellationToken.None);
 
         var outCursor = cursorModifier.ToCursor();
 
-        Assert.Equal(1, outCursor.RowIndex);
+        Assert.Equal(1, outCursor.LineIndex);
         Assert.Equal(0, outCursor.ColumnIndex);
 
         var outModel = modelModifier.ToModel();
@@ -317,14 +317,14 @@ public partial class TextEditorModelModifierTests
                 cursorModifier
             });
 
-        Assert.Equal(0, cursorModifier.RowIndex);
+        Assert.Equal(0, cursorModifier.LineIndex);
         Assert.Equal(0, cursorModifier.ColumnIndex);
 
         modelModifier.DeleteTextByMotion(MotionKind.Delete, cursorModifierBag, CancellationToken.None);
 
         var outCursor = cursorModifier.ToCursor();
 
-        Assert.Equal(0, outCursor.RowIndex);
+        Assert.Equal(0, outCursor.LineIndex);
         Assert.Equal(0, outCursor.ColumnIndex);
 
         var outModel = modelModifier.ToModel();
@@ -356,14 +356,14 @@ public partial class TextEditorModelModifierTests
                 cursorModifier
             });
 
-        Assert.Equal(0, cursorModifier.RowIndex);
+        Assert.Equal(0, cursorModifier.LineIndex);
         Assert.Equal(0, cursorModifier.ColumnIndex);
 
         modelModifier.DeleteByRange(3, cursorModifierBag, CancellationToken.None);
 
         var outCursor = cursorModifier.ToCursor();
 
-        Assert.Equal(0, outCursor.RowIndex);
+        Assert.Equal(0, outCursor.LineIndex);
         Assert.Equal(0, outCursor.ColumnIndex);
 
         var outModel = modelModifier.ToModel();
