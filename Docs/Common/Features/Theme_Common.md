@@ -2,4 +2,4 @@ Theme | Luthetus.Common | Features
 
 ---
 
-![features_Theme.gif](../../Images/Gifs/features_Theme.gif)
+![features_Theme.gif](../../../Images/Common/Gifs/features_Theme.gif)

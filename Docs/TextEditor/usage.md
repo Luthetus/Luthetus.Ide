@@ -3,14 +3,14 @@
 ## Usage
 
 ### Source Code
-The .NET Solution: [Luthetus.TextEditor.Usage.sln](../Source/Tutorials/Usage/Luthetus.TextEditor.Usage.sln),
+The .NET Solution: [Luthetus.TextEditor.Usage.sln](../../Source/Tutorials/TextEditor/Luthetus.TextEditor.Usage.sln),
 was made by following steps described here. So, the completed result can be found there.
 
 ### Goal
 
 - Render a C# Text Editor which makes use of the CSharpCompilerService
 
-![tutorial_Usage-CSharpCompilerServiceTextEditor.gif](../Images/Gifs/tutorial_Usage-CSharpCompilerServiceTextEditor.gif)
+![tutorial_Usage-CSharpCompilerServiceTextEditor.gif](../../Images/TextEditor/Gifs/tutorial_Usage-CSharpCompilerServiceTextEditor.gif)
 
 ### Steps
 - Create a codebehind for the file: `Pages/Index.razor`
@@ -193,7 +193,7 @@ Welcome to your new app.
 
 - The following GIF shows how the Text Editor looks at this step.
 
-![tutorial_Usage-InputAppTheme-VisualChanges.gif](../Images/Gifs/tutorial_Usage-BasicTextEditor.gif)
+![tutorial_Usage-InputAppTheme-VisualChanges.gif](../../Images/TextEditor/Gifs/tutorial_Usage-BasicTextEditor.gif)
 
 - Now we can add in the C# Compiler Service.
 
@@ -289,6 +289,6 @@ public partial class Index : ComponentBase
 
 - Now you should have a Text Editor with the CSharpCompilerService as shown in this GIF:
 
-![tutorial_Usage-CSharpCompilerServiceTextEditor.gif](../Images/Gifs/tutorial_Usage-CSharpCompilerServiceTextEditor.gif)
+![tutorial_Usage-CSharpCompilerServiceTextEditor.gif](../../Images/TextEditor/Gifs/tutorial_Usage-CSharpCompilerServiceTextEditor.gif)
 
 # Next tutorial: #TODO: Continue

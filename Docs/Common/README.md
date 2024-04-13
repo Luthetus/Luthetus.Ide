@@ -1,6 +1,6 @@
 # Luthetus.Common
 
-![Example GIF](./Images/Gifs/rootReadmeIntroGif.gif)
+![rootReadmeIntroGif](../../Images/Common/Gifs/rootReadmeIntroGif.gif)
 
 ## Demo:
 https://luthetus.github.io/Luthetus.Website/
@@ -31,25 +31,25 @@ You can download the latest release NuGet packages from the official Luthetus.Co
 
 ## Features
 
-- [Dialog](./Docs/Features/Dialog_Common.md)
-- [Dropdown](./Docs/Features/Dropdown_Common.md)
-- [Icons](./Docs/Features/Icons_Common.md)
-- [Menu](./Docs/Features/Menu_Common.md)
-- [Notification](./Docs/Features/Notification_Common.md)
-- [ResizableColumn](./Docs/Features/ResizableColumn_Common.md)
-- [ResizableDisplay](./Docs/Features/ResizableDisplay_Common.md)
-- [ResizableRow](./Docs/Features/ResizableRow_Common.md)
-- [Theme](./Docs/Features/Theme_Common.md)
-- [TreeView](./Docs/Features/TreeView_Common.md)
-- [WatchWindow](./Docs/Features/WatchWindow_Common.md)
+- [Dialog](./Features/Dialog_Common.md)
+- [Dropdown](./Features/Dropdown_Common.md)
+- [Icons](./Features/Icons_Common.md)
+- [Menu](./Features/Menu_Common.md)
+- [Notification](./Features/Notification_Common.md)
+- [ResizableColumn](./Features/ResizableColumn_Common.md)
+- [ResizableDisplay](./Features/ResizableDisplay_Common.md)
+- [ResizableRow](./Features/ResizableRow_Common.md)
+- [Theme](./Features/Theme_Common.md)
+- [TreeView](./Features/TreeView_Common.md)
+- [WatchWindow](./Features/WatchWindow_Common.md)
 
 ## Release notes / Changelog
 
-See the [changelog.md](./Docs/changelog.md) for release history.
+See the [changelog.md](./changelog.md) for release history.
 
 ## Roadmap
 
-See the [roadmap.md](./Docs/roadmap.md) for planned future updates.
+See the [roadmap.md](./roadmap.md) for planned future updates.
 
 # Licence
 

@@ -3,7 +3,7 @@
 ## Installation
 
 ### Source Code
-The .NET Solution: [Luthetus.Common.Usage.sln](../Source/Tutorials/Usage/Luthetus.Common.Usage.sln),
+The .NET Solution: [Luthetus.Common.Usage.sln](../../Source/Tutorials/Common/Luthetus.Common.Usage.sln),
 was made by following steps described here. So, the completed result can be found there.
 
 ### Goal

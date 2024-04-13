@@ -3,7 +3,7 @@
 
 - Runs on Linux, Windows, and Mac
 
-![Example GIF](./Luthetus.Ide/Images/Gifs/ide0.3.0.gif)
+![Example GIF](./Images/Ide/Gifs/ide0.3.0.gif)
 
 ## Demo:
 https://luthetus.github.io/Luthetus.Website/
@@ -19,9 +19,9 @@ The individual libraries used in Luthetus.Ide are available as NuGet Packages.
 
 There is a README.md for each of the libraries to aid in installation:
 
-- [Luthetus.Common](./Luthetus.Common/README.md)
-- [Luthetus.TextEditor](./Luthetus.TextEditor/README.md)
-- [Luthetus.CompilerServices](./Luthetus.CompilerServices/README.md)
+- [Luthetus.Common](./Docs/Common/README.md)
+- [Luthetus.TextEditor](./Docs/TextEditor/README.md)
+- [Luthetus.CompilerServices](./Docs/CompilerServices/README.md)
 
 ## My Youtube Videos
 You may be interested in visiting my [youtube channel](https://www.youtube.com/channel/UCzhWhqYVP40as1MFUesQM9w). I make videos about this repository there.

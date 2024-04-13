@@ -2,4 +2,4 @@ Insert-Text | Luthetus.TextEditor | Features
 
 ---
 
-![features_Insert-Text.gif](../../Images/Gifs/features_Insert-Text.gif)
+![features_Insert-Text.gif](../../../Images/TextEditor/Gifs/features_Insert-Text.gif)

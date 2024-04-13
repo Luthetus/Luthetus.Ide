@@ -2,4 +2,4 @@ ResizableDisplay | Luthetus.Common | Features
 
 ---
 
-![features_ResizableDisplay.gif](../../Images/Gifs/features_ResizableDisplay.gif)
+![features_ResizableDisplay.gif](../../../Images/Common/Gifs/features_ResizableDisplay.gif)

@@ -3,7 +3,7 @@
 
 - Runs on Linux, Windows, and Mac
 
-![Example GIF](./Images/Gifs/ide0.3.0.gif)
+![Example GIF](../../Images/Ide/Gifs/ide0.3.0.gif)
 
 ## Demo:
 https://luthetus.github.io/Luthetus.Website/
@@ -11,7 +11,7 @@ https://luthetus.github.io/Luthetus.Website/
 ## Features
 
 ### Solution Explorer:
-![solutionExplorerGif](./Images/Gifs/solutionExplorerGif.gif)
+![solutionExplorerGif](../../Images/Ide/Gifs/solutionExplorerGif.gif)
 - Tracks the file system default namespace.
 - Interpolate file system namespace when creating a templated C# file.
 - Create codebehinds for Blazor components with the 'partial', 'ComponentBase', and 'using' automatically.
@@ -22,11 +22,11 @@ https://luthetus.github.io/Luthetus.Website/
 - Nesting of 'codebehind' like files. So nesting "MyComponent.razor.cs" behind "MyComponent.razor".
 
 ### Input File Dialog:
-![inputFileDialogGif](./Images/Gifs/inputFileDialogGif.gif)
+![inputFileDialogGif](../../Images/Ide/Gifs/inputFileDialogGif.gif)
 - Traverse the file system in order to select a file. This file must satisfy a predicate which is defined by the requester. So I can request for a C# Project and the user sees an input file dialog which asks the user to pick a C# Project.
 
 ### NuGet Package Manager
-![nugetPackageManagerGif](./Images/Gifs/nugetPackageManagerGif.gif)
+![nugetPackageManagerGif](../../Images/Ide/Gifs/nugetPackageManagerGif.gif)
 - Query "azuresearch-usnc.nuget.org/"
 - Pick the Project one wishes to add the NuGet Package reference to.
 - Option for "Include Prerelease"
@@ -36,7 +36,7 @@ https://luthetus.github.io/Luthetus.Website/
 - The gif for this will be the gif at the start of this file where I showcase its usage as to decrease how large this README is.
 
 ### Settings
-![settingsGif](./Images/Gifs/settingsGif.gif)
+![settingsGif](../../Images/Ide/Gifs/settingsGif.gif)
 - Application Settings
   - Font-Size
   - Font-Family
@@ -51,40 +51,3 @@ https://luthetus.github.io/Luthetus.Website/
   - Show Whitespace
   - Theme
   - Keymap (Default, or Vim)
-
-## Why Am I Making this IDE?
-- https://github.com/Luthetus/Luthetus.About
-
-## References I find useful:
-  - Scintilla Documentation: [https://www.scintilla.org/ScintillaDoc.html](https://www.scintilla.org/ScintillaDoc.html)
-
-## Cloning and locally running the repo
-Luthetus.Ide has references to other projects of mine.
-
-I wanted to avoid git-submodules, as I wonder if they would make things more complicated or not. I want anyone to be able to clone and run this repository, without needing knowledge of submodules.
-
-Therefore, to run this repository one must clone this repo itself, and a few of my other repositories of which Luthetus.Ide references.
-
-Preferably the main branch would use the NuGet Packages of the projects which are referenced. I hope to make this change in the future.
-
-Clone the following repos into the same folder:
-- Luthetus.Common
-  - [Source code](https://github.com/Luthetus/Luthetus.Common)
-  - git https url: https://github.com/Luthetus/Luthetus.Common.git
-- Luthetus.TextEditor
-  - [Source code](https://github.com/Luthetus/Luthetus.TextEditor)
-  - git https url: https://github.com/Luthetus/Luthetus.TextEditor.git
-- Luthetus.CompilerServices
-  - [Source code](https://github.com/Luthetus/Luthetus.CompilerServices)
-  - git https url: https://github.com/Luthetus/Luthetus.CompilerServices.git
-- Luthetus.Ide
-  - [Source code](https://github.com/Luthetus/Luthetus.Ide)
-  - git https url: https://github.com/Luthetus/Luthetus.Ide.git
-
-Possible errors with this 'scuffed' approach I have at the moment are:
-- Due to me not using submodules, the parent repository (Luthetus.Ide) does not track the commit which was being used by a child-repository (ex: Luthetus.TextEditor). I intend to keep the 'main' branches in sync, but I want to acknowledge possible errors. If there are others who wish to contribute to the code I'll make submodules a number one priority. As of right now, I'm the only developer on this so the unorganized nature of my approach is working, and effective for rapid changes. As the project grows, things would then need to be better organized.
-- The C# projects use file paths to resolve project references. The error here would be that the file paths do not match. Open the C# project in a text editor, and fix the file paths.
-- The .NET Solutions use file paths to include C# projects in a solution. The error here would be that the file paths do not match. Open the .NET Solution in a text editor, and fix the file paths.
-
-# My Youtube Videos
-You may be interested in visiting my [youtube channel](https://www.youtube.com/channel/UCzhWhqYVP40as1MFUesQM9w). I make videos about this repository there.

@@ -2,4 +2,4 @@ Command-Save | Luthetus.TextEditor | Features
 
 ---
 
-![features_Command-Save.gif](../../Images/Gifs/features_Command-Save.gif)
+![features_Command-Save.gif](../../../Images/TextEditor/Gifs/features_Command-Save.gif)

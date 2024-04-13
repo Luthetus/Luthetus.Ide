@@ -2,4 +2,4 @@ WatchWindow | Luthetus.Common | Features
 
 ---
 
-![features_WatchWindow.gif](../../Images/Gifs/features_WatchWindow.gif)
+![features_WatchWindow.gif](../../../Images/Common/Gifs/features_WatchWindow.gif)
