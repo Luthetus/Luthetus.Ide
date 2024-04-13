@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Product>Luthetus TextEditor</Product>
+        <Description>A text editor written using Blazor. Contains API for syntax highlighting, and ICompilerService integration.</Description>
+        <PackageId>Luthetus.TextEditor</PackageId>
+        <Version>1.5.0</Version>
+        <Authors>Hunter Freeman</Authors>
+        <Company />
+        <PackageTags>DotNet CSharp Blazor RazorComponents</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <SupportedPlatform Include="browser" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Condition="'$(TargetFramework)' == 'net7.0'" Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
+        <PackageReference Condition="'$(TargetFramework)' == 'net6.0'" Include="Microsoft.AspNetCore.Components.Web" Version="6.0.0" />
+        <PackageReference Condition="'$(TargetFramework)' == 'net5.0'" Include="Microsoft.AspNetCore.Components.Web" Version="5.0.0" />
+        <PackageReference Condition="'$(TargetFramework)' != 'net7.0' AND '$(TargetFramework)' != 'net6.0' AND '$(TargetFramework)' != 'net5.0'" Include="Microsoft.AspNetCore.Components.Web" Version="3.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Common\Luthetus.Common.RazorLib.csproj" />
+    </ItemGroup>
+
+</Project>
