@@ -4,7 +4,6 @@ using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.Tests.Basis.Options.Models;
 

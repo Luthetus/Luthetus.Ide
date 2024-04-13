@@ -1,7 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
 
 namespace Luthetus.Ide.Tests.Basis.CompilerServices.Models;

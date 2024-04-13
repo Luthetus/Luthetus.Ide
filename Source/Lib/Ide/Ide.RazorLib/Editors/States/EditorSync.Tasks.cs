@@ -11,7 +11,6 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
-using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.Ide.RazorLib.Editors.States;
 

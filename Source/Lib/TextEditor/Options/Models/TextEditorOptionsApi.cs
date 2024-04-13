@@ -12,7 +12,6 @@ using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using static Luthetus.Common.RazorLib.Contexts.States.ContextState;
 using System.Text.Json;
 

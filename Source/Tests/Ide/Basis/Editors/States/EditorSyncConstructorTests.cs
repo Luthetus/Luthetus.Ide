@@ -2,7 +2,6 @@
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.InputFiles.States;

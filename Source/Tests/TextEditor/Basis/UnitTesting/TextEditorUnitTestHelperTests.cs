@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Luthetus.Common.RazorLib.Installations.Models;
-
-namespace Luthetus.TextEditor.Tests.Basis.UnitTesting;
+﻿namespace Luthetus.TextEditor.Tests.Basis.UnitTesting;
 
 /// <summary>
 /// <see cref="TextEditorUnitTestHelper"/>

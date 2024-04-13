@@ -4,7 +4,6 @@ using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.Ide.RazorLib.Commands;
 
 namespace Luthetus.Ide.Tests.Basis.Commands;

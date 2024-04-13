@@ -5,7 +5,6 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.Ide.RazorLib.InputFiles.States;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;

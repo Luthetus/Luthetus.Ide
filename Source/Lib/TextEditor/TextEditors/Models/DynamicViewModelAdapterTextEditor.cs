@@ -10,7 +10,6 @@ using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Tabs.Displays;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using System.Collections.Immutable;
