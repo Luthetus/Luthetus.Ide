@@ -1,5 +1,6 @@
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -77,7 +78,7 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
                     localTextSpanTuple.TextEditorTextSpan.StartingIndexInclusive,
                     localTextSpanTuple.TextEditorTextSpan.EndingIndexExclusive));
 
-            var cursorModifierBag = new TextEditorCursorModifierBag(
+            var cursorModifierBag = new CursorModifierBagTextEditor(
                 Key<TextEditorViewModel>.Empty,
                 new List<TextEditorCursorModifier> { new(cursor) });
 

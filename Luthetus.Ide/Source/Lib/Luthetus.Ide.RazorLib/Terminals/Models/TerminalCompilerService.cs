@@ -1,5 +1,6 @@
 using Fluxor;
 using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;

@@ -14,7 +14,7 @@ public static partial class TextEditorCommandVimFacts
     {
         public static TextEditorEdit WordFactory(TextEditorCommandArgs commandArgs)
         {
-            return (ITextEditorEditContext editContext) =>
+            return (IEditContext editContext) =>
             {
                 var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
@@ -64,7 +64,7 @@ public static partial class TextEditorCommandVimFacts
 
         public static TextEditorEdit EndFactory(TextEditorCommandArgs commandArgs)
         {
-            return async (ITextEditorEditContext editContext) =>
+            return async (IEditContext editContext) =>
             {
                 await PerformEndAsync(commandArgs, editContext).ConfigureAwait(false);
                 return;
@@ -72,7 +72,7 @@ public static partial class TextEditorCommandVimFacts
         }
 
         private static async Task PerformEndAsync(
-            TextEditorCommandArgs commandArgs, ITextEditorEditContext editContext, bool isRecursiveCall = false)
+            TextEditorCommandArgs commandArgs, IEditContext editContext, bool isRecursiveCall = false)
         {
             var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
@@ -152,7 +152,7 @@ public static partial class TextEditorCommandVimFacts
 
         public static TextEditorEdit BackFactory(TextEditorCommandArgs commandArgs)
         {
-            return (ITextEditorEditContext editContext) =>
+            return (IEditContext editContext) =>
             {
                 var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
@@ -201,7 +201,7 @@ public static partial class TextEditorCommandVimFacts
 
         public static TextEditorEdit VisualFactory(TextEditorCommandArgs commandArgs)
         {
-            return async (ITextEditorEditContext editContext) =>
+            return async (IEditContext editContext) =>
             {
                 var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
@@ -249,7 +249,7 @@ public static partial class TextEditorCommandVimFacts
 
         public static TextEditorEdit VisualLineFactory(TextEditorCommandArgs commandArgs)
         {
-            return async (ITextEditorEditContext editContext) =>
+            return async (IEditContext editContext) =>
             {
                 var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);

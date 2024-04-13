@@ -21,6 +21,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
+using Luthetus.TextEditor.RazorLib;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
@@ -437,7 +438,7 @@ public class Terminal
         _textEditorService.ViewModelApi.Register(
             TextEditorViewModelKey,
             ResourceUri,
-            new TextEditorCategory("terminal"));
+            new Category("terminal"));
 
         var layerFirstPresentationKeys = new[]
         {

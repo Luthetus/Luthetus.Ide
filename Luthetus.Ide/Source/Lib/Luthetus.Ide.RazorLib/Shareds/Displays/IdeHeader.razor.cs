@@ -25,6 +25,7 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 

@@ -38,7 +38,7 @@ public partial class EditorSync
         var viewModelKey = await TryRegisterViewModelFunc(new TryRegisterViewModelArgs(
             Key<TextEditorViewModel>.NewKey(),
             resourceUri,
-            new TextEditorCategory("main"),
+            new Category("main"),
             shouldSetFocusToEditor,
             _serviceProvider));
 

@@ -1,6 +1,5 @@
 ﻿using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
-using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
@@ -8,6 +7,8 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib;
 
 namespace Luthetus.TextEditor.Tests.Basis.Commands.Models.Defaults;
 
@@ -421,7 +422,7 @@ public class TextEditorCommandDefaultFactsTests
             {
                 var cursor = new TextEditorCursor(0, 0, true);
 
-                var cursorModificationBag = new TextEditorCursorModifierBag(
+                var cursorModificationBag = new CursorModifierBagTextEditor(
                     Key<TextEditorViewModel>.Empty,
                     new List<TextEditorCursorModifier> { new TextEditorCursorModifier(cursor) });
 
@@ -1000,7 +1001,7 @@ public class TextEditorCommandDefaultFactsTests
                         var cursor = new TextEditorCursor(1, 0, true);
                         var cursorModifier = new TextEditorCursorModifier(cursor);
 
-                        var insertionCursorModifierBag = new TextEditorCursorModifierBag(
+                        var insertionCursorModifierBag = new CursorModifierBagTextEditor(
                             Key<TextEditorViewModel>.Empty,
                             new List<TextEditorCursorModifier> { cursorModifier });
 
@@ -1069,7 +1070,7 @@ public class TextEditorCommandDefaultFactsTests
                         var cursor = new TextEditorCursor(1, 0, true);
                         var cursorModifier = new TextEditorCursorModifier(cursor);
 
-                        var insertionCursorModifierBag = new TextEditorCursorModifierBag(
+                        var insertionCursorModifierBag = new CursorModifierBagTextEditor(
                             Key<TextEditorViewModel>.Empty,
                             new List<TextEditorCursorModifier> { cursorModifier });
 
@@ -1138,7 +1139,7 @@ public class TextEditorCommandDefaultFactsTests
                         var cursor = new TextEditorCursor(1, 0, true);
                         var cursorModifier = new TextEditorCursorModifier(cursor);
 
-                        var insertionCursorModifierBag = new TextEditorCursorModifierBag(
+                        var insertionCursorModifierBag = new CursorModifierBagTextEditor(
                             Key<TextEditorViewModel>.Empty,
                             new List<TextEditorCursorModifier> { cursorModifier });
 

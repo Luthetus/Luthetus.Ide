@@ -1,8 +1,8 @@
 ﻿using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Autocompletes.Models;
 
@@ -22,7 +22,7 @@ public class WordAutocompleteIndexerTests
     [Fact]
 	public async Task Constructor()
 	{
-        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+        TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
             out var inModel,
             out var inViewModel,

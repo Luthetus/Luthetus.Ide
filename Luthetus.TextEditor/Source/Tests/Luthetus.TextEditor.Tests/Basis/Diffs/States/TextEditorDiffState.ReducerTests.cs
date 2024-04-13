@@ -3,9 +3,9 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 using Microsoft.Extensions.DependencyInjection;
 using Fluxor;
+using Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Diffs.States;
 
@@ -20,7 +20,7 @@ public partial class TextEditorDiffStateReducerTests
 	[Fact]
 	public void ReduceRegisterAction()
 	{
-        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+        TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
             out var inModel,
             out var inViewModel,
@@ -42,7 +42,7 @@ public partial class TextEditorDiffStateReducerTests
         textEditorService.ViewModelApi.Register(
             outViewModelKey,
             outModelResourceUri,
-            new TextEditorCategory("UnitTesting"));
+            new Category("UnitTesting"));
 
         var outViewModel = textEditorService.ViewModelApi.GetOrDefault(outViewModelKey)
            ?? throw new ArgumentNullException();
@@ -74,7 +74,7 @@ public partial class TextEditorDiffStateReducerTests
 	[Fact]
 	public void ReduceDisposeAction()
 	{
-        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+        TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
             out var inModel,
             out var inViewModel,
@@ -96,7 +96,7 @@ public partial class TextEditorDiffStateReducerTests
         textEditorService.ViewModelApi.Register(
             outViewModelKey,
             outModelResourceUri,
-            new TextEditorCategory("UnitTesting"));
+            new Category("UnitTesting"));
 
         var outViewModel = textEditorService.ViewModelApi.GetOrDefault(outViewModelKey)
            ?? throw new ArgumentNullException();

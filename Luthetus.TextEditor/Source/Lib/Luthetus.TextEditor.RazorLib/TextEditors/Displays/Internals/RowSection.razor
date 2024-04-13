@@ -1,8 +1,9 @@
-﻿@using Luthetus.TextEditor.RazorLib.Rows.Models;
+﻿@using System.Text
+@using Luthetus.TextEditor.RazorLib.Rows.Models;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
-@using Luthetus.TextEditor.RazorLib.Virtualizations.Displays
-@using System.Text;
 @using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+@using Luthetus.TextEditor.RazorLib.Virtualizations.Displays
 @using Luthetus.Common.RazorLib.Keys.Models;
 
 <div class="luth_te_row-section"
@@ -22,7 +23,7 @@
                             CssClassString="luth_te_last-presentation-layer-group"
                             TextEditorPresentationKeys="RenderBatch.ViewModel.LastPresentationLayerKeysList" />
 
-    <TextEditorWidgetInlineLayerDisplay/>
+    <WidgetInlineLayerDisplay/>
 
     @foreach (var virtualizedRow in RenderBatch.ViewModel!.VirtualizationResult.EntryList)
     {

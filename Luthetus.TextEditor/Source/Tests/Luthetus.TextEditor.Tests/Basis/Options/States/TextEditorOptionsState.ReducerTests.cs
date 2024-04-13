@@ -1,11 +1,11 @@
 ﻿using Luthetus.TextEditor.RazorLib.Options.States;
-using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 using Microsoft.Extensions.DependencyInjection;
 using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Options.States;
 
@@ -20,7 +20,7 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetFontFamilyAction()
 	{
-        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+        TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
             out var inModel,
             out var inViewModel,
@@ -49,7 +49,7 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetFontSizeAction()
 	{
-        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+        TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
             out var inModel,
             out var inViewModel,
@@ -78,7 +78,7 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetRenderStateKeyAction()
 	{
-        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+        TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
             out var inModel,
             out var inViewModel,
@@ -107,7 +107,7 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetCursorWidthAction()
 	{
-        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+        TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
             out var inModel,
             out var inViewModel,
@@ -136,7 +136,7 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetHeightAction()
 	{
-        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+        TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
             out var inModel,
             out var inViewModel,
@@ -184,7 +184,7 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetThemeAction()
 	{
-        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+        TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
             out var inModel,
             out var inViewModel,
@@ -213,7 +213,7 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetKeymapAction()
 	{
-        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+        TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
             out var inModel,
             out var inViewModel,
@@ -242,7 +242,7 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetShowWhitespaceAction()
 	{
-        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+        TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
             out var inModel,
             out var inViewModel,
@@ -290,7 +290,7 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetShowNewlinesAction()
 	{
-        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+        TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
             out var inModel,
             out var inViewModel,
@@ -338,7 +338,7 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetUseMonospaceOptimizationsAction()
 	{
-        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+        TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
             out var inModel,
             out var inViewModel,

@@ -3,13 +3,14 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 public partial class TextSelectionGroup : ComponentBase
 {
     [CascadingParameter]
-    public TextEditorRenderBatch RenderBatch { get; set; } = null!;
+    public RenderBatch RenderBatch { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TextEditorCursor PrimaryCursor { get; set; } = null!;

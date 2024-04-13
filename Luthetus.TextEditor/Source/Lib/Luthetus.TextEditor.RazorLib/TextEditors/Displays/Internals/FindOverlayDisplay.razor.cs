@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using System.Collections.Immutable;
 using Fluxor;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -25,7 +26,7 @@ public partial class FindOverlayDisplay : ComponentBase
     private IJSRuntime JsRuntime { get; set; } = null!;
 
     [CascadingParameter]
-    public TextEditorRenderBatch RenderBatch { get; set; } = null!;
+    public RenderBatch RenderBatch { get; set; } = null!;
 
     private bool _lastSeenShowFindOverlayValue = false;
     private string _inputValue = string.Empty;
@@ -280,7 +281,7 @@ public partial class FindOverlayDisplay : ComponentBase
                     presentationModel.CompletedCalculation.TextSpanList =
                         presentationModel.CompletedCalculation.TextSpanList.Replace(targetTextSpan, targetTextSpan with
                         {
-                            DecorationByte = (byte)TextEditorFindOverlayDecorationKind.Insertion,
+                            DecorationByte = (byte)FindOverlayDecorationKind.Insertion,
                         });
                 }
 

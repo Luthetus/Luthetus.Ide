@@ -24,7 +24,7 @@ public partial class TextEditorSettingsPreview : ComponentBase
     public static readonly ResourceUri SettingsPreviewTextEditorResourceUri = new ResourceUri("__LUTHETUS_SETTINGS_PREVIEW__");
     public static readonly Key<TextEditorViewModel> SettingsPreviewTextEditorViewModelKey = Key<TextEditorViewModel>.NewKey();
 
-    private readonly TextEditorViewModelDisplayOptions _viewModelDisplayOptions = new()
+    private readonly ViewModelDisplayOptions _viewModelDisplayOptions = new()
     {
         WrapperStyleCssString = "height: var(--luth_te_text-editor-content-min-height);",
         TextEditorStyleCssString = "height: 100%;",
@@ -47,7 +47,7 @@ public partial class TextEditorSettingsPreview : ComponentBase
             TextEditorService.ViewModelApi.Register(
                 SettingsPreviewTextEditorViewModelKey,
                 SettingsPreviewTextEditorResourceUri,
-                new TextEditorCategory(nameof(TextEditorSettingsPreview)));
+                new Category(nameof(TextEditorSettingsPreview)));
 
             await InvokeAsync(StateHasChanged);
         }

@@ -10,7 +10,6 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -22,9 +21,9 @@ public partial class AutocompleteMenu : ComponentBase
     private IAutocompleteService AutocompleteService { get; set; } = null!;
 
     [CascadingParameter]
-    public TextEditorRenderBatch RenderBatch { get; set; } = null!;
+    public RenderBatch RenderBatch { get; set; } = null!;
     [CascadingParameter(Name = "SetShouldDisplayMenuAsync")]
-    public Func<TextEditorMenuKind, bool, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
+    public Func<MenuKind, bool, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
     [CascadingParameter(Name = "TextEditorMenuShouldTakeFocusFunc")]
     public Func<bool> TextEditorMenuShouldTakeFocusFunc { get; set; } = null!;
 
@@ -42,14 +41,14 @@ public partial class AutocompleteMenu : ComponentBase
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
-            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
+            await SetShouldDisplayMenuAsync.Invoke(MenuKind.None, true);
     }
 
     private async Task ReturnFocusToThisAsync()
     {
         try
         {
-            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
+            await SetShouldDisplayMenuAsync.Invoke(MenuKind.None, true);
         }
         catch (Exception e)
         {
@@ -141,7 +140,7 @@ public partial class AutocompleteMenu : ComponentBase
         {
             try
             {
-                await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
+                await SetShouldDisplayMenuAsync.Invoke(MenuKind.None, true);
                 await menuOptionAction.Invoke();
             }
             catch (Exception e)

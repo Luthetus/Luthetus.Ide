@@ -1,5 +1,4 @@
 ﻿using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 namespace Luthetus.TextEditor.Tests.Basis.ComponentRenderers.Models;
 
@@ -17,8 +16,8 @@ public class LuthetusTextEditorComponentRenderersTests
     [Fact]
 	public void Constructor()
 	{
-		var symbolDisplay = typeof(TextEditorSymbolDisplay);
-		var diagnosticDisplay = typeof(TextEditorDiagnosticDisplay);
+		var symbolDisplay = typeof(RazorLib.TextEditors.Displays.Internals.SymbolDisplay);
+		var diagnosticDisplay = typeof(RazorLib.TextEditors.Displays.Internals.DiagnosticDisplay);
 		
 		var componentRenderers = new LuthetusTextEditorComponentRenderers(
             symbolDisplay,

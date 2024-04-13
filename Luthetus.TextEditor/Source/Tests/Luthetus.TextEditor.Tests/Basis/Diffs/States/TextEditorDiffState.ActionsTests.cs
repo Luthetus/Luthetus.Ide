@@ -1,9 +1,9 @@
 ﻿using Luthetus.TextEditor.RazorLib.Diffs.States;
-using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
+using Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Diffs.States;
 
@@ -18,7 +18,7 @@ public partial class TextEditorDiffStateActionsTests
 	[Fact]
 	public void RegisterAction()
 	{
-        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+        TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
             out var inModel,
             out var inViewModel,
@@ -40,7 +40,7 @@ public partial class TextEditorDiffStateActionsTests
         textEditorService.ViewModelApi.Register(
             outViewModelKey,
             outModelResourceUri,
-            new TextEditorCategory("UnitTesting"));
+            new Category("UnitTesting"));
 
         var outViewModel = textEditorService.ViewModelApi.GetOrDefault(outViewModelKey)
            ?? throw new ArgumentNullException();
@@ -63,7 +63,7 @@ public partial class TextEditorDiffStateActionsTests
 	[Fact]
 	public void DisposeAction()
 	{
-        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+        TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
             out var inModel,
             out var inViewModel,
@@ -85,7 +85,7 @@ public partial class TextEditorDiffStateActionsTests
         textEditorService.ViewModelApi.Register(
             outViewModelKey,
             outModelResourceUri,
-            new TextEditorCategory("UnitTesting"));
+            new Category("UnitTesting"));
 
         var outViewModel = textEditorService.ViewModelApi.GetOrDefault(outViewModelKey)
            ?? throw new ArgumentNullException();

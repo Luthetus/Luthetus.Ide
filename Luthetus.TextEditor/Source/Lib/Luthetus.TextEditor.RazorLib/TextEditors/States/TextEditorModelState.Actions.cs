@@ -19,7 +19,7 @@ public partial class TextEditorModelState
 
     public record SetAction(
             Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
-            ITextEditorEditContext EditContext,
+            IEditContext EditContext,
             TextEditorModelModifier ModelModifier)
         : TextEditorAuthenticatedAction(AuthenticatedActionKey);
 }

@@ -85,7 +85,7 @@ public static partial class TextEditorCommandVimFacts
                     motionResult.LowerPositionIndexCursor.ColumnIndex,
                     true);
 
-                var cursorModifierBagForDeletion = new TextEditorCursorModifierBag(
+                var cursorModifierBagForDeletion = new CursorModifierBagTextEditor(
                     Key<TextEditorViewModel>.Empty,
                     new List<TextEditorCursorModifier> { new(cursorForDeletion) });
 

@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Htmls.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -14,7 +14,7 @@ public partial class TextSelectionRow : ComponentBase
     private IJSRuntime JsRuntime { get; set; } = null!;
 
     [CascadingParameter]
-    public TextEditorRenderBatch RenderBatch { get; set; } = null!;
+    public RenderBatch RenderBatch { get; set; } = null!;
     [CascadingParameter(Name = "ProportionalFontMeasurementsContainerElementId")]
     public string ProportionalFontMeasurementsContainerElementId { get; set; } = null!;
 

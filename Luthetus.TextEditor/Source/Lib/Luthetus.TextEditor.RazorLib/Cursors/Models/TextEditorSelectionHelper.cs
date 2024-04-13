@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Cursors.Models;
 
@@ -28,7 +28,7 @@ public static class TextEditorSelectionHelper
 
     public static string? GetSelectedText(
         TextEditorSelection textEditorSelection,
-        ITextEditorModel textEditorModel)
+        IModelTextEditor textEditorModel)
     {
         return GetSelectedText(
             textEditorSelection.AnchorPositionIndex,
@@ -38,7 +38,7 @@ public static class TextEditorSelectionHelper
     
     public static string? GetSelectedText(
         TextEditorCursorModifier cursorModifier,
-        ITextEditorModel textEditorModel)
+        IModelTextEditor textEditorModel)
     {
         return GetSelectedText(
             cursorModifier.SelectionAnchorPositionIndex,
@@ -49,7 +49,7 @@ public static class TextEditorSelectionHelper
     public static string? GetSelectedText(
         int? anchorPositionIndex,
         int endingPositionIndex,
-        ITextEditorModel textEditorModel)
+        IModelTextEditor textEditorModel)
     {
         if (HasSelectedText(anchorPositionIndex, endingPositionIndex))
         {
@@ -66,7 +66,7 @@ public static class TextEditorSelectionHelper
     }
 
     public static TextEditorCursor SelectLinesRange(
-        ITextEditorModel textEditorModel,
+        IModelTextEditor textEditorModel,
         int startingRowIndex,
         int count)
     {
@@ -128,7 +128,7 @@ public static class TextEditorSelectionHelper
     }
 
     public static (int lowerRowIndexInclusive, int upperRowIndexExclusive) ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
-        ITextEditorModel textEditorModel,
+        IModelTextEditor textEditorModel,
         (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) positionIndexBounds)
     {
         var firstRowToSelectDataInclusive = textEditorModel.GetLineInformationFromPositionIndex(

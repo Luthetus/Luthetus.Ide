@@ -5,6 +5,7 @@ using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.CompilerServices.Lang.CSharp.RuntimeAssemblies;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -151,7 +152,7 @@ public sealed class CSharpCompilerService : LuthCompilerService
                                 var viewModelList = _textEditorService.ModelApi.GetViewModelsOrEmpty(textSpan.ResourceUri);
 
                                 var cursor = new TextEditorCursor(0, 0, true);
-                                var cursorModifierBag = new TextEditorCursorModifierBag(
+                                var cursorModifierBag = new CursorModifierBagTextEditor(
                                     Key<TextEditorViewModel>.Empty,
                                     new List<TextEditorCursorModifier> { new(cursor) });
 

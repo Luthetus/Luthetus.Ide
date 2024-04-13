@@ -3,7 +3,6 @@
 @using Luthetus.TextEditor.RazorLib.Options.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 @{
@@ -29,7 +28,7 @@
 
             @if (renderBatch.IsValid && ViewModelDisplayOptions.IncludeHeaderHelperComponent)
             {
-                <TextEditorHeader HeaderButtonKinds="ViewModelDisplayOptions.HeaderButtonKinds" />
+                <Header HeaderButtonKinds="ViewModelDisplayOptions.HeaderButtonKinds" />
             }
 
             <div @onclick="FocusTextEditorAsync"
@@ -95,7 +94,7 @@
 
             @if (renderBatch.IsValid && ViewModelDisplayOptions.IncludeFooterHelperComponent)
             {
-                <TextEditorFooter />
+                <Footer/>
             }
 
         </CascadingValue>

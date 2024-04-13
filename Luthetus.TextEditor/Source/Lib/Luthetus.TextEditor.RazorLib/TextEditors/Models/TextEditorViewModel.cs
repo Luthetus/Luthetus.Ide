@@ -37,7 +37,7 @@ public record TextEditorViewModel : IDisposable
         IJSRuntime jsRuntime,
         VirtualizationResult<List<RichCharacter>> virtualizationResult,
         bool displayCommandBar,
-        TextEditorCategory category)
+        Category category)
     {
         ViewModelKey = viewModelKey;
         ResourceUri = resourceUri;
@@ -60,7 +60,7 @@ public record TextEditorViewModel : IDisposable
 
         UnsafeState = new();
         
-        DynamicViewModelAdapter = new TextEditorDynamicViewModelAdapter(
+        DynamicViewModelAdapter = new DynamicViewModelAdapterTextEditor(
             ViewModelKey,
             TextEditorService,
             dispatcher,
@@ -104,9 +104,9 @@ public record TextEditorViewModel : IDisposable
     /// </summary>
     public bool ShowCommandBar { get; init; }
     /// <summary>
-    /// <inheritdoc cref="TextEditorCategory"/>
+    /// <inheritdoc cref="Models.Category"/>
     /// </summary>
-    public TextEditorCategory Category { get; }
+    public Category Category { get; }
     /// <summary>
     /// The find overlay refers to hitting the keymap { Ctrl + f } when browser focus is within a text editor.
     /// </summary>
@@ -114,7 +114,7 @@ public record TextEditorViewModel : IDisposable
     /// <summary>
     /// If one hits the keymap { Ctrl + s } when browser focus is within a text editor.
     /// </summary>
-    public Action<ITextEditorModel>? OnSaveRequested { get; init; }
+    public Action<IModelTextEditor>? OnSaveRequested { get; init; }
     /// <summary>
     /// When a view model is rendered within a <see cref="TextEditorGroup"/>, this Func can be used to render a more friendly tab name, than the resource uri path.
     /// </summary>
@@ -143,14 +143,14 @@ public record TextEditorViewModel : IDisposable
     /// This property is what the find overlay input element binds to.
     /// </summary>
     public string FindOverlayValue { get; set; } = string.Empty;
-    public TextEditorViewModelUnsafeState UnsafeState { get; }
+    public ViewModelUnsafeState UnsafeState { get; }
     /// <summary>
     /// This property contains all data, and logic, necessary to render a text editor from within a dialog,
     /// a panel tab, or a text editor group tab.
     /// </summary>
-    public TextEditorDynamicViewModelAdapter DynamicViewModelAdapter { get; init; }
-    public ImmutableArray<TextEditorWidgetBlock> TextEditorWidgetBlockList { get; init; } = ImmutableArray<TextEditorWidgetBlock>.Empty;
-    public ImmutableArray<TextEditorWidgetInline> TextEditorWidgetInlineList { get; init; } = ImmutableArray<TextEditorWidgetInline>.Empty;
+    public DynamicViewModelAdapterTextEditor DynamicViewModelAdapter { get; init; }
+    public ImmutableArray<WidgetBlock> TextEditorWidgetBlockList { get; init; } = ImmutableArray<WidgetBlock>.Empty;
+    public ImmutableArray<WidgetInline> TextEditorWidgetInlineList { get; init; } = ImmutableArray<WidgetInline>.Empty;
 
     public string BodyElementId => $"luth_te_text-editor-content_{ViewModelKey.Guid}";
     public string PrimaryCursorContentId => $"luth_te_text-editor-content_{ViewModelKey.Guid}_primary-cursor";

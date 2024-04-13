@@ -13,7 +13,7 @@ public partial class CommandBarDisplay : FluxorComponent
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     [CascadingParameter]
-    public TextEditorRenderBatch RenderBatch { get; set; } = null!;
+    public RenderBatch RenderBatch { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Func<Task> RestoreFocusToTextEditor { get; set; } = null!;

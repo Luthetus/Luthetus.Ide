@@ -1,5 +1,5 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+﻿using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
 namespace Luthetus.CompilerServices.Lang.C;
 

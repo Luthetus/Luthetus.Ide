@@ -8,7 +8,6 @@ using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
@@ -23,6 +22,8 @@ using Fluxor;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.Events;
 
 namespace Luthetus.Ide.RazorLib.Keymaps.Models.Terminals;
 
@@ -90,7 +91,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 						if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
 							return;
 
-						var throttleEventOnKeyDown = new ThrottleEventOnKeyDown(
+						var onKeyDown = new OnKeyDown(
 							new TextEditorEvents(events, new TextEditorKeymapDefault()),
 							keyboardEventArgs,
 							commandArgs.ModelResourceUri,
@@ -99,7 +100,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 						var selectionContainsCurrentRow = false;
 						var selectionRowCount = 0;
 
-						if (throttleEventOnKeyDown.TentativeHasSelection)
+						if (onKeyDown.TentativeHasSelection)
 						{
 							var selectionBoundPositionIndices = TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier);
 
@@ -116,8 +117,8 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 							selectionRowCount = selectionBoundRowIndices.upperRowIndexExclusive - selectionBoundRowIndices.lowerRowIndexInclusive;
                         }
 
-						if (throttleEventOnKeyDown.TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Text ||
-							throttleEventOnKeyDown.TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Other)
+						if (onKeyDown.TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Text ||
+							onKeyDown.TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Other)
 						{
                             // Only the last line of the terminal is editable.
                             if (primaryCursorModifier.LineIndex == modelModifier.LineCount - 1)
@@ -214,34 +215,34 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 										{
                                             // Don't let them type
                                         }
-                                        else if (throttleEventOnKeyDown.TentativeHasSelection &&
+                                        else if (onKeyDown.TentativeHasSelection &&
                                                  mostRecentWorkingDirectoryText.StartingIndexInclusive >= TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier).lowerPositionIndexInclusive)
                                         {
                                             // Don't let them type
                                         }
 										else
 										{
-                                            await throttleEventOnKeyDown.InvokeWithEditContext(editContext);
+                                            await onKeyDown.InvokeWithEditContext(editContext);
 											terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
                                         }
                                     }
                                 }
 							}
 						}
-						else if (throttleEventOnKeyDown.Command is not null)
+						else if (onKeyDown.Command is not null)
 						{
-							if (throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.Copy.InternalIdentifier ||
-								throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.PasteCommand.InternalIdentifier ||
-								throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.SelectAll.InternalIdentifier ||
-								throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollLineDown.InternalIdentifier ||
-								throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollLineUp.InternalIdentifier ||
-								throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollPageDown.InternalIdentifier ||
-								throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollPageUp.InternalIdentifier ||
-								throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageBottom.InternalIdentifier ||
-								throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageTop.InternalIdentifier ||
-								throttleEventOnKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ShowFindOverlay.InternalIdentifier)
+							if (onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.Copy.InternalIdentifier ||
+								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.PasteCommand.InternalIdentifier ||
+								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.SelectAll.InternalIdentifier ||
+								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollLineDown.InternalIdentifier ||
+								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollLineUp.InternalIdentifier ||
+								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollPageDown.InternalIdentifier ||
+								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollPageUp.InternalIdentifier ||
+								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageBottom.InternalIdentifier ||
+								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageTop.InternalIdentifier ||
+								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ShowFindOverlay.InternalIdentifier)
                             {
-                                await throttleEventOnKeyDown.InvokeWithEditContext(editContext);
+                                await onKeyDown.InvokeWithEditContext(editContext);
                             }
 							else
 							{
@@ -250,7 +251,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 						}
 						else
 						{
-							await throttleEventOnKeyDown.InvokeWithEditContext(editContext);
+							await onKeyDown.InvokeWithEditContext(editContext);
 
                             var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
 

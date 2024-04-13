@@ -19,6 +19,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
 
@@ -390,7 +391,7 @@ await builder.Build().RunAsync();
         textEditorService.ViewModelApi.Register(
             viewModelKey,
             resourceUri,
-            new TextEditorCategory("UnitTesting"));
+            new Category("UnitTesting"));
 
         viewModel = textEditorService.ViewModelApi.GetOrDefault(viewModelKey)
            ?? throw new ArgumentNullException();

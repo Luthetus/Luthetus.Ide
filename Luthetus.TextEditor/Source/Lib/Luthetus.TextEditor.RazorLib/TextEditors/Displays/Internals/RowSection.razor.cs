@@ -16,7 +16,7 @@ public partial class RowSection : ComponentBase
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     [CascadingParameter]
-    public TextEditorRenderBatch RenderBatch { get; set; } = null!;
+    public RenderBatch RenderBatch { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public bool GlobalShowNewlines { get; set; }

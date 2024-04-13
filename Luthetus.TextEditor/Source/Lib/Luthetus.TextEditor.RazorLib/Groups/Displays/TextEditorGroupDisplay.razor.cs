@@ -39,7 +39,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     public string CssClassString { get; set; } = string.Empty;
     /// <summary><see cref="HeaderButtonKindList"/> contains the enum value that represents a button displayed in the optional component: <see cref="TextEditorHeader"/>.</summary>
     [Parameter]
-    public TextEditorViewModelDisplayOptions ViewModelDisplayOptions { get; set; } = new();
+    public ViewModelDisplayOptions ViewModelDisplayOptions { get; set; } = new();
 
 	private TabListDisplay? _tabListDisplay;
 

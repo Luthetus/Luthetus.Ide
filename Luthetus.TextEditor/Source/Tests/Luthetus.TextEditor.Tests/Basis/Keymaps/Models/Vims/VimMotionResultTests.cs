@@ -1,6 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Keymaps.Models.Vims;
 
@@ -25,7 +25,7 @@ public class VimMotionResultTests
 	}
 
 	/// <summary>
-	/// <see cref="VimMotionResult.GetResultAsync(ITextEditorModel, TextEditorCursorModifier, Func{Task})"/>
+	/// <see cref="VimMotionResult.GetResultAsync(IModelTextEditor, TextEditorCursorModifier, Func{Task})"/>
 	/// </summary>
 	[Fact]
 	public void GetResultAsync()

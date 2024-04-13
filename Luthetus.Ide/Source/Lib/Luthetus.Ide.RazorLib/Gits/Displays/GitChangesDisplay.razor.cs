@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -38,7 +39,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                 TextEditorService.ViewModelApi.Register(
                     InViewModelKey,
                     InResourceUri,
-                    new TextEditorCategory(nameof(GitChangesDisplay)));
+                    new Category(nameof(GitChangesDisplay)));
 
                 TextEditorService.Post(
                     nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
@@ -83,7 +84,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                 TextEditorService.ViewModelApi.Register(
                     OutViewModelKey,
                     OutResourceUri,
-                    new TextEditorCategory(nameof(GitChangesDisplay)));
+                    new Category(nameof(GitChangesDisplay)));
 
                 TextEditorService.Post(
                     nameof(TextEditorService.ModelApi.AddPresentationModelFactory),

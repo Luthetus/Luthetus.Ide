@@ -13,5 +13,5 @@ public static class FindOverlayPresentationFacts
         PresentationKey,
         0,
         CssClassString,
-        new TextEditorFindOverlayDecorationMapper());
+        new FindOverlayDecorationMapper());
 }

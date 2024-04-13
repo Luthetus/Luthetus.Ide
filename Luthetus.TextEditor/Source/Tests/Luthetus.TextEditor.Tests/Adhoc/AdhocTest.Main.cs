@@ -19,6 +19,7 @@ using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
 
@@ -269,7 +270,7 @@ public partial class AdhocTest
     }
 
     /// <summary>
-    /// <see cref="RazorLib.TextEditors.Models.TextEditorModels.ITextEditorModel.ContentList"/><br/><br/>
+    /// <see cref="IModelTextEditor.ContentList"/><br/><br/>
     /// TODO: This needs to be separated out into an IReadOnlyList&lt;char&gt;...
     ///       ...and a IReadOnlyList&lt;byte&gt;
     ///       |
@@ -761,7 +762,7 @@ public partial class AdhocTest
         model = textEditorService.ModelApi.GetOrDefault(resourceUri) ?? throw new ArgumentNullException();
 
         var viewModelKey = Key<TextEditorViewModel>.NewKey();
-        textEditorService.ViewModelApi.Register(viewModelKey, resourceUri, new TextEditorCategory("UnitTesting"));
+        textEditorService.ViewModelApi.Register(viewModelKey, resourceUri, new Category("UnitTesting"));
         viewModel = textEditorService.ViewModelApi.GetOrDefault(viewModelKey) ?? throw new ArgumentNullException();
     }
 }

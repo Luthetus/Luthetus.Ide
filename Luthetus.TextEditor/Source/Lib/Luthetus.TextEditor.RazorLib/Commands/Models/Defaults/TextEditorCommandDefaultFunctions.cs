@@ -19,7 +19,7 @@ public class TextEditorCommandDefaultFunctions
 {
     public static TextEditorEdit DoNothingDiscardFactory()
     {
-        return (ITextEditorEditContext editContext) =>
+        return (IEditContext editContext) =>
         {
             return Task.CompletedTask;
         };
@@ -28,7 +28,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit CopyFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return async (ITextEditorEditContext editContext) =>
+        return async (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -49,7 +49,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit CutFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return async (ITextEditorEditContext editContext) =>
+        return async (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -83,7 +83,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit PasteFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return async (ITextEditorEditContext editContext) =>
+        return async (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -101,7 +101,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit SaveFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return (ITextEditorEditContext editContext) =>
+        return (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -120,7 +120,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit SelectAllFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return (ITextEditorEditContext editContext) =>
+        return (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -151,7 +151,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit RemeasureFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return (ITextEditorEditContext editContext) =>
+        return (IEditContext editContext) =>
         {
             editContext.TextEditorService.OptionsApi.SetRenderStateKey(Key<RenderState>.NewKey());
             return Task.CompletedTask;
@@ -161,7 +161,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit ScrollLineDownFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return async (ITextEditorEditContext editContext) =>
+        return async (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -178,7 +178,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit ScrollLineUpFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return async (ITextEditorEditContext editContext) =>
+        return async (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -195,7 +195,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit ScrollPageDownFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return async (ITextEditorEditContext editContext) =>
+        return async (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -212,7 +212,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit ScrollPageUpFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return async (ITextEditorEditContext editContext) =>
+        return async (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -229,7 +229,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit CursorMovePageBottomFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return (ITextEditorEditContext editContext) =>
+        return (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -255,7 +255,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit CursorMovePageTopFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return (ITextEditorEditContext editContext) =>
+        return (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -280,7 +280,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit DuplicateFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return (ITextEditorEditContext editContext) =>
+        return (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -315,7 +315,7 @@ public class TextEditorCommandDefaultFunctions
 
             modelModifier.Insert(
                 selectedText,
-                new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier>() { new(cursorForInsertion) }),
+                new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier>() { new(cursorForInsertion) }),
                 CancellationToken.None);
 
             return Task.CompletedTask;
@@ -325,7 +325,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit IndentMoreFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return (ITextEditorEditContext editContext) =>
+        return (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -350,7 +350,7 @@ public class TextEditorCommandDefaultFunctions
             {
                 var insertionCursor = new TextEditorCursor(i, 0, true);
 
-                var insertionCursorModifierBag = new TextEditorCursorModifierBag(
+                var insertionCursorModifierBag = new CursorModifierBagTextEditor(
                     Key<TextEditorViewModel>.Empty,
                     new List<TextEditorCursorModifier> { new TextEditorCursorModifier(insertionCursor) });
 
@@ -384,7 +384,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit IndentLessFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return (ITextEditorEditContext editContext) =>
+        return (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -423,7 +423,7 @@ public class TextEditorCommandDefaultFunctions
 
                     modelModifier.DeleteByRange(
                         removeCharacterCount, // Delete a single "Tab" character
-                        new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier> { new(cursorForDeletion) }),
+                        new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier> { new(cursorForDeletion) }),
                         CancellationToken.None);
                 }
                 else if (readResult.StartsWith(KeyboardKeyFacts.WhitespaceCharacters.SPACE))
@@ -441,7 +441,7 @@ public class TextEditorCommandDefaultFunctions
 
                     modelModifier.DeleteByRange(
                         removeCharacterCount,
-                        new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier> { new(cursorForDeletion) }),
+                        new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier> { new(cursorForDeletion) }),
                         CancellationToken.None);
                 }
 
@@ -479,7 +479,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit ClearTextSelectionFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return (ITextEditorEditContext editContext) =>
+        return (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -497,7 +497,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit NewLineBelowFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return (ITextEditorEditContext editContext) =>
+        return (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -522,7 +522,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit NewLineAboveFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return (ITextEditorEditContext editContext) =>
+        return (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -552,7 +552,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit GoToMatchingCharacterFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return async (ITextEditorEditContext editContext) =>
+        return async (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -668,7 +668,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit GoToDefinitionFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return (ITextEditorEditContext editContext) =>
+        return (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -721,7 +721,7 @@ public class TextEditorCommandDefaultFunctions
                     commandArgs.TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
                         Key<TextEditorViewModel>.NewKey(),
                         definitionTextSpan.ResourceUri,
-                        new TextEditorCategory("main"),
+                        new Category("main"),
                         true,
                         commandArgs.ServiceProvider));
 
@@ -768,7 +768,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit ShowFindAllDialogFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return (ITextEditorEditContext editContext) =>
+        return (IEditContext editContext) =>
         {
             commandArgs.TextEditorService.OptionsApi.ShowFindAllDialog();
             return Task.CompletedTask;
@@ -778,7 +778,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit ShowTooltipByCursorPositionFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return async (ITextEditorEditContext editContext) =>
+        return async (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);

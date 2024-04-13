@@ -28,9 +28,9 @@ public partial class ContextMenu : ComponentBase
     private IServiceProvider ServiceProvider { get; set; } = null!;
 
     [CascadingParameter]
-    public TextEditorRenderBatch RenderBatch { get; set; } = null!;
+    public RenderBatch RenderBatch { get; set; } = null!;
     [CascadingParameter(Name = "SetShouldDisplayMenuAsync")]
-    public Func<TextEditorMenuKind, bool, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
+    public Func<MenuKind, bool, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
 
     private ElementReference? _textEditorContextMenuElementReference;
 
@@ -79,14 +79,14 @@ public partial class ContextMenu : ComponentBase
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
-            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
+            await SetShouldDisplayMenuAsync.Invoke(MenuKind.None, true);
     }
 
     private async Task ReturnFocusToThisAsync()
     {
         try
         {
-            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
+            await SetShouldDisplayMenuAsync.Invoke(MenuKind.None, true);
         }
         catch (Exception e)
         {
@@ -120,7 +120,7 @@ public partial class ContextMenu : ComponentBase
         {
             try
             {
-                await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
+                await SetShouldDisplayMenuAsync.Invoke(MenuKind.None, true);
                 await menuOptionAction.Invoke();
             }
             catch (Exception e)

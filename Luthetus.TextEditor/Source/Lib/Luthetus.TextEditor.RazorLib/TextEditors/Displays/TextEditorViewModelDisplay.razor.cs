@@ -24,8 +24,8 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals.UiEvent;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
+using Luthetus.TextEditor.RazorLib.Events;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -60,7 +60,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     public Key<TextEditorViewModel> TextEditorViewModelKey { get; set; } = Key<TextEditorViewModel>.Empty;
     
     [Parameter]
-    public TextEditorViewModelDisplayOptions ViewModelDisplayOptions { get; set; } = new();
+    public ViewModelDisplayOptions ViewModelDisplayOptions { get; set; } = new();
 
     private readonly Guid _textEditorHtmlElementId = Guid.NewGuid();
     /// <summary>Using this lock in order to avoid the Dispose implementation decrementing when it shouldn't</summary>
@@ -73,8 +73,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private BodySection? _bodySectionComponent;
     private MeasureCharacterWidthAndRowHeight? _measureCharacterWidthAndRowHeightComponent;
     private bool _userMouseIsInside;
-    private TextEditorRenderBatch _storedRenderBatch = null!;
-    private TextEditorRenderBatch? _previousRenderBatch;
+    private RenderBatch _storedRenderBatch = null!;
+    private RenderBatch? _previousRenderBatch;
     private TextEditorViewModel? _linkedViewModel;
 
     private CursorDisplay? CursorDisplay => _bodySectionComponent?.CursorDisplayComponent;
@@ -169,11 +169,11 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     private void ConstructRenderBatch()
     {
-        var renderBatch = new TextEditorRenderBatch(
+        var renderBatch = new RenderBatch(
             GetModel(),
             GetViewModel(),
             GetOptions(),
-            TextEditorRenderBatch.DEFAULT_FONT_FAMILY,
+            RenderBatch.DEFAULT_FONT_FAMILY,
             TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS,
             ViewModelDisplayOptions,
             _events);
@@ -253,7 +253,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     private Task ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-        if (TextEditorEventsUtils.CheckIfKeyboardEventArgsIsNoise(keyboardEventArgs))
+        if (EventsUtils.CheckIfKeyboardEventArgsIsNoise(keyboardEventArgs))
             return Task.CompletedTask;
 
         var resourceUri = GetModel()?.ResourceUri;
@@ -262,7 +262,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (resourceUri is null || viewModelKey is null)
 			return Task.CompletedTask;
 
-		var throttleEventOnKeyDown = new ThrottleEventOnKeyDown(
+		var throttleEventOnKeyDown = new OnKeyDown(
             _events,
             keyboardEventArgs,
             resourceUri,
@@ -277,7 +277,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         var localCursorDisplay = CursorDisplay;
 
         if (localCursorDisplay is not null)
-            await localCursorDisplay.SetShouldDisplayMenuAsync(TextEditorMenuKind.ContextMenu);
+            await localCursorDisplay.SetShouldDisplayMenuAsync(MenuKind.ContextMenu);
     }
 
     private void ReceiveOnDoubleClick(MouseEventArgs mouseEventArgs)
@@ -288,7 +288,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        var throttleEventOnDoubleClick = new ThrottleEventOnDoubleClick(
+        var throttleEventOnDoubleClick = new OnDoubleClick(
             mouseEventArgs,
             _events,
             modelResourceUri,
@@ -305,7 +305,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 		
-		var throttleEventOnMouseDown = new ThrottleEventOnMouseDown(
+		var throttleEventOnMouseDown = new OnMouseDown(
             mouseEventArgs,
             _events,
             modelResourceUri,
@@ -369,7 +369,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
-			var throttleEventOnMouseMove = new ThrottleEventOnMouseMove(
+			var throttleEventOnMouseMove = new OnMouseMove(
                 mouseEventArgs,
                 _events,
                 modelResourceUri,
@@ -395,7 +395,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (viewModelKey is null)
             return;
 
-		var throttleEventOnWheel = new ThrottleEventOnWheel(
+		var throttleEventOnWheel = new OnWheel(
             wheelEventArgs,
             _events,
             viewModelKey.Value);
@@ -495,7 +495,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     }
 
     private void QueueRemeasureBackgroundTask(
-        TextEditorRenderBatch localRefCurrentRenderBatch,
+        RenderBatch localRefCurrentRenderBatch,
         string localMeasureCharacterWidthAndRowHeightElementId,
         int countOfTestCharacters,
         CancellationToken cancellationToken)
@@ -517,7 +517,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     }
 
     private void QueueCalculateVirtualizationResultBackgroundTask(
-        TextEditorRenderBatch localCurrentRenderBatch)
+        RenderBatch localCurrentRenderBatch)
     {
         var modelResourceUri = GetModel()?.ResourceUri;
         var viewModelKey = GetViewModel()?.ViewModelKey;
@@ -578,7 +578,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         private readonly TextEditorViewModelDisplay _viewModelDisplay;
         private readonly IThrottle _throttleApplySyntaxHighlighting = new Throttle(TimeSpan.FromMilliseconds(500));
 
-        public TextEditorEvents(TextEditorViewModelDisplay viewModelDisplay, TextEditorRenderBatch renderBatch)
+        public TextEditorEvents(TextEditorViewModelDisplay viewModelDisplay, RenderBatch renderBatch)
         {
             _viewModelDisplay = viewModelDisplay;
 			Options = renderBatch.Options ?? TextEditorService.OptionsStateWrap.Value.Options;
@@ -610,7 +610,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         /// <summary>This accounts for one who might hold down Left Mouse Button from outside the TextEditorDisplay's content div then move their mouse over the content div while holding the Left Mouse Button down.</summary>
         public bool ThinksLeftMouseButtonIsDown { get; set; }
 
-        public TextEditorViewModelDisplayOptions ViewModelDisplayOptions => _viewModelDisplay.ViewModelDisplayOptions;
+        public ViewModelDisplayOptions ViewModelDisplayOptions => _viewModelDisplay.ViewModelDisplayOptions;
         public CursorDisplay? CursorDisplay => _viewModelDisplay.CursorDisplay;
         public ITextEditorService TextEditorService => _viewModelDisplay.TextEditorService;
         public IClipboardService ClipboardService => _viewModelDisplay.ClipboardService;
@@ -632,7 +632,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             }
         }
 
-        public Func<TextEditorMenuKind, bool, Task> CursorSetShouldDisplayMenuAsyncFunc 
+        public Func<MenuKind, bool, Task> CursorSetShouldDisplayMenuAsyncFunc 
         { 
             get
             {
@@ -652,7 +652,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             ResourceUri resourceUri,
             Key<TextEditorViewModel> viewModelKey,
             KeyboardEventArgs keyboardEventArgs,
-            Func<TextEditorMenuKind, bool, Task> setTextEditorMenuKind)
+            Func<MenuKind, bool, Task> setTextEditorMenuKind)
         {
             if (_viewModelDisplay.ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory is not null)
             {
@@ -695,7 +695,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 if (IsAutocompleteMenuInvoker(keyboardEventArgs))
                 {
-                    await setTextEditorMenuKind.Invoke(TextEditorMenuKind.AutoCompleteMenu, true);
+                    await setTextEditorMenuKind.Invoke(MenuKind.AutoCompleteMenu, true);
                 }
                 else if (IsSyntaxHighlightingInvoker(keyboardEventArgs))
                 {
@@ -708,7 +708,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             ResourceUri resourceUri,
             Key<TextEditorViewModel> viewModelKey,
             List<KeyboardEventArgs> keyboardEventArgsList,
-            Func<TextEditorMenuKind, bool, Task> setTextEditorMenuKind)
+            Func<MenuKind, bool, Task> setTextEditorMenuKind)
         {
             if (_viewModelDisplay.ViewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory is not null)
             {
@@ -765,7 +765,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 if (seenIsAutocompleteMenuInvoker)
                 {
-                    await setTextEditorMenuKind.Invoke(TextEditorMenuKind.AutoCompleteMenu, true);
+                    await setTextEditorMenuKind.Invoke(MenuKind.AutoCompleteMenu, true);
                 }
 
                 if (seenIsSyntaxHighlightingInvoker)

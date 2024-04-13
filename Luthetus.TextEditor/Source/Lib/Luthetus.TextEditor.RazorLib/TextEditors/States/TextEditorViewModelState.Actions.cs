@@ -13,7 +13,7 @@ public partial class TextEditorViewModelState
     public record RegisterAction(
         Key<TextEditorViewModel> ViewModelKey,
         ResourceUri ResourceUri,
-        TextEditorCategory Category,
+        Category Category,
         ITextEditorService TextEditorService,
         IDispatcher Dispatcher,
         IDialogService DialogService,
@@ -23,7 +23,7 @@ public partial class TextEditorViewModelState
 
     public record SetViewModelWithAction(
         Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
-            ITextEditorEditContext EditContext,
+            IEditContext EditContext,
             Key<TextEditorViewModel> ViewModelKey,
             Func<TextEditorViewModel, TextEditorViewModel> WithFunc)
         : TextEditorAuthenticatedAction(AuthenticatedActionKey);

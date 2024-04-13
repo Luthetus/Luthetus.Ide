@@ -28,7 +28,7 @@ public record TextEditorGroup(
 
     public bool GetIsActive(ITab tab)
     {
-        if (tab is not ITextEditorTab textEditorTab)
+        if (tab is not ITabTextEditor textEditorTab)
             return false;
 
         return ActiveViewModelKey == textEditorTab.ViewModelKey;
@@ -36,7 +36,7 @@ public record TextEditorGroup(
 
     public Task OnClickAsync(ITab tab, MouseEventArgs mouseEventArgs)
     {
-        if (tab is not ITextEditorTab textEditorTab)
+        if (tab is not ITabTextEditor textEditorTab)
             return Task.CompletedTask;
 
         if (!GetIsActive(tab))
@@ -52,7 +52,7 @@ public record TextEditorGroup(
 
     public Task CloseAsync(ITab tab)
     {
-        if (tab is not ITextEditorTab textEditorTab)
+        if (tab is not ITabTextEditor textEditorTab)
             return Task.CompletedTask;
 
         TextEditorService.GroupApi.RemoveViewModel(GroupKey, textEditorTab.ViewModelKey);
@@ -65,7 +65,7 @@ public record TextEditorGroup(
 
         foreach (var viewModelKey in localViewModelKeyList)
         {
-            await CloseAsync(new TextEditorDynamicViewModelAdapter(
+            await CloseAsync(new DynamicViewModelAdapterTextEditor(
                 viewModelKey,
                 TextEditorService,
                 Dispatcher,

@@ -38,7 +38,7 @@ public partial class DirtyResourceUriViewDisplay : FluxorComponent
             var viewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
                 Key<TextEditorViewModel>.NewKey(),
                 resourceUri,
-                new TextEditorCategory("main"),
+                new Category("main"),
                 false,
                 ServiceProvider));
 

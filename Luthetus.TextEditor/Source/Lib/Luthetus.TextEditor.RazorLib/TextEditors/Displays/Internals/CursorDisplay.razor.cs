@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -19,7 +20,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     [CascadingParameter]
-    public TextEditorRenderBatch RenderBatch { get; set; } = null!;
+    public RenderBatch RenderBatch { get; set; } = null!;
     [CascadingParameter(Name = "ProportionalFontMeasurementsContainerElementId")]
     public string ProportionalFontMeasurementsContainerElementId { get; set; } = null!;
 
@@ -43,7 +44,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     private readonly IThrottle _throttleShouldRevealCursor = new Throttle(TimeSpan.FromMilliseconds(50));
 
     private ElementReference? _cursorDisplayElementReference;
-    private TextEditorMenuKind _menuKind;
+    private MenuKind _menuKind;
     private int _menuShouldGetFocusRequestCount;
 
     private string _previouslyObservedCursorDisplayId = string.Empty;
@@ -61,7 +62,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         ? "luth_te_blink"
         : string.Empty;
 
-    public TextEditorMenuKind MenuKind => _menuKind;
+    public MenuKind MenuKind => _menuKind;
 
     protected override void OnInitialized()
     {
@@ -272,7 +273,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         PauseBlinkAnimation();
     }
 
-    public async Task SetShouldDisplayMenuAsync(TextEditorMenuKind textEditorMenuKind, bool shouldFocusCursor = true)
+    public async Task SetShouldDisplayMenuAsync(MenuKind textEditorMenuKind, bool shouldFocusCursor = true)
     {
         // Clear the counter of requests for the Menu to take focus
         _ = TextEditorMenuShouldTakeFocus();
@@ -281,7 +282,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
         await InvokeAsync(StateHasChanged);
 
-        if (shouldFocusCursor && _menuKind == TextEditorMenuKind.None)
+        if (shouldFocusCursor && _menuKind == MenuKind.None)
             await FocusAsync();
     }
 

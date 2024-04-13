@@ -1,5 +1,5 @@
 ﻿using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
@@ -11,7 +11,7 @@ public record VimMotionResult(
     int PositionIndexDisplacement)
 {
     public static async Task<VimMotionResult> GetResultAsync(
-        ITextEditorModel model,
+        IModelTextEditor model,
         TextEditorCursorModifier cursorModifier,
         Func<Task> motionCommand)
     {

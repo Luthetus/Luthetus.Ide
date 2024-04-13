@@ -28,7 +28,7 @@ public partial class TerminalDisplay : FluxorComponent
     [Parameter]
     public Key<TerminalCommand> TerminalCommandKey { get; set; } = Key<TerminalCommand>.Empty;
 
-    private TextEditorViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
+    private ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
     {
         IncludeHeaderHelperComponent = false,
         IncludeFooterHelperComponent = false,

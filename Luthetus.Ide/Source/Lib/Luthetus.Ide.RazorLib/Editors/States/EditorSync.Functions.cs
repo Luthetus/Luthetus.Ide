@@ -121,7 +121,7 @@ public partial class EditorSync
 
         return Task.FromResult(viewModelKey);
 
-        void HandleOnSaveRequested(ITextEditorModel innerTextEditor)
+        void HandleOnSaveRequested(IModelTextEditor innerTextEditor)
         {
             var innerContent = innerTextEditor.GetAllText();
 
@@ -154,7 +154,7 @@ public partial class EditorSync
         if (viewModel is null)
             return Task.FromResult(false);
 
-        if (viewModel.Category == new TextEditorCategory("main") &&
+        if (viewModel.Category == new Category("main") &&
             showViewModelArgs.GroupKey == Key<TextEditorGroup>.Empty)
         {
             showViewModelArgs = new TryShowViewModelArgs(

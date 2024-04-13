@@ -13,6 +13,7 @@ using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Misc;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.TextEditor.RazorLib;
 
 namespace Luthetus.CompilerServices.Lang.Razor.Tests;
 

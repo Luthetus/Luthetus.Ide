@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib;
 
 namespace Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
 

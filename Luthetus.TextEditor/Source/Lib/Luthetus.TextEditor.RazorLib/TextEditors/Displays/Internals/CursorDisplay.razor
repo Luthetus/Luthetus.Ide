@@ -26,7 +26,7 @@
      style="@CaretRowStyleCss">
 </div>
 
-@if (_menuKind != TextEditorMenuKind.None && IncludeContextMenuHelperComponent)
+@if (_menuKind != MenuKind.None && IncludeContextMenuHelperComponent)
 {
     <div @onkeydown:stopPropagation="true"
          @onmousedown:stopPropagation="true"
@@ -35,16 +35,16 @@
          style="@MenuStyleCss">
 
         <CascadingValue Name="SetShouldDisplayMenuAsync"
-                        Value="new Func<TextEditorMenuKind, bool, Task>(SetShouldDisplayMenuAsync)">
+                        Value="new Func<MenuKind, bool, Task>(SetShouldDisplayMenuAsync)">
             <CascadingValue Name="TextEditorMenuShouldTakeFocusFunc"
                             Value="TextEditorMenuShouldTakeFocus">
 
                 @switch (_menuKind)
                 {
-                    case TextEditorMenuKind.ContextMenu:
+                    case MenuKind.ContextMenu:
                             @OnContextMenuRenderFragment
                         break;
-                    case TextEditorMenuKind.AutoCompleteMenu:
+                    case MenuKind.AutoCompleteMenu:
                             @AutoCompleteMenuRenderFragment
                         break;
                 }

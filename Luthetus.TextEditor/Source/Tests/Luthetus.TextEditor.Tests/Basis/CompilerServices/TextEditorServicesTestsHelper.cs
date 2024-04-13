@@ -15,6 +15,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
@@ -89,7 +90,7 @@ public class TextEditorCompilerServicesTestsHelper
         textEditorService.ViewModelApi.Register(
             viewModelKey,
             resourceUri,
-            new TextEditorCategory("UnitTesting"));
+            new Category("UnitTesting"));
 
         viewModel = textEditorService.ViewModelApi.GetOrDefault(viewModelKey)
            ?? throw new ArgumentNullException();

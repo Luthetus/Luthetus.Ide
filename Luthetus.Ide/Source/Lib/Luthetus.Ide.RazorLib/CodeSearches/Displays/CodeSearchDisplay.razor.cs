@@ -12,6 +12,7 @@ using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.CodeSearches.States;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.TextEditor.RazorLib;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Displays;
 
@@ -32,7 +33,7 @@ public partial class CodeSearchDisplay : FluxorComponent
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 
-	private readonly TextEditorViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
+	private readonly ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
 	{
 		IncludeHeaderHelperComponent = false,
 	};
@@ -80,7 +81,7 @@ public partial class CodeSearchDisplay : FluxorComponent
             var viewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
                 outPreviewViewModelKey,
                 resourceUri,
-                new TextEditorCategory(nameof(CodeSearchDisplay)),
+                new Category(nameof(CodeSearchDisplay)),
                 false,
                 ServiceProvider));
 
@@ -118,7 +119,7 @@ public partial class CodeSearchDisplay : FluxorComponent
             var viewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
                 Key<TextEditorViewModel>.NewKey(),
                 resourceUri,
-                new TextEditorCategory("main"),
+                new Category("main"),
                 false,
                 ServiceProvider));
 

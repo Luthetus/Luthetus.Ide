@@ -8,7 +8,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 /// Any actions which modify state should inhert from <see cref="TextEditorAuthenticatedAction"/>.<br/>
 /// <br/>
 /// Doing this permits state modifications to be concurrency safe. They will be enqueued using
-/// <see cref="ITextEditorService.EnqueueEdit(Func{ITextEditorEditContext, Task})"/>.<br/>
+/// <see cref="ITextEditorService.EnqueueEdit(Func{IEditContext, Task})"/>.<br/>
 /// <br/>
 /// When it is a specific edit's turn to perform their modification, all state will be provided
 /// by the <see cref="ITextEditorService"/>.<br/>

@@ -10,7 +10,7 @@ public class TryRegisterViewModelArgs
     public TryRegisterViewModelArgs(
         Key<TextEditorViewModel> viewModelKey,
         ResourceUri resourceUri,
-        TextEditorCategory category,
+        Category category,
         bool shouldSetFocusToEditor,
         IServiceProvider serviceProvider)
     {
@@ -34,9 +34,9 @@ public class TryRegisterViewModelArgs
     /// </summary>
     public ResourceUri ResourceUri { get; }
     /// <summary>
-    /// <inheritdoc cref="TextEditorCategory"/>
+    /// <inheritdoc cref="TextEditors.Models.Category"/>
     /// </summary>
-    public TextEditorCategory Category { get; }
+    public Category Category { get; }
     /// <summary>
     /// When this view model next gets rendered should browser focus be set to the text editor.
     /// </summary>
