@@ -53,6 +53,8 @@ public partial class TextEditorModelModifierTests
 
     /// <summary>
     /// <see cref="TextEditorModelModifier.ClearContent()"/>
+    /// ----------------------------------------------------
+    /// This test was deemed valuable on (2024-04-13)
     /// </summary>
     [Fact]
     public void ClearContent()
@@ -208,8 +210,8 @@ public partial class TextEditorModelModifierTests
                 // this results in the 'EndOfFile' positionIndex changing.
                 // But, since the content was cleared, the 'EndOfFile' positionIndex should return to 0.
                 var endOfFile = modelModifier.LineEndPositionList[0];
-                Assert.Equal(10, endOfFile.StartPositionIndexInclusive);
-                Assert.Equal(10, endOfFile.EndPositionIndexExclusive);
+                Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
             }
         }

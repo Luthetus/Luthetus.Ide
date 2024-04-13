@@ -525,7 +525,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
                 if (charactersOnRow > MostCharactersOnASingleLineTuple.lineLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
                     _mostCharactersOnASingleLineTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
 
-                LineEndPositionList.Add(new(index, index + 1, LineEndKind.CarriageReturn));
+                LineEndPositionList.Insert(rowIndex, new(index, index + 1, LineEndKind.CarriageReturn));
                 rowIndex++;
 
                 charactersOnRow = 0;
@@ -548,7 +548,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
                 }
                 else
                 {
-                    LineEndPositionList.Add(new(index, index + 1, LineEndKind.LineFeed));
+                    LineEndPositionList.Insert(rowIndex, new(index, index + 1, LineEndKind.LineFeed));
                     rowIndex++;
 
                     linefeedCount++;
@@ -583,6 +583,17 @@ public partial class TextEditorModelModifier : IModelTextEditor
                 var indexCarriageReturnLineFeed = _lineEndKindCountList.FindIndex(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed);
                 _lineEndKindCountList[indexCarriageReturnLineFeed] = (LineEndKind.CarriageReturnLineFeed, carriageReturnLinefeedCount);
             }
+        }
+
+        // Update the EndOfFile line end.
+        {
+            var endOfFile = _lineEndPositionList[^1];
+
+            if (endOfFile.LineEndKind != LineEndKind.EndOfFile)
+                throw new ApplicationException($"The text editor model is malformed; the final entry of {nameof(_lineEndPositionList)} must be the {nameof(LineEndKind)}.{nameof(LineEndKind.EndOfFile)}");
+
+            endOfFile.StartPositionIndexInclusive = content.Length;
+            endOfFile.EndPositionIndexExclusive = content.Length;
         }
 
         CheckRowEndingPositions(true);
