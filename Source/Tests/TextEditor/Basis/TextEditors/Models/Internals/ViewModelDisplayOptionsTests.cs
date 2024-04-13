@@ -1,6 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
-namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
+namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.Internals;
 
 /// <summary>
 /// <see cref="ViewModelDisplayOptions"/>

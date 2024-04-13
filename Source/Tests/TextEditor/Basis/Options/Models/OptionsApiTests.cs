@@ -6,7 +6,7 @@ using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
-namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Options.Models;
 
 /// <summary>
 /// <see cref="ITextEditorService.TextEditorOptionsApi"/>

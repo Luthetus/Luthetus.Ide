@@ -5,7 +5,6 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Fluxor;
-using Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Diffs.States;
 

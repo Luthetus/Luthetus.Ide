@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
-namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Diffs.Models;
 
 /// <summary>
 /// <see cref="ITextEditorService.TextEditorDiffApi"/>

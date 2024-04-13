@@ -2,7 +2,7 @@
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
-namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
+namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.Internals;
 
 /// <summary>
 /// <see cref="TooltipViewModel"/>

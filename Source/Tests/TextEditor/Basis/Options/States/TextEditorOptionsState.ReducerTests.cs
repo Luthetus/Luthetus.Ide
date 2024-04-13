@@ -5,7 +5,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
-using Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Options.States;
 

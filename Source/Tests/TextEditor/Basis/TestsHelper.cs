@@ -17,8 +17,9 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
-namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
+namespace Luthetus.TextEditor.Tests.Basis;
 
 public class TestsHelper
 {
