@@ -36,7 +36,7 @@ public partial class TextEditorModel
         CharList = modifier.CharList;
         DecorationByteList = modifier.DecorationByteList;
         PartitionList = modifier.PartitionList;
-        LineEndKindCountList = modifier.LineEndingKindCountsList.ToImmutableList();
+        LineEndKindCountList = modifier.LineEndKindCountsList.ToImmutableList();
 		LineEndPositionList = modifier.LineEndPositionList.ToImmutableList();
 		TabKeyPositionsList = modifier.TabKeyPositionsList.ToImmutableList();
 		OnlyLineEndKind = modifier.OnlyLineEndKind;

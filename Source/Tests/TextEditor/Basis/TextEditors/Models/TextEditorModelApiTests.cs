@@ -1,18 +1,26 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Fluxor;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
 /// <summary>
-/// <see cref="ITextEditorService.TextEditorModelApi"/>
+/// <see cref="TextEditorModelApi"/>
 /// </summary>
 public class ModelApiTests
 {
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.TextEditorModelApi(ITextEditorService, IDecorationMapperRegistry, ICompilerServiceRegistry, Common.RazorLib.BackgroundTasks.Models.IBackgroundTaskService, Fluxor.IDispatcher)"/>
+    /// <see cref="TextEditorModelApi(ITextEditorService, IDecorationMapperRegistry, ICompilerServiceRegistry, IBackgroundTaskService, IDispatcher)"/>
     /// </summary>
     [Fact]
     public void Constructor()
@@ -28,7 +36,7 @@ public class ModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.UndoEditEnqueue(ResourceUri)"/>
+    /// <see cref="TextEditorModelApi.UndoEditFactory(ResourceUri)"/>
     /// </summary>
     [Fact]
     public void UndoEdit()
@@ -69,7 +77,7 @@ public class ModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.SetUsingRowEndingKindEnqueue(ResourceUri, LineEndKind)"/>
+    /// <see cref="TextEditorModelApi.SetUsingLineEndKindFactory(ResourceUri, LineEndKind)"/>
     /// </summary>
     [Fact]
     public void SetUsingRowEndingKind()
@@ -97,7 +105,7 @@ public class ModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.SetResourceDataEnqueue(ResourceUri, DateTime)"/>
+    /// <see cref="TextEditorModelApi.SetResourceDataFactory(ResourceUri, DateTime)"/>
     /// </summary>
     [Fact]
     public void SetResourceData()
@@ -125,7 +133,7 @@ public class ModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.ReloadEnqueue(ResourceUri, string, DateTime)"/>
+    /// <see cref="TextEditorModelApi.ReloadFactory(ResourceUri, string, DateTime)"/>
     /// </summary>
     [Fact]
     public void Reload()
@@ -153,7 +161,7 @@ public class ModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.RegisterCustom(TextEditorModel)"/>
+    /// <see cref="TextEditorModelApi.RegisterCustom(TextEditorModel)"/>
     /// </summary>
     [Fact]
     public void RegisterCustom()
@@ -195,7 +203,7 @@ public class ModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.RegisterTemplated(string, ResourceUri, DateTime, string, string?)"/>
+    /// <see cref="TextEditorModelApi.RegisterTemplated(string, ResourceUri, DateTime, string, string?)"/>
     /// </summary>
     [Fact]
     public void RegisterTemplated()
@@ -229,7 +237,7 @@ public class ModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.RedoEditEnqueue(ResourceUri)"/>
+    /// <see cref="TextEditorModelApi.RedoEditFactory(ResourceUri)"/>
     /// </summary>
     [Fact]
     public void RedoEditEnqueue()
@@ -277,7 +285,7 @@ public class ModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.InsertTextEnqueue(TextEditorModelState.InsertTextAction)"/>
+    /// <see cref="TextEditorModelApi.InsertTextFactory(ResourceUri, Key{TextEditorViewModel}, string, CancellationToken)"/>
     /// </summary>
     [Fact]
     public void InsertTextEnqueue()
@@ -309,7 +317,7 @@ public class ModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.HandleKeyboardEventEnqueue(TextEditorModelState.KeyboardEventAction)"/>
+    /// <see cref="TextEditorModelApi.HandleKeyboardEventFactory(ResourceUri, Key{TextEditorViewModel}, KeyboardEventArgs, CancellationToken)"/>
     /// </summary>
     [Fact]
     public void HandleKeyboardEventEnqueue()
@@ -347,7 +355,7 @@ public class ModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.GetViewModelsOrEmpty(ResourceUri)"/>
+    /// <see cref="TextEditorModelApi.GetViewModelsOrEmpty(ResourceUri)"/>
     /// </summary>
     [Fact]
     public void GetViewModelsOrEmpty()
@@ -369,7 +377,7 @@ public class ModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.GetAllText(ResourceUri)"/>
+    /// <see cref="TextEditorModelApi.GetAllText(ResourceUri)"/>
     /// </summary>
     [Fact]
     public void GetAllText()
@@ -397,7 +405,7 @@ public class ModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.GetOrDefault(ResourceUri)"/>
+    /// <see cref="TextEditorModelApi.GetOrDefault(ResourceUri)"/>
     /// </summary>
     [Fact]
     public void GetOrDefault()
@@ -413,7 +421,7 @@ public class ModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.Dispose(ResourceUri)"/>
+    /// <see cref="TextEditorModelApi.Dispose(ResourceUri)"/>
     /// </summary>
     [Fact]
     public void Dispose()
@@ -431,7 +439,7 @@ public class ModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.DeleteTextByRangeEnqueue(TextEditorModelState.DeleteTextByRangeAction)"/>
+    /// <see cref="TextEditorModelApi.DeleteTextByRangeFactory(ResourceUri, Key{TextEditorViewModel}, int, CancellationToken)"/>
     /// </summary>
     [Fact]
     public void DeleteTextByRangeEnqueue()
@@ -465,7 +473,7 @@ public class ModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.DeleteTextByMotionEnqueue(TextEditorModelState.DeleteTextByMotionAction)"/>
+    /// <see cref="TextEditorModelApi.DeleteTextByMotionFactory(ResourceUri, Key{TextEditorViewModel}, MotionKind, CancellationToken)"/>
     /// </summary>
     [Fact]
     public void DeleteTextByMotionEnqueue_Backspace()
@@ -500,42 +508,7 @@ public class ModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.DeleteTextByMotionEnqueue(TextEditorModelState.DeleteTextByMotionAction)"/>
-    /// </summary>
-    [Fact]
-    public void DeleteTextByMotionEnqueue_Delete()
-    {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
-            out var textEditorService,
-            out var inModel,
-            out var inViewModel,
-            out var serviceProvider);
-
-        // "Hello World" -> "HelloWorld" is the expected output
-        var spaceText = " ";
-        var expectedContent = "HelloWorld!";
-
-        var columnIndex = inModel.GetAllText().IndexOf(spaceText);
-
-        var cursor = new TextEditorCursor(0, columnIndex, columnIndex, true, TextEditorSelection.Empty);
-        var cursorList = new[] { new TextEditorCursorModifier(cursor) }.ToList();
-
-        var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
-
-        textEditorService.Post(
-            nameof(textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory),
-            textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory(
-                inModel.ResourceUri,
-                cursorModifierBag,
-                MotionKind.Delete,
-                CancellationToken.None));
-
-        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
-        Assert.Equal(expectedContent, outModel!.GetAllText());
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.AddPresentationModelFactory(ResourceUri, TextEditorPresentationModel)"/>
+    /// <see cref="TextEditorModelApi.AddPresentationModelFactory(ResourceUri, TextEditorPresentationModel)"/>
     /// </summary>
     [Fact]
     public void RegisterPresentationModel()

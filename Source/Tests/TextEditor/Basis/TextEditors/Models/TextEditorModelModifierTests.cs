@@ -11,13 +11,14 @@ using Luthetus.TextEditor.RazorLib.Characters.Models;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using System.Reflection;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
 /// <summary>
 /// <see cref="TextEditorModelModifier"/>
 /// </summary>
-public partial class ModelModifierTests
+public partial class TextEditorModelModifierTests
 {
     /// <summary>
     /// <see cref="TextEditorModelModifier(TextEditorModel)"/>
@@ -51,62 +52,167 @@ public partial class ModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ClearContentList()"/>
+    /// <see cref="TextEditorModelModifier.ClearContent()"/>
     /// </summary>
     [Fact]
-    public void ClearContentList()
+    public void ClearContent()
     {
-        TestsHelper.ConstructTestTextEditorModel(out var inModel);
-        var modelModifier = new TextEditorModelModifier(inModel);
+        // Create test data
+        TextEditorModel inModel;
+        TextEditorModelModifier modelModifier;
+        {
+            inModel = new TextEditorModel(
+                new ResourceUri($"/{nameof(ClearContent)}.txt"),
+                DateTime.UtcNow,
+                ExtensionNoPeriodFacts.TXT,
+                (
+                    "A2" + // Uppercase letter, and Digit
+                    "\n" + // LineFeed
+                    "\r" + // CarriageReturn
+                    "z$" + // Lowercase letter, and special character
+                    "\t" + // Tab
+                    "\r\n" // CarriageReturnNewLine
+                ),
+                null,
+                null,
+                // Partition size is defaulted to 4096, but explicitly passing the value ensures that
+                // a change in the default value won't break this test.
+                partitionSize: 4096); 
 
-        modelModifier.ClearContentList();
+            modelModifier = new TextEditorModelModifier(inModel);
+        }
 
-        var outModel = modelModifier.ToModel();
-        Assert.NotEqual(inModel.CharList, outModel.CharList);
-        Assert.NotEqual(inModel.DecorationByteList, outModel.DecorationByteList);
-        Assert.Equal(ImmutableList<char>.Empty, outModel.CharList);
-        Assert.Equal(ImmutableList<byte>.Empty, outModel.DecorationByteList);
-    }
+        // Pre-assertions
+        {
+            // Obnoixously write the constant '9' instead of capturing the TextEditorModel
+            // constructor's 'initialContent' parameter, then checking '.Length'.
+            //
+            // This makes it more clear if the source text changes (accidentally or intentionally).
+            // If one day this assertion fails, then someone touched the source text...
+            Assert.Equal(9, modelModifier.DocumentLength);
 
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.ClearRowEndingPositionsList()"/>
-    /// </summary>
-    [Fact]
-    public void ClearRowEndingPositionsList()
-    {
-        TestsHelper.ConstructTestTextEditorModel(out var inModel);
-        var modelModifier = new TextEditorModelModifier(inModel);
+            // The file extension should NOT change as a result of clearing the content.
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
 
-        modelModifier.ClearRowEndingPositionsList();
+            // The text is small, it should write a single partition, nothing more.
+            Assert.Single(modelModifier.PartitionList);
 
-        var outModel = modelModifier.ToModel();
-        Assert.NotEqual(inModel.LineEndPositionList, outModel.LineEndPositionList);
-        Assert.Equal(ImmutableList<LineEnd>.Empty, outModel.LineEndPositionList);
-    }
+            // 1 tab key was included in the initial content for the TextEditorModel, therefore the Count is 1.
+            Assert.Equal(1, modelModifier.TabKeyPositionsList.Count);
 
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.ClearRowEndingKindCountsList()"/>
-    /// </summary>
-    [Fact]
-    public void ClearRowEndingKindCountsList()
-    {
-        TestsHelper.ConstructTestTextEditorModel(out var inModel);
-        var modelModifier = new TextEditorModelModifier(inModel);
+            // LineEnd related code-block-grouping:
+            {
+                // 1 CarriageReturn was included in the initial content for the TextEditorModel, therefore the count is 1.
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
 
-        modelModifier.ClearRowEndingKindCountsList();
+                // 1 LineFeed was included in the initial content for the TextEditorModel, therefore the count is 1.
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
 
-        var outModel = modelModifier.ToModel();
-        Assert.NotEqual(inModel.LineEndKindCountList, outModel.LineEndKindCountList);
-        Assert.Equal(ImmutableList<(LineEndKind rowEndingKind, int count)>.Empty, outModel.LineEndKindCountList);
-    }
+                // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel, therefore the count is 1.
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
 
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.ClearTabKeyPositionsList()"/>
-    /// </summary>
-    [Fact]
-    public void ClearTabKeyPositionsList()
-    {
-        throw new NotImplementedException();
+                // 3 line endings where included in the initial content for the TextEditorModel,
+                // plus the always existing 'EndOfFile' line ending, means the Count is 4.
+                Assert.Equal(4, modelModifier.LineEndPositionList.Count);
+
+                // When invoking the constructor for the TextEditorModel, a LineFeed was
+                // the first LineEnd occurence, in regards to position from start to end.
+                var lineFeed = modelModifier.LineEndPositionList[0];
+                Assert.Equal(2, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(3, lineFeed.EndPositionIndexExclusive);
+                Assert.Equal(LineEndKind.LineFeed, lineFeed.LineEndKind);
+
+                // When invoking the constructor for the TextEditorModel, a CarriageReturn was
+                // the second LineEnd occurence, in regards to position from start to end.
+                var carriageReturn = modelModifier.LineEndPositionList[1];
+                Assert.Equal(3, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(4, carriageReturn.EndPositionIndexExclusive);
+                Assert.Equal(LineEndKind.CarriageReturn, carriageReturn.LineEndKind);
+
+                // When invoking the constructor for the TextEditorModel, a CarriageReturnLineFeed was
+                // the third LineEnd occurence, in regards to position from start to end.
+                var carriageReturnLineFeed = modelModifier.LineEndPositionList[2];
+                Assert.Equal(7, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(9, carriageReturnLineFeed.EndPositionIndexExclusive);
+                Assert.Equal(LineEndKind.CarriageReturnLineFeed, carriageReturnLineFeed.LineEndKind);
+
+                // A TextEditorModel always contains at least 1 LineEnd.
+                // This LineEnd marks the 'EndOfFile'.
+                //
+                // Given that the constructor for 'TextEditorModel' takes the 'initialContent'
+                // and sets the model's content as it, the 'EndOfFile' is no longer at positionIndex 0,
+                // but instead shifted by the length of the 'initialContent'.
+                var endOfFile = modelModifier.LineEndPositionList[3];
+                Assert.Equal(9, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(9, endOfFile.EndPositionIndexExclusive);
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+            }
+        }
+
+        // Do something
+        TextEditorModel outModel;
+        {
+            modelModifier.ClearContent();
+            outModel = modelModifier.ToModel();
+        }
+
+        // Post-assertions
+        {
+            // Clearing the content of a 'TextEditorModel' should result in a 'DocumentLength' of 0.
+            Assert.Equal(0, modelModifier.DocumentLength);
+
+            // The file extension should NOT change as a result of clearing the content.
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+            // The text is small, it should write a single partition, nothing more.
+            Assert.Single(modelModifier.PartitionList);
+
+            // 1 tab key was included in the initial content for the TextEditorModel but,
+            // now that the content is cleared, the Count is 0.
+            Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+
+            // LineEnd related code-block-grouping:
+            {
+                // 1 CarriageReturn was included in the initial content for the TextEditorModel but,
+                // after clearing the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+
+                // 1 LineFeed was included in the initial content for the TextEditorModel but,
+                // after clearing the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+
+                // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel but,
+                // after clearing the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+
+                // 3 line endings where included in the initial content for the TextEditorModel but,
+                // after clearing the content, only the special-'EndOfFile' LineEnd should remain, so the count is 1.
+                Assert.Equal(1, modelModifier.LineEndPositionList.Count);
+
+                // A TextEditorModel always contains at least 1 LineEnd.
+                // This LineEnd marks the 'EndOfFile'.
+                //
+                // The constructor for 'TextEditorModel' takes the 'initialContent' and sets the model's content as it,
+                // this results in the 'EndOfFile' positionIndex changing.
+                // But, since the content was cleared, the 'EndOfFile' positionIndex should return to 0.
+                var endOfFile = modelModifier.LineEndPositionList[0];
+                Assert.Equal(10, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(10, endOfFile.EndPositionIndexExclusive);
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+            }
+        }
     }
 
     /// <summary>
@@ -201,7 +307,7 @@ public partial class ModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ClearAllStatesButEditHistory()"/>
+    /// <see cref="TextEditorModelModifier.ClearAllStatesButKeepEditHistory()"/>
     /// </summary>
     [Fact]
     public void ModifyResetStateButNotEditHistory()
@@ -382,7 +488,7 @@ public partial class ModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.StartPendingCalculatePresentationModel(Key{TextEditorPresentationModel})"/>
+    /// <see cref="TextEditorModelModifier.StartPendingCalculatePresentationModel(Key{TextEditorPresentationModel}, TextEditorPresentationModel)"/>
     /// </summary>
     [Fact]
     public void PerformCalculatePresentationModelAction()
@@ -418,10 +524,19 @@ public partial class ModelModifierTests
     }
 
     /// <summary>
-	/// <see cref="TextEditorModelModifier.ContentList"/>
+	/// <see cref="TextEditorModelModifier.CharList"/>
 	/// </summary>
 	[Fact]
-    public void ContentList()
+    public void CharList()
+    {
+        throw new NotImplementedException();
+    }
+    
+    /// <summary>
+	/// <see cref="TextEditorModelModifier.DecorationByteList"/>
+	/// </summary>
+	[Fact]
+    public void DecorationByteList()
     {
         throw new NotImplementedException();
     }
@@ -439,16 +554,16 @@ public partial class ModelModifierTests
     /// <see cref="TextEditorModelModifier.LineEndPositionList"/>
     /// </summary>
     [Fact]
-    public void RowEndingPositionsList()
+    public void LineEndingPositionsList()
     {
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.LineEndingKindCountsList"/>
+    /// <see cref="TextEditorModelModifier.LineEndKindCountsList"/>
     /// </summary>
     [Fact]
-    public void RowEndingKindCountsList()
+    public void LineEndingKindCountsList()
     {
         throw new NotImplementedException();
     }
@@ -475,7 +590,7 @@ public partial class ModelModifierTests
     /// <see cref="TextEditorModelModifier.OnlyLineEndKind"/>
     /// </summary>
     [Fact]
-    public void OnlyRowEndingKind()
+    public void OnlyLineEndKind()
     {
         throw new NotImplementedException();
     }
@@ -484,7 +599,7 @@ public partial class ModelModifierTests
     /// <see cref="TextEditorModelModifier.UsingLineEndKind"/>
     /// </summary>
     [Fact]
-    public void UsingRowEndingKind()
+    public void UsingLineEndKind()
     {
         throw new NotImplementedException();
     }
@@ -556,7 +671,7 @@ public partial class ModelModifierTests
     /// <see cref="TextEditorModelModifier.MostCharactersOnASingleLineTuple"/>
     /// </summary>
     [Fact]
-    public void MostCharactersOnASingleRowTuple()
+    public void MostCharactersOnASingleLineTuple()
     {
         throw new NotImplementedException();
     }
@@ -571,28 +686,10 @@ public partial class ModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.TextEditorKeymap"/>
-    /// </summary>
-    [Fact]
-    public void TextEditorKeymap()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.TextEditorOptions"/>
-    /// </summary>
-    [Fact]
-    public void TextEditorOptions()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TextEditorModelModifier.__Add(RichCharacter)"/>
     /// </summary>
     [Fact]
-    public void PartitionList_Add()
+    public void _Add()
     {
         throw new NotImplementedException();
     }
