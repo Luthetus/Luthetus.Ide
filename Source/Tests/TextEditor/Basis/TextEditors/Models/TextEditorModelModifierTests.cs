@@ -1045,33 +1045,1125 @@ public partial class TextEditorModelModifierTests
 
     /// <summary>
     /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
-    /// Case: Insert into an empty editor (2024-04-14)<br/>
-    /// <br/>
-    /// ∙∙∙ Case A:<br/>
-    /// ∙∙∙∙∙∙∙ Insert at positionIndex 0<br/>
-    /// ∙∙∙∙∙∙∙ Tracked data gets shifted<br/>
-    /// ∙∙∙ Case B:<br/>
-    /// ∙∙∙∙∙∙∙ Insert at EndOfFile<br/>
-    /// ∙∙∙∙∙∙∙ Nothing gets shifted<br/>
-    /// ∙∙∙ Case C:<br/>
-    /// ∙∙∙∙∙∙∙ Insert -1<br/>
-    /// ∙∙∙∙∙∙∙ Idea being that the insertion positionIndex is out of bounds due to being negative.<br/>
-    /// ∙∙∙ Case D:<br/>
-    /// ∙∙∙∙∙∙∙ Insert at positionIndex > EndOfFile<br/>
-    /// ∙∙∙∙∙∙∙ Idea being that the insertion positionIndex is out of bounds due to being big.<br/>
-    /// ∙∙∙ Case E:<br/>
-    /// ∙∙∙∙∙∙∙ Insert string.Empty<br/>
-    /// ∙∙∙∙∙∙∙ It is expected that this does nothing.<br/>
+    /// Case: Insert into an empty editor, at positionIndex equal to 0 (2024-04-14)<br/>
+    /// Purpose: Index 0 is the first valid positionIndex, thus it bears significance as a boundary.<br/>
     /// </summary>
     [Fact]
-    public void Insert_EmptyEditor()
+    public void Insert_Into_EmptyEditor_At_PositionIndex_Zero()
     {
         // Create test data
         TextEditorModel inModel;
         TextEditorModelModifier modelModifier;
         {
             inModel = new TextEditorModel(
-                new ResourceUri($"/{nameof(Insert_EmptyEditor)}.txt"),
+                new ResourceUri($"/{nameof(Insert_Into_EmptyEditor_At_PositionIndex_Zero)}.txt"),
+                DateTime.UtcNow,
+                ExtensionNoPeriodFacts.TXT,
+                string.Empty,
+                null,
+                null,
+                // Provide a value for the optional parameter, so a change in the default value won't break this test.
+                partitionSize: 4096);
+
+            modelModifier = new TextEditorModelModifier(inModel);
+        }
+
+        // Pre-assertions
+        {
+            // Obnoixously write the constant value for the initialContent's length instead of capturing the TextEditorModel
+            // constructor's 'initialContent' parameter, then checking '.Length'.
+            //
+            // This makes it more clear if the source text changes (accidentally or intentionally).
+            // If one day this assertion fails, then someone touched the source text.
+            Assert.Equal(0, modelModifier.DocumentLength);
+
+            // The file extension should NOT change as a result of inserting content.
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+            // The text is small, it should write a single partition, nothing more.
+            Assert.Single(modelModifier.PartitionList);
+
+            // No tab keys were included in the initial content for the TextEditorModel, therefore the Count is 0.
+            Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+
+            // LineEnd related code-block-grouping:
+            {
+                // No CarriageReturns were included in the initial content for the TextEditorModel, therefore the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+
+                // No LineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+
+                // No CarriageReturnLineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+
+                // No line endings where included in the initial content for the TextEditorModel,
+                // there is only the always existing 'EndOfFile' line ending, therefore the Count is 1.
+                Assert.Equal(1, modelModifier.LineEndPositionList.Count);
+
+                // When invoking the constructor for the TextEditorModel,
+                // an string.Empty was used, therefore there are no LineFeeds.
+                // Assert that the only line ending in the text is the 'EndOfFile'.
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+
+                // When invoking the constructor for the TextEditorModel,
+                // an string.Empty was used, therefore there are no CarriageReturns.
+                // Assert that the only line ending in the text is the 'EndOfFile'.
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+
+                // When invoking the constructor for the TextEditorModel,
+                // an string.Empty was used, therefore there are no CarriageReturnLineFeeds.
+                // Assert that the only line ending in the text is the 'EndOfFile'.
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+
+                // A TextEditorModel always contains at least 1 LineEnd. This LineEnd marks the 'EndOfFile'.
+                //
+                // The constructor for 'TextEditorModel' takes the 'initialContent'
+                // and sets the model's content as it, this results in the positionIndex for 'EndOfFile'
+                // to be shifted by the length of the 'initialContent'.
+                // But, the constructor was invoked with string.Empty, therefore,
+                // the 'EndOfFile' is unchanged.
+                var endOfFile = modelModifier.LineEndPositionList.Single();
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+            }
+        }
+
+        // Do something
+        TextEditorModel outModel;
+        {
+            // The initialContent for the model was intentionally made to
+            // include (hopefully) all unique characters kinds.
+            //
+            // Unique here refers to how the letters 'a', and 'b' are NOT unique,
+            // because they are simply seen as a 'LetterOrDigit'.
+            // Whereas '\t' is unique from a 'LetterOrDigit' because
+            // it is whitespace, and because its position is tracked.
+            //
+            // Since this string is intended to be all-encompassing,
+            // it will be used for insertion too.
+            modelModifier.Insert_Unsafe(
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " ",     // Space
+                    rowIndex: 0,
+                    columnIndex: 0,
+                    CancellationToken.None
+                );
+            outModel = modelModifier.ToModel();
+        }
+
+        // Post-assertions
+        {
+            // The 'SetContent' parameter has a string length of '12',
+            // But, as of this comment, the insertion of line ending characters
+            // other than line feed is not supported.
+            // Therefore, the "\r" and the "\r\n" are replaced with "\n".
+            //
+            // As a result of the "\r\n" replacement with "\n",
+            // one character was lost, therefore the length ends up being 11.
+            Assert.Equal(11, modelModifier.DocumentLength);
+
+            // The file extension should NOT change as a result of setting the content.
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+            // The text is small, it should write a single partition, nothing more.
+            Assert.Single(modelModifier.PartitionList);
+
+            // 1 tab key was included in the initial content for the TextEditorModel but,
+            // now that the content is set to 'string.Empty', the Count is 0.
+            Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+
+            // LineEnd related code-block-grouping:
+            {
+                // 1 CarriageReturn was included in the initial content for the TextEditorModel but,
+                // after setting the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+
+                // 1 LineFeed was included in the initial content for the TextEditorModel but,
+                // after setting the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+
+                // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel but,
+                // after setting the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+
+                // 3 line endings where included in the initial content for the TextEditorModel but,
+                // after setting the content, only the special-'EndOfFile' LineEnd should remain, so the count is 1.
+                Assert.Equal(1, modelModifier.LineEndPositionList.Count);
+
+                // A TextEditorModel always contains at least 1 LineEnd.
+                // This LineEnd marks the 'EndOfFile'.
+                //
+                // The constructor for 'TextEditorModel' takes the 'initialContent' and sets the model's content as it,
+                // this results in the 'EndOfFile' positionIndex changing.
+                // But, since the content was set to 'string.Empty', the 'EndOfFile' positionIndex should return to 0.
+                var endOfFile = modelModifier.LineEndPositionList[0];
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+            }
+        }
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
+    /// Case: Insert into an empty editor, at positionIndex equal to DocumentLength (2024-04-14)<br/>
+    /// Purpose: Index 0 is the DocumentLength valid positionIndex, thus it bears significance as a boundary.<br/>
+    /// </summary>
+    [Fact]
+    public void Insert_Into_EmptyEditor_At_PositionIndex_DocumentLength()
+    {
+        // Create test data
+        TextEditorModel inModel;
+        TextEditorModelModifier modelModifier;
+        {
+            inModel = new TextEditorModel(
+                new ResourceUri($"/{nameof(Insert_Into_EmptyEditor_At_PositionIndex_DocumentLength)}.txt"),
+                DateTime.UtcNow,
+                ExtensionNoPeriodFacts.TXT,
+                string.Empty,
+                null,
+                null,
+                // Provide a value for the optional parameter, so a change in the default value won't break this test.
+                partitionSize: 4096);
+
+            modelModifier = new TextEditorModelModifier(inModel);
+        }
+
+        // Pre-assertions
+        {
+            // Obnoixously write the constant value for the initialContent's length instead of capturing the TextEditorModel
+            // constructor's 'initialContent' parameter, then checking '.Length'.
+            //
+            // This makes it more clear if the source text changes (accidentally or intentionally).
+            // If one day this assertion fails, then someone touched the source text.
+            Assert.Equal(0, modelModifier.DocumentLength);
+
+            // The file extension should NOT change as a result of inserting content.
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+            // The text is small, it should write a single partition, nothing more.
+            Assert.Single(modelModifier.PartitionList);
+
+            // No tab keys were included in the initial content for the TextEditorModel, therefore the Count is 0.
+            Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+
+            // LineEnd related code-block-grouping:
+            {
+                // No CarriageReturns were included in the initial content for the TextEditorModel, therefore the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+
+                // No LineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+
+                // No CarriageReturnLineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+
+                // No line endings where included in the initial content for the TextEditorModel,
+                // there is only the always existing 'EndOfFile' line ending, therefore the Count is 1.
+                Assert.Equal(1, modelModifier.LineEndPositionList.Count);
+
+                // When invoking the constructor for the TextEditorModel,
+                // an string.Empty was used, therefore there are no LineFeeds.
+                // Assert that the only line ending in the text is the 'EndOfFile'.
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+
+                // When invoking the constructor for the TextEditorModel,
+                // an string.Empty was used, therefore there are no CarriageReturns.
+                // Assert that the only line ending in the text is the 'EndOfFile'.
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+
+                // When invoking the constructor for the TextEditorModel,
+                // an string.Empty was used, therefore there are no CarriageReturnLineFeeds.
+                // Assert that the only line ending in the text is the 'EndOfFile'.
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+
+                // A TextEditorModel always contains at least 1 LineEnd. This LineEnd marks the 'EndOfFile'.
+                //
+                // The constructor for 'TextEditorModel' takes the 'initialContent'
+                // and sets the model's content as it, this results in the positionIndex for 'EndOfFile'
+                // to be shifted by the length of the 'initialContent'.
+                // But, the constructor was invoked with string.Empty, therefore,
+                // the 'EndOfFile' is unchanged.
+                var endOfFile = modelModifier.LineEndPositionList.Single();
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+            }
+        }
+
+        // Do something
+        TextEditorModel outModel;
+        {
+            // The initialContent for the model was intentionally made to
+            // include (hopefully) all unique characters kinds.
+            //
+            // Unique here refers to how the letters 'a', and 'b' are NOT unique,
+            // because they are simply seen as a 'LetterOrDigit'.
+            // Whereas '\t' is unique from a 'LetterOrDigit' because
+            // it is whitespace, and because its position is tracked.
+            //
+            // Since this string is intended to be all-encompassing,
+            // it will be used for insertion too.
+            modelModifier.Insert_Unsafe(
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " ",     // Space
+                    rowIndex: 0,
+                    columnIndex: 0,
+                    CancellationToken.None
+                );
+            outModel = modelModifier.ToModel();
+        }
+
+        // Post-assertions
+        {
+            // The 'SetContent' parameter has a string length of '12',
+            // But, as of this comment, the insertion of line ending characters
+            // other than line feed is not supported.
+            // Therefore, the "\r" and the "\r\n" are replaced with "\n".
+            //
+            // As a result of the "\r\n" replacement with "\n",
+            // one character was lost, therefore the length ends up being 11.
+            Assert.Equal(11, modelModifier.DocumentLength);
+
+            // The file extension should NOT change as a result of setting the content.
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+            // The text is small, it should write a single partition, nothing more.
+            Assert.Single(modelModifier.PartitionList);
+
+            // 1 tab key was included in the initial content for the TextEditorModel but,
+            // now that the content is set to 'string.Empty', the Count is 0.
+            Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+
+            // LineEnd related code-block-grouping:
+            {
+                // 1 CarriageReturn was included in the initial content for the TextEditorModel but,
+                // after setting the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+
+                // 1 LineFeed was included in the initial content for the TextEditorModel but,
+                // after setting the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+
+                // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel but,
+                // after setting the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+
+                // 3 line endings where included in the initial content for the TextEditorModel but,
+                // after setting the content, only the special-'EndOfFile' LineEnd should remain, so the count is 1.
+                Assert.Equal(1, modelModifier.LineEndPositionList.Count);
+
+                // A TextEditorModel always contains at least 1 LineEnd.
+                // This LineEnd marks the 'EndOfFile'.
+                //
+                // The constructor for 'TextEditorModel' takes the 'initialContent' and sets the model's content as it,
+                // this results in the 'EndOfFile' positionIndex changing.
+                // But, since the content was set to 'string.Empty', the 'EndOfFile' positionIndex should return to 0.
+                var endOfFile = modelModifier.LineEndPositionList[0];
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+            }
+        }
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
+    /// Case: Insert into an empty editor, at positionIndex between 0 and DocumentLength; exclusive bounds (2024-04-14)<br/>
+    /// Purpose: With 0 being the first valid position, and DocumentLength being the last valid position;
+    ///          testing a value between the valid positionIndex boundaries bears significance as a unique case.<br/>
+    /// </summary>
+    [Fact]
+    public void Insert_Into_EmptyEditor_At_PositionIndex_Between_0_And_DocumentLength_Exclusive()
+    {
+        // Create test data
+        TextEditorModel inModel;
+        TextEditorModelModifier modelModifier;
+        {
+            inModel = new TextEditorModel(
+                new ResourceUri($"/{nameof(Insert_Into_EmptyEditor_At_PositionIndex_Between_0_And_DocumentLength_Exclusive)}.txt"),
+                DateTime.UtcNow,
+                ExtensionNoPeriodFacts.TXT,
+                string.Empty,
+                null,
+                null,
+                // Provide a value for the optional parameter, so a change in the default value won't break this test.
+                partitionSize: 4096);
+
+            modelModifier = new TextEditorModelModifier(inModel);
+        }
+
+        // Pre-assertions
+        {
+            // Obnoixously write the constant value for the initialContent's length instead of capturing the TextEditorModel
+            // constructor's 'initialContent' parameter, then checking '.Length'.
+            //
+            // This makes it more clear if the source text changes (accidentally or intentionally).
+            // If one day this assertion fails, then someone touched the source text.
+            Assert.Equal(0, modelModifier.DocumentLength);
+
+            // The file extension should NOT change as a result of inserting content.
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+            // The text is small, it should write a single partition, nothing more.
+            Assert.Single(modelModifier.PartitionList);
+
+            // No tab keys were included in the initial content for the TextEditorModel, therefore the Count is 0.
+            Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+
+            // LineEnd related code-block-grouping:
+            {
+                // No CarriageReturns were included in the initial content for the TextEditorModel, therefore the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+
+                // No LineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+
+                // No CarriageReturnLineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+
+                // No line endings where included in the initial content for the TextEditorModel,
+                // there is only the always existing 'EndOfFile' line ending, therefore the Count is 1.
+                Assert.Equal(1, modelModifier.LineEndPositionList.Count);
+
+                // When invoking the constructor for the TextEditorModel,
+                // an string.Empty was used, therefore there are no LineFeeds.
+                // Assert that the only line ending in the text is the 'EndOfFile'.
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+
+                // When invoking the constructor for the TextEditorModel,
+                // an string.Empty was used, therefore there are no CarriageReturns.
+                // Assert that the only line ending in the text is the 'EndOfFile'.
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+
+                // When invoking the constructor for the TextEditorModel,
+                // an string.Empty was used, therefore there are no CarriageReturnLineFeeds.
+                // Assert that the only line ending in the text is the 'EndOfFile'.
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+
+                // A TextEditorModel always contains at least 1 LineEnd. This LineEnd marks the 'EndOfFile'.
+                //
+                // The constructor for 'TextEditorModel' takes the 'initialContent'
+                // and sets the model's content as it, this results in the positionIndex for 'EndOfFile'
+                // to be shifted by the length of the 'initialContent'.
+                // But, the constructor was invoked with string.Empty, therefore,
+                // the 'EndOfFile' is unchanged.
+                var endOfFile = modelModifier.LineEndPositionList.Single();
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+            }
+        }
+
+        // Do something
+        TextEditorModel outModel;
+        {
+            // The initialContent for the model was intentionally made to
+            // include (hopefully) all unique characters kinds.
+            //
+            // Unique here refers to how the letters 'a', and 'b' are NOT unique,
+            // because they are simply seen as a 'LetterOrDigit'.
+            // Whereas '\t' is unique from a 'LetterOrDigit' because
+            // it is whitespace, and because its position is tracked.
+            //
+            // Since this string is intended to be all-encompassing,
+            // it will be used for insertion too.
+            modelModifier.Insert_Unsafe(
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " ",     // Space
+                    rowIndex: 0,
+                    columnIndex: 0,
+                    CancellationToken.None
+                );
+            outModel = modelModifier.ToModel();
+        }
+
+        // Post-assertions
+        {
+            // The 'SetContent' parameter has a string length of '12',
+            // But, as of this comment, the insertion of line ending characters
+            // other than line feed is not supported.
+            // Therefore, the "\r" and the "\r\n" are replaced with "\n".
+            //
+            // As a result of the "\r\n" replacement with "\n",
+            // one character was lost, therefore the length ends up being 11.
+            Assert.Equal(11, modelModifier.DocumentLength);
+
+            // The file extension should NOT change as a result of setting the content.
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+            // The text is small, it should write a single partition, nothing more.
+            Assert.Single(modelModifier.PartitionList);
+
+            // 1 tab key was included in the initial content for the TextEditorModel but,
+            // now that the content is set to 'string.Empty', the Count is 0.
+            Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+
+            // LineEnd related code-block-grouping:
+            {
+                // 1 CarriageReturn was included in the initial content for the TextEditorModel but,
+                // after setting the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+
+                // 1 LineFeed was included in the initial content for the TextEditorModel but,
+                // after setting the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+
+                // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel but,
+                // after setting the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+
+                // 3 line endings where included in the initial content for the TextEditorModel but,
+                // after setting the content, only the special-'EndOfFile' LineEnd should remain, so the count is 1.
+                Assert.Equal(1, modelModifier.LineEndPositionList.Count);
+
+                // A TextEditorModel always contains at least 1 LineEnd.
+                // This LineEnd marks the 'EndOfFile'.
+                //
+                // The constructor for 'TextEditorModel' takes the 'initialContent' and sets the model's content as it,
+                // this results in the 'EndOfFile' positionIndex changing.
+                // But, since the content was set to 'string.Empty', the 'EndOfFile' positionIndex should return to 0.
+                var endOfFile = modelModifier.LineEndPositionList[0];
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+            }
+        }
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
+    /// Case: Insert into an empty editor, at positionIndex equal to -1 (2024-04-14)<br/>
+    /// Purpose: Index -1 is a value which is less than than the lower-bound for valid positionIndices,
+    ///          thus it bears significance as a unique case.<br/>
+    /// </summary>
+    [Fact]
+    public void Insert_Into_EmptyEditor_At_PositionIndex_Negative_One()
+    {
+        // Create test data
+        TextEditorModel inModel;
+        TextEditorModelModifier modelModifier;
+        {
+            inModel = new TextEditorModel(
+                new ResourceUri($"/{nameof(Insert_Into_EmptyEditor_At_PositionIndex_Negative_One)}.txt"),
+                DateTime.UtcNow,
+                ExtensionNoPeriodFacts.TXT,
+                string.Empty,
+                null,
+                null,
+                // Provide a value for the optional parameter, so a change in the default value won't break this test.
+                partitionSize: 4096);
+
+            modelModifier = new TextEditorModelModifier(inModel);
+        }
+
+        // Pre-assertions
+        {
+            // Obnoixously write the constant value for the initialContent's length instead of capturing the TextEditorModel
+            // constructor's 'initialContent' parameter, then checking '.Length'.
+            //
+            // This makes it more clear if the source text changes (accidentally or intentionally).
+            // If one day this assertion fails, then someone touched the source text.
+            Assert.Equal(0, modelModifier.DocumentLength);
+
+            // The file extension should NOT change as a result of inserting content.
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+            // The text is small, it should write a single partition, nothing more.
+            Assert.Single(modelModifier.PartitionList);
+
+            // No tab keys were included in the initial content for the TextEditorModel, therefore the Count is 0.
+            Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+
+            // LineEnd related code-block-grouping:
+            {
+                // No CarriageReturns were included in the initial content for the TextEditorModel, therefore the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+
+                // No LineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+
+                // No CarriageReturnLineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+
+                // No line endings where included in the initial content for the TextEditorModel,
+                // there is only the always existing 'EndOfFile' line ending, therefore the Count is 1.
+                Assert.Equal(1, modelModifier.LineEndPositionList.Count);
+
+                // When invoking the constructor for the TextEditorModel,
+                // an string.Empty was used, therefore there are no LineFeeds.
+                // Assert that the only line ending in the text is the 'EndOfFile'.
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+
+                // When invoking the constructor for the TextEditorModel,
+                // an string.Empty was used, therefore there are no CarriageReturns.
+                // Assert that the only line ending in the text is the 'EndOfFile'.
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+
+                // When invoking the constructor for the TextEditorModel,
+                // an string.Empty was used, therefore there are no CarriageReturnLineFeeds.
+                // Assert that the only line ending in the text is the 'EndOfFile'.
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+
+                // A TextEditorModel always contains at least 1 LineEnd. This LineEnd marks the 'EndOfFile'.
+                //
+                // The constructor for 'TextEditorModel' takes the 'initialContent'
+                // and sets the model's content as it, this results in the positionIndex for 'EndOfFile'
+                // to be shifted by the length of the 'initialContent'.
+                // But, the constructor was invoked with string.Empty, therefore,
+                // the 'EndOfFile' is unchanged.
+                var endOfFile = modelModifier.LineEndPositionList.Single();
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+            }
+        }
+
+        // Do something
+        TextEditorModel outModel;
+        {
+            // The initialContent for the model was intentionally made to
+            // include (hopefully) all unique characters kinds.
+            //
+            // Unique here refers to how the letters 'a', and 'b' are NOT unique,
+            // because they are simply seen as a 'LetterOrDigit'.
+            // Whereas '\t' is unique from a 'LetterOrDigit' because
+            // it is whitespace, and because its position is tracked.
+            //
+            // Since this string is intended to be all-encompassing,
+            // it will be used for insertion too.
+            modelModifier.Insert_Unsafe(
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " ",     // Space
+                    rowIndex: 0,
+                    columnIndex: 0,
+                    CancellationToken.None
+                );
+            outModel = modelModifier.ToModel();
+        }
+
+        // Post-assertions
+        {
+            // The 'SetContent' parameter has a string length of '12',
+            // But, as of this comment, the insertion of line ending characters
+            // other than line feed is not supported.
+            // Therefore, the "\r" and the "\r\n" are replaced with "\n".
+            //
+            // As a result of the "\r\n" replacement with "\n",
+            // one character was lost, therefore the length ends up being 11.
+            Assert.Equal(11, modelModifier.DocumentLength);
+
+            // The file extension should NOT change as a result of setting the content.
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+            // The text is small, it should write a single partition, nothing more.
+            Assert.Single(modelModifier.PartitionList);
+
+            // 1 tab key was included in the initial content for the TextEditorModel but,
+            // now that the content is set to 'string.Empty', the Count is 0.
+            Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+
+            // LineEnd related code-block-grouping:
+            {
+                // 1 CarriageReturn was included in the initial content for the TextEditorModel but,
+                // after setting the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+
+                // 1 LineFeed was included in the initial content for the TextEditorModel but,
+                // after setting the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+
+                // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel but,
+                // after setting the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+
+                // 3 line endings where included in the initial content for the TextEditorModel but,
+                // after setting the content, only the special-'EndOfFile' LineEnd should remain, so the count is 1.
+                Assert.Equal(1, modelModifier.LineEndPositionList.Count);
+
+                // A TextEditorModel always contains at least 1 LineEnd.
+                // This LineEnd marks the 'EndOfFile'.
+                //
+                // The constructor for 'TextEditorModel' takes the 'initialContent' and sets the model's content as it,
+                // this results in the 'EndOfFile' positionIndex changing.
+                // But, since the content was set to 'string.Empty', the 'EndOfFile' positionIndex should return to 0.
+                var endOfFile = modelModifier.LineEndPositionList[0];
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+            }
+        }
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
+    /// Case: Insert into an empty editor, at a positionIndex equal to '1 + DocumentLength' (2024-04-14)<br/>
+    /// Purpose: Index '1 + DocumentLength' is a value which is greater than than the upper-bound for valid positionIndices,
+    ///          thus it bears significance as a unique case.<br/>
+    /// </summary>
+    [Fact]
+    public void Insert_Into_EmptyEditor_At_Position_One_Plus_DocumentLength()
+    {
+        // Create test data
+        TextEditorModel inModel;
+        TextEditorModelModifier modelModifier;
+        {
+            inModel = new TextEditorModel(
+                new ResourceUri($"/{nameof(Insert_Into_EmptyEditor_At_Position_One_Plus_DocumentLength)}.txt"),
+                DateTime.UtcNow,
+                ExtensionNoPeriodFacts.TXT,
+                string.Empty,
+                null,
+                null,
+                // Provide a value for the optional parameter, so a change in the default value won't break this test.
+                partitionSize: 4096);
+
+            modelModifier = new TextEditorModelModifier(inModel);
+        }
+
+        // Pre-assertions
+        {
+            // Obnoixously write the constant value for the initialContent's length instead of capturing the TextEditorModel
+            // constructor's 'initialContent' parameter, then checking '.Length'.
+            //
+            // This makes it more clear if the source text changes (accidentally or intentionally).
+            // If one day this assertion fails, then someone touched the source text.
+            Assert.Equal(0, modelModifier.DocumentLength);
+
+            // The file extension should NOT change as a result of inserting content.
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+            // The text is small, it should write a single partition, nothing more.
+            Assert.Single(modelModifier.PartitionList);
+
+            // No tab keys were included in the initial content for the TextEditorModel, therefore the Count is 0.
+            Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+
+            // LineEnd related code-block-grouping:
+            {
+                // No CarriageReturns were included in the initial content for the TextEditorModel, therefore the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+
+                // No LineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+
+                // No CarriageReturnLineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+
+                // No line endings where included in the initial content for the TextEditorModel,
+                // there is only the always existing 'EndOfFile' line ending, therefore the Count is 1.
+                Assert.Equal(1, modelModifier.LineEndPositionList.Count);
+
+                // When invoking the constructor for the TextEditorModel,
+                // an string.Empty was used, therefore there are no LineFeeds.
+                // Assert that the only line ending in the text is the 'EndOfFile'.
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+
+                // When invoking the constructor for the TextEditorModel,
+                // an string.Empty was used, therefore there are no CarriageReturns.
+                // Assert that the only line ending in the text is the 'EndOfFile'.
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+
+                // When invoking the constructor for the TextEditorModel,
+                // an string.Empty was used, therefore there are no CarriageReturnLineFeeds.
+                // Assert that the only line ending in the text is the 'EndOfFile'.
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+
+                // A TextEditorModel always contains at least 1 LineEnd. This LineEnd marks the 'EndOfFile'.
+                //
+                // The constructor for 'TextEditorModel' takes the 'initialContent'
+                // and sets the model's content as it, this results in the positionIndex for 'EndOfFile'
+                // to be shifted by the length of the 'initialContent'.
+                // But, the constructor was invoked with string.Empty, therefore,
+                // the 'EndOfFile' is unchanged.
+                var endOfFile = modelModifier.LineEndPositionList.Single();
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+            }
+        }
+
+        // Do something
+        TextEditorModel outModel;
+        {
+            // The initialContent for the model was intentionally made to
+            // include (hopefully) all unique characters kinds.
+            //
+            // Unique here refers to how the letters 'a', and 'b' are NOT unique,
+            // because they are simply seen as a 'LetterOrDigit'.
+            // Whereas '\t' is unique from a 'LetterOrDigit' because
+            // it is whitespace, and because its position is tracked.
+            //
+            // Since this string is intended to be all-encompassing,
+            // it will be used for insertion too.
+            modelModifier.Insert_Unsafe(
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " ",     // Space
+                    rowIndex: 0,
+                    columnIndex: 0,
+                    CancellationToken.None
+                );
+            outModel = modelModifier.ToModel();
+        }
+
+        // Post-assertions
+        {
+            // The 'SetContent' parameter has a string length of '12',
+            // But, as of this comment, the insertion of line ending characters
+            // other than line feed is not supported.
+            // Therefore, the "\r" and the "\r\n" are replaced with "\n".
+            //
+            // As a result of the "\r\n" replacement with "\n",
+            // one character was lost, therefore the length ends up being 11.
+            Assert.Equal(11, modelModifier.DocumentLength);
+
+            // The file extension should NOT change as a result of setting the content.
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+            // The text is small, it should write a single partition, nothing more.
+            Assert.Single(modelModifier.PartitionList);
+
+            // 1 tab key was included in the initial content for the TextEditorModel but,
+            // now that the content is set to 'string.Empty', the Count is 0.
+            Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+
+            // LineEnd related code-block-grouping:
+            {
+                // 1 CarriageReturn was included in the initial content for the TextEditorModel but,
+                // after setting the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+
+                // 1 LineFeed was included in the initial content for the TextEditorModel but,
+                // after setting the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+
+                // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel but,
+                // after setting the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+
+                // 3 line endings where included in the initial content for the TextEditorModel but,
+                // after setting the content, only the special-'EndOfFile' LineEnd should remain, so the count is 1.
+                Assert.Equal(1, modelModifier.LineEndPositionList.Count);
+
+                // A TextEditorModel always contains at least 1 LineEnd.
+                // This LineEnd marks the 'EndOfFile'.
+                //
+                // The constructor for 'TextEditorModel' takes the 'initialContent' and sets the model's content as it,
+                // this results in the 'EndOfFile' positionIndex changing.
+                // But, since the content was set to 'string.Empty', the 'EndOfFile' positionIndex should return to 0.
+                var endOfFile = modelModifier.LineEndPositionList[0];
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+            }
+        }
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
+    /// Case: Insert into an empty editor, a null string (2024-04-14)<br/>
+    /// Purpose: The string argument of Insert(...) has 3 states as far as the text editor is concerned.<br/>
+    ///              -It is null<br/>
+    ///              -It is empty<br/>
+    ///              -It not null, and it is not empty<br/>
+    ///              -NOTE: the string being whitespace is a valid possibility, it falls under "not null, and not empty"
+    ///                     just as if it were a LetterOrDigit<br/>
+    ///           This bears significance as the 'null' case.
+    /// </summary>
+    [Fact]
+    public void Insert_Into_EmptyEditor_Null_String()
+    {
+        // Create test data
+        TextEditorModel inModel;
+        TextEditorModelModifier modelModifier;
+        {
+            inModel = new TextEditorModel(
+                new ResourceUri($"/{nameof(Insert_Into_EmptyEditor)}.txt"),
+                DateTime.UtcNow,
+                ExtensionNoPeriodFacts.TXT,
+                string.Empty,
+                null,
+                null,
+                // Provide a value for the optional parameter, so a change in the default value won't break this test.
+                partitionSize: 4096);
+
+            modelModifier = new TextEditorModelModifier(inModel);
+        }
+
+        // Pre-assertions
+        {
+            // Obnoixously write the constant value for the initialContent's length instead of capturing the TextEditorModel
+            // constructor's 'initialContent' parameter, then checking '.Length'.
+            //
+            // This makes it more clear if the source text changes (accidentally or intentionally).
+            // If one day this assertion fails, then someone touched the source text.
+            Assert.Equal(0, modelModifier.DocumentLength);
+
+            // The file extension should NOT change as a result of inserting content.
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+            // The text is small, it should write a single partition, nothing more.
+            Assert.Single(modelModifier.PartitionList);
+
+            // No tab keys were included in the initial content for the TextEditorModel, therefore the Count is 0.
+            Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+
+            // LineEnd related code-block-grouping:
+            {
+                // No CarriageReturns were included in the initial content for the TextEditorModel, therefore the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+
+                // No LineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+
+                // No CarriageReturnLineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+
+                // No line endings where included in the initial content for the TextEditorModel,
+                // there is only the always existing 'EndOfFile' line ending, therefore the Count is 1.
+                Assert.Equal(1, modelModifier.LineEndPositionList.Count);
+
+                // When invoking the constructor for the TextEditorModel,
+                // an string.Empty was used, therefore there are no LineFeeds.
+                // Assert that the only line ending in the text is the 'EndOfFile'.
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+
+                // When invoking the constructor for the TextEditorModel,
+                // an string.Empty was used, therefore there are no CarriageReturns.
+                // Assert that the only line ending in the text is the 'EndOfFile'.
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+
+                // When invoking the constructor for the TextEditorModel,
+                // an string.Empty was used, therefore there are no CarriageReturnLineFeeds.
+                // Assert that the only line ending in the text is the 'EndOfFile'.
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+
+                // A TextEditorModel always contains at least 1 LineEnd. This LineEnd marks the 'EndOfFile'.
+                //
+                // The constructor for 'TextEditorModel' takes the 'initialContent'
+                // and sets the model's content as it, this results in the positionIndex for 'EndOfFile'
+                // to be shifted by the length of the 'initialContent'.
+                // But, the constructor was invoked with string.Empty, therefore,
+                // the 'EndOfFile' is unchanged.
+                var endOfFile = modelModifier.LineEndPositionList.Single();
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+            }
+        }
+
+        // Do something
+        TextEditorModel outModel;
+        {
+            // The initialContent for the model was intentionally made to
+            // include (hopefully) all unique characters kinds.
+            //
+            // Unique here refers to how the letters 'a', and 'b' are NOT unique,
+            // because they are simply seen as a 'LetterOrDigit'.
+            // Whereas '\t' is unique from a 'LetterOrDigit' because
+            // it is whitespace, and because its position is tracked.
+            //
+            // Since this string is intended to be all-encompassing,
+            // it will be used for insertion too.
+            modelModifier.Insert_Unsafe(
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " ",     // Space
+                    rowIndex: 0,
+                    columnIndex: 0,
+                    CancellationToken.None
+                );
+            outModel = modelModifier.ToModel();
+        }
+
+        // Post-assertions
+        {
+            // The 'SetContent' parameter has a string length of '12',
+            // But, as of this comment, the insertion of line ending characters
+            // other than line feed is not supported.
+            // Therefore, the "\r" and the "\r\n" are replaced with "\n".
+            //
+            // As a result of the "\r\n" replacement with "\n",
+            // one character was lost, therefore the length ends up being 11.
+            Assert.Equal(11, modelModifier.DocumentLength);
+
+            // The file extension should NOT change as a result of setting the content.
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+            // The text is small, it should write a single partition, nothing more.
+            Assert.Single(modelModifier.PartitionList);
+
+            // 1 tab key was included in the initial content for the TextEditorModel but,
+            // now that the content is set to 'string.Empty', the Count is 0.
+            Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+
+            // LineEnd related code-block-grouping:
+            {
+                // 1 CarriageReturn was included in the initial content for the TextEditorModel but,
+                // after setting the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+
+                // 1 LineFeed was included in the initial content for the TextEditorModel but,
+                // after setting the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+
+                // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel but,
+                // after setting the content, the count is 0.
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+
+                // 3 line endings where included in the initial content for the TextEditorModel but,
+                // after setting the content, only the special-'EndOfFile' LineEnd should remain, so the count is 1.
+                Assert.Equal(1, modelModifier.LineEndPositionList.Count);
+
+                // A TextEditorModel always contains at least 1 LineEnd.
+                // This LineEnd marks the 'EndOfFile'.
+                //
+                // The constructor for 'TextEditorModel' takes the 'initialContent' and sets the model's content as it,
+                // this results in the 'EndOfFile' positionIndex changing.
+                // But, since the content was set to 'string.Empty', the 'EndOfFile' positionIndex should return to 0.
+                var endOfFile = modelModifier.LineEndPositionList[0];
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+            }
+        }
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
+    /// Case: Insert into an empty editor, a value of 'string.Empty' (2024-04-14)<br/>
+    /// Purpose: The string argument of Insert(...) has 3 states as far as the text editor is concerned.<br/>
+    ///              -It is null<br/>
+    ///              -It is empty<br/>
+    ///              -It not null, and it is not empty<br/>
+    ///              -NOTE: the string being whitespace is a valid possibility, it falls under "not null, and not empty"
+    ///                     just as if it were a LetterOrDigit<br/>
+    ///           This bears significance as the 'empty' case.
+    /// </summary>
+    [Fact]
+    public void Insert_Into_EmptyEditor_Empty_String()
+    {
+        // Create test data
+        TextEditorModel inModel;
+        TextEditorModelModifier modelModifier;
+        {
+            inModel = new TextEditorModel(
+                new ResourceUri($"/{nameof(Insert_Into_EmptyEditor)}.txt"),
                 DateTime.UtcNow,
                 ExtensionNoPeriodFacts.TXT,
                 string.Empty,
@@ -1262,6 +2354,8 @@ public partial class TextEditorModelModifierTests
     [Fact]
     public void Insert_NotEmptyEditor()
     {
+        throw new NotImplementedException("Not started yet, the code below is copy pasted for templating.");
+
         // Create test data
         TextEditorModel inModel;
         TextEditorModelModifier modelModifier;
