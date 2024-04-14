@@ -14,6 +14,7 @@ using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Microsoft.AspNetCore.Components.Web;
+using System;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -759,23 +760,52 @@ public partial class TextEditorModelModifier : IModelTextEditor
             _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
         }
 
-        var startOfRowPositionIndex = this.GetLineStartPositionIndexInclusive(cursorModifier.LineIndex);
-        var cursorPositionIndex = startOfRowPositionIndex + cursorModifier.ColumnIndex;
+        var initialCursorPositionIndex = this.GetPositionIndex(cursorModifier);
+        var initialCursorLineIndex = cursorModifier.LineIndex;
 
         // If cursor is out of bounds then continue
-        if (cursorPositionIndex > _charList.Count)
+        if (initialCursorPositionIndex > _charList.Count)
             return;
+
+        bool isTab = false;
+        bool isCarriageReturn = false;
+        bool isLinefeed = false;
+        bool isCarriageReturnLineFeed = false;
+
+        int characterCountInserted = 0;
+
+        // The insertion is contiguous, therefore, the to-be-inserted metadata can be
+        // delt with after re-calculating the existing metadata.
+        //
+        // That is, Insert("\n\n\n") is the same as Insert("\n Hello World!\n\n")
+        // as far as the metadata for LineEnd(s) is concerned.
+        //
+        // If there is a second LineEnd, they all can be added as 'AddRange'
+        // where the index starts at the first inserted line end.
+        //
+        // If one performs a for loop from index 0 of the string to-be-inserted to the
+        // end of the string, then the line endings will already know their meta data.
+        //
+        // Any remainder of the insertion string won't impact their metadata entry since it
+        // has a positionIndex greater than its own.
+        //
+        // Then after the for loop, since one hasn't modified the public metadata,
+        // one can safely iterate over it and add 'characterCountInserted'.
+        //
+        // After that, one would then do the lazy insert range for the new metadata.
+        (int? index, List<LineEnd> localLineEndList) lineEndPositionLazyInsertRange = (null, new());
+        (int? index, List<int> localTabPositionList) tabPositionLazyInsertRange = (null, new());
 
         for (int characterIndex = 0; characterIndex < value.Length; characterIndex++)
         {
-            char character = value[characterIndex];
+            var character = value[characterIndex];
 
-            var isTab = character == '\t';
-            var isCarriageReturn = character == '\r';
-            var isLinefeed = character == '\n';
-            var isCarriageReturnLineFeed = isCarriageReturn && characterIndex != value.Length - 1 && value[1 + characterIndex] == '\n';
+            isTab = character == '\t';
+            isCarriageReturn = character == '\r';
+            isLinefeed = character == '\n';
+            isCarriageReturnLineFeed = isCarriageReturn && characterIndex != value.Length - 1 && value[1 + characterIndex] == '\n';
 
-            var characterCountInserted = 1;
+            characterCountInserted += 1;
 
             if (isLinefeed || isCarriageReturn)
             {
@@ -799,101 +829,118 @@ public partial class TextEditorModelModifier : IModelTextEditor
                     DecorationByte = default,
                 });
 
-                characterCountInserted = rowEndingKindToInsert.AsCharacters().Length;
+                // characterCountInserted presumes each character has a length of 1. But, "\r\n" is an example of an exception
+                // to this. "\r\n" would be 2 characters, 1 length is already accounted for, so add the remaining 1 length.
+                var characterLength = rowEndingKindToInsert.AsCharacters().Length;
+                characterCountInserted += characterLength - 1;
 
-                LineEndPositionList.Insert(
-                    cursorModifier.LineIndex,
-                    new(cursorPositionIndex, cursorPositionIndex + characterCountInserted, rowEndingKindToInsert));
+                var currentPositionIndex = this.GetPositionIndex(cursorModifier);
+
+                lineEndPositionLazyInsertRange.index ??= cursorModifier.LineIndex;
+
+                lineEndPositionLazyInsertRange.localLineEndList.Add(new LineEnd(
+                    currentPositionIndex,
+                    currentPositionIndex + characterLength,
+                    rowEndingKindToInsert));
 
                 MutateRowEndingKindCount(rowEndingKindToInsert, 1);
 
                 cursorModifier.LineIndex++;
-                cursorModifier.ColumnIndex = 0;
-                cursorModifier.PreferredColumnIndex = cursorModifier.ColumnIndex;
+                cursorModifier.SetColumnIndexAndPreferred(0);
             }
             else
             {
                 if (isTab)
                 {
-                    var index = _tabKeyPositionsList.FindIndex(x => x >= cursorPositionIndex);
-
-                    if (index == -1)
+                    if (tabPositionLazyInsertRange.index is null)
                     {
-                        _tabKeyPositionsList.Add(cursorPositionIndex);
-                    }
-                    else
-                    {
-                        for (var i = index; i < _tabKeyPositionsList.Count; i++)
-                        {
-                            _tabKeyPositionsList[i]++;
-                        }
+                        tabPositionLazyInsertRange.index = _tabKeyPositionsList.FindIndex(x => x >= initialCursorPositionIndex);
 
-                        _tabKeyPositionsList.Insert(index, cursorPositionIndex);
+                        if (tabPositionLazyInsertRange.index == -1)
+                            tabPositionLazyInsertRange.index = _tabKeyPositionsList.Count;
                     }
+
+                    // Subtract 1 here because the 'characterCountInserted' was eagerly consumed.
+                    tabPositionLazyInsertRange.localTabPositionList.Add(-1 + initialCursorPositionIndex + characterCountInserted);
                 }
 
                 cursorModifier.SetColumnIndexAndPreferred(1 + cursorModifier.ColumnIndex);
             }
+        }
 
-            // Reposition the Row Endings
+        // Reposition the Row Endings
+        {
+            for (var i = initialCursorLineIndex; i < LineEndPositionList.Count; i++)
             {
-                for (var i = cursorModifier.LineIndex; i < LineEndPositionList.Count; i++)
+                var rowEndingTuple = LineEndPositionList[i];
+                rowEndingTuple.StartPositionIndexInclusive += characterCountInserted;
+                rowEndingTuple.EndPositionIndexExclusive += characterCountInserted;
+            }
+        }
+
+        // Reposition the Tabs
+        {
+            var firstTabKeyPositionIndexToModify = _tabKeyPositionsList.FindIndex(x => x >= initialCursorPositionIndex);
+
+            if (firstTabKeyPositionIndexToModify != -1)
+            {
+                for (var i = firstTabKeyPositionIndexToModify; i < TabKeyPositionsList.Count; i++)
                 {
-                    var rowEndingTuple = LineEndPositionList[i];
-                    rowEndingTuple.StartPositionIndexInclusive += characterCountInserted;
-                    rowEndingTuple.EndPositionIndexExclusive += characterCountInserted;
+                    TabKeyPositionsList[i] += characterCountInserted;
                 }
             }
+        }
 
-            if (!isTab)
+        // Reposition the Diagnostic Squigglies
+        {
+            var textSpanForInsertion = new TextEditorTextSpan(
+                initialCursorPositionIndex,
+                initialCursorPositionIndex + characterCountInserted,
+                0,
+                new(string.Empty),
+                string.Empty);
+
+            var textModification = new TextEditorTextModification(true, textSpanForInsertion);
+
+            foreach (var presentationModel in PresentationModelsList)
             {
-                var firstTabKeyPositionIndexToModify = _tabKeyPositionsList.FindIndex(x => x >= cursorPositionIndex);
+                presentationModel.CompletedCalculation?.TextModificationsSinceRequestList.Add(textModification);
+                presentationModel.PendingCalculation?.TextModificationsSinceRequestList.Add(textModification);
+            }
+        }
 
-                if (firstTabKeyPositionIndexToModify != -1)
-                {
-                    for (var i = firstTabKeyPositionIndexToModify; i < TabKeyPositionsList.Count; i++)
-                    {
-                        TabKeyPositionsList[i] += characterCountInserted;
-                    }
-                }
+        // TODO: Fix tracking the MostCharactersOnASingleRowTuple this way is possibly inefficient - should instead only check the rows that changed
+        {
+            (int rowIndex, int rowLength) localMostCharactersOnASingleRowTuple = (0, 0);
+
+            for (var i = 0; i < LineEndPositionList.Count; i++)
+            {
+                var lengthOfRow = this.GetLengthOfLine(i);
+
+                if (lengthOfRow > localMostCharactersOnASingleRowTuple.rowLength)
+                    localMostCharactersOnASingleRowTuple = (i, lengthOfRow);
             }
 
-            // Reposition the Diagnostic Squigglies
+            localMostCharactersOnASingleRowTuple = (localMostCharactersOnASingleRowTuple.rowIndex,
+                localMostCharactersOnASingleRowTuple.rowLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+
+            _mostCharactersOnASingleLineTuple = localMostCharactersOnASingleRowTuple;
+        }
+
+        // Add in any new metadata
+        {
+            if (lineEndPositionLazyInsertRange.index is not null)
             {
-                var textSpanForInsertion = new TextEditorTextSpan(
-                    cursorPositionIndex,
-                    cursorPositionIndex + characterCountInserted,
-                    0,
-                    new(string.Empty),
-                    string.Empty);
-
-                var textModification = new TextEditorTextModification(true, textSpanForInsertion);
-
-                foreach (var presentationModel in PresentationModelsList)
-                {
-                    presentationModel.CompletedCalculation?.TextModificationsSinceRequestList.Add(textModification);
-                    presentationModel.PendingCalculation?.TextModificationsSinceRequestList.Add(textModification);
-                }
+                _lineEndPositionList.InsertRange(
+                    lineEndPositionLazyInsertRange.index.Value,
+                    lineEndPositionLazyInsertRange.localLineEndList);
             }
 
-            // TODO: Fix tracking the MostCharactersOnASingleRowTuple this way is possibly inefficient - should instead only check the rows that changed
+            if (tabPositionLazyInsertRange.index is not null)
             {
-                (int rowIndex, int rowLength) localMostCharactersOnASingleRowTuple = (0, 0);
-
-                for (var i = 0; i < LineEndPositionList.Count; i++)
-                {
-                    var lengthOfRow = this.GetLengthOfLine(i);
-
-                    if (lengthOfRow > localMostCharactersOnASingleRowTuple.rowLength)
-                    {
-                        localMostCharactersOnASingleRowTuple = (i, lengthOfRow);
-                    }
-                }
-
-                localMostCharactersOnASingleRowTuple = (localMostCharactersOnASingleRowTuple.rowIndex,
-                    localMostCharactersOnASingleRowTuple.rowLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
-
-                _mostCharactersOnASingleLineTuple = localMostCharactersOnASingleRowTuple;
+                _tabKeyPositionsList.InsertRange(
+                    tabPositionLazyInsertRange.index.Value,
+                    tabPositionLazyInsertRange.localTabPositionList);
             }
         }
     }
