@@ -73,7 +73,7 @@ public partial class TextEditorModelModifierTests
                     "\r" + // CarriageReturn
                     "z$" + // Lowercase letter, and special character
                     "\t" + // Tab
-                    "\r\n" // CarriageReturnNewLine
+                    "\r\n" // CarriageReturnLineFeed
                 ),
                 null,
                 null,
@@ -90,7 +90,7 @@ public partial class TextEditorModelModifierTests
             // constructor's 'initialContent' parameter, then checking '.Length'.
             //
             // This makes it more clear if the source text changes (accidentally or intentionally).
-            // If one day this assertion fails, then someone touched the source text...
+            // If one day this assertion fails, then someone touched the source text.
             Assert.Equal(9, modelModifier.DocumentLength);
 
             // The file extension should NOT change as a result of clearing the content.
@@ -303,9 +303,342 @@ public partial class TextEditorModelModifierTests
     /// <see cref="TextEditorModelModifier.SetContent(string)"/>
     /// </summary>
     [Fact]
-    public void ModifyContent()
+    public void SetContent()
     {
-        throw new NotImplementedException();
+        // Create test data
+        TextEditorModel inModel;
+        TextEditorModelModifier modelModifier;
+        {
+            inModel = new TextEditorModel(
+                new ResourceUri($"/{nameof(SetContent)}.txt"),
+                DateTime.UtcNow,
+                ExtensionNoPeriodFacts.TXT,
+                (
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " "      // Space
+                ),
+                null,
+                null,
+                // Partition size is defaulted to 4096, but explicitly passing the value ensures that
+                // a change in the default value won't break this test.
+                partitionSize: 4096);
+
+            modelModifier = new TextEditorModelModifier(inModel);
+        }
+
+        // Pre-assertions
+        {
+            // Obnoixously write the constant value for the initialContent's length instead of capturing the TextEditorModel
+            // constructor's 'initialContent' parameter, then checking '.Length'.
+            //
+            // This makes it more clear if the source text changes (accidentally or intentionally).
+            // If one day this assertion fails, then someone touched the source text.
+            Assert.Equal(12, modelModifier.DocumentLength);
+
+            // The file extension should NOT change as a result of "setting" the content.
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+            // The text is small, it should write a single partition, nothing more.
+            Assert.Single(modelModifier.PartitionList);
+
+            // 1 tab key was included in the initial content for the TextEditorModel, therefore the Count is 1.
+            Assert.Equal(1, modelModifier.TabKeyPositionsList.Count);
+
+            // LineEnd related code-block-grouping:
+            {
+                // 1 CarriageReturn was included in the initial content for the TextEditorModel, therefore the count is 1.
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+
+                // 1 LineFeed was included in the initial content for the TextEditorModel, therefore the count is 1.
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+
+                // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel, therefore the count is 1.
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+
+                // 3 line endings where included in the initial content for the TextEditorModel,
+                // plus the always existing 'EndOfFile' line ending, means the Count is 4.
+                Assert.Equal(4, modelModifier.LineEndPositionList.Count);
+
+                // When invoking the constructor for the TextEditorModel, a LineFeed was
+                // the first LineEnd occurence, in regards to position from start to end.
+                var lineFeed = modelModifier.LineEndPositionList[0];
+                Assert.Equal(2, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(3, lineFeed.EndPositionIndexExclusive);
+                Assert.Equal(LineEndKind.LineFeed, lineFeed.LineEndKind);
+
+                // When invoking the constructor for the TextEditorModel, a CarriageReturn was
+                // the second LineEnd occurence, in regards to position from start to end.
+                var carriageReturn = modelModifier.LineEndPositionList[1];
+                Assert.Equal(3, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(4, carriageReturn.EndPositionIndexExclusive);
+                Assert.Equal(LineEndKind.CarriageReturn, carriageReturn.LineEndKind);
+
+                // When invoking the constructor for the TextEditorModel, a CarriageReturnLineFeed was
+                // the third LineEnd occurence, in regards to position from start to end.
+                var carriageReturnLineFeed = modelModifier.LineEndPositionList[2];
+                Assert.Equal(7, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(9, carriageReturnLineFeed.EndPositionIndexExclusive);
+                Assert.Equal(LineEndKind.CarriageReturnLineFeed, carriageReturnLineFeed.LineEndKind);
+
+                // A TextEditorModel always contains at least 1 LineEnd.
+                // This LineEnd marks the 'EndOfFile'.
+                //
+                // Given that the constructor for 'TextEditorModel' takes the 'initialContent'
+                // and sets the model's content as it, the 'EndOfFile' is no longer at positionIndex 0,
+                // but instead shifted by the length of the 'initialContent'.
+                var endOfFile = modelModifier.LineEndPositionList[3];
+                Assert.Equal(9, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(9, endOfFile.EndPositionIndexExclusive);
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+            }
+        }
+
+        // Case: Reduce counters
+        //
+        // Description: Setting the content can result in a decrease in the amount of line endings in a text editor,
+        //              as just one example.
+        //              |
+        //              Erroneous example: one has a text editor with the text value of:
+        //                  (
+        //                      "\n" +   // LineFeed
+        //                      "b9" +   // LetterOrDigit-Lowercase
+        //                      "\r" +   // CarriageReturn
+        //                      "9B" +   // LetterOrDigit-Uppercase
+        //                      "\r\n" + // CarriageReturnLineFeed
+        //                      "\t" +   // Tab
+        //                      "$" +    // SpecialCharacter
+        //                      ";" +    // Punctuation
+        //                      " "      // Space
+        //                  )
+        //              so, a text editor with 4 line endings. Now one invokes:
+        //                  |
+        //                  SetContent(string.Empty)
+        //                  |
+        //              but, erroneously, the text editor still thinks there are 4 line endings in the text.
+        //              |
+        //              Correction for the example: one has 4 line endings, then invokes 'SetContent(string.Empty)',
+        //              and the text editor now thinks there is 1 line ending in the text.
+        //              |
+        //              Note: all text editor models have at least 1 line ending, which is known as the 'EndOfFile'.
+        {
+            // Do something
+            TextEditorModel outModel;
+            {
+                modelModifier.SetContent(
+                        string.Empty
+                    );
+                outModel = modelModifier.ToModel();
+            }
+
+            // Post-assertions
+            {
+                // The 'SetContent' parameter has a string length of '0'. Therefore, the DocumentLength becomes '0'.
+                Assert.Equal(0, modelModifier.DocumentLength);
+
+                // The file extension should NOT change as a result of setting the content.
+                Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+                // The text is small, it should write a single partition, nothing more.
+                Assert.Single(modelModifier.PartitionList);
+
+                // 1 tab key was included in the initial content for the TextEditorModel but,
+                // now that the content is set to 'string.Empty', the Count is 0.
+                Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+
+                // LineEnd related code-block-grouping:
+                {
+                    // 1 CarriageReturn was included in the initial content for the TextEditorModel but,
+                    // after setting the content, the count is 0.
+                    Assert.Equal(
+                        0,
+                        modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+
+                    // 1 LineFeed was included in the initial content for the TextEditorModel but,
+                    // after setting the content, the count is 0.
+                    Assert.Equal(
+                        0,
+                        modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+
+                    // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel but,
+                    // after setting the content, the count is 0.
+                    Assert.Equal(
+                        0,
+                        modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+
+                    // 3 line endings where included in the initial content for the TextEditorModel but,
+                    // after clearing the content, only the special-'EndOfFile' LineEnd should remain, so the count is 1.
+                    Assert.Equal(1, modelModifier.LineEndPositionList.Count);
+
+                    // A TextEditorModel always contains at least 1 LineEnd.
+                    // This LineEnd marks the 'EndOfFile'.
+                    //
+                    // The constructor for 'TextEditorModel' takes the 'initialContent' and sets the model's content as it,
+                    // this results in the 'EndOfFile' positionIndex changing.
+                    // But, since the content was set to 'string.Empty', the 'EndOfFile' positionIndex should return to 0.
+                    var endOfFile = modelModifier.LineEndPositionList[0];
+                    Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
+                    Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+                    Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                }
+            }
+        }
+
+        // Case: Maintain counters
+        //
+        // Description: Setting the content can result in NO-change in the amount of line endings in a text editor.
+        //              |
+        //              Erroneous example: one has a text editor with the text value of:
+        //                  (
+        //                      "\n" +   // LineFeed
+        //                      "b9" +   // LetterOrDigit-Lowercase
+        //                      "\r" +   // CarriageReturn
+        //                      "9B" +   // LetterOrDigit-Uppercase
+        //                      "\r\n" + // CarriageReturnLineFeed
+        //                      "\t" +   // Tab
+        //                      "$" +    // SpecialCharacter
+        //                      ";" +    // Punctuation
+        //                      " "      // Space
+        //                  )
+        //              then invokes SetContent(string) with the following string:
+        //                  (
+        //                      "\t" +   // Tab
+        //                      ";" +    // Punctuation
+        //                      "\r\n" + // CarriageReturnLineFeed
+        //                      " "      // Space
+        //                      "\n" +   // LineFeed
+        //                      "\r" +   // CarriageReturn
+        //                      "9B" +   // LetterOrDigit-Uppercase
+        //                      "$" +    // SpecialCharacter
+        //                      "b9" +   // LetterOrDigit-Lowercase
+        //                  )
+        //              Here, the text editor started with 4 line endings,
+        //              and it is expected to in the end have 4 line endings.
+        //              |
+        //              The overall count of the line endings has not changed, but, the positioning
+        //              of each LineEnd has.
+        //              |
+        //              The erroneous behavior here could be, not updating the LineEndPositionList.
+        //              Thereby leaving the '\n' character as having a 'StartPositionIndex' of '0',
+        //              All the while, the '\n' character is in actually at a 'StartPositionIndex' of '7'.
+        //              |
+        //              Note: all text editor models have at least 1 line ending, which is known as the 'EndOfFile'.
+        {
+            // Do something
+            TextEditorModel outModel;
+            {
+                modelModifier.SetContent(
+                        string.Empty
+                    );
+                outModel = modelModifier.ToModel();
+            }
+
+            // Post-assertions
+            {
+                // The 'SetContent' parameter has a string length of '0'. Therefore, the DocumentLength becomes '0'.
+                Assert.Equal(0, modelModifier.DocumentLength);
+
+                // The file extension should NOT change as a result of setting the content.
+                Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+                // The text is small, it should write a single partition, nothing more.
+                Assert.Single(modelModifier.PartitionList);
+
+                // 1 tab key was included in the initial content for the TextEditorModel but,
+                // now that the content is set to 'string.Empty', the Count is 0.
+                Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+
+                // LineEnd related code-block-grouping:
+                {
+                    // 1 CarriageReturn was included in the initial content for the TextEditorModel but,
+                    // after setting the content, the count is 0.
+                    Assert.Equal(
+                        0,
+                        modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+
+                    // 1 LineFeed was included in the initial content for the TextEditorModel but,
+                    // after setting the content, the count is 0.
+                    Assert.Equal(
+                        0,
+                        modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+
+                    // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel but,
+                    // after setting the content, the count is 0.
+                    Assert.Equal(
+                        0,
+                        modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+
+                    // 3 line endings where included in the initial content for the TextEditorModel but,
+                    // after clearing the content, only the special-'EndOfFile' LineEnd should remain, so the count is 1.
+                    Assert.Equal(1, modelModifier.LineEndPositionList.Count);
+
+                    // A TextEditorModel always contains at least 1 LineEnd.
+                    // This LineEnd marks the 'EndOfFile'.
+                    //
+                    // The constructor for 'TextEditorModel' takes the 'initialContent' and sets the model's content as it,
+                    // this results in the 'EndOfFile' positionIndex changing.
+                    // But, since the content was set to 'string.Empty', the 'EndOfFile' positionIndex should return to 0.
+                    var endOfFile = modelModifier.LineEndPositionList[0];
+                    Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
+                    Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+                    Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                }
+            }
+        }
+
+        // Case: Increase counters
+        //
+        // Description: Setting the content can result in an increase in the amount of line endings in a text editor.
+        //              |
+        //              Erroneous example: one has a text editor with the text value of:
+        //                  (
+        //                      "\n" +   // LineFeed
+        //                      "b9" +   // LetterOrDigit-Lowercase
+        //                      "\r" +   // CarriageReturn
+        //                      "9B" +   // LetterOrDigit-Uppercase
+        //                      "\r\n" + // CarriageReturnLineFeed
+        //                      "\t" +   // Tab
+        //                      "$" +    // SpecialCharacter
+        //                      ";" +    // Punctuation
+        //                      " "      // Space
+        //                  )
+        //              then invokes SetContent(string) with the following string:
+        //                  (
+        //                      "\n" +   // LineFeed
+        //                      "\n" +   // LineFeed
+        //                      "b9" +   // LetterOrDigit-Lowercase
+        //                      "\r" +   // CarriageReturn
+        //                      "\r" +   // CarriageReturn
+        //                      "9B" +   // LetterOrDigit-Uppercase
+        //                      "\r\n" + // CarriageReturnLineFeed
+        //                      "\r\n" + // CarriageReturnLineFeed
+        //                      "\t" +   // Tab
+        //                      "\t" +   // Tab
+        //                      "$" +    // SpecialCharacter
+        //                      ";" +    // Punctuation
+        //                      " "      // Space
+        //                  )
+        //              Here, the text editor started with 4 line endings,
+        //              and it is expected to in the end have 7 line endings.
+        //              |
+        //              The erroneous behavior here could be, not updating the 'LineEndKindCountsList'.
+        //              That is, initially the text editor has 1 'LineFeed' character.
+        //              It is expected that in the end the text editor will have 2 'LineFeed' characters.
+        {
+
+        }
     }
 
     /// <summary>
