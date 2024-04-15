@@ -135,7 +135,7 @@ public class OnKeyDownBatch : ITextEditorTask
             {
                 if (KeyboardKeyFacts.MetaKeys.BACKSPACE == inspectThrottleEventOnKeyDown.KeyboardEventArgs.Key)
                 {
-                    modelModifier.PerformDeletions(
+                    modelModifier.Delete(
                         inspectThrottleEventOnKeyDown.KeyboardEventArgs,
                         cursorModifierBag,
                         ThrottleEventOnKeyDownList.Count,
@@ -144,7 +144,7 @@ public class OnKeyDownBatch : ITextEditorTask
 
                 if (KeyboardKeyFacts.MetaKeys.DELETE == inspectThrottleEventOnKeyDown.KeyboardEventArgs.Key)
                 {
-                    modelModifier.PerformDeletions(
+                    modelModifier.Delete(
                         inspectThrottleEventOnKeyDown.KeyboardEventArgs,
                         cursorModifierBag,
                         ThrottleEventOnKeyDownList.Count,
