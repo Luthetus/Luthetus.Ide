@@ -86,7 +86,7 @@ public partial class TextEditorModelModifierTests
 
         // Pre-assertions
         {
-            // Obnoixously write the constant '9' instead of capturing the TextEditorModel
+            // Obnoxiously write the constant '9' instead of capturing the TextEditorModel
             // constructor's 'initialContent' parameter, then checking '.Length'.
             //
             // This makes it more clear if the source text changes (accidentally or intentionally).
@@ -357,7 +357,7 @@ public partial class TextEditorModelModifierTests
 
         // Pre-assertions
         {
-            // Obnoixously write the constant value for the initialContent's length instead of capturing the TextEditorModel
+            // Obnoxiously write the constant value for the initialContent's length instead of capturing the TextEditorModel
             // constructor's 'initialContent' parameter, then checking '.Length'.
             //
             // This makes it more clear if the source text changes (accidentally or intentionally).
@@ -559,7 +559,7 @@ public partial class TextEditorModelModifierTests
 
         // Pre-assertions
         {
-            // Obnoixously write the constant value for the initialContent's length instead of capturing the TextEditorModel
+            // Obnoxiously write the constant value for the initialContent's length instead of capturing the TextEditorModel
             // constructor's 'initialContent' parameter, then checking '.Length'.
             //
             // This makes it more clear if the source text changes (accidentally or intentionally).
@@ -793,7 +793,7 @@ public partial class TextEditorModelModifierTests
 
         // Pre-assertions
         {
-            // Obnoixously write the constant value for the initialContent's length instead of capturing the TextEditorModel
+            // Obnoxiously write the constant value for the initialContent's length instead of capturing the TextEditorModel
             // constructor's 'initialContent' parameter, then checking '.Length'.
             //
             // This makes it more clear if the source text changes (accidentally or intentionally).
@@ -1070,7 +1070,7 @@ public partial class TextEditorModelModifierTests
 
         // Pre-assertions
         {
-            // Obnoixously write the constant value for the initialContent's length instead of capturing the TextEditorModel
+            // Obnoxiously write the constant value for the initialContent's length instead of capturing the TextEditorModel
             // constructor's 'initialContent' parameter, then checking '.Length'.
             //
             // This makes it more clear if the source text changes (accidentally or intentionally).
@@ -1288,7 +1288,7 @@ public partial class TextEditorModelModifierTests
 
         // Pre-assertions
         {
-            // Obnoixously write the constant value for the initialContent's length instead of capturing the TextEditorModel
+            // Obnoxiously write the constant value for the initialContent's length instead of capturing the TextEditorModel
             // constructor's 'initialContent' parameter, then checking '.Length'.
             //
             // This makes it more clear if the source text changes (accidentally or intentionally).
@@ -1511,7 +1511,7 @@ public partial class TextEditorModelModifierTests
 
         // Pre-assertions
         {
-            // Obnoixously write the constant value for the initialContent's length instead of capturing the TextEditorModel
+            // Obnoxiously write the constant value for the initialContent's length instead of capturing the TextEditorModel
             // constructor's 'initialContent' parameter, then checking '.Length'.
             //
             // This makes it more clear if the source text changes (accidentally or intentionally).
@@ -1665,8 +1665,6 @@ public partial class TextEditorModelModifierTests
     [Fact]
     public void Insert_Into_EmptyEditor_At_PositionIndex_Negative_One()
     {
-        throw new NotImplementedException();
-
         // Create test data
         TextEditorModel inModel;
         TextEditorModelModifier modelModifier;
@@ -1686,7 +1684,7 @@ public partial class TextEditorModelModifierTests
 
         // Pre-assertions
         {
-            // Obnoixously write the constant value for the initialContent's length instead of capturing the TextEditorModel
+            // Obnoxiously write the constant value for the initialContent's length instead of capturing the TextEditorModel
             // constructor's 'initialContent' parameter, then checking '.Length'.
             //
             // This makes it more clear if the source text changes (accidentally or intentionally).
@@ -1752,83 +1750,32 @@ public partial class TextEditorModelModifierTests
             }
         }
 
-        // Do something
-        TextEditorModel outModel;
-        {
-            modelModifier.Insert_Unsafe(
-                    "\n" +   // LineFeed
-                    "b9" +   // LetterOrDigit-Lowercase
-                    "\r" +   // CarriageReturn
-                    "9B" +   // LetterOrDigit-Uppercase
-                    "\r\n" + // CarriageReturnLineFeed
-                    "\t" +   // Tab
-                    "$" +    // SpecialCharacter
-                    ";" +    // Punctuation
-                    " ",     // Space
-                    rowIndex: 0,
-                    columnIndex: 0,
-                    CancellationToken.None
-                );
-            outModel = modelModifier.ToModel();
-        }
-
         // Post-assertions
+        //
+        // This test expects the 'Do Something' step to throw an exception.
+        // That is all that needs to be tested here.
+        Assert.Throws<ApplicationException>(() =>
         {
-            // The 'SetContent' parameter has a string length of '12',
-            // But, as of this comment, the insertion of line ending characters
-            // other than line feed is not supported.
-            // Therefore, the "\r" and the "\r\n" are replaced with "\n".
-            //
-            // As a result of the "\r\n" replacement with "\n",
-            // one character was lost, therefore the length ends up being 11.
-            Assert.Equal(11, modelModifier.DocumentLength);
-
-            // The file extension should NOT change as a result of setting the content.
-            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
-            // The text is small, it should write a single partition, nothing more.
-            Assert.Single(modelModifier.PartitionList);
-
-            // 1 tab key was included in the initial content for the TextEditorModel but,
-            // now that the content is set to 'string.Empty', the Count is 0.
-            Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
-
-            // LineEnd related code-block-grouping:
+            // Do something
+            TextEditorModel outModel;
             {
-                // 1 CarriageReturn was included in the initial content for the TextEditorModel but,
-                // after setting the content, the count is 0.
-                Assert.Equal(
-                    0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
-
-                // 1 LineFeed was included in the initial content for the TextEditorModel but,
-                // after setting the content, the count is 0.
-                Assert.Equal(
-                    0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
-
-                // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel but,
-                // after setting the content, the count is 0.
-                Assert.Equal(
-                    0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
-
-                // 3 line endings where included in the initial content for the TextEditorModel but,
-                // after setting the content, only the special-'EndOfFile' LineEnd should remain, so the count is 1.
-                Assert.Equal(1, modelModifier.LineEndPositionList.Count);
-
-                // A TextEditorModel always contains at least 1 LineEnd.
-                // This LineEnd marks the 'EndOfFile'.
-                //
-                // The constructor for 'TextEditorModel' takes the 'initialContent' and sets the model's content as it,
-                // this results in the 'EndOfFile' positionIndex changing.
-                // But, since the content was set to 'string.Empty', the 'EndOfFile' positionIndex should return to 0.
-                var endOfFile = modelModifier.LineEndPositionList[0];
-                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
-                Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
-                Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+                modelModifier.Insert_Unsafe(
+                        "\n" +   // LineFeed
+                        "b9" +   // LetterOrDigit-Lowercase
+                        "\r" +   // CarriageReturn
+                        "9B" +   // LetterOrDigit-Uppercase
+                        "\r\n" + // CarriageReturnLineFeed
+                        "\t" +   // Tab
+                        "$" +    // SpecialCharacter
+                        ";" +    // Punctuation
+                        " ",     // Space
+                        rowIndex: 0,
+                        columnIndex: -1,
+                        CancellationToken.None
+                    );
+                outModel = modelModifier.ToModel();
             }
-        }
+        });
     }
 
     /// <summary>
@@ -1861,7 +1808,7 @@ public partial class TextEditorModelModifierTests
 
         // Pre-assertions
         {
-            // Obnoixously write the constant value for the initialContent's length instead of capturing the TextEditorModel
+            // Obnoxiously write the constant value for the initialContent's length instead of capturing the TextEditorModel
             // constructor's 'initialContent' parameter, then checking '.Length'.
             //
             // This makes it more clear if the source text changes (accidentally or intentionally).
@@ -2041,7 +1988,7 @@ public partial class TextEditorModelModifierTests
 
         // Pre-assertions
         {
-            // Obnoixously write the constant value for the initialContent's length instead of capturing the TextEditorModel
+            // Obnoxiously write the constant value for the initialContent's length instead of capturing the TextEditorModel
             // constructor's 'initialContent' parameter, then checking '.Length'.
             //
             // This makes it more clear if the source text changes (accidentally or intentionally).
@@ -2221,7 +2168,7 @@ public partial class TextEditorModelModifierTests
 
         // Pre-assertions
         {
-            // Obnoixously write the constant value for the initialContent's length instead of capturing the TextEditorModel
+            // Obnoxiously write the constant value for the initialContent's length instead of capturing the TextEditorModel
             // constructor's 'initialContent' parameter, then checking '.Length'.
             //
             // This makes it more clear if the source text changes (accidentally or intentionally).
@@ -2419,7 +2366,7 @@ public partial class TextEditorModelModifierTests
 
         // Pre-assertions
         {
-            // Obnoixously write the constant value for the initialContent's length instead of capturing the TextEditorModel
+            // Obnoxiously write the constant value for the initialContent's length instead of capturing the TextEditorModel
             // constructor's 'initialContent' parameter, then checking '.Length'.
             //
             // This makes it more clear if the source text changes (accidentally or intentionally).
