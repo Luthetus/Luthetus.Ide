@@ -12,38 +12,64 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 public static class TextEditorModelExtensionMethods
 {
     /// <summary>
-    /// This method is awkwardly worded, and hard to understand.<br/><br/>
-    /// In short, one provides a rowIndex, and gets the line-ending of the previous row.<br/><br/>
-	/// So, rowIndex of 1 returns the line-ending of row 0.<br/><br/>
-	/// And, rowIndex of 2 returns the line-ending of row 1, etc...<br/><br/>
-	/// rowIndex of 0 returns an object representing the "StartOfFile"<br/><br/>
+    /// Short but inaccurate description:<br/>
+    /// ∙∙∙ One provides a rowIndex, and gets the line-ending of the previous row.<br/>
+    /// 
+    /// Special cases:<br/>
+    /// ∙∙∙ Index 0 and index ^1 (the final index) return 'StartOfFile' and 'EndOfFile' respectively.<br/>
+    /// 
+    /// Algorithm:<br/>
+	/// ∙∙∙ rowIndex of 0 returns StartOfFile<br/>
+	/// ∙∙∙ rowIndex of 1 returns the line-ending of row 0<br/>
+	/// ∙∙∙ rowIndex of 2 returns the line-ending of row 1<br/>
+	/// ∙∙∙ etc...<br/>
+	/// ∙∙∙ rowIndex of ^1 (the final index) returns EndOfFile<br/>
     /// </summary>
     public static LineEnd GetLineOpening(this IModelTextEditor model, int lineIndex)
     {
-        if (lineIndex > model.LineEndPositionList.Count - 1)
-            lineIndex = model.LineEndPositionList.Count - 1;
+        // Index is out of range (large-ly)? Then change the index to the last index.
+        lineIndex = Math.Min(lineIndex, model.LineEndPositionList.Count - 1);
 
+        // Index is the last index? Then return EndOfFile
+        if (lineIndex == model.LineEndPositionList.Count - 1)
+            return model.LineEndPositionList[^1];
+
+        // Index in range (small-ly, and large-ly)? Then return the previous line's line ending.
         if (lineIndex > 0)
             return model.LineEndPositionList[lineIndex - 1];
 
+        // Index is out of range (small-ly)? Then return StartOfFile.
         return new(0, 0, LineEndKind.StartOfFile);
     }
 
     /// <summary>
-    /// This method is awkwardly worded, and hard to understand.<br/><br/>
-    /// In short, one provides a rowIndex, and gets the line-ending of that specific row.<br/><br/>
-    /// So, rowIndex of 1 returns the line-ending of row 1.<br/><br/>
-    /// And, rowIndex of 2 returns the line-ending of row 2, etc...<br/><br/>
-    /// The last rowIndex returns an object representing the "EndOfFile"<br/><br/>
+    /// Short but inaccurate description:<br/>
+    /// ∙∙∙ One provides a rowIndex, and gets the line-ending of that row.<br/>
+    /// 
+    /// Special cases:<br/>
+    /// ∙∙∙ Index ^1 (the final index) returns 'EndOfFile'.<br/>
+    /// 
+    /// Algorithm:<br/>
+	/// ∙∙∙ rowIndex of 0 returns the line-ending of row 0<br/>
+	/// ∙∙∙ rowIndex of 1 returns the line-ending of row 1<br/>
+	/// ∙∙∙ rowIndex of 2 returns the line-ending of row 2<br/>
+	/// ∙∙∙ etc...<br/>
+	/// ∙∙∙ rowIndex of ^1 (the final index) returns EndOfFile<br/>
     /// </summary>
     public static LineEnd GetLineClosing(this IModelTextEditor model, int lineIndex)
     {
-        if (lineIndex > model.LineEndPositionList.Count - 1)
-            lineIndex = model.LineEndPositionList.Count - 1;
+        // Index is out of range (large-ly)? Then change the index to the last index.
+        lineIndex = Math.Min(lineIndex, model.LineEndPositionList.Count - 1);
 
+        // Index is the last index? Then return EndOfFile.
+        if (lineIndex == model.LineEndPositionList.Count - 1)
+            return model.LineEndPositionList[^1];
+
+        // Index in range (small-ly, and large-ly)? Then return that line's line ending.
         if (lineIndex >= 0)
             return model.LineEndPositionList[lineIndex];
 
+        // Index is out of range (small-ly)? Then return EndOfFile.
         return model.LineEndPositionList[^1];
     }
 
