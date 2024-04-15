@@ -667,12 +667,44 @@ public partial class TextEditorModelModifier : IModelTextEditor
             }));
     }
 
+    /// <summary>
+    /// Use <see cref="Delete(CursorModifierBagTextEditor, int, bool, CancellationToken, DeleteKind)"/> instead.
+    /// This version is unsafe because it won't respect the user's cursor.
+    /// </summary>
+    public void Delete_Unsafe(
+        int rowIndex,
+        int columnIndex,
+        int count,
+        bool expandWord,
+        CancellationToken cancellationToken,
+        DeleteKind deleteKind = DeleteKind.Delete)
+    {
+        var cursor = new TextEditorCursor(rowIndex, columnIndex, true);
+        var cursorModifier = new TextEditorCursorModifier(cursor);
+
+        var cursorModifierBag = new CursorModifierBagTextEditor(
+            Key<TextEditorViewModel>.Empty,
+            new List<TextEditorCursorModifier>() { cursorModifier });
+
+        Delete(cursorModifierBag, count, expandWord, cancellationToken, deleteKind);
+    }
+
+    /// <summary>
+    /// The 'expandWord' parameter is applied after moving by the 'count' parameter.<br/>
+    /// 
+    /// Ex:
+    ///     count of 1, and expandWord of true;
+    ///     will move 1 char-value from the initialPositionIndex.
+    ///     Afterwards, if expandWord is true, then the cursor is checked to be within a word, or at the start or end of one.
+    ///     If the cursor is at the start or end of one, then the selection to delete is expanded such that it contains
+    ///     the entire word that the cursor ended at.
+    /// </summary>
     public void Delete(
-        DeleteKind deleteKind,
-        bool deleteWord,
         CursorModifierBagTextEditor cursorModifierBag,
         int count,
-        CancellationToken cancellationToken)
+        bool expandWord,
+        CancellationToken cancellationToken,
+        DeleteKind deleteKind = DeleteKind.Delete)
     {
         SetIsDirtyTrue();
 
@@ -692,7 +724,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
             // Remember the cursorPositionIndex
             var initialCursorPositionIndex = this.GetPositionIndex(cursorModifier);
 
-            HackyStepMetadata(deleteKind, deleteWord, cursorModifier);
+            HackyStepMetadata(deleteKind, expandWord, cursorModifier);
 
             // Delete metadata with the cursorModifier itself
             //
@@ -706,7 +738,17 @@ public partial class TextEditorModelModifier : IModelTextEditor
         }
     }
 
-    private void HackyStepMetadata(DeleteKind deleteKind, bool deleteWord, TextEditorCursorModifier cursorModifier)
+    /// <summary>
+    /// The 'expandWord' parameter is applied after moving by the 'count' parameter.<br/>
+    /// 
+    /// Ex:
+    ///     count of 1, and expandWord of true;
+    ///     will move 1 char-value from the initialPositionIndex.
+    ///     Afterwards, if expandWord is true, then the cursor is checked to be within a word, or at the start or end of one.
+    ///     If the cursor is at the start or end of one, then the selection to delete is expanded such that it contains
+    ///     the entire word that the cursor ended at.
+    /// </summary>
+    private void HackyStepMetadata(DeleteKind deleteKind, bool expandWord, TextEditorCursorModifier cursorModifier)
     {
         var initialCursorPositionIndex = this.GetPositionIndex(cursorModifier);
 
@@ -748,7 +790,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
         }
         else if (DeleteKind.Backspace == deleteKind)
         {
-            if (deleteWord)
+            if (expandWord)
             {
                 var columnIndexOfCharacterWithDifferingKind = this.GetColumnIndexOfCharacterWithDifferingKind(
                     cursorModifier.LineIndex,
@@ -775,7 +817,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
         }
         else if (DeleteKind.Delete == deleteKind)
         {
-            if (deleteWord)
+            if (expandWord)
             {
                 var columnIndexOfCharacterWithDifferingKind = this.GetColumnIndexOfCharacterWithDifferingKind(
                     cursorModifier.LineIndex,
