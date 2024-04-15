@@ -52,7 +52,7 @@ public interface IModelTextEditor
     /// _lineEndPositions returns the start of the NEXT line
     /// </summary>
     public IList<LineEnd> LineEndPositionList { get; }
-    public IList<(LineEndKind lineEndingKind, int count)> LineEndKindCountsList { get; }
+    public IList<(LineEndKind lineEndKind, int count)> LineEndKindCountsList { get; }
     public IList<TextEditorPresentationModel> PresentationModelsList { get; }
     /// <summary>
     /// Provides exact position index of a tab character

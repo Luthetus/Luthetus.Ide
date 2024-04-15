@@ -14,7 +14,7 @@ public partial class TextEditorModel : IModelTextEditor
     
     IList<EditBlock> IModelTextEditor.EditBlockList => EditBlocksList;
 	IList<LineEnd> IModelTextEditor.LineEndPositionList => LineEndPositionList;
-	IList<(LineEndKind lineEndingKind, int count)> IModelTextEditor.LineEndKindCountsList => LineEndKindCountList;
+	IList<(LineEndKind lineEndKind, int count)> IModelTextEditor.LineEndKindCountsList => LineEndKindCountList;
 	IList<TextEditorPresentationModel> IModelTextEditor.PresentationModelsList => PresentationModelList;
 	IList<int> IModelTextEditor.TabKeyPositionsList => TabKeyPositionsList;
 

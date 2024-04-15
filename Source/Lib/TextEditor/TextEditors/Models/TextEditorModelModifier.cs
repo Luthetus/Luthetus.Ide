@@ -52,7 +52,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
 
     public IList<EditBlock> EditBlockList => _editBlocksList is null ? _textEditorModel.EditBlocksList : _editBlocksList;
     public IList<LineEnd> LineEndPositionList => _lineEndPositionList is null ? _textEditorModel.LineEndPositionList : _lineEndPositionList;
-    public IList<(LineEndKind lineEndingKind, int count)> LineEndKindCountsList => _lineEndKindCountList is null ? _textEditorModel.LineEndKindCountList : _lineEndKindCountList;
+    public IList<(LineEndKind lineEndKind, int count)> LineEndKindCountsList => _lineEndKindCountList is null ? _textEditorModel.LineEndKindCountList : _lineEndKindCountList;
     public IList<TextEditorPresentationModel> PresentationModelsList => _presentationModelsList is null ? _textEditorModel.PresentationModelList : _presentationModelsList;
     public IList<int> TabKeyPositionsList => _tabKeyPositionsList is null ? _textEditorModel.TabKeyPositionsList : _tabKeyPositionsList;
     public LineEndKind? OnlyLineEndKind => _onlyLineEndKindWasModified ? _onlyLineEndKind : _textEditorModel.OnlyLineEndKind;
@@ -1172,7 +1172,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
         {
             if (existingRowEndingsList.Length == 1)
             {
-                var rowEndingKind = existingRowEndingsList.Single().lineEndingKind;
+                var rowEndingKind = existingRowEndingsList.Single().lineEndKind;
 
                 if (setUsingRowEndingKind)
                     _usingLineEndKind = rowEndingKind;
@@ -1182,7 +1182,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
             else
             {
                 if (setUsingRowEndingKind)
-                    _usingLineEndKind = existingRowEndingsList.MaxBy(x => x.count).lineEndingKind;
+                    _usingLineEndKind = existingRowEndingsList.MaxBy(x => x.count).lineEndKind;
 
                 _onlyLineEndKind = null;
             }

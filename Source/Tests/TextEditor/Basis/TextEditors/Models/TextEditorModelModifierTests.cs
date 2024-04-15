@@ -107,17 +107,17 @@ public partial class TextEditorModelModifierTests
                 // 1 CarriageReturn was included in the initial content for the TextEditorModel, therefore the count is 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // 1 LineFeed was included in the initial content for the TextEditorModel, therefore the count is 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
                 // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel, therefore the count is 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 // 3 line endings where included in the initial content for the TextEditorModel,
                 // plus the always existing 'EndOfFile' line ending, means the Count is 4.
@@ -185,19 +185,19 @@ public partial class TextEditorModelModifierTests
                 // after clearing the content, the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // 1 LineFeed was included in the initial content for the TextEditorModel but,
                 // after clearing the content, the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
                 // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel but,
                 // after clearing the content, the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 // 3 line endings where included in the initial content for the TextEditorModel but,
                 // after clearing the content, only the special-'EndOfFile' LineEnd should remain, so the count is 1.
@@ -379,17 +379,17 @@ public partial class TextEditorModelModifierTests
                 // 1 CarriageReturn was included in the initial content for the TextEditorModel, therefore the count is 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // 1 LineFeed was included in the initial content for the TextEditorModel, therefore the count is 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
                 // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel, therefore the count is 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 // 3 line endings where included in the initial content for the TextEditorModel,
                 // plus the always existing 'EndOfFile' line ending, means the Count is 4.
@@ -459,19 +459,19 @@ public partial class TextEditorModelModifierTests
                 // after setting the content, the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // 1 LineFeed was included in the initial content for the TextEditorModel but,
                 // after setting the content, the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
                 // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel but,
                 // after setting the content, the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 // 3 line endings where included in the initial content for the TextEditorModel but,
                 // after setting the content, only the special-'EndOfFile' LineEnd should remain, so the count is 1.
@@ -581,17 +581,17 @@ public partial class TextEditorModelModifierTests
                 // 1 CarriageReturn was included in the initial content for the TextEditorModel, therefore the count is 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // 1 LineFeed was included in the initial content for the TextEditorModel, therefore the count is 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
                 // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel, therefore the count is 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 // 3 line endings where included in the initial content for the TextEditorModel,
                 // plus the always existing 'EndOfFile' line ending, means the Count is 4.
@@ -673,7 +673,7 @@ public partial class TextEditorModelModifierTests
                 // there still is 1 CarriageReturn, but it should no longer be in the same position.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 // The CarriageReturn is at positionIndex '6'. Therefore,
                 // get the single entry with a value of '6' from 'LineEndPositionList',
                 // and then assert that it is a CarriageReturn.
@@ -684,7 +684,7 @@ public partial class TextEditorModelModifierTests
                 // there still is 1 LineFeed, but it should no longer be in the same position.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 // The LineFeed is at positionIndex '5'. Therefore,
                 // get the single entry with a value of '5' from 'LineEndPositionList',
                 // and then assert that it is a LineFeed.
@@ -695,7 +695,7 @@ public partial class TextEditorModelModifierTests
                 // there still is 1 CarriageReturnLineFeed, but it should no longer be in the same position.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 // The CarriageReturnLineFeed is at positionIndex '2'. Therefore,
                 // get the single entry with a value of '2' from 'LineEndPositionList',
                 // and then assert that it is a CarriageReturnLineFeed.
@@ -815,17 +815,17 @@ public partial class TextEditorModelModifierTests
                 // 1 CarriageReturn was included in the initial content for the TextEditorModel, therefore the count is 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // 1 LineFeed was included in the initial content for the TextEditorModel, therefore the count is 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
                 // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel, therefore the count is 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 // 3 line endings where included in the initial content for the TextEditorModel,
                 // plus the always existing 'EndOfFile' line ending, means the Count is 4.
@@ -923,7 +923,7 @@ public partial class TextEditorModelModifierTests
                 // Therefore, there are now 2 CarriageReturn(s).
                 Assert.Equal(
                     2,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 // The first CarriageReturn is at positionIndex '4'. Therefore,
                 // get the single entry with a value of '4' from 'LineEndPositionList',
                 // and then assert that it is a CarriageReturn.
@@ -938,7 +938,7 @@ public partial class TextEditorModelModifierTests
                 // Therefore, there are now 2 LineFeed(s).
                 Assert.Equal(
                     2,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 // The first LineFeed is at positionIndex '0'. Therefore,
                 // get the single entry with a value of '0' from 'LineEndPositionList',
                 // and then assert that it is a LineFeed.
@@ -953,7 +953,7 @@ public partial class TextEditorModelModifierTests
                 // Therefore, there are now 2 CarriageReturnLineFeed(s).
                 Assert.Equal(
                     2,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 // The first CarriageReturnLineFeed is at positionIndex '8'. Therefore,
                 // get the single entry with a value of '8' from 'LineEndPositionList',
                 // and then assert that it is a CarriageReturnLineFeed.
@@ -1092,17 +1092,17 @@ public partial class TextEditorModelModifierTests
                 // No CarriageReturns were included in the initial content for the TextEditorModel, therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // No LineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
                 // No CarriageReturnLineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 // No line endings where included in the initial content for the TextEditorModel,
                 // there is only the always existing 'EndOfFile' line ending, therefore the Count is 1.
@@ -1188,7 +1188,7 @@ public partial class TextEditorModelModifierTests
                 // into a '\n' that follows causing a "\r\n" to appear. Therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // 1 LineFeed was inserted.
                 // But, for the time being, only LineFeed insertions are permitted to avoid insertion of '\r'
@@ -1196,14 +1196,14 @@ public partial class TextEditorModelModifierTests
                 // Because 3 total LineEnds were inserted, the count is 3.
                 Assert.Equal(
                     3,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 
                 // 1 CarriageReturnLineFeed was inserted.
                 // But, for the time being, only LineFeed insertions are permitted to avoid insertion of '\r'
                 // into a '\n' that follows causing a "\r\n" to appear. Therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 var lineFeedPositionList = modelModifier.LineEndPositionList
                     .Where(x => x.LineEndKind == LineEndKind.LineFeed)
@@ -1310,17 +1310,17 @@ public partial class TextEditorModelModifierTests
                 // No CarriageReturns were included in the initial content for the TextEditorModel, therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // No LineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
                 // No CarriageReturnLineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 // No line endings where included in the initial content for the TextEditorModel,
                 // there is only the always existing 'EndOfFile' line ending, therefore the Count is 1.
@@ -1406,7 +1406,7 @@ public partial class TextEditorModelModifierTests
                 // into a '\n' that follows causing a "\r\n" to appear. Therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // 1 LineFeed was inserted.
                 // But, for the time being, only LineFeed insertions are permitted to avoid insertion of '\r'
@@ -1414,14 +1414,14 @@ public partial class TextEditorModelModifierTests
                 // Because 3 total LineEnds were inserted, the count is 3.
                 Assert.Equal(
                     3,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
                 // 1 CarriageReturnLineFeed was inserted.
                 // But, for the time being, only LineFeed insertions are permitted to avoid insertion of '\r'
                 // into a '\n' that follows causing a "\r\n" to appear. Therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 var lineFeedPositionList = modelModifier.LineEndPositionList
                     .Where(x => x.LineEndKind == LineEndKind.LineFeed)
@@ -1529,17 +1529,17 @@ public partial class TextEditorModelModifierTests
                 // No CarriageReturns were included in the initial content for the TextEditorModel, therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // No LineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
                 // No CarriageReturnLineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 // No line endings where included in the initial content for the TextEditorModel,
                 // there is only the always existing 'EndOfFile' line ending, therefore the Count is 1.
@@ -1651,17 +1651,17 @@ public partial class TextEditorModelModifierTests
                 // No CarriageReturns were included in the initial content for the TextEditorModel, therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // No LineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
                 // No CarriageReturnLineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 // No line endings where included in the initial content for the TextEditorModel,
                 // there is only the always existing 'EndOfFile' line ending, therefore the Count is 1.
@@ -1750,19 +1750,19 @@ public partial class TextEditorModelModifierTests
                 // Therefore, the count remains 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // An insertion which is out of bounds due to being too large does nothing and immediately returns.
                 // Therefore, the count remains 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
                 // An insertion which is out of bounds due to being too large does nothing and immediately returns.
                 // Therefore, the count remains 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 // An insertion which is out of bounds due to being too large does nothing and immediately returns.
                 // Therefore, the count remains 1, due to the existance of the special-'EndOfFile' line ending.
@@ -1849,17 +1849,17 @@ public partial class TextEditorModelModifierTests
                 // No CarriageReturns were included in the initial content for the TextEditorModel, therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // No LineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
                 // No CarriageReturnLineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 // No line endings where included in the initial content for the TextEditorModel,
                 // there is only the always existing 'EndOfFile' line ending, therefore the Count is 1.
@@ -1971,17 +1971,17 @@ public partial class TextEditorModelModifierTests
                 // No CarriageReturns were included in the initial content for the TextEditorModel, therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // No LineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
                 // No CarriageReturnLineFeeds were included in the initial content for the TextEditorModel, therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 // No line endings where included in the initial content for the TextEditorModel,
                 // there is only the always existing 'EndOfFile' line ending, therefore the Count is 1.
@@ -2056,19 +2056,19 @@ public partial class TextEditorModelModifierTests
                 // Therefore, the count remains 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
                 // Therefore, the count remains 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
                 // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
                 // Therefore, the count remains 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
                 // Therefore, the count remains 1, due to the existance of the special-'EndOfFile' line ending.
@@ -2166,7 +2166,7 @@ public partial class TextEditorModelModifierTests
                 // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 {
                     var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                     // StartPositionIndexInclusive
@@ -2182,7 +2182,7 @@ public partial class TextEditorModelModifierTests
                 // 1 LineFeed was included in the string that was passed to the constructor.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 {
                     var lineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
                     // StartPositionIndexInclusive
@@ -2199,7 +2199,7 @@ public partial class TextEditorModelModifierTests
                 // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 {
                     var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                     // StartPositionIndexInclusive
@@ -2294,7 +2294,7 @@ public partial class TextEditorModelModifierTests
                 // into a '\n' that follows causing a "\r\n" to appear. Therefore the count remains 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 {
                     var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                     // StartPositionIndexInclusive
@@ -2313,7 +2313,7 @@ public partial class TextEditorModelModifierTests
                 // Because 3 total LineEnds were inserted, the count of LineFeed(s) is 4.
                 Assert.Equal(
                     4,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 var lineFeedMatches = modelModifier.LineEndPositionList.Where(x => x.LineEndKind == LineEndKind.LineFeed).ToArray();
                 // First LineFeed
                 {
@@ -2369,7 +2369,7 @@ public partial class TextEditorModelModifierTests
                 // into a '\n' that follows causing a "\r\n" to appear. Therefore the count remains 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 {
                     var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                     // StartPositionIndexInclusive
@@ -2462,7 +2462,7 @@ public partial class TextEditorModelModifierTests
                 // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 {
                     var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                     // StartPositionIndexInclusive
@@ -2478,7 +2478,7 @@ public partial class TextEditorModelModifierTests
                 // 1 LineFeed was included in the string that was passed to the constructor.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 {
                     var lineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
                     // StartPositionIndexInclusive
@@ -2495,7 +2495,7 @@ public partial class TextEditorModelModifierTests
                 // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 {
                     var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                     // StartPositionIndexInclusive
@@ -2594,7 +2594,7 @@ public partial class TextEditorModelModifierTests
                 // into a '\n' that follows causing a "\r\n" to appear. Therefore the count remains 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 {
                     var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                     // StartPositionIndexInclusive
@@ -2613,7 +2613,7 @@ public partial class TextEditorModelModifierTests
                 // Because 3 total LineEnds were inserted, the count of LineFeed(s) is 4.
                 Assert.Equal(
                     4,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 var lineFeedMatches = modelModifier.LineEndPositionList.Where(x => x.LineEndKind == LineEndKind.LineFeed).ToArray();
                 // First LineFeed
                 {
@@ -2669,7 +2669,7 @@ public partial class TextEditorModelModifierTests
                 // into a '\n' that follows causing a "\r\n" to appear. Therefore the count remains 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 {
                     var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                     // StartPositionIndexInclusive
@@ -2763,7 +2763,7 @@ public partial class TextEditorModelModifierTests
                 // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 {
                     var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                     // StartPositionIndexInclusive
@@ -2779,7 +2779,7 @@ public partial class TextEditorModelModifierTests
                 // 1 LineFeed was included in the string that was passed to the constructor.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 {
                     var lineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
                     // StartPositionIndexInclusive
@@ -2796,7 +2796,7 @@ public partial class TextEditorModelModifierTests
                 // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 {
                     var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                     // StartPositionIndexInclusive
@@ -2825,7 +2825,6 @@ public partial class TextEditorModelModifierTests
             }
         }
 
-        throw new NotImplementedException();
         // Do something
         TextEditorModel outModel;
         {
@@ -2839,8 +2838,8 @@ public partial class TextEditorModelModifierTests
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
                     " ",     // Space
-                    rowIndex: 0,
-                    columnIndex: 0,
+                    rowIndex: 1,
+                    columnIndex: 1,
                     CancellationToken.None
                 );
             outModel = modelModifier.ToModel();
@@ -2848,14 +2847,18 @@ public partial class TextEditorModelModifierTests
 
         // Post-assertions
         {
-            // The 'SetContent' parameter has a string length of '12',
+            // The constructor's initialContent parameter has a string length of '12',
+            //
+            // As well, a 12 character string was inserted.
             // But, as of this comment, the insertion of line ending characters
             // other than line feed is not supported.
             // Therefore, the "\r" and the "\r\n" are replaced with "\n".
             //
             // As a result of the "\r\n" replacement with "\n",
-            // one character was lost, therefore the length ends up being 11.
-            Assert.Equal(11, modelModifier.DocumentLength);
+            // one character was lost, therefore the length inserted ends up being 11.
+            //
+            // In total 23 characters.
+            Assert.Equal(23, modelModifier.DocumentLength);
 
             // The file extension should NOT change as a result of setting the content.
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
@@ -2864,43 +2867,115 @@ public partial class TextEditorModelModifierTests
             Assert.Single(modelModifier.PartitionList);
 
             // 1 tab key was included in the initial content for the TextEditorModel but,
-            // now that the content is set to 'string.Empty', the Count is 0.
-            Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+            // Additionally, a tab key was included in the content that was inserted.
+            // Therefore, 2 tab keys total.
+            Assert.Equal(2, modelModifier.TabKeyPositionsList.Count);
 
             // LineEnd related code-block-grouping:
             {
-                // 1 CarriageReturn was included in the initial content for the TextEditorModel but,
-                // after setting the content, the count is 0.
+                // 1 CarriageReturn was included in the initial content for the TextEditorModel.
+                // Additionally, a '\r' was included in the content that was inserted,
+                // but it was converted to a '\n'. Therefore, 1 CarriageReturn(s) total.
                 Assert.Equal(
-                    0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
-
-                // 1 LineFeed was included in the initial content for the TextEditorModel but,
-                // after setting the content, the count is 0.
+                    1,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                // StartPositionIndexInclusive
                 Assert.Equal(
-                    0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
-
-                // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel but,
-                // after setting the content, the count is 0.
+                    14,
+                    carriageReturn.StartPositionIndexInclusive);
+                // EndPositionIndexExclusive
                 Assert.Equal(
-                    0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    15,
+                    carriageReturn.EndPositionIndexExclusive);
 
-                // 3 line endings where included in the initial content for the TextEditorModel but,
-                // after setting the content, only the special-'EndOfFile' LineEnd should remain, so the count is 1.
-                Assert.Equal(1, modelModifier.LineEndPositionList.Count);
+                // 1 LineFeed was included in the initial content for the TextEditorModel.
+                // Additionally, a LineFeed was included in the content that was inserted.
+                // Furthermore, a '\r' was converted to a '\n', and a '\r\n' were converted to a '\n'.
+                // Therefore, 4 LineFeed(s) total.
+                Assert.Equal(
+                    4,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                var lineFeedMatches = modelModifier.LineEndPositionList.Where(x => x.LineEndKind == LineEndKind.LineFeed).ToArray();
+                // First LineFeed
+                {
+                    var lineFeed = lineFeedMatches[0];
+                    // StartPositionIndexInclusive
+                    Assert.Equal(
+                        0,
+                        lineFeed.StartPositionIndexInclusive);
+                    // EndPositionIndexExclusive
+                    Assert.Equal(
+                        1,
+                        lineFeed.EndPositionIndexExclusive);
+                }
+                // Second LineFeed
+                {
+                    var lineFeed = lineFeedMatches[1];
+                    // StartPositionIndexInclusive
+                    Assert.Equal(
+                        2,
+                        lineFeed.StartPositionIndexInclusive);
+                    // EndPositionIndexExclusive
+                    Assert.Equal(
+                        3,
+                        lineFeed.EndPositionIndexExclusive);
+                }
+                // Third LineFeed
+                {
+                    var lineFeed = lineFeedMatches[2];
+                    // StartPositionIndexInclusive
+                    Assert.Equal(
+                        5,
+                        lineFeed.StartPositionIndexInclusive);
+                    // EndPositionIndexExclusive
+                    Assert.Equal(
+                        6,
+                        lineFeed.EndPositionIndexExclusive);
+                }
+                // Fourth LineFeed
+                {
+                    var lineFeed = lineFeedMatches[3];
+                    // StartPositionIndexInclusive
+                    Assert.Equal(
+                        8,
+                        lineFeed.StartPositionIndexInclusive);
+                    // EndPositionIndexExclusive
+                    Assert.Equal(
+                        9,
+                        lineFeed.EndPositionIndexExclusive);
+                }
+
+                // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel.
+                // Additionally, a "\r\n" was included in the content that was inserted,
+                // but it was converted to a '\n'. Therefore, 1 CarriageReturn(s) total.
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                // StartPositionIndexInclusive
+                Assert.Equal(
+                    17,
+                    carriageReturnLineFeed.StartPositionIndexInclusive);
+                // EndPositionIndexExclusive
+                Assert.Equal(
+                    19,
+                    carriageReturnLineFeed.EndPositionIndexExclusive);
+
+                // 3 line endings where included in the initial content for the TextEditorModel.
+                // Then, 3 line endings were inserted.
+                // If one includes the EndOfFile, then there are 7 line endings total.
+                Assert.Equal(7, modelModifier.LineEndPositionList.Count);
 
                 // A TextEditorModel always contains at least 1 LineEnd.
                 // This LineEnd marks the 'EndOfFile'.
                 //
-                // The constructor for 'TextEditorModel' takes the 'initialContent' and sets the model's content as it,
-                // this results in the 'EndOfFile' positionIndex changing.
-                // But, since the content was set to 'string.Empty', the 'EndOfFile' positionIndex should return to 0.
-                var endOfFile = modelModifier.LineEndPositionList[0];
+                // The Insert(...) for 'TextEditorModel' results in the 'EndOfFile' positionIndex changing,
+                // by the length of what was inserted.
+                var endOfFile = modelModifier.LineEndPositionList.Last();
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
-                Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
-                Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+                Assert.Equal(23, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(23, endOfFile.EndPositionIndexExclusive);
             }
         }
     }
@@ -2969,7 +3044,7 @@ public partial class TextEditorModelModifierTests
                 // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 {
                     var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                     // StartPositionIndexInclusive
@@ -2985,7 +3060,7 @@ public partial class TextEditorModelModifierTests
                 // 1 LineFeed was included in the string that was passed to the constructor.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 {
                     var lineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
                     // StartPositionIndexInclusive
@@ -3002,7 +3077,7 @@ public partial class TextEditorModelModifierTests
                 // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 {
                     var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                     // StartPositionIndexInclusive
@@ -3031,7 +3106,6 @@ public partial class TextEditorModelModifierTests
             }
         }
 
-        throw new NotImplementedException();
         // Post-assertions
         //
         // This test expects the 'Do Something' step to throw an exception.
@@ -3124,7 +3198,7 @@ public partial class TextEditorModelModifierTests
                 // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 {
                     var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                     // StartPositionIndexInclusive
@@ -3140,7 +3214,7 @@ public partial class TextEditorModelModifierTests
                 // 1 LineFeed was included in the string that was passed to the constructor.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 {
                     var lineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
                     // StartPositionIndexInclusive
@@ -3157,7 +3231,7 @@ public partial class TextEditorModelModifierTests
                 // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 {
                     var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                     // StartPositionIndexInclusive
@@ -3186,7 +3260,6 @@ public partial class TextEditorModelModifierTests
             }
         }
 
-        throw new NotImplementedException();
         // Do something
         TextEditorModel outModel;
         {
@@ -3223,7 +3296,7 @@ public partial class TextEditorModelModifierTests
             //
             // This makes it more clear if the source text changes (accidentally or intentionally).
             // If one day this assertion fails, then someone touched the source text.
-            Assert.Equal(0, modelModifier.DocumentLength);
+            Assert.Equal(12, modelModifier.DocumentLength);
 
             // The file extension should NOT change as a result of inserting content.
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
@@ -3231,57 +3304,85 @@ public partial class TextEditorModelModifierTests
             // The text is small, it should write a single partition, nothing more.
             Assert.Single(modelModifier.PartitionList);
 
-            // An insertion which is out of bounds due to being too large does nothing and immediately returns.
-            // Therefore, the count remains 0.
-            Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+            // 1 tab key was included in the string that was passed to the constructor.
+            // And the insertion is expected to do nothing.
+            // Therefore, the Count remains 1.
+            Assert.Equal(1, modelModifier.TabKeyPositionsList.Count);
+            Assert.Equal(
+                8,
+                modelModifier.TabKeyPositionsList.Single());
 
             // LineEnd related code-block-grouping:
             {
-                // An insertion which is out of bounds due to being too large does nothing and immediately returns.
-                // Therefore, the count remains 0.
+                // 1 CarriageReturn was included in the string that was passed to the constructor.
+                // And the insertion is expected to do nothing.
+                // Therefore, the Count remains 1.
+                // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
-                    0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    1,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                {
+                    var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                    // StartPositionIndexInclusive
+                    Assert.Equal(
+                        3,
+                        carriageReturn.StartPositionIndexInclusive);
+                    // EndPositionIndexExclusive
+                    Assert.Equal(
+                        4,
+                        carriageReturn.EndPositionIndexExclusive);
+                }
 
-                // An insertion which is out of bounds due to being too large does nothing and immediately returns.
-                // Therefore, the count remains 0.
+                // 1 LineFeed was included in the string that was passed to the constructor.
+                // And the insertion is expected to do nothing.
+                // Therefore, the Count remains 1.
                 Assert.Equal(
-                    0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    1,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                {
+                    var lineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                    // StartPositionIndexInclusive
+                    Assert.Equal(
+                        0,
+                        lineFeed.StartPositionIndexInclusive);
+                    // EndPositionIndexExclusive
+                    Assert.Equal(
+                        1,
+                        lineFeed.EndPositionIndexExclusive);
+                }
 
-                // An insertion which is out of bounds due to being too large does nothing and immediately returns.
-                // Therefore, the count remains 0.
+                // 1 CarriageReturnLineFeed was included in the string that was passed to the constructor.
+                // And the insertion is expected to do nothing.
+                // Therefore, the Count remains 1.
+                // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
-                    0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    1,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                {
+                    var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                    // StartPositionIndexInclusive
+                    Assert.Equal(
+                        6,
+                        carriageReturnLineFeed.StartPositionIndexInclusive);
+                    // EndPositionIndexExclusive
+                    Assert.Equal(
+                        8,
+                        carriageReturnLineFeed.EndPositionIndexExclusive);
+                }
 
-                // An insertion which is out of bounds due to being too large does nothing and immediately returns.
-                // Therefore, the count remains 1, due to the existance of the special-'EndOfFile' line ending.
-                Assert.Equal(1, modelModifier.LineEndPositionList.Count);
-
-                // An insertion which is out of bounds due to being too large does nothing and immediately returns.
-                // Therefore, LineEndPositionList is expected to not contain any CarriageReturn(s)
-                // Assert that the only line ending in the text is the 'EndOfFile'.
-                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
-
-                // An insertion which is out of bounds due to being too large does nothing and immediately returns.
-                // Therefore, LineEndPositionList is expected to not contain any LineFeed(s)
-                // Assert that the only line ending in the text is the 'EndOfFile'.
-                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
-
-                // An insertion which is out of bounds due to being too large does nothing and immediately returns.
-                // Therefore, LineEndPositionList is expected to not contain any CarriageReturnLineFeed(s)
-                // Assert that the only line ending in the text is the 'EndOfFile'.
-                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+                // 3 line endings where included in the string that was passed to the constructor,
+                // And the insertion is expected to do nothing.
+                // Therefore, there are 4 in total if one then includes the special-'EndOfFile' LineEnd.
+                Assert.Equal(4, modelModifier.LineEndPositionList.Count);
 
                 // A TextEditorModel always contains at least 1 LineEnd. This LineEnd marks the 'EndOfFile'.
                 //
-                // An insertion which is out of bounds due to being too large does nothing and immediately returns.
-                // Therefore, the 'EndOfFile' is unchanged.
-                var endOfFile = modelModifier.LineEndPositionList.Single();
+                // The insertion is expected to do nothing,
+                // therefore the positionIndex remains 12.
+                var endOfFile = modelModifier.LineEndPositionList.Last();
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
-                Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
-                Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+                Assert.Equal(12, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(12, endOfFile.EndPositionIndexExclusive);
             }
         }
     }
@@ -3355,7 +3456,7 @@ public partial class TextEditorModelModifierTests
                 // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 {
                     var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                     // StartPositionIndexInclusive
@@ -3371,7 +3472,7 @@ public partial class TextEditorModelModifierTests
                 // 1 LineFeed was included in the string that was passed to the constructor.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 {
                     var lineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
                     // StartPositionIndexInclusive
@@ -3388,7 +3489,7 @@ public partial class TextEditorModelModifierTests
                 // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 {
                     var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                     // StartPositionIndexInclusive
@@ -3417,7 +3518,6 @@ public partial class TextEditorModelModifierTests
             }
         }
 
-        throw new NotImplementedException();
         // Post-assertions
         //
         // This test expects the 'Do Something' step to throw an exception.
@@ -3510,7 +3610,7 @@ public partial class TextEditorModelModifierTests
                 // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 {
                     var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                     // StartPositionIndexInclusive
@@ -3526,7 +3626,7 @@ public partial class TextEditorModelModifierTests
                 // 1 LineFeed was included in the string that was passed to the constructor.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 {
                     var lineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
                     // StartPositionIndexInclusive
@@ -3543,7 +3643,7 @@ public partial class TextEditorModelModifierTests
                 // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 {
                     var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                     // StartPositionIndexInclusive
@@ -3572,7 +3672,6 @@ public partial class TextEditorModelModifierTests
             }
         }
 
-        throw new NotImplementedException();
         // Do something
         TextEditorModel outModel;
         {
@@ -3595,7 +3694,7 @@ public partial class TextEditorModelModifierTests
             //
             // This makes it more clear if the source text changes (accidentally or intentionally).
             // If one day this assertion fails, then someone touched the source text.
-            Assert.Equal(0, modelModifier.DocumentLength);
+            Assert.Equal(12, modelModifier.DocumentLength);
 
             // The file extension should NOT change as a result of inserting content.
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
@@ -3603,57 +3702,85 @@ public partial class TextEditorModelModifierTests
             // The text is small, it should write a single partition, nothing more.
             Assert.Single(modelModifier.PartitionList);
 
-            // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
-            // Therefore, the count remains 0.
-            Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+            // 1 tab key was included in the string that was passed to the constructor.
+            // And the insertion is expected to do nothing.
+            // Therefore, the Count remains 1.
+            Assert.Equal(1, modelModifier.TabKeyPositionsList.Count);
+            Assert.Equal(
+                8,
+                modelModifier.TabKeyPositionsList.Single());
 
             // LineEnd related code-block-grouping:
             {
-                // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
-                // Therefore, the count remains 0.
+                // 1 CarriageReturn was included in the string that was passed to the constructor.
+                // And the insertion is expected to do nothing.
+                // Therefore, the Count remains 1.
+                // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
-                    0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturn).count);
+                    1,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                {
+                    var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                    // StartPositionIndexInclusive
+                    Assert.Equal(
+                        3,
+                        carriageReturn.StartPositionIndexInclusive);
+                    // EndPositionIndexExclusive
+                    Assert.Equal(
+                        4,
+                        carriageReturn.EndPositionIndexExclusive);
+                }
 
-                // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
-                // Therefore, the count remains 0.
+                // 1 LineFeed was included in the string that was passed to the constructor.
+                // And the insertion is expected to do nothing.
+                // Therefore, the Count remains 1.
                 Assert.Equal(
-                    0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.LineFeed).count);
+                    1,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                {
+                    var lineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                    // StartPositionIndexInclusive
+                    Assert.Equal(
+                        0,
+                        lineFeed.StartPositionIndexInclusive);
+                    // EndPositionIndexExclusive
+                    Assert.Equal(
+                        1,
+                        lineFeed.EndPositionIndexExclusive);
+                }
 
-                // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
-                // Therefore, the count remains 0.
+                // 1 CarriageReturnLineFeed was included in the string that was passed to the constructor.
+                // And the insertion is expected to do nothing.
+                // Therefore, the Count remains 1.
+                // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
-                    0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndingKind == LineEndKind.CarriageReturnLineFeed).count);
+                    1,
+                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                {
+                    var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                    // StartPositionIndexInclusive
+                    Assert.Equal(
+                        6,
+                        carriageReturnLineFeed.StartPositionIndexInclusive);
+                    // EndPositionIndexExclusive
+                    Assert.Equal(
+                        8,
+                        carriageReturnLineFeed.EndPositionIndexExclusive);
+                }
 
-                // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
-                // Therefore, the count remains 1, due to the existance of the special-'EndOfFile' line ending.
-                Assert.Equal(1, modelModifier.LineEndPositionList.Count);
-
-                // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
-                // Therefore, LineEndPositionList is expected to not contain any CarriageReturn(s)
-                // Assert that the only line ending in the text is the 'EndOfFile'.
-                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
-
-                // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
-                // Therefore, LineEndPositionList is expected to not contain any LineFeed(s)
-                // Assert that the only line ending in the text is the 'EndOfFile'.
-                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
-
-                // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
-                // Therefore, LineEndPositionList is expected to not contain any CarriageReturnLineFeed(s)
-                // Assert that the only line ending in the text is the 'EndOfFile'.
-                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+                // 3 line endings where included in the string that was passed to the constructor,
+                // And the insertion is expected to do nothing.
+                // Therefore, there are 4 in total if one then includes the special-'EndOfFile' LineEnd.
+                Assert.Equal(4, modelModifier.LineEndPositionList.Count);
 
                 // A TextEditorModel always contains at least 1 LineEnd. This LineEnd marks the 'EndOfFile'.
                 //
-                // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
-                // Therefore, the 'EndOfFile' is unchanged.
-                var endOfFile = modelModifier.LineEndPositionList.Single();
+                // The insertion is expected to do nothing,
+                // therefore the positionIndex remains 12.
+                var endOfFile = modelModifier.LineEndPositionList.Last();
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
-                Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
-                Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+                Assert.Equal(12, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(12, endOfFile.EndPositionIndexExclusive);
             }
         }
     }
