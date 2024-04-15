@@ -15,6 +15,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Microsoft.AspNetCore.Components.Web;
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -691,10 +692,10 @@ public partial class TextEditorModelModifier : IModelTextEditor
 
             if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
             {
-                var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
+                var (lowerPositionIndexInclusive, upperPositionIndexExclusive) = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-                var lowerRowData = this.GetLineInformationFromPositionIndex(selectionBounds.lowerPositionIndexInclusive);
-                var lowerColumnIndex = selectionBounds.lowerPositionIndexInclusive - lowerRowData.LineStartPositionIndexInclusive;
+                var lowerRowData = this.GetLineInformationFromPositionIndex(lowerPositionIndexInclusive);
+                var lowerColumnIndex = lowerPositionIndexInclusive - lowerRowData.LineStartPositionIndexInclusive;
 
                 PerformDeletions(
                     new KeyboardEventArgs
@@ -733,8 +734,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
             }
 
             // Remember the cursorPositionIndex
-            var startOfRowPositionIndex = this.GetLineStartPositionIndexInclusive(cursorModifier.LineIndex);
-            var cursorPositionIndex = startOfRowPositionIndex + cursorModifier.ColumnIndex;
+            var initialCursorPositionIndex = this.GetPositionIndex(cursorModifier);
 
             // Track metadata with the cursorModifier itself
             //
@@ -744,7 +744,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
             // Now the text still needs to be inserted.
             // The cursorModifier is invalid, because the metadata step moved its position.
             // So, use the 'cursorPositionIndex' variable that was calculated prior to the metadata step.
-            InsertValue(value, cursorPositionIndex, cancellationToken);
+            InsertValue(value, initialCursorPositionIndex, cancellationToken);
         }
     }
 
@@ -772,25 +772,13 @@ public partial class TextEditorModelModifier : IModelTextEditor
         bool isLinefeed = false;
         bool isCarriageReturnLineFeed = false;
 
-        int characterCountInserted = 0;
-
-        // The insertion is contiguous, therefore, the to-be-inserted metadata can be
-        // delt with after re-calculating the existing metadata.
+        // The insertion is contiguous, therefore, the to-be-inserted metadata can be delt with after re-calculating the existing metadata.
+        // That is, Insert("\n\n\n") is the same as Insert("\n Hello World!\n\n") as far as the metadata for LineEnd(s) is concerned.
         //
-        // That is, Insert("\n\n\n") is the same as Insert("\n Hello World!\n\n")
-        // as far as the metadata for LineEnd(s) is concerned.
-        //
-        // If there is a second LineEnd, they all can be added as 'AddRange'
-        // where the index starts at the first inserted line end.
-        //
-        // If one performs a for loop from index 0 of the string to-be-inserted to the
-        // end of the string, then the line endings will already know their meta data.
-        //
-        // Any remainder of the insertion string won't impact their metadata entry since it
-        // has a positionIndex greater than its own.
-        //
-        // Then after the for loop, since one hasn't modified the public metadata,
-        // one can safely iterate over it and add 'characterCountInserted'.
+        // If there is a second LineEnd, they all can be added as 'AddRange' where the index starts at the first inserted line end.
+        // If one performs a for loop from index 0 of the string to-be-inserted to the end of the string, then the line endings will already know their meta data.
+        // Any remainder of the insertion string won't impact their metadata entry since it has a positionIndex greater than its own.
+        // Then after the for loop, since one hasn't modified the public metadata, one can safely iterate over it and add 'characterCountInserted'.
         //
         // After that, one would then do the lazy insert range for the new metadata.
         (int? index, List<LineEnd> localLineEndList) lineEndPositionLazyInsertRange = (null, new());
@@ -805,9 +793,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
             isLinefeed = character == '\n';
             isCarriageReturnLineFeed = isCarriageReturn && characterIndex != value.Length - 1 && value[1 + characterIndex] == '\n';
 
-            characterCountInserted += 1;
-
-            if (isLinefeed || isCarriageReturn)
+            if (isCarriageReturn || isCarriageReturnLineFeed)
             {
                 // TODO: Do not convert '\r' and '\r\n' to '\n'. Instead take the string and insert it...
                 //       ...as it was given.
@@ -821,29 +807,23 @@ public partial class TextEditorModelModifier : IModelTextEditor
                 //       |
                 //       Well, now the text editor model sees its contents as "\r\n".
                 //       What is to be done in this scenario?
-                var rowEndingKindToInsert = LineEndKind.LineFeed;
-
-                var richCharacters = rowEndingKindToInsert.AsCharacters().Select(character => new RichCharacter
-                {
-                    Value = character,
-                    DecorationByte = default,
-                });
-
-                // characterCountInserted presumes each character has a length of 1. But, "\r\n" is an example of an exception
-                // to this. "\r\n" would be 2 characters, 1 length is already accounted for, so add the remaining 1 length.
-                var characterLength = rowEndingKindToInsert.AsCharacters().Length;
-                characterCountInserted += characterLength - 1;
-
-                var currentPositionIndex = this.GetPositionIndex(cursorModifier);
+                //
+                // NOTE: This conversion is done in the 'Insert(...)' method,
+                //       which goes on to invoke this method with the converted line endings.
+                throw new NotImplementedException("TODO: Do not convert '\r' and '\r\n' to '\n'.Instead take the string and insert it as it was given.");
+            }
+            else if (isLinefeed)
+            {
+                var lineEndKindToInsert = LineEndKind.LineFeed;
 
                 lineEndPositionLazyInsertRange.index ??= cursorModifier.LineIndex;
 
                 lineEndPositionLazyInsertRange.localLineEndList.Add(new LineEnd(
-                    currentPositionIndex,
-                    currentPositionIndex + characterLength,
-                    rowEndingKindToInsert));
+                    initialCursorPositionIndex + characterIndex,
+                    1 + initialCursorPositionIndex + characterIndex,
+                    LineEndKind.LineFeed));
 
-                MutateRowEndingKindCount(rowEndingKindToInsert, 1);
+                MutateRowEndingKindCount(lineEndKindToInsert, 1);
 
                 cursorModifier.LineIndex++;
                 cursorModifier.SetColumnIndexAndPreferred(0);
@@ -860,8 +840,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
                             tabPositionLazyInsertRange.index = _tabKeyPositionsList.Count;
                     }
 
-                    // Subtract 1 here because the 'characterCountInserted' was eagerly consumed.
-                    tabPositionLazyInsertRange.localTabPositionList.Add(-1 + initialCursorPositionIndex + characterCountInserted);
+                    tabPositionLazyInsertRange.localTabPositionList.Add(initialCursorPositionIndex + characterIndex);
                 }
 
                 cursorModifier.SetColumnIndexAndPreferred(1 + cursorModifier.ColumnIndex);
@@ -873,8 +852,8 @@ public partial class TextEditorModelModifier : IModelTextEditor
             for (var i = initialCursorLineIndex; i < LineEndPositionList.Count; i++)
             {
                 var rowEndingTuple = LineEndPositionList[i];
-                rowEndingTuple.StartPositionIndexInclusive += characterCountInserted;
-                rowEndingTuple.EndPositionIndexExclusive += characterCountInserted;
+                rowEndingTuple.StartPositionIndexInclusive += value.Length;
+                rowEndingTuple.EndPositionIndexExclusive += value.Length;
             }
         }
 
@@ -886,7 +865,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
             {
                 for (var i = firstTabKeyPositionIndexToModify; i < TabKeyPositionsList.Count; i++)
                 {
-                    TabKeyPositionsList[i] += characterCountInserted;
+                    TabKeyPositionsList[i] += value.Length;
                 }
             }
         }
@@ -895,7 +874,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
         {
             var textSpanForInsertion = new TextEditorTextSpan(
                 initialCursorPositionIndex,
-                initialCursorPositionIndex + characterCountInserted,
+                initialCursorPositionIndex + value.Length,
                 0,
                 new(string.Empty),
                 string.Empty);

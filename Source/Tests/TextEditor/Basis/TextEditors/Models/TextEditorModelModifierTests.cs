@@ -1241,7 +1241,7 @@ public partial class TextEditorModelModifierTests
                         lineFeedPosition.StartPositionIndexInclusive);
                     // EndPositionIndexExclusive
                     Assert.Equal(
-                        8,
+                        7,
                         lineFeedPosition.EndPositionIndexExclusive);
                 }
 
@@ -1253,14 +1253,12 @@ public partial class TextEditorModelModifierTests
                 //
                 // The insert will have moved the 'EndOfFile' LineEnd from positionIndex 0 to a larger value.
                 // Specifically, the 'EndOfFile' should move by the length of the text inserted.
-                var endOfFile = modelModifier.LineEndPositionList[0];
+                var endOfFile = modelModifier.LineEndPositionList.Last();
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
-                Assert.Equal(12, endOfFile.StartPositionIndexInclusive);
-                Assert.Equal(12, endOfFile.EndPositionIndexExclusive);
+                Assert.Equal(11, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(11, endOfFile.EndPositionIndexExclusive);
             }
         }
-
-        throw new NotImplementedException();
     }
 
     /// <summary>
