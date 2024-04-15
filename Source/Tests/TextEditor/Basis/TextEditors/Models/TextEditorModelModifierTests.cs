@@ -2576,7 +2576,7 @@ public partial class TextEditorModelModifierTests
             {
                 var tabKeyPosition = modelModifier.TabKeyPositionsList[0];
                 Assert.Equal(
-                    7,
+                    8,
                     tabKeyPosition);
             }
             // Second tab key
@@ -2599,11 +2599,11 @@ public partial class TextEditorModelModifierTests
                     var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                     // StartPositionIndexInclusive
                     Assert.Equal(
-                        14,
+                        3,
                         carriageReturn.StartPositionIndexInclusive);
                     // EndPositionIndexExclusive
                     Assert.Equal(
-                        15,
+                        4,
                         carriageReturn.EndPositionIndexExclusive);
                 }
 
@@ -2632,11 +2632,11 @@ public partial class TextEditorModelModifierTests
                     var lineFeed = lineFeedMatches[1];
                     // StartPositionIndexInclusive
                     Assert.Equal(
-                        3,
+                        12,
                         lineFeed.StartPositionIndexInclusive);
                     // EndPositionIndexExclusive
                     Assert.Equal(
-                        4,
+                        13,
                         lineFeed.EndPositionIndexExclusive);
                 }
                 // Third LineFeed
@@ -2644,11 +2644,11 @@ public partial class TextEditorModelModifierTests
                     var lineFeed = lineFeedMatches[2];
                     // StartPositionIndexInclusive
                     Assert.Equal(
-                        6,
+                        15,
                         lineFeed.StartPositionIndexInclusive);
                     // EndPositionIndexExclusive
                     Assert.Equal(
-                        7,
+                        16,
                         lineFeed.EndPositionIndexExclusive);
                 }
                 // Fourth LineFeed
@@ -2656,11 +2656,11 @@ public partial class TextEditorModelModifierTests
                     var lineFeed = lineFeedMatches[3];
                     // StartPositionIndexInclusive
                     Assert.Equal(
-                        11,
+                        18,
                         lineFeed.StartPositionIndexInclusive);
                     // EndPositionIndexExclusive
                     Assert.Equal(
-                        12,
+                        19,
                         lineFeed.EndPositionIndexExclusive);
                 }
 
@@ -2674,11 +2674,11 @@ public partial class TextEditorModelModifierTests
                     var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                     // StartPositionIndexInclusive
                     Assert.Equal(
-                        17,
+                        6,
                         carriageReturnLineFeed.StartPositionIndexInclusive);
                     // EndPositionIndexExclusive
                     Assert.Equal(
-                        19,
+                        8,
                         carriageReturnLineFeed.EndPositionIndexExclusive);
                 }
 
@@ -2697,8 +2697,6 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(23, endOfFile.EndPositionIndexExclusive);
             }
         }
-
-        throw new NotImplementedException();
     }
 
     /// <summary>
