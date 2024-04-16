@@ -862,22 +862,22 @@ public partial class TextEditorModelModifier : IModelTextEditor
                     // which puts us after the "\r", and before the "\n", yet we know that "\r\n" is
                     // a multi-char-value character?
                 }
-                var aaa = new List<int>();
-                aaa.RemoveRange();
-                var startDeletingAtPositionIndex = 0;
+                //var aaa = new List<int>();
+                //aaa.RemoveRange();
+                //var startDeletingAtPositionIndex = 0;
 
-                // DeleteKind.Delete:
-                {
+                //// DeleteKind.Delete:
+                //{
                     
-                }
+                //}
 
-                // DeleteKind.Backspace
-                {
+                //// DeleteKind.Backspace
+                //{
 
-                }
+                //}
             }
 
-            HackyStepMetadata(deleteKind, expandWord, cursorModifier);
+            // HackyStepMetadata(deleteKind, expandWord, cursorModifier);
 
             // Delete metadata with the cursorModifier itself
             //
@@ -1016,9 +1016,9 @@ public partial class TextEditorModelModifier : IModelTextEditor
     /// This method returns the 'int charValueCount', so that it can be used
     /// in the <see cref="DeleteValue(int, int, CancellationToken)"/> method.
     /// </summary>
-    private int DeleteMetadata(
-        int count,
-        int initialCursorPositionIndex,
+    private (int characterValueCount, int charValuePositionIndex) DeleteMetadata(
+        int characterCount,
+        int tentativeCharValuePositionIndex,
         TextEditorCursorModifier cursorModifier,
         CancellationToken cancellationToken,
         DeleteKind deleteKind)
@@ -1030,11 +1030,13 @@ public partial class TextEditorModelModifier : IModelTextEditor
             _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
         }
 
+        var realCharValuePositionIndex = tentativeCharValuePositionIndex;
+
         // If cursor is out of bounds then continue
-        if (initialCursorPositionIndex > _charList.Count)
+        if (tentativeCharValuePositionIndex > _charList.Count)
             return 0;
 
-        int charValueCount = count;
+        int charValueCount = characterCount;
 
         // Cannot calculate this after text was deleted - it would be wrong
         int? selectionUpperBoundRowIndex = null;
@@ -1046,7 +1048,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
 
         for (int i = 0; i < charValueCount; i++)
         {
-            var deletePositionIndex = initialCursorPositionIndex + i;
+            var deletePositionIndex = tentativeCharValuePositionIndex + i;
 
             if (deletePositionIndex < 0)
                 break;
@@ -1092,7 +1094,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
                 {
                     cursorModifier.LineIndex--;
                     var startCurrentRowPositionIndex = this.GetLineEndPositionIndexExclusive(cursorModifier.LineIndex);
-                    var endingPositionIndex = initialCursorPositionIndex - charValueCount;
+                    var endingPositionIndex = tentativeCharValuePositionIndex - charValueCount;
 
                     cursorModifier.SetColumnIndexAndPreferred(endingPositionIndex - startCurrentRowPositionIndex);
                 }
@@ -1130,7 +1132,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
             rowEndingTuple.EndPositionIndexExclusive -= charValueCount;
         }
 
-        var firstTabKeyPositionIndexToModify = _tabKeyPositionsList.FindIndex(x => x >= initialCursorPositionIndex);
+        var firstTabKeyPositionIndexToModify = _tabKeyPositionsList.FindIndex(x => x >= tentativeCharValuePositionIndex);
 
         if (firstTabKeyPositionIndexToModify != -1)
         {
@@ -1143,8 +1145,8 @@ public partial class TextEditorModelModifier : IModelTextEditor
         // Reposition the Diagnostic Squigglies
         {
             var textSpanForInsertion = new TextEditorTextSpan(
-                initialCursorPositionIndex,
-                initialCursorPositionIndex + charValueCount,
+                tentativeCharValuePositionIndex,
+                tentativeCharValuePositionIndex + charValueCount,
                 0,
                 new(string.Empty),
                 string.Empty);
