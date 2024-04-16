@@ -340,14 +340,23 @@ public partial class TextEditorModelModifier : IModelTextEditor
     {
         if (KeyboardKeyFacts.IsMetaKey(keyboardEventArgs))
         {
-            if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventArgs.Key ||
-                KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key)
+            if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventArgs.Key)
             {
                 Delete(
-                    keyboardEventArgs,
                     cursorModifierBag,
                     1,
-                    cancellationToken);
+                    keyboardEventArgs.CtrlKey,
+                    cancellationToken,
+                    DeleteKind.Backspace);
+            }
+            else if (KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key)
+            {
+                Delete(
+                    cursorModifierBag,
+                    1,
+                    keyboardEventArgs.CtrlKey,
+                    cancellationToken,
+                    DeleteKind.Delete);
             }
         }
         else
@@ -423,14 +432,11 @@ public partial class TextEditorModelModifier : IModelTextEditor
                 var lowerColumnIndex = lowerPositionIndexInclusive - lowerRowData.LineStartPositionIndexInclusive;
 
                 Delete(
-                    new KeyboardEventArgs
-                    {
-                        Code = KeyboardKeyFacts.MetaKeys.DELETE,
-                        Key = KeyboardKeyFacts.MetaKeys.DELETE,
-                    },
                     cursorModifierBag,
                     1,
-                    CancellationToken.None);
+                    false,
+                    CancellationToken.None,
+                    DeleteKind.Delete);
 
                 // Move cursor to lower bound of text selection
                 cursorModifier.LineIndex = lowerRowData.LineIndex;
@@ -729,7 +735,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
             // Delete metadata with the cursorModifier itself
             //
             // Metadata must be done prior to 'DeleteValue'
-            var charValueCount = DeleteMetadata(count, initialCursorPositionIndex, cursorModifier, cancellationToken);
+            var charValueCount = DeleteMetadata(count, initialCursorPositionIndex, cursorModifier, cancellationToken, deleteKind);
 
             // Now the text still needs to be deleted.
             // The cursorModifier is invalid, because the metadata step moved its position.
@@ -867,7 +873,8 @@ public partial class TextEditorModelModifier : IModelTextEditor
         int count,
         int initialCursorPositionIndex,
         TextEditorCursorModifier cursorModifier,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        DeleteKind deleteKind)
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
@@ -890,12 +897,18 @@ public partial class TextEditorModelModifier : IModelTextEditor
         (int? index, int count) lineEndPositionLazyRemoveRange = (null, 0);
         (int? index, int count) tabPositionLazyRemoveRange = (null, 0);
 
-        for (int i = 0; i < charValueCount - 1; i++)
+        for (int i = 0; i < charValueCount; i++)
         {
             var deletePositionIndex = initialCursorPositionIndex + i;
 
-            if (deletePositionIndex < 0 || deletePositionIndex > _charList.Count - 1)
+            if (deletePositionIndex < 0)
                 break;
+
+            if (deletePositionIndex > _charList.Count - 1)
+            {
+                charValueCount--;
+                break;
+            }
 
             var charToDelete = _charList[deletePositionIndex];
 
@@ -904,7 +917,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
                 // A delete is a contiguous operation. Therefore, all that is needed to update the LineEndPositionList
                 // is a starting index, and a count.
                 var indexLineEnd = _lineEndPositionList.FindIndex(
-                    x => x.EndPositionIndexExclusive == deletePositionIndex);
+                    x => x.StartPositionIndexInclusive == deletePositionIndex);
 
                 var lineEnd = LineEndPositionList[indexLineEnd];
 
@@ -924,7 +937,11 @@ public partial class TextEditorModelModifier : IModelTextEditor
 
                 MutateRowEndingKindCount(lineEnd.LineEndKind, -1);
 
-                if (!selectionUpperBoundRowIndex.HasValue)
+                if (deleteKind == DeleteKind.Delete)
+                {
+                    // TODO: Do nothing; remove this codeblock
+                }
+                else if (!selectionUpperBoundRowIndex.HasValue)
                 {
                     cursorModifier.LineIndex--;
                     var startCurrentRowPositionIndex = this.GetLineEndPositionIndexExclusive(cursorModifier.LineIndex);

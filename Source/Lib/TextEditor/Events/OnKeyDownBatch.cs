@@ -136,19 +136,21 @@ public class OnKeyDownBatch : ITextEditorTask
                 if (KeyboardKeyFacts.MetaKeys.BACKSPACE == inspectThrottleEventOnKeyDown.KeyboardEventArgs.Key)
                 {
                     modelModifier.Delete(
-                        inspectThrottleEventOnKeyDown.KeyboardEventArgs,
                         cursorModifierBag,
                         ThrottleEventOnKeyDownList.Count,
-                        CancellationToken.None);
+                        inspectThrottleEventOnKeyDown.KeyboardEventArgs.CtrlKey,
+                        CancellationToken.None,
+                        TextEditorModelModifier.DeleteKind.Backspace);
                 }
 
                 if (KeyboardKeyFacts.MetaKeys.DELETE == inspectThrottleEventOnKeyDown.KeyboardEventArgs.Key)
                 {
                     modelModifier.Delete(
-                        inspectThrottleEventOnKeyDown.KeyboardEventArgs,
                         cursorModifierBag,
                         ThrottleEventOnKeyDownList.Count,
-                        CancellationToken.None);
+                        inspectThrottleEventOnKeyDown.KeyboardEventArgs.CtrlKey,
+                        CancellationToken.None,
+                        TextEditorModelModifier.DeleteKind.Delete);
                 }
             }
             else if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == inspectThrottleEventOnKeyDown.KeyboardEventArgs.Code ||
