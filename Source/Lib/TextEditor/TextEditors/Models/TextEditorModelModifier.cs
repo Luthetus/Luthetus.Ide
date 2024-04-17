@@ -675,28 +675,6 @@ public partial class TextEditorModelModifier : ITextEditorModel
     }
 
     /// <summary>
-    /// Use <see cref="Delete(CursorModifierBagTextEditor, int, bool, CancellationToken, DeleteKind)"/> instead.
-    /// This version is unsafe because it won't respect the user's cursor.
-    /// </summary>
-    public void Delete_Unsafe(
-        int rowIndex,
-        int columnIndex,
-        int columnCount,
-        bool expandWord,
-        CancellationToken cancellationToken,
-        DeleteKind deleteKind = DeleteKind.Delete)
-    {
-        var cursor = new TextEditorCursor(rowIndex, columnIndex, true);
-        var cursorModifier = new TextEditorCursorModifier(cursor);
-
-        var cursorModifierBag = new CursorModifierBagTextEditor(
-            Key<TextEditorViewModel>.Empty,
-            new List<TextEditorCursorModifier>() { cursorModifier });
-
-        Delete(cursorModifierBag, columnCount, expandWord, cancellationToken, deleteKind);
-    }
-
-    /// <summary>
     /// This method allows for a "RemoveRange" like operation on the text editor's contents.
     /// Any meta-data will automatically be updated (e.g. <see cref="ITextEditorModel.LineEndKindCountList"/>.
     /// </summary>

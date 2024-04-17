@@ -15,8 +15,8 @@ public record TextEditorCursor(
         
     }
     
-    public TextEditorCursor(int rowIndex, int columnIndex, bool isPrimaryCursor) 
-        : this(rowIndex, columnIndex, columnIndex, isPrimaryCursor, TextEditorSelection.Empty)
+    public TextEditorCursor(int lineIndex, int columnIndex, bool isPrimaryCursor) 
+        : this(lineIndex, columnIndex, columnIndex, isPrimaryCursor, TextEditorSelection.Empty)
     {
         
     }
