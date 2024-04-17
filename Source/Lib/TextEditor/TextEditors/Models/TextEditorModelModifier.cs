@@ -681,7 +681,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     public void Delete_Unsafe(
         int rowIndex,
         int columnIndex,
-        int count,
+        int columnCount,
         bool expandWord,
         CancellationToken cancellationToken,
         DeleteKind deleteKind = DeleteKind.Delete)
@@ -693,7 +693,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
             Key<TextEditorViewModel>.Empty,
             new List<TextEditorCursorModifier>() { cursorModifier });
 
-        Delete(cursorModifierBag, count, expandWord, cancellationToken, deleteKind);
+        Delete(cursorModifierBag, columnCount, expandWord, cancellationToken, deleteKind);
     }
 
     /// <summary>
@@ -750,10 +750,6 @@ public partial class TextEditorModelModifier : ITextEditorModel
         {
             var cursorModifier = cursorModifierBag.List[cursorIndex];
 
-            // TODO: Handle case where cursor has a selection.
-            if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
-                throw new NotImplementedException("TODO: Handle case where cursor has a selection");
-
             var tuple = DeleteMetadata(columnCount, cursorModifier, cancellationToken, deleteKind);
 
             if (tuple is null)
@@ -789,6 +785,21 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
         var initialLineIndex = cursorModifier.LineIndex;
         var positionIndex = this.GetPositionIndex(cursorModifier);
+
+        if (TextEditorSelectionHelper.HasSelectedText(cursorModifier) && cursorModifier.SelectionAnchorPositionIndex is not null)
+        {
+            // If user's cursor has a selection, then set the variables so the
+            // positionIndex is the selection.AnchorPositionIndex and the
+            // count is selection.EndPositionIndex - selection.AnchorPositionIndex.
+            // and that the 'DeleteKind.Delete' logic runs.
+            var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(cursorModifier.SelectionAnchorPositionIndex.Value);
+            cursorModifier.LineIndex = lineIndex;
+            initialLineIndex = cursorModifier.LineIndex;
+            cursorModifier.SetColumnIndexAndPreferred(columnIndex);
+            positionIndex = cursorModifier.SelectionAnchorPositionIndex.Value;
+            columnCount = cursorModifier.SelectionEndingPositionIndex - cursorModifier.SelectionAnchorPositionIndex.Value;
+            deleteKind = DeleteKind.Delete;
+        }
 
         // If cursor is out of bounds then continue.
         // NOTE: '_charList.Count' is a valid position for the cursor.
