@@ -74,7 +74,7 @@ public partial class FindOverlayDisplay : ComponentBase
                                 FindOverlayPresentationFacts.EmptyPresentationModel)
                             .Invoke(editContext);
 
-                        var presentationModel = modelModifier.PresentationModelsList.First(
+                        var presentationModel = modelModifier.PresentationModelList.First(
                             x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
                         if (presentationModel.PendingCalculation is null)
@@ -148,7 +148,7 @@ public partial class FindOverlayDisplay : ComponentBase
                             .Invoke(editContext)
                             ;
 
-                    var presentationModel = modelModifier.PresentationModelsList.First(
+                    var presentationModel = modelModifier.PresentationModelList.First(
                         x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
                     if (presentationModel.PendingCalculation is null)
@@ -251,7 +251,7 @@ public partial class FindOverlayDisplay : ComponentBase
                 if (modelModifier is null)
                     return;
 
-                var presentationModel = modelModifier.PresentationModelsList.FirstOrDefault(x =>
+                var presentationModel = modelModifier.PresentationModelList.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
                 if (presentationModel?.CompletedCalculation is not null)

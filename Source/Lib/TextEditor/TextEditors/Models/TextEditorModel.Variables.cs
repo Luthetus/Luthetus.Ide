@@ -22,26 +22,26 @@ public partial class TextEditorModel
     public ImmutableList<byte> DecorationByteList { get; init; }
     public ImmutableList<TextEditorPartition> PartitionList { get; init; }
 
-    public ImmutableList<EditBlock> EditBlocksList { get; init; } = ImmutableList<EditBlock>.Empty;
+    public ImmutableList<EditBlock> EditBlockList { get; init; } = ImmutableList<EditBlock>.Empty;
 
-    /// <inheritdoc cref="IModelTextEditor.LineEndPositionList"/>
+    /// <inheritdoc cref="ITextEditorModel.LineEndPositionList"/>
 	public ImmutableList<LineEnd> LineEndPositionList { get; init; } = ImmutableList<LineEnd>.Empty;
 	public ImmutableList<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; init; } = ImmutableList<(LineEndKind lineEndingKind, int count)>.Empty;
 	public ImmutableList<TextEditorPresentationModel> PresentationModelList { get; init; } = ImmutableList<TextEditorPresentationModel>.Empty;
     
-    /// <inheritdoc cref="IModelTextEditor.TabKeyPositionsList"/>
-	public ImmutableList<int> TabKeyPositionsList = ImmutableList<int>.Empty;
+    /// <inheritdoc cref="ITextEditorModel.TabKeyPositionList"/>
+	public ImmutableList<int> TabKeyPositionList = ImmutableList<int>.Empty;
     
-    /// <inheritdoc cref="IModelTextEditor.OnlyLineEndKind"/>
+    /// <inheritdoc cref="ITextEditorModel.OnlyLineEndKind"/>
     public LineEndKind? OnlyLineEndKind { get; init; }
     public LineEndKind UsingLineEndKind { get; init; }
     
-    /// <inheritdoc cref="IModelTextEditor.ResourceUri"/>
+    /// <inheritdoc cref="ITextEditorModel.ResourceUri"/>
     public ResourceUri ResourceUri { get; init; }
     public DateTime ResourceLastWriteTime { get; init; }
     public int PartitionSize { get; init; }
     
-    /// <inheritdoc cref="IModelTextEditor.FileExtension"/>
+    /// <inheritdoc cref="ITextEditorModel.FileExtension"/>
     public string FileExtension { get; init; }
     public IDecorationMapper DecorationMapper { get; init; }
     public ILuthCompilerService CompilerService { get; init; }

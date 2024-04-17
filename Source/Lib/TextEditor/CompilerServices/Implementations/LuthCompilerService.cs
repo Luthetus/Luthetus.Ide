@@ -176,7 +176,7 @@ public class LuthCompilerService : ILuthCompilerService
                     .Invoke(editContext)
                     .ConfigureAwait(false);
 
-                var presentationModel = modelModifier.PresentationModelsList.First(
+                var presentationModel = modelModifier.PresentationModelList.First(
                     x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
                 if (presentationModel.PendingCalculation is null)

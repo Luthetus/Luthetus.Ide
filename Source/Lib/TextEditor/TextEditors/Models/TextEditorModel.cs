@@ -11,7 +11,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
-/// <inheritdoc cref="IModelTextEditor"/>
+/// <inheritdoc cref="ITextEditorModel"/>
 public partial class TextEditorModel
 {
     public TextEditorModel(
@@ -36,9 +36,9 @@ public partial class TextEditorModel
         CharList = modifier.CharList;
         DecorationByteList = modifier.DecorationByteList;
         PartitionList = modifier.PartitionList;
-        LineEndKindCountList = modifier.LineEndKindCountsList.ToImmutableList();
+        LineEndKindCountList = modifier.LineEndKindCountList.ToImmutableList();
 		LineEndPositionList = modifier.LineEndPositionList.ToImmutableList();
-		TabKeyPositionsList = modifier.TabKeyPositionsList.ToImmutableList();
+		TabKeyPositionList = modifier.TabKeyPositionList.ToImmutableList();
 		OnlyLineEndKind = modifier.OnlyLineEndKind;
 		UsingLineEndKind = modifier.UsingLineEndKind;
 		MostCharactersOnASingleLineTuple = modifier.MostCharactersOnASingleLineTuple;
@@ -71,11 +71,11 @@ public partial class TextEditorModel
         DecorationByteList = decorationByteList;
         PartitionSize = partitionSize;
         PartitionList = partitionList;
-		EditBlocksList = editBlocksList;
+		EditBlockList = editBlocksList;
 		LineEndPositionList = rowEndingPositionsList;
 		LineEndKindCountList = rowEndingKindCountsList;
 		PresentationModelList = presentationModelsList;
-		TabKeyPositionsList = tabKeyPositionsList;
+		TabKeyPositionList = tabKeyPositionsList;
 		OnlyLineEndKind = onlyRowEndingKind;
 		UsingLineEndKind = usingRowEndingKind;
 		ResourceUri = resourceUri;

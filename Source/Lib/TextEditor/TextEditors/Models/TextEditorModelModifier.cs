@@ -27,9 +27,9 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// When reading state, if the state had been 'null coallesce assigned' then the field will
 /// be read. Otherwise, the existing TextEditorModel's value will be read.
 /// <br/><br/>
-/// <inheritdoc cref="IModelTextEditor"/>
+/// <inheritdoc cref="ITextEditorModel"/>
 /// </summary>
-public partial class TextEditorModelModifier : IModelTextEditor
+public partial class TextEditorModelModifier : ITextEditorModel
 {
     private readonly TextEditorModel _textEditorModel;
 
@@ -51,11 +51,11 @@ public partial class TextEditorModelModifier : IModelTextEditor
     public ImmutableList<byte> DecorationByteList => _decorationByteList is null ? _textEditorModel.DecorationByteList : _decorationByteList;
     public ImmutableList<TextEditorPartition> PartitionList => _partitionList is null ? _textEditorModel.PartitionList : _partitionList;
 
-    public IList<EditBlock> EditBlockList => _editBlocksList is null ? _textEditorModel.EditBlocksList : _editBlocksList;
+    public IList<EditBlock> EditBlockList => _editBlocksList is null ? _textEditorModel.EditBlockList : _editBlocksList;
     public IList<LineEnd> LineEndPositionList => _lineEndPositionList is null ? _textEditorModel.LineEndPositionList : _lineEndPositionList;
-    public IList<(LineEndKind lineEndKind, int count)> LineEndKindCountsList => _lineEndKindCountList is null ? _textEditorModel.LineEndKindCountList : _lineEndKindCountList;
-    public IList<TextEditorPresentationModel> PresentationModelsList => _presentationModelsList is null ? _textEditorModel.PresentationModelList : _presentationModelsList;
-    public IList<int> TabKeyPositionsList => _tabKeyPositionsList is null ? _textEditorModel.TabKeyPositionsList : _tabKeyPositionsList;
+    public IList<(LineEndKind lineEndKind, int count)> LineEndKindCountList => _lineEndKindCountList is null ? _textEditorModel.LineEndKindCountList : _lineEndKindCountList;
+    public IList<TextEditorPresentationModel> PresentationModelList => _presentationModelsList is null ? _textEditorModel.PresentationModelList : _presentationModelsList;
+    public IList<int> TabKeyPositionList => _tabKeyPositionsList is null ? _textEditorModel.TabKeyPositionList : _tabKeyPositionsList;
     public LineEndKind? OnlyLineEndKind => _onlyLineEndKindWasModified ? _onlyLineEndKind : _textEditorModel.OnlyLineEndKind;
     public LineEndKind UsingLineEndKind => _usingLineEndKind ?? _textEditorModel.UsingLineEndKind;
     public ResourceUri ResourceUri => _resourceUri ?? _textEditorModel.ResourceUri;
@@ -137,11 +137,11 @@ public partial class TextEditorModelModifier : IModelTextEditor
             _decorationByteList is null ? _textEditorModel.DecorationByteList : _decorationByteList,
             PartitionSize,
             _partitionList is null ? _textEditorModel.PartitionList : _partitionList,
-            _editBlocksList is null ? _textEditorModel.EditBlocksList : _editBlocksList.ToImmutableList(),
+            _editBlocksList is null ? _textEditorModel.EditBlockList : _editBlocksList.ToImmutableList(),
             _lineEndPositionList is null ? _textEditorModel.LineEndPositionList : _lineEndPositionList.ToImmutableList(),
             _lineEndKindCountList is null ? _textEditorModel.LineEndKindCountList : _lineEndKindCountList.ToImmutableList(),
             _presentationModelsList is null ? _textEditorModel.PresentationModelList : _presentationModelsList.ToImmutableList(),
-            _tabKeyPositionsList is null ? _textEditorModel.TabKeyPositionsList : _tabKeyPositionsList.ToImmutableList(),
+            _tabKeyPositionsList is null ? _textEditorModel.TabKeyPositionList : _tabKeyPositionsList.ToImmutableList(),
             _onlyLineEndKindWasModified ? _onlyLineEndKind : _textEditorModel.OnlyLineEndKind,
             _usingLineEndKind ?? _textEditorModel.UsingLineEndKind,
             _resourceUri ?? _textEditorModel.ResourceUri,
@@ -162,7 +162,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
         {
             _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
             _lineEndPositionList ??= _textEditorModel.LineEndPositionList.ToList();
-            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
+            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionList.ToList();
             _lineEndKindCountList ??= _textEditorModel.LineEndKindCountList.ToList();
         }
 
@@ -227,7 +227,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
         {
             _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
             _lineEndPositionList ??= _textEditorModel.LineEndPositionList.ToList();
-            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
+            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionList.ToList();
             _lineEndKindCountList ??= _textEditorModel.LineEndKindCountList.ToList();
         }
 
@@ -286,7 +286,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
             }
 
             if (character == KeyboardKeyFacts.WhitespaceCharacters.TAB)
-                TabKeyPositionsList.Add(index);
+                TabKeyPositionList.Add(index);
 
             previousCharacter = character;
         }
@@ -415,7 +415,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _lineEndPositionList ??= _textEditorModel.LineEndPositionList.ToList();
-            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
+            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionList.ToList();
             _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
         }
 
@@ -488,7 +488,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _lineEndPositionList ??= _textEditorModel.LineEndPositionList.ToList();
-            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
+            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionList.ToList();
             _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
         }
 
@@ -595,9 +595,9 @@ public partial class TextEditorModelModifier : IModelTextEditor
 
             if (firstTabKeyPositionIndexToModify != -1)
             {
-                for (var i = firstTabKeyPositionIndexToModify; i < TabKeyPositionsList.Count; i++)
+                for (var i = firstTabKeyPositionIndexToModify; i < TabKeyPositionList.Count; i++)
                 {
-                    TabKeyPositionsList[i] += value.Length;
+                    TabKeyPositionList[i] += value.Length;
                 }
             }
         }
@@ -613,7 +613,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
 
             var textModification = new TextEditorTextModification(true, textSpanForInsertion);
 
-            foreach (var presentationModel in PresentationModelsList)
+            foreach (var presentationModel in PresentationModelList)
             {
                 presentationModel.CompletedCalculation?.TextModificationsSinceRequestList.Add(textModification);
                 presentationModel.PendingCalculation?.TextModificationsSinceRequestList.Add(textModification);
@@ -697,31 +697,50 @@ public partial class TextEditorModelModifier : IModelTextEditor
     }
 
     /// <summary>
-    /// The 'expandWord' parameter is applied after moving by the 'count' parameter.<br/>
-    /// 
+    /// This method allows for a "RemoveRange" like operation on the text editor's contents.
+    /// Any meta-data will automatically be updated (e.g. <see cref="ITextEditorModel.LineEndKindCountList"/>.
+    /// </summary>
+    /// <param name="cursorModifierBag">
+    /// The list of cursors that indicate the positionIndex to start a "RemoveRange" operation.
+    /// The cursors are iterated backwards, with each cursor being its own "RemoveRange" operation.
+    /// </param>
+    /// <param name="columnCount">
+    /// The amount of columns to delete. If a the value of a column is of 2-char length (e.g. "\r\n"),
+    /// then internally this columnCount will be converted to a 'charCount' of the corrected length.
+    /// </param>
+    /// <param name="expandWord">
+    /// Applied after moving by the 'count' parameter.<br/>
     /// Ex:
     ///     count of 1, and expandWord of true;
     ///     will move 1 char-value from the initialPositionIndex.
     ///     Afterwards, if expandWord is true, then the cursor is checked to be within a word, or at the start or end of one.
     ///     If the cursor is at the start or end of one, then the selection to delete is expanded such that it contains
     ///     the entire word that the cursor ended at.
-    /// </summary>
+    /// </param>
+    /// <param name="cancellationToken"></param>
+    /// <param name="deleteKind">
+    /// The default <see cref="DeleteKind.Delete"/> will do logic similar to a "RemoveRange" like
+    /// operation on a collection type.<br/>
+    /// If one has keyboard input from a user, one might want to have the user's backspace key
+    /// pass in the <see cref="DeleteKind.Backspace"/> parameter.
+    /// Then, for a user's delete key, pass in <see cref="DeleteKind.Delete"/>.
+    /// </param>
     public void Delete(
         CursorModifierBagTextEditor cursorModifierBag,
-        int characterCount,
+        int columnCount,
         bool expandWord,
         CancellationToken cancellationToken,
         DeleteKind deleteKind = DeleteKind.Delete)
     {
-        if (characterCount < 0)
-            throw new ApplicationException("characterCount < 0");
+        if (columnCount < 0)
+            throw new ApplicationException($"{nameof(columnCount)} < 0");
 
         SetIsDirtyTrue();
 
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _lineEndPositionList ??= _textEditorModel.LineEndPositionList.ToList();
-            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
+            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionList.ToList();
             _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
         }
 
@@ -733,19 +752,15 @@ public partial class TextEditorModelModifier : IModelTextEditor
 
             // TODO: Handle case where cursor has a selection.
             if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
-            {
                 throw new NotImplementedException("TODO: Handle case where cursor has a selection");
-            }
 
-            var tuple = deleteKind == DeleteKind.Delete
-                ? DeleteMetadata_Delete(characterCount, cursorModifier, cancellationToken, deleteKind)
-                : DeleteMetadata_Backspace(characterCount, cursorModifier, cancellationToken, deleteKind);
+            var tuple = DeleteMetadata(columnCount, cursorModifier, cancellationToken, deleteKind);
 
             if (tuple is null)
                 return;
 
-            var (characterValueCount, charValuePositionIndex) = tuple.Value;
-            DeleteValue(charValuePositionIndex, characterValueCount, cancellationToken);
+            var (positionIndex, charCount) = tuple.Value;
+            DeleteValue(positionIndex, charCount, cancellationToken);
         }
     }
 
@@ -759,8 +774,8 @@ public partial class TextEditorModelModifier : IModelTextEditor
     /// This method returns the 'int charValueCount', so that it can be used
     /// in the <see cref="DeleteValue(int, int, CancellationToken)"/> method.
     /// </summary>
-    private (int charValuePositionIndex, int characterValueCount)? DeleteMetadata_Delete(
-        int characterCount,
+    private (int positionIndex, int charCount)? DeleteMetadata(
+        int columnCount,
         TextEditorCursorModifier cursorModifier,
         CancellationToken cancellationToken,
         DeleteKind deleteKind)
@@ -768,205 +783,120 @@ public partial class TextEditorModelModifier : IModelTextEditor
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _lineEndPositionList ??= _textEditorModel.LineEndPositionList.ToList();
-            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
+            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionList.ToList();
             _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
         }
 
         var initialLineIndex = cursorModifier.LineIndex;
-        var charValuePositionIndex = this.GetPositionIndex(cursorModifier);
+        var positionIndex = this.GetPositionIndex(cursorModifier);
 
-        // If cursor is out of bounds then continue
-        if (charValuePositionIndex > _charList.Count || charValuePositionIndex < 0)
-            throw new ApplicationException("charValuePositionIndex > _charList.Count || charValuePositionIndex < 0");
+        // If cursor is out of bounds then continue.
+        // NOTE: '_charList.Count' is a valid position for the cursor.
+        if (positionIndex > _charList.Count || positionIndex < 0)
+            throw new ApplicationException($"{nameof(positionIndex)} > {nameof(_charList)}.{nameof(_charList.Count)} || {nameof(positionIndex)} < 0");
 
         (int? index, int count) lineEndPositionLazyRemoveRange = (null, 0);
         (int? index, int count) tabPositionLazyRemoveRange = (null, 0);
 
-        var charValueCount = 0;
+        var charCount = 0;
 
-        for (int i = 0; i < characterCount; i++)
+        if (deleteKind == DeleteKind.Delete)
         {
-            var charValueDeletePositionIndex = charValuePositionIndex + charValueCount;
-            var charToDelete = _charList[charValueDeletePositionIndex];
-
-            if (KeyboardKeyFacts.IsLineEndingCharacter(charToDelete))
+            for (int i = 0; i < columnCount; i++)
             {
-                // A delete is a contiguous operation. Therefore, all that is needed to update the LineEndPositionList
-                // is a starting index, and a count.
-                var indexLineEnd = _lineEndPositionList.FindIndex(
-                    x => x.StartPositionIndexInclusive == charValueDeletePositionIndex);
+                var toDeletePositionIndex = positionIndex + charCount;
+                if (toDeletePositionIndex < 0 || toDeletePositionIndex >= DocumentLength)
+                    break;
 
-                var lineEnd = LineEndPositionList[indexLineEnd];
+                var charToDelete = _charList[toDeletePositionIndex];
 
-                // Delete starts at the lowest index, therefore use '??=' to only assign once.
-                lineEndPositionLazyRemoveRange.index ??= indexLineEnd;
-                lineEndPositionLazyRemoveRange.count++;
-
-                var lengthOfLineEnd = LineEndPositionList[indexLineEnd].LineEndKind.AsCharacters().Length;
-                charValueCount += lengthOfLineEnd;
-
-                MutateLineEndKindCount(lineEnd.LineEndKind, -1);
-            }
-            else
-            {
-                charValueCount++;
-
-                if (charToDelete == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+                if (KeyboardKeyFacts.IsLineEndingCharacter(charToDelete))
                 {
-                    var indexTabKey = _tabKeyPositionsList.FindIndex(
-                        x => x == charValueDeletePositionIndex);
+                    // A delete is a contiguous operation. Therefore, all that is needed to update the LineEndPositionList
+                    // is a starting index, and a count.
+                    var indexLineEnd = _lineEndPositionList.FindIndex(
+                        x => x.StartPositionIndexInclusive == toDeletePositionIndex);
+
+                    var lineEnd = LineEndPositionList[indexLineEnd];
 
                     // Delete starts at the lowest index, therefore use '??=' to only assign once.
-                    tabPositionLazyRemoveRange.index ??= indexTabKey;
-                    tabPositionLazyRemoveRange.count++;
+                    lineEndPositionLazyRemoveRange.index ??= indexLineEnd;
+                    lineEndPositionLazyRemoveRange.count++;
+
+                    var lengthOfLineEnd = LineEndPositionList[indexLineEnd].LineEndKind.AsCharacters().Length;
+                    charCount += lengthOfLineEnd;
+
+                    MutateLineEndKindCount(lineEnd.LineEndKind, -1);
+                }
+                else
+                {
+                    charCount++;
+
+                    if (charToDelete == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+                    {
+                        var indexTabKey = _tabKeyPositionsList.FindIndex(
+                            x => x == toDeletePositionIndex);
+
+                        // Delete starts at the lowest index, therefore use '??=' to only assign once.
+                        tabPositionLazyRemoveRange.index ??= indexTabKey;
+                        tabPositionLazyRemoveRange.count++;
+                    }
                 }
             }
         }
-
-        // Reposition the LineEnd(s)
+        else if (deleteKind == DeleteKind.Backspace)
         {
-            for (var i = initialLineIndex; i < LineEndPositionList.Count; i++)
+            for (int i = 0; i < columnCount; i++)
             {
-                var lineEnd = LineEndPositionList[i];
-                lineEnd.StartPositionIndexInclusive -= charValueCount;
-                lineEnd.EndPositionIndexExclusive -= charValueCount;
-            }
-        }
+                // Minus 1 here because 'Backspace' deletes the previous character.
+                var toDeletePositionIndex = positionIndex - charCount - 1;
+                if (toDeletePositionIndex < 0 || toDeletePositionIndex >= DocumentLength)
+                    break;
 
-        // Reposition the Tab(s)
-        {
-            var firstTabKeyPositionIndexToModify = _tabKeyPositionsList.FindIndex(x => x >= charValuePositionIndex);
+                var charToDelete = _charList[toDeletePositionIndex];
 
-            if (firstTabKeyPositionIndexToModify != -1)
-            {
-                for (var i = firstTabKeyPositionIndexToModify; i < TabKeyPositionsList.Count; i++)
+                if (KeyboardKeyFacts.IsLineEndingCharacter(charToDelete))
                 {
-                    TabKeyPositionsList[i] -= charValueCount;
-                }
-            }
-        }
+                    // A delete is a contiguous operation. Therefore, all that is needed to update the LineEndPositionList
+                    // is a starting index, and a count.
+                    //
+                    // Here there is an 'or' expression.
+                    // The left side checks for line endings of length '1' (i.e. "\n")
+                    // The right side checks for line endings of length '2' (i.e. "\r\n")
+                    var indexLineEnd = _lineEndPositionList.FindIndex(
+                        x => x.StartPositionIndexInclusive == toDeletePositionIndex ||
+                             x.StartPositionIndexInclusive == toDeletePositionIndex - 1);
 
-        // Reposition the PresentationModel(s)
-        {
-            var textSpanForInsertion = new TextEditorTextSpan(
-                charValuePositionIndex,
-                charValuePositionIndex + charValueCount,
-                0,
-                new(string.Empty),
-                string.Empty);
-
-            var textModification = new TextEditorTextModification(false, textSpanForInsertion);
-
-            foreach (var presentationModel in PresentationModelsList)
-            {
-                presentationModel.CompletedCalculation?.TextModificationsSinceRequestList.Add(textModification);
-                presentationModel.PendingCalculation?.TextModificationsSinceRequestList.Add(textModification);
-            }
-        }
-
-        // TODO: Fix tracking the MostCharactersOnASingleLineTuple this way is possibly inefficient - should instead only check the rows that changed
-        {
-            (int lineIndex, int lineLength) localMostCharactersOnASingleLineTuple = (0, 0);
-
-            for (var i = 0; i < LineEndPositionList.Count; i++)
-            {
-                var lengthOfLine = this.GetLengthOfLine(i);
-
-                if (lengthOfLine > localMostCharactersOnASingleLineTuple.lineLength)
-                {
-                    localMostCharactersOnASingleLineTuple = (i, lengthOfLine);
-                }
-            }
-
-            localMostCharactersOnASingleLineTuple = (
-                localMostCharactersOnASingleLineTuple.lineIndex,
-                localMostCharactersOnASingleLineTuple.lineLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
-
-            _mostCharactersOnASingleLineTuple = localMostCharactersOnASingleLineTuple;
-        }
-
-        // Delete metadata
-        {
-            if (lineEndPositionLazyRemoveRange.index is not null)
-            {
-                _lineEndPositionList.RemoveRange(
-                    lineEndPositionLazyRemoveRange.index.Value,
-                    lineEndPositionLazyRemoveRange.count);
-            }
-
-            if (tabPositionLazyRemoveRange.index is not null)
-            {
-                _tabKeyPositionsList.RemoveRange(
-                    tabPositionLazyRemoveRange.index.Value,
-                    tabPositionLazyRemoveRange.count);
-            }
-        }
-
-        return (charValuePositionIndex, charValueCount);
-    }
-
-    private (int charValuePositionIndex, int characterValueCount)? DeleteMetadata_Backspace(
-        int characterCount,
-        TextEditorCursorModifier cursorModifier,
-        CancellationToken cancellationToken,
-        DeleteKind deleteKind)
-    {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _lineEndPositionList ??= _textEditorModel.LineEndPositionList.ToList();
-            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionsList.ToList();
-            _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
-        }
-
-        var initialLineIndex = cursorModifier.LineIndex;
-        var charValuePositionIndex = this.GetPositionIndex(cursorModifier);
-
-        // If cursor is out of bounds then continue
-        if (charValuePositionIndex > _charList.Count || charValuePositionIndex <= 0)
-            throw new ApplicationException("charValuePositionIndex > _charList.Count || charValuePositionIndex < 0");
-
-        (int? index, int count) lineEndPositionLazyRemoveRange = (null, 0);
-        (int? index, int count) tabPositionLazyRemoveRange = (null, 0);
-
-        var charValueCount = 0;
-
-        for (int i = 0; i < characterCount; i++)
-        {
-            var charValueDeletePositionIndex = charValuePositionIndex - charValueCount;
-            var charToDelete = _charList[charValueDeletePositionIndex];
-
-            if (KeyboardKeyFacts.IsLineEndingCharacter(charToDelete))
-            {
-                // A delete is a contiguous operation. Therefore, all that is needed to update the LineEndPositionList
-                // is a starting index, and a count.
-                var indexLineEnd = _lineEndPositionList.FindIndex(
-                    x => x.EndPositionIndexExclusive == charValueDeletePositionIndex);
-
-                var lineEnd = LineEndPositionList[indexLineEnd];
-
-                // Backspace starts at the highest index, therefore use '=' to only assign everytime.
-                lineEndPositionLazyRemoveRange.index = indexLineEnd;
-                lineEndPositionLazyRemoveRange.count++;
-
-                var lengthOfLineEnd = LineEndPositionList[indexLineEnd].LineEndKind.AsCharacters().Length;
-                charValueCount += lengthOfLineEnd;
-
-                MutateLineEndKindCount(lineEnd.LineEndKind, -1);
-            }
-            else
-            {
-                charValueCount++;
-
-                if (charToDelete == KeyboardKeyFacts.WhitespaceCharacters.TAB)
-                {
-                    var indexTabKey = _tabKeyPositionsList.FindIndex(
-                        x => x == charValueDeletePositionIndex);
+                    var lineEnd = LineEndPositionList[indexLineEnd];
 
                     // Backspace starts at the highest index, therefore use '=' to only assign everytime.
-                    tabPositionLazyRemoveRange.index = indexTabKey;
-                    tabPositionLazyRemoveRange.count++;
+                    lineEndPositionLazyRemoveRange.index = indexLineEnd;
+                    lineEndPositionLazyRemoveRange.count++;
+
+                    var lengthOfLineEnd = LineEndPositionList[indexLineEnd].LineEndKind.AsCharacters().Length;
+                    charCount += lengthOfLineEnd;
+
+                    MutateLineEndKindCount(lineEnd.LineEndKind, -1);
+                }
+                else
+                {
+                    charCount++;
+
+                    if (charToDelete == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+                    {
+                        var indexTabKey = _tabKeyPositionsList.FindIndex(
+                            x => x == toDeletePositionIndex);
+
+                        // Backspace starts at the highest index, therefore use '=' to only assign everytime.
+                        tabPositionLazyRemoveRange.index = indexTabKey;
+                        tabPositionLazyRemoveRange.count++;
+                    }
                 }
             }
+        }
+        else
+        {
+            throw new NotImplementedException();
         }
 
         // Reposition the LineEnd(s)
@@ -974,20 +904,20 @@ public partial class TextEditorModelModifier : IModelTextEditor
             for (var i = initialLineIndex; i < LineEndPositionList.Count; i++)
             {
                 var lineEnd = LineEndPositionList[i];
-                lineEnd.StartPositionIndexInclusive -= charValueCount;
-                lineEnd.EndPositionIndexExclusive -= charValueCount;
+                lineEnd.StartPositionIndexInclusive -= charCount;
+                lineEnd.EndPositionIndexExclusive -= charCount;
             }
         }
 
         // Reposition the Tab(s)
         {
-            var firstTabKeyPositionIndexToModify = _tabKeyPositionsList.FindIndex(x => x >= charValuePositionIndex);
+            var firstTabKeyPositionIndexToModify = _tabKeyPositionsList.FindIndex(x => x >= positionIndex);
 
             if (firstTabKeyPositionIndexToModify != -1)
             {
-                for (var i = firstTabKeyPositionIndexToModify; i < TabKeyPositionsList.Count; i++)
+                for (var i = firstTabKeyPositionIndexToModify; i < TabKeyPositionList.Count; i++)
                 {
-                    TabKeyPositionsList[i] -= charValueCount;
+                    TabKeyPositionList[i] -= charCount;
                 }
             }
         }
@@ -995,15 +925,15 @@ public partial class TextEditorModelModifier : IModelTextEditor
         // Reposition the PresentationModel(s)
         {
             var textSpanForInsertion = new TextEditorTextSpan(
-                charValuePositionIndex,
-                charValuePositionIndex + charValueCount,
+                positionIndex,
+                positionIndex + charCount,
                 0,
                 new(string.Empty),
                 string.Empty);
 
             var textModification = new TextEditorTextModification(false, textSpanForInsertion);
 
-            foreach (var presentationModel in PresentationModelsList)
+            foreach (var presentationModel in PresentationModelList)
             {
                 presentationModel.CompletedCalculation?.TextModificationsSinceRequestList.Add(textModification);
                 presentationModel.PendingCalculation?.TextModificationsSinceRequestList.Add(textModification);
@@ -1048,16 +978,28 @@ public partial class TextEditorModelModifier : IModelTextEditor
             }
         }
 
-        return (charValuePositionIndex, charValueCount);
+        if (deleteKind == DeleteKind.Delete)
+        {
+            return (positionIndex, charCount);
+        }
+        else if (deleteKind == DeleteKind.Backspace)
+        {
+            var calculatedPositionIndex = positionIndex - charCount;
+            return (calculatedPositionIndex, charCount);
+        }
+        else
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    private void DeleteValue(int count, int initialCursorPositionIndex, CancellationToken cancellationToken)
+    private void DeleteValue(int positionIndex, int count, CancellationToken cancellationToken)
     {
         // If cursor is out of bounds then continue
-        if (initialCursorPositionIndex > _charList.Count)
+        if (positionIndex >= _charList.Count)
             return;
 
-        __RemoveRange(initialCursorPositionIndex, count);
+        __RemoveRange(positionIndex, count);
     }
 
     public void DeleteTextByMotion(
@@ -1110,7 +1052,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
-            _editBlocksList ??= _textEditorModel.EditBlocksList.ToList();
+            _editBlocksList ??= _textEditorModel.EditBlockList.ToList();
             _editBlockIndex ??= _textEditorModel.EditBlockIndex;
         }
 
@@ -1127,7 +1069,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
-            _editBlocksList ??= _textEditorModel.EditBlocksList.ToList();
+            _editBlocksList ??= _textEditorModel.EditBlockList.ToList();
             _editBlockIndex ??= _textEditorModel.EditBlockIndex;
         }
 
@@ -1153,7 +1095,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
-            _editBlocksList ??= _textEditorModel.EditBlocksList.ToList();
+            _editBlocksList ??= _textEditorModel.EditBlockList.ToList();
             _editBlockIndex ??= _textEditorModel.EditBlockIndex;
         }
 
@@ -1185,8 +1127,8 @@ public partial class TextEditorModelModifier : IModelTextEditor
             _presentationModelsList ??= _textEditorModel.PresentationModelList.ToList();
         }
 
-        if (!PresentationModelsList.Any(x => x.TextEditorPresentationKey == presentationModel.TextEditorPresentationKey))
-            PresentationModelsList.Add(presentationModel);
+        if (!PresentationModelList.Any(x => x.TextEditorPresentationKey == presentationModel.TextEditorPresentationKey))
+            PresentationModelList.Add(presentationModel);
     }
 
     public void StartPendingCalculatePresentationModel(
@@ -1206,8 +1148,8 @@ public partial class TextEditorModelModifier : IModelTextEditor
 
         // The presentation model is expected to always be registered at this point.
 
-        var presentationModel = PresentationModelsList[indexOfPresentationModel];
-        PresentationModelsList[indexOfPresentationModel] = presentationModel with
+        var presentationModel = PresentationModelList[indexOfPresentationModel];
+        PresentationModelList[indexOfPresentationModel] = presentationModel with
         {
             PendingCalculation = new(this.GetAllText())
         };
@@ -1231,7 +1173,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
 
         // The presentation model is expected to always be registered at this point.
 
-        var presentationModel = PresentationModelsList[indexOfPresentationModel];
+        var presentationModel = PresentationModelList[indexOfPresentationModel];
 
         if (presentationModel.PendingCalculation is null)
             return;
@@ -1241,7 +1183,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
             TextSpanList = calculatedTextSpans
         };
 
-        PresentationModelsList[indexOfPresentationModel] = presentationModel with
+        PresentationModelList[indexOfPresentationModel] = presentationModel with
         {
             PendingCalculation = null,
             CompletedCalculation = calculation,
@@ -1261,9 +1203,9 @@ public partial class TextEditorModelModifier : IModelTextEditor
         }
 
         var indexOfRowEndingKindCount = _lineEndKindCountList.FindIndex(x => x.lineEndKind == rowEndingKind);
-        var currentRowEndingKindCount = LineEndKindCountsList[indexOfRowEndingKindCount].count;
+        var currentRowEndingKindCount = LineEndKindCountList[indexOfRowEndingKindCount].count;
 
-        LineEndKindCountsList[indexOfRowEndingKindCount] = (rowEndingKind, currentRowEndingKindCount + changeBy);
+        LineEndKindCountList[indexOfRowEndingKindCount] = (rowEndingKind, currentRowEndingKindCount + changeBy);
 
         CheckRowEndingPositions(false);
     }
@@ -1277,7 +1219,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
             _usingLineEndKind ??= _textEditorModel.UsingLineEndKind;
         }
 
-        var existingRowEndingsList = LineEndKindCountsList
+        var existingRowEndingsList = LineEndKindCountList
             .Where(x => x.count > 0)
             .ToArray();
 
@@ -1311,7 +1253,7 @@ public partial class TextEditorModelModifier : IModelTextEditor
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
-            _editBlocksList ??= _textEditorModel.EditBlocksList.ToList();
+            _editBlocksList ??= _textEditorModel.EditBlockList.ToList();
             _editBlockIndex ??= _textEditorModel.EditBlockIndex;
         }
 

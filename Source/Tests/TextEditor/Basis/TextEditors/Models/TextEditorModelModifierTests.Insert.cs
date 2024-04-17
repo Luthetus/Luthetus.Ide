@@ -67,10 +67,10 @@ public partial class TextEditorModelModifierTests
 
             // 1 tab key was included in the string that was inserted.
             // Therefore, the Count is 1.
-            Assert.Equal(1, modelModifier.TabKeyPositionsList.Count);
+            Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
             Assert.Equal(
                 7,
-                modelModifier.TabKeyPositionsList.Single());
+                modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
@@ -79,7 +79,7 @@ public partial class TextEditorModelModifierTests
                 // into a '\n' that follows causing a "\r\n" to appear. Therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // 1 LineFeed was inserted.
                 // But, for the time being, only LineFeed insertions are permitted to avoid insertion of '\r'
@@ -87,14 +87,14 @@ public partial class TextEditorModelModifierTests
                 // Because 3 total LineEnds were inserted, the count is 3.
                 Assert.Equal(
                     3,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 
                 // 1 CarriageReturnLineFeed was inserted.
                 // But, for the time being, only LineFeed insertions are permitted to avoid insertion of '\r'
                 // into a '\n' that follows causing a "\r\n" to appear. Therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 var lineFeedPositionList = modelModifier.LineEndPositionList
                     .Where(x => x.LineEndKind == LineEndKind.LineFeed)
@@ -209,10 +209,10 @@ public partial class TextEditorModelModifierTests
 
             // 1 tab key was included in the initial content for the TextEditorModel but,
             // now that the content is set to 'string.Empty', the Count is 0.
-            Assert.Equal(1, modelModifier.TabKeyPositionsList.Count);
+            Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
             Assert.Equal(
                 7,
-                modelModifier.TabKeyPositionsList.Single());
+                modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
@@ -221,7 +221,7 @@ public partial class TextEditorModelModifierTests
                 // into a '\n' that follows causing a "\r\n" to appear. Therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // 1 LineFeed was inserted.
                 // But, for the time being, only LineFeed insertions are permitted to avoid insertion of '\r'
@@ -229,14 +229,14 @@ public partial class TextEditorModelModifierTests
                 // Because 3 total LineEnds were inserted, the count is 3.
                 Assert.Equal(
                     3,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
                 // 1 CarriageReturnLineFeed was inserted.
                 // But, for the time being, only LineFeed insertions are permitted to avoid insertion of '\r'
                 // into a '\n' that follows causing a "\r\n" to appear. Therefore the count is 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 var lineFeedPositionList = modelModifier.LineEndPositionList
                     .Where(x => x.LineEndKind == LineEndKind.LineFeed)
@@ -405,7 +405,7 @@ public partial class TextEditorModelModifierTests
 
             // An insertion which is out of bounds due to being too large does nothing and immediately returns.
             // Therefore, the count remains 0.
-            Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+            Assert.Equal(0, modelModifier.TabKeyPositionList.Count);
 
             // LineEnd related code-block-grouping:
             {
@@ -413,19 +413,19 @@ public partial class TextEditorModelModifierTests
                 // Therefore, the count remains 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // An insertion which is out of bounds due to being too large does nothing and immediately returns.
                 // Therefore, the count remains 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
                 // An insertion which is out of bounds due to being too large does nothing and immediately returns.
                 // Therefore, the count remains 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 // An insertion which is out of bounds due to being too large does nothing and immediately returns.
                 // Therefore, the count remains 1, due to the existance of the special-'EndOfFile' line ending.
@@ -559,7 +559,7 @@ public partial class TextEditorModelModifierTests
 
             // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
             // Therefore, the count remains 0.
-            Assert.Equal(0, modelModifier.TabKeyPositionsList.Count);
+            Assert.Equal(0, modelModifier.TabKeyPositionList.Count);
 
             // LineEnd related code-block-grouping:
             {
@@ -567,19 +567,19 @@ public partial class TextEditorModelModifierTests
                 // Therefore, the count remains 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
                 // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
                 // Therefore, the count remains 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
                 // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
                 // Therefore, the count remains 0.
                 Assert.Equal(
                     0,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
                 // Therefore, the count remains 1, due to the existance of the special-'EndOfFile' line ending.
@@ -685,17 +685,17 @@ public partial class TextEditorModelModifierTests
             // 1 tab key was included in the initial content for the TextEditorModel.
             // Furthermore, 1 tab key was inserted.
             // Therefore the count is 2.
-            Assert.Equal(2, modelModifier.TabKeyPositionsList.Count);
+            Assert.Equal(2, modelModifier.TabKeyPositionList.Count);
             // First tab key
             {
-                var tabKeyPosition = modelModifier.TabKeyPositionsList[0];
+                var tabKeyPosition = modelModifier.TabKeyPositionList[0];
                 Assert.Equal(
                     7,
                     tabKeyPosition);
             }
             // Second tab key
             {
-                var tabKeyPosition = modelModifier.TabKeyPositionsList[1];
+                var tabKeyPosition = modelModifier.TabKeyPositionList[1];
                 Assert.Equal(
                     19,
                     tabKeyPosition);
@@ -708,7 +708,7 @@ public partial class TextEditorModelModifierTests
                 // into a '\n' that follows causing a "\r\n" to appear. Therefore the count remains 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 {
                     var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                     // StartPositionIndexInclusive
@@ -727,7 +727,7 @@ public partial class TextEditorModelModifierTests
                 // Because 3 total LineEnds were inserted, the count of LineFeed(s) is 4.
                 Assert.Equal(
                     4,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 var lineFeedMatches = modelModifier.LineEndPositionList.Where(x => x.LineEndKind == LineEndKind.LineFeed).ToArray();
                 // First LineFeed
                 {
@@ -783,7 +783,7 @@ public partial class TextEditorModelModifierTests
                 // into a '\n' that follows causing a "\r\n" to appear. Therefore the count remains 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 {
                     var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                     // StartPositionIndexInclusive
@@ -888,17 +888,17 @@ public partial class TextEditorModelModifierTests
             // 1 tab key was included in the initial content for the TextEditorModel.
             // Furthermore, 1 tab key was inserted.
             // Therefore the count is 2.
-            Assert.Equal(2, modelModifier.TabKeyPositionsList.Count);
+            Assert.Equal(2, modelModifier.TabKeyPositionList.Count);
             // First tab key
             {
-                var tabKeyPosition = modelModifier.TabKeyPositionsList[0];
+                var tabKeyPosition = modelModifier.TabKeyPositionList[0];
                 Assert.Equal(
                     8,
                     tabKeyPosition);
             }
             // Second tab key
             {
-                var tabKeyPosition = modelModifier.TabKeyPositionsList[1];
+                var tabKeyPosition = modelModifier.TabKeyPositionList[1];
                 Assert.Equal(
                     19,
                     tabKeyPosition);
@@ -911,7 +911,7 @@ public partial class TextEditorModelModifierTests
                 // into a '\n' that follows causing a "\r\n" to appear. Therefore the count remains 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 {
                     var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                     // StartPositionIndexInclusive
@@ -930,7 +930,7 @@ public partial class TextEditorModelModifierTests
                 // Because 3 total LineEnds were inserted, the count of LineFeed(s) is 4.
                 Assert.Equal(
                     4,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 var lineFeedMatches = modelModifier.LineEndPositionList.Where(x => x.LineEndKind == LineEndKind.LineFeed).ToArray();
                 // First LineFeed
                 {
@@ -986,7 +986,7 @@ public partial class TextEditorModelModifierTests
                 // into a '\n' that follows causing a "\r\n" to appear. Therefore the count remains 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 {
                     var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                     // StartPositionIndexInclusive
@@ -1089,7 +1089,7 @@ public partial class TextEditorModelModifierTests
             // 1 tab key was included in the initial content for the TextEditorModel but,
             // Additionally, a tab key was included in the content that was inserted.
             // Therefore, 2 tab keys total.
-            Assert.Equal(2, modelModifier.TabKeyPositionsList.Count);
+            Assert.Equal(2, modelModifier.TabKeyPositionList.Count);
 
             // LineEnd related code-block-grouping:
             {
@@ -1098,7 +1098,7 @@ public partial class TextEditorModelModifierTests
                 // but it was converted to a '\n'. Therefore, 1 CarriageReturn(s) total.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                 // StartPositionIndexInclusive
                 Assert.Equal(
@@ -1115,7 +1115,7 @@ public partial class TextEditorModelModifierTests
                 // Therefore, 4 LineFeed(s) total.
                 Assert.Equal(
                     4,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 var lineFeedMatches = modelModifier.LineEndPositionList.Where(x => x.LineEndKind == LineEndKind.LineFeed).ToArray();
                 // First LineFeed
                 {
@@ -1171,7 +1171,7 @@ public partial class TextEditorModelModifierTests
                 // but it was converted to a '\n'. Therefore, 1 CarriageReturn(s) total.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                 // StartPositionIndexInclusive
                 Assert.Equal(
@@ -1333,10 +1333,10 @@ public partial class TextEditorModelModifierTests
             // 1 tab key was included in the string that was passed to the constructor.
             // And the insertion is expected to do nothing.
             // Therefore, the Count remains 1.
-            Assert.Equal(1, modelModifier.TabKeyPositionsList.Count);
+            Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
             Assert.Equal(
                 8,
-                modelModifier.TabKeyPositionsList.Single());
+                modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
@@ -1346,7 +1346,7 @@ public partial class TextEditorModelModifierTests
                 // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 {
                     var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                     // StartPositionIndexInclusive
@@ -1364,7 +1364,7 @@ public partial class TextEditorModelModifierTests
                 // Therefore, the Count remains 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 {
                     var lineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
                     // StartPositionIndexInclusive
@@ -1383,7 +1383,7 @@ public partial class TextEditorModelModifierTests
                 // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 {
                     var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                     // StartPositionIndexInclusive
@@ -1537,10 +1537,10 @@ public partial class TextEditorModelModifierTests
             // 1 tab key was included in the string that was passed to the constructor.
             // And the insertion is expected to do nothing.
             // Therefore, the Count remains 1.
-            Assert.Equal(1, modelModifier.TabKeyPositionsList.Count);
+            Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
             Assert.Equal(
                 8,
-                modelModifier.TabKeyPositionsList.Single());
+                modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
@@ -1550,7 +1550,7 @@ public partial class TextEditorModelModifierTests
                 // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 {
                     var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                     // StartPositionIndexInclusive
@@ -1568,7 +1568,7 @@ public partial class TextEditorModelModifierTests
                 // Therefore, the Count remains 1.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 {
                     var lineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
                     // StartPositionIndexInclusive
@@ -1587,7 +1587,7 @@ public partial class TextEditorModelModifierTests
                 // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
                 Assert.Equal(
                     1,
-                    modelModifier.LineEndKindCountsList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 {
                     var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                     // StartPositionIndexInclusive

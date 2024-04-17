@@ -107,7 +107,7 @@ public class ModelTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModel.EditBlocksList"/>
+    /// <see cref="TextEditorModel.EditBlockList"/>
     /// </summary>
     [Fact]
     public void EditBlocksList_InterfaceImplementation()
@@ -143,7 +143,7 @@ public class ModelTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModel.TabKeyPositionsList"/>
+    /// <see cref="TextEditorModel.TabKeyPositionList"/>
     /// </summary>
     [Fact]
     public void TabKeyPositionsList_InterfaceImplementation()
@@ -161,7 +161,7 @@ public class ModelTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModel.EditBlocksList"/>
+    /// <see cref="TextEditorModel.EditBlockList"/>
     /// </summary>
     [Fact]
     public void EditBlocksList()
@@ -197,7 +197,7 @@ public class ModelTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModel.TabKeyPositionsList"/>
+    /// <see cref="TextEditorModel.TabKeyPositionList"/>
     /// </summary>
     [Fact]
     public void TabKeyPositionsList()

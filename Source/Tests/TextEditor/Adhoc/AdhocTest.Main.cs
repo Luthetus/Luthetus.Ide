@@ -51,7 +51,7 @@ public partial class AdhocTest
             Assert.Equal(0, model.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
             Assert.Equal(0, model.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
             //
-            Assert.Empty(model.TabKeyPositionsList);
+            Assert.Empty(model.TabKeyPositionList);
         }
 
         // Variables
@@ -78,7 +78,7 @@ public partial class AdhocTest
             Assert.Equal(0, model.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
             Assert.Equal(0, model.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
             //
-            Assert.Empty(model.TabKeyPositionsList);
+            Assert.Empty(model.TabKeyPositionList);
         }
     }
 
@@ -109,7 +109,7 @@ public partial class AdhocTest
             Assert.Equal(0, model.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
             Assert.Equal(0, model.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
             //
-            Assert.Empty(model.TabKeyPositionsList);
+            Assert.Empty(model.TabKeyPositionList);
         }
 
         // Variables
@@ -136,7 +136,7 @@ public partial class AdhocTest
             Assert.Equal(1, model.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
             Assert.Equal(0, model.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
             //
-            Assert.Empty(model.TabKeyPositionsList);
+            Assert.Empty(model.TabKeyPositionList);
         }
     }
 
@@ -167,7 +167,7 @@ public partial class AdhocTest
             Assert.Equal(0, model.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
             Assert.Equal(0, model.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
             //
-            Assert.Empty(model.TabKeyPositionsList);
+            Assert.Empty(model.TabKeyPositionList);
         }
 
         // Variables
@@ -200,7 +200,7 @@ public partial class AdhocTest
             Assert.Equal(1, model.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
             Assert.Equal(0, model.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
             //
-            Assert.Empty(model.TabKeyPositionsList);
+            Assert.Empty(model.TabKeyPositionList);
         }
     }
 
@@ -231,7 +231,7 @@ public partial class AdhocTest
             Assert.Equal(0, model.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
             Assert.Equal(0, model.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
             //
-            Assert.Empty(model.TabKeyPositionsList);
+            Assert.Empty(model.TabKeyPositionList);
         }
 
         // Variables
@@ -264,12 +264,12 @@ public partial class AdhocTest
             Assert.Equal(1, model.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
             Assert.Equal(0, model.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
             //
-            Assert.Empty(model.TabKeyPositionsList);
+            Assert.Empty(model.TabKeyPositionList);
         }
     }
 
     /// <summary>
-    /// <see cref="IModelTextEditor.ContentList"/><br/><br/>
+    /// <see cref="ITextEditorModel.ContentList"/><br/><br/>
     /// TODO: This needs to be separated out into an IReadOnlyList&lt;char&gt;...
     ///       ...and a IReadOnlyList&lt;byte&gt;
     ///       |
@@ -486,7 +486,7 @@ public partial class AdhocTest
 
         // EditBlocksList
         {
-            var editBlocksList = refModel.EditBlocksList;
+            var editBlocksList = refModel.EditBlockList;
             Assert.Empty(editBlocksList);
         }
 
@@ -553,7 +553,7 @@ public partial class AdhocTest
 
         // TabKeyPositionsList
         {
-            var tabKeyPositionsList = refModel.TabKeyPositionsList;
+            var tabKeyPositionsList = refModel.TabKeyPositionList;
 
             Assert.Single(tabKeyPositionsList);
 

@@ -114,7 +114,7 @@ public record TextEditorViewModel : IDisposable
     /// <summary>
     /// If one hits the keymap { Ctrl + s } when browser focus is within a text editor.
     /// </summary>
-    public Action<IModelTextEditor>? OnSaveRequested { get; init; }
+    public Action<ITextEditorModel>? OnSaveRequested { get; init; }
     /// <summary>
     /// When a view model is rendered within a <see cref="TextEditorGroup"/>, this Func can be used to render a more friendly tab name, than the resource uri path.
     /// </summary>

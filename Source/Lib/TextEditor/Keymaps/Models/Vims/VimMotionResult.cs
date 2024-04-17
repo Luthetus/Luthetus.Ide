@@ -11,7 +11,7 @@ public record VimMotionResult(
     int PositionIndexDisplacement)
 {
     public static async Task<VimMotionResult> GetResultAsync(
-        IModelTextEditor model,
+        ITextEditorModel model,
         TextEditorCursorModifier cursorModifier,
         Func<Task> motionCommand)
     {

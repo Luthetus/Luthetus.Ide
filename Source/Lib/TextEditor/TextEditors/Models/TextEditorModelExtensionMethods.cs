@@ -25,7 +25,7 @@ public static class TextEditorModelExtensionMethods
 	/// ∙∙∙ etc...<br/>
 	/// ∙∙∙ rowIndex of ^1 (the final index) returns EndOfFile<br/>
     /// </summary>
-    public static LineEnd GetLineOpening(this IModelTextEditor model, int lineIndex)
+    public static LineEnd GetLineOpening(this ITextEditorModel model, int lineIndex)
     {
         // Index is out of range (large-ly)? Then change the index to the last index.
         lineIndex = Math.Min(lineIndex, model.LineEndPositionList.Count - 1);
@@ -56,7 +56,7 @@ public static class TextEditorModelExtensionMethods
 	/// ∙∙∙ etc...<br/>
 	/// ∙∙∙ rowIndex of ^1 (the final index) returns EndOfFile<br/>
     /// </summary>
-    public static LineEnd GetLineClosing(this IModelTextEditor model, int lineIndex)
+    public static LineEnd GetLineClosing(this ITextEditorModel model, int lineIndex)
     {
         // Index is out of range (large-ly)? Then change the index to the last index.
         lineIndex = Math.Min(lineIndex, model.LineEndPositionList.Count - 1);
@@ -73,12 +73,12 @@ public static class TextEditorModelExtensionMethods
         return model.LineEndPositionList[^1];
     }
 
-    public static int GetLineStartPositionIndexInclusive(this IModelTextEditor model, int lineIndex)
+    public static int GetLineStartPositionIndexInclusive(this ITextEditorModel model, int lineIndex)
     {
         return model.GetLineOpening(lineIndex).EndPositionIndexExclusive;
     }
 
-    public static int GetLineEndPositionIndexExclusive(this IModelTextEditor model, int lineIndex)
+    public static int GetLineEndPositionIndexExclusive(this ITextEditorModel model, int lineIndex)
     {
         return model.GetLineClosing(lineIndex).EndPositionIndexExclusive;
     }
@@ -87,7 +87,7 @@ public static class TextEditorModelExtensionMethods
 	/// Returns the Length of a line however it does not include the line ending characters by default.
 	/// To include line ending characters the parameter <see cref="includeLineEndingCharacters" /> must be true.
 	/// </summary>
-    public static int GetLengthOfLine(this IModelTextEditor model, int lineIndex, bool includeLineEndingCharacters = false)
+    public static int GetLengthOfLine(this ITextEditorModel model, int lineIndex, bool includeLineEndingCharacters = false)
     {
         if (!model.LineEndPositionList.Any())
             return 0;
@@ -118,7 +118,7 @@ public static class TextEditorModelExtensionMethods
     /// A count of 1 returns lines[startingLineIndex] only.<br/>
     /// A count of 2 returns lines[startingLineIndex] and lines[startingLineIndex + 1].<br/>
     /// </param>
-    public static List<List<RichCharacter>> GetLines(this IModelTextEditor model, int startingLineIndex, int count)
+    public static List<List<RichCharacter>> GetLines(this ITextEditorModel model, int startingLineIndex, int count)
     {
         var lineCountAvailable = model.LineEndPositionList.Count - startingLineIndex;
 
@@ -148,11 +148,11 @@ public static class TextEditorModelExtensionMethods
         return lineList;
     }
 
-    public static int GetTabsCountOnSameLineBeforeCursor(this IModelTextEditor model, int rowIndex, int columnIndex)
+    public static int GetTabsCountOnSameLineBeforeCursor(this ITextEditorModel model, int rowIndex, int columnIndex)
     {
         var startOfLinePositionIndex = model.GetLineStartPositionIndexInclusive(rowIndex);
 
-        var tabs = model.TabKeyPositionsList
+        var tabs = model.TabKeyPositionList
             .SkipWhile(positionIndex => positionIndex < startOfLinePositionIndex)
             .TakeWhile(positionIndex => positionIndex < startOfLinePositionIndex + columnIndex);
 
@@ -163,17 +163,17 @@ public static class TextEditorModelExtensionMethods
     /// TODO: Given that the text editor is now immutable (2023-12-17), when this is invoked...
     /// ...it should be cached.
     /// </summary>
-    public static string GetAllText(this IModelTextEditor model)
+    public static string GetAllText(this ITextEditorModel model)
     {
         return new string(model.CharList.Select(x => x).ToArray());
     }
 
-    public static int GetPositionIndex(this IModelTextEditor model, TextEditorCursor cursor)
+    public static int GetPositionIndex(this ITextEditorModel model, TextEditorCursor cursor)
     {
         return model.GetPositionIndex(cursor.LineIndex, cursor.ColumnIndex);
     }
 
-    public static int GetPositionIndex(this IModelTextEditor model, TextEditorCursorModifier cursorModifier)
+    public static int GetPositionIndex(this ITextEditorModel model, TextEditorCursorModifier cursorModifier)
     {
         return model.GetPositionIndex(cursorModifier.LineIndex, cursorModifier.ColumnIndex);
     }
@@ -181,14 +181,14 @@ public static class TextEditorModelExtensionMethods
     /// <summary>
     /// TODO: How should this method handle input which is out of bounds?
     /// </summary>
-    public static int GetPositionIndex(this IModelTextEditor model, int lineIndex, int columnIndex)
+    public static int GetPositionIndex(this ITextEditorModel model, int lineIndex, int columnIndex)
     {
         var lineStartPositionIndexInclusive = model.GetLineStartPositionIndexInclusive(lineIndex);
         return lineStartPositionIndexInclusive + columnIndex;
     }
 
     public static (int lineIndex, int columnIndex) GetLineAndColumnIndicesFromPositionIndex(
-        this IModelTextEditor model,
+        this ITextEditorModel model,
         int positionIndex)
     {
         var lineInformation = model.GetLineInformationFromPositionIndex(positionIndex);
@@ -201,7 +201,7 @@ public static class TextEditorModelExtensionMethods
     /// <summary>
     /// To receive a <see cref="string"/> value, one can use <see cref="GetString"/> instead.
     /// </summary>
-    public static char GetCharacter(this IModelTextEditor model, int positionIndex)
+    public static char GetCharacter(this ITextEditorModel model, int positionIndex)
     {
         if (positionIndex < 0 || positionIndex >= model.CharList.Count)
             return ParserFacts.END_OF_FILE;
@@ -212,7 +212,7 @@ public static class TextEditorModelExtensionMethods
     /// <summary>
     /// To receive a <see cref="char"/> value, one can use <see cref="GetCharacter"/> instead.
     /// </summary>
-    public static string GetString(this IModelTextEditor model, int startingPositionIndex, int count)
+    public static string GetString(this ITextEditorModel model, int startingPositionIndex, int count)
     {
         return new string(model.CharList
             .Skip(startingPositionIndex)
@@ -221,7 +221,7 @@ public static class TextEditorModelExtensionMethods
             .ToArray());
     }
 
-    public static string GetLineRange(this IModelTextEditor model, int startLineIndex, int count)
+    public static string GetLineRange(this ITextEditorModel model, int startLineIndex, int count)
     {
         if (startLineIndex > model.LineCount - 1)
             return string.Empty;
@@ -249,7 +249,7 @@ public static class TextEditorModelExtensionMethods
     ///     -IF the cursor is amongst a word, that word will be returned.<br/><br/>
     ///     -ELSE IF the start of a word is to the right of the cursor that word will be returned.<br/><br/>
     ///     -ELSE IF the end of a word is to the left of the cursor that word will be returned.</summary>
-    public static TextEditorTextSpan? GetWordTextSpan(this IModelTextEditor model, int positionIndex)
+    public static TextEditorTextSpan? GetWordTextSpan(this ITextEditorModel model, int positionIndex)
     {
         var previousCharacter = model.GetCharacter(positionIndex - 1);
         var currentCharacter = model.GetCharacter(positionIndex);
@@ -323,7 +323,7 @@ public static class TextEditorModelExtensionMethods
         return null;
     }
 
-    public static ImmutableArray<TextEditorTextSpan> FindMatches(this IModelTextEditor model, string query)
+    public static ImmutableArray<TextEditorTextSpan> FindMatches(this ITextEditorModel model, string query)
     {
         var text = model.GetAllText();
         var matchedTextSpans = new List<TextEditorTextSpan>();
@@ -355,7 +355,7 @@ public static class TextEditorModelExtensionMethods
         return matchedTextSpans.ToImmutableArray();
     }
 
-    public static RowInformation GetLineInformationFromPositionIndex(this IModelTextEditor model, int positionIndex)
+    public static RowInformation GetLineInformationFromPositionIndex(this ITextEditorModel model, int positionIndex)
     {
         for (var i = model.LineEndPositionList.Count - 1; i >= 0; i--)
         {
@@ -381,7 +381,7 @@ public static class TextEditorModelExtensionMethods
     /// </summary>
     /// <returns>Will return -1 if no valid result was found.</returns>
     public static int GetColumnIndexOfCharacterWithDifferingKind(
-        this IModelTextEditor model,
+        this ITextEditorModel model,
         int lineIndex,
         int columnIndex,
         bool moveBackwards)
@@ -434,17 +434,17 @@ public static class TextEditorModelExtensionMethods
         return positionIndex - lineStartPositionIndex;
     }
 
-    public static bool CanUndoEdit(this IModelTextEditor model)
+    public static bool CanUndoEdit(this ITextEditorModel model)
     {
         return model.EditBlockIndex > 0;
     }
 
-    public static bool CanRedoEdit(this IModelTextEditor model)
+    public static bool CanRedoEdit(this ITextEditorModel model)
     {
         return model.EditBlockIndex < model.EditBlockList.Count - 1;
     }
 
-    public static CharacterKind GetCharacterKind(this IModelTextEditor model, int positionIndex)
+    public static CharacterKind GetCharacterKind(this ITextEditorModel model, int positionIndex)
     {
         try
         {
@@ -460,7 +460,7 @@ public static class TextEditorModelExtensionMethods
     }
 
     public static string? ReadPreviousWordOrDefault(
-        this IModelTextEditor model,
+        this ITextEditorModel model,
         int lineIndex,
         int columnIndex,
         bool isRecursiveCall = false)
@@ -501,7 +501,7 @@ public static class TextEditorModelExtensionMethods
         return null;
     }
 
-    public static string? ReadNextWordOrDefault(this IModelTextEditor model, int lineIndex, int columnIndex)
+    public static string? ReadNextWordOrDefault(this ITextEditorModel model, int lineIndex, int columnIndex)
     {
         var wordPositionIndexStartInclusive = model.GetPositionIndex(lineIndex, columnIndex);
         var wordCharacterKind = model.GetCharacterKind(wordPositionIndexStartInclusive);
@@ -530,7 +530,7 @@ public static class TextEditorModelExtensionMethods
     /// One uses this method most often to measure the position of the cursor when rendering the
     /// UI for a font-family which is proportional (i.e. not monospace).
     /// </summary>
-    public static string GetTextOffsettingCursor(this IModelTextEditor model, TextEditorCursor textEditorCursor)
+    public static string GetTextOffsettingCursor(this ITextEditorModel model, TextEditorCursor textEditorCursor)
     {
         var cursorPositionIndex = model.GetPositionIndex(textEditorCursor);
         var priorLineEnd = model.GetLineOpening(textEditorCursor.LineIndex);
@@ -538,7 +538,7 @@ public static class TextEditorModelExtensionMethods
         return model.GetString(priorLineEnd.EndPositionIndexExclusive, cursorPositionIndex - priorLineEnd.EndPositionIndexExclusive);
     }
 
-    public static string GetLine(this IModelTextEditor model, int lineIndex)
+    public static string GetLine(this ITextEditorModel model, int lineIndex)
     {
         if (lineIndex < 0 || lineIndex > model.LineCount - 1)
             return string.Empty;
@@ -549,7 +549,7 @@ public static class TextEditorModelExtensionMethods
         return model.GetString(priorLineEnd.EndPositionIndexExclusive, lengthOfRow);
     }
 
-    public static RichCharacter? GetRichCharacterOrDefault(this IModelTextEditor model, int positionIndex)
+    public static RichCharacter? GetRichCharacterOrDefault(this ITextEditorModel model, int positionIndex)
     {
         if (positionIndex < 0 || positionIndex > model.DocumentLength - 1)
             return null;
@@ -561,7 +561,7 @@ public static class TextEditorModelExtensionMethods
         };
     }
 
-    public static List<RichCharacter> GetAllRichCharacters(this IModelTextEditor model)
+    public static List<RichCharacter> GetAllRichCharacters(this ITextEditorModel model)
     {
         var richCharacterList = new List<RichCharacter>();
 
@@ -577,7 +577,7 @@ public static class TextEditorModelExtensionMethods
         return richCharacterList;
     }
 
-    public static List<RichCharacter> GetRichCharacters(this IModelTextEditor model, int skip, int take)
+    public static List<RichCharacter> GetRichCharacters(this ITextEditorModel model, int skip, int take)
     {
         var richCharacterList = new List<RichCharacter>();
 

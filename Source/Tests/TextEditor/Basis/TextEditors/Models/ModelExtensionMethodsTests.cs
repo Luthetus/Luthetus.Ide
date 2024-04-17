@@ -15,7 +15,7 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 public class ModelExtensionMethodsTests
 {
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.GetLineOpening(IModelTextEditor, int)"/>
+    /// <see cref="TextEditorModelExtensionMethods.GetLineOpening(ITextEditorModel, int)"/>
     /// </summary>
     [Fact]
     public void GetRowEndingThatCreatedRow()
@@ -188,7 +188,7 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.GetLengthOfLine(IModelTextEditor, int, bool)"/>
+    /// <see cref="TextEditorModelExtensionMethods.GetLengthOfLine(ITextEditorModel, int, bool)"/>
     /// </summary>
     [Fact]
     public void GetLengthOfRow()
@@ -231,7 +231,7 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.GetLines(IModelTextEditor, int, int)"/>
+    /// <see cref="TextEditorModelExtensionMethods.GetLines(ITextEditorModel, int, int)"/>
     /// </summary>
     [Fact]
     public void GetRows()
@@ -362,7 +362,7 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.GetTabsCountOnSameLineBeforeCursor(IModelTextEditor, int, int)"/>
+    /// <see cref="TextEditorModelExtensionMethods.GetTabsCountOnSameLineBeforeCursor(ITextEditorModel, int, int)"/>
     /// </summary>
     [Fact]
     public void GetTabsCountOnSameRowBeforeCursor()
@@ -459,7 +459,7 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.ApplyDecorationRange(IModelTextEditor, IEnumerable{TextEditorTextSpan})"/>
+    /// <see cref="TextEditorModelExtensionMethods.ApplyDecorationRange(ITextEditorModel, IEnumerable{TextEditorTextSpan})"/>
     /// </summary>
     [Fact]
     public void ApplyDecorationRange()
@@ -468,7 +468,7 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.ApplySyntaxHighlightingAsync(IModelTextEditor)"/>
+    /// <see cref="TextEditorModelExtensionMethods.ApplySyntaxHighlightingAsync(ITextEditorModel)"/>
     /// </summary>
     [Fact]
     public void ApplySyntaxHighlightingAsync()
@@ -477,7 +477,7 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-	/// <see cref="TextEditorModelExtensionMethods.GetAllRichCharacters(IModelTextEditor)"/>
+	/// <see cref="TextEditorModelExtensionMethods.GetAllRichCharacters(ITextEditorModel)"/>
 	/// </summary>
 	[Fact]
     public void GetAllRichCharacters()
@@ -520,7 +520,7 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.GetAllText(IModelTextEditor)"/>
+    /// <see cref="TextEditorModelExtensionMethods.GetAllText(ITextEditorModel)"/>
     /// </summary>
     [Fact]
     public void GetAllText()
@@ -562,10 +562,10 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.GetPositionIndex(IModelTextEditor, TextEditorCursor)"/>
+    /// <see cref="TextEditorModelExtensionMethods.GetPositionIndex(ITextEditorModel, TextEditorCursor)"/>
     /// <br/>----<br/>
-    /// <see cref="TextEditorModelExtensionMethods.GetPositionIndex(IModelTextEditor, TextEditorCursorModifier)"/>
-	/// <see cref="TextEditorModelExtensionMethods.GetPositionIndex(IModelTextEditor, int, int)"/>
+    /// <see cref="TextEditorModelExtensionMethods.GetPositionIndex(ITextEditorModel, TextEditorCursorModifier)"/>
+	/// <see cref="TextEditorModelExtensionMethods.GetPositionIndex(ITextEditorModel, int, int)"/>
     /// </summary>
     [Fact]
     public void GetPositionIndex()
@@ -667,7 +667,7 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.GetCharacter(IModelTextEditor, int)"/>
+    /// <see cref="TextEditorModelExtensionMethods.GetCharacter(ITextEditorModel, int)"/>
     /// </summary>
     [Fact]
     public void GetCharacter()
@@ -719,7 +719,7 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-	/// <see cref="TextEditorModelExtensionMethods.GetCharacterKind(IModelTextEditor, int)"/>
+	/// <see cref="TextEditorModelExtensionMethods.GetCharacterKind(ITextEditorModel, int)"/>
 	/// </summary>
 	[Fact]
     public void GetCharacterKind()
@@ -782,7 +782,7 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-	/// <see cref="TextEditorModelExtensionMethods.GetWordTextSpan(IModelTextEditor, int)"/>
+	/// <see cref="TextEditorModelExtensionMethods.GetWordTextSpan(ITextEditorModel, int)"/>
 	/// </summary>
 	[Fact]
     public void GetWordTextSpan()
@@ -866,7 +866,7 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.GetString(IModelTextEditor, int, int)"/>
+    /// <see cref="TextEditorModelExtensionMethods.GetString(ITextEditorModel, int, int)"/>
     /// </summary>
     [Fact]
     public void GetString()
@@ -1063,7 +1063,7 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-	/// <see cref="TextEditorModelExtensionMethods.GetLine(IModelTextEditor, int)"/>
+	/// <see cref="TextEditorModelExtensionMethods.GetLine(ITextEditorModel, int)"/>
 	/// </summary>
 	[Fact]
     public void GetLine()
@@ -1110,7 +1110,7 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.GetLineRange(IModelTextEditor, int, int)"/>
+    /// <see cref="TextEditorModelExtensionMethods.GetLineRange(ITextEditorModel, int, int)"/>
     /// </summary>
     [Fact]
     public void GetLineRange()
@@ -1267,7 +1267,7 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.GetLineInformationFromPositionIndex(IModelTextEditor, int)"/>
+    /// <see cref="TextEditorModelExtensionMethods.GetLineInformationFromPositionIndex(ITextEditorModel, int)"/>
     /// </summary>
     [Fact]
     public void FindRowInformation()
@@ -1276,7 +1276,7 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.GetColumnIndexOfCharacterWithDifferingKind(IModelTextEditor, int, int, bool)"/>
+    /// <see cref="TextEditorModelExtensionMethods.GetColumnIndexOfCharacterWithDifferingKind(ITextEditorModel, int, int, bool)"/>
     /// </summary>
     [Fact]
     public void GetColumnIndexOfCharacterWithDifferingKind()
@@ -1303,7 +1303,7 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.ReadPreviousWordOrDefault(IModelTextEditor, int, int, bool)"/>
+    /// <see cref="TextEditorModelExtensionMethods.ReadPreviousWordOrDefault(ITextEditorModel, int, int, bool)"/>
     /// </summary>
     [Fact]
     public void ReadPreviousWordOrDefault()
@@ -1312,7 +1312,7 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.ReadNextWordOrDefault(IModelTextEditor, int, int)"/>
+    /// <see cref="TextEditorModelExtensionMethods.ReadNextWordOrDefault(ITextEditorModel, int, int)"/>
     /// </summary>
     [Fact]
     public void ReadNextWordOrDefault()
@@ -1321,7 +1321,7 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.GetTextOffsettingCursor(IModelTextEditor, TextEditorCursor)"/>
+    /// <see cref="TextEditorModelExtensionMethods.GetTextOffsettingCursor(ITextEditorModel, TextEditorCursor)"/>
     /// </summary>
     [Fact]
     public void GetTextOffsettingCursor()

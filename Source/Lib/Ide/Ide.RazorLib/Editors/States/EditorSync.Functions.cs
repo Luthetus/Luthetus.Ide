@@ -121,7 +121,7 @@ public partial class EditorSync
 
         return Task.FromResult(viewModelKey);
 
-        void HandleOnSaveRequested(IModelTextEditor innerTextEditor)
+        void HandleOnSaveRequested(ITextEditorModel innerTextEditor)
         {
             var innerContent = innerTextEditor.GetAllText();
 

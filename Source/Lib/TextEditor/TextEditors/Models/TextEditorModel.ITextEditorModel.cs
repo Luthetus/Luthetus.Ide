@@ -5,19 +5,19 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
-public partial class TextEditorModel : IModelTextEditor
+public partial class TextEditorModel : ITextEditorModel
 {
-    ImmutableList<char> IModelTextEditor.CharList => CharList;
-    ImmutableList<byte> IModelTextEditor.DecorationByteList => DecorationByteList;
+    ImmutableList<char> ITextEditorModel.CharList => CharList;
+    ImmutableList<byte> ITextEditorModel.DecorationByteList => DecorationByteList;
 
-    ImmutableList<TextEditorPartition> IModelTextEditor.PartitionList => PartitionList;
+    ImmutableList<TextEditorPartition> ITextEditorModel.PartitionList => PartitionList;
     
-    IList<EditBlock> IModelTextEditor.EditBlockList => EditBlocksList;
-	IList<LineEnd> IModelTextEditor.LineEndPositionList => LineEndPositionList;
-	IList<(LineEndKind lineEndKind, int count)> IModelTextEditor.LineEndKindCountsList => LineEndKindCountList;
-	IList<TextEditorPresentationModel> IModelTextEditor.PresentationModelsList => PresentationModelList;
-	IList<int> IModelTextEditor.TabKeyPositionsList => TabKeyPositionsList;
+    IList<EditBlock> ITextEditorModel.EditBlockList => EditBlockList;
+	IList<LineEnd> ITextEditorModel.LineEndPositionList => LineEndPositionList;
+	IList<(LineEndKind lineEndKind, int count)> ITextEditorModel.LineEndKindCountList => LineEndKindCountList;
+	IList<TextEditorPresentationModel> ITextEditorModel.PresentationModelList => PresentationModelList;
+	IList<int> ITextEditorModel.TabKeyPositionList => TabKeyPositionList;
 
-    int IModelTextEditor.LineCount => LineCount;
-    int IModelTextEditor.DocumentLength => DocumentLength;
+    int ITextEditorModel.LineCount => LineCount;
+    int ITextEditorModel.DocumentLength => DocumentLength;
 }
