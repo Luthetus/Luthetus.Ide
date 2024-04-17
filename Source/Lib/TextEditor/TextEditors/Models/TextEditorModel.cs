@@ -37,7 +37,7 @@ public partial class TextEditorModel
         DecorationByteList = modifier.DecorationByteList;
         PartitionList = modifier.PartitionList;
         LineEndKindCountList = modifier.LineEndKindCountList.ToImmutableList();
-		LineEndPositionList = modifier.LineEndPositionList.ToImmutableList();
+		LineEndList = modifier.LineEndList.ToImmutableList();
 		TabKeyPositionList = modifier.TabKeyPositionList.ToImmutableList();
 		OnlyLineEndKind = modifier.OnlyLineEndKind;
 		UsingLineEndKind = modifier.UsingLineEndKind;
@@ -72,7 +72,7 @@ public partial class TextEditorModel
         PartitionSize = partitionSize;
         PartitionList = partitionList;
 		EditBlockList = editBlocksList;
-		LineEndPositionList = rowEndingPositionsList;
+		LineEndList = rowEndingPositionsList;
 		LineEndKindCountList = rowEndingKindCountsList;
 		PresentationModelList = presentationModelsList;
 		TabKeyPositionList = tabKeyPositionsList;

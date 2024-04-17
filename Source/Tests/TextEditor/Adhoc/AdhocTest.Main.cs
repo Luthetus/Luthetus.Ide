@@ -42,7 +42,7 @@ public partial class AdhocTest
             Assert.Empty(model.CharList);
             //
             Assert.Equal(1, model.LineCount);
-            var endOfFileLineEnd = model.LineEndPositionList.Single();
+            var endOfFileLineEnd = model.LineEndList.Single();
             Assert.Equal(LineEndKind.EndOfFile, endOfFileLineEnd.LineEndKind);
             Assert.Equal(0, endOfFileLineEnd.StartPositionIndexInclusive);
             Assert.Equal(0, endOfFileLineEnd.EndPositionIndexExclusive);
@@ -69,7 +69,7 @@ public partial class AdhocTest
             Assert.Equal(letterToInsert, model.CharList.Single().ToString());
             //
             Assert.Equal(1, model.LineCount);
-            var endOfFileLineEnd = model.LineEndPositionList.Single();
+            var endOfFileLineEnd = model.LineEndList.Single();
             Assert.Equal(LineEndKind.EndOfFile, endOfFileLineEnd.LineEndKind);
             Assert.Equal(1, endOfFileLineEnd.StartPositionIndexInclusive);
             Assert.Equal(1, endOfFileLineEnd.EndPositionIndexExclusive);
@@ -100,7 +100,7 @@ public partial class AdhocTest
             Assert.Empty(model.CharList);
             //
             Assert.Equal(1, model.LineCount);
-            var endOfFileLineEnd = model.LineEndPositionList.Single();
+            var endOfFileLineEnd = model.LineEndList.Single();
             Assert.Equal(LineEndKind.EndOfFile, endOfFileLineEnd.LineEndKind);
             Assert.Equal(0, endOfFileLineEnd.StartPositionIndexInclusive);
             Assert.Equal(0, endOfFileLineEnd.EndPositionIndexExclusive);
@@ -127,7 +127,7 @@ public partial class AdhocTest
             Assert.Equal(letterToInsert, model.CharList.Single().ToString());
             //
             Assert.Equal(2, model.LineCount);
-            var endOfFileLineEnd = model.LineEndPositionList.Last();
+            var endOfFileLineEnd = model.LineEndList.Last();
             Assert.Equal(LineEndKind.EndOfFile, endOfFileLineEnd.LineEndKind);
             Assert.Equal(1, endOfFileLineEnd.StartPositionIndexInclusive);
             Assert.Equal(1, endOfFileLineEnd.EndPositionIndexExclusive);
@@ -158,7 +158,7 @@ public partial class AdhocTest
             Assert.Empty(model.CharList);
             //
             Assert.Equal(1, model.LineCount);
-            var endOfFileLineEnd = model.LineEndPositionList.Single();
+            var endOfFileLineEnd = model.LineEndList.Single();
             Assert.Equal(LineEndKind.EndOfFile, endOfFileLineEnd.LineEndKind);
             Assert.Equal(0, endOfFileLineEnd.StartPositionIndexInclusive);
             Assert.Equal(0, endOfFileLineEnd.EndPositionIndexExclusive);
@@ -191,7 +191,7 @@ public partial class AdhocTest
             Assert.Equal(expectedLetterThatWasInserted, model.CharList.Single().ToString());
             //
             Assert.Equal(2, model.LineCount);
-            var endOfFileLineEnd = model.LineEndPositionList.Last();
+            var endOfFileLineEnd = model.LineEndList.Last();
             Assert.Equal(LineEndKind.EndOfFile, endOfFileLineEnd.LineEndKind);
             Assert.Equal(1, endOfFileLineEnd.StartPositionIndexInclusive);
             Assert.Equal(1, endOfFileLineEnd.EndPositionIndexExclusive);
@@ -222,7 +222,7 @@ public partial class AdhocTest
             Assert.Empty(model.CharList);
             //
             Assert.Equal(1, model.LineCount);
-            var endOfFileLineEnd = model.LineEndPositionList.Last();
+            var endOfFileLineEnd = model.LineEndList.Last();
             Assert.Equal(LineEndKind.EndOfFile, endOfFileLineEnd.LineEndKind);
             Assert.Equal(0, endOfFileLineEnd.StartPositionIndexInclusive);
             Assert.Equal(0, endOfFileLineEnd.EndPositionIndexExclusive);
@@ -255,7 +255,7 @@ public partial class AdhocTest
             Assert.Equal(expectedLetterThatWasInserted, model.CharList.Single().ToString());
             //
             Assert.Equal(2, model.LineCount);
-            var endOfFileLineEnd = model.LineEndPositionList.Last();
+            var endOfFileLineEnd = model.LineEndList.Last();
             Assert.Equal(LineEndKind.EndOfFile, endOfFileLineEnd.LineEndKind);
             Assert.Equal(1, endOfFileLineEnd.StartPositionIndexInclusive);
             Assert.Equal(1, endOfFileLineEnd.EndPositionIndexExclusive);
@@ -492,7 +492,7 @@ public partial class AdhocTest
 
         // RowEndingPositionsList
         {
-            var rowEndingPositionsList = refModel.LineEndPositionList;
+            var rowEndingPositionsList = refModel.LineEndList;
 
             Assert.Equal(5, rowEndingPositionsList.Count);
 

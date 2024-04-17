@@ -265,9 +265,9 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             if (viewModelModifier is null)
                 return Task.CompletedTask;
 
-            var lineInformation = modelModifier.GetLineInformationFromPositionIndex(textSpan.StartingIndexInclusive);
-            var lineIndex = lineInformation.LineIndex;
-            var columnIndex = textSpan.StartingIndexInclusive - lineInformation.LineStartPositionIndexInclusive;
+            var lineInformation = modelModifier.GetLineInformation(modelModifier.GetLineIndexFromPositionIndex(textSpan.StartingIndexInclusive));
+            var lineIndex = lineInformation.Index;
+            var columnIndex = textSpan.StartingIndexInclusive - lineInformation.StartPositionIndexInclusive;
 
             // Unit of measurement is pixels (px)
             var scrollLeft = new Nullable<double>(columnIndex *
@@ -437,13 +437,13 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                     {
                         var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-                        var lowerLineInformation = modelModifier.GetLineInformationFromPositionIndex(
-                            selectionBounds.lowerPositionIndexInclusive);
+                        var lowerLineInformation = modelModifier.GetLineInformation(
+                            modelModifier.GetLineIndexFromPositionIndex(selectionBounds.lowerPositionIndexInclusive));
 
-                        cursorModifier.LineIndex = lowerLineInformation.LineIndex;
+                        cursorModifier.LineIndex = lowerLineInformation.Index;
 
                         cursorModifier.ColumnIndex = selectionBounds.lowerPositionIndexInclusive -
-                            lowerLineInformation.LineStartPositionIndexInclusive;
+                            lowerLineInformation.StartPositionIndexInclusive;
                     }
                     else
                     {
@@ -515,9 +515,10 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                     {
                         var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-                        var upperLineMetaData = modelModifier.GetLineInformationFromPositionIndex(selectionBounds.upperPositionIndexExclusive);
+                        var upperLineMetaData = modelModifier.GetLineInformation(
+                            modelModifier.GetLineIndexFromPositionIndex(selectionBounds.upperPositionIndexExclusive));
 
-                        cursorModifier.LineIndex = upperLineMetaData.LineIndex;
+                        cursorModifier.LineIndex = upperLineMetaData.Index;
 
                         if (cursorModifier.LineIndex >= modelModifier.LineCount)
                         {
@@ -530,7 +531,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                         else
                         {
                             cursorModifier.ColumnIndex =
-                                selectionBounds.upperPositionIndexExclusive - upperLineMetaData.LineStartPositionIndexInclusive;
+                                selectionBounds.upperPositionIndexExclusive - upperLineMetaData.StartPositionIndexInclusive;
                         }
                     }
                     else
@@ -738,8 +739,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             {
                 verticalStartingIndex = Math.Max(0, verticalStartingIndex);
 
-                if (verticalStartingIndex + verticalTake > modelModifier.LineEndPositionList.Count)
-                    verticalTake = modelModifier.LineEndPositionList.Count - verticalStartingIndex;
+                if (verticalStartingIndex + verticalTake > modelModifier.LineEndList.Count)
+                    verticalTake = modelModifier.LineEndList.Count - verticalStartingIndex;
 
                 verticalTake = Math.Max(0, verticalTake);
             }
@@ -835,7 +836,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             var totalWidth = modelModifier.MostCharactersOnASingleLineTuple.lineLength *
                 virtualizationResult.CharAndLineMeasurements.CharacterWidth;
 
-            var totalHeight = modelModifier.LineEndPositionList.Count *
+            var totalHeight = modelModifier.LineEndList.Count *
                 virtualizationResult.CharAndLineMeasurements.LineHeight;
 
             // Add vertical margin so the user can scroll beyond the final line of content

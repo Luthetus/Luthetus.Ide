@@ -20,11 +20,11 @@ public partial class TextSelectionGroup : ComponentBase
         int upperPositionIndexExclusive,
         int rowIndex)
     {
-        if (rowIndex >= RenderBatch.Model!.LineEndPositionList.Count)
+        if (rowIndex >= RenderBatch.Model!.LineEndList.Count)
             return string.Empty;
 
-        var startOfRowTuple = RenderBatch.Model!.GetLineOpening(rowIndex);
-        var endOfRowTuple = RenderBatch.Model!.LineEndPositionList[rowIndex];
+        var startOfRowTuple = RenderBatch.Model!.GetLineEndLower(rowIndex);
+        var endOfRowTuple = RenderBatch.Model!.LineEndList[rowIndex];
 
         var selectionStartingColumnIndex = 0;
         var selectionEndingColumnIndex = endOfRowTuple.EndPositionIndexExclusive - 1;

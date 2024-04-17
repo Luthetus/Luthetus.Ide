@@ -31,14 +31,14 @@
                 {
                     var boundsInPositionIndexUnits = (textSpan.StartingIndexInclusive, textSpan.EndingIndexExclusive);
 
-                    var firstRowToSelectDataInclusive = RenderBatch.Model!.GetLineInformationFromPositionIndex(
-                            boundsInPositionIndexUnits.StartingIndexInclusive)
-                        .LineIndex;
+                    var firstRowToSelectDataInclusive = RenderBatch.Model!.GetLineInformation(
+                        RenderBatch.Model!.GetLineIndexFromPositionIndex(boundsInPositionIndexUnits.StartingIndexInclusive))
+                        .Index;
 
-                    var lastRowToSelectDataExclusive = RenderBatch.Model!.GetLineInformationFromPositionIndex(
-                            boundsInPositionIndexUnits.EndingIndexExclusive)
-                        .LineIndex +
-                        1;
+                    var lastRowToSelectDataExclusive = RenderBatch.Model!.GetLineInformation(
+                        RenderBatch.Model!.GetLineIndexFromPositionIndex(boundsInPositionIndexUnits.EndingIndexExclusive))
+                        .Index
+                        + 1;
 
                     var boundsInRowIndexUnits = (firstRowToSelectDataInclusive, lastRowToSelectDataExclusive);
 

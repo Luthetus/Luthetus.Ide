@@ -24,8 +24,8 @@ public partial class TextEditorModel
 
     public ImmutableList<EditBlock> EditBlockList { get; init; } = ImmutableList<EditBlock>.Empty;
 
-    /// <inheritdoc cref="ITextEditorModel.LineEndPositionList"/>
-	public ImmutableList<LineEnd> LineEndPositionList { get; init; } = ImmutableList<LineEnd>.Empty;
+    /// <inheritdoc cref="ITextEditorModel.LineEndList"/>
+	public ImmutableList<LineEnd> LineEndList { get; init; } = ImmutableList<LineEnd>.Empty;
 	public ImmutableList<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; init; } = ImmutableList<(LineEndKind lineEndingKind, int count)>.Empty;
 	public ImmutableList<TextEditorPresentationModel> PresentationModelList { get; init; } = ImmutableList<TextEditorPresentationModel>.Empty;
     
@@ -51,6 +51,6 @@ public partial class TextEditorModel
 	public (int lineIndex, int lineLength) MostCharactersOnASingleLineTuple { get; init; }
     public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();
 
-    public int LineCount => LineEndPositionList.Count;
+    public int LineCount => LineEndList.Count;
     public int DocumentLength => CharList.Count;
 }

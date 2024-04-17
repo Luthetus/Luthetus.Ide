@@ -61,14 +61,14 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
                 return;
             }
 
-            var rowInfo = modelModifier.GetLineInformationFromPositionIndex(
-                localTextSpanTuple.TextEditorTextSpan.StartingIndexInclusive);
+            var rowInfo = modelModifier.GetLineInformation(modelModifier.GetLineIndexFromPositionIndex(
+                localTextSpanTuple.TextEditorTextSpan.StartingIndexInclusive));
 
             var columnIndex = localTextSpanTuple.TextEditorTextSpan.StartingIndexInclusive -
-                rowInfo.LineStartPositionIndexInclusive;
+                rowInfo.StartPositionIndexInclusive;
 
             var cursor = new TextEditorCursor(
-                rowInfo.LineIndex,
+                rowInfo.Index,
                 columnIndex,
                 columnIndex,
                 true,

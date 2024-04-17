@@ -96,7 +96,7 @@ public partial class TextEditorModelModifierTests
                     0,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
-                var lineFeedPositionList = modelModifier.LineEndPositionList
+                var lineFeedPositionList = modelModifier.LineEndList
                     .Where(x => x.LineEndKind == LineEndKind.LineFeed)
                     .ToArray();
 
@@ -139,13 +139,13 @@ public partial class TextEditorModelModifierTests
 
                 // 3 line endings where inserted,
                 // There are 4 in total if one then includes the special-'EndOfFile' LineEnd.
-                Assert.Equal(4, modelModifier.LineEndPositionList.Count);
+                Assert.Equal(4, modelModifier.LineEndList.Count);
 
                 // A TextEditorModel always contains at least 1 LineEnd. This LineEnd marks the 'EndOfFile'.
                 //
                 // The insert will have moved the 'EndOfFile' LineEnd from positionIndex 0 to a larger value.
                 // Specifically, the 'EndOfFile' should move by the length of the text inserted.
-                var endOfFile = modelModifier.LineEndPositionList.Last();
+                var endOfFile = modelModifier.LineEndList.Last();
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
                 Assert.Equal(11, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(11, endOfFile.EndPositionIndexExclusive);
@@ -238,7 +238,7 @@ public partial class TextEditorModelModifierTests
                     0,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
-                var lineFeedPositionList = modelModifier.LineEndPositionList
+                var lineFeedPositionList = modelModifier.LineEndList
                     .Where(x => x.LineEndKind == LineEndKind.LineFeed)
                     .ToArray();
 
@@ -281,13 +281,13 @@ public partial class TextEditorModelModifierTests
 
                 // 3 line endings where inserted,
                 // There are 4 in total if one then includes the special-'EndOfFile' LineEnd.
-                Assert.Equal(4, modelModifier.LineEndPositionList.Count);
+                Assert.Equal(4, modelModifier.LineEndList.Count);
 
                 // A TextEditorModel always contains at least 1 LineEnd. This LineEnd marks the 'EndOfFile'.
                 //
                 // The insert will have moved the 'EndOfFile' LineEnd from positionIndex 0 to a larger value.
                 // Specifically, the 'EndOfFile' should move by the length of the text inserted.
-                var endOfFile = modelModifier.LineEndPositionList.Last();
+                var endOfFile = modelModifier.LineEndList.Last();
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
                 Assert.Equal(11, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(11, endOfFile.EndPositionIndexExclusive);
@@ -429,28 +429,28 @@ public partial class TextEditorModelModifierTests
 
                 // An insertion which is out of bounds due to being too large does nothing and immediately returns.
                 // Therefore, the count remains 1, due to the existance of the special-'EndOfFile' line ending.
-                Assert.Equal(1, modelModifier.LineEndPositionList.Count);
+                Assert.Equal(1, modelModifier.LineEndList.Count);
 
                 // An insertion which is out of bounds due to being too large does nothing and immediately returns.
                 // Therefore, LineEndPositionList is expected to not contain any CarriageReturn(s)
                 // Assert that the only line ending in the text is the 'EndOfFile'.
-                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndList.Single().LineEndKind);
 
                 // An insertion which is out of bounds due to being too large does nothing and immediately returns.
                 // Therefore, LineEndPositionList is expected to not contain any LineFeed(s)
                 // Assert that the only line ending in the text is the 'EndOfFile'.
-                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndList.Single().LineEndKind);
 
                 // An insertion which is out of bounds due to being too large does nothing and immediately returns.
                 // Therefore, LineEndPositionList is expected to not contain any CarriageReturnLineFeed(s)
                 // Assert that the only line ending in the text is the 'EndOfFile'.
-                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndList.Single().LineEndKind);
 
                 // A TextEditorModel always contains at least 1 LineEnd. This LineEnd marks the 'EndOfFile'.
                 //
                 // An insertion which is out of bounds due to being too large does nothing and immediately returns.
                 // Therefore, the 'EndOfFile' is unchanged.
-                var endOfFile = modelModifier.LineEndPositionList.Single();
+                var endOfFile = modelModifier.LineEndList.Single();
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
                 Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
@@ -583,28 +583,28 @@ public partial class TextEditorModelModifierTests
 
                 // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
                 // Therefore, the count remains 1, due to the existance of the special-'EndOfFile' line ending.
-                Assert.Equal(1, modelModifier.LineEndPositionList.Count);
+                Assert.Equal(1, modelModifier.LineEndList.Count);
 
                 // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
                 // Therefore, LineEndPositionList is expected to not contain any CarriageReturn(s)
                 // Assert that the only line ending in the text is the 'EndOfFile'.
-                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndList.Single().LineEndKind);
 
                 // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
                 // Therefore, LineEndPositionList is expected to not contain any LineFeed(s)
                 // Assert that the only line ending in the text is the 'EndOfFile'.
-                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndList.Single().LineEndKind);
 
                 // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
                 // Therefore, LineEndPositionList is expected to not contain any CarriageReturnLineFeed(s)
                 // Assert that the only line ending in the text is the 'EndOfFile'.
-                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndPositionList.Single().LineEndKind);
+                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndList.Single().LineEndKind);
 
                 // A TextEditorModel always contains at least 1 LineEnd. This LineEnd marks the 'EndOfFile'.
                 //
                 // Inserting 'string.Empty' will run all of the insertion code, but have no effect.
                 // Therefore, the 'EndOfFile' is unchanged.
-                var endOfFile = modelModifier.LineEndPositionList.Single();
+                var endOfFile = modelModifier.LineEndList.Single();
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
                 Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
@@ -710,7 +710,7 @@ public partial class TextEditorModelModifierTests
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 {
-                    var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                     // StartPositionIndexInclusive
                     Assert.Equal(
                         14,
@@ -728,7 +728,7 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(
                     4,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                var lineFeedMatches = modelModifier.LineEndPositionList.Where(x => x.LineEndKind == LineEndKind.LineFeed).ToArray();
+                var lineFeedMatches = modelModifier.LineEndList.Where(x => x.LineEndKind == LineEndKind.LineFeed).ToArray();
                 // First LineFeed
                 {
                     var lineFeed = lineFeedMatches[0];
@@ -785,7 +785,7 @@ public partial class TextEditorModelModifierTests
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 {
-                    var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                     // StartPositionIndexInclusive
                     Assert.Equal(
                         17,
@@ -799,13 +799,13 @@ public partial class TextEditorModelModifierTests
                 // 3 line endings were part of the constructor's initialContent,
                 // 3 line endings where inserted,
                 // Therefore, there are 7 in total if one then includes the special-'EndOfFile' LineEnd.
-                Assert.Equal(7, modelModifier.LineEndPositionList.Count);
+                Assert.Equal(7, modelModifier.LineEndList.Count);
 
                 // A TextEditorModel always contains at least 1 LineEnd. This LineEnd marks the 'EndOfFile'.
                 //
                 // The insert will have moved the 'EndOfFile' LineEnd from positionIndex 12 to a larger value.
                 // Specifically, the 'EndOfFile' should move by the length of the text inserted.
-                var endOfFile = modelModifier.LineEndPositionList.Last();
+                var endOfFile = modelModifier.LineEndList.Last();
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
                 Assert.Equal(23, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(23, endOfFile.EndPositionIndexExclusive);
@@ -913,7 +913,7 @@ public partial class TextEditorModelModifierTests
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 {
-                    var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                     // StartPositionIndexInclusive
                     Assert.Equal(
                         3,
@@ -931,7 +931,7 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(
                     4,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                var lineFeedMatches = modelModifier.LineEndPositionList.Where(x => x.LineEndKind == LineEndKind.LineFeed).ToArray();
+                var lineFeedMatches = modelModifier.LineEndList.Where(x => x.LineEndKind == LineEndKind.LineFeed).ToArray();
                 // First LineFeed
                 {
                     var lineFeed = lineFeedMatches[0];
@@ -988,7 +988,7 @@ public partial class TextEditorModelModifierTests
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 {
-                    var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                     // StartPositionIndexInclusive
                     Assert.Equal(
                         6,
@@ -1002,13 +1002,13 @@ public partial class TextEditorModelModifierTests
                 // 3 line endings were part of the constructor's initialContent,
                 // 3 line endings where inserted,
                 // Therefore, there are 7 in total if one then includes the special-'EndOfFile' LineEnd.
-                Assert.Equal(7, modelModifier.LineEndPositionList.Count);
+                Assert.Equal(7, modelModifier.LineEndList.Count);
 
                 // A TextEditorModel always contains at least 1 LineEnd. This LineEnd marks the 'EndOfFile'.
                 //
                 // The insert will have moved the 'EndOfFile' LineEnd from positionIndex 12 to a larger value.
                 // Specifically, the 'EndOfFile' should move by the length of the text inserted.
-                var endOfFile = modelModifier.LineEndPositionList.Last();
+                var endOfFile = modelModifier.LineEndList.Last();
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
                 Assert.Equal(23, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(23, endOfFile.EndPositionIndexExclusive);
@@ -1099,7 +1099,7 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                 // StartPositionIndexInclusive
                 Assert.Equal(
                     14,
@@ -1116,7 +1116,7 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(
                     4,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                var lineFeedMatches = modelModifier.LineEndPositionList.Where(x => x.LineEndKind == LineEndKind.LineFeed).ToArray();
+                var lineFeedMatches = modelModifier.LineEndList.Where(x => x.LineEndKind == LineEndKind.LineFeed).ToArray();
                 // First LineFeed
                 {
                     var lineFeed = lineFeedMatches[0];
@@ -1172,7 +1172,7 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                 // StartPositionIndexInclusive
                 Assert.Equal(
                     17,
@@ -1185,14 +1185,14 @@ public partial class TextEditorModelModifierTests
                 // 3 line endings where included in the initial content for the TextEditorModel.
                 // Then, 3 line endings were inserted.
                 // If one includes the EndOfFile, then there are 7 line endings total.
-                Assert.Equal(7, modelModifier.LineEndPositionList.Count);
+                Assert.Equal(7, modelModifier.LineEndList.Count);
 
                 // A TextEditorModel always contains at least 1 LineEnd.
                 // This LineEnd marks the 'EndOfFile'.
                 //
                 // The Insert(...) for 'TextEditorModel' results in the 'EndOfFile' positionIndex changing,
                 // by the length of what was inserted.
-                var endOfFile = modelModifier.LineEndPositionList.Last();
+                var endOfFile = modelModifier.LineEndList.Last();
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
                 Assert.Equal(23, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(23, endOfFile.EndPositionIndexExclusive);
@@ -1348,7 +1348,7 @@ public partial class TextEditorModelModifierTests
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 {
-                    var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                     // StartPositionIndexInclusive
                     Assert.Equal(
                         3,
@@ -1366,7 +1366,7 @@ public partial class TextEditorModelModifierTests
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 {
-                    var lineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
                     // StartPositionIndexInclusive
                     Assert.Equal(
                         0,
@@ -1385,7 +1385,7 @@ public partial class TextEditorModelModifierTests
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 {
-                    var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                     // StartPositionIndexInclusive
                     Assert.Equal(
                         6,
@@ -1399,13 +1399,13 @@ public partial class TextEditorModelModifierTests
                 // 3 line endings where included in the string that was passed to the constructor,
                 // And the insertion is expected to do nothing.
                 // Therefore, there are 4 in total if one then includes the special-'EndOfFile' LineEnd.
-                Assert.Equal(4, modelModifier.LineEndPositionList.Count);
+                Assert.Equal(4, modelModifier.LineEndList.Count);
 
                 // A TextEditorModel always contains at least 1 LineEnd. This LineEnd marks the 'EndOfFile'.
                 //
                 // The insertion is expected to do nothing,
                 // therefore the positionIndex remains 12.
-                var endOfFile = modelModifier.LineEndPositionList.Last();
+                var endOfFile = modelModifier.LineEndList.Last();
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
                 Assert.Equal(12, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(12, endOfFile.EndPositionIndexExclusive);
@@ -1552,7 +1552,7 @@ public partial class TextEditorModelModifierTests
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 {
-                    var carriageReturn = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
                     // StartPositionIndexInclusive
                     Assert.Equal(
                         3,
@@ -1570,7 +1570,7 @@ public partial class TextEditorModelModifierTests
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 {
-                    var lineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
                     // StartPositionIndexInclusive
                     Assert.Equal(
                         0,
@@ -1589,7 +1589,7 @@ public partial class TextEditorModelModifierTests
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
                 {
-                    var carriageReturnLineFeed = modelModifier.LineEndPositionList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
                     // StartPositionIndexInclusive
                     Assert.Equal(
                         6,
@@ -1603,13 +1603,13 @@ public partial class TextEditorModelModifierTests
                 // 3 line endings where included in the string that was passed to the constructor,
                 // And the insertion is expected to do nothing.
                 // Therefore, there are 4 in total if one then includes the special-'EndOfFile' LineEnd.
-                Assert.Equal(4, modelModifier.LineEndPositionList.Count);
+                Assert.Equal(4, modelModifier.LineEndList.Count);
 
                 // A TextEditorModel always contains at least 1 LineEnd. This LineEnd marks the 'EndOfFile'.
                 //
                 // The insertion is expected to do nothing,
                 // therefore the positionIndex remains 12.
-                var endOfFile = modelModifier.LineEndPositionList.Last();
+                var endOfFile = modelModifier.LineEndList.Last();
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
                 Assert.Equal(12, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(12, endOfFile.EndPositionIndexExclusive);

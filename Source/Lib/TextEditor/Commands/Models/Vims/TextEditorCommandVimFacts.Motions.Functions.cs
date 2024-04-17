@@ -278,10 +278,11 @@ public static partial class TextEditorCommandVimFacts
                     if (previousAnchorPositionIndex < previousEndingPositionIndex)
                     {
                         // Anchor went from being the lower bound to the upper bound.
-                        var rowDataAnchorIsOn = modelModifier.GetLineInformationFromPositionIndex(previousAnchorPositionIndex.Value);
+                        var rowDataAnchorIsOn = modelModifier.GetLineInformation(
+                            modelModifier.GetLineIndexFromPositionIndex(previousAnchorPositionIndex.Value));
 
-                        primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier.LineEndPositionList[
-                            rowDataAnchorIsOn.LineIndex].EndPositionIndexExclusive;
+                        primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier.LineEndList[
+                            rowDataAnchorIsOn.Index].EndPositionIndexExclusive;
                     }
 
                     var rowStartPositionInclusive = modelModifier.GetLineStartPositionIndexInclusive(primaryCursorModifier.LineIndex);
@@ -293,13 +294,14 @@ public static partial class TextEditorCommandVimFacts
                     if (previousAnchorPositionIndex > previousEndingPositionIndex)
                     {
                         // Anchor went from being the upper bound to the lower bound.
-                        var rowDataAnchorIsOn = modelModifier.GetLineInformationFromPositionIndex(previousAnchorPositionIndex.Value);
+                        var rowDataAnchorIsOn = modelModifier.GetLineInformation(
+                            modelModifier.GetLineIndexFromPositionIndex(previousAnchorPositionIndex.Value));
 
                         primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier.GetLineStartPositionIndexInclusive(
-                            rowDataAnchorIsOn.LineIndex - 1);
+                            rowDataAnchorIsOn.Index - 1);
                     }
 
-                    var endingPositionOfRow = modelModifier.LineEndPositionList[primaryCursorModifier.LineIndex]
+                    var endingPositionOfRow = modelModifier.LineEndList[primaryCursorModifier.LineIndex]
                         .EndPositionIndexExclusive;
 
                     primaryCursorModifier.SelectionEndingPositionIndex = endingPositionOfRow;

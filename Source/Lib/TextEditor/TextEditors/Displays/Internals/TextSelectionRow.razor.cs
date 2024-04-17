@@ -45,13 +45,13 @@ public partial class TextSelectionRow : ComponentBase
         int upperPositionIndexExclusive = UpperPositionIndexExclusive;
         int rowIndex = RowIndex;
 
-        if (rowIndex >= RenderBatch.Model!.LineEndPositionList.Count)
+        if (rowIndex >= RenderBatch.Model!.LineEndList.Count)
             return;
 
         bool stateHasChanged = false;
 
-        var startOfRowTuple = RenderBatch.Model!.GetLineOpening(rowIndex);
-        var endOfRowTuple = RenderBatch.Model!.LineEndPositionList[rowIndex];
+        var startOfRowTuple = RenderBatch.Model!.GetLineEndLower(rowIndex);
+        var endOfRowTuple = RenderBatch.Model!.LineEndList[rowIndex];
 
         var selectionStartingColumnIndex = 0;
         var selectionEndingColumnIndex = endOfRowTuple.EndPositionIndexExclusive - 1;

@@ -62,7 +62,7 @@ public interface ITextEditorModel
     /// To get the ending position of LineIndex _lineEndPositions[LineIndex]<br /><br />
     /// _lineEndPositions returns the start of the NEXT line
     /// </summary>
-    public IList<LineEnd> LineEndPositionList { get; }
+    public IList<LineEnd> LineEndList { get; }
     public IList<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; }
     public IList<TextEditorPresentationModel> PresentationModelList { get; }
     /// <summary>

@@ -69,7 +69,7 @@
 
                 if (amountOfLeftInCharacterWidthUnits < lengthOfRow)
                 {
-                    var rowEndingTuple = RenderBatch.Model!.LineEndPositionList[virtualizedRow.Index];
+                    var rowEndingTuple = RenderBatch.Model!.LineEndList[virtualizedRow.Index];
 
                     <span class="luth_te_newline">
                         @rowEndingTuple.LineEndKind.AsCharactersHtmlEscaped()

@@ -116,7 +116,7 @@ public class ModelTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModel.LineEndPositionList "/>
+    /// <see cref="TextEditorModel.LineEndList "/>
     /// </summary>
     [Fact]
     public void RowEndingPositionsList_InterfaceImplementation()
@@ -170,7 +170,7 @@ public class ModelTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModel.LineEndPositionList"/>
+    /// <see cref="TextEditorModel.LineEndList"/>
     /// </summary>
     [Fact]
     public void RowEndingPositionsList()

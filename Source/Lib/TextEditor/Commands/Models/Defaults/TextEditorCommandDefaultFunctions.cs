@@ -62,10 +62,10 @@ public class TextEditorCommandDefaultFunctions
             if (!TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
             {
                 var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
-                var lineInformation = modelModifier.GetLineInformationFromPositionIndex(positionIndex);
+                var lineInformation = modelModifier.GetLineInformation(modelModifier.GetLineIndexFromPositionIndex(positionIndex));
 
-                primaryCursorModifier.SelectionAnchorPositionIndex = lineInformation.LineStartPositionIndexInclusive;
-                primaryCursorModifier.SelectionEndingPositionIndex = lineInformation.LineEnd.EndPositionIndexExclusive;
+                primaryCursorModifier.SelectionAnchorPositionIndex = lineInformation.StartPositionIndexInclusive;
+                primaryCursorModifier.SelectionEndingPositionIndex = lineInformation.EndPositionIndexExclusive;
             }
 
             var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier) ?? string.Empty;
@@ -745,11 +745,11 @@ public class TextEditorCommandDefaultFunctions
             if (definitionViewModelModifier is null || definitionCursorModifierBag is null || definitionPrimaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            var rowData = definitionModel.GetLineInformationFromPositionIndex(definitionTextSpan.StartingIndexInclusive);
-            var columnIndex = definitionTextSpan.StartingIndexInclusive - rowData.LineStartPositionIndexInclusive;
+            var rowData = definitionModel.GetLineInformation(definitionModel.GetLineIndexFromPositionIndex(definitionTextSpan.StartingIndexInclusive));
+            var columnIndex = definitionTextSpan.StartingIndexInclusive - rowData.StartPositionIndexInclusive;
 
             definitionPrimaryCursorModifier.SelectionAnchorPositionIndex = null;
-            definitionPrimaryCursorModifier.LineIndex = rowData.LineIndex;
+            definitionPrimaryCursorModifier.LineIndex = rowData.Index;
             definitionPrimaryCursorModifier.ColumnIndex = columnIndex;
             definitionPrimaryCursorModifier.PreferredColumnIndex = columnIndex;
 

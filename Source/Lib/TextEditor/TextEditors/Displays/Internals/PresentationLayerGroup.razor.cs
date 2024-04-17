@@ -47,11 +47,11 @@ public partial class PresentationLayerGroup : ComponentBase
         var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements;
         var elementMeasurements = RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements;
 
-        if (rowIndex >= RenderBatch.Model!.LineEndPositionList.Count)
+        if (rowIndex >= RenderBatch.Model!.LineEndList.Count)
             return string.Empty;
 
-        var startOfRowTuple = RenderBatch.Model!.GetLineOpening(rowIndex);
-        var endOfRowTuple = RenderBatch.Model!.LineEndPositionList[rowIndex];
+        var startOfRowTuple = RenderBatch.Model!.GetLineEndLower(rowIndex);
+        var endOfRowTuple = RenderBatch.Model!.LineEndList[rowIndex];
 
         var startingColumnIndex = 0;
         var endingColumnIndex = endOfRowTuple.EndPositionIndexExclusive - 1;
@@ -146,8 +146,8 @@ public partial class PresentationLayerGroup : ComponentBase
             var lowerLineIndexInclusive = RenderBatch.ViewModel.VirtualizationResult.EntryList.First().Index;
             var upperLineIndexInclusive = RenderBatch.ViewModel.VirtualizationResult.EntryList.Last().Index;
             
-            var lowerLineEndingThatCreatedRow = RenderBatch.Model!.GetLineOpening(lowerLineIndexInclusive);
-            var upperLineEndingThatCreatedRow = RenderBatch.Model!.GetLineOpening(upperLineIndexInclusive);
+            var lowerLineEndingThatCreatedRow = RenderBatch.Model!.GetLineEndLower(lowerLineIndexInclusive);
+            var upperLineEndingThatCreatedRow = RenderBatch.Model!.GetLineEndLower(upperLineIndexInclusive);
 
             foreach (var textSpan in inTextSpanList)
             {
