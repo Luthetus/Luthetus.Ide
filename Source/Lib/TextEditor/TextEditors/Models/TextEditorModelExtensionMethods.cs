@@ -355,24 +355,42 @@ public static class TextEditorModelExtensionMethods
         return matchedTextSpans.ToImmutableArray();
     }
 
-    public static RowInformation GetLineInformationFromPositionIndex(this ITextEditorModel model, int positionIndex)
+    public static LineInformation GetLineInformationFromPositionIndex(this ITextEditorModel model, int positionIndex)
     {
-        for (var i = model.LineEndPositionList.Count - 1; i >= 0; i--)
+        // If the EndPositionIndexExclusive of the first line end is greater than the position index
+        if (model.LineEndPositionList[0].EndPositionIndexExclusive > positionIndex)
+        {
+            // Then the line-opening is a special case 'StartOfFile'
+            var lineEnd = GetLineOpening(model, 0);
+            return new LineInformation(0, lineEnd.StartPositionIndexInclusive, lineEnd);
+        }
+
+        // If the EndOfFile's EndPositionIndexExclusive is less than the positionIndex,
+        // then the positionIndex is (large-ly) out of bounds.
+        if (model.LineEndPositionList[^1].EndPositionIndexExclusive <= positionIndex)
+        {
+            // Return the 'EndOfFile' special case line-end
+            var lineEnd = GetLineOpening(model, model.LineEndPositionList.Count - 1);
+            return new LineInformation(0, lineEnd.StartPositionIndexInclusive, lineEnd);
+        }
+
+        // Any cases which are not at the start of the text editor,
+        // nor the end the text editor,
+        // are handled by this 'for' loop.
+        for (var i = 1; i < model.LineEndPositionList.Count; i++)
         {
             var lineEndTuple = model.LineEndPositionList[i];
 
-            if (positionIndex >= lineEndTuple.EndPositionIndexExclusive)
+            if (lineEndTuple.EndPositionIndexExclusive > positionIndex)
             {
-                return new(
-                    i + 1,
-                    lineEndTuple.EndPositionIndexExclusive,
-                    i == model.LineEndPositionList.Count - 1
-                        ? lineEndTuple
-                        : model.LineEndPositionList[i + 1]);
+                return new LineInformation(
+                    i,
+                    lineEndTuple.StartPositionIndexInclusive,
+                    GetLineOpening(model, model.LineEndPositionList.Count - 1));
             }
         }
 
-        return new(0, 0, model.LineEndPositionList[0]);
+        return new(0, 0, new LineEnd(0, 0, LineEndKind.StartOfFile));
     }
 
     /// <summary>

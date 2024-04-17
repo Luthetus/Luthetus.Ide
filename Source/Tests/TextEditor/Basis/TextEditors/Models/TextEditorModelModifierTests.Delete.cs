@@ -78,13 +78,14 @@ public partial class TextEditorModelModifierTests
 
         // Do something
         TextEditorModel outModel;
+        TextEditorCursorModifier cursorModifier;
         {
             var cursor = new TextEditorCursor(
                 lineIndex: 0,
                 columnIndex: 0,
                 isPrimaryCursor: true);
 
-            var cursorModifier = new TextEditorCursorModifier(cursor);
+            cursorModifier = new TextEditorCursorModifier(cursor);
             var cursorModifierBag = new CursorModifierBagTextEditor(
                 Key<TextEditorViewModel>.Empty,
                 new List<TextEditorCursorModifier>() { cursorModifier });
@@ -130,6 +131,16 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
             }
+
+            // Cursor related code-block-grouping:
+            {
+                Assert.Equal(0, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.ColumnIndex);
+                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                Assert.True(cursorModifier.IsPrimaryCursor);
+                Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
+                Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
+            }
         }
     }
     
@@ -150,6 +161,7 @@ public partial class TextEditorModelModifierTests
 
         // Do something
         TextEditorModel outModel;
+        TextEditorCursorModifier cursorModifier;
         {
             // Deleting at positionIndex of 'DocumentLength' is awkward, because the API accepts a 'lineIndex' and 'columnIndex'
             // Here, 'lineIndex: modelModifier.LineCount - 1' gets the lineIndex that the 'EndOfFile' resides at.
@@ -160,7 +172,7 @@ public partial class TextEditorModelModifierTests
                 columnIndex: 0,
                 isPrimaryCursor: true);
 
-            var cursorModifier = new TextEditorCursorModifier(cursor);
+            cursorModifier = new TextEditorCursorModifier(cursor);
             var cursorModifierBag = new CursorModifierBagTextEditor(
                 Key<TextEditorViewModel>.Empty,
                 new List<TextEditorCursorModifier>() { cursorModifier });
@@ -205,6 +217,16 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
                 Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+            }
+
+            // Cursor related code-block-grouping:
+            {
+                Assert.Equal(0, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.ColumnIndex);
+                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                Assert.True(cursorModifier.IsPrimaryCursor);
+                Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
+                Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
             }
         }
     }
@@ -323,6 +345,7 @@ public partial class TextEditorModelModifierTests
 
         // Do something
         TextEditorModel outModel;
+        TextEditorCursorModifier cursorModifier;
         {
             // Deleting at positionIndex '0' with 'DeleteKind.Backspace' should have no effect.
             var cursor = new TextEditorCursor(
@@ -330,7 +353,7 @@ public partial class TextEditorModelModifierTests
                     columnIndex: 0,
                     isPrimaryCursor: true);
 
-            var cursorModifier = new TextEditorCursorModifier(cursor);
+            cursorModifier = new TextEditorCursorModifier(cursor);
             var cursorModifierBag = new CursorModifierBagTextEditor(
                 Key<TextEditorViewModel>.Empty,
                 new List<TextEditorCursorModifier>() { cursorModifier });
@@ -376,6 +399,16 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
             }
+
+            // Cursor related code-block-grouping:
+            {
+                Assert.Equal(0, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.ColumnIndex);
+                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                Assert.True(cursorModifier.IsPrimaryCursor);
+                Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
+                Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
+            }
         }
     }
 
@@ -396,6 +429,7 @@ public partial class TextEditorModelModifierTests
 
         // Do something
         TextEditorModel outModel;
+        TextEditorCursorModifier cursorModifier;
         {
             // Deleting at positionIndex of 'DocumentLength' is awkward, because the API accepts a 'lineIndex' and 'columnIndex'
             // Here, 'lineIndex: modelModifier.LineCount - 1' gets the lineIndex that the 'EndOfFile' resides at.
@@ -406,7 +440,7 @@ public partial class TextEditorModelModifierTests
                 columnIndex: 0,
                 isPrimaryCursor: true);
 
-            var cursorModifier = new TextEditorCursorModifier(cursor);
+            cursorModifier = new TextEditorCursorModifier(cursor);
             var cursorModifierBag = new CursorModifierBagTextEditor(
                 Key<TextEditorViewModel>.Empty,
                 new List<TextEditorCursorModifier>() { cursorModifier });
@@ -451,6 +485,16 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
                 Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+            }
+
+            // Cursor related code-block-grouping:
+            {
+                Assert.Equal(0, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.ColumnIndex);
+                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                Assert.True(cursorModifier.IsPrimaryCursor);
+                Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
+                Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
             }
         }
     }
@@ -533,13 +577,14 @@ public partial class TextEditorModelModifierTests
 
         // Do something
         TextEditorModel outModel;
+        TextEditorCursorModifier cursorModifier;
         {
             var cursor = new TextEditorCursor(
                 lineIndex: 0,
                 columnIndex: 0,
                 isPrimaryCursor: true);
 
-            var cursorModifier = new TextEditorCursorModifier(cursor);
+            cursorModifier = new TextEditorCursorModifier(cursor);
             var cursorModifierBag = new CursorModifierBagTextEditor(
                 Key<TextEditorViewModel>.Empty,
                 new List<TextEditorCursorModifier>() { cursorModifier });
@@ -576,6 +621,16 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
             }
+
+            // Cursor related code-block-grouping:
+            {
+                Assert.Equal(0, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.ColumnIndex);
+                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                Assert.True(cursorModifier.IsPrimaryCursor);
+                Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
+                Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
+            }
         }
     }
 
@@ -604,6 +659,7 @@ public partial class TextEditorModelModifierTests
 
         // Do something
         TextEditorModel outModel;
+        TextEditorCursorModifier cursorModifier;
         {
             /*
              Given content:
@@ -639,7 +695,7 @@ public partial class TextEditorModelModifierTests
                 columnIndex: 0,
                 isPrimaryCursor: true);
 
-            var cursorModifier = new TextEditorCursorModifier(cursor);
+            cursorModifier = new TextEditorCursorModifier(cursor);
             var cursorModifierBag = new CursorModifierBagTextEditor(
                 Key<TextEditorViewModel>.Empty,
                 new List<TextEditorCursorModifier>() { cursorModifier });
@@ -714,6 +770,16 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
                 Assert.Equal(11, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(11, endOfFile.EndPositionIndexExclusive);
+            }
+
+            // Cursor related code-block-grouping:
+            {
+                Assert.Equal(1, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.ColumnIndex);
+                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                Assert.True(cursorModifier.IsPrimaryCursor);
+                Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
+                Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
             }
         }
     }
@@ -797,13 +863,14 @@ public partial class TextEditorModelModifierTests
 
         // Do something
         TextEditorModel outModel;
+        TextEditorCursorModifier cursorModifier;
         {
             var cursor = new TextEditorCursor(
                 lineIndex: 0,
                 columnIndex: 0,
                 isPrimaryCursor: true);
 
-            var cursorModifier = new TextEditorCursorModifier(cursor);
+            cursorModifier = new TextEditorCursorModifier(cursor);
             var cursorModifierBag = new CursorModifierBagTextEditor(
                 Key<TextEditorViewModel>.Empty,
                 new List<TextEditorCursorModifier>() { cursorModifier });
@@ -870,6 +937,16 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(11, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(11, endOfFile.EndPositionIndexExclusive);
             }
+
+            // Cursor related code-block-grouping:
+            {
+                Assert.Equal(0, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.ColumnIndex);
+                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                Assert.True(cursorModifier.IsPrimaryCursor);
+                Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
+                Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
+            }
         }
     }
 
@@ -898,6 +975,7 @@ public partial class TextEditorModelModifierTests
 
         // Do something
         TextEditorModel outModel;
+        TextEditorCursorModifier cursorModifier;
         {
             /*
              Given content:
@@ -933,7 +1011,7 @@ public partial class TextEditorModelModifierTests
                 columnIndex: 0,
                 isPrimaryCursor: true);
 
-            var cursorModifier = new TextEditorCursorModifier(cursor);
+            cursorModifier = new TextEditorCursorModifier(cursor);
             var cursorModifierBag = new CursorModifierBagTextEditor(
                 Key<TextEditorViewModel>.Empty,
                 new List<TextEditorCursorModifier>() { cursorModifier });
@@ -1009,6 +1087,16 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(11, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(11, endOfFile.EndPositionIndexExclusive);
             }
+
+            // Cursor related code-block-grouping:
+            {
+                Assert.Equal(1, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.ColumnIndex);
+                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                Assert.True(cursorModifier.IsPrimaryCursor);
+                Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
+                Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
+            }
         }
     }
 
@@ -1037,6 +1125,7 @@ public partial class TextEditorModelModifierTests
 
         // Do something
         TextEditorModel outModel;
+        TextEditorCursorModifier cursorModifier;
         {
             // Deleting at positionIndex of 'DocumentLength' is awkward, because the API accepts a 'lineIndex' and 'columnIndex'
             // Here, 'lineIndex: modelModifier.LineCount - 1' gets the lineIndex that the 'EndOfFile' resides at.
@@ -1047,7 +1136,7 @@ public partial class TextEditorModelModifierTests
                 columnIndex: 0,
                 isPrimaryCursor: true);
 
-            var cursorModifier = new TextEditorCursorModifier(cursor);
+            cursorModifier = new TextEditorCursorModifier(cursor);
             var cursorModifierBag = new CursorModifierBagTextEditor(
                 Key<TextEditorViewModel>.Empty,
                 new List<TextEditorCursorModifier>() { cursorModifier });
@@ -1122,6 +1211,16 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
                 Assert.Equal(12, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(12, endOfFile.EndPositionIndexExclusive);
+            }
+
+            // Cursor related code-block-grouping:
+            {
+                Assert.Equal(modelModifier.LineCount - 1, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.ColumnIndex);
+                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                Assert.True(cursorModifier.IsPrimaryCursor);
+                Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
+                Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
             }
         }
     }
@@ -1210,6 +1309,7 @@ public partial class TextEditorModelModifierTests
 
         // Do something
         TextEditorModel outModel;
+        TextEditorCursorModifier cursorModifier;
         {
             // DocumentLength is equivalent to:
             // lineIndex: modelModifier.LineCount - 1, and columnIndex: 0
@@ -1221,7 +1321,7 @@ public partial class TextEditorModelModifierTests
                 columnIndex: 0,
                 isPrimaryCursor: true);
 
-            var cursorModifier = new TextEditorCursorModifier(cursor);
+            cursorModifier = new TextEditorCursorModifier(cursor);
             var cursorModifierBag = new CursorModifierBagTextEditor(
                 Key<TextEditorViewModel>.Empty,
                 new List<TextEditorCursorModifier>() { cursorModifier });
@@ -1257,6 +1357,16 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
                 Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+            }
+
+            // Cursor related code-block-grouping:
+            {
+                Assert.Equal(0, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.ColumnIndex);
+                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                Assert.True(cursorModifier.IsPrimaryCursor);
+                Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
+                Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
             }
         }
     }

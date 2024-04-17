@@ -969,11 +969,26 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
         if (deleteKind == DeleteKind.Delete)
         {
+            // Reposition the cursor
+            {
+                var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(positionIndex);
+                cursorModifier.LineIndex = lineIndex;
+                cursorModifier.ColumnIndex = columnIndex;
+            }
+
             return (positionIndex, charCount);
         }
         else if (deleteKind == DeleteKind.Backspace)
         {
             var calculatedPositionIndex = positionIndex - charCount;
+
+            // Reposition the cursor
+            {
+                var(lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(calculatedPositionIndex);
+                cursorModifier.LineIndex = lineIndex;
+                cursorModifier.ColumnIndex = columnIndex;
+            }
+
             return (calculatedPositionIndex, charCount);
         }
         else

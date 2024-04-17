@@ -1,6 +1,6 @@
 ﻿namespace Luthetus.TextEditor.RazorLib.Rows.Models;
 
-public record RowInformation(
+public record LineInformation(
     int LineIndex,
     int LineStartPositionIndexInclusive,
-    LineEnd RowEnding);
+    LineEnd LineEnd);

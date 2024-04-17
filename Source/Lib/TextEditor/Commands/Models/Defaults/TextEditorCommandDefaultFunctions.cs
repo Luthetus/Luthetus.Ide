@@ -62,10 +62,10 @@ public class TextEditorCommandDefaultFunctions
             if (!TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
             {
                 var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
-                var rowInformation = modelModifier.GetLineInformationFromPositionIndex(positionIndex);
+                var lineInformation = modelModifier.GetLineInformationFromPositionIndex(positionIndex);
 
-                primaryCursorModifier.SelectionAnchorPositionIndex = rowInformation.LineStartPositionIndexInclusive;
-                primaryCursorModifier.SelectionEndingPositionIndex = rowInformation.RowEnding.EndPositionIndexExclusive;
+                primaryCursorModifier.SelectionAnchorPositionIndex = lineInformation.LineStartPositionIndexInclusive;
+                primaryCursorModifier.SelectionEndingPositionIndex = lineInformation.LineEnd.EndPositionIndexExclusive;
             }
 
             var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier) ?? string.Empty;
