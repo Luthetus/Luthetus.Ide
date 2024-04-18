@@ -155,7 +155,7 @@ public class TextEditorTestBase
     /// 1 \n                                                                                          <br/>
     /// 2 b9\r                                                                                        <br/>
     /// 3 9B\r\n                                                                                      <br/>
-    /// 4 --->$;∙                                                                                     <br/>
+    /// 4 --->$;∙EOF                                                                                  <br/>
     /// </summary>
     protected (TextEditorModel inModel, TextEditorModelModifier modelModifier) NotEmptyEditor_TestData_And_PerformPreAssertions(
         ResourceUri resourceUri,
