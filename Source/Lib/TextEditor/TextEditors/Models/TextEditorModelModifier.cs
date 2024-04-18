@@ -758,6 +758,9 @@ public partial class TextEditorModelModifier : ITextEditorModel
             _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
         }
 
+        // IMPORTANT NOTE TO SELF:
+        // Cursors use 'lineIdex' NOT 'lineEndIndex'.
+
         var initialLineIndex = cursorModifier.LineIndex;
         var positionIndex = this.GetPositionIndex(cursorModifier);
 

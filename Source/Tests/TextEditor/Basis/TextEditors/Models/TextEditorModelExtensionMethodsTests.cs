@@ -2,6 +2,7 @@
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using System.Linq;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
@@ -20,12 +21,67 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.GetLines(ITextEditorModel, int, int)"/>
+    /// <see cref="TextEditorModelExtensionMethods.GetLineRichCharacterRange(ITextEditorModel, int, int)"/>
     /// </summary>
     [Fact]
     public void GetLines()
     {
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: "\nb9\r9B\r\n\t$; ",
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        var zero_index_line = modelModifier.GetLineText(0);
+        var one_index_line = modelModifier.GetLineText(1);
+        var two_index_line = modelModifier.GetLineText(2);
+        var three_index_line = modelModifier.GetLineText(3);
+        var four_index_line = modelModifier.GetLineText(4);
+        var five_index_line = modelModifier.GetLineText(5);
+
+        //Assert.Equal("\n", );
+
+        var lineEndListCount = modelModifier.LineEndList.Count;
+
+        var zero_line_index_to_position_index = modelModifier.GetPositionIndex(lineIndex: 0, columnIndex: 0);
+        var one_line_index_to_position_index = modelModifier.GetPositionIndex(lineIndex: 1, columnIndex: 0);
+        var two_line_index_to_position_index = modelModifier.GetPositionIndex(lineIndex: 2, columnIndex: 0);
+        var three_line_index_to_position_index = modelModifier.GetPositionIndex(lineIndex: 3, columnIndex: 0);
+        var four_line_index_to_position_index = modelModifier.GetPositionIndex(lineIndex: 4, columnIndex: 0);
+
         throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetAllText(ITextEditorModel)"/> equals
+    /// <see cref="String(char*)"/> constructor used on 
+    /// <see cref="TextEditorModelExtensionMethods.GetLineRichCharacterRange(ITextEditorModel, int, int)"/>
+    /// after using .SelectMany() to get the values out, and doing .ToArray().
+    /// </summary>
+    [Fact]
+    public void GetAllText_Equals_GetLines_MadeIntoA_String()
+    {
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: "\nb9\r9B\r\n\t$; ",
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        var all_text = modelModifier.GetAllText();
+        var all_lines = modelModifier.GetLineRichCharacterRange(0, modelModifier.LineCount);
+
+        var linesString = new string(all_lines
+            .SelectMany(x => x)
+            .Select(y => y.Value)
+            .ToArray());
+
+        Assert.Equal(all_text, linesString);
     }
 
     /// <summary>
@@ -144,7 +200,7 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.GetLineRange(ITextEditorModel, int, int)"/>
+    /// <see cref="TextEditorModelExtensionMethods.GetLineTextRange(ITextEditorModel, int, int)"/>
     /// </summary>
     [Fact]
     public void GetLineRange()

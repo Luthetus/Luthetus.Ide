@@ -687,7 +687,7 @@ public class TextEditorCommandDefaultFactsTests
                 Assert.NotNull(outModel);
 
                 var textOnRow = new string(outModel!
-                    .GetLines(1, 1)
+                    .GetLineRichCharacterRange(1, 1)
                     .Single()
                     .Select(x => x.Value)
                     .ToArray());
@@ -760,7 +760,7 @@ public class TextEditorCommandDefaultFactsTests
                 Assert.NotNull(outModel);
 
                 var textOnRow = new string(outModel!
-                    .GetLines(1, 1)
+                    .GetLineRichCharacterRange(1, 1)
                     .Single()
                     .Select(x => x.Value)
                     .ToArray());
@@ -835,7 +835,7 @@ public class TextEditorCommandDefaultFactsTests
                 Assert.NotNull(outModel);
 
                 var textOnRow = string.Join(string.Empty, outModel!
-                    .GetLines(0, 2)
+                    .GetLineRichCharacterRange(0, 2)
                     .SelectMany(x => new string(x.Select(y => y.Value).ToArray()))
                     .ToArray());
 
@@ -909,7 +909,7 @@ public class TextEditorCommandDefaultFactsTests
                 Assert.NotNull(outModel);
 
                 var textOnRow = string.Join(string.Empty, outModel!
-                    .GetLines(0, 2)
+                    .GetLineRichCharacterRange(0, 2)
                     .SelectMany(x => new string(x.Select(y => y.Value).ToArray()))
                     .ToArray());
 
@@ -1012,7 +1012,7 @@ public class TextEditorCommandDefaultFactsTests
                             .Invoke(editContext);
 
                         var rowText = new string(
-                            modelModifier.GetLines(1, 1).Single().Select(x => x.Value).ToArray());
+                            modelModifier.GetLineRichCharacterRange(1, 1).Single().Select(x => x.Value).ToArray());
 
                         Assert.Equal("\t7 Pillows\n", rowText);
                     }
@@ -1040,7 +1040,7 @@ public class TextEditorCommandDefaultFactsTests
             Assert.NotNull(outModel);
 
             var rowText = new string(
-                outModel!.GetLines(1, 1).Single().Select(x => x.Value).ToArray());
+                outModel!.GetLineRichCharacterRange(1, 1).Single().Select(x => x.Value).ToArray());
             
             Assert.Equal("7 Pillows\n", rowText);
         }
@@ -1081,7 +1081,7 @@ public class TextEditorCommandDefaultFactsTests
                             .Invoke(editContext);
 
                         var rowText = new string(
-                            modelModifier.GetLines(1, 1).Single().Select(x => x.Value).ToArray());
+                            modelModifier.GetLineRichCharacterRange(1, 1).Single().Select(x => x.Value).ToArray());
 
                         Assert.Equal("    7 Pillows\n", rowText);
                     }
@@ -1109,7 +1109,7 @@ public class TextEditorCommandDefaultFactsTests
             Assert.NotNull(outModel);
 
             var rowText = new string(
-                outModel!.GetLines(1, 1).Single().Select(x => x.Value).ToArray());
+                outModel!.GetLineRichCharacterRange(1, 1).Single().Select(x => x.Value).ToArray());
 
             Assert.Equal("7 Pillows\n", rowText);
         }
@@ -1150,7 +1150,7 @@ public class TextEditorCommandDefaultFactsTests
                             .Invoke(editContext);
 
                         var rowText = new string(
-                            modelModifier.GetLines(1, 1).Single().Select(x => x.Value).ToArray());
+                            modelModifier.GetLineRichCharacterRange(1, 1).Single().Select(x => x.Value).ToArray());
 
                         Assert.Equal("\t7 Pillows\n", rowText);
                     }
@@ -1178,7 +1178,7 @@ public class TextEditorCommandDefaultFactsTests
             Assert.NotNull(outModel);
 
             var rowText = new string(
-                outModel!.GetLines(1, 1).Single().Select(x => x.Value).ToArray());
+                outModel!.GetLineRichCharacterRange(1, 1).Single().Select(x => x.Value).ToArray());
 
             Assert.Equal("7 Pillows\n", rowText);
         }

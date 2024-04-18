@@ -44,7 +44,7 @@ public static class TextEditorModelExtensionMethods
     /// A count of 1 returns lines[startingLineIndex] only.<br/>
     /// A count of 2 returns lines[startingLineIndex] and lines[startingLineIndex + 1].<br/>
     /// </param>
-    public static List<List<RichCharacter>> GetLines(this ITextEditorModel model, int startingLineIndex, int count)
+    public static List<List<RichCharacter>> GetLineRichCharacterRange(this ITextEditorModel model, int startingLineIndex, int count)
     {
         var lineCountAvailable = model.LineEndList.Count - startingLineIndex;
 
@@ -147,7 +147,7 @@ public static class TextEditorModelExtensionMethods
             .ToArray());
     }
 
-    public static string GetLineRange(this ITextEditorModel model, int startLineIndex, int count)
+    public static string GetLineTextRange(this ITextEditorModel model, int startLineIndex, int count)
     {
         if (startLineIndex > model.LineCount - 1)
             return string.Empty;
@@ -336,7 +336,30 @@ public static class TextEditorModelExtensionMethods
 
     public static LineInformation GetLineInformationFromPositionIndex(this ITextEditorModel model, int positionIndex)
     {
-        return model.GetLineInformation(positionIndex);
+        int GetLineIndexFromPositionIndex()
+        {
+            // StartOfFile
+            if (model.LineEndList[0].EndPositionIndexExclusive > positionIndex)
+                return 0;
+
+            // EndOfFile
+            if (model.LineEndList[^1].EndPositionIndexExclusive <= positionIndex)
+                return model.LineEndList.Count - 1;
+
+            // In-between
+            for (var i = 1; i < model.LineEndList.Count; i++)
+            {
+                var lineEndTuple = model.LineEndList[i];
+
+                if (lineEndTuple.EndPositionIndexExclusive > positionIndex)
+                    return i;
+            }
+
+            // Fallback return StartOfFile
+            return 0;
+        }
+
+        return model.GetLineInformation(GetLineIndexFromPositionIndex());
     }
 
     /// <summary>

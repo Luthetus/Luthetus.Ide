@@ -39,7 +39,7 @@ public class TextEditorCommandDefaultFunctions
                 return;
 
             var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
-            selectedText ??= modelModifier.GetLineRange(primaryCursorModifier.LineIndex, 1);
+            selectedText ??= modelModifier.GetLineTextRange(primaryCursorModifier.LineIndex, 1);
 
             await commandArgs.ClipboardService.SetClipboard(selectedText).ConfigureAwait(false);
             await viewModelModifier.ViewModel.FocusFactory().Invoke(editContext).ConfigureAwait(false);
@@ -296,7 +296,7 @@ public class TextEditorCommandDefaultFunctions
             if (selectedText is null)
             {
                 // Select line
-                selectedText = modelModifier.GetLineRange(primaryCursorModifier.LineIndex, 1);
+                selectedText = modelModifier.GetLineTextRange(primaryCursorModifier.LineIndex, 1);
 
                 cursorForInsertion = new TextEditorCursor(
                     primaryCursorModifier.LineIndex,

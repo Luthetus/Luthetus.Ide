@@ -1877,6 +1877,11 @@ public partial class TextEditorModelModifierTests
             // Here, 'lineIndex: modelModifier.LineCount - 1' gets the lineIndex that the 'EndOfFile' resides at.
             // The row index for 'EndOfFile', and columnIndex 0, is a valid place for insertion.
             // This equates to 'DocumentLength'.
+
+            var endOfFile = modelModifier.LineEndList.Last();
+            var aaa = modelModifier.GetLineAndColumnIndicesFromPositionIndex(endOfFile.StartPositionIndexInclusive);
+            var bbb = modelModifier.GetLineAndColumnIndicesFromPositionIndex(endOfFile.EndPositionIndexExclusive);
+                
             var cursor = new TextEditorCursor(
                 lineIndex: modelModifier.LineCount - 1,
                 columnIndex: 0,

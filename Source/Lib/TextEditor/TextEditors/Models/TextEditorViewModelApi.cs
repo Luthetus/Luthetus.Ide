@@ -754,7 +754,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                 virtualizationResult.CharAndLineMeasurements.CharacterWidth);
 
             var virtualizedEntryBag = modelModifier
-                .GetLines(verticalStartingIndex, verticalTake)
+                .GetLineRichCharacterRange(verticalStartingIndex, verticalTake)
                 .Select((line, lineIndex) =>
                 {
                     lineIndex += verticalStartingIndex;
