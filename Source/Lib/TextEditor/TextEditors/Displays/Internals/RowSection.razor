@@ -60,14 +60,14 @@
                 </span>
             }
 
-            @if (GlobalShowNewlines && virtualizedRow.Index < RenderBatch.Model!.LineCount - 1)
+            @if (GlobalShowNewlines && virtualizedRow.Index < RenderBatch.Model!.LineCount)
             {
                 var amountOfLeftInCharacterWidthUnits = virtualizedRow.LeftInPixels /
-                RenderBatch.ViewModel.VirtualizationResult!.CharAndLineMeasurements.CharacterWidth;
+                    RenderBatch.ViewModel.VirtualizationResult!.CharAndLineMeasurements.CharacterWidth;
 
                 var lengthOfRow = RenderBatch.Model!.GetLengthOfLine(virtualizedRow.Index, true);
 
-                if (amountOfLeftInCharacterWidthUnits < lengthOfRow)
+                if (amountOfLeftInCharacterWidthUnits <= lengthOfRow)
                 {
                     var rowEndingTuple = RenderBatch.Model!.LineEndList[virtualizedRow.Index];
 
