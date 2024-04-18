@@ -61,8 +61,8 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
                 return;
             }
 
-            var rowInfo = modelModifier.GetLineInformation(modelModifier.GetLineIndexFromPositionIndex(
-                localTextSpanTuple.TextEditorTextSpan.StartingIndexInclusive));
+            var rowInfo = modelModifier.GetLineInformationFromPositionIndex(
+                localTextSpanTuple.TextEditorTextSpan.StartingIndexInclusive);
 
             var columnIndex = localTextSpanTuple.TextEditorTextSpan.StartingIndexInclusive -
                 rowInfo.StartPositionIndexInclusive;

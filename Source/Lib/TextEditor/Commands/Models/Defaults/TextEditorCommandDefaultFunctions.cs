@@ -55,14 +55,14 @@ public class TextEditorCommandDefaultFunctions
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
             var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
+            
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
             if (!TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
             {
                 var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
-                var lineInformation = modelModifier.GetLineInformation(modelModifier.GetLineIndexFromPositionIndex(positionIndex));
+                var lineInformation = modelModifier.GetLineInformationFromPositionIndex(positionIndex);
 
                 primaryCursorModifier.SelectionAnchorPositionIndex = lineInformation.StartPositionIndexInclusive;
                 primaryCursorModifier.SelectionEndingPositionIndex = lineInformation.EndPositionIndexExclusive;
@@ -745,7 +745,7 @@ public class TextEditorCommandDefaultFunctions
             if (definitionViewModelModifier is null || definitionCursorModifierBag is null || definitionPrimaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            var rowData = definitionModel.GetLineInformation(definitionModel.GetLineIndexFromPositionIndex(definitionTextSpan.StartingIndexInclusive));
+            var rowData = definitionModel.GetLineInformationFromPositionIndex(definitionTextSpan.StartingIndexInclusive);
             var columnIndex = definitionTextSpan.StartingIndexInclusive - rowData.StartPositionIndexInclusive;
 
             definitionPrimaryCursorModifier.SelectionAnchorPositionIndex = null;

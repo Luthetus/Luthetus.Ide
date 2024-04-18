@@ -278,11 +278,12 @@ public static partial class TextEditorCommandVimFacts
                     if (previousAnchorPositionIndex < previousEndingPositionIndex)
                     {
                         // Anchor went from being the lower bound to the upper bound.
-                        var rowDataAnchorIsOn = modelModifier.GetLineInformation(
-                            modelModifier.GetLineIndexFromPositionIndex(previousAnchorPositionIndex.Value));
+                        var rowDataAnchorIsOn = modelModifier.GetLineInformationFromPositionIndex(
+                            previousAnchorPositionIndex.Value);
 
                         primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier.LineEndList[
-                            rowDataAnchorIsOn.Index].EndPositionIndexExclusive;
+                            rowDataAnchorIsOn.Index]
+                            .EndPositionIndexExclusive;
                     }
 
                     var rowStartPositionInclusive = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex)
@@ -295,10 +296,11 @@ public static partial class TextEditorCommandVimFacts
                     if (previousAnchorPositionIndex > previousEndingPositionIndex)
                     {
                         // Anchor went from being the upper bound to the lower bound.
-                        var rowDataAnchorIsOn = modelModifier.GetLineInformation(
-                            modelModifier.GetLineIndexFromPositionIndex(previousAnchorPositionIndex.Value));
+                        var rowDataAnchorIsOn = modelModifier.GetLineInformationFromPositionIndex(
+                            previousAnchorPositionIndex.Value);
 
-                        primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier.GetLineInformation(rowDataAnchorIsOn.Index - 1)
+                        primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier
+                            .GetLineInformation(rowDataAnchorIsOn.Index - 1)
                             .StartPositionIndexInclusive;
                     }
 

@@ -265,7 +265,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             if (viewModelModifier is null)
                 return Task.CompletedTask;
 
-            var lineInformation = modelModifier.GetLineInformation(modelModifier.GetLineIndexFromPositionIndex(textSpan.StartingIndexInclusive));
+            var lineInformation = modelModifier.GetLineInformationFromPositionIndex(textSpan.StartingIndexInclusive));
             var lineIndex = lineInformation.Index;
             var columnIndex = textSpan.StartingIndexInclusive - lineInformation.StartPositionIndexInclusive;
 
@@ -437,8 +437,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                     {
                         var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-                        var lowerLineInformation = modelModifier.GetLineInformation(
-                            modelModifier.GetLineIndexFromPositionIndex(selectionBounds.lowerPositionIndexInclusive));
+                        var lowerLineInformation = modelModifier.GetLineInformationFromPositionIndex(
+                            selectionBounds.lowerPositionIndexInclusive);
 
                         cursorModifier.LineIndex = lowerLineInformation.Index;
 
@@ -515,8 +515,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                     {
                         var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-                        var upperLineMetaData = modelModifier.GetLineInformation(
-                            modelModifier.GetLineIndexFromPositionIndex(selectionBounds.upperPositionIndexExclusive));
+                        var upperLineMetaData = modelModifier.GetLineInformationFromPositionIndex(
+                            selectionBounds.upperPositionIndexExclusive);
 
                         cursorModifier.LineIndex = upperLineMetaData.Index;
 

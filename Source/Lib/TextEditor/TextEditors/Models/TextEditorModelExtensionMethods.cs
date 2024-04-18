@@ -117,7 +117,7 @@ public static class TextEditorModelExtensionMethods
         this ITextEditorModel model,
         int positionIndex)
     {
-        var lineInformation = model.GetLineInformation(model.GetLineIndexFromPositionIndex(positionIndex));
+        var lineInformation = model.GetLineInformationFromPositionIndex(positionIndex));
 
         return (
             lineInformation.Index,
@@ -183,7 +183,7 @@ public static class TextEditorModelExtensionMethods
         var previousCharacterKind = CharacterKindHelper.CharToCharacterKind(previousCharacter);
         var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(currentCharacter);
 
-        var lineInformation = model.GetLineInformation(model.GetLineIndexFromPositionIndex(positionIndex));
+        var lineInformation = model.GetLineInformationFromPositionIndex(positionIndex));
         var columnIndex = positionIndex - lineInformation.StartPositionIndexInclusive;
 
         if (previousCharacterKind == CharacterKind.LetterOrDigit && currentCharacterKind == CharacterKind.LetterOrDigit)
@@ -333,28 +333,10 @@ public static class TextEditorModelExtensionMethods
             lineEndLower,
             lineEndUpper);
     }
-    
-    public static int GetLineIndexFromPositionIndex(this ITextEditorModel model, int positionIndex)
+
+    public static LineInformation GetLineInformationFromPositionIndex(this ITextEditorModel model, int positionIndex)
     {
-        // StartOfFile
-        if (model.LineEndList[0].EndPositionIndexExclusive > positionIndex)
-            return 0;
-
-        // EndOfFile
-        if (model.LineEndList[^1].EndPositionIndexExclusive <= positionIndex)
-            return model.LineEndList.Count - 1;
-
-        // In-between
-        for (var i = 1; i < model.LineEndList.Count; i++)
-        {
-            var lineEndTuple = model.LineEndList[i];
-
-            if (lineEndTuple.EndPositionIndexExclusive > positionIndex)
-                return i;
-        }
-
-        // Fallback return StartOfFile
-        return 0;
+        return model.GetLineInformationFromPositionIndex(positionIndex);
     }
 
     /// <summary>

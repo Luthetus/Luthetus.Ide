@@ -426,7 +426,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
             {
                 var (lowerPositionIndexInclusive, upperPositionIndexExclusive) = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-                var lowerRowData = this.GetLineInformation(this.GetLineIndexFromPositionIndex(lowerPositionIndexInclusive));
+                var lowerRowData = this.GetLineInformationFromPositionIndex(lowerPositionIndexInclusive);
                 var lowerColumnIndex = lowerPositionIndexInclusive - lowerRowData.StartPositionIndexInclusive;
 
                 Delete(

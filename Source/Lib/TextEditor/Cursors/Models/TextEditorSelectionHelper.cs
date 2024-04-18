@@ -131,11 +131,11 @@ public static class TextEditorSelectionHelper
         ITextEditorModel textEditorModel,
         (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) positionIndexBounds)
     {
-        var firstRowToSelectDataInclusive = textEditorModel.GetLineInformation(textEditorModel.GetLineIndexFromPositionIndex(
-            positionIndexBounds.lowerPositionIndexInclusive));
+        var firstRowToSelectDataInclusive = textEditorModel.GetLineInformationFromPositionIndex(
+            positionIndexBounds.lowerPositionIndexInclusive);
 
-        var lastRowToSelectDataExclusive = textEditorModel.GetLineInformation(textEditorModel.GetLineIndexFromPositionIndex(
-            positionIndexBounds.upperPositionIndexExclusive));
+        var lastRowToSelectDataExclusive = textEditorModel.GetLineInformationFromPositionIndex(
+            positionIndexBounds.upperPositionIndexExclusive);
 
         var upperRowIndexExclusive = lastRowToSelectDataExclusive.Index + 1;
 
