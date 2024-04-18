@@ -15,7 +15,7 @@ public static class TextEditorModelExtensionMethods
 	/// Returns the Length of a line however it does not include the line ending characters by default.
 	/// To include line ending characters the parameter <see cref="includeLineEndingCharacters" /> must be true.
 	/// </summary>
-    public static int GetLengthOfLine(this ITextEditorModel model, int lineIndex, bool includeLineEndingCharacters = false)
+    public static int GetLineLength(this ITextEditorModel model, int lineIndex, bool includeLineEndingCharacters = false)
     {
         if (!model.LineEndList.Any())
             return 0;
@@ -74,9 +74,9 @@ public static class TextEditorModelExtensionMethods
         return lineList;
     }
 
-    public static int GetTabsCountOnSameLineBeforeCursor(this ITextEditorModel model, int rowIndex, int columnIndex)
+    public static int GetTabsCountOnSameLineBeforeCursor(this ITextEditorModel model, int lineIndex, int columnIndex)
     {
-        var startOfLinePositionIndex = model.GetLineInformation(rowIndex).StartPositionIndexInclusive;
+        var startOfLinePositionIndex = model.GetLineInformation(lineIndex).StartPositionIndexInclusive;
 
         var tabs = model.TabKeyPositionList
             .SkipWhile(positionIndex => positionIndex < startOfLinePositionIndex)
@@ -202,7 +202,7 @@ public static class TextEditorModelExtensionMethods
                 false);
 
             if (wordColumnIndexEndExclusive == -1)
-                wordColumnIndexEndExclusive = model.GetLengthOfLine(lineInformation.Index);
+                wordColumnIndexEndExclusive = model.GetLineLength(lineInformation.Index);
 
             return new TextEditorTextSpan(
                 wordColumnIndexStartInclusive + lineInformation.StartPositionIndexInclusive,
@@ -219,7 +219,7 @@ public static class TextEditorModelExtensionMethods
                 false);
 
             if (wordColumnIndexEndExclusive == -1)
-                wordColumnIndexEndExclusive = model.GetLengthOfLine(lineInformation.Index);
+                wordColumnIndexEndExclusive = model.GetLineLength(lineInformation.Index);
 
             return new TextEditorTextSpan(
                 columnIndex + lineInformation.StartPositionIndexInclusive,
@@ -501,7 +501,7 @@ public static class TextEditorModelExtensionMethods
                 false);
 
             if (wordColumnIndexEndExclusive == -1)
-                wordColumnIndexEndExclusive = model.GetLengthOfLine(lineIndex);
+                wordColumnIndexEndExclusive = model.GetLineLength(lineIndex);
 
             var wordLength = wordColumnIndexEndExclusive - columnIndex;
 
@@ -531,7 +531,7 @@ public static class TextEditorModelExtensionMethods
             return string.Empty;
 
         var lineStartPositionIndexInclusive = model.GetLineInformation(lineIndex).StartPositionIndexInclusive;
-        var lengthOfLine = model.GetLengthOfLine(lineIndex, true);
+        var lengthOfLine = model.GetLineLength(lineIndex, true);
 
         return model.GetString(lineStartPositionIndexInclusive, lengthOfLine);
     }

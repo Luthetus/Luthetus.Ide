@@ -623,7 +623,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
             for (var i = 0; i < LineEndList.Count; i++)
             {
-                var lengthOfRow = this.GetLengthOfLine(i);
+                var lengthOfRow = this.GetLineLength(i);
 
                 if (lengthOfRow > localMostCharactersOnASingleRowTuple.rowLength)
                     localMostCharactersOnASingleRowTuple = (i, lengthOfRow);
@@ -935,7 +935,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
             for (var i = 0; i < LineEndList.Count; i++)
             {
-                var lengthOfLine = this.GetLengthOfLine(i);
+                var lengthOfLine = this.GetLineLength(i);
 
                 if (lengthOfLine > localMostCharactersOnASingleLineTuple.lineLength)
                 {

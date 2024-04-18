@@ -242,7 +242,7 @@ public class TextEditorCommandDefaultFunctions
             if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
             {
                 var lastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.Last();
-                var lastEntriesRowLength = modelModifier.GetLengthOfLine(lastEntry.Index);
+                var lastEntriesRowLength = modelModifier.GetLineLength(lastEntry.Index);
 
                 primaryCursorModifier.LineIndex = lastEntry.Index;
                 primaryCursorModifier.ColumnIndex = lastEntriesRowLength;
@@ -408,7 +408,7 @@ public class TextEditorCommandDefaultFunctions
             {
                 var rowPositionIndex = modelModifier.GetPositionIndex(i, 0);
                 var characterReadCount = TextEditorModel.TAB_WIDTH;
-                var lengthOfRow = modelModifier.GetLengthOfLine(i);
+                var lengthOfRow = modelModifier.GetLineLength(i);
 
                 characterReadCount = Math.Min(lengthOfRow, characterReadCount);
 
@@ -509,7 +509,7 @@ public class TextEditorCommandDefaultFunctions
 
             primaryCursorModifier.SelectionAnchorPositionIndex = null;
 
-            var lengthOfRow = modelModifier.GetLengthOfLine(primaryCursorModifier.LineIndex);
+            var lengthOfRow = modelModifier.GetLineLength(primaryCursorModifier.LineIndex);
 
             primaryCursorModifier.LineIndex = primaryCursorModifier.LineIndex;
             primaryCursorModifier.ColumnIndex = lengthOfRow;

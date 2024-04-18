@@ -12,19 +12,10 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
 {
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.GetLengthOfLine(ITextEditorModel, int, bool)"/>
+    /// <see cref="TextEditorModelExtensionMethods.GetLineLength(ITextEditorModel, int, bool)"/>
     /// </summary>
     [Fact]
     public void GetLengthOfLine()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.GetLineRichCharacterRange(ITextEditorModel, int, int)"/>
-    /// </summary>
-    [Fact]
-    public void GetLines()
     {
         var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
             resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
@@ -35,24 +26,48 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
             compilerService: null,
             partitionSize: 4096);
 
-        var zero_index_line = modelModifier.GetLineText(0);
-        var one_index_line = modelModifier.GetLineText(1);
-        var two_index_line = modelModifier.GetLineText(2);
-        var three_index_line = modelModifier.GetLineText(3);
-        var four_index_line = modelModifier.GetLineText(4);
-        var five_index_line = modelModifier.GetLineText(5);
+        // Line_Index_0: "\n"
+        Assert.Equal(0, modelModifier.GetLineLength(lineIndex: 0, includeLineEndingCharacters: false));
+        Assert.Equal(1, modelModifier.GetLineLength(lineIndex: 0, includeLineEndingCharacters: true));
 
-        //Assert.Equal("\n", );
+        // Line_Index_1: "b9\r"
+        Assert.Equal(2, modelModifier.GetLineLength(lineIndex: 1, includeLineEndingCharacters: false));
+        Assert.Equal(3, modelModifier.GetLineLength(lineIndex: 1, includeLineEndingCharacters: true));
 
-        var lineEndListCount = modelModifier.LineEndList.Count;
+        // Line_Index_2: "9B\r\n"
+        Assert.Equal(2, modelModifier.GetLineLength(lineIndex: 2, includeLineEndingCharacters: false));
+        Assert.Equal(4, modelModifier.GetLineLength(lineIndex: 2, includeLineEndingCharacters: true));
 
-        var zero_line_index_to_position_index = modelModifier.GetPositionIndex(lineIndex: 0, columnIndex: 0);
-        var one_line_index_to_position_index = modelModifier.GetPositionIndex(lineIndex: 1, columnIndex: 0);
-        var two_line_index_to_position_index = modelModifier.GetPositionIndex(lineIndex: 2, columnIndex: 0);
-        var three_line_index_to_position_index = modelModifier.GetPositionIndex(lineIndex: 3, columnIndex: 0);
-        var four_line_index_to_position_index = modelModifier.GetPositionIndex(lineIndex: 4, columnIndex: 0);
+        // Line_Index_3: "--->$;∙EOF"
+        Assert.Equal(4, modelModifier.GetLineLength(lineIndex: 3, includeLineEndingCharacters: false));
+        Assert.Equal(4, modelModifier.GetLineLength(lineIndex: 3, includeLineEndingCharacters: true));
+    }
 
-        throw new NotImplementedException();
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetLineRichCharacterRange(ITextEditorModel, int, int)"/>
+    /// </summary>
+    [Fact]
+    public void GetLineRichCharacterRange()
+    {
+        var content = "\nb9\r9B\r\n\t$; ";
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: content,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        var lineRichCharacterRange = modelModifier.GetLineRichCharacterRange(0, modelModifier.LineEndList.Count);
+
+        var lineRangeString = new string(lineRichCharacterRange
+            .SelectMany(x => x)
+            .Select(x => x.Value)
+            .ToArray());
+        
+        Assert.Equal(content, lineRangeString);
     }
 
     /// <summary>
@@ -78,7 +93,7 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
 
         var linesString = new string(all_lines
             .SelectMany(x => x)
-            .Select(y => y.Value)
+            .Select(x => x.Value)
             .ToArray());
 
         Assert.Equal(all_text, linesString);
@@ -90,7 +105,35 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     [Fact]
     public void GetTabsCountOnSameLineBeforeCursor()
     {
-        throw new NotImplementedException();
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: "\nb9\r9B\r\n\t$; ",
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // Pattern:
+        // -------
+        // Invoke 'GetTabsCountOnSameLineBeforeCursor' with the start of the line,
+        // then separately with the end of the line.
+
+        // Line_Index_0: "\n"
+        Assert.Equal(0, modelModifier.GetTabsCountOnSameLineBeforeCursor(lineIndex: 0, columnIndex: 0));
+        Assert.Equal(0, modelModifier.GetTabsCountOnSameLineBeforeCursor(lineIndex: 0, columnIndex: 1));
+
+        // Line_Index_1: "b9\r"
+        Assert.Equal(0, modelModifier.GetTabsCountOnSameLineBeforeCursor(lineIndex: 1, columnIndex: 0));
+        Assert.Equal(0, modelModifier.GetTabsCountOnSameLineBeforeCursor(lineIndex: 1, columnIndex: 2));
+
+        // Line_Index_2: "9B\r\n"
+        Assert.Equal(0, modelModifier.GetTabsCountOnSameLineBeforeCursor(lineIndex: 2, columnIndex: 0));
+        Assert.Equal(0, modelModifier.GetTabsCountOnSameLineBeforeCursor(lineIndex: 2, columnIndex: 2));
+
+        // Line_Index_3: "--->$;∙EOF"
+        Assert.Equal(0, modelModifier.GetTabsCountOnSameLineBeforeCursor(lineIndex: 3, columnIndex: 0));
+        Assert.Equal(1, modelModifier.GetTabsCountOnSameLineBeforeCursor(lineIndex: 3, columnIndex: 4));
     }
 
     /// <summary>
@@ -99,7 +142,18 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     [Fact]
     public void GetAllText()
     {
-        throw new NotImplementedException();
+        var content = "\nb9\r9B\r\n\t$; ";
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: content,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        Assert.Equal(content, modelModifier.GetAllText());
     }
 
     /// <summary>
@@ -162,10 +216,10 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
         var two_positionIndex = modelModifier.GetPositionIndex(2, 0);
         var three_positionIndex = modelModifier.GetPositionIndex(3, 0);
 
-        var zero_length = modelModifier.GetLengthOfLine(0, true);
-        var one_length = modelModifier.GetLengthOfLine(1, true);
-        var two_length = modelModifier.GetLengthOfLine(2, true);
-        var three_length = modelModifier.GetLengthOfLine(3, true);
+        var zero_length = modelModifier.GetLineLength(0, true);
+        var one_length = modelModifier.GetLineLength(1, true);
+        var two_length = modelModifier.GetLineLength(2, true);
+        var three_length = modelModifier.GetLineLength(3, true);
 
         // Post-assertions
 

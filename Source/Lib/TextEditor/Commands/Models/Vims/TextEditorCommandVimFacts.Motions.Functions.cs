@@ -29,7 +29,7 @@ public static partial class TextEditorCommandVimFacts
                     primaryCursorModifier.PreferredColumnIndex = columnIndex;
                 }
 
-                var lengthOfRow = modelModifier.GetLengthOfLine(primaryCursorModifier.LineIndex);
+                var lengthOfRow = modelModifier.GetLineLength(primaryCursorModifier.LineIndex);
 
                 if (primaryCursorModifier.ColumnIndex == lengthOfRow &&
                     primaryCursorModifier.LineIndex < modelModifier.LineCount - 1)
@@ -87,7 +87,7 @@ public static partial class TextEditorCommandVimFacts
                 primaryCursorModifier.PreferredColumnIndex = columnIndex;
             }
 
-            var lengthOfRow = modelModifier.GetLengthOfLine(primaryCursorModifier.LineIndex);
+            var lengthOfRow = modelModifier.GetLineLength(primaryCursorModifier.LineIndex);
 
             if (primaryCursorModifier.ColumnIndex == lengthOfRow &&
                 primaryCursorModifier.LineIndex < modelModifier.LineCount - 1)
@@ -173,7 +173,7 @@ public static partial class TextEditorCommandVimFacts
                     {
                         primaryCursorModifier.LineIndex--;
 
-                        var lengthOfRow = modelModifier.GetLengthOfLine(primaryCursorModifier.LineIndex);
+                        var lengthOfRow = modelModifier.GetLineLength(primaryCursorModifier.LineIndex);
 
                         MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
                     }

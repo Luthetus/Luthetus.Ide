@@ -453,7 +453,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                             {
                                 cursorModifier.LineIndex--;
 
-                                lengthOfLine = modelModifier.GetLengthOfLine(cursorModifier.LineIndex);
+                                lengthOfLine = modelModifier.GetLineLength(cursorModifier.LineIndex);
 
                                 MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfLine);
                             }
@@ -489,7 +489,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                     {
                         cursorModifier.LineIndex++;
 
-                        lengthOfLine = modelModifier.GetLengthOfLine(cursorModifier.LineIndex);
+                        lengthOfLine = modelModifier.GetLineLength(cursorModifier.LineIndex);
 
                         cursorModifier.ColumnIndex = lengthOfLine < cursorModifier.PreferredColumnIndex
                             ? lengthOfLine
@@ -502,7 +502,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                     {
                         cursorModifier.LineIndex--;
 
-                        lengthOfLine = modelModifier.GetLengthOfLine(cursorModifier.LineIndex);
+                        lengthOfLine = modelModifier.GetLineLength(cursorModifier.LineIndex);
 
                         cursorModifier.ColumnIndex = lengthOfLine < cursorModifier.PreferredColumnIndex
                             ? lengthOfLine
@@ -524,7 +524,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                         {
                             cursorModifier.LineIndex = modelModifier.LineCount - 1;
 
-                            var upperLineLength = modelModifier.GetLengthOfLine(cursorModifier.LineIndex);
+                            var upperLineLength = modelModifier.GetLineLength(cursorModifier.LineIndex);
 
                             cursorModifier.ColumnIndex = upperLineLength;
                         }
@@ -536,7 +536,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                     }
                     else
                     {
-                        lengthOfLine = modelModifier.GetLengthOfLine(cursorModifier.LineIndex);
+                        lengthOfLine = modelModifier.GetLineLength(cursorModifier.LineIndex);
 
                         if (cursorModifier.ColumnIndex >= lengthOfLine &&
                             cursorModifier.LineIndex < modelModifier.LineCount - 1)
@@ -580,7 +580,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                     if (keyboardEventArgs.CtrlKey)
                         cursorModifier.LineIndex = modelModifier.LineCount - 1;
 
-                    lengthOfLine = modelModifier.GetLengthOfLine(cursorModifier.LineIndex);
+                    lengthOfLine = modelModifier.GetLineLength(cursorModifier.LineIndex);
 
                     MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfLine);
 
@@ -677,7 +677,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             if ((viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false))
             {
                 var lastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.Last();
-                var lastEntriesLineLength = modelModifier.GetLengthOfLine(lastEntry.Index);
+                var lastEntriesLineLength = modelModifier.GetLineLength(lastEntry.Index);
 
                 cursorModifier.LineIndex = lastEntry.Index;
                 cursorModifier.ColumnIndex = lastEntriesLineLength;

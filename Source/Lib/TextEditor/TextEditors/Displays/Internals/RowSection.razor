@@ -65,7 +65,7 @@
                 var amountOfLeftInCharacterWidthUnits = virtualizedRow.LeftInPixels /
                     RenderBatch.ViewModel.VirtualizationResult!.CharAndLineMeasurements.CharacterWidth;
 
-                var lengthOfRow = RenderBatch.Model!.GetLengthOfLine(virtualizedRow.Index, true);
+                var lengthOfRow = RenderBatch.Model!.GetLineLength(virtualizedRow.Index, true);
 
                 if (amountOfLeftInCharacterWidthUnits <= lengthOfRow)
                 {

@@ -970,7 +970,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
             }
 
-            var lengthOfRow = model.GetLengthOfLine(rowIndex);
+            var lengthOfRow = model.GetLineLength(rowIndex);
 
             // Tab key column offset
             {

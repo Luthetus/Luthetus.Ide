@@ -70,7 +70,7 @@ public class OnDoubleClick : ITextEditorTask
             false);
 
         higherColumnIndexExpansion = higherColumnIndexExpansion == -1
-            ? modelModifier.GetLengthOfLine(rowAndColumnIndex.rowIndex)
+            ? modelModifier.GetLineLength(rowAndColumnIndex.rowIndex)
             : higherColumnIndexExpansion;
 
         // Move user's cursor position to the higher expansion
