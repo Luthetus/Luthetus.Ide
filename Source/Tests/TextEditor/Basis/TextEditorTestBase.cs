@@ -149,6 +149,14 @@ public class TextEditorTestBase
         return (inModel, modelModifier);
     }
 
+    /// <summary>
+    /// Text Editor UI result (with show-newlines and show-whitespace; arrow is tab, and dot is space)<br/>
+    /// =====================                                                                         <br/>
+    /// 1 \n                                                                                          <br/>
+    /// 2 b9\r                                                                                        <br/>
+    /// 3 9B\r\n                                                                                      <br/>
+    /// 4 --->$;∙                                                                                     <br/>
+    /// </summary>
     protected (TextEditorModel inModel, TextEditorModelModifier modelModifier) NotEmptyEditor_TestData_And_PerformPreAssertions(
         ResourceUri resourceUri,
         DateTime resourceLastWriteTime,
