@@ -10,48 +10,63 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 /// </summary>
 public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
 {
-    [Fact]
-    public void GetPositionIndex_recent()
-    {
-        throw new NotImplementedException();
-    }
-
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetLengthOfLine(ITextEditorModel, int, bool)"/>
+    /// </summary>
     [Fact]
     public void GetLengthOfLine()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetLines(ITextEditorModel, int, int)"/>
+    /// </summary>
     [Fact]
     public void GetLines()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetTabsCountOnSameLineBeforeCursor(ITextEditorModel, int, int)"/>
+    /// </summary>
     [Fact]
     public void GetTabsCountOnSameLineBeforeCursor()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetAllText(ITextEditorModel)"/>
+    /// </summary>
     [Fact]
     public void GetAllText()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetPositionIndex(ITextEditorModel, TextEditorCursor)"/>
+    /// </summary>
     [Fact]
     public void GetPositionIndex_TextEditorCursor()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetPositionIndex(ITextEditorModel, TextEditorCursorModifier)"/>
+    /// </summary>
     [Fact]
     public void GetPositionIndex_TextEditorCursorModifier()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetPositionIndex(ITextEditorModel, int, int)"/>
+    /// </summary>
     [Fact]
     public void GetPositionIndex_LineIndex_ColumnIndex()
     {
@@ -101,114 +116,171 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetLineAndColumnIndicesFromPositionIndex(ITextEditorModel, int)"/>
+    /// </summary>
     [Fact]
     public void GetLineAndColumnIndicesFromPositionIndex()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetCharacter(ITextEditorModel, int)"/>
+    /// </summary>
     [Fact]
     public void GetCharacter()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetString(ITextEditorModel, int, int)"/>
+    /// </summary>
     [Fact]
     public void GetString()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetLineRange(ITextEditorModel, int, int)"/>
+    /// </summary>
     [Fact]
     public void GetLineRange()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetWordTextSpan(ITextEditorModel, int)"/>
+    /// </summary>
     [Fact]
     public void GetWordTextSpan()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.FindMatches(ITextEditorModel, string)"/>
+    /// </summary>
     [Fact]
     public void FindMatches()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetLineInformation(ITextEditorModel, int)"/>
+    /// </summary>
     [Fact]
     public void GetLineInformation()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetLineInformationFromPositionIndex(ITextEditorModel, int)"/>
+    /// </summary>
     [Fact]
     public void GetLineInformationFromPositionIndex()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetColumnIndexOfCharacterWithDifferingKind(ITextEditorModel, int, int, bool)"/>
+    /// </summary>
     [Fact]
     public void GetColumnIndexOfCharacterWithDifferingKind()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.CanUndoEdit(ITextEditorModel)"/>
+    /// </summary>
     [Fact]
     public void CanUndoEdit()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.CanRedoEdit(ITextEditorModel)"/>
+    /// </summary>
     [Fact]
     public void CanRedoEdit()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetCharacterKind(ITextEditorModel, int)"/>
+    /// </summary>
     [Fact]
     public void GetCharacterKind()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.ReadPreviousWordOrDefault(ITextEditorModel, int, int, bool)"/>
+    /// </summary>
     [Fact]
     public void ReadPreviousWordOrDefault()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.ReadNextWordOrDefault(ITextEditorModel, int, int)"/>
+    /// </summary>
     [Fact]
     public void ReadNextWordOrDefault()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetTextOffsettingCursor(ITextEditorModel, TextEditorCursor)"/>
+    /// </summary>
     [Fact]
     public void GetTextOffsettingCursor()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetLineText(ITextEditorModel, int)"/>
+    /// </summary>
     [Fact]
     public void GetLineText()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetRichCharacterOrDefault(ITextEditorModel, int)"/>
+    /// </summary>
     [Fact]
     public void GetRichCharacterOrDefault()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetAllRichCharacters(ITextEditorModel)"/>
+    /// </summary>
     [Fact]
     public void GetAllRichCharacters()
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TextEditorModelExtensionMethods.GetRichCharacters(ITextEditorModel, int, int)"/>
+    /// </summary>
     [Fact]
     public void GetRichCharacters()
     {
