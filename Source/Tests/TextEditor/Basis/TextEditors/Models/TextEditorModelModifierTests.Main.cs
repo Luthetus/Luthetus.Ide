@@ -340,7 +340,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -461,7 +461,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -614,7 +614,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -1544,7 +1544,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 );
             var expectedDecorationMapper = (IDecorationMapper?)null;
             var expectedCompilerService = (ILuthCompilerService?)null;

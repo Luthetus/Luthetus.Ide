@@ -568,7 +568,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -650,7 +650,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -671,7 +671,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
              Then delete:
                 (
@@ -686,7 +686,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
              */
             var cursor = new TextEditorCursor(
@@ -800,7 +800,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -854,7 +854,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -966,7 +966,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -987,7 +987,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
              Then delete:
                 (
@@ -1002,7 +1002,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
              */
             var cursor = new TextEditorCursor(
@@ -1116,7 +1116,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -1241,7 +1241,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -1300,7 +1300,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -1387,7 +1387,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -1408,7 +1408,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
              Then delete:
                 (
@@ -1423,7 +1423,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
              */
             var cursor = new TextEditorCursor(
@@ -1537,7 +1537,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -1591,7 +1591,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -1713,7 +1713,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -1734,7 +1734,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
              Then delete:
                 (
@@ -1749,7 +1749,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
              */
             var cursor = new TextEditorCursor(
@@ -1863,7 +1863,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -1961,9 +1961,8 @@ public partial class TextEditorModelModifierTests
 
             // Cursor related code-block-grouping:
             {
-                var aaa = modelModifier.GetLineInformation(modelModifier.LineEndList.Count);
-                var bbb = modelModifier.LineEndList.Count;
-                var ccc = modelModifier.LineCount;
+                var aaa = modelModifier.GetLineInformation(modelModifier.LineEndList.Count - 1);
+                var bbb = modelModifier.GetLineInformation(modelModifier.LineEndList.Count);
 
                 Assert.Equal(1, cursorModifier.LineIndex);
                 Assert.Equal(0, cursorModifier.ColumnIndex);
@@ -1992,7 +1991,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -2053,7 +2052,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -2128,7 +2127,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -2148,7 +2147,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
              Then delete:
                 (
@@ -2163,7 +2162,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
              */
             var cursor = new TextEditorCursor(
@@ -2271,7 +2270,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -2329,7 +2328,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -2434,7 +2433,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -2454,7 +2453,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
              Then delete:
                 (
@@ -2469,7 +2468,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
              */
             var cursor = new TextEditorCursor(
@@ -2577,7 +2576,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -2695,7 +2694,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -2758,7 +2757,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -2833,7 +2832,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -2853,7 +2852,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
              Then delete:
                 (
@@ -2868,7 +2867,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
              */
             var cursor = new TextEditorCursor(
@@ -2976,7 +2975,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -3034,7 +3033,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -3139,7 +3138,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -3159,7 +3158,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
              Then delete:
                 (
@@ -3174,7 +3173,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
              */
             var cursor = new TextEditorCursor(
@@ -3282,7 +3281,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,
@@ -3400,7 +3399,7 @@ public partial class TextEditorModelModifierTests
                     "\t" +   // Tab
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
-                    " "
+                    " "      // Space
                 ),
             decorationMapper: null,
             compilerService: null,

@@ -265,7 +265,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             if (viewModelModifier is null)
                 return Task.CompletedTask;
 
-            var lineInformation = modelModifier.GetLineInformationFromPositionIndex(textSpan.StartingIndexInclusive));
+            var lineInformation = modelModifier.GetLineInformationFromPositionIndex(textSpan.StartingIndexInclusive);
             var lineIndex = lineInformation.Index;
             var columnIndex = textSpan.StartingIndexInclusive - lineInformation.StartPositionIndexInclusive;
 

@@ -117,7 +117,7 @@ public static class TextEditorModelExtensionMethods
         this ITextEditorModel model,
         int positionIndex)
     {
-        var lineInformation = model.GetLineInformationFromPositionIndex(positionIndex));
+        var lineInformation = model.GetLineInformationFromPositionIndex(positionIndex);
 
         return (
             lineInformation.Index,
@@ -183,7 +183,7 @@ public static class TextEditorModelExtensionMethods
         var previousCharacterKind = CharacterKindHelper.CharToCharacterKind(previousCharacter);
         var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(currentCharacter);
 
-        var lineInformation = model.GetLineInformationFromPositionIndex(positionIndex));
+        var lineInformation = model.GetLineInformationFromPositionIndex(positionIndex);
         var columnIndex = positionIndex - lineInformation.StartPositionIndexInclusive;
 
         if (previousCharacterKind == CharacterKind.LetterOrDigit && currentCharacterKind == CharacterKind.LetterOrDigit)
@@ -299,12 +299,12 @@ public static class TextEditorModelExtensionMethods
     {
         LineEnd GetLineEndLower(int lineIndex)
         {
+            // Large index? Then set the index to the last index.
+            lineIndex = Math.Min(lineIndex, model.LineEndList.Count - 1);
+
             // Small index? Then return StartOfFile.
             if (lineIndex <= 0)
                 return new(0, 0, LineEndKind.StartOfFile);
-
-            // Large index? Then set the index to the last index.
-            lineIndex = Math.Min(lineIndex, model.LineEndList.Count - 1);
 
             // In-range index? Then return the previous line's line ending.
             return model.LineEndList[lineIndex - 1];
@@ -312,12 +312,12 @@ public static class TextEditorModelExtensionMethods
 
         LineEnd GetLineEndUpper(int lineIndex)
         {
+            // Large index? Then set the index to the last index.
+            lineIndex = Math.Min(lineIndex, model.LineEndList.Count - 1);
+
             // Small index? Then return the first LineEnd
             if (lineIndex <= 0)
                 return model.LineEndList[0];
-
-            // Large index? Then set the index to the last index.
-            lineIndex = Math.Min(lineIndex, model.LineEndList.Count - 1);
 
             // In-range index? Then return the LineEnd at that index.
             return model.LineEndList[lineIndex];
@@ -336,7 +336,7 @@ public static class TextEditorModelExtensionMethods
 
     public static LineInformation GetLineInformationFromPositionIndex(this ITextEditorModel model, int positionIndex)
     {
-        return model.GetLineInformationFromPositionIndex(positionIndex);
+        return model.GetLineInformation(positionIndex);
     }
 
     /// <summary>

@@ -6,14 +6,69 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
 /// <summary>
 /// <see cref="TextEditorModelExtensionMethods"/>
 /// </summary>
-public class ModelExtensionMethodsTests
+public class TextEditorModelExtensionMethodsTests
 {
+    [Fact]
+    public void GetPositionIndex_recent()
+    {
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content:
+                (
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " "      // Space
+                ),
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // Do something
+        TextEditorCursorModifier cursorModifier;
+        {
+            var cursor = new TextEditorCursor(
+                lineIndex: modelModifier.LineCount - 1,
+                columnIndex: 0,
+                isPrimaryCursor: true);
+
+            cursorModifier = new TextEditorCursorModifier(cursor);
+            var cursorModifierBag = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier>() { cursorModifier });
+
+            var zero_positionIndex = modelModifier.GetPositionIndex(0, 0);
+            var one_positionIndex = modelModifier.GetPositionIndex(1, 0);
+            var two_positionIndex = modelModifier.GetPositionIndex(2, 0);
+            var three_positionIndex = modelModifier.GetPositionIndex(3, 0);
+
+            var zero_length = modelModifier.GetLengthOfLine(0, true);
+            var one_length = modelModifier.GetLengthOfLine(1, true);
+            var two_length = modelModifier.GetLengthOfLine(2, true);
+            var three_length = modelModifier.GetLengthOfLine(3, true);
+        }
+
+        // Post-assertions
+        {
+        }
+    }
+
     /// <summary>
     /// <see cref="TextEditorModelExtensionMethods.GetLineEndLower(ITextEditorModel, int)"/>
     /// </summary>
@@ -1327,5 +1382,184 @@ public class ModelExtensionMethodsTests
     public void GetTextOffsettingCursor()
     {
         throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// It is preferred that each test defines its own test data within the '[Fact]' method itself.
+    /// There however is 100 lines of code at the beginning of every test if one follows this rule.
+    /// <br/><br/>
+    /// To reduce the noise, this method was created.
+    /// <br/><br/>
+    /// That being said, it is vital that the test defines its test-data, otherwise some
+    /// readonly and static data might one day have the source code for its definition change.
+    /// <br/><br/>
+    /// Any dependent tests would then break, and a great deal of confusion would arise,
+    /// because it would not be clear that the test data was changed.
+    /// <br/><br/>
+    /// For this reason, the '[Fact]' method must invoke this method with every
+    /// parameter needed to construct the test data.
+    /// <br/><br/>
+    /// In this method, the exact same parameters that were passed in will be
+    /// typed out in the source code for this method.
+    /// <br/><br/>
+    /// If the parameters to this method, and the hardcoded local variables of this method
+    /// match, then the test and this method agree on what the test data is.
+    /// <br/><br/>
+    /// At that point the test data can be constructed, and the pre-assertions can be done
+    /// from within this method.
+    /// <br/><br/>
+    /// Lastly, return the test data.
+    /// </summary>
+    private (TextEditorModel inModel, TextEditorModelModifier modelModifier) NotEmptyEditor_TestData_And_PerformPreAssertions(
+        ResourceUri resourceUri,
+        DateTime resourceLastWriteTime,
+        string fileExtension,
+        string content,
+        IDecorationMapper? decorationMapper,
+        ILuthCompilerService? compilerService,
+        // partitionSize is an optional parameter to the TextEditorModel's constructor,
+        // but provide a value so that if the default value changes, it doesn't break this test.
+        int partitionSize)
+    {
+        // Agree with caller on what the test data is.
+        {
+            var expectedResourceUri = new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt");
+            // Use 'DateTime.MinValue' because agreeing on 'DateTime.UtcNow' is a nightmare
+            var expectedResourceLastWriteTime = DateTime.MinValue;
+            var expectedFileExtension = ExtensionNoPeriodFacts.TXT;
+            var expectedContent =
+                (
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " "      // Space
+                );
+            var expectedDecorationMapper = (IDecorationMapper?)null;
+            var expectedCompilerService = (ILuthCompilerService?)null;
+            // partitionSize is an optional parameter to the TextEditorModel's constructor,
+            // but provide a value so that if the default value changes, it doesn't break this test.
+            var expectedPartitionSize = 4096;
+
+            Assert.Equal(expectedResourceUri, resourceUri);
+            Assert.Equal(expectedResourceLastWriteTime, resourceLastWriteTime);
+            Assert.Equal(expectedFileExtension, fileExtension);
+            Assert.Equal(expectedContent, content);
+            Assert.Equal(expectedDecorationMapper, decorationMapper);
+            Assert.Equal(expectedCompilerService, compilerService);
+            Assert.Equal(expectedPartitionSize, partitionSize);
+        }
+
+        // Create test data
+        TextEditorModel inModel;
+        TextEditorModelModifier modelModifier;
+        {
+            inModel = new TextEditorModel(
+                resourceUri,
+                resourceLastWriteTime,
+                fileExtension,
+                content,
+                decorationMapper,
+                compilerService,
+                partitionSize);
+
+            modelModifier = new TextEditorModelModifier(inModel);
+        }
+
+        // Pre-assertions
+        {
+            // Obnoxiously write the constant value for the initialContent's length instead of capturing the TextEditorModel
+            // constructor's 'initialContent' parameter, then checking '.Length'.
+            //
+            // This makes it more clear if the source text changes (accidentally or intentionally).
+            // If one day this assertion fails, then someone touched the source text.
+            Assert.Equal(12, modelModifier.DocumentLength);
+
+            // The file extension should NOT change as a result of inserting content.
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+            // The text is small, it should write a single partition, nothing more.
+            Assert.Single(modelModifier.PartitionList);
+
+            // 1 tab key was included in the string that was passed to the constructor.
+            // Therefore, the Count is 1.
+            Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
+            Assert.Equal(
+                8,
+                modelModifier.TabKeyPositionList.Single());
+
+            // LineEnd related code-block-grouping:
+            {
+                // 1 CarriageReturn was included in the string that was passed to the constructor.
+                // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                {
+                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                    // StartPositionIndexInclusive
+                    Assert.Equal(
+                        3,
+                        carriageReturn.StartPositionIndexInclusive);
+                    // EndPositionIndexExclusive
+                    Assert.Equal(
+                        4,
+                        carriageReturn.EndPositionIndexExclusive);
+                }
+
+                // 1 LineFeed was included in the string that was passed to the constructor.
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                {
+                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                    // StartPositionIndexInclusive
+                    Assert.Equal(
+                        0,
+                        lineFeed.StartPositionIndexInclusive);
+                    // EndPositionIndexExclusive
+                    Assert.Equal(
+                        1,
+                        lineFeed.EndPositionIndexExclusive);
+                }
+
+                // 1 CarriageReturnLineFeed was included in the string that was passed to the constructor.
+                // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                {
+                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                    // StartPositionIndexInclusive
+                    Assert.Equal(
+                        6,
+                        carriageReturnLineFeed.StartPositionIndexInclusive);
+                    // EndPositionIndexExclusive
+                    Assert.Equal(
+                        8,
+                        carriageReturnLineFeed.EndPositionIndexExclusive);
+                }
+
+                // 3 line endings where included in the string that was passed to the constructor,
+                // There are 4 in total if one then includes the special-'EndOfFile' LineEnd.
+                Assert.Equal(4, modelModifier.LineEndList.Count);
+
+                // A TextEditorModel always contains at least 1 LineEnd. This LineEnd marks the 'EndOfFile'.
+                //
+                // The constructor for 'TextEditorModel' takes the 'initialContent'
+                // and sets the model's content as it, this results in the positionIndex for 'EndOfFile'
+                // to be shifted by the length of the 'initialContent'.
+                var endOfFile = modelModifier.LineEndList.Last();
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                Assert.Equal(12, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(12, endOfFile.EndPositionIndexExclusive);
+            }
+        }
+
+        return (inModel, modelModifier);
     }
 }
