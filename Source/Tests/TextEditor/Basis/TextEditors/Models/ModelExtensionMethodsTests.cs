@@ -34,15 +34,15 @@ public class ModelExtensionMethodsTests
 
                 // TextEditorModel
                 {
-                    var actual = model.GetLineEndLower(cursor.LineIndex);
-                    Assert.Equal(expected, actual);
+                    var line = model.GetLineInformation(cursor.LineIndex);
+                    Assert.Equal(expected, line.LowerLineEnd);
                 }
 
                 // TextEditorModelModifier
                 {
                     var modelModifier = new TextEditorModelModifier(model);
-                    var actual = modelModifier.GetLineEndLower(cursor.LineIndex);
-                    Assert.Equal(expected, actual);
+                    var line = model.GetLineInformation(cursor.LineIndex);
+                    Assert.Equal(expected, line.LowerLineEnd);
                 }
             }
 
@@ -56,15 +56,15 @@ public class ModelExtensionMethodsTests
 
                 // TextEditorModel
                 {
-                    var actual = model.GetLineEndLower(cursor.LineIndex);
-                    Assert.Equal(expected, actual);
+                    var line = model.GetLineInformation(cursor.LineIndex);
+                    Assert.Equal(expected, line.LowerLineEnd);
                 }
 
                 // TextEditorModelModifier
                 {
                     var modelModifier = new TextEditorModelModifier(model);
-                    var actual = modelModifier.GetLineEndLower(cursor.LineIndex);
-                    Assert.Equal(expected, actual);
+                    var line = model.GetLineInformation(cursor.LineIndex);
+                    Assert.Equal(expected, line.LowerLineEnd);
                 }
             }
 
@@ -78,15 +78,15 @@ public class ModelExtensionMethodsTests
 
                 // TextEditorModel
                 {
-                    var actual = model.GetLineEndLower(cursor.LineIndex);
-                    Assert.Equal(expected, actual);
+                    var line = model.GetLineInformation(cursor.LineIndex);
+                    Assert.Equal(expected, line.LowerLineEnd);
                 }
 
                 // TextEditorModelModifier
                 {
                     var modelModifier = new TextEditorModelModifier(model);
-                    var actual = modelModifier.GetLineEndLower(cursor.LineIndex);
-                    Assert.Equal(expected, actual);
+                    var line = model.GetLineInformation(cursor.LineIndex);
+                    Assert.Equal(expected, line.LowerLineEnd);
                 }
             }
 
@@ -100,15 +100,15 @@ public class ModelExtensionMethodsTests
 
                 // TextEditorModel
                 {
-                    var actual = model.GetLineEndLower(cursor.LineIndex);
-                    Assert.Equal(expected, actual);
+                    var line = model.GetLineInformation(cursor.LineIndex);
+                    Assert.Equal(expected, line.LowerLineEnd);
                 }
 
                 // TextEditorModelModifier
                 {
                     var modelModifier = new TextEditorModelModifier(model);
-                    var actual = modelModifier.GetLineEndLower(cursor.LineIndex);
-                    Assert.Equal(expected, actual);
+                    var line = model.GetLineInformation(cursor.LineIndex);
+                    Assert.Equal(expected, line.LowerLineEnd);
                 }
             }
 
@@ -126,15 +126,15 @@ public class ModelExtensionMethodsTests
 
                 // TextEditorModel
                 {
-                    var actual = model.GetLineEndLower(cursor.LineIndex);
-                    Assert.Equal(expected, actual);
+                    var line = model.GetLineInformation(cursor.LineIndex);
+                    Assert.Equal(expected, line.LowerLineEnd);
                 }
 
                 // TextEditorModelModifier
                 {
                     var modelModifier = new TextEditorModelModifier(model);
-                    var actual = modelModifier.GetLineEndLower(cursor.LineIndex);
-                    Assert.Equal(expected, actual);
+                    var line = model.GetLineInformation(cursor.LineIndex);
+                    Assert.Equal(expected, line.LowerLineEnd);
                 }
             }
         }
@@ -151,15 +151,15 @@ public class ModelExtensionMethodsTests
 
                 // TextEditorModel
                 {
-                    var actual = model.GetLineEndLower(cursor.LineIndex);
-                    Assert.Equal(expected, actual);
+                    var line = model.GetLineInformation(cursor.LineIndex);
+                    Assert.Equal(expected, line.LowerLineEnd);
                 }
 
                 // TextEditorModelModifier
                 {
                     var modelModifier = new TextEditorModelModifier(model);
-                    var actual = modelModifier.GetLineEndLower(cursor.LineIndex);
-                    Assert.Equal(expected, actual);
+                    var line = model.GetLineInformation(cursor.LineIndex);
+                    Assert.Equal(expected, line.LowerLineEnd);
                 }
             }
 
@@ -173,15 +173,15 @@ public class ModelExtensionMethodsTests
 
                 // TextEditorModel
                 {
-                    var actual = model.GetLineEndLower(cursor.LineIndex);
-                    Assert.Equal(expected, actual);
+                    var line = model.GetLineInformation(cursor.LineIndex);
+                    Assert.Equal(expected, line.LowerLineEnd);
                 }
 
                 // TextEditorModelModifier
                 {
                     var modelModifier = new TextEditorModelModifier(model);
-                    var actual = modelModifier.GetLineEndLower(cursor.LineIndex);
-                    Assert.Equal(expected, actual);
+                    var line = model.GetLineInformation(cursor.LineIndex);
+                    Assert.Equal(expected, line.LowerLineEnd);
                 }
             }
         }
@@ -1063,7 +1063,7 @@ public class ModelExtensionMethodsTests
     }
 
     /// <summary>
-	/// <see cref="TextEditorModelExtensionMethods.GetLine(ITextEditorModel, int)"/>
+	/// <see cref="TextEditorModelExtensionMethods.GetLineText(ITextEditorModel, int)"/>
 	/// </summary>
 	[Fact]
     public void GetLine()
@@ -1073,7 +1073,7 @@ public class ModelExtensionMethodsTests
         // rowIndex < 0
         {
             var rowIndex = -1;
-            var line = model.GetLine(rowIndex);
+            var line = model.GetLineText(rowIndex);
             Assert.Equal(string.Empty, line);
         }
 
@@ -1082,21 +1082,21 @@ public class ModelExtensionMethodsTests
             // rowIndex == 0
             {
                 var rowIndex = 0;
-                var line = model.GetLine(rowIndex);
+                var line = model.GetLineText(rowIndex);
                 Assert.Equal("Hello World!\n", line);
             }
 
             //  rowIndex is not the FirstRow nor the LastRow
             {
                 var rowIndex = TestConstants.ROW_INDEX_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW;
-                var line = model.GetLine(rowIndex);
+                var line = model.GetLineText(rowIndex);
                 Assert.Equal("7 Pillows\n", line);
             }
 
             // rowIndex resides on the LastRow
             {
                 var rowIndex = TestConstants.LAST_ROW_INDEX;
-                var line = model.GetLine(rowIndex);
+                var line = model.GetLineText(rowIndex);
                 Assert.Equal(",abc123", line);
             }
         }
@@ -1104,7 +1104,7 @@ public class ModelExtensionMethodsTests
         // rowIndex > 0 && rowIndex is OUT of bounds
         {
             var rowIndex = TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX;
-            var line = model.GetLine(rowIndex);
+            var line = model.GetLineText(rowIndex);
             Assert.Equal(string.Empty, line);
         }
     }

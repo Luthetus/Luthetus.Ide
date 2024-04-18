@@ -285,7 +285,8 @@ public static partial class TextEditorCommandVimFacts
                             rowDataAnchorIsOn.Index].EndPositionIndexExclusive;
                     }
 
-                    var rowStartPositionInclusive = modelModifier.GetLineStartPositionIndexInclusive(primaryCursorModifier.LineIndex);
+                    var rowStartPositionInclusive = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex)
+                        .StartPositionIndexInclusive;
 
                     primaryCursorModifier.SelectionEndingPositionIndex = rowStartPositionInclusive;
                 }
@@ -297,8 +298,8 @@ public static partial class TextEditorCommandVimFacts
                         var rowDataAnchorIsOn = modelModifier.GetLineInformation(
                             modelModifier.GetLineIndexFromPositionIndex(previousAnchorPositionIndex.Value));
 
-                        primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier.GetLineStartPositionIndexInclusive(
-                            rowDataAnchorIsOn.Index - 1);
+                        primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier.GetLineInformation(rowDataAnchorIsOn.Index - 1)
+                            .StartPositionIndexInclusive;
                     }
 
                     var endingPositionOfRow = modelModifier.LineEndList[primaryCursorModifier.LineIndex]

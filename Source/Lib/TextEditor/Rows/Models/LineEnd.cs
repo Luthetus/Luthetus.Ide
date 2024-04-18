@@ -2,6 +2,8 @@
 
 public record LineEnd
 {
+    public static readonly LineEnd StartOfFile = new(0, 0, LineEndKind.StartOfFile);
+
     public LineEnd(
         int startPositionIndexInclusive,
         int endPositionIndexExclusive,

@@ -50,23 +50,22 @@ public partial class PresentationLayerGroup : ComponentBase
         if (rowIndex >= RenderBatch.Model!.LineEndList.Count)
             return string.Empty;
 
-        var startOfRowTuple = RenderBatch.Model!.GetLineEndLower(rowIndex);
-        var endOfRowTuple = RenderBatch.Model!.LineEndList[rowIndex];
+        var line = RenderBatch.Model!.GetLineInformation(rowIndex);
 
         var startingColumnIndex = 0;
-        var endingColumnIndex = endOfRowTuple.EndPositionIndexExclusive - 1;
+        var endingColumnIndex = line.EndPositionIndexExclusive - 1;
 
         var fullWidthOfRowIsSelected = true;
 
-        if (lowerPositionIndexInclusive > startOfRowTuple.EndPositionIndexExclusive)
+        if (lowerPositionIndexInclusive > line.StartPositionIndexInclusive)
         {
-            startingColumnIndex = lowerPositionIndexInclusive - startOfRowTuple.EndPositionIndexExclusive;
+            startingColumnIndex = lowerPositionIndexInclusive - line.StartPositionIndexInclusive;
             fullWidthOfRowIsSelected = false;
         }
 
-        if (upperPositionIndexExclusive < endOfRowTuple.EndPositionIndexExclusive)
+        if (upperPositionIndexExclusive < line.EndPositionIndexExclusive)
         {
-            endingColumnIndex = upperPositionIndexExclusive - startOfRowTuple.EndPositionIndexExclusive;
+            endingColumnIndex = upperPositionIndexExclusive - line.StartPositionIndexInclusive;
             fullWidthOfRowIsSelected = false;
         }
 
@@ -122,7 +121,7 @@ public partial class PresentationLayerGroup : ComponentBase
 
         if (fullWidthOfRowIsSelected)
             widthCssStyleString += $"{fullWidthValueInPixelsInvariantCulture}px;";
-        else if (startingColumnIndex != 0 && upperPositionIndexExclusive > endOfRowTuple.EndPositionIndexExclusive - 1)
+        else if (startingColumnIndex != 0 && upperPositionIndexExclusive > line.EndPositionIndexExclusive - 1)
             widthCssStyleString += $"calc({fullWidthValueInPixelsInvariantCulture}px - {startInPixelsInvariantCulture}px);";
         else
             widthCssStyleString += $"{widthInPixelsInvariantCulture}px;";
@@ -145,14 +144,14 @@ public partial class PresentationLayerGroup : ComponentBase
         {
             var lowerLineIndexInclusive = RenderBatch.ViewModel.VirtualizationResult.EntryList.First().Index;
             var upperLineIndexInclusive = RenderBatch.ViewModel.VirtualizationResult.EntryList.Last().Index;
-            
-            var lowerLineEndingThatCreatedRow = RenderBatch.Model!.GetLineEndLower(lowerLineIndexInclusive);
-            var upperLineEndingThatCreatedRow = RenderBatch.Model!.GetLineEndLower(upperLineIndexInclusive);
+
+            var lowerLine = RenderBatch.Model!.GetLineInformation(lowerLineIndexInclusive);
+            var upperLine = RenderBatch.Model!.GetLineInformation(upperLineIndexInclusive);
 
             foreach (var textSpan in inTextSpanList)
             {
-                if (lowerLineEndingThatCreatedRow.StartPositionIndexInclusive <= textSpan.StartingIndexInclusive &&
-                    upperLineEndingThatCreatedRow.StartPositionIndexInclusive >= textSpan.StartingIndexInclusive)
+                if (lowerLine.StartPositionIndexInclusive <= textSpan.StartingIndexInclusive &&
+                    upperLine.EndPositionIndexExclusive >= textSpan.StartingIndexInclusive)
                 {
                     virtualizedTextSpanList.Add(textSpan);
                 }

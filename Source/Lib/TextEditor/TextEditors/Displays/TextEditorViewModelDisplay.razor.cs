@@ -956,7 +956,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                         $"luth_te_proportional-font-measurement-cursor_{_viewModelDisplay._textEditorHtmlElementId}_{guid}",
                         positionX,
                         charMeasurements.CharacterWidth,
-                        model.GetLine(rowIndex));
+                        model.GetLineText(rowIndex));
 
                 if (columnIndexInt == -1)
                 {

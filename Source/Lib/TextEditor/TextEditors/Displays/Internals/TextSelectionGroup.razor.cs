@@ -23,23 +23,22 @@ public partial class TextSelectionGroup : ComponentBase
         if (rowIndex >= RenderBatch.Model!.LineEndList.Count)
             return string.Empty;
 
-        var startOfRowTuple = RenderBatch.Model!.GetLineEndLower(rowIndex);
-        var endOfRowTuple = RenderBatch.Model!.LineEndList[rowIndex];
+        var line = RenderBatch.Model!.GetLineInformation(rowIndex);
 
         var selectionStartingColumnIndex = 0;
-        var selectionEndingColumnIndex = endOfRowTuple.EndPositionIndexExclusive - 1;
+        var selectionEndingColumnIndex = line.EndPositionIndexExclusive - 1;
 
         var fullWidthOfRowIsSelected = true;
 
-        if (lowerPositionIndexInclusive > startOfRowTuple.EndPositionIndexExclusive)
+        if (lowerPositionIndexInclusive > line.StartPositionIndexInclusive)
         {
-            selectionStartingColumnIndex = lowerPositionIndexInclusive - startOfRowTuple.EndPositionIndexExclusive;
+            selectionStartingColumnIndex = lowerPositionIndexInclusive - line.StartPositionIndexInclusive;
             fullWidthOfRowIsSelected = false;
         }
 
-        if (upperPositionIndexExclusive < endOfRowTuple.EndPositionIndexExclusive)
+        if (upperPositionIndexExclusive < line.EndPositionIndexExclusive)
         {
-            selectionEndingColumnIndex = upperPositionIndexExclusive - startOfRowTuple.EndPositionIndexExclusive;
+            selectionEndingColumnIndex = upperPositionIndexExclusive - line.StartPositionIndexInclusive;
             fullWidthOfRowIsSelected = false;
         }
 
@@ -101,7 +100,7 @@ public partial class TextSelectionGroup : ComponentBase
         if (fullWidthOfRowIsSelected)
             widthCssStyleString += $"{fullWidthValueInPixelsInvariantCulture}px;";
         else if (selectionStartingColumnIndex != 0 &&
-                 upperPositionIndexExclusive > endOfRowTuple.EndPositionIndexExclusive - 1)
+                 upperPositionIndexExclusive > line.EndPositionIndexExclusive - 1)
             widthCssStyleString += $"calc({fullWidthValueInPixelsInvariantCulture}px - {selectionStartInPixelsInvariantCulture}px);";
         else
             widthCssStyleString += $"{selectionWidthInPixelsInvariantCulture}px;";

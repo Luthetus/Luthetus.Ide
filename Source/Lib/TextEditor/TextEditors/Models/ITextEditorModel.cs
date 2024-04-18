@@ -59,8 +59,8 @@ public interface ITextEditorModel
     public ImmutableList<TextEditorPartition> PartitionList { get; }
     public IList<EditBlock> EditBlockList { get; }
     /// <summary>
-    /// To get the ending position of LineIndex _lineEndPositions[LineIndex]<br /><br />
-    /// _lineEndPositions returns the start of the NEXT line
+    /// Convert an index for a <see cref="LineEnd"/> to a <see cref="LineInformation"/>, use the method:
+    /// <see cref="TextEditorModelExtensionMethods.GetLineInformation(ITextEditorModel, int)"/>
     /// </summary>
     public IList<LineEnd> LineEndList { get; }
     public IList<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; }

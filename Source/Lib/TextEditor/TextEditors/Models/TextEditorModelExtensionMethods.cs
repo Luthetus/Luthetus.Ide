@@ -12,94 +12,6 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 public static class TextEditorModelExtensionMethods
 {
     /// <summary>
-    /// Use the method: '<see cref="GetLineInformation"/>' instead of this.
-    /// This is a "low level" API so to speak where one works with the <see cref="LineEnd"/>
-    /// types. It usually is preferable to use the "high level" API (...so to speak): '<see cref="GetLineInformation"/>'
-    /// where one works with the <see cref="LineInformation"/> type.<br/><br/>
-    /// 
-    /// Short but inaccurate description:<br/>
-    /// ∙∙∙ One provides a rowIndex, and gets the line-ending of the previous row.<br/>
-    /// 
-    /// Special cases:<br/>
-    /// ∙∙∙ Index 0 and index ^1 (the final index) return 'StartOfFile' and 'EndOfFile' respectively.<br/>
-    /// 
-    /// Algorithm:<br/>
-	/// ∙∙∙ rowIndex of 0 returns StartOfFile<br/>
-	/// ∙∙∙ rowIndex of 1 returns the line-ending of row 0<br/>
-	/// ∙∙∙ rowIndex of 2 returns the line-ending of row 1<br/>
-	/// ∙∙∙ etc...<br/>
-	/// ∙∙∙ rowIndex of ^1 (the final index) returns EndOfFile<br/>
-    /// </summary>
-    public static LineEnd GetLineEndLower(this ITextEditorModel model, int lineIndex)
-    {
-        // Index is out of range (large-ly)? Then change the index to the last index.
-        lineIndex = Math.Min(lineIndex, model.LineEndList.Count - 1);
-
-        // Index is the last index? Then return EndOfFile
-        if (lineIndex == model.LineEndList.Count - 1)
-            return model.LineEndList[^1];
-
-        // Index in range (small-ly, and large-ly)? Then return the previous line's line ending.
-        if (lineIndex > 0)
-            return model.LineEndList[lineIndex - 1];
-
-        // Index is out of range (small-ly)? Then return StartOfFile.
-        return new(0, 0, LineEndKind.StartOfFile);
-    }
-
-    /// <summary>
-    /// Use the method: '<see cref="GetLineInformation"/>' instead of this.
-    /// This is a "low level" API so to speak where one works with the <see cref="LineEnd"/>
-    /// types. It usually is preferable to use the "high level" API (...so to speak): '<see cref="GetLineInformation"/>'
-    /// where one works with the <see cref="LineInformation"/> type.<br/><br/>
-    /// 
-    /// Short but inaccurate description:<br/>
-    /// ∙∙∙ One provides a rowIndex, and gets the line-ending of that row.<br/>
-    /// 
-    /// Special cases:<br/>
-    /// ∙∙∙ Index ^1 (the final index) returns 'EndOfFile'.<br/>
-    /// 
-    /// Algorithm:<br/>
-	/// ∙∙∙ rowIndex of 0 returns the line-ending of row 0<br/>
-	/// ∙∙∙ rowIndex of 1 returns the line-ending of row 1<br/>
-	/// ∙∙∙ rowIndex of 2 returns the line-ending of row 2<br/>
-	/// ∙∙∙ etc...<br/>
-	/// ∙∙∙ rowIndex of ^1 (the final index) returns EndOfFile<br/>
-    /// </summary>
-    public static LineEnd GetLineEndUpper(this ITextEditorModel model, int lineIndex)
-    {
-        // Index is out of range (large-ly)? Then change the index to the last index.
-        lineIndex = Math.Min(lineIndex, model.LineEndList.Count - 1);
-
-        // Index is the last index? Then return EndOfFile.
-        if (lineIndex == model.LineEndList.Count - 1)
-            return model.LineEndList[^1];
-
-        // Index in range (small-ly, and large-ly)? Then return that line's line ending.
-        if (lineIndex >= 0)
-            return model.LineEndList[lineIndex];
-
-        // Index is out of range (small-ly)? Then return EndOfFile.
-        return model.LineEndList[^1];
-    }
-
-    /// <summary>
-    /// Use the method: '<see cref="GetLineInformation"/>' instead of this.
-    /// </summary>
-    public static int GetLineStartPositionIndexInclusive(this ITextEditorModel model, int lineIndex)
-    {
-        return model.GetLineEndLower(lineIndex).EndPositionIndexExclusive;
-    }
-
-    /// <summary>
-    /// Use the method: '<see cref="GetLineInformation"/>' instead of this.
-    /// </summary>
-    public static int GetLineEndPositionIndexExclusive(this ITextEditorModel model, int lineIndex)
-    {
-        return model.GetLineEndUpper(lineIndex).EndPositionIndexExclusive;
-    }
-
-    /// <summary>
 	/// Returns the Length of a line however it does not include the line ending characters by default.
 	/// To include line ending characters the parameter <see cref="includeLineEndingCharacters" /> must be true.
 	/// </summary>
@@ -114,15 +26,13 @@ public static class TextEditorModelExtensionMethods
         if (lineIndex < 0)
             lineIndex = 0;
 
-        var startOfLineTupleInclusive = model.GetLineEndLower(lineIndex);
-        // TODO: Index was out of range exception on 2023-04-18
-        var endOfLineTupleExclusive = model.LineEndList[lineIndex];
-        var lineLengthWithLineEndings = endOfLineTupleExclusive.EndPositionIndexExclusive - startOfLineTupleInclusive.EndPositionIndexExclusive;
+        var line = model.GetLineInformation(lineIndex);
+        var lineLengthWithLineEndings = line.EndPositionIndexExclusive - line.StartPositionIndexInclusive;
 
         if (includeLineEndingCharacters)
             return lineLengthWithLineEndings;
 
-        return lineLengthWithLineEndings - endOfLineTupleExclusive.LineEndKind.AsCharacters().Length;
+        return lineLengthWithLineEndings - line.UpperLineEnd.LineEndKind.AsCharacters().Length;
     }
 
     /// <summary>
@@ -151,7 +61,7 @@ public static class TextEditorModelExtensionMethods
         for (var i = startingLineIndex; i < endingLineIndexExclusive; i++)
         {
             // Previous line's end-position-exclusive is this row's start.
-            var startOfLineInclusive = model.GetLineStartPositionIndexInclusive(i);
+            var startOfLineInclusive = model.GetLineInformation(i).StartPositionIndexInclusive;
             var endOfLineExclusive = model.LineEndList[i].EndPositionIndexExclusive;
 
             var line = model.GetRichCharacters(
@@ -166,7 +76,7 @@ public static class TextEditorModelExtensionMethods
 
     public static int GetTabsCountOnSameLineBeforeCursor(this ITextEditorModel model, int rowIndex, int columnIndex)
     {
-        var startOfLinePositionIndex = model.GetLineStartPositionIndexInclusive(rowIndex);
+        var startOfLinePositionIndex = model.GetLineInformation(rowIndex).StartPositionIndexInclusive;
 
         var tabs = model.TabKeyPositionList
             .SkipWhile(positionIndex => positionIndex < startOfLinePositionIndex)
@@ -199,7 +109,7 @@ public static class TextEditorModelExtensionMethods
     /// </summary>
     public static int GetPositionIndex(this ITextEditorModel model, int lineIndex, int columnIndex)
     {
-        var lineStartPositionIndexInclusive = model.GetLineStartPositionIndexInclusive(lineIndex);
+        var lineStartPositionIndexInclusive = model.GetLineInformation(lineIndex).StartPositionIndexInclusive;
         return lineStartPositionIndexInclusive + columnIndex;
     }
 
@@ -372,28 +282,49 @@ public static class TextEditorModelExtensionMethods
     }
 
     /// <summary>
-    /// Lines are confusing.<br/><br/>
+    /// 'lineIndex' equal to '0' returns the first line.<br/><br/>
     /// 
-    /// The <see cref="ITextEditorModel.LineEndList"/> is used to determine the
-    /// start and end of a line.
+    /// An index for <see cref="ITextEditorModel.LineEndList"/> maps 1 to 1 with this method.
+    /// (i.e.) the 0th line-end index will end up returning the 0th line.<br/><br/>
     /// 
-    /// But, its important to remember, '<see cref="ITextEditorModel.LineEndList"/>' is a list of line-endings,
-    /// NOT lines themselves.<br/><br/>
-    /// 
-    /// Both the start, and the end of a line are defined by the end of a line-ending.
-    /// That gets incredibly confusing, (especially if you need some sleep).
-    /// 
-    /// Then, we can add on the fact that the '<see cref="LineEndKind.StartOfFile"/>' line end does not exist,
-    /// but it is used when speaking about the 0th line's start position.<br/><br/>
-    /// 
-    /// Goal of this method:
-    /// avoid all the confusion of working with the <see cref="ITextEditorModel.LineEndList"/>,
-    /// by creating an instance of <see cref="LineInformation"/> from within this method.
+    /// Given a 'lineIndex', return the <see cref="LineEnd"/> at <see cref="ITextEditorModel.LineEndList"/>[lineIndex - 1],
+    /// and <see cref="ITextEditorModel.LineEndList"/>[lineIndex]
+    /// in the form of the type <see cref="LineInformation"/>.
     /// </summary>
+    /// <remarks>
+    /// When 'lineIndex' == 0, then a "made-up" line ending named <see cref="LineEnd.StartOfFile"/> will be used
+    /// in place of indexing at '<see cref="ITextEditorModel.LineEndList"/>[-1]'
+    /// </remarks>
     public static LineInformation GetLineInformation(this ITextEditorModel model, int lineIndex)
     {
-        var lineEndLower = GetLineEndLower(model, lineIndex);
-        var lineEndUpper = GetLineEndUpper(model, lineIndex);
+        LineEnd GetLineEndLower(int lineIndex)
+        {
+            // Small index? Then return StartOfFile.
+            if (lineIndex <= 0)
+                return new(0, 0, LineEndKind.StartOfFile);
+
+            // Large index? Then set the index to the last index.
+            lineIndex = Math.Min(lineIndex, model.LineEndList.Count - 1);
+
+            // In-range index? Then return the previous line's line ending.
+            return model.LineEndList[lineIndex - 1];
+        }
+
+        LineEnd GetLineEndUpper(int lineIndex)
+        {
+            // Small index? Then return the first LineEnd
+            if (lineIndex <= 0)
+                return model.LineEndList[0];
+
+            // Large index? Then set the index to the last index.
+            lineIndex = Math.Min(lineIndex, model.LineEndList.Count - 1);
+
+            // In-range index? Then return the LineEnd at that index.
+            return model.LineEndList[lineIndex];
+        }
+        
+        var lineEndLower = GetLineEndLower(lineIndex);
+        var lineEndUpper = GetLineEndUpper(lineIndex);
 
         return new LineInformation(
             lineIndex,
@@ -441,7 +372,7 @@ public static class TextEditorModelExtensionMethods
             ? -1
             : 1;
 
-        var lineStartPositionIndex = model.GetLineStartPositionIndexInclusive(lineIndex);
+        var lineStartPositionIndex = model.GetLineInformation(lineIndex).StartPositionIndexInclusive;
 
         if (lineIndex > model.LineEndList.Count - 1)
             return -1;
@@ -584,20 +515,20 @@ public static class TextEditorModelExtensionMethods
     public static string GetTextOffsettingCursor(this ITextEditorModel model, TextEditorCursor textEditorCursor)
     {
         var cursorPositionIndex = model.GetPositionIndex(textEditorCursor);
-        var priorLineEnd = model.GetLineEndLower(textEditorCursor.LineIndex);
+        var lineStartPositionIndexInclusive = model.GetLineInformation(textEditorCursor.LineIndex).StartPositionIndexInclusive;
 
-        return model.GetString(priorLineEnd.EndPositionIndexExclusive, cursorPositionIndex - priorLineEnd.EndPositionIndexExclusive);
+        return model.GetString(lineStartPositionIndexInclusive, cursorPositionIndex - lineStartPositionIndexInclusive);
     }
 
-    public static string GetLine(this ITextEditorModel model, int lineIndex)
+    public static string GetLineText(this ITextEditorModel model, int lineIndex)
     {
         if (lineIndex < 0 || lineIndex > model.LineCount - 1)
             return string.Empty;
 
-        var priorLineEnd = model.GetLineEndLower(lineIndex);
-        var lengthOfRow = model.GetLengthOfLine(lineIndex, true);
+        var lineStartPositionIndexInclusive = model.GetLineInformation(lineIndex).StartPositionIndexInclusive;
+        var lengthOfLine = model.GetLengthOfLine(lineIndex, true);
 
-        return model.GetString(priorLineEnd.EndPositionIndexExclusive, lengthOfRow);
+        return model.GetString(lineStartPositionIndexInclusive, lengthOfLine);
     }
 
     public static RichCharacter? GetRichCharacterOrDefault(this ITextEditorModel model, int positionIndex)
