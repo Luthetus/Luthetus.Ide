@@ -3,6 +3,8 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using System.Linq;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
@@ -423,7 +425,7 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
 
         // Pattern:
         // -------
-        // Foreach line in the 'content', invoke 'GetLineAndColumnIndicesFromPositionIndex' on every positionIndex and assert the result.
+        // Foreach positionIndex in the 'content', invoke 'GetLineAndColumnIndicesFromPositionIndex' on every positionIndex and assert the result.
         // These are expected to NOT-throw exceptions.
 
         // Line_Index_0: "\n"
@@ -478,7 +480,7 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
 
         // Pattern:
         // -------
-        // Foreach line in the 'content', invoke 'GetCharacter' on every positionIndex and assert the result.
+        // Foreach positionIndex in the 'content', invoke 'GetCharacter' on every positionIndex and assert the result.
         // These are expected to NOT-throw exceptions.
 
         // Line_Index_0: "\n"
@@ -533,7 +535,7 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
 
         // Pattern:
         // -------
-        // Foreach line in the 'content', invoke 'GetString' on every positionIndex and assert the result.
+        // Foreach positionIndex in the 'content', invoke 'GetString' on every positionIndex and assert the result.
         // These are expected to NOT-throw exceptions.
 
         // Line_Index_0: "\n"
@@ -572,9 +574,45 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     /// <see cref="TextEditorModelExtensionMethods.GetLineTextRange(ITextEditorModel, int, int)"/>
     /// </summary>
     [Fact]
-    public void GetLineRange()
+    public void GetLineTextRange()
     {
-        throw new NotImplementedException();
+        var content = "\nb9\r9B\r\n\t$; ";
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: content,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // Pattern:
+        // -------
+        // These are expected to NOT-throw exceptions.
+
+        // Line_Index_0: "\n"
+        Assert.Equal(string.Empty, modelModifier.GetLineTextRange(0, 0));
+        Assert.Equal("\n", modelModifier.GetLineTextRange(0, 1));
+
+        // Line_Index_1: "b9\r"
+        Assert.Equal("b9\r9B\r\n", modelModifier.GetLineTextRange(1, 2));
+
+        // Line_Index_2: "9B\r\n"
+        Assert.Equal("9B\r\n\t$; ", modelModifier.GetLineTextRange(2, 3));
+
+        // Line_Index_3: "--->$;∙EOF"
+        Assert.Equal("\t$; ", modelModifier.GetLineTextRange(3, 1));
+
+        // Pattern:
+        // -------
+        // Foreach unique out-of-bounds possibility, invoke 'GetLineTextRange' and assert the result.
+        // These are expected to throw exceptions.
+
+        Assert.Throws<ApplicationException>(() => modelModifier.GetLineTextRange(-1, 1));
+        Assert.Throws<ApplicationException>(() => modelModifier.GetLineTextRange(4, 1));
+        Assert.Throws<ApplicationException>(() => modelModifier.GetLineTextRange(-1, -1));
+        Assert.Throws<ApplicationException>(() => modelModifier.GetLineTextRange(4, -1));
     }
 
     /// <summary>
@@ -583,7 +621,54 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     [Fact]
     public void GetWordTextSpan()
     {
-        throw new NotImplementedException();
+        var content = "\nb9\r9B\r\n\t$; ";
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: content,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // "\nb9\r9B\r\n\t$; "
+        //     ^cursor is between the 'b' and the '9'
+        {
+            var textSpan = modelModifier.GetWordTextSpan(2);
+            Assert.NotNull(textSpan);
+            Assert.Equal(1, textSpan!.StartingIndexInclusive);
+            Assert.Equal(3, textSpan.EndingIndexExclusive);
+            Assert.Equal("b9", textSpan.GetText());
+            Assert.Equal(2, textSpan.Length);
+        }
+
+        // "\nb9\r9B\r\n\t$; "
+        //        ^cursor is to the left of the "9B" text.
+        {
+            var textSpan = modelModifier.GetWordTextSpan(4);
+            Assert.NotNull(textSpan);
+            Assert.Equal(4, textSpan!.StartingIndexInclusive);
+            Assert.Equal(6, textSpan.EndingIndexExclusive);
+            Assert.Equal("9B", textSpan.GetText());
+            Assert.Equal(2, textSpan.Length);
+        }
+
+        // "\nb9\r9B\r\n\t$; "
+        //          ^cursor is to the right of the "9B" text.
+        {
+            var textSpan = modelModifier.GetWordTextSpan(6);
+            Assert.NotNull(textSpan);
+            Assert.Equal(4, textSpan!.StartingIndexInclusive);
+            Assert.Equal(6, textSpan.EndingIndexExclusive);
+            Assert.Equal("9B", textSpan.GetText());
+            Assert.Equal(2, textSpan.Length);
+        }
+
+        // Out-of-bounds small number
+        Assert.Throws<ApplicationException>(() => modelModifier.GetWordTextSpan(-1));
+        // Out-of-bounds large number
+        Assert.Throws<ApplicationException>(() => modelModifier.GetWordTextSpan(13));
     }
 
     /// <summary>
@@ -592,7 +677,57 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     [Fact]
     public void FindMatches()
     {
-        throw new NotImplementedException();
+        var content = "\nb9\r9B\r\n\t$; ";
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: content,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // "\nb9\r9B\r\n\t$; "
+        //     ^  ^           # 2 total
+        {
+            var matchList = modelModifier.FindMatches("9");
+            Assert.Equal(2, matchList.Length);
+
+            // Index 0
+            {
+                var match = matchList[0];
+                Assert.Equal(2, match.StartingIndexInclusive);
+                Assert.Equal(3, match.EndingIndexExclusive);
+                Assert.Equal("9", match.GetText());
+                Assert.Equal(1, match.Length);
+            }
+
+            // Index 1
+            {
+                var match = matchList[1];
+                Assert.Equal(4, match.StartingIndexInclusive);
+                Assert.Equal(5, match.EndingIndexExclusive);
+                Assert.Equal("9", match.GetText());
+                Assert.Equal(1, match.Length);
+            }
+        }
+
+        // "\nb9\r9B\r\n\t$; "
+        //        ^           # 1 total
+        {
+            var matchList = modelModifier.FindMatches("9B");
+            Assert.Single(matchList);
+
+            // Index 0
+            {
+                var match = matchList[0];
+                Assert.Equal(4, match.StartingIndexInclusive);
+                Assert.Equal(6, match.EndingIndexExclusive);
+                Assert.Equal("9B", match.GetText());
+                Assert.Equal(2, match.Length);
+            }
+        }
     }
 
     /// <summary>
@@ -601,7 +736,62 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     [Fact]
     public void GetLineInformation()
     {
-        throw new NotImplementedException();
+        var content = "\nb9\r9B\r\n\t$; ";
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: content,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+
+        // Line_Index_0: "\n"
+        {
+            var line = modelModifier.GetLineInformation(0);
+            Assert.Equal(0, line.Index);
+            Assert.Equal(0, line.StartPositionIndexInclusive);
+            Assert.Equal(1, line.EndPositionIndexExclusive);
+            Assert.Equal(LineEnd.StartOfFile, line.LowerLineEnd);
+            Assert.Equal(modelModifier.LineEndList[0], line.UpperLineEnd);
+        }
+
+        // Line_Index_1: "b9\r"
+        {
+            var line = modelModifier.GetLineInformation(1);
+            Assert.Equal(1, line.Index);
+            Assert.Equal(1, line.StartPositionIndexInclusive);
+            Assert.Equal(4, line.EndPositionIndexExclusive);
+            Assert.Equal(modelModifier.LineEndList[0], line.LowerLineEnd);
+            Assert.Equal(modelModifier.LineEndList[1], line.UpperLineEnd);
+        }
+
+        // Line_Index_2: "9B\r\n"
+        {
+            var line = modelModifier.GetLineInformation(2);
+            Assert.Equal(2, line.Index);
+            Assert.Equal(4, line.StartPositionIndexInclusive);
+            Assert.Equal(8, line.EndPositionIndexExclusive);
+            Assert.Equal(modelModifier.LineEndList[1], line.LowerLineEnd);
+            Assert.Equal(modelModifier.LineEndList[2], line.UpperLineEnd);
+        }
+
+        // Line_Index_3: "--->$;∙EOF"
+        {
+            var line = modelModifier.GetLineInformation(3);
+            Assert.Equal(3, line.Index);
+            Assert.Equal(8, line.StartPositionIndexInclusive);
+            Assert.Equal(12, line.EndPositionIndexExclusive);
+            Assert.Equal(modelModifier.LineEndList[2], line.LowerLineEnd);
+            Assert.Equal(modelModifier.LineEndList[3], line.UpperLineEnd);
+        }
+
+        // Out-of-range small number
+        Assert.Throws<ApplicationException>(() => modelModifier.GetLineInformation(-1));
+        // Out-of-range large number
+        Assert.Throws<ApplicationException>(() => modelModifier.GetLineInformation(4));
     }
 
     /// <summary>
@@ -610,7 +800,66 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     [Fact]
     public void GetLineInformationFromPositionIndex()
     {
-        throw new NotImplementedException();
+        var content = "\nb9\r9B\r\n\t$; ";
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: content,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+
+        // Line_Index_0: "\n"
+        {
+            // Invoke at start of a line
+            var line = modelModifier.GetLineInformationFromPositionIndex(0);
+            Assert.Equal(0, line.Index);
+            Assert.Equal(0, line.StartPositionIndexInclusive);
+            Assert.Equal(1, line.EndPositionIndexExclusive);
+            Assert.Equal(LineEnd.StartOfFile, line.LowerLineEnd);
+            Assert.Equal(modelModifier.LineEndList[0], line.UpperLineEnd);
+        }
+
+        // Line_Index_1: "b9\r"
+        {
+            // Invoke at middle of word "b9"
+            var line = modelModifier.GetLineInformationFromPositionIndex(2);
+            Assert.Equal(1, line.Index);
+            Assert.Equal(1, line.StartPositionIndexInclusive);
+            Assert.Equal(4, line.EndPositionIndexExclusive);
+            Assert.Equal(modelModifier.LineEndList[0], line.LowerLineEnd);
+            Assert.Equal(modelModifier.LineEndList[1], line.UpperLineEnd);
+        }
+
+        // Line_Index_2: "9B\r\n"
+        {
+            // Invoke at middle of CarriageReturnLineFeed "\r\n"
+            var line = modelModifier.GetLineInformationFromPositionIndex(7);
+            Assert.Equal(2, line.Index);
+            Assert.Equal(4, line.StartPositionIndexInclusive);
+            Assert.Equal(8, line.EndPositionIndexExclusive);
+            Assert.Equal(modelModifier.LineEndList[1], line.LowerLineEnd);
+            Assert.Equal(modelModifier.LineEndList[2], line.UpperLineEnd);
+        }
+
+        // Line_Index_3: "--->$;∙EOF"
+        {
+            // Invoke at the final positionIndex
+            var line = modelModifier.GetLineInformationFromPositionIndex(12);
+            Assert.Equal(3, line.Index);
+            Assert.Equal(8, line.StartPositionIndexInclusive);
+            Assert.Equal(12, line.EndPositionIndexExclusive);
+            Assert.Equal(modelModifier.LineEndList[2], line.LowerLineEnd);
+            Assert.Equal(modelModifier.LineEndList[3], line.UpperLineEnd);
+        }
+
+        // Out-of-range small number
+        Assert.Throws<ApplicationException>(() => modelModifier.GetLineInformation(-1));
+        // Out-of-range large number
+        Assert.Throws<ApplicationException>(() => modelModifier.GetLineInformation(13));
     }
 
     /// <summary>
@@ -619,7 +868,37 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     [Fact]
     public void GetColumnIndexOfCharacterWithDifferingKind()
     {
-        throw new NotImplementedException();
+        var content = "\nb9\r9B\r\n\t$; ";
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: content,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        Assert.Equal(2, modelModifier.GetColumnIndexOfCharacterWithDifferingKind(lineIndex: 1, columnIndex: 0, moveBackwards: false));
+
+        // -1 is the result because this method stays on the provided lineIndex, it will NOT wrap to the previous line.
+        Assert.Equal(-1, modelModifier.GetColumnIndexOfCharacterWithDifferingKind(lineIndex: 1, columnIndex: 2, moveBackwards: true));
+
+        // lineIndex out of bounds small number
+        Assert.Throws<ApplicationException>(() =>
+            modelModifier.GetColumnIndexOfCharacterWithDifferingKind(lineIndex: -1, columnIndex: 0, moveBackwards: true));
+
+        // lineIndex out of bounds large number
+        Assert.Throws<ApplicationException>(() =>
+            modelModifier.GetColumnIndexOfCharacterWithDifferingKind(lineIndex: 4, columnIndex: 0, moveBackwards: true));
+
+        // columnIndex out of bounds small number
+        Assert.Throws<ApplicationException>(() =>
+            modelModifier.GetColumnIndexOfCharacterWithDifferingKind(lineIndex: 0, columnIndex: -1, moveBackwards: true));
+
+        // columnIndex out of bounds large number
+        Assert.Throws<ApplicationException>(() =>
+            modelModifier.GetColumnIndexOfCharacterWithDifferingKind(lineIndex: 0, columnIndex: 2, moveBackwards: true));
     }
 
     /// <summary>
@@ -628,7 +907,27 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     [Fact]
     public void CanUndoEdit()
     {
-        throw new NotImplementedException();
+        var content = "\nb9\r9B\r\n\t$; ";
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: content,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // The constructor for the text editor does NOT set an EditBlock
+        Assert.False(modelModifier.CanUndoEdit());
+
+        // Insert text
+        var insertedContent = "a";
+        modelModifier.Insert_Unsafe(insertedContent, 0, 0, CancellationToken.None);
+        Assert.Equal(insertedContent + content, modelModifier.GetAllText());
+
+        // Text insertion will set an EditBlock
+        Assert.True(modelModifier.CanUndoEdit());
     }
 
     /// <summary>
@@ -637,7 +936,34 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     [Fact]
     public void CanRedoEdit()
     {
-        throw new NotImplementedException();
+        var content = "\nb9\r9B\r\n\t$; ";
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: content,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // The constructor for the text editor does NOT set an EditBlock
+        Assert.False(modelModifier.CanUndoEdit());
+        Assert.False(modelModifier.CanRedoEdit());
+
+        // Insert text
+        var insertedContent = "a";
+        modelModifier.Insert_Unsafe(insertedContent, 0, 0, CancellationToken.None);
+        Assert.Equal(insertedContent + content, modelModifier.GetAllText());
+
+        // Text insertion will set an EditBlock
+        Assert.True(modelModifier.CanUndoEdit());
+
+        // Undo an edit
+        modelModifier.UndoEdit();
+
+        // Undoing an edit will allow Redo
+        Assert.True(modelModifier.CanRedoEdit());
     }
 
     /// <summary>
@@ -646,7 +972,72 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     [Fact]
     public void GetCharacterKind()
     {
-        throw new NotImplementedException();
+        var content = "\nb9\r9B\r\n\t$; ";
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: content,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // "\nb9\r9B\r\n\t$; "
+        //  ^
+        Assert.Equal(CharacterKind.Whitespace, modelModifier.GetCharacterKind(0));
+
+        // "\nb9\r9B\r\n\t$; "
+        //    ^
+        Assert.Equal(CharacterKind.LetterOrDigit, modelModifier.GetCharacterKind(1));
+
+        // "\nb9\r9B\r\n\t$; "
+        //     ^
+        Assert.Equal(CharacterKind.LetterOrDigit, modelModifier.GetCharacterKind(2));
+
+        // "\nb9\r9B\r\n\t$; "
+        //      ^
+        Assert.Equal(CharacterKind.Whitespace, modelModifier.GetCharacterKind(3));
+
+        // "\nb9\r9B\r\n\t$; "
+        //        ^
+        Assert.Equal(CharacterKind.LetterOrDigit, modelModifier.GetCharacterKind(4));
+
+        // "\nb9\r9B\r\n\t$; "
+        //         ^
+        Assert.Equal(CharacterKind.LetterOrDigit, modelModifier.GetCharacterKind(5));
+
+        // "\nb9\r9B\r\n\t$; "
+        //          ^
+        Assert.Equal(CharacterKind.Whitespace, modelModifier.GetCharacterKind(6));
+
+        // "\nb9\r9B\r\n\t$; "
+        //            ^
+        Assert.Equal(CharacterKind.Whitespace, modelModifier.GetCharacterKind(7));
+
+        // "\nb9\r9B\r\n\t$; "
+        //              ^
+        Assert.Equal(CharacterKind.Whitespace, modelModifier.GetCharacterKind(8));
+
+        // "\nb9\r9B\r\n\t$; "
+        //                ^
+        Assert.Equal(CharacterKind.Punctuation, modelModifier.GetCharacterKind(9));
+
+        // "\nb9\r9B\r\n\t$; "
+        //                 ^
+        Assert.Equal(CharacterKind.Punctuation, modelModifier.GetCharacterKind(10));
+
+        // "\nb9\r9B\r\n\t$; "
+        //                  ^
+        Assert.Equal(CharacterKind.Whitespace, modelModifier.GetCharacterKind(11));
+
+        // "\nb9\r9B\r\n\t$; "
+        //                   ^
+        Assert.Equal(CharacterKind.Bad, modelModifier.GetCharacterKind(12));
+
+
+        Assert.Throws<ApplicationException>(() => modelModifier.GetCharacterKind(-1));
+        Assert.Throws<ApplicationException>(() => modelModifier.GetCharacterKind(13));
     }
 
     /// <summary>

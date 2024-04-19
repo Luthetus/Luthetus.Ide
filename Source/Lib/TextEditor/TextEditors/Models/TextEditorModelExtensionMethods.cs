@@ -154,13 +154,12 @@ public static class TextEditorModelExtensionMethods
             .ToArray());
     }
 
-    public static string GetLineTextRange(this ITextEditorModel model, int startLineIndex, int count)
+    public static string GetLineTextRange(this ITextEditorModel model, int lineIndex, int count)
     {
-        if (startLineIndex > model.LineCount - 1)
-            return string.Empty;
+        model.AssertCount(count);
 
-        var startPositionIndexInclusive = model.GetPositionIndex(startLineIndex, 0);
-        var lastLineIndexExclusive = startLineIndex + count;
+        var startPositionIndexInclusive = model.GetPositionIndex(lineIndex, 0);
+        var lastLineIndexExclusive = lineIndex + count;
         int endPositionIndexExclusive;
 
         if (lastLineIndexExclusive > model.LineCount - 1)
@@ -444,19 +443,18 @@ public static class TextEditorModelExtensionMethods
 
     public static CharacterKind GetCharacterKind(this ITextEditorModel model, int positionIndex)
     {
-        try
-        {
-            return CharacterKindHelper.CharToCharacterKind(model.CharList[positionIndex]);
-        }
-        catch (ArgumentOutOfRangeException)
-        {
-            // The text editor's cursor is is likely
-            // to have this occur at times
-        }
+        model.AssertPositionIndex(positionIndex);
 
-        return CharacterKind.Bad;
+        if (positionIndex == model.DocumentLength)
+            return CharacterKind.Bad;
+
+        return CharacterKindHelper.CharToCharacterKind(model.CharList[positionIndex]);
     }
 
+    /// <summary>
+    /// This method and <see cref="ReadNextWordOrDefault(ITextEditorModel, int, int)"/>
+    /// are separate because of 'Ctrl + Space' bring up autocomplete when at a period.
+    /// </summary>
     public static string? ReadPreviousWordOrDefault(
         this ITextEditorModel model,
         int lineIndex,
@@ -499,6 +497,10 @@ public static class TextEditorModelExtensionMethods
         return null;
     }
 
+    /// <summary>
+    /// This method and <see cref="ReadPreviousWordOrDefault(ITextEditorModel, int, int, bool)"/>
+    /// are separate because of 'Ctrl + Space' bring up autocomplete when at a period.
+    /// </summary>
     public static string? ReadNextWordOrDefault(this ITextEditorModel model, int lineIndex, int columnIndex)
     {
         var wordPositionIndexStartInclusive = model.GetPositionIndex(lineIndex, columnIndex);
