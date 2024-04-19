@@ -1035,7 +1035,6 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
         //                   ^
         Assert.Equal(CharacterKind.Bad, modelModifier.GetCharacterKind(12));
 
-
         Assert.Throws<ApplicationException>(() => modelModifier.GetCharacterKind(-1));
         Assert.Throws<ApplicationException>(() => modelModifier.GetCharacterKind(13));
     }
@@ -1046,7 +1045,74 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     [Fact]
     public void ReadPreviousWordOrDefault()
     {
-        throw new NotImplementedException();
+        var content = "\nb9\r9B\r\n\t$; ";
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: content,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // Case: after CharacterKind.LetterOrDigit
+        //
+        // "\nb9\r9B\r\n\t$; "
+        //      ^cursor is after the text "b9"
+        {
+            var word = modelModifier.ReadPreviousWordOrDefault(1, 2);
+            Assert.Equal("b9", word);
+        }
+
+        // Case: after CharacterKind.Whitespace
+        //
+        // "\nb9\r9B\r\n\t$; "
+        //        ^cursor is to the right of the "\r" text.
+        {
+            var word = modelModifier.ReadPreviousWordOrDefault(2, 0);
+            Assert.Null(word);
+        }
+
+        // Case: after CharacterKind.Punctuation
+        //
+        // "\nb9\r9B\r\n\t$; "
+        //                 ^cursor is to the right of the "$" text.
+        {
+            var textSpan = modelModifier.ReadPreviousWordOrDefault(3, 2);
+            Assert.Null(textSpan);
+        }
+
+        // These cases are expected to throw an exception
+        {
+            // lineIndex is bad
+            {
+                // Out-of-bounds small number
+                Assert.Throws<ApplicationException>(() => modelModifier.ReadPreviousWordOrDefault(-1, 0));
+                // Out-of-bounds large number
+                Assert.Throws<ApplicationException>(() => modelModifier.ReadPreviousWordOrDefault(4, 0));
+            }
+
+            // columnIndex is bad
+            {
+                // Out-of-bounds small number
+                Assert.Throws<ApplicationException>(() => modelModifier.ReadPreviousWordOrDefault(2, -1));
+                // Out-of-bounds large number
+                Assert.Throws<ApplicationException>(() => modelModifier.ReadPreviousWordOrDefault(0, 2));
+            }
+
+            // Mixture is bad
+            {
+                // Out-of-bounds (small number, small number)
+                Assert.Throws<ApplicationException>(() => modelModifier.ReadPreviousWordOrDefault(-1, -1));
+                // Out-of-bounds (small number, large number)
+                Assert.Throws<ApplicationException>(() => modelModifier.ReadPreviousWordOrDefault(-1, 2));
+                // Out-of-bounds (large number, small number)
+                Assert.Throws<ApplicationException>(() => modelModifier.ReadPreviousWordOrDefault(4, -1));
+                // Out-of-bounds (large number, large number)
+                Assert.Throws<ApplicationException>(() => modelModifier.ReadPreviousWordOrDefault(4, 4));
+            }
+        }
     }
 
     /// <summary>
@@ -1055,7 +1121,74 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     [Fact]
     public void ReadNextWordOrDefault()
     {
-        throw new NotImplementedException();
+        var content = "\nb9\r9B\r\n\t$; ";
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: content,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // Case: before CharacterKind.LetterOrDigit
+        //
+        // "\nb9\r9B\r\n\t$; "
+        //    ^cursor is to the left of the "b9" text.
+        {
+            var word = modelModifier.ReadNextWordOrDefault(1, 0);
+            Assert.Equal("b9", word);
+        }
+
+        // Case: before CharacterKind.Whitespace
+        //
+        // "\nb9\r9B\r\n\t$; "
+        //      ^cursor is to the left of the "\r" text.
+        {
+            var word = modelModifier.ReadNextWordOrDefault(1, 2);
+            Assert.Null(word);
+        }
+
+        // Case: before CharacterKind.Punctuation
+        //
+        // "\nb9\r9B\r\n\t$; "
+        //                ^cursor is to the left of the "$" text.
+        {
+            var textSpan = modelModifier.ReadNextWordOrDefault(3, 1);
+            Assert.Null(textSpan);
+        }
+
+        // These cases are expected to throw an exception
+        {
+            // lineIndex is bad
+            {
+                // Out-of-bounds small number
+                Assert.Throws<ApplicationException>(() => modelModifier.ReadNextWordOrDefault(-1, 0));
+                // Out-of-bounds large number
+                Assert.Throws<ApplicationException>(() => modelModifier.ReadNextWordOrDefault(4, 0));
+            }
+
+            // columnIndex is bad
+            {
+                // Out-of-bounds small number
+                Assert.Throws<ApplicationException>(() => modelModifier.ReadNextWordOrDefault(2, -1));
+                // Out-of-bounds large number
+                Assert.Throws<ApplicationException>(() => modelModifier.ReadNextWordOrDefault(0, 2));
+            }
+
+            // Mixture is bad
+            {
+                // Out-of-bounds (small number, small number)
+                Assert.Throws<ApplicationException>(() => modelModifier.ReadNextWordOrDefault(-1, -1));
+                // Out-of-bounds (small number, large number)
+                Assert.Throws<ApplicationException>(() => modelModifier.ReadNextWordOrDefault(-1, 2));
+                // Out-of-bounds (large number, small number)
+                Assert.Throws<ApplicationException>(() => modelModifier.ReadNextWordOrDefault(4, -1));
+                // Out-of-bounds (large number, large number)
+                Assert.Throws<ApplicationException>(() => modelModifier.ReadNextWordOrDefault(4, 4));
+            }
+        }
     }
 
     /// <summary>
@@ -1064,7 +1197,87 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     [Fact]
     public void GetTextOffsettingCursor()
     {
-        throw new NotImplementedException();
+        var content = "\nb9\r9B\r\n\t$; ";
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: content,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // Case: start of file
+        //
+        // "\nb9\r9B\r\n\t$; "
+        //  ^
+        Assert.Equal(
+            string.Empty,
+            modelModifier.GetTextOffsettingCursor(new TextEditorCursor(lineIndex: 0, columnIndex: 0, isPrimaryCursor: true)));
+
+        // Case: end of file
+        //
+        // "\nb9\r9B\r\n\t$; "
+        //  ^
+        Assert.Equal(
+            "\t$; ",
+            modelModifier.GetTextOffsettingCursor(new TextEditorCursor(lineIndex: 3, columnIndex: 4, isPrimaryCursor: true)));
+
+        // Case: start of line && (NOT the start of the file)
+        //
+        // "\nb9\r9B\r\n\t$; "
+        //  ^
+        Assert.Equal(
+            string.Empty,
+            modelModifier.GetTextOffsettingCursor(new TextEditorCursor(lineIndex: 2, columnIndex: 0, isPrimaryCursor: true)));
+
+        // Case: end of line && (NOT the end of the file)
+        //
+        // "\nb9\r9B\r\n\t$; "
+        //  ^
+        Assert.Equal(
+            "9B",
+            modelModifier.GetTextOffsettingCursor(new TextEditorCursor(lineIndex: 2, columnIndex: 2, isPrimaryCursor: true)));
+
+        // Case: part of a line
+        //
+        // "\nb9\r9B\r\n\t$; "
+        //  ^
+        Assert.Equal(
+            "9",
+            modelModifier.GetTextOffsettingCursor(new TextEditorCursor(lineIndex: 2, columnIndex: 1, isPrimaryCursor: true)));
+
+        // These cases are expected to throw an exception
+        {
+            // lineIndex is bad
+            {
+                // Out-of-bounds small number
+                Assert.Throws<ApplicationException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(-1, 0, true)));
+                // Out-of-bounds large number
+                Assert.Throws<ApplicationException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(4, 0, true)));
+            }
+
+            // columnIndex is bad
+            {
+                // Out-of-bounds small number
+                Assert.Throws<ApplicationException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(2, -1, true)));
+                // Out-of-bounds large number
+                Assert.Throws<ApplicationException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(0, 2, true)));
+            }
+
+            // Mixture is bad
+            {
+                // Out-of-bounds (small number, small number)
+                Assert.Throws<ApplicationException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(-1, -1, true)));
+                // Out-of-bounds (small number, large number)
+                Assert.Throws<ApplicationException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(-1, 2, true)));
+                // Out-of-bounds (large number, small number)
+                Assert.Throws<ApplicationException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(4, -1, true)));
+                // Out-of-bounds (large number, large number)
+                Assert.Throws<ApplicationException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(4, 4, true)));
+            }
+        }
     }
 
     /// <summary>
