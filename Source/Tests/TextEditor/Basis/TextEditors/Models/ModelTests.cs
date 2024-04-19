@@ -1,7 +1,14 @@
-﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+﻿using Luthetus.Common.RazorLib.RenderStates.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
@@ -11,322 +18,53 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 public class ModelTests
 {
     /// <summary>
-    /// <see cref="TextEditorModel(ResourceUri, DateTime, string, string, RazorLib.Decorations.Models.IDecorationMapper?, Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces.ILuthCompilerService?, Common.RazorLib.Keymaps.Models.Keymap?)"/>
+    /// <see cref="TextEditorModel(ResourceUri, DateTime, string, string, IDecorationMapper?, ILuthCompilerService?, int)"/>
     /// </summary>
     [Fact]
     public void Constructor_New()
     {
-        throw new NotImplementedException("Test was broken on (2024-04-08)");
-        //var resourceUri = new ResourceUri("/unitTests.txt");
-        //var resourceLastWriteTime = DateTime.UtcNow;
-        //var fileExtension = ".txt";
-        //var content = "Hello World!";
-        //var decorationMapper = new TextEditorDecorationMapperDefault();
-        //var compilerService = new LuthCompilerService(null);
-
-        //      var model = new TextEditorModel(
-        //          resourceUri,
-        //          resourceLastWriteTime,
-        //          fileExtension,
-        //          content,
-        //          decorationMapper,
-        //          compilerService);
-
-        //Assert.Equal(resourceUri, model.ResourceUri);
-        //Assert.Equal(resourceLastWriteTime, model.ResourceLastWriteTime);
-        //Assert.Equal(fileExtension, model.FileExtension);
-        //Assert.Equal(content, model.GetAllText());
-        //Assert.Equal(decorationMapper, model.DecorationMapper);
-        //Assert.Equal(compilerService, model.CompilerService);
+        throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="TextEditorModel(System.Collections.Immutable.ImmutableList{RazorLib.Characters.Models.RichCharacter}, System.Collections.Immutable.ImmutableList{RazorLib.Edits.Models.EditBlock}, System.Collections.Immutable.ImmutableList{ValueTuple{int, RazorLib.Rows.Models.LineEndKind}}, System.Collections.Immutable.ImmutableList{ValueTuple{RazorLib.Rows.Models.LineEndKind, int}}, System.Collections.Immutable.ImmutableList{RazorLib.Decorations.Models.TextEditorPresentationModel}, System.Collections.Immutable.ImmutableList{int}, RazorLib.Rows.Models.LineEndKind?, RazorLib.Rows.Models.LineEndKind, RazorLib.Lexes.Models.ResourceUri, DateTime, string, RazorLib.Decorations.Models.IDecorationMapper, ILuthCompilerService, SaveFileHelper, int, ValueTuple{int, int}, Common.RazorLib.Keys.Models.Key{Common.RazorLib.RenderStates.Models.RenderState}, Common.RazorLib.Keymaps.Models.Keymap, RazorLib.Options.Models.TextEditorOptions?)"/>
+    /// <see cref="TextEditorModel(ImmutableList{char}, ImmutableList{byte}, int, ImmutableList{TextEditorPartition}, ImmutableList{EditBlock}, ImmutableList{LineEnd}, ImmutableList{ValueTuple{LineEndKind, int}}, ImmutableList{TextEditorPresentationModel}, ImmutableList{int}, LineEndKind?, LineEndKind, ResourceUri, DateTime, string, IDecorationMapper, ILuthCompilerService, SaveFileHelper, int, bool, ValueTuple{int, int}, Key{RenderState})"/>
     /// </summary>
     [Fact]
     public void Constructor_Clone()
     {
-        throw new NotImplementedException("Test was broken on (2024-04-08)");
-        //      var originalModel = new TextEditorModel(
-        //          new ResourceUri("/unitTests.txt"),
-        //          DateTime.UtcNow,
-        //          ".txt",
-        //          "Hello World!",
-        //          new TextEditorDecorationMapperDefault(),
-        //          new LuthCompilerService(null));
-
-        //var cloneModel = new TextEditorModel(
-        //	originalModel.ContentList,
-        //	originalModel.PartitionSize,
-        //	originalModel.PartitionList,
-        //	originalModel.EditBlocksList,
-        //          originalModel.RowEndingPositionsList,
-        //          originalModel.RowEndingKindCountsList,
-        //          originalModel.PresentationModelsList,
-        //          originalModel.TabKeyPositionsList,
-        //          originalModel.OnlyRowEndingKind,
-        //	originalModel.UsingRowEndingKind,
-        //	originalModel.ResourceUri,
-        //	originalModel.ResourceLastWriteTime,
-        //	originalModel.FileExtension,
-        //	originalModel.DecorationMapper,
-        //	originalModel.CompilerService,
-        //	originalModel.TextEditorSaveFileHelper,
-        //	originalModel.EditBlockIndex,
-        //	originalModel.IsDirty,
-        //	originalModel.MostCharactersOnASingleRowTuple,
-        //	originalModel.RenderStateKey);
-
-        //      Assert.Equal(originalModel.ContentList, cloneModel.ContentList);
-        //Assert.Equal(originalModel.EditBlocksList, cloneModel.EditBlocksList);
-        //      Assert.Equal(originalModel.RowEndingPositionsList, cloneModel.RowEndingPositionsList);
-        //      Assert.Equal(originalModel.RowEndingKindCountsList, cloneModel.RowEndingKindCountsList);
-        //      Assert.Equal(originalModel.PresentationModelsList, cloneModel.PresentationModelsList);
-        //      Assert.Equal(originalModel.TabKeyPositionsList, cloneModel.TabKeyPositionsList);
-        //      Assert.Equal(originalModel.OnlyRowEndingKind, cloneModel.OnlyRowEndingKind);
-        //Assert.Equal(originalModel.UsingRowEndingKind, cloneModel.UsingRowEndingKind);
-        //Assert.Equal(originalModel.ResourceUri, cloneModel.ResourceUri);
-        //Assert.Equal(originalModel.ResourceLastWriteTime, cloneModel.ResourceLastWriteTime);
-        //Assert.Equal(originalModel.FileExtension, cloneModel.FileExtension);
-        //Assert.Equal(originalModel.DecorationMapper, cloneModel.DecorationMapper);
-        //Assert.Equal(originalModel.CompilerService, cloneModel.CompilerService);
-        //Assert.Equal(originalModel.TextEditorSaveFileHelper, cloneModel.TextEditorSaveFileHelper);
-        //Assert.Equal(originalModel.EditBlockIndex, cloneModel.EditBlockIndex);
-        //Assert.Equal(originalModel.IsDirty, cloneModel.IsDirty);
-        //Assert.Equal(originalModel.MostCharactersOnASingleRowTuple, cloneModel.MostCharactersOnASingleRowTuple);
-        //Assert.Equal(originalModel.RenderStateKey, cloneModel.RenderStateKey);
+        throw new NotImplementedException();
     }
 
     /// <summary>
 	/// <see cref="TextEditorModel.ContentList"/>
-	/// </summary>
-	[Fact]
-    public void ContentList_InterfaceImplementation()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TextEditorModel.EditBlockList"/>
-    /// </summary>
-    [Fact]
-    public void EditBlocksList_InterfaceImplementation()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TextEditorModel.LineEndList "/>
-    /// </summary>
-    [Fact]
-    public void RowEndingPositionsList_InterfaceImplementation()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TextEditorModel.LineEndKindCountList"/>
-    /// </summary>
-    [Fact]
-    public void RowEndingKindCountsList_InterfaceImplementation()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TextEditorModel.PresentationModelList"/>
-    /// </summary>
-    [Fact]
-    public void PresentationModelsList_InterfaceImplementation()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TextEditorModel.TabKeyPositionList"/>
-    /// </summary>
-    [Fact]
-    public void TabKeyPositionsList_InterfaceImplementation()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
 	/// <see cref="TextEditorModel.ContentList"/>
+    /// <see cref="TextEditorModel.EditBlockList"/>
+    /// <see cref="TextEditorModel.LineEndList"/>
+    /// <see cref="TextEditorModel.LineEndKindCountList"/>
+    /// <see cref="TextEditorModel.PresentationModelList"/>
+    /// <see cref="TextEditorModel.TabKeyPositionList"/>
+    /// <see cref="TextEditorModel.OnlyLineEndKind"/>
+    /// <see cref="TextEditorModel.UsingLineEndKind"/>
+    /// <see cref="TextEditorModel.ResourceUri"/>
+    /// <see cref="TextEditorModel.ResourceLastWriteTime"/>
+    /// <see cref="TextEditorModel.FileExtension"/>
+    /// <see cref="TextEditorModel.DecorationMapper"/>
+    /// <see cref="TextEditorModel.CompilerService"/>
+    /// <see cref="TextEditorModel.TextEditorSaveFileHelper"/>
+    /// <see cref="TextEditorModel.EditBlockIndex"/>
+    /// <see cref="TextEditorModel.MostCharactersOnASingleLineTuple"/>
+    /// <see cref="TextEditorModel.RenderStateKey"/>
+    /// <see cref="TextEditorModel.TextEditorOptions"/>
+    /// <see cref="TextEditorModel.LineCount"/>
+    /// <see cref="TextEditorModel.DocumentLength"/>
 	/// </summary>
 	[Fact]
-    public void ContentList()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModel.EditBlockList"/>
-    /// </summary>
-    [Fact]
-    public void EditBlocksList()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModel.LineEndList"/>
-    /// </summary>
-    [Fact]
-    public void RowEndingPositionsList()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModel.LineEndKindCountList"/>
-    /// </summary>
-    [Fact]
-    public void RowEndingKindCountsList()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModel.PresentationModelList"/>
-    /// </summary>
-    [Fact]
-    public void PresentationModelsList()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModel.TabKeyPositionList"/>
-    /// </summary>
-    [Fact]
-    public void TabKeyPositionsList()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModel.OnlyLineEndKind"/>
-    /// </summary>
-    [Fact]
-    public void OnlyRowEndingKind()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModel.UsingLineEndKind"/>
-    /// </summary>
-    [Fact]
-    public void UsingRowEndingKind()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModel.ResourceUri"/>
-    /// </summary>
-    [Fact]
-    public void ResourceUri()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModel.ResourceLastWriteTime"/>
-    /// </summary>
-    [Fact]
-    public void ResourceLastWriteTime()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModel.FileExtension"/>
-    /// </summary>
-    [Fact]
-    public void FileExtension()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModel.DecorationMapper"/>
-    /// </summary>
-    [Fact]
-    public void DecorationMapper()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModel.CompilerService"/>
-    /// </summary>
-    [Fact]
-    public void CompilerService()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModel.TextEditorSaveFileHelper"/>
-    /// </summary>
-    [Fact]
-    public void TextEditorSaveFileHelper()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModel.EditBlockIndex"/>
-    /// </summary>
-    [Fact]
-    public void EditBlockIndex()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModel.MostCharactersOnASingleLineTuple"/>
-    /// </summary>
-    [Fact]
-    public void MostCharactersOnASingleRowTuple()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModel.RenderStateKey"/>
-    /// </summary>
-    [Fact]
-    public void RenderStateKey()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModel.TextEditorOptions"/>
-    /// </summary>
-    [Fact]
-    public void TextEditorOptions()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModel.LineCount"/>
-    /// </summary>
-    [Fact]
-    public void RowCount()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModel.DocumentLength"/>
-    /// </summary>
-    [Fact]
-    public void DocumentLength()
+    public void Properties()
     {
         throw new NotImplementedException();
     }

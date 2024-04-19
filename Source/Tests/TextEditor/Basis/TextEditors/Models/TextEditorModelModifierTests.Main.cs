@@ -22,6 +22,24 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     /// <see cref="TextEditorModelModifier(TextEditorModel)"/>
     /// <br/>----<br/>
     /// <see cref="TextEditorModelModifier.ToModel()"/>
+    /// <see cref="TextEditorModelModifier.CharList"/>
+	/// <see cref="TextEditorModelModifier.DecorationByteList"/>
+    /// <see cref="TextEditorModelModifier.EditBlockList"/>
+    /// <see cref="TextEditorModelModifier.LineEndList"/>
+    /// <see cref="TextEditorModelModifier.LineEndKindCountList"/>
+    /// <see cref="TextEditorModelModifier.PresentationModelList"/>
+    /// <see cref="TextEditorModelModifier.TabKeyPositionList"/>
+    /// <see cref="TextEditorModelModifier.OnlyLineEndKind"/>
+    /// <see cref="TextEditorModelModifier.UsingLineEndKind"/>
+    /// <see cref="TextEditorModelModifier.ResourceUri"/>
+    /// <see cref="TextEditorModelModifier.ResourceLastWriteTime"/>
+    /// <see cref="TextEditorModelModifier.FileExtension"/>
+    /// <see cref="TextEditorModelModifier.DecorationMapper"/>
+    /// <see cref="TextEditorModelModifier.CompilerService"/>
+    /// <see cref="TextEditorModelModifier.TextEditorSaveFileHelper"/>
+    /// <see cref="TextEditorModelModifier.EditBlockIndex"/>
+    /// <see cref="TextEditorModelModifier.MostCharactersOnASingleLineTuple"/>
+    /// <see cref="TextEditorModelModifier.RenderStateKey"/>
     /// </summary>
     [Fact]
     public void Constructor()
@@ -47,6 +65,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
         Assert.Equal(inModel.TextEditorSaveFileHelper, outModel.TextEditorSaveFileHelper);
         Assert.Equal(inModel.EditBlockIndex, outModel.EditBlockIndex);
         Assert.Equal(inModel.MostCharactersOnASingleLineTuple, outModel.MostCharactersOnASingleLineTuple);
+        Assert.NotEqual(inModel.RenderStateKey, outModel.RenderStateKey);
     }
 
     /// <summary>
@@ -839,168 +858,6 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     /// </summary>
     [Fact]
     public void RedoEdit()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-	/// <see cref="TextEditorModelModifier.CharList"/>
-	/// </summary>
-	[Fact]
-    public void CharList()
-    {
-        throw new NotImplementedException();
-    }
-    
-    /// <summary>
-	/// <see cref="TextEditorModelModifier.DecorationByteList"/>
-	/// </summary>
-	[Fact]
-    public void DecorationByteList()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.EditBlockList"/>
-    /// </summary>
-    [Fact]
-    public void EditBlocksList()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.LineEndList"/>
-    /// </summary>
-    [Fact]
-    public void LineEndingPositionsList()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.LineEndKindCountList"/>
-    /// </summary>
-    [Fact]
-    public void LineEndingKindCountsList()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.PresentationModelList"/>
-    /// </summary>
-    [Fact]
-    public void PresentationModelsList()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.TabKeyPositionList"/>
-    /// </summary>
-    [Fact]
-    public void TabKeyPositionsList()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.OnlyLineEndKind"/>
-    /// </summary>
-    [Fact]
-    public void OnlyLineEndKind()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.UsingLineEndKind"/>
-    /// </summary>
-    [Fact]
-    public void UsingLineEndKind()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.ResourceUri"/>
-    /// </summary>
-    [Fact]
-    public void ResourceUri()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.ResourceLastWriteTime"/>
-    /// </summary>
-    [Fact]
-    public void ResourceLastWriteTime()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.FileExtension"/>
-    /// </summary>
-    [Fact]
-    public void FileExtension()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.DecorationMapper"/>
-    /// </summary>
-    [Fact]
-    public void DecorationMapper()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.CompilerService"/>
-    /// </summary>
-    [Fact]
-    public void CompilerService()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.TextEditorSaveFileHelper"/>
-    /// </summary>
-    [Fact]
-    public void TextEditorSaveFileHelper()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.EditBlockIndex"/>
-    /// </summary>
-    [Fact]
-    public void EditBlockIndex()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.MostCharactersOnASingleLineTuple"/>
-    /// </summary>
-    [Fact]
-    public void MostCharactersOnASingleLineTuple()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.RenderStateKey"/>
-    /// </summary>
-    [Fact]
-    public void RenderStateKey()
     {
         throw new NotImplementedException();
     }

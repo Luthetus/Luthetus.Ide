@@ -745,7 +745,6 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
             compilerService: null,
             partitionSize: 4096);
 
-
         // Line_Index_0: "\n"
         {
             var line = modelModifier.GetLineInformation(0);
