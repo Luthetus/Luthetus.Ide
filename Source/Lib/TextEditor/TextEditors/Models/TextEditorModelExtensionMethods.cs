@@ -340,6 +340,8 @@ public static class TextEditorModelExtensionMethods
 
     public static LineInformation GetLineInformationFromPositionIndex(this ITextEditorModel model, int positionIndex)
     {
+        model.AssertPositionIndex(positionIndex);
+
         int GetLineIndexFromPositionIndex()
         {
             // StartOfFile
@@ -591,6 +593,7 @@ public static class TextEditorModelExtensionMethods
     {
         if (columnIndex < 0)
             throw new ApplicationException($"{nameof(columnIndex)} < 0");
+        
         if (columnIndex > line.LastValidColumnIndex)
             throw new ApplicationException($"{nameof(columnIndex)} > {nameof(line)}.{nameof(line.LastValidColumnIndex)}");
     }
@@ -599,7 +602,18 @@ public static class TextEditorModelExtensionMethods
     {
         if (lineIndex < 0)
             throw new ApplicationException($"{nameof(lineIndex)} < 0");
+        
         if (lineIndex >= model.LineCount)
             throw new ApplicationException($"{nameof(lineIndex)} >= model.LineCount");
+    }
+
+    public static void AssertPositionIndex(this ITextEditorModel model, int positionIndex)
+    {
+        if (positionIndex < 0)
+            throw new ApplicationException($"{nameof(positionIndex)} < 0");
+        
+        // model.DocumentLength is a valid position for the cursor to be at.
+        if (positionIndex > model.DocumentLength)
+            throw new ApplicationException($"{nameof(positionIndex)} > {nameof(model)}.{nameof(model.DocumentLength)}");
     }
 }

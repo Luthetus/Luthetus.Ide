@@ -103,7 +103,7 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     /// <see cref="TextEditorModelExtensionMethods.GetTabCountOnSameLineBeforeCursor(ITextEditorModel, int, int)"/>
     /// </summary>
     [Fact]
-    public void GetTabsCountOnSameLineBeforeCursor()
+    public void GetTabCountOnSameLineBeforeCursor()
     {
         var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
             resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
