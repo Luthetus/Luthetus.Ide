@@ -131,7 +131,9 @@ public static class TextEditorModelExtensionMethods
     /// </summary>
     public static char GetCharacter(this ITextEditorModel model, int positionIndex)
     {
-        if (positionIndex < 0 || positionIndex >= model.CharList.Count)
+        model.AssertPositionIndex(positionIndex);
+
+        if (positionIndex == model.DocumentLength)
             return ParserFacts.END_OF_FILE;
 
         return model.CharList[positionIndex];
@@ -140,10 +142,13 @@ public static class TextEditorModelExtensionMethods
     /// <summary>
     /// To receive a <see cref="char"/> value, one can use <see cref="GetCharacter"/> instead.
     /// </summary>
-    public static string GetString(this ITextEditorModel model, int startingPositionIndex, int count)
+    public static string GetString(this ITextEditorModel model, int positionIndex, int count)
     {
+        model.AssertPositionIndex(positionIndex);
+        model.AssertCount(count);
+
         return new string(model.CharList
-            .Skip(startingPositionIndex)
+            .Skip(positionIndex)
             .Take(count)
             .Select(x => x)
             .ToArray());
@@ -615,5 +620,11 @@ public static class TextEditorModelExtensionMethods
         // model.DocumentLength is a valid position for the cursor to be at.
         if (positionIndex > model.DocumentLength)
             throw new ApplicationException($"{nameof(positionIndex)} > {nameof(model)}.{nameof(model.DocumentLength)}");
+    }
+    
+    public static void AssertCount(this ITextEditorModel model, int count)
+    {
+        if (count < 0)
+            throw new ApplicationException($"{nameof(count)} < 0");
     }
 }

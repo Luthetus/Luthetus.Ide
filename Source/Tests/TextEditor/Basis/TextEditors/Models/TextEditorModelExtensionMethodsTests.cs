@@ -453,9 +453,9 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
 
         // Case: lineIndex out-of-bounds
         // ----
-        // Greater-than out-of-bounds: positionIndex of 13 throws because the modelModifier.LineCount is 4, thereby putting a lineIndex of 4 out-of-bounds.
+        // Greater-than out-of-bounds: positionIndex of 13 throws because the modelModifier.DocumentLength is 12, thereby putting a positionIndex of 13 out-of-bounds.
         Assert.Throws<ApplicationException>(() => modelModifier.GetLineAndColumnIndicesFromPositionIndex(13));
-        // Less-than out-of-bounds: positionIndex of -1 throws because the lineIndex is negative, and would never be valid, thereby putting the lineIndex out-of-bounds.
+        // Less-than out-of-bounds: positionIndex of -1 throws because the positionIndex is negative, and would never be valid, thereby putting the positionIndex out-of-bounds.
         Assert.Throws<ApplicationException>(() => modelModifier.GetLineAndColumnIndicesFromPositionIndex(-1));
     }
 
@@ -465,7 +465,53 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     [Fact]
     public void GetCharacter()
     {
-        throw new NotImplementedException();
+        var content = "\nb9\r9B\r\n\t$; ";
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: content,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // Pattern:
+        // -------
+        // Foreach line in the 'content', invoke 'GetCharacter' on every positionIndex and assert the result.
+        // These are expected to NOT-throw exceptions.
+
+        // Line_Index_0: "\n"
+        Assert.Equal('\n', modelModifier.GetCharacter(0));
+
+        // Line_Index_1: "b9\r"
+        Assert.Equal('b', modelModifier.GetCharacter(1));
+        Assert.Equal('9', modelModifier.GetCharacter(2));
+        Assert.Equal('\r', modelModifier.GetCharacter(3));
+
+        // Line_Index_2: "9B\r\n"
+        Assert.Equal('9', modelModifier.GetCharacter(4));
+        Assert.Equal('B', modelModifier.GetCharacter(5));
+        Assert.Equal('\r', modelModifier.GetCharacter(6));
+
+        // Line_Index_3: "--->$;∙EOF"
+        Assert.Equal('\t', modelModifier.GetCharacter(8));
+        Assert.Equal('$', modelModifier.GetCharacter(9));
+        Assert.Equal(';', modelModifier.GetCharacter(10));
+        Assert.Equal(' ', modelModifier.GetCharacter(11));
+        Assert.Equal('\0', modelModifier.GetCharacter(12));
+
+        // Pattern:
+        // -------
+        // Foreach unique out-of-bounds possibility, invoke 'GetCharacter' and assert the result.
+        // These are expected to throw exceptions.
+
+        // Case: lineIndex out-of-bounds
+        // ----
+        // Greater-than out-of-bounds: positionIndex of 13 throws because the modelModifier.DocumentLength is 12, thereby putting a positionIndex of 13 out-of-bounds.
+        Assert.Throws<ApplicationException>(() => modelModifier.GetCharacter(13));
+        // Less-than out-of-bounds: positionIndex of -1 throws because the positionIndex is negative, and would never be valid, thereby putting the positionIndex out-of-bounds.
+        Assert.Throws<ApplicationException>(() => modelModifier.GetCharacter(-1));
     }
 
     /// <summary>
@@ -474,7 +520,52 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     [Fact]
     public void GetString()
     {
-        throw new NotImplementedException();
+        var content = "\nb9\r9B\r\n\t$; ";
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: content,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // Pattern:
+        // -------
+        // Foreach line in the 'content', invoke 'GetString' on every positionIndex and assert the result.
+        // These are expected to NOT-throw exceptions.
+
+        // Line_Index_0: "\n"
+        Assert.Equal(string.Empty, modelModifier.GetString(0, 0));
+        Assert.Equal("\n", modelModifier.GetString(0, 1));
+
+        // Line_Index_1: "b9\r"
+        Assert.Equal("b", modelModifier.GetString(1, 1));
+        Assert.Equal("b9", modelModifier.GetString(1, 2));
+        Assert.Equal(string.Empty, modelModifier.GetString(2, 0));
+        Assert.Equal("\r", modelModifier.GetString(3, 1));
+
+        // Line_Index_2: "9B\r\n"
+        Assert.Equal("9B\r", modelModifier.GetString(4, 3));
+        Assert.Equal("9B\r\n", modelModifier.GetString(4, 4));
+        Assert.Equal("9B\r\n\t$", modelModifier.GetString(4, 6));
+        Assert.Equal("\r\n", modelModifier.GetString(6, 2));
+
+        // Line_Index_3: "--->$;∙EOF"
+        Assert.Equal("$; ", modelModifier.GetString(9, 4));
+        Assert.Equal(string.Empty, modelModifier.GetString(12, 1));
+
+        // Pattern:
+        // -------
+        // Foreach unique out-of-bounds possibility, invoke 'GetString' and assert the result.
+        // These are expected to throw exceptions.
+
+        Assert.Throws<ApplicationException>(() => modelModifier.GetString(-1, 1));
+        Assert.Throws<ApplicationException>(() => modelModifier.GetString(-1, -1));
+        Assert.Throws<ApplicationException>(() => modelModifier.GetString(-1, 13));
+        Assert.Throws<ApplicationException>(() => modelModifier.GetString(2, -1));
+        Assert.Throws<ApplicationException>(() => modelModifier.GetString(13, 1));
     }
 
     /// <summary>
