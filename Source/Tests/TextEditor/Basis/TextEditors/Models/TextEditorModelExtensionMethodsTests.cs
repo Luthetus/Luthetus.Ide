@@ -1,8 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
-using System.Linq;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 
@@ -1286,16 +1284,72 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     [Fact]
     public void GetLineText()
     {
-        throw new NotImplementedException();
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: "\nb9\r9B\r\n\t$; ",
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // Line_Index_0: "\n"
+        Assert.Equal("\n", modelModifier.GetLineText(lineIndex: 0));
+
+        // Line_Index_1: "b9\r"
+        Assert.Equal("b9\r", modelModifier.GetLineText(lineIndex: 1));
+
+        // Line_Index_2: "9B\r\n"
+        Assert.Equal("9B\r\n", modelModifier.GetLineText(lineIndex: 2));
+
+        // Line_Index_3: "--->$;∙EOF"
+        Assert.Equal("\t$; ", modelModifier.GetLineText(lineIndex: 3));
+
+        // Out-of-bounds small number
+        Assert.Throws<ApplicationException>(() => modelModifier.GetLineText(lineIndex: -1));
+        // Out-of-bounds large number
+        Assert.Throws<ApplicationException>(() => modelModifier.GetLineText(lineIndex: 4));
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelExtensionMethods.GetRichCharacterOrDefault(ITextEditorModel, int)"/>
+    /// <see cref="TextEditorModelExtensionMethods.GetRichCharacter(ITextEditorModel, int)"/>
     /// </summary>
     [Fact]
     public void GetRichCharacterOrDefault()
     {
-        throw new NotImplementedException();
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: "\nb9\r9B\r\n\t$; ",
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // Line_Index_0: "\n"
+        Assert.Equal(new RichCharacter { Value = '\n', DecorationByte = 0 }, modelModifier.GetRichCharacter(0));
+
+        // Line_Index_1: "b9\r"
+        Assert.Equal(new RichCharacter { Value = 'b', DecorationByte = 0 }, modelModifier.GetRichCharacter(1));
+        Assert.Equal(new RichCharacter { Value = '9', DecorationByte = 0 }, modelModifier.GetRichCharacter(2));
+        Assert.Equal(new RichCharacter { Value = '\r', DecorationByte = 0 }, modelModifier.GetRichCharacter(3));
+
+        // Line_Index_2: "9B\r\n"
+        Assert.Equal(new RichCharacter { Value = '9', DecorationByte = 0 }, modelModifier.GetRichCharacter(4));
+        Assert.Equal(new RichCharacter { Value = 'B', DecorationByte = 0 }, modelModifier.GetRichCharacter(5));
+        Assert.Equal(new RichCharacter { Value = '\r', DecorationByte = 0 }, modelModifier.GetRichCharacter(6));
+
+        // Line_Index_3: "--->$;∙EOF"
+        Assert.Equal(new RichCharacter { Value = '\t', DecorationByte = 0 }, modelModifier.GetRichCharacter(8));
+        Assert.Equal(new RichCharacter { Value = '$', DecorationByte = 0 }, modelModifier.GetRichCharacter(9));
+        Assert.Equal(new RichCharacter { Value = ';', DecorationByte = 0 }, modelModifier.GetRichCharacter(10));
+        Assert.Equal(new RichCharacter { Value = ' ', DecorationByte = 0 }, modelModifier.GetRichCharacter(11));
+        Assert.Equal(new RichCharacter { Value = '\0', DecorationByte = 0 }, modelModifier.GetRichCharacter(12));
+
+        // Greater-than out-of-bounds: positionIndex of 13 throws because the modelModifier.DocumentLength is 12, thereby putting a positionIndex of 13 out-of-bounds.
+        Assert.Throws<ApplicationException>(() => modelModifier.GetRichCharacter(13));
+        // Less-than out-of-bounds: positionIndex of -1 throws because the positionIndex is negative, and would never be valid, thereby putting the positionIndex out-of-bounds.
+        Assert.Throws<ApplicationException>(() => modelModifier.GetRichCharacter(-1));
     }
 
     /// <summary>
@@ -1304,7 +1358,26 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     [Fact]
     public void GetAllRichCharacters()
     {
-        throw new NotImplementedException();
+        var content = "\nb9\r9B\r\n\t$; ";
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: content,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        var expectedRichCharacterList = content.Select(x => new RichCharacter { Value = x, DecorationByte = 0 }).ToList();
+        var actualRichCharacterList = modelModifier.GetAllRichCharacters();
+
+        Assert.Equal(expectedRichCharacterList.Count, actualRichCharacterList.Count);
+
+        for (int i = 0; i < expectedRichCharacterList.Count; i++)
+        {
+            Assert.Equal(expectedRichCharacterList[i], actualRichCharacterList[i]);
+        }
     }
 
     /// <summary>
@@ -1313,6 +1386,59 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     [Fact]
     public void GetRichCharacters()
     {
-        throw new NotImplementedException();
+        var content = "\nb9\r9B\r\n\t$; ";
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: content,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // Case: from start of file
+        {
+            var expectedRichCharacterList = "\nb9\r".Select(x => new RichCharacter { Value = x, DecorationByte = 0 }).ToList();
+            var actualRichCharacterList = modelModifier.GetRichCharacters(0, 4);
+
+            Assert.Equal(expectedRichCharacterList.Count, actualRichCharacterList.Count);
+
+            for (int i = 0; i < expectedRichCharacterList.Count; i++)
+            {
+                Assert.Equal(expectedRichCharacterList[i], actualRichCharacterList[i]);
+            }
+        }
+
+        // Case: to end of file
+        {
+            var expectedRichCharacterList = "\t$; ".Select(x => new RichCharacter { Value = x, DecorationByte = 0 }).ToList();
+            var actualRichCharacterList = modelModifier.GetRichCharacters(8, 4);
+
+            Assert.Equal(expectedRichCharacterList.Count, actualRichCharacterList.Count);
+
+            for (int i = 0; i < expectedRichCharacterList.Count; i++)
+            {
+                Assert.Equal(expectedRichCharacterList[i], actualRichCharacterList[i]);
+            }
+        }
+
+        // Case: from negative start
+        {
+            Assert.Throws<ApplicationException>(() => modelModifier.GetRichCharacters(-1, 4));
+        }
+
+        // Case: to out of bounds large number end
+        {
+            var expectedRichCharacterList = "\t$; ".Select(x => new RichCharacter { Value = x, DecorationByte = 0 }).ToList();
+            var actualRichCharacterList = modelModifier.GetRichCharacters(8, 7);
+
+            Assert.Equal(expectedRichCharacterList.Count, actualRichCharacterList.Count);
+
+            for (int i = 0; i < expectedRichCharacterList.Count; i++)
+            {
+                Assert.Equal(expectedRichCharacterList[i], actualRichCharacterList[i]);
+            }
+        }
     }
 }

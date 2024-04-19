@@ -540,19 +540,18 @@ public static class TextEditorModelExtensionMethods
 
     public static string GetLineText(this ITextEditorModel model, int lineIndex)
     {
-        if (lineIndex < 0 || lineIndex > model.LineCount - 1)
-            return string.Empty;
-
         var lineStartPositionIndexInclusive = model.GetLineInformation(lineIndex).StartPositionIndexInclusive;
         var lengthOfLine = model.GetLineLength(lineIndex, true);
 
         return model.GetString(lineStartPositionIndexInclusive, lengthOfLine);
     }
 
-    public static RichCharacter? GetRichCharacterOrDefault(this ITextEditorModel model, int positionIndex)
+    public static RichCharacter GetRichCharacter(this ITextEditorModel model, int positionIndex)
     {
-        if (positionIndex < 0 || positionIndex > model.DocumentLength - 1)
-            return null;
+        model.AssertPositionIndex(positionIndex);
+
+        if (positionIndex == model.DocumentLength)
+            return new RichCharacter { Value = ParserFacts.END_OF_FILE, DecorationByte = 0 };
 
         return new RichCharacter
         {
@@ -579,17 +578,22 @@ public static class TextEditorModelExtensionMethods
 
     public static List<RichCharacter> GetRichCharacters(this ITextEditorModel model, int skip, int take)
     {
+        if (skip < 0)
+            throw new ApplicationException($"{nameof(skip)} < 0");
+
         var richCharacterList = new List<RichCharacter>();
 
-        for (var i = 0; i < take; i++)
+        for (var step = 0; step < take; step++)
         {
-            if (i >= model.DocumentLength)
+            var index = skip + step;
+
+            if (index >= model.DocumentLength)
                 break;
 
             richCharacterList.Add(new RichCharacter
             {
-                Value = model.CharList[skip + i],
-                DecorationByte = model.DecorationByteList[skip + i]
+                Value = model.CharList[index],
+                DecorationByte = model.DecorationByteList[index]
             });
         }
 
