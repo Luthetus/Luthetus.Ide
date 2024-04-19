@@ -149,7 +149,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
         // Tab key column offset
         {
-            var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabsCountOnSameLineBeforeCursor(
+            var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabCountOnSameLineBeforeCursor(
                 Cursor.LineIndex,
                 Cursor.ColumnIndex);
 
@@ -215,7 +215,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
         // Tab key column offset
         {
-            var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabsCountOnSameLineBeforeCursor(
+            var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabCountOnSameLineBeforeCursor(
                 Cursor.LineIndex,
                 Cursor.ColumnIndex);
 

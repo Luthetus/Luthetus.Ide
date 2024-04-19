@@ -978,7 +978,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                     ? lengthOfRow
                     : columnIndexInt;
 
-                var tabsOnSameRowBeforeCursor = model.GetTabsCountOnSameLineBeforeCursor(
+                var tabsOnSameRowBeforeCursor = model.GetTabCountOnSameLineBeforeCursor(
                     rowIndex,
                     parameterForGetTabsCountOnSameRowBeforeCursor);
 

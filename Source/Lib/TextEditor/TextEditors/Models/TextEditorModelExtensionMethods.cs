@@ -74,13 +74,15 @@ public static class TextEditorModelExtensionMethods
         return lineList;
     }
 
-    public static int GetTabsCountOnSameLineBeforeCursor(this ITextEditorModel model, int lineIndex, int columnIndex)
+    public static int GetTabCountOnSameLineBeforeCursor(this ITextEditorModel model, int lineIndex, int columnIndex)
     {
-        var startOfLinePositionIndex = model.GetLineInformation(lineIndex).StartPositionIndexInclusive;
+        var line = model.GetLineInformation(lineIndex);
+
+        model.AssertColumnIndex(line, columnIndex);
 
         var tabs = model.TabKeyPositionList
-            .SkipWhile(positionIndex => positionIndex < startOfLinePositionIndex)
-            .TakeWhile(positionIndex => positionIndex < startOfLinePositionIndex + columnIndex);
+            .SkipWhile(positionIndex => positionIndex < line.StartPositionIndexInclusive)
+            .TakeWhile(positionIndex => positionIndex < line.StartPositionIndexInclusive + columnIndex);
 
         return tabs.Count();
     }
@@ -106,15 +108,9 @@ public static class TextEditorModelExtensionMethods
 
     public static int GetPositionIndex(this ITextEditorModel model, int lineIndex, int columnIndex)
     {
-        if (lineIndex < 0)
-            throw new ApplicationException($"{nameof(lineIndex)} < 0");
-        if (lineIndex >= model.LineCount)
-            throw new ApplicationException($"{nameof(lineIndex)} >= model.LineCount");
-
         var line = model.GetLineInformation(lineIndex);
 
-        if (columnIndex > line.LastValidColumnIndex)
-            throw new ApplicationException($"{nameof(columnIndex)} > {nameof(line)}.{nameof(line.LastValidColumnIndex)}");
+        model.AssertColumnIndex(line, columnIndex);
 
         return line.StartPositionIndexInclusive + columnIndex;
     }
@@ -303,6 +299,8 @@ public static class TextEditorModelExtensionMethods
     /// </remarks>
     public static LineInformation GetLineInformation(this ITextEditorModel model, int lineIndex)
     {
+        model.AssertLineIndex(lineIndex);
+
         LineEnd GetLineEndLower(int lineIndex)
         {
             // Large index? Then set the index to the last index.
@@ -587,5 +585,21 @@ public static class TextEditorModelExtensionMethods
         }
 
         return richCharacterList;
+    }
+
+    public static void AssertColumnIndex(this ITextEditorModel model, LineInformation line, int columnIndex)
+    {
+        if (columnIndex < 0)
+            throw new ApplicationException($"{nameof(columnIndex)} < 0");
+        if (columnIndex > line.LastValidColumnIndex)
+            throw new ApplicationException($"{nameof(columnIndex)} > {nameof(line)}.{nameof(line.LastValidColumnIndex)}");
+    }
+    
+    public static void AssertLineIndex(this ITextEditorModel model, int lineIndex)
+    {
+        if (lineIndex < 0)
+            throw new ApplicationException($"{nameof(lineIndex)} < 0");
+        if (lineIndex >= model.LineCount)
+            throw new ApplicationException($"{nameof(lineIndex)} >= model.LineCount");
     }
 }

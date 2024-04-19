@@ -54,7 +54,7 @@ public partial class TextSelectionGroup : ComponentBase
 
         // selectionStartInPixels offset from Tab keys a width of many characters
         {
-            var tabsOnSameRowBeforeCursor = RenderBatch.Model.GetTabsCountOnSameLineBeforeCursor(
+            var tabsOnSameRowBeforeCursor = RenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
                 rowIndex,
                 selectionStartingColumnIndex);
 
@@ -73,7 +73,7 @@ public partial class TextSelectionGroup : ComponentBase
 
         // Tab keys a width of many characters
         {
-            var tabsOnSameRowBeforeCursor = RenderBatch.Model.GetTabsCountOnSameLineBeforeCursor(
+            var tabsOnSameRowBeforeCursor = RenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
                 rowIndex,
                 selectionEndingColumnIndex);
 

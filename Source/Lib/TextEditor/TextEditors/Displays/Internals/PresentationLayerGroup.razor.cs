@@ -81,7 +81,7 @@ public partial class PresentationLayerGroup : ComponentBase
 
         // startInPixels offset from Tab keys a width of many characters
         {
-            var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabsCountOnSameLineBeforeCursor(
+            var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabCountOnSameLineBeforeCursor(
                 rowIndex,
                 startingColumnIndex);
 
@@ -98,7 +98,7 @@ public partial class PresentationLayerGroup : ComponentBase
 
         // Tab keys a width of many characters
         {
-            var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabsCountOnSameLineBeforeCursor(
+            var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabCountOnSameLineBeforeCursor(
                 rowIndex,
                 endingColumnIndex);
 
