@@ -9,18 +9,10 @@ public class NugetResponseTests
 {
     /// <summary>
     /// <see cref="NugetResponse.TotalHits"/>
-    /// </summary>
-    [Fact]
-    public void TotalHits()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="NugetResponse.Data"/>
     /// </summary>
     [Fact]
-    public void Data()
+    public void Properties()
     {
         throw new NotImplementedException();
     }

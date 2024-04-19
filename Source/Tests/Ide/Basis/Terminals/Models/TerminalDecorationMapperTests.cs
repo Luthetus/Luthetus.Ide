@@ -5,7 +5,7 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 /// <summary>
 /// <see cref="TerminalDecorationMapper"/>
 /// </summary>
-public class IntegratedTerminalDecorationMapperTests
+public class TerminalDecorationMapperTests
 {
     /// <summary>
     /// <see cref="TerminalDecorationMapper.Map(byte)"/>

@@ -1,4 +1,12 @@
-﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
+using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+using Fluxor;
+using Microsoft.JSInterop;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
@@ -8,7 +16,7 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 public class ViewModelTests
 {
     /// <summary>
-    /// <see cref="TextEditorViewModel(Common.RazorLib.Keys.Models.Key{TextEditorViewModel}, RazorLib.Lexes.Models.ResourceUri, RazorLib.TextEditors.Models.TextEditorServices.ITextEditorService, RazorLib.Virtualizations.Models.VirtualizationResult{List{RazorLib.Characters.Models.RichCharacter}}, bool)"/>
+    /// <see cref="TextEditorViewModel(Key{TextEditorViewModel}, ResourceUri, ITextEditorService, IDispatcher, IDialogService, IJSRuntime, VirtualizationResult{List{RichCharacter}}, bool, Category)"/>
     /// <br/>----<br/>
     /// <see cref="TextEditorViewModel.ViewModelKey"/>
     /// <see cref="TextEditorViewModel.ResourceUri"/>
@@ -45,130 +53,24 @@ public class ViewModelTests
 	}
 
     /// <summary>
-    /// <see cref="TextEditorViewModel.CalculateVirtualizationResultAsync(RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel?, RazorLib.JavaScriptObjects.Models.TextEditorMeasurements?, CancellationToken)"/>
-    /// </summary>
-    [Fact]
-    public void CalculateVirtualizationResultAsync()
-    {
-		throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="TextEditorViewModel.ThrottleRemeasure"/>
-    /// </summary>
-    [Fact]
-	public void ThrottleRemeasure()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.ThrottleCalculateVirtualizationResult"/>
-	/// </summary>
-	[Fact]
-	public void ThrottleCalculateVirtualizationResult()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.PrimaryCursor"/>
-	/// </summary>
-	[Fact]
-	public void PrimaryCursor()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.DisplayTracker"/>
-	/// </summary>
-	[Fact]
-	public void DisplayTracker()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.VirtualizationResult"/>
-	/// </summary>
-	[Fact]
-	public void VirtualizationResult()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.ShowCommandBar"/>
-	/// </summary>
-	[Fact]
-	public void DisplayCommandBar()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.OnSaveRequested"/>
-	/// </summary>
-	[Fact]
-	public void OnSaveRequested()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.GetTabDisplayNameFunc"/>
-	/// </summary>
-	[Fact]
-	public void GetTabDisplayNameFunc()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.FirstPresentationLayerKeysList"/>
-	/// </summary>
-	[Fact]
-	public void FirstPresentationLayerKeysList()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.LastPresentationLayerKeysList"/>
-	/// </summary>
-	[Fact]
-	public void LastPresentationLayerKeysList()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.CommandBarValue"/>
-	/// </summary>
-	[Fact]
-	public void CommandBarValue()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorViewModel.ShouldSetFocusAfterNextRender"/>
-	/// </summary>
-	[Fact]
-	public void ShouldSetFocusAfterNextRender()
-	{
-		throw new NotImplementedException();
-	}
-
-    /// <summary>
     /// <see cref="TextEditorViewModel.BodyElementId"/>
-    /// <br/>----<br/>
 	/// <see cref="TextEditorViewModel.PrimaryCursorContentId"/>
 	/// <see cref="TextEditorViewModel.GutterElementId"/>
     /// </summary>
     [Fact]
-	public void BodyElementId()
+	public void Properties()
 	{
         TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
@@ -176,9 +78,9 @@ public class ViewModelTests
             out var inViewModel,
             out var serviceProvider);
 
-		Assert.Equal(
-			$"luth_te_text-editor-content_{inViewModel.ViewModelKey.Guid}",
-			inViewModel.BodyElementId);
+        Assert.Equal(
+            $"luth_te_text-editor-content_{inViewModel.ViewModelKey.Guid}",
+            inViewModel.BodyElementId);
 
         Assert.Equal(
             $"luth_te_text-editor-content_{inViewModel.ViewModelKey.Guid}_primary-cursor",
@@ -187,85 +89,60 @@ public class ViewModelTests
         Assert.Equal(
             $"luth_te_text-editor-gutter_{inViewModel.ViewModelKey.Guid}",
             inViewModel.GutterElementId);
-    }
+
+        throw new NotImplementedException();
+	}
 
 	/// <summary>
-	/// <see cref="TextEditorViewModel.CursorMovePageTop()"/>
+	/// <see cref="TextEditorViewModel.MutateScrollHorizontalPositionByPixelsFactory(double)"/>
 	/// </summary>
 	[Fact]
-	public void CursorMovePageTop()
+	public void MutateScrollHorizontalPositionByPixelsFactory()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorViewModel.CursorMovePageBottom()"/>
+	/// <see cref="TextEditorViewModel.MutateScrollVerticalPositionByPixelsFactory(double)"/>
 	/// </summary>
 	[Fact]
-	public void CursorMovePageBottom()
+	public void MutateScrollVerticalPositionByPixelsFactory()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorViewModel.MutateScrollHorizontalPositionByPixels(double)"/>
+	/// <see cref="TextEditorViewModel.MutateScrollVerticalPositionByPagesFactory(double)"/>
 	/// </summary>
 	[Fact]
-	public void MutateScrollHorizontalPositionByPixelsAsync()
+	public void MutateScrollVerticalPositionByPagesFactory()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorViewModel.MutateScrollVerticalPositionByPixels(double)"/>
+	/// <see cref="TextEditorViewModel.MutateScrollVerticalPositionByLinesFactory(double)"/>
 	/// </summary>
 	[Fact]
-	public void MutateScrollVerticalPositionByPixelsAsync()
+	public void MutateScrollVerticalPositionByLinesFactory()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorViewModel.MutateScrollVerticalPositionByPages(double)"/>
+	/// <see cref="TextEditorViewModel.SetScrollPositionFactory(double?, double?)"/>
 	/// </summary>
 	[Fact]
-	public void MutateScrollVerticalPositionByPagesAsync()
+	public void SetScrollPositionFactory()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorViewModel.MutateScrollVerticalPositionByLines(double)"/>
+	/// <see cref="TextEditorViewModel.FocusFactory()"/>
 	/// </summary>
 	[Fact]
-	public void MutateScrollVerticalPositionByLinesAsync()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorViewModel.SetScrollPosition(double?, double?)"/>
-	/// </summary>
-	[Fact]
-	public void SetScrollPositionAsync()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorViewModel.Focus()"/>
-	/// </summary>
-	[Fact]
-	public void FocusAsync()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorViewModel.RemeasureAsync(RazorLib.Options.Models.TextEditorOptions, string, int, CancellationToken)"/>
-	/// </summary>
-	[Fact]
-	public void RemeasureAsync()
+	public void FocusFactory()
 	{
 		throw new NotImplementedException();
 	}

@@ -1,5 +1,10 @@
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Fluxor;
 
 namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 
@@ -9,7 +14,7 @@ namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 public class TerminalTests
 {
     /// <summary>
-    /// <see cref="Terminal(string?, IDispatcher, IBackgroundTaskService, ILuthetusCommonComponentRenderers)"/>
+    /// <see cref="Terminal(string, string?, IDispatcher, IBackgroundTaskService, ITextEditorService, ILuthetusCommonComponentRenderers, ICompilerServiceRegistry)"/>
     /// <br/>----<br/>
     /// <see cref="Terminal.Key"/>
     /// <see cref="Terminal.WorkingDirectoryAbsolutePathString"/>

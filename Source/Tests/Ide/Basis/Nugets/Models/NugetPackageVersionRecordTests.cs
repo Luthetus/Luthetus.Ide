@@ -9,27 +9,11 @@ public class NugetPackageVersionRecordTests
 {
     /// <summary>
     /// <see cref="NugetPackageVersionRecord.Version"/>
-    /// </summary>
-    [Fact]
-    public void Version()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="NugetPackageVersionRecord.Downloads"/>
-    /// </summary>
-    [Fact]
-    public void Downloads()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="NugetPackageVersionRecord.AtId"/>
     /// </summary>
     [Fact]
-    public void AtId()
+    public void Properties()
     {
         throw new NotImplementedException();
     }
