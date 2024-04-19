@@ -162,7 +162,71 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
     [Fact]
     public void GetPositionIndex_TextEditorCursor()
     {
-        throw new NotImplementedException();
+        var content = "\nb9\r9B\r\n\t$; ";
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: content,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // Pattern:
+        // -------
+        // Foreach line in the 'content', invoke 'GetPositionIndex' on every (line, column) and assert the result.
+        // These are expected to NOT-throw exceptions.
+
+        // Line_Index_0: "\n"
+        Assert.Equal(0, modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 0, columnIndex: 0, isPrimaryCursor: true)));
+
+        // Line_Index_1: "b9\r"
+        Assert.Equal(1, modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 1, columnIndex: 0, isPrimaryCursor: true)));
+        Assert.Equal(2, modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 1, columnIndex: 1, isPrimaryCursor: true)));
+        Assert.Equal(3, modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 1, columnIndex: 2, isPrimaryCursor: true)));
+
+        // Line_Index_2: "9B\r\n"
+        Assert.Equal(4, modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 2, columnIndex: 0, isPrimaryCursor: true)));
+        Assert.Equal(5, modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 2, columnIndex: 1, isPrimaryCursor: true)));
+        Assert.Equal(6, modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 2, columnIndex: 2, isPrimaryCursor: true)));
+
+        // Line_Index_3: "--->$;∙EOF"
+        Assert.Equal(8, modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 3, columnIndex: 0, isPrimaryCursor: true)));
+        Assert.Equal(9, modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 3, columnIndex: 1, isPrimaryCursor: true)));
+        Assert.Equal(10, modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 3, columnIndex: 2, isPrimaryCursor: true)));
+        Assert.Equal(11, modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 3, columnIndex: 3, isPrimaryCursor: true)));
+        Assert.Equal(12, modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 3, columnIndex: 4, isPrimaryCursor: true)));
+
+        // Pattern:
+        // -------
+        // Foreach unique out-of-bounds possibility, invoke 'GetPositionIndex' and assert the result.
+        // These are expected to throw exceptions.
+
+        // Case: lineIndex out-of-bounds
+        // ----
+        // Greater-than out-of-bounds: (lineIndex: 4, columnIndex: 0) throws because the modelModifier.LineCount is 4, thereby putting a lineIndex of 4 out-of-bounds.
+        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 0, columnIndex: 1, isPrimaryCursor: true)));
+        // Less-than out-of-bounds: (lineIndex: -1, columnIndex: 0) throws because the lineIndex is negative, and would never be valid, thereby putting the lineIndex out-of-bounds.
+        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 0, columnIndex: 1, isPrimaryCursor: true)));
+
+        // Case: columnIndex out-of-bounds
+        // ----
+        // Greater-than out-of-bounds: (lineIndex: 0, columnIndex: 1) throws because the 0th line is a length of 0, thereby putting the columnIndex out-of-bounds.
+        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 0, columnIndex: 1, isPrimaryCursor: true)));
+        // Less-than out-of-bounds: (lineIndex: 0, columnIndex: -1) throws because the columnIndex is negative, and would never be valid, thereby putting the columnIndex out-of-bounds.
+        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 0, columnIndex: 1, isPrimaryCursor: true)));
+
+        // Case: mix the previous bad cases
+        // ----
+        // Greater-than out-of-bounds: lineIndex; Greater-than out-of-bounds: columnIndex;
+        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 4, columnIndex: 1, isPrimaryCursor: true)));
+        // Greater-than out-of-bounds: lineIndex; Less-than out-of-bounds: columnIndex;
+        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 4, columnIndex: -1, isPrimaryCursor: true)));
+        // Less-than out-of-bounds: lineIndex; Greater-than out-of-bounds: columnIndex;
+        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: -1, columnIndex: 1, isPrimaryCursor: true)));
+        // Less-than out-of-bounds: lineIndex; Less-than out-of-bounds: columnIndex;
+        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: -1, columnIndex: -1, isPrimaryCursor: true)));
     }
 
     /// <summary>

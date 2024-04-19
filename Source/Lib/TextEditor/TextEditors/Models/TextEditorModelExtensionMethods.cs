@@ -104,13 +104,19 @@ public static class TextEditorModelExtensionMethods
         return model.GetPositionIndex(cursorModifier.LineIndex, cursorModifier.ColumnIndex);
     }
 
-    /// <summary>
-    /// TODO: How should this method handle input which is out of bounds?
-    /// </summary>
     public static int GetPositionIndex(this ITextEditorModel model, int lineIndex, int columnIndex)
     {
-        var lineStartPositionIndexInclusive = model.GetLineInformation(lineIndex).StartPositionIndexInclusive;
-        return lineStartPositionIndexInclusive + columnIndex;
+        if (lineIndex < 0)
+            throw new ApplicationException($"{nameof(lineIndex)} < 0");
+        if (lineIndex >= model.LineCount)
+            throw new ApplicationException($"{nameof(lineIndex)} >= model.LineCount");
+
+        var line = model.GetLineInformation(lineIndex);
+
+        if (columnIndex > line.LastValidColumnIndex)
+            throw new ApplicationException($"{nameof(columnIndex)} > {nameof(line)}.{nameof(line.LastValidColumnIndex)}");
+
+        return line.StartPositionIndexInclusive + columnIndex;
     }
 
     public static (int lineIndex, int columnIndex) GetLineAndColumnIndicesFromPositionIndex(
