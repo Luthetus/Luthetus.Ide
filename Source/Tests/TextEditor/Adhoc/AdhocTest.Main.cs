@@ -19,6 +19,7 @@ using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
 
@@ -59,7 +60,16 @@ public partial class AdhocTest
 
         // State change
         {
-            modelModifier.Insert_Unsafe(letterToInsert, 0, 0, CancellationToken.None);
+            var cursor = new TextEditorCursor(
+                lineIndex: 0,
+                columnIndex: 0,
+                isPrimaryCursor: true);
+            var cursorModifier = new TextEditorCursorModifier(cursor);
+            var cursorModifierBag = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier>() { cursorModifier });
+
+            modelModifier.Insert(letterToInsert, cursorModifierBag, CancellationToken.None);
             model = modelModifier.ToModel();
         }
 
@@ -117,7 +127,16 @@ public partial class AdhocTest
 
         // State change
         {
-            modelModifier.Insert_Unsafe(letterToInsert, 0, 0, CancellationToken.None);
+            var cursor = new TextEditorCursor(
+                lineIndex: 0,
+                columnIndex: 0,
+                isPrimaryCursor: true);
+            var cursorModifier = new TextEditorCursorModifier(cursor);
+            var cursorModifierBag = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier>() { cursorModifier });
+
+            modelModifier.Insert(letterToInsert, cursorModifierBag, CancellationToken.None);
             model = modelModifier.ToModel();
         }
 
@@ -181,7 +200,16 @@ public partial class AdhocTest
 
         // State change
         {
-            modelModifier.Insert_Unsafe(letterToInsert, 0, 0, CancellationToken.None);
+            var cursor = new TextEditorCursor(
+                lineIndex: 0,
+                columnIndex: 0,
+                isPrimaryCursor: true);
+            var cursorModifier = new TextEditorCursorModifier(cursor);
+            var cursorModifierBag = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier>() { cursorModifier });
+
+            modelModifier.Insert(letterToInsert, cursorModifierBag, CancellationToken.None);
             model = modelModifier.ToModel();
         }
 
@@ -245,7 +273,16 @@ public partial class AdhocTest
 
         // State change
         {
-            modelModifier.Insert_Unsafe(letterToInsert, 0, 0, CancellationToken.None);
+            var cursor = new TextEditorCursor(
+                lineIndex: 0,
+                columnIndex: 0,
+                isPrimaryCursor: true);
+            var cursorModifier = new TextEditorCursorModifier(cursor);
+            var cursorModifierBag = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier>() { cursorModifier });
+
+            modelModifier.Insert(letterToInsert, cursorModifierBag, CancellationToken.None);
             model = modelModifier.ToModel();
         }
 

@@ -162,13 +162,11 @@ public partial class TextEditorModelModifierTests
         TextEditorModel outModel;
         TextEditorCursorModifier cursorModifier;
         {
-            // Deleting at positionIndex of 'DocumentLength' is awkward, because the API accepts a 'lineIndex' and 'columnIndex'
-            // Here, 'lineIndex: modelModifier.LineCount - 1' gets the lineIndex that the 'EndOfFile' resides at.
-            // The row index for 'EndOfFile', and columnIndex 0, is a valid place for insertion.
-            // This equates to 'DocumentLength'.
+            var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+            
             var cursor = new TextEditorCursor(
-                lineIndex: modelModifier.LineCount - 1,
-                columnIndex: 0,
+                lineIndex: lastLine.Index,
+                columnIndex: lastLine.LastValidColumnIndex,
                 isPrimaryCursor: true);
 
             cursorModifier = new TextEditorCursorModifier(cursor);
@@ -254,14 +252,11 @@ public partial class TextEditorModelModifierTests
             // Do something
             TextEditorModel outModel;
             {
-                // Deleting at positionIndex of '1 + DocumentLength' is awkward, because the API accepts a 'lineIndex' and 'columnIndex'
-                // Here, 'lineIndex: modelModifier.LineCount - 1' gets the lineIndex that the 'EndOfFile' resides at.
-                // The row index for 'EndOfFile', and columnIndex 0, is a valid place for insertion.
-                // This equates to 'DocumentLength'.
-                // Now add 1 to the columnIndex to be one position further than 'DocumentLength'.
+                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+
                 var cursor = new TextEditorCursor(
-                    lineIndex: modelModifier.LineCount - 1,
-                    columnIndex: 1,
+                    lineIndex: lastLine.Index,
+                    columnIndex: 1 + lastLine.LastValidColumnIndex,
                     isPrimaryCursor: true);
 
                 var cursorModifier = new TextEditorCursorModifier(cursor);
@@ -430,13 +425,11 @@ public partial class TextEditorModelModifierTests
         TextEditorModel outModel;
         TextEditorCursorModifier cursorModifier;
         {
-            // Deleting at positionIndex of 'DocumentLength' is awkward, because the API accepts a 'lineIndex' and 'columnIndex'
-            // Here, 'lineIndex: modelModifier.LineCount - 1' gets the lineIndex that the 'EndOfFile' resides at.
-            // The row index for 'EndOfFile', and columnIndex 0, is a valid place for insertion.
-            // This equates to 'DocumentLength'.
+            var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+
             var cursor = new TextEditorCursor(
-                lineIndex: modelModifier.LineCount - 1,
-                columnIndex: 0,
+                lineIndex: lastLine.Index,
+                columnIndex: lastLine.LastValidColumnIndex,
                 isPrimaryCursor: true);
 
             cursorModifier = new TextEditorCursorModifier(cursor);
@@ -522,14 +515,11 @@ public partial class TextEditorModelModifierTests
             // Do something
             TextEditorModel outModel;
             {
-                // Deleting at positionIndex of '1 + DocumentLength' is awkward, because the API accepts a 'lineIndex' and 'columnIndex'
-                // Here, 'lineIndex: modelModifier.LineCount - 1' gets the lineIndex that the 'EndOfFile' resides at.
-                // The row index for 'EndOfFile', and columnIndex 0, is a valid place for insertion.
-                // This equates to 'DocumentLength'.
-                // Now add 1 to the columnIndex to be one position further than 'DocumentLength'.
+                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+
                 var cursor = new TextEditorCursor(
-                    lineIndex: modelModifier.LineCount - 1,
-                    columnIndex: 1,
+                    lineIndex: lastLine.Index,
+                    columnIndex: 1 + lastLine.LastValidColumnIndex,
                     isPrimaryCursor: true);
 
                 var cursorModifier = new TextEditorCursorModifier(cursor);
@@ -1126,13 +1116,11 @@ public partial class TextEditorModelModifierTests
         TextEditorModel outModel;
         TextEditorCursorModifier cursorModifier;
         {
-            // Deleting at positionIndex of 'DocumentLength' is awkward, because the API accepts a 'lineIndex' and 'columnIndex'
-            // Here, 'lineIndex: modelModifier.LineCount - 1' gets the lineIndex that the 'EndOfFile' resides at.
-            // The row index for 'EndOfFile', and columnIndex 0, is a valid place for insertion.
-            // This equates to 'DocumentLength'.
+            var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+
             var cursor = new TextEditorCursor(
-                lineIndex: modelModifier.LineCount - 1,
-                columnIndex: 0,
+                lineIndex: lastLine.Index,
+                columnIndex: lastLine.LastValidColumnIndex,
                 isPrimaryCursor: true);
 
             cursorModifier = new TextEditorCursorModifier(cursor);
@@ -1256,14 +1244,11 @@ public partial class TextEditorModelModifierTests
             // Do something
             TextEditorModel outModel;
             {
-                // Deleting at positionIndex of '1 + DocumentLength' is awkward, because the API accepts a 'lineIndex' and 'columnIndex'
-                // Here, 'lineIndex: modelModifier.LineCount - 1' gets the lineIndex that the 'EndOfFile' resides at.
-                // The row index for 'EndOfFile', and columnIndex 0, is a valid place for insertion.
-                // This equates to 'DocumentLength'.
-                // Now add 1 to the columnIndex to be one position further than 'DocumentLength'.
+                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+
                 var cursor = new TextEditorCursor(
-                    lineIndex: modelModifier.LineCount - 1,
-                    columnIndex: 1,
+                    lineIndex: lastLine.Index,
+                    columnIndex: 1 + lastLine.LastValidColumnIndex,
                     isPrimaryCursor: true);
 
                 var cursorModifier = new TextEditorCursorModifier(cursor);
@@ -1873,18 +1858,11 @@ public partial class TextEditorModelModifierTests
         TextEditorModel outModel;
         TextEditorCursorModifier cursorModifier;
         {
-            // Deleting at positionIndex of 'DocumentLength' is awkward, because the API accepts a 'lineIndex' and 'columnIndex'
-            // Here, 'lineIndex: modelModifier.LineCount - 1' gets the lineIndex that the 'EndOfFile' resides at.
-            // The row index for 'EndOfFile', and columnIndex 0, is a valid place for insertion.
-            // This equates to 'DocumentLength'.
+            var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
 
-            var endOfFile = modelModifier.LineEndList.Last();
-            var aaa = modelModifier.GetLineAndColumnIndicesFromPositionIndex(endOfFile.StartPositionIndexInclusive);
-            var bbb = modelModifier.GetLineAndColumnIndicesFromPositionIndex(endOfFile.EndPositionIndexExclusive);
-                
             var cursor = new TextEditorCursor(
-                lineIndex: modelModifier.LineCount - 1,
-                columnIndex: 0,
+                lineIndex: lastLine.Index,
+                columnIndex: lastLine.LastValidColumnIndex,
                 isPrimaryCursor: true);
 
             cursorModifier = new TextEditorCursorModifier(cursor);
@@ -2011,14 +1989,11 @@ public partial class TextEditorModelModifierTests
             // Do something
             TextEditorModel outModel;
             {
-                // Deleting at positionIndex of '1 + DocumentLength' is awkward, because the API accepts a 'lineIndex' and 'columnIndex'
-                // Here, 'lineIndex: modelModifier.LineCount - 1' gets the lineIndex that the 'EndOfFile' resides at.
-                // The row index for 'EndOfFile', and columnIndex 0, is a valid place for insertion.
-                // This equates to 'DocumentLength'.
-                // Now add 1 to the columnIndex to be one position further than 'DocumentLength'.
+                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+
                 var cursor = new TextEditorCursor(
-                    lineIndex: modelModifier.LineCount - 1,
-                    columnIndex: 1,
+                    lineIndex: lastLine.Index,
+                    columnIndex: 1 + lastLine.LastValidColumnIndex,
                     isPrimaryCursor: true);
 
                 var cursorModifier = new TextEditorCursorModifier(cursor);
@@ -2590,18 +2565,16 @@ public partial class TextEditorModelModifierTests
         // Do something
         TextEditorModel outModel;
         {
-            // Deleting at positionIndex of 'DocumentLength' is awkward, because the API accepts a 'lineIndex' and 'columnIndex'
-            // Here, 'lineIndex: modelModifier.LineCount - 1' gets the lineIndex that the 'EndOfFile' resides at.
-            // The row index for 'EndOfFile', and columnIndex 0, is a valid place for insertion.
-            // This equates to 'DocumentLength'.
+            var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+
             var cursor = new TextEditorCursor(
-                LineIndex: 0,
-                ColumnIndex: 0,
-                PreferredColumnIndex: 1,
+                LineIndex: lastLine.Index,
+                ColumnIndex: lastLine.LastValidColumnIndex,
+                PreferredColumnIndex: lastLine.LastValidColumnIndex,
                 IsPrimaryCursor: true,
                 Selection: new TextEditorSelection(
-                    AnchorPositionIndex: (-1) + modelModifier.LineEndList[^1].EndPositionIndexExclusive,
-                    EndingPositionIndex: modelModifier.LineEndList[^1].EndPositionIndexExclusive));
+                    AnchorPositionIndex: (-1) + lastLine.LastValidColumnIndex,
+                    EndingPositionIndex: lastLine.LastValidColumnIndex));
 
             var cursorModifier = new TextEditorCursorModifier(cursor);
             var cursorModifierBag = new CursorModifierBagTextEditor(
@@ -2714,19 +2687,16 @@ public partial class TextEditorModelModifierTests
             // Do something
             TextEditorModel outModel;
             {
-                // Deleting at positionIndex of '1 + DocumentLength' is awkward, because the API accepts a 'lineIndex' and 'columnIndex'
-                // Here, 'lineIndex: modelModifier.LineCount - 1' gets the lineIndex that the 'EndOfFile' resides at.
-                // The row index for 'EndOfFile', and columnIndex 0, is a valid place for insertion.
-                // This equates to 'DocumentLength'.
-                // Now add 1 to the columnIndex to be one position further than 'DocumentLength'.
+                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+
                 var cursor = new TextEditorCursor(
-                LineIndex: 0,
-                ColumnIndex: 0,
-                PreferredColumnIndex: 1,
-                IsPrimaryCursor: true,
-                Selection: new TextEditorSelection(
-                    AnchorPositionIndex: 1 + modelModifier.LineEndList[^1].EndPositionIndexExclusive,
-                    EndingPositionIndex: 2 + modelModifier.LineEndList[^1].EndPositionIndexExclusive));
+                    LineIndex: lastLine.Index,
+                    ColumnIndex: 2 + lastLine.LastValidColumnIndex,
+                    PreferredColumnIndex: 2 + lastLine.LastValidColumnIndex,
+                    IsPrimaryCursor: true,
+                    Selection: new TextEditorSelection(
+                        AnchorPositionIndex: 1 + lastLine.LastValidColumnIndex,
+                        EndingPositionIndex: 2  + lastLine.LastValidColumnIndex));
 
                 var cursorModifier = new TextEditorCursorModifier(cursor);
                 var cursorModifierBag = new CursorModifierBagTextEditor(
@@ -3295,18 +3265,16 @@ public partial class TextEditorModelModifierTests
         // Do something
         TextEditorModel outModel;
         {
-            // Deleting at positionIndex of 'DocumentLength' is awkward, because the API accepts a 'lineIndex' and 'columnIndex'
-            // Here, 'lineIndex: modelModifier.LineCount - 1' gets the lineIndex that the 'EndOfFile' resides at.
-            // The row index for 'EndOfFile', and columnIndex 0, is a valid place for insertion.
-            // This equates to 'DocumentLength'.
+            var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+
             var cursor = new TextEditorCursor(
-                LineIndex: 0,
-                ColumnIndex: 0,
-                PreferredColumnIndex: 1,
+                LineIndex: lastLine.Index,
+                ColumnIndex: lastLine.LastValidColumnIndex,
+                PreferredColumnIndex: lastLine.LastValidColumnIndex,
                 IsPrimaryCursor: true,
                 Selection: new TextEditorSelection(
-                    AnchorPositionIndex: (-1) + modelModifier.LineEndList[^1].EndPositionIndexExclusive,
-                    EndingPositionIndex: modelModifier.LineEndList[^1].EndPositionIndexExclusive));
+                    AnchorPositionIndex: (-1) + lastLine.LastValidColumnIndex,
+                    EndingPositionIndex: lastLine.LastValidColumnIndex));
 
             var cursorModifier = new TextEditorCursorModifier(cursor);
             var cursorModifierBag = new CursorModifierBagTextEditor(
@@ -3419,19 +3387,16 @@ public partial class TextEditorModelModifierTests
             // Do something
             TextEditorModel outModel;
             {
-                // Deleting at positionIndex of '1 + DocumentLength' is awkward, because the API accepts a 'lineIndex' and 'columnIndex'
-                // Here, 'lineIndex: modelModifier.LineCount - 1' gets the lineIndex that the 'EndOfFile' resides at.
-                // The row index for 'EndOfFile', and columnIndex 0, is a valid place for insertion.
-                // This equates to 'DocumentLength'.
-                // Now add 1 to the columnIndex to be one position further than 'DocumentLength'.
+                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+
                 var cursor = new TextEditorCursor(
-                LineIndex: 0,
-                ColumnIndex: 0,
-                PreferredColumnIndex: 1,
-                IsPrimaryCursor: true,
-                Selection: new TextEditorSelection(
-                    AnchorPositionIndex: 1 + modelModifier.LineEndList[^1].EndPositionIndexExclusive,
-                    EndingPositionIndex: 2 + modelModifier.LineEndList[^1].EndPositionIndexExclusive));
+                    LineIndex: lastLine.Index,
+                    ColumnIndex: 2 + lastLine.LastValidColumnIndex,
+                    PreferredColumnIndex: 2 + lastLine.LastValidColumnIndex,
+                    IsPrimaryCursor: true,
+                    Selection: new TextEditorSelection(
+                        AnchorPositionIndex: 1 + lastLine.LastValidColumnIndex,
+                        EndingPositionIndex: 2 + lastLine.LastValidColumnIndex));
 
                 var cursorModifier = new TextEditorCursorModifier(cursor);
                 var cursorModifierBag = new CursorModifierBagTextEditor(

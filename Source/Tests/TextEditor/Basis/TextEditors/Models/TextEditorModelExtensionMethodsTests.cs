@@ -3,6 +3,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
@@ -920,7 +921,17 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
 
         // Insert text
         var insertedContent = "a";
-        modelModifier.Insert_Unsafe(insertedContent, 0, 0, CancellationToken.None);
+
+        var cursor = new TextEditorCursor(
+                    lineIndex: 0,
+                    columnIndex: 0,
+                    isPrimaryCursor: true);
+        var cursorModifier = new TextEditorCursorModifier(cursor);
+        var cursorModifierBag = new CursorModifierBagTextEditor(
+            Key<TextEditorViewModel>.Empty,
+            new List<TextEditorCursorModifier>() { cursorModifier });
+
+        modelModifier.Insert(insertedContent, cursorModifierBag, CancellationToken.None);
         Assert.Equal(insertedContent + content, modelModifier.GetAllText());
 
         // Text insertion will set an EditBlock
@@ -950,7 +961,17 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
 
         // Insert text
         var insertedContent = "a";
-        modelModifier.Insert_Unsafe(insertedContent, 0, 0, CancellationToken.None);
+        
+        var cursor = new TextEditorCursor(
+                    lineIndex: 0,
+                    columnIndex: 0,
+                    isPrimaryCursor: true);
+        var cursorModifier = new TextEditorCursorModifier(cursor);
+        var cursorModifierBag = new CursorModifierBagTextEditor(
+            Key<TextEditorViewModel>.Empty,
+            new List<TextEditorCursorModifier>() { cursorModifier });
+
+        modelModifier.Insert(insertedContent, cursorModifierBag, CancellationToken.None);
         Assert.Equal(insertedContent + content, modelModifier.GetAllText());
 
         // Text insertion will set an EditBlock

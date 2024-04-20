@@ -2,6 +2,8 @@
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
@@ -31,7 +33,13 @@ public partial class TextEditorModelModifierTests
         // Do something
         TextEditorModel outModel;
         {
-            modelModifier.Insert_Unsafe(
+            var cursor = new TextEditorCursor(lineIndex: 0, columnIndex: 0, isPrimaryCursor: true);
+            var cursorModifier = new TextEditorCursorModifier(cursor);
+            var cursorModifierBag = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier>() { cursorModifier });
+
+            modelModifier.Insert(
                     "\n" +   // LineFeed
                     "b9" +   // LetterOrDigit-Lowercase
                     "\r" +   // CarriageReturn
@@ -41,8 +49,7 @@ public partial class TextEditorModelModifierTests
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
                     " ",     // Space
-                    rowIndex: 0,
-                    columnIndex: 0,
+                    cursorModifierBag,
                     CancellationToken.None
                 );
             outModel = modelModifier.ToModel();
@@ -173,7 +180,14 @@ public partial class TextEditorModelModifierTests
         // Do something
         TextEditorModel outModel;
         {
-            modelModifier.Insert_Unsafe(
+            // DocumentLength is 0 for an empty text editor model
+            var cursor = new TextEditorCursor(lineIndex: 0, columnIndex: 0, isPrimaryCursor: true);
+            var cursorModifier = new TextEditorCursorModifier(cursor);
+            var cursorModifierBag = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier>() { cursorModifier });
+
+            modelModifier.Insert(
                     "\n" +   // LineFeed
                     "b9" +   // LetterOrDigit-Lowercase
                     "\r" +   // CarriageReturn
@@ -183,8 +197,7 @@ public partial class TextEditorModelModifierTests
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
                     " ",     // Space
-                    rowIndex: 0, // DocumentLength is 0 for an empty text editor model
-                    columnIndex: 0, // DocumentLength is 0 for an empty text editor model
+                    cursorModifierBag,
                     CancellationToken.None
                 );
             outModel = modelModifier.ToModel();
@@ -322,7 +335,13 @@ public partial class TextEditorModelModifierTests
             // Do something
             TextEditorModel outModel;
             {
-                modelModifier.Insert_Unsafe(
+                var cursor = new TextEditorCursor(lineIndex: 0, columnIndex: -1, isPrimaryCursor: true);
+                var cursorModifier = new TextEditorCursorModifier(cursor);
+                var cursorModifierBag = new CursorModifierBagTextEditor(
+                    Key<TextEditorViewModel>.Empty,
+                    new List<TextEditorCursorModifier>() { cursorModifier });
+
+                modelModifier.Insert(
                         "\n" +   // LineFeed
                         "b9" +   // LetterOrDigit-Lowercase
                         "\r" +   // CarriageReturn
@@ -332,8 +351,7 @@ public partial class TextEditorModelModifierTests
                         "$" +    // SpecialCharacter
                         ";" +    // Punctuation
                         " ",     // Space
-                        rowIndex: 0,
-                        columnIndex: -1,
+                        cursorModifierBag,
                         CancellationToken.None
                     );
                 outModel = modelModifier.ToModel();
@@ -362,12 +380,18 @@ public partial class TextEditorModelModifierTests
         // Do something
         TextEditorModel outModel;
         {
-            // Inserting at positionIndex of '1 + DocumentLength' is awkward, because the API accepts a 'rowIndex' and 'columnIndex'
-            // Here, 'rowIndex: modelModifier.LineCount - 1' gets the rowIndex that the 'EndOfFile' resides at.
-            // The row index for 'EndOfFile', and columnIndex 0, is a valid place for insertion.
-            // Therefore, 'columnIndex: 1' puts the cursor 1 column further than what is valid.
-            // This equates to '1 + DocumentLength'.
-            modelModifier.Insert_Unsafe(
+            var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+
+            var cursor = new TextEditorCursor(
+                lineIndex: lastLine.Index,
+                columnIndex: 1 + lastLine.LastValidColumnIndex,
+                isPrimaryCursor: true);
+            var cursorModifier = new TextEditorCursorModifier(cursor);
+            var cursorModifierBag = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier>() { cursorModifier });
+
+            modelModifier.Insert(
                     "\n" +   // LineFeed
                     "b9" +   // LetterOrDigit-Lowercase
                     "\r" +   // CarriageReturn
@@ -377,8 +401,7 @@ public partial class TextEditorModelModifierTests
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
                     " ",     // Space
-                    rowIndex: modelModifier.LineCount - 1,
-                    columnIndex: 1,
+                    cursorModifierBag,
                     CancellationToken.None
                 );
             outModel = modelModifier.ToModel();
@@ -490,13 +513,21 @@ public partial class TextEditorModelModifierTests
             // Do something
             TextEditorModel outModel;
             {
-                modelModifier.Insert_Unsafe(
+                var cursor = new TextEditorCursor(
+                    lineIndex: 0,
+                    columnIndex: 0,
+                    isPrimaryCursor: true);
+                var cursorModifier = new TextEditorCursorModifier(cursor);
+                var cursorModifierBag = new CursorModifierBagTextEditor(
+                    Key<TextEditorViewModel>.Empty,
+                    new List<TextEditorCursorModifier>() { cursorModifier });
+
+                modelModifier.Insert(
                     // The null-forgiving operator was used here
                     // because the test purposefully wants to pass in null,
                     // to see what happens.
                     value: null!,
-                    rowIndex: 0,
-                    columnIndex: 0,
+                    cursorModifierBag,
                     CancellationToken.None
                 );
                 outModel = modelModifier.ToModel();
@@ -530,10 +561,18 @@ public partial class TextEditorModelModifierTests
         // Do something
         TextEditorModel outModel;
         {
-            modelModifier.Insert_Unsafe(
+            var cursor = new TextEditorCursor(
+                lineIndex: 0,
+                columnIndex: 0,
+                isPrimaryCursor: true);
+            var cursorModifier = new TextEditorCursorModifier(cursor);
+            var cursorModifierBag = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier>() { cursorModifier });
+
+            modelModifier.Insert(
                     value: string.Empty,
-                    rowIndex: 0,
-                    columnIndex: 0,
+                    cursorModifierBag,
                     CancellationToken.None
                 );
             outModel = modelModifier.ToModel();
@@ -645,7 +684,16 @@ public partial class TextEditorModelModifierTests
         // Do something
         TextEditorModel outModel;
         {
-            modelModifier.Insert_Unsafe(
+            var cursor = new TextEditorCursor(
+                lineIndex: 0,
+                columnIndex: 0,
+                isPrimaryCursor: true);
+            var cursorModifier = new TextEditorCursorModifier(cursor);
+            var cursorModifierBag = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier>() { cursorModifier });
+
+            modelModifier.Insert(
                     "\n" +   // LineFeed
                     "b9" +   // LetterOrDigit-Lowercase
                     "\r" +   // CarriageReturn
@@ -655,8 +703,7 @@ public partial class TextEditorModelModifierTests
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
                     " ",     // Space
-                    rowIndex: 0,
-                    columnIndex: 0,
+                    cursorModifierBag,
                     CancellationToken.None
                 );
             outModel = modelModifier.ToModel();
@@ -844,11 +891,18 @@ public partial class TextEditorModelModifierTests
         // Do something
         TextEditorModel outModel;
         {
-            // Inserting at positionIndex of 'DocumentLength' is awkward, because the API accepts a 'rowIndex' and 'columnIndex'
-            // Here, 'rowIndex: modelModifier.LineCount - 1' gets the rowIndex that the 'EndOfFile' resides at.
-            // The row index for 'EndOfFile', and columnIndex 0, is a valid place for insertion.
-            // This equates to 'DocumentLength'.
-            modelModifier.Insert_Unsafe(
+            var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1); 
+
+            var cursor = new TextEditorCursor(
+                lineIndex: lastLine.Index,
+                columnIndex: lastLine.LastValidColumnIndex,
+                isPrimaryCursor: true);
+            var cursorModifier = new TextEditorCursorModifier(cursor);
+            var cursorModifierBag = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier>() { cursorModifier });
+
+            modelModifier.Insert(
                     "\n" +   // LineFeed
                     "b9" +   // LetterOrDigit-Lowercase
                     "\r" +   // CarriageReturn
@@ -858,8 +912,7 @@ public partial class TextEditorModelModifierTests
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
                     " ",     // Space
-                    rowIndex: modelModifier.LineCount - 1,
-                    columnIndex: 0,
+                    cursorModifierBag,
                     CancellationToken.None
                 );
             outModel = modelModifier.ToModel();
@@ -1048,7 +1101,16 @@ public partial class TextEditorModelModifierTests
         // Do something
         TextEditorModel outModel;
         {
-            modelModifier.Insert_Unsafe(
+            var cursor = new TextEditorCursor(
+                lineIndex: 1,
+                columnIndex: 1,
+                isPrimaryCursor: true);
+            var cursorModifier = new TextEditorCursorModifier(cursor);
+            var cursorModifierBag = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier>() { cursorModifier });
+
+            modelModifier.Insert(
                     "\n" +   // LineFeed
                     "b9" +   // LetterOrDigit-Lowercase
                     "\r" +   // CarriageReturn
@@ -1058,8 +1120,7 @@ public partial class TextEditorModelModifierTests
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
                     " ",     // Space
-                    rowIndex: 1,
-                    columnIndex: 1,
+                    cursorModifierBag,
                     CancellationToken.None
                 );
             outModel = modelModifier.ToModel();
@@ -1238,7 +1299,16 @@ public partial class TextEditorModelModifierTests
             // Do something
             TextEditorModel outModel;
             {
-                modelModifier.Insert_Unsafe(
+                var cursor = new TextEditorCursor(
+                    lineIndex: 0,
+                    columnIndex: -1,
+                    isPrimaryCursor: true);
+                var cursorModifier = new TextEditorCursorModifier(cursor);
+                var cursorModifierBag = new CursorModifierBagTextEditor(
+                    Key<TextEditorViewModel>.Empty,
+                    new List<TextEditorCursorModifier>() { cursorModifier });
+
+                modelModifier.Insert(
                         "\n" +   // LineFeed
                         "b9" +   // LetterOrDigit-Lowercase
                         "\r" +   // CarriageReturn
@@ -1248,8 +1318,7 @@ public partial class TextEditorModelModifierTests
                         "$" +    // SpecialCharacter
                         ";" +    // Punctuation
                         " ",     // Space
-                        rowIndex: 0,
-                        columnIndex: -1,
+                        cursorModifierBag,
                         CancellationToken.None
                     );
                 outModel = modelModifier.ToModel();
@@ -1289,12 +1358,18 @@ public partial class TextEditorModelModifierTests
         // Do something
         TextEditorModel outModel;
         {
-            // Inserting at positionIndex of '1 + DocumentLength' is awkard, because the API accepts a 'rowIndex' and 'columnIndex'
-            // Here, 'rowIndex: modelModifier.LineCount - 1' gets the rowIndex that the 'EndOfFile' resides at.
-            // The row index for 'EndOfFile', and columnIndex 0, is a valid place for insertion.
-            // Therefore, 'columnIndex: 1' puts the cursor 1 column further than what is valid.
-            // This equates to '1 + DocumentLength'.
-            modelModifier.Insert_Unsafe(
+            var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+
+            var cursor = new TextEditorCursor(
+                    lineIndex: lastLine.Index,
+                    columnIndex: 1 + lastLine.LastValidColumnIndex,
+                    isPrimaryCursor: true);
+            var cursorModifier = new TextEditorCursorModifier(cursor);
+            var cursorModifierBag = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier>() { cursorModifier });
+
+            modelModifier.Insert(
                     "\n" +   // LineFeed
                     "b9" +   // LetterOrDigit-Lowercase
                     "\r" +   // CarriageReturn
@@ -1304,8 +1379,7 @@ public partial class TextEditorModelModifierTests
                     "$" +    // SpecialCharacter
                     ";" +    // Punctuation
                     " ",     // Space
-                    rowIndex: modelModifier.LineCount - 1,
-                    columnIndex: 1,
+                    cursorModifierBag,
                     CancellationToken.None
                 );
             outModel = modelModifier.ToModel();
@@ -1456,13 +1530,21 @@ public partial class TextEditorModelModifierTests
             // Do something
             TextEditorModel outModel;
             {
-                modelModifier.Insert_Unsafe(
+                var cursor = new TextEditorCursor(
+                        lineIndex: 0,
+                        columnIndex: 0,
+                        isPrimaryCursor: true);
+                var cursorModifier = new TextEditorCursorModifier(cursor);
+                var cursorModifierBag = new CursorModifierBagTextEditor(
+                    Key<TextEditorViewModel>.Empty,
+                    new List<TextEditorCursorModifier>() { cursorModifier });
+
+                modelModifier.Insert(
                     // The null-forgiving operator was used here
                     // because the test purposefully wants to pass in null,
                     // to see what happens.
                     value: null!,
-                    rowIndex: 0,
-                    columnIndex: 0,
+                    cursorModifierBag,
                     CancellationToken.None
                 );
                 outModel = modelModifier.ToModel();
@@ -1507,10 +1589,18 @@ public partial class TextEditorModelModifierTests
         // Do something
         TextEditorModel outModel;
         {
-            modelModifier.Insert_Unsafe(
+            var cursor = new TextEditorCursor(
+                lineIndex: 0,
+                columnIndex: 0,
+                isPrimaryCursor: true);
+            var cursorModifier = new TextEditorCursorModifier(cursor);
+            var cursorModifierBag = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier>() { cursorModifier });
+
+            modelModifier.Insert(
                     value: string.Empty,
-                    rowIndex: 0,
-                    columnIndex: 0,
+                    cursorModifierBag,
                     CancellationToken.None
                 );
             outModel = modelModifier.ToModel();

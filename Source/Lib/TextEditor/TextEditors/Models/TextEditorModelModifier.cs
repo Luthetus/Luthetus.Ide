@@ -382,26 +382,6 @@ public partial class TextEditorModelModifier : ITextEditorModel
         }
     }
 
-    /// <summary>
-    /// Use <see cref="Insert(string, CursorModifierBagTextEditor, CancellationToken)"/> instead.
-    /// This version is unsafe because it won't respect the user's cursor.
-    /// </summary>
-    public void Insert_Unsafe(
-        string value,
-        int rowIndex,
-        int columnIndex,
-        CancellationToken cancellationToken)
-    {
-        var cursor = new TextEditorCursor(rowIndex, columnIndex, true);
-        var cursorModifier = new TextEditorCursorModifier(cursor);
-
-        var cursorModifierBag = new CursorModifierBagTextEditor(
-            Key<TextEditorViewModel>.Empty,
-            new List<TextEditorCursorModifier>() { cursorModifier });
-
-        Insert(value, cursorModifierBag, cancellationToken);
-    }
-
     public void Insert(
         string value,
         CursorModifierBagTextEditor cursorModifierBag,

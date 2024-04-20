@@ -15,7 +15,7 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 /// <summary>
 /// <see cref="TextEditorModel"/>
 /// </summary>
-public class ModelTests
+public class TextEditorModelTests
 {
     /// <summary>
     /// <see cref="TextEditorModel(ResourceUri, DateTime, string, string, IDecorationMapper?, ILuthCompilerService?, int)"/>
