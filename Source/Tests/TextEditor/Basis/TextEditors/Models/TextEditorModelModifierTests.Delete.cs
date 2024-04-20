@@ -2484,8 +2484,8 @@ public partial class TextEditorModelModifierTests
                 ),
              */
             var cursor = new TextEditorCursor(
-                LineIndex: 0,
-                ColumnIndex: 0,
+                LineIndex: 1,
+                ColumnIndex: 1,
                 PreferredColumnIndex: 1,
                 IsPrimaryCursor: true,
                 Selection: new TextEditorSelection(
@@ -2571,8 +2571,6 @@ public partial class TextEditorModelModifierTests
 
             // Cursor related code-block-grouping:
             {
-                throw new NotImplementedException();
-
                 Assert.Equal(1, cursorModifier.LineIndex);
                 Assert.Equal(0, cursorModifier.ColumnIndex);
                 Assert.Equal(0, cursorModifier.PreferredColumnIndex);
@@ -3243,8 +3241,8 @@ public partial class TextEditorModelModifierTests
                 ),
              */
             var cursor = new TextEditorCursor(
-                LineIndex: 0,
-                ColumnIndex: 0,
+                LineIndex: 1,
+                ColumnIndex: 1,
                 PreferredColumnIndex: 1,
                 IsPrimaryCursor: true,
                 Selection: new TextEditorSelection(
@@ -3330,8 +3328,6 @@ public partial class TextEditorModelModifierTests
 
             // Cursor related code-block-grouping:
             {
-                throw new NotImplementedException();
-
                 Assert.Equal(1, cursorModifier.LineIndex);
                 Assert.Equal(0, cursorModifier.ColumnIndex);
                 Assert.Equal(0, cursorModifier.PreferredColumnIndex);
