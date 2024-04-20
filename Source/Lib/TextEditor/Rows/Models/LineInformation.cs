@@ -20,5 +20,5 @@ public record LineInformation(
     /// Reason: The last valid column index is the index between the content and the line ending.
     ///         Think of a cursor, rendered in the text editor. Would it be allowed to go "there".
     /// </summary>
-    public int LastValidColumnIndex => UpperLineEnd.StartPositionIndexInclusive;
+    public int LastValidColumnIndex => UpperLineEnd.StartPositionIndexInclusive - LowerLineEnd.EndPositionIndexExclusive;
 }

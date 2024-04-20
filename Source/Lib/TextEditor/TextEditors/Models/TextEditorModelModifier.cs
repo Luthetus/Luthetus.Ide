@@ -757,6 +757,9 @@ public partial class TextEditorModelModifier : ITextEditorModel
             positionIndex = cursorModifier.SelectionAnchorPositionIndex.Value;
             columnCount = cursorModifier.SelectionEndingPositionIndex - cursorModifier.SelectionAnchorPositionIndex.Value;
             deleteKind = DeleteKind.Delete;
+
+            cursorModifier.SelectionAnchorPositionIndex = null;
+            cursorModifier.SelectionEndingPositionIndex = 0;
         }
 
         // If cursor is out of bounds then continue.
@@ -953,7 +956,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
             {
                 var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(positionIndex);
                 cursorModifier.LineIndex = lineIndex;
-                cursorModifier.ColumnIndex = columnIndex;
+                cursorModifier.SetColumnIndexAndPreferred(columnIndex);
             }
 
             return (positionIndex, charCount);
@@ -964,9 +967,9 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
             // Reposition the cursor
             {
-                var(lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(calculatedPositionIndex);
+                var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(calculatedPositionIndex);
                 cursorModifier.LineIndex = lineIndex;
-                cursorModifier.ColumnIndex = columnIndex;
+                cursorModifier.SetColumnIndexAndPreferred(columnIndex);
             }
 
             return (calculatedPositionIndex, charCount);

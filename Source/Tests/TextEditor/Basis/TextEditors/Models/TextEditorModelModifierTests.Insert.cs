@@ -161,11 +161,11 @@ public partial class TextEditorModelModifierTests
 
             // Cursor related code-block-grouping:
             {
-                throw new NotImplementedException();
+                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
 
-                Assert.Equal(1, cursorModifier.LineIndex);
-                Assert.Equal(0, cursorModifier.ColumnIndex);
-                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                Assert.Equal(lastLine.Index, cursorModifier.LineIndex);
+                Assert.Equal(lastLine.LastValidColumnIndex, cursorModifier.ColumnIndex);
+                Assert.Equal(lastLine.LastValidColumnIndex, cursorModifier.PreferredColumnIndex);
                 Assert.True(cursorModifier.IsPrimaryCursor);
                 Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
                 Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
@@ -322,11 +322,11 @@ public partial class TextEditorModelModifierTests
 
             // Cursor related code-block-grouping:
             {
-                throw new NotImplementedException();
+                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
 
-                Assert.Equal(1, cursorModifier.LineIndex);
-                Assert.Equal(0, cursorModifier.ColumnIndex);
-                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                Assert.Equal(lastLine.Index, cursorModifier.LineIndex);
+                Assert.Equal(lastLine.LastValidColumnIndex, cursorModifier.ColumnIndex);
+                Assert.Equal(lastLine.LastValidColumnIndex, cursorModifier.PreferredColumnIndex);
                 Assert.True(cursorModifier.IsPrimaryCursor);
                 Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
                 Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
@@ -403,121 +403,43 @@ public partial class TextEditorModelModifierTests
             compilerService: null,
             partitionSize: 4096);
 
-        // Do something
-        TextEditorModel outModel;
-        TextEditorCursorModifier cursorModifier;
-        {
-            var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
-
-            var cursor = new TextEditorCursor(
-                lineIndex: lastLine.Index,
-                columnIndex: 1 + lastLine.LastValidColumnIndex,
-                isPrimaryCursor: true);
-            cursorModifier = new TextEditorCursorModifier(cursor);
-            var cursorModifierBag = new CursorModifierBagTextEditor(
-                Key<TextEditorViewModel>.Empty,
-                new List<TextEditorCursorModifier>() { cursorModifier });
-
-            modelModifier.Insert(
-                    "\n" +   // LineFeed
-                    "b9" +   // LetterOrDigit-Lowercase
-                    "\r" +   // CarriageReturn
-                    "9B" +   // LetterOrDigit-Uppercase
-                    "\r\n" + // CarriageReturnLineFeed
-                    "\t" +   // Tab
-                    "$" +    // SpecialCharacter
-                    ";" +    // Punctuation
-                    " ",     // Space
-                    cursorModifierBag,
-                    CancellationToken.None
-                );
-            outModel = modelModifier.ToModel();
-        }
-
         // Post-assertions
         //
-        // Here, the post assertions are equivalent to the Pre-Assertions because
-        // inserting at an index which is out of bounds due to being too large,
-        // will cause the insertion to just do nothing and return.
+        // This test expects the 'Do Something' step to throw an exception.
+        // That is all that needs to be tested here.
+        Assert.Throws<ApplicationException>(() =>
         {
-            // Obnoxiously write the constant value for the initialContent's length instead of capturing the TextEditorModel
-            // constructor's 'initialContent' parameter, then checking '.Length'.
-            //
-            // This makes it more clear if the source text changes (accidentally or intentionally).
-            // If one day this assertion fails, then someone touched the source text.
-            Assert.Equal(0, modelModifier.DocumentLength);
-
-            // The file extension should NOT change as a result of inserting content.
-            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
-            // The text is small, it should write a single partition, nothing more.
-            Assert.Single(modelModifier.PartitionList);
-
-            // An insertion which is out of bounds due to being too large does nothing and immediately returns.
-            // Therefore, the count remains 0.
-            Assert.Equal(0, modelModifier.TabKeyPositionList.Count);
-
-            // LineEnd related code-block-grouping:
+            // Do something
+            TextEditorModel outModel;
+            TextEditorCursorModifier cursorModifier;
             {
-                // An insertion which is out of bounds due to being too large does nothing and immediately returns.
-                // Therefore, the count remains 0.
-                Assert.Equal(
-                    0,
-                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
 
-                // An insertion which is out of bounds due to being too large does nothing and immediately returns.
-                // Therefore, the count remains 0.
-                Assert.Equal(
-                    0,
-                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                var cursor = new TextEditorCursor(
+                    lineIndex: lastLine.Index,
+                    columnIndex: 1 + lastLine.LastValidColumnIndex,
+                    isPrimaryCursor: true);
+                cursorModifier = new TextEditorCursorModifier(cursor);
+                var cursorModifierBag = new CursorModifierBagTextEditor(
+                    Key<TextEditorViewModel>.Empty,
+                    new List<TextEditorCursorModifier>() { cursorModifier });
 
-                // An insertion which is out of bounds due to being too large does nothing and immediately returns.
-                // Therefore, the count remains 0.
-                Assert.Equal(
-                    0,
-                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-
-                // An insertion which is out of bounds due to being too large does nothing and immediately returns.
-                // Therefore, the count remains 1, due to the existance of the special-'EndOfFile' line ending.
-                Assert.Equal(1, modelModifier.LineEndList.Count);
-
-                // An insertion which is out of bounds due to being too large does nothing and immediately returns.
-                // Therefore, LineEndPositionList is expected to not contain any CarriageReturn(s)
-                // Assert that the only line ending in the text is the 'EndOfFile'.
-                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndList.Single().LineEndKind);
-
-                // An insertion which is out of bounds due to being too large does nothing and immediately returns.
-                // Therefore, LineEndPositionList is expected to not contain any LineFeed(s)
-                // Assert that the only line ending in the text is the 'EndOfFile'.
-                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndList.Single().LineEndKind);
-
-                // An insertion which is out of bounds due to being too large does nothing and immediately returns.
-                // Therefore, LineEndPositionList is expected to not contain any CarriageReturnLineFeed(s)
-                // Assert that the only line ending in the text is the 'EndOfFile'.
-                Assert.Equal(LineEndKind.EndOfFile, modelModifier.LineEndList.Single().LineEndKind);
-
-                // A TextEditorModel always contains at least 1 LineEnd. This LineEnd marks the 'EndOfFile'.
-                //
-                // An insertion which is out of bounds due to being too large does nothing and immediately returns.
-                // Therefore, the 'EndOfFile' is unchanged.
-                var endOfFile = modelModifier.LineEndList.Single();
-                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
-                Assert.Equal(0, endOfFile.StartPositionIndexInclusive);
-                Assert.Equal(0, endOfFile.EndPositionIndexExclusive);
+                modelModifier.Insert(
+                        "\n" +   // LineFeed
+                        "b9" +   // LetterOrDigit-Lowercase
+                        "\r" +   // CarriageReturn
+                        "9B" +   // LetterOrDigit-Uppercase
+                        "\r\n" + // CarriageReturnLineFeed
+                        "\t" +   // Tab
+                        "$" +    // SpecialCharacter
+                        ";" +    // Punctuation
+                        " ",     // Space
+                        cursorModifierBag,
+                        CancellationToken.None
+                    );
+                outModel = modelModifier.ToModel();
             }
-
-            // Cursor related code-block-grouping:
-            {
-                throw new NotImplementedException();
-
-                Assert.Equal(1, cursorModifier.LineIndex);
-                Assert.Equal(0, cursorModifier.ColumnIndex);
-                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
-                Assert.True(cursorModifier.IsPrimaryCursor);
-                Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
-                Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
-            }
-        }
+        });
     }
 
     /// <summary>
@@ -691,9 +613,7 @@ public partial class TextEditorModelModifierTests
 
             // Cursor related code-block-grouping:
             {
-                throw new NotImplementedException();
-
-                Assert.Equal(1, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.LineIndex);
                 Assert.Equal(0, cursorModifier.ColumnIndex);
                 Assert.Equal(0, cursorModifier.PreferredColumnIndex);
                 Assert.True(cursorModifier.IsPrimaryCursor);
@@ -913,11 +833,17 @@ public partial class TextEditorModelModifierTests
 
             // Cursor related code-block-grouping:
             {
-                throw new NotImplementedException();
-
-                Assert.Equal(1, cursorModifier.LineIndex);
-                Assert.Equal(0, cursorModifier.ColumnIndex);
-                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                // Insertion was done at (rowIndex: 0, columnIndex: 0).
+                //
+                // The text inserted has its endpoint at (rowIndex: 3, columnIndex: 4)
+                //
+                // Therefore, end result is cursor_rowIndex + insertionContentFinalRowIndex,
+                // and the columnIndex ends up being the insertionContentFinalColumnIndex.
+                //
+                // Which is (rowIndex: 3, columnIndex: 4)
+                Assert.Equal(3, cursorModifier.LineIndex);
+                Assert.Equal(4, cursorModifier.ColumnIndex);
+                Assert.Equal(4, cursorModifier.PreferredColumnIndex);
                 Assert.True(cursorModifier.IsPrimaryCursor);
                 Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
                 Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
@@ -1135,11 +1061,17 @@ public partial class TextEditorModelModifierTests
 
             // Cursor related code-block-grouping:
             {
-                throw new NotImplementedException();
-
-                Assert.Equal(1, cursorModifier.LineIndex);
-                Assert.Equal(0, cursorModifier.ColumnIndex);
-                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                // Insertion was done at (rowIndex: 3, columnIndex: 4).
+                //
+                // The text inserted has its endpoint at (rowIndex: 3, columnIndex: 4)
+                //
+                // Therefore, end result is cursor_rowIndex + insertionContentFinalRowIndex,
+                // and the columnIndex ends up being the insertionContentFinalColumnIndex.
+                //
+                // Which is (rowIndex: 4, columnIndex: 4)
+                Assert.Equal(6, cursorModifier.LineIndex);
+                Assert.Equal(4, cursorModifier.ColumnIndex);
+                Assert.Equal(4, cursorModifier.PreferredColumnIndex);
                 Assert.True(cursorModifier.IsPrimaryCursor);
                 Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
                 Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
@@ -1340,11 +1272,17 @@ public partial class TextEditorModelModifierTests
 
             // Cursor related code-block-grouping:
             {
-                throw new NotImplementedException();
-
-                Assert.Equal(1, cursorModifier.LineIndex);
-                Assert.Equal(0, cursorModifier.ColumnIndex);
-                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                // Insertion was done at (rowIndex: 1, columnIndex: 1).
+                //
+                // The text inserted has its endpoint at (rowIndex: 3, columnIndex: 4)
+                //
+                // Therefore, end result is cursor_rowIndex + insertionContentFinalRowIndex,
+                // and the columnIndex ends up being the insertionContentFinalColumnIndex.
+                //
+                // Which is (rowIndex: 4, columnIndex: 4)
+                Assert.Equal(4, cursorModifier.LineIndex);
+                Assert.Equal(4, cursorModifier.ColumnIndex);
+                Assert.Equal(4, cursorModifier.PreferredColumnIndex);
                 Assert.True(cursorModifier.IsPrimaryCursor);
                 Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
                 Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
@@ -1446,149 +1384,43 @@ public partial class TextEditorModelModifierTests
             compilerService: null,
             partitionSize: 4096);
 
-        // Do something
-        TextEditorModel outModel;
-        TextEditorCursorModifier cursorModifier;
+        // Post-assertions
+        //
+        // This test expects the 'Do Something' step to throw an exception.
+        // That is all that needs to be tested here.
+        Assert.Throws<ApplicationException>(() =>
         {
-            var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+            // Do something
+            TextEditorModel outModel;
+            TextEditorCursorModifier cursorModifier;
+            {
+                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
 
-            var cursor = new TextEditorCursor(
+                var cursor = new TextEditorCursor(
                     lineIndex: lastLine.Index,
                     columnIndex: 1 + lastLine.LastValidColumnIndex,
                     isPrimaryCursor: true);
-            cursorModifier = new TextEditorCursorModifier(cursor);
-            var cursorModifierBag = new CursorModifierBagTextEditor(
-                Key<TextEditorViewModel>.Empty,
-                new List<TextEditorCursorModifier>() { cursorModifier });
+                cursorModifier = new TextEditorCursorModifier(cursor);
+                var cursorModifierBag = new CursorModifierBagTextEditor(
+                    Key<TextEditorViewModel>.Empty,
+                    new List<TextEditorCursorModifier>() { cursorModifier });
 
-            modelModifier.Insert(
-                    "\n" +   // LineFeed
-                    "b9" +   // LetterOrDigit-Lowercase
-                    "\r" +   // CarriageReturn
-                    "9B" +   // LetterOrDigit-Uppercase
-                    "\r\n" + // CarriageReturnLineFeed
-                    "\t" +   // Tab
-                    "$" +    // SpecialCharacter
-                    ";" +    // Punctuation
-                    " ",     // Space
-                    cursorModifierBag,
-                    CancellationToken.None
-                );
-            outModel = modelModifier.ToModel();
-        }
-
-        // Post-assertions
-        //
-        // Here, the post assertions are equivalent to the Pre-Assertions because
-        // inserting at an index which is out of bounds due to being too large,
-        // will cause the insertion to just do nothing and return.
-        {
-            // Obnoxiously write the constant value for the initialContent's length instead of capturing the TextEditorModel
-            // constructor's 'initialContent' parameter, then checking '.Length'.
-            //
-            // This makes it more clear if the source text changes (accidentally or intentionally).
-            // If one day this assertion fails, then someone touched the source text.
-            Assert.Equal(12, modelModifier.DocumentLength);
-
-            // The file extension should NOT change as a result of inserting content.
-            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
-            // The text is small, it should write a single partition, nothing more.
-            Assert.Single(modelModifier.PartitionList);
-
-            // 1 tab key was included in the string that was passed to the constructor.
-            // And the insertion is expected to do nothing.
-            // Therefore, the Count remains 1.
-            Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                8,
-                modelModifier.TabKeyPositionList.Single());
-
-            // LineEnd related code-block-grouping:
-            {
-                // 1 CarriageReturn was included in the string that was passed to the constructor.
-                // And the insertion is expected to do nothing.
-                // Therefore, the Count remains 1.
-                // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
-                Assert.Equal(
-                    1,
-                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        3,
-                        carriageReturn.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        4,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
-
-                // 1 LineFeed was included in the string that was passed to the constructor.
-                // And the insertion is expected to do nothing.
-                // Therefore, the Count remains 1.
-                Assert.Equal(
-                    1,
-                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                {
-                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
-
-                // 1 CarriageReturnLineFeed was included in the string that was passed to the constructor.
-                // And the insertion is expected to do nothing.
-                // Therefore, the Count remains 1.
-                // NOTE: While the Insert(...) method does not allow '\r' or '\r\n', the constructor does.
-                Assert.Equal(
-                    1,
-                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        6,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        8,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
-
-                // 3 line endings where included in the string that was passed to the constructor,
-                // And the insertion is expected to do nothing.
-                // Therefore, there are 4 in total if one then includes the special-'EndOfFile' LineEnd.
-                Assert.Equal(4, modelModifier.LineEndList.Count);
-
-                // A TextEditorModel always contains at least 1 LineEnd. This LineEnd marks the 'EndOfFile'.
-                //
-                // The insertion is expected to do nothing,
-                // therefore the positionIndex remains 12.
-                var endOfFile = modelModifier.LineEndList.Last();
-                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
-                Assert.Equal(12, endOfFile.StartPositionIndexInclusive);
-                Assert.Equal(12, endOfFile.EndPositionIndexExclusive);
+                modelModifier.Insert(
+                        "\n" +   // LineFeed
+                        "b9" +   // LetterOrDigit-Lowercase
+                        "\r" +   // CarriageReturn
+                        "9B" +   // LetterOrDigit-Uppercase
+                        "\r\n" + // CarriageReturnLineFeed
+                        "\t" +   // Tab
+                        "$" +    // SpecialCharacter
+                        ";" +    // Punctuation
+                        " ",     // Space
+                        cursorModifierBag,
+                        CancellationToken.None
+                    );
+                outModel = modelModifier.ToModel();
             }
-
-            // Cursor related code-block-grouping:
-            {
-                throw new NotImplementedException();
-
-                Assert.Equal(1, cursorModifier.LineIndex);
-                Assert.Equal(0, cursorModifier.ColumnIndex);
-                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
-                Assert.True(cursorModifier.IsPrimaryCursor);
-                Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
-                Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
-            }
-        }
+        });
     }
 
     /// <summary>
@@ -1812,9 +1644,7 @@ public partial class TextEditorModelModifierTests
 
             // Cursor related code-block-grouping:
             {
-                throw new NotImplementedException();
-
-                Assert.Equal(1, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.LineIndex);
                 Assert.Equal(0, cursorModifier.ColumnIndex);
                 Assert.Equal(0, cursorModifier.PreferredColumnIndex);
                 Assert.True(cursorModifier.IsPrimaryCursor);

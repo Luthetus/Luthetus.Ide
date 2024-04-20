@@ -1202,9 +1202,11 @@ public partial class TextEditorModelModifierTests
 
             // Cursor related code-block-grouping:
             {
-                Assert.Equal(modelModifier.LineCount - 1, cursorModifier.LineIndex);
-                Assert.Equal(0, cursorModifier.ColumnIndex);
-                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+
+                Assert.Equal(lastLine.Index, cursorModifier.LineIndex);
+                Assert.Equal(lastLine.LastValidColumnIndex, cursorModifier.ColumnIndex);
+                Assert.Equal(lastLine.LastValidColumnIndex, cursorModifier.PreferredColumnIndex);
                 Assert.True(cursorModifier.IsPrimaryCursor);
                 Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
                 Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
@@ -1295,14 +1297,11 @@ public partial class TextEditorModelModifierTests
         TextEditorModel outModel;
         TextEditorCursorModifier cursorModifier;
         {
-            // DocumentLength is equivalent to:
-            // lineIndex: modelModifier.LineCount - 1, and columnIndex: 0
-            //
-            // A count of '12', with 'DeleteKind.BackSpace',
-            // should delete all the content in the text editor (relative to the current test data).
+            var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+
             var cursor = new TextEditorCursor(
-                lineIndex: modelModifier.LineCount - 1,
-                columnIndex: 0,
+                lineIndex: lastLine.Index,
+                columnIndex: lastLine.LastValidColumnIndex,
                 isPrimaryCursor: true);
 
             cursorModifier = new TextEditorCursorModifier(cursor);
@@ -1944,11 +1943,11 @@ public partial class TextEditorModelModifierTests
 
             // Cursor related code-block-grouping:
             {
-                throw new NotImplementedException();
+                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
 
-                Assert.Equal(1, cursorModifier.LineIndex);
-                Assert.Equal(0, cursorModifier.ColumnIndex);
-                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                Assert.Equal(lastLine.Index, cursorModifier.LineIndex);
+                Assert.Equal(lastLine.LastValidColumnIndex, cursorModifier.ColumnIndex);
+                Assert.Equal(lastLine.LastValidColumnIndex, cursorModifier.PreferredColumnIndex);
                 Assert.True(cursorModifier.IsPrimaryCursor);
                 Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
                 Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
@@ -2044,7 +2043,7 @@ public partial class TextEditorModelModifierTests
             var cursor = new TextEditorCursor(
                 LineIndex: 0,
                 ColumnIndex: 0,
-                PreferredColumnIndex: 1,
+                PreferredColumnIndex: 0,
                 IsPrimaryCursor: true,
                 Selection: new TextEditorSelection(
                     AnchorPositionIndex: 0,
@@ -2090,9 +2089,7 @@ public partial class TextEditorModelModifierTests
 
             // Cursor related code-block-grouping:
             {
-                throw new NotImplementedException();
-
-                Assert.Equal(1, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.LineIndex);
                 Assert.Equal(0, cursorModifier.ColumnIndex);
                 Assert.Equal(0, cursorModifier.PreferredColumnIndex);
                 Assert.True(cursorModifier.IsPrimaryCursor);
@@ -2159,7 +2156,7 @@ public partial class TextEditorModelModifierTests
                 ),
              */
             var cursor = new TextEditorCursor(
-                LineIndex: 0,
+                LineIndex: 1,
                 ColumnIndex: 0,
                 PreferredColumnIndex: 1,
                 IsPrimaryCursor: true,
@@ -2246,8 +2243,6 @@ public partial class TextEditorModelModifierTests
 
             // Cursor related code-block-grouping:
             {
-                throw new NotImplementedException();
-
                 Assert.Equal(1, cursorModifier.LineIndex);
                 Assert.Equal(0, cursorModifier.ColumnIndex);
                 Assert.Equal(0, cursorModifier.PreferredColumnIndex);
@@ -2344,9 +2339,9 @@ public partial class TextEditorModelModifierTests
         TextEditorCursorModifier cursorModifier;
         {
             var cursor = new TextEditorCursor(
-                LineIndex: 0,
+                LineIndex: 1,
                 ColumnIndex: 0,
-                PreferredColumnIndex: 1,
+                PreferredColumnIndex: 0,
                 IsPrimaryCursor: true,
                 Selection: new TextEditorSelection(
                     AnchorPositionIndex: 0,
@@ -2422,9 +2417,7 @@ public partial class TextEditorModelModifierTests
 
             // Cursor related code-block-grouping:
             {
-                throw new NotImplementedException();
-
-                Assert.Equal(1, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.LineIndex);
                 Assert.Equal(0, cursorModifier.ColumnIndex);
                 Assert.Equal(0, cursorModifier.PreferredColumnIndex);
                 Assert.True(cursorModifier.IsPrimaryCursor);
@@ -2809,7 +2802,7 @@ public partial class TextEditorModelModifierTests
             var cursor = new TextEditorCursor(
                 LineIndex: 0,
                 ColumnIndex: 0,
-                PreferredColumnIndex: 1,
+                PreferredColumnIndex: 0,
                 IsPrimaryCursor: true,
                 Selection: new TextEditorSelection(
                     AnchorPositionIndex: 0,
@@ -2855,9 +2848,7 @@ public partial class TextEditorModelModifierTests
 
             // Cursor related code-block-grouping:
             {
-                throw new NotImplementedException();
-
-                Assert.Equal(1, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.LineIndex);
                 Assert.Equal(0, cursorModifier.ColumnIndex);
                 Assert.Equal(0, cursorModifier.PreferredColumnIndex);
                 Assert.True(cursorModifier.IsPrimaryCursor);
@@ -2924,8 +2915,8 @@ public partial class TextEditorModelModifierTests
                 ),
              */
             var cursor = new TextEditorCursor(
-                LineIndex: 0,
-                ColumnIndex: 0,
+                LineIndex: 1,
+                ColumnIndex: 1,
                 PreferredColumnIndex: 1,
                 IsPrimaryCursor: true,
                 Selection: new TextEditorSelection(
@@ -3011,8 +3002,6 @@ public partial class TextEditorModelModifierTests
 
             // Cursor related code-block-grouping:
             {
-                throw new NotImplementedException();
-
                 Assert.Equal(1, cursorModifier.LineIndex);
                 Assert.Equal(0, cursorModifier.ColumnIndex);
                 Assert.Equal(0, cursorModifier.PreferredColumnIndex);
@@ -3109,9 +3098,9 @@ public partial class TextEditorModelModifierTests
         TextEditorCursorModifier cursorModifier;
         {
             var cursor = new TextEditorCursor(
-                LineIndex: 0,
+                LineIndex: 1,
                 ColumnIndex: 0,
-                PreferredColumnIndex: 1,
+                PreferredColumnIndex: 0,
                 IsPrimaryCursor: true,
                 Selection: new TextEditorSelection(
                     AnchorPositionIndex: 0,
@@ -3187,9 +3176,7 @@ public partial class TextEditorModelModifierTests
 
             // Cursor related code-block-grouping:
             {
-                throw new NotImplementedException();
-
-                Assert.Equal(1, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.LineIndex);
                 Assert.Equal(0, cursorModifier.ColumnIndex);
                 Assert.Equal(0, cursorModifier.PreferredColumnIndex);
                 Assert.True(cursorModifier.IsPrimaryCursor);
