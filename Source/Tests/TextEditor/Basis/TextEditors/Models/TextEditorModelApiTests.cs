@@ -17,7 +17,7 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 /// <summary>
 /// <see cref="TextEditorModelApi"/>
 /// </summary>
-public class ModelApiTests
+public class TextEditorModelApiTests
 {
     /// <summary>
     /// <see cref="TextEditorModelApi(ITextEditorService, IDecorationMapperRegistry, ICompilerServiceRegistry, IBackgroundTaskService, IDispatcher)"/>

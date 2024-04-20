@@ -6,7 +6,7 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 /// <summary>
 /// <see cref="ITextEditorService.TextEditorViewModelApi"/>
 /// </summary>
-public class ViewModelApiTests
+public class TextEditorViewModelApiTests
 {
     /// <summary>
     /// <see cref="ITextEditorService.TextEditorViewModelApi.TextEditorViewModelApi(ITextEditorService, Common.RazorLib.BackgroundTasks.Models.IBackgroundTaskService, Fluxor.IState{TextEditorViewModelState}, Fluxor.IState{TextEditorModelState}, Microsoft.JSInterop.IJSRuntime, Fluxor.IDispatcher)"/>
