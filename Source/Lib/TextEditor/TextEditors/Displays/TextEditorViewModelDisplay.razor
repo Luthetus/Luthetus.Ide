@@ -18,6 +18,8 @@
 
     @if (renderBatch.IsValid && !renderBatch.Options!.UseMonospaceOptimizations)
     {
+        // TODO: Move this inside MeasureCharacterWidthAndRowHeight.razor
+
         <div style="display: flex; position: absolute; visibility: hidden;"
              id="@ProportionalFontMeasurementsContainerElementId">
         </div>
