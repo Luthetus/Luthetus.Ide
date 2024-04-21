@@ -777,18 +777,11 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                                 ? maxValidColumnIndex
                                 : localHorizontalStartingIndex;
 
-                        try
-                        {
-                            var tabsOnSameLineBeforeCursor = modelModifier.GetTabCountOnSameLineBeforeCursor(
-                                lineIndex,
-                                parameterForGetTabsCountOnSameLineBeforeCursor);
+                        var tabsOnSameLineBeforeCursor = modelModifier.GetTabCountOnSameLineBeforeCursor(
+                            lineIndex,
+                            parameterForGetTabsCountOnSameLineBeforeCursor);
 
-                            localHorizontalStartingIndex -= extraWidthPerTabKey * tabsOnSameLineBeforeCursor;
-                        }
-                        catch (LuthetusTextEditorException textEditorException)
-                        {
-                            throw;
-                        }
+                        localHorizontalStartingIndex -= extraWidthPerTabKey * tabsOnSameLineBeforeCursor;
                     }
 
                     if (localHorizontalStartingIndex + localHorizontalTake > line.Count)
@@ -814,7 +807,9 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
                     // Adjust for tab key width
                     {
-                        var maxValidColumnIndex = line.Count - 1;
+                        var maxValidColumnIndex = line.Count > 0
+                            ? line.Count - 1
+                            : 0;
 
                         var parameterForGetTabsCountOnSameLineBeforeCursor =
                             localHorizontalStartingIndex > maxValidColumnIndex
