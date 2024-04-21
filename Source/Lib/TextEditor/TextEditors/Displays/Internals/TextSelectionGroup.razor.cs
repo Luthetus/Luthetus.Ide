@@ -4,6 +4,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using System.Reflection;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -73,6 +74,12 @@ public partial class TextSelectionGroup : ComponentBase
 
         // Tab keys a width of many characters
         {
+            var lineInformation = RenderBatch.Model.GetLineInformation(rowIndex);
+
+            selectionEndingColumnIndex = Math.Min(
+                selectionEndingColumnIndex,
+                lineInformation.LastValidColumnIndex);
+
             var tabsOnSameRowBeforeCursor = RenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
                 rowIndex,
                 selectionEndingColumnIndex);
