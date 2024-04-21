@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
@@ -35,7 +36,7 @@ public class VimSentence
                 VimGrammarKind.Modifier => ContinueFromModifier(keymapArgument, hasTextSelection),
                 VimGrammarKind.TextObject => ContinueFromTextObject(keymapArgument, hasTextSelection),
                 VimGrammarKind.Repeat => ContinueFromRepeat(keymapArgument, hasTextSelection),
-                _ => throw new ApplicationException($"The {nameof(VimGrammarKind)}: {_pendingSentenceList.Last().VimGrammarKind} was not recognized."),
+                _ => throw new LuthetusTextEditorException($"The {nameof(VimGrammarKind)}: {_pendingSentenceList.Last().VimGrammarKind} was not recognized."),
             };
         }
 
@@ -223,7 +224,7 @@ public class VimSentence
                 textEditorKeymapVim, sentenceSnapshotList, indexInSentence, keymapArgument, hasTextSelection, out command),
             VimGrammarKind.Repeat => SyntaxRepeatVim.TryParse(
                 textEditorKeymapVim, sentenceSnapshotList, indexInSentence, keymapArgument, hasTextSelection, out command),
-            _ => throw new ApplicationException($"The {nameof(VimGrammarKind)}: {sentenceSnapshotList.Last().VimGrammarKind} was not recognized."),
+            _ => throw new LuthetusTextEditorException($"The {nameof(VimGrammarKind)}: {sentenceSnapshotList.Last().VimGrammarKind} was not recognized."),
         };
 
         if (success && command is not null)

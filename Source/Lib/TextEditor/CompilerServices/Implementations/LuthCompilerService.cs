@@ -3,6 +3,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 
@@ -180,7 +181,7 @@ public class LuthCompilerService : ILuthCompilerService
                     x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
                 if (presentationModel.PendingCalculation is null)
-                    throw new ApplicationException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
+                    throw new LuthetusTextEditorException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
 
                 if (_compilerServiceOptions.GetLexerFunc is null)
                     return;

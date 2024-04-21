@@ -1,4 +1,6 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+﻿using Luthetus.Common.RazorLib.Exceptions;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.Exceptions;
 
 namespace Luthetus.Ide.RazorLib.Gits.Models;
 
@@ -11,7 +13,7 @@ public record GitFile(IAbsolutePath AbsolutePath, GitDirtyReason GitDirtyReason)
         GitDirtyReason.Added => true,
         GitDirtyReason.Modified => true,
         GitDirtyReason.Deleted => true,
-        _ => throw new ApplicationException(GetUnrecognizedGitDirtyReasonExceptionMessage(GitDirtyReason))
+        _ => throw new LuthetusIdeException(GetUnrecognizedGitDirtyReasonExceptionMessage(GitDirtyReason))
     };
 
     private static string GetUnrecognizedGitDirtyReasonExceptionMessage(GitDirtyReason gitDirtyReason) =>

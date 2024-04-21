@@ -2,6 +2,7 @@
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Exceptions;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
@@ -95,7 +96,7 @@ public class CommonUnitTestHelper
 
     private void ThrowInvalidInterfaceException(Type interfaceType, Type concreteType)
     {
-        throw new ApplicationException(
+        throw new LuthetusCommonException(
             $"The current implementation of {nameof(IStorageService)}" +
             $" is NOT {nameof(DoNothingStorageService)}." +
             $" To avoid side effects in unit tests," +

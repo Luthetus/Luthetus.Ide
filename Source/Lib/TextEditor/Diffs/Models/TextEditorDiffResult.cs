@@ -1,4 +1,5 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
+﻿using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 using System.Text;
 
@@ -160,7 +161,7 @@ public class TextEditorDiffResult
                     targetSourceWeight--;
 
                     if (cell.BeforeCharValue != cell.AfterCharValue)
-                        throw new ApplicationException($"The {nameof(cell.BeforeCharValue)}:'{cell.BeforeCharValue}' was not equal to the {nameof(cell.AfterCharValue)}:'{cell.AfterCharValue}'");
+                        throw new LuthetusTextEditorException($"The {nameof(cell.BeforeCharValue)}:'{cell.BeforeCharValue}' was not equal to the {nameof(cell.AfterCharValue)}:'{cell.AfterCharValue}'");
 
                     lcsBuilder.Append(cell.BeforeCharValue);
 

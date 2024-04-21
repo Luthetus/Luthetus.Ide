@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Exceptions;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 
 namespace Luthetus.Common.RazorLib.WatchWindows.Models;
@@ -77,7 +78,7 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObject>
             }
             else
             {
-                throw new ApplicationException($"Unexpected failed cast to the Type {nameof(IEnumerable)}. {nameof(TreeViewEnumerable)} are to have a {nameof(Item.Item)} which is castable as {nameof(IEnumerable)}");
+                throw new LuthetusCommonException($"Unexpected failed cast to the Type {nameof(IEnumerable)}. {nameof(TreeViewEnumerable)} are to have a {nameof(Item.Item)} which is castable as {nameof(IEnumerable)}");
             }
 
             if (ChildList.Count == 0)

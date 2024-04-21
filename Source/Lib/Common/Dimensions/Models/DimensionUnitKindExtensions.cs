@@ -1,3 +1,5 @@
+using Luthetus.Common.RazorLib.Exceptions;
+
 namespace Luthetus.Common.RazorLib.Dimensions.Models;
 
 public static class DimensionUnitKindExtensions
@@ -14,7 +16,7 @@ public static class DimensionUnitKindExtensions
             DimensionUnitKind.RootCharacterHeight => "rem",
             DimensionUnitKind.CharacterWidth => "ch",
             DimensionUnitKind.CharacterHeight => "em",
-            _ => throw new ApplicationException($"The {nameof(DimensionUnitKind)}: '{dimensionUnitKind}' was not recognized.")
+            _ => throw new LuthetusCommonException($"The {nameof(DimensionUnitKind)}: '{dimensionUnitKind}' was not recognized.")
         };
     }
 }

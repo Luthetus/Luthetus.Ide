@@ -13,6 +13,7 @@ using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.Common.RazorLib.Commands.Models;
 using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
@@ -52,7 +53,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             case VimMode.Command:
                 return TextEditorKeymapVimFacts.CommandLayer.Key;
             default:
-                throw new ApplicationException($"The {nameof(ActiveVimMode)}: '{ActiveVimMode}' was not recognized.");
+                throw new LuthetusTextEditorException($"The {nameof(ActiveVimMode)}: '{ActiveVimMode}' was not recognized.");
         }
     }
 

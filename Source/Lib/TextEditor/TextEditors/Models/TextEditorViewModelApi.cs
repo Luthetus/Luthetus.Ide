@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
@@ -774,11 +775,18 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                                 ? maxValidColumnIndex
                                 : localHorizontalStartingIndex;
 
-                        var tabsOnSameLineBeforeCursor = modelModifier.GetTabCountOnSameLineBeforeCursor(
-                            lineIndex,
-                            parameterForGetTabsCountOnSameLineBeforeCursor);
+                        try
+                        {
+                            var tabsOnSameLineBeforeCursor = modelModifier.GetTabCountOnSameLineBeforeCursor(
+                                lineIndex,
+                                parameterForGetTabsCountOnSameLineBeforeCursor);
 
-                        localHorizontalStartingIndex -= extraWidthPerTabKey * tabsOnSameLineBeforeCursor;
+                            localHorizontalStartingIndex -= extraWidthPerTabKey * tabsOnSameLineBeforeCursor;
+                        }
+                        catch (LuthetusTextEditorException textEditorException)
+                        {
+                            throw;
+                        }
                     }
 
                     if (localHorizontalStartingIndex + localHorizontalTake > line.Count)

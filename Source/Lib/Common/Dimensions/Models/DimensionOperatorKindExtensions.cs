@@ -1,3 +1,5 @@
+using Luthetus.Common.RazorLib.Exceptions;
+
 namespace Luthetus.Common.RazorLib.Dimensions.Models;
 
 public static class DimensionOperatorKindExtensions
@@ -10,7 +12,7 @@ public static class DimensionOperatorKindExtensions
             DimensionOperatorKind.Subtract => "-",
             DimensionOperatorKind.Multiply => "*",
             DimensionOperatorKind.Divide => "/",
-            _ => throw new ApplicationException($"The {nameof(DimensionOperatorKind)}: '{dimensionOperatorKind}' was not recognized.")
+            _ => throw new LuthetusCommonException($"The {nameof(DimensionOperatorKind)}: '{dimensionOperatorKind}' was not recognized.")
         };
     }
 }

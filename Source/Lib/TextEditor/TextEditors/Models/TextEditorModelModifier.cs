@@ -8,6 +8,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
@@ -33,7 +34,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     public TextEditorModelModifier(TextEditorModel model)
     {
         if (model.PartitionSize < 2)
-            throw new ApplicationException($"{nameof(model)}.{nameof(PartitionSize)} must be >= 2");
+            throw new LuthetusTextEditorException($"{nameof(model)}.{nameof(PartitionSize)} must be >= 2");
 
         PartitionSize = model.PartitionSize;
         WasDirty = model.IsDirty;
@@ -315,7 +316,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
             var endOfFile = _lineEndList[^1];
 
             if (endOfFile.LineEndKind != LineEndKind.EndOfFile)
-                throw new ApplicationException($"The text editor model is malformed; the final entry of {nameof(_lineEndList)} must be the {nameof(LineEndKind)}.{nameof(LineEndKind.EndOfFile)}");
+                throw new LuthetusTextEditorException($"The text editor model is malformed; the final entry of {nameof(_lineEndList)} must be the {nameof(LineEndKind)}.{nameof(LineEndKind.EndOfFile)}");
 
             endOfFile.StartPositionIndexInclusive = content.Length;
             endOfFile.EndPositionIndexExclusive = content.Length;
@@ -688,7 +689,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
         DeleteKind deleteKind = DeleteKind.Delete)
     {
         if (columnCount < 0)
-            throw new ApplicationException($"{nameof(columnCount)} < 0");
+            throw new LuthetusTextEditorException($"{nameof(columnCount)} < 0");
 
         SetIsDirtyTrue();
 
@@ -765,7 +766,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
         // If cursor is out of bounds then continue.
         // NOTE: '_charList.Count' is a valid position for the cursor.
         if (positionIndex > _charList.Count || positionIndex < 0)
-            throw new ApplicationException($"{nameof(positionIndex)} > {nameof(_charList)}.{nameof(_charList.Count)} || {nameof(positionIndex)} < 0");
+            throw new LuthetusTextEditorException($"{nameof(positionIndex)} > {nameof(_charList)}.{nameof(_charList.Count)} || {nameof(positionIndex)} < 0");
 
         (int? index, int count) lineEndPositionLazyRemoveRange = (null, 0);
         (int? index, int count) tabPositionLazyRemoveRange = (null, 0);
@@ -998,7 +999,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
         {
             MotionKind.Backspace => new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.BACKSPACE },
             MotionKind.Delete => new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
-            _ => throw new ApplicationException($"The {nameof(MotionKind)}: {motionKind} was not recognized.")
+            _ => throw new LuthetusTextEditorException($"The {nameof(MotionKind)}: {motionKind} was not recognized.")
         };
 
         HandleKeyboardEvent(
@@ -1305,10 +1306,10 @@ public partial class TextEditorModelModifier : ITextEditorModel
         }
 
         if (indexOfPartitionWithAvailableSpace == -1)
-            throw new ApplicationException("if (indexOfPartitionWithAvailableSpace == -1)");
+            throw new LuthetusTextEditorException("if (indexOfPartitionWithAvailableSpace == -1)");
 
         if (relativePositionIndex == -1)
-            throw new ApplicationException("if (relativePositionIndex == -1)");
+            throw new LuthetusTextEditorException("if (relativePositionIndex == -1)");
 
         var inPartition = _partitionList[indexOfPartitionWithAvailableSpace];
         var outPartition = inPartition.Insert(relativePositionIndex, richCharacter.Value, richCharacter.DecorationByte);
@@ -1352,10 +1353,10 @@ public partial class TextEditorModelModifier : ITextEditorModel
         }
 
         if (indexOfPartitionWithAvailableSpace == -1)
-            throw new ApplicationException("if (indexOfPartitionWithAvailableSpace == -1)");
+            throw new LuthetusTextEditorException("if (indexOfPartitionWithAvailableSpace == -1)");
 
         if (relativePositionIndex == -1)
-            throw new ApplicationException("if (relativePositionIndex == -1)");
+            throw new LuthetusTextEditorException("if (relativePositionIndex == -1)");
 
         var inPartition = _partitionList[indexOfPartitionWithAvailableSpace];
         var outPartition = inPartition.SetItem(relativePositionIndex, character, decorationByte);
@@ -1403,10 +1404,10 @@ public partial class TextEditorModelModifier : ITextEditorModel
         }
 
         if (indexOfPartitionWithContent == -1)
-            throw new ApplicationException("if (indexOfPartitionWithContent == -1)");
+            throw new LuthetusTextEditorException("if (indexOfPartitionWithContent == -1)");
 
         if (relativePositionIndex == -1)
-            throw new ApplicationException("if (relativePositionIndex == -1)");
+            throw new LuthetusTextEditorException("if (relativePositionIndex == -1)");
 
         var inPartition = _partitionList[indexOfPartitionWithContent];
         var outPartition = inPartition.RemoveAt(relativePositionIndex);
@@ -1489,10 +1490,10 @@ public partial class TextEditorModelModifier : ITextEditorModel
             }
 
             if (indexOfPartitionWithAvailableSpace == -1)
-                throw new ApplicationException("if (indexOfPartitionWithAvailableSpace == -1)");
+                throw new LuthetusTextEditorException("if (indexOfPartitionWithAvailableSpace == -1)");
 
             if (relativePositionIndex == -1)
-                throw new ApplicationException("if (relativePositionIndex == -1)");
+                throw new LuthetusTextEditorException("if (relativePositionIndex == -1)");
 
             partition = _partitionList[indexOfPartitionWithAvailableSpace];
             var partitionAvailableSpace = PartitionSize - partition.Count;

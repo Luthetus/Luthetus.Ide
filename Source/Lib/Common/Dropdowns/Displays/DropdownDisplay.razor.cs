@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Exceptions;
 
 namespace Luthetus.Common.RazorLib.Dropdowns.Displays;
 
@@ -36,7 +37,7 @@ public partial class DropdownDisplay : FluxorComponent
         DropdownPositionKind.Vertical => "position: absolute; left: 0; top: 100%;",
         DropdownPositionKind.Horizontal => "position: absolute; left: 100%; top: 0;",
         DropdownPositionKind.Unset => string.Empty,
-        _ => throw new ApplicationException($"The {nameof(DropdownPositionKind)}: {DropdownPositionKind} was unrecognized.")
+        _ => throw new LuthetusCommonException($"The {nameof(DropdownPositionKind)}: {DropdownPositionKind} was unrecognized.")
     };
 
     /// <summary>

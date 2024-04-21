@@ -7,6 +7,8 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
+using Luthetus.Common.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.CompilerServices.Lang.Css.Css.SyntaxActors;
 
@@ -145,7 +147,7 @@ public class CssSyntaxTree
                     childDecorationKind = CssDecorationKind.PropertyValue;
                     break;
                 default:
-                    throw new ApplicationException($"The {nameof(CssSyntaxKind)} of" +
+                    throw new LuthetusTextEditorException($"The {nameof(CssSyntaxKind)} of" +
                                                    $" {expectedStyleBlockChild} was unexpected.");
             }
 
@@ -190,7 +192,7 @@ public class CssSyntaxTree
                             ImmutableArray<ICssSyntax>.Empty);
                         break;
                     default:
-                        throw new ApplicationException($"The {nameof(CssSyntaxKind)} of" +
+                        throw new LuthetusTextEditorException($"The {nameof(CssSyntaxKind)} of" +
                                                        $" {expectedStyleBlockChild} was unexpected.");
                 }
 
@@ -214,7 +216,7 @@ public class CssSyntaxTree
                         expectedStyleBlockChild = CssSyntaxKind.PropertyName;
                         break;
                     default:
-                        throw new ApplicationException($"The {nameof(CssSyntaxKind)} of" +
+                        throw new LuthetusTextEditorException($"The {nameof(CssSyntaxKind)} of" +
                                                        $" {expectedStyleBlockChild} was unexpected.");
                 }
             }

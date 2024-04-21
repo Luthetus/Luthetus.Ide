@@ -1,6 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 using System.Text;
@@ -51,7 +52,7 @@ public class StringWalker
     public char PeekCharacter(int offset)
     {
         if (offset <= -1)
-            throw new ApplicationException($"{nameof(offset)} must be > -1");
+            throw new LuthetusTextEditorException($"{nameof(offset)} must be > -1");
 
         if (PositionIndex + offset >= SourceText.Length)
             return ParserFacts.END_OF_FILE;

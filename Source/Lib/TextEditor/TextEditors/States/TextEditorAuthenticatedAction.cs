@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 
@@ -24,7 +25,7 @@ public record TextEditorAuthenticatedAction
     public TextEditorAuthenticatedAction(Key<TextEditorAuthenticatedAction> authenticatedActionKey)
     {
         if (authenticatedActionKey != TextEditorService.AuthenticatedActionKey)
-            throw new ApplicationException($"Only edits made via the {nameof(ITextEditorService)}.{nameof(ITextEditorService.Post)}(...) method may modify state.");
+            throw new LuthetusTextEditorException($"Only edits made via the {nameof(ITextEditorService)}.{nameof(ITextEditorService.Post)}(...) method may modify state.");
         AuthenticatedActionKey = authenticatedActionKey;
     }
 

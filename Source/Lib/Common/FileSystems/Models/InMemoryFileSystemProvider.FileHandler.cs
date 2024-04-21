@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Exceptions;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using System.Text;
 
@@ -186,7 +187,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                     !f.IsDirectory);
 
                 if (indexOfSource == -1)
-                    throw new ApplicationException($"Source file: {sourceAbsolutePathString} was not found.");
+                    throw new LuthetusCommonException($"Source file: {sourceAbsolutePathString} was not found.");
             }
 
             // Destination

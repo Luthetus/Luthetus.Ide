@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.Exceptions;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.Common.RazorLib.Keyboards.Models;
@@ -190,7 +191,7 @@ public static class KeyboardKeyFacts
             case WhitespaceCodes.SPACE_CODE:
                 return ' ';
             default:
-                throw new ApplicationException($"Unrecognized Whitespace code of: {code}");
+                throw new LuthetusCommonException($"Unrecognized Whitespace code of: {code}");
         }
     }
 

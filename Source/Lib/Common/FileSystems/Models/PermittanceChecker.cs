@@ -1,4 +1,6 @@
-﻿namespace Luthetus.Common.RazorLib.FileSystems.Models;
+﻿using Luthetus.Common.RazorLib.Exceptions;
+
+namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
 public static class PermittanceChecker
 {
@@ -63,7 +65,7 @@ public static class PermittanceChecker
         return false;
     }
 
-    private static ApplicationException NotDeletionPermittedExceptionFactory(
+    private static LuthetusCommonException NotDeletionPermittedExceptionFactory(
         string path,
         bool isDirectory)
     {
@@ -71,7 +73,7 @@ public static class PermittanceChecker
             ? "directory"
             : "file";
 
-        return new ApplicationException(
+        return new LuthetusCommonException(
             $"{ERROR_PREFIX} The {entryTypeName} with path '{path}' was not permitted to be deleted.");
     }
 }

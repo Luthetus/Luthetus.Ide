@@ -9,6 +9,7 @@ using Microsoft.JSInterop;
 using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -78,7 +79,7 @@ public partial class FindOverlayDisplay : ComponentBase
                             x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
                         if (presentationModel.PendingCalculation is null)
-                            throw new ApplicationException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
+                            throw new LuthetusTextEditorException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
 
                         modelModifier.CompletePendingCalculatePresentationModel(
                             FindOverlayPresentationFacts.PresentationKey,
@@ -152,7 +153,7 @@ public partial class FindOverlayDisplay : ComponentBase
                         x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
                     if (presentationModel.PendingCalculation is null)
-                        throw new ApplicationException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
+                        throw new LuthetusTextEditorException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
 
                     modelModifier.CompletePendingCalculatePresentationModel(
                         FindOverlayPresentationFacts.PresentationKey,

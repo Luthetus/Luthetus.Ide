@@ -1,6 +1,7 @@
 ﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -579,7 +580,7 @@ public static class TextEditorModelExtensionMethods
     public static List<RichCharacter> GetRichCharacters(this ITextEditorModel model, int skip, int take)
     {
         if (skip < 0)
-            throw new ApplicationException($"{nameof(skip)} < 0");
+            throw new LuthetusTextEditorException($"{nameof(skip)} < 0");
 
         var richCharacterList = new List<RichCharacter>();
 
@@ -603,34 +604,34 @@ public static class TextEditorModelExtensionMethods
     public static void AssertColumnIndex(this ITextEditorModel model, LineInformation line, int columnIndex)
     {
         if (columnIndex < 0)
-            throw new ApplicationException($"{nameof(columnIndex)} < 0");
+            throw new LuthetusTextEditorException($"'{nameof(columnIndex)}={columnIndex}' < 0");
         
         if (columnIndex > line.LastValidColumnIndex)
-            throw new ApplicationException($"{nameof(columnIndex)} > {nameof(line)}.{nameof(line.LastValidColumnIndex)}");
+            throw new LuthetusTextEditorException($"'{nameof(columnIndex)}={columnIndex}' > {nameof(line)}.{nameof(line.LastValidColumnIndex)}");
     }
     
     public static void AssertLineIndex(this ITextEditorModel model, int lineIndex)
     {
         if (lineIndex < 0)
-            throw new ApplicationException($"{nameof(lineIndex)} < 0");
+            throw new LuthetusTextEditorException($"'{nameof(lineIndex)}={lineIndex}' < 0");
         
         if (lineIndex >= model.LineCount)
-            throw new ApplicationException($"{nameof(lineIndex)} >= model.LineCount");
+            throw new LuthetusTextEditorException($"'{nameof(lineIndex)}={lineIndex}' >= {nameof(model)}.{nameof(model.LineCount)}");
     }
 
     public static void AssertPositionIndex(this ITextEditorModel model, int positionIndex)
     {
         if (positionIndex < 0)
-            throw new ApplicationException($"{nameof(positionIndex)} < 0");
+            throw new LuthetusTextEditorException($"'{nameof(positionIndex)}={positionIndex}' < 0");
         
         // model.DocumentLength is a valid position for the cursor to be at.
         if (positionIndex > model.DocumentLength)
-            throw new ApplicationException($"{nameof(positionIndex)} > {nameof(model)}.{nameof(model.DocumentLength)}");
+            throw new LuthetusTextEditorException($"'{nameof(positionIndex)}={positionIndex}' > {nameof(model)}.{nameof(model.DocumentLength)}");
     }
     
     public static void AssertCount(this ITextEditorModel model, int count)
     {
         if (count < 0)
-            throw new ApplicationException($"{nameof(count)} < 0");
+            throw new LuthetusTextEditorException($"'{nameof(count)}={count}' < 0");
     }
 }

@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Notifications.States;
+using Luthetus.Ide.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Microsoft.AspNetCore.Components;
 using System.IO.Compression;
@@ -140,7 +141,7 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
             }
             else
             {
-                throw new ApplicationException(response.ToString());
+                throw new LuthetusIdeException(response.ToString());
             }
         }
         catch (Exception exception)

@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Ide.RazorLib.Exceptions;
 using Luthetus.Ide.RazorLib.InputFiles.States;
 using Microsoft.AspNetCore.Components;
 
@@ -105,9 +106,9 @@ public partial class InputFileTopNavBar : ComponentBase
             if (!await FileSystemProvider.Directory.ExistsAsync(address))
             {
                 if (await FileSystemProvider.File.ExistsAsync(address))
-                    throw new ApplicationException($"Address provided was a file. Provide a directory instead. {address}");
+                    throw new LuthetusIdeException($"Address provided was a file. Provide a directory instead. {address}");
 
-                throw new ApplicationException($"Address provided does not exist. {address}");
+                throw new LuthetusIdeException($"Address provided does not exist. {address}");
             }
 
             var absolutePath = EnvironmentProvider.AbsolutePathFactory(address, true);

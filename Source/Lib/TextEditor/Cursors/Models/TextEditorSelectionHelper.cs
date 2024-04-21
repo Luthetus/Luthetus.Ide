@@ -1,4 +1,5 @@
-﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+﻿using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Cursors.Models;
 
@@ -114,7 +115,7 @@ public static class TextEditorSelectionHelper
     {
         if (anchorPositionIndex is null)
         {
-            throw new ApplicationException(
+            throw new LuthetusTextEditorException(
                 $"{nameof(anchorPositionIndex)} was null.");
         }
 
