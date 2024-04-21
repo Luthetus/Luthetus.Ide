@@ -768,7 +768,9 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
                     // Adjust for tab key width
                     {
-                        var maxValidColumnIndex = line.Count - 1;
+                        var maxValidColumnIndex = line.Count > 0
+                            ? line.Count - 1
+                            : 0;
 
                         var parameterForGetTabsCountOnSameLineBeforeCursor =
                             localHorizontalStartingIndex > maxValidColumnIndex
