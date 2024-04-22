@@ -16,6 +16,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
+using System.Text;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -446,7 +447,9 @@ public partial class TextEditorModelModifier : ITextEditorModel
             // Track metadata with the cursorModifier itself
             //
             // Metadata must be done prior to 'InsertValue'
-            InsertMetadata(value, cursorModifier, useLineEndKindPreference, cancellationToken);
+            //
+            // 'value' is replaced by the original with any line endings changed (based on 'useLineEndKindPreference').
+            value = InsertMetadata(value, cursorModifier, useLineEndKindPreference, cancellationToken);
 
             // Now the text still needs to be inserted.
             // The cursorModifier is invalid, because the metadata step moved its position.
@@ -455,7 +458,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
         }
     }
 
-    private void InsertMetadata(
+    private string InsertMetadata(
         string value,
         TextEditorCursorModifier cursorModifier,
         bool useLineEndKindPreference,
@@ -475,11 +478,13 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
         bool isTab = false;
         bool isCarriageReturn = false;
-        bool isLinefeed = false;
+        bool isLineFeed = false;
         bool isCarriageReturnLineFeed = false;
 
         (int? index, List<LineEnd> localLineEndList) lineEndPositionLazyInsertRange = (null, new());
         (int? index, List<int> localTabPositionList) tabPositionLazyInsertRange = (null, new());
+
+        var lineEndingsChangedValueBuilder = new StringBuilder();
 
         for (int charIndex = 0; charIndex < value.Length; charIndex++)
         {
@@ -487,7 +492,8 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
             isTab = charValue == '\t';
             isCarriageReturn = charValue == '\r';
-            isLinefeed = charValue == '\n';
+            isLineFeed = charValue == '\n';
+            // The CRLF boolean must be checked prior to CR, as one is a "substring" of the other
             isCarriageReturnLineFeed = isCarriageReturn && charIndex != value.Length - 1 && value[1 + charIndex] == '\n';
 
             {
@@ -502,8 +508,13 @@ public partial class TextEditorModelModifier : ITextEditorModel
                 //       (2024-04-22)
             }
 
-            if (isLinefeed || isCarriageReturn || isCarriageReturnLineFeed)
+            if (isLineFeed || isCarriageReturn || isCarriageReturnLineFeed)
             {
+                // Regardless of which line ending is used, since the source text
+                // is CRLF, one must increment the for loop one character further.
+                if (isCarriageReturnLineFeed)
+                    charIndex++;
+
                 LineEndKind lineEndKind;
                 
                 if (useLineEndKindPreference)
@@ -516,24 +527,45 @@ public partial class TextEditorModelModifier : ITextEditorModel
                         // CRLF must be checked prior to CR, as one is a "substring" of the other.
                         isCarriageReturnLineFeed ? LineEndKind.CarriageReturnLineFeed :
                         isCarriageReturn ? LineEndKind.CarriageReturn :
-                        isLinefeed ? LineEndKind.LineFeed :
+                        isLineFeed ? LineEndKind.LineFeed :
                         LineEndKindPreference;
                 }
-                
+
+                // The LineEndKindPreference can invalidate the booleans
+                //
+                // Additionally, by clearing all the booleans and then setting only one of them,
+                //
+                //     -"CRLF must be checked prior to CR, as one is a "substring" of the other"
+                //
+                // can be avoided.
+                {
+                    isCarriageReturnLineFeed = false;
+                    isCarriageReturn = false;
+                    isLineFeed = false;
+
+                    if (lineEndKind == LineEndKind.CarriageReturnLineFeed)
+                        isCarriageReturnLineFeed = true;
+                    else if (lineEndKind == LineEndKind.CarriageReturn)
+                        isCarriageReturn = true;
+                    else if (lineEndKind == LineEndKind.LineFeed)
+                        isLineFeed = true;
+                }
+
                 lineEndPositionLazyInsertRange.index ??= cursorModifier.LineIndex;
 
+                var lineEndCharacters = lineEndKind.AsCharacters();
+
                 lineEndPositionLazyInsertRange.localLineEndList.Add(new LineEnd(
-                    initialCursorPositionIndex + charIndex,
-                    lineEndKind.AsCharacters().Length + initialCursorPositionIndex + charIndex,
+                    initialCursorPositionIndex + lineEndingsChangedValueBuilder.Length,
+                    lineEndCharacters.Length + initialCursorPositionIndex + lineEndingsChangedValueBuilder.Length,
                     lineEndKind));
+
+                lineEndingsChangedValueBuilder.Append(lineEndCharacters);
 
                 MutateLineEndKindCount(lineEndKind, 1);
 
                 cursorModifier.LineIndex++;
                 cursorModifier.SetColumnIndexAndPreferred(0);
-
-                if (isCarriageReturnLineFeed)
-                    charIndex++;
             }
             else
             {
@@ -547,9 +579,10 @@ public partial class TextEditorModelModifier : ITextEditorModel
                             tabPositionLazyInsertRange.index = _tabKeyPositionsList.Count;
                     }
 
-                    tabPositionLazyInsertRange.localTabPositionList.Add(initialCursorPositionIndex + charIndex);
+                    tabPositionLazyInsertRange.localTabPositionList.Add(initialCursorPositionIndex + lineEndingsChangedValueBuilder.Length);
                 }
 
+                lineEndingsChangedValueBuilder.Append(charValue);
                 cursorModifier.SetColumnIndexAndPreferred(1 + cursorModifier.ColumnIndex);
             }
         }
@@ -559,8 +592,8 @@ public partial class TextEditorModelModifier : ITextEditorModel
             for (var i = initialCursorLineIndex; i < LineEndList.Count; i++)
             {
                 var rowEndingTuple = LineEndList[i];
-                rowEndingTuple.StartPositionIndexInclusive += value.Length;
-                rowEndingTuple.EndPositionIndexExclusive += value.Length;
+                rowEndingTuple.StartPositionIndexInclusive += lineEndingsChangedValueBuilder.Length;
+                rowEndingTuple.EndPositionIndexExclusive += lineEndingsChangedValueBuilder.Length;
             }
         }
 
@@ -572,7 +605,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
             {
                 for (var i = firstTabKeyPositionIndexToModify; i < TabKeyPositionList.Count; i++)
                 {
-                    TabKeyPositionList[i] += value.Length;
+                    TabKeyPositionList[i] += lineEndingsChangedValueBuilder.Length;
                 }
             }
         }
@@ -581,7 +614,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
         {
             var textSpanForInsertion = new TextEditorTextSpan(
                 initialCursorPositionIndex,
-                initialCursorPositionIndex + value.Length,
+                initialCursorPositionIndex + lineEndingsChangedValueBuilder.Length,
                 0,
                 new(string.Empty),
                 string.Empty);
@@ -629,6 +662,8 @@ public partial class TextEditorModelModifier : ITextEditorModel
                     tabPositionLazyInsertRange.localTabPositionList);
             }
         }
+
+        return lineEndingsChangedValueBuilder.ToString();
     }
 
     private void InsertValue(
