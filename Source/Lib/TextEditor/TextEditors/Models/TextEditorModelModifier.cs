@@ -383,13 +383,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
         }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="value"></param>
-    /// <param name="cursorModifierBag"></param>
-    /// <param name="cancellationToken"></param>
-    /// <param name="useLineEndingPreference">
+    /// <param name="useLineEndKindPreference">
     /// If false, then the string will be inserted as is.
     /// If true, then the string will have its line endings replaced with the <see cref="LineEndKindPreference"/>
     /// </param>
@@ -510,10 +504,22 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
             if (isLinefeed || isCarriageReturn || isCarriageReturnLineFeed)
             {
+                LineEndKind lineEndKind;
                 
-
-                var lineEndKind = LineEndKindPreference;
-
+                if (useLineEndKindPreference)
+                {
+                    lineEndKind = LineEndKindPreference;
+                }
+                else
+                {
+                    lineEndKind =
+                        // CRLF must be checked prior to CR, as one is a "substring" of the other.
+                        isCarriageReturnLineFeed ? LineEndKind.CarriageReturnLineFeed :
+                        isCarriageReturn ? LineEndKind.CarriageReturn :
+                        isLinefeed ? LineEndKind.LineFeed :
+                        LineEndKindPreference;
+                }
+                
                 lineEndPositionLazyInsertRange.index ??= cursorModifier.LineIndex;
 
                 lineEndPositionLazyInsertRange.localLineEndList.Add(new LineEnd(
@@ -819,7 +825,10 @@ public partial class TextEditorModelModifier : ITextEditorModel
                     // A delete is a contiguous operation. Therefore, all that is needed to update the LineEndList
                     // is a starting index, and a count.
                     var indexLineEnd = _lineEndList.FindIndex(
-                        x => x.StartPositionIndexInclusive == toDeletePositionIndex);
+                        // Check for '\n' or '\r'
+                        x => x.EndPositionIndexExclusive == toDeletePositionIndex + 1 ||
+                        // Check for "\r\n"
+                        x.EndPositionIndexExclusive == toDeletePositionIndex + 2);
 
                     var lineEnd = LineEndList[indexLineEnd];
 

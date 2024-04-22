@@ -194,7 +194,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
 
         // Insert 2 LineFeed characters.
         var insertionString = "\r\r";
-        modelModifier.Insert(insertionString, cursorModifierBag, cancellationToken: CancellationToken.None);
+        modelModifier.Insert(insertionString, cursorModifierBag, useLineEndKindPreference: false, cancellationToken: CancellationToken.None);
 
         // Assert insertion
         {
@@ -271,7 +271,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
 
         // Insert 2 LineFeed characters.
         var insertionString = "\r\n\r\n";
-        modelModifier.Insert(insertionString, cursorModifierBag, cancellationToken: CancellationToken.None);
+        modelModifier.Insert(insertionString, cursorModifierBag, useLineEndKindPreference: false, cancellationToken: CancellationToken.None);
 
         // Assert insertion
         {

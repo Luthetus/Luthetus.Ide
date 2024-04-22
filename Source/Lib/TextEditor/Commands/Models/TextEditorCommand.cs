@@ -44,7 +44,7 @@ public class TextEditorCommand : CommandWithType<TextEditorCommandArgs>
     /// </summary>
     public Func<ICommandArgs, TextEditorEdit>? TextEditorEditFactory { get; set; }
 
-    public static ApplicationException ThrowOtherTextEditKindIdentifierWasExpectedException(TextEditKind textEditKind)
+    public static LuthetusTextEditorException ThrowOtherTextEditKindIdentifierWasExpectedException(TextEditKind textEditKind)
     {
         throw new LuthetusTextEditorException(
             $"{nameof(textEditKind)} was passed in as {TextEditKind.Other}" +

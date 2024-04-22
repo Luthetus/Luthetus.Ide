@@ -5,6 +5,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModelModifier;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
@@ -33,7 +34,7 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<ApplicationException>(() =>
+        Assert.Throws<LuthetusTextEditorException>(() =>
         {
             // Do something
             TextEditorModel outModel;
@@ -247,7 +248,7 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<ApplicationException>(() =>
+        Assert.Throws<LuthetusTextEditorException>(() =>
         {
             // Do something
             TextEditorModel outModel;
@@ -295,7 +296,7 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<ApplicationException>(() =>
+        Assert.Throws<LuthetusTextEditorException>(() =>
         {
             // Do something
             TextEditorModel outModel;
@@ -510,7 +511,7 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<ApplicationException>(() =>
+        Assert.Throws<LuthetusTextEditorException>(() =>
         {
             // Do something
             TextEditorModel outModel;
@@ -800,7 +801,7 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<ApplicationException>(() =>
+        Assert.Throws<LuthetusTextEditorException>(() =>
         {
             // Do something
             TextEditorModel outModel;
@@ -1241,7 +1242,7 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<ApplicationException>(() =>
+        Assert.Throws<LuthetusTextEditorException>(() =>
         {
             // Do something
             TextEditorModel outModel;
@@ -1531,7 +1532,7 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<ApplicationException>(() =>
+        Assert.Throws<LuthetusTextEditorException>(() =>
         {
             // Do something
             TextEditorModel outModel;
@@ -1982,7 +1983,7 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<ApplicationException>(() =>
+        Assert.Throws<LuthetusTextEditorException>(() =>
         {
             // Do something
             TextEditorModel outModel;
@@ -2280,7 +2281,7 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<ApplicationException>(() =>
+        Assert.Throws<LuthetusTextEditorException>(() =>
         {
             // Do something
             TextEditorModel outModel;
@@ -2737,7 +2738,7 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<ApplicationException>(() =>
+        Assert.Throws<LuthetusTextEditorException>(() =>
         {
             // Do something
             TextEditorModel outModel;
@@ -3037,7 +3038,7 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<ApplicationException>(() =>
+        Assert.Throws<LuthetusTextEditorException>(() =>
         {
             // Do something
             TextEditorModel outModel;
@@ -3494,7 +3495,7 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<ApplicationException>(() =>
+        Assert.Throws<LuthetusTextEditorException>(() =>
         {
             // Do something
             TextEditorModel outModel;
