@@ -162,7 +162,7 @@
                         @foreach (var rowEndingKind in LineEndKind.LineFeed.GetRowEndingsUserAllowedToUse())
                         {
                             <option value="@rowEndingKind.ToString()"
-                                    selected="@(model.UsingLineEndKind == rowEndingKind)">
+                                    selected="@(model.LineEndKindPreference == rowEndingKind)">
                                 @rowEndingKind.AsFriendlyName()
                             </option>
                         }

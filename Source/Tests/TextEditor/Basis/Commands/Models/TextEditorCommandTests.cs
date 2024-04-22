@@ -1,6 +1,7 @@
 ﻿using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.Tests.Basis.Commands.Models;
 
@@ -46,7 +47,7 @@ public class TextEditorCommandTests
         Assert.Equal(commandFunc, command.CommandFunc);
 
         // ThrowOtherTextEditKindIdentifierWasExpectedException(TextEditKind)
-        Assert.Throws<ApplicationException>(() =>
+        Assert.Throws<LuthetusTextEditorException>(() =>
         {
             var command = new TextEditorCommand(
                 displayName,

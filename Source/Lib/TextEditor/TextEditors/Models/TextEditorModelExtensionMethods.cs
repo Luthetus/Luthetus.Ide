@@ -624,7 +624,7 @@ public static class TextEditorModelExtensionMethods
         if (positionIndex < 0)
             throw new LuthetusTextEditorException($"'{nameof(positionIndex)}={positionIndex}' < 0");
         
-        // model.DocumentLength is a valid position for the cursor to be at.
+        // NOTE: model.DocumentLength is a valid position for the cursor to be at.
         if (positionIndex > model.DocumentLength)
             throw new LuthetusTextEditorException($"'{nameof(positionIndex)}={positionIndex}' > {nameof(model)}.{nameof(model.DocumentLength)}");
     }

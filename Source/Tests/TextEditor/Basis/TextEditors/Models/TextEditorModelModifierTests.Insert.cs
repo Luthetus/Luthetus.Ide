@@ -51,7 +51,7 @@ public partial class TextEditorModelModifierTests
                     ";" +    // Punctuation
                     " ",     // Space
                     cursorModifierBag,
-                    CancellationToken.None
+                    cancellationToken: CancellationToken.None
                 );
             outModel = modelModifier.ToModel();
         }
@@ -212,7 +212,7 @@ public partial class TextEditorModelModifierTests
                     ";" +    // Punctuation
                     " ",     // Space
                     cursorModifierBag,
-                    CancellationToken.None
+                    cancellationToken: CancellationToken.None
                 );
             outModel = modelModifier.ToModel();
         }
@@ -378,7 +378,7 @@ public partial class TextEditorModelModifierTests
                         ";" +    // Punctuation
                         " ",     // Space
                         cursorModifierBag,
-                        CancellationToken.None
+                        cancellationToken: CancellationToken.None
                     );
                 outModel = modelModifier.ToModel();
             }
@@ -435,7 +435,7 @@ public partial class TextEditorModelModifierTests
                         ";" +    // Punctuation
                         " ",     // Space
                         cursorModifierBag,
-                        CancellationToken.None
+                        cancellationToken: CancellationToken.None
                     );
                 outModel = modelModifier.ToModel();
             }
@@ -489,7 +489,7 @@ public partial class TextEditorModelModifierTests
                     // to see what happens.
                     value: null!,
                     cursorModifierBag,
-                    CancellationToken.None
+                    cancellationToken: CancellationToken.None
                 );
                 outModel = modelModifier.ToModel();
             }
@@ -535,7 +535,7 @@ public partial class TextEditorModelModifierTests
             modelModifier.Insert(
                     value: string.Empty,
                     cursorModifierBag,
-                    CancellationToken.None
+                    cancellationToken: CancellationToken.None
                 );
             outModel = modelModifier.ToModel();
         }
@@ -677,7 +677,7 @@ public partial class TextEditorModelModifierTests
                     ";" +    // Punctuation
                     " ",     // Space
                     cursorModifierBag,
-                    CancellationToken.None
+                    cancellationToken: CancellationToken.None
                 );
             outModel = modelModifier.ToModel();
         }
@@ -905,7 +905,7 @@ public partial class TextEditorModelModifierTests
                     ";" +    // Punctuation
                     " ",     // Space
                     cursorModifierBag,
-                    CancellationToken.None
+                    cancellationToken: CancellationToken.None
                 );
             outModel = modelModifier.ToModel();
         }
@@ -1132,7 +1132,7 @@ public partial class TextEditorModelModifierTests
                     ";" +    // Punctuation
                     " ",     // Space
                     cursorModifierBag,
-                    CancellationToken.None
+                    cancellationToken: CancellationToken.None
                 );
             outModel = modelModifier.ToModel();
         }
@@ -1348,7 +1348,7 @@ public partial class TextEditorModelModifierTests
                         ";" +    // Punctuation
                         " ",     // Space
                         cursorModifierBag,
-                        CancellationToken.None
+                        cancellationToken: CancellationToken.None
                     );
                 outModel = modelModifier.ToModel();
             }
@@ -1416,7 +1416,7 @@ public partial class TextEditorModelModifierTests
                         ";" +    // Punctuation
                         " ",     // Space
                         cursorModifierBag,
-                        CancellationToken.None
+                        cancellationToken: CancellationToken.None
                     );
                 outModel = modelModifier.ToModel();
             }
@@ -1481,7 +1481,7 @@ public partial class TextEditorModelModifierTests
                     // to see what happens.
                     value: null!,
                     cursorModifierBag,
-                    CancellationToken.None
+                    cancellationToken: CancellationToken.None
                 );
                 outModel = modelModifier.ToModel();
             }
@@ -1538,7 +1538,7 @@ public partial class TextEditorModelModifierTests
             modelModifier.Insert(
                     value: string.Empty,
                     cursorModifierBag,
-                    CancellationToken.None
+                    cancellationToken: CancellationToken.None
                 );
             outModel = modelModifier.ToModel();
         }

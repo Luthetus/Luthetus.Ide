@@ -49,7 +49,7 @@ public class TextEditorModelTests
     /// <see cref="TextEditorModel.PresentationModelList"/>
     /// <see cref="TextEditorModel.TabKeyPositionList"/>
     /// <see cref="TextEditorModel.OnlyLineEndKind"/>
-    /// <see cref="TextEditorModel.UsingLineEndKind"/>
+    /// <see cref="TextEditorModel.LineEndKindPreference"/>
     /// <see cref="TextEditorModel.ResourceUri"/>
     /// <see cref="TextEditorModel.ResourceLastWriteTime"/>
     /// <see cref="TextEditorModel.FileExtension"/>

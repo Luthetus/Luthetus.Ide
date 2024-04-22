@@ -94,7 +94,7 @@ public class TextEditorCommandDefaultFunctions
                 return;
 
             var clipboard = await commandArgs.ClipboardService.ReadClipboard().ConfigureAwait(false);
-            modelModifier.Insert(clipboard, cursorModifierBag, CancellationToken.None);
+            modelModifier.Insert(clipboard, cursorModifierBag, cancellationToken: CancellationToken.None);
         };
     }
 
@@ -316,7 +316,7 @@ public class TextEditorCommandDefaultFunctions
             modelModifier.Insert(
                 selectedText,
                 new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier>() { new(cursorForInsertion) }),
-                CancellationToken.None);
+                cancellationToken: CancellationToken.None);
 
             return Task.CompletedTask;
         };
@@ -357,7 +357,7 @@ public class TextEditorCommandDefaultFunctions
                 modelModifier.Insert(
                     KeyboardKeyFacts.WhitespaceCharacters.TAB.ToString(),
                     insertionCursorModifierBag,
-                    CancellationToken.None);
+                    cancellationToken: CancellationToken.None);
             }
 
             var lowerBoundPositionIndexChange = 1;
@@ -514,7 +514,7 @@ public class TextEditorCommandDefaultFunctions
             primaryCursorModifier.LineIndex = primaryCursorModifier.LineIndex;
             primaryCursorModifier.ColumnIndex = lengthOfRow;
 
-            modelModifier.Insert("\n", cursorModifierBag, CancellationToken.None);
+            modelModifier.Insert("\n", cursorModifierBag, cancellationToken: CancellationToken.None);
             return Task.CompletedTask;
         };
     }
@@ -537,7 +537,7 @@ public class TextEditorCommandDefaultFunctions
             primaryCursorModifier.LineIndex = primaryCursorModifier.LineIndex;
             primaryCursorModifier.ColumnIndex = 0;
 
-            modelModifier.Insert("\n", cursorModifierBag, CancellationToken.None);
+            modelModifier.Insert("\n", cursorModifierBag, cancellationToken: CancellationToken.None);
 
             if (primaryCursorModifier.LineIndex > 1)
             {

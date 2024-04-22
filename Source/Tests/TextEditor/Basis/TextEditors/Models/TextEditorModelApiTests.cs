@@ -91,7 +91,7 @@ public class TextEditorModelApiTests
         var rowEndingKind = LineEndKind.CarriageReturn;
 
         // Assert the current values are different from that which will be set.
-        Assert.NotEqual(rowEndingKind, inModel.UsingLineEndKind);
+        Assert.NotEqual(rowEndingKind, inModel.LineEndKindPreference);
 
         textEditorService.Post(
             nameof(textEditorService.ModelApi.SetUsingLineEndKindFactory),
@@ -101,7 +101,7 @@ public class TextEditorModelApiTests
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
 
         // Assert the value is now set
-        Assert.Equal(rowEndingKind, outModel!.UsingLineEndKind);
+        Assert.Equal(rowEndingKind, outModel!.LineEndKindPreference);
     }
 
     /// <summary>

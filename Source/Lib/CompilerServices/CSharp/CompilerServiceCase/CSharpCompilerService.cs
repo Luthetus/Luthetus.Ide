@@ -158,7 +158,7 @@ public sealed class CSharpCompilerService : LuthCompilerService
                                 modelModifier.Insert(
                                     textToInsert,
                                     cursorModifierBag,
-                                    CancellationToken.None);
+                                    cancellationToken: CancellationToken.None);
 
                                 foreach (var unsafeViewModel in viewModelList)
                                 {

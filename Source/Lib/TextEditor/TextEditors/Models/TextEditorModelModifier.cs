@@ -55,7 +55,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     public IList<TextEditorPresentationModel> PresentationModelList => _presentationModelsList is null ? _textEditorModel.PresentationModelList : _presentationModelsList;
     public IList<int> TabKeyPositionList => _tabKeyPositionsList is null ? _textEditorModel.TabKeyPositionList : _tabKeyPositionsList;
     public LineEndKind? OnlyLineEndKind => _onlyLineEndKindWasModified ? _onlyLineEndKind : _textEditorModel.OnlyLineEndKind;
-    public LineEndKind UsingLineEndKind => _usingLineEndKind ?? _textEditorModel.UsingLineEndKind;
+    public LineEndKind LineEndKindPreference => _usingLineEndKind ?? _textEditorModel.LineEndKindPreference;
     public ResourceUri ResourceUri => _resourceUri ?? _textEditorModel.ResourceUri;
     public DateTime ResourceLastWriteTime => _resourceLastWriteTime ?? _textEditorModel.ResourceLastWriteTime;
     public string FileExtension => _fileExtension ?? _textEditorModel.FileExtension;
@@ -141,7 +141,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
             _presentationModelsList is null ? _textEditorModel.PresentationModelList : _presentationModelsList.ToImmutableList(),
             _tabKeyPositionsList is null ? _textEditorModel.TabKeyPositionList : _tabKeyPositionsList.ToImmutableList(),
             _onlyLineEndKindWasModified ? _onlyLineEndKind : _textEditorModel.OnlyLineEndKind,
-            _usingLineEndKind ?? _textEditorModel.UsingLineEndKind,
+            _usingLineEndKind ?? _textEditorModel.LineEndKindPreference,
             _resourceUri ?? _textEditorModel.ResourceUri,
             _resourceLastWriteTime ?? _textEditorModel.ResourceLastWriteTime,
             _fileExtension ?? _textEditorModel.FileExtension,
@@ -345,8 +345,8 @@ public partial class TextEditorModelModifier : ITextEditorModel
                     cursorModifierBag,
                     1,
                     keyboardEventArgs.CtrlKey,
-                    cancellationToken,
-                    DeleteKind.Backspace);
+                    DeleteKind.Backspace,
+                    cancellationToken);
             }
             else if (KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key)
             {
@@ -354,8 +354,8 @@ public partial class TextEditorModelModifier : ITextEditorModel
                     cursorModifierBag,
                     1,
                     keyboardEventArgs.CtrlKey,
-                    cancellationToken,
-                    DeleteKind.Delete);
+                    DeleteKind.Delete,
+                    cancellationToken);
             }
         }
         else
@@ -371,22 +371,33 @@ public partial class TextEditorModelModifier : ITextEditorModel
                 var valueToInsert = keyboardEventArgs.Key.First().ToString();
 
                 if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
-                    valueToInsert = UsingLineEndKind.AsCharacters();
+                    valueToInsert = LineEndKindPreference.AsCharacters();
                 else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.TAB_CODE)
                     valueToInsert = "\t";
 
                 Insert(
                     valueToInsert,
                     singledCursorModifierBag,
-                    cancellationToken);
+                    cancellationToken: cancellationToken);
             }
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="cursorModifierBag"></param>
+    /// <param name="cancellationToken"></param>
+    /// <param name="useLineEndingPreference">
+    /// If false, then the string will be inserted as is.
+    /// If true, then the string will have its line endings replaced with the <see cref="LineEndKindPreference"/>
+    /// </param>
     public void Insert(
         string value,
         CursorModifierBagTextEditor cursorModifierBag,
-        CancellationToken cancellationToken)
+        bool useLineEndKindPreference = true,
+        CancellationToken cancellationToken = default)
     {
         SetIsDirtyTrue();
 
@@ -414,33 +425,25 @@ public partial class TextEditorModelModifier : ITextEditorModel
                     cursorModifierBag,
                     1,
                     false,
-                    CancellationToken.None,
-                    DeleteKind.Delete);
+                    DeleteKind.Delete,
+                    CancellationToken.None);
 
                 // Move cursor to lower bound of text selection
                 cursorModifier.LineIndex = lowerRowData.Index;
                 cursorModifier.SetColumnIndexAndPreferred(lowerColumnIndex);
             }
 
-            // Validate the text to be inserted
             {
-                // TODO: Do not convert '\r' and '\r\n' to '\n'. Instead take the string and insert it...
-                //       ...as it was given.
-                //       |
-                //       The reason for converting to '\n' is, if one inserts a carriage return character,
+                // TODO: If one inserts a carriage return character,
                 //       meanwhile the text editor model happens to have a line feed character at the position
-                //       you are inserting (example: Insert("\r", ...)).
+                //       you are inserting at.
                 //       |
                 //       Then, the '\r' takes the position of the '\n', and the '\n' is shifted further
                 //       by 1 position in order to allow space the '\r'.
                 //       |
                 //       Well, now the text editor model sees its contents as "\r\n".
                 //       What is to be done in this scenario?
-                //
-                // The order of these replacements is important.
-                value = value
-                    .Replace("\r\n", "\n")
-                    .Replace("\r", "\n");
+                //       (2024-04-22)
             }
 
             // Remember the cursorPositionIndex
@@ -449,18 +452,19 @@ public partial class TextEditorModelModifier : ITextEditorModel
             // Track metadata with the cursorModifier itself
             //
             // Metadata must be done prior to 'InsertValue'
-            InsertMetadata(value, cursorModifier, cancellationToken);
+            InsertMetadata(value, cursorModifier, useLineEndKindPreference, cancellationToken);
 
             // Now the text still needs to be inserted.
             // The cursorModifier is invalid, because the metadata step moved its position.
             // So, use the 'cursorPositionIndex' variable that was calculated prior to the metadata step.
-            InsertValue(value, initialCursorPositionIndex, cancellationToken);
+            InsertValue(value, initialCursorPositionIndex, useLineEndKindPreference, cancellationToken);
         }
     }
 
     private void InsertMetadata(
         string value,
         TextEditorCursorModifier cursorModifier,
+        bool useLineEndKindPreference,
         CancellationToken cancellationToken)
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
@@ -473,70 +477,57 @@ public partial class TextEditorModelModifier : ITextEditorModel
         var initialCursorPositionIndex = this.GetPositionIndex(cursorModifier);
         var initialCursorLineIndex = cursorModifier.LineIndex;
 
-        // If cursor is out of bounds then continue
-        if (initialCursorPositionIndex > _charList.Count)
-            return;
+        this.AssertPositionIndex(initialCursorPositionIndex);
 
         bool isTab = false;
         bool isCarriageReturn = false;
         bool isLinefeed = false;
         bool isCarriageReturnLineFeed = false;
 
-        // The insertion is contiguous, therefore, the to-be-inserted metadata can be delt with after re-calculating the existing metadata.
-        // That is, Insert("\n\n\n") is the same as Insert("\n Hello World!\n\n") as far as the metadata for LineEnd(s) is concerned.
-        //
-        // If there is a second LineEnd, they all can be added as 'AddRange' where the index starts at the first inserted line end.
-        // If one performs a for loop from index 0 of the string to-be-inserted to the end of the string, then the line endings will already know their meta data.
-        // Any remainder of the insertion string won't impact their metadata entry since it has a positionIndex greater than its own.
-        // Then after the for loop, since one hasn't modified the public metadata, one can safely iterate over it and add 'characterCountInserted'.
-        //
-        // After that, one would then do the lazy insert range for the new metadata.
         (int? index, List<LineEnd> localLineEndList) lineEndPositionLazyInsertRange = (null, new());
         (int? index, List<int> localTabPositionList) tabPositionLazyInsertRange = (null, new());
 
-        for (int characterIndex = 0; characterIndex < value.Length; characterIndex++)
+        for (int charIndex = 0; charIndex < value.Length; charIndex++)
         {
-            var character = value[characterIndex];
+            var charValue = value[charIndex];
 
-            isTab = character == '\t';
-            isCarriageReturn = character == '\r';
-            isLinefeed = character == '\n';
-            isCarriageReturnLineFeed = isCarriageReturn && characterIndex != value.Length - 1 && value[1 + characterIndex] == '\n';
+            isTab = charValue == '\t';
+            isCarriageReturn = charValue == '\r';
+            isLinefeed = charValue == '\n';
+            isCarriageReturnLineFeed = isCarriageReturn && charIndex != value.Length - 1 && value[1 + charIndex] == '\n';
 
-            if (isCarriageReturn || isCarriageReturnLineFeed)
             {
-                // TODO: Do not convert '\r' and '\r\n' to '\n'. Instead take the string and insert it...
-                //       ...as it was given.
-                //       |
-                //       The reason for converting to '\n' is, if one inserts a carriage return character,
-                //       meanwhile the text editor model happens to have a line feed character at the position
-                //       you are inserting (example: Insert("\r", ...)).
+                // TODO: If one inserts a carriage return character, meanwhile the text editor model
+                //       happens to have a line feed character at the position you are inserting at.
                 //       |
                 //       Then, the '\r' takes the position of the '\n', and the '\n' is shifted further
                 //       by 1 position in order to allow space the '\r'.
                 //       |
                 //       Well, now the text editor model sees its contents as "\r\n".
                 //       What is to be done in this scenario?
-                //
-                // NOTE: This conversion is done in the 'Insert(...)' method,
-                //       which goes on to invoke this method with the converted line endings.
-                throw new NotImplementedException("TODO: Do not convert '\r' and '\r\n' to '\n'.Instead take the string and insert it as it was given.");
+                //       (2024-04-22)
             }
-            else if (isLinefeed)
+
+            if (isLinefeed || isCarriageReturn || isCarriageReturnLineFeed)
             {
-                var lineEndKindToInsert = LineEndKind.LineFeed;
+                
+
+                var lineEndKind = LineEndKindPreference;
 
                 lineEndPositionLazyInsertRange.index ??= cursorModifier.LineIndex;
 
                 lineEndPositionLazyInsertRange.localLineEndList.Add(new LineEnd(
-                    initialCursorPositionIndex + characterIndex,
-                    1 + initialCursorPositionIndex + characterIndex,
-                    LineEndKind.LineFeed));
+                    initialCursorPositionIndex + charIndex,
+                    lineEndKind.AsCharacters().Length + initialCursorPositionIndex + charIndex,
+                    lineEndKind));
 
-                MutateLineEndKindCount(lineEndKindToInsert, 1);
+                MutateLineEndKindCount(lineEndKind, 1);
 
                 cursorModifier.LineIndex++;
                 cursorModifier.SetColumnIndexAndPreferred(0);
+
+                if (isCarriageReturnLineFeed)
+                    charIndex++;
             }
             else
             {
@@ -550,7 +541,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
                             tabPositionLazyInsertRange.index = _tabKeyPositionsList.Count;
                     }
 
-                    tabPositionLazyInsertRange.localTabPositionList.Add(initialCursorPositionIndex + characterIndex);
+                    tabPositionLazyInsertRange.localTabPositionList.Add(initialCursorPositionIndex + charIndex);
                 }
 
                 cursorModifier.SetColumnIndexAndPreferred(1 + cursorModifier.ColumnIndex);
@@ -637,6 +628,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     private void InsertValue(
         string value,
         int cursorPositionIndex,
+        bool useLineEndKindPreference,
         CancellationToken cancellationToken)
     {
         // If cursor is out of bounds then continue
@@ -685,8 +677,8 @@ public partial class TextEditorModelModifier : ITextEditorModel
         CursorModifierBagTextEditor cursorModifierBag,
         int columnCount,
         bool expandWord,
-        CancellationToken cancellationToken,
-        DeleteKind deleteKind)
+        DeleteKind deleteKind,
+        CancellationToken cancellationToken = default)
     {
         if (columnCount < 0)
             throw new LuthetusTextEditorException($"{nameof(columnCount)} < 0");
@@ -706,7 +698,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
         {
             var cursorModifier = cursorModifierBag.List[cursorIndex];
 
-            var tuple = DeleteMetadata(columnCount, cursorModifier, cancellationToken, deleteKind);
+            var tuple = DeleteMetadata(columnCount, cursorModifier, deleteKind, cancellationToken);
 
             if (tuple is null)
                 return;
@@ -729,8 +721,8 @@ public partial class TextEditorModelModifier : ITextEditorModel
     private (int positionIndex, int charCount)? DeleteMetadata(
         int columnCount,
         TextEditorCursorModifier cursorModifier,
-        CancellationToken cancellationToken,
-        DeleteKind deleteKind)
+        DeleteKind deleteKind,
+        CancellationToken cancellationToken)
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
@@ -760,10 +752,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
             cursorModifier.SelectionEndingPositionIndex = 0;
         }
 
-        // If cursor is out of bounds then continue.
-        // NOTE: '_charList.Count' is a valid position for the cursor.
-        if (positionIndex > _charList.Count || positionIndex < 0)
-            throw new LuthetusTextEditorException($"{nameof(positionIndex)} > {nameof(_charList)}.{nameof(_charList.Count)} || {nameof(positionIndex)} < 0");
+        this.AssertPositionIndex(positionIndex);
 
         (int? index, int count) lineEndPositionLazyRemoveRange = (null, 0);
         (int? index, int count) tabPositionLazyRemoveRange = (null, 0);
@@ -1196,7 +1185,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
         {
             _lineEndKindCountList ??= _textEditorModel.LineEndKindCountList.ToList();
             _onlyLineEndKind ??= _textEditorModel.OnlyLineEndKind;
-            _usingLineEndKind ??= _textEditorModel.UsingLineEndKind;
+            _usingLineEndKind ??= _textEditorModel.LineEndKindPreference;
         }
 
         var existingRowEndingsList = LineEndKindCountList

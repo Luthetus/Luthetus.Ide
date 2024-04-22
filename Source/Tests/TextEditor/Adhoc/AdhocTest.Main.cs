@@ -69,7 +69,7 @@ public partial class AdhocTest
                 Key<TextEditorViewModel>.Empty,
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
-            modelModifier.Insert(letterToInsert, cursorModifierBag, CancellationToken.None);
+            modelModifier.Insert(letterToInsert, cursorModifierBag, cancellationToken: CancellationToken.None);
             model = modelModifier.ToModel();
         }
 
@@ -136,7 +136,7 @@ public partial class AdhocTest
                 Key<TextEditorViewModel>.Empty,
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
-            modelModifier.Insert(letterToInsert, cursorModifierBag, CancellationToken.None);
+            modelModifier.Insert(letterToInsert, cursorModifierBag, cancellationToken: CancellationToken.None);
             model = modelModifier.ToModel();
         }
 
@@ -209,7 +209,7 @@ public partial class AdhocTest
                 Key<TextEditorViewModel>.Empty,
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
-            modelModifier.Insert(letterToInsert, cursorModifierBag, CancellationToken.None);
+            modelModifier.Insert(letterToInsert, cursorModifierBag, cancellationToken: CancellationToken.None);
             model = modelModifier.ToModel();
         }
 
@@ -282,7 +282,7 @@ public partial class AdhocTest
                 Key<TextEditorViewModel>.Empty,
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
-            modelModifier.Insert(letterToInsert, cursorModifierBag, CancellationToken.None);
+            modelModifier.Insert(letterToInsert, cursorModifierBag, cancellationToken: CancellationToken.None);
             model = modelModifier.ToModel();
         }
 
@@ -606,7 +606,7 @@ public partial class AdhocTest
 
         // UsingRowEndingKind
         {
-            var usingRowEndingKind = refModel.UsingLineEndKind;
+            var usingRowEndingKind = refModel.LineEndKindPreference;
             Assert.Equal(LineEndKind.LineFeed, usingRowEndingKind);
         }
 

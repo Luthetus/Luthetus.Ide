@@ -123,7 +123,7 @@ public class OnKeyDownBatch : ITextEditorTask
             modelModifier.Insert(
                 string.Join(string.Empty, ThrottleEventOnKeyDownList.Select(x => x.KeyboardEventArgs.Key)),
                 cursorModifierBag,
-                CancellationToken.None);
+                cancellationToken: CancellationToken.None);
         }
         else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Other)
         {
@@ -139,8 +139,8 @@ public class OnKeyDownBatch : ITextEditorTask
                         cursorModifierBag,
                         ThrottleEventOnKeyDownList.Count,
                         inspectThrottleEventOnKeyDown.KeyboardEventArgs.CtrlKey,
-                        CancellationToken.None,
-                        TextEditorModelModifier.DeleteKind.Backspace);
+                        TextEditorModelModifier.DeleteKind.Backspace,
+                        CancellationToken.None);
                 }
 
                 if (KeyboardKeyFacts.MetaKeys.DELETE == inspectThrottleEventOnKeyDown.KeyboardEventArgs.Key)
@@ -149,8 +149,8 @@ public class OnKeyDownBatch : ITextEditorTask
                         cursorModifierBag,
                         ThrottleEventOnKeyDownList.Count,
                         inspectThrottleEventOnKeyDown.KeyboardEventArgs.CtrlKey,
-                        CancellationToken.None,
-                        TextEditorModelModifier.DeleteKind.Delete);
+                        TextEditorModelModifier.DeleteKind.Delete,
+                        CancellationToken.None);
                 }
             }
             else if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == inspectThrottleEventOnKeyDown.KeyboardEventArgs.Code ||

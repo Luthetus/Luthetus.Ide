@@ -75,7 +75,7 @@ public interface ITextEditorModel
 	/// If there are no line endings then this will be null.
 	/// </summary>
 	public LineEndKind? OnlyLineEndKind { get; }
-    public LineEndKind UsingLineEndKind { get; }
+    public LineEndKind LineEndKindPreference { get; }
     /// <summary>
     /// TODO: On (2023-10-02) Key&lt;TextEditorModel&gt; was removed, because it felt redundant...
     /// ...given only 1 <see cref="TextEditorModel"/> can exist for a given <see cref="ResourceUri"/>.

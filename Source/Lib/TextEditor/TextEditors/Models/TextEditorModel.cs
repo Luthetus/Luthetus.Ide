@@ -40,7 +40,7 @@ public partial class TextEditorModel
 		LineEndList = modifier.LineEndList.ToImmutableList();
 		TabKeyPositionList = modifier.TabKeyPositionList.ToImmutableList();
 		OnlyLineEndKind = modifier.OnlyLineEndKind;
-		UsingLineEndKind = modifier.UsingLineEndKind;
+		LineEndKindPreference = modifier.LineEndKindPreference;
 		MostCharactersOnASingleLineTuple = modifier.MostCharactersOnASingleLineTuple;
 	}
 
@@ -77,7 +77,7 @@ public partial class TextEditorModel
 		PresentationModelList = presentationModelsList;
 		TabKeyPositionList = tabKeyPositionsList;
 		OnlyLineEndKind = onlyRowEndingKind;
-		UsingLineEndKind = usingRowEndingKind;
+		LineEndKindPreference = usingRowEndingKind;
 		ResourceUri = resourceUri;
 		ResourceLastWriteTime = resourceLastWriteTime;
 		FileExtension = fileExtension;

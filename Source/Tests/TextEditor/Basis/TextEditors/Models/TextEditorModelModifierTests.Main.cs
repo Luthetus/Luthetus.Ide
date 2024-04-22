@@ -30,7 +30,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     /// <see cref="TextEditorModelModifier.PresentationModelList"/>
     /// <see cref="TextEditorModelModifier.TabKeyPositionList"/>
     /// <see cref="TextEditorModelModifier.OnlyLineEndKind"/>
-    /// <see cref="TextEditorModelModifier.UsingLineEndKind"/>
+    /// <see cref="TextEditorModelModifier.LineEndKindPreference"/>
     /// <see cref="TextEditorModelModifier.ResourceUri"/>
     /// <see cref="TextEditorModelModifier.ResourceLastWriteTime"/>
     /// <see cref="TextEditorModelModifier.FileExtension"/>
@@ -56,7 +56,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
         Assert.Equal(inModel.PresentationModelList, outModel.PresentationModelList);
         Assert.Equal(inModel.TabKeyPositionList, outModel.TabKeyPositionList);
         Assert.Equal(inModel.OnlyLineEndKind, outModel.OnlyLineEndKind);
-        Assert.Equal(inModel.UsingLineEndKind, outModel.UsingLineEndKind);
+        Assert.Equal(inModel.LineEndKindPreference, outModel.LineEndKindPreference);
         Assert.Equal(inModel.ResourceUri, outModel.ResourceUri);
         Assert.Equal(inModel.ResourceLastWriteTime, outModel.ResourceLastWriteTime);
         Assert.Equal(inModel.FileExtension, outModel.FileExtension);
@@ -94,7 +94,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     ///                    regarding '\r\n' will not work now. And one must determine the ultimate fix.
     /// </summary>
     [Fact]
-    public void Enter_Enter_Backspace_Original()
+    public void Enter_Enter_Backspace_LineFeed()
     {
         var (inModel, modelModifier) = EmptyEditor_TestData_And_PerformPreAssertions(
             resourceUri: new ResourceUri($"/{nameof(EmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
@@ -114,15 +114,45 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
         var cursorModifierBag = new CursorModifierBagTextEditor(
             Key<TextEditorViewModel>.Empty,
             new List<TextEditorCursorModifier>() { cursorModifier });
-        
+
         // Insert 2 LineFeed characters.
-        modelModifier.Insert("\n\n", cursorModifierBag, CancellationToken.None);
+        var insertionString = "\n\n";
+        modelModifier.Insert(insertionString, cursorModifierBag, cancellationToken: CancellationToken.None);
+
+        // Assert insertion
+        {
+            Assert.Equal(insertionString, modelModifier.GetAllText());
+            Assert.Equal(3, modelModifier.LineEndList.Count);
+
+            // First line end
+            {
+                var lineEnd = modelModifier.LineEndList[0];
+                Assert.Equal(0, lineEnd.StartPositionIndexInclusive);
+                Assert.Equal(1, lineEnd.EndPositionIndexExclusive);
+                Assert.Equal(LineEndKind.LineFeed, lineEnd.LineEndKind);
+            }
+
+            // Second line end
+            {
+                var lineEnd = modelModifier.LineEndList[1];
+                Assert.Equal(1, lineEnd.StartPositionIndexInclusive);
+                Assert.Equal(2, lineEnd.EndPositionIndexExclusive);
+                Assert.Equal(LineEndKind.LineFeed, lineEnd.LineEndKind);
+            }
+
+            // Third line end
+            {
+                var lineEnd = modelModifier.LineEndList[2];
+                Assert.Equal(2, lineEnd.StartPositionIndexInclusive);
+                Assert.Equal(2, lineEnd.EndPositionIndexExclusive);
+                Assert.Equal(LineEndKind.EndOfFile, lineEnd.LineEndKind);
+            }
+        }
 
         // Backspace with count of 1
-        modelModifier.Delete(cursorModifierBag, 1, false, CancellationToken.None, TextEditorModelModifier.DeleteKind.Backspace);
+        modelModifier.Delete(cursorModifierBag, 1, false, TextEditorModelModifier.DeleteKind.Backspace, CancellationToken.None);
 
-
-        // Assert result
+        // Assert backspace
         {
             Assert.Equal("\n", modelModifier.GetAllText());
             Assert.Equal(2, modelModifier.LineEndList.Count);
@@ -132,8 +162,8 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
             Assert.Equal(1, firstLineEnd.EndPositionIndexExclusive);
 
             var lastLineEnd = modelModifier.LineEndList[1];
-            Assert.Equal(1, firstLineEnd.StartPositionIndexInclusive);
-            Assert.Equal(1, firstLineEnd.EndPositionIndexExclusive);
+            Assert.Equal(1, lastLineEnd.StartPositionIndexInclusive);
+            Assert.Equal(1, lastLineEnd.EndPositionIndexExclusive);
         }
     }
 
@@ -163,12 +193,43 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
             new List<TextEditorCursorModifier>() { cursorModifier });
 
         // Insert 2 LineFeed characters.
-        modelModifier.Insert("\r\r", cursorModifierBag, CancellationToken.None);
+        var insertionString = "\r\r";
+        modelModifier.Insert(insertionString, cursorModifierBag, cancellationToken: CancellationToken.None);
+
+        // Assert insertion
+        {
+            Assert.Equal(insertionString, modelModifier.GetAllText());
+            Assert.Equal(3, modelModifier.LineEndList.Count);
+
+            // First line end
+            {
+                var lineEnd = modelModifier.LineEndList[0];
+                Assert.Equal(0, lineEnd.StartPositionIndexInclusive);
+                Assert.Equal(1, lineEnd.EndPositionIndexExclusive);
+                Assert.Equal(LineEndKind.CarriageReturn, lineEnd.LineEndKind);
+            }
+
+            // Second line end
+            {
+                var lineEnd = modelModifier.LineEndList[1];
+                Assert.Equal(1, lineEnd.StartPositionIndexInclusive);
+                Assert.Equal(2, lineEnd.EndPositionIndexExclusive);
+                Assert.Equal(LineEndKind.CarriageReturn, lineEnd.LineEndKind);
+            }
+
+            // Third line end
+            {
+                var lineEnd = modelModifier.LineEndList[2];
+                Assert.Equal(2, lineEnd.StartPositionIndexInclusive);
+                Assert.Equal(2, lineEnd.EndPositionIndexExclusive);
+                Assert.Equal(LineEndKind.EndOfFile, lineEnd.LineEndKind);
+            }
+        }
 
         // Backspace with count of 1
-        modelModifier.Delete(cursorModifierBag, 1, false, CancellationToken.None, TextEditorModelModifier.DeleteKind.Backspace);
+        modelModifier.Delete(cursorModifierBag, 1, false, TextEditorModelModifier.DeleteKind.Backspace, CancellationToken.None);
 
-        // Assert result
+        // Assert backspace
         {
             Assert.Equal("\r", modelModifier.GetAllText());
             Assert.Equal(2, modelModifier.LineEndList.Count);
@@ -178,8 +239,8 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
             Assert.Equal(1, firstLineEnd.EndPositionIndexExclusive);
 
             var lastLineEnd = modelModifier.LineEndList[1];
-            Assert.Equal(1, firstLineEnd.StartPositionIndexInclusive);
-            Assert.Equal(1, firstLineEnd.EndPositionIndexExclusive);
+            Assert.Equal(1, lastLineEnd.StartPositionIndexInclusive);
+            Assert.Equal(1, lastLineEnd.EndPositionIndexExclusive);
         }
     }
 
@@ -209,10 +270,41 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
             new List<TextEditorCursorModifier>() { cursorModifier });
 
         // Insert 2 LineFeed characters.
-        modelModifier.Insert("\r\n\r\n", cursorModifierBag, CancellationToken.None);
+        var insertionString = "\r\n\r\n";
+        modelModifier.Insert(insertionString, cursorModifierBag, cancellationToken: CancellationToken.None);
+
+        // Assert insertion
+        {
+            Assert.Equal(insertionString, modelModifier.GetAllText());
+            Assert.Equal(3, modelModifier.LineEndList.Count);
+
+            // First line end
+            {
+                var lineEnd = modelModifier.LineEndList[0];
+                Assert.Equal(0, lineEnd.StartPositionIndexInclusive);
+                Assert.Equal(2, lineEnd.EndPositionIndexExclusive);
+                Assert.Equal(LineEndKind.CarriageReturnLineFeed, lineEnd.LineEndKind);
+            }
+
+            // Second line end
+            {
+                var lineEnd = modelModifier.LineEndList[1];
+                Assert.Equal(2, lineEnd.StartPositionIndexInclusive);
+                Assert.Equal(4, lineEnd.EndPositionIndexExclusive);
+                Assert.Equal(LineEndKind.CarriageReturnLineFeed, lineEnd.LineEndKind);
+            }
+
+            // Third line end
+            {
+                var lineEnd = modelModifier.LineEndList[2];
+                Assert.Equal(4, lineEnd.StartPositionIndexInclusive);
+                Assert.Equal(4, lineEnd.EndPositionIndexExclusive);
+                Assert.Equal(LineEndKind.EndOfFile, lineEnd.LineEndKind);
+            }
+        }
 
         // Backspace with count of 1
-        modelModifier.Delete(cursorModifierBag, 1, false, CancellationToken.None, TextEditorModelModifier.DeleteKind.Backspace);
+        modelModifier.Delete(cursorModifierBag, 1, false, TextEditorModelModifier.DeleteKind.Backspace, CancellationToken.None);
 
         // Assert result
         {
@@ -221,11 +313,11 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
 
             var firstLineEnd = modelModifier.LineEndList[0];
             Assert.Equal(0, firstLineEnd.StartPositionIndexInclusive);
-            Assert.Equal(1, firstLineEnd.EndPositionIndexExclusive);
+            Assert.Equal(2, firstLineEnd.EndPositionIndexExclusive);
 
             var lastLineEnd = modelModifier.LineEndList[1];
-            Assert.Equal(1, firstLineEnd.StartPositionIndexInclusive);
-            Assert.Equal(1, firstLineEnd.EndPositionIndexExclusive);
+            Assert.Equal(2, lastLineEnd.StartPositionIndexInclusive);
+            Assert.Equal(2, lastLineEnd.EndPositionIndexExclusive);
         }
     }
 
@@ -423,8 +515,8 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
         modelModifier.SetUsingLineEndKind(LineEndKind.CarriageReturn);
 
         var outModel = modelModifier.ToModel();
-        Assert.NotEqual(inModel.UsingLineEndKind, outModel.UsingLineEndKind);
-        Assert.Equal(LineEndKind.CarriageReturn, outModel.UsingLineEndKind);
+        Assert.NotEqual(inModel.LineEndKindPreference, outModel.LineEndKindPreference);
+        Assert.Equal(LineEndKind.CarriageReturn, outModel.LineEndKindPreference);
     }
 
     /// <summary>

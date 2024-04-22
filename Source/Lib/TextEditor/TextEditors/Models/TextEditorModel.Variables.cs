@@ -34,7 +34,7 @@ public partial class TextEditorModel
     
     /// <inheritdoc cref="ITextEditorModel.OnlyLineEndKind"/>
     public LineEndKind? OnlyLineEndKind { get; init; }
-    public LineEndKind UsingLineEndKind { get; init; }
+    public LineEndKind LineEndKindPreference { get; init; }
     
     /// <inheritdoc cref="ITextEditorModel.ResourceUri"/>
     public ResourceUri ResourceUri { get; init; }

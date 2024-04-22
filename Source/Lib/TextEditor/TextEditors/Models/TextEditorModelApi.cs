@@ -196,7 +196,7 @@ public class TextEditorModelApi : ITextEditorModelApi
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            modelModifier.Insert(content, cursorModifierBag, cancellationToken);
+            modelModifier.Insert(content, cursorModifierBag, cancellationToken: cancellationToken);
             return Task.CompletedTask;
         };
     }
@@ -214,7 +214,7 @@ public class TextEditorModelApi : ITextEditorModelApi
             if (modelModifier is null)
                 return Task.CompletedTask;
 
-            modelModifier.Insert(content, cursorModifierBag, cancellationToken);
+            modelModifier.Insert(content, cursorModifierBag, cancellationToken: cancellationToken);
             return Task.CompletedTask;
         };
     }

@@ -1313,8 +1313,8 @@ public partial class TextEditorModelModifierTests
                     cursorModifierBag: cursorModifierBag,
                     12,
                     false,
-                    CancellationToken.None,
-                    DeleteKind.Backspace
+                    DeleteKind.Backspace,
+                    CancellationToken.None
                 );
             outModel = modelModifier.ToModel();
         }

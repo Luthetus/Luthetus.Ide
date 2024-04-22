@@ -4,6 +4,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
@@ -143,27 +144,27 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
         // Case: lineIndex out-of-bounds
         // ----
         // Greater-than out-of-bounds: (lineIndex: 4, columnIndex: 0) throws because the modelModifier.LineCount is 4, thereby putting a lineIndex of 4 out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetTabCountOnSameLineBeforeCursor(lineIndex: 4, columnIndex: 0));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetTabCountOnSameLineBeforeCursor(lineIndex: 4, columnIndex: 0));
         // Less-than out-of-bounds: (lineIndex: -1, columnIndex: 0) throws because the lineIndex is negative, and would never be valid, thereby putting the lineIndex out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetTabCountOnSameLineBeforeCursor(lineIndex: -1, columnIndex: 0));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetTabCountOnSameLineBeforeCursor(lineIndex: -1, columnIndex: 0));
 
         // Case: columnIndex out-of-bounds
         // ----
         // Greater-than out-of-bounds: (lineIndex: 0, columnIndex: 1) throws because the 0th line is a length of 0, thereby putting the columnIndex out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetTabCountOnSameLineBeforeCursor(lineIndex: 0, columnIndex: 1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetTabCountOnSameLineBeforeCursor(lineIndex: 0, columnIndex: 1));
         // Less-than out-of-bounds: (lineIndex: 0, columnIndex: -1) throws because the columnIndex is negative, and would never be valid, thereby putting the columnIndex out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetTabCountOnSameLineBeforeCursor(lineIndex: 0, columnIndex: -1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetTabCountOnSameLineBeforeCursor(lineIndex: 0, columnIndex: -1));
 
         // Case: mix the previous bad cases
         // ----
         // Greater-than out-of-bounds: lineIndex; Greater-than out-of-bounds: columnIndex;
-        Assert.Throws<ApplicationException>(() => modelModifier.GetTabCountOnSameLineBeforeCursor(lineIndex: 4, columnIndex: 1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetTabCountOnSameLineBeforeCursor(lineIndex: 4, columnIndex: 1));
         // Greater-than out-of-bounds: lineIndex; Less-than out-of-bounds: columnIndex;
-        Assert.Throws<ApplicationException>(() => modelModifier.GetTabCountOnSameLineBeforeCursor(lineIndex: 4, columnIndex: -1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetTabCountOnSameLineBeforeCursor(lineIndex: 4, columnIndex: -1));
         // Less-than out-of-bounds: lineIndex; Greater-than out-of-bounds: columnIndex;
-        Assert.Throws<ApplicationException>(() => modelModifier.GetTabCountOnSameLineBeforeCursor(lineIndex: -1, columnIndex: 1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetTabCountOnSameLineBeforeCursor(lineIndex: -1, columnIndex: 1));
         // Less-than out-of-bounds: lineIndex; Less-than out-of-bounds: columnIndex;
-        Assert.Throws<ApplicationException>(() => modelModifier.GetTabCountOnSameLineBeforeCursor(lineIndex: -1, columnIndex: -1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetTabCountOnSameLineBeforeCursor(lineIndex: -1, columnIndex: -1));
     }
 
     /// <summary>
@@ -236,27 +237,27 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
         // Case: lineIndex out-of-bounds
         // ----
         // Greater-than out-of-bounds: (lineIndex: 4, columnIndex: 0) throws because the modelModifier.LineCount is 4, thereby putting a lineIndex of 4 out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 4, columnIndex: 0, isPrimaryCursor: true)));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 4, columnIndex: 0, isPrimaryCursor: true)));
         // Less-than out-of-bounds: (lineIndex: -1, columnIndex: 0) throws because the lineIndex is negative, and would never be valid, thereby putting the lineIndex out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: -1, columnIndex: 0, isPrimaryCursor: true)));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: -1, columnIndex: 0, isPrimaryCursor: true)));
 
         // Case: columnIndex out-of-bounds
         // ----
         // Greater-than out-of-bounds: (lineIndex: 0, columnIndex: 1) throws because the 0th line is a length of 0, thereby putting the columnIndex out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 0, columnIndex: 1, isPrimaryCursor: true)));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 0, columnIndex: 1, isPrimaryCursor: true)));
         // Less-than out-of-bounds: (lineIndex: 0, columnIndex: -1) throws because the columnIndex is negative, and would never be valid, thereby putting the columnIndex out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 0, columnIndex: -1, isPrimaryCursor: true)));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 0, columnIndex: -1, isPrimaryCursor: true)));
 
         // Case: mix the previous bad cases
         // ----
         // Greater-than out-of-bounds: lineIndex; Greater-than out-of-bounds: columnIndex;
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 4, columnIndex: 1, isPrimaryCursor: true)));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 4, columnIndex: 1, isPrimaryCursor: true)));
         // Greater-than out-of-bounds: lineIndex; Less-than out-of-bounds: columnIndex;
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 4, columnIndex: -1, isPrimaryCursor: true)));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: 4, columnIndex: -1, isPrimaryCursor: true)));
         // Less-than out-of-bounds: lineIndex; Greater-than out-of-bounds: columnIndex;
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: -1, columnIndex: 1, isPrimaryCursor: true)));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: -1, columnIndex: 1, isPrimaryCursor: true)));
         // Less-than out-of-bounds: lineIndex; Less-than out-of-bounds: columnIndex;
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: -1, columnIndex: -1, isPrimaryCursor: true)));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(cursor: new TextEditorCursor(lineIndex: -1, columnIndex: -1, isPrimaryCursor: true)));
     }
 
     /// <summary>
@@ -309,27 +310,27 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
         // Case: lineIndex out-of-bounds
         // ----
         // Greater-than out-of-bounds: (lineIndex: 4, columnIndex: 0) throws because the modelModifier.LineCount is 4, thereby putting a lineIndex of 4 out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursorModifier: new TextEditorCursorModifier(new(lineIndex: 4, columnIndex: 0, isPrimaryCursor: true))));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(cursorModifier: new TextEditorCursorModifier(new(lineIndex: 4, columnIndex: 0, isPrimaryCursor: true))));
         // Less-than out-of-bounds: (lineIndex: -1, columnIndex: 0) throws because the lineIndex is negative, and would never be valid, thereby putting the lineIndex out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursorModifier: new TextEditorCursorModifier(new(lineIndex: -1, columnIndex: 0, isPrimaryCursor: true))));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(cursorModifier: new TextEditorCursorModifier(new(lineIndex: -1, columnIndex: 0, isPrimaryCursor: true))));
 
         // Case: columnIndex out-of-bounds
         // ----
         // Greater-than out-of-bounds: (lineIndex: 0, columnIndex: 1) throws because the 0th line is a length of 0, thereby putting the columnIndex out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursorModifier: new TextEditorCursorModifier(new(lineIndex: 0, columnIndex: 1, isPrimaryCursor: true))));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(cursorModifier: new TextEditorCursorModifier(new(lineIndex: 0, columnIndex: 1, isPrimaryCursor: true))));
         // Less-than out-of-bounds: (lineIndex: 0, columnIndex: -1) throws because the columnIndex is negative, and would never be valid, thereby putting the columnIndex out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursorModifier: new TextEditorCursorModifier(new(lineIndex: 0, columnIndex: -1, isPrimaryCursor: true))));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(cursorModifier: new TextEditorCursorModifier(new(lineIndex: 0, columnIndex: -1, isPrimaryCursor: true))));
 
         // Case: mix the previous bad cases
         // ----
         // Greater-than out-of-bounds: lineIndex; Greater-than out-of-bounds: columnIndex;
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursorModifier: new TextEditorCursorModifier(new(lineIndex: 4, columnIndex: 1, isPrimaryCursor: true))));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(cursorModifier: new TextEditorCursorModifier(new(lineIndex: 4, columnIndex: 1, isPrimaryCursor: true))));
         // Greater-than out-of-bounds: lineIndex; Less-than out-of-bounds: columnIndex;
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursorModifier: new TextEditorCursorModifier(new(lineIndex: 4, columnIndex: -1, isPrimaryCursor: true))));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(cursorModifier: new TextEditorCursorModifier(new(lineIndex: 4, columnIndex: -1, isPrimaryCursor: true))));
         // Less-than out-of-bounds: lineIndex; Greater-than out-of-bounds: columnIndex;
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursorModifier: new TextEditorCursorModifier(new(lineIndex: -1, columnIndex: 1, isPrimaryCursor: true))));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(cursorModifier: new TextEditorCursorModifier(new(lineIndex: -1, columnIndex: 1, isPrimaryCursor: true))));
         // Less-than out-of-bounds: lineIndex; Less-than out-of-bounds: columnIndex;
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(cursorModifier: new TextEditorCursorModifier(new(lineIndex: -1, columnIndex: -1, isPrimaryCursor: true))));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(cursorModifier: new TextEditorCursorModifier(new(lineIndex: -1, columnIndex: -1, isPrimaryCursor: true))));
     }
 
     /// <summary>
@@ -382,27 +383,27 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
         // Case: lineIndex out-of-bounds
         // ----
         // Greater-than out-of-bounds: (lineIndex: 4, columnIndex: 0) throws because the modelModifier.LineCount is 4, thereby putting a lineIndex of 4 out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(lineIndex: 4, columnIndex: 0));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(lineIndex: 4, columnIndex: 0));
         // Less-than out-of-bounds: (lineIndex: -1, columnIndex: 0) throws because the lineIndex is negative, and would never be valid, thereby putting the lineIndex out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(lineIndex: -1, columnIndex: 0));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(lineIndex: -1, columnIndex: 0));
 
         // Case: columnIndex out-of-bounds
         // ----
         // Greater-than out-of-bounds: (lineIndex: 0, columnIndex: 1) throws because the 0th line is a length of 0, thereby putting the columnIndex out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(lineIndex: 0, columnIndex: 1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(lineIndex: 0, columnIndex: 1));
         // Less-than out-of-bounds: (lineIndex: 0, columnIndex: -1) throws because the columnIndex is negative, and would never be valid, thereby putting the columnIndex out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(lineIndex: 0, columnIndex: -1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(lineIndex: 0, columnIndex: -1));
 
         // Case: mix the previous bad cases
         // ----
         // Greater-than out-of-bounds: lineIndex; Greater-than out-of-bounds: columnIndex;
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(lineIndex: 4, columnIndex: 1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(lineIndex: 4, columnIndex: 1));
         // Greater-than out-of-bounds: lineIndex; Less-than out-of-bounds: columnIndex;
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(lineIndex: 4, columnIndex: -1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(lineIndex: 4, columnIndex: -1));
         // Less-than out-of-bounds: lineIndex; Greater-than out-of-bounds: columnIndex;
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(lineIndex: -1, columnIndex: 1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(lineIndex: -1, columnIndex: 1));
         // Less-than out-of-bounds: lineIndex; Less-than out-of-bounds: columnIndex;
-        Assert.Throws<ApplicationException>(() => modelModifier.GetPositionIndex(lineIndex: -1, columnIndex: -1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetPositionIndex(lineIndex: -1, columnIndex: -1));
     }
 
     /// <summary>
@@ -455,9 +456,9 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
         // Case: lineIndex out-of-bounds
         // ----
         // Greater-than out-of-bounds: positionIndex of 13 throws because the modelModifier.DocumentLength is 12, thereby putting a positionIndex of 13 out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetLineAndColumnIndicesFromPositionIndex(13));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetLineAndColumnIndicesFromPositionIndex(13));
         // Less-than out-of-bounds: positionIndex of -1 throws because the positionIndex is negative, and would never be valid, thereby putting the positionIndex out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetLineAndColumnIndicesFromPositionIndex(-1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetLineAndColumnIndicesFromPositionIndex(-1));
     }
 
     /// <summary>
@@ -510,9 +511,9 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
         // Case: lineIndex out-of-bounds
         // ----
         // Greater-than out-of-bounds: positionIndex of 13 throws because the modelModifier.DocumentLength is 12, thereby putting a positionIndex of 13 out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetCharacter(13));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetCharacter(13));
         // Less-than out-of-bounds: positionIndex of -1 throws because the positionIndex is negative, and would never be valid, thereby putting the positionIndex out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetCharacter(-1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetCharacter(-1));
     }
 
     /// <summary>
@@ -562,11 +563,11 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
         // Foreach unique out-of-bounds possibility, invoke 'GetString' and assert the result.
         // These are expected to throw exceptions.
 
-        Assert.Throws<ApplicationException>(() => modelModifier.GetString(-1, 1));
-        Assert.Throws<ApplicationException>(() => modelModifier.GetString(-1, -1));
-        Assert.Throws<ApplicationException>(() => modelModifier.GetString(-1, 13));
-        Assert.Throws<ApplicationException>(() => modelModifier.GetString(2, -1));
-        Assert.Throws<ApplicationException>(() => modelModifier.GetString(13, 1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetString(-1, 1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetString(-1, -1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetString(-1, 13));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetString(2, -1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetString(13, 1));
     }
 
     /// <summary>
@@ -608,10 +609,10 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
         // Foreach unique out-of-bounds possibility, invoke 'GetLineTextRange' and assert the result.
         // These are expected to throw exceptions.
 
-        Assert.Throws<ApplicationException>(() => modelModifier.GetLineTextRange(-1, 1));
-        Assert.Throws<ApplicationException>(() => modelModifier.GetLineTextRange(4, 1));
-        Assert.Throws<ApplicationException>(() => modelModifier.GetLineTextRange(-1, -1));
-        Assert.Throws<ApplicationException>(() => modelModifier.GetLineTextRange(4, -1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetLineTextRange(-1, 1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetLineTextRange(4, 1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetLineTextRange(-1, -1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetLineTextRange(4, -1));
     }
 
     /// <summary>
@@ -665,9 +666,9 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
         }
 
         // Out-of-bounds small number
-        Assert.Throws<ApplicationException>(() => modelModifier.GetWordTextSpan(-1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetWordTextSpan(-1));
         // Out-of-bounds large number
-        Assert.Throws<ApplicationException>(() => modelModifier.GetWordTextSpan(13));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetWordTextSpan(13));
     }
 
     /// <summary>
@@ -787,9 +788,9 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
         }
 
         // Out-of-range small number
-        Assert.Throws<ApplicationException>(() => modelModifier.GetLineInformation(-1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetLineInformation(-1));
         // Out-of-range large number
-        Assert.Throws<ApplicationException>(() => modelModifier.GetLineInformation(4));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetLineInformation(4));
     }
 
     /// <summary>
@@ -855,9 +856,9 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
         }
 
         // Out-of-range small number
-        Assert.Throws<ApplicationException>(() => modelModifier.GetLineInformation(-1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetLineInformation(-1));
         // Out-of-range large number
-        Assert.Throws<ApplicationException>(() => modelModifier.GetLineInformation(13));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetLineInformation(13));
     }
 
     /// <summary>
@@ -883,19 +884,19 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
         Assert.Equal(-1, modelModifier.GetColumnIndexOfCharacterWithDifferingKind(lineIndex: 1, columnIndex: 2, moveBackwards: true));
 
         // lineIndex out of bounds small number
-        Assert.Throws<ApplicationException>(() =>
+        Assert.Throws<LuthetusTextEditorException>(() =>
             modelModifier.GetColumnIndexOfCharacterWithDifferingKind(lineIndex: -1, columnIndex: 0, moveBackwards: true));
 
         // lineIndex out of bounds large number
-        Assert.Throws<ApplicationException>(() =>
+        Assert.Throws<LuthetusTextEditorException>(() =>
             modelModifier.GetColumnIndexOfCharacterWithDifferingKind(lineIndex: 4, columnIndex: 0, moveBackwards: true));
 
         // columnIndex out of bounds small number
-        Assert.Throws<ApplicationException>(() =>
+        Assert.Throws<LuthetusTextEditorException>(() =>
             modelModifier.GetColumnIndexOfCharacterWithDifferingKind(lineIndex: 0, columnIndex: -1, moveBackwards: true));
 
         // columnIndex out of bounds large number
-        Assert.Throws<ApplicationException>(() =>
+        Assert.Throws<LuthetusTextEditorException>(() =>
             modelModifier.GetColumnIndexOfCharacterWithDifferingKind(lineIndex: 0, columnIndex: 2, moveBackwards: true));
     }
 
@@ -931,7 +932,7 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
             Key<TextEditorViewModel>.Empty,
             new List<TextEditorCursorModifier>() { cursorModifier });
 
-        modelModifier.Insert(insertedContent, cursorModifierBag, CancellationToken.None);
+        modelModifier.Insert(insertedContent, cursorModifierBag, cancellationToken: CancellationToken.None);
         Assert.Equal(insertedContent + content, modelModifier.GetAllText());
 
         // Text insertion will set an EditBlock
@@ -971,7 +972,7 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
             Key<TextEditorViewModel>.Empty,
             new List<TextEditorCursorModifier>() { cursorModifier });
 
-        modelModifier.Insert(insertedContent, cursorModifierBag, CancellationToken.None);
+        modelModifier.Insert(insertedContent, cursorModifierBag, cancellationToken: CancellationToken.None);
         Assert.Equal(insertedContent + content, modelModifier.GetAllText());
 
         // Text insertion will set an EditBlock
@@ -1053,8 +1054,8 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
         //                   ^
         Assert.Equal(CharacterKind.Bad, modelModifier.GetCharacterKind(12));
 
-        Assert.Throws<ApplicationException>(() => modelModifier.GetCharacterKind(-1));
-        Assert.Throws<ApplicationException>(() => modelModifier.GetCharacterKind(13));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetCharacterKind(-1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetCharacterKind(13));
     }
 
     /// <summary>
@@ -1106,29 +1107,29 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
             // lineIndex is bad
             {
                 // Out-of-bounds small number
-                Assert.Throws<ApplicationException>(() => modelModifier.ReadPreviousWordOrDefault(-1, 0));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.ReadPreviousWordOrDefault(-1, 0));
                 // Out-of-bounds large number
-                Assert.Throws<ApplicationException>(() => modelModifier.ReadPreviousWordOrDefault(4, 0));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.ReadPreviousWordOrDefault(4, 0));
             }
 
             // columnIndex is bad
             {
                 // Out-of-bounds small number
-                Assert.Throws<ApplicationException>(() => modelModifier.ReadPreviousWordOrDefault(2, -1));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.ReadPreviousWordOrDefault(2, -1));
                 // Out-of-bounds large number
-                Assert.Throws<ApplicationException>(() => modelModifier.ReadPreviousWordOrDefault(0, 2));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.ReadPreviousWordOrDefault(0, 2));
             }
 
             // Mixture is bad
             {
                 // Out-of-bounds (small number, small number)
-                Assert.Throws<ApplicationException>(() => modelModifier.ReadPreviousWordOrDefault(-1, -1));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.ReadPreviousWordOrDefault(-1, -1));
                 // Out-of-bounds (small number, large number)
-                Assert.Throws<ApplicationException>(() => modelModifier.ReadPreviousWordOrDefault(-1, 2));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.ReadPreviousWordOrDefault(-1, 2));
                 // Out-of-bounds (large number, small number)
-                Assert.Throws<ApplicationException>(() => modelModifier.ReadPreviousWordOrDefault(4, -1));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.ReadPreviousWordOrDefault(4, -1));
                 // Out-of-bounds (large number, large number)
-                Assert.Throws<ApplicationException>(() => modelModifier.ReadPreviousWordOrDefault(4, 4));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.ReadPreviousWordOrDefault(4, 4));
             }
         }
     }
@@ -1182,29 +1183,29 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
             // lineIndex is bad
             {
                 // Out-of-bounds small number
-                Assert.Throws<ApplicationException>(() => modelModifier.ReadNextWordOrDefault(-1, 0));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.ReadNextWordOrDefault(-1, 0));
                 // Out-of-bounds large number
-                Assert.Throws<ApplicationException>(() => modelModifier.ReadNextWordOrDefault(4, 0));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.ReadNextWordOrDefault(4, 0));
             }
 
             // columnIndex is bad
             {
                 // Out-of-bounds small number
-                Assert.Throws<ApplicationException>(() => modelModifier.ReadNextWordOrDefault(2, -1));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.ReadNextWordOrDefault(2, -1));
                 // Out-of-bounds large number
-                Assert.Throws<ApplicationException>(() => modelModifier.ReadNextWordOrDefault(0, 2));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.ReadNextWordOrDefault(0, 2));
             }
 
             // Mixture is bad
             {
                 // Out-of-bounds (small number, small number)
-                Assert.Throws<ApplicationException>(() => modelModifier.ReadNextWordOrDefault(-1, -1));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.ReadNextWordOrDefault(-1, -1));
                 // Out-of-bounds (small number, large number)
-                Assert.Throws<ApplicationException>(() => modelModifier.ReadNextWordOrDefault(-1, 2));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.ReadNextWordOrDefault(-1, 2));
                 // Out-of-bounds (large number, small number)
-                Assert.Throws<ApplicationException>(() => modelModifier.ReadNextWordOrDefault(4, -1));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.ReadNextWordOrDefault(4, -1));
                 // Out-of-bounds (large number, large number)
-                Assert.Throws<ApplicationException>(() => modelModifier.ReadNextWordOrDefault(4, 4));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.ReadNextWordOrDefault(4, 4));
             }
         }
     }
@@ -1271,29 +1272,29 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
             // lineIndex is bad
             {
                 // Out-of-bounds small number
-                Assert.Throws<ApplicationException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(-1, 0, true)));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(-1, 0, true)));
                 // Out-of-bounds large number
-                Assert.Throws<ApplicationException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(4, 0, true)));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(4, 0, true)));
             }
 
             // columnIndex is bad
             {
                 // Out-of-bounds small number
-                Assert.Throws<ApplicationException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(2, -1, true)));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(2, -1, true)));
                 // Out-of-bounds large number
-                Assert.Throws<ApplicationException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(0, 2, true)));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(0, 2, true)));
             }
 
             // Mixture is bad
             {
                 // Out-of-bounds (small number, small number)
-                Assert.Throws<ApplicationException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(-1, -1, true)));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(-1, -1, true)));
                 // Out-of-bounds (small number, large number)
-                Assert.Throws<ApplicationException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(-1, 2, true)));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(-1, 2, true)));
                 // Out-of-bounds (large number, small number)
-                Assert.Throws<ApplicationException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(4, -1, true)));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(4, -1, true)));
                 // Out-of-bounds (large number, large number)
-                Assert.Throws<ApplicationException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(4, 4, true)));
+                Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetTextOffsettingCursor(new TextEditorCursor(4, 4, true)));
             }
         }
     }
@@ -1326,9 +1327,9 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
         Assert.Equal("\t$; ", modelModifier.GetLineText(lineIndex: 3));
 
         // Out-of-bounds small number
-        Assert.Throws<ApplicationException>(() => modelModifier.GetLineText(lineIndex: -1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetLineText(lineIndex: -1));
         // Out-of-bounds large number
-        Assert.Throws<ApplicationException>(() => modelModifier.GetLineText(lineIndex: 4));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetLineText(lineIndex: 4));
     }
 
     /// <summary>
@@ -1367,9 +1368,9 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
         Assert.Equal(new RichCharacter { Value = '\0', DecorationByte = 0 }, modelModifier.GetRichCharacter(12));
 
         // Greater-than out-of-bounds: positionIndex of 13 throws because the modelModifier.DocumentLength is 12, thereby putting a positionIndex of 13 out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetRichCharacter(13));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetRichCharacter(13));
         // Less-than out-of-bounds: positionIndex of -1 throws because the positionIndex is negative, and would never be valid, thereby putting the positionIndex out-of-bounds.
-        Assert.Throws<ApplicationException>(() => modelModifier.GetRichCharacter(-1));
+        Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetRichCharacter(-1));
     }
 
     /// <summary>
@@ -1445,7 +1446,7 @@ public class TextEditorModelExtensionMethodsTests : TextEditorTestBase
 
         // Case: from negative start
         {
-            Assert.Throws<ApplicationException>(() => modelModifier.GetRichCharacters(-1, 4));
+            Assert.Throws<LuthetusTextEditorException>(() => modelModifier.GetRichCharacters(-1, 4));
         }
 
         // Case: to out of bounds large number end
