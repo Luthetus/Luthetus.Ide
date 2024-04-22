@@ -69,6 +69,167 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
+    /// (2024-04-22)
+    /// ------------
+    /// TODO: organize this test.
+    /// 
+    /// Description: Create an empty file, press 'enter' key twice, then 'backspace'.
+    /// 
+    /// Initial idea of issue: A LineFeed is inserted correctly, then the second is inserted incorrectly,
+    ///                        and 'backspace' throws an exception when trying to delete the corrupted line feed
+    /// 
+    /// Midway explanation of issue: the 'backspace' is deleting the EndOfFile line end somehow.
+    /// 
+    /// Post-fix explanation of issue: the problem was caused when deleting metadata.
+    ///                                When doing a 'backspace' there was code that determined
+    ///                                which line end to remove from the '_lineEndList'.
+    ///                                This code incorrectly determined the index to remove
+    ///                                because it checked
+    ///                                lineEnd.StartPositionIndexInclusive || (-1) + lineEnd.StartPositionIndexInclusive
+    ///                                and thus things broke.
+    ///                                Using 'lineEnd.StartPositionIndexInclusive' only, fixed the issue.
+    ///                                
+    /// Post-fix concerns: recreate multiple of this test with '\r' only, '\r\n' only, and all possible mixes of the 3.
+    ///                    The 'or' logic in the predicate was likely there for a reason. Likely something
+    ///                    regarding '\r\n' will not work now. And one must determine the ultimate fix.
+    /// </summary>
+    [Fact]
+    public void Enter_Enter_Backspace_Original()
+    {
+        var (inModel, modelModifier) = EmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(EmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: string.Empty,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        var cursor = new TextEditorCursor(
+            lineIndex: 0,
+            columnIndex: 0,
+            isPrimaryCursor: true);
+
+        var cursorModifier = new TextEditorCursorModifier(cursor);
+        var cursorModifierBag = new CursorModifierBagTextEditor(
+            Key<TextEditorViewModel>.Empty,
+            new List<TextEditorCursorModifier>() { cursorModifier });
+        
+        // Insert 2 LineFeed characters.
+        modelModifier.Insert("\n\n", cursorModifierBag, CancellationToken.None);
+
+        // Backspace with count of 1
+        modelModifier.Delete(cursorModifierBag, 1, false, CancellationToken.None, TextEditorModelModifier.DeleteKind.Backspace);
+
+
+        // Assert result
+        {
+            Assert.Equal("\n", modelModifier.GetAllText());
+            Assert.Equal(2, modelModifier.LineEndList.Count);
+
+            var firstLineEnd = modelModifier.LineEndList[0];
+            Assert.Equal(0, firstLineEnd.StartPositionIndexInclusive);
+            Assert.Equal(1, firstLineEnd.EndPositionIndexExclusive);
+
+            var lastLineEnd = modelModifier.LineEndList[1];
+            Assert.Equal(1, firstLineEnd.StartPositionIndexInclusive);
+            Assert.Equal(1, firstLineEnd.EndPositionIndexExclusive);
+        }
+    }
+
+    /// <summary>
+    /// (2024-04-22)
+    /// </summary>
+    [Fact]
+    public void Enter_Enter_Backspace_CarriageReturn()
+    {
+        var (inModel, modelModifier) = EmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(EmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: string.Empty,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        var cursor = new TextEditorCursor(
+            lineIndex: 0,
+            columnIndex: 0,
+            isPrimaryCursor: true);
+
+        var cursorModifier = new TextEditorCursorModifier(cursor);
+        var cursorModifierBag = new CursorModifierBagTextEditor(
+            Key<TextEditorViewModel>.Empty,
+            new List<TextEditorCursorModifier>() { cursorModifier });
+
+        // Insert 2 LineFeed characters.
+        modelModifier.Insert("\r\r", cursorModifierBag, CancellationToken.None);
+
+        // Backspace with count of 1
+        modelModifier.Delete(cursorModifierBag, 1, false, CancellationToken.None, TextEditorModelModifier.DeleteKind.Backspace);
+
+        // Assert result
+        {
+            Assert.Equal("\r", modelModifier.GetAllText());
+            Assert.Equal(2, modelModifier.LineEndList.Count);
+
+            var firstLineEnd = modelModifier.LineEndList[0];
+            Assert.Equal(0, firstLineEnd.StartPositionIndexInclusive);
+            Assert.Equal(1, firstLineEnd.EndPositionIndexExclusive);
+
+            var lastLineEnd = modelModifier.LineEndList[1];
+            Assert.Equal(1, firstLineEnd.StartPositionIndexInclusive);
+            Assert.Equal(1, firstLineEnd.EndPositionIndexExclusive);
+        }
+    }
+
+    /// <summary>
+    /// (2024-04-22)
+    /// </summary>
+    [Fact]
+    public void Enter_Enter_Backspace_CarriageReturnLineFeed()
+    {
+        var (inModel, modelModifier) = EmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(EmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: string.Empty,
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        var cursor = new TextEditorCursor(
+            lineIndex: 0,
+            columnIndex: 0,
+            isPrimaryCursor: true);
+
+        var cursorModifier = new TextEditorCursorModifier(cursor);
+        var cursorModifierBag = new CursorModifierBagTextEditor(
+            Key<TextEditorViewModel>.Empty,
+            new List<TextEditorCursorModifier>() { cursorModifier });
+
+        // Insert 2 LineFeed characters.
+        modelModifier.Insert("\r\n\r\n", cursorModifierBag, CancellationToken.None);
+
+        // Backspace with count of 1
+        modelModifier.Delete(cursorModifierBag, 1, false, CancellationToken.None, TextEditorModelModifier.DeleteKind.Backspace);
+
+        // Assert result
+        {
+            Assert.Equal("\r\n", modelModifier.GetAllText());
+            Assert.Equal(2, modelModifier.LineEndList.Count);
+
+            var firstLineEnd = modelModifier.LineEndList[0];
+            Assert.Equal(0, firstLineEnd.StartPositionIndexInclusive);
+            Assert.Equal(1, firstLineEnd.EndPositionIndexExclusive);
+
+            var lastLineEnd = modelModifier.LineEndList[1];
+            Assert.Equal(1, firstLineEnd.StartPositionIndexInclusive);
+            Assert.Equal(1, firstLineEnd.EndPositionIndexExclusive);
+        }
+    }
+
+    /// <summary>
     /// <see cref="TextEditorModelModifier.ClearContent()"/>
     /// ----------------------------------------------------
     /// This test was deemed valuable on (2024-04-13)

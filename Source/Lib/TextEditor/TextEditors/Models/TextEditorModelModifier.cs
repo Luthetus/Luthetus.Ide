@@ -686,7 +686,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
         int columnCount,
         bool expandWord,
         CancellationToken cancellationToken,
-        DeleteKind deleteKind = DeleteKind.Delete)
+        DeleteKind deleteKind)
     {
         if (columnCount < 0)
             throw new LuthetusTextEditorException($"{nameof(columnCount)} < 0");
@@ -738,9 +738,6 @@ public partial class TextEditorModelModifier : ITextEditorModel
             _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionList.ToList();
             _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
         }
-
-        // IMPORTANT NOTE TO SELF:
-        // Cursors use 'lineIdex' NOT 'lineEndIndex'.
 
         var initialLineIndex = cursorModifier.LineIndex;
         var positionIndex = this.GetPositionIndex(cursorModifier);
@@ -832,13 +829,8 @@ public partial class TextEditorModelModifier : ITextEditorModel
                 {
                     // A delete is a contiguous operation. Therefore, all that is needed to update the LineEndList
                     // is a starting index, and a count.
-                    //
-                    // Here there is an 'or' expression.
-                    // The left side checks for line endings of length '1' (i.e. "\n")
-                    // The right side checks for line endings of length '2' (i.e. "\r\n")
                     var indexLineEnd = _lineEndList.FindIndex(
-                        x => x.StartPositionIndexInclusive == toDeletePositionIndex ||
-                             x.StartPositionIndexInclusive == toDeletePositionIndex - 1);
+                        x => x.StartPositionIndexInclusive == toDeletePositionIndex);
 
                     var lineEnd = LineEndList[indexLineEnd];
 
