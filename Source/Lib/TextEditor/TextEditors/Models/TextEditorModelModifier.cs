@@ -805,7 +805,23 @@ public partial class TextEditorModelModifier : ITextEditorModel
         {
             if (expandWord && !initiallyHadSelection)
             {
-                throw new NotImplementedException();
+                var columnIndexOfCharacterWithDifferingKind = this.GetColumnIndexOfCharacterWithDifferingKind(
+                    cursorModifier.LineIndex,
+                    cursorModifier.ColumnIndex,
+                    false);
+
+                // -1 implies that no differing kind was found on the current line.
+                if (columnIndexOfCharacterWithDifferingKind == -1)
+                {
+                    var line = this.GetLineInformation(cursorModifier.LineIndex);
+                    columnIndexOfCharacterWithDifferingKind = line.LastValidColumnIndex;
+                }
+
+                columnCount = columnIndexOfCharacterWithDifferingKind - cursorModifier.ColumnIndex;
+
+                // Cursor is at the start of a row
+                if (columnCount == 0)
+                    columnCount = 1;
             }
 
             for (int i = 0; i < columnCount; i++)
