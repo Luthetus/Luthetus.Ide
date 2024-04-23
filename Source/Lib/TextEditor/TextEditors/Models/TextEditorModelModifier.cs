@@ -739,7 +739,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
         {
             var cursorModifier = cursorModifierBag.List[cursorIndex];
 
-            var tuple = DeleteMetadata(columnCount, cursorModifier, deleteKind, cancellationToken);
+            var tuple = DeleteMetadata(columnCount, cursorModifier, expandWord, deleteKind, cancellationToken);
 
             if (tuple is null)
                 return;
@@ -762,6 +762,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     private (int positionIndex, int charCount)? DeleteMetadata(
         int columnCount,
         TextEditorCursorModifier cursorModifier,
+        bool expandWord,
         DeleteKind deleteKind,
         CancellationToken cancellationToken)
     {
@@ -772,14 +773,14 @@ public partial class TextEditorModelModifier : ITextEditorModel
             _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
         }
 
+        var initiallyHadSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
         var initialLineIndex = cursorModifier.LineIndex;
         var positionIndex = this.GetPositionIndex(cursorModifier);
 
-        if (TextEditorSelectionHelper.HasSelectedText(cursorModifier) && cursorModifier.SelectionAnchorPositionIndex is not null)
+        if (initiallyHadSelection && cursorModifier.SelectionAnchorPositionIndex is not null)
         {
-            // If user's cursor has a selection, then set the variables so the
-            // positionIndex is the selection.AnchorPositionIndex and the
-            // count is selection.EndPositionIndex - selection.AnchorPositionIndex.
+            // If user's cursor has a selection, then set the variables so the positionIndex is the
+            // selection.AnchorPositionIndex and the count is selection.EndPositionIndex - selection.AnchorPositionIndex
             // and that the 'DeleteKind.Delete' logic runs.
             var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(cursorModifier.SelectionAnchorPositionIndex.Value);
             cursorModifier.LineIndex = lineIndex;
@@ -802,6 +803,11 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
         if (deleteKind == DeleteKind.Delete)
         {
+            if (expandWord && !initiallyHadSelection)
+            {
+                throw new NotImplementedException();
+            }
+
             for (int i = 0; i < columnCount; i++)
             {
                 var toDeletePositionIndex = positionIndex + charCount;
@@ -846,6 +852,24 @@ public partial class TextEditorModelModifier : ITextEditorModel
         }
         else if (deleteKind == DeleteKind.Backspace)
         {
+            if (expandWord && !initiallyHadSelection)
+            {
+                var columnIndexOfCharacterWithDifferingKind = this.GetColumnIndexOfCharacterWithDifferingKind(
+                    cursorModifier.LineIndex,
+                    cursorModifier.ColumnIndex,
+                    true);
+
+                // -1 implies that no differing kind was found on the current line.
+                if (columnIndexOfCharacterWithDifferingKind == -1)
+                    columnIndexOfCharacterWithDifferingKind = 0;
+
+                columnCount = cursorModifier.ColumnIndex - columnIndexOfCharacterWithDifferingKind;
+
+                // Cursor is at the start of a row
+                if (columnCount == 0)
+                    columnCount = 1;
+            }
+
             for (int i = 0; i < columnCount; i++)
             {
                 // Minus 1 here because 'Backspace' deletes the previous character.

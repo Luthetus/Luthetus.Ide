@@ -1081,7 +1081,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
+    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, bool, CancellationToken)"/><br/>
     /// Case: Insert into a not empty editor, at positionIndex between 0 and DocumentLength; exclusive bounds (2024-04-14)<br/>
     /// Purpose: With 0 being the first valid position, and DocumentLength being the last valid position;
     ///          testing a value between the valid positionIndex boundaries bears significance as a unique case.<br/>

@@ -1091,6 +1091,158 @@ public partial class TextEditorModelModifierTests
     }
 
     [Fact]
+    public void Delete_From_NotEmptyEditor_At_PositionIndex_Between_0_And_DocumentLength_Exclusive_ExpandWord_DeleteEnum()
+    {
+        throw new NotImplementedException();
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content:
+                (
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " "      // Space
+                ),
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // Do something
+        TextEditorModel outModel;
+        TextEditorCursorModifier cursorModifier;
+        {
+            /*
+             Given content:
+                (
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " "      // Space
+                ),
+             Then delete:
+                (
+                    "\n" +   // LineFeed
+
+                    "b9" +   // LetterOrDigit-Lowercase
+                     ^Delete this 'b'
+
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " "      // Space
+                ),
+             */
+            var cursor = new TextEditorCursor(
+                lineIndex: 1,
+                columnIndex: 0,
+                isPrimaryCursor: true);
+
+            cursorModifier = new TextEditorCursorModifier(cursor);
+            var cursorModifierBag = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier>() { cursorModifier });
+
+            modelModifier.Delete(
+                    cursorModifierBag: cursorModifierBag,
+                    columnCount: 1,
+                    expandWord: false,
+                    cancellationToken: CancellationToken.None,
+                    deleteKind: DeleteKind.Delete
+                );
+            outModel = modelModifier.ToModel();
+        }
+
+        // Post-assertions
+        {
+            Assert.Equal(11, modelModifier.DocumentLength);
+
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+            Assert.Single(modelModifier.PartitionList);
+
+            Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
+            Assert.Equal(
+                7,
+                modelModifier.TabKeyPositionList.Single());
+
+            // LineEnd related code-block-grouping:
+            {
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                {
+                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                    Assert.Equal(
+                        2,
+                        carriageReturn.StartPositionIndexInclusive);
+                    Assert.Equal(
+                        3,
+                        carriageReturn.EndPositionIndexExclusive);
+                }
+
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                {
+                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                    Assert.Equal(
+                        0,
+                        lineFeed.StartPositionIndexInclusive);
+                    Assert.Equal(
+                        1,
+                        lineFeed.EndPositionIndexExclusive);
+                }
+
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                {
+                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                    Assert.Equal(
+                        5,
+                        carriageReturnLineFeed.StartPositionIndexInclusive);
+                    Assert.Equal(
+                        7,
+                        carriageReturnLineFeed.EndPositionIndexExclusive);
+                }
+
+                Assert.Equal(4, modelModifier.LineEndList.Count);
+
+                var endOfFile = modelModifier.LineEndList.Last();
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                Assert.Equal(11, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(11, endOfFile.EndPositionIndexExclusive);
+            }
+
+            // Cursor related code-block-grouping:
+            {
+                Assert.Equal(1, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.ColumnIndex);
+                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                Assert.True(cursorModifier.IsPrimaryCursor);
+                Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
+                Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
+            }
+        }
+    }
+
+    [Fact]
     public void Delete_From_NotEmptyEditor_At_PositionIndex_EqualTo_DocumentLength_DeleteEnum()
     {
         var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
@@ -1817,6 +1969,156 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
                 Assert.Equal(11, endOfFile.StartPositionIndexInclusive);
                 Assert.Equal(11, endOfFile.EndPositionIndexExclusive);
+            }
+
+            // Cursor related code-block-grouping:
+            {
+                Assert.Equal(1, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.ColumnIndex);
+                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                Assert.True(cursorModifier.IsPrimaryCursor);
+                Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
+                Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
+            }
+        }
+    }
+    
+    [Fact]
+    public void Delete_From_NotEmptyEditor_At_PositionIndex_Between_0_And_DocumentLength_Exclusive_ExpandWord_BackspaceEnum()
+    {
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content:
+                (
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " "      // Space
+                ),
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // Do something
+        TextEditorModel outModel;
+        TextEditorCursorModifier cursorModifier;
+        {
+            /*
+             Given content:
+                (
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " "      // Space
+                ),
+             Then delete:
+                (
+                    "\n" +   // LineFeed
+
+                    "b9" +   // LetterOrDigit-Lowercase
+                       ^Delete this 'b9' with { Ctrl + Backspace }
+
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " "      // Space
+                ),
+             */
+            var cursor = new TextEditorCursor(
+                lineIndex: 1,
+                columnIndex: 1,
+                isPrimaryCursor: true);
+
+            cursorModifier = new TextEditorCursorModifier(cursor);
+            var cursorModifierBag = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier>() { cursorModifier });
+
+            modelModifier.Delete(
+                    cursorModifierBag: cursorModifierBag,
+                    columnCount: 1,
+                    expandWord: true,
+                    cancellationToken: CancellationToken.None,
+                    deleteKind: DeleteKind.Backspace
+                );
+            outModel = modelModifier.ToModel();
+        }
+
+        // Post-assertions
+        {
+            Assert.Equal(10, modelModifier.DocumentLength);
+
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+            Assert.Single(modelModifier.PartitionList);
+
+            Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
+            Assert.Equal(
+                6,
+                modelModifier.TabKeyPositionList.Single());
+
+            // LineEnd related code-block-grouping:
+            {
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                {
+                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                    Assert.Equal(
+                        1,
+                        carriageReturn.StartPositionIndexInclusive);
+                    Assert.Equal(
+                        2,
+                        carriageReturn.EndPositionIndexExclusive);
+                }
+
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                {
+                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                    Assert.Equal(
+                        0,
+                        lineFeed.StartPositionIndexInclusive);
+                    Assert.Equal(
+                        1,
+                        lineFeed.EndPositionIndexExclusive);
+                }
+
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                {
+                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                    Assert.Equal(
+                        4,
+                        carriageReturnLineFeed.StartPositionIndexInclusive);
+                    Assert.Equal(
+                        6,
+                        carriageReturnLineFeed.EndPositionIndexExclusive);
+                }
+
+                Assert.Equal(4, modelModifier.LineEndList.Count);
+
+                var endOfFile = modelModifier.LineEndList.Last();
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                Assert.Equal(10, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(10, endOfFile.EndPositionIndexExclusive);
             }
 
             // Cursor related code-block-grouping:
@@ -2583,6 +2885,162 @@ public partial class TextEditorModelModifierTests
     }
 
     [Fact]
+    public void Delete_From_CursorSelection_At_PositionIndex_Between_0_And_DocumentLength_Exclusive_ExpandWord_DeleteEnum()
+    {
+        throw new NotImplementedException();
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content:
+                (
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " "      // Space
+                ),
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // Do something
+        TextEditorModel outModel;
+        TextEditorCursorModifier cursorModifier;
+        {
+            /*
+             Given content:
+                (
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " "      // Space
+                ),
+             Then delete:
+                (
+                    "\n" +   // LineFeed
+
+                    "b9" +   // LetterOrDigit-Lowercase
+                     ^Delete this 'b'
+
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " "      // Space
+                ),
+             */
+            var cursor = new TextEditorCursor(
+                LineIndex: 1,
+                ColumnIndex: 1,
+                PreferredColumnIndex: 1,
+                IsPrimaryCursor: true,
+                Selection: new TextEditorSelection(
+                    AnchorPositionIndex: 1,
+                    EndingPositionIndex: 2));
+
+            cursorModifier = new TextEditorCursorModifier(cursor);
+            var cursorModifierBag = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier>() { cursorModifier });
+
+            modelModifier.Delete(
+                    cursorModifierBag: cursorModifierBag,
+                    columnCount: 1,
+                    expandWord: true,
+                    cancellationToken: CancellationToken.None,
+                    deleteKind: DeleteKind.Delete
+                );
+            outModel = modelModifier.ToModel();
+        }
+
+        // Post-assertions
+        {
+            Assert.Equal(11, modelModifier.DocumentLength);
+
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+            Assert.Single(modelModifier.PartitionList);
+
+            Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
+            Assert.Equal(
+                7,
+                modelModifier.TabKeyPositionList.Single());
+
+            // LineEnd related code-block-grouping:
+            {
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                {
+                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                    Assert.Equal(
+                        2,
+                        carriageReturn.StartPositionIndexInclusive);
+                    Assert.Equal(
+                        3,
+                        carriageReturn.EndPositionIndexExclusive);
+                }
+
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                {
+                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                    Assert.Equal(
+                        0,
+                        lineFeed.StartPositionIndexInclusive);
+                    Assert.Equal(
+                        1,
+                        lineFeed.EndPositionIndexExclusive);
+                }
+
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                {
+                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                    Assert.Equal(
+                        5,
+                        carriageReturnLineFeed.StartPositionIndexInclusive);
+                    Assert.Equal(
+                        7,
+                        carriageReturnLineFeed.EndPositionIndexExclusive);
+                }
+
+                Assert.Equal(4, modelModifier.LineEndList.Count);
+
+                var endOfFile = modelModifier.LineEndList.Last();
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                Assert.Equal(11, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(11, endOfFile.EndPositionIndexExclusive);
+            }
+
+            // Cursor related code-block-grouping:
+            {
+                Assert.Equal(1, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.ColumnIndex);
+                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                Assert.True(cursorModifier.IsPrimaryCursor);
+                Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
+                Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
+            }
+        }
+    }
+
+    [Fact]
     public void Delete_From_CursorSelection_At_PositionIndex_EqualTo_DocumentLength_DeleteEnum()
     {
         var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
@@ -3259,6 +3717,162 @@ public partial class TextEditorModelModifierTests
                     cursorModifierBag: cursorModifierBag,
                     columnCount: 1,
                     expandWord: false,
+                    cancellationToken: CancellationToken.None,
+                    deleteKind: DeleteKind.Backspace
+                );
+            outModel = modelModifier.ToModel();
+        }
+
+        // Post-assertions
+        {
+            Assert.Equal(11, modelModifier.DocumentLength);
+
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+
+            Assert.Single(modelModifier.PartitionList);
+
+            Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
+            Assert.Equal(
+                7,
+                modelModifier.TabKeyPositionList.Single());
+
+            // LineEnd related code-block-grouping:
+            {
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                {
+                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                    Assert.Equal(
+                        2,
+                        carriageReturn.StartPositionIndexInclusive);
+                    Assert.Equal(
+                        3,
+                        carriageReturn.EndPositionIndexExclusive);
+                }
+
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                {
+                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                    Assert.Equal(
+                        0,
+                        lineFeed.StartPositionIndexInclusive);
+                    Assert.Equal(
+                        1,
+                        lineFeed.EndPositionIndexExclusive);
+                }
+
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                {
+                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                    Assert.Equal(
+                        5,
+                        carriageReturnLineFeed.StartPositionIndexInclusive);
+                    Assert.Equal(
+                        7,
+                        carriageReturnLineFeed.EndPositionIndexExclusive);
+                }
+
+                Assert.Equal(4, modelModifier.LineEndList.Count);
+
+                var endOfFile = modelModifier.LineEndList.Last();
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                Assert.Equal(11, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(11, endOfFile.EndPositionIndexExclusive);
+            }
+
+            // Cursor related code-block-grouping:
+            {
+                Assert.Equal(1, cursorModifier.LineIndex);
+                Assert.Equal(0, cursorModifier.ColumnIndex);
+                Assert.Equal(0, cursorModifier.PreferredColumnIndex);
+                Assert.True(cursorModifier.IsPrimaryCursor);
+                Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
+                Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
+            }
+        }
+    }
+    
+    [Fact]
+    public void Delete_From_CursorSelection_At_PositionIndex_Between_0_And_DocumentLength_Exclusive_ExpandWord_BackspaceEnum()
+    {
+        throw new NotImplementedException();
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content:
+                (
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " "      // Space
+                ),
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // Do something
+        TextEditorModel outModel;
+        TextEditorCursorModifier cursorModifier;
+        {
+            /*
+             Given content:
+                (
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " "      // Space
+                ),
+             Then delete:
+                (
+                    "\n" +   // LineFeed
+
+                    "b9" +   // LetterOrDigit-Lowercase
+                     ^Delete this 'b'
+
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " "      // Space
+                ),
+             */
+            var cursor = new TextEditorCursor(
+                LineIndex: 1,
+                ColumnIndex: 1,
+                PreferredColumnIndex: 1,
+                IsPrimaryCursor: true,
+                Selection: new TextEditorSelection(
+                    AnchorPositionIndex: 1,
+                    EndingPositionIndex: 2));
+
+            cursorModifier = new TextEditorCursorModifier(cursor);
+            var cursorModifierBag = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier>() { cursorModifier });
+
+            modelModifier.Delete(
+                    cursorModifierBag: cursorModifierBag,
+                    columnCount: 1,
+                    expandWord: true,
                     cancellationToken: CancellationToken.None,
                     deleteKind: DeleteKind.Backspace
                 );
