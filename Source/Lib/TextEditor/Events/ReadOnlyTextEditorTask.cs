@@ -34,7 +34,7 @@ public class ReadOnlyTextEditorTask : ITextEditorTask
         _events = events;
         _textEditorEdit = textEditorEdit;
 
-        ThrottleTimeSpan = throttleTimeSpan ?? _events.ThrottleDelayDefault;
+        ThrottleTimeSpan = throttleTimeSpan ?? TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
     }
 
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
@@ -47,10 +47,10 @@ public class ReadOnlyTextEditorTask : ITextEditorTask
 
     public async Task InvokeWithEditContext(IEditContext editContext)
     {
-        var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
+        //var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
 
-        if (viewModelModifier is null)
-            return;
+        //if (viewModelModifier is null)
+        //    return;
 
         await _textEditorEdit
             .Invoke(editContext)

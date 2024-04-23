@@ -330,7 +330,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 _events.OnMouseOutTooltipTask = Task.Run(async () =>
                 {
-                    await Task.Delay(_events.OnMouseOutTooltipDelay, onMouseOutTooltipCancellationToken);
+                    await Task.Delay(TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault, onMouseOutTooltipCancellationToken);
 
                     if (!onMouseOutTooltipCancellationToken.IsCancellationRequested)
                     {
@@ -347,7 +347,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
             _events.MouseStoppedMovingTask = Task.Run(async () =>
             {
-                await Task.Delay(_events.MouseStoppedMovingDelay, cancellationToken);
+                await Task.Delay(TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault, cancellationToken);
 
                 if (!cancellationToken.IsCancellationRequested && _userMouseIsInside)
                 {
@@ -508,7 +508,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        TextEditorService.PostIdempotent(
+        TextEditorService.PostReadOnly(
             nameof(QueueRemeasureBackgroundTask),
             _events,
             viewModelKey.Value,
@@ -529,7 +529,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        TextEditorService.PostIdempotent(
+        TextEditorService.PostReadOnly(
             nameof(QueueCalculateVirtualizationResultBackgroundTask),
             _events,
             viewModelKey.Value,
@@ -604,9 +604,9 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             };
 		}
 
-		public TimeSpan ThrottleDelayDefault { get; } = TimeSpan.FromMilliseconds(30);
-        public TimeSpan OnMouseOutTooltipDelay { get; } = TimeSpan.FromMilliseconds(1_000);
-        public TimeSpan MouseStoppedMovingDelay { get; } = TimeSpan.FromMilliseconds(400);
+		public static TimeSpan ThrottleDelayDefault { get; } = TimeSpan.FromMilliseconds(30);
+        public static TimeSpan OnMouseOutTooltipDelay { get; } = TimeSpan.FromMilliseconds(1_000);
+        public static TimeSpan MouseStoppedMovingDelay { get; } = TimeSpan.FromMilliseconds(400);
         public Task MouseStoppedMovingTask { get; set; } = Task.CompletedTask;
         public Task OnMouseOutTooltipTask { get; set; } = Task.CompletedTask;
         public CancellationTokenSource OnMouseOutTooltipCancellationTokenSource { get; set; } = new();

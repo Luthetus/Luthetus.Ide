@@ -50,7 +50,7 @@ public class OnKeyDown : ITextEditorTask
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnKeyDown);
     public Task? WorkProgress { get; }
-    public TimeSpan ThrottleTimeSpan => _events.ThrottleDelayDefault;
+    public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
     public KeyboardEventArgs KeyboardEventArgs { get; }
     public CommandNoType? Command { get; }
 

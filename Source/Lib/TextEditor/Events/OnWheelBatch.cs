@@ -28,7 +28,7 @@ public class OnWheelBatch : ITextEditorTask
     public List<WheelEventArgs> WheelEventArgsList { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
-    public TimeSpan ThrottleTimeSpan => _events.ThrottleDelayDefault;
+    public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
 
     public Task InvokeWithEditContext(IEditContext editContext)
     {

@@ -33,7 +33,7 @@ public class OnDoubleClick : ITextEditorTask
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
-    public TimeSpan ThrottleTimeSpan => _events.ThrottleDelayDefault;
+    public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
 
     public async Task InvokeWithEditContext(IEditContext editContext)
     {
