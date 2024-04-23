@@ -21,9 +21,9 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Microsoft.JSInterop;
-using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.Edits.States;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
+using Luthetus.TextEditor.RazorLib.Events;
 
 namespace Luthetus.TextEditor.RazorLib;
 
@@ -132,84 +132,19 @@ public partial class TextEditorService : ITextEditorService
         }
     }
 
-    public void Post(string taskDisplayName, TextEditorEdit edit)
+    public void PostIdempotent(
+        string name,
+        TextEditorViewModelDisplay.TextEditorEvents events,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorEdit textEditorEdit,
+        TimeSpan? throttleTimeSpan = null)
     {
-        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
-            "te_" + taskDisplayName,
-                async () =>
-                {
-                    var editContext = new TextEditorEditContext(
-                        this,
-                        AuthenticatedActionKey);
-
-                    try
-                    {
-                        await edit.Invoke(editContext).ConfigureAwait(false);
-
-                        foreach (var modelModifier in editContext.ModelCache.Values)
-                        {
-                            if (modelModifier is null || !modelModifier.WasModified)
-                                continue;
-
-                            _dispatcher.Dispatch(new TextEditorModelState.SetAction(
-                                AuthenticatedActionKey,
-                                editContext,
-                                modelModifier));
-
-                            var viewModelBag = ModelApi.GetViewModelsOrEmpty(modelModifier.ResourceUri);
-
-                            foreach (var viewModel in viewModelBag)
-                            {
-                                // Invoking 'GetViewModelModifier' marks the view model to be updated.
-                                editContext.GetViewModelModifier(viewModel.ViewModelKey);
-                            }
-
-                            if (modelModifier.WasDirty != modelModifier.IsDirty)
-                            {
-                                if (modelModifier.IsDirty)
-                                    _dispatcher.Dispatch(new DirtyResourceUriState.AddDirtyResourceUriAction(modelModifier.ResourceUri));
-                                else
-                                    _dispatcher.Dispatch(new DirtyResourceUriState.RemoveDirtyResourceUriAction(modelModifier.ResourceUri));
-                            }
-                        }
-
-                        foreach (var viewModelModifier in editContext.ViewModelCache.Values)
-                        {
-                            if (viewModelModifier is null || !viewModelModifier.WasModified)
-                                return;
-
-                            var successCursorModifierBag = editContext.CursorModifierBagCache.TryGetValue(
-                                viewModelModifier.ViewModel.ViewModelKey,
-                                out var cursorModifierBag);
-
-                            if (successCursorModifierBag && cursorModifierBag is not null)
-                            {
-                                viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-                                {
-                                    CursorList = cursorModifierBag.List
-                                        .Select(x => x.ToCursor())
-                                        .ToImmutableArray()
-                                };
-                            }
-
-                            await ViewModelApi.CalculateVirtualizationResultFactory(
-                                    viewModelModifier.ViewModel.ResourceUri, viewModelModifier.ViewModel.ViewModelKey, CancellationToken.None)
-                                .Invoke(editContext)
-                                .ConfigureAwait(false);
-
-                            _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
-                                AuthenticatedActionKey,
-                                editContext,
-                                viewModelModifier.ViewModel.ViewModelKey,
-                                inState => viewModelModifier.ViewModel));
-                        }
-                    }
-                    catch (LuthetusTextEditorException e)
-                    {
-                        Console.WriteLine("aaaa" + e.ToString());
-                    }
-                });
+        Post(new IdempotentTextEditorTask(
+            name,
+            events,
+            viewModelKey,
+            textEditorEdit,
+            throttleTimeSpan));
     }
 
     private record TextEditorEditContext : IEditContext

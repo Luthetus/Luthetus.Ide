@@ -9,8 +9,8 @@ namespace Luthetus.TextEditor.RazorLib.Events;
 /// <summary>
 /// This class allows for easy creation of a <see cref="ITextEditorTask"/>, that comes with "redundancy" checking in the queue.
 /// That is, if when enqueueing an instance of this type, the last item in the queue is already an instance of this type
-/// with the same <see cref="Name"/>, then this instance will overwrite the last item in the queue, because the logic has no
-/// value if ran many times one after another, therefore, just take the most recent event.
+/// with the same <see cref="Name"/>, and same <see cref="ViewModelKey"/> then this instance will overwrite the last item in
+/// the queue, because the logic has no value if ran many times one after another, therefore, just take the most recent event.
 /// </summary>
 public class IdempotentTextEditorTask : ITextEditorTask
 {

@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Fluxor;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models;
 
@@ -20,6 +21,7 @@ public class TextEditorCommandArgs : ICommandArgs
         IClipboardService clipboardService,
         ITextEditorService textEditorService,
         TextEditorOptions options,
+        TextEditorViewModelDisplay.TextEditorEvents events,
         Func<MouseEventArgs, Task>? handleMouseStoppedMovingEventAsyncFunc,
         IJSRuntime? jsRuntime,
         IDispatcher dispatcher,
@@ -32,7 +34,8 @@ public class TextEditorCommandArgs : ICommandArgs
         ClipboardService = clipboardService;
         TextEditorService = textEditorService;
 		Options = options;
-		HandleMouseStoppedMovingEventAsyncFunc = handleMouseStoppedMovingEventAsyncFunc;
+        Events = events;
+        HandleMouseStoppedMovingEventAsyncFunc = handleMouseStoppedMovingEventAsyncFunc;
         JsRuntime = jsRuntime;
         Dispatcher = dispatcher;
         ServiceProvider = serviceProvider;
@@ -49,11 +52,12 @@ public class TextEditorCommandArgs : ICommandArgs
     /// of the event.
     /// </summary>
 	public TextEditorOptions Options { get; }
+    public TextEditorViewModelDisplay.TextEditorEvents Events { get; }
 
-	/// <summary>
-	/// This property is used so a keyboard event can trigger a tooltip at the cursor's position.
-	/// </summary>
-	public Func<MouseEventArgs, Task>? HandleMouseStoppedMovingEventAsyncFunc { get; }
+    /// <summary>
+    /// This property is used so a keyboard event can trigger a tooltip at the cursor's position.
+    /// </summary>
+    public Func<MouseEventArgs, Task>? HandleMouseStoppedMovingEventAsyncFunc { get; }
     public IJSRuntime? JsRuntime { get; }
     public IDispatcher Dispatcher { get; }
     public IServiceProvider ServiceProvider { get; }

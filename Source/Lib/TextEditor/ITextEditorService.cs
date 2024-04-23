@@ -11,6 +11,8 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.Common.RazorLib.Storages.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
 namespace Luthetus.TextEditor.RazorLib;
 
@@ -35,10 +37,25 @@ public partial interface ITextEditorService
     public IState<TextEditorFindAllState> FindAllStateWrap { get; }
 
     /// <summary>
-    /// The intent of this method is to replicate functionality of the <see cref="SynchronizationContext"/>
-    /// class. Here the replication is quite roundabout, perhaps I should use <see cref="SynchronizationContext"/> directly,
-    /// but I need to learn more about it. (2023-12-21)
+    /// This method will create an instance of <see cref="Events.IdempotentTextEditorTask"/>,
+    /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
+    /// --- IdempotentTextEditorTask.cs inheritdoc:<br/><br/>
+    /// <inheritdoc cref="Events.IdempotentTextEditorTask"/>
     /// </summary>
-    public void Post(string taskDisplayName, TextEditorEdit textEditorEdit);
+    public void PostIdempotent(
+        string name,
+        TextEditorViewModelDisplay.TextEditorEvents events,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorEdit textEditorEdit,
+        TimeSpan? throttleTimeSpan = null);
+
+    /// <summary>
+    /// This method creates a <see cref="TextEditorServiceTask"/>
+    /// that will encapsulate the provided innerTask.
+    /// When the queue invokes the encapsulating <see cref="TextEditorServiceTask"/>,
+    /// then the provided innerTask's <see cref="ITextEditorTask.InvokeWithEditContext(IEditContext)"/> will be invoked in turn.
+    /// When the innerTask is finished, the encapsulating <see cref="TextEditorServiceTask"/>
+    /// will update any state that was modified, and trigger re-renders for the UI.
+    /// </summary>
     public void Post(ITextEditorTask textEditorTask);
 }
