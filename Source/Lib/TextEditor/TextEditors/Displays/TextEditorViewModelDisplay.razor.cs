@@ -26,6 +26,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Events;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -984,9 +985,18 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                     ? lengthOfRow
                     : columnIndexInt;
 
-                var tabsOnSameRowBeforeCursor = model.GetTabCountOnSameLineBeforeCursor(
-                    rowIndex,
-                    parameterForGetTabsCountOnSameRowBeforeCursor);
+                int tabsOnSameRowBeforeCursor;
+
+                try
+                {
+                    tabsOnSameRowBeforeCursor = model.GetTabCountOnSameLineBeforeCursor(
+                        rowIndex,
+                        parameterForGetTabsCountOnSameRowBeforeCursor);
+                }
+                catch (LuthetusTextEditorException)
+                {
+                    tabsOnSameRowBeforeCursor = 0;
+                }
 
                 // 1 of the character width is already accounted for
                 var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
