@@ -776,6 +776,12 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                                 ? maxValidColumnIndex
                                 : localHorizontalStartingIndex;
 
+                        var lineInformation = modelModifier.GetLineInformation(lineIndex);
+
+                        if (parameterForGetTabsCountOnSameLineBeforeCursor > lineInformation.LastValidColumnIndex)
+                            parameterForGetTabsCountOnSameLineBeforeCursor = lineInformation.LastValidColumnIndex;
+
+
                         var tabsOnSameLineBeforeCursor = modelModifier.GetTabCountOnSameLineBeforeCursor(
                             lineIndex,
                             parameterForGetTabsCountOnSameLineBeforeCursor);
@@ -814,6 +820,11 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                             localHorizontalStartingIndex > maxValidColumnIndex
                                 ? maxValidColumnIndex
                                 : localHorizontalStartingIndex;
+
+                        var lineInformation = modelModifier.GetLineInformation(lineIndex);
+
+                        if (parameterForGetTabsCountOnSameLineBeforeCursor > lineInformation.LastValidColumnIndex)
+                            parameterForGetTabsCountOnSameLineBeforeCursor = lineInformation.LastValidColumnIndex;
 
                         var tabsOnSameLineBeforeCursor = modelModifier.GetTabCountOnSameLineBeforeCursor(
                             lineIndex,
