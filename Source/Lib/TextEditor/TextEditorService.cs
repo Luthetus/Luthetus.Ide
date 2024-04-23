@@ -111,6 +111,36 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
 
+    public void PostReadOnly(
+        string name,
+        TextEditorViewModelDisplay.TextEditorEvents events,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorEdit textEditorEdit,
+        TimeSpan? throttleTimeSpan = null)
+    {
+        Post(new ReadOnlyTextEditorTask(
+            name,
+            events,
+            viewModelKey,
+            textEditorEdit,
+            throttleTimeSpan));
+    }
+
+    public void PostIdempotent(
+        string name,
+        TextEditorViewModelDisplay.TextEditorEvents events,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorEdit textEditorEdit,
+        TimeSpan? throttleTimeSpan = null)
+    {
+        Post(new IdempotentTextEditorTask(
+            name,
+            events,
+            viewModelKey,
+            textEditorEdit,
+            throttleTimeSpan));
+    }
+
     public void Post(ITextEditorTask innerTask)
     {
         try
@@ -130,21 +160,6 @@ public partial class TextEditorService : ITextEditorService
         {
             Console.WriteLine("aaaa" + e.ToString());
         }
-    }
-
-    public void PostIdempotent(
-        string name,
-        TextEditorViewModelDisplay.TextEditorEvents events,
-        Key<TextEditorViewModel> viewModelKey,
-        TextEditorEdit textEditorEdit,
-        TimeSpan? throttleTimeSpan = null)
-    {
-        Post(new IdempotentTextEditorTask(
-            name,
-            events,
-            viewModelKey,
-            textEditorEdit,
-            throttleTimeSpan));
     }
 
     private record TextEditorEditContext : IEditContext

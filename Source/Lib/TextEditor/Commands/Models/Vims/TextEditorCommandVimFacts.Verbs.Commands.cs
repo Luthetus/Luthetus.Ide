@@ -12,8 +12,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(
+                commandArgs.TextEditorService.PostReadOnly(
                     nameof(DeleteLineCommand),
+                    commandArgs.Events,
+                    commandArgs.ViewModelKey,
                     DeleteLineFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -32,8 +34,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(
+                commandArgs.TextEditorService.PostReadOnly(
                     nameof(ChangeLineCommand),
+                    commandArgs.Events,
+                    commandArgs.ViewModelKey,
                     ChangeLineFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -54,8 +58,10 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.InnerCommand = innerTextEditorCommand;
 
-                commandArgs.TextEditorService.Post(
+                commandArgs.TextEditorService.PostReadOnly(
                     nameof(DeleteMotionCommandConstructor),
+                    commandArgs.Events,
+                    commandArgs.ViewModelKey,
                     DeleteMotionFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -79,8 +85,10 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.InnerCommand = innerTextEditorCommand;
 
-                commandArgs.TextEditorService.Post(
+                commandArgs.TextEditorService.PostReadOnly(
                     nameof(ChangeMotionCommandConstructor),
+                    commandArgs.Events,
+                    commandArgs.ViewModelKey,
                     GetChangeMotionFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -102,8 +110,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(
+                commandArgs.TextEditorService.PostReadOnly(
                     nameof(ChangeSelectionCommand),
+                    commandArgs.Events,
+                    commandArgs.ViewModelKey,
                     ChangeSelectionFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -122,8 +132,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(
+                commandArgs.TextEditorService.PostReadOnly(
                     nameof(YankCommand),
+                    commandArgs.Events,
+                    commandArgs.ViewModelKey,
                     YankFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -142,8 +154,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(
+                commandArgs.TextEditorService.PostReadOnly(
                     nameof(NewLineBelowCommand),
+                    commandArgs.Events,
+                    commandArgs.ViewModelKey,
                     NewLineBelowFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -162,8 +176,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(
+                commandArgs.TextEditorService.PostReadOnly(
                     nameof(NewLineAboveCommand),
+                    commandArgs.Events,
+                    commandArgs.ViewModelKey,
                     NewLineAboveFactory(commandArgs));
 
                 return Task.CompletedTask;

@@ -12,8 +12,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(
+                commandArgs.TextEditorService.PostReadOnly(
                     nameof(Word),
+                    commandArgs.Events,
+                    commandArgs.ViewModelKey,
                     WordFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -32,8 +34,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(
+                commandArgs.TextEditorService.PostReadOnly(
                     nameof(End),
+                    commandArgs.Events,
+                    commandArgs.ViewModelKey,
                     EndFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -52,8 +56,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(
+                commandArgs.TextEditorService.PostReadOnly(
                     nameof(Back),
+                    commandArgs.Events,
+                    commandArgs.ViewModelKey,
                     BackFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -77,8 +83,10 @@ public static partial class TextEditorCommandVimFacts
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                     commandArgs.InnerCommand = innerCommand;
 
-                    commandArgs.TextEditorService.Post(
+                    commandArgs.TextEditorService.PostReadOnly(
                         nameof(GetVisualFactory),
+                        commandArgs.Events,
+                        commandArgs.ViewModelKey,
                         VisualFactory(commandArgs));
 
                     return Task.CompletedTask;
@@ -105,8 +113,10 @@ public static partial class TextEditorCommandVimFacts
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                     commandArgs.InnerCommand = innerCommand;
 
-                    commandArgs.TextEditorService.Post(
+                    commandArgs.TextEditorService.PostReadOnly(
                         nameof(GetVisualLineFactory),
+                        commandArgs.Events,
+                        commandArgs.ViewModelKey,
                         VisualLineFactory(commandArgs));
 
                     return Task.CompletedTask;

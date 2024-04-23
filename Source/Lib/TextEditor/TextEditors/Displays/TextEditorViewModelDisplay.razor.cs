@@ -435,8 +435,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         var diffX = previousTouchPoint.ClientX - currentTouchPoint.ClientX;
         var diffY = previousTouchPoint.ClientY - currentTouchPoint.ClientY;
 
-		TextEditorService.Post(
+		TextEditorService.PostReadOnly(
             nameof(QueueRemeasureBackgroundTask),
+            _events,
+            viewModel.ViewModelKey,
             async editContext =>
 			{
 				await viewModel.MutateScrollHorizontalPositionByPixelsFactory(diffX)
@@ -506,8 +508,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        TextEditorService.Post(
+        TextEditorService.PostIdempotent(
             nameof(QueueRemeasureBackgroundTask),
+            _events,
+            viewModelKey.Value,
             TextEditorService.ViewModelApi.RemeasureFactory(
                 modelResourceUri,
                 viewModelKey.Value,
@@ -525,8 +529,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        TextEditorService.Post(
+        TextEditorService.PostIdempotent(
             nameof(QueueCalculateVirtualizationResultBackgroundTask),
+            _events,
+            viewModelKey.Value,
             TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
                 modelResourceUri,
                 viewModelKey.Value,

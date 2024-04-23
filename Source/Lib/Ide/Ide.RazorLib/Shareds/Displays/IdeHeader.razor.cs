@@ -217,6 +217,7 @@ public partial class IdeHeader : ComponentBase
 							ClipboardService,
 					        TextEditorService,
 							TextEditorService.OptionsStateWrap.Value.Options,
+                            null,
 							null,
 					        JsRuntime,
 					        Dispatcher,

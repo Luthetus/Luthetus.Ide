@@ -125,6 +125,7 @@ public class OnKeyDown : ITextEditorTask
                         _events.ClipboardService,
                         _events.TextEditorService,
                         _events.Options,
+                        _events,
                         _events.HandleMouseStoppedMovingEventAsync,
                         _events.JsRuntime,
                         _events.Dispatcher,

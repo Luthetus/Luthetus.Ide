@@ -50,46 +50,50 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 
         var modelText = model.GetAllText();
 
-        TextEditorService.Post(nameof(SyntaxTextSpanDisplay), async editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(
-                localTextSpanTuple.TextEditorTextSpan.ResourceUri);
-
-            if (modelModifier is null ||
-                modelModifier.GetAllText() != modelText)
+        TextEditorService.PostReadOnly(
+            nameof(SyntaxTextSpanDisplay),
+            null,
+            Key<TextEditorViewModel>.Empty,
+            async editContext =>
             {
-                return;
-            }
+                var modelModifier = editContext.GetModelModifier(
+                    localTextSpanTuple.TextEditorTextSpan.ResourceUri);
 
-            var rowInfo = modelModifier.GetLineInformationFromPositionIndex(
-                localTextSpanTuple.TextEditorTextSpan.StartingIndexInclusive);
+                if (modelModifier is null ||
+                    modelModifier.GetAllText() != modelText)
+                {
+                    return;
+                }
 
-            var columnIndex = localTextSpanTuple.TextEditorTextSpan.StartingIndexInclusive -
-                rowInfo.StartPositionIndexInclusive;
+                var rowInfo = modelModifier.GetLineInformationFromPositionIndex(
+                    localTextSpanTuple.TextEditorTextSpan.StartingIndexInclusive);
 
-            var cursor = new TextEditorCursor(
-                rowInfo.Index,
-                columnIndex,
-                columnIndex,
-                true,
-                new TextEditorSelection(
-                    localTextSpanTuple.TextEditorTextSpan.StartingIndexInclusive,
-                    localTextSpanTuple.TextEditorTextSpan.EndingIndexExclusive));
+                var columnIndex = localTextSpanTuple.TextEditorTextSpan.StartingIndexInclusive -
+                    rowInfo.StartPositionIndexInclusive;
 
-            var cursorModifierBag = new CursorModifierBagTextEditor(
-                Key<TextEditorViewModel>.Empty,
-                new List<TextEditorCursorModifier> { new(cursor) });
+                var cursor = new TextEditorCursor(
+                    rowInfo.Index,
+                    columnIndex,
+                    columnIndex,
+                    true,
+                    new TextEditorSelection(
+                        localTextSpanTuple.TextEditorTextSpan.StartingIndexInclusive,
+                        localTextSpanTuple.TextEditorTextSpan.EndingIndexExclusive));
 
-            await TextEditorService.ModelApi.InsertTextUnsafeFactory(
+                var cursorModifierBag = new CursorModifierBagTextEditor(
+                    Key<TextEditorViewModel>.Empty,
+                    new List<TextEditorCursorModifier> { new(cursor) });
+
+                await TextEditorService.ModelApi.InsertTextUnsafeFactory(
+                        _textSpanTuple.TextEditorTextSpan.ResourceUri,
+                        cursorModifierBag,
+                        localInputValue,
+                        CancellationToken.None)
+                    .Invoke(editContext);
+
+                modelModifier.CompilerService.ResourceWasModified(
                     _textSpanTuple.TextEditorTextSpan.ResourceUri,
-                    cursorModifierBag,
-                    localInputValue,
-                    CancellationToken.None)
-                .Invoke(editContext);
-
-            modelModifier.CompilerService.ResourceWasModified(
-                _textSpanTuple.TextEditorTextSpan.ResourceUri,
-                ImmutableArray<TextEditorTextSpan>.Empty);
-        });
+                    ImmutableArray<TextEditorTextSpan>.Empty);
+            });
     }
 }

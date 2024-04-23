@@ -43,8 +43,10 @@ public class TextEditorModelApi : ITextEditorModelApi
             model));
 
         // TODO: Do not immediately apply syntax highlighting. Wait until the file is viewed first.
-        _textEditorService.Post(
+        _textEditorService.PostIdempotent(
             nameof(RegisterTemplated),
+            null,
+            Key<TextEditorViewModel>.Empty,
             ApplySyntaxHighlightingFactory(model.ResourceUri));
     }
 
@@ -68,8 +70,10 @@ public class TextEditorModelApi : ITextEditorModelApi
             model));
 
         // TODO: Do not immediately apply syntax highlighting. Wait until the file is viewed first.
-        _textEditorService.Post(
+        _textEditorService.PostIdempotent(
             nameof(RegisterTemplated),
+            null,
+            Key<TextEditorViewModel>.Empty,
             ApplySyntaxHighlightingFactory(model.ResourceUri));
     }
     #endregion

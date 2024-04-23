@@ -111,8 +111,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(
+                    commandArgs.TextEditorService.PostReadOnly(
                         nameof(commandDisplayName),
+                        null,
+                        commandArgs.ViewModelKey,
                         editContext =>
                         {
                             ActiveVimMode = VimMode.Insert;
@@ -139,8 +141,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(
+                    commandArgs.TextEditorService.PostReadOnly(
                         nameof(commandDisplayName),
+                        null,
+                        commandArgs.ViewModelKey,
                         editContext =>
                         {
                             var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri, true);
@@ -189,8 +193,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(
+                    commandArgs.TextEditorService.PostReadOnly(
                         nameof(commandDisplayName),
+                        null,
+                        commandArgs.ViewModelKey,
                         editContext =>
                         {
                             var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri, true);
@@ -244,8 +250,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(
+                    commandArgs.TextEditorService.PostReadOnly(
                         nameof(commandDisplayName),
+                        null,
+                        commandArgs.ViewModelKey,
                         editContext =>
                         {
                             var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri, true);
@@ -285,8 +293,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(
+                    commandArgs.TextEditorService.PostReadOnly(
                         nameof(commandDisplayName),
+                        null,
+                        commandArgs.ViewModelKey,
                         async editContext =>
                         {
                             var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
@@ -326,8 +336,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(
+                    commandArgs.TextEditorService.PostReadOnly(
                         nameof(commandDisplayName),
+                        null,
+                        commandArgs.ViewModelKey,
                         async editContext =>
                         {
                             var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
@@ -368,8 +380,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(
+                    commandArgs.TextEditorService.PostReadOnly(
                         nameof(commandDisplayName),
+                        null,
+                        commandArgs.ViewModelKey,
                         editContext =>
                         {
                             return TextEditorCommandVimFacts.Verbs.NewLineBelowCommand.CommandFunc
@@ -395,8 +409,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(
+                    commandArgs.TextEditorService.PostReadOnly(
                         nameof(commandDisplayName),
+                        null,
+                        commandArgs.ViewModelKey,
                         editContext =>
                         {
                             return TextEditorCommandVimFacts.Verbs.NewLineAboveCommand.CommandFunc
@@ -422,8 +438,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(
+                    commandArgs.TextEditorService.PostReadOnly(
                         nameof(commandDisplayName),
+                        null,
+                        commandArgs.ViewModelKey,
                         editContext =>
                         {
                             return TextEditorCommandDefaultFacts.ScrollLineDown.CommandFunc
@@ -450,8 +468,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(
+                    commandArgs.TextEditorService.PostReadOnly(
                         nameof(commandDisplayName),
+                        null,
+                        commandArgs.ViewModelKey,
                         editContext =>
                         {
                             return TextEditorCommandDefaultFacts.ScrollLineUp.CommandFunc
@@ -723,8 +743,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(
+                commandArgs.TextEditorService.PostReadOnly(
                     nameof(commandDisplayName),
+                    null,
+                    commandArgs.ViewModelKey,
                     editContext =>
                     {
                         ActiveVimMode = VimMode.Normal;
@@ -784,8 +806,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(
+                    commandArgs.TextEditorService.PostReadOnly(
                         nameof(commandDisplayName),
+                        null,
+                        commandArgs.ViewModelKey,
                         editContext =>
                         {
                             return TextEditorCommandDefaultFacts.ScrollPageDown.CommandFunc
@@ -811,8 +835,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(
+                    commandArgs.TextEditorService.PostReadOnly(
                         nameof(commandDisplayName),
+                        null,
+                        commandArgs.ViewModelKey,
                         editContext =>
                         {
                             return TextEditorCommandDefaultFacts.ScrollPageUp.CommandFunc
@@ -837,8 +863,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(
+                commandArgs.TextEditorService.PostReadOnly(
                     nameof(displayName),
+                    null,
+                    commandArgs.ViewModelKey,
                     editContext =>
                     {
                         var success = VimSentence.TryLex(this, keymapArgument, commandArgs.HasTextSelection, out var lexCommand);
@@ -863,8 +891,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(
+                commandArgs.TextEditorService.PostReadOnly(
                     nameof(commandDisplayName),
+                    null,
+                    commandArgs.ViewModelKey,
                     editContext =>
                     {
                         if (ActiveVimMode == VimMode.Visual || ActiveVimMode == VimMode.VisualLine)

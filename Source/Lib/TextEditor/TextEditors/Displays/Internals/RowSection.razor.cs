@@ -110,8 +110,10 @@ public partial class RowSection : ComponentBase
 
         _throttleVirtualizationDisplayItemsProviderFunc.PushEvent(_ => 
         {
-            TextEditorService.Post(
+            TextEditorService.PostReadOnly(
                 nameof(VirtualizationDisplayItemsProviderFunc),
+                RenderBatch.Events,
+                viewModel.ViewModelKey,
                 TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
                     model.ResourceUri,
                     viewModel.ViewModelKey,

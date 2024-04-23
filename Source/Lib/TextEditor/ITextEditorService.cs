@@ -37,6 +37,19 @@ public partial interface ITextEditorService
     public IState<TextEditorFindAllState> FindAllStateWrap { get; }
 
     /// <summary>
+    /// This method will create an instance of <see cref="Events.ReadOnlyTextEditorTask"/>,
+    /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
+    /// --- ReadOnlyTextEditorTask.cs inheritdoc:<br/><br/>
+    /// <inheritdoc cref="Events.ReadOnlyTextEditorTask"/>
+    /// </summary>
+    public void PostReadOnly(
+        string name,
+        TextEditorViewModelDisplay.TextEditorEvents events,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorEdit textEditorEdit,
+        TimeSpan? throttleTimeSpan = null);
+
+    /// <summary>
     /// This method will create an instance of <see cref="Events.IdempotentTextEditorTask"/>,
     /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
     /// --- IdempotentTextEditorTask.cs inheritdoc:<br/><br/>

@@ -43,8 +43,10 @@ public partial class FindOverlayDisplay : ComponentBase
 
             _throttleInputValueChange.PushEvent(_ =>
             {
-				TextEditorService.Post(
+				TextEditorService.PostReadOnly(
                     nameof(FindOverlayDisplay),
+                    RenderBatch.Events,
+                    RenderBatch.ViewModel!.ViewModelKey,
                     async editContext =>
                     {
                         var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel!.ViewModelKey);
@@ -119,12 +121,13 @@ public partial class FindOverlayDisplay : ComponentBase
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
             await JsRuntime.InvokeVoidAsync(
-                    "luthetusTextEditor.focusHtmlElementById",
-                    RenderBatch.ViewModel!.PrimaryCursorContentId)
-            	;
+                "luthetusTextEditor.focusHtmlElementById",
+                RenderBatch.ViewModel!.PrimaryCursorContentId);
 
-            TextEditorService.Post(
+            TextEditorService.PostIdempotent(
                 nameof(FindOverlayDisplay),
+                RenderBatch.Events,
+                RenderBatch.ViewModel.ViewModelKey,
                 async editContext =>
                 {
                     var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel!.ViewModelKey);
@@ -146,8 +149,7 @@ public partial class FindOverlayDisplay : ComponentBase
                                 modelModifier.ResourceUri,
                                 FindOverlayPresentationFacts.PresentationKey,
                                 FindOverlayPresentationFacts.EmptyPresentationModel)
-                            .Invoke(editContext)
-                            ;
+                            .Invoke(editContext);
 
                     var presentationModel = modelModifier.PresentationModelList.First(
                         x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
@@ -233,8 +235,10 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private void HandleActiveIndexMatchedTextSpanChanged()
     {
-        TextEditorService.Post(
+        TextEditorService.PostReadOnly(
             nameof(HandleActiveIndexMatchedTextSpanChanged),
+            RenderBatch.Events,
+            RenderBatch.ViewModel!.ViewModelKey,
             async editContext =>
             {
                 var localActiveIndexMatchedTextSpan = _activeIndexMatchedTextSpan;

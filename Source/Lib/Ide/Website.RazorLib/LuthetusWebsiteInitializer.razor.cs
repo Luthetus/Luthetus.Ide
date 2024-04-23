@@ -17,6 +17,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.Website.RazorLib;
 
@@ -186,8 +187,10 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
 
             TextEditorService.ModelApi.RegisterCustom(textEditorModel);
 
-            TextEditorService.Post(
+            TextEditorService.PostReadOnly(
                 nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
+                null,
+                Key<TextEditorViewModel>.Empty,
                 async editContext =>
                 {
                     await TextEditorService.ModelApi.AddPresentationModelFactory(

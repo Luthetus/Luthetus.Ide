@@ -53,6 +53,7 @@ public partial class Header : ComponentBase
             ClipboardService,
             TextEditorService,
             RenderBatch.Options ?? TextEditorService.OptionsStateWrap.Value.Options,
+            RenderBatch.Events,
             null,
             null,
             Dispatcher,

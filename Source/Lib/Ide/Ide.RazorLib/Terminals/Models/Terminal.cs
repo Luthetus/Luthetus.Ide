@@ -281,8 +281,10 @@ public class Terminal
                                         _standardOutBuilderMap[terminalCommandKey].TextLineList.Add(output);
                                     }
 
-                                    _textEditorService.Post(
+                                    _textEditorService.PostReadOnly(
                                         nameof(EnqueueCommandAsync),
+                                        null,
+                                        Key<TextEditorViewModel>.Empty,
                                         async editContext =>
                                         {
                                             var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -411,8 +413,10 @@ public class Terminal
 
         _textEditorService.ModelApi.RegisterCustom(model);
 
-        _textEditorService.Post(
+        _textEditorService.PostReadOnly(
             nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
+            null,
+            Key<TextEditorViewModel>.Empty,
             async editContext =>
             {
                 await _textEditorService.ModelApi.AddPresentationModelFactory(
@@ -446,8 +450,10 @@ public class Terminal
             FindOverlayPresentationFacts.PresentationKey,
         }.ToImmutableArray();
 
-        _textEditorService.Post(
+        _textEditorService.PostReadOnly(
             nameof(Terminal),
+            null,
+            Key<TextEditorViewModel>.Empty,
             _textEditorService.ViewModelApi.WithValueFactory(
                 TextEditorViewModelKey,
                 textEditorViewModel => textEditorViewModel with
@@ -455,8 +461,10 @@ public class Terminal
                         FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
                     }));
 
-        _textEditorService.Post(
+        _textEditorService.PostReadOnly(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
+            null,
+            Key<TextEditorViewModel>.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -501,8 +509,10 @@ public class Terminal
 
     public void WriteWorkingDirectory()
     {
-        _textEditorService.Post(
+        _textEditorService.PostReadOnly(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
+            null,
+            Key<TextEditorViewModel>.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -545,8 +555,10 @@ public class Terminal
     
     public void ClearTerminal()
     {
-        _textEditorService.Post(
+        _textEditorService.PostReadOnly(
             nameof(ClearTerminal),
+            null,
+            Key<TextEditorViewModel>.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);

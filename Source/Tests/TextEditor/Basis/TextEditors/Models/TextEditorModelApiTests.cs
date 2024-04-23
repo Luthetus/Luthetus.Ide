@@ -93,8 +93,10 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(rowEndingKind, inModel.LineEndKindPreference);
 
-        textEditorService.Post(
+        textEditorService.PostReadOnly(
             nameof(textEditorService.ModelApi.SetUsingLineEndKindFactory),
+            null,
+            Key<TextEditorViewModel>.Empty,
             textEditorService.ModelApi.SetUsingLineEndKindFactory(
                 inModel.ResourceUri, rowEndingKind));
 
@@ -121,8 +123,10 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(newResourceLastWriteTime, inModel.ResourceLastWriteTime);
 
-        textEditorService.Post(
+        textEditorService.PostReadOnly(
             nameof(textEditorService.ModelApi.SetResourceDataFactory),
+            null,
+            Key<TextEditorViewModel>.Empty,
             textEditorService.ModelApi.SetResourceDataFactory(
                 inModel.ResourceUri, newResourceLastWriteTime));
 
@@ -149,8 +153,10 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(newContent, inModel.GetAllText());
 
-        textEditorService.Post(
+        textEditorService.PostReadOnly(
             nameof(textEditorService.ModelApi.ReloadFactory),
+            null,
+            Key<TextEditorViewModel>.Empty,
             textEditorService.ModelApi.ReloadFactory(
                 inModel.ResourceUri, newContent, DateTime.UtcNow));
 
@@ -460,8 +466,10 @@ public class TextEditorModelApiTests
 
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
-        textEditorService.Post(
+        textEditorService.PostReadOnly(
             nameof(textEditorService.ModelApi.DeleteTextByRangeUnsafeFactory),
+            null,
+            Key<TextEditorViewModel>.Empty,
             textEditorService.ModelApi.DeleteTextByRangeUnsafeFactory(
                 inModel.ResourceUri,
                 cursorModifierBag,
@@ -495,8 +503,10 @@ public class TextEditorModelApiTests
 
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
-        textEditorService.Post(
+        textEditorService.PostReadOnly(
             nameof(textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory),
+            null,
+            Key<TextEditorViewModel>.Empty,
             textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory(
                 inModel.ResourceUri,
                 cursorModifierBag,
@@ -521,8 +531,10 @@ public class TextEditorModelApiTests
 
         Assert.Empty(inModel!.PresentationModelList);
 
-        textEditorService.Post(
+        textEditorService.PostReadOnly(
             nameof(textEditorService.ModelApi.AddPresentationModelFactory),
+            null,
+            Key<TextEditorViewModel>.Empty,
             textEditorService.ModelApi.AddPresentationModelFactory(inModel.ResourceUri, DiffPresentationFacts.EmptyOutPresentationModel));
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);

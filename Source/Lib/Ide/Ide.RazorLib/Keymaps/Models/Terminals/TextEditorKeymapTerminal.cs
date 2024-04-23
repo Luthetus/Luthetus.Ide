@@ -78,9 +78,11 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 			{
 				var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-				commandArgs.TextEditorService.Post(
+				commandArgs.TextEditorService.PostReadOnly(
 					nameof(commandDisplayName),
-					async editContext =>
+                    null,
+                    Key<TextEditorViewModel>.Empty,
+                    async editContext =>
 					{
 						var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
 						var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);

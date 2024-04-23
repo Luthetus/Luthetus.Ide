@@ -68,6 +68,7 @@ public partial class ContextMenu : ComponentBase
             ClipboardService,
             TextEditorService,
             RenderBatch.Options!,
+            RenderBatch.Events,
             null,
             null,
             Dispatcher,

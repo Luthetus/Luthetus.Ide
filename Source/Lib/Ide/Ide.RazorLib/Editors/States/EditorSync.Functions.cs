@@ -37,8 +37,10 @@ public partial class EditorSync
 
             _textEditorService.ModelApi.RegisterCustom(model);
 
-            _textEditorService.Post(
+            _textEditorService.PostReadOnly(
                 nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
+                null,
+                Key<TextEditorViewModel>.Empty,
                 async editContext =>
                 {
                     await _textEditorService.ModelApi.AddPresentationModelFactory(
@@ -103,8 +105,10 @@ public partial class EditorSync
             registerViewModelArgs.ResourceUri.Value,
             false);
 
-        _textEditorService.Post(
+        _textEditorService.PostReadOnly(
             nameof(TryRegisterViewModelFunc),
+            null,
+            Key<TextEditorViewModel>.Empty,
             _textEditorService.ViewModelApi.WithValueFactory(
                 viewModelKey,
                 textEditorViewModel => 
@@ -134,8 +138,10 @@ public partial class EditorSync
                 {
                     if (writtenDateTime is not null)
                     {
-                        _textEditorService.Post(
+                        _textEditorService.PostReadOnly(
                             nameof(HandleOnSaveRequested),
+                            null,
+                            Key<TextEditorViewModel>.Empty,
                             _textEditorService.ModelApi.SetResourceDataFactory(
                                 innerTextEditor.ResourceUri,
                                 writtenDateTime.Value));

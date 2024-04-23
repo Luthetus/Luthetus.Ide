@@ -1,10 +1,12 @@
-﻿using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
+﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
@@ -161,8 +163,10 @@ public class LuthCompilerService : ILuthCompilerService
 
     protected virtual void QueueParseRequest(ResourceUri resourceUri)
     {
-        _textEditorService.Post(
+        _textEditorService.PostReadOnly(
             nameof(QueueParseRequest),
+            null,
+            Key<TextEditorViewModel>.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);

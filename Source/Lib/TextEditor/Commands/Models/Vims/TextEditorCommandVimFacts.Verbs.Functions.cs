@@ -56,6 +56,7 @@ public static partial class TextEditorCommandVimFacts
                     commandArgs.ClipboardService,
                     commandArgs.TextEditorService,
                     commandArgs.Options,
+                    commandArgs.Events,
                     commandArgs.HandleMouseStoppedMovingEventAsyncFunc,
                     commandArgs.JsRuntime,
                     commandArgs.Dispatcher,
