@@ -139,8 +139,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (firstRender)
         {
             await JsRuntime.InvokeVoidAsync(
-                    "luthetusTextEditor.preventDefaultOnWheelEvents",
-                    ContentElementId);
+                "luthetusTextEditor.preventDefaultOnWheelEvents",
+                ContentElementId);
 
             QueueRemeasureBackgroundTask(
                 _storedRenderBatch,

@@ -47,11 +47,6 @@ public class ReadOnlyTextEditorTask : ITextEditorTask
 
     public async Task InvokeWithEditContext(IEditContext editContext)
     {
-        //var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
-
-        //if (viewModelModifier is null)
-        //    return;
-
         await _textEditorEdit
             .Invoke(editContext)
             .ConfigureAwait(false);
@@ -59,6 +54,7 @@ public class ReadOnlyTextEditorTask : ITextEditorTask
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
+        // Keep the oldEvent, and enqueue this one
         return null;
     }
 

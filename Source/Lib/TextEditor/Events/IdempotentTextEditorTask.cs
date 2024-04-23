@@ -43,11 +43,6 @@ public class IdempotentTextEditorTask : ITextEditorTask
 
     public async Task InvokeWithEditContext(IEditContext editContext)
     {
-        //var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
-
-        //if (viewModelModifier is null)
-        //    return;
-
         await _textEditorEdit
             .Invoke(editContext)
             .ConfigureAwait(false);
@@ -55,7 +50,18 @@ public class IdempotentTextEditorTask : ITextEditorTask
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
-        return this;
+        if (oldEvent is IdempotentTextEditorTask oldIdempotentTextEditorTask)
+        {
+            if (oldIdempotentTextEditorTask.Name == Name &&
+                oldIdempotentTextEditorTask.ViewModelKey == ViewModelKey)
+            {
+                // Replace the oldEvent with this one
+                return this;
+            }
+        }
+
+        // Keep the oldEvent, and enqueue this one
+        return null;
     }
 
     public Task HandleEvent(CancellationToken cancellationToken)
