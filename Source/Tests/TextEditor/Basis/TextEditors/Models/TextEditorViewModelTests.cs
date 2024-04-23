@@ -13,7 +13,7 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 /// <summary>
 /// <see cref="TextEditorViewModel"/>
 /// </summary>
-public class ViewModelTests
+public class TextEditorViewModelTests
 {
     /// <summary>
     /// <see cref="TextEditorViewModel(Key{TextEditorViewModel}, ResourceUri, ITextEditorService, IDispatcher, IDialogService, IJSRuntime, VirtualizationResult{List{RichCharacter}}, bool, Category)"/>
