@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -45,6 +46,8 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     private ElementReference? _cursorDisplayElementReference;
     private MenuKind _menuKind;
     private int _menuShouldGetFocusRequestCount;
+    private string _previousGetCursorStyleCss = string.Empty;
+    private string _previousGetCaretRowStyleCss = string.Empty;
 
     private string _previouslyObservedCursorDisplayId = string.Empty;
     private double _leftRelativeToParentInPixels;
@@ -143,68 +146,98 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
     private string GetCursorStyleCss()
     {
-        var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements;
-
-        var leftInPixels = 0d;
-
-        // Tab key column offset
+        try
         {
-            var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabCountOnSameLineBeforeCursor(
-                Cursor.LineIndex,
-                Cursor.ColumnIndex);
+            var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements;
 
-            // 1 of the character width is already accounted for
+            var leftInPixels = 0d;
 
-            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+            // Tab key column offset
+            {
+                var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabCountOnSameLineBeforeCursor(
+                    Cursor.LineIndex,
+                    Cursor.ColumnIndex);
 
-            leftInPixels += extraWidthPerTabKey *
-                tabsOnSameRowBeforeCursor *
-                measurements.CharacterWidth;
+                // 1 of the character width is already accounted for
+
+                var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+
+                leftInPixels += extraWidthPerTabKey *
+                    tabsOnSameRowBeforeCursor *
+                    measurements.CharacterWidth;
+            }
+
+            leftInPixels += measurements.CharacterWidth * Cursor.ColumnIndex;
+
+            var leftInPixelsInvariantCulture = leftInPixels.ToCssValue();
+            var left = $"left: {leftInPixelsInvariantCulture}px;";
+
+            var topInPixelsInvariantCulture = (measurements.LineHeight * Cursor.LineIndex)
+                .ToCssValue();
+
+            var top = $"top: {topInPixelsInvariantCulture}px;";
+
+            var heightInPixelsInvariantCulture = measurements.LineHeight.ToCssValue();
+            var height = $"height: {heightInPixelsInvariantCulture}px;";
+
+            var widthInPixelsInvariantCulture = RenderBatch.Options!.CursorWidthInPixels.ToCssValue();
+            var width = $"width: {widthInPixelsInvariantCulture}px;";
+
+            var keymapStyling = ((ITextEditorKeymap)RenderBatch.Options!.Keymap!).GetCursorCssStyleString(
+                RenderBatch.Model!,
+                RenderBatch.ViewModel!,
+                RenderBatch.Options!);
+            
+            // This feels a bit hacky, exceptions are happening because the UI isn't accessing
+            // the text editor in a thread safe way.
+            //
+            // When an exception does occur though, the cursor should receive a 'text editor changed'
+            // event and re-render anyhow however.
+            // 
+            // So store the result of this method incase an exception occurs in future invocations,
+            // to keep the cursor on screen while the state works itself out.
+            return _previousGetCursorStyleCss = $"{left} {top} {height} {width} {keymapStyling}";
         }
-
-        leftInPixels += measurements.CharacterWidth * Cursor.ColumnIndex;
-
-        var leftInPixelsInvariantCulture = leftInPixels.ToCssValue();
-        var left = $"left: {leftInPixelsInvariantCulture}px;";
-
-        var topInPixelsInvariantCulture = (measurements.LineHeight * Cursor.LineIndex)
-            .ToCssValue();
-
-        var top = $"top: {topInPixelsInvariantCulture}px;";
-
-        var heightInPixelsInvariantCulture = measurements.LineHeight.ToCssValue();
-        var height = $"height: {heightInPixelsInvariantCulture}px;";
-
-        var widthInPixelsInvariantCulture = RenderBatch.Options!.CursorWidthInPixels.ToCssValue();
-        var width = $"width: {widthInPixelsInvariantCulture}px;";
-
-        var keymapStyling = ((ITextEditorKeymap)RenderBatch.Options!.Keymap!).GetCursorCssStyleString(
-            RenderBatch.Model!,
-            RenderBatch.ViewModel!,
-            RenderBatch.Options!);
-
-        return $"{left} {top} {height} {width} {keymapStyling}";
+        catch (LuthetusTextEditorException)
+        {
+            return _previousGetCursorStyleCss;
+        }
     }
 
     private string GetCaretRowStyleCss()
     {
-        var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements;
+        try
+        {
+            var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements;
 
-        var topInPixelsInvariantCulture = (measurements.LineHeight * Cursor.LineIndex)
-            .ToCssValue();
+            var topInPixelsInvariantCulture = (measurements.LineHeight * Cursor.LineIndex)
+                .ToCssValue();
 
-        var top = $"top: {topInPixelsInvariantCulture}px;";
+            var top = $"top: {topInPixelsInvariantCulture}px;";
 
-        var heightInPixelsInvariantCulture = measurements.LineHeight.ToCssValue();
-        var height = $"height: {heightInPixelsInvariantCulture}px;";
+            var heightInPixelsInvariantCulture = measurements.LineHeight.ToCssValue();
+            var height = $"height: {heightInPixelsInvariantCulture}px;";
 
-        var widthOfBodyInPixelsInvariantCulture =
-            (RenderBatch.Model!.MostCharactersOnASingleLineTuple.lineLength * measurements.CharacterWidth)
-            .ToCssValue();
+            var widthOfBodyInPixelsInvariantCulture =
+                (RenderBatch.Model!.MostCharactersOnASingleLineTuple.lineLength * measurements.CharacterWidth)
+                .ToCssValue();
 
-        var width = $"width: {widthOfBodyInPixelsInvariantCulture}px;";
+            var width = $"width: {widthOfBodyInPixelsInvariantCulture}px;";
 
-        return $"{top} {width} {height}";
+            // This feels a bit hacky, exceptions are happening because the UI isn't accessing
+            // the text editor in a thread safe way.
+            //
+            // When an exception does occur though, the cursor should receive a 'text editor changed'
+            // event and re-render anyhow however.
+            // 
+            // So store the result of this method incase an exception occurs in future invocations,
+            // to keep the cursor on screen while the state works itself out.
+            return _previousGetCaretRowStyleCss = $"{top} {width} {height}";
+        }
+        catch (LuthetusTextEditorException)
+        {
+            return _previousGetCaretRowStyleCss;
+        }
     }
 
     private string GetMenuStyleCss()

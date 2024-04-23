@@ -137,7 +137,7 @@
                         </div>
 
                         @{
-                            var positionNumber = model.GetPositionIndex(viewModel.PrimaryCursor) + 1;
+                            var positionNumber = GetPositionNumber(model, viewModel);
                         }
 
                         <div class="luth_te_text-editor-footer-value"
