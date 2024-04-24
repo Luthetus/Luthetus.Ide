@@ -283,8 +283,6 @@ public class Terminal
 
                                     _textEditorService.PostIndependent(
                                         nameof(EnqueueCommandAsync),
-                                        null,
-                                        Key<TextEditorViewModel>.Empty,
                                         async editContext =>
                                         {
                                             var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -415,8 +413,6 @@ public class Terminal
 
         _textEditorService.PostIndependent(
             nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
-            null,
-            Key<TextEditorViewModel>.Empty,
             async editContext =>
             {
                 await _textEditorService.ModelApi.AddPresentationModelFactory(
@@ -452,8 +448,6 @@ public class Terminal
 
         _textEditorService.PostIndependent(
             nameof(Terminal),
-            null,
-            Key<TextEditorViewModel>.Empty,
             _textEditorService.ViewModelApi.WithValueFactory(
                 TextEditorViewModelKey,
                 textEditorViewModel => textEditorViewModel with
@@ -463,8 +457,6 @@ public class Terminal
 
         _textEditorService.PostIndependent(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
-            null,
-            Key<TextEditorViewModel>.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -511,8 +503,6 @@ public class Terminal
     {
         _textEditorService.PostIndependent(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
-            null,
-            Key<TextEditorViewModel>.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -557,8 +547,6 @@ public class Terminal
     {
         _textEditorService.PostIndependent(
             nameof(ClearTerminal),
-            null,
-            Key<TextEditorViewModel>.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);

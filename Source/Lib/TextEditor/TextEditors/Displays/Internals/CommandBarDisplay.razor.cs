@@ -48,8 +48,7 @@ public partial class CommandBarDisplay : FluxorComponent
 
             TextEditorService.PostRedundant(
                 nameof(HandleOnKeyDown),
-                RenderBatch.Events,
-                RenderBatch.ViewModel!.ViewModelKey,
+                nameof(HandleOnKeyDown),
                 TextEditorService.ViewModelApi.WithValueFactory(
                     RenderBatch.ViewModel!.ViewModelKey,
                     previousViewModel => previousViewModel with

@@ -165,8 +165,6 @@ public class LuthCompilerService : ILuthCompilerService
     {
         _textEditorService.PostIndependent(
             nameof(QueueParseRequest),
-            null,
-            Key<TextEditorViewModel>.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);

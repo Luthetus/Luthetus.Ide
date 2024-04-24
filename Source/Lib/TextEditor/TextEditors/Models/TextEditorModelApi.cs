@@ -45,8 +45,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         // TODO: Do not immediately apply syntax highlighting. Wait until the file is viewed first.
         _textEditorService.PostRedundant(
             $"ApplySyntaxHighlighting_{model.ResourceUri.Value}",
-            null,
-            Key<TextEditorViewModel>.Empty,
+            $"ApplySyntaxHighlighting_{model.ResourceUri.Value}",
             ApplySyntaxHighlightingFactory(model.ResourceUri));
     }
 
@@ -72,8 +71,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         // TODO: Do not immediately apply syntax highlighting. Wait until the file is viewed first.
         _textEditorService.PostRedundant(
             $"ApplySyntaxHighlighting_{model.ResourceUri.Value}",
-            null,
-            Key<TextEditorViewModel>.Empty,
+            $"ApplySyntaxHighlighting_{model.ResourceUri.Value}",
             ApplySyntaxHighlightingFactory(model.ResourceUri));
     }
     #endregion

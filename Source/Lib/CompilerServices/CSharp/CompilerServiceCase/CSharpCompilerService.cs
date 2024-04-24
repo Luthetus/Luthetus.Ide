@@ -139,8 +139,6 @@ public sealed class CSharpCompilerService : LuthCompilerService
 
                         _textEditorService.PostIndependent(
                             "Add using statement",
-                            null,
-                            Key<TextEditorViewModel>.Empty,
                             async editContext =>
                             {
                                 var modelModifier = editContext.GetModelModifier(textSpan.ResourceUri);

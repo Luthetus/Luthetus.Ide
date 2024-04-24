@@ -80,8 +80,6 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 
 				commandArgs.TextEditorService.PostIndependent(
 					nameof(commandDisplayName),
-                    null,
-                    Key<TextEditorViewModel>.Empty,
                     async editContext =>
 					{
 						var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);

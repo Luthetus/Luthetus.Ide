@@ -32,8 +32,7 @@ public partial class Footer : ComponentBase
         {
             TextEditorService.PostRedundant(
                 nameof(TextEditorService.ModelApi.SetUsingLineEndKindFactory),
-                RenderBatch.Events,
-                RenderBatch.ViewModel!.ViewModelKey,
+                nameof(TextEditorService.ModelApi.SetUsingLineEndKindFactory),
                 TextEditorService.ModelApi.SetUsingLineEndKindFactory(
                     viewModel.ResourceUri,
                     rowEndingKind));

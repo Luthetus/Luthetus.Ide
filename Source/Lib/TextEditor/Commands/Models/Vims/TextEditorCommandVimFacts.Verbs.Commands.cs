@@ -14,8 +14,6 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.TextEditorService.PostIndependent(
                     nameof(DeleteLineCommand),
-                    commandArgs.Events,
-                    commandArgs.ViewModelKey,
                     DeleteLineFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -36,8 +34,6 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.TextEditorService.PostIndependent(
                     nameof(ChangeLineCommand),
-                    commandArgs.Events,
-                    commandArgs.ViewModelKey,
                     ChangeLineFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -60,8 +56,6 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.TextEditorService.PostIndependent(
                     nameof(DeleteMotionCommandConstructor),
-                    commandArgs.Events,
-                    commandArgs.ViewModelKey,
                     DeleteMotionFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -87,8 +81,6 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.TextEditorService.PostIndependent(
                     nameof(ChangeMotionCommandConstructor),
-                    commandArgs.Events,
-                    commandArgs.ViewModelKey,
                     GetChangeMotionFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -112,8 +104,6 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.TextEditorService.PostIndependent(
                     nameof(ChangeSelectionCommand),
-                    commandArgs.Events,
-                    commandArgs.ViewModelKey,
                     ChangeSelectionFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -134,8 +124,6 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.TextEditorService.PostIndependent(
                     nameof(YankCommand),
-                    commandArgs.Events,
-                    commandArgs.ViewModelKey,
                     YankFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -156,8 +144,6 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.TextEditorService.PostIndependent(
                     nameof(NewLineBelowCommand),
-                    commandArgs.Events,
-                    commandArgs.ViewModelKey,
                     NewLineBelowFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -178,8 +164,6 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.TextEditorService.PostIndependent(
                     nameof(NewLineAboveCommand),
-                    commandArgs.Events,
-                    commandArgs.ViewModelKey,
                     NewLineAboveFactory(commandArgs));
 
                 return Task.CompletedTask;

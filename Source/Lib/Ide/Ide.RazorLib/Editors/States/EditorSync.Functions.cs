@@ -39,8 +39,6 @@ public partial class EditorSync
 
             _textEditorService.PostIndependent(
                 nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 async editContext =>
                 {
                     await _textEditorService.ModelApi.AddPresentationModelFactory(
@@ -107,8 +105,6 @@ public partial class EditorSync
 
         _textEditorService.PostIndependent(
             nameof(TryRegisterViewModelFunc),
-            null,
-            Key<TextEditorViewModel>.Empty,
             _textEditorService.ViewModelApi.WithValueFactory(
                 viewModelKey,
                 textEditorViewModel => 
@@ -140,8 +136,6 @@ public partial class EditorSync
                     {
                         _textEditorService.PostIndependent(
                             nameof(HandleOnSaveRequested),
-                            null,
-                            Key<TextEditorViewModel>.Empty,
                             _textEditorService.ModelApi.SetResourceDataFactory(
                                 innerTextEditor.ResourceUri,
                                 writtenDateTime.Value));

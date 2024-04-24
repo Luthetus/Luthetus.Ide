@@ -254,7 +254,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     private Task ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-        if (EventsUtils.CheckIfKeyboardEventArgsIsNoise(keyboardEventArgs))
+        if (EventUtils.CheckIfKeyboardEventArgsIsNoise(keyboardEventArgs))
             return Task.CompletedTask;
 
         var resourceUri = GetModel()?.ResourceUri;
@@ -438,8 +438,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
 		TextEditorService.PostIndependent(
             nameof(QueueRemeasureBackgroundTask),
-            _events,
-            viewModel.ViewModelKey,
             async editContext =>
 			{
 				await viewModel.MutateScrollHorizontalPositionByPixelsFactory(diffX)
@@ -511,8 +509,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         TextEditorService.PostIndependent(
             nameof(QueueRemeasureBackgroundTask),
-            _events,
-            viewModelKey.Value,
             TextEditorService.ViewModelApi.RemeasureFactory(
                 modelResourceUri,
                 viewModelKey.Value,
@@ -532,8 +528,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         TextEditorService.PostIndependent(
             nameof(QueueCalculateVirtualizationResultBackgroundTask),
-            _events,
-            viewModelKey.Value,
             TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
                 modelResourceUri,
                 viewModelKey.Value,

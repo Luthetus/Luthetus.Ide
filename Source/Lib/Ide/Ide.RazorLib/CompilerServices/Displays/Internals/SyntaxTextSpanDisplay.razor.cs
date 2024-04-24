@@ -52,8 +52,6 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 
         TextEditorService.PostIndependent(
             nameof(SyntaxTextSpanDisplay),
-            null,
-            Key<TextEditorViewModel>.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(

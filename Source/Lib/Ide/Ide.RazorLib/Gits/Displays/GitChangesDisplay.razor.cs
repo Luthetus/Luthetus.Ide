@@ -42,8 +42,6 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
 
                 TextEditorService.PostIndependent(
                     nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
-                    null,
-                    Key<TextEditorViewModel>.Empty,
                     async editContext =>
                     {
                         await TextEditorService.ModelApi.AddPresentationModelFactory(
@@ -89,8 +87,6 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
 
                 TextEditorService.PostIndependent(
                     nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
-                    null,
-                    Key<TextEditorViewModel>.Empty,
                     async editContext =>
                     {
                         await TextEditorService.ModelApi.AddPresentationModelFactory(

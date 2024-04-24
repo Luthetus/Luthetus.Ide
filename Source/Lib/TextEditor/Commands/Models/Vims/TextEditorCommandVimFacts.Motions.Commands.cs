@@ -14,8 +14,6 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.TextEditorService.PostIndependent(
                     nameof(Word),
-                    commandArgs.Events,
-                    commandArgs.ViewModelKey,
                     WordFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -36,8 +34,6 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.TextEditorService.PostIndependent(
                     nameof(End),
-                    commandArgs.Events,
-                    commandArgs.ViewModelKey,
                     EndFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -58,8 +54,6 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.TextEditorService.PostIndependent(
                     nameof(Back),
-                    commandArgs.Events,
-                    commandArgs.ViewModelKey,
                     BackFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -85,8 +79,6 @@ public static partial class TextEditorCommandVimFacts
 
                     commandArgs.TextEditorService.PostIndependent(
                         nameof(GetVisualFactory),
-                        commandArgs.Events,
-                        commandArgs.ViewModelKey,
                         VisualFactory(commandArgs));
 
                     return Task.CompletedTask;
@@ -115,8 +107,6 @@ public static partial class TextEditorCommandVimFacts
 
                     commandArgs.TextEditorService.PostIndependent(
                         nameof(GetVisualLineFactory),
-                        commandArgs.Events,
-                        commandArgs.ViewModelKey,
                         VisualLineFactory(commandArgs));
 
                     return Task.CompletedTask;

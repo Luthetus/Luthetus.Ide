@@ -11,7 +11,7 @@ using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewMod
 
 namespace Luthetus.TextEditor.RazorLib.Events;
 
-public static class EventsUtils
+public static class EventUtils
 {
     public static KeyboardEventArgsKind GetKeyboardEventArgsKind(
         TextEditorEvents events,

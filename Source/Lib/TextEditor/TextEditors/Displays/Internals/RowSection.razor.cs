@@ -112,8 +112,6 @@ public partial class RowSection : ComponentBase
         {
             TextEditorService.PostIndependent(
                 nameof(VirtualizationDisplayItemsProviderFunc),
-                RenderBatch.Events,
-                viewModel.ViewModelKey,
                 TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
                     model.ResourceUri,
                     viewModel.ViewModelKey,

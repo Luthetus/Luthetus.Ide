@@ -35,7 +35,7 @@ public class OnKeyDown : ITextEditorTask
         {
             TentativeHasSelection = TextEditorSelectionHelper.HasSelectedText(badViewModel.PrimaryCursor.Selection);
 
-            TentativeKeyboardEventArgsKind = EventsUtils.GetKeyboardEventArgsKind(
+            TentativeKeyboardEventArgsKind = EventUtils.GetKeyboardEventArgsKind(
                 _events,
                 KeyboardEventArgs,
                 TentativeHasSelection,
@@ -108,7 +108,7 @@ public class OnKeyDown : ITextEditorTask
         // But have a previous event pending, that will result in a future selection when this event is handled.
         var definiteHasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
 
-        var definiteKeyboardEventArgsKind = EventsUtils.GetKeyboardEventArgsKind(
+        var definiteKeyboardEventArgsKind = EventUtils.GetKeyboardEventArgsKind(
             _events, KeyboardEventArgs, definiteHasSelection, _events.TextEditorService, out var command);
 
         var shouldInvokeAfterOnKeyDownAsync = false;

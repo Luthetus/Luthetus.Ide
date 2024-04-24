@@ -93,8 +93,6 @@ public partial class EditorSync
 
                                         _textEditorService.PostIndependent(
                                             nameof(CheckIfContentsWereModifiedAsync),
-                                            null,
-                                            Key<TextEditorViewModel>.Empty,
                                             async editContext =>
                                             {
                                                 await _textEditorService.ModelApi

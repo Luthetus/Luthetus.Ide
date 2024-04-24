@@ -70,8 +70,6 @@ public partial class DotNetSolutionSync
         {
             _textEditorService.PostIndependent(
                 nameof(Website_AddExistingProjectToSolutionAsync),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 _textEditorService.ModelApi.ReloadFactory(
                     solutionTextEditorModel.ResourceUri,
                     outDotNetSolutionModel.SolutionFileContents,
