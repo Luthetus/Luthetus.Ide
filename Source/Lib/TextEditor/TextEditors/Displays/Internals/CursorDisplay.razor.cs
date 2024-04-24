@@ -349,8 +349,6 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
         if (IsFocusTarget)
         {
-            // ICommonBackgroundTaskQueue does not work well here because
-            // this Task does not need to be tracked.
             _ = Task.Run(async () =>
             {
                 try

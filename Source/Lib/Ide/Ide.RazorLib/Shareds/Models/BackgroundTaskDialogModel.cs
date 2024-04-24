@@ -11,4 +11,5 @@ public class BackgroundTaskDialogModel
 
     public List<IBackgroundTask> SeenBackgroundTasks { get; }
     public Func<Task>? ReRenderFuncAsync { get; set; }
+    public int CountTracked { get; set; } = 500;
 }

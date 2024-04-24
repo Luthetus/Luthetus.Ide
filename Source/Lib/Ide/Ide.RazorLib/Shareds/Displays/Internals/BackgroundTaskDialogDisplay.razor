@@ -1,10 +1,10 @@
 ﻿@{
-    var countShown = 50;
-    var seenBackgroundTasks = BackgroundTaskDialogModel.SeenBackgroundTasks.TakeLast(50).Reverse().ToArray();
+    var countShown = BackgroundTaskDialogModel.CountTracked;
+    var seenBackgroundTasks = BackgroundTaskDialogModel.SeenBackgroundTasks.TakeLast(countShown).Reverse().ToArray();
 }
 
 <div class="luth_ide_background-task">
-    <div>Total count:@seenBackgroundTasks.Length // only showing the most recent @countShown</div>
+    <div>only showing the most recent @countShown</div>
     <div>The most recent entry is the first entry rendered, the last entry is the oldest entry relative to the set which was rendered.</div>
     
     <hr />

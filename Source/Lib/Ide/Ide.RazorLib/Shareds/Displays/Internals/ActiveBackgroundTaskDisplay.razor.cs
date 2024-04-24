@@ -58,7 +58,7 @@ public partial class ActiveBackgroundTaskDisplay : IDisposable
         
         if (executingBackgroundTask is not null)
         {
-            if (_seenBackgroundTasks.Count > 1000)
+            if (_seenBackgroundTasks.Count > _backgroundTaskDialogModel.CountTracked)
             {
                 var lastFifty = _seenBackgroundTasks.TakeLast(50).ToList();
                 _seenBackgroundTasks.Clear();
