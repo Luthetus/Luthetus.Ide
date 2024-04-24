@@ -20,9 +20,6 @@ using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
-using Luthetus.TextEditor.RazorLib.Commands.Models;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
 
@@ -31,39 +28,25 @@ public partial class AdhocTest
     [Fact]
     public void Why_Is_Command_Cut_Very_Slow()
     {
-        var serviceCollection = new ServiceCollection();
-        var backgroundTaskService = new BackgroundTaskServiceSynchronous();
-
-        serviceCollection
-            .AddScoped<IJSRuntime, DoNothingJsRuntime>()
-            .AddLuthetusTextEditor(new LuthetusHostingInformation(LuthetusHostingKind.UnitTesting, backgroundTaskService))
-            .AddFluxor(options => options.ScanAssemblies(
-                typeof(LuthetusTextEditorConfig).Assembly,
-                typeof(LuthetusCommonConfig).Assembly));
-
-        var serviceProvider = serviceCollection.BuildServiceProvider();
-
-        var store = serviceProvider.GetRequiredService<IStore>();
-        store.InitializeAsync().Wait();
-
-        var textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
-
-        var resourceUri = new ResourceUri("/unitTesting.cs");
-        textEditorService.ModelApi.RegisterCustom(new TextEditorModel(
-            resourceUri,
+        var model = new TextEditorModel(
+            new ResourceUri("/unitTesting.cs"),
             DateTime.UtcNow,
             ExtensionNoPeriodFacts.C_SHARP_CLASS,
             _bigString,
             null,
-            null));
+            null);
 
-        var textEditorCommandArgs = new TextEditorCommandArgs(
-            resourceUri,
-            Key<TextEditorViewModel>.Empty,);
+        var modelModifier = new TextEditorModelModifier(model);
 
-        textEditorService.PostIndependent(
-            "test-command-cut",
-            TextEditorCommandDefaultFacts.Cut.TextEditorEditFactory.Invoke());
+        var beforeAllText = modelModifier.GetAllText();
+
+        modelModifier.__RemoveRange(0, 5);
+
+        var afterAllText = modelModifier.GetAllText();
+
+        modelModifier.__RemoveRange(0, 5);
+
+        var anotherAfterAllText = modelModifier.GetAllText();
     }
 
     [Fact]

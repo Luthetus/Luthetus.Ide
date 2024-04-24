@@ -38,6 +38,11 @@ public class TextEditorPartition
         return new TextEditorPartition(RichCharacterList.RemoveAt(relativePositionIndex));
     }
 
+    public TextEditorPartition RemoveRange(int relativePositionIndex, int count)
+    {
+        return new TextEditorPartition(RichCharacterList.RemoveRange(relativePositionIndex, count));
+    }
+
     public TextEditorPartition AddRange(IEnumerable<RichCharacter> richCharacterList)
     {
         return InsertRange(Count, richCharacterList);
