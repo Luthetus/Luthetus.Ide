@@ -48,8 +48,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
         var modelModifier = new TextEditorModelModifier(inModel);
 
         var outModel = modelModifier.ToModel();
-        Assert.Equal(inModel.CharList, outModel.CharList);
-        Assert.Equal(inModel.DecorationByteList, outModel.DecorationByteList);
+        Assert.Equal(inModel.RichCharacterList, outModel.RichCharacterList);
         Assert.Equal(inModel.EditBlockList, outModel.EditBlockList);
         Assert.Equal(inModel.LineEndList, outModel.LineEndList);
         Assert.Equal(inModel.LineEndKindCountList, outModel.LineEndKindCountList);
@@ -1143,13 +1142,13 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
         var modifier = new TextEditorModelModifier(model);
 
         // Assert that the first partition is empty at the start.
-        Assert.Empty(modifier.PartitionList.First().CharList);
+        Assert.Empty(modifier.PartitionList.First().RichCharacterList);
 
         // Assert that more space than just one partition will be needed.
         var sourceText = "Hello World!";
         Assert.True(sourceText.Length > model.PartitionSize);
 
-        var firstPartitionStringValue = new string(modifier.PartitionList.First().CharList.ToArray());
+        var firstPartitionStringValue = new string(modifier.PartitionList.First().RichCharacterList.Select(x => x.Value).ToArray());
 
         for (int i = 0; i < sourceText.Length; i++)
         {
@@ -1162,7 +1161,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
             {
                 // Assert that the first n loops write to the first partition, because it has available space
                 // This is asserted by checking that the string value of the first partition has changed.
-                var newStringValue = new string(modifier.PartitionList.First().CharList.ToArray());
+                var newStringValue = new string(modifier.PartitionList.First().RichCharacterList.Select(x => x.Value).ToArray());
                 Assert.NotEqual(firstPartitionStringValue, newStringValue);
                 firstPartitionStringValue = newStringValue;
             }
@@ -1170,14 +1169,14 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
             {
                 // Assert that the last (n + 1) loops do NOT write to the first partition, because it no longer has available space
                 // This is asserted by checking that the string value of the first partition has NOT changed.
-                var newStringValue = new string(modifier.PartitionList.First().CharList.ToArray());
+                var newStringValue = new string(modifier.PartitionList.First().RichCharacterList.Select(x => x.Value).ToArray());
                 Assert.Equal(firstPartitionStringValue, newStringValue);
             }
         }
 
         // Assert that the output is correct.
         Assert.Equal(
-            new string(modifier.CharList.ToArray()),
+            new string(modifier.RichCharacterList.Select(x => x.Value).ToArray()),
             sourceText);
     }
 
@@ -1227,34 +1226,34 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
                 // (PARTITION_SIZE / 2)
                 Assert.Equal(
                     model.PartitionSize / 2 + model.PartitionSize % 2,
-                    modifier.PartitionList.First().CharList.Count);
+                    modifier.PartitionList.First().RichCharacterList.Count);
 
                 Assert.Equal(
                     // This had to be changed to include a '+1' because the insertion already occurred.
                     model.PartitionSize / 2 + 1,
-                    modifier.PartitionList.Last().CharList.Count);
+                    modifier.PartitionList.Last().RichCharacterList.Count);
             }
         }
 
         Assert.Equal(
             "Hel",
-            new string(modifier.PartitionList[0].CharList.ToArray()));
+            new string(modifier.PartitionList[0].RichCharacterList.Select(x => x.Value).ToArray()));
 
         Assert.Equal(
             "lo ",
-            new string(modifier.PartitionList[1].CharList.ToArray()));
+            new string(modifier.PartitionList[1].RichCharacterList.Select(x => x.Value).ToArray()));
 
         Assert.Equal(
             "Wor",
-            new string(modifier.PartitionList[2].CharList.ToArray()));
+            new string(modifier.PartitionList[2].RichCharacterList.Select(x => x.Value).ToArray()));
 
         Assert.Equal(
             "ld!",
-            new string(modifier.PartitionList[3].CharList.ToArray()));
+            new string(modifier.PartitionList[3].RichCharacterList.Select(x => x.Value).ToArray()));
 
         // Assert that the output is correct.
         Assert.Equal(
-            new string(modifier.CharList.ToArray()),
+            new string(modifier.RichCharacterList.Select(x => x.Value).ToArray()),
             sourceText);
     }
 

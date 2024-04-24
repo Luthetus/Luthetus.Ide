@@ -48,8 +48,6 @@ public class USER_TYPES_OUT_CODE
         {
             textEditorService.PostIndependent(
                 nameof(USER_TYPES_OUT_CODE),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 async editContext =>
                 {
                     await textEditorService.ModelApi.InsertTextFactory(
@@ -102,8 +100,6 @@ public class USER_TYPES_OUT_CODE
         {
             textEditorService.PostIndependent(
                 nameof(USER_TYPES_OUT_CODE),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 async editContext =>
                 {
                     await textEditorService.ModelApi.InsertTextFactory(
@@ -161,8 +157,6 @@ await builder.Build().RunAsync();
 
                 textEditorService.PostIndependent(
                     nameof(USER_TYPES_OUT_CODE),
-                    null,
-                    Key<TextEditorViewModel>.Empty,
                     async editContext =>
                     {
                         await textEditorService.ModelApi.InsertTextFactory(

@@ -95,8 +95,6 @@ public class TextEditorModelApiTests
 
         textEditorService.PostIndependent(
             nameof(textEditorService.ModelApi.SetUsingLineEndKindFactory),
-            null,
-            Key<TextEditorViewModel>.Empty,
             textEditorService.ModelApi.SetUsingLineEndKindFactory(
                 inModel.ResourceUri, rowEndingKind));
 
@@ -125,8 +123,6 @@ public class TextEditorModelApiTests
 
         textEditorService.PostIndependent(
             nameof(textEditorService.ModelApi.SetResourceDataFactory),
-            null,
-            Key<TextEditorViewModel>.Empty,
             textEditorService.ModelApi.SetResourceDataFactory(
                 inModel.ResourceUri, newResourceLastWriteTime));
 
@@ -155,8 +151,6 @@ public class TextEditorModelApiTests
 
         textEditorService.PostIndependent(
             nameof(textEditorService.ModelApi.ReloadFactory),
-            null,
-            Key<TextEditorViewModel>.Empty,
             textEditorService.ModelApi.ReloadFactory(
                 inModel.ResourceUri, newContent, DateTime.UtcNow));
 
@@ -468,8 +462,6 @@ public class TextEditorModelApiTests
 
         textEditorService.PostIndependent(
             nameof(textEditorService.ModelApi.DeleteTextByRangeUnsafeFactory),
-            null,
-            Key<TextEditorViewModel>.Empty,
             textEditorService.ModelApi.DeleteTextByRangeUnsafeFactory(
                 inModel.ResourceUri,
                 cursorModifierBag,
@@ -505,8 +497,6 @@ public class TextEditorModelApiTests
 
         textEditorService.PostIndependent(
             nameof(textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory),
-            null,
-            Key<TextEditorViewModel>.Empty,
             textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory(
                 inModel.ResourceUri,
                 cursorModifierBag,
@@ -533,8 +523,6 @@ public class TextEditorModelApiTests
 
         textEditorService.PostIndependent(
             nameof(textEditorService.ModelApi.AddPresentationModelFactory),
-            null,
-            Key<TextEditorViewModel>.Empty,
             textEditorService.ModelApi.AddPresentationModelFactory(inModel.ResourceUri, DiffPresentationFacts.EmptyOutPresentationModel));
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);

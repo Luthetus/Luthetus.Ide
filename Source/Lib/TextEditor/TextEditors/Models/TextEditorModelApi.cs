@@ -405,8 +405,7 @@ public class TextEditorModelApi : ITextEditorModelApi
             if (modelModifier is null)
                 return Task.CompletedTask;
 
-            var localCharList = modelModifier.CharList;
-            var localDecorationByteList = modelModifier.DecorationByteList;
+            var localRichCharacterList = modelModifier.RichCharacterList;
 
             var positionsPainted = new HashSet<int>();
 
@@ -414,20 +413,20 @@ public class TextEditorModelApi : ITextEditorModelApi
             {
                 for (var i = textEditorTextSpan.StartingIndexInclusive; i < textEditorTextSpan.EndingIndexExclusive; i++)
                 {
-                    if (i < 0 || i >= localCharList.Count)
+                    if (i < 0 || i >= localRichCharacterList.Count)
                         continue;
 
-                    modelModifier.__SetItem(i, null, textEditorTextSpan.DecorationByte);
+                    modelModifier.__SetDecorationByte(i, textEditorTextSpan.DecorationByte);
                     positionsPainted.Add(i);
                 }
             }
 
-            for (var i = 0; i < localCharList.Count - 1; i++)
+            for (var i = 0; i < localRichCharacterList.Count - 1; i++)
             {
                 if (!positionsPainted.Contains(i))
                 {
                     // DecorationByte of 0 is to be 'None'
-                    modelModifier.__SetItem(i, null, 0);
+                    modelModifier.__SetDecorationByte(i, 0);
                 }
             }
 
@@ -450,9 +449,13 @@ public class TextEditorModelApi : ITextEditorModelApi
 
             var symbolTextSpansList = symbolsList.Select(s => s.TextSpan);
 
+            var textSpanList = new List<TextEditorTextSpan>();
+            textSpanList.AddRange(syntacticTextSpansList);
+            textSpanList.AddRange(symbolTextSpansList);
+
             await ApplyDecorationRangeFactory(
                     resourceUri,
-                    syntacticTextSpansList.Union(symbolTextSpansList))
+                    textSpanList)
                 .Invoke(editContext)
                 .ConfigureAwait(false);
         };

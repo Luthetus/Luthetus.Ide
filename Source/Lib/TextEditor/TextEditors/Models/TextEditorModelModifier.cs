@@ -46,8 +46,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
         _partitionList = _textEditorModel.PartitionList;
     }
 
-    public ImmutableList<char> CharList => _charList is null ? _textEditorModel.CharList : _charList;
-    public ImmutableList<byte> DecorationByteList => _decorationByteList is null ? _textEditorModel.DecorationByteList : _decorationByteList;
+    public ImmutableList<RichCharacter> RichCharacterList => _richCharacterList is null ? _textEditorModel.RichCharacterList : _richCharacterList;
     public ImmutableList<TextEditorPartition> PartitionList => _partitionList is null ? _textEditorModel.PartitionList : _partitionList;
 
     public IList<EditBlock> EditBlockList => _editBlocksList is null ? _textEditorModel.EditBlockList : _editBlocksList;
@@ -69,7 +68,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     public Key<RenderState> RenderStateKey => _renderStateKey ?? _textEditorModel.RenderStateKey;
 
     public int LineCount => LineEndList.Count;
-    public int DocumentLength => _charList.Count;
+    public int DocumentLength => _richCharacterList.Count;
 
     /// <summary>
     /// TODO: Awkward naming convention is being used here. This is an expression bound property,...
@@ -80,7 +79,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     ///       |
     ///       Need to revisit naming this.
     /// </summary>
-    private ImmutableList<char> _charList => _partitionList.SelectMany(x => x.CharList).ToImmutableList();
+    private ImmutableList<RichCharacter> _richCharacterList => _partitionList.SelectMany(x => x.RichCharacterList).ToImmutableList();
     /// <summary>
     /// TODO: Awkward naming convention is being used here. This is an expression bound property,...
     ///       ...with the naming conventions of a private field.
@@ -90,8 +89,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     ///       |
     ///       Need to revisit naming this.
     /// </summary>
-    private ImmutableList<byte> _decorationByteList => _partitionList.SelectMany(x => x.DecorationByteList).ToImmutableList();
-    private ImmutableList<TextEditorPartition> _partitionList = new TextEditorPartition[] { TextEditorPartition.Empty }.ToImmutableList();
+    private ImmutableList<TextEditorPartition> _partitionList = new TextEditorPartition[] { new(Array.Empty<RichCharacter>().ToImmutableList()) }.ToImmutableList();
 
     private List<EditBlock>? _editBlocksList;
     private List<LineEnd>? _lineEndList;
@@ -129,11 +127,14 @@ public partial class TextEditorModelModifier : ITextEditorModel
     private int PartitionSize { get; }
     public bool WasModified { get; internal set; }
 
+    private string AllText => new string(RichCharacterList.Select(x => x.Value).ToArray());
+
+    string ITextEditorModel.AllText => AllText;
+
     public TextEditorModel ToModel()
     {
         return new TextEditorModel(
-            _charList is null ? _textEditorModel.CharList : _charList,
-            _decorationByteList is null ? _textEditorModel.DecorationByteList : _decorationByteList,
+            _richCharacterList is null ? _textEditorModel.RichCharacterList : _richCharacterList,
             PartitionSize,
             _partitionList is null ? _textEditorModel.PartitionList : _partitionList,
             _editBlocksList is null ? _textEditorModel.EditBlockList : _editBlocksList.ToImmutableList(),
@@ -167,7 +168,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
         _mostCharactersOnASingleLineTuple = (0, TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
 
-        _partitionList = new TextEditorPartition[] { TextEditorPartition.Empty }.ToImmutableList();
+        _partitionList = new TextEditorPartition[] { new(Array.Empty<RichCharacter>().ToImmutableList()) }.ToImmutableList();
 
         _lineEndList = new List<LineEnd> 
         {
@@ -673,7 +674,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
         CancellationToken cancellationToken)
     {
         // If cursor is out of bounds then continue
-        if (cursorPositionIndex > _charList.Count)
+        if (cursorPositionIndex > _richCharacterList.Count)
             return;
 
         __InsertRange(
@@ -830,9 +831,9 @@ public partial class TextEditorModelModifier : ITextEditorModel
                 if (toDeletePositionIndex < 0 || toDeletePositionIndex >= DocumentLength)
                     break;
 
-                var charToDelete = _charList[toDeletePositionIndex];
+                var richCharacterToDelete = _richCharacterList[toDeletePositionIndex];
 
-                if (KeyboardKeyFacts.IsLineEndingCharacter(charToDelete))
+                if (KeyboardKeyFacts.IsLineEndingCharacter(richCharacterToDelete.Value))
                 {
                     // A delete is a contiguous operation. Therefore, all that is needed to update the LineEndList
                     // is a starting index, and a count.
@@ -854,7 +855,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
                 {
                     charCount++;
 
-                    if (charToDelete == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+                    if (richCharacterToDelete.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
                     {
                         var indexTabKey = _tabKeyPositionsList.FindIndex(
                             x => x == toDeletePositionIndex);
@@ -893,9 +894,9 @@ public partial class TextEditorModelModifier : ITextEditorModel
                 if (toDeletePositionIndex < 0 || toDeletePositionIndex >= DocumentLength)
                     break;
 
-                var charToDelete = _charList[toDeletePositionIndex];
+                var richCharacterToDelete = _richCharacterList[toDeletePositionIndex];
 
-                if (KeyboardKeyFacts.IsLineEndingCharacter(charToDelete))
+                if (KeyboardKeyFacts.IsLineEndingCharacter(richCharacterToDelete.Value))
                 {
                     // A delete is a contiguous operation. Therefore, all that is needed to update the LineEndList
                     // is a starting index, and a count.
@@ -920,7 +921,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
                 {
                     charCount++;
 
-                    if (charToDelete == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+                    if (richCharacterToDelete.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
                     {
                         var indexTabKey = _tabKeyPositionsList.FindIndex(
                             x => x == toDeletePositionIndex);
@@ -1049,7 +1050,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     private void DeleteValue(int positionIndex, int count, CancellationToken cancellationToken)
     {
         // If cursor is out of bounds then continue
-        if (positionIndex >= _charList.Count)
+        if (positionIndex >= _richCharacterList.Count)
             return;
 
         __RemoveRange(positionIndex, count);
@@ -1377,7 +1378,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
             throw new LuthetusTextEditorException("if (relativePositionIndex == -1)");
 
         var inPartition = _partitionList[indexOfPartitionWithAvailableSpace];
-        var outPartition = inPartition.Insert(relativePositionIndex, richCharacter.Value, richCharacter.DecorationByte);
+        var outPartition = inPartition.Insert(relativePositionIndex, richCharacter);
 
         _partitionList = _partitionList.SetItem(
             indexOfPartitionWithAvailableSpace,
@@ -1393,8 +1394,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     /// </summary>
     public void __SetItem(
         int globalPositionIndex,
-        char? character,
-        byte? decorationByte)
+        RichCharacter richCharacter)
     {
         int indexOfPartitionWithAvailableSpace = -1;
         int relativePositionIndex = -1;
@@ -1424,22 +1424,46 @@ public partial class TextEditorModelModifier : ITextEditorModel
             throw new LuthetusTextEditorException("if (relativePositionIndex == -1)");
 
         var inPartition = _partitionList[indexOfPartitionWithAvailableSpace];
-        var outPartition = inPartition.SetItem(relativePositionIndex, character, decorationByte);
+        var outPartition = inPartition.SetItem(relativePositionIndex, richCharacter);
 
         _partitionList = _partitionList.SetItem(
             indexOfPartitionWithAvailableSpace,
             outPartition);
     }
 
-    /// <summary>
-    /// To change ONLY a character value, or ONLY a decorationByte,
-    /// one would need to use the overload: <see cref="__SetItem(int, char?, byte?)"/>.
-    /// </summary>
-    public void __SetItem(
+    public void __SetDecorationByte(
         int globalPositionIndex,
-        RichCharacter richCharacter)
+        byte decorationByte)
     {
-        __SetItem(globalPositionIndex, richCharacter.Value, richCharacter.DecorationByte);
+        int indexOfPartitionWithAvailableSpace = -1;
+        int relativePositionIndex = -1;
+        var runningCount = 0;
+
+        for (int i = 0; i < _partitionList.Count; i++)
+        {
+            TextEditorPartition? partition = _partitionList[i];
+
+            if (runningCount + partition.Count > globalPositionIndex)
+            {
+                // This is the partition we want to modify.
+                relativePositionIndex = globalPositionIndex - runningCount;
+                indexOfPartitionWithAvailableSpace = i;
+                break;
+            }
+            else
+            {
+                runningCount += partition.Count;
+            }
+        }
+
+        if (indexOfPartitionWithAvailableSpace == -1)
+            throw new LuthetusTextEditorException("if (indexOfPartitionWithAvailableSpace == -1)");
+
+        if (relativePositionIndex == -1)
+            throw new LuthetusTextEditorException("if (relativePositionIndex == -1)");
+
+        var inPartition = _partitionList[indexOfPartitionWithAvailableSpace];
+        inPartition.RichCharacterList[relativePositionIndex].DecorationByte = decorationByte;
     }
 
     public void __RemoveAt(int globalPositionIndex)
@@ -1484,7 +1508,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
     private void __InsertNewPartition(int partitionIndex)
     {
-        _partitionList = _partitionList.Insert(partitionIndex, TextEditorPartition.Empty);
+        _partitionList = _partitionList.Insert(partitionIndex, new TextEditorPartition(Array.Empty<RichCharacter>().ToImmutableList()));
     }
 
     private void __SplitIntoTwoPartitions(int partitionIndex)
@@ -1496,11 +1520,10 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
         // Replace old
         {
-
-            var partition = TextEditorPartition.Empty.AddRange(
-                originalPartition.GetRichCharacters(
-                    skip: 0,
-                    take: firstUnevenSplit));
+            var partition = new TextEditorPartition(originalPartition.RichCharacterList
+                .Skip(0)
+                .Take(firstUnevenSplit)
+                .ToImmutableList());
 
             _partitionList = _partitionList.SetItem(
                 partitionIndex,
@@ -1509,10 +1532,10 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
         // Insert new
         {
-            var partition = TextEditorPartition.Empty.AddRange(
-                originalPartition.GetRichCharacters(
-                    skip: firstUnevenSplit,
-                    take: secondUnevenSplit));
+            var partition = new TextEditorPartition(originalPartition.RichCharacterList
+                .Skip(firstUnevenSplit)
+                .Take(secondUnevenSplit)
+                .ToImmutableList());
 
             _partitionList = _partitionList.Insert(
                 partitionIndex + 1,

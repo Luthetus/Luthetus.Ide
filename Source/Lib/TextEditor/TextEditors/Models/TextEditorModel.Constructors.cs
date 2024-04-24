@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
@@ -33,8 +34,7 @@ public partial class TextEditorModel
 		var modifier = new TextEditorModelModifier(this);
 		modifier.SetContent(content);
 
-        CharList = modifier.CharList;
-        DecorationByteList = modifier.DecorationByteList;
+        RichCharacterList = modifier.RichCharacterList;
         PartitionList = modifier.PartitionList;
         LineEndKindCountList = modifier.LineEndKindCountList.ToImmutableList();
 		LineEndList = modifier.LineEndList.ToImmutableList();
@@ -45,8 +45,7 @@ public partial class TextEditorModel
 	}
 
 	public TextEditorModel(
-        ImmutableList<char> charList,
-        ImmutableList<byte> decorationByteList,
+        ImmutableList<RichCharacter> richCharacterList,
         int partitionSize,
         ImmutableList<TextEditorPartition> partitionList,
 		ImmutableList<EditBlock> editBlocksList,
@@ -67,8 +66,7 @@ public partial class TextEditorModel
         (int rowIndex, int rowLength) mostCharactersOnASingleRowTuple,
 		Key<RenderState>  renderStateKey)
 	{
-        CharList = charList;
-        DecorationByteList = decorationByteList;
+        RichCharacterList = richCharacterList;
         PartitionSize = partitionSize;
         PartitionList = partitionList;
 		EditBlockList = editBlocksList;

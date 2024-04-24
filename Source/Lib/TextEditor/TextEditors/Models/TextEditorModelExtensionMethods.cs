@@ -65,9 +65,10 @@ public static class TextEditorModelExtensionMethods
             var startOfLineInclusive = model.GetLineInformation(i).StartPositionIndexInclusive;
             var endOfLineExclusive = model.LineEndList[i].EndPositionIndexExclusive;
 
-            var line = model.GetRichCharacters(
-                skip: startOfLineInclusive,
-                take: endOfLineExclusive - startOfLineInclusive);
+            var line = model.RichCharacterList
+                .Skip(startOfLineInclusive)
+                .Take(endOfLineExclusive - startOfLineInclusive)
+                .ToList();
 
             lineList.Add(line);
         }
@@ -88,13 +89,9 @@ public static class TextEditorModelExtensionMethods
         return tabs.Count();
     }
 
-    /// <summary>
-    /// TODO: Given that the text editor is now immutable (2023-12-17), when this is invoked...
-    /// ...it should be cached.
-    /// </summary>
     public static string GetAllText(this ITextEditorModel model)
     {
-        return new string(model.CharList.Select(x => x).ToArray());
+        return model.AllText;
     }
 
     public static int GetPositionIndex(this ITextEditorModel model, TextEditorCursor cursor)
@@ -137,7 +134,7 @@ public static class TextEditorModelExtensionMethods
         if (positionIndex == model.DocumentLength)
             return ParserFacts.END_OF_FILE;
 
-        return model.CharList[positionIndex];
+        return model.RichCharacterList[positionIndex].Value;
     }
 
     /// <summary>
@@ -148,10 +145,10 @@ public static class TextEditorModelExtensionMethods
         model.AssertPositionIndex(positionIndex);
         model.AssertCount(count);
 
-        return new string(model.CharList
+        return new string(model.RichCharacterList
             .Skip(positionIndex)
             .Take(count)
-            .Select(x => x)
+            .Select(x => x.Value)
             .ToArray());
     }
 
@@ -404,21 +401,21 @@ public static class TextEditorModelExtensionMethods
             positionIndex -= 1;
         }
 
-        if (positionIndex < 0 || positionIndex >= model.CharList.Count)
+        if (positionIndex < 0 || positionIndex >= model.RichCharacterList.Count)
             return -1;
 
-        var startCharacterKind = CharacterKindHelper.CharToCharacterKind(model.CharList[positionIndex]);
+        var startCharacterKind = CharacterKindHelper.CharToCharacterKind(model.RichCharacterList[positionIndex].Value);
 
         while (true)
         {
-            if (positionIndex >= model.CharList.Count ||
+            if (positionIndex >= model.RichCharacterList.Count ||
                 positionIndex > lastPositionIndexOnRow ||
                 positionIndex < lineStartPositionIndex)
             {
                 return -1;
             }
 
-            var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(model.CharList[positionIndex]);
+            var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(model.RichCharacterList[positionIndex].Value);
 
             if (currentCharacterKind != startCharacterKind)
                 break;
@@ -449,7 +446,7 @@ public static class TextEditorModelExtensionMethods
         if (positionIndex == model.DocumentLength)
             return CharacterKind.Bad;
 
-        return CharacterKindHelper.CharToCharacterKind(model.CharList[positionIndex]);
+        return CharacterKindHelper.CharToCharacterKind(model.RichCharacterList[positionIndex].Value);
     }
 
     /// <summary>
@@ -545,60 +542,6 @@ public static class TextEditorModelExtensionMethods
         var lengthOfLine = model.GetLineLength(lineIndex, true);
 
         return model.GetString(lineStartPositionIndexInclusive, lengthOfLine);
-    }
-
-    public static RichCharacter GetRichCharacter(this ITextEditorModel model, int positionIndex)
-    {
-        model.AssertPositionIndex(positionIndex);
-
-        if (positionIndex == model.DocumentLength)
-            return new RichCharacter { Value = ParserFacts.END_OF_FILE, DecorationByte = 0 };
-
-        return new RichCharacter
-        {
-            Value = model.CharList[positionIndex],
-            DecorationByte = model.DecorationByteList[positionIndex],
-        };
-    }
-
-    public static List<RichCharacter> GetAllRichCharacters(this ITextEditorModel model)
-    {
-        var richCharacterList = new List<RichCharacter>();
-
-        for (int i = 0; i < model.DocumentLength; i++)
-        {
-            richCharacterList.Add(new RichCharacter
-            {
-                Value = model.CharList[i],
-                DecorationByte = model.DecorationByteList[i],
-            });
-        }
-
-        return richCharacterList;
-    }
-
-    public static List<RichCharacter> GetRichCharacters(this ITextEditorModel model, int skip, int take)
-    {
-        if (skip < 0)
-            throw new LuthetusTextEditorException($"{nameof(skip)} < 0");
-
-        var richCharacterList = new List<RichCharacter>();
-
-        for (var step = 0; step < take; step++)
-        {
-            var index = skip + step;
-
-            if (index >= model.DocumentLength)
-                break;
-
-            richCharacterList.Add(new RichCharacter
-            {
-                Value = model.CharList[index],
-                DecorationByte = model.DecorationByteList[index]
-            });
-        }
-
-        return richCharacterList;
     }
 
     public static void AssertColumnIndex(this ITextEditorModel model, LineInformation line, int columnIndex)

@@ -63,8 +63,6 @@ public class TextEditorCommandDefaultFactsTests
 
             textEditorService.PostIndependent(
 				nameof(TextEditorCommandDefaultFactsTests),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 editContext =>
 				{
 					var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -135,8 +133,6 @@ public class TextEditorCommandDefaultFactsTests
 
             textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -159,8 +155,6 @@ public class TextEditorCommandDefaultFactsTests
 
             textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 async editContext =>
                 {
                     var outClipboard = await clipboardService.ReadClipboard();
@@ -194,8 +188,6 @@ public class TextEditorCommandDefaultFactsTests
 
             textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 async editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -238,8 +230,6 @@ public class TextEditorCommandDefaultFactsTests
 
             textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 async editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -296,8 +286,6 @@ public class TextEditorCommandDefaultFactsTests
 
             textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -320,8 +308,6 @@ public class TextEditorCommandDefaultFactsTests
 
             textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 editContext =>
                 {
                     Assert.Equal(TestConstants.SOURCE_TEXT, savedContent);
@@ -342,8 +328,6 @@ public class TextEditorCommandDefaultFactsTests
 
                 textEditorService.PostIndependent(
                     nameof(TextEditorCommandDefaultFactsTests),
-                    null,
-                    Key<TextEditorViewModel>.Empty,
                     editContext =>
                     {
                         Assert.Null(savedContent);
@@ -387,8 +371,6 @@ public class TextEditorCommandDefaultFactsTests
 
             textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -445,8 +427,6 @@ public class TextEditorCommandDefaultFactsTests
 
                 textEditorService.PostIndependent(
                     nameof(TextEditorCommandDefaultFactsTests),
-                    null,
-                    Key<TextEditorViewModel>.Empty,
                     textEditorService.ModelApi.InsertTextUnsafeFactory(
                         inModel.ResourceUri,
                         cursorModificationBag,
@@ -672,8 +652,6 @@ public class TextEditorCommandDefaultFactsTests
 
             textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -747,8 +725,6 @@ public class TextEditorCommandDefaultFactsTests
 
             textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -823,8 +799,6 @@ public class TextEditorCommandDefaultFactsTests
 
             textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -899,8 +873,6 @@ public class TextEditorCommandDefaultFactsTests
 
             textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -1013,8 +985,6 @@ public class TextEditorCommandDefaultFactsTests
 
             textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 async editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -1084,8 +1054,6 @@ public class TextEditorCommandDefaultFactsTests
 
             textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -1155,8 +1123,6 @@ public class TextEditorCommandDefaultFactsTests
 
             textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -1251,8 +1217,6 @@ public class TextEditorCommandDefaultFactsTests
 
             textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -1527,8 +1491,6 @@ public class Person
 
             textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -1599,8 +1561,6 @@ public class Person
 
             textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
-                null,
-                Key<TextEditorViewModel>.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);

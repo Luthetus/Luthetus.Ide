@@ -95,8 +95,6 @@ public class TextEditorViewModelApiTests
 
         textEditorService.PostIndependent(
             nameof(textEditorService.ViewModelApi.WithValueFactory),
-            null,
-            Key<TextEditorViewModel>.Empty,
             textEditorService.ViewModelApi.WithValueFactory(
                 inViewModel.ViewModelKey,
                 inState =>

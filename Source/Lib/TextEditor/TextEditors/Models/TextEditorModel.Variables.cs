@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
@@ -18,8 +19,9 @@ public partial class TextEditorModel
     public const int MAXIMUM_EDIT_BLOCKS = 10;
     public const int MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN = 5;
 
-    public ImmutableList<char> CharList { get; init; }
-    public ImmutableList<byte> DecorationByteList { get; init; }
+    private string? _allText;
+
+    public ImmutableList<RichCharacter> RichCharacterList { get; init; }
     public ImmutableList<TextEditorPartition> PartitionList { get; init; }
 
     public ImmutableList<EditBlock> EditBlockList { get; init; } = ImmutableList<EditBlock>.Empty;
@@ -51,6 +53,8 @@ public partial class TextEditorModel
 	public (int lineIndex, int lineLength) MostCharactersOnASingleLineTuple { get; init; }
     public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();
 
+    public string AllText => _allText ??= new string (RichCharacterList.Select(x => x.Value).ToArray());
+
     public int LineCount => LineEndList.Count;
-    public int DocumentLength => CharList.Count;
+    public int DocumentLength => RichCharacterList.Count;
 }
