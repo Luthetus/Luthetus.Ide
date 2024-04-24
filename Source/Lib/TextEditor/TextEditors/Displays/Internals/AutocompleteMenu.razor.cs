@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -58,79 +59,89 @@ public partial class AutocompleteMenu : ComponentBase
 
     private MenuRecord GetMenuRecord()
     {
-        var cursorList = new TextEditorCursor[] { RenderBatch.ViewModel!.PrimaryCursor }.ToImmutableArray();
-
-        var primaryCursor = cursorList.First(x => x.IsPrimaryCursor);
-
-        if (primaryCursor.ColumnIndex > 0)
+        try
         {
-            var word = RenderBatch.Model!.ReadPreviousWordOrDefault(
-                primaryCursor.LineIndex,
-                primaryCursor.ColumnIndex);
+            var cursorList = new TextEditorCursor[] { RenderBatch.ViewModel!.PrimaryCursor }.ToImmutableArray();
 
-            List<MenuOptionRecord> menuOptionRecordsList = new();
+            var primaryCursor = cursorList.First(x => x.IsPrimaryCursor);
 
-            if (word is not null)
+            if (primaryCursor.ColumnIndex > 0)
             {
-                var autocompleteWordsList = AutocompleteService.GetAutocompleteOptions(word);
+                var word = RenderBatch.Model!.ReadPreviousWordOrDefault(
+                    primaryCursor.LineIndex,
+                    primaryCursor.ColumnIndex);
 
-                var autocompleteEntryList = autocompleteWordsList
-                    .Select(aw => new AutocompleteEntry(aw, AutocompleteEntryKind.Word, null))
-                    .ToArray();
+                List<MenuOptionRecord> menuOptionRecordsList = new();
 
-                // (2023-08-09) Looking into using an ICompilerService for autocompletion.
+                if (word is not null)
                 {
-                    var positionIndex = RenderBatch.Model.GetPositionIndex(primaryCursor);
+                    var autocompleteWordsList = AutocompleteService.GetAutocompleteOptions(word);
 
-                    var textSpan = new TextEditorTextSpan(
-                        positionIndex,
-                        positionIndex + 1,
-                        0,
-                        RenderBatch.Model.ResourceUri,
-                        // TODO: RenderBatch.Model.GetAllText() probably isn't needed here. Maybe a useful optimization is to remove it somehow?
-                        RenderBatch.Model.GetAllText());
+                    var autocompleteEntryList = autocompleteWordsList
+                        .Select(aw => new AutocompleteEntry(aw, AutocompleteEntryKind.Word, null))
+                        .ToArray();
 
-                    var compilerServiceAutocompleteEntryList = RenderBatch.Model!.CompilerService.GetAutocompleteEntries(
-                        word,
-                        textSpan);
-
-                    if (compilerServiceAutocompleteEntryList.Any())
+                    // (2023-08-09) Looking into using an ICompilerService for autocompletion.
                     {
-                        autocompleteEntryList = compilerServiceAutocompleteEntryList
-                            .AddRange(autocompleteEntryList)
-                            .ToArray();
+                        var positionIndex = RenderBatch.Model.GetPositionIndex(primaryCursor);
+
+                        var textSpan = new TextEditorTextSpan(
+                            positionIndex,
+                            positionIndex + 1,
+                            0,
+                            RenderBatch.Model.ResourceUri,
+                            // TODO: RenderBatch.Model.GetAllText() probably isn't needed here. Maybe a useful optimization is to remove it somehow?
+                            RenderBatch.Model.GetAllText());
+
+                        var compilerServiceAutocompleteEntryList = RenderBatch.Model!.CompilerService.GetAutocompleteEntries(
+                            word,
+                            textSpan);
+
+                        if (compilerServiceAutocompleteEntryList.Any())
+                        {
+                            autocompleteEntryList = compilerServiceAutocompleteEntryList
+                                .AddRange(autocompleteEntryList)
+                                .ToArray();
+                        }
                     }
+
+                    menuOptionRecordsList = autocompleteEntryList.Select(entry => new MenuOptionRecord(
+                        entry.DisplayName,
+                        MenuOptionKind.Other,
+                        () => SelectMenuOption(() =>
+                        {
+                            InsertAutocompleteMenuOption(word, entry, RenderBatch.ViewModel!);
+                            entry.SideEffectAction?.Invoke();
+                            return Task.CompletedTask;
+                        }),
+                        WidgetParameterMap: new Dictionary<string, object?>
+                        {
+                            {
+                                nameof(AutocompleteEntry),
+                                entry
+                            }
+                        }))
+                    .ToList();
                 }
 
-                menuOptionRecordsList = autocompleteEntryList.Select(entry => new MenuOptionRecord(
-                    entry.DisplayName,
-                    MenuOptionKind.Other,
-                    () => SelectMenuOption(() =>
-                    {
-                        InsertAutocompleteMenuOption(word, entry, RenderBatch.ViewModel!);
-                        entry.SideEffectAction?.Invoke();
-                        return Task.CompletedTask;
-                    }),
-                    WidgetParameterMap: new Dictionary<string, object?>
-                    {
-                        {
-                            nameof(AutocompleteEntry),
-                            entry
-                        }
-                    }))
-                .ToList();
+                if (!menuOptionRecordsList.Any())
+                    menuOptionRecordsList.Add(new MenuOptionRecord("No results", MenuOptionKind.Other));
+
+                return new MenuRecord(menuOptionRecordsList.ToImmutableArray());
             }
 
-            if (!menuOptionRecordsList.Any())
-                menuOptionRecordsList.Add(new MenuOptionRecord("No results", MenuOptionKind.Other));
-
-            return new MenuRecord(menuOptionRecordsList.ToImmutableArray());
+            return new MenuRecord(new MenuOptionRecord[]
+            {
+                new("No results", MenuOptionKind.Other)
+            }.ToImmutableArray());
         }
-
-        return new MenuRecord(new MenuOptionRecord[]
+        catch (LuthetusTextEditorException)
         {
-            new("No results", MenuOptionKind.Other)
-        }.ToImmutableArray());
+            return new MenuRecord(new MenuOptionRecord[]
+            {
+                new("No results", MenuOptionKind.Other)
+            }.ToImmutableArray());
+        }
     }
 
     private Task SelectMenuOption(Func<Task> menuOptionAction)

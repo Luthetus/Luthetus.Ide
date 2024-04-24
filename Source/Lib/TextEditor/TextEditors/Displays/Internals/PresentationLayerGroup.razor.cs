@@ -216,4 +216,25 @@ public partial class PresentationLayerGroup : ComponentBase
             return ImmutableArray<TextEditorTextSpan>.Empty;
         }
     }
+
+    private (int FirstRowToSelectDataInclusive, int LastRowToSelectDataExclusive) GetBoundsInRowIndexUnits(TextEditorModel model, (int StartingIndexInclusive, int EndingIndexExclusive) boundsInPositionIndexUnits)
+    {
+        try
+        {
+            var firstRowToSelectDataInclusive = RenderBatch.Model!
+                .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.StartingIndexInclusive)
+                .Index;
+
+            var lastRowToSelectDataExclusive = RenderBatch.Model!
+                .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.EndingIndexExclusive)
+                .Index +
+                1;
+
+            return (firstRowToSelectDataInclusive, lastRowToSelectDataExclusive);
+        }
+        catch (LuthetusTextEditorException)
+        {
+            return (0, 0);
+        }
+    }
 }

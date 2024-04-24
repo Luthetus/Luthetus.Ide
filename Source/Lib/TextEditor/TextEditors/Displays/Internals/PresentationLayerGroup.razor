@@ -31,19 +31,10 @@
                 {
                     var boundsInPositionIndexUnits = (textSpan.StartingIndexInclusive, textSpan.EndingIndexExclusive);
 
-                    var firstRowToSelectDataInclusive = RenderBatch.Model!
-                        .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.StartingIndexInclusive)
-                        .Index;
+                    var boundsInRowIndexUnits = GetBoundsInRowIndexUnits(RenderBatch.Model!, boundsInPositionIndexUnits);
 
-                    var lastRowToSelectDataExclusive = RenderBatch.Model!
-                        .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.EndingIndexExclusive)
-                        .Index +
-                        1;
-
-                    var boundsInRowIndexUnits = (firstRowToSelectDataInclusive, lastRowToSelectDataExclusive);
-
-                    for (var i = boundsInRowIndexUnits.firstRowToSelectDataInclusive;
-                         i < boundsInRowIndexUnits.lastRowToSelectDataExclusive;
+                    for (var i = boundsInRowIndexUnits.FirstRowToSelectDataInclusive;
+                         i < boundsInRowIndexUnits.LastRowToSelectDataExclusive;
                          i++)
                     {
                         var rowIndex = i;

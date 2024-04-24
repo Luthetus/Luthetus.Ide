@@ -254,7 +254,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     private Task ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-        if (EventUtils.CheckIfKeyboardEventArgsIsNoise(keyboardEventArgs))
+        if (EventUtils.IsKeyboardEventArgsNoise(keyboardEventArgs))
             return Task.CompletedTask;
 
         var resourceUri = GetModel()?.ResourceUri;
@@ -263,13 +263,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (resourceUri is null || viewModelKey is null)
 			return Task.CompletedTask;
 
-		var throttleEventOnKeyDown = new OnKeyDown(
+		var onKeyDown = new OnKeyDown(
             _events,
             keyboardEventArgs,
             resourceUri,
             viewModelKey.Value);
 
-		TextEditorService.Post(throttleEventOnKeyDown);
+		TextEditorService.Post(onKeyDown);
 		return Task.CompletedTask;
 	}
 
@@ -289,51 +289,56 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        var throttleEventOnDoubleClick = new OnDoubleClick(
+        var onDoubleClick = new OnDoubleClick(
             mouseEventArgs,
             _events,
             modelResourceUri,
             viewModelKey.Value);
 
-		TextEditorService.Post(throttleEventOnDoubleClick);
+		TextEditorService.Post(onDoubleClick);
     }
 
     private void ReceiveContentOnMouseDown(MouseEventArgs mouseEventArgs)
     {
+        _events.ThinksLeftMouseButtonIsDown = true;
+
         var modelResourceUri = GetModel()?.ResourceUri;
         var viewModelKey = GetViewModel()?.ViewModelKey;
 
         if (modelResourceUri is null || viewModelKey is null)
             return;
 		
-		var throttleEventOnMouseDown = new OnMouseDown(
+		var onMouseDown = new OnMouseDown(
             mouseEventArgs,
             _events,
             modelResourceUri,
             viewModelKey.Value);
 
-		TextEditorService.Post(throttleEventOnMouseDown);
-
-        _events.ThinksLeftMouseButtonIsDown = true;
+        TextEditorService.Post(onMouseDown);
     }
 
     /// <summary>OnMouseUp is un-necessary</summary>
     private void ReceiveContentOnMouseMove(MouseEventArgs mouseEventArgs)
     {
         _userMouseIsInside = true;
+
+        if ((mouseEventArgs.Buttons & 1) == 0)
+            _events.ThinksLeftMouseButtonIsDown = false;
+
         var localThinksLeftMouseButtonIsDown = _events.ThinksLeftMouseButtonIsDown;
 
         // MouseStoppedMovingEvent
         {
-            if (_events.TooltipViewModel is not null && _events.OnMouseOutTooltipTask.IsCompleted)
+            // Hide the tooltip, if the user moves their cursor out of the tooltips UI.
+            if (_events.TooltipViewModel is not null && _events.MouseNoLongerOverTooltipTask.IsCompleted)
             {
-                var onMouseOutTooltipCancellationToken = _events.OnMouseOutTooltipCancellationTokenSource.Token;
+                var mouseNoLongerOverTooltipCancellationToken = _events.MouseNoLongerOverTooltipCancellationTokenSource.Token;
 
-                _events.OnMouseOutTooltipTask = Task.Run(async () =>
+                _events.MouseNoLongerOverTooltipTask = Task.Run(async () =>
                 {
-                    await Task.Delay(TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault, onMouseOutTooltipCancellationToken);
+                    await Task.Delay(TextEditorEvents.OnMouseOutTooltipDelay, mouseNoLongerOverTooltipCancellationToken);
 
-                    if (!onMouseOutTooltipCancellationToken.IsCancellationRequested)
+                    if (!mouseNoLongerOverTooltipCancellationToken.IsCancellationRequested)
                     {
                         _events.TooltipViewModel = null;
                         await InvokeAsync(StateHasChanged);
@@ -344,15 +349,15 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             _events.MouseStoppedMovingCancellationTokenSource.Cancel();
             _events.MouseStoppedMovingCancellationTokenSource = new();
 
-            var cancellationToken = _events.MouseStoppedMovingCancellationTokenSource.Token;
+            var mouseStoppedMovingCancellationToken = _events.MouseStoppedMovingCancellationTokenSource.Token;
 
             _events.MouseStoppedMovingTask = Task.Run(async () =>
             {
-                await Task.Delay(TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault, cancellationToken);
+                await Task.Delay(TextEditorEvents.MouseStoppedMovingDelay, mouseStoppedMovingCancellationToken);
 
-                if (!cancellationToken.IsCancellationRequested && _userMouseIsInside)
+                if (!mouseStoppedMovingCancellationToken.IsCancellationRequested && _userMouseIsInside)
                 {
-                    await _events.HandleOnTooltipMouseOverAsync();
+                    await _events.ContinueRenderingTooltipAsync();
                     await _events.HandleMouseStoppedMovingEventAsync(mouseEventArgs);
                 }
             });
@@ -370,13 +375,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
-			var throttleEventOnMouseMove = new OnMouseMove(
+			var onMouseMove = new OnMouseMove(
                 mouseEventArgs,
                 _events,
                 modelResourceUri,
                 viewModelKey.Value);
 
-            TextEditorService.Post(throttleEventOnMouseMove);
+            TextEditorService.Post(onMouseMove);
         }
         else
         {
@@ -396,12 +401,12 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (viewModelKey is null)
             return;
 
-		var throttleEventOnWheel = new OnWheel(
+		var onWheel = new OnWheel(
             wheelEventArgs,
             _events,
             viewModelKey.Value);
 
-        TextEditorService.Post(throttleEventOnWheel);
+        TextEditorService.Post(onWheel);
     }
 
     private Task ReceiveOnTouchStartAsync(TouchEventArgs touchEventArgs)
@@ -603,8 +608,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         public static TimeSpan OnMouseOutTooltipDelay { get; } = TimeSpan.FromMilliseconds(1_000);
         public static TimeSpan MouseStoppedMovingDelay { get; } = TimeSpan.FromMilliseconds(400);
         public Task MouseStoppedMovingTask { get; set; } = Task.CompletedTask;
-        public Task OnMouseOutTooltipTask { get; set; } = Task.CompletedTask;
-        public CancellationTokenSource OnMouseOutTooltipCancellationTokenSource { get; set; } = new();
+        public Task MouseNoLongerOverTooltipTask { get; set; } = Task.CompletedTask;
+        public CancellationTokenSource MouseNoLongerOverTooltipCancellationTokenSource { get; set; } = new();
         public CancellationTokenSource MouseStoppedMovingCancellationTokenSource { get; set; } = new();
         public TooltipViewModel? TooltipViewModel { get; set; }
 
@@ -859,7 +864,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                             parameterMap,
                             relativeCoordinatesOnClick,
                             null,
-                            HandleOnTooltipMouseOverAsync);
+                            ContinueRenderingTooltipAsync);
                     }
                 }
             }
@@ -886,7 +891,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                             parameters,
                             relativeCoordinatesOnClick,
                             null,
-                            HandleOnTooltipMouseOverAsync);
+                            ContinueRenderingTooltipAsync);
                     }
                 }
             }
@@ -904,10 +909,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             await _viewModelDisplay.InvokeAsync(_viewModelDisplay.StateHasChanged);
         }
 
-        public Task HandleOnTooltipMouseOverAsync()
+        public Task ContinueRenderingTooltipAsync()
         {
-            OnMouseOutTooltipCancellationTokenSource.Cancel();
-            OnMouseOutTooltipCancellationTokenSource = new();
+            MouseNoLongerOverTooltipCancellationTokenSource.Cancel();
+            MouseNoLongerOverTooltipCancellationTokenSource = new();
 
             return Task.CompletedTask;
         }

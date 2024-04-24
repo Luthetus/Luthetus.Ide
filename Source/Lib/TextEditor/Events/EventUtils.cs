@@ -49,7 +49,7 @@ public static class EventUtils
         return KeyboardEventArgsKind.Other;
     }
 
-    public static bool CheckIfKeyboardEventArgsIsNoise(KeyboardEventArgs keyboardEventArgs)
+    public static bool IsKeyboardEventArgsNoise(KeyboardEventArgs keyboardEventArgs)
     {
         if (keyboardEventArgs.Key == "Shift" ||
             keyboardEventArgs.Key == "Control" ||
