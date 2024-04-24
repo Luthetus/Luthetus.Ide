@@ -53,7 +53,7 @@ public class Terminal
         _compilerServiceRegistry = compilerServiceRegistry;
         WorkingDirectoryAbsolutePathString = workingDirectoryAbsolutePathString;
 
-        ResourceUri = new($"__LUTHETUS-{Key.Guid}__");
+        ResourceUri = new(ResourceUriFacts.Terminal_ReservedResourceUri_Prefix + Key.Guid.ToString());
 
         CreateTextEditor();
     }

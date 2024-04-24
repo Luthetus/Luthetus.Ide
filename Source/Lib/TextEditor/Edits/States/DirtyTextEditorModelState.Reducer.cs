@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Edits.States;
 
@@ -11,6 +12,11 @@ public partial record DirtyResourceUriState
             DirtyResourceUriState inState,
             AddDirtyResourceUriAction addDirtyResourceUriAction)
         {
+            if (addDirtyResourceUriAction.ResourceUri.Value.StartsWith(ResourceUriFacts.Terminal_ReservedResourceUri_Prefix))
+                return inState;
+            if (addDirtyResourceUriAction.ResourceUri == ResourceUriFacts.SettingsPreviewTextEditorResourceUri)
+                return inState;
+
             return inState with
             {
                 DirtyResourceUriList = inState.DirtyResourceUriList.Add(addDirtyResourceUriAction.ResourceUri)

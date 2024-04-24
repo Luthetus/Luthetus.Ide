@@ -20,7 +20,6 @@ public partial class TextEditorSettingsPreview : ComponentBase
     [Parameter]
     public string PreviewElementCssClassString { get; set; } = string.Empty;
 
-    public static readonly ResourceUri SettingsPreviewTextEditorResourceUri = new ResourceUri("__LUTHETUS_SETTINGS_PREVIEW__");
     public static readonly Key<TextEditorViewModel> SettingsPreviewTextEditorViewModelKey = Key<TextEditorViewModel>.NewKey();
 
     private readonly ViewModelDisplayOptions _viewModelDisplayOptions = new()
@@ -38,14 +37,14 @@ public partial class TextEditorSettingsPreview : ComponentBase
         {
             TextEditorService.ModelApi.RegisterTemplated(
                 ExtensionNoPeriodFacts.TXT,
-                SettingsPreviewTextEditorResourceUri,
+                ResourceUriFacts.SettingsPreviewTextEditorResourceUri,
                 DateTime.UtcNow,
                 "Preview settings here",
                 "Settings Preview");
 
             TextEditorService.ViewModelApi.Register(
                 SettingsPreviewTextEditorViewModelKey,
-                SettingsPreviewTextEditorResourceUri,
+                ResourceUriFacts.SettingsPreviewTextEditorResourceUri,
                 new Category(nameof(TextEditorSettingsPreview)));
 
             await InvokeAsync(StateHasChanged);
