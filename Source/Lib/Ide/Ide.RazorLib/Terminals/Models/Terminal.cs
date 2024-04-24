@@ -200,6 +200,7 @@ public class Terminal
                 if (terminalCommand.FormattedCommand.TargetFileName == "clear")
                 {
                     ClearTerminal();
+                    WriteWorkingDirectory();
                     return;
                 }
 

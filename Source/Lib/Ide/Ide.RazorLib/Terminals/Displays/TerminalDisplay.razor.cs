@@ -50,7 +50,7 @@ public partial class TerminalDisplay : FluxorComponent
                 IncludeFooterHelperComponent = false,
                 IncludeGutterComponent = false,
                 ContextRecord = ContextFacts.TerminalContext,
-                KeymapOverride = new TextEditorKeymapTerminal(TerminalStateWrap, TerminalKey)
+                KeymapOverride = new TextEditorKeymapTerminal(TerminalStateWrap, () => TerminalKey)
             };
         }
 

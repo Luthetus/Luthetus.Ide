@@ -29,17 +29,17 @@ namespace Luthetus.Ide.RazorLib.Keymaps.Models.Terminals;
 public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 {
     private readonly IState<TerminalState> _terminalStateWrap;
-    private readonly Key<Terminal> _terminalKey;
+    private readonly Func<Key<Terminal>> _getTerminalKeyFunc;
 
     public TextEditorKeymapTerminal(
 			IState<TerminalState> terminalStateWrap,
-            Key<Terminal> terminalKey)
+            Func<Key<Terminal>> getTerminalKeyFunc)
         : base(
             new Key<Keymap>(Guid.Parse("baf160e1-6b43-494b-99db-0e8c7500facb")),
             "Terminal")
     {
         _terminalStateWrap = terminalStateWrap;
-        _terminalKey = terminalKey;
+        _getTerminalKeyFunc = getTerminalKeyFunc;
     }
 
     public Key<KeymapLayer> GetLayer(bool hasSelection)
@@ -70,7 +70,8 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 		TextEditorEvents events,
 		out CommandNoType? command)
 	{
-		var commandDisplayName = "Terminal::InterceptDefaultKeymap";
+		var terminalKey = _getTerminalKeyFunc.Invoke();
+        var commandDisplayName = "Terminal::InterceptDefaultKeymap";
 
 		command = new TextEditorCommand(
 			commandDisplayName, "terminal_intercept-default-keymap", false, true, TextEditKind.None, null,
@@ -130,7 +131,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
                                     if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
                                     {
                                         // Notify the underlying terminal (tty) that the user wrote to standard out.
-                                        var generalTerminal = _terminalStateWrap.Value.TerminalMap[_terminalKey];
+                                        var generalTerminal = _terminalStateWrap.Value.TerminalMap[terminalKey];
                                         var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
 
                                         if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
