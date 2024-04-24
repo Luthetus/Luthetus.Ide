@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using System.Reflection;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -113,5 +113,19 @@ public partial class TextSelectionGroup : ComponentBase
             widthCssStyleString += $"{selectionWidthInPixelsInvariantCulture}px;";
 
         return $"{top} {height} {left} {widthCssStyleString}";
+    }
+
+    private (int lowerRowIndexInclusive, int upperRowIndexExclusive) GetSelectionBoundsInRowIndexUnits((int lowerPositionIndexInclusive, int upperPositionIndexExclusive) selectionBoundsInPositionIndexUnits)
+    {
+        try
+        {
+            return TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
+                RenderBatch.Model!,
+                selectionBoundsInPositionIndexUnits);
+        }
+        catch (LuthetusTextEditorException)
+        {
+            return (0, 0);
+        }
     }
 }
