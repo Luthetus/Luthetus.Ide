@@ -41,12 +41,6 @@ public class TextEditorModelApi : ITextEditorModelApi
         _dispatcher.Dispatch(new TextEditorModelState.RegisterAction(
             TextEditorService.AuthenticatedActionKey,
             model));
-
-        // TODO: Do not immediately apply syntax highlighting. Wait until the file is viewed first.
-        _textEditorService.PostRedundant(
-            $"ApplySyntaxHighlighting_{model.ResourceUri.Value}",
-            $"ApplySyntaxHighlighting_{model.ResourceUri.Value}",
-            ApplySyntaxHighlightingFactory(model.ResourceUri));
     }
 
     public void RegisterTemplated(
@@ -67,12 +61,6 @@ public class TextEditorModelApi : ITextEditorModelApi
         _dispatcher.Dispatch(new TextEditorModelState.RegisterAction(
             TextEditorService.AuthenticatedActionKey,
             model));
-
-        // TODO: Do not immediately apply syntax highlighting. Wait until the file is viewed first.
-        _textEditorService.PostRedundant(
-            $"ApplySyntaxHighlighting_{model.ResourceUri.Value}",
-            $"ApplySyntaxHighlighting_{model.ResourceUri.Value}",
-            ApplySyntaxHighlightingFactory(model.ResourceUri));
     }
     #endregion
 
