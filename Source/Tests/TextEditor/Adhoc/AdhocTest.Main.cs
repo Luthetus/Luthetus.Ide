@@ -385,7 +385,7 @@ public partial class AdhocTest
 
         refModel = textEditorService.ModelApi.GetOrDefault(refModel.ResourceUri) ?? throw new ArgumentNullException();
 
-        textEditorService.PostReadOnly(
+        textEditorService.PostIndependent(
             nameof(ContentList_Change),
             null,
             Key<TextEditorViewModel>.Empty,

@@ -46,7 +46,7 @@ public class USER_TYPES_OUT_CODE
 
         foreach (var character in content)
         {
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
                 nameof(USER_TYPES_OUT_CODE),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -100,7 +100,7 @@ public class USER_TYPES_OUT_CODE
 
         foreach (var character in content)
         {
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
                 nameof(USER_TYPES_OUT_CODE),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -159,7 +159,7 @@ await builder.Build().RunAsync();
             {
                 char character = content[i];
 
-                textEditorService.PostReadOnly(
+                textEditorService.PostIndependent(
                     nameof(USER_TYPES_OUT_CODE),
                     null,
                     Key<TextEditorViewModel>.Empty,

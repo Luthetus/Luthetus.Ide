@@ -163,7 +163,7 @@ public class LuthCompilerService : ILuthCompilerService
 
     protected virtual void QueueParseRequest(ResourceUri resourceUri)
     {
-        _textEditorService.PostReadOnly(
+        _textEditorService.PostIndependent(
             nameof(QueueParseRequest),
             null,
             Key<TextEditorViewModel>.Empty,

@@ -187,7 +187,7 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
 
             TextEditorService.ModelApi.RegisterCustom(textEditorModel);
 
-            TextEditorService.PostReadOnly(
+            TextEditorService.PostIndependent(
                 nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
                 null,
                 Key<TextEditorViewModel>.Empty,

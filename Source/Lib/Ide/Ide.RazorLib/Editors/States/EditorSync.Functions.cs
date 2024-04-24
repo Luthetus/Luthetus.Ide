@@ -37,7 +37,7 @@ public partial class EditorSync
 
             _textEditorService.ModelApi.RegisterCustom(model);
 
-            _textEditorService.PostReadOnly(
+            _textEditorService.PostIndependent(
                 nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -105,7 +105,7 @@ public partial class EditorSync
             registerViewModelArgs.ResourceUri.Value,
             false);
 
-        _textEditorService.PostReadOnly(
+        _textEditorService.PostIndependent(
             nameof(TryRegisterViewModelFunc),
             null,
             Key<TextEditorViewModel>.Empty,
@@ -138,7 +138,7 @@ public partial class EditorSync
                 {
                     if (writtenDateTime is not null)
                     {
-                        _textEditorService.PostReadOnly(
+                        _textEditorService.PostIndependent(
                             nameof(HandleOnSaveRequested),
                             null,
                             Key<TextEditorViewModel>.Empty,

@@ -11,8 +11,6 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.Common.RazorLib.Storages.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
 namespace Luthetus.TextEditor.RazorLib;
 
@@ -37,28 +35,25 @@ public partial interface ITextEditorService
     public IState<TextEditorFindAllState> FindAllStateWrap { get; }
 
     /// <summary>
-    /// This method will create an instance of <see cref="Events.ReadOnlyTextEditorTask"/>,
+    /// This method will create an instance of <see cref="Events.IndependentTextEditorTask"/>,
     /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
-    /// --- ReadOnlyTextEditorTask.cs inheritdoc:<br/><br/>
-    /// <inheritdoc cref="Events.ReadOnlyTextEditorTask"/>
+    /// --- IndependentTextEditorTask.cs inheritdoc:<br/><br/>
+    /// <inheritdoc cref="Events.IndependentTextEditorTask"/>
     /// </summary>
-    public void PostReadOnly(
+    public void PostIndependent(
         string name,
-        TextEditorViewModelDisplay.TextEditorEvents events,
-        Key<TextEditorViewModel> viewModelKey,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null);
 
     /// <summary>
-    /// This method will create an instance of <see cref="Events.IdempotentTextEditorTask"/>,
+    /// This method will create an instance of <see cref="Events.RedundantTextEditorTask"/>,
     /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
-    /// --- IdempotentTextEditorTask.cs inheritdoc:<br/><br/>
-    /// <inheritdoc cref="Events.IdempotentTextEditorTask"/>
+    /// --- RedundantTextEditorTask.cs inheritdoc:<br/><br/>
+    /// <inheritdoc cref="Events.RedundantTextEditorTask"/>
     /// </summary>
-    public void PostIdempotent(
+    public void PostRedundant(
         string name,
-        TextEditorViewModelDisplay.TextEditorEvents events,
-        Key<TextEditorViewModel> viewModelKey,
+        string redundancyIdentifier,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null);
 

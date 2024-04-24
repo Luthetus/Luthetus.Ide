@@ -93,7 +93,7 @@ public class TextEditorViewModelApiTests
             oppositeShouldSetFocusAfterNextRender,
             inViewModel.UnsafeState.ShouldSetFocusAfterNextRender);
 
-        textEditorService.PostReadOnly(
+        textEditorService.PostIndependent(
             nameof(textEditorService.ViewModelApi.WithValueFactory),
             null,
             Key<TextEditorViewModel>.Empty,

@@ -68,7 +68,7 @@ public partial class DotNetSolutionSync
 
         if (solutionTextEditorModel is not null)
         {
-            _textEditorService.PostReadOnly(
+            _textEditorService.PostIndependent(
                 nameof(Website_AddExistingProjectToSolutionAsync),
                 null,
                 Key<TextEditorViewModel>.Empty,

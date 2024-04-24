@@ -9,37 +9,32 @@ namespace Luthetus.TextEditor.RazorLib.Events;
 /// <summary>
 /// This class allows for easy creation of a <see cref="ITextEditorTask"/>, that comes with "redundancy" checking in the queue.
 /// That is, if when enqueueing an instance of this type, the last item in the queue is already an instance of this type
-/// with the same <see cref="Name"/>, and same <see cref="ViewModelKey"/> then this instance will overwrite the last item in
+/// with the same <see cref="RedundancyIdentifier"/>, then this instance will overwrite the last item in
 /// the queue, because the logic has no value if ran many times one after another, therefore, just take the most recent event.
 /// </summary>
-public class IdempotentTextEditorTask : ITextEditorTask
+public class RedundantTextEditorTask : ITextEditorTask
 {
-    private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
     private readonly TextEditorEdit _textEditorEdit;
 
-    public IdempotentTextEditorTask(
+    public RedundantTextEditorTask(
         string name,
-        TextEditorViewModelDisplay.TextEditorEvents events,
-        Key<TextEditorViewModel> viewModelKey,
+        string redundancyIdentifier,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        Name = name;
-        ViewModelKey = viewModelKey;
-
-        _events = events;
         _textEditorEdit = textEditorEdit;
 
+        Name = name;
+        RedundancyIdentifier = redundancyIdentifier;
         ThrottleTimeSpan = throttleTimeSpan ?? TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
     }
 
+    public string Name { get; }
+    public string RedundancyIdentifier { get; }
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public string Name { get; } = nameof(OnScrollVertical);
-    public Task? WorkProgress { get; }
-    public Key<TextEditorViewModel> ViewModelKey { get; }
-
     public TimeSpan ThrottleTimeSpan { get; }
+    public Task? WorkProgress { get; }
 
     public async Task InvokeWithEditContext(IEditContext editContext)
     {
@@ -50,17 +45,19 @@ public class IdempotentTextEditorTask : ITextEditorTask
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
-        if (oldEvent is IdempotentTextEditorTask oldIdempotentTextEditorTask)
+        if (oldEvent is not RedundantTextEditorTask oldRedundantTextEditorTask)
         {
-            if (oldIdempotentTextEditorTask.Name == Name &&
-                oldIdempotentTextEditorTask.ViewModelKey == ViewModelKey)
-            {
-                // Replace the oldEvent with this one
-                return this;
-            }
+            // Keep both events
+            return null;
         }
 
-        // Keep the oldEvent, and enqueue this one
+        if (oldRedundantTextEditorTask.Name == Name)
+        {
+            // Keep this event (via replacement)
+            return this;
+        }
+
+        // Keep both events
         return null;
     }
 

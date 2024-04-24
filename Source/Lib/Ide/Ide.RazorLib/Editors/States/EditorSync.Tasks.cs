@@ -91,7 +91,7 @@ public partial class EditorSync
                                         var content = await _fileSystemProvider.File
                                             .ReadAllTextAsync(inputFileAbsolutePathString);
 
-                                        _textEditorService.PostReadOnly(
+                                        _textEditorService.PostIndependent(
                                             nameof(CheckIfContentsWereModifiedAsync),
                                             null,
                                             Key<TextEditorViewModel>.Empty,

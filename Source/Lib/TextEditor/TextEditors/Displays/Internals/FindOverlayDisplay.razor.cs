@@ -43,7 +43,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
             _throttleInputValueChange.PushEvent(_ =>
             {
-				TextEditorService.PostReadOnly(
+				TextEditorService.PostIndependent(
                     nameof(FindOverlayDisplay),
                     RenderBatch.Events,
                     RenderBatch.ViewModel!.ViewModelKey,
@@ -124,7 +124,7 @@ public partial class FindOverlayDisplay : ComponentBase
                 "luthetusTextEditor.focusHtmlElementById",
                 RenderBatch.ViewModel!.PrimaryCursorContentId);
 
-            TextEditorService.PostIdempotent(
+            TextEditorService.PostRedundant(
                 nameof(FindOverlayDisplay),
                 RenderBatch.Events,
                 RenderBatch.ViewModel.ViewModelKey,
@@ -235,7 +235,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private void HandleActiveIndexMatchedTextSpanChanged()
     {
-        TextEditorService.PostReadOnly(
+        TextEditorService.PostIndependent(
             nameof(HandleActiveIndexMatchedTextSpanChanged),
             RenderBatch.Events,
             RenderBatch.ViewModel!.ViewModelKey,

@@ -30,7 +30,7 @@ public partial class Footer : ComponentBase
 
         if (Enum.TryParse<LineEndKind>(rowEndingKindString, out var rowEndingKind))
         {
-            TextEditorService.PostIdempotent(
+            TextEditorService.PostRedundant(
                 nameof(TextEditorService.ModelApi.SetUsingLineEndKindFactory),
                 RenderBatch.Events,
                 RenderBatch.ViewModel!.ViewModelKey,

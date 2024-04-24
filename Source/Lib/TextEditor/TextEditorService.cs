@@ -22,7 +22,6 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Microsoft.JSInterop;
 using Luthetus.TextEditor.RazorLib.Exceptions;
-using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.Events;
 
 namespace Luthetus.TextEditor.RazorLib;
@@ -93,7 +92,6 @@ public partial class TextEditorService : ITextEditorService
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
     public IState<TextEditorFindAllState> FindAllStateWrap { get; }
 
-
 #if DEBUG
     public string StorageKey => "luth_te_text-editor-options-debug";
 #else
@@ -111,32 +109,26 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
 
-    public void PostReadOnly(
+    public void PostIndependent(
         string name,
-        TextEditorViewModelDisplay.TextEditorEvents events,
-        Key<TextEditorViewModel> viewModelKey,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        Post(new ReadOnlyTextEditorTask(
+        Post(new IndependentTextEditorTask(
             name,
-            events,
-            viewModelKey,
             textEditorEdit,
             throttleTimeSpan));
     }
 
-    public void PostIdempotent(
+    public void PostRedundant(
         string name,
-        TextEditorViewModelDisplay.TextEditorEvents events,
-        Key<TextEditorViewModel> viewModelKey,
+        string redundancyIdentifier,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        Post(new IdempotentTextEditorTask(
+        Post(new RedundantTextEditorTask(
             name,
-            events,
-            viewModelKey,
+            redundancyIdentifier,
             textEditorEdit,
             throttleTimeSpan));
     }
@@ -158,7 +150,7 @@ public partial class TextEditorService : ITextEditorService
         }
         catch (LuthetusTextEditorException e)
         {
-            Console.WriteLine("aaaa" + e.ToString());
+            Console.WriteLine(e.ToString());
         }
     }
 

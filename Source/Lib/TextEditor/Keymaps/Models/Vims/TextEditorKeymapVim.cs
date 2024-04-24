@@ -111,7 +111,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostReadOnly(
+                    commandArgs.TextEditorService.PostIndependent(
                         nameof(commandDisplayName),
                         null,
                         commandArgs.ViewModelKey,
@@ -141,7 +141,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostReadOnly(
+                    commandArgs.TextEditorService.PostIndependent(
                         nameof(commandDisplayName),
                         null,
                         commandArgs.ViewModelKey,
@@ -193,7 +193,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostReadOnly(
+                    commandArgs.TextEditorService.PostIndependent(
                         nameof(commandDisplayName),
                         null,
                         commandArgs.ViewModelKey,
@@ -250,7 +250,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostReadOnly(
+                    commandArgs.TextEditorService.PostIndependent(
                         nameof(commandDisplayName),
                         null,
                         commandArgs.ViewModelKey,
@@ -293,7 +293,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostReadOnly(
+                    commandArgs.TextEditorService.PostIndependent(
                         nameof(commandDisplayName),
                         null,
                         commandArgs.ViewModelKey,
@@ -336,7 +336,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostReadOnly(
+                    commandArgs.TextEditorService.PostIndependent(
                         nameof(commandDisplayName),
                         null,
                         commandArgs.ViewModelKey,
@@ -380,7 +380,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostReadOnly(
+                    commandArgs.TextEditorService.PostIndependent(
                         nameof(commandDisplayName),
                         null,
                         commandArgs.ViewModelKey,
@@ -409,7 +409,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostReadOnly(
+                    commandArgs.TextEditorService.PostIndependent(
                         nameof(commandDisplayName),
                         null,
                         commandArgs.ViewModelKey,
@@ -438,7 +438,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostReadOnly(
+                    commandArgs.TextEditorService.PostIndependent(
                         nameof(commandDisplayName),
                         null,
                         commandArgs.ViewModelKey,
@@ -468,7 +468,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostReadOnly(
+                    commandArgs.TextEditorService.PostIndependent(
                         nameof(commandDisplayName),
                         null,
                         commandArgs.ViewModelKey,
@@ -743,7 +743,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostReadOnly(
+                commandArgs.TextEditorService.PostIndependent(
                     nameof(commandDisplayName),
                     null,
                     commandArgs.ViewModelKey,
@@ -806,7 +806,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostReadOnly(
+                    commandArgs.TextEditorService.PostIndependent(
                         nameof(commandDisplayName),
                         null,
                         commandArgs.ViewModelKey,
@@ -835,7 +835,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostReadOnly(
+                    commandArgs.TextEditorService.PostIndependent(
                         nameof(commandDisplayName),
                         null,
                         commandArgs.ViewModelKey,
@@ -863,7 +863,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostReadOnly(
+                commandArgs.TextEditorService.PostIndependent(
                     nameof(displayName),
                     null,
                     commandArgs.ViewModelKey,
@@ -891,7 +891,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostReadOnly(
+                commandArgs.TextEditorService.PostIndependent(
                     nameof(commandDisplayName),
                     null,
                     commandArgs.ViewModelKey,

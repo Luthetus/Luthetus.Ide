@@ -50,7 +50,7 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 
         var modelText = model.GetAllText();
 
-        TextEditorService.PostReadOnly(
+        TextEditorService.PostIndependent(
             nameof(SyntaxTextSpanDisplay),
             null,
             Key<TextEditorViewModel>.Empty,

@@ -436,7 +436,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         var diffX = previousTouchPoint.ClientX - currentTouchPoint.ClientX;
         var diffY = previousTouchPoint.ClientY - currentTouchPoint.ClientY;
 
-		TextEditorService.PostReadOnly(
+		TextEditorService.PostIndependent(
             nameof(QueueRemeasureBackgroundTask),
             _events,
             viewModel.ViewModelKey,
@@ -509,7 +509,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        TextEditorService.PostReadOnly(
+        TextEditorService.PostIndependent(
             nameof(QueueRemeasureBackgroundTask),
             _events,
             viewModelKey.Value,
@@ -530,7 +530,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        TextEditorService.PostReadOnly(
+        TextEditorService.PostIndependent(
             nameof(QueueCalculateVirtualizationResultBackgroundTask),
             _events,
             viewModelKey.Value,

@@ -281,7 +281,7 @@ public class Terminal
                                         _standardOutBuilderMap[terminalCommandKey].TextLineList.Add(output);
                                     }
 
-                                    _textEditorService.PostReadOnly(
+                                    _textEditorService.PostIndependent(
                                         nameof(EnqueueCommandAsync),
                                         null,
                                         Key<TextEditorViewModel>.Empty,
@@ -413,7 +413,7 @@ public class Terminal
 
         _textEditorService.ModelApi.RegisterCustom(model);
 
-        _textEditorService.PostReadOnly(
+        _textEditorService.PostIndependent(
             nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
             null,
             Key<TextEditorViewModel>.Empty,
@@ -450,7 +450,7 @@ public class Terminal
             FindOverlayPresentationFacts.PresentationKey,
         }.ToImmutableArray();
 
-        _textEditorService.PostReadOnly(
+        _textEditorService.PostIndependent(
             nameof(Terminal),
             null,
             Key<TextEditorViewModel>.Empty,
@@ -461,7 +461,7 @@ public class Terminal
                         FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
                     }));
 
-        _textEditorService.PostReadOnly(
+        _textEditorService.PostIndependent(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
             null,
             Key<TextEditorViewModel>.Empty,
@@ -509,7 +509,7 @@ public class Terminal
 
     public void WriteWorkingDirectory()
     {
-        _textEditorService.PostReadOnly(
+        _textEditorService.PostIndependent(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
             null,
             Key<TextEditorViewModel>.Empty,
@@ -555,7 +555,7 @@ public class Terminal
     
     public void ClearTerminal()
     {
-        _textEditorService.PostReadOnly(
+        _textEditorService.PostIndependent(
             nameof(ClearTerminal),
             null,
             Key<TextEditorViewModel>.Empty,

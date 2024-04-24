@@ -16,34 +16,26 @@ namespace Luthetus.TextEditor.RazorLib.Events;
 /// that sees the last item in the queue to be of this type, and then batching or etc with it.
 /// One should NOT do this, but it is possible, and should be remarked about.
 /// </remarks>
-public class ReadOnlyTextEditorTask : ITextEditorTask
+public class IndependentTextEditorTask : ITextEditorTask
 {
-    private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
     private readonly TextEditorEdit _textEditorEdit;
 
-    public ReadOnlyTextEditorTask(
+    public IndependentTextEditorTask(
         string name,
-        TextEditorViewModelDisplay.TextEditorEvents events,
-        Key<TextEditorViewModel> viewModelKey,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        Name = name;
-        ViewModelKey = viewModelKey;
-
-        _events = events;
         _textEditorEdit = textEditorEdit;
 
+        Name = name;
         ThrottleTimeSpan = throttleTimeSpan ?? TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
     }
 
+    public string Name { get; }
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public string Name { get; } = nameof(OnScrollVertical);
-    public Task? WorkProgress { get; }
-    public Key<TextEditorViewModel> ViewModelKey { get; }
-
     public TimeSpan ThrottleTimeSpan { get; }
+    public Task? WorkProgress { get; }
 
     public async Task InvokeWithEditContext(IEditContext editContext)
     {
@@ -54,7 +46,7 @@ public class ReadOnlyTextEditorTask : ITextEditorTask
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
-        // Keep the oldEvent, and enqueue this one
+        // Keep both events
         return null;
     }
 

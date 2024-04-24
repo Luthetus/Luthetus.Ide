@@ -61,7 +61,7 @@ public class TextEditorCommandDefaultFactsTests
             var inClipboard = await clipboardService.ReadClipboard();
             Assert.Empty(inClipboard);
 
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
 				nameof(TextEditorCommandDefaultFactsTests),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -133,7 +133,7 @@ public class TextEditorCommandDefaultFactsTests
             var inClipboard = await clipboardService.ReadClipboard();
             Assert.Empty(inClipboard);
 
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -157,7 +157,7 @@ public class TextEditorCommandDefaultFactsTests
 
             await TextEditorCommandDefaultFacts.Cut.CommandFunc.Invoke(textEditorCommandArgs);
 
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -192,7 +192,7 @@ public class TextEditorCommandDefaultFactsTests
 
             var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
 
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -236,7 +236,7 @@ public class TextEditorCommandDefaultFactsTests
 
             var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
 
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -294,7 +294,7 @@ public class TextEditorCommandDefaultFactsTests
             var savedContent = (string?)null;
             Assert.Null(savedContent);
 
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -318,7 +318,7 @@ public class TextEditorCommandDefaultFactsTests
 
             await TextEditorCommandDefaultFacts.Save.CommandFunc.Invoke(textEditorCommandArgs);
 
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -340,7 +340,7 @@ public class TextEditorCommandDefaultFactsTests
                 Assert.Null(savedContent);
                 await TextEditorCommandDefaultFacts.Save.CommandFunc.Invoke(textEditorCommandArgs);
 
-                textEditorService.PostReadOnly(
+                textEditorService.PostIndependent(
                     nameof(TextEditorCommandDefaultFactsTests),
                     null,
                     Key<TextEditorViewModel>.Empty,
@@ -385,7 +385,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -443,7 +443,7 @@ public class TextEditorCommandDefaultFactsTests
                     Key<TextEditorViewModel>.Empty,
                     new List<TextEditorCursorModifier> { new TextEditorCursorModifier(cursor) });
 
-                textEditorService.PostReadOnly(
+                textEditorService.PostIndependent(
                     nameof(TextEditorCommandDefaultFactsTests),
                     null,
                     Key<TextEditorViewModel>.Empty,
@@ -670,7 +670,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -745,7 +745,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -821,7 +821,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -897,7 +897,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -1011,7 +1011,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -1082,7 +1082,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -1153,7 +1153,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -1249,7 +1249,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -1525,7 +1525,7 @@ public class Person
             var newRowIndex = 3;
             var newColumnIndex = 0;
 
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
                 null,
                 Key<TextEditorViewModel>.Empty,
@@ -1597,7 +1597,7 @@ public class Person
             var newRowIndex = 3;
             var newColumnIndex = 0;
 
-            textEditorService.PostReadOnly(
+            textEditorService.PostIndependent(
                 nameof(TextEditorCommandDefaultFactsTests),
                 null,
                 Key<TextEditorViewModel>.Empty,

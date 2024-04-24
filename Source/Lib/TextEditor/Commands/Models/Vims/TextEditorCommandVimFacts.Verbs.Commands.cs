@@ -12,7 +12,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostReadOnly(
+                commandArgs.TextEditorService.PostIndependent(
                     nameof(DeleteLineCommand),
                     commandArgs.Events,
                     commandArgs.ViewModelKey,
@@ -34,7 +34,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostReadOnly(
+                commandArgs.TextEditorService.PostIndependent(
                     nameof(ChangeLineCommand),
                     commandArgs.Events,
                     commandArgs.ViewModelKey,
@@ -58,7 +58,7 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.InnerCommand = innerTextEditorCommand;
 
-                commandArgs.TextEditorService.PostReadOnly(
+                commandArgs.TextEditorService.PostIndependent(
                     nameof(DeleteMotionCommandConstructor),
                     commandArgs.Events,
                     commandArgs.ViewModelKey,
@@ -85,7 +85,7 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.InnerCommand = innerTextEditorCommand;
 
-                commandArgs.TextEditorService.PostReadOnly(
+                commandArgs.TextEditorService.PostIndependent(
                     nameof(ChangeMotionCommandConstructor),
                     commandArgs.Events,
                     commandArgs.ViewModelKey,
@@ -110,7 +110,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostReadOnly(
+                commandArgs.TextEditorService.PostIndependent(
                     nameof(ChangeSelectionCommand),
                     commandArgs.Events,
                     commandArgs.ViewModelKey,
@@ -132,7 +132,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostReadOnly(
+                commandArgs.TextEditorService.PostIndependent(
                     nameof(YankCommand),
                     commandArgs.Events,
                     commandArgs.ViewModelKey,
@@ -154,7 +154,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostReadOnly(
+                commandArgs.TextEditorService.PostIndependent(
                     nameof(NewLineBelowCommand),
                     commandArgs.Events,
                     commandArgs.ViewModelKey,
@@ -176,7 +176,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostReadOnly(
+                commandArgs.TextEditorService.PostIndependent(
                     nameof(NewLineAboveCommand),
                     commandArgs.Events,
                     commandArgs.ViewModelKey,

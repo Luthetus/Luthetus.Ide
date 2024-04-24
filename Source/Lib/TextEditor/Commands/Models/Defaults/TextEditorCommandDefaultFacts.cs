@@ -15,7 +15,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostIdempotent(
+            commandArgs.TextEditorService.PostRedundant(
                 $"{nameof(Copy)}_{commandArgs.ViewModelKey.Guid}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -33,7 +33,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostReadOnly(
+            commandArgs.TextEditorService.PostIndependent(
                 $"{nameof(Cut)}_{commandArgs.ViewModelKey.Guid}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -51,7 +51,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostReadOnly(
+            commandArgs.TextEditorService.PostIndependent(
                 $"{nameof(PasteCommand)}_{commandArgs.ViewModelKey.Guid}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -69,7 +69,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostIdempotent(
+            commandArgs.TextEditorService.PostRedundant(
                 $"{nameof(Save)}_{commandArgs.ViewModelKey.Guid}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -87,7 +87,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostIdempotent(
+            commandArgs.TextEditorService.PostRedundant(
                 $"{nameof(SelectAll)}_{commandArgs.ViewModelKey.Guid}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -105,7 +105,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostReadOnly(
+            commandArgs.TextEditorService.PostIndependent(
                 $"{nameof(Undo)}_{commandArgs.ViewModelKey.Guid}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -123,7 +123,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostReadOnly(
+            commandArgs.TextEditorService.PostIndependent(
                 $"{nameof(Redo)}_{commandArgs.ViewModelKey}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -141,7 +141,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostIdempotent(
+            commandArgs.TextEditorService.PostRedundant(
                 $"{nameof(Remeasure)}_{commandArgs.ViewModelKey}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -159,7 +159,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostReadOnly(
+            commandArgs.TextEditorService.PostIndependent(
                 $"{nameof(ScrollLineDown)}_{commandArgs.ViewModelKey}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -177,7 +177,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostReadOnly(
+            commandArgs.TextEditorService.PostIndependent(
                 $"{nameof(ScrollLineUp)}_{commandArgs.ViewModelKey}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -195,7 +195,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostReadOnly(
+            commandArgs.TextEditorService.PostIndependent(
                 $"{nameof(ScrollPageDown)}_{commandArgs.ViewModelKey}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -213,7 +213,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostReadOnly(
+            commandArgs.TextEditorService.PostIndependent(
                 $"{nameof(ScrollPageUp)}_{commandArgs.ViewModelKey}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -231,7 +231,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostIdempotent(
+            commandArgs.TextEditorService.PostRedundant(
                 $"{nameof(CursorMovePageBottom)}_{commandArgs.ViewModelKey}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -249,7 +249,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostIdempotent(
+            commandArgs.TextEditorService.PostRedundant(
                 $"{nameof(CursorMovePageTop)}_{commandArgs.ViewModelKey}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -267,7 +267,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostReadOnly(
+            commandArgs.TextEditorService.PostIndependent(
                 $"{nameof(Duplicate)}_{commandArgs.ViewModelKey}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -285,7 +285,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostReadOnly(
+            commandArgs.TextEditorService.PostIndependent(
                 $"{nameof(IndentMore)}_{commandArgs.ViewModelKey}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -303,7 +303,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostReadOnly(
+            commandArgs.TextEditorService.PostIndependent(
                 $"{nameof(IndentLess)}_{commandArgs.ViewModelKey}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -321,7 +321,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostIdempotent(
+            commandArgs.TextEditorService.PostRedundant(
                 $"{nameof(ClearTextSelection)}_{commandArgs.ViewModelKey}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -339,7 +339,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostReadOnly(
+            commandArgs.TextEditorService.PostIndependent(
                 $"{nameof(NewLineBelow)}_{commandArgs.ViewModelKey}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -357,7 +357,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostReadOnly(
+            commandArgs.TextEditorService.PostIndependent(
                 $"{nameof(NewLineAbove)}_{commandArgs.ViewModelKey}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -376,7 +376,7 @@ public static class TextEditorCommandDefaultFacts
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
             commandArgs.ShouldSelectText = shouldSelectText;
 
-            commandArgs.TextEditorService.PostReadOnly(
+            commandArgs.TextEditorService.PostIndependent(
                 $"{nameof(GoToMatchingCharacterFactory)}_{commandArgs.ViewModelKey}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -394,7 +394,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostIdempotent(
+            commandArgs.TextEditorService.PostRedundant(
                 $"{nameof(GoToDefinition)}_{commandArgs.ViewModelKey}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -412,7 +412,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostIdempotent(
+            commandArgs.TextEditorService.PostRedundant(
                 $"{nameof(ShowFindAllDialog)}_{commandArgs.ViewModelKey}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -434,7 +434,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostIdempotent(
+            commandArgs.TextEditorService.PostRedundant(
                 $"{nameof(ShowTooltipByCursorPosition)}_{commandArgs.ViewModelKey}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,
@@ -452,7 +452,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostIdempotent(
+            commandArgs.TextEditorService.PostRedundant(
                 $"{nameof(ShowFindOverlay)}_{commandArgs.ViewModelKey}",
                 commandArgs.Events,
                 commandArgs.ViewModelKey,

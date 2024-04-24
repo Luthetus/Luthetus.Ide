@@ -93,7 +93,7 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(rowEndingKind, inModel.LineEndKindPreference);
 
-        textEditorService.PostReadOnly(
+        textEditorService.PostIndependent(
             nameof(textEditorService.ModelApi.SetUsingLineEndKindFactory),
             null,
             Key<TextEditorViewModel>.Empty,
@@ -123,7 +123,7 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(newResourceLastWriteTime, inModel.ResourceLastWriteTime);
 
-        textEditorService.PostReadOnly(
+        textEditorService.PostIndependent(
             nameof(textEditorService.ModelApi.SetResourceDataFactory),
             null,
             Key<TextEditorViewModel>.Empty,
@@ -153,7 +153,7 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(newContent, inModel.GetAllText());
 
-        textEditorService.PostReadOnly(
+        textEditorService.PostIndependent(
             nameof(textEditorService.ModelApi.ReloadFactory),
             null,
             Key<TextEditorViewModel>.Empty,
@@ -466,7 +466,7 @@ public class TextEditorModelApiTests
 
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
-        textEditorService.PostReadOnly(
+        textEditorService.PostIndependent(
             nameof(textEditorService.ModelApi.DeleteTextByRangeUnsafeFactory),
             null,
             Key<TextEditorViewModel>.Empty,
@@ -503,7 +503,7 @@ public class TextEditorModelApiTests
 
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
-        textEditorService.PostReadOnly(
+        textEditorService.PostIndependent(
             nameof(textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory),
             null,
             Key<TextEditorViewModel>.Empty,
@@ -531,7 +531,7 @@ public class TextEditorModelApiTests
 
         Assert.Empty(inModel!.PresentationModelList);
 
-        textEditorService.PostReadOnly(
+        textEditorService.PostIndependent(
             nameof(textEditorService.ModelApi.AddPresentationModelFactory),
             null,
             Key<TextEditorViewModel>.Empty,

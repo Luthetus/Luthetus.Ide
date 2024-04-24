@@ -110,7 +110,7 @@ public partial class RowSection : ComponentBase
 
         _throttleVirtualizationDisplayItemsProviderFunc.PushEvent(_ => 
         {
-            TextEditorService.PostReadOnly(
+            TextEditorService.PostIndependent(
                 nameof(VirtualizationDisplayItemsProviderFunc),
                 RenderBatch.Events,
                 viewModel.ViewModelKey,

@@ -12,7 +12,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostReadOnly(
+                commandArgs.TextEditorService.PostIndependent(
                     nameof(Word),
                     commandArgs.Events,
                     commandArgs.ViewModelKey,
@@ -34,7 +34,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostReadOnly(
+                commandArgs.TextEditorService.PostIndependent(
                     nameof(End),
                     commandArgs.Events,
                     commandArgs.ViewModelKey,
@@ -56,7 +56,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostReadOnly(
+                commandArgs.TextEditorService.PostIndependent(
                     nameof(Back),
                     commandArgs.Events,
                     commandArgs.ViewModelKey,
@@ -83,7 +83,7 @@ public static partial class TextEditorCommandVimFacts
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                     commandArgs.InnerCommand = innerCommand;
 
-                    commandArgs.TextEditorService.PostReadOnly(
+                    commandArgs.TextEditorService.PostIndependent(
                         nameof(GetVisualFactory),
                         commandArgs.Events,
                         commandArgs.ViewModelKey,
@@ -113,7 +113,7 @@ public static partial class TextEditorCommandVimFacts
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                     commandArgs.InnerCommand = innerCommand;
 
-                    commandArgs.TextEditorService.PostReadOnly(
+                    commandArgs.TextEditorService.PostIndependent(
                         nameof(GetVisualLineFactory),
                         commandArgs.Events,
                         commandArgs.ViewModelKey,

@@ -137,7 +137,7 @@ public sealed class CSharpCompilerService : LuthCompilerService
                             return;
                         }
 
-                        _textEditorService.PostReadOnly(
+                        _textEditorService.PostIndependent(
                             "Add using statement",
                             null,
                             Key<TextEditorViewModel>.Empty,
