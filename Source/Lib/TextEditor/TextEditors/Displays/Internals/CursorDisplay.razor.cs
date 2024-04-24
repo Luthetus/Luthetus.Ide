@@ -48,6 +48,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     private int _menuShouldGetFocusRequestCount;
     private string _previousGetCursorStyleCss = string.Empty;
     private string _previousGetCaretRowStyleCss = string.Empty;
+    private string _previousGetMenuStyleCss = string.Empty;
 
     private string _previouslyObservedCursorDisplayId = string.Empty;
     private double _leftRelativeToParentInPixels;
@@ -242,41 +243,56 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
     private string GetMenuStyleCss()
     {
-        var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements;
-
-        var leftInPixels = 0d;
-
-        // Tab key column offset
+        try
         {
-            var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabCountOnSameLineBeforeCursor(
-                Cursor.LineIndex,
-                Cursor.ColumnIndex);
+            var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements;
 
-            // 1 of the character width is already accounted for
-            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+            var leftInPixels = 0d;
 
-            leftInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor *
-                measurements.CharacterWidth;
+            // Tab key column offset
+            {
+                var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabCountOnSameLineBeforeCursor(
+                    Cursor.LineIndex,
+                    Cursor.ColumnIndex);
+
+                // 1 of the character width is already accounted for
+                var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+
+                leftInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor *
+                    measurements.CharacterWidth;
+            }
+
+            leftInPixels += measurements.CharacterWidth * Cursor.ColumnIndex;
+
+            var leftInPixelsInvariantCulture = leftInPixels.ToCssValue();
+            var left = $"left: {leftInPixelsInvariantCulture}px;";
+
+            var topInPixelsInvariantCulture = (measurements.LineHeight * (Cursor.LineIndex + 1))
+                .ToCssValue();
+
+            // Top is 1 row further than the cursor so it does not cover text at cursor position.
+            var top = $"top: {topInPixelsInvariantCulture}px;";
+
+            var minWidthInPixelsInvariantCulture = (measurements.CharacterWidth * 16).ToCssValue();
+            var minWidth = $"min-Width: {minWidthInPixelsInvariantCulture}px;";
+
+            var minHeightInPixelsInvariantCulture = (measurements.LineHeight * 4).ToCssValue();
+            var minHeight = $"min-height: {minHeightInPixelsInvariantCulture}px;";
+
+            // This feels a bit hacky, exceptions are happening because the UI isn't accessing
+            // the text editor in a thread safe way.
+            //
+            // When an exception does occur though, the cursor should receive a 'text editor changed'
+            // event and re-render anyhow however.
+            // 
+            // So store the result of this method incase an exception occurs in future invocations,
+            // to keep the cursor on screen while the state works itself out.
+            return _previousGetMenuStyleCss = $"{left} {top} {minWidth} {minHeight}";
         }
-
-        leftInPixels += measurements.CharacterWidth * Cursor.ColumnIndex;
-
-        var leftInPixelsInvariantCulture = leftInPixels.ToCssValue();
-        var left = $"left: {leftInPixelsInvariantCulture}px;";
-
-        var topInPixelsInvariantCulture = (measurements.LineHeight * (Cursor.LineIndex + 1))
-            .ToCssValue();
-
-        // Top is 1 row further than the cursor so it does not cover text at cursor position.
-        var top = $"top: {topInPixelsInvariantCulture}px;";
-
-        var minWidthInPixelsInvariantCulture = (measurements.CharacterWidth * 16).ToCssValue();
-        var minWidth = $"min-Width: {minWidthInPixelsInvariantCulture}px;";
-
-        var minHeightInPixelsInvariantCulture = (measurements.LineHeight * 4).ToCssValue();
-        var minHeight = $"min-height: {minHeightInPixelsInvariantCulture}px;";
-
-        return $"{left} {top} {minWidth} {minHeight}";
+        catch (LuthetusTextEditorException)
+        {
+            return _previousGetMenuStyleCss;
+        }
     }
 
     public async Task FocusAsync()

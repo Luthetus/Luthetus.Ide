@@ -1,12 +1,10 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
+﻿using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
@@ -153,8 +151,7 @@ public class LuthCompilerService : ILuthCompilerService
     }
 
     /// <summary>
-    /// A method wrapper for <see cref="ResourceDisposed"/> as to allow dervied types
-    /// to invoke the event.
+    /// A method wrapper for <see cref="ResourceDisposed"/> as to allow derived types to invoke the event.
     /// </summary>
     protected virtual void OnResourceDisposed()
     {
@@ -164,7 +161,7 @@ public class LuthCompilerService : ILuthCompilerService
     protected virtual void QueueParseRequest(ResourceUri resourceUri)
     {
         _textEditorService.PostIndependent(
-            nameof(QueueParseRequest),
+            $"{nameof(QueueParseRequest)}_{resourceUri.Value}",
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
