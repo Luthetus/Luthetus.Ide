@@ -381,7 +381,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
-        return editContext =>
+        return async editContext =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -389,10 +389,12 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return;
 
-            return MoveCursorUnsafeFactory(keyboardEventArgs, modelResourceUri, viewModelKey, primaryCursorModifier)
+            await MoveCursorUnsafeFactory(keyboardEventArgs, modelResourceUri, viewModelKey, primaryCursorModifier)
                 .Invoke(editContext);
+
+            viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
         };
     }
 
