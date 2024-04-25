@@ -9,7 +9,7 @@ using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dynamics.Models;
-using Luthetus.Common.RazorLib.JsRuntimes;
+using Luthetus.Common.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.Common.RazorLib.Dialogs.Displays;
 

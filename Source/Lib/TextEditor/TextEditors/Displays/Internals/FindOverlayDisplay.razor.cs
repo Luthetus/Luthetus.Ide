@@ -11,7 +11,7 @@ using Fluxor;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.JsRuntimes;
-using Luthetus.Common.RazorLib.JsRuntimes;
+using Luthetus.Common.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 

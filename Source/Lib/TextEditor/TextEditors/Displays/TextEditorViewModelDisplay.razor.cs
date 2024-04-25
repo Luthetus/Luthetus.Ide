@@ -27,7 +27,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Events;
 using Luthetus.TextEditor.RazorLib.Exceptions;
-using Luthetus.TextEditor.RazorLib.JsRuntimes;
+using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 

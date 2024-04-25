@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Microsoft.JSInterop;
 
-namespace Luthetus.Common.RazorLib.JsRuntimes;
+namespace Luthetus.Common.RazorLib.JsRuntimes.Models;
 
 public class LuthetusCommonJavaScriptInteropApi
 {

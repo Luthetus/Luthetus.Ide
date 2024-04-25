@@ -1,6 +1,6 @@
 ﻿using Microsoft.JSInterop;
 
-namespace Luthetus.TextEditor.RazorLib.JsRuntimes;
+namespace Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 
 public static class LuthetusTextEditorJsRuntimeExtensionMethods
 {

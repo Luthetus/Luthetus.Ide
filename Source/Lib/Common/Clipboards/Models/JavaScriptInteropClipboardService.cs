@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.JsRuntimes;
+﻿using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Microsoft.JSInterop;
 
 namespace Luthetus.Common.RazorLib.Clipboards.Models;

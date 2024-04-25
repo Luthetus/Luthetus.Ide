@@ -1,4 +1,4 @@
-using Luthetus.TextEditor.RazorLib.JsRuntimes;
+using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;

@@ -5,7 +5,7 @@ using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Microsoft.AspNetCore.Components;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Displays;
 
-namespace Luthetus.TextEditor.RazorLib.JsRuntimes;
+namespace Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 
 public class LuthetusTextEditorJavaScriptInteropApi
 {

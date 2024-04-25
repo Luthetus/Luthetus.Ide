@@ -12,7 +12,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
-using Luthetus.TextEditor.RazorLib.JsRuntimes;
+using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
