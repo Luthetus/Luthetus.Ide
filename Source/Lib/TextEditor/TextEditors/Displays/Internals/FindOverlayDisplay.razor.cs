@@ -10,6 +10,7 @@ using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.JsRuntimes;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -118,9 +119,9 @@ public partial class FindOverlayDisplay : ComponentBase
     {
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
-            await JsRuntime.InvokeVoidAsync(
-                "luthetusTextEditor.focusHtmlElementById",
-                RenderBatch.ViewModel!.PrimaryCursorContentId);
+            await JsRuntime.GetLuthetusTextEditorApi()
+                .FocusHtmlElementById(
+                    RenderBatch.ViewModel!.PrimaryCursorContentId);
 
             TextEditorService.PostRedundant(
                 nameof(FindOverlayDisplay),

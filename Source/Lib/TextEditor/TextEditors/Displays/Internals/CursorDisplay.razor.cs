@@ -9,6 +9,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.JsRuntimes;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -92,13 +93,13 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
             var guid = Guid.NewGuid();
 
-            var nextLeftRelativeToParentInPixels = await JsRuntime.InvokeAsync<double>(
-                "luthetusTextEditor.calculateProportionalLeftOffset",
-                ProportionalFontMeasurementsContainerElementId,
-                $"luth_te_proportional-font-measurement-parent_{viewModel.ViewModelKey.Guid}_cursor_{guid}",
-                $"luth_te_proportional-font-measurement-cursor_{viewModel.ViewModelKey.Guid}_cursor_{guid}",
-                textOffsettingCursor,
-                true);
+            var nextLeftRelativeToParentInPixels = await JsRuntime.GetLuthetusTextEditorApi()
+                .CalculateProportionalLeftOffset(
+                    ProportionalFontMeasurementsContainerElementId,
+                    $"luth_te_proportional-font-measurement-parent_{viewModel.ViewModelKey.Guid}_cursor_{guid}",
+                    $"luth_te_proportional-font-measurement-cursor_{viewModel.ViewModelKey.Guid}_cursor_{guid}",
+                    textOffsettingCursor,
+                    true);
 
             var previousLeftRelativeToParentInPixels = _leftRelativeToParentInPixels;
 
@@ -110,12 +111,12 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
         if (_previouslyObservedCursorDisplayId != CursorDisplayId && IsFocusTarget)
         {
-            await JsRuntime.InvokeVoidAsync(
-                "luthetusTextEditor.initializeTextEditorCursorIntersectionObserver",
-                _intersectionObserverMapKey.ToString(),
-                DotNetObjectReference.Create(this),
-                ScrollableContainerId,
-                CursorDisplayId);
+            await JsRuntime.GetLuthetusTextEditorApi()
+                .InitializeTextEditorCursorIntersectionObserver(
+                    _intersectionObserverMapKey.ToString(),
+                    DotNetObjectReference.Create(this),
+                    ScrollableContainerId,
+                    CursorDisplayId);
 
             _previouslyObservedCursorDisplayId = CursorDisplayId;
         }
@@ -128,9 +129,9 @@ public partial class CursorDisplay : ComponentBase, IDisposable
             {
                 _throttleShouldRevealCursor.PushEvent(async _ =>
                 {
-                    await JsRuntime.InvokeVoidAsync(
-                        "luthetusTextEditor.scrollElementIntoView",
-                        CursorDisplayId);
+                    await JsRuntime.GetLuthetusTextEditorApi()
+                        .ScrollElementIntoView(
+                            CursorDisplayId);
                 });
             }
         }
@@ -369,10 +370,10 @@ public partial class CursorDisplay : ComponentBase, IDisposable
             {
                 try
                 {
-                    await JsRuntime.InvokeVoidAsync(
-                        "luthetusTextEditor.disposeTextEditorCursorIntersectionObserver",
-                        CancellationToken.None,
-                        _intersectionObserverMapKey.ToString());
+                    await JsRuntime.GetLuthetusTextEditorApi()
+                        .DisposeTextEditorCursorIntersectionObserver(
+                            CancellationToken.None,
+                            _intersectionObserverMapKey.ToString());
                 }
                 catch (Exception e)
                 {

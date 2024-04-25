@@ -62,6 +62,8 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     {
         if (firstRender)
         {
+            await JsRuntime.GetLuthetusTextEditorApi()
+
             await JsRuntime.InvokeVoidAsync(
                 "luthetusTextEditor.focusHtmlElementById",
                 Dialog.DialogFocusPointHtmlElementId);

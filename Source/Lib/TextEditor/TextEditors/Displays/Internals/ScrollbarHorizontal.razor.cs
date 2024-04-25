@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Events;
+using Luthetus.TextEditor.RazorLib.JsRuntimes;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -84,8 +85,8 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
     {
         _thinksLeftMouseButtonIsDown = true;
 
-        _relativeCoordinatesOnMouseDown = await JsRuntime.InvokeAsync<RelativeCoordinates>(
-                "luthetusTextEditor.getRelativePosition",
+        _relativeCoordinatesOnMouseDown = await JsRuntime.GetLuthetusTextEditorApi()
+            .GetRelativePosition(
                 ScrollbarSliderElementId,
                 mouseEventArgs.ClientX,
                 mouseEventArgs.ClientY);
@@ -139,11 +140,11 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgsTuple.secondMouseEventArgs.Buttons & 1) == 1)
         {
-            var relativeCoordinatesOfDragEvent = await JsRuntime.InvokeAsync<RelativeCoordinates>(
-                "luthetusTextEditor.getRelativePosition",
-                ScrollbarElementId,
-                mouseEventArgsTuple.secondMouseEventArgs.ClientX,
-                mouseEventArgsTuple.secondMouseEventArgs.ClientY);
+            var relativeCoordinatesOfDragEvent = await JsRuntime.GetLuthetusTextEditorApi()
+                .GetRelativePosition(
+                    ScrollbarElementId,
+                    mouseEventArgsTuple.secondMouseEventArgs.ClientX,
+                    mouseEventArgsTuple.secondMouseEventArgs.ClientY);
 
             var xPosition = relativeCoordinatesOfDragEvent.RelativeX - _relativeCoordinatesOnMouseDown.RelativeX;
 

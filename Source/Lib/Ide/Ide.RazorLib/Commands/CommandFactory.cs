@@ -17,6 +17,7 @@ using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.JsRuntimes;
 
 namespace Luthetus.Ide.RazorLib.Commands;
 
@@ -237,8 +238,9 @@ public class CommandFactory : ICommandFactory
                     if (activeViewModel is null)
                         return;
 
-                    await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.focusHtmlElementById",
-                        activeViewModel.PrimaryCursorContentId);
+                    await _jsRuntime.GetLuthetusTextEditorApi()
+                        .FocusHtmlElementById(activeViewModel.PrimaryCursorContentId)
+                        .ConfigureAwait(false);
                 });
 
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(

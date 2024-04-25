@@ -27,6 +27,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Events;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.JsRuntimes;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -139,9 +140,9 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     {
         if (firstRender)
         {
-            await JsRuntime.InvokeVoidAsync(
-                "luthetusTextEditor.preventDefaultOnWheelEvents",
-                ContentElementId);
+            await JsRuntime.GetLuthetusTextEditorApi()
+                .PreventDefaultOnWheelEvents(
+                    ContentElementId);
 
             QueueRemeasureBackgroundTask(
                 _storedRenderBatch,
@@ -825,8 +826,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
 
             // TODO: (2023-05-28) This shouldn't be re-calcuated in the best case scenario. That is to say, the previous line invokes 'CalculateRowAndColumnIndex(...)' which also invokes this logic
-            var relativeCoordinatesOnClick = await JsRuntime.InvokeAsync<RelativeCoordinates>(
-                    "luthetusTextEditor.getRelativePosition",
+            var relativeCoordinatesOnClick = await JsRuntime.GetLuthetusTextEditorApi()
+                .GetRelativePosition(
                     viewModel.BodyElementId,
                     mouseEventArgs.ClientX,
                     mouseEventArgs.ClientY);
@@ -928,8 +929,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
             var charMeasurements = viewModel.VirtualizationResult.CharAndLineMeasurements;
 
-            var relativeCoordinatesOnClick = await JsRuntime.InvokeAsync<RelativeCoordinates>(
-                    "luthetusTextEditor.getRelativePosition",
+            var relativeCoordinatesOnClick = await JsRuntime.GetLuthetusTextEditorApi()
+                .GetRelativePosition(
                     viewModel.BodyElementId,
                     mouseEventArgs.ClientX,
                     mouseEventArgs.ClientY);
@@ -955,8 +956,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             {
                 var guid = Guid.NewGuid();
 
-                columnIndexInt = await JsRuntime.InvokeAsync<int>(
-                        "luthetusTextEditor.calculateProportionalColumnIndex",
+                columnIndexInt = await JsRuntime.GetLuthetusTextEditorApi()
+                    .CalculateProportionalColumnIndex(
                         _viewModelDisplay.ProportionalFontMeasurementsContainerElementId,
                         $"luth_te_proportional-font-measurement-parent_{_viewModelDisplay._textEditorHtmlElementId}_{guid}",
                         $"luth_te_proportional-font-measurement-cursor_{_viewModelDisplay._textEditorHtmlElementId}_{guid}",

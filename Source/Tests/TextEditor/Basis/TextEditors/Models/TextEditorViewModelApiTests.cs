@@ -1,18 +1,88 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.States;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components.Web;
+using Luthetus.TextEditor.Tests.JsRuntimes;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
 /// <summary>
-/// <see cref="ITextEditorService.TextEditorViewModelApi"/>
+/// <see cref="TextEditorViewModelApi"/>
 /// </summary>
-public class TextEditorViewModelApiTests
+public class TextEditorViewModelApiTests : TextEditorTestBase
 {
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.TextEditorViewModelApi(ITextEditorService, Common.RazorLib.BackgroundTasks.Models.IBackgroundTaskService, Fluxor.IState{TextEditorViewModelState}, Fluxor.IState{TextEditorModelState}, Microsoft.JSInterop.IJSRuntime, Fluxor.IDispatcher)"/>
+    /// <see cref="TextEditorViewModelApi(ITextEditorService, IBackgroundTaskService, IState{TextEditorViewModelState}, IState{TextEditorModelState}, IJSRuntime, IDispatcher, IDialogService)"/>
     /// </summary>
     [Fact]
     public void Constructor()
+    {
+        InitializeTextEditorViewModelApiTests(
+            out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
+
+        Assert.NotNull(textEditorService.ViewModelApi);
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.CalculateVirtualizationResultFactory(ResourceUri, Key{TextEditorViewModel}, CancellationToken)"/>
+    /// </summary>
+    [Fact]
+    public void CalculateVirtualizationResultFactory()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.CursorMovePageTopFactory(ResourceUri, Key{TextEditorViewModel})"/>
+    /// </summary>
+    [Fact]
+    public void CursorMovePageTopFactory()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.CursorMovePageTopUnsafeFactory(ResourceUri, Key{TextEditorViewModel}, TextEditorCursorModifier)"/>
+    /// </summary>
+    [Fact]
+    public void CursorMovePageTopUnsafeFactory()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.CursorMovePageBottomFactory(ResourceUri, Key{TextEditorViewModel})"/>
+    /// </summary>
+    [Fact]
+    public void CursorMovePageBottomFactory()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.CursorMovePageBottomUnsafeFactory(ResourceUri, Key{TextEditorViewModel}, TextEditorCursorModifier)"/>
+    /// </summary>
+    [Fact]
+    public void CursorMovePageBottomUnsafeFactory()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.Dispose(Key{TextEditorViewModel})"/>
+    /// </summary>
+    [Fact]
+    public void Dispose()
     {
         TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
@@ -20,17 +90,224 @@ public class TextEditorViewModelApiTests
             out var inViewModel,
             out var serviceProvider);
 
-        Assert.NotNull(textEditorService.ViewModelApi);
+        Assert.Single(textEditorService.ViewModelApi.GetViewModels());
+
+        textEditorService.ViewModelApi.Dispose(inViewModel.ViewModelKey);
+
+        Assert.Empty(textEditorService.ViewModelApi.GetViewModels());
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.CursorShouldBlink"/>
-    /// <br/>----<br/>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.CursorShouldBlinkChanged"/>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.SetCursorShouldBlink(bool)"/>
+    /// <see cref="TextEditorViewModelApi.FocusPrimaryCursorFactory(string)"/>
     /// </summary>
     [Fact]
-    public async Task CursorShouldBlink()
+    public void FocusPrimaryCursorFactory()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.GetTextEditorMeasurementsAsync(string)"/>
+    /// </summary>
+    [Fact]
+    public void GetTextEditorMeasurementsAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.GetModelOrDefault(Key{TextEditorViewModel})"/>
+    /// </summary>
+    [Fact]
+    public void GetModelOrDefault()
+    {
+        TestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var viewModelsOrEmpty = textEditorService.ModelApi.GetViewModelsOrEmpty(inModel.ResourceUri);
+        var getModelOrDefault = textEditorService.ViewModelApi.GetModelOrDefault(inViewModel.ViewModelKey);
+
+        Assert.Single(viewModelsOrEmpty);
+        Assert.Equal(inViewModel, viewModelsOrEmpty.Single());
+
+        Assert.Equal(inModel, getModelOrDefault);
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.GetAllText(Key{TextEditorViewModel})"/>
+    /// </summary>
+    [Fact]
+    public void GetAllText()
+    {
+        TestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        Assert.Equal(
+            inModel.GetAllText(),
+            textEditorService.ViewModelApi.GetAllText(inViewModel.ViewModelKey));
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.GetOrDefault(Key{TextEditorViewModel})"/>
+    /// </summary>
+    [Fact]
+    public void GetOrDefault()
+    {
+        TestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        Assert.Equal(
+            inViewModel,
+            textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey));
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.GetViewModels()"/>
+    /// </summary>
+    [Fact]
+    public void GetViewModels()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.MutateScrollVerticalPositionFactory(string, string, double)"/>
+    /// </summary>
+    [Fact]
+    public void MutateScrollVerticalPositionFactory()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.MutateScrollHorizontalPositionFactory(string, string, double)"/>
+    /// </summary>
+    [Fact]
+    public void MutateScrollHorizontalPositionFactory()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.MeasureCharacterWidthAndLineHeightAsync(string, int)"/>
+    /// </summary>
+    [Fact]
+    public void MeasureCharacterWidthAndLineHeightAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.MoveCursorFactory(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// </summary>
+    [Fact]
+    public void MoveCursorFactory()
+    {
+        throw new NotImplementedException();
+    }
+    
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.MoveCursorUnsafeFactory(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel}, TextEditorCursorModifier)"/>
+    /// </summary>
+    [Fact]
+    public void MoveCursorUnsafeFactory()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.Register(Key{TextEditorViewModel}, ResourceUri, Category)"/>
+    /// </summary>
+    [Fact]
+    public void Register()
+    {
+        TestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        Assert.Single(textEditorService.ModelApi.GetViewModelsOrEmpty(inModel.ResourceUri));
+
+        textEditorService.ViewModelApi.Register(
+            Key<TextEditorViewModel>.NewKey(),
+            inModel.ResourceUri,
+            new Category("UnitTesting"));
+
+        Assert.Equal(2, textEditorService.ModelApi.GetViewModelsOrEmpty(inModel.ResourceUri).Length);
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.RemeasureFactory(ResourceUri, Key{TextEditorViewModel}, string, int, CancellationToken)"/>
+    /// </summary>
+    [Fact]
+    public void RemeasureFactory()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.ScrollIntoViewFactory(string, string, int?, int?)"/>
+    /// </summary>
+    [Fact]
+    public void ScrollIntoViewFactory_LineIndex_ColumnIndex()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.ScrollIntoViewFactory(string, string, int)"/>
+    /// </summary>
+    [Fact]
+    public void ScrollIntoViewFactory_PositionIndex()
+    {
+        throw new NotImplementedException();
+    }
+    
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.ScrollIntoViewFactory(ResourceUri, Key{TextEditorViewModel}, TextEditorTextSpan)"/>
+    /// </summary>
+    [Fact]
+    public void ScrollIntoViewFactory_TextSpan()
+    {
+        throw new NotImplementedException();
+    }
+    
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.SetScrollPositionFactory(string, string, double?, double?)"/>
+    /// </summary>
+    [Fact]
+    public void SetScrollPositionFactory()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.SetGutterScrollTopFactory(string, double)"/>
+    /// </summary>
+    [Fact]
+    public void SetGutterScrollTopFactory()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelApi.SetCursorShouldBlink(bool)"/>
+    /// <br/>----<br/>
+    /// <see cref="TextEditorViewModelApi.CursorShouldBlink"/>
+    /// <see cref="TextEditorViewModelApi.CursorShouldBlinkChanged"/>
+    /// </summary>
+    [Fact]
+    public async Task SetCursorShouldBlink()
     {
         TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
@@ -76,10 +353,10 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.WithValueEnqueue(Key{TextEditorViewModel}, Func{TextEditorViewModel, TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.WithValueFactory(Key{TextEditorViewModel}, Func{TextEditorViewModel, TextEditorViewModel})"/>
     /// </summary>
     [Fact]
-    public void WithValueEnqueue()
+    public void WithValueFactory()
     {
         TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
@@ -111,196 +388,56 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.Register(Key{TextEditorViewModel}, ResourceUri)"/>
+    /// <see cref="TextEditorViewModelApi.WithTaskFactory(Key{TextEditorViewModel}, Func{TextEditorViewModel, Task{Func{TextEditorViewModel, TextEditorViewModel}}})"/>
     /// </summary>
     [Fact]
-    public void Register()
+    public void WithTaskFactory()
     {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
-            out var textEditorService,
-            out var inModel,
-            out var inViewModel,
-            out var serviceProvider);
+        throw new NotImplementedException();
+    }
 
-        Assert.Single(textEditorService.ModelApi.GetViewModelsOrEmpty(inModel.ResourceUri));
+    private void InitializeTextEditorViewModelApiTests(
+        out ResourceUri resourceUri,
+        out Key<TextEditorViewModel> viewModelKey,
+        out ITextEditorService textEditorService,
+        out IServiceProvider serviceProvider)
+    {
+        var backgroundTaskService = new BackgroundTaskServiceSynchronous();
+
+        var services = new ServiceCollection()
+            .AddScoped<IJSRuntime, TextEditorTestingJsRuntime>()
+            .AddLuthetusTextEditor(new LuthetusHostingInformation(LuthetusHostingKind.UnitTesting, backgroundTaskService))
+            .AddFluxor(options => options.ScanAssemblies(
+                typeof(LuthetusCommonConfig).Assembly,
+                typeof(LuthetusTextEditorConfig).Assembly));
+
+        serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
+
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content: "\nb9\r9B\r\n\t$; ",
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+        
+        textEditorService.ModelApi.RegisterCustom(inModel);
+
+        resourceUri = inModel.ResourceUri;
+
+        viewModelKey = Key<TextEditorViewModel>.NewKey();
 
         textEditorService.ViewModelApi.Register(
-            Key<TextEditorViewModel>.NewKey(),
-            inModel.ResourceUri,
+            viewModelKey,
+            resourceUri,
             new Category("UnitTesting"));
 
-        Assert.Equal(2, textEditorService.ModelApi.GetViewModelsOrEmpty(inModel.ResourceUri).Length);
-    }/// <summary>
-     /// <see cref="ITextEditorService.TextEditorViewModelApi.GetModelOrDefault(Key{TextEditorViewModel})"/>
-     /// </summary>
-    [Fact]
-    public void GetModelOrDefault()
-    {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
-            out var textEditorService,
-            out var inModel,
-            out var inViewModel,
-            out var serviceProvider);
-
-        var viewModelsOrEmpty = textEditorService.ModelApi.GetViewModelsOrEmpty(inModel.ResourceUri);
-        var getModelOrDefault = textEditorService.ViewModelApi.GetModelOrDefault(inViewModel.ViewModelKey);
-
-        Assert.Single(viewModelsOrEmpty);
-        Assert.Equal(inViewModel, viewModelsOrEmpty.Single());
-
-        Assert.Equal(inModel, getModelOrDefault);
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.GetAllText(Key{TextEditorViewModel})"/>
-    /// </summary>
-    [Fact]
-    public void GetAllText()
-    {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
-            out var textEditorService,
-            out var inModel,
-            out var inViewModel,
-            out var serviceProvider);
-
-        Assert.Equal(
-            inModel.GetAllText(),
-            textEditorService.ViewModelApi.GetAllText(inViewModel.ViewModelKey));
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.GetOrDefault(Key{TextEditorViewModel})"/>
-    /// </summary>
-    [Fact]
-    public void FindOrDefault()
-    {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
-            out var textEditorService,
-            out var inModel,
-            out var inViewModel,
-            out var serviceProvider);
-
-        Assert.Equal(
-            inViewModel,
-            textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey));
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.Dispose(Key{TextEditorViewModel})"/>
-    /// </summary>
-    [Fact]
-    public void Dispose()
-    {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
-            out var textEditorService,
-            out var inModel,
-            out var inViewModel,
-            out var serviceProvider);
-
-        Assert.Single(textEditorService.ViewModelApi.GetViewModels());
-
-        textEditorService.ViewModelApi.Dispose(inViewModel.ViewModelKey);
-
-        Assert.Empty(textEditorService.ViewModelApi.GetViewModels());
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.WithTaskEnqueue(Key{TextEditorViewModel}, Func{TextEditorViewModel, Task{Func{TextEditorViewModel, TextEditorViewModel}}})"/>
-    /// </summary>
-    [Fact]
-    public void WithTaskEnqueue()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.SetScrollPositionEnqueue(string, string, double?, double?)"/>
-    /// </summary>
-    [Fact]
-    public void SetScrollPositionEnqueue()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.SetGutterScrollTopEnqueue(string, double)"/>
-    /// </summary>
-    [Fact]
-    public void SetGutterScrollTopEnqueue()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.MutateScrollVerticalPositionEnqueue(string, string, double)"/>
-    /// </summary>
-    [Fact]
-    public void MutateScrollVerticalPositionEnqueue()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.MutateScrollHorizontalPositionEnqueue(string, string, double)"/>
-    /// </summary>
-    [Fact]
-    public void MutateScrollHorizontalPositionEnqueue()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.FocusPrimaryCursorFactory(string)"/>
-    /// </summary>
-    [Fact]
-    public void FocusPrimaryCursorAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.GetTextEditorMeasurementsAsync(string)"/>
-    /// </summary>
-    [Fact]
-    public void GetTextEditorMeasurementsAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.MeasureCharacterWidthAndLineHeightAsync(string, int)"/>
-    /// </summary>
-    [Fact]
-    public void MeasureCharacterWidthAndRowHeightAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.MoveCursorEnqueue(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel}, Key{TextEditorCursor})"/>
-    /// </summary>
-    [Fact]
-    public void MoveCursorEnqueue()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.CursorMovePageTopEnqueue(ResourceUri, Key{TextEditorViewModel}, Key{TextEditorCursor})"/>
-    /// </summary>
-    [Fact]
-    public void CursorMovePageTopEnqueue()
-    {
-
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.CursorMovePageBottomEnqueue(ResourceUri, Key{TextEditorViewModel}, Key{TextEditorCursor})"/>
-    /// </summary>
-    [Fact]
-    public void CursorMovePageBottomEnqueue()
-    {
-        throw new NotImplementedException();
+        var viewModel = textEditorService.ViewModelApi.GetOrDefault(viewModelKey) ?? throw new ArgumentNullException();
     }
 }

@@ -1,3 +1,4 @@
+using Luthetus.TextEditor.RazorLib.JsRuntimes;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -50,11 +51,11 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
         {
             if (UseIntersectionObserver)
             {
-                var boundaryIdsList = new List<object>();
+                var boundaryIdList = new List<object>();
 
                 if (UseHorizontalVirtualization)
                 {
-                    boundaryIdsList.AddRange(new[]
+                    boundaryIdList.AddRange(new[]
                     {
                         LeftBoundaryElementId,
                         RightBoundaryElementId,
@@ -63,19 +64,19 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
 
                 if (UseVerticalVirtualization)
                 {
-                    boundaryIdsList.AddRange(new[]
+                    boundaryIdList.AddRange(new[]
                     {
                         TopBoundaryElementId,
                         BottomBoundaryElementId,
                     });
                 }
 
-                await JsRuntime.InvokeVoidAsync(
-                    "luthetusTextEditor.initializeVirtualizationIntersectionObserver",
-                    _virtualizationDisplayGuid.ToString(),
-                    DotNetObjectReference.Create(this),
-                    _scrollableParentFinder,
-                    boundaryIdsList);
+                await JsRuntime.GetLuthetusTextEditorApi()
+                    .InitializeVirtualizationIntersectionObserver(
+                        _virtualizationDisplayGuid.ToString(),
+                        DotNetObjectReference.Create(this),
+                        _scrollableParentFinder,
+                        boundaryIdList);
             }
         }
 
@@ -104,11 +105,10 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
         {
             _ = Task.Run(async () =>
             {
-                await JsRuntime.InvokeVoidAsync(
-                        "luthetusTextEditor.disposeVirtualizationIntersectionObserver",
+                await JsRuntime.GetLuthetusTextEditorApi()
+                    .DisposeVirtualizationIntersectionObserver(
                         CancellationToken.None,
-                        _virtualizationDisplayGuid.ToString())
-                    ;
+                        _virtualizationDisplayGuid.ToString());
             }, CancellationToken.None);
         }
     }

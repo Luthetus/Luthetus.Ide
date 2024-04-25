@@ -12,6 +12,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
+using Luthetus.TextEditor.RazorLib.JsRuntimes;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -791,10 +792,9 @@ public class TextEditorCommandDefaultFunctions
             if (commandArgs.JsRuntime is null || commandArgs.HandleMouseStoppedMovingEventAsyncFunc is null)
                 return;
 
-            var elementPositionInPixels = await commandArgs.JsRuntime.InvokeAsync<ElementPositionInPixels>(
-                    "luthetusTextEditor.getBoundingClientRect",
-                    viewModelModifier.ViewModel.PrimaryCursorContentId)
-			    .ConfigureAwait(false);
+            var elementPositionInPixels = await commandArgs.JsRuntime.GetLuthetusTextEditorApi()
+                .GetBoundingClientRect(viewModelModifier.ViewModel.PrimaryCursorContentId)
+                .ConfigureAwait(false);
 
             elementPositionInPixels = elementPositionInPixels with
             {

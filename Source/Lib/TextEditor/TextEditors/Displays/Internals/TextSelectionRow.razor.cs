@@ -5,6 +5,7 @@ using Luthetus.TextEditor.RazorLib.Htmls.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.JsRuntimes;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -90,13 +91,13 @@ public partial class TextSelectionRow : ComponentBase
 
             var guid = Guid.NewGuid();
 
-            var nextSelectionStartingLeftRelativeToParentInPixels = await JsRuntime.InvokeAsync<double>(
-                "luthetusTextEditor.calculateProportionalLeftOffset",
-                ProportionalFontMeasurementsContainerElementId,
-                $"luth_te_proportional-font-measurement-parent_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
-                $"luth_te_proportional-font-measurement-cursor_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
-                textOffsettingCursor,
-                true);
+            var nextSelectionStartingLeftRelativeToParentInPixels = await JsRuntime.GetLuthetusTextEditorApi()
+                .CalculateProportionalLeftOffset(
+                    ProportionalFontMeasurementsContainerElementId,
+                    $"luth_te_proportional-font-measurement-parent_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
+                    $"luth_te_proportional-font-measurement-cursor_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
+                    textOffsettingCursor,
+                    true);
 
             var previousSelectionStartingLeftRelativeToParentInPixels = _selectionStartingLeftRelativeToParentInPixels;
 
@@ -125,13 +126,13 @@ public partial class TextSelectionRow : ComponentBase
 
             var guid = Guid.NewGuid();
 
-            var selectionEndingLeftRelativeToParentInPixels = await JsRuntime.InvokeAsync<double>(
-                "luthetusTextEditor.calculateProportionalLeftOffset",
-                ProportionalFontMeasurementsContainerElementId,
-                $"luth_te_proportional-font-measurement-parent_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
-                $"luth_te_proportional-font-measurement-cursor_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
-                textOffsettingCursor,
-                true);
+            var selectionEndingLeftRelativeToParentInPixels = await JsRuntime.GetLuthetusTextEditorApi()
+                .CalculateProportionalLeftOffset(
+                    ProportionalFontMeasurementsContainerElementId,
+                    $"luth_te_proportional-font-measurement-parent_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
+                    $"luth_te_proportional-font-measurement-cursor_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
+                    textOffsettingCursor,
+                    true);
 
             var nextSelectionWidthInPixels = selectionEndingLeftRelativeToParentInPixels -
                 _selectionStartingLeftRelativeToParentInPixels;

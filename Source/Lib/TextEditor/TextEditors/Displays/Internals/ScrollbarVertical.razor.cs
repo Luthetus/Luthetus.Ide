@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Events;
+using Luthetus.TextEditor.RazorLib.JsRuntimes;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -76,11 +77,11 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
     {
         _thinksLeftMouseButtonIsDown = true;
 
-        _relativeCoordinatesOnMouseDown = await JsRuntime.InvokeAsync<RelativeCoordinates>(
-            "luthetusTextEditor.getRelativePosition",
-            ScrollbarSliderElementId,
-            mouseEventArgs.ClientX,
-            mouseEventArgs.ClientY);
+        _relativeCoordinatesOnMouseDown = await JsRuntime.GetLuthetusTextEditorApi()
+            .GetRelativePosition(
+                ScrollbarSliderElementId,
+                mouseEventArgs.ClientX,
+                mouseEventArgs.ClientY);
 
         SubscribeToDragEventForScrolling();
     }
@@ -131,11 +132,11 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgsTuple.secondMouseEventArgs.Buttons & 1) == 1)
         {
-            var relativeCoordinatesOfDragEvent = await JsRuntime.InvokeAsync<RelativeCoordinates>(
-                "luthetusTextEditor.getRelativePosition",
-                ScrollbarElementId,
-                mouseEventArgsTuple.secondMouseEventArgs.ClientX,
-                mouseEventArgsTuple.secondMouseEventArgs.ClientY);
+            var relativeCoordinatesOfDragEvent = await JsRuntime.GetLuthetusTextEditorApi()
+                .GetRelativePosition(
+                    ScrollbarElementId,
+                    mouseEventArgsTuple.secondMouseEventArgs.ClientX,
+                    mouseEventArgsTuple.secondMouseEventArgs.ClientY);
 
             var yPosition = relativeCoordinatesOfDragEvent.RelativeY - _relativeCoordinatesOnMouseDown.RelativeY;
             yPosition = Math.Max(0, yPosition);

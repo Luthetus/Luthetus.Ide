@@ -6,6 +6,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
+using Luthetus.TextEditor.RazorLib.JsRuntimes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
@@ -155,8 +156,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public async Task<TextEditorMeasurements> GetTextEditorMeasurementsAsync(string elementId)
     {
-        return await _jsRuntime.InvokeAsync<TextEditorMeasurements>(
-                "luthetusTextEditor.getTextEditorMeasurementsInPixelsById",
+        return await _jsRuntime.GetLuthetusTextEditorApi()
+            .GetTextEditorMeasurementsInPixelsById(
                 elementId)
             .ConfigureAwait(false);
     }
@@ -165,8 +166,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         string measureCharacterWidthAndLineHeightElementId,
         int countOfTestCharacters)
     {
-        return await _jsRuntime.InvokeAsync<CharAndLineMeasurements>(
-                "luthetusTextEditor.getCharAndLineMeasurementsInPixelsById",
+        return await _jsRuntime.GetLuthetusTextEditorApi()
+            .GetCharAndLineMeasurementsInPixelsById(
                 measureCharacterWidthAndLineHeightElementId,
                 countOfTestCharacters)
             .ConfigureAwait(false);
@@ -220,8 +221,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         return async editContext =>
         {
-            await _jsRuntime.InvokeVoidAsync(
-                    "luthetusTextEditor.setScrollPosition",
+            await _jsRuntime.GetLuthetusTextEditorApi()
+                .SetScrollPosition(
                     bodyElementId,
                     gutterElementId,
                     scrollLeftInPixels,
@@ -319,8 +320,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         return async editContext =>
         {
-            await _jsRuntime.InvokeVoidAsync(
-                    "luthetusTextEditor.setGutterScrollTop",
+            await _jsRuntime.GetLuthetusTextEditorApi()
+                .SetGutterScrollTop(
                     gutterElementId,
                     scrollTopInPixels)
                 .ConfigureAwait(false);
@@ -334,8 +335,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         return async editContext =>
         {
-            await _jsRuntime.InvokeVoidAsync(
-                    "luthetusTextEditor.mutateScrollVerticalPositionByPixels",
+            await _jsRuntime.GetLuthetusTextEditorApi()
+                .MutateScrollVerticalPositionByPixels(
                     bodyElementId,
                     gutterElementId,
                     pixels)
@@ -350,8 +351,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         return async editContext =>
         {
-            await _jsRuntime.InvokeVoidAsync(
-                    "luthetusTextEditor.mutateScrollHorizontalPositionByPixels",
+            await _jsRuntime.GetLuthetusTextEditorApi()
+                .MutateScrollHorizontalPositionByPixels(
                     bodyElementId,
                     gutterElementId,
                     pixels)
@@ -363,8 +364,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         return async editContext =>
         {
-            await _jsRuntime.InvokeVoidAsync(
-                    "luthetusTextEditor.focusHtmlElementById",
+            await _jsRuntime.GetLuthetusTextEditorApi()
+                .FocusHtmlElementById(
                     primaryCursorContentId)
                 .ConfigureAwait(false);
         };
