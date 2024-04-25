@@ -333,9 +333,9 @@ public class CommandFactory : ICommandFactory
 
         async Task<bool> TrySetFocus()
         {
-            return await _jsRuntime.InvokeAsync<bool>(
-                "luthetusIde.tryFocusHtmlElementById",
-                contextRecord.ContextElementId);
+            return await _jsRuntime.GetLuthetusCommonApi()
+                .TryFocusHtmlElementById(
+                    contextRecord.ContextElementId);
         }
     }
 

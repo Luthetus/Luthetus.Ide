@@ -10,6 +10,7 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
+using Luthetus.Common.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.Common.RazorLib.Tabs.Displays;
 
@@ -161,9 +162,9 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
         if (_thinksLeftMouseButtonIsDown && Tab is IDrag draggable)
         {
-			var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
-                "luthetusIde.measureElementById",
-                HtmlId);
+			var measuredHtmlElementDimensions = await JsRuntime.GetLuthetusCommonApi()
+                .MeasureElementById(
+                    HtmlId);
 
 			await draggable.OnDragStartAsync();
 

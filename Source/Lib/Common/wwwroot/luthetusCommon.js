@@ -8,11 +8,55 @@
 
         element.focus();
     },
+    tryFocusHtmlElementById: function (elementId) {
+        let element = document.getElementById(elementId);
+
+        if (!element) {
+            return false;
+        }
+
+        element.focus();
+        return true;
+    },
     localStorageSetItem: function (key, value) {
         localStorage.setItem(key, value);
     },
     localStorageGetItem: function (key) {
         return localStorage.getItem(key);
+    },
+    getTreeViewContextMenuFixedPosition: function (nodeElementId) {
+
+        let treeViewNode = document.getElementById(nodeElementId);
+        let treeViewNodeBounds = treeViewNode.getBoundingClientRect();
+
+        return {
+            OccurredDueToMouseEvent: false,
+            LeftPositionInPixels: treeViewNodeBounds.left,
+            TopPositionInPixels: treeViewNodeBounds.top + treeViewNodeBounds.height
+        }
+    },
+    measureElementById: function (elementId) {
+        let element = document.getElementById(elementId);
+
+        if (!element) {
+            return {
+                WidthInPixels: 0,
+                HeightInPixels: 0,
+                LeftInPixels: 0,
+                TopInPixels: 0,
+                ZIndex: 0,
+            }
+        }
+
+        let boundingClientRect = element.getBoundingClientRect();
+
+        return {
+            WidthInPixels: boundingClientRect.width,
+            HeightInPixels: boundingClientRect.height,
+            LeftInPixels: boundingClientRect.left,
+            TopInPixels: boundingClientRect.top,
+            ZIndex: 0,
+        }
     },
     readClipboard: async function () {
         // domexception-on-calling-navigator-clipboard-readtext
@@ -68,17 +112,6 @@
             }
         }
     },
-    getTreeViewContextMenuFixedPosition: function (nodeElementId) {
-
-        let treeViewNode = document.getElementById(nodeElementId);
-        let treeViewNodeBounds = treeViewNode.getBoundingClientRect();
-
-        return {
-            OccurredDueToMouseEvent: false,
-            LeftPositionInPixels: treeViewNodeBounds.left,
-            TopPositionInPixels: treeViewNodeBounds.top + treeViewNodeBounds.height
-        }
-    }
 }
 
 Blazor.registerCustomEventType('keydownwithpreventscroll', {

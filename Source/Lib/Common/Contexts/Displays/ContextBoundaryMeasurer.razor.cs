@@ -7,6 +7,7 @@ using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Contexts.States;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.Common.RazorLib.Contexts.Displays;
 
@@ -46,10 +47,9 @@ public partial class ContextBoundaryMeasurer : FluxorComponent
 
             if (contextState.IsSelectingInspectionTarget)
             {
-                var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
-                    "luthetusIde.measureElementById",
-                    ContextRecord.ContextElementId);
-
+                var measuredHtmlElementDimensions = await JsRuntime.GetLuthetusCommonApi()
+                    .MeasureElementById(ContextRecord.ContextElementId);
+                
                 var contextBoundaryHeirarchy = GetContextBoundaryHeirarchy.Invoke();
 
                 measuredHtmlElementDimensions = measuredHtmlElementDimensions with

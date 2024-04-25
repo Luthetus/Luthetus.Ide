@@ -10,6 +10,7 @@ using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Tabs.Displays;
+using Luthetus.Common.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.Common.RazorLib.Panels.Models;
 
@@ -107,9 +108,9 @@ public record Panel : IPanelTab, IDialog, IDrag
 
 		foreach (var panelGroupHtmlIdTuple in panelGroupHtmlIdTupleList)
 		{
-			var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
-				"luthetusIde.measureElementById",
-				panelGroupHtmlIdTuple.HtmlElementId);
+			var measuredHtmlElementDimensions = await JsRuntime.GetLuthetusCommonApi()
+                .MeasureElementById(
+                    panelGroupHtmlIdTuple.HtmlElementId);
 
 			measuredHtmlElementDimensions = measuredHtmlElementDimensions with
 			{

@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Panels.States;
@@ -153,9 +154,9 @@ public class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTab, IDia
         AddFallbackDropzone(dropzoneList);
         await AddPanelDropzonesAsync(dropzoneList);
 
-        var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
-            "luthetusIde.measureElementById",
-            $"luth_te_group_{TextEditorService.GroupStateWrap.Value.GroupList.Single().GroupKey.Guid}");
+        var measuredHtmlElementDimensions = await JsRuntime.GetLuthetusCommonApi()
+            .MeasureElementById(
+                $"luth_te_group_{TextEditorService.GroupStateWrap.Value.GroupList.Single().GroupKey.Guid}");
 
         measuredHtmlElementDimensions = measuredHtmlElementDimensions with
         {
@@ -432,9 +433,9 @@ public class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTab, IDia
 
         foreach (var panelGroupHtmlIdTuple in panelGroupHtmlIdTupleList)
         {
-            var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
-                "luthetusIde.measureElementById",
-                panelGroupHtmlIdTuple.HtmlElementId);
+            var measuredHtmlElementDimensions = await JsRuntime.GetLuthetusCommonApi()
+                .MeasureElementById(
+                    panelGroupHtmlIdTuple.HtmlElementId);
 
             measuredHtmlElementDimensions = measuredHtmlElementDimensions with
             {

@@ -19,6 +19,20 @@ public class LuthetusCommonJavaScriptInteropApi
             elementId);
     }
 
+    public ValueTask<bool> TryFocusHtmlElementById(string elementId)
+    {
+        return _jsRuntime.InvokeAsync<bool>(
+            "luthetusCommon.tryFocusHtmlElementById",
+            elementId);
+    }
+    
+    public ValueTask<MeasuredHtmlElementDimensions> MeasureElementById(string elementId)
+    {
+        return _jsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
+            "luthetusCommon.measureElementById",
+            elementId);
+    }
+
     public ValueTask LocalStorageSetItem(string key, object? value)
     {
         return _jsRuntime.InvokeVoidAsync(

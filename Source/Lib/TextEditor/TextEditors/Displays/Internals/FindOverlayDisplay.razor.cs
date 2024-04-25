@@ -106,10 +106,9 @@ public partial class FindOverlayDisplay : ComponentBase
             // If it changes from 'false' to 'true', focus the input element
             if (_lastSeenShowFindOverlayValue)
             {
-                _ = await JsRuntime.InvokeAsync<bool>(
-                        "luthetusIde.tryFocusHtmlElementById",
-                        RenderBatch.ViewModel!.FindOverlayId)
-                    ;
+                await JsRuntime.GetLuthetusCommonApi()
+                    .FocusHtmlElementById(
+                        RenderBatch.ViewModel!.FindOverlayId);
             }
         }
 
