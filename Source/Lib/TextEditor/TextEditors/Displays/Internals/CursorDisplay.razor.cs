@@ -10,6 +10,8 @@ using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -42,7 +44,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     public RenderFragment AutoCompleteMenuRenderFragment { get; set; } = null!;
 
     private readonly Guid _intersectionObserverMapKey = Guid.NewGuid();
-    private readonly IThrottle _throttleShouldRevealCursor = new Throttle(TimeSpan.FromMilliseconds(50));
+    private readonly IThrottle _throttleShouldRevealCursor = new Throttle(TimeSpan.FromMilliseconds(1_000));
 
     private ElementReference? _cursorDisplayElementReference;
     private MenuKind _menuKind;
@@ -125,13 +127,33 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         {
             viewModel.UnsafeState.ShouldRevealCursor = false;
 
-            if (!viewModel.UnsafeState.CursorIsIntersecting)
+            if (!RenderBatch.ViewModel!.UnsafeState.CursorIsIntersecting)
             {
-                _throttleShouldRevealCursor.PushEvent(async _ =>
+                _throttleShouldRevealCursor.PushEvent(_ =>
                 {
-                    await JsRuntime.GetLuthetusTextEditorApi()
-                        .ScrollElementIntoView(
-                            CursorDisplayId);
+                    var id = nameof(CursorDisplay) +
+                        ", " +
+                        nameof(TextEditorService.ViewModelApi.ScrollIntoViewFactory) +
+                        RenderBatch.ViewModel!.ViewModelKey.ToString();
+
+                    var cursorPositionIndex = RenderBatch.Model!.GetPositionIndex(Cursor);
+
+                    var cursorTextSpan = new TextEditorTextSpan(
+                        cursorPositionIndex,
+                        cursorPositionIndex + 1,
+                        0,
+                        RenderBatch.Model!.ResourceUri,
+                        RenderBatch.Model!.GetAllText());
+
+                    TextEditorService.PostRedundant(
+                        id,
+                        id,
+                        TextEditorService.ViewModelApi.ScrollIntoViewFactory(
+                            RenderBatch.Model!.ResourceUri,
+                            RenderBatch.ViewModel!.ViewModelKey,
+                            cursorTextSpan));
+
+                    return Task.CompletedTask;
                 });
             }
         }

@@ -174,7 +174,7 @@ public class OnKeyDownBatch : ITextEditorTask
             if (inspectThrottleEventOnKeyDown.Command is null ||
                 inspectThrottleEventOnKeyDown.Command is TextEditorCommand commandTextEditor && commandTextEditor.ShouldScrollCursorIntoView)
             {
-                primaryCursorModifier.ShouldRevealCursor = true;
+                viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
             }
 
             var cursorDisplay = _events.CursorDisplay;

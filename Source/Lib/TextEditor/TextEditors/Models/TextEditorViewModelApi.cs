@@ -306,6 +306,10 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                 }
             }
 
+            // Return early if both values are 'null'
+            if (scrollLeft is null && scrollTop is null)
+                return Task.CompletedTask;
+
             return SetScrollPositionFactory(
                     viewModelModifier.ViewModel.BodyElementId,
                     viewModelModifier.ViewModel.GutterElementId,

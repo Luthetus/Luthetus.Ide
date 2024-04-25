@@ -189,7 +189,7 @@ public class OnKeyDown : ITextEditorTask
             if (command is null ||
                 command is TextEditorCommand commandTextEditor && commandTextEditor.ShouldScrollCursorIntoView)
             {
-                primaryCursorModifier.ShouldRevealCursor = true;
+                viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
             }
 
             var cursorDisplay = _events.CursorDisplay;

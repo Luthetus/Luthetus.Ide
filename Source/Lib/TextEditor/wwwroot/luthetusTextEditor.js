@@ -370,13 +370,10 @@ window.luthetusTextEditor = {
             return;
         }
         
-        // The IntersectionObserver's options are readonly.
-        // Therefore "rootMargin: '-60px'" is awkwardly hardcoded here as I find it 'feels correct'
-        // for any font-size one might use. Because one cannot dynamically change the 'rootMargin'
         let options = {
             root: scrollableParent,
-            rootMargin: '-60px',
-            threshold: [ 0 ]
+            rootMargin: '0px',
+            threshold: 0
         }
 
         let intersectionObserver = new IntersectionObserver((entries) => {

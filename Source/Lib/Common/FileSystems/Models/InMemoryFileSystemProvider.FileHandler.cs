@@ -152,7 +152,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             string absolutePathString,
             CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(_inMemoryFileSystemProvider._files.Any(imf =>
+            // System.InvalidOperationException: Collection was modified; enumeration operation may not execute.
+            // Fix: added '.ToArray()' (2024-04-25)
+            return Task.FromResult(_inMemoryFileSystemProvider._files.ToArray().Any(imf =>
                 imf.AbsolutePath.Value == absolutePathString &&
                 !imf.IsDirectory));
         }
