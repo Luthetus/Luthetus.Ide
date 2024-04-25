@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.JsRuntimes;
 
 namespace Luthetus.Common.RazorLib.Dialogs.Displays;
 
@@ -62,11 +63,9 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     {
         if (firstRender)
         {
-            await JsRuntime.GetLuthetusTextEditorApi()
-
-            await JsRuntime.InvokeVoidAsync(
-                "luthetusTextEditor.focusHtmlElementById",
-                Dialog.DialogFocusPointHtmlElementId);
+            await JsRuntime.GetLuthetusCommonApi()
+                .FocusHtmlElementById(
+                    Dialog.DialogFocusPointHtmlElementId);
         }
 
         await base.OnAfterRenderAsync(firstRender);

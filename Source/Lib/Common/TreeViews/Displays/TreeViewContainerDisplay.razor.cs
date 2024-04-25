@@ -10,6 +10,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.JsRuntimes;
 
 namespace Luthetus.Common.RazorLib.TreeViews.Displays;
 
@@ -126,10 +127,9 @@ public partial class TreeViewContainerDisplay : FluxorComponent
 
             // If dedicated context menu button or shift + F10 was pressed as opposed to
             // a mouse RightClick then use JavaScript to determine the ContextMenu position.
-            contextMenuFixedPosition = await JsRuntime.InvokeAsync<ContextMenuFixedPosition>(
-                "luthetusCommon.getTreeViewContextMenuFixedPosition",
-                TreeViewService.GetTreeContainerElementId(treeViewContainer.Key),
-                TreeViewService.GetNodeElementId(treeViewContainer.ActiveNode));
+            contextMenuFixedPosition = await JsRuntime.GetLuthetusCommonApi()
+                .GetTreeViewContextMenuFixedPosition(
+                    TreeViewService.GetNodeElementId(treeViewContainer.ActiveNode));
 
             contextMenuTargetTreeViewNoType = treeViewContainer.ActiveNode;
         }

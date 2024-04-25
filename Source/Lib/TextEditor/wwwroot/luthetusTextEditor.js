@@ -1,13 +1,4 @@
 window.luthetusTextEditor = {
-    focusHtmlElementById: function (elementId) {
-        let element = document.getElementById(elementId);
-
-        if (!element) {
-            return;
-        }
-
-        element.focus();
-    },
     scrollElementIntoView: function (elementId) {
 
         let element = document.getElementById(elementId);

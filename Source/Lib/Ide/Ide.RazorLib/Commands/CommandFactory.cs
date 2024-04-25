@@ -18,6 +18,7 @@ using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.JsRuntimes;
+using Luthetus.Common.RazorLib.JsRuntimes;
 
 namespace Luthetus.Ide.RazorLib.Commands;
 
@@ -238,7 +239,7 @@ public class CommandFactory : ICommandFactory
                     if (activeViewModel is null)
                         return;
 
-                    await _jsRuntime.GetLuthetusTextEditorApi()
+                    await _jsRuntime.GetLuthetusCommonApi()
                         .FocusHtmlElementById(activeViewModel.PrimaryCursorContentId)
                         .ConfigureAwait(false);
                 });

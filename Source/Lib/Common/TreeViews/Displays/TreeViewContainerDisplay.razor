@@ -6,7 +6,7 @@
 @{
     var treeViewContainer = TreeViewStateSelection.Value;
 
-    <div id="@TreeViewService.GetTreeContainerElementId(treeViewContainer?.Key ?? Key<TreeViewContainer>.Empty)"
+    <div id="@TreeViewService.GetTreeViewContainerElementId(treeViewContainer?.Key ?? Key<TreeViewContainer>.Empty)"
          class="luth_tree-view-state luth_unselectable @GetHasActiveNodeCssClass(treeViewContainer) @CssClassString"
          style="@CssStyleString"
          tabindex="0"

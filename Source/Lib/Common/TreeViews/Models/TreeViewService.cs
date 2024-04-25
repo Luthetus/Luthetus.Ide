@@ -200,7 +200,7 @@ public class TreeViewService : ITreeViewService
         return $"luth_node-{node.Key}";
     }
 
-    public string GetTreeContainerElementId(Key<TreeViewContainer> containerKey)
+    public string GetTreeViewContainerElementId(Key<TreeViewContainer> containerKey)
     {
         return $"luth_tree-container-{containerKey.Guid}";
     }

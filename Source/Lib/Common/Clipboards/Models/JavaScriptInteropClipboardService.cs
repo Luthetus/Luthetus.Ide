@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using Luthetus.Common.RazorLib.JsRuntimes;
+using Microsoft.JSInterop;
 
 namespace Luthetus.Common.RazorLib.Clipboards.Models;
 
@@ -15,7 +16,9 @@ public class JavaScriptInteropClipboardService : IClipboardService
     {
         try
         {
-            return await _jsRuntime.InvokeAsync<string>("luthetusCommon.readClipboard").ConfigureAwait(false);
+            return await _jsRuntime.GetLuthetusCommonApi()
+                .ReadClipboard()
+                .ConfigureAwait(false);
         }
         catch (TaskCanceledException)
         {
@@ -27,7 +30,9 @@ public class JavaScriptInteropClipboardService : IClipboardService
     {
         try
         {
-            await _jsRuntime.InvokeVoidAsync("luthetusCommon.setClipboard", value).ConfigureAwait(false);
+            await _jsRuntime.GetLuthetusCommonApi()
+                .SetClipboard(value)
+                .ConfigureAwait(false);
         }
         catch (TaskCanceledException)
         {

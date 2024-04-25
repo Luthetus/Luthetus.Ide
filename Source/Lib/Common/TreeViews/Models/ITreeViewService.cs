@@ -53,5 +53,5 @@ public interface ITreeViewService
 		bool selectNodesBetweenCurrentAndNextActiveNode);
 
     public string GetNodeElementId(TreeViewNoType node);
-    public string GetTreeContainerElementId(Key<TreeViewContainer> containerKey);
+    public string GetTreeViewContainerElementId(Key<TreeViewContainer> containerKey);
 }

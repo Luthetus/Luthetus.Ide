@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.JsRuntimes;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
@@ -364,7 +365,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         return async editContext =>
         {
-            await _jsRuntime.GetLuthetusTextEditorApi()
+            await _jsRuntime.GetLuthetusCommonApi()
                 .FocusHtmlElementById(
                     primaryCursorContentId)
                 .ConfigureAwait(false);

@@ -189,7 +189,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.GetTreeContainerElementId(Key{TreeViewContainer})"/>
+    /// <see cref="TreeViewService.GetTreeViewContainerElementId(Key{TreeViewContainer})"/>
     /// </summary>
     [Fact]
     public void GetTreeContainerElementId()

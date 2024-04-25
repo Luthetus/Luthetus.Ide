@@ -16,13 +16,6 @@ public class LuthetusTextEditorJavaScriptInteropApi
         _jsRuntime = jsRuntime;
     }
 
-    public ValueTask FocusHtmlElementById(string elementId)
-    {
-        return _jsRuntime.InvokeVoidAsync(
-            "luthetusTextEditor.focusHtmlElementById",
-            elementId);
-    }
-
     public ValueTask ScrollElementIntoView(string elementId)
     {
         return _jsRuntime.InvokeVoidAsync(

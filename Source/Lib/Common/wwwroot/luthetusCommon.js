@@ -1,14 +1,25 @@
 ﻿window.luthetusCommon = {
+    focusHtmlElementById: function (elementId) {
+        let element = document.getElementById(elementId);
+
+        if (!element) {
+            return;
+        }
+
+        element.focus();
+    },
     localStorageSetItem: function (key, value) {
         localStorage.setItem(key, value);
     },
-    localStorageGetItem: function (key, value) {
+    localStorageGetItem: function (key) {
         return localStorage.getItem(key);
     },
     readClipboard: async function () {
+        // domexception-on-calling-navigator-clipboard-readtext
+        // https://stackoverflow.com/q/56306153/14847452
+        // ----------------------------------------------------
         // First, ask the Permissions API if we have some kind of access to
         // the "clipboard-read" feature.
-
         try {
             return await navigator.permissions.query({name: "clipboard-read"}).then(async (result) => {
                 // If permission to read the clipboard is granted or if the user will
@@ -27,6 +38,9 @@
         }
     },
     setClipboard: function (value) {
+        // how-do-i-copy-to-the-clipboard-in-javascript:
+        // https://stackoverflow.com/a/33928558/14847452
+        // ---------------------------------------------
         // Copies a string to the clipboard. Must be called from within an
         // event handler such as click. May return false if it failed, but
         // this is not always possible. Browser support for Chrome 43+,
@@ -54,11 +68,9 @@
             }
         }
     },
-    getTreeViewContextMenuFixedPosition: function (
-        treeViewStateKey,
-        treeViewNodeId) {
+    getTreeViewContextMenuFixedPosition: function (nodeElementId) {
 
-        let treeViewNode = document.getElementById(treeViewNodeId);
+        let treeViewNode = document.getElementById(nodeElementId);
         let treeViewNodeBounds = treeViewNode.getBoundingClientRect();
 
         return {
