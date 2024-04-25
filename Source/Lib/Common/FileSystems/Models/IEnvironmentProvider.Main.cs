@@ -6,6 +6,17 @@ public partial interface IEnvironmentProvider
 {
     public IAbsolutePath HomeDirectoryAbsolutePath { get; }
     public IAbsolutePath RootDirectoryAbsolutePath { get; }
+    /// <summary>
+    /// If one is executing the program from the absolute path "C:\Programs\..." then this is "C:".
+    /// This property is needed in order to disambiguate when given:<br/>
+    ///     "\Homework\math.txt"<br/>
+    /// versus<br/>
+    ///     "C:\Homework\math.txt".<br/><br/>
+    ///     
+    /// Consider the creation of a text editor model. This property allows
+    /// the previous example of ambiguous paths to map to the same TextEditorModel.
+    /// </summary>
+    public string DriveExecutingFromNoDirectorySeparator { get; }
     public char DirectorySeparatorChar { get; }
     public char AltDirectorySeparatorChar { get; }
     /// <summary>

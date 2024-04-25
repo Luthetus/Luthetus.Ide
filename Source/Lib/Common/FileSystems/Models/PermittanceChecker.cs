@@ -21,6 +21,12 @@ public static class PermittanceChecker
         {
             if (path == "/" || path == "\\" || string.IsNullOrWhiteSpace(path))
                 throw NotDeletionPermittedExceptionFactory(path, isDirectory);
+            
+            if (path == environmentProvider.DriveExecutingFromNoDirectorySeparator + "/" ||
+                path == environmentProvider.DriveExecutingFromNoDirectorySeparator + "\\")
+            {
+                throw NotDeletionPermittedExceptionFactory(path, isDirectory);
+            }
         }
 
         if (!environmentProvider.DeletionPermittedPathList.Contains(simplePath))

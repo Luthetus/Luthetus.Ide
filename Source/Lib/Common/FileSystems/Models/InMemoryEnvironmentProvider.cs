@@ -30,6 +30,7 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
 
     public IAbsolutePath RootDirectoryAbsolutePath { get; }
     public IAbsolutePath HomeDirectoryAbsolutePath { get; }
+    public string DriveExecutingFromNoDirectorySeparator { get; } = string.Empty;
     public ImmutableHashSet<SimplePath> DeletionPermittedPathList { get; private set; } = ImmutableHashSet<SimplePath>.Empty;
     public ImmutableHashSet<SimplePath> ProtectedPathList { get; private set; } = ImmutableHashSet<SimplePath>.Empty;
 

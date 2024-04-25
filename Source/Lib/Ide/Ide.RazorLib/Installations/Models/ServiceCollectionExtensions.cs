@@ -27,6 +27,8 @@ using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.TestExplorers.States;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.Ide.RazorLib.Installations.Models;
 
@@ -44,19 +46,45 @@ public static class ServiceCollectionExtensions
 
         if (ideConfig.AddLuthetusTextEditor)
         {
+            ResourceUri RemoveDriveFromResourceUri(ResourceUri resourceUri, IServiceProvider serviceProvider)
+            {
+                var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
+
+                if (resourceUri.Value.StartsWith(environmentProvider.DriveExecutingFromNoDirectorySeparator))
+                {
+                    var removeDriveFromResourceUriValue = resourceUri.Value[
+                        environmentProvider.DriveExecutingFromNoDirectorySeparator.Length..];
+
+                    return new ResourceUri(removeDriveFromResourceUriValue);
+                }
+
+                return resourceUri;
+            }
+
             services.AddLuthetusTextEditor(hostingInformation, inTextEditorOptions => inTextEditorOptions with
             {
                 CustomThemeRecordList = LuthetusTextEditorCustomThemeFacts.AllCustomThemesList,
                 InitialThemeKey = ThemeFacts.VisualStudioDarkThemeClone.Key,
                 RegisterModelFunc = async (registerModelArgs) =>
                 {
+                    registerModelArgs = new RegisterModelArgs(
+                        RemoveDriveFromResourceUri(registerModelArgs.ResourceUri, registerModelArgs.ServiceProvider),
+                        registerModelArgs.ServiceProvider);
+
                     var editorSync = registerModelArgs.ServiceProvider.GetRequiredService<EditorSync>();
                     await editorSync.RegisterModelFunc(registerModelArgs).ConfigureAwait(false);
                 },
-                TryRegisterViewModelFunc = async (registerViewModelArgs) =>
+                TryRegisterViewModelFunc = async (tryRegisterViewModelArgs) =>
                 {
-                    var editorSync = registerViewModelArgs.ServiceProvider.GetRequiredService<EditorSync>();
-                    return await editorSync.TryRegisterViewModelFunc(registerViewModelArgs).ConfigureAwait(false);
+                    tryRegisterViewModelArgs = new TryRegisterViewModelArgs(
+                        tryRegisterViewModelArgs.ViewModelKey,
+                        RemoveDriveFromResourceUri(tryRegisterViewModelArgs.ResourceUri, tryRegisterViewModelArgs.ServiceProvider),
+                        tryRegisterViewModelArgs.Category,
+                        tryRegisterViewModelArgs.ShouldSetFocusToEditor,
+                        tryRegisterViewModelArgs.ServiceProvider);
+
+                    var editorSync = tryRegisterViewModelArgs.ServiceProvider.GetRequiredService<EditorSync>();
+                    return await editorSync.TryRegisterViewModelFunc(tryRegisterViewModelArgs).ConfigureAwait(false);
                 },
                 TryShowViewModelFunc = async (tryShowViewModelArgs) =>
                 {

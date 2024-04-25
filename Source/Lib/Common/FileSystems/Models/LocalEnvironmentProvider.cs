@@ -29,11 +29,50 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
             ProtectedPathList = ProtectedPathList.Add(new SimplePath("/", true));
             ProtectedPathList = ProtectedPathList.Add(new SimplePath("\\", true));
             ProtectedPathList = ProtectedPathList.Add(new SimplePath("", true));
+
+            try
+            {
+                var entryAssembly = System.Reflection.Assembly.GetEntryAssembly();
+
+                if (entryAssembly is not null)
+                {
+                    var driveExecutingFrom = Path.GetPathRoot(entryAssembly.Location);
+
+                    if (driveExecutingFrom is not null)
+                    {
+                        if (driveExecutingFrom.EndsWith('/') || driveExecutingFrom.EndsWith('\\'))
+                        {
+                            DriveExecutingFromNoDirectorySeparator = driveExecutingFrom[..^1];
+
+                            ProtectedPathList = ProtectedPathList.Add(
+                                new SimplePath(DriveExecutingFromNoDirectorySeparator + '/',
+                                true));
+                            
+                            ProtectedPathList = ProtectedPathList.Add(
+                                new SimplePath(DriveExecutingFromNoDirectorySeparator + '\\',
+                                true));
+                        }
+                        else
+                        {
+                            DriveExecutingFromNoDirectorySeparator = driveExecutingFrom;
+                            ProtectedPathList = ProtectedPathList.Add(new SimplePath(driveExecutingFrom, true));
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // This code is intended to be an extra level of caution.
+                // it trys to add the current drive to the protected path list if possible.
+            }
+
         }
     }
 
     public IAbsolutePath RootDirectoryAbsolutePath { get; }
     public IAbsolutePath HomeDirectoryAbsolutePath { get; }
+
+    public string DriveExecutingFromNoDirectorySeparator { get; }
 
     public char DirectorySeparatorChar => Path.DirectorySeparatorChar;
     public char AltDirectorySeparatorChar => Path.AltDirectorySeparatorChar;
