@@ -7,6 +7,7 @@ using Luthetus.Ide.RazorLib.CompilerServices.States;
 using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -66,56 +67,63 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 
     private void RecalculateViewModel()
     {
-        var localCSharpCompilerService = _cSharpCompilerService;
-        var localCompilerServiceEditorState = CompilerServiceEditorStateWrap.Value;
-        var localTextEditorGroupState = TextEditorGroupStateWrap.Value;
-        var localTextEditorViewModelState = TextEditorViewModelStateWrap.Value;
-        var localTextEditorModelState = TextEditorModelStateWrap.Value;
-
-        var editorTextEditorGroup = localTextEditorGroupState.GroupList.FirstOrDefault(
-            x => x.GroupKey == EditorSync.EditorTextEditorGroupKey);
-
-        var activeViewModelKey = editorTextEditorGroup?.ActiveViewModelKey ?? Key<TextEditorViewModel>.Empty;
-
-        var viewModel = localTextEditorViewModelState.ViewModelList.FirstOrDefault(
-            x => x.ViewModelKey == activeViewModelKey);
-
-        var interfaceCompilerServiceResource = viewModel is null
-            ? null
-            : localCSharpCompilerService.GetCompilerServiceResourceFor(viewModel.ResourceUri);
-
-        var cSharpResource = interfaceCompilerServiceResource is null
-            ? (CSharpResource?)null
-            : (CSharpResource)interfaceCompilerServiceResource;
-
-        var textEditorModel = viewModel is null
-            ? null
-            : localTextEditorModelState.ModelList.FirstOrDefault(x => x.ResourceUri == viewModel.ResourceUri);
-
-        Nullable<int> primaryCursorPositionIndex = textEditorModel is null || viewModel is null
-            ? null
-            : textEditorModel.GetPositionIndex(viewModel.PrimaryCursor);
-
-        var syntaxNode = primaryCursorPositionIndex is null || localCSharpCompilerService.Binder is null || cSharpResource?.CompilationUnit is null
-            ? null
-            : localCSharpCompilerService.Binder.GetSyntaxNode(primaryCursorPositionIndex.Value, cSharpResource.CompilationUnit);
-
-        _viewModel = new CompilerServiceEditorViewModel
+        try
         {
-            LocalCSharpCompilerService = localCSharpCompilerService,
-            LocalCompilerServiceEditorState = localCompilerServiceEditorState,
-            LocalTextEditorGroupState = localTextEditorGroupState,
-            LocalTextEditorViewModelState = localTextEditorViewModelState,
-            LocalTextEditorModelState = localTextEditorModelState,
-            EditorTextEditorGroup = editorTextEditorGroup,
-            ActiveViewModelKey = activeViewModelKey,
-            ViewModel = viewModel,
-            InterfaceCompilerServiceResource = interfaceCompilerServiceResource,
-            CSharpResource = cSharpResource,
-            TextEditorModel = textEditorModel,
-            PrimaryCursorPositionIndex = primaryCursorPositionIndex,
-            SyntaxNode = syntaxNode,
-        };
+            var localCSharpCompilerService = _cSharpCompilerService;
+            var localCompilerServiceEditorState = CompilerServiceEditorStateWrap.Value;
+            var localTextEditorGroupState = TextEditorGroupStateWrap.Value;
+            var localTextEditorViewModelState = TextEditorViewModelStateWrap.Value;
+            var localTextEditorModelState = TextEditorModelStateWrap.Value;
+
+            var editorTextEditorGroup = localTextEditorGroupState.GroupList.FirstOrDefault(
+                x => x.GroupKey == EditorSync.EditorTextEditorGroupKey);
+
+            var activeViewModelKey = editorTextEditorGroup?.ActiveViewModelKey ?? Key<TextEditorViewModel>.Empty;
+
+            var viewModel = localTextEditorViewModelState.ViewModelList.FirstOrDefault(
+                x => x.ViewModelKey == activeViewModelKey);
+
+            var interfaceCompilerServiceResource = viewModel is null
+                ? null
+                : localCSharpCompilerService.GetCompilerServiceResourceFor(viewModel.ResourceUri);
+
+            var cSharpResource = interfaceCompilerServiceResource is null
+                ? (CSharpResource?)null
+                : (CSharpResource)interfaceCompilerServiceResource;
+
+            var textEditorModel = viewModel is null
+                ? null
+                : localTextEditorModelState.ModelList.FirstOrDefault(x => x.ResourceUri == viewModel.ResourceUri);
+
+            Nullable<int> primaryCursorPositionIndex = textEditorModel is null || viewModel is null
+                ? null
+                : textEditorModel.GetPositionIndex(viewModel.PrimaryCursor);
+
+            var syntaxNode = primaryCursorPositionIndex is null || localCSharpCompilerService.Binder is null || cSharpResource?.CompilationUnit is null
+                ? null
+                : localCSharpCompilerService.Binder.GetSyntaxNode(primaryCursorPositionIndex.Value, cSharpResource.CompilationUnit);
+
+            _viewModel = new CompilerServiceEditorViewModel
+            {
+                LocalCSharpCompilerService = localCSharpCompilerService,
+                LocalCompilerServiceEditorState = localCompilerServiceEditorState,
+                LocalTextEditorGroupState = localTextEditorGroupState,
+                LocalTextEditorViewModelState = localTextEditorViewModelState,
+                LocalTextEditorModelState = localTextEditorModelState,
+                EditorTextEditorGroup = editorTextEditorGroup,
+                ActiveViewModelKey = activeViewModelKey,
+                ViewModel = viewModel,
+                InterfaceCompilerServiceResource = interfaceCompilerServiceResource,
+                CSharpResource = cSharpResource,
+                TextEditorModel = textEditorModel,
+                PrimaryCursorPositionIndex = primaryCursorPositionIndex,
+                SyntaxNode = syntaxNode,
+            };
+        }
+        catch (LuthetusTextEditorException)
+        {
+            // Eat this exception
+        }
     }
 
     private async void TextEditorModelStateWrap_StateChanged(object? sender, EventArgs e)
