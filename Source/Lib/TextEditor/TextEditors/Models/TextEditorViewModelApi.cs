@@ -412,11 +412,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             if (modelModifier is null || viewModelModifier is null)
                 return Task.CompletedTask;
 
-            void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
-            {
-                cursorModifier.ColumnIndex = columnIndex;
-                cursorModifier.PreferredColumnIndex = columnIndex;
-            }
+            var shouldClearSelection = false;
 
             if (keyboardEventArgs.ShiftKey)
             {
@@ -432,7 +428,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             }
             else
             {
-                cursorModifier.SelectionAnchorPositionIndex = null;
+                shouldClearSelection = true;
             }
 
             int lengthOfLine = 0; // This variable is used in multiple switch cases.
@@ -463,11 +459,11 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
                                 lengthOfLine = modelModifier.GetLineLength(cursorModifier.LineIndex);
 
-                                MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfLine);
+                                cursorModifier.SetColumnIndexAndPreferred(lengthOfLine);
                             }
                             else
                             {
-                                MutateIndexCoordinatesAndPreferredColumnIndex(0);
+                                cursorModifier.SetColumnIndexAndPreferred(0);
                             }
                         }
                         else
@@ -480,13 +476,13 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                                     true);
 
                                 if (columnIndexOfCharacterWithDifferingKind == -1)
-                                    MutateIndexCoordinatesAndPreferredColumnIndex(0);
+                                    cursorModifier.SetColumnIndexAndPreferred(0);
                                 else
-                                    MutateIndexCoordinatesAndPreferredColumnIndex(columnIndexOfCharacterWithDifferingKind);
+                                    cursorModifier.SetColumnIndexAndPreferred(columnIndexOfCharacterWithDifferingKind);
                             }
                             else
                             {
-                                MutateIndexCoordinatesAndPreferredColumnIndex(cursorModifier.ColumnIndex - 1);
+                                cursorModifier.SetColumnIndexAndPreferred(cursorModifier.ColumnIndex - 1);
                             }
                         }
                     }
@@ -549,7 +545,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                         if (cursorModifier.ColumnIndex >= lengthOfLine &&
                             cursorModifier.LineIndex < modelModifier.LineCount - 1)
                         {
-                            MutateIndexCoordinatesAndPreferredColumnIndex(0);
+                            cursorModifier.SetColumnIndexAndPreferred(0);
                             cursorModifier.LineIndex++;
                         }
                         else if (cursorModifier.ColumnIndex != lengthOfLine)
@@ -562,16 +558,16 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                                     false);
 
                                 if (columnIndexOfCharacterWithDifferingKind == -1)
-                                    MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfLine);
+                                    cursorModifier.SetColumnIndexAndPreferred(lengthOfLine);
                                 else
                                 {
-                                    MutateIndexCoordinatesAndPreferredColumnIndex(
+                                    cursorModifier.SetColumnIndexAndPreferred(
                                         columnIndexOfCharacterWithDifferingKind);
                                 }
                             }
                             else
                             {
-                                MutateIndexCoordinatesAndPreferredColumnIndex(cursorModifier.ColumnIndex + 1);
+                                cursorModifier.SetColumnIndexAndPreferred(cursorModifier.ColumnIndex + 1);
                             }
                         }
                     }
@@ -581,7 +577,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                     if (keyboardEventArgs.CtrlKey)
                         cursorModifier.LineIndex = 0;
 
-                    MutateIndexCoordinatesAndPreferredColumnIndex(0);
+                    cursorModifier.SetColumnIndexAndPreferred(0);
 
                     break;
                 case KeyboardKeyFacts.MovementKeys.END:
@@ -590,7 +586,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
                     lengthOfLine = modelModifier.GetLineLength(cursorModifier.LineIndex);
 
-                    MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfLine);
+                    cursorModifier.SetColumnIndexAndPreferred(lengthOfLine);
 
                     break;
             }
@@ -600,6 +596,12 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                 cursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(
                     cursorModifier.LineIndex,
                     cursorModifier.ColumnIndex);
+            }
+            else if (!keyboardEventArgs.ShiftKey && shouldClearSelection)
+            {
+                // The active selection is needed, and cannot be touched until the end.
+                cursorModifier.SelectionAnchorPositionIndex = null;
+                cursorModifier.SelectionEndingPositionIndex = 0;
             }
 
             return Task.CompletedTask;

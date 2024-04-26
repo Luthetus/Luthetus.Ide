@@ -84,20 +84,6 @@ public class TextEditorCursorModifierTests
                 cursorModifier.SelectionEndingPositionIndex++;
                 Assert.Equal(inSelectionEndingPositionIndex + 1, cursorModifier.SelectionEndingPositionIndex);
             }
-
-            // ShouldRevealCursor
-            {
-                var inShouldRevealCursor = cursorModifier.ShouldRevealCursor;
-                cursorModifier.ShouldRevealCursor = !cursorModifier.ShouldRevealCursor;
-                Assert.Equal(!inShouldRevealCursor, cursorModifier.ShouldRevealCursor);
-            }
-
-            // IsIntersecting
-            {
-                var inIsIntersecting = cursorModifier.IsIntersecting;
-                cursorModifier.IsIntersecting = !cursorModifier.IsIntersecting;
-                Assert.Equal(!inIsIntersecting, cursorModifier.IsIntersecting);
-            }
         }
 
         var outCursor = cursorModifier.ToCursor();
