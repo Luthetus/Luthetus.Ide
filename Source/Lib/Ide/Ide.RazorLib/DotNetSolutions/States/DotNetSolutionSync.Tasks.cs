@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Runtime.InteropServices;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -113,7 +114,9 @@ public partial class DotNetSolutionSync
 
         foreach (var project in parser.DotNetProjectList)
         {
-            // Debugging Linux-Ubuntu (2024-04-28)
+            var relativePathFromSolutionFileString = project.RelativePathFromSolutionFileString;
+
+			// Debugging Linux-Ubuntu (2024-04-28)
             // -----------------------------------
             // It is believed, that Linux-Ubuntu is not fully working correctly,
             // due to the directory separator character at the os level being '/',
@@ -124,8 +127,8 @@ public partial class DotNetSolutionSync
             //
             // Okay, this single replacement fixes 99% of the solution explorer issue.
             // And I say 99% instead of 100% just because I haven't tested every single part of it yet.
-            var relativePathFromSolutionFileString = project.RelativePathFromSolutionFileString;
-            relativePathFromSolutionFileString = relativePathFromSolutionFileString.Replace("\\", "/");
+			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				relativePathFromSolutionFileString = relativePathFromSolutionFileString.Replace("\\", "/");
             
             // Solution Folders do not exist on the filesystem. Therefore their absolute path is not guaranteed to be unique
             // One can use the ProjectIdGuid however, when working with a SolutionFolder to make the absolute path unique.
