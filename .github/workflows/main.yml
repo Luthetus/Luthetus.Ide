@@ -33,8 +33,8 @@ jobs:
           run: dotnet publish Source/Lib/Ide/Host.BlazorWebAssembly/Luthetus.Ide.Wasm.csproj -c:Release -p:GHPages=true -o dist/Web --nologo
           
         # changes the base-tag in index.html from '/' to 'Luthetus.Website' to match GitHub Pages repository subdirectory
-        - name: Change base-tag in index.html from / to Luthetus.Website
-          run: sed -i 's/<base href="\/" \/>/<base href="\/Luthetus.Website\/" \/>/g' dist/Web/wwwroot/index.html
+        - name: Change base-tag in index.html from / to Luthetus.Ide
+          run: sed -i 's/<base href="\/" \/>/<base href="\/Luthetus.Ide\/" \/>/g' dist/Web/wwwroot/index.html
           
         # add .nojekyll file to tell GitHub pages to not treat this as a Jekyll project. (Allow files and folders starting with an underscore)
         - name: Add .nojekyll file
