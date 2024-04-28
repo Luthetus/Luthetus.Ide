@@ -23,7 +23,7 @@ directly.
 ## Getting started
 
 - Video format: [YouTube video](https://youtu.be/hC4E2-LNxB4?si=fnqbyVvGcns5fy3z)
-- Markdown format: [installation.md](./Docs/installation.md)
+- Markdown format: [installation.md](./installation.md)
 
 ## Installation
 
@@ -58,11 +58,11 @@ You can download the latest release NuGet packages from the official Luthetus.Te
 
 ## Release notes / Changelog
 
-See the [changelog.md](./Docs/changelog.md) for release history.
+See the [changelog.md](./changelog.md) for release history.
 
 ## Roadmap
 
-See the [roadmap.md](./Docs/roadmap.md) for planned future updates.
+See the [roadmap.md](./roadmap.md) for planned future updates.
 
 # Licence
 
