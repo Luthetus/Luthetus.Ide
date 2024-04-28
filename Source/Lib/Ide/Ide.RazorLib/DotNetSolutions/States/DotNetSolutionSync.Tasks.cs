@@ -114,16 +114,6 @@ public partial class DotNetSolutionSync
         foreach (var project in parser.DotNetProjectList)
         {
             // Debugging Linux-Ubuntu (2024-04-28)
-            {
-                NotificationHelper.DispatchDebugMessage(
-                    "project.DisplayName",
-                    () => project.DisplayName,
-                    _commonComponentRenderers,
-                    Dispatcher,
-                    TimeSpan.FromSeconds(60));
-            }
-
-            // Debugging Linux-Ubuntu (2024-04-28)
             // -----------------------------------
             // It is believed, that Linux-Ubuntu is not fully working correctly,
             // due to the directory separator character at the os level being '/',
@@ -136,52 +126,16 @@ public partial class DotNetSolutionSync
             // And I say 99% instead of 100% just because I haven't tested every single part of it yet.
             var relativePathFromSolutionFileString = project.RelativePathFromSolutionFileString;
             relativePathFromSolutionFileString = relativePathFromSolutionFileString.Replace("\\", "/");
-
-            // Debugging Linux-Ubuntu (2024-04-28)
-            {
-                NotificationHelper.DispatchDebugMessage(
-                    "relativePathFromSolutionFileString",
-                    () => relativePathFromSolutionFileString,
-                    _commonComponentRenderers,
-                    Dispatcher,
-                    TimeSpan.FromSeconds(60));
-            }
             
             // Solution Folders do not exist on the filesystem. Therefore their absolute path is not guaranteed to be unique
             // One can use the ProjectIdGuid however, when working with a SolutionFolder to make the absolute path unique.
             if (project.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
                 relativePathFromSolutionFileString = $"{project.ProjectIdGuid}_{relativePathFromSolutionFileString}";
 
-            // Debugging Linux-Ubuntu (2024-04-28)
-            {
-                NotificationHelper.DispatchDebugMessage(
-                    "DirectorySeparatorChar",
-                    () => _environmentProvider.DirectorySeparatorChar.ToString(),
-                    _commonComponentRenderers,
-                    Dispatcher,
-                    TimeSpan.FromSeconds(60));
-                NotificationHelper.DispatchDebugMessage(
-                    "AltDirectorySeparatorChar",
-                    () => _environmentProvider.AltDirectorySeparatorChar.ToString(),
-                    _commonComponentRenderers,
-                    Dispatcher,
-                    TimeSpan.FromSeconds(60));
-            }
-
             var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
                 solutionAbsolutePath,
                 relativePathFromSolutionFileString,
                 _environmentProvider);
-
-            // Debugging Linux-Ubuntu (2024-04-28)
-            {
-                NotificationHelper.DispatchDebugMessage(
-                    "absolutePathString",
-                    () => absolutePathString,
-                    _commonComponentRenderers,
-                    Dispatcher,
-                    TimeSpan.FromSeconds(60));
-            }
 
             project.AbsolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, false);
         }
