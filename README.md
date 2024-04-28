@@ -6,7 +6,7 @@
 ![Example GIF](./Images/Ide/Gifs/ide0.3.0.gif)
 
 ## Demo:
-https://luthetus.github.io/Luthetus.Website/
+https://luthetus.github.io/Luthetus.Ide/
 
 ## Donations:
 [![Donate with PayPal](https://raw.githubusercontent.com/Luthetus/paypal-donate-button_Fork/master/paypal-donate-button.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RCG8QN3KL623Y)
