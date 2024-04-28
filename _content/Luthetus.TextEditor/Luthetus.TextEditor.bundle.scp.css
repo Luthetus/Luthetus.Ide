@@ -1,0 +1,69 @@
+/* _content/Luthetus.TextEditor/Diffs/Displays/DiffDetailsDisplay.razor.rz.scp.css */
+.luth_diff-details-visualization-grid[b-53fxoteowt] {
+    position: relative;
+    width: 375px;
+    height: 375px;
+}
+
+[b-53fxoteowt] .luth_diff-details-visualization-character {
+    width: 2em;
+    height: 2em;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+/* _content/Luthetus.TextEditor/Diffs/Displays/Internals/DiffDetailsInTextDisplay.razor.rz.scp.css */
+.luth_diff-details-visualization-in[b-78dov4nmc9] {
+    position: absolute;
+    left: 0;
+    top: 2em;
+    height: calc(100% - 2em);
+    width: 2em;
+}
+/* _content/Luthetus.TextEditor/Diffs/Displays/Internals/DiffDetailsMatrixDisplay.razor.rz.scp.css */
+.luth_diff-details-visualization-cell[b-j789wpiioa] {
+    position: absolute;
+    width: 2em;
+    height: 2em;
+    outline: 1px solid var(--luth_primary-border-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .luth_diff-details-visualization-cell.luth_active[b-j789wpiioa] {
+        background-color: green;
+    }
+/* _content/Luthetus.TextEditor/Diffs/Displays/Internals/DiffDetailsOutTextDisplay.razor.rz.scp.css */
+.luth_diff-details-visualization-out[b-azhhja29m2] {
+    position: absolute;
+    left: 2em;
+    top: 0;
+    height: 2em;
+    width: calc(100% - 2em);
+}
+/* _content/Luthetus.TextEditor/Edits/Displays/DirtyResourceUriInteractiveIconDisplay.razor.rz.scp.css */
+.luth_web_dirty-text-editor-models-interactive-icon[b-l3pw0a2hp7] {
+    position: relative;
+}
+/* _content/Luthetus.TextEditor/TextEditors/Displays/Internals/FindOverlayDisplay.razor.rz.scp.css */
+.luth_te_find-overlay[b-vqz5xh3qbb] {
+    overflow: hidden;
+    position: absolute;
+    right: var(--luth_te_scrollbar-size);
+    top: 0;
+    width: 25%;
+    min-width: calc(22ch + 16px);
+    padding: 7px;
+    z-index: 1;
+    cursor: default;
+    background-color: var(--luth_te_scrollbar-background-color);
+}
+/* _content/Luthetus.TextEditor/TextEditors/Displays/Internals/SymbolDisplay.razor.rz.scp.css */
+/* _content/Luthetus.TextEditor/TextEditors/Displays/Internals/WidgetInlineLayerDisplay.razor.rz.scp.css */
+.luth_te_widget-layer[b-39ig7it9nj] {
+    position: absolute;
+    background-color: red;
+    z-index: 1;
+}

@@ -1,0 +1,822 @@
+.luth_te_text-editor-css-wrapper {
+    height: 100%;
+}
+
+.luth_te_text-editor {
+    min-height: var(--luth_te_text-editor-content-min-height);
+    color: var(--luth_te_primary-font-color);
+    background-color: var(--luth_te_body-background-color);
+    cursor: text;
+    position: relative;
+    display: flex;
+}
+
+.luth_te_text-editor-group {
+    height: 100%;
+}
+
+.luth_te_text-editor-group-tabs-list {
+    height: var(--luth_tabs-bar-height);
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    font-size: .8em;
+}
+
+.luth_te_text-editor-group-active-view-model {
+    height: calc(100% - var(--luth_tabs-bar-height));
+}
+
+.luth_te_method {
+    color: var(--luth_te_method-foreground-color);
+}
+
+.luth_te_type {
+    color: var(--luth_te_type-foreground-color);
+}
+
+.luth_te_variable {
+    color: var(--luth_te_variable-foreground-color);
+}
+
+.luth_te_string-literal {
+    color: var(--luth_te_string-literal-foreground-color);
+}
+
+.luth_te_string-literal-escape-character {
+    color: var(--luth_te_string-literal-escape-character-foreground-color);
+}
+
+.luth_te_keyword {
+    color: var(--luth_te_keyword-foreground-color);
+}
+
+.luth_te_keyword-control {
+    color: var(--luth_te_keyword-control-foreground-color);
+}
+
+.luth_te_comment {
+    color: var(--luth_te_comment-foreground-color);
+}
+
+.luth_te_tag-name {
+    color: var(--luth_te_tag-name-foreground-color);
+}
+
+.luth_te_injected-language-fragment {
+    color: var(--luth_te_injected-language-fragment-color);
+}
+
+.luth_te_injected-language-component {
+    color: var(--luth_te_injected-language-component-color);
+}
+
+.luth_te_css-property-name {
+    color: var(--luth_te_css-property-name-color);
+}
+
+.luth_te_css-property-value {
+    color: var(--luth_te_css-property-value-color);
+}
+
+.luth_te_css-identifier {
+    color: var(--luth_te_css-identifier-color);
+}
+
+.luth_te_attribute-name {
+    color: var(--luth_te_attribute-name-color);
+}
+
+.luth_te_attribute-value {
+    color: var(--luth_te_attribute-value-color);
+}
+
+.luth_te_json-property-key {
+    color: var(--luth_te_json-property-key-color);
+}
+
+.luth_te_json-property-value {
+    color: var(--luth_te_json-property-value-color);
+}
+
+.luth_te_measure-character-width-and-row-height-wrapper {
+    top: 0;
+    left: 0;
+    visibility: hidden;
+    overflow: hidden;
+}
+
+.luth_te_measure-character-width-and-row-height {
+    top: 0;
+    left: 0;
+    visibility: hidden;
+}
+
+.luth_te_row {
+    white-space: nowrap;
+    position: absolute;
+    display: flex;
+}
+
+.luth_te_gutter {
+    white-space: nowrap;
+    position: absolute;
+    display: flex;
+    justify-content: end;
+    box-shadow: -2px 0 0 var(--luth_te_text-editor-gutter-border-color) inset;
+    background-color: var(--luth_te_text-editor-gutter-background-color);
+}
+
+.luth_te_gutter-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.luth_te_body-section {
+    height: 100%;
+    position: absolute;
+    top: 0;
+}
+
+.luth_te_command-bar {
+    height: var(--luth_te_text-editor-command-bar-height);
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: aqua;
+    z-index: 1;
+}
+
+.luth_te_command-bar-input {
+    width: 100%;
+}
+
+.luth_te_row-section {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.luth_te_scrollbar-section {
+    overflow: hidden;
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.luth_te_scrollbar {
+    position: absolute;
+    cursor: default;
+    opacity: var(--luth_te_scrollbar-opacity);
+    background-color: var(--luth_te_scrollbar-background-color);
+}
+
+.luth_te_scrollbar-slider {
+    background-color: var(--luth_te_scrollbar-slider-background-color);
+    position: absolute;
+}
+
+.luth_te_scrollbar:hover {
+    opacity: var(--luth_te_scrollbar-opacity-on-hover);
+}
+
+.luth_te_scrollbar-horizontal {
+    top: calc(100% - var(--luth_te_scrollbar-size));
+    height: var(--luth_te_scrollbar-size);
+}
+
+.luth_te_scrollbar-vertical {
+    right: 0;
+    top: 0;
+    width: var(--luth_te_scrollbar-size);
+    height: calc(100% - var(--luth_te_scrollbar-size));
+}
+
+.luth_te_scrollbar-connector {
+    right: 0;
+    top: calc(100% - var(--luth_te_scrollbar-size));
+    width: var(--luth_te_scrollbar-size);
+    height: var(--luth_te_scrollbar-size);
+}
+
+.luth_te_text-editor-cursor {
+    position: absolute;
+    display: inline-block;
+    background-color: var(--luth_te_text-editor-cursor-foreground-color);
+    margin: 0;
+    padding: 0;
+    outline: none !important;
+    resize: none;
+    border: none;
+    overflow: hidden;
+    color: transparent;
+}
+
+.luth_te_text-editor-cursor:focus {
+    outline: none !important;
+    color: transparent;
+}
+
+.luth_te_text-editor:not(.luth_te_text-editor:focus-within) .luth_te_text-editor-cursor {
+    width: 0;
+}
+
+.luth_te_text-editor-cursor:not(.luth_te_text-editor-cursor:focus) {
+    width: 0;
+}
+
+.luth_te_text-editor-caret-row {
+    border-width: 1.5px;
+    border-style: solid;
+    border-color: var(--luth_te_text-editor-caret-row-border-color-no-focus-within-editor);
+    border-left: none;
+    border-right: none;
+    position: absolute;
+    left: 0;
+    min-width: 100%;
+}
+
+.luth_te_text-editor:focus-within .luth_te_text-editor-caret-row {
+    border-color: var(--luth_te_text-editor-caret-row-border-color-editor-focus-within);
+}
+
+.luth_te_blink {
+    animation: luth_te_blink-animation 1s infinite;
+}
+
+@keyframes luth_te_blink-animation {
+    0% {
+        opacity: 0
+    }
+    49% {
+        opacity: 0
+    }
+    50% {
+        opacity: 1
+    }
+}
+
+.luth_te_text-selection {
+    background-color: var(--luth_te_text-selection-background-color);
+    position: absolute;
+}
+
+.luth_te_diff-longest-common-subsequence {
+    background-color: var(--luth_te_diff-longest-common-subsequence-background-color);
+    position: absolute;
+}
+
+.luth_te_diff-insertion {
+    background-color: var(--luth_te_diff-insertion-background-color);
+    position: absolute;
+}
+
+.luth_te_diff-deletion {
+    background-color: var(--luth_te_diff-deletion-background-color);
+    position: absolute;
+}
+
+.luth_te_diff-modification {
+    background-color: var(--luth_te_diff-modification-background-color);
+    position: absolute;
+}
+
+.luth_te_semantic-diagnostic-error {
+    border-bottom: 2px solid var(--luth_te_semantic-diagnostic-error-background-color);
+    position: absolute;
+}
+
+.luth_te_semantic-diagnostic-hint {
+    border-bottom: 2px solid var(--luth_te_semantic-diagnostic-hint-background-color);
+    position: absolute;
+}
+
+.luth_te_semantic-diagnostic-suggestion {
+    position: absolute;
+}
+
+.luth_te_semantic-diagnostic-warning {
+    position: absolute;
+}
+
+.luth_te_semantic-diagnostic-other {
+    position: absolute;
+}
+
+.luth_te_newline {
+    color: var(--luth_te_newline-foreground-color);
+    background-color: var(--luth_te_newline-background-color);
+}
+
+.luth_te_virtualization-boundary-display {
+    position: absolute;
+}
+
+.luth_te_text-editor-footer {
+    height: var(--luth_te_text-editor-footer-height);
+    border-top: 2px solid var(--luth_te_text-editor-gutter-border-color);
+    color: var(--luth_te_primary-font-color);
+    background-color: var(--luth_te_text-editor-gutter-background-color);
+}
+
+.luth_te_text-editor-footer-listing {
+    height: 100%;
+    font-size: .8em;
+    display: flex;
+    padding-left: var(--luth_te_text-editor-footer-padding-left);
+    align-items: center;
+    overflow: auto;
+    white-space: nowrap;
+}
+
+.luth_te_text-editor-footer-entry {
+    padding-right: 5px;
+    display: flex;
+}
+
+.luth_te_text-editor-footer-entry:not(:last-child) {
+    border-right: 2px solid var(--luth_te_text-editor-caret-row-border-color-no-focus-within-editor);
+    margin-right: 5px;
+}
+
+.luth_te_text-editor-footer-name-value-pair {
+    display: flex;
+}
+
+.luth_te_text-editor-header {
+    height: var(--luth_te_text-editor-header-height);
+    border-bottom: 2px solid var(--luth_te_text-editor-gutter-border-color);
+    color: var(--luth_te_primary-font-color);
+    background-color: var(--luth_te_text-editor-gutter-background-color);
+}
+
+.luth_te_text-editor-header-listing {
+    height: 100%;
+    font-size: .8em;
+    display: flex;
+    padding-left: var(--luth_te_text-editor-header-padding-left);
+    align-items: center;
+    overflow: auto;
+    white-space: nowrap;
+}
+
+.luth_te_text-editor-header-entry {
+    padding-right: 5px;
+}
+
+.luth_te_text-editor-header-entry > .luth_button {
+    padding: 5px;
+}
+
+.luth_te_text-editor-header-entry:not(:last-child) {
+    border-right: 2px solid var(--luth_te_text-editor-caret-row-border-color-no-focus-within-editor);
+    margin-right: 5px;
+}
+
+.luth_te_button {
+    background-color: var(--luth_te_button-background-color);
+    color: var(--luth_te_button-foreground-color);
+}
+
+.luth_te_button:disabled {
+    background-color: var(--luth_te_button-disabled-background-color);
+    color: var(--luth_te_button-disabled-foreground-color);
+}
+
+.luth_te_resize-column {
+    background-color: var(--luth_te_resize-column-background-color);
+    height: 100%;
+    cursor: e-resize;
+}
+
+.luth_te_resize-row {
+    background-color: var(--luth_te_resize-row-background-color);
+    width: 100%;
+    cursor: n-resize;
+}
+
+.luth_te_add-margin-top {
+    margin: 10px 0;
+}
+
+.luth_te_text-editor-input-height .luth_te_child-input {
+    border-left: 2px solid var(--luth_te_text-editor-caret-row-border-color-no-focus-within-editor);
+}
+
+.luth_te_text-editor-input-height .luth_te_disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.luth_te_text-editor-input-height .luth_te_disabled input {
+    cursor: not-allowed;
+}
+
+.luth_te_text-editor-context-menu {
+    position: absolute;
+    z-index: 30;
+    background-color: var(--luth_te_secondary-background-color);
+    color: var(--luth_te_secondary-font-color);
+    box-shadow: 0 0 2px var(--luth_te_primary-overlay-box-shadow-color);
+}
+
+.luth_te_tooltip {
+    position: absolute;
+    z-index: 30;
+    background-color: var(--luth_te_secondary-background-color);
+    color: var(--luth_te_secondary-font-color);
+    box-shadow: 0 0 2px var(--luth_te_primary-overlay-box-shadow-color);
+    padding: 20px;
+    cursor: default;
+}
+
+.luth_te_use-vim-keymap {
+    height: calc(100% - 200px);
+}
+
+.luth_te_text-editor-diff {
+    height: 100%;
+}
+
+.luth_te_diff-longest-common-subsequence {
+    color: var(--luth_te_primary-font-color);
+}
+
+.luth_te_text-editor-diff-header {
+    display: flex;
+    height: var(--luth_te_diff-header-height);
+}
+
+.luth_te_text-editor-diff-body {
+    display: flex;
+    height: calc(100% - var(--luth_te_diff-header-height));
+}
+
+.luth_te_text-editor-diff-body-separator {
+    background-color: var(--luth_primary-border-color);
+    width: var(--luth_te_diff-body-separator-width);
+}
+
+.luth_te_text-editor-diff-comparison-item {
+    width: calc(50% - var(--luth_te_diff-body-separator-width) / 2);
+}
+
+.luth_te_find-tabs {
+    display: flex;
+}
+
+.luth_te_find-provider-tab {
+    display: flex;
+}
+
+:root {
+    /* Sizes Text Editor */
+    --luth_te_text-editor-content-min-height: 100px;
+    --luth_te_text-editor-footer-height: calc(1.2em + 5px);
+    --luth_te_text-editor-footer-padding-left: 5px;
+    --luth_te_text-editor-header-height: calc(1.2em + 5px);
+    --luth_te_text-editor-header-padding-left: 5px;
+    --luth_te_text-editor-command-bar-height: 2.2em;
+    --luth_te_text-editor-command-bar-padding-left: 5px;
+    --luth_te_scrollbar-size: 10px;
+    --luth_te_diff-body-separator-width: 6px;
+    --luth_te_diff-header-height: 2em;
+}
+
+.luth_visual-studio-light-theme-clone {
+    /*
+        The colors are a close cloning of the
+        Light Theme found in Visual Studio.
+    */
+    --luth_te_primary-font-color: #000000;
+    --luth_te_text-editor-cursor-foreground-color: #000000;
+    --luth_te_text-selection-background-color: #ADD6FF;
+    --luth_te_diff-longest-common-subsequence-background-color: #ffb3f1;
+    --luth_te_diff-insertion-background-color: green;
+    --luth_te_diff-deletion-background-color: blue;
+    --luth_te_diff-modification-background-color: yellow;
+    --luth_te_semantic-diagnostic-error-background-color: red;
+    --luth_te_semantic-diagnostic-hint-background-color: purple;
+    --luth_te_body-background-color: rgb(255, 255, 255);
+    --luth_te_text-editor-caret-row-border-color-no-focus-within-editor: var(--luth_te_text-editor-cursor-foreground-color);
+    --luth_te_text-editor-caret-row-border-color-editor-focus-within: #28ae0c;
+    --luth_te_newline-foreground-color: #007F00;
+    --luth_te_newline-background-color: #faeee2;
+    --luth_te_method-foreground-color: rgb(116, 83, 31);
+    --luth_te_type-foreground-color: rgb(43, 145, 175);
+    --luth_te_variable-foreground-color: rgb(31, 55, 127);
+    --luth_te_string-literal-foreground-color: rgb(163, 21, 21);
+    --luth_te_string-literal-escape-character-foreground-color: rgb(183, 118, 251);
+    --luth_te_keyword-foreground-color: rgb(0, 0, 255);
+    --luth_te_keyword-control-foreground-color: rgb(143, 8, 196);
+    --luth_te_comment-foreground-color: rgb(0, 128, 0);
+    --luth_te_tag-name-foreground-color: rgb(128, 0, 0);
+    --luth_te_injected-language-fragment-color: rgb(225, 80, 220);
+    --luth_te_injected-language-component-color: rgb(128, 0, 128);
+    --luth_te_associated-key-color: rgb(255, 0, 0);
+    --luth_te_associated-value-color: rgb(0, 0, 255);
+    --luth_te_css-property-name-color: var(--luth_te_associated-key-color);
+    --luth_te_css-property-value-color: var(--luth_te_associated-value-color);
+    --luth_te_css-identifier-color: var(--luth_te_keyword-foreground-color);
+    --luth_te_attribute-name-color: var(--luth_te_associated-key-color);
+    --luth_te_attribute-value-color: var(--luth_te_associated-value-color);
+    --luth_te_json-property-key-color: var(--luth_te_associated-key-color);
+    --luth_te_json-property-value-color: var(--luth_te_associated-value-color);
+    --luth_te_text-editor-gutter-border-color: #28ae0c;
+    --luth_te_text-editor-gutter-background-color: #F8F8EE;
+    --luth_te_secondary-font-color: var(--luth_te_primary-font-color);
+    --luth_te_secondary-background-color: #fefef6;
+    --luth_te_primary-overlay-box-shadow-color: #000000;
+    --luth_te_button-background-color: #b2d1ff;
+    --luth_te_button-foreground-color: var(--luth_te_primary-font-color);
+    --luth_te_button-disabled-background-color: #d7dde6;
+    --luth_te_button-disabled-foreground-color: var(--luth_te_primary-font-color);
+    --luth_te_resize-column-background-color: black;
+    --luth_te_resize-row-background-color: black;
+    --luth_te_dialog-display-background-color: rgb(252, 252, 245);
+    --luth_te_primary-box-shadow-color: #000000;
+    --luth_te_dialog-display-toolbar-background-color: #cad5eb;
+    --luth_te_primary-hover-background-color: #dda133;
+    --bte-primary-outline-color: #ADD6FF;
+    --bte-primary-active-not-focused-background-color: #d9dcdf;
+    --bte-primary-active-focused-background-color: #ADD6FF;
+    --luth_dropdown-display-default-background-color: #e6e6e6;
+    --luth_te_primary-emphasis-foreground-color: #124df9;
+    --luth_te_primary-disabled-background-color: #cfcfcf;
+    --luth_te_primary-disabled-foreground-color: #25180c;
+    --luth_te_primary-disabled-hover-background-color: var(--luth_te_primary-disabled-foreground-color);
+    --luth_te_primary-disabled-hover-foreground-color: var(--luth_te_primary-disabled-background-color);
+    --luth_te_notification-display-background-color: rgb(252, 252, 245);
+    --luth_te_notification-display-toolbar-background-color: rgb(192, 214, 247);
+    --luth_te_active-button-background-color: #d889e8;
+    --luth_te_active-button-primary-font-color: var(--luth_te_primary-font-color);
+    --luth_te_tertiary-background-color: #f3f0dc;
+    --luth_te_tertiary-foreground-color: var(--luth_te_primary-font-color);
+    --luth_te_hr-primary-background-color: currentColor;
+    --luth_te_error-foreground-color: red;
+    --luth_te_scrollbar-opacity: 0.5;
+    --luth_te_scrollbar-background-color: #9090af;
+    --luth_te_scrollbar-opacity-on-hover: 0.8;
+    --luth_te_scrollbar-slider-background-color: black;
+    --btv_outline-color: #33bcec;
+    --btv_active-but-not-focused-background-color: #7f8e93;
+    --btv_context-menu-background-color: red;
+    --btv_context-menu-foreground-color: green;
+    --btv-tree-view-expansion-chevron-color: currentColor;
+    --btv-tree-view-children-border-color: currentColor;
+}
+
+.luth_visual-studio-dark-theme-clone {
+    /*
+        The colors are a close cloning of the
+        Dark Theme found in Visual Studio.
+    */
+    --luth_te_primary-font-color: #DCDCDC;
+    --luth_te_text-editor-cursor-foreground-color: #BBBBBB;
+    --luth_te_text-selection-background-color: #245B82;
+    --luth_te_diff-longest-common-subsequence-background-color: #7e0077;
+    --luth_te_diff-insertion-background-color: green;
+    --luth_te_diff-deletion-background-color: blue;
+    --luth_te_diff-modification-background-color: yellow;
+    --luth_te_semantic-diagnostic-error-background-color: rgb(200, 70, 70);
+    --luth_te_semantic-diagnostic-hint-background-color: #009aab;
+    --luth_te_body-background-color: #1E1E1E;
+    --luth_te_text-editor-caret-row-border-color-no-focus-within-editor: var(--luth_te_text-editor-cursor-foreground-color);
+    --luth_te_text-editor-caret-row-border-color-editor-focus-within: #977400;
+    --luth_te_newline-foreground-color: #4e9a41;
+    --luth_te_newline-background-color: #424242;
+    --luth_te_method-foreground-color: rgb(220, 220, 170);
+    --luth_te_type-foreground-color: rgb(78, 201, 176);
+    --luth_te_variable-foreground-color: rgb(156, 220, 254);
+    --luth_te_string-literal-foreground-color: rgb(206, 145, 120);
+    --luth_te_string-literal-escape-character-foreground-color: rgb(215, 186, 125);
+    --luth_te_keyword-foreground-color: rgb(86, 156, 214);
+    --luth_te_keyword-control-foreground-color: rgb(197, 134, 192);
+    --luth_te_comment-foreground-color: rgb(106, 153, 85);
+    --luth_te_tag-name-foreground-color: rgb(86, 156, 214);
+    --luth_te_injected-language-fragment-color: rgb(197, 134, 192);
+    --luth_te_injected-language-component-color: rgb(0, 150, 150);
+    --luth_te_associated-key-color: var(--luth_te_variable-foreground-color);
+    --luth_te_associated-value-color: var(--luth_te_string-literal-foreground-color);
+    --luth_te_css-property-name-color: var(--luth_te_associated-key-color);
+    --luth_te_css-property-value-color: var(--luth_te_associated-value-color);
+    --luth_te_css-identifier-color: var(--luth_te_keyword-foreground-color);
+    --luth_te_attribute-name-color: var(--luth_te_associated-key-color);
+    --luth_te_attribute-value-color: var(--luth_te_associated-value-color);
+    --luth_te_json-property-key-color: var(--luth_te_associated-key-color);
+    --luth_te_json-property-value-color: var(--luth_te_associated-value-color);
+    --luth_te_text-editor-gutter-border-color: #273840;
+    --luth_te_text-editor-gutter-background-color: rgb(43 41 55);
+    --luth_te_secondary-font-color: #d1d2ca;
+    --luth_te_secondary-background-color: #2d2f34;
+    --luth_te_primary-overlay-box-shadow-color: #ffffff;
+    --luth_te_button-background-color: #1e56a7;
+    --luth_te_button-foreground-color: var(--luth_te_primary-font-color);
+    --luth_te_button-disabled-background-color: #4a5a71;
+    --luth_te_button-disabled-foreground-color: var(--luth_te_primary-font-color);
+    --luth_te_resize-column-background-color: #d7d7d7;
+    --luth_te_resize-row-background-color: #d7d7d7;
+    --luth_te_dialog-display-background-color: #2d2f34;
+    --luth_te_primary-box-shadow-color: #f5f5f5;
+    --luth_te_dialog-display-toolbar-background-color: #071c57;
+    --luth_te_primary-hover-background-color: #956100;
+    --bte-primary-outline-color: #2d498b;
+    --bte-primary-active-not-focused-background-color: #566060;
+    --bte-primary-active-focused-background-color: #2d498b;
+    --luth_dropdown-display-default-background-color: rgb(48, 51, 101);
+    --luth_te_primary-emphasis-foreground-color: #4d8aea;
+    --luth_te_primary-disabled-background-color: #5c5959;
+    --luth_te_primary-disabled-foreground-color: #ba931e;
+    --luth_te_primary-disabled-hover-background-color: var(--luth_te_primary-disabled-foreground-color);
+    --luth_te_primary-disabled-hover-foreground-color: var(--luth_te_primary-disabled-background-color);
+    --luth_te_notification-display-background-color: #2d2f34;
+    --luth_te_notification-display-toolbar-background-color: #071c57;
+    --luth_te_active-button-background-color: #753282;
+    --luth_te_active-button-primary-font-color: var(--luth_te_primary-font-color);
+    --luth_te_tertiary-background-color: var(--luth_te_body-background-color);
+    --luth_te_tertiary-foreground-color: var(--luth_te_primary-font-color);
+    --luth_te_hr-primary-background-color: currentColor;
+    --luth_te_error-foreground-color: #e55d62;
+    --luth_te_scrollbar-opacity: 0.5;
+    --luth_te_scrollbar-background-color: #555566;
+    --luth_te_scrollbar-opacity-on-hover: 0.8;
+    --luth_te_scrollbar-slider-background-color: #ffffff;
+    --btv_outline-color: var(--bte-primary-outline-color);
+    --btv_active-but-not-focused-background-color: var(--bte-primary-active-not-focused-background-color);
+    --btv_context-menu-background-color: red;
+    --btv_context-menu-foreground-color: green;
+    --btv-tree-view-expansion-chevron-color: currentColor;
+    --btv-tree-view-children-border-color: currentColor;
+}
+
+.luth_dark-theme {
+    /*
+        The colors are custom
+        dark themed so the Text Editor has its own theme
+    */
+    --luth_te_primary-font-color: rgb(212, 212, 212);
+    --luth_te_text-editor-cursor-foreground-color: rgb(215, 215, 215);
+    --luth_te_text-selection-background-color: #1E557D;
+    --luth_te_diff-longest-common-subsequence-background-color: #7e0077;
+    --luth_te_diff-insertion-background-color: green;
+    --luth_te_diff-deletion-background-color: blue;
+    --luth_te_diff-modification-background-color: yellow;
+    --luth_te_semantic-diagnostic-error-background-color: rgb(200, 70, 70);
+    --luth_te_semantic-diagnostic-hint-background-color: #009aab;
+    --luth_te_body-background-color: rgb(30, 30, 30);
+    --luth_te_text-editor-caret-row-border-color-no-focus-within-editor: var(--luth_te_text-editor-cursor-foreground-color);
+    --luth_te_text-editor-caret-row-border-color-editor-focus-within: #977400;
+    --luth_te_newline-foreground-color: #4e9a41;
+    --luth_te_newline-background-color: #424242;
+    --luth_te_method-foreground-color: rgb(85, 193, 85);
+    --luth_te_type-foreground-color: rgb(70, 165, 215);
+    --luth_te_variable-foreground-color: rgb(170, 150, 215);
+    --luth_te_string-literal-foreground-color: rgb(190, 190, 60);
+    --luth_te_string-literal-escape-character-foreground-color: rgb(86, 156, 255);
+    --luth_te_keyword-foreground-color: rgb(215, 150, 70);
+    --luth_te_keyword-control-foreground-color: rgb(215, 100, 100);
+    --luth_te_comment-foreground-color: rgb(142, 142, 142);
+    --luth_te_tag-name-foreground-color: var(--luth_te_keyword-foreground-color);
+    --luth_te_injected-language-fragment-color: rgb(215, 107, 179);
+    --luth_te_injected-language-component-color: rgb(0, 150, 150);
+    --luth_te_associated-key-color: rgb(120, 200, 210);
+    --luth_te_associated-value-color: var(--luth_te_string-literal-foreground-color);
+    --luth_te_css-property-name-color: var(--luth_te_associated-key-color);
+    --luth_te_css-property-value-color: var(--luth_te_associated-value-color);
+    --luth_te_css-identifier-color: var(--luth_te_keyword-foreground-color);
+    --luth_te_attribute-name-color: var(--luth_te_associated-key-color);
+    --luth_te_attribute-value-color: var(--luth_te_associated-value-color);
+    --luth_te_json-property-key-color: var(--luth_te_associated-key-color);
+    --luth_te_json-property-value-color: var(--luth_te_associated-value-color);
+    --luth_te_text-editor-gutter-border-color: #273840;
+    --luth_te_text-editor-gutter-background-color: rgb(43 41 55);
+    --luth_te_secondary-font-color: #d1d2ca;
+    --luth_te_secondary-background-color: #2d2f34;
+    --luth_te_primary-overlay-box-shadow-color: #ffffff;
+    --luth_te_button-background-color: #1e56a7;
+    --luth_te_button-foreground-color: var(--luth_te_primary-font-color);
+    --luth_te_button-disabled-background-color: #4a5a71;
+    --luth_te_button-disabled-foreground-color: var(--luth_te_primary-font-color);
+    --luth_te_resize-column-background-color: #d7d7d7;
+    --luth_te_resize-row-background-color: #d7d7d7;
+    --luth_te_dialog-display-background-color: #2d2f34;
+    --luth_te_primary-box-shadow-color: #f5f5f5;
+    --luth_te_dialog-display-toolbar-background-color: #071c57;
+    --luth_te_primary-hover-background-color: #956100;
+    --bte-primary-outline-color: #2d498b;
+    --bte-primary-active-not-focused-background-color: #566060;
+    --bte-primary-active-focused-background-color: #2d498b;
+    --luth_dropdown-display-default-background-color: rgb(48, 51, 101);
+    --luth_te_primary-emphasis-foreground-color: #4d8aea;
+    --luth_te_primary-disabled-background-color: #5c5959;
+    --luth_te_primary-disabled-foreground-color: #ba931e;
+    --luth_te_primary-disabled-hover-background-color: var(--luth_te_primary-disabled-foreground-color);
+    --luth_te_primary-disabled-hover-foreground-color: var(--luth_te_primary-disabled-background-color);
+    --luth_te_notification-display-background-color: #2d2f34;
+    --luth_te_notification-display-toolbar-background-color: #071c57;
+    --luth_te_active-button-background-color: #753282;
+    --luth_te_active-button-primary-font-color: var(--luth_te_primary-font-color);
+    --luth_te_tertiary-background-color: var(--luth_te_body-background-color);
+    --luth_te_tertiary-foreground-color: var(--luth_te_primary-font-color);
+    --luth_te_hr-primary-background-color: currentColor;
+    --luth_te_error-foreground-color: #e55d62;
+    --luth_te_scrollbar-opacity: 0.5;
+    --luth_te_scrollbar-background-color: #555566;
+    --luth_te_scrollbar-opacity-on-hover: 0.8;
+    --luth_te_scrollbar-slider-background-color: #ffffff;
+    --btv_outline-color: var(--bte-primary-outline-color);
+    --btv_active-but-not-focused-background-color: var(--bte-primary-active-not-focused-background-color);
+    --btv_context-menu-background-color: red;
+    --btv_context-menu-foreground-color: green;
+    --btv-tree-view-expansion-chevron-color: currentColor;
+    --btv-tree-view-children-border-color: currentColor;
+}
+
+.luth_light-theme {
+    /*
+       The colors are custom
+       light themed so the Text Editor has its own theme
+   */
+    --luth_te_primary-font-color: rgb(0, 0, 0);
+    --luth_te_text-editor-cursor-foreground-color: rgb(0, 0, 0);
+    --luth_te_text-selection-background-color: rgb(188, 217, 255);
+    --luth_te_diff-longest-common-subsequence-background-color: #ffb3f1;
+    --luth_te_diff-insertion-background-color: green;
+    --luth_te_diff-deletion-background-color: blue;
+    --luth_te_diff-modification-background-color: yellow;
+    --luth_te_semantic-diagnostic-error-background-color: red;
+    --luth_te_semantic-diagnostic-hint-background-color: purple;
+    --luth_te_body-background-color: rgb(255, 255, 255);
+    --luth_te_text-editor-caret-row-border-color-no-focus-within-editor: var(--luth_te_text-editor-cursor-foreground-color);
+    --luth_te_text-editor-caret-row-border-color-editor-focus-within: #28ae0c;
+    --luth_te_newline-foreground-color: #007F00;
+    --luth_te_newline-background-color: #faeee2;
+    --luth_te_method-foreground-color: rgb(0, 128, 0);
+    --luth_te_type-foreground-color: rgb(0, 94, 222);
+    --luth_te_variable-foreground-color: rgb(130, 28, 180);
+    --luth_te_string-literal-foreground-color: rgb(110, 100, 0);
+    --luth_te_string-literal-escape-character-foreground-color: rgb(200, 100, 0);
+    --luth_te_keyword-foreground-color: rgb(190, 80, 0);
+    --luth_te_keyword-control-foreground-color: rgb(220, 0, 0);
+    --luth_te_comment-foreground-color: rgb(105, 105, 105);
+    --luth_te_tag-name-foreground-color: var(--luth_te_keyword-foreground-color);
+    --luth_te_injected-language-fragment-color: rgb(210, 0, 160);
+    --luth_te_injected-language-component-color: rgb(210, 110, 0);
+    --luth_te_associated-key-color: rgb(0, 110, 90);
+    --luth_te_associated-value-color: var(--luth_te_string-literal-foreground-color);
+    --luth_te_css-property-name-color: var(--luth_te_associated-key-color);
+    --luth_te_css-property-value-color: var(--luth_te_associated-value-color);
+    --luth_te_css-identifier-color: var(--luth_te_keyword-foreground-color);
+    --luth_te_attribute-name-color: var(--luth_te_associated-key-color);
+    --luth_te_attribute-value-color: var(--luth_te_associated-value-color);
+    --luth_te_json-property-key-color: var(--luth_te_associated-key-color);
+    --luth_te_json-property-value-color: var(--luth_te_associated-value-color);
+    --luth_te_text-editor-gutter-border-color: #28ae0c;
+    --luth_te_text-editor-gutter-background-color: #F8F8EE;
+    --luth_te_secondary-font-color: var(--luth_te_primary-font-color);
+    --luth_te_secondary-background-color: #fefef6;
+    --luth_te_primary-overlay-box-shadow-color: #000000;
+    --luth_te_button-background-color: #b2d1ff;
+    --luth_te_button-foreground-color: var(--luth_te_primary-font-color);
+    --luth_te_button-disabled-background-color: #d7dde6;
+    --luth_te_button-disabled-foreground-color: var(--luth_te_primary-font-color);
+    --luth_te_resize-column-background-color: black;
+    --luth_te_resize-row-background-color: black;
+    --luth_te_dialog-display-background-color: rgb(252, 252, 245);
+    --luth_te_primary-box-shadow-color: #000000;
+    --luth_te_dialog-display-toolbar-background-color: #cad5eb;
+    --luth_te_primary-hover-background-color: #dda133;
+    --bte-primary-outline-color: #ADD6FF;
+    --bte-primary-active-not-focused-background-color: #d9dcdf;
+    --bte-primary-active-focused-background-color: #ADD6FF;
+    --luth_dropdown-display-default-background-color: #e6e6e6;
+    --luth_te_primary-emphasis-foreground-color: #124df9;
+    --luth_te_primary-disabled-background-color: #cfcfcf;
+    --luth_te_primary-disabled-foreground-color: #25180c;
+    --luth_te_primary-disabled-hover-background-color: var(--luth_te_primary-disabled-foreground-color);
+    --luth_te_primary-disabled-hover-foreground-color: var(--luth_te_primary-disabled-background-color);
+    --luth_te_notification-display-background-color: rgb(252, 252, 245);
+    --luth_te_notification-display-toolbar-background-color: rgb(192, 214, 247);
+    --luth_te_active-button-background-color: #d889e8;
+    --luth_te_active-button-primary-font-color: var(--luth_te_primary-font-color);
+    --luth_te_tertiary-background-color: #f3f0dc;
+    --luth_te_tertiary-foreground-color: var(--luth_te_primary-font-color);
+    --luth_te_hr-primary-background-color: currentColor;
+    --luth_te_error-foreground-color: red;
+    --luth_te_scrollbar-opacity: 0.5;
+    --luth_te_scrollbar-background-color: #9090af;
+    --luth_te_scrollbar-opacity-on-hover: 0.8;
+    --luth_te_scrollbar-slider-background-color: black;
+    --btv_outline-color: #33bcec;
+    --btv_active-but-not-focused-background-color: #7f8e93;
+    --btv_context-menu-background-color: red;
+    --btv_context-menu-foreground-color: green;
+    --btv-tree-view-expansion-chevron-color: currentColor;
+    --btv-tree-view-children-border-color: currentColor;
+}
