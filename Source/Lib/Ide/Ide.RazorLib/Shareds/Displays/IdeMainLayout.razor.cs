@@ -11,6 +11,7 @@ using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.ProgramExecutions.States;
 using Luthetus.TextEditor.RazorLib;
 using Microsoft.AspNetCore.Components;
+using System.Runtime.InteropServices;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -84,9 +85,15 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             string personalTestPath;
 
 #if DEBUG
-            personalTestPath = "C:\\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg.sln";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                personalTestPath = "/home/hunter/Repos/BlazorCrudApp/BlazorCrudApp.sln";
+            else
+                personalTestPath = "C:\\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg.sln";
 #else
-            personalTestPath = "C:\\Users\\hunte\\Repos\\Luthetus.Ide_Fork\\Luthetus.Ide.sln";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                personalTestPath = "/home/hunter/Repos/Luthetus.Ide_Fork/Luthetus.Ide.sln";
+            else
+                personalTestPath = "C:\\Users\\hunte\\Repos\\Luthetus.Ide_Fork\\Luthetus.Ide.sln";
 #endif
 
             if (await FileSystemProvider.File.ExistsAsync(personalTestPath))
@@ -98,9 +105,16 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 DotNetSolutionSync.SetDotNetSolution(absolutePath);
 
 #if DEBUG
+                string personalProjectPath;
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    personalProjectPath = "/home/hunter/Repos/BlazorCrudApp/BlazorCrudApp.ServerSide/BlazorCrudApp.ServerSide.csproj";
+                else
+                    personalProjectPath = "C:\\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg.csproj";
+
                 Dispatcher.Dispatch(new ProgramExecutionState.SetStartupProjectAbsolutePathAction(
                     EnvironmentProvider.AbsolutePathFactory(
-                        "C:\\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg.csproj",
+                        personalProjectPath,
                         false)));
 #endif
             }
