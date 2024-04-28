@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Product>Luthetus Compiler Service Razor</Product>
+    <Description>A Razor implementation of the ICompilerService interface, which comes from the "Luthetus.TextEditor" repository.</Description>
+    <PackageId>Luthetus.CompilerServices.Razor</PackageId>
+    <Version>1.5.0</Version>
+    <Authors>Hunter Freeman</Authors>
+    <Company />
+    <PackageTags>DotNet CSharp Blazor RazorComponents</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TextEditor\Luthetus.TextEditor.RazorLib.csproj" />
+    <ProjectReference Include="..\CSharp\Luthetus.CompilerServices.Lang.CSharp.csproj" />
+    <ProjectReference Include="..\Xml\Luthetus.CompilerServices.Lang.Xml.csproj" />
+  </ItemGroup>
+
+</Project>

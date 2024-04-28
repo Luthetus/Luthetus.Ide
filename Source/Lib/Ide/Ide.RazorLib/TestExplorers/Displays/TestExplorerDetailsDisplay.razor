@@ -1,0 +1,30 @@
+@using Luthetus.Ide.RazorLib.TreeViewImplementations.Models
+@using Luthetus.Ide.RazorLib.Terminals.Models;
+@using Luthetus.Ide.RazorLib.Terminals.Displays;
+
+<div class="luth_ide_test-explorer-details"
+	 style="@ElementDimensions.StyleString">
+
+	@{ var activeNode = RenderBatch.TreeViewContainer.ActiveNode; }
+
+	<div style="height: 100%;">
+		@if (activeNode is TreeViewStringFragment treeViewStringFragment)
+		{
+			<TerminalDisplay TerminalKey="TerminalFacts.EXECUTION_TERMINAL_KEY"
+						     TerminalCommandKey="@treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey"/>
+		}
+		else if (activeNode is TreeViewProjectTestModel treeViewProjectTestModel)
+		{
+			<TerminalDisplay TerminalKey="TerminalFacts.EXECUTION_TERMINAL_KEY"
+						     TerminalCommandKey="@treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey"/>
+		}
+		else if (activeNode is not null)
+		{
+			<text>@(activeNode.GetType().Name)</text>
+		}
+		else
+		{
+			<text>activeNode is null</text>
+		}
+	</div>
+</div>

@@ -1,0 +1,42 @@
+﻿@using Luthetus.TextEditor.RazorLib.Cursors.Models;
+@using Luthetus.TextEditor.RazorLib.Lexes.Models
+
+<div class="luth_te_text-selection-group">
+    @if (TextEditorSelectionHelper.HasSelectedText(PrimaryCursor.Selection))
+    {
+        var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
+            PrimaryCursor.Selection);
+
+        var selectionBoundsInRowIndexUnits = GetSelectionBoundsInRowIndexUnits(selectionBoundsInPositionIndexUnits);
+
+        var virtualLowerBoundInclusiveRowIndex = RenderBatch.ViewModel!.VirtualizationResult.EntryList.First().Index;
+        var virtualUpperBoundExclusiveRowIndex = 1 + RenderBatch.ViewModel.VirtualizationResult.EntryList.Last().Index;
+
+        int useLowerBoundInclusiveRowIndex = virtualLowerBoundInclusiveRowIndex >= selectionBoundsInRowIndexUnits.lowerRowIndexInclusive
+            ? virtualLowerBoundInclusiveRowIndex
+            : selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
+            
+        int useUpperBoundExclusiveRowIndex = virtualUpperBoundExclusiveRowIndex <= selectionBoundsInRowIndexUnits.upperRowIndexExclusive
+            ? virtualUpperBoundExclusiveRowIndex
+            : selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
+
+        for (var badIndex = useLowerBoundInclusiveRowIndex; badIndex < useUpperBoundExclusiveRowIndex; badIndex++)
+        {
+            var rowIndex = badIndex;
+            var textSelectionStyleCss = string.Empty;
+
+            if (RenderBatch.Options!.UseMonospaceOptimizations)
+            {
+                textSelectionStyleCss = GetTextSelectionStyleCss(
+                    selectionBoundsInPositionIndexUnits.lowerPositionIndexInclusive,
+                    selectionBoundsInPositionIndexUnits.upperPositionIndexExclusive,
+                    rowIndex);
+            }
+            
+            <TextSelectionRow TextSelectionStyleCss="@textSelectionStyleCss"
+                              LowerPositionIndexInclusive="selectionBoundsInPositionIndexUnits.lowerPositionIndexInclusive"
+                              UpperPositionIndexExclusive="selectionBoundsInPositionIndexUnits.upperPositionIndexExclusive"
+                              RowIndex="rowIndex"/>
+        }
+    }
+</div>

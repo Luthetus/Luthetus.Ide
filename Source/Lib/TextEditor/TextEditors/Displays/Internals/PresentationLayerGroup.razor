@@ -1,0 +1,53 @@
+﻿@using Luthetus.TextEditor.RazorLib.Decorations.Models;
+@using Luthetus.TextEditor.RazorLib.Lexes.Models;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+@using System.Collections.Immutable;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+
+<div class="@CssClassString">
+
+    @{
+        var presentationModelsList = GetTextEditorPresentationModels();
+
+        var presentationLayerOrderedByRankAscending = presentationModelsList.OrderBy(x => x.Rank).ToList();
+    }
+
+    @foreach (var presentationLayer in presentationLayerOrderedByRankAscending)
+    {
+        var completedCalculation = presentationLayer.CompletedCalculation;
+
+        var textSpansList = completedCalculation?.TextSpanList
+            ?? Array.Empty<TextEditorTextSpan>().ToImmutableArray();
+
+        var textModificationList = completedCalculation?.TextModificationsSinceRequestList.ToArray()
+            ?? Array.Empty<TextEditorTextModification>();
+
+        @if (completedCalculation is not null)
+        {
+            textSpansList = VirtualizeAndShiftTextSpans(textModificationList, completedCalculation.TextSpanList);
+
+            <div class="@presentationLayer.CssClassString">
+                @foreach (var textSpan in textSpansList)
+                {
+                    var boundsInPositionIndexUnits = (textSpan.StartingIndexInclusive, textSpan.EndingIndexExclusive);
+
+                    var boundsInRowIndexUnits = GetBoundsInRowIndexUnits(RenderBatch.Model!, boundsInPositionIndexUnits);
+
+                    for (var i = boundsInRowIndexUnits.FirstRowToSelectDataInclusive;
+                         i < boundsInRowIndexUnits.LastRowToSelectDataExclusive;
+                         i++)
+                    {
+                        var rowIndex = i;
+
+                        <div class="@GetCssClass(presentationLayer, textSpan.DecorationByte)"
+                             style="@GetPresentationCssStyleString(
+                                    boundsInPositionIndexUnits.StartingIndexInclusive,
+                                    boundsInPositionIndexUnits.EndingIndexExclusive,
+                                    rowIndex)">
+                        </div>
+                    }
+                }
+            </div>
+        }
+    }
+</div>

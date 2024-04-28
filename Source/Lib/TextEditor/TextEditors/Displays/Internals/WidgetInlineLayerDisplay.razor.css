@@ -1,0 +1,5 @@
+.luth_te_widget-layer {
+    position: absolute;
+    background-color: red;
+    z-index: 1;
+}

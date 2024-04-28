@@ -1,0 +1,53 @@
+﻿@using Luthetus.Common.RazorLib.Keys.Models;
+@using Luthetus.Common.RazorLib.TreeViews.Models;
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@{
+    var treeViewContainer = TreeViewStateSelection.Value;
+
+    <div id="@TreeViewService.GetTreeViewContainerElementId(treeViewContainer?.Key ?? Key<TreeViewContainer>.Empty)"
+         class="luth_tree-view-state luth_unselectable @GetHasActiveNodeCssClass(treeViewContainer) @CssClassString"
+         style="@CssStyleString"
+         tabindex="0"
+         @ref="_treeViewStateDisplayElementReference"
+         @onkeydownwithpreventscroll="(e) => HandleTreeViewOnKeyDownWithPreventScroll(e, treeViewContainer)"
+         @oncontextmenu:preventDefault="true"
+         @oncontextmenu:stopPropagation="true"
+         @oncontextmenu="(e) => HandleTreeViewOnContextMenu(e, treeViewContainer?.Key ?? Key<TreeViewContainer>.Empty, null)">
+
+        @if (treeViewContainer is null)
+        {
+            <div>@nameof(treeViewContainer) was null</div>
+        }
+        else
+        {
+            <CascadingValue Value="treeViewContainer">
+                <CascadingValue Name="@nameof(TreeViewNodeDisplay.TreeViewMouseEventHandler)" Value="TreeViewMouseEventHandler">
+                    <CascadingValue Name="@nameof(TreeViewNodeDisplay.TreeViewKeyboardEventHandler)" Value="TreeViewKeyboardEventHandler">
+                        <CascadingValue Name="@nameof(TreeViewNodeDisplay.HandleTreeViewOnContextMenu)" Value="HandleTreeViewOnContextMenu">
+                            <TreeViewNodeDisplay TreeViewNoType="treeViewContainer.RootNode"
+                                                 Depth="GetRootDepth(treeViewContainer.RootNode)"/>
+                        </CascadingValue>
+                    </CascadingValue>
+                </CascadingValue>
+            </CascadingValue>
+        }
+    </div>
+}
+
+@if (OnContextMenuRenderFragment is not null &&
+     _treeViewContextMenuCommandArgs is not null)
+{
+    <div class="luth_context-menu luth_set-selectable"
+         style="@ContextMenuCssStyleString"
+         @oncontextmenu:stopPropagation="true"
+         @onmousedown:stopPropagation="true"
+         @onclick:stopPropagation="true"
+         @ondblclick:stopPropagation="true"
+         @onkeydown:stopPropagation="true"
+         @onkeydownwithpreventscroll:stopPropagation="true">
+
+        @OnContextMenuRenderFragment(_treeViewContextMenuCommandArgs)
+    </div>
+}

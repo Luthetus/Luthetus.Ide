@@ -1,0 +1,462 @@
+﻿.luth_te_button:hover {
+    background-color: var(--luth_button-hover-background-color);
+    box-shadow: 0 0 2px var(--luth_primary-overlay-box-shadow-color);
+}
+
+.luth_te_button:focus {
+    background-color: var(--luth_button-hover-background-color);
+    box-shadow: 0 0 2px var(--luth_primary-overlay-box-shadow-color);
+}
+
+.luth_te_button:disabled {
+    color: var(--luth_button-disabled-foreground-color);
+    background-color: var(--luth_button-disabled-background-color);
+}
+
+.luth_te_button:disabled {
+    color: var(--luth_button-disabled-foreground-color);
+    background-color: var(--luth_button-disabled-background-color);
+}
+
+.luth_te_button:disabled:hover {
+    color: var(--luth_button-disabled-foreground-color);
+    background-color: var(--luth_button-disabled-hover-background-color);
+    box-shadow: 0 0 2px var(--luth_primary-overlay-box-shadow-color);
+}
+
+.luth_te_button:disabled:focus {
+    color: var(--luth_button-disabled-foreground-color);
+    background-color: var(--luth_button-disabled-hover-background-color);
+    box-shadow: 0 0 2px var(--luth_primary-overlay-box-shadow-color);
+}
+
+.luth_button {
+    color: var(--luth_button-foreground-color);
+}
+
+.luth_button:focus {
+    background-color: var(--luth_button-hover-background-color);
+    box-shadow: 0 0 2px var(--luth_primary-overlay-box-shadow-color);
+}
+
+.luth_button.luth_active {
+    background-color: var(--luth_toggled-on-background-color);
+    box-shadow: 0 0 2px var(--luth_primary-overlay-box-shadow-color);
+}
+
+.luth_button.luth_active:hover {
+    background-color: var(--luth_toggled-on-hover-background-color);
+    box-shadow: 0 0 2px var(--luth_primary-overlay-box-shadow-color);
+}
+
+.luth_button.luth_active:focus {
+    background-color: var(--luth_toggled-on-hover-background-color);
+    box-shadow: 0 0 2px var(--luth_primary-overlay-box-shadow-color);
+}
+
+.luth_button.luth_button-close {
+    background-color: var(--luth_danger-general-use-color);
+    margin-left: 10px;
+}
+
+.luth_button.luth_button-close:hover {
+    background-color: var(--luth_danger-hover-background-color);
+    box-shadow: 0 0 2px var(--luth_primary-overlay-box-shadow-color);
+}
+
+.luth_button.luth_button-close:focus {
+    background-color: var(--luth_danger-hover-background-color);
+    box-shadow: 0 0 2px var(--luth_primary-overlay-box-shadow-color);
+}
+
+.luth_button {
+    background-color: var(--luth_button-background-color);
+    color: var(--luth_button-foreground-color);
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.luth_button:hover {
+    background-color: var(--luth_button-hover-background-color);
+}
+
+.luth_button:focus {
+    outline: solid var(--luth_menu-option-display-focus-outline-size) var(--luth_primary-emphasis-foreground-color);
+    background-color: var(--luth_button-hover-background-color);
+}
+
+.luth_button.luth_active {
+    background-color: var(--luth_active-button-background-color);
+    color: var(--luth_active-button-primary-font-color);
+}
+
+.luth_button:disabled {
+    background-color: var(--luth_primary-disabled-background-color);
+    color: var(--luth_primary-disabled-foreground-color);
+}
+
+.luth_button:disabled:hover {
+    background-color: var(--luth_primary-disabled-hover-background-color);
+    color: var(--luth_primary-disabled-hover-foreground-color);
+}
+
+.luth_button:disabled:focus {
+    background-color: var(--luth_primary-disabled-hover-background-color);
+    color: var(--luth_primary-disabled-hover-foreground-color);
+}
+
+.luth_tab:not(:first-of-type) {
+    border-left: 2px solid var(--luth_primary-border-color);
+}
+
+.luth_link {
+    color: var(--luth_link-foreground-color);
+    text-decoration: none;
+}
+
+.luth_link:hover {
+    color: var(--luth_link-hover-foreground-color);
+    box-shadow: 0 0 2px var(--luth_primary-overlay-box-shadow-color);
+}
+
+.luth_link:focus {
+    color: var(--luth_link-hover-foreground-color);
+    box-shadow: 0 0 2px var(--luth_primary-overlay-box-shadow-color);
+}
+
+em.luth_em {
+    color: var(--luth_primary-emphasis-foreground-color);
+    font-style: normal;
+}
+
+.luth_primary {
+    background-color: var(--luth_primary-general-use-color);
+}
+
+.luth_secondary {
+    background-color: var(--luth_secondary-general-use-color);
+}
+
+.luth_success {
+    background-color: var(--luth_success-general-use-color);
+}
+
+.luth_info {
+    background-color: var(--luth_info-general-use-color);
+}
+
+.luth_warning {
+    background-color: var(--luth_warning-general-use-color);
+}
+
+.luth_danger {
+    background-color: var(--luth_danger-general-use-color);
+}
+
+.luth_primary:hover {
+    background-color: var(--luth_primary-hover-background-color);
+}
+
+.luth_secondary:hover {
+    background-color: var(--luth_secondary-hover-background-color);
+}
+
+.luth_success:hover {
+    background-color: var(--luth_success-hover-background-color);
+}
+
+.luth_info:hover {
+    background-color: var(--luth_info-hover-background-color);
+}
+
+.luth_warning:hover {
+    background-color: var(--luth_warning-hover-background-color);
+}
+
+.luth_danger:hover {
+    background-color: var(--luth_danger-general-use-color);
+}
+
+.luth_tree-view-exception {
+    color: var(--luth_error-foreground-color)
+}
+
+.luth_tree-view-warning {
+    color: var(--luth_warning-foreground-color)
+}
+
+.luth_context-menu-content {
+    z-index: var(--luth_dropdown-display-z-index);
+    position: absolute;
+    min-width: 100%;
+    min-height: 100%;
+    color: var(--luth_primary-font-color);
+}
+
+.luth_context-menu {
+    position: fixed;
+    min-width: 15ch;
+    min-height:6em;
+}
+
+.luth_unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.luth_set-selectable {
+    /* 
+        "luth_set-selectable" is for child elements of 
+        a "luth_unselectable" where the child needs to
+        re-enable selectable when the parent turned it off.
+    */
+
+    -webkit-touch-callout: default;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    -o-user-select: text;
+    user-select: text;
+}
+
+ul.luth_indent-child-content {
+    padding-left: 20px;
+}
+
+.luth_resize-handle-north {
+    cursor: n-resize;
+}
+
+.luth_resize-handle-east {
+    cursor: e-resize;
+}
+
+.luth_resize-handle-south {
+    cursor: s-resize;
+}
+
+.luth_resize-handle-west {
+    cursor: w-resize;
+}
+
+.luth_resize-handle-north-east {
+    cursor: ne-resize;
+}
+
+.luth_resize-handle-south-east {
+    cursor: se-resize;
+}
+
+.luth_resize-handle-south-west {
+    cursor: sw-resize;
+}
+
+.luth_resize-handle-north-west {
+    cursor: nw-resize;
+}
+
+:root {
+    /* Sizes Common */
+    --luth_tabs-bar-height: 2.6rem;
+    --luth_tabs-bar-margin-bottom: 10px;
+    --luth_hr-height: 1.5px;
+    --luth_hr-margin: 5px 0;
+    --luth_hr-opacity: 0.7;
+    --luth_tree-view-display-focus-outline-size: 10px;
+    --luth_tree-view-display-focus-outline-offset: -5px;
+    --luth_dialog-display-toolbar-height: 2rem;
+    --luth_dialog-display-z-index: 10;
+    --luth_dialog-display-active-z-index: 11;
+    --luth_dialog-display-box-shadow-blur-radius: 2px;
+    --luth_dialog-display-button-entry-margin-right: 5px;
+    --luth_dialog-display-button-entry-padding: 3px;
+    --luth_dialog-display-toolbar-padding: 0 7px;
+    --luth_dialog-display-body-padding: 0 7px;
+    --luth_dropdown-display-z-index: 20;
+    --luth_dropdown-display-default-background-box-shadow-blur-radius: 2px;
+    --luth_drag-initializer-z-index: 30;
+    --luth_menu-display-focus-outline-size: 2px;
+    --luth_menu-option-display-padding-width: 10px;
+    --luth_menu-option-display-focus-outline-size: 2px;
+    --luth_notification-display-z-index: 15;
+    --luth_notification-display-box-shadow-blur-radius: 2px;
+    --luth_notification-display-toolbar-height: 2rem;
+    --luth_notification-button-entry-margin-right: 5px;
+    --luth_notification-button-entry-padding: 3px;
+    --luth_notification-toolbar-padding: 0 3px;
+    --luth_notification-body-padding: 0 3px;
+}
+
+/* Theme CSS */
+
+:root {
+    /* Colors (dark-theme) */
+
+    --luth_primary-foreground-color: rgb(220, 220, 220);
+    --luth_primary-background-color: #201c1c;
+    --luth_secondary-foreground-color: rgb(220, 220, 220);
+    --luth_secondary-background-color: #2d2d2d;
+    --luth_tertiary-foreground-color: rgb(220, 220, 220);
+    --luth_tertiary-background-color: #403c3c;
+    --luth_primary-general-use-color: blue;
+    --luth_secondary-general-use-color: gray;
+    --luth_success-general-use-color: green;
+    --luth_info-general-use-color: #58bebe;
+    --luth_warning-general-use-color: yellow;
+    --luth_secondary-hover-background-color: #aca2a2;
+    --luth_success-hover-background-color: #86d686;
+    --luth_info-hover-background-color: #65dede;
+    --luth_warning-hover-background-color: #d6d698;
+    --luth_outline-with-focus-color: #0646b4;
+    --luth_outline-no-focus-color: #cec3c3;
+    --luth_active-with-focus-background-color: #415d90;
+    --luth_active-no-focus-background-color: #5c5757;
+    --luth_primary-font-color: #d2d2d2;
+    --luth_primary-border-color: #d7d7d7;
+    --luth_dialog-toolbar-foreground-color: var(--luth_primary-foreground-color);
+    --luth_dialog-toolbar-background-color: #071c57;
+    --luth_dialog-display-background-color: #2d2f34;
+    --luth_primary-box-shadow-color: #f5f5f5;
+    --balc-primary-outline-color: #2d498b;
+    --balc-primary-active-not-focused-background-color: #566060;
+    --balc-primary-active-focused-background-color: #2d498b;
+    --luth_dropdown-display-default-background-color: rgb(48, 51, 101);
+    --luth_primary-emphasis-foreground-color: #4d8aea;
+    --luth_primary-disabled-background-color: #5c5959;
+    --luth_primary-disabled-foreground-color: #ba931e;
+    --luth_primary-disabled-hover-background-color: #8f7015;
+    --luth_primary-disabled-hover-foreground-color: #e6e6e6;
+    --luth_notification-display-background-color: #2d2f34;
+    --luth_notification-display-toolbar-background-color: #071c57;
+    --luth_error-background-color: #5a0404;
+    --luth_active-button-background-color: #753282;
+    --luth_active-button-primary-font-color: var(--luth_primary-font-color);
+    --luth_hr-primary-background-color: currentColor;
+    --luth_error-foreground-color: #e55d62;
+    --luth_warning-foreground-color: #c0c03c;
+    --luth_outline-color: var(--balc-primary-outline-color);
+    --luth_active-but-not-focused-background-color: var(--balc-primary-active-not-focused-background-color);
+    --luth_context-menu-background-color: red;
+    --luth_context-menu-foreground-color: green;
+    --luth_resize-column-background-color: #d7d7d7;
+    --luth_resize-row-background-color: #d7d7d7;
+    --luth_icon-solution-font-color: #a074c4;
+    --luth_icon-dot-net-solution-folder-font-color: #5c7feb;
+    --luth_icon-project-font-color: #88d184;
+    --luth_icon-razor-font-color: #c586c0;
+    --luth_icon-folder-font-color: #d7ab69;
+    --luth_icon-json-font-color: #cbc638;
+    --luth_icon-c-sharp-class-font-color: #519aba;
+    --luth_icon-cshtml-font-color: #c586c0;
+    --luth_icon-css-font-color: #e36a6e;
+    --luth_icon-js-font-color: #519aba;
+    --luth_icon-ts-font-color: #37b38b;
+    --luth_icon-start-without-debugging-font-color: #37b38b;
+    --luth_icon-start-with-debugging-font-color: #37b38b;
+    --luth_toggled-on-background-color: #7f0eb8;
+    --luth_toggled-on-hover-background-color: #bb56ac;
+    --luth_danger-general-use-color: #b35252;
+    --luth_danger-hover-background-color: #ef4949;
+    --luth_button-foreground-color: #DCDCDC;
+    --luth_button-background-color: #1e56a7;
+    --luth_button-hover-background-color: #8e5a15;
+    --luth_primary-overlay-box-shadow-color: #ffffff;
+    --luth_button-disabled-foreground-color: #DCDCDC;
+    --luth_button-disabled-background-color: #4a5a71;
+    --luth_button-disabled-hover-background-color: #97a3b4;
+    --luth_primary-hover-background-color: #2d568b;
+    --luth_link-foreground-color: #1778e1;
+    --luth_link-hover-foreground-color: #e49021;
+    --luth_tree-view-expansion-chevron-color: currentColor;
+    --luth_tree-view-children-border-color: currentColor;
+    --luth_ide_context-boundary-overlay-background-color: var(--luth_active-with-focus-background-color);
+}
+
+.luth_visual-studio-light-theme-clone {
+    /* Colors (light-theme) */
+
+    --luth_primary-foreground-color: black;
+    --luth_primary-background-color: rgb(253, 253, 253);
+    --luth_secondary-foreground-color: black;
+    --luth_secondary-background-color: rgb(250 250 244);
+    --luth_tertiary-foreground-color: black;
+    --luth_tertiary-background-color: #f0ebd2;
+    --luth_primary-general-use-color: blue;
+    --luth_secondary-general-use-color: gray;
+    --luth_success-general-use-color: green;
+    --luth_info-general-use-color: #58bebe;
+    --luth_warning-general-use-color: yellow;
+    --luth_primary-hover-background-color: #afd3f4;
+    --luth_secondary-hover-background-color: #aca2a2;
+    --luth_success-hover-background-color: #86d686;
+    --luth_info-hover-background-color: #65dede;
+    --luth_warning-hover-background-color: #d6d698;
+    --luth_danger-hover-background-color: #d96b6b;
+    --luth_outline-with-focus-color: #0064ff;
+    --luth_outline-no-focus-color: #2a2727;
+    --luth_active-with-focus-background-color: #ADD6FF;
+    --luth_active-no-focus-background-color: #c8c8c8;
+    --luth_primary-font-color: black;
+    --luth_primary-border-color: black;
+    --luth_dialog-toolbar-foreground-color: var(--luth_primary-foreground-color);
+    --luth_dialog-toolbar-background-color: #aac1ee;
+    --luth_dialog-display-background-color: rgb(252, 252, 245);
+    --luth_primary-box-shadow-color: #000000;
+    --balc-primary-outline-color: #ADD6FF;
+    --luth_dropdown-display-default-background-color: #e6e6e6;
+    --luth_primary-emphasis-foreground-color: #124df9;
+    --luth_primary-disabled-background-color: #cfcfcf;
+    --luth_primary-disabled-foreground-color: #25180c;
+    --luth_primary-disabled-hover-background-color: var(--luth_primary-disabled-foreground-color);
+    --luth_primary-disabled-hover-foreground-color: var(--luth_primary-disabled-background-color);
+    --luth_notification-display-background-color: rgb(252, 252, 245);
+    --luth_notification-display-toolbar-background-color: rgb(192, 214, 247);
+    --luth_error-background-color: rgb(253, 172, 183);
+    --luth_active-button-background-color: #d889e8;
+    --luth_active-button-primary-font-color: var(--luth_primary-font-color);
+    --luth_hr-primary-background-color: currentColor;
+    --luth_error-foreground-color: red;
+    --luth_warning-foreground-color: #8f00d7;
+    --luth_outline-color: #33bcec;
+    --luth_active-but-not-focused-background-color: #7f8e93;
+    --luth_context-menu-background-color: red;
+    --luth_context-menu-foreground-color: green;
+    --luth_resize-column-background-color: black;
+    --luth_resize-row-background-color: black;
+    --luth_icon-solution-font-color: #8f38d6;
+    --luth_icon-dot-net-solution-folder-font-color: #252ff1;
+    --luth_icon-project-font-color: rgb(0, 150, 0);
+    --luth_icon-razor-font-color: #c509db;
+    --luth_icon-folder-font-color: #a46d00;
+    --luth_icon-json-font-color: #beb106;
+    --luth_icon-c-sharp-class-font-color: #2B91AF;
+    --luth_icon-cshtml-font-color: #c509db;
+    --luth_icon-css-font-color: #de4b50;
+    --luth_icon-js-font-color: #519aba;
+    --luth_icon-ts-font-color: #37b38b;
+    --luth_icon-start-without-debugging-font-color: #37b38b;
+    --luth_icon-start-with-debugging-font-color: #37b38b;
+    --luth_toggled-on-background-color: #c4eaff;
+    --luth_toggled-on-hover-background-color: #67e4ff;
+    --luth_danger-general-use-color: #ff8484;
+    --luth_button-foreground-color: rgb(240, 240, 240);
+    --luth_button-background-color: #0b30c7;
+    --luth_button-hover-background-color: #c98800;
+    --luth_primary-overlay-box-shadow-color: #000000;
+    --luth_button-disabled-foreground-color: #000000;
+    --luth_button-disabled-background-color: #d7dde6;
+    --luth_button-disabled-hover-background-color: #eceff7;
+    --luth_link-foreground-color: red;
+    --luth_link-hover-foreground-color: red;
+    --luth_tree-view-expansion-chevron-color: currentColor;
+    --luth_tree-view-children-border-color: currentColor;
+    --luth_ide_context-boundary-overlay-background-color: var(--luth_active-with-focus-background-color);
+}

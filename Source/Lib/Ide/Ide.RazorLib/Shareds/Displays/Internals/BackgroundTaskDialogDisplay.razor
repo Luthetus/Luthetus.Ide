@@ -1,0 +1,32 @@
+﻿@{
+    var countShown = BackgroundTaskDialogModel.CountTracked;
+    var seenBackgroundTasks = BackgroundTaskDialogModel.SeenBackgroundTasks.TakeLast(countShown).Reverse().ToArray();
+}
+
+<div class="luth_ide_background-task">
+    <div>only showing the most recent @countShown</div>
+    <div>The most recent entry is the first entry rendered, the last entry is the oldest entry relative to the set which was rendered.</div>
+    
+    <hr />
+    @BackgroundTaskDialogModel.SeenBackgroundTasks.Count
+    <div>
+        @for (var i = 0; i < seenBackgroundTasks.Length; i++)
+        {
+            var index = i;
+            var backgroundTask = seenBackgroundTasks[index];
+
+            if (backgroundTask.Name.StartsWith("te_"))
+            {
+                <div class="luth_te_keyword" title="@backgroundTask.BackgroundTaskKey.Guid">
+                    @backgroundTask.Name
+                </div>
+            }
+            else
+            {
+                <div title="@backgroundTask.BackgroundTaskKey.Guid">
+                    @backgroundTask.Name
+                </div>
+            }
+        }
+    </div>
+</div>

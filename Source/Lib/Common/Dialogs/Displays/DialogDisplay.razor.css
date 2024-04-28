@@ -1,0 +1,56 @@
+﻿.luth_dialog-display {
+    z-index: var(--luth_dialog-display-z-index);
+    color: var(--luth_secondary-foreground-color);
+    background-color: var(--luth_secondary-background-color);
+    box-shadow: 0 0 var(--luth_dialog-display-box-shadow-blur-radius) var(--luth_primary-box-shadow-color);
+}
+
+    .luth_dialog-display:focus {
+        outline: 5px solid var(--luth_toggled-on-hover-background-color);
+    }
+
+.luth_dialog-display.luth_active {
+    z-index: var(--luth_dialog-display-active-z-index);
+}
+
+.luth_dialog-display-toolbar {
+    height: var(--luth_dialog-display-toolbar-height);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--luth_dialog-toolbar-foreground-color);
+    background-color: var(--luth_dialog-toolbar-background-color);
+    cursor: default;
+    padding: var(--luth_dialog-display-toolbar-padding);
+}
+
+.luth_dialog-display-title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.luth_error .luth_dialog-display-toolbar {
+    background-color: var(--luth_error-background-color);
+}
+
+.luth_dialog-display-buttons {
+    display: flex;
+    align-items: center;
+}
+
+.luth_dialog-display-button-entry {
+    padding: var(--luth_dialog-display-button-entry-padding);
+    display: inline-flex;
+    height: fit-content;
+}
+
+.luth_dialog-display-button-entry:not(:last-of-type) {
+    margin-right: var(--luth_dialog-display-button-entry-margin-right);
+}
+
+.luth_dialog-display-body {
+    height: calc(100% - var(--luth_dialog-display-toolbar-height));
+    overflow: auto;
+    padding: var(--luth_dialog-display-body-padding);
+}

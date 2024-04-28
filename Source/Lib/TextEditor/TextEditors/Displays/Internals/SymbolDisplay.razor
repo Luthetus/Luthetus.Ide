@@ -1,0 +1,127 @@
+﻿<div class="luth_te_symbol">
+    @switch (Symbol.SymbolKindString)
+    {
+        case "TypeSymbol":
+            <text>
+                <span class="luth_te_keyword">
+                    type
+                </span>
+                
+                <span class="luth_te_type">
+                    @Symbol.TextSpan.GetText()
+                </span>
+            </text>
+            break;
+        case "ConstructorSymbol":
+            <text>
+                <span class="luth_te_keyword">
+                    constructor
+                </span>
+
+                <span class="luth_te_type">
+                    @Symbol.TextSpan.GetText()
+                </span>
+            </text>
+            break;
+        case "FunctionSymbol":
+            <text>
+                <span class="luth_te_keyword">
+                    function
+                </span>
+
+                <span class="luth_te_method">
+                    @Symbol.TextSpan.GetText()
+                </span>
+            </text>
+            break;
+        case "VariableSymbol":
+            <text>
+                <span class="luth_te_keyword">
+                    variable
+                </span>
+
+                <span class="luth_te_variable">
+                    @Symbol.TextSpan.GetText()
+                </span>
+            </text>
+            break;
+        case "FieldSymbol":
+            <text>
+                <span class="luth_te_keyword">
+                    field
+                </span>
+
+                <span class="@(string.Empty /* Fields do not have their own css class as of (2023-07-20) */)">
+                    @Symbol.TextSpan.GetText()
+                </span>
+            </text>
+            break;
+        case "PropertySymbol":
+            <text>
+                <span class="luth_te_keyword">
+                    property
+                </span>
+
+                <span class="@(string.Empty /* Properties do not have their own css class as of (2023-07-20) */)">
+                    @Symbol.TextSpan.GetText()
+                </span>
+            </text>
+            break;
+        case "StringInterpolationSymbol":
+            <text>
+                <span class="luth_te_keyword">
+                    string-interpolation
+                </span>
+
+                <span class="luth_te_string-literal">
+                    @Symbol.TextSpan.GetText()
+                </span>
+            </text>
+            break;
+        case "NamespaceSymbol":
+            <text>
+                <span class="luth_te_keyword">
+                    namespace
+                </span>
+
+                <span class="@(string.Empty /* Namespaces do not have their own css class as of (2023-07-20) */)">
+                    @Symbol.TextSpan.GetText()
+                </span>
+            </text>
+            break;
+        case "InjectedLanguageComponentSymbol":
+            <text>
+                <span class="luth_te_keyword">
+                    component
+                </span>
+
+                <span class="luth_te_injected-language-component">
+                    @Symbol.TextSpan.GetText()
+                </span>
+            </text>
+            break;
+        case "SourceFileSymbol":
+            <text>
+                <span class="luth_te_keyword">
+                    Open in editor:
+                </span>
+
+                <button class="luth_button luth_te_source-file"
+                        @onclick="() => OpenInEditorOnClick(Symbol.TextSpan.GetText())">
+                    @Symbol.TextSpan.GetText()
+                </button>
+            </text>
+            break;
+        default:
+            <text>
+                <span class="luth_te_keyword">
+                    unknown-symbol-kind
+                </span>
+
+                <span class="@(string.Empty /* Unknown-symbol-kinds do not have their own css class as of (2023-07-20) */)">
+                    @Symbol.TextSpan.GetText()
+                </span>
+            </text>
+            break;
+    }
+</div>
