@@ -15,6 +15,7 @@ using Luthetus.Ide.RazorLib.CodeSearches.States;
 using static Luthetus.Ide.RazorLib.DotNetSolutions.States.DotNetSolutionState;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
@@ -95,6 +96,16 @@ public partial class DotNetSolutionSync
         var solutionAbsolutePath = _environmentProvider.AbsolutePathFactory(
             dotNetSolutionAbsolutePathString,
             false);
+
+        // Debugging Linux-Ubuntu (2024-04-28)
+        {
+            NotificationHelper.DispatchDebugMessage(
+                solutionAbsolutePath.Value,
+                () => solutionAbsolutePath.Value,
+                _commonComponentRenderers,
+                Dispatcher,
+                TimeSpan.FromSeconds(10));
+        }
 
         var solutionNamespacePath = new NamespacePath(
             string.Empty,

@@ -46,10 +46,11 @@ class Program
             .SetLeft(50)
             .SetTop(50);
 
-		if (Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) == "C:\\Users\\hunte")
-        {
+        var specialFolderUserProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+		if (specialFolderUserProfile == "C:\\Users\\hunte")
             app.MainWindow.SetLeft(1_355);
-		}
+        else if (specialFolderUserProfile == "/home/hunter")
+            app.MainWindow.SetLeft(1_100).SetTop(100).SetHeight(1900);
 
         var continuousStartCts = new CancellationTokenSource();
         var blockingStartCts = new CancellationTokenSource();
