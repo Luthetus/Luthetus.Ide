@@ -412,21 +412,12 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
             if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
             {
-                var (lowerPositionIndexInclusive, upperPositionIndexExclusive) = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
-
-                var lowerRowData = this.GetLineInformationFromPositionIndex(lowerPositionIndexInclusive);
-                var lowerColumnIndex = lowerPositionIndexInclusive - lowerRowData.StartPositionIndexInclusive;
-
                 Delete(
                     cursorModifierBag,
                     1,
                     false,
                     DeleteKind.Delete,
                     CancellationToken.None);
-
-                // Move cursor to lower bound of text selection
-                cursorModifier.LineIndex = lowerRowData.Index;
-                cursorModifier.SetColumnIndexAndPreferred(lowerColumnIndex);
             }
 
             {
@@ -783,12 +774,19 @@ public partial class TextEditorModelModifier : ITextEditorModel
             // If user's cursor has a selection, then set the variables so the positionIndex is the
             // selection.AnchorPositionIndex and the count is selection.EndPositionIndex - selection.AnchorPositionIndex
             // and that the 'DeleteKind.Delete' logic runs.
-            var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(cursorModifier.SelectionAnchorPositionIndex.Value);
-            cursorModifier.LineIndex = lineIndex;
+
+
+
+            var (lowerPositionIndexInclusive, upperPositionIndexExclusive) = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
+
+            var lowerLineData = this.GetLineInformationFromPositionIndex(lowerPositionIndexInclusive);
+            var lowerColumnIndex = lowerPositionIndexInclusive - lowerLineData.StartPositionIndexInclusive;
+
+            cursorModifier.LineIndex = lowerLineData.Index;
             initialLineIndex = cursorModifier.LineIndex;
-            cursorModifier.SetColumnIndexAndPreferred(columnIndex);
-            positionIndex = cursorModifier.SelectionAnchorPositionIndex.Value;
-            columnCount = cursorModifier.SelectionEndingPositionIndex - cursorModifier.SelectionAnchorPositionIndex.Value;
+            cursorModifier.SetColumnIndexAndPreferred(lowerColumnIndex);
+            positionIndex = lowerPositionIndexInclusive;
+            columnCount = upperPositionIndexExclusive - lowerPositionIndexInclusive;
             deleteKind = DeleteKind.Delete;
 
             cursorModifier.SelectionAnchorPositionIndex = null;
