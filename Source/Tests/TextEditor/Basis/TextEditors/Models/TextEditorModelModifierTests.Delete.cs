@@ -333,9 +333,9 @@ public partial class TextEditorModelModifierTests
         {
             // Deleting at positionIndex '0' with 'DeleteKind.Backspace' should have no effect.
             var cursor = new TextEditorCursor(
-                    lineIndex: 0,
-                    columnIndex: 0,
-                    isPrimaryCursor: true);
+                lineIndex: 0,
+                columnIndex: 0,
+                isPrimaryCursor: true);
 
             cursorModifier = new TextEditorCursorModifier(cursor);
             var cursorModifierBag = new CursorModifierBagTextEditor(
@@ -2327,13 +2327,13 @@ public partial class TextEditorModelModifierTests
             TextEditorModel outModel;
             {
                 var cursor = new TextEditorCursor(
-                LineIndex: 0,
-                ColumnIndex: 0,
-                PreferredColumnIndex: 1,
-                IsPrimaryCursor: true,
-                Selection: new TextEditorSelection(
-                    AnchorPositionIndex: -1,
-                    EndingPositionIndex: 1));
+                    LineIndex: 0,
+                    ColumnIndex: 0,
+                    PreferredColumnIndex: 1,
+                    IsPrimaryCursor: true,
+                    Selection: new TextEditorSelection(
+                        AnchorPositionIndex: -1,
+                        EndingPositionIndex: 1));
 
                 var cursorModifier = new TextEditorCursorModifier(cursor);
                 var cursorModifierBag = new CursorModifierBagTextEditor(
@@ -3131,13 +3131,13 @@ public partial class TextEditorModelModifierTests
             TextEditorModel outModel;
             {
                 var cursor = new TextEditorCursor(
-                LineIndex: 0,
-                ColumnIndex: 0,
-                PreferredColumnIndex: 1,
-                IsPrimaryCursor: true,
-                Selection: new TextEditorSelection(
-                    AnchorPositionIndex: -1,
-                    EndingPositionIndex: 1));
+                    LineIndex: 0,
+                    ColumnIndex: 0,
+                    PreferredColumnIndex: 1,
+                    IsPrimaryCursor: true,
+                    Selection: new TextEditorSelection(
+                        AnchorPositionIndex: -1,
+                        EndingPositionIndex: 1));
 
                 var cursorModifier = new TextEditorCursorModifier(cursor);
                 var cursorModifierBag = new CursorModifierBagTextEditor(

@@ -1665,6 +1665,8 @@ public partial class TextEditorModelModifierTests
     [Fact]
     public void Insert_Into_NotEmptyEditor_At_PositionIndex_Between_0_And_DocumentLength_Exclusive_With_Selection()
     {
+        throw new NotImplementedException();
+
         var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
             resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
             resourceLastWriteTime: DateTime.MinValue,

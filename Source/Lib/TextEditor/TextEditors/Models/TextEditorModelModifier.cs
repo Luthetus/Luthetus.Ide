@@ -775,7 +775,8 @@ public partial class TextEditorModelModifier : ITextEditorModel
             // selection.AnchorPositionIndex and the count is selection.EndPositionIndex - selection.AnchorPositionIndex
             // and that the 'DeleteKind.Delete' logic runs.
 
-
+            // TODO: Is this true?: If one is deleting a selection, there is no multi-char-value character involvement, because the selection...
+            // ...is in terms of the char-values themselves already. Too many characters get deleted if one selects /r/n character.
 
             var (lowerPositionIndexInclusive, upperPositionIndexExclusive) = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
