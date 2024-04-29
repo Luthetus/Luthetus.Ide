@@ -3,10 +3,12 @@
 @using Luthetus.TextEditor.RazorLib.Options.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 @{
     var renderBatch = _storedRenderBatch;
+    var renderBatchValidated = renderBatch.IsValid ? new TextEditorRenderBatchValidated(renderBatch) : null;
 
     var contextBoundaryStyle = $"{renderBatch.FontSizeInPixelsCssStyle} {renderBatch.FontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
     var contextBoundaryClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
@@ -16,19 +18,18 @@
                  ClassCssString="@contextBoundaryClass"
                  StyleCssString="@contextBoundaryStyle">
 
-    @if (renderBatch.IsValid && !renderBatch.Options!.UseMonospaceOptimizations)
+    @if (renderBatchValidated is not null && !renderBatch.Options!.UseMonospaceOptimizations)
     {
         // TODO: Move this inside MeasureCharacterWidthAndRowHeight.razor
-
         <div style="display: flex; position: absolute; visibility: hidden;"
              id="@ProportionalFontMeasurementsContainerElementId">
         </div>
     }
 
-    <CascadingValue Value="renderBatch">
+    <CascadingValue Value="renderBatchValidated">
         <CascadingValue Name="ProportionalFontMeasurementsContainerElementId" Value="ProportionalFontMeasurementsContainerElementId">
 
-            @if (renderBatch.IsValid && ViewModelDisplayOptions.IncludeHeaderHelperComponent)
+            @if (renderBatchValidated is not null && ViewModelDisplayOptions.IncludeHeaderHelperComponent)
             {
                 <Header HeaderButtonKinds="ViewModelDisplayOptions.HeaderButtonKinds" />
             }
@@ -56,7 +57,7 @@
                 <MeasureCharacterWidthAndRowHeight @ref="_measureCharacterWidthAndRowHeightComponent"
                                                    HtmlElementId="@MeasureCharacterWidthAndRowHeightElementId" />
 
-                @if (renderBatch.IsValid)
+                @if (renderBatchValidated is not null)
                 {
                     <CascadingValue Value="_events.TooltipViewModel">
 
@@ -71,7 +72,7 @@
                                      IncludeContextMenuHelperComponent="ViewModelDisplayOptions.IncludeContextMenuHelperComponent"
                                      AutoCompleteMenuRenderFragmentOverride="ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride" />
 
-                        @if (renderBatch.ViewModel!.ShowCommandBar)
+                        @if (renderBatchValidated.ViewModel.ShowCommandBar)
                         {
                             <CommandBarDisplay RestoreFocusToTextEditor="FocusTextEditorAsync" />
                         }
@@ -94,7 +95,7 @@
                 }
             </div>
 
-            @if (renderBatch.IsValid && ViewModelDisplayOptions.IncludeFooterHelperComponent)
+            @if (renderBatchValidated is not null && ViewModelDisplayOptions.IncludeFooterHelperComponent)
             {
                 <Footer/>
             }

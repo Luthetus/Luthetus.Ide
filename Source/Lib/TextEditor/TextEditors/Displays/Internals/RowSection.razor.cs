@@ -2,10 +2,10 @@
 using System.Text;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -15,7 +15,7 @@ public partial class RowSection : ComponentBase
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     [CascadingParameter]
-    public RenderBatch RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public bool GlobalShowNewlines { get; set; }
@@ -42,7 +42,7 @@ public partial class RowSection : ComponentBase
 
     private string GetRowStyleCss(int index, double? virtualizedRowLeftInPixels)
     {
-        var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements;
+        var charMeasurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
 
         var topInPixelsInvariantCulture = (index * charMeasurements.LineHeight).ToCssValue();
         var top = $"top: {topInPixelsInvariantCulture}px;";
@@ -58,7 +58,7 @@ public partial class RowSection : ComponentBase
 
     private string GetCssClass(byte decorationByte)
     {
-        return RenderBatch.Model!.DecorationMapper.Map(decorationByte);
+        return RenderBatch.Model.DecorationMapper.Map(decorationByte);
     }
 
     private void AppendTextEscaped(

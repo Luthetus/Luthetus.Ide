@@ -2,20 +2,20 @@
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 public partial class PresentationLayerGroup : ComponentBase
 {
     [CascadingParameter]
-    public RenderBatch RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TextEditorCursor PrimaryCursor { get; set; } = null!;
@@ -30,7 +30,7 @@ public partial class PresentationLayerGroup : ComponentBase
 
         foreach (var presentationKey in TextEditorPresentationKeys)
         {
-            var textEditorPresentationModel = RenderBatch.Model!.PresentationModelList.FirstOrDefault(x =>
+            var textEditorPresentationModel = RenderBatch.Model.PresentationModelList.FirstOrDefault(x =>
                 x.TextEditorPresentationKey == presentationKey);
 
             if (textEditorPresentationModel is not null)
@@ -47,13 +47,13 @@ public partial class PresentationLayerGroup : ComponentBase
     {
         try
         {
-            var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements;
-            var elementMeasurements = RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements;
+            var charMeasurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
+            var elementMeasurements = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements;
 
-            if (rowIndex >= RenderBatch.Model!.LineEndList.Count)
+            if (rowIndex >= RenderBatch.Model.LineEndList.Count)
                 return string.Empty;
 
-            var line = RenderBatch.Model!.GetLineInformation(rowIndex);
+            var line = RenderBatch.Model.GetLineInformation(rowIndex);
 
             var startingColumnIndex = 0;
             var endingColumnIndex = line.EndPositionIndexExclusive - 1;
@@ -84,7 +84,7 @@ public partial class PresentationLayerGroup : ComponentBase
 
             // startInPixels offset from Tab keys a width of many characters
             {
-                var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabCountOnSameLineBeforeCursor(
+                var tabsOnSameRowBeforeCursor = RenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
                     rowIndex,
                     startingColumnIndex);
 
@@ -101,7 +101,7 @@ public partial class PresentationLayerGroup : ComponentBase
 
             // Tab keys a width of many characters
             {
-                var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabCountOnSameLineBeforeCursor(
+                var tabsOnSameRowBeforeCursor = RenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
                     rowIndex,
                     endingColumnIndex);
 
@@ -150,13 +150,13 @@ public partial class PresentationLayerGroup : ComponentBase
         {
             // Virtualize the text spans
             var virtualizedTextSpanList = new List<TextEditorTextSpan>();
-            if (RenderBatch.ViewModel!.VirtualizationResult?.EntryList.Any() ?? false)
+            if (RenderBatch.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
             {
                 var lowerLineIndexInclusive = RenderBatch.ViewModel.VirtualizationResult.EntryList.First().Index;
                 var upperLineIndexInclusive = RenderBatch.ViewModel.VirtualizationResult.EntryList.Last().Index;
 
-                var lowerLine = RenderBatch.Model!.GetLineInformation(lowerLineIndexInclusive);
-                var upperLine = RenderBatch.Model!.GetLineInformation(upperLineIndexInclusive);
+                var lowerLine = RenderBatch.Model.GetLineInformation(lowerLineIndexInclusive);
+                var upperLine = RenderBatch.Model.GetLineInformation(upperLineIndexInclusive);
 
                 foreach (var textSpan in inTextSpanList)
                 {
@@ -221,11 +221,11 @@ public partial class PresentationLayerGroup : ComponentBase
     {
         try
         {
-            var firstRowToSelectDataInclusive = RenderBatch.Model!
+            var firstRowToSelectDataInclusive = RenderBatch.Model
                 .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.StartingIndexInclusive)
                 .Index;
 
-            var lastRowToSelectDataExclusive = RenderBatch.Model!
+            var lastRowToSelectDataExclusive = RenderBatch.Model
                 .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.EndingIndexExclusive)
                 .Index +
                 1;

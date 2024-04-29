@@ -34,7 +34,7 @@ public partial class Header : ComponentBase
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 
     [CascadingParameter]
-    public RenderBatch RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
 
     [Parameter]
     public ImmutableArray<HeaderButtonKind>? HeaderButtonKinds { get; set; }
@@ -166,8 +166,8 @@ public partial class Header : ComponentBase
 
         var watchWindowObject = new WatchWindowObject(
             RenderBatch,
-            typeof(RenderBatch),
-            "TextEditorRenderBatch",
+            typeof(TextEditorRenderBatchValidated),
+            nameof(TextEditorRenderBatchValidated),
             true);
 
         var dialogRecord = new DialogViewModel(

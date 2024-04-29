@@ -3,21 +3,21 @@
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
 /// <summary>
-/// <see cref="RenderBatch"/>
+/// <see cref="TextEditorRenderBatch"/>
 /// </summary>
 public class RenderBatchTests
 {
     /// <summary>
     /// <see cref="TextEditorRenderBatch(TextEditorModel?, TextEditorViewModel?, TextEditorOptions?, string, int)"/>
 	/// <br/>----<br/>
-    /// <see cref="RenderBatch.Model"/>
-    /// <see cref="RenderBatch.ViewModel"/>
-    /// <see cref="RenderBatch.Options"/>
-    /// <see cref="RenderBatch.FontFamily"/>
-    /// <see cref="RenderBatch.FontSizeInPixels"/>
-    /// <see cref="RenderBatch.FontFamilyCssStyle"/>
-    /// <see cref="RenderBatch.FontSizeInPixelsCssStyle"/>
-    /// <see cref="RenderBatch.IsValid"/>
+    /// <see cref="TextEditorRenderBatch.Model"/>
+    /// <see cref="TextEditorRenderBatch.ViewModel"/>
+    /// <see cref="TextEditorRenderBatch.Options"/>
+    /// <see cref="TextEditorRenderBatch.FontFamily"/>
+    /// <see cref="TextEditorRenderBatch.FontSizeInPixels"/>
+    /// <see cref="TextEditorRenderBatch.FontFamilyCssStyle"/>
+    /// <see cref="TextEditorRenderBatch.FontSizeInPixelsCssStyle"/>
+    /// <see cref="TextEditorRenderBatch.IsValid"/>
     /// </summary>
     [Fact]
     public void Constructor()

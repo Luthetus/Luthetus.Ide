@@ -10,7 +10,6 @@ using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
-using Luthetus.TextEditor.RazorLib.JsRuntimes;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
@@ -27,7 +26,7 @@ public partial class FindOverlayDisplay : ComponentBase
     private IJSRuntime JsRuntime { get; set; } = null!;
 
     [CascadingParameter]
-    public RenderBatch RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
 
     private bool _lastSeenShowFindOverlayValue = false;
     private string _inputValue = string.Empty;
@@ -49,7 +48,7 @@ public partial class FindOverlayDisplay : ComponentBase
                     nameof(FindOverlayDisplay),
                     async editContext =>
                     {
-                        var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel!.ViewModelKey);
+                        var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
 
                         if (viewModelModifier is null)
                             return;
@@ -61,7 +60,7 @@ public partial class FindOverlayDisplay : ComponentBase
                             FindOverlayValue = localInputValue,
                         };
 
-                        var modelModifier = editContext.GetModelModifier(RenderBatch.Model!.ResourceUri);
+                        var modelModifier = editContext.GetModelModifier(RenderBatch.Model.ResourceUri);
 
                         if (modelModifier is null)
                             return;
@@ -99,16 +98,16 @@ public partial class FindOverlayDisplay : ComponentBase
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (_lastSeenShowFindOverlayValue != RenderBatch.ViewModel!.ShowFindOverlay)
+        if (_lastSeenShowFindOverlayValue != RenderBatch.ViewModel.ShowFindOverlay)
         {
-            _lastSeenShowFindOverlayValue = RenderBatch.ViewModel!.ShowFindOverlay;
+            _lastSeenShowFindOverlayValue = RenderBatch.ViewModel.ShowFindOverlay;
 
             // If it changes from 'false' to 'true', focus the input element
             if (_lastSeenShowFindOverlayValue)
             {
                 await JsRuntime.GetLuthetusCommonApi()
                     .FocusHtmlElementById(
-                        RenderBatch.ViewModel!.FindOverlayId);
+                        RenderBatch.ViewModel.FindOverlayId);
             }
         }
 
@@ -121,14 +120,14 @@ public partial class FindOverlayDisplay : ComponentBase
         {
             await JsRuntime.GetLuthetusCommonApi()
                 .FocusHtmlElementById(
-                    RenderBatch.ViewModel!.PrimaryCursorContentId);
+                    RenderBatch.ViewModel.PrimaryCursorContentId);
 
             TextEditorService.PostRedundant(
                 nameof(FindOverlayDisplay),
                 nameof(FindOverlayDisplay),
                 async editContext =>
                 {
-                    var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel!.ViewModelKey);
+                    var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
 
                     if (viewModelModifier is null)
                         return;
@@ -138,7 +137,7 @@ public partial class FindOverlayDisplay : ComponentBase
                         ShowFindOverlay = false,
                     };
 
-                    var modelModifier = editContext.GetModelModifier(RenderBatch.Model!.ResourceUri);
+                    var modelModifier = editContext.GetModelModifier(RenderBatch.Model.ResourceUri);
 
                     if (modelModifier is null)
                         return;
@@ -165,7 +164,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private void MoveActiveIndexMatchedTextSpanUp()
     {
-        var findOverlayPresentationModel = RenderBatch.Model!.PresentationModelList.FirstOrDefault(
+        var findOverlayPresentationModel = RenderBatch.Model.PresentationModelList.FirstOrDefault(
             x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
         if (findOverlayPresentationModel is null)
@@ -199,7 +198,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private void MoveActiveIndexMatchedTextSpanDown()
     {
-        var findOverlayPresentationModel = RenderBatch.Model!.PresentationModelList.FirstOrDefault(
+        var findOverlayPresentationModel = RenderBatch.Model.PresentationModelList.FirstOrDefault(
             x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
         if (findOverlayPresentationModel is null)
@@ -242,12 +241,12 @@ public partial class FindOverlayDisplay : ComponentBase
                 if (localActiveIndexMatchedTextSpan is null)
                     return;
 
-                var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel!.ViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
 
                 if (viewModelModifier is null)
                     return;
                 
-                var modelModifier = editContext.GetModelModifier(RenderBatch.Model!.ResourceUri);
+                var modelModifier = editContext.GetModelModifier(RenderBatch.Model.ResourceUri);
 
                 if (modelModifier is null)
                     return;
@@ -285,8 +284,8 @@ public partial class FindOverlayDisplay : ComponentBase
                 }
 
 				await TextEditorService.ViewModelApi.ScrollIntoViewFactory(
-						RenderBatch.Model!.ResourceUri,						
-						RenderBatch.ViewModel!.ViewModelKey,
+						RenderBatch.Model.ResourceUri,						
+						RenderBatch.ViewModel.ViewModelKey,
 						_decorationByteChangedTargetTextSpan)
 	                .Invoke(editContext)
 	                ;

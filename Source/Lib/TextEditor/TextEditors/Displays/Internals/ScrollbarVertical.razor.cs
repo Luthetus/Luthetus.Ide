@@ -24,7 +24,7 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [CascadingParameter]
-    public RenderBatch RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
 
     private readonly Guid _scrollbarGuid = Guid.NewGuid();
     private readonly IThrottle _throttleScroll = new Throttle(TimeSpan.FromMilliseconds(100));
@@ -46,7 +46,7 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
 
     private string GetSliderVerticalStyleCss()
     {
-        var elementMeasurements = RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements;
+        var elementMeasurements = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements;
 
         var scrollbarHeightInPixels = elementMeasurements.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 
@@ -141,7 +141,7 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
             var yPosition = relativeCoordinatesOfDragEvent.RelativeY - _relativeCoordinatesOnMouseDown.RelativeY;
             yPosition = Math.Max(0, yPosition);
 
-            var elementMeasurements = RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements;
+            var elementMeasurements = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements;
 
             if (yPosition > elementMeasurements.Height)
                 yPosition = elementMeasurements.Height;
@@ -158,7 +158,7 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
 			var throttleEventOnScrollVertical = new OnScrollVertical(
 				scrollTop,
 				RenderBatch.Events,
-				RenderBatch.ViewModel!.ViewModelKey);
+				RenderBatch.ViewModel.ViewModelKey);
 
 			TextEditorService.Post(throttleEventOnScrollVertical);
         }

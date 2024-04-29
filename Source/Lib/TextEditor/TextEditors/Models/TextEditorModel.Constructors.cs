@@ -28,7 +28,7 @@ public partial class TextEditorModel
         ResourceLastWriteTime = resourceLastWriteTime;
         FileExtension = fileExtension;
         DecorationMapper = decorationMapper ?? new TextEditorDecorationMapperDefault();
-        CompilerService = compilerService ?? new LuthCompilerService(null);
+        CompilerService = compilerService ?? new LuthCompilerServiceDoNothing();
 
 		PartitionSize = partitionSize;
 		var modifier = new TextEditorModelModifier(this);

@@ -8,44 +8,16 @@
 <div class="luth_ide_test-explorer-details"
 	 style="@ElementDimensions.StyleString">
 
-	@{ var activeNode = RenderBatch.TreeViewContainer.ActiveNode; }
+	@{
+		var activeNode = RenderBatch.TreeViewContainer.ActiveNode;
+		var viewModelKey = GetTextEditorViewModelKey(activeNode);
+	}
 
 	<div style="height: 100%;">
-		@if (activeNode is TreeViewStringFragment treeViewStringFragment)
+		@if (activeNode is TreeViewStringFragment treeViewStringFragment ||
+			 activeNode is TreeViewProjectTestModel treeViewProjectTestModel)
 		{
-			var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
-
-			var success = executionTerminal.TryGetTerminalCommandViewModelKey(
-				treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey,
-				out var viewModelKey);
-
-			if (!success || viewModelKey == Key<TextEditorViewModel>.Empty)
-			{
-				executionTerminal.CreateTextEditorForCommandOutput(
-					treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey);
-			}
-			else
-			{
-				<ReadOnlyTextEditorViewModelDisplay TextEditorViewModelKey="viewModelKey"/>
-			}
-		}
-		else if (activeNode is TreeViewProjectTestModel treeViewProjectTestModel)
-		{
-			var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
-
-			var success = executionTerminal.TryGetTerminalCommandViewModelKey(
-				treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey,
-				out var viewModelKey);
-
-			if (!success || viewModelKey == Key<TextEditorViewModel>.Empty)
-			{
-				executionTerminal.CreateTextEditorForCommandOutput(
-					treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey);
-			}
-			else
-			{
-				<ReadOnlyTextEditorViewModelDisplay TextEditorViewModelKey="viewModelKey" />
-			}
+			<ReadOnlyTextEditorViewModelDisplay TextEditorViewModelKey="viewModelKey" />
 		}
 		else if (activeNode is not null)
 		{

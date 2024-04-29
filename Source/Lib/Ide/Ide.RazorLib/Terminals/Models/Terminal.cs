@@ -222,7 +222,7 @@ public class Terminal
         DispatchNewStateKey();
     }
 
-	public void CreateTextEditorForCommandOutput(Key<TerminalCommand> terminalCommandKey)
+	public void CreateTextEditorForCommandOutput(Key<TerminalCommand> terminalCommandKey, Key<TextEditorViewModel> commandOutputViewModelKey)
 	{
         var success = TryGetTerminalCommandTextSpan(terminalCommandKey, out var textSpan);
 
@@ -258,76 +258,33 @@ public class Terminal
 				await _textEditorService.ModelApi.AddPresentationModelFactory(
 						model.ResourceUri,
 						FindOverlayPresentationFacts.EmptyPresentationModel)
-					.Invoke(editContext)
-					.ConfigureAwait(false);
+					.Invoke(editContext);
 
 				model.CompilerService.RegisterResource(model.ResourceUri);
-			});
 
-        var commandOutputViewModelKey = Key<TextEditorViewModel>.NewKey();
-        _terminalCommandViewModelKeyMap.Add(terminalCommandKey, commandOutputViewModelKey);
+				_terminalCommandViewModelKeyMap.Add(terminalCommandKey, commandOutputViewModelKey);
 
-		_textEditorService.ViewModelApi.Register(
-			commandOutputViewModelKey,
-			commandOutputResourceUri,
-			new Category("terminal"));
+				_textEditorService.ViewModelApi.Register(
+					commandOutputViewModelKey,
+					commandOutputResourceUri,
+					new Category("terminal"));
 
-		var layerFirstPresentationKeys = new[]
-		{
-			TerminalPresentationFacts.PresentationKey,
-			CompilerServiceDiagnosticPresentationFacts.PresentationKey,
-			FindOverlayPresentationFacts.PresentationKey,
-		}.ToImmutableArray();
+                var viewModelModifier = editContext.GetViewModelModifier(commandOutputViewModelKey);
 
-		_textEditorService.PostIndependent(
-			nameof(Terminal),
-			_textEditorService.ViewModelApi.WithValueFactory(
-				TextEditorViewModelKey,
-				textEditorViewModel => textEditorViewModel with
+                if (viewModelModifier is null)
+                    throw new NullReferenceException();
+
+				var layerFirstPresentationKeys = new[]
 				{
+			        TerminalPresentationFacts.PresentationKey,
+			        CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+			        FindOverlayPresentationFacts.PresentationKey,
+		        }.ToImmutableArray();
+
+                viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                {
 					FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
-				}));
-
-		_textEditorService.PostIndependent(
-			nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
-			async editContext =>
-			{
-				//var modelModifier = editContext.GetModelModifier(ResourceUri);
-				//var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
-				//var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-				//var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-				//if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-				//	return;
-
-				//await _textEditorService.ViewModelApi.MoveCursorFactory(
-				//		new KeyboardEventArgs
-				//		{
-				//			Code = KeyboardKeyFacts.MovementKeys.END,
-				//			Key = KeyboardKeyFacts.MovementKeys.END,
-				//			CtrlKey = true,
-				//		},
-				//		ResourceUri,
-				//		TextEditorViewModelKey)
-				//	.Invoke(editContext)
-				//	.ConfigureAwait(false);
-
-				//var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
-				//if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
-				//	return;
-
-				//terminalResource.ManualDecorationTextSpanList.Add(new TextEditorTextSpan(
-				//	0,
-				//	modelModifier.GetPositionIndex(primaryCursorModifier),
-				//	(byte)TerminalDecorationKind.Comment,
-				//	ResourceUri,
-				//	modelModifier.GetAllText()));
-
-				//await editContext.TextEditorService.ModelApi.ApplyDecorationRangeFactory(
-				//		modelModifier.ResourceUri,
-				//		terminalResource.GetTokenTextSpans())
-				//	.Invoke(editContext)
-				//	.ConfigureAwait(false);
+				};
 			});
 	}
 

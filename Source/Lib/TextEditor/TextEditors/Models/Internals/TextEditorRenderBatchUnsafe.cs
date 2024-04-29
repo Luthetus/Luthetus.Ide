@@ -1,4 +1,4 @@
-using Luthetus.Common.RazorLib.Dimensions.Models;
+﻿using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
@@ -6,17 +6,16 @@ using System.Text;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
-public record RenderBatch(
-    TextEditorModel? Model,
-    TextEditorViewModel? ViewModel,
-    TextEditorOptions? Options,
-    string FontFamily,
-    int FontSizeInPixels,
-    ViewModelDisplayOptions ViewModelDisplayOptions,
-    TextEditorViewModelDisplay.TextEditorEvents Events)
+public record TextEditorRenderBatchUnsafe(
+        TextEditorModel? Model,
+        TextEditorViewModel? ViewModel,
+        TextEditorOptions? Options,
+        string FontFamily,
+        int FontSizeInPixels,
+        ViewModelDisplayOptions ViewModelDisplayOptions,
+        TextEditorViewModelDisplay.TextEditorEvents Events)
+    : ITextEditorRenderBatch
 {
-    public const string DEFAULT_FONT_FAMILY = "monospace";
-
     private double? _gutterWidthInPixels;
 
     public string FontFamilyCssStyle => $"font-family: {FontFamily};";

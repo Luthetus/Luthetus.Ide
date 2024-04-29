@@ -196,7 +196,7 @@ public partial class DotNetSolutionSync
 
                 var changeDirectoryCommand = new TerminalCommand(
                     Key<TerminalCommand>.NewKey(),
-                    new FormattedCommand(string.Empty, new string[] { }),
+                    new FormattedCommand("cd", new string[] { }),
                     parentDirectory.Value,
                     CancellationToken.None);
 
@@ -209,7 +209,7 @@ public partial class DotNetSolutionSync
 
                 var changeDirectoryCommand = new TerminalCommand(
                     Key<TerminalCommand>.NewKey(),
-                    new FormattedCommand(string.Empty, new string[] { }),
+                    new FormattedCommand("cd", new string[] { }),
                     parentDirectory.Value,
                     CancellationToken.None);
 
