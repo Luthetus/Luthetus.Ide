@@ -31,42 +31,6 @@ public class TerminalTests
     }
 
     /// <summary>
-    /// <see cref="Terminal.ReadStandardOut()"/>
-    /// </summary>
-    [Fact]
-    public void ReadStandardOut_NO_ARGS()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="Terminal.ReadStandardOut(Key{TerminalCommand})"/>
-    /// </summary>
-    [Fact]
-    public void ReadStandardOut_WITH_ARGS()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="Terminal.GetStandardOut()"/>
-    /// </summary>
-    [Fact]
-    public void GetStandardOut_NO_ARGS()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="Terminal.GetStandardOut(Key{TerminalCommand})"/>
-    /// </summary>
-    [Fact]
-    public void GetStandardOut_WITH_ARGS()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="Terminal.EnqueueCommandAsync(TerminalCommand)"/>
     /// </summary>
     [Fact]

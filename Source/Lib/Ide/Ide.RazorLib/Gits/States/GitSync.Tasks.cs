@@ -58,9 +58,11 @@ public partial class GitSync
             CancellationToken.None,
             async () =>
             {
-                var gitStatusOutput = generalTerminal.ReadStandardOut(
-                    GitFacts.GitStatusTerminalCommandKey);
+				var success = generalTerminal.TryGetTerminalCommandTextSpan(
+					GitFacts.GitStatusTerminalCommandKey,
+					out var terminalCommandTextSpan);
 
+				var gitStatusOutput = terminalCommandTextSpan.GetText();
                 if (gitStatusOutput is null)
                     return;
 

@@ -34,6 +34,7 @@ public partial class TextEditorModel
 		var modifier = new TextEditorModelModifier(this);
 		modifier.SetContent(content);
 
+		_allText = modifier.AllText;
         RichCharacterList = modifier.RichCharacterList;
         PartitionList = modifier.PartitionList;
         LineEndKindCountList = modifier.LineEndKindCountList.ToImmutableList();
@@ -45,6 +46,7 @@ public partial class TextEditorModel
 	}
 
 	public TextEditorModel(
+        string allText,
         ImmutableList<RichCharacter> richCharacterList,
         int partitionSize,
         ImmutableList<TextEditorPartition> partitionList,
@@ -66,6 +68,7 @@ public partial class TextEditorModel
         (int rowIndex, int rowLength) mostCharactersOnASingleRowTuple,
 		Key<RenderState>  renderStateKey)
 	{
+		_allText = allText;
         RichCharacterList = richCharacterList;
         PartitionSize = partitionSize;
         PartitionList = partitionList;

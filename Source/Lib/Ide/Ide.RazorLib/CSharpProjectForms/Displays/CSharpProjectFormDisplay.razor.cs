@@ -20,6 +20,7 @@ using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
 using Luthetus.Ide.RazorLib.Websites;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjectForms.Displays;
 
@@ -133,8 +134,11 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 _viewModel.NewCSharpProjectCancellationTokenSource.Token,
                 async () =>
                 {
-                    var output = generalTerminal.ReadStandardOut(_viewModel.LoadProjectTemplatesTerminalCommandKey);
-
+					var success = generalTerminal.TryGetTerminalCommandTextSpan(
+						_viewModel.LoadProjectTemplatesTerminalCommandKey,
+						out var terminalCommandTextSpan);
+					
+                    var output = terminalCommandTextSpan?.GetText();
                     if (output is not null)
                     {
                         _viewModel.ProjectTemplateList = DotNetCliOutputParser.ParseDotNetNewListTerminalOutput(output);
@@ -175,8 +179,11 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 _viewModel.NewCSharpProjectCancellationTokenSource.Token,
                 async () =>
                 {
-                    var output = generalTerminal.ReadStandardOut(_viewModel.LoadProjectTemplatesTerminalCommandKey);
+					var success = generalTerminal.TryGetTerminalCommandTextSpan(
+						_viewModel.LoadProjectTemplatesTerminalCommandKey,
+						out var terminalCommandTextSpan);
 
+					var output = terminalCommandTextSpan?.GetText();
                     if (output is not null)
                     {
                         _viewModel.ProjectTemplateList = DotNetCliOutputParser.ParseDotNetNewListTerminalOutput(output);

@@ -2,18 +2,9 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
-using CliWrap;
-using CliWrap.EventStream;
-using Fluxor;
-using System.Collections.Concurrent;
-using System.Collections.Immutable;
-using System.Reactive.Linq;
-using System.Text;
-using Luthetus.Common.RazorLib.Keyboards.Models;
-using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -21,6 +12,13 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.Ide.RazorLib.Terminals.States;
+using CliWrap;
+using CliWrap.EventStream;
+using Fluxor;
+using System.Collections.Immutable;
+using System.Reactive.Linq;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
@@ -32,9 +30,8 @@ public class Terminal
     private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
-    private readonly object _standardOutBuilderMapLock = new();
-    private readonly ConcurrentQueue<TerminalCommand> _terminalCommandsConcurrentQueue = new();
-    private readonly Dictionary<Key<TerminalCommand>, TerminalOutput> _standardOutBuilderMap = new();
+    private readonly Dictionary<Key<TerminalCommand>, TextEditorTextSpan> _terminalCommandTextSpanMap = new();
+    private readonly Dictionary<Key<TerminalCommand>, Key<TextEditorViewModel>> _terminalCommandViewModelKeyMap = new();
 
     public Terminal(
         string displayName,
@@ -45,27 +42,30 @@ public class Terminal
         ILuthetusCommonComponentRenderers commonComponentRenderers,
         ICompilerServiceRegistry compilerServiceRegistry)
     {
-        DisplayName = displayName;
         _dispatcher = dispatcher;
         _backgroundTaskService = backgroundTaskService;
         _textEditorService = textEditorService;
         _commonComponentRenderers = commonComponentRenderers;
         _compilerServiceRegistry = compilerServiceRegistry;
-        WorkingDirectoryAbsolutePathString = workingDirectoryAbsolutePathString;
 
+        DisplayName = displayName;
+        WorkingDirectoryAbsolutePathString = workingDirectoryAbsolutePathString;
         ResourceUri = new(ResourceUriFacts.Terminal_ReservedResourceUri_Prefix + Key.Guid.ToString());
 
         CreateTextEditor();
     }
 
 	private CancellationTokenSource _commandCancellationTokenSource = new();
-
     private string? _previousWorkingDirectoryAbsolutePathString;
     private string? _workingDirectoryAbsolutePathString;
 
     public Key<Terminal> Key { get; init; } = Key<Terminal>.NewKey();
     public ResourceUri ResourceUri { get; init; }
     public Key<TextEditorViewModel> TextEditorViewModelKey { get; init; } = Key<TextEditorViewModel>.NewKey();
+    public TerminalCommand? ActiveTerminalCommand { get; private set; }
+	/// <summary>NOTE: the following did not work => _process?.HasExited ?? false;</summary>
+    public bool HasExecutingProcess { get; private set; }
+    public string DisplayName { get; }
 
     public string? WorkingDirectoryAbsolutePathString
     {
@@ -82,103 +82,10 @@ public class Terminal
         }
     }
 
-    public TerminalCommand? ActiveTerminalCommand { get; private set; }
-	/// <summary>NOTE: the following did not work => _process?.HasExited ?? false;</summary>
-    public bool HasExecutingProcess { get; private set; }
-    public string DisplayName { get; }
-
     public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
-
-	/// <summary>
-	/// Returns the output that occurred in the terminal session
-	/// </summary>
-    public string ReadStandardOut()
-    {
-		var output = string.Empty;
-
-		lock(_standardOutBuilderMapLock)
-		{
-			var entireStdOutStringBuilder = new StringBuilder();
-
-			foreach (var sessionOutput in _standardOutBuilderMap.Values)
-			{
-				var perCommandStringBuilder = new StringBuilder();
-	
-				foreach (var str in sessionOutput.TextLineList)
-				{
-					perCommandStringBuilder.Append(str);
-				}
-
-				entireStdOutStringBuilder.Append(perCommandStringBuilder.ToString());
-			}
-
-			output = entireStdOutStringBuilder.ToString();
-		}
-
-        return output;
-    }
-
-	/// <summary>
-	/// Returns the output that occurred as a result of a specific command
-	/// </summary>
-    public string? ReadStandardOut(Key<TerminalCommand> terminalCommandKey)
-    {
-		var output = (string?)null;
-
-		lock(_standardOutBuilderMapLock)
-		{
-			if (_standardOutBuilderMap.TryGetValue(terminalCommandKey, out var sessionOutput))
-			{
-				var perCommandStringBuilder = new StringBuilder();
-	
-				foreach (var str in sessionOutput.TextLineList)
-				{
-					perCommandStringBuilder.Append(str);
-				}
-
-				output = perCommandStringBuilder.ToString();
-			}
-		}
-
-        return output;
-    }
-
-	/// <summary>
-	/// Returns the output that occurred in the terminal session
-	/// </summary>
-	public List<string>? GetStandardOut()
-	{
-		var allOutput = (List<string>?)null;
-
-		lock(_standardOutBuilderMapLock)
-		{
-			allOutput = _standardOutBuilderMap
-				.SelectMany(kvp => GetStandardOut(kvp.Key))
-				.ToList();
-		}
-
-        return allOutput;
-	}
-
-	/// <summary>
-	/// Returns the output that occurred as a result of a specific command
-	/// </summary>
-    public List<string>? GetStandardOut(Key<TerminalCommand> terminalCommandKey)
-	{
-		var output = (List<string>?)null;
-
-		lock(_standardOutBuilderMapLock)
-		{
-			if (_standardOutBuilderMap.TryGetValue(terminalCommandKey, out var sessionOutput))
-				output = new List<string>(sessionOutput.TextLineList); // Shallow copy to hide private memory location
-		}
-
-        return output;
-	}
 
     public Task EnqueueCommandAsync(TerminalCommand terminalCommand)
     {
-		// This is the 'EnqueueCommandAsync' method, that runs terminal command
         var queueKey = BlockingBackgroundTaskWorker.GetQueueKey();
 
         _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), queueKey,
@@ -195,6 +102,8 @@ public class Terminal
                         WorkingDirectoryAbsolutePathString = terminalCommand.FormattedCommand.HACK_ArgumentsString;
                     else if (terminalCommand.FormattedCommand.ArgumentsList.Any())
                         WorkingDirectoryAbsolutePathString = terminalCommand.FormattedCommand.ArgumentsList.ElementAt(0);
+
+                    return;
                 }
                 
                 if (terminalCommand.FormattedCommand.TargetFileName == "clear")
@@ -222,172 +131,207 @@ public class Terminal
                 else if (WorkingDirectoryAbsolutePathString is not null)
                     command = command.WithWorkingDirectory(WorkingDirectoryAbsolutePathString);
 
-                // Event stream
+                try
                 {
                     var terminalCommandKey = terminalCommand.TerminalCommandKey;
-					
-					// Here, immediately prior to starting the terminal command,
-					// a StringBuilder is being made for the respective terminal command to write to.
-					//
-					// I'll change this to make a new List<string>()
-					lock(_standardOutBuilderMapLock)
-					{
-						_standardOutBuilderMap.TryAdd(terminalCommand.TerminalCommandKey, new TerminalOutput());
-					}
-
                     HasExecutingProcess = true;
                     DispatchNewStateKey();
 
-                    try
-                    {
-						if (terminalCommand.BeginWith is not null)
-                            await terminalCommand.BeginWith.Invoke(); // Actually start the terminal command here
+                    if (terminalCommand.BeginWith is not null)
+                        await terminalCommand.BeginWith.Invoke();
 
-                        await command.Observe(_commandCancellationTokenSource.Token)
-                            .ForEachAsync(cmdEvent =>
+                    var terminalCommandBoundary = new TerminalCommandBoundary();
+
+                    await command.Observe(_commandCancellationTokenSource.Token)
+                        .ForEachAsync(cmdEvent =>
+                        {
+							var output = (string?)null;
+
+                            switch (cmdEvent)
                             {
-								var output = (string?)null; // a variable for storing the output
+                                case StartedCommandEvent started:
+									output = $"> {terminalCommand.FormattedCommand.Value}\n" +
+                                             $"> PID:{started.ProcessId} PWD:{WorkingDirectoryAbsolutePathString}\n";
+                                    
+                                    output = null;
+									break;
+                                case StandardOutputCommandEvent stdOut:
+                                    output = $"{stdOut.Text}\n";
+                                    break;
+                                case StandardErrorCommandEvent stdErr:
+                                    output = $"{stdErr.Text}\n";
+                                    break;
+                                case ExitedCommandEvent exited:
+                                    output = $"Process exited; Code: {exited.ExitCode}\n";
+                                    break;
+                            }
 
-                                switch (cmdEvent)
-                                {
-                                    case StartedCommandEvent started:
-										lock(_standardOutBuilderMapLock)
-										{
-											output = $"> {terminalCommand.FormattedCommand.Value}";
-	                                        _standardOutBuilderMap[terminalCommandKey].TextLineList.Add(output);
+							if (output is not null)
+                                AddOutput(output, terminalCommandBoundary);
 
-											output = $"> PID:{started.ProcessId} PWD:{WorkingDirectoryAbsolutePathString}";
-	                                        _standardOutBuilderMap[terminalCommandKey].TextLineList.Add(output);
+                            DispatchNewStateKey();
+                        });
 
-											output = null;
-	                                    }
+                    _terminalCommandTextSpanMap.Add(
+                        terminalCommandKey,
+                        new TextEditorTextSpan(
+                            terminalCommandBoundary.StartPositionIndexInclusive ?? 0,
+                            terminalCommandBoundary.EndPositionIndexExclusive ?? 0,
+                            0,
+                            ResourceUri,
+                            _textEditorService.ModelApi.GetAllText(ResourceUri) ?? string.Empty));
+                }
+                catch (Exception e)
+                {
+                    NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(14));
+                }
+                finally
+                {
+                    HasExecutingProcess = false;
+                    DispatchNewStateKey();
 
-                                        break;
-                                    case StandardOutputCommandEvent stdOut:
-                                        output = $"{stdOut.Text}";
-                                        break;
-                                    case StandardErrorCommandEvent stdErr:
-                                        output = $"{stdErr.Text}";
-                                        break;
-                                    case ExitedCommandEvent exited:
-                                        output = $"Process exited; Code: {exited.ExitCode}";
-                                        break;
-                                }
-
-								if (output is not null)
-								{
-                                    // This lock is dead code and should be removed.
-									lock(_standardOutBuilderMapLock)
-									{
-                                        _standardOutBuilderMap[terminalCommandKey].TextLineList.Add(output);
-                                    }
-
-                                    _textEditorService.PostIndependent(
-                                        nameof(EnqueueCommandAsync),
-                                        async editContext =>
-                                        {
-                                            var modelModifier = editContext.GetModelModifier(ResourceUri);
-                                            var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
-                                            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-                                            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-                                            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                                                return;
-
-                                            var startingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
-
-                                            var result = output + '\n';
-
-                                            var outputTextSpans = DotNetRunOutputParser.Parse(result);
-
-                                            await _textEditorService.ModelApi.InsertTextFactory(
-                                                    ResourceUri,
-                                                    TextEditorViewModelKey,
-                                                    result,
-                                                    CancellationToken.None)
-                                                .Invoke(editContext)
-                                                .ConfigureAwait(false);
-
-                                            var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
-
-                                            if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
-                                                return;
-
-                                            var allText = modelModifier.GetAllText();
-
-                                            outputTextSpans = outputTextSpans.Select(x => x with
-                                            {
-                                                StartingIndexInclusive = startingPositionIndex + x.StartingIndexInclusive,
-                                                EndingIndexExclusive = startingPositionIndex + x.EndingIndexExclusive,
-                                                ResourceUri = ResourceUri,
-                                                SourceText = allText,
-                                            }).ToList();
-
-                                            terminalResource.ManualDecorationTextSpanList.AddRange(outputTextSpans);
-
-                                            terminalResource.ManualSymbolList.AddRange(outputTextSpans.Select(x => new SourceFileSymbol(x)));
-
-                                            await editContext.TextEditorService.ModelApi.ApplyDecorationRangeFactory(
-                                                    modelModifier.ResourceUri,
-                                                    terminalResource.GetTokenTextSpans())
-                                                .Invoke(editContext)
-                                                .ConfigureAwait(false);
-                                        });
-                                }
-
-                                DispatchNewStateKey();
-                            });
-                    }
-                    catch (Exception e)
-                    {
-                        NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(14));
-                    }
-                    finally
-                    {
-                        HasExecutingProcess = false;
-                        DispatchNewStateKey();
-
-                        if (terminalCommand.ContinueWith is not null)
-                            await terminalCommand.ContinueWith.Invoke();
-                    }
+                    if (terminalCommand.ContinueWith is not null)
+                        await terminalCommand.ContinueWith.Invoke();
                 }
             });
 
         return Task.CompletedTask;
     }
 
-    public void ClearStandardOut()
+    /// <summary>
+    /// When using the <see cref="Terminal"/>, one can run many <see cref="TerminalCommand"/>.
+    /// Therefore, a way to filter the <see cref="Terminal"/>, such that only the output of a single
+    /// <see cref="TerminalCommand"/> is returned, is needed.
+    /// </summary>
+    public bool TryGetTerminalCommandTextSpan(Key<TerminalCommand> terminalCommandKey, out TextEditorTextSpan? textSpan)
     {
-		lock(_standardOutBuilderMapLock)
-		{
-			foreach (var stringBuilder in _standardOutBuilderMap.Values)
-	        {
-	            stringBuilder.Clear();
-	        }
-		}
-
-        DispatchNewStateKey();
+        return _terminalCommandTextSpanMap.TryGetValue(terminalCommandKey, out textSpan);
     }
 
-	public void ClearStandardOut(Key<TerminalCommand> terminalCommandKey)
-    {
-		lock(_standardOutBuilderMapLock)
-		{
-			_standardOutBuilderMap[terminalCommandKey].Clear();
-		}
+	public bool TryGetTerminalCommandViewModelKey(
+        Key<TerminalCommand> terminalCommandKey,
+        out Key<TextEditorViewModel> viewModelKey)
+	{
+		return _terminalCommandViewModelKeyMap.TryGetValue(terminalCommandKey, out viewModelKey);
+	}
 
-        DispatchNewStateKey();
-    }
-
-    public void KillProcess()
+	public void KillProcess()
     {
         _commandCancellationTokenSource.Cancel();
         _commandCancellationTokenSource = new();
-
         DispatchNewStateKey();
     }
 
-    private void DispatchNewStateKey()
+	public void CreateTextEditorForCommandOutput(Key<TerminalCommand> terminalCommandKey)
+	{
+        var success = TryGetTerminalCommandTextSpan(terminalCommandKey, out var textSpan);
+
+        if (!success || textSpan is null)
+            return;
+
+        var commandOutputResourceUri = new ResourceUri("terminalCommand" + '_' + terminalCommandKey);
+
+		var model = new TextEditorModel(
+			commandOutputResourceUri,
+            DateTime.UtcNow,
+            "terminal",
+            textSpan.GetText(),
+            null, //new TerminalDecorationMapper(),
+            null); //_compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL));
+
+		_textEditorService.ModelApi.RegisterCustom(model);
+
+		_textEditorService.PostIndependent(
+			nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
+			async editContext =>
+			{
+				await _textEditorService.ModelApi.AddPresentationModelFactory(
+						model.ResourceUri,
+						TerminalPresentationFacts.EmptyPresentationModel)
+					.Invoke(editContext);
+
+				await _textEditorService.ModelApi.AddPresentationModelFactory(
+						model.ResourceUri,
+						CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel)
+					.Invoke(editContext);
+
+				await _textEditorService.ModelApi.AddPresentationModelFactory(
+						model.ResourceUri,
+						FindOverlayPresentationFacts.EmptyPresentationModel)
+					.Invoke(editContext)
+					.ConfigureAwait(false);
+
+				model.CompilerService.RegisterResource(model.ResourceUri);
+			});
+
+        var commandOutputViewModelKey = Key<TextEditorViewModel>.NewKey();
+        _terminalCommandViewModelKeyMap.Add(terminalCommandKey, commandOutputViewModelKey);
+
+		_textEditorService.ViewModelApi.Register(
+			commandOutputViewModelKey,
+			commandOutputResourceUri,
+			new Category("terminal"));
+
+		var layerFirstPresentationKeys = new[]
+		{
+			TerminalPresentationFacts.PresentationKey,
+			CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+			FindOverlayPresentationFacts.PresentationKey,
+		}.ToImmutableArray();
+
+		_textEditorService.PostIndependent(
+			nameof(Terminal),
+			_textEditorService.ViewModelApi.WithValueFactory(
+				TextEditorViewModelKey,
+				textEditorViewModel => textEditorViewModel with
+				{
+					FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
+				}));
+
+		_textEditorService.PostIndependent(
+			nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
+			async editContext =>
+			{
+				//var modelModifier = editContext.GetModelModifier(ResourceUri);
+				//var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
+				//var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+				//var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+				//if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+				//	return;
+
+				//await _textEditorService.ViewModelApi.MoveCursorFactory(
+				//		new KeyboardEventArgs
+				//		{
+				//			Code = KeyboardKeyFacts.MovementKeys.END,
+				//			Key = KeyboardKeyFacts.MovementKeys.END,
+				//			CtrlKey = true,
+				//		},
+				//		ResourceUri,
+				//		TextEditorViewModelKey)
+				//	.Invoke(editContext)
+				//	.ConfigureAwait(false);
+
+				//var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
+				//if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
+				//	return;
+
+				//terminalResource.ManualDecorationTextSpanList.Add(new TextEditorTextSpan(
+				//	0,
+				//	modelModifier.GetPositionIndex(primaryCursorModifier),
+				//	(byte)TerminalDecorationKind.Comment,
+				//	ResourceUri,
+				//	modelModifier.GetAllText()));
+
+				//await editContext.TextEditorService.ModelApi.ApplyDecorationRangeFactory(
+				//		modelModifier.ResourceUri,
+				//		terminalResource.GetTokenTextSpans())
+				//	.Invoke(editContext)
+				//	.ConfigureAwait(false);
+			});
+	}
+
+	private void DispatchNewStateKey()
     {
         _dispatcher.Dispatch(new TerminalState.NotifyStateChangedAction(Key));
     }
@@ -481,7 +425,6 @@ public class Terminal
                     .ConfigureAwait(false);
 
                 var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
-                
                 if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
                     return;
 
@@ -525,7 +468,6 @@ public class Terminal
                     .ConfigureAwait(false);
 
                 var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
-
                 if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
                     return;
 
@@ -541,6 +483,58 @@ public class Terminal
                         terminalResource.GetTokenTextSpans())
                     .Invoke(editContext)
                     .ConfigureAwait(false);
+            });
+    }
+
+    public void AddOutput(string output, TerminalCommandBoundary terminalCommandBoundary)
+    {
+        _textEditorService.PostIndependent(
+            nameof(EnqueueCommandAsync),
+            async editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    return;
+
+                var entryPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+                terminalCommandBoundary.StartPositionIndexInclusive ??= entryPositionIndex;
+
+                var outputTextSpans = DotNetRunOutputParser.Parse(output);
+
+                await _textEditorService.ModelApi.InsertTextFactory(
+                        ResourceUri,
+                        TextEditorViewModelKey,
+                        output,
+                        CancellationToken.None)
+                    .Invoke(editContext)
+                    .ConfigureAwait(false);
+
+                var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
+                if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
+                    return;
+
+                outputTextSpans = outputTextSpans.Select(x => x with
+                {
+                    StartingIndexInclusive = entryPositionIndex + x.StartingIndexInclusive,
+                    EndingIndexExclusive = entryPositionIndex + x.EndingIndexExclusive,
+                    ResourceUri = ResourceUri,
+                    SourceText = modelModifier.GetAllText(),
+                }).ToList();
+
+                terminalResource.ManualDecorationTextSpanList.AddRange(outputTextSpans);
+                terminalResource.ManualSymbolList.AddRange(outputTextSpans.Select(x => new SourceFileSymbol(x)));
+
+                await editContext.TextEditorService.ModelApi.ApplyDecorationRangeFactory(
+                        modelModifier.ResourceUri,
+                        terminalResource.GetTokenTextSpans())
+                    .Invoke(editContext)
+                    .ConfigureAwait(false);
+
+                terminalCommandBoundary.EndPositionIndexExclusive = modelModifier.GetPositionIndex(primaryCursorModifier);
             });
     }
     
@@ -574,7 +568,6 @@ public class Terminal
                     .ConfigureAwait(false);
 
                 var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
-
                 if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
                     return;
 

@@ -89,6 +89,9 @@ public static class TextEditorModelExtensionMethods
         return tabs.Count();
     }
 
+    /// <summary>
+    /// Implementations of this method are expected to have caching.
+    /// </summary>
     public static string GetAllText(this ITextEditorModel model)
     {
         return model.AllText;

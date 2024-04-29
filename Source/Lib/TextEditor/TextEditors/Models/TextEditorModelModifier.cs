@@ -117,6 +117,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     private Key<RenderState>? _renderStateKey = Key<RenderState>.NewKey();
     private Keymap? _textEditorKeymap;
     private TextEditorOptions? _textEditorOptions;
+    private string? _allText;
 
     /// <summary>
     /// This property optimizes the dirty state tracking. If _wasDirty != _isDirty then track the state change.
@@ -127,13 +128,12 @@ public partial class TextEditorModelModifier : ITextEditorModel
     private int PartitionSize { get; }
     public bool WasModified { get; internal set; }
 
-    private string AllText => new string(RichCharacterList.Select(x => x.Value).ToArray());
-
-    string ITextEditorModel.AllText => AllText;
+    public string AllText => _allText ??= new string(RichCharacterList.Select(x => x.Value).ToArray());
 
     public TextEditorModel ToModel()
     {
         return new TextEditorModel(
+            AllText,
             _richCharacterList is null ? _textEditorModel.RichCharacterList : _richCharacterList,
             PartitionSize,
             _partitionList is null ? _textEditorModel.PartitionList : _partitionList,
@@ -1165,6 +1165,8 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
     public void SetIsDirtyTrue()
     {
+        // Setting _allText to null will clear the 'cache' for the all 'AllText' property.
+        _allText = null;
         _isDirty = true;
     }
 
