@@ -137,6 +137,27 @@ public class Terminal
                     HasExecutingProcess = true;
                     DispatchNewStateKey();
 
+                    if (_textEditorService.ModelApi.GetOrDefault(new ResourceUri("terminalCommand" + '_' + terminalCommandKey)) is not null)
+                    {
+                        _textEditorService.PostIndependent(
+                            "clear-content_" + terminalCommandKey.Guid,
+                            editContext =>
+                            {
+                                var commandOutputResourceUri = new ResourceUri("terminalCommand" + '_' + terminalCommandKey);
+                                var modelModifier = editContext.GetModelModifier(commandOutputResourceUri);
+
+                                if (modelModifier is null)
+                                    return Task.CompletedTask;
+
+                                var textSpan = TextEditorTextSpan.FabricateTextSpan($"> {terminalCommand.FormattedCommand.Value}\n");
+
+                                _terminalCommandTextSpanMap[terminalCommandKey] = textSpan;
+
+                                modelModifier.SetContent(textSpan.GetText());
+                                return Task.CompletedTask;
+                            });
+                    }
+
                     if (terminalCommand.BeginWith is not null)
                         await terminalCommand.BeginWith.Invoke();
 
@@ -172,14 +193,42 @@ public class Terminal
                             DispatchNewStateKey();
                         });
 
-                    _terminalCommandTextSpanMap.Add(
-                        terminalCommandKey,
-                        new TextEditorTextSpan(
-                            terminalCommandBoundary.StartPositionIndexInclusive ?? 0,
-                            terminalCommandBoundary.EndPositionIndexExclusive ?? 0,
-                            0,
-                            ResourceUri,
-                            _textEditorService.ModelApi.GetAllText(ResourceUri) ?? string.Empty));
+                    if (!_terminalCommandTextSpanMap.ContainsKey(terminalCommandKey))
+                    {
+                        _terminalCommandTextSpanMap.Add(
+                            terminalCommandKey,
+                            new TextEditorTextSpan(
+                                terminalCommandBoundary.StartPositionIndexInclusive ?? 0,
+                                terminalCommandBoundary.EndPositionIndexExclusive ?? 0,
+                                0,
+                                ResourceUri,
+                                _textEditorService.ModelApi.GetAllText(ResourceUri) ?? string.Empty));
+                    }
+                    else
+                    {
+                        _textEditorService.PostIndependent(
+                            "set-content_" + terminalCommandKey.Guid,
+                            editContext =>
+                            {
+                                var commandOutputResourceUri = new ResourceUri("terminalCommand" + '_' + terminalCommandKey);
+                                var modelModifier = editContext.GetModelModifier(commandOutputResourceUri);
+
+                                if (modelModifier is null)
+                                    return Task.CompletedTask;
+
+                                var textSpan = new TextEditorTextSpan(
+                                    terminalCommandBoundary.StartPositionIndexInclusive ?? 0,
+                                    terminalCommandBoundary.EndPositionIndexExclusive ?? 0,
+                                    0,
+                                    ResourceUri,
+                                    _textEditorService.ModelApi.GetAllText(ResourceUri) ?? string.Empty);
+
+                                _terminalCommandTextSpanMap[terminalCommandKey] = textSpan;
+
+                                modelModifier.SetContent(textSpan.GetText());
+                                return Task.CompletedTask;
+                            });
+                    }
                 }
                 catch (Exception e)
                 {
