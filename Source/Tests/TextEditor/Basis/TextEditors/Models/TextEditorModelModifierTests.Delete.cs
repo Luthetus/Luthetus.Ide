@@ -54,8 +54,7 @@ public partial class TextEditorModelModifierTests
                     columnCount: 1,
                     expandWord: false,
                     cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Delete
-                );
+                    deleteKind: DeleteKind.Delete);
                 outModel = modelModifier.ToModel();
             }
         });
@@ -91,23 +90,19 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Delete
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Delete);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(0, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(0, modelModifier.TabKeyPositionList.Count);
 
             // LineEnd related code-block-grouping:
@@ -176,23 +171,19 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
             
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Backspace
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Backspace);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(0, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(0, modelModifier.TabKeyPositionList.Count);
 
             // LineEnd related code-block-grouping:
@@ -266,12 +257,11 @@ public partial class TextEditorModelModifierTests
                     new List<TextEditorCursorModifier>() { cursorModifier });
 
                 modelModifier.Delete(
-                        cursorModifierBag: cursorModifierBag,
-                        columnCount: 1,
-                        expandWord: false,
-                        cancellationToken: CancellationToken.None,
-                        deleteKind: DeleteKind.Delete
-                    );
+                    cursorModifierBag: cursorModifierBag,
+                    columnCount: 1,
+                    expandWord: false,
+                    cancellationToken: CancellationToken.None,
+                    deleteKind: DeleteKind.Delete);
                 outModel = modelModifier.ToModel();
             }
         });
@@ -316,8 +306,7 @@ public partial class TextEditorModelModifierTests
                     columnCount: 1,
                     expandWord: false,
                     cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Backspace
-                );
+                    deleteKind: DeleteKind.Backspace);
                 outModel = modelModifier.ToModel();
             }
         });
@@ -354,23 +343,19 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Backspace
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Backspace);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(0, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(0, modelModifier.TabKeyPositionList.Count);
 
             // LineEnd related code-block-grouping:
@@ -439,23 +424,19 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Backspace
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Backspace);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(0, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(0, modelModifier.TabKeyPositionList.Count);
 
             // LineEnd related code-block-grouping:
@@ -529,12 +510,11 @@ public partial class TextEditorModelModifierTests
                     new List<TextEditorCursorModifier>() { cursorModifier });
 
                 modelModifier.Delete(
-                        cursorModifierBag: cursorModifierBag,
-                        columnCount: 1,
-                        expandWord: false,
-                        cancellationToken: CancellationToken.None,
-                        deleteKind: DeleteKind.Backspace
-                    );
+                    cursorModifierBag: cursorModifierBag,
+                    columnCount: 1,
+                    expandWord: false,
+                    cancellationToken: CancellationToken.None,
+                    deleteKind: DeleteKind.Backspace);
                 outModel = modelModifier.ToModel();
             }
         });
@@ -580,12 +560,11 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 12,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Delete
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 12,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Delete);
             outModel = modelModifier.ToModel();
         }
 
@@ -598,11 +577,17 @@ public partial class TextEditorModelModifierTests
 
             // LineEnd related code-block-grouping:
             {
-                Assert.Equal(0, modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
-                Assert.Equal(0, modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
-                Assert.Equal(0, modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 Assert.Equal(1, modelModifier.LineEndList.Count);
 
@@ -691,68 +676,44 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Delete
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Delete);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(11, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                7,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(7, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        2,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        3,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(2, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(3, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                {
-                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        5,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        7,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(5, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(7, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(4, modelModifier.LineEndList.Count);
 
@@ -821,8 +782,7 @@ public partial class TextEditorModelModifierTests
                     columnCount: 1,
                     expandWord: false,
                     cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Delete
-                );
+                    deleteKind: DeleteKind.Delete);
                 outModel = modelModifier.ToModel();
             }
         });
@@ -866,42 +826,30 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Delete
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Delete);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(11, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                7,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(7, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        2,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        3,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(2, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(3, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     0,
@@ -910,15 +858,9 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        5,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        7,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(5, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(7, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(3, modelModifier.LineEndList.Count);
 
@@ -1007,68 +949,44 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Delete
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Delete);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(11, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                7,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(7, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        2,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        3,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(2, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(3, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                {
-                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        5,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        7,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(5, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(7, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(4, modelModifier.LineEndList.Count);
 
@@ -1159,12 +1077,11 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Delete
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Delete);
             outModel = modelModifier.ToModel();
         }
 
@@ -1186,41 +1103,23 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        2,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        3,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(2, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(3, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                {
-                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        5,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        7,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(5, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(7, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(4, modelModifier.LineEndList.Count);
 
@@ -1282,68 +1181,44 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Delete
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Delete);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(12, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                8,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(8, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        3,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        4,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(3, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(4, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                {
-                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        6,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        8,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(6, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(8, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(4, modelModifier.LineEndList.Count);
 
@@ -1412,12 +1287,11 @@ public partial class TextEditorModelModifierTests
                     new List<TextEditorCursorModifier>() { cursorModifier });
 
                 modelModifier.Delete(
-                        cursorModifierBag: cursorModifierBag,
-                        columnCount: 1,
-                        expandWord: false,
-                        cancellationToken: CancellationToken.None,
-                        deleteKind: DeleteKind.Delete
-                    );
+                    cursorModifierBag: cursorModifierBag,
+                    columnCount: 1,
+                    expandWord: false,
+                    cancellationToken: CancellationToken.None,
+                    deleteKind: DeleteKind.Delete);
                 outModel = modelModifier.ToModel();
             }
         });
@@ -1463,12 +1337,11 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    12,
-                    false,
-                    DeleteKind.Backspace,
-                    CancellationToken.None
-                );
+                cursorModifierBag: cursorModifierBag,
+                12,
+                false,
+                DeleteKind.Backspace,
+                CancellationToken.None);
             outModel = modelModifier.ToModel();
         }
 
@@ -1481,11 +1354,17 @@ public partial class TextEditorModelModifierTests
 
             // LineEnd related code-block-grouping:
             {
-                Assert.Equal(0, modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
-                Assert.Equal(0, modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
-                Assert.Equal(0, modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 Assert.Equal(1, modelModifier.LineEndList.Count);
 
@@ -1574,68 +1453,44 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Backspace
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Backspace);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(11, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                7,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(7, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        2,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        3,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(2, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(3, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                {
-                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        5,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        7,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(5, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(7, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(4, modelModifier.LineEndList.Count);
 
@@ -1704,8 +1559,7 @@ public partial class TextEditorModelModifierTests
                     columnCount: 1,
                     expandWord: false,
                     cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Backspace
-                );
+                    deleteKind: DeleteKind.Backspace);
                 outModel = modelModifier.ToModel();
             }
         });
@@ -1750,68 +1604,44 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Backspace
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Backspace);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(12, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                8,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(8, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        3,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        4,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(3, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(4, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                {
-                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        6,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        8,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(6, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(8, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(4, modelModifier.LineEndList.Count);
 
@@ -1900,68 +1730,44 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Backspace
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Backspace);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(11, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                7,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(7, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        2,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        3,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(2, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(3, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                {
-                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        5,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        7,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(5, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(7, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(4, modelModifier.LineEndList.Count);
 
@@ -2050,68 +1856,44 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: true,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Backspace
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: true,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Backspace);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(10, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                6,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(6, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        1,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        2,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(1, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(2, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                {
-                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        4,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        6,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(4, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(6, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(4, modelModifier.LineEndList.Count);
 
@@ -2173,68 +1955,44 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Backspace
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Backspace);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(11, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                8,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(8, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        3,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        4,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(3, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(4, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                {
-                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        6,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        8,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(6, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(8, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(4, modelModifier.LineEndList.Count);
 
@@ -2303,12 +2061,11 @@ public partial class TextEditorModelModifierTests
                     new List<TextEditorCursorModifier>() { cursorModifier });
 
                 modelModifier.Delete(
-                        cursorModifierBag: cursorModifierBag,
-                        columnCount: 1,
-                        expandWord: false,
-                        cancellationToken: CancellationToken.None,
-                        deleteKind: DeleteKind.Backspace
-                    );
+                    cursorModifierBag: cursorModifierBag,
+                    columnCount: 1,
+                    expandWord: false,
+                    cancellationToken: CancellationToken.None,
+                    deleteKind: DeleteKind.Backspace);
                 outModel = modelModifier.ToModel();
             }
         });
@@ -2358,12 +2115,11 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
             
             modelModifier.Delete(
-                    cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Delete
-                );
+                cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Delete);
             outModel = modelModifier.ToModel();
         }
 
@@ -2376,11 +2132,17 @@ public partial class TextEditorModelModifierTests
 
             // LineEnd related code-block-grouping:
             {
-                Assert.Equal(0, modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
-                Assert.Equal(0, modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
-                Assert.Equal(0, modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
                 Assert.Equal(1, modelModifier.LineEndList.Count);
 
@@ -2473,68 +2235,44 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Delete
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Delete);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(11, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                7,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(7, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        2,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        3,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(2, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(3, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                {
-                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        5,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        7,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(5, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(7, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(4, modelModifier.LineEndList.Count);
 
@@ -2607,8 +2345,7 @@ public partial class TextEditorModelModifierTests
                     columnCount: 1,
                     expandWord: false,
                     cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Delete
-                );
+                    deleteKind: DeleteKind.Delete);
                 outModel = modelModifier.ToModel();
             }
         });
@@ -2656,42 +2393,30 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Delete
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Delete);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(11, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                7,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(7, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        2,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        3,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(2, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(3, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     0,
@@ -2700,15 +2425,9 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        5,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        7,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(5, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(7, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(3, modelModifier.LineEndList.Count);
 
@@ -2801,68 +2520,44 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Delete
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Delete);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(11, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                7,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(7, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        2,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        3,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(2, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(3, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                {
-                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        5,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        7,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(5, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(7, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(4, modelModifier.LineEndList.Count);
 
@@ -2957,68 +2652,44 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: true,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Delete
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: true,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Delete);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(11, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                7,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(7, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        2,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        3,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(2, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(3, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                {
-                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        5,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        7,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(5, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(7, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(4, modelModifier.LineEndList.Count);
 
@@ -3084,68 +2755,44 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Delete
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Delete);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(11, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                8,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(8, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        3,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        4,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(3, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(4, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                {
-                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        6,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        8,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(6, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(8, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(4, modelModifier.LineEndList.Count);
 
@@ -3218,12 +2865,11 @@ public partial class TextEditorModelModifierTests
                     new List<TextEditorCursorModifier>() { cursorModifier });
 
                 modelModifier.Delete(
-                        cursorModifierBag: cursorModifierBag,
-                        columnCount: 1,
-                        expandWord: false,
-                        cancellationToken: CancellationToken.None,
-                        deleteKind: DeleteKind.Delete
-                    );
+                    cursorModifierBag: cursorModifierBag,
+                    columnCount: 1,
+                    expandWord: false,
+                    cancellationToken: CancellationToken.None,
+                    deleteKind: DeleteKind.Delete);
                 outModel = modelModifier.ToModel();
             }
         });
@@ -3271,12 +2917,11 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Backspace
-                );
+                cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Backspace);
             outModel = modelModifier.ToModel();
         }
 
@@ -3289,13 +2934,21 @@ public partial class TextEditorModelModifierTests
 
             // LineEnd related code-block-grouping:
             {
-                Assert.Equal(0, modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
 
-                Assert.Equal(0, modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
 
-                Assert.Equal(0, modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                Assert.Equal(
+                    0,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
 
-                Assert.Equal(1, modelModifier.LineEndList.Count);
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndList.Count);
 
                 var endOfFile = modelModifier.LineEndList.Last();
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
@@ -3386,68 +3039,44 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Backspace
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Backspace);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(11, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                7,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(7, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        2,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        3,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(2, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(3, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                {
-                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        5,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        7,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(5, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(7, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(4, modelModifier.LineEndList.Count);
 
@@ -3520,8 +3149,7 @@ public partial class TextEditorModelModifierTests
                     columnCount: 1,
                     expandWord: false,
                     cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Backspace
-                );
+                    deleteKind: DeleteKind.Backspace);
                 outModel = modelModifier.ToModel();
             }
         });
@@ -3569,42 +3197,30 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Backspace
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Backspace);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(11, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                7,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(7, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        2,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        3,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(2, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(3, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     0,
@@ -3613,15 +3229,9 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        5,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        7,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(5, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(7, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(3, modelModifier.LineEndList.Count);
 
@@ -3714,68 +3324,44 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Backspace
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Backspace);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(11, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                7,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(7, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        2,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        3,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(2, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(3, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                {
-                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        5,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        7,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(5, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(7, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(4, modelModifier.LineEndList.Count);
 
@@ -3870,68 +3456,44 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: true,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Backspace
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: true,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Backspace);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(11, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                7,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(7, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        2,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        3,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(2, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(3, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                {
-                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        5,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        7,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(5, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(7, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(4, modelModifier.LineEndList.Count);
 
@@ -3997,68 +3559,44 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Delete(
-                    cursorModifierBag: cursorModifierBag,
-                    columnCount: 1,
-                    expandWord: false,
-                    cancellationToken: CancellationToken.None,
-                    deleteKind: DeleteKind.Backspace
-                );
+                cursorModifierBag: cursorModifierBag,
+                columnCount: 1,
+                expandWord: false,
+                cancellationToken: CancellationToken.None,
+                deleteKind: DeleteKind.Backspace);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
             Assert.Equal(11, modelModifier.DocumentLength);
-
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
-
             Assert.Single(modelModifier.PartitionList);
-
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                8,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(8, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    Assert.Equal(
-                        3,
-                        carriageReturn.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        4,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(3, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(4, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                {
-                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    Assert.Equal(
-                        6,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(
-                        8,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(6, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(8, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(4, modelModifier.LineEndList.Count);
 
@@ -4131,12 +3669,11 @@ public partial class TextEditorModelModifierTests
                     new List<TextEditorCursorModifier>() { cursorModifier });
 
                 modelModifier.Delete(
-                        cursorModifierBag: cursorModifierBag,
-                        columnCount: 1,
-                        expandWord: false,
-                        cancellationToken: CancellationToken.None,
-                        deleteKind: DeleteKind.Backspace
-                    );
+                    cursorModifierBag: cursorModifierBag,
+                    columnCount: 1,
+                    expandWord: false,
+                    cancellationToken: CancellationToken.None,
+                    deleteKind: DeleteKind.Backspace);
                 outModel = modelModifier.ToModel();
             }
         });

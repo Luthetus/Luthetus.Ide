@@ -1654,5 +1654,136 @@ public partial class TextEditorModelModifierTests
             }
         }
     }
+
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, bool, CancellationToken)"/><br/>
+    /// Case: Insert into a not empty editor, at positionIndex between 0 and DocumentLength; exclusive bounds
+    ///       while the cursor has an active selection(2024-04-14)<br/>
+    /// Purpose: insertion while the cursor has an active selection means that the selected text
+    ///          must be deleted prior to insertion, thus making this a unique case.<br/>
+    /// </summary>
+    [Fact]
+    public void Insert_Into_NotEmptyEditor_At_PositionIndex_Between_0_And_DocumentLength_Exclusive_With_Selection()
+    {
+        var (inModel, modelModifier) = NotEmptyEditor_TestData_And_PerformPreAssertions(
+            resourceUri: new ResourceUri($"/{nameof(NotEmptyEditor_TestData_And_PerformPreAssertions)}.txt"),
+            resourceLastWriteTime: DateTime.MinValue,
+            fileExtension: ExtensionNoPeriodFacts.TXT,
+            content:
+                (
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " "      // Space
+                ),
+            decorationMapper: null,
+            compilerService: null,
+            partitionSize: 4096);
+
+        // Do something
+        TextEditorModel outModel;
+        TextEditorCursorModifier cursorModifier;
+        {
+            var cursor = new TextEditorCursor(
+                lineIndex: 1,
+                columnIndex: 1,
+                isPrimaryCursor: true);
+            cursorModifier = new TextEditorCursorModifier(cursor);
+            var cursorModifierBag = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier>() { cursorModifier });
+
+            modelModifier.Insert(
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " ",     // Space
+                    cursorModifierBag,
+                    cancellationToken: CancellationToken.None
+                );
+            outModel = modelModifier.ToModel();
+        }
+
+        // Post-assertions
+        {
+            Assert.Equal(23, modelModifier.DocumentLength);
+            Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
+            Assert.Single(modelModifier.PartitionList);
+            Assert.Equal(2, modelModifier.TabKeyPositionList.Count);
+
+            // LineEnd related code-block-grouping:
+            {
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(14, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(15, carriageReturn.EndPositionIndexExclusive);
+
+                Assert.Equal(4, modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
+                var lineFeedMatches = modelModifier.LineEndList.Where(x => x.LineEndKind == LineEndKind.LineFeed).ToArray();
+                // First LineFeed
+                {
+                    var lineFeed = lineFeedMatches[0];
+                    Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                    Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
+                }
+                // Second LineFeed
+                {
+                    var lineFeed = lineFeedMatches[1];
+                    Assert.Equal(2, lineFeed.StartPositionIndexInclusive);
+                    Assert.Equal(3, lineFeed.EndPositionIndexExclusive);
+                }
+                // Third LineFeed
+                {
+                    var lineFeed = lineFeedMatches[2];
+                    Assert.Equal(5, lineFeed.StartPositionIndexInclusive);
+                    Assert.Equal(6, lineFeed.EndPositionIndexExclusive);
+                }
+                // Fourth LineFeed
+                {
+                    var lineFeed = lineFeedMatches[3];
+                    Assert.Equal(8, lineFeed.StartPositionIndexInclusive);
+                    Assert.Equal(9, lineFeed.EndPositionIndexExclusive);
+                }
+
+                Assert.Equal(
+                    1,
+                    modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                // StartPositionIndexInclusive
+                Assert.Equal(17, carriageReturnLineFeed.StartPositionIndexInclusive);
+                // EndPositionIndexExclusive
+                Assert.Equal(19, carriageReturnLineFeed.EndPositionIndexExclusive);
+
+                Assert.Equal(7, modelModifier.LineEndList.Count);
+
+                var endOfFile = modelModifier.LineEndList.Last();
+                Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
+                Assert.Equal(23, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(23, endOfFile.EndPositionIndexExclusive);
+            }
+
+            // Cursor related code-block-grouping:
+            {
+                Assert.Equal(4, cursorModifier.LineIndex);
+                Assert.Equal(4, cursorModifier.ColumnIndex);
+                Assert.Equal(4, cursorModifier.PreferredColumnIndex);
+                Assert.True(cursorModifier.IsPrimaryCursor);
+                Assert.Equal(0, cursorModifier.SelectionEndingPositionIndex);
+                Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
+            }
+        }
+    }
     #endregion
 }
