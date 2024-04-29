@@ -8,6 +8,12 @@
 
 @{
     var renderBatch = _storedRenderBatch;
+    
+    // Do not use <CascadingValue Value="renderBatchValidated">...</CascadingValue>
+    // at the top level in order to D.R.Y the code.
+    //
+    // If at any point the renderBatchValidated is null, checking after the fact is not sufficient.
+    // The cascading parameter could change out from under a child component, and cause some confusing exceptions.
     var renderBatchValidated = renderBatch.IsValid ? new TextEditorRenderBatchValidated(renderBatch) : null;
 
     var contextBoundaryStyle = $"{renderBatch.FontSizeInPixelsCssStyle} {renderBatch.FontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
@@ -26,41 +32,41 @@
         </div>
     }
 
-    <CascadingValue Value="renderBatchValidated">
-        <CascadingValue Name="ProportionalFontMeasurementsContainerElementId" Value="ProportionalFontMeasurementsContainerElementId">
-
-            @if (renderBatchValidated is not null && ViewModelDisplayOptions.IncludeHeaderHelperComponent)
-            {
+    <CascadingValue Name="ProportionalFontMeasurementsContainerElementId" Value="ProportionalFontMeasurementsContainerElementId">
+        @if (renderBatchValidated is not null && ViewModelDisplayOptions.IncludeHeaderHelperComponent)
+        {
+            <CascadingValue Value="renderBatchValidated">
                 <Header HeaderButtonKinds="ViewModelDisplayOptions.HeaderButtonKinds" />
-            }
+            </CascadingValue>
+        }
 
-            <div @onclick="FocusTextEditorAsync"
-                 @onkeydown="ReceiveOnKeyDown"
-                 @onkeydown:preventDefault="true"
-                 @oncontextmenu="ReceiveOnContextMenuAsync"
-                 @oncontextmenu:preventDefault="true"
-                 @onmousedown="ReceiveContentOnMouseDown"
-                 @onmousemove="ReceiveContentOnMouseMove"
-                 @onmouseout="ReceiveContentOnMouseOut"
-                 @ondblclick="ReceiveOnDoubleClick"
-                 @onwheel="ReceiveOnWheel"
-                 @ontouchstart="ReceiveOnTouchStartAsync"
-                 @ontouchmove="ReceiveOnTouchMoveAsync"
-                 @ontouchend="ClearTouch"
-                 @ontouchcancel="ClearTouch"
-                 @ontouchleave="ClearTouch"
-                 id="@ContentElementId"
-                 style="@(renderBatch.HeightCssStyle) @ViewModelDisplayOptions.TextEditorStyleCssString"
-                 class="luth_te_text-editor luth_unselectable @ViewModelDisplayOptions.TextEditorClassCssString"
-                 tabindex="-1">
+        <div @onclick="FocusTextEditorAsync"
+             @onkeydown="ReceiveOnKeyDown"
+             @onkeydown:preventDefault="true"
+             @oncontextmenu="ReceiveOnContextMenuAsync"
+             @oncontextmenu:preventDefault="true"
+             @onmousedown="ReceiveContentOnMouseDown"
+             @onmousemove="ReceiveContentOnMouseMove"
+             @onmouseout="ReceiveContentOnMouseOut"
+             @ondblclick="ReceiveOnDoubleClick"
+             @onwheel="ReceiveOnWheel"
+             @ontouchstart="ReceiveOnTouchStartAsync"
+             @ontouchmove="ReceiveOnTouchMoveAsync"
+             @ontouchend="ClearTouch"
+             @ontouchcancel="ClearTouch"
+             @ontouchleave="ClearTouch"
+             id="@ContentElementId"
+             style="@(renderBatch.HeightCssStyle) @ViewModelDisplayOptions.TextEditorStyleCssString"
+             class="luth_te_text-editor luth_unselectable @ViewModelDisplayOptions.TextEditorClassCssString"
+             tabindex="-1">
 
-                <MeasureCharacterWidthAndRowHeight @ref="_measureCharacterWidthAndRowHeightComponent"
-                                                   HtmlElementId="@MeasureCharacterWidthAndRowHeightElementId" />
+            <MeasureCharacterWidthAndRowHeight @ref="_measureCharacterWidthAndRowHeightComponent"
+                                               HtmlElementId="@MeasureCharacterWidthAndRowHeightElementId" />
 
-                @if (renderBatchValidated is not null)
-                {
+            @if (renderBatchValidated is not null)
+            {
+                <CascadingValue Value="renderBatchValidated">
                     <CascadingValue Value="_events.TooltipViewModel">
-
                         @if (ViewModelDisplayOptions.IncludeGutterComponent)
                         {
                             <GutterSection />
@@ -77,29 +83,30 @@
                             <CommandBarDisplay RestoreFocusToTextEditor="FocusTextEditorAsync" />
                         }
                     </CascadingValue>
-                }
-                else
-                {
-                    if (renderBatch.Model is null)
-                    {
-                        <div>The @nameof(TextEditorModel) was null</div>
-                    }
-                    else if (renderBatch.ViewModel is null)
-                    {
-                        <div>The @nameof(TextEditorViewModel) was null</div>
-                    }
-                    else if (renderBatch.Options is null)
-                    {
-                        <div>The @nameof(TextEditorOptions) was null</div>
-                    }
-                }
-            </div>
-
-            @if (renderBatchValidated is not null && ViewModelDisplayOptions.IncludeFooterHelperComponent)
-            {
-                <Footer/>
+                </CascadingValue>
             }
+            else
+            {
+                if (renderBatch.Model is null)
+                {
+                    <div>The @nameof(TextEditorModel) was null</div>
+                }
+                else if (renderBatch.ViewModel is null)
+                {
+                    <div>The @nameof(TextEditorViewModel) was null</div>
+                }
+                else if (renderBatch.Options is null)
+                {
+                    <div>The @nameof(TextEditorOptions) was null</div>
+                }
+            }
+        </div>
 
-        </CascadingValue>
+        @if (renderBatchValidated is not null && ViewModelDisplayOptions.IncludeFooterHelperComponent)
+        {
+            <CascadingValue Value="renderBatchValidated">
+                <Footer />
+            </CascadingValue>
+        }
     </CascadingValue>
 </ContextBoundary>
