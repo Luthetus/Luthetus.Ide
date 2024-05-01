@@ -395,8 +395,6 @@ public partial class TextEditorModelModifier : ITextEditorModel
         bool useLineEndKindPreference = true,
         CancellationToken cancellationToken = default)
     {
-        SetIsDirtyTrue();
-
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _lineEndList ??= _textEditorModel.LineEndList.ToList();
@@ -448,6 +446,8 @@ public partial class TextEditorModelModifier : ITextEditorModel
             // So, use the 'cursorPositionIndex' variable that was calculated prior to the metadata step.
             InsertValue(value, initialCursorPositionIndex, useLineEndKindPreference, cancellationToken);
         }
+
+        SetIsDirtyTrue();
     }
 
     private string InsertMetadata(
@@ -716,8 +716,6 @@ public partial class TextEditorModelModifier : ITextEditorModel
         if (columnCount < 0)
             throw new LuthetusTextEditorException($"{nameof(columnCount)} < 0");
 
-        SetIsDirtyTrue();
-
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _lineEndList ??= _textEditorModel.LineEndList.ToList();
@@ -734,11 +732,16 @@ public partial class TextEditorModelModifier : ITextEditorModel
             var tuple = DeleteMetadata(columnCount, cursorModifier, expandWord, deleteKind, cancellationToken);
 
             if (tuple is null)
+            {
+                SetIsDirtyTrue();
                 return;
+            }
 
             var (positionIndex, charCount) = tuple.Value;
             DeleteValue(positionIndex, charCount, cancellationToken);
         }
+
+        SetIsDirtyTrue();
     }
 
     /// <summary>
@@ -774,10 +777,6 @@ public partial class TextEditorModelModifier : ITextEditorModel
             // If user's cursor has a selection, then set the variables so the positionIndex is the
             // selection.AnchorPositionIndex and the count is selection.EndPositionIndex - selection.AnchorPositionIndex
             // and that the 'DeleteKind.Delete' logic runs.
-
-            // TODO: Is this true?: If one is deleting a selection, there is no multi-char-value character involvement, because the selection...
-            // ...is in terms of the char-values themselves already. Too many characters get deleted if one selects /r/n character.
-
             var (lowerPositionIndexInclusive, upperPositionIndexExclusive) = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
             var lowerLineData = this.GetLineInformationFromPositionIndex(lowerPositionIndexInclusive);
@@ -787,6 +786,9 @@ public partial class TextEditorModelModifier : ITextEditorModel
             initialLineIndex = cursorModifier.LineIndex;
             cursorModifier.SetColumnIndexAndPreferred(lowerColumnIndex);
             positionIndex = lowerPositionIndexInclusive;
+
+            // The deletion of a selection logic does not check for multibyte characters.
+            // Therefore, later in this method, if a multibyte character is found, the columnCount must be reduced. (2024-05-01)
             columnCount = upperPositionIndexExclusive - lowerPositionIndexInclusive;
             deleteKind = DeleteKind.Delete;
 
@@ -849,6 +851,13 @@ public partial class TextEditorModelModifier : ITextEditorModel
                     charCount += lengthOfLineEnd;
 
                     MutateLineEndKindCount(lineEnd.LineEndKind, -1);
+
+                    if (lineEnd.LineEndKind == LineEndKind.CarriageReturnLineFeed && initiallyHadSelection)
+                    {
+                        // The deletion of a selection logic does not check for multibyte characters.
+                        // Therefore, if a multibyte character is found, the columnCount must be reduced. (2024-05-01)
+                        columnCount--;
+                    }
                 }
                 else
                 {

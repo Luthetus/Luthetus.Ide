@@ -1618,25 +1618,25 @@ public partial class TextEditorModelModifierTests
                 Key<TextEditorViewModel>.Empty,
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
+            modelModifier.SetLineEndKindPreference(LineEndKind.LineFeed);
             modelModifier.Insert(
-                    "\n" +   // LineFeed
-                    "b9" +   // LetterOrDigit-Lowercase
-                    "\r" +   // CarriageReturn
-                    "9B" +   // LetterOrDigit-Uppercase
-                    "\r\n" + // CarriageReturnLineFeed
-                    "\t" +   // Tab
-                    "$" +    // SpecialCharacter
-                    ";" +    // Punctuation
-                    " ",     // Space
-                    cursorModifierBag,
-                    cancellationToken: CancellationToken.None
-                );
+                "\n" +   // LineFeed
+                "b9" +   // LetterOrDigit-Lowercase
+                "\r" +   // CarriageReturn
+                "9B" +   // LetterOrDigit-Uppercase
+                "\r\n" + // CarriageReturnLineFeed
+                "\t" +   // Tab
+                "$" +    // SpecialCharacter
+                ";" +    // Punctuation
+                " ",     // Space
+                cursorModifierBag,
+                cancellationToken: CancellationToken.None);
             outModel = modelModifier.ToModel();
         }
 
         // Post-assertions
         {
-            Assert.Equal(23, modelModifier.CharCount);
+            Assert.Equal(20, modelModifier.CharCount);
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
             Assert.Single(modelModifier.PartitionList);
             Assert.Equal(2, modelModifier.TabKeyPositionList.Count);
@@ -1647,8 +1647,8 @@ public partial class TextEditorModelModifierTests
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
                 var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                Assert.Equal(14, carriageReturn.StartPositionIndexInclusive);
-                Assert.Equal(15, carriageReturn.EndPositionIndexExclusive);
+                Assert.Equal(3, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(4, carriageReturn.EndPositionIndexExclusive);
 
                 Assert.Equal(4, modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 var lineFeedMatches = modelModifier.LineEndList.Where(x => x.LineEndKind == LineEndKind.LineFeed).ToArray();
