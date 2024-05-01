@@ -2,41 +2,51 @@
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.Common.RazorLib.Storages.States;
+using Luthetus.Common.RazorLib.Storages.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
+using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Misc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
 
 namespace Luthetus.TextEditor.Tests.Basis.Options.Models;
 
 /// <summary>
-/// <see cref="ITextEditorService.TextEditorOptionsApi"/>
+/// <see cref="TextEditorOptionsApi"/>
 /// </summary>
 public class OptionsApiTests
 {
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.TextEditorOptionsApi(ITextEditorService, RazorLib.Installations.Models.LuthetusTextEditorConfig, Common.RazorLib.Storages.Models.IStorageService, Common.RazorLib.Storages.States.StorageSync, Fluxor.IDispatcher)"/>
+    /// <see cref="TextEditorOptionsApi(ITextEditorService, LuthetusTextEditorConfig, IStorageService, StorageSync, IDispatcher)"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var dispatcher,
             out var serviceProvider);
 
         Assert.NotNull(textEditorService.OptionsApi);
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetTheme(ThemeRecord)"/>
+    /// <see cref="TextEditorOptionsApi.SetTheme(ThemeRecord)"/>
     /// </summary>
     [Fact]
     public void SetTheme()
     {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var dispatcher,
             out var serviceProvider);
 
         Assert.Equal(
@@ -51,15 +61,14 @@ public class OptionsApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetShowWhitespace(bool)"/>
+    /// <see cref="TextEditorOptionsApi.SetShowWhitespace(bool)"/>
     /// </summary>
     [Fact]
     public void SetShowWhitespace()
     {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var dispatcher,
             out var serviceProvider);
 
         Assert.False(textEditorService.OptionsApi.GetOptions().ShowWhitespace);
@@ -68,15 +77,14 @@ public class OptionsApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetUseMonospaceOptimizations(bool)"/>
+    /// <see cref="TextEditorOptionsApi.SetUseMonospaceOptimizations(bool)"/>
     /// </summary>
     [Fact]
     public void SetUseMonospaceOptimizations()
     {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var dispatcher,
             out var serviceProvider);
 
         Assert.True(textEditorService.OptionsApi.GetOptions().UseMonospaceOptimizations);
@@ -85,15 +93,14 @@ public class OptionsApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetShowNewlines(bool)"/>
+    /// <see cref="TextEditorOptionsApi.SetShowNewlines(bool)"/>
     /// </summary>
     [Fact]
     public void SetShowNewlines()
     {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var dispatcher,
             out var serviceProvider);
 
         Assert.False(textEditorService.OptionsApi.GetOptions().ShowNewlines);
@@ -102,15 +109,14 @@ public class OptionsApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetKeymap(Common.RazorLib.Keymaps.Models.Keymap)"/>
+    /// <see cref="TextEditorOptionsApi.SetKeymap(Keymap)"/>
     /// </summary>
     [Fact]
     public void SetKeymap()
     {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var dispatcher,
             out var serviceProvider);
 
         Assert.Equal(
@@ -125,15 +131,14 @@ public class OptionsApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetHeight(int?)"/>
+    /// <see cref="TextEditorOptionsApi.SetHeight(int?)"/>
     /// </summary>
     [Fact]
     public void SetHeight()
     {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var dispatcher,
             out var serviceProvider);
 
         var textEditorHeightInPixels = 500;
@@ -148,15 +153,14 @@ public class OptionsApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetFontSize(int)"/>
+    /// <see cref="TextEditorOptionsApi.SetFontSize(int)"/>
     /// </summary>
     [Fact]
     public void SetFontSize()
     {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var dispatcher,
             out var serviceProvider);
 
         Assert.Equal(
@@ -173,15 +177,14 @@ public class OptionsApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetFontFamily(string?)"/>
+    /// <see cref="TextEditorOptionsApi.SetFontFamily(string?)"/>
     /// </summary>
     [Fact]
     public void SetFontFamily()
     {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var dispatcher,
             out var serviceProvider);
 
         Assert.Null(textEditorService.OptionsApi.GetOptions().CommonOptions.FontFamily);
@@ -196,15 +199,14 @@ public class OptionsApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetCursorWidth(double)"/>
+    /// <see cref="TextEditorOptionsApi.SetCursorWidth(double)"/>
     /// </summary>
     [Fact]
     public void SetCursorWidth()
     {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var dispatcher,
             out var serviceProvider);
 
         Assert.Equal(
@@ -221,15 +223,14 @@ public class OptionsApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetRenderStateKey(Key{RenderState})"/>
+    /// <see cref="TextEditorOptionsApi.SetRenderStateKey(Key{RenderState})"/>
     /// </summary>
     [Fact]
     public void SetRenderStateKey()
     {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var dispatcher,
             out var serviceProvider);
 
         var renderStateKey = Key<RenderState>.NewKey();
@@ -246,38 +247,81 @@ public class OptionsApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetFromLocalStorageAsync()"/>
+    /// <see cref="TextEditorOptionsApi.SetFromLocalStorageAsync()"/>
     /// </summary>
     [Fact]
     public void SetFromLocalStorageAsync()
     {
+        InitializeOptionsApiTests(
+            out var textEditorService,
+            out var dispatcher,
+            out var serviceProvider);
+
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.WriteToStorage()"/>
+    /// <see cref="TextEditorOptionsApi.WriteToStorage()"/>
     /// </summary>
     [Fact]
     public void WriteToStorage()
     {
+        InitializeOptionsApiTests(
+            out var textEditorService,
+            out var dispatcher,
+            out var serviceProvider);
+
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.ShowSettingsDialog(bool?, string?)"/>
+    /// <see cref="TextEditorOptionsApi.ShowSettingsDialog(bool?, string?)"/>
     /// </summary>
     [Fact]
     public void ShowSettingsDialog()
     {
+        InitializeOptionsApiTests(
+            out var textEditorService,
+            out var dispatcher,
+            out var serviceProvider);
+
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.ShowFindAllDialog(bool?, string?)"/>
+    /// <see cref="TextEditorOptionsApi.ShowFindAllDialog(bool?, string?)"/>
     /// </summary>
     [Fact]
     public void ShowFindDialog()
     {
+        InitializeOptionsApiTests(
+            out var textEditorService,
+            out var dispatcher,
+            out var serviceProvider);
+
         throw new NotImplementedException();
+    }
+    
+    private void InitializeOptionsApiTests(
+        out ITextEditorService textEditorService,
+        out IDispatcher dispatcher,
+        out ServiceProvider serviceProvider)
+    {
+        var backgroundTaskService = new BackgroundTaskServiceSynchronous();
+
+        var serviceCollection = new ServiceCollection()
+            .AddScoped<IJSRuntime, DoNothingJsRuntime>()
+            .AddLuthetusTextEditor(new LuthetusHostingInformation(LuthetusHostingKind.UnitTesting, backgroundTaskService))
+            .AddFluxor(options => options.ScanAssemblies(
+                typeof(LuthetusCommonConfig).Assembly,
+                typeof(LuthetusTextEditorConfig).Assembly));
+
+        serviceProvider = serviceCollection.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+        textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
     }
 }
