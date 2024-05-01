@@ -1653,50 +1653,37 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(4, modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 var lineFeedMatches = modelModifier.LineEndList.Where(x => x.LineEndKind == LineEndKind.LineFeed).ToArray();
                 // First LineFeed
-                {
-                    var lineFeed = lineFeedMatches[0];
-                    Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = lineFeedMatches[0];
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
                 // Second LineFeed
-                {
-                    var lineFeed = lineFeedMatches[1];
-                    Assert.Equal(2, lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(3, lineFeed.EndPositionIndexExclusive);
-                }
+                lineFeed = lineFeedMatches[1];
+                Assert.Equal(5, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(6, lineFeed.EndPositionIndexExclusive);
                 // Third LineFeed
-                {
-                    var lineFeed = lineFeedMatches[2];
-                    Assert.Equal(5, lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(6, lineFeed.EndPositionIndexExclusive);
-                }
+                lineFeed = lineFeedMatches[2];
+                Assert.Equal(8, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(9, lineFeed.EndPositionIndexExclusive);
                 // Fourth LineFeed
-                {
-                    var lineFeed = lineFeedMatches[3];
-                    Assert.Equal(8, lineFeed.StartPositionIndexInclusive);
-                    Assert.Equal(9, lineFeed.EndPositionIndexExclusive);
-                }
+                lineFeed = lineFeedMatches[3];
+                Assert.Equal(11, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(12, lineFeed.EndPositionIndexExclusive);
 
                 Assert.Equal(
-                    1,
+                    0,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                // StartPositionIndexInclusive
-                Assert.Equal(17, carriageReturnLineFeed.StartPositionIndexInclusive);
-                // EndPositionIndexExclusive
-                Assert.Equal(19, carriageReturnLineFeed.EndPositionIndexExclusive);
 
-                Assert.Equal(7, modelModifier.LineEndList.Count);
+                Assert.Equal(6, modelModifier.LineEndList.Count);
 
                 var endOfFile = modelModifier.LineEndList.Last();
                 Assert.Equal(LineEndKind.EndOfFile, endOfFile.LineEndKind);
-                Assert.Equal(23, endOfFile.StartPositionIndexInclusive);
-                Assert.Equal(23, endOfFile.EndPositionIndexExclusive);
+                Assert.Equal(20, endOfFile.StartPositionIndexInclusive);
+                Assert.Equal(20, endOfFile.EndPositionIndexExclusive);
             }
 
             // Cursor related code-block-grouping:
             {
-                Assert.Equal(4, cursorModifier.LineIndex);
+                Assert.Equal(5, cursorModifier.LineIndex);
                 Assert.Equal(4, cursorModifier.ColumnIndex);
                 Assert.Equal(4, cursorModifier.PreferredColumnIndex);
                 Assert.True(cursorModifier.IsPrimaryCursor);
@@ -1704,8 +1691,6 @@ public partial class TextEditorModelModifierTests
                 Assert.Null(cursorModifier.SelectionAnchorPositionIndex);
             }
         }
-
-        throw new NotImplementedException();
     }
     #endregion
 }
