@@ -81,5 +81,5 @@ public interface ITextEditorModel
     public string AllText { get; }
 
     public int LineCount { get; }
-    public int DocumentLength { get; }
+    public int CharCount { get; }
 }

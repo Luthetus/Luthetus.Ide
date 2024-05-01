@@ -132,7 +132,7 @@ public class TextEditorCommandDefaultFunctions
                 return Task.CompletedTask;
 
             primaryCursorModifier.SelectionAnchorPositionIndex = 0;
-            primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.DocumentLength;
+            primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.CharCount;
             return Task.CompletedTask;
         };
     }
@@ -657,7 +657,7 @@ public class TextEditorCommandDefaultFunctions
                 if (unmatchedCharacters == 0)
                     break;
 
-                if (positionIndex <= 0 || positionIndex >= modelModifier.DocumentLength)
+                if (positionIndex <= 0 || positionIndex >= modelModifier.CharCount)
                     break;
             }
 

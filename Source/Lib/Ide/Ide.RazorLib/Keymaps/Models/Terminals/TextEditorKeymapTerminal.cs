@@ -142,7 +142,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 
 										var input = new TextEditorTextSpan(
 											mostRecentWorkingDirectoryText.EndingIndexExclusive,
-											modelModifier.DocumentLength,
+											modelModifier.CharCount,
 											0,
 											modelModifier.ResourceUri,
 											modelModifier.GetAllText());

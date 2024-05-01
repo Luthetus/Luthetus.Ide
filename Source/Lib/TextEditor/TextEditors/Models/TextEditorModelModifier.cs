@@ -68,7 +68,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     public Key<RenderState> RenderStateKey => _renderStateKey ?? _textEditorModel.RenderStateKey;
 
     public int LineCount => LineEndList.Count;
-    public int DocumentLength => _richCharacterList.Count;
+    public int CharCount => _richCharacterList.Count;
 
     /// <summary>
     /// TODO: Awkward naming convention is being used here. This is an expression bound property,...
@@ -193,7 +193,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
         _onlyLineEndKindWasModified = true;
     }
 
-    public void SetUsingLineEndKind(LineEndKind rowEndingKind)
+    public void SetLineEndKindPreference(LineEndKind rowEndingKind)
     {
         _usingLineEndKind = rowEndingKind;
     }
@@ -331,7 +331,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     {
         ClearContent();
         ClearOnlyRowEndingKind();
-        SetUsingLineEndKind(LineEndKind.Unset);
+        SetLineEndKindPreference(LineEndKind.Unset);
     }
 
     public void HandleKeyboardEvent(
@@ -827,7 +827,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
             for (int i = 0; i < columnCount; i++)
             {
                 var toDeletePositionIndex = positionIndex + charCount;
-                if (toDeletePositionIndex < 0 || toDeletePositionIndex >= DocumentLength)
+                if (toDeletePositionIndex < 0 || toDeletePositionIndex >= CharCount)
                     break;
 
                 var richCharacterToDelete = _richCharacterList[toDeletePositionIndex];
@@ -890,7 +890,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
             {
                 // Minus 1 here because 'Backspace' deletes the previous character.
                 var toDeletePositionIndex = positionIndex - charCount - 1;
-                if (toDeletePositionIndex < 0 || toDeletePositionIndex >= DocumentLength)
+                if (toDeletePositionIndex < 0 || toDeletePositionIndex >= CharCount)
                     break;
 
                 var richCharacterToDelete = _richCharacterList[toDeletePositionIndex];
@@ -1469,7 +1469,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
     public void __RemoveAt(int globalPositionIndex)
     {
-        if (globalPositionIndex >= DocumentLength)
+        if (globalPositionIndex >= CharCount)
             return;
 
         int indexOfPartitionWithContent = -1;
@@ -1632,7 +1632,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
         while (true)
         {
-            if (globalPositionIndex >= DocumentLength)
+            if (globalPositionIndex >= CharCount)
                 return;
 
             for (; i < _partitionList.Count; i++)
@@ -1701,7 +1701,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
     public void __Add(RichCharacter richCharacter)
     {
-        __Insert(DocumentLength, richCharacter);
+        __Insert(CharCount, richCharacter);
     }
 
     public enum DeleteKind
