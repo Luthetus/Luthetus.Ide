@@ -2,13 +2,19 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Namespaces.Models;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
+using Microsoft.Extensions.DependencyInjection;
+using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib;
 
 namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 
 /// <summary>
 /// <see cref="TreeViewCompilerService"/>
 /// </summary>
-public class TreeViewCompilerServiceTests
+public class TreeViewCompilerServiceTests : IdeTestBase
 {
     /// <summary>
     /// <see cref="TreeViewCompilerService(ILuthCompilerService, ILuthetusIdeComponentRenderers, ILuthetusCommonComponentRenderers, bool, bool)"/>
@@ -19,7 +25,32 @@ public class TreeViewCompilerServiceTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        Test_RegisterServices(out var serviceProvider);
+        Test_CreateFileSystem(serviceProvider);
+
+        var ideComponentRenderers = serviceProvider.GetRequiredService<ILuthetusIdeComponentRenderers>();
+        var commonComponentRenderers = serviceProvider.GetRequiredService<ILuthetusCommonComponentRenderers>();
+        var fileSystemProvider = serviceProvider.GetRequiredService<IFileSystemProvider>();
+        var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
+
+        var compilerService = new CSharpCompilerService(
+            serviceProvider.GetRequiredService<ITextEditorService>());
+
+        var isExpandable = true;
+        var isExpanded = true;
+
+        var treeView = new TreeViewCompilerService(
+            compilerService,
+            ideComponentRenderers,
+            commonComponentRenderers,
+            isExpandable,
+            isExpanded);
+
+        Assert.Equal(treeView.Item, compilerService);
+        Assert.Equal(treeView.IdeComponentRenderers, ideComponentRenderers);
+        Assert.Equal(treeView.CommonComponentRenderers, commonComponentRenderers);
+        Assert.Equal(treeView.IsExpandable, isExpandable);
+        Assert.Equal(treeView.IsExpanded, isExpanded);
     }
 
     /// <summary>

@@ -2,13 +2,17 @@
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Gits.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 
 /// <summary>
 /// <see cref="TreeViewGitFile"/>
 /// </summary>
-public class TreeViewGitFileTests
+public class TreeViewGitFileTests : IdeTestBase
 {
     /// <summary>
     /// <see cref="TreeViewGitFile(GitFile, ILuthetusIdeComponentRenderers, bool, bool)"/>
@@ -18,7 +22,31 @@ public class TreeViewGitFileTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        Test_RegisterServices(out var serviceProvider);
+        Test_CreateFileSystem(serviceProvider);
+
+        var ideComponentRenderers = serviceProvider.GetRequiredService<ILuthetusIdeComponentRenderers>();
+        var commonComponentRenderers = serviceProvider.GetRequiredService<ILuthetusCommonComponentRenderers>();
+        var fileSystemProvider = serviceProvider.GetRequiredService<IFileSystemProvider>();
+        var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
+
+        var gitFile = new GitFile(
+            environmentProvider.AbsolutePathFactory("/unitTesting.txt", false),
+            GitDirtyReason.Untracked);
+
+        var isExpandable = true;
+        var isExpanded = true;
+
+        var treeView = new TreeViewGitFile(
+            gitFile,
+            ideComponentRenderers,
+            isExpandable,
+            isExpanded);
+
+        Assert.Equal(treeView.Item, gitFile);
+        Assert.Equal(treeView.IdeComponentRenderers, ideComponentRenderers);
+        Assert.Equal(treeView.IsExpandable, isExpandable);
+        Assert.Equal(treeView.IsExpanded, isExpanded);
     }
 
     /// <summary>
