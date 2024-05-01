@@ -1,6 +1,19 @@
-﻿using Luthetus.Common.RazorLib.Contexts.Models;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Misc;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Panels.States;
+using Luthetus.Common.RazorLib.Resizes.Displays;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
+using System.Collections.Immutable;
 
 namespace Luthetus.Common.Tests.Basis.Panels.States;
 
@@ -16,10 +29,7 @@ public class PanelsStateActionsTests
     public void RegisterPanelGroupAction()
     {
         InitializePanelsStateActionsTests(out var panelGroup, out var panelTab);
-
-        var registerPanelGroupAction = new PanelsState.RegisterPanelGroupAction(
-            panelGroup);
-
+        var registerPanelGroupAction = new PanelsState.RegisterPanelGroupAction(panelGroup);
         Assert.Equal(panelGroup, registerPanelGroupAction.PanelGroup);
     }
 
@@ -30,10 +40,7 @@ public class PanelsStateActionsTests
     public void DisposePanelGroupAction()
     {
         InitializePanelsStateActionsTests(out var panelGroup, out var panelTab);
-
-        var disposePanelGroupAction = new PanelsState.DisposePanelGroupAction(
-            panelGroup.Key);
-
+        var disposePanelGroupAction = new PanelsState.DisposePanelGroupAction(panelGroup.Key);
         Assert.Equal(panelGroup.Key, disposePanelGroupAction.PanelGroupKey);
     }
 
@@ -143,37 +150,48 @@ public class PanelsStateActionsTests
         out PanelGroup samplePanelGroup,
         out IPanelTab samplePanelTab)
     {
-        throw new NotImplementedException("Test was broken on (2024-04-08)");
-        //     samplePanelGroup = new PanelGroup(
-        //             PanelFacts.LeftPanelRecordKey,
-        //             Key<Panel>.Empty,
-        //             new ElementDimensions(),
-        //             ImmutableArray<IPanelTab>.Empty);
+        samplePanelGroup = new PanelGroup(
+            PanelFacts.LeftPanelGroupKey,
+            Key<Panel>.Empty,
+            new ElementDimensions(),
+            ImmutableArray<IPanelTab>.Empty);
 
-        //     var leftPanelGroupWidth = samplePanelGroup.ElementDimensions.DimensionAttributeList
-        //         .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
+        var leftPanelGroupWidth = samplePanelGroup.ElementDimensions.DimensionAttributeList
+            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
 
-        //     leftPanelGroupWidth.DimensionUnitList.AddRange(new[]
-        //     {
-        //         new DimensionUnit
-        //         {
-        //             Value = 33.3333,
-        //             DimensionUnitKind = DimensionUnitKind.Percentage
-        //         },
-        //         new DimensionUnit
-        //         {
-        //             Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
-        //             DimensionUnitKind = DimensionUnitKind.Pixels,
-        //             DimensionOperatorKind = DimensionOperatorKind.Subtract
-        //         }
-        //     });
+        leftPanelGroupWidth.DimensionUnitList.AddRange(new[]
+        {
+            new DimensionUnit
+            {
+                Value = 33.3333,
+                DimensionUnitKind = DimensionUnitKind.Percentage
+            },
+            new DimensionUnit
+            {
+                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionOperatorKind = DimensionOperatorKind.Subtract
+            }
+        });
 
-        //     samplePanelTab = new Panel(
-        //"Solution Explorer",
-        //Key<Panel>.NewKey(),
-        //Key<IDynamicViewModel>.NewKey(),
-        //ContextFacts.SolutionExplorerContext.ContextKey,
-        //         typeof(IconCSharpClass),
-        //         new());
+        var backgroundTaskService = new BackgroundTaskServiceSynchronous();
+
+        var serviceCollection = new ServiceCollection()
+            .AddScoped<IJSRuntime, DoNothingJsRuntime>()
+            .AddLuthetusCommonServices(new LuthetusHostingInformation(LuthetusHostingKind.UnitTesting, backgroundTaskService))
+            .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonConfig).Assembly));
+
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+
+        samplePanelTab = new Panel(
+            "Solution Explorer",
+            Key<Panel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
+            ContextFacts.SolutionExplorerContext.ContextKey,
+            typeof(IconCSharpClass),
+            null,
+            serviceProvider.GetRequiredService<IDispatcher>(),
+            serviceProvider.GetRequiredService<IDialogService>(),
+            serviceProvider.GetRequiredService<IJSRuntime>());
     }
 }
