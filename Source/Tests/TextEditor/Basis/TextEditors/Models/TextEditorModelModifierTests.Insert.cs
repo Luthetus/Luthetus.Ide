@@ -42,18 +42,17 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Insert(
-                    "\n" +   // LineFeed
-                    "b9" +   // LetterOrDigit-Lowercase
-                    "\r" +   // CarriageReturn
-                    "9B" +   // LetterOrDigit-Uppercase
-                    "\r\n" + // CarriageReturnLineFeed
-                    "\t" +   // Tab
-                    "$" +    // SpecialCharacter
-                    ";" +    // Punctuation
-                    " ",     // Space
-                    cursorModifierBag,
-                    cancellationToken: CancellationToken.None
-                );
+                "\n" +   // LineFeed
+                "b9" +   // LetterOrDigit-Lowercase
+                "\r" +   // CarriageReturn
+                "9B" +   // LetterOrDigit-Uppercase
+                "\r\n" + // CarriageReturnLineFeed
+                "\t" +   // Tab
+                "$" +    // SpecialCharacter
+                ";" +    // Punctuation
+                " ",     // Space
+                cursorModifierBag,
+                cancellationToken: CancellationToken.None);
             outModel = modelModifier.ToModel();
         }
 
@@ -77,9 +76,7 @@ public partial class TextEditorModelModifierTests
             // 1 tab key was included in the string that was inserted.
             // Therefore, the Count is 1.
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                7,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(7, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
@@ -110,41 +107,17 @@ public partial class TextEditorModelModifierTests
                     .ToArray();
 
                 // First LineEnd
-                {
-                    var lineFeedPosition = lineFeedPositionList[0];
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        0,
-                        lineFeedPosition.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        1,
-                        lineFeedPosition.EndPositionIndexExclusive);
-                }
+                var lineFeedPosition = lineFeedPositionList[0];
+                Assert.Equal(0, lineFeedPosition.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeedPosition.EndPositionIndexExclusive);
                 // Second LineEnd
-                {
-                    var lineFeedPosition = lineFeedPositionList[1];
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        3,
-                        lineFeedPosition.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        4,
-                        lineFeedPosition.EndPositionIndexExclusive);
-                }
+                lineFeedPosition = lineFeedPositionList[1];
+                Assert.Equal(3, lineFeedPosition.StartPositionIndexInclusive);
+                Assert.Equal(4, lineFeedPosition.EndPositionIndexExclusive);
                 // Third LineEnd
-                {
-                    var lineFeedPosition = lineFeedPositionList[2];
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        6,
-                        lineFeedPosition.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        7,
-                        lineFeedPosition.EndPositionIndexExclusive);
-                }
+                lineFeedPosition = lineFeedPositionList[2];
+                Assert.Equal(6, lineFeedPosition.StartPositionIndexInclusive);
+                Assert.Equal(7, lineFeedPosition.EndPositionIndexExclusive);
 
                 // 3 line endings where inserted,
                 // There are 4 in total if one then includes the special-'EndOfFile' LineEnd.
@@ -203,18 +176,17 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Insert(
-                    "\n" +   // LineFeed
-                    "b9" +   // LetterOrDigit-Lowercase
-                    "\r" +   // CarriageReturn
-                    "9B" +   // LetterOrDigit-Uppercase
-                    "\r\n" + // CarriageReturnLineFeed
-                    "\t" +   // Tab
-                    "$" +    // SpecialCharacter
-                    ";" +    // Punctuation
-                    " ",     // Space
-                    cursorModifierBag,
-                    cancellationToken: CancellationToken.None
-                );
+                "\n" +   // LineFeed
+                "b9" +   // LetterOrDigit-Lowercase
+                "\r" +   // CarriageReturn
+                "9B" +   // LetterOrDigit-Uppercase
+                "\r\n" + // CarriageReturnLineFeed
+                "\t" +   // Tab
+                "$" +    // SpecialCharacter
+                ";" +    // Punctuation
+                " ",     // Space
+                cursorModifierBag,
+                cancellationToken: CancellationToken.None);
             outModel = modelModifier.ToModel();
         }
 
@@ -238,9 +210,7 @@ public partial class TextEditorModelModifierTests
             // 1 tab key was included in the initial content for the TextEditorModel but,
             // now that the content is set to 'string.Empty', the Count is 0.
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                7,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(7, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
@@ -271,41 +241,17 @@ public partial class TextEditorModelModifierTests
                     .ToArray();
 
                 // First LineEnd
-                {
-                    var lineFeedPosition = lineFeedPositionList[0];
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        0,
-                        lineFeedPosition.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        1,
-                        lineFeedPosition.EndPositionIndexExclusive);
-                }
+                var lineFeedPosition = lineFeedPositionList[0];
+                Assert.Equal(0, lineFeedPosition.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeedPosition.EndPositionIndexExclusive);
                 // Second LineEnd
-                {
-                    var lineFeedPosition = lineFeedPositionList[1];
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        3,
-                        lineFeedPosition.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        4,
-                        lineFeedPosition.EndPositionIndexExclusive);
-                }
+                lineFeedPosition = lineFeedPositionList[1];
+                Assert.Equal(3, lineFeedPosition.StartPositionIndexInclusive);
+                Assert.Equal(4, lineFeedPosition.EndPositionIndexExclusive);
                 // Third LineEnd
-                {
-                    var lineFeedPosition = lineFeedPositionList[2];
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        6,
-                        lineFeedPosition.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        7,
-                        lineFeedPosition.EndPositionIndexExclusive);
-                }
+                lineFeedPosition = lineFeedPositionList[2];
+                Assert.Equal(6, lineFeedPosition.StartPositionIndexInclusive);
+                Assert.Equal(7, lineFeedPosition.EndPositionIndexExclusive);
 
                 // 3 line endings where inserted,
                 // There are 4 in total if one then includes the special-'EndOfFile' LineEnd.
@@ -369,18 +315,17 @@ public partial class TextEditorModelModifierTests
                     new List<TextEditorCursorModifier>() { cursorModifier });
 
                 modelModifier.Insert(
-                        "\n" +   // LineFeed
-                        "b9" +   // LetterOrDigit-Lowercase
-                        "\r" +   // CarriageReturn
-                        "9B" +   // LetterOrDigit-Uppercase
-                        "\r\n" + // CarriageReturnLineFeed
-                        "\t" +   // Tab
-                        "$" +    // SpecialCharacter
-                        ";" +    // Punctuation
-                        " ",     // Space
-                        cursorModifierBag,
-                        cancellationToken: CancellationToken.None
-                    );
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " ",     // Space
+                    cursorModifierBag,
+                    cancellationToken: CancellationToken.None);
                 outModel = modelModifier.ToModel();
             }
         });
@@ -426,18 +371,17 @@ public partial class TextEditorModelModifierTests
                     new List<TextEditorCursorModifier>() { cursorModifier });
 
                 modelModifier.Insert(
-                        "\n" +   // LineFeed
-                        "b9" +   // LetterOrDigit-Lowercase
-                        "\r" +   // CarriageReturn
-                        "9B" +   // LetterOrDigit-Uppercase
-                        "\r\n" + // CarriageReturnLineFeed
-                        "\t" +   // Tab
-                        "$" +    // SpecialCharacter
-                        ";" +    // Punctuation
-                        " ",     // Space
-                        cursorModifierBag,
-                        cancellationToken: CancellationToken.None
-                    );
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " ",     // Space
+                    cursorModifierBag,
+                    cancellationToken: CancellationToken.None);
                 outModel = modelModifier.ToModel();
             }
         });
@@ -490,8 +434,7 @@ public partial class TextEditorModelModifierTests
                     // to see what happens.
                     value: null!,
                     cursorModifierBag,
-                    cancellationToken: CancellationToken.None
-                );
+                    cancellationToken: CancellationToken.None);
                 outModel = modelModifier.ToModel();
             }
         });
@@ -534,10 +477,9 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Insert(
-                    value: string.Empty,
-                    cursorModifierBag,
-                    cancellationToken: CancellationToken.None
-                );
+                value: string.Empty,
+                cursorModifierBag,
+                cancellationToken: CancellationToken.None);
             outModel = modelModifier.ToModel();
         }
 
@@ -668,18 +610,17 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Insert(
-                    "\n" +   // LineFeed
-                    "b9" +   // LetterOrDigit-Lowercase
-                    "\r" +   // CarriageReturn
-                    "9B" +   // LetterOrDigit-Uppercase
-                    "\r\n" + // CarriageReturnLineFeed
-                    "\t" +   // Tab
-                    "$" +    // SpecialCharacter
-                    ";" +    // Punctuation
-                    " ",     // Space
-                    cursorModifierBag,
-                    cancellationToken: CancellationToken.None
-                );
+                "\n" +   // LineFeed
+                "b9" +   // LetterOrDigit-Lowercase
+                "\r" +   // CarriageReturn
+                "9B" +   // LetterOrDigit-Uppercase
+                "\r\n" + // CarriageReturnLineFeed
+                "\t" +   // Tab
+                "$" +    // SpecialCharacter
+                ";" +    // Punctuation
+                " ",     // Space
+                cursorModifierBag,
+                cancellationToken: CancellationToken.None);
             outModel = modelModifier.ToModel();
         }
 
@@ -708,19 +649,11 @@ public partial class TextEditorModelModifierTests
             // Therefore the count is 2.
             Assert.Equal(2, modelModifier.TabKeyPositionList.Count);
             // First tab key
-            {
-                var tabKeyPosition = modelModifier.TabKeyPositionList[0];
-                Assert.Equal(
-                    7,
-                    tabKeyPosition);
-            }
+            var tabKeyPosition = modelModifier.TabKeyPositionList[0];
+            Assert.Equal(7, tabKeyPosition);
             // Second tab key
-            {
-                var tabKeyPosition = modelModifier.TabKeyPositionList[1];
-                Assert.Equal(
-                    19,
-                    tabKeyPosition);
-            }
+            tabKeyPosition = modelModifier.TabKeyPositionList[1];
+            Assert.Equal(19, tabKeyPosition);
 
             // LineEnd related code-block-grouping:
             {
@@ -730,17 +663,9 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        14,
-                        carriageReturn.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        15,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(14, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(15, carriageReturn.EndPositionIndexExclusive);
 
                 // 1 LineFeed was included in the initial content for the TextEditorModel.
                 // But, for the time being, only LineFeed insertions are permitted to avoid insertion of '\r'
@@ -751,53 +676,21 @@ public partial class TextEditorModelModifierTests
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 var lineFeedMatches = modelModifier.LineEndList.Where(x => x.LineEndKind == LineEndKind.LineFeed).ToArray();
                 // First LineFeed
-                {
-                    var lineFeed = lineFeedMatches[0];
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = lineFeedMatches[0];
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
                 // Second LineFeed
-                {
-                    var lineFeed = lineFeedMatches[1];
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        3,
-                        lineFeed.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        4,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                lineFeed = lineFeedMatches[1];
+                Assert.Equal(3, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(4, lineFeed.EndPositionIndexExclusive);
                 // Third LineFeed
-                {
-                    var lineFeed = lineFeedMatches[2];
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        6,
-                        lineFeed.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        7,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                lineFeed = lineFeedMatches[2];
+                Assert.Equal(6, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(7, lineFeed.EndPositionIndexExclusive);
                 // Fourth LineFeed
-                {
-                    var lineFeed = lineFeedMatches[3];
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        11,
-                        lineFeed.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        12,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                lineFeed = lineFeedMatches[3];
+                Assert.Equal(11, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(12, lineFeed.EndPositionIndexExclusive);
 
                 // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel.
                 // But, for the time being, only LineFeed insertions are permitted to avoid insertion of '\r'
@@ -805,17 +698,9 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        17,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        19,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(17, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(19, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 // 3 line endings were part of the constructor's initialContent,
                 // 3 line endings where inserted,
@@ -896,18 +781,17 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Insert(
-                    "\n" +   // LineFeed
-                    "b9" +   // LetterOrDigit-Lowercase
-                    "\r" +   // CarriageReturn
-                    "9B" +   // LetterOrDigit-Uppercase
-                    "\r\n" + // CarriageReturnLineFeed
-                    "\t" +   // Tab
-                    "$" +    // SpecialCharacter
-                    ";" +    // Punctuation
-                    " ",     // Space
-                    cursorModifierBag,
-                    cancellationToken: CancellationToken.None
-                );
+                "\n" +   // LineFeed
+                "b9" +   // LetterOrDigit-Lowercase
+                "\r" +   // CarriageReturn
+                "9B" +   // LetterOrDigit-Uppercase
+                "\r\n" + // CarriageReturnLineFeed
+                "\t" +   // Tab
+                "$" +    // SpecialCharacter
+                ";" +    // Punctuation
+                " ",     // Space
+                cursorModifierBag,
+                cancellationToken: CancellationToken.None);
             outModel = modelModifier.ToModel();
         }
 
@@ -936,19 +820,11 @@ public partial class TextEditorModelModifierTests
             // Therefore the count is 2.
             Assert.Equal(2, modelModifier.TabKeyPositionList.Count);
             // First tab key
-            {
-                var tabKeyPosition = modelModifier.TabKeyPositionList[0];
-                Assert.Equal(
-                    8,
-                    tabKeyPosition);
-            }
+            var tabKeyPosition = modelModifier.TabKeyPositionList[0];
+            Assert.Equal(8, tabKeyPosition);
             // Second tab key
-            {
-                var tabKeyPosition = modelModifier.TabKeyPositionList[1];
-                Assert.Equal(
-                    19,
-                    tabKeyPosition);
-            }
+            tabKeyPosition = modelModifier.TabKeyPositionList[1];
+            Assert.Equal(19, tabKeyPosition);
 
             // LineEnd related code-block-grouping:
             {
@@ -958,17 +834,9 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        3,
-                        carriageReturn.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        4,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(3, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(4, carriageReturn.EndPositionIndexExclusive);
 
                 // 1 LineFeed was included in the initial content for the TextEditorModel.
                 // But, for the time being, only LineFeed insertions are permitted to avoid insertion of '\r'
@@ -979,53 +847,21 @@ public partial class TextEditorModelModifierTests
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
                 var lineFeedMatches = modelModifier.LineEndList.Where(x => x.LineEndKind == LineEndKind.LineFeed).ToArray();
                 // First LineFeed
-                {
-                    var lineFeed = lineFeedMatches[0];
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = lineFeedMatches[0];
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
                 // Second LineFeed
-                {
-                    var lineFeed = lineFeedMatches[1];
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        12,
-                        lineFeed.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        13,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                lineFeed = lineFeedMatches[1];
+                Assert.Equal(12, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(13, lineFeed.EndPositionIndexExclusive);
                 // Third LineFeed
-                {
-                    var lineFeed = lineFeedMatches[2];
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        15,
-                        lineFeed.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        16,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                lineFeed = lineFeedMatches[2];
+                Assert.Equal(15, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(16, lineFeed.EndPositionIndexExclusive);
                 // Fourth LineFeed
-                {
-                    var lineFeed = lineFeedMatches[3];
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        18,
-                        lineFeed.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        19,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                lineFeed = lineFeedMatches[3];
+                Assert.Equal(18, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(19, lineFeed.EndPositionIndexExclusive);
 
                 // 1 CarriageReturnLineFeed was included in the initial content for the TextEditorModel.
                 // But, for the time being, only LineFeed insertions are permitted to avoid insertion of '\r'
@@ -1033,17 +869,9 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        6,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        8,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(6, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(8, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 // 3 line endings were part of the constructor's initialContent,
                 // 3 line endings where inserted,
@@ -1254,18 +1082,17 @@ public partial class TextEditorModelModifierTests
                     new List<TextEditorCursorModifier>() { cursorModifier });
 
                 modelModifier.Insert(
-                        "\n" +   // LineFeed
-                        "b9" +   // LetterOrDigit-Lowercase
-                        "\r" +   // CarriageReturn
-                        "9B" +   // LetterOrDigit-Uppercase
-                        "\r\n" + // CarriageReturnLineFeed
-                        "\t" +   // Tab
-                        "$" +    // SpecialCharacter
-                        ";" +    // Punctuation
-                        " ",     // Space
-                        cursorModifierBag,
-                        cancellationToken: CancellationToken.None
-                    );
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " ",     // Space
+                    cursorModifierBag,
+                    cancellationToken: CancellationToken.None);
                 outModel = modelModifier.ToModel();
             }
         });
@@ -1322,18 +1149,17 @@ public partial class TextEditorModelModifierTests
                     new List<TextEditorCursorModifier>() { cursorModifier });
 
                 modelModifier.Insert(
-                        "\n" +   // LineFeed
-                        "b9" +   // LetterOrDigit-Lowercase
-                        "\r" +   // CarriageReturn
-                        "9B" +   // LetterOrDigit-Uppercase
-                        "\r\n" + // CarriageReturnLineFeed
-                        "\t" +   // Tab
-                        "$" +    // SpecialCharacter
-                        ";" +    // Punctuation
-                        " ",     // Space
-                        cursorModifierBag,
-                        cancellationToken: CancellationToken.None
-                    );
+                    "\n" +   // LineFeed
+                    "b9" +   // LetterOrDigit-Lowercase
+                    "\r" +   // CarriageReturn
+                    "9B" +   // LetterOrDigit-Uppercase
+                    "\r\n" + // CarriageReturnLineFeed
+                    "\t" +   // Tab
+                    "$" +    // SpecialCharacter
+                    ";" +    // Punctuation
+                    " ",     // Space
+                    cursorModifierBag,
+                    cancellationToken: CancellationToken.None);
                 outModel = modelModifier.ToModel();
             }
         });
@@ -1397,8 +1223,7 @@ public partial class TextEditorModelModifierTests
                     // to see what happens.
                     value: null!,
                     cursorModifierBag,
-                    cancellationToken: CancellationToken.None
-                );
+                    cancellationToken: CancellationToken.None);
                 outModel = modelModifier.ToModel();
             }
         });
@@ -1452,10 +1277,9 @@ public partial class TextEditorModelModifierTests
                 new List<TextEditorCursorModifier>() { cursorModifier });
 
             modelModifier.Insert(
-                    value: string.Empty,
-                    cursorModifierBag,
-                    cancellationToken: CancellationToken.None
-                );
+                value: string.Empty,
+                cursorModifierBag,
+                cancellationToken: CancellationToken.None);
             outModel = modelModifier.ToModel();
         }
 
@@ -1481,9 +1305,7 @@ public partial class TextEditorModelModifierTests
             // And the insertion is expected to do nothing.
             // Therefore, the Count remains 1.
             Assert.Equal(1, modelModifier.TabKeyPositionList.Count);
-            Assert.Equal(
-                8,
-                modelModifier.TabKeyPositionList.Single());
+            Assert.Equal(8, modelModifier.TabKeyPositionList.Single());
 
             // LineEnd related code-block-grouping:
             {
@@ -1494,17 +1316,9 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturn).count);
-                {
-                    var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        3,
-                        carriageReturn.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        4,
-                        carriageReturn.EndPositionIndexExclusive);
-                }
+                var carriageReturn = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturn);
+                Assert.Equal(3, carriageReturn.StartPositionIndexInclusive);
+                Assert.Equal(4, carriageReturn.EndPositionIndexExclusive);
 
                 // 1 LineFeed was included in the string that was passed to the constructor.
                 // And the insertion is expected to do nothing.
@@ -1512,17 +1326,9 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.LineFeed).count);
-                {
-                    var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        0,
-                        lineFeed.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        1,
-                        lineFeed.EndPositionIndexExclusive);
-                }
+                var lineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.LineFeed);
+                Assert.Equal(0, lineFeed.StartPositionIndexInclusive);
+                Assert.Equal(1, lineFeed.EndPositionIndexExclusive);
 
                 // 1 CarriageReturnLineFeed was included in the string that was passed to the constructor.
                 // And the insertion is expected to do nothing.
@@ -1531,17 +1337,9 @@ public partial class TextEditorModelModifierTests
                 Assert.Equal(
                     1,
                     modelModifier.LineEndKindCountList.Single(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed).count);
-                {
-                    var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
-                    // StartPositionIndexInclusive
-                    Assert.Equal(
-                        6,
-                        carriageReturnLineFeed.StartPositionIndexInclusive);
-                    // EndPositionIndexExclusive
-                    Assert.Equal(
-                        8,
-                        carriageReturnLineFeed.EndPositionIndexExclusive);
-                }
+                var carriageReturnLineFeed = modelModifier.LineEndList.Single(x => x.LineEndKind == LineEndKind.CarriageReturnLineFeed);
+                Assert.Equal(6, carriageReturnLineFeed.StartPositionIndexInclusive);
+                Assert.Equal(8, carriageReturnLineFeed.EndPositionIndexExclusive);
 
                 // 3 line endings where included in the string that was passed to the constructor,
                 // And the insertion is expected to do nothing.
