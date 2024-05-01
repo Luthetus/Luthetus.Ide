@@ -11,6 +11,12 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Fluxor;
 using Microsoft.AspNetCore.Components.Web;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Misc;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.Options.States;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
@@ -25,14 +31,15 @@ public class TextEditorModelApiTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException("Test was broken on (2024-04-08)");
-        //TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
-        //    out var textEditorService,
-        //    out var inModel,
-        //    out var inViewModel,
-        //    out var serviceProvider);
+        InitializeTextEditorModelApiTests(
+            out var inModel,
+            out var inViewModel,
+            out var textEditorService,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
+            out var serviceProvider);
 
-        //Assert.NotNull(textEditorService.ModelApi);
+        Assert.NotNull(textEditorService.ModelApi);
     }
 
     /// <summary>
@@ -41,39 +48,42 @@ public class TextEditorModelApiTests
     [Fact]
     public void UndoEdit()
     {
+        InitializeTextEditorModelApiTests(
+            out var inModel,
+            out var inViewModel,
+            out var textEditorService,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
+            out var serviceProvider);
+
+        var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
+        var cursorList = new[] { new TextEditorCursorModifier(cursor) }.ToList();
+
+        var insertedText = "I have something to say: ";
+
+        var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
+
+        textEditorService.PostIndependent(
+            nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
+            textEditorService.ModelApi.InsertTextUnsafeFactory(
+                inModel.ResourceUri,
+                cursorModifierBag,
+                insertedText,
+                CancellationToken.None));
+
+        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        Assert.Equal(
+            insertedText + inModel.GetAllText(),
+            outModel.GetAllText());
+
+        textEditorService.PostIndependent(nameof(textEditorService.ModelApi.UndoEditFactory),
+            textEditorService.ModelApi.UndoEditFactory(
+                inModel.ResourceUri));
+
+        outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        Assert.Equal(inModel.GetAllText(), outModel.GetAllText());
+
         throw new NotImplementedException("Test was broken on (2024-04-08)");
-        //TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
-        //    out var textEditorService,
-        //    out var inModel,
-        //    out var inViewModel,
-        //    out var serviceProvider);
-
-        //var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
-        //var cursorList = new[] { new TextEditorCursorModifier(cursor) }.ToList();
-
-        //var insertedText = "I have something to say: ";
-
-        //var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorList);
-
-        //textEditorService.Post(
-        //    nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
-        //    textEditorService.ModelApi.InsertTextUnsafeFactory(
-        //        inModel.ResourceUri,
-        //        cursorModifierBag,
-        //        insertedText,
-        //        CancellationToken.None));
-
-        //var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
-        //Assert.Equal(
-        //    insertedText + inModel.GetAllText(),
-        //    outModel.GetAllText());
-
-        //textEditorService.Post(nameof(textEditorService.ModelApi.UndoEditFactory),
-        //    textEditorService.ModelApi.UndoEditFactory(
-        //        inModel.ResourceUri));
-
-        //outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
-        //Assert.Equal(inModel.GetAllText(), outModel.GetAllText());
     }
 
     /// <summary>
@@ -82,10 +92,12 @@ public class TextEditorModelApiTests
     [Fact]
     public void SetUsingRowEndingKind()
     {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
-            out var textEditorService,
+        InitializeTextEditorModelApiTests(
             out var inModel,
             out var inViewModel,
+            out var textEditorService,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
             out var serviceProvider);
 
         var rowEndingKind = LineEndKind.CarriageReturn;
@@ -110,10 +122,12 @@ public class TextEditorModelApiTests
     [Fact]
     public void SetResourceData()
     {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
-            out var textEditorService,
+        InitializeTextEditorModelApiTests(
             out var inModel,
             out var inViewModel,
+            out var textEditorService,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
             out var serviceProvider);
 
         var newResourceLastWriteTime = inModel.ResourceLastWriteTime.AddDays(1);
@@ -138,10 +152,12 @@ public class TextEditorModelApiTests
     [Fact]
     public void Reload()
     {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
-            out var textEditorService,
+        InitializeTextEditorModelApiTests(
             out var inModel,
             out var inViewModel,
+            out var textEditorService,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
             out var serviceProvider);
 
         var newContent = "Alphabet Soup";
@@ -166,40 +182,41 @@ public class TextEditorModelApiTests
     [Fact]
     public void RegisterCustom()
     {
-        throw new NotImplementedException("Test was broken on (2024-04-08)");
-        //TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
-        //    out var textEditorService,
-        //    out _,
-        //    out var inViewModel,
-        //    out var serviceProvider);
+        InitializeTextEditorModelApiTests(
+            out _,
+            out var inViewModel,
+            out var textEditorService,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
+            out var serviceProvider);
 
-        //var fileExtension = ExtensionNoPeriodFacts.TXT;
-        //var resourceUri = new ResourceUri("/unitTesting.txt");
-        //var resourceLastWriteTime = DateTime.UtcNow;
-        //var initialContent = "Hello World!";
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
 
-        //var decorationMapperRegistry = serviceProvider.GetRequiredService<IDecorationMapperRegistry>();
-        //var compilerServiceRegistry = serviceProvider.GetRequiredService<ICompilerServiceRegistry>();
+        var decorationMapperRegistry = serviceProvider.GetRequiredService<IDecorationMapperRegistry>();
+        var compilerServiceRegistry = serviceProvider.GetRequiredService<ICompilerServiceRegistry>();
 
-        //var decorationMapper = decorationMapperRegistry.GetDecorationMapper(fileExtension);
-        //var compilerService = compilerServiceRegistry.GetCompilerService(fileExtension);
+        var decorationMapper = decorationMapperRegistry.GetDecorationMapper(fileExtension);
+        var compilerService = compilerServiceRegistry.GetCompilerService(fileExtension);
 
-        //var model = new TextEditorModel(
-        //    resourceUri,
-        //    resourceLastWriteTime,
-        //    fileExtension,
-        //    initialContent,
-        //    decorationMapper,
-        //    compilerService);
+        var model = new TextEditorModel(
+            resourceUri,
+            resourceLastWriteTime,
+            fileExtension,
+            initialContent,
+            decorationMapper,
+            compilerService);
 
-        //textEditorService.ModelApi.RegisterCustom(model);
+        textEditorService.ModelApi.RegisterCustom(model);
 
-        //var existingModel = textEditorService.ModelApi.GetOrDefault(model.ResourceUri);
+        var existingModel = textEditorService.ModelApi.GetOrDefault(model.ResourceUri);
 
-        //Assert.Equal(resourceUri, existingModel.ResourceUri);
-        //Assert.Equal(resourceLastWriteTime, existingModel.ResourceLastWriteTime);
-        //Assert.Equal(initialContent, existingModel.GetAllText());
-        //Assert.Equal(fileExtension, existingModel.FileExtension);
+        Assert.Equal(resourceUri, existingModel.ResourceUri);
+        Assert.Equal(resourceLastWriteTime, existingModel.ResourceLastWriteTime);
+        Assert.Equal(initialContent, existingModel.GetAllText());
+        Assert.Equal(fileExtension, existingModel.FileExtension);
     }
 
     /// <summary>
@@ -208,32 +225,33 @@ public class TextEditorModelApiTests
     [Fact]
     public void RegisterTemplated()
     {
-        throw new NotImplementedException("Test was broken on (2024-04-08)");
-        //TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
-        //    out var textEditorService,
-        //    out _,
-        //    out var inViewModel,
-        //    out var serviceProvider);
+        InitializeTextEditorModelApiTests(
+            out _,
+            out var inViewModel,
+            out var textEditorService,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
+            out var serviceProvider);
 
-        //Assert.Empty(textEditorService.ModelApi.GetModels());
+        Assert.Empty(textEditorService.ModelApi.GetModels());
 
-        //var fileExtension = ExtensionNoPeriodFacts.TXT;
-        //var resourceUri = new ResourceUri("/unitTesting.txt");
-        //var resourceLastWriteTime = DateTime.UtcNow;
-        //var initialContent = "Hello World!";
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
 
-        //textEditorService.ModelApi.RegisterTemplated(
-        //    fileExtension,
-        //    resourceUri,
-        //    resourceLastWriteTime,
-        //    initialContent);
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
 
-        //var model = textEditorService.ModelApi.GetOrDefault(resourceUri);
+        var model = textEditorService.ModelApi.GetOrDefault(resourceUri);
 
-        //Assert.Equal(resourceUri, model.ResourceUri);
-        //Assert.Equal(resourceLastWriteTime, model.ResourceLastWriteTime);
-        //Assert.Equal(initialContent, model.GetAllText());
-        //Assert.Equal(fileExtension, model.FileExtension);
+        Assert.Equal(resourceUri, model.ResourceUri);
+        Assert.Equal(resourceLastWriteTime, model.ResourceLastWriteTime);
+        Assert.Equal(initialContent, model.GetAllText());
+        Assert.Equal(fileExtension, model.FileExtension);
     }
 
     /// <summary>
@@ -242,46 +260,47 @@ public class TextEditorModelApiTests
     [Fact]
     public void RedoEditEnqueue()
     {
-        throw new NotImplementedException("Test was broken on (2024-04-08)");
-        //TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
-        //    out var textEditorService,
-        //    out var inModel,
-        //    out var inViewModel,
-        //    out var serviceProvider);
+        InitializeTextEditorModelApiTests(
+            out var inModel,
+            out var inViewModel,
+            out var textEditorService,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
+            out var serviceProvider);
 
-        //var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
-        //var cursorList = new[] { new TextEditorCursorModifier(cursor) }.ToList();
+        var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
+        var cursorList = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
-        //var insertedText = "I have something to say: ";
+        var insertedText = "I have something to say: ";
 
-        //var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorList);
+        var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
-        //textEditorService.Post(
-        //    nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
-        //    textEditorService.ModelApi.InsertTextUnsafeFactory(
-        //        inModel.ResourceUri,
-        //        cursorModifierBag,
-        //        insertedText,
-        //        CancellationToken.None));
+        textEditorService.PostIndependent(
+            nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
+            textEditorService.ModelApi.InsertTextUnsafeFactory(
+                inModel.ResourceUri,
+                cursorModifierBag,
+                insertedText,
+                CancellationToken.None));
 
-        //var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
-        //Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
+        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
 
-        //textEditorService.Post(
-        //    nameof(textEditorService.ModelApi.UndoEditFactory),
-        //    textEditorService.ModelApi.UndoEditFactory(
-        //        inModel.ResourceUri));
+        textEditorService.PostIndependent(
+            nameof(textEditorService.ModelApi.UndoEditFactory),
+            textEditorService.ModelApi.UndoEditFactory(
+                inModel.ResourceUri));
 
-        //outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
-        //Assert.Equal(inModel.GetAllText(), outModel.GetAllText());
+        outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        Assert.Equal(inModel.GetAllText(), outModel.GetAllText());
 
-        //textEditorService.Post(
-        //    nameof(textEditorService.ModelApi.RedoEditFactory),
-        //    textEditorService.ModelApi.RedoEditFactory(
-        //        inModel.ResourceUri));
+        textEditorService.PostIndependent(
+            nameof(textEditorService.ModelApi.RedoEditFactory),
+            textEditorService.ModelApi.RedoEditFactory(
+                inModel.ResourceUri));
 
-        //outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
-        //Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
+        outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
     }
 
     /// <summary>
@@ -290,30 +309,31 @@ public class TextEditorModelApiTests
     [Fact]
     public void InsertTextEnqueue()
     {
-        throw new NotImplementedException("Test was broken on (2024-04-08)");
-        //TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
-        //    out var textEditorService,
-        //    out var inModel,
-        //    out var inViewModel,
-        //    out var serviceProvider);
+        InitializeTextEditorModelApiTests(
+            out var inModel,
+            out var inViewModel,
+            out var textEditorService,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
+            out var serviceProvider);
 
-        //var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
-        //var cursorList = new[] { new TextEditorCursorModifier(cursor) }.ToList();
+        var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
+        var cursorList = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
-        //var insertedText = "I have something to say: ";
+        var insertedText = "I have something to say: ";
 
-        //var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorList);
+        var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
-        //textEditorService.Post(
-        //    nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
-        //    textEditorService.ModelApi.InsertTextUnsafeFactory(
-        //        inModel.ResourceUri,
-        //        cursorModifierBag,
-        //        insertedText,
-        //        CancellationToken.None));
+        textEditorService.PostIndependent(
+            nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
+            textEditorService.ModelApi.InsertTextUnsafeFactory(
+                inModel.ResourceUri,
+                cursorModifierBag,
+                insertedText,
+                CancellationToken.None));
 
-        //var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
-        //Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
+        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
     }
 
     /// <summary>
@@ -322,36 +342,37 @@ public class TextEditorModelApiTests
     [Fact]
     public void HandleKeyboardEventEnqueue()
     {
-        throw new NotImplementedException("Test was broken on (2024-04-08)");
-        //TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
-        //    out var textEditorService,
-        //    out var inModel,
-        //    out var inViewModel,
-        //    out var serviceProvider);
+        InitializeTextEditorModelApiTests(
+            out var inModel,
+            out var inViewModel,
+            out var textEditorService,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
+            out var serviceProvider);
 
-        //var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
-        //var cursorList = new[] { new TextEditorCursorModifier(cursor) }.ToList();
+        var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
+        var cursorList = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
-        //var key = "a";
+        var key = "a";
 
-        //var keyboardEventArgs = new KeyboardEventArgs
-        //{
-        //    Key = key
-        //};
+        var keyboardEventArgs = new KeyboardEventArgs
+        {
+            Key = key
+        };
 
-        //var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorList);
+        var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
-        //textEditorService.Post(
-        //    nameof(textEditorService.ModelApi.HandleKeyboardEventUnsafeFactory),
-        //    textEditorService.ModelApi.HandleKeyboardEventUnsafeFactory(
-        //        inModel.ResourceUri,
-        //        Key<TextEditorViewModel>.Empty,
-        //        keyboardEventArgs,
-        //        CancellationToken.None,
-        //        cursorModifierBag));
+        textEditorService.PostIndependent(
+            nameof(textEditorService.ModelApi.HandleKeyboardEventUnsafeFactory),
+            textEditorService.ModelApi.HandleKeyboardEventUnsafeFactory(
+                inModel.ResourceUri,
+                Key<TextEditorViewModel>.Empty,
+                keyboardEventArgs,
+                CancellationToken.None,
+                cursorModifierBag));
 
-        //var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
-        //Assert.Equal(key + inModel.GetAllText(), outModel.GetAllText());
+        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        Assert.Equal(key + inModel.GetAllText(), outModel.GetAllText());
     }
 
     /// <summary>
@@ -360,10 +381,12 @@ public class TextEditorModelApiTests
     [Fact]
     public void GetViewModelsOrEmpty()
     {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
-            out var textEditorService,
+        InitializeTextEditorModelApiTests(
             out var inModel,
             out var inViewModel,
+            out var textEditorService,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
             out var serviceProvider);
 
         Assert.Empty(textEditorService.ModelApi.GetViewModelsOrEmpty(inModel.ResourceUri));
@@ -382,26 +405,27 @@ public class TextEditorModelApiTests
     [Fact]
     public void GetAllText()
     {
-        throw new NotImplementedException("Test was broken on (2024-04-08)");
-        //TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
-        //    out var textEditorService,
-        //    out _,
-        //    out var inViewModel,
-        //    out var serviceProvider);
+        InitializeTextEditorModelApiTests(
+            out var inModel,
+            out var inViewModel,
+            out var textEditorService,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
+            out var serviceProvider);
 
-        //var fileExtension = ExtensionNoPeriodFacts.TXT;
-        //var resourceUri = new ResourceUri("/unitTesting.txt");
-        //var resourceLastWriteTime = DateTime.UtcNow;
-        //var initialContent = "Hello World!";
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
 
-        //textEditorService.ModelApi.RegisterTemplated(
-        //    fileExtension,
-        //    resourceUri,
-        //    resourceLastWriteTime,
-        //    initialContent);
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
 
-        //var model = textEditorService.ModelApi.GetOrDefault(resourceUri);
-        //Assert.Equal(initialContent, model.GetAllText());
+        var model = textEditorService.ModelApi.GetOrDefault(resourceUri);
+        Assert.Equal(initialContent, model.GetAllText());
     }
 
     /// <summary>
@@ -527,5 +551,58 @@ public class TextEditorModelApiTests
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.NotEmpty(outModel!.PresentationModelList);
+    }
+
+    private void InitializeTextEditorModelApiTests(
+        out TextEditorModel model,
+        out TextEditorViewModel viewModel,
+        out ITextEditorService textEditorService,
+        out IState<TextEditorOptionsState> textEditorOptionsState,
+        out IDispatcher dispatcher,
+        out ServiceProvider serviceProvider)
+    {
+        var backgroundTaskService = new BackgroundTaskServiceSynchronous();
+
+        var serviceCollection = new ServiceCollection()
+            .AddScoped<IJSRuntime, DoNothingJsRuntime>()
+            .AddLuthetusTextEditor(new LuthetusHostingInformation(LuthetusHostingKind.UnitTesting, backgroundTaskService))
+            .AddFluxor(options => options.ScanAssemblies(
+                typeof(LuthetusCommonConfig).Assembly,
+                typeof(LuthetusTextEditorConfig).Assembly));
+
+        serviceProvider = serviceCollection.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+        textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
+        textEditorOptionsState = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var content = "Hello World!";
+
+        model = new TextEditorModel(
+            resourceUri,
+            resourceLastWriteTime,
+            fileExtension,
+            content,
+            null,
+            null,
+            4096);
+
+        textEditorService.ModelApi.RegisterCustom(model);
+        
+        var viewModelKey = Key<TextEditorViewModel>.NewKey();
+
+        textEditorService.ViewModelApi.Register(
+            viewModelKey,
+            resourceUri,
+            new Category("UnitTesting"));
+
+        viewModel = textEditorService.ViewModelApi.GetOrDefault(viewModelKey)
+           ?? throw new ArgumentNullException();
     }
 }
