@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.Panels.Models;
 
 namespace Luthetus.Common.RazorLib.Panels.States;
 
-public partial record PanelsState
+public partial record PanelState
 {
     public record RegisterPanelAction(Panel Panel);
     public record DisposePanelAction(Key<Panel> PanelKey);

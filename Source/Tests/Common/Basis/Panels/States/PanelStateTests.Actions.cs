@@ -18,45 +18,45 @@ using System.Collections.Immutable;
 namespace Luthetus.Common.Tests.Basis.Panels.States;
 
 /// <summary>
-/// <see cref="PanelsState"/>
+/// <see cref="PanelState"/>
 /// </summary>
-public class PanelsStateActionsTests
+public class PanelStateActionsTests
 {
     /// <summary>
-    /// <see cref="PanelsState.RegisterPanelGroupAction"/>
+    /// <see cref="PanelState.RegisterPanelGroupAction"/>
     /// </summary>
     [Fact]
     public void RegisterPanelGroupAction()
     {
-        InitializePanelsStateActionsTests(out var panelGroup, out var panelTab);
-        var registerPanelGroupAction = new PanelsState.RegisterPanelGroupAction(panelGroup);
+        InitializePanelStateActionsTests(out var panelGroup, out var panelTab);
+        var registerPanelGroupAction = new PanelState.RegisterPanelGroupAction(panelGroup);
         Assert.Equal(panelGroup, registerPanelGroupAction.PanelGroup);
     }
 
     /// <summary>
-    /// <see cref="PanelsState.DisposePanelGroupAction"/>
+    /// <see cref="PanelState.DisposePanelGroupAction"/>
     /// </summary>
     [Fact]
     public void DisposePanelGroupAction()
     {
-        InitializePanelsStateActionsTests(out var panelGroup, out var panelTab);
-        var disposePanelGroupAction = new PanelsState.DisposePanelGroupAction(panelGroup.Key);
+        InitializePanelStateActionsTests(out var panelGroup, out var panelTab);
+        var disposePanelGroupAction = new PanelState.DisposePanelGroupAction(panelGroup.Key);
         Assert.Equal(panelGroup.Key, disposePanelGroupAction.PanelGroupKey);
     }
 
     /// <summary>
-    /// <see cref="PanelsState.RegisterPanelTabAction"/>
+    /// <see cref="PanelState.RegisterPanelTabAction"/>
     /// </summary>
     [Fact]
     public void RegisterPanelTabAction()
     {
-        InitializePanelsStateActionsTests(out var panelGroup, out var panelTab);
+        InitializePanelStateActionsTests(out var panelGroup, out var panelTab);
 
         // InsertAtIndexZero == false
         {
             var insertAtIndexZero = false;
 
-            var registerPanelTabAction = new PanelsState.RegisterPanelTabAction(
+            var registerPanelTabAction = new PanelState.RegisterPanelTabAction(
                 panelGroup.Key,
                 panelTab,
                 insertAtIndexZero);
@@ -70,7 +70,7 @@ public class PanelsStateActionsTests
         {
             var insertAtIndexZero = true;
 
-            var registerPanelTabAction = new PanelsState.RegisterPanelTabAction(
+            var registerPanelTabAction = new PanelState.RegisterPanelTabAction(
                 panelGroup.Key,
                 panelTab,
                 insertAtIndexZero);
@@ -82,14 +82,14 @@ public class PanelsStateActionsTests
     }
 
     /// <summary>
-    /// <see cref="PanelsState.DisposePanelTabAction"/>
+    /// <see cref="PanelState.DisposePanelTabAction"/>
     /// </summary>
     [Fact]
     public void DisposePanelTabAction()
     {
-        InitializePanelsStateActionsTests(out var panelGroup, out var panelTab);
+        InitializePanelStateActionsTests(out var panelGroup, out var panelTab);
 
-        var disposePanelTabAction = new PanelsState.DisposePanelTabAction(
+        var disposePanelTabAction = new PanelState.DisposePanelTabAction(
             panelGroup.Key,
             panelTab.Key);
 
@@ -98,14 +98,14 @@ public class PanelsStateActionsTests
     }
 
     /// <summary>
-    /// <see cref="PanelsState.SetActivePanelTabAction"/>
+    /// <see cref="PanelState.SetActivePanelTabAction"/>
     /// </summary>
     [Fact]
     public void SetActivePanelTabAction()
     {
-        InitializePanelsStateActionsTests(out var panelGroup, out var panelTab);
+        InitializePanelStateActionsTests(out var panelGroup, out var panelTab);
 
-        var setActivePanelTabAction = new PanelsState.SetActivePanelTabAction(
+        var setActivePanelTabAction = new PanelState.SetActivePanelTabAction(
             panelGroup.Key,
             panelTab.Key);
 
@@ -114,14 +114,14 @@ public class PanelsStateActionsTests
     }
 
     /// <summary>
-    /// <see cref="PanelsState.SetPanelTabAsActiveByContextRecordKeyAction"/>
+    /// <see cref="PanelState.SetPanelTabAsActiveByContextRecordKeyAction"/>
     /// </summary>
     [Fact]
     public void SetPanelTabAsActiveByContextRecordKeyAction()
     {
-        InitializePanelsStateActionsTests(out var panelGroup, out var panelTab);
+        InitializePanelStateActionsTests(out var panelGroup, out var panelTab);
 
-        var setPanelTabAsActiveByContextRecordKeyAction = new PanelsState.SetPanelTabAsActiveByContextRecordKeyAction(
+        var setPanelTabAsActiveByContextRecordKeyAction = new PanelState.SetPanelTabAsActiveByContextRecordKeyAction(
             ContextFacts.SolutionExplorerContext.ContextKey);
 
         Assert.Equal(
@@ -130,14 +130,14 @@ public class PanelsStateActionsTests
     }
 
     /// <summary>
-    /// <see cref="PanelsState.SetDragEventArgsAction"/>
+    /// <see cref="PanelState.SetDragEventArgsAction"/>
     /// </summary>
     [Fact]
     public void SetDragEventArgsAction()
     {
-        InitializePanelsStateActionsTests(out var panelGroup, out var panelTab);
+        InitializePanelStateActionsTests(out var panelGroup, out var panelTab);
 
-        var setDragEventArgsAction = new PanelsState.SetDragEventArgsAction(
+        var setDragEventArgsAction = new PanelState.SetDragEventArgsAction(
             (panelTab, panelGroup));
 
         Assert.NotNull(setDragEventArgsAction.DragEventArgs);
@@ -146,7 +146,7 @@ public class PanelsStateActionsTests
         Assert.Equal(panelGroup, setDragEventArgsAction.DragEventArgs.Value.PanelGroup);
     }
 
-    private void InitializePanelsStateActionsTests(
+    private void InitializePanelStateActionsTests(
         out PanelGroup samplePanelGroup,
         out IPanelTab samplePanelTab)
     {

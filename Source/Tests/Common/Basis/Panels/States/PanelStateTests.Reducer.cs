@@ -18,12 +18,12 @@ using System.Collections.Immutable;
 namespace Luthetus.Common.Tests.Basis.Panels.States;
 
 /// <summary>
-/// <see cref="PanelsState.Reducer"/>
+/// <see cref="PanelState.Reducer"/>
 /// </summary>
-public class PanelsStateReducerTests
+public class PanelStateReducerTests
 {
     /// <summary>
-    /// <see cref="PanelsState.Reducer.ReduceRegisterPanelGroupAction(PanelsState, PanelsState.RegisterPanelGroupAction)"/>
+    /// <see cref="PanelState.Reducer.ReduceRegisterPanelGroupAction(PanelState, PanelState.RegisterPanelGroupAction)"/>
     /// </summary>
     [Fact]
     public void ReduceRegisterPanelGroupAction()
@@ -31,19 +31,19 @@ public class PanelsStateReducerTests
         InitializePanelStateReducerTests(
             out var panelGroup,
             out var panelTab,
-            out var panelsStateWrap,
+            out var panelStateWrap,
             out var dispatcher,
             out var serviceProvider);
 
-        Assert.DoesNotContain(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
+        Assert.DoesNotContain(panelStateWrap.Value.PanelGroupList, x => x == panelGroup);
 
-        var registerPanelGroupAction = new PanelsState.RegisterPanelGroupAction(panelGroup);
+        var registerPanelGroupAction = new PanelState.RegisterPanelGroupAction(panelGroup);
         dispatcher.Dispatch(registerPanelGroupAction);
-        Assert.Contains(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
+        Assert.Contains(panelStateWrap.Value.PanelGroupList, x => x == panelGroup);
     }
 
     /// <summary>
-    /// <see cref="PanelsState.Reducer.ReduceDisposePanelGroupAction(PanelsState, PanelsState.DisposePanelGroupAction)"/>
+    /// <see cref="PanelState.Reducer.ReduceDisposePanelGroupAction(PanelState, PanelState.DisposePanelGroupAction)"/>
     /// </summary>
     [Fact]
     public void ReduceDisposePanelGroupAction()
@@ -51,21 +51,21 @@ public class PanelsStateReducerTests
         InitializePanelStateReducerTests(
             out var panelGroup,
             out var panelTab,
-            out var panelsStateWrap,
+            out var panelStateWrap,
             out var dispatcher,
             out var serviceProvider);
 
-        Assert.DoesNotContain(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
+        Assert.DoesNotContain(panelStateWrap.Value.PanelGroupList, x => x == panelGroup);
 
-        dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
-        Assert.Contains(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
+        dispatcher.Dispatch(new PanelState.RegisterPanelGroupAction(panelGroup));
+        Assert.Contains(panelStateWrap.Value.PanelGroupList, x => x == panelGroup);
 
-        dispatcher.Dispatch(new PanelsState.DisposePanelGroupAction(panelGroup.Key));
-        Assert.DoesNotContain(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
+        dispatcher.Dispatch(new PanelState.DisposePanelGroupAction(panelGroup.Key));
+        Assert.DoesNotContain(panelStateWrap.Value.PanelGroupList, x => x == panelGroup);
     }
 
     /// <summary>
-    /// <see cref="PanelsState.Reducer.ReduceRegisterPanelTabAction(PanelsState, PanelsState.RegisterPanelTabAction)"/>
+    /// <see cref="PanelState.Reducer.ReduceRegisterPanelTabAction(PanelState, PanelState.RegisterPanelTabAction)"/>
     /// </summary>
     [Fact]
     public void ReduceRegisterPanelTabAction()
@@ -73,23 +73,23 @@ public class PanelsStateReducerTests
         InitializePanelStateReducerTests(
             out var panelGroup,
             out var panelTab,
-            out var panelsStateWrap,
+            out var panelStateWrap,
             out var dispatcher,
             out var serviceProvider);
 
-        dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
-        Assert.Contains(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
+        dispatcher.Dispatch(new PanelState.RegisterPanelGroupAction(panelGroup));
+        Assert.Contains(panelStateWrap.Value.PanelGroupList, x => x == panelGroup);
 
         // Ensure the panelGroup is not empty.
         // This allows one to test the 'insertAtIndexZero' logic.
         // That is to say, insert at start or end logic.
         {
-            dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+            dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(
                 panelGroup.Key,
                 panelTab,
                 true));
 
-            var localPanelGroup = panelsStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
+            var localPanelGroup = panelStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
             Assert.Contains(localPanelGroup.TabList, x => x == panelTab);
             Assert.NotEmpty(localPanelGroup.TabList);
         }
@@ -109,12 +109,12 @@ public class PanelsStateReducerTests
                 serviceProvider.GetRequiredService<IDialogService>(),
                 serviceProvider.GetRequiredService<IJSRuntime>());
 
-            dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+            dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(
                 panelGroup.Key,
                 localPanelTab,
                 insertAtIndexZero));
 
-            var localPanelGroup = panelsStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
+            var localPanelGroup = panelStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
             Assert.Contains(localPanelGroup.TabList, x => x == localPanelTab);
             Assert.Equal(localPanelGroup.TabList.Last(), localPanelTab);
         }
@@ -134,19 +134,19 @@ public class PanelsStateReducerTests
                 serviceProvider.GetRequiredService<IDialogService>(),
                 serviceProvider.GetRequiredService<IJSRuntime>());
 
-            dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+            dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(
                 panelGroup.Key,
                 localPanelTab,
                 insertAtIndexZero));
 
-            var localPanelGroup = panelsStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
+            var localPanelGroup = panelStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
             Assert.Contains(localPanelGroup.TabList, x => x == localPanelTab);
             Assert.Equal(localPanelGroup.TabList.First(), localPanelTab);
         }
     }
 
     /// <summary>
-    /// <see cref="PanelsState.Reducer.ReduceDisposePanelTabAction(PanelsState, PanelsState.DisposePanelTabAction)"/>
+    /// <see cref="PanelState.Reducer.ReduceDisposePanelTabAction(PanelState, PanelState.DisposePanelTabAction)"/>
     /// </summary>
     [Fact]
     public void ReduceDisposePanelTabAction()
@@ -154,35 +154,35 @@ public class PanelsStateReducerTests
         InitializePanelStateReducerTests(
             out var panelGroup,
             out var panelTab,
-            out var panelsStateWrap,
+            out var panelStateWrap,
             out var dispatcher,
             out var serviceProvider);
 
         Assert.Empty(panelGroup.TabList);
 
-        dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
-        Assert.Contains(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
+        dispatcher.Dispatch(new PanelState.RegisterPanelGroupAction(panelGroup));
+        Assert.Contains(panelStateWrap.Value.PanelGroupList, x => x == panelGroup);
 
-        dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+        dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(
                 panelGroup.Key,
                 panelTab,
                 true));
 
-        var localPanelGroup = panelsStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
+        var localPanelGroup = panelStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
         Assert.Contains(localPanelGroup.TabList, x => x == panelTab);
         Assert.NotEmpty(localPanelGroup.TabList);
 
-        dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
+        dispatcher.Dispatch(new PanelState.DisposePanelTabAction(
             panelGroup.Key,
             panelTab.Key));
 
-        localPanelGroup = panelsStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
+        localPanelGroup = panelStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
         Assert.DoesNotContain(localPanelGroup.TabList, x => x == panelTab);
         Assert.Empty(localPanelGroup.TabList);
     }
 
     /// <summary>
-    /// <see cref="PanelsState.Reducer.ReduceSetActivePanelTabAction(PanelsState, PanelsState.SetActivePanelTabAction)"/>
+    /// <see cref="PanelState.Reducer.ReduceSetActivePanelTabAction(PanelState, PanelState.SetActivePanelTabAction)"/>
     /// </summary>
     [Fact]
     public void ReduceSetActivePanelTabAction()
@@ -190,36 +190,36 @@ public class PanelsStateReducerTests
         InitializePanelStateReducerTests(
             out var panelGroup,
             out var panelTab,
-            out var panelsStateWrap,
+            out var panelStateWrap,
             out var dispatcher,
             out var serviceProvider);
 
         Assert.Empty(panelGroup.TabList);
 
-        dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
-        Assert.Contains(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
+        dispatcher.Dispatch(new PanelState.RegisterPanelGroupAction(panelGroup));
+        Assert.Contains(panelStateWrap.Value.PanelGroupList, x => x == panelGroup);
 
-        dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+        dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(
                 panelGroup.Key,
                 panelTab,
                 true));
 
-        var localPanelGroup = panelsStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
+        var localPanelGroup = panelStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
         Assert.Contains(localPanelGroup.TabList, x => x == panelTab);
         Assert.NotEmpty(localPanelGroup.TabList);
 
         Assert.NotEqual(panelTab.Key, localPanelGroup.ActiveTabKey);
 
-        dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(
+        dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(
             panelGroup.Key,
             panelTab.Key));
         
-        localPanelGroup = panelsStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
+        localPanelGroup = panelStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
         Assert.Equal(panelTab.Key, localPanelGroup.ActiveTabKey);
     }
 
     /// <summary>
-    /// <see cref="PanelsState.Reducer.ReduceSetPanelTabAsActiveByContextRecordKeyAction(PanelsState, PanelsState.SetPanelTabAsActiveByContextRecordKeyAction)"/>
+    /// <see cref="PanelState.Reducer.ReduceSetPanelTabAsActiveByContextRecordKeyAction(PanelState, PanelState.SetPanelTabAsActiveByContextRecordKeyAction)"/>
     /// </summary>
     [Fact]
     public void ReduceSetPanelTabAsActiveByContextRecordKeyAction()
@@ -227,14 +227,14 @@ public class PanelsStateReducerTests
         InitializePanelStateReducerTests(
             out var panelGroup,
             out var panelTab,
-            out var panelsStateWrap,
+            out var panelStateWrap,
             out var dispatcher,
             out var serviceProvider);
 
         Assert.Empty(panelGroup.TabList);
 
-        dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
-        Assert.Contains(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
+        dispatcher.Dispatch(new PanelState.RegisterPanelGroupAction(panelGroup));
+        Assert.Contains(panelStateWrap.Value.PanelGroupList, x => x == panelGroup);
 
         List<(ContextRecord contextRecord, IPanelTab panelTab)> panelTabTupleList = new();
 
@@ -253,12 +253,12 @@ public class PanelsStateReducerTests
 
             panelTabTupleList.Add((context, localPanelTab));
 
-            dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+            dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(
                 panelGroup.Key,
                 localPanelTab,
                 false));
 
-            var localPanelGroup = panelsStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
+            var localPanelGroup = panelStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
             Assert.Contains(localPanelGroup.TabList, x => x == localPanelTab);
         }
 
@@ -266,16 +266,16 @@ public class PanelsStateReducerTests
 
         foreach (var panelTabTuple in panelTabTupleList)
         {
-            dispatcher.Dispatch(new PanelsState.SetPanelTabAsActiveByContextRecordKeyAction(
+            dispatcher.Dispatch(new PanelState.SetPanelTabAsActiveByContextRecordKeyAction(
                 panelTabTuple.contextRecord.ContextKey));
 
-            var localPanelGroup = panelsStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
+            var localPanelGroup = panelStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
             Assert.Equal(panelTabTuple.panelTab.Key, localPanelGroup.ActiveTabKey);
         }
     }
 
     /// <summary>
-    /// <see cref="PanelsState.Reducer.ReduceSetDragEventArgsAction(PanelsState, PanelsState.SetDragEventArgsAction)"/>
+    /// <see cref="PanelState.Reducer.ReduceSetDragEventArgsAction(PanelState, PanelState.SetDragEventArgsAction)"/>
     /// </summary>
     [Fact]
     public void ReduceSetDragEventArgsAction()
@@ -283,32 +283,32 @@ public class PanelsStateReducerTests
         InitializePanelStateReducerTests(
             out var panelGroup,
             out var panelTab,
-            out var panelsStateWrap,
+            out var panelStateWrap,
             out var dispatcher,
             out var serviceProvider);
 
         Assert.Empty(panelGroup.TabList);
 
-        dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
-        Assert.Contains(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
+        dispatcher.Dispatch(new PanelState.RegisterPanelGroupAction(panelGroup));
+        Assert.Contains(panelStateWrap.Value.PanelGroupList, x => x == panelGroup);
 
-        dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+        dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(
             panelGroup.Key,
             panelTab,
             false));
 
-        Assert.Null(panelsStateWrap.Value.DragEventArgs);
+        Assert.Null(panelStateWrap.Value.DragEventArgs);
 
         var dragEventArgs = (panelTab, panelGroup);
         
-        dispatcher.Dispatch(new PanelsState.SetDragEventArgsAction(dragEventArgs));
-        Assert.Equal(panelsStateWrap.Value.DragEventArgs!.Value, dragEventArgs);
+        dispatcher.Dispatch(new PanelState.SetDragEventArgsAction(dragEventArgs));
+        Assert.Equal(panelStateWrap.Value.DragEventArgs!.Value, dragEventArgs);
     }
 
     private void InitializePanelStateReducerTests(
         out PanelGroup samplePanelGroup,
         out IPanelTab samplePanelTab,
-        out IState<PanelsState> panelStateWrap,
+        out IState<PanelState> panelStateWrap,
         out IDispatcher dispatcher,
         out ServiceProvider serviceProvider)
     {
@@ -324,7 +324,7 @@ public class PanelsStateReducerTests
         var store = serviceProvider.GetRequiredService<IStore>();
         store.InitializeAsync().Wait();
 
-        panelStateWrap = serviceProvider.GetRequiredService<IState<PanelsState>>();
+        panelStateWrap = serviceProvider.GetRequiredService<IState<PanelState>>();
         dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
 
         samplePanelGroup = new PanelGroup(

@@ -22,7 +22,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
-    private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
+    private IState<PanelState> PanelStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]

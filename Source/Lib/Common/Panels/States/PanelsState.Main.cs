@@ -11,11 +11,11 @@ namespace Luthetus.Common.RazorLib.Panels.States;
 /// TODO: SphagettiCode - The resizing and hiding/showing is a bit scuffed. (2023-09-19)
 /// </summary>
 [FeatureState]
-public partial record PanelsState(
+public partial record PanelState(
 	ImmutableArray<PanelGroup> PanelGroupList,
 	ImmutableArray<Panel> PanelList)
 {
-    public PanelsState() : this(ImmutableArray<PanelGroup>.Empty, ImmutableArray<Panel>.Empty)
+    public PanelState() : this(ImmutableArray<PanelGroup>.Empty, ImmutableArray<Panel>.Empty)
     {
         var topLeftGroup = ConstructTopLeftGroup();
         var topRightGroup = ConstructTopRightGroup();

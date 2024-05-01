@@ -24,7 +24,7 @@ namespace Luthetus.Ide.RazorLib.Commands;
 
 public class CommandFactory : ICommandFactory
 {
-    private readonly IState<PanelsState> _panelsStateWrap;
+    private readonly IState<PanelState> _panelStateWrap;
     private readonly ITextEditorService _textEditorService;
     private readonly ITreeViewService _treeViewService;
     private readonly IEnvironmentProvider _environmentProvider;
@@ -35,14 +35,14 @@ public class CommandFactory : ICommandFactory
 		ITextEditorService textEditorService,
 		ITreeViewService treeViewService,
 		IEnvironmentProvider environmentProvider,
-        IState<PanelsState> panelsStateWrap,
+        IState<PanelState> panelStateWrap,
         IDispatcher dispatcher,
 		IJSRuntime jsRuntime)
     {
 		_textEditorService = textEditorService;
 		_treeViewService = treeViewService;
 		_environmentProvider = environmentProvider;
-        _panelsStateWrap = panelsStateWrap;
+        _panelStateWrap = panelStateWrap;
         _dispatcher = dispatcher;
 		_jsRuntime = jsRuntime;
     }
@@ -324,7 +324,7 @@ public class CommandFactory : ICommandFactory
 
                 if (!success)
                 {
-                    _dispatcher.Dispatch(new PanelsState.SetPanelTabAsActiveByContextRecordKeyAction(
+                    _dispatcher.Dispatch(new PanelState.SetPanelTabAsActiveByContextRecordKeyAction(
                         contextRecord.ContextKey));
 
                     _ = await TrySetFocus();

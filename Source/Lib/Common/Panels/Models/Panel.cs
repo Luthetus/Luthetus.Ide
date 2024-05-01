@@ -199,7 +199,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 			{
 				if (panelGroup is not null)
 				{
-					Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
+					Dispatcher.Dispatch(new PanelState.DisposePanelTabAction(
 						panelGroup.Key,
 						Key));
 				}
@@ -223,7 +223,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 			{
 				if (panelGroup is not null)
 				{
-					Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
+					Dispatcher.Dispatch(new PanelState.DisposePanelTabAction(
 						panelGroup.Key,
 						Key));
 				}
@@ -242,7 +242,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 				? true
 				: false;
 
-			Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+			Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(
 				panelGroupDropzone.PanelGroupKey,
 				this,
 				insertAtIndexZero));
