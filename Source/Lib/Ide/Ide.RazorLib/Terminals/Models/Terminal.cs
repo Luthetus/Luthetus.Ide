@@ -92,6 +92,8 @@ public class Terminal
             "Enqueue Command",
             async () =>
             {
+                MoveCursorToEnd();
+
                 if (terminalCommand.ChangeWorkingDirectoryTo is not null)
                     WorkingDirectoryAbsolutePathString = terminalCommand.ChangeWorkingDirectoryTo;
 
@@ -171,10 +173,10 @@ public class Terminal
                             switch (cmdEvent)
                             {
                                 case StartedCommandEvent started:
-									output = $"> {terminalCommand.FormattedCommand.Value}\n" +
-                                             $"> PID:{started.ProcessId} PWD:{WorkingDirectoryAbsolutePathString}\n";
+                                    output = $"{terminalCommand.FormattedCommand.Value}\n"; // +
+                                             // $"> PID:{started.ProcessId} PWD:{WorkingDirectoryAbsolutePathString}\n";
                                     
-                                    output = null;
+                                    // output = null;
 									break;
                                 case StandardOutputCommandEvent stdOut:
                                     output = $"{stdOut.Text}\n";
@@ -237,6 +239,7 @@ public class Terminal
                 finally
                 {
                     HasExecutingProcess = false;
+                    WriteWorkingDirectory();
                     DispatchNewStateKey();
 
                     if (terminalCommand.ContinueWith is not null)
@@ -487,6 +490,34 @@ public class Terminal
                 await editContext.TextEditorService.ModelApi.ApplyDecorationRangeFactory(
                         modelModifier.ResourceUri,
                         terminalResource.GetTokenTextSpans())
+                    .Invoke(editContext)
+                    .ConfigureAwait(false);
+            });
+    }
+    
+    public void MoveCursorToEnd()
+    {
+        _textEditorService.PostIndependent(
+            nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
+            async editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    return;
+
+                await _textEditorService.ViewModelApi.MoveCursorFactory(
+                        new KeyboardEventArgs
+                        {
+                            Code = KeyboardKeyFacts.MovementKeys.END,
+                            Key = KeyboardKeyFacts.MovementKeys.END,
+                            CtrlKey = true,
+                        },
+                        ResourceUri,
+                        TextEditorViewModelKey)
                     .Invoke(editContext)
                     .ConfigureAwait(false);
             });
