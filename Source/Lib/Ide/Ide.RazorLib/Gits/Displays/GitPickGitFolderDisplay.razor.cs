@@ -1,3 +1,7 @@
+using Fluxor;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.Gits.Models;
+using Luthetus.Ide.RazorLib.Gits.States;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.InputFiles.States;
 using Microsoft.AspNetCore.Components;
@@ -9,6 +13,10 @@ public partial class GitPickGitFolderDisplay : ComponentBase
 {
     [Inject]
     private InputFileSync InputFileSync { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     private string _gitFolderAbsolutePath = string.Empty;
 
@@ -38,5 +46,15 @@ public partial class GitPickGitFolderDisplay : ComponentBase
             {
                 new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
             }.ToImmutableArray());
+    }
+
+    private void ConfirmGitFolderOnClick()
+    {
+        Dispatcher.Dispatch(new GitState.SetGitStateWithAction(inState => inState with
+        {
+            GitFolderAbsolutePath = EnvironmentProvider.AbsolutePathFactory(_gitFolderAbsolutePath, true),
+            ActiveGitTasks = ImmutableList<GitTask>.Empty,
+            GitFilesList = ImmutableList<GitFile>.Empty,
+        }));
     }
 }

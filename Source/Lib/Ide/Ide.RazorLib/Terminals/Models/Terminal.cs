@@ -188,7 +188,7 @@ public class Terminal
                             }
 
 							if (output is not null)
-                                AddOutput(output, terminalCommandBoundary);
+                                AddOutput(output, terminalCommand, terminalCommandBoundary);
 
                             DispatchNewStateKey();
                         });
@@ -492,7 +492,7 @@ public class Terminal
             });
     }
 
-    public void AddOutput(string output, TerminalCommandBoundary terminalCommandBoundary)
+    public void AddOutput(string output, TerminalCommand terminalCommand, TerminalCommandBoundary terminalCommandBoundary)
     {
         _textEditorService.PostIndependent(
             nameof(EnqueueCommandAsync),
@@ -509,7 +509,10 @@ public class Terminal
                 var entryPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
                 terminalCommandBoundary.StartPositionIndexInclusive ??= entryPositionIndex;
 
-                var outputTextSpans = DotNetRunOutputParser.Parse(output);
+                var outputTextSpanList = new List<TextEditorTextSpan>();
+
+                if (terminalCommand.ParseFunc is not null)
+                    outputTextSpanList = terminalCommand.ParseFunc.Invoke(output);
 
                 await _textEditorService.ModelApi.InsertTextFactory(
                         ResourceUri,
@@ -523,7 +526,7 @@ public class Terminal
                 if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
                     return;
 
-                outputTextSpans = outputTextSpans.Select(x => x with
+                outputTextSpanList = outputTextSpanList.Select(x => x with
                 {
                     StartingIndexInclusive = entryPositionIndex + x.StartingIndexInclusive,
                     EndingIndexExclusive = entryPositionIndex + x.EndingIndexExclusive,
@@ -531,8 +534,8 @@ public class Terminal
                     SourceText = modelModifier.GetAllText(),
                 }).ToList();
 
-                terminalResource.ManualDecorationTextSpanList.AddRange(outputTextSpans);
-                terminalResource.ManualSymbolList.AddRange(outputTextSpans.Select(x => new SourceFileSymbol(x)));
+                terminalResource.ManualDecorationTextSpanList.AddRange(outputTextSpanList);
+                terminalResource.ManualSymbolList.AddRange(outputTextSpanList.Select(x => new SourceFileSymbol(x)));
 
                 await editContext.TextEditorService.ModelApi.ApplyDecorationRangeFactory(
                         modelModifier.ResourceUri,

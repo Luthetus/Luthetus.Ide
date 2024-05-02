@@ -1,4 +1,6 @@
-﻿@using Luthetus.Common.RazorLib.Contexts.Displays
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models
 
 <ContextBoundary ContextRecord="ContextFacts.SolutionExplorerContext"
@@ -12,15 +14,19 @@
     </div>
 
     <div class="luth_ide_section-body">
-        @if (gitState.GitFolderAbsolutePath is null)
-        {
-            <GitPickGitFolderDisplay/>
-        }
-        else
-        {
-            <div>
-                You have chosen: @gitState.GitFolderAbsolutePath
-            </div>
-        }
+        <CascadingValue Value="gitState">
+            @if (gitState.GitFolderAbsolutePath is null)
+            {
+                <GitPickGitFolderDisplay/>
+            }
+            else
+            {
+                <div>
+                    You have chosen: @gitState.GitFolderAbsolutePath
+                </div>
+                
+                <GitControlsDisplay/>
+            }
+        </CascadingValue>
     </div>
 </ContextBoundary>
