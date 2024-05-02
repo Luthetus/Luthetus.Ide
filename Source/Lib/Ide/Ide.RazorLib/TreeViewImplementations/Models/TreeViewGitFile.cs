@@ -6,8 +6,6 @@ namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 
 public class TreeViewGitFile : TreeViewWithType<GitFile>
 {
-    private readonly ILuthetusIdeComponentRenderers _ideComponentRenderers;
-
     public TreeViewGitFile(
             GitFile item,
             ILuthetusIdeComponentRenderers ideComponentRenderers,
@@ -15,8 +13,10 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
             bool isExpanded)
         : base(item, isExpandable, isExpanded)
     {
-        _ideComponentRenderers = ideComponentRenderers;
+        IdeComponentRenderers = ideComponentRenderers;
     }
+
+    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
 
     public override bool Equals(object? obj)
     {
@@ -32,7 +32,7 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            _ideComponentRenderers.LuthetusIdeTreeViews.TreeViewGitFileRendererType,
+            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewGitFileRendererType,
             new Dictionary<string, object?>
             {
                 {

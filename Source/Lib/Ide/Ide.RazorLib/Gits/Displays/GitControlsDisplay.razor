@@ -8,4 +8,14 @@
     </button>
 
 	<GitChangesTreeViewDisplay/>
+
+    <input class="luth_ide_input luth_ide_input-text"
+        placeholder="Summary"
+        @bind="_summary"
+        @bind:event="oninput" />
+
+    <button class="luth_button"
+            @onclick="SubmitOnClick">
+        Commit
+    </button>
 </div>

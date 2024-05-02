@@ -21,6 +21,8 @@ public partial class GitControlsDisplay : ComponentBase
     [CascadingParameter]
     public GitState GitState { get; set; } = null!;
 
+    private string _summary = string.Empty;
+
     public Key<TerminalCommand> NewDotNetSolutionTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
 
     private async Task ExecuteGitStatusTerminalCommandOnClick()
@@ -50,5 +52,11 @@ public partial class GitControlsDisplay : ComponentBase
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
         await generalTerminal.EnqueueCommandAsync(gitStatusCommand);
+    }
+
+    private void SubmitOnClick()
+    {
+        if (string.IsNullOrWhiteSpace(_summary))
+            return;
     }
 }

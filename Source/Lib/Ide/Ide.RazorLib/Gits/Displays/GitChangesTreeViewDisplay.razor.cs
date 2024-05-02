@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Ide.RazorLib.Gits.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
 using Microsoft.AspNetCore.Components;
 
@@ -11,6 +12,13 @@ namespace Luthetus.Ide.RazorLib.Gits.Displays;
 
 public partial class GitChangesTreeViewDisplay : ComponentBase
 {
+    /// <summary>
+    /// Awkwardly, the <see cref="GitTreeViewKeyboardEventHandler"/> constructor needs this,
+    /// meanwhile this component is receiving <see cref="States.GitState"/> as a cascading parameter.
+    /// This should be written differently (2024-05-02).
+    /// </summary>
+    [Inject]
+    private IState<GitState> GitStateWrap { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
@@ -32,9 +40,11 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
 
     protected override void OnInitialized()
     {
-        _treeViewKeyboardEventHandler = new TreeViewKeyboardEventHandler(
+        _treeViewKeyboardEventHandler = new GitTreeViewKeyboardEventHandler(
             TreeViewService,
-            BackgroundTaskService);
+            BackgroundTaskService,
+            GitStateWrap,
+            Dispatcher);
 
         _treeViewMouseEventHandler = new TreeViewMouseEventHandler(
             TreeViewService,
