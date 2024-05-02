@@ -24,6 +24,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Microsoft.JSInterop;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.Ide.RazorLib.Gits.Displays;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
 
@@ -131,6 +132,20 @@ public partial class LuthetusIdeInitializer : ComponentBase
             JsRuntime);
         Dispatcher.Dispatch(new PanelState.RegisterPanelAction(solutionExplorerPanel));
         Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(leftPanel.Key, solutionExplorerPanel, false));
+
+        // gitPanel
+        var gitPanel = new Panel(
+            "Git Changes",
+            Key<Panel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
+            ContextFacts.GitContext.ContextKey,
+            typeof(GitDisplay),
+            null,
+            Dispatcher,
+            DialogService,
+            JsRuntime);
+        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(gitPanel));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(leftPanel.Key, gitPanel, false));
 
         // folderExplorerPanel
         var folderExplorerPanel = new Panel(

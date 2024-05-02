@@ -1,0 +1,22 @@
+<div class="luth_ide_git-pick-git-folder">
+    <div class="luth_ide_form-group">
+        <div class="luth_ide_form-label">
+            Git Folder (absolute path):
+        </div>
+
+        <div class="luth_ide_form-value"
+             style="display: flex;">
+
+            <input class="luth_ide_input luth_ide_input-text"
+                   style="height: 2em;"
+                   placeholder="Git Folder (absolute path)"
+                   @bind="_gitFolderAbsolutePath"
+                   @bind:event="oninput" />
+
+            <button class="luth_button"
+                    @onclick="RequestInputFileForGitFolder">
+                <IconFolder />
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+﻿@using Luthetus.Common.RazorLib.Contexts.Displays
+@using Luthetus.Common.RazorLib.Contexts.Models
+
+<ContextBoundary ContextRecord="ContextFacts.SolutionExplorerContext"
+                 ClassCssString="luth_ide_solution-explorer-display"
+                 StyleCssString="height: 100%">
+
+    @{ var gitState = GitStateWrap.Value; }
+
+    <div class="luth_ide_section-title">
+        Git Changes
+    </div>
+
+    <div class="luth_ide_section-body">
+        @if (gitState.GitFolderAbsolutePath is null)
+        {
+            <GitPickGitFolderDisplay/>
+        }
+        else
+        {
+            <div>
+                You have chosen: @gitState.GitFolderAbsolutePath
+            </div>
+        }
+    </div>
+</ContextBoundary>
