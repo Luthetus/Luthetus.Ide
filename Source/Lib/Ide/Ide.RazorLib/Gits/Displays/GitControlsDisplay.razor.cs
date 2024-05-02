@@ -12,6 +12,8 @@ public partial class GitControlsDisplay : ComponentBase
 {
     [Inject]
     private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
     [CascadingParameter]
     public GitState GitState { get; set; } = null!;
@@ -31,11 +33,13 @@ public partial class GitControlsDisplay : ComponentBase
             GitCliFacts.TARGET_FILE_NAME,
             new string[] { GitCliFacts.STATUS_COMMAND });
 
+        var gitCliOutputParser = new GitCliOutputParser(Dispatcher, GitState);
+
         var gitStatusCommand = new TerminalCommand(
             NewDotNetSolutionTerminalCommandKey,
             formattedCommand,
             parentDirectory.Value,
-            CancellationToken.None);
+            ParseFunc: gitCliOutputParser.Parse);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
         await generalTerminal.EnqueueCommandAsync(gitStatusCommand);
