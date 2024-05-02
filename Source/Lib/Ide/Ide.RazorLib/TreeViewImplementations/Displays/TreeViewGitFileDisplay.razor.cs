@@ -21,7 +21,7 @@ public partial class TreeViewGitFileDisplay : ComponentBase, ITreeViewGitFileRen
 
     private bool IsChecked
     {
-        get => GitState.SelectedGitFileMap.ContainsKey(TreeViewGitFile.Item.AbsolutePath.Value);
+        get => GitState.StagedGitFileMap.ContainsKey(TreeViewGitFile.Item.AbsolutePath.Value);
         set
         {
             var localGitState = GitState;
@@ -35,16 +35,16 @@ public partial class TreeViewGitFileDisplay : ComponentBase, ITreeViewGitFileRen
                 }
 
                 var key = TreeViewGitFile.Item.AbsolutePath.Value;
-                ImmutableDictionary<string, GitFile> outSelectedGitFileMap;
+                ImmutableDictionary<string, GitFile> outStagedGitFileMap;
 
-                if (inState.SelectedGitFileMap.ContainsKey(key))
-                    outSelectedGitFileMap = inState.SelectedGitFileMap.Remove(key);
+                if (inState.StagedGitFileMap.ContainsKey(key))
+                    outStagedGitFileMap = inState.StagedGitFileMap.Remove(key);
                 else
-                    outSelectedGitFileMap = inState.SelectedGitFileMap.Add(key, TreeViewGitFile.Item);
+                    outStagedGitFileMap = inState.StagedGitFileMap.Add(key, TreeViewGitFile.Item);
 
                 return inState with
                 {
-                    SelectedGitFileMap = outSelectedGitFileMap
+                    StagedGitFileMap = outStagedGitFileMap
                 };
             }));
         }

@@ -15,7 +15,7 @@
         @bind:event="oninput" />
 
     <button class="luth_button"
-            @onclick="SubmitOnClick">
+            @onclick="() => SubmitOnClick(localGitState)">
         Commit
     </button>
 </div>

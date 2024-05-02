@@ -6,6 +6,7 @@ using Luthetus.Ide.RazorLib.Gits.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Microsoft.AspNetCore.Components;
+using System.Text;
 
 namespace Luthetus.Ide.RazorLib.Gits.Displays;
 
@@ -54,9 +55,43 @@ public partial class GitControlsDisplay : ComponentBase
         await generalTerminal.EnqueueCommandAsync(gitStatusCommand);
     }
 
-    private void SubmitOnClick()
+    private async Task SubmitOnClick(GitState localGitState)
     {
         if (string.IsNullOrWhiteSpace(_summary))
             return;
+
+        if (localGitState.GitFolderAbsolutePath?.ParentDirectory is null)
+            return;
+
+        var parentDirectory = localGitState.GitFolderAbsolutePath.ParentDirectory;
+
+        var filesBuilder =  new StringBuilder();
+
+        foreach (var fileAbsolutePath in localGitState.StagedGitFileMap.Values)
+        {
+            var relativePathString = PathHelper.GetRelativeFromTwoAbsolutes(
+                EnvironmentProvider.AbsolutePathFactory(parentDirectory.Value, true),
+                fileAbsolutePath.AbsolutePath,
+                EnvironmentProvider);
+
+            filesBuilder.Append($"\"{relativePathString}\" ");
+        }
+
+        var argumentsString = "add " + filesBuilder.ToString();
+
+        var formattedCommand = new FormattedCommand(
+            GitCliFacts.TARGET_FILE_NAME,
+            new string[] { argumentsString })
+        {
+            HACK_ArgumentsString = argumentsString
+        };
+        
+        var gitAddCommand = new TerminalCommand(
+            NewDotNetSolutionTerminalCommandKey,
+            formattedCommand,
+            parentDirectory.Value);
+
+        var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
+        await generalTerminal.EnqueueCommandAsync(gitAddCommand);
     }
 }

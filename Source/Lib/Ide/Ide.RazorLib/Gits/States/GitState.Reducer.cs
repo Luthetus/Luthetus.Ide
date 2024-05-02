@@ -35,7 +35,7 @@ public partial record GitState
             {
                 GitFolderAbsolutePath = setGitFolderAction.GitFolderAbsolutePath,
                 GitFileList = ImmutableList<GitFile>.Empty,
-                SelectedGitFileMap = ImmutableDictionary<string, GitFile>.Empty,
+                StagedGitFileMap = ImmutableDictionary<string, GitFile>.Empty,
                 ActiveGitTasks = ImmutableList<GitTask>.Empty,
             };
         }
