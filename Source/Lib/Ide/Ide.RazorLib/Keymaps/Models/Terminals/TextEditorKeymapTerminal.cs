@@ -164,12 +164,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 
                                         var terminalCommand = new TerminalCommand(
                                             Key<TerminalCommand>.NewKey(),
-                                            formattedCommand,
-											ContinueWith: () =>
-											{
-												terminalResource.Terminal.WriteWorkingDirectory();
-												return Task.CompletedTask;
-											});
+                                            formattedCommand);
 
 										terminalResource.ManualDecorationTextSpanList.Add(terminalResource.TargetFilePathTextSpan);
 
