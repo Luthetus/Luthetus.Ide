@@ -74,6 +74,18 @@ public partial class GitControlsDisplay : ComponentBase
                 fileAbsolutePath.AbsolutePath,
                 EnvironmentProvider);
 
+            if (EnvironmentProvider.DirectorySeparatorChar == '\\')
+            {
+                // The following fails:
+                //     git add ".\MyApp\"
+                //
+                // Whereas the following succeeds
+                //     git add "./MyApp/"
+                relativePathString = relativePathString.Replace(
+                    EnvironmentProvider.DirectorySeparatorChar,
+                    EnvironmentProvider.AltDirectorySeparatorChar);
+            }
+
             filesBuilder.Append($"\"{relativePathString}\" ");
         }
 
