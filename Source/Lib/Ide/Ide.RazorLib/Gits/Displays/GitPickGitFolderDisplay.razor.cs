@@ -54,7 +54,7 @@ public partial class GitPickGitFolderDisplay : ComponentBase
         {
             GitFolderAbsolutePath = EnvironmentProvider.AbsolutePathFactory(_gitFolderAbsolutePath, true),
             ActiveGitTasks = ImmutableList<GitTask>.Empty,
-            GitFilesList = ImmutableList<GitFile>.Empty,
+            GitFileList = ImmutableList<GitFile>.Empty,
         }));
     }
 }

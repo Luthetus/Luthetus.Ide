@@ -16,7 +16,7 @@ namespace Luthetus.Ide.RazorLib.Gits.States;
 [FeatureState]
 public partial record GitState(
     IAbsolutePath? GitFolderAbsolutePath,
-    ImmutableList<GitFile> GitFilesList,
+    ImmutableList<GitFile> GitFileList,
     ImmutableList<GitTask> ActiveGitTasks)
 {
     public GitState() : this(null, ImmutableList<GitFile>.Empty, ImmutableList<GitTask>.Empty)

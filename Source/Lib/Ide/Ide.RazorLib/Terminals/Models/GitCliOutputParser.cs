@@ -1,9 +1,11 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.Gits.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Linq;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
@@ -11,11 +13,20 @@ public class GitCliOutputParser
 {
     private readonly IDispatcher _dispatcher;
     private readonly GitState _gitState;
+    private readonly IAbsolutePath _workingDirectory;
+    private readonly IEnvironmentProvider _environmentProvider;
+    private readonly List<GitFile> _gitFileList = new();
 
-    public GitCliOutputParser(IDispatcher dispatcher, GitState gitState)
+    public GitCliOutputParser(
+        IDispatcher dispatcher,
+        GitState gitState,
+        IAbsolutePath workingDirectory,
+        IEnvironmentProvider environmentProvider)
     {
         _dispatcher = dispatcher;
         _gitState = gitState;
+        _workingDirectory = workingDirectory;
+        _environmentProvider = environmentProvider;
     }
 
     private StageKind _stageKind = StageKind.None;
@@ -104,10 +115,20 @@ public class GitCliOutputParser
                                 _ = stringWalker.ReadCharacter();
                             }
 
-                            textSpanList.Add(new TextEditorTextSpan(
+                            var textSpan = new TextEditorTextSpan(
                                 startPositionInclusive,
                                 stringWalker,
-                                (byte)TerminalDecorationKind.Warning));
+                                (byte)TerminalDecorationKind.Warning);
+                            textSpanList.Add(textSpan);
+
+                            var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
+                                _workingDirectory,
+                                textSpan.GetText(),
+                                _environmentProvider);
+
+                            var absolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, false);
+
+                            _gitFileList.Add(new GitFile(absolutePath, GitDirtyReason.Untracked));
                         }
 
                         break;
@@ -115,24 +136,7 @@ public class GitCliOutputParser
 
                     _ = stringWalker.ReadCharacter();
                 }
-
-                //// Read each untracked file
-                //while (!stringWalker.IsEof)
-                //{
-                //    var character = stringWalker.ReadCharacter();
-
-                //    if (character == ':')
-                //    {
-                //        textSpanList.Add(new TextEditorTextSpan(
-                //            startPositionInclusive,
-                //            stringWalker,
-                //            (byte)TerminalDecorationKind.Warning));
-
-                //        break;
-                //    }
-                //}
             }
-
 
             _ = stringWalker.ReadCharacter();
         }
@@ -148,17 +152,20 @@ public class GitCliOutputParser
             }
         }
 
-        //_dispatcher.Dispatch(new GitState.SetGitStateWithAction(inState =>
-        //{
-        //    if (inState.GitFolderAbsolutePath != localGitState.GitFolderAbsolutePath)
-        //    {
-        //        // Git folder was changed while the text was being parsed,
-        //        // throw away the result since it is thereby invalid.
-        //        return inState;
-        //    }
-        //
-        //    inState.GitFilesList.Add(new GitFile());
-        //}));
+        _dispatcher.Dispatch(new GitState.SetGitStateWithAction(inState =>
+        {
+            if (inState.GitFolderAbsolutePath != _gitState.GitFolderAbsolutePath)
+            {
+                // Git folder was changed while the text was being parsed,
+                // throw away the result since it is thereby invalid.
+                return inState;
+            }
+
+            return inState with
+            {
+                GitFileList = _gitFileList.ToImmutableList()
+            };
+        }));
 
         return textSpanList;
     }

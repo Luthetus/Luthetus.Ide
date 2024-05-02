@@ -34,7 +34,7 @@ public partial class GitSync
         // without realizing the other was also part of the Dispatch replacement.
         Dispatcher.Dispatch(new SetGitStateWithAction(inGitState => inGitState with
         {
-            GitFilesList = ImmutableList<GitFile>.Empty
+            GitFileList = ImmutableList<GitFile>.Empty
         }));
 
         if (gitState.GitFolderAbsolutePath is null ||
@@ -93,8 +93,8 @@ public partial class GitSync
         {
             Dispatcher.Dispatch(new SetGitStateWithAction(inGitState =>
             {
-                var nextGitFilesList = inGitState.GitFilesList.AddRange(gitFiles);
-                return inGitState with { GitFilesList = nextGitFilesList };
+                var nextGitFilesList = inGitState.GitFileList.AddRange(gitFiles);
+                return inGitState with { GitFileList = nextGitFilesList };
             }));
         }
 
@@ -102,8 +102,8 @@ public partial class GitSync
         {
             Dispatcher.Dispatch(new SetGitStateWithAction(inGitState =>
             {
-                var nextGitFilesList = inGitState.GitFilesList.AddRange(gitFiles);
-                return inGitState with { GitFilesList = nextGitFilesList };
+                var nextGitFilesList = inGitState.GitFileList.AddRange(gitFiles);
+                return inGitState with { GitFileList = nextGitFilesList };
             }));
         }
     }

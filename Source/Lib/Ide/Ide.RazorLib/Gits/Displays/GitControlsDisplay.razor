@@ -1,6 +1,16 @@
 <div class="luth_ide_git-controls">
+    
+    @{ var localGitState = GitState; }
+
     <button class="luth_button"
             @onclick="ExecuteGitStatusTerminalCommandOnClick">
         Status
     </button>
+
+    <div>
+        @foreach (var gitFile in localGitState.GitFileList)
+        {
+            <div>@gitFile.AbsolutePath.Value|@gitFile.GitDirtyReason</div>
+        }
+    </div>
 </div>

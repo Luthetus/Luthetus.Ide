@@ -1,4 +1,5 @@
 using Fluxor;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
@@ -14,6 +15,8 @@ public partial class GitControlsDisplay : ComponentBase
     private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     [CascadingParameter]
     public GitState GitState { get; set; } = null!;
@@ -33,7 +36,11 @@ public partial class GitControlsDisplay : ComponentBase
             GitCliFacts.TARGET_FILE_NAME,
             new string[] { GitCliFacts.STATUS_COMMAND });
 
-        var gitCliOutputParser = new GitCliOutputParser(Dispatcher, GitState);
+        var gitCliOutputParser = new GitCliOutputParser(
+            Dispatcher,
+            GitState,
+            EnvironmentProvider.AbsolutePathFactory(parentDirectory.Value, true),
+            EnvironmentProvider);
 
         var gitStatusCommand = new TerminalCommand(
             NewDotNetSolutionTerminalCommandKey,
