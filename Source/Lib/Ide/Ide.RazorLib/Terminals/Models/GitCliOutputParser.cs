@@ -59,41 +59,57 @@ public class GitCliOutputParser
             }
             else if (_stageKind == StageKind.IsReadingUntrackedFiles)
             {
-                // Find: "(use \"git add <file>...\" to include in what will be committed)"
                 while (!stringWalker.IsEof)
                 {
-                    var targetString = "(use \"git add <file>...\" to include in what will be committed)";
-                    var targetStringFirstCharacter = targetString.First();
-
-                    if (stringWalker.CurrentCharacter == targetStringFirstCharacter &&
-                        stringWalker.PeekForSubstring(targetString))
+                    
+                    if (stringWalker.CurrentCharacter == ' ' && stringWalker.NextCharacter == ' ')
                     {
-                        var startPositionInclusive = stringWalker.PositionIndex;
-
-                        // Read: "(use \"git add <file>...\" to include in what will be committed)" (literally)
+                        // Read comments line by line
                         while (!stringWalker.IsEof)
                         {
-                            var character = stringWalker.ReadCharacter();
-
-                            if (character == ')')
-                            {
-                                textSpanList.Add(new TextEditorTextSpan(
-                                    startPositionInclusive,
-                                    stringWalker,
-                                    (byte)TerminalDecorationKind.Comment));
-
+                            if (stringWalker.CurrentCharacter != ' ' || stringWalker.NextCharacter != ' ')
                                 break;
+
+                            // Discard the leading whitespace on the line (two spaces)
+                            _ = stringWalker.ReadRange(2);
+
+                            var startPositionInclusive = stringWalker.PositionIndex;
+
+                            while (!stringWalker.IsEof && !WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
+                            {
+                                _ = stringWalker.ReadCharacter();
                             }
+
+                            textSpanList.Add(new TextEditorTextSpan(
+                                startPositionInclusive,
+                                stringWalker,
+                                (byte)TerminalDecorationKind.Comment));
+                        }
+                    }
+                    else if (stringWalker.CurrentCharacter == WhitespaceFacts.TAB)
+                    {
+                        // Read untracked files line by line
+                        while (!stringWalker.IsEof)
+                        {
+                            if (stringWalker.CurrentCharacter != WhitespaceFacts.TAB)
+                                break;
+
+                            // Discard the leading whitespace on the line (one tab)
+                            _ = stringWalker.ReadCharacter();
+
+                            var startPositionInclusive = stringWalker.PositionIndex;
+
+                            while (!stringWalker.IsEof && !WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
+                            {
+                                _ = stringWalker.ReadCharacter();
+                            }
+
+                            textSpanList.Add(new TextEditorTextSpan(
+                                startPositionInclusive,
+                                stringWalker,
+                                (byte)TerminalDecorationKind.Warning));
                         }
 
-                        break;
-                    }
-                    else if (!WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
-                    {
-                        // If the '(' was not found,
-                        // yet the stringWalker.CurrentCharacter is non-whitespace,
-                        // Then for whatever reason the "(use \"git add <file>...\" to include in what will be committed)"
-                        // text was not written out. Perhaps the CLI is going straight into listing the untracked files?
                         break;
                     }
 
