@@ -50,11 +50,7 @@ public partial class GitPickGitFolderDisplay : ComponentBase
 
     private void ConfirmGitFolderOnClick()
     {
-        Dispatcher.Dispatch(new GitState.SetGitStateWithAction(inState => inState with
-        {
-            GitFolderAbsolutePath = EnvironmentProvider.AbsolutePathFactory(_gitFolderAbsolutePath, true),
-            ActiveGitTasks = ImmutableList<GitTask>.Empty,
-            GitFileList = ImmutableList<GitFile>.Empty,
-        }));
+        Dispatcher.Dispatch(new GitState.SetGitFolderAction(
+            EnvironmentProvider.AbsolutePathFactory(_gitFolderAbsolutePath, true)));
     }
 }

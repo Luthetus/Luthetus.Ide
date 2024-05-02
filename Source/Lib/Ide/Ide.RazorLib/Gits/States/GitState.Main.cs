@@ -11,11 +11,13 @@ namespace Luthetus.Ide.RazorLib.Gits.States;
 public partial record GitState(
     IAbsolutePath? GitFolderAbsolutePath,
     ImmutableList<GitFile> GitFileList,
+    ImmutableDictionary<string, GitFile> SelectedGitFileList,
     ImmutableList<GitTask> ActiveGitTasks)
 {
     public static readonly Key<TreeViewContainer> TreeViewGitChangesKey = Key<TreeViewContainer>.NewKey();
 
-    public GitState() : this(null, ImmutableList<GitFile>.Empty, ImmutableList<GitTask>.Empty)
+    public GitState()
+        : this(null, ImmutableList<GitFile>.Empty, ImmutableDictionary<string, GitFile>.Empty, ImmutableList<GitTask>.Empty)
     {
 
     }

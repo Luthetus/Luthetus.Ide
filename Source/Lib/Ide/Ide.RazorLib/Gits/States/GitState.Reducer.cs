@@ -1,4 +1,6 @@
 ﻿using Fluxor;
+using Luthetus.Ide.RazorLib.Gits.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Gits.States;
 
@@ -24,6 +26,20 @@ public partial record GitState
             };
         }
         
+        [ReducerMethod]
+        public static GitState ReduceSetGitFolderAction(
+            GitState inState,
+            SetGitFolderAction setGitFolderAction)
+        {
+            return inState with
+            {
+                GitFolderAbsolutePath = setGitFolderAction.GitFolderAbsolutePath,
+                GitFileList = ImmutableList<GitFile>.Empty,
+                SelectedGitFileList = ImmutableDictionary<string, GitFile>.Empty,
+                ActiveGitTasks = ImmutableList<GitTask>.Empty,
+            };
+        }
+
         [ReducerMethod]
         public static GitState ReduceSetGitStateWithAction(
             GitState inState,

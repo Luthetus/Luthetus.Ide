@@ -2,9 +2,11 @@
 
     @{ var nameWithExtension = TreeViewGitFile.Item.AbsolutePath.NameWithExtension; }
 
+    <input type="checkbox" @bind="IsChecked" @bind:event="oninput" />
+
     @if (string.IsNullOrWhiteSpace(nameWithExtension))
     {
-        @: abc123
+        @: string.IsNullOrWhiteSpace(nameWithExtension)
     }
     else
     {

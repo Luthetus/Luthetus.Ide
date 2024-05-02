@@ -10,5 +10,7 @@ public partial record GitState
     /// If the expected path is not the actual path, then the git file list will NOT be changed.
     /// </summary>
     public record SetGitFileListAction(IAbsolutePath ExpectedGitFolderAbsolutePath, ImmutableList<GitFile> GitFileList);
+    public record SetGitFolderAction(IAbsolutePath GitFolderAbsolutePath);
+    public record SetSelectedGitFileListAction(Func<ImmutableDictionary<string, GitFile>, ImmutableDictionary<string, GitFile>> SetSelectedGitFileListFunc);
     public record SetGitStateWithAction(Func<GitState, GitState> GitStateWithFunc);
 }
