@@ -33,13 +33,11 @@ public class GitCliOutputParser
 
     public List<TextEditorTextSpan> Parse(string output)
     {
+        if (_gitState.GitFolderAbsolutePath is null)
+            return new();
+
         var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
-
         var textSpanList = new List<TextEditorTextSpan>();
-
-        TextEditorTextSpan errorKeywordAndErrorCodeTextSpan = new(0, 0, 0, new ResourceUri(string.Empty), string.Empty);
-
-        
 
         while (!stringWalker.IsEof)
         {
@@ -121,12 +119,17 @@ public class GitCliOutputParser
                                 (byte)TerminalDecorationKind.Warning);
                             textSpanList.Add(textSpan);
 
+                            var text = textSpan.GetText();
+
                             var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
                                 _workingDirectory,
-                                textSpan.GetText(),
+                                text,
                                 _environmentProvider);
 
-                            var absolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, false);
+                            var isDirectory = text.EndsWith(_environmentProvider.DirectorySeparatorChar) ||
+                                text.EndsWith(_environmentProvider.AltDirectorySeparatorChar);
+
+                            var absolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, isDirectory);
 
                             _gitFileList.Add(new GitFile(absolutePath, GitDirtyReason.Untracked));
                         }
@@ -141,31 +144,9 @@ public class GitCliOutputParser
             _ = stringWalker.ReadCharacter();
         }
 
-        if (errorKeywordAndErrorCodeTextSpan.DecorationByte != 0)
-        {
-            for (int i = textSpanList.Count - 1; i >= 0; i--)
-            {
-                textSpanList[i] = textSpanList[i] with
-                {
-                    DecorationByte = errorKeywordAndErrorCodeTextSpan.DecorationByte
-                };
-            }
-        }
-
-        _dispatcher.Dispatch(new GitState.SetGitStateWithAction(inState =>
-        {
-            if (inState.GitFolderAbsolutePath != _gitState.GitFolderAbsolutePath)
-            {
-                // Git folder was changed while the text was being parsed,
-                // throw away the result since it is thereby invalid.
-                return inState;
-            }
-
-            return inState with
-            {
-                GitFileList = _gitFileList.ToImmutableList()
-            };
-        }));
+        _dispatcher.Dispatch(new GitState.SetGitFileListAction(
+            _gitState.GitFolderAbsolutePath,
+            _gitFileList.ToImmutableList()));
 
         return textSpanList;
     }

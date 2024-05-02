@@ -1,0 +1,31 @@
+﻿@using Luthetus.Common.RazorLib.Dropdowns.Displays
+@using Luthetus.Common.RazorLib.Dropdowns.Models
+@using Luthetus.Common.RazorLib.TreeViews.Displays
+@using Luthetus.Common.RazorLib.TreeViews.Models
+@using Luthetus.Ide.RazorLib.Terminals.Models
+@using System.Collections.Immutable
+
+<div class="luth_ide_test-explorer-tree-view"
+	 style="height: 100%;">
+
+     @{ var appOptionsState = AppOptionsStateWrap.Value; }
+
+    <CascadingValue Name="LuthetusTreeViewIconWidth" Value="appOptionsState.Options.IconSizeInPixels">
+        <CascadingValue Name="LuthetusTreeViewIconHeight" Value="appOptionsState.Options.IconSizeInPixels">
+            <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+                <TreeViewContainerDisplay TreeViewContainerKey="Gits.States.GitState.TreeViewGitChangesKey"
+                                          CssStyleString="height: 100%;"
+                                          OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                          TreeViewKeyboardEventHandler="_treeViewKeyboardEventHandler"
+                                          TreeViewMouseEventHandler="_treeViewMouseEventHandler" />
+            </CascadingValue>
+        </CascadingValue>
+    </CascadingValue>
+	
+	<DropdownDisplay DropdownKey="GitChangesContextMenu.ContextMenuEventDropdownKey"
+                     DropdownPositionKind="DropdownPositionKind.Unset"
+                     CssStyleString="@GitChangesContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandArgs)">
+
+        <GitChangesContextMenu TreeViewCommandArgs="_mostRecentTreeViewCommandArgs" />
+    </DropdownDisplay>
+</div>

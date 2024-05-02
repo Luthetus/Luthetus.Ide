@@ -6,24 +6,25 @@ namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 
 public class TreeViewGitFile : TreeViewWithType<GitFile>
 {
+    private readonly ILuthetusIdeComponentRenderers _ideComponentRenderers;
+
     public TreeViewGitFile(
-            GitFile gitFile,
+            GitFile item,
             ILuthetusIdeComponentRenderers ideComponentRenderers,
             bool isExpandable,
             bool isExpanded)
-        : base(gitFile, isExpandable, isExpanded)
+        : base(item, isExpandable, isExpanded)
     {
-        IdeComponentRenderers = ideComponentRenderers;
+        _ideComponentRenderers = ideComponentRenderers;
     }
-
-    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
 
     public override bool Equals(object? obj)
     {
         if (obj is not TreeViewGitFile treeViewGitFile)
             return false;
 
-        return treeViewGitFile.Item.AbsolutePath.Value == Item.AbsolutePath.Value;
+        return treeViewGitFile.Item.AbsolutePath.Value ==
+               Item.AbsolutePath.Value;
     }
 
     public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
@@ -31,7 +32,7 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewGitFileRendererType,
+            _ideComponentRenderers.LuthetusIdeTreeViews.TreeViewGitFileRendererType,
             new Dictionary<string, object?>
             {
                 {
@@ -44,10 +45,5 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
     public override Task LoadChildListAsync()
     {
         return Task.CompletedTask;
-    }
-
-    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
-    {
-        // This method is meant to do nothing in this case.
     }
 }

@@ -24,6 +24,16 @@ public partial record CodeSearchState
             _fileSystemProvider = fileSystemProvider;
         }
 
+        /// <summary>
+        /// TODO: This method makes use of <see cref="IThrottle"/> and yet is accessing...
+        ///       ...searchEffect.CancellationToken.
+        ///       The issue here is that the search effect parameter to this method
+        ///       could be out of date by the time that the throttle delay is completed.
+        ///       This should be fixed. (2024-05-02)
+        /// </summary>
+        /// <param name="searchEffect"></param>
+        /// <param name="dispatcher"></param>
+        /// <returns></returns>
         [EffectMethod]
         public Task HandleSearchEffect(
             SearchEffect searchEffect,

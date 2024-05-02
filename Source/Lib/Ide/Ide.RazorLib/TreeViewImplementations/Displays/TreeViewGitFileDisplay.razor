@@ -1,33 +1,13 @@
-﻿@using Luthetus.Ide.RazorLib.FileSystems.Displays
+﻿<span title="@TreeViewGitFile.Item.AbsolutePath.Value">
 
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+    @{ var nameWithExtension = TreeViewGitFile.Item.AbsolutePath.NameWithExtension; }
 
-@{
-    var gitFile = TreeViewGitFile.Item;
-    var cssClass = "luth_ide_git-file"; 
-}
-
-<div class="@cssClass"
-     title="@gitFile.GitDirtyReason">
-
-    @{
-        var gitState = GitStateWrap.Value;
-
-        string shortenedParentDirectoryPathString = gitFile.AbsolutePath.Value;
-
-        if (gitFile.AbsolutePath.ParentDirectory is not null &&
-            gitState.GitFolderAbsolutePath?.ParentDirectory is not null)
-        {
-        }
+    @if (string.IsNullOrWhiteSpace(nameWithExtension))
+    {
+        @: abc123
     }
-
-    <FileIconDisplay AbsolutePath="gitFile.AbsolutePath" />
-
-    <em class="luth_em">
-        @gitFile.AbsolutePath.NameWithExtension
-    </em>
-
-    <span>
-        @shortenedParentDirectoryPathString
-    </span>
-</div>
+    else
+    {
+        @nameWithExtension
+    }
+</span>

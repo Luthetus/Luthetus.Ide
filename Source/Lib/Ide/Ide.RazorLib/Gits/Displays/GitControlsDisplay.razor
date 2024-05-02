@@ -7,10 +7,5 @@
         Status
     </button>
 
-    <div>
-        @foreach (var gitFile in localGitState.GitFileList)
-        {
-            <div>@gitFile.AbsolutePath.Value|@gitFile.GitDirtyReason</div>
-        }
-    </div>
+	<GitChangesTreeViewDisplay/>
 </div>
