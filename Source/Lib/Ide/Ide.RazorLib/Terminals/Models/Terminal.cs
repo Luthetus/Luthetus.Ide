@@ -148,6 +148,8 @@ public class Terminal
 
                     var terminalCommandBoundary = new TerminalCommandBoundary();
 
+                    var outputOffset = 0;
+
                     await command.Observe(_commandCancellationTokenSource.Token)
                         .ForEachAsync(cmdEvent =>
                         {
@@ -182,12 +184,15 @@ public class Terminal
                                     outputTextSpanList = terminalCommand.OutputParser.ParseLine(output);
 
                                 _textEditorService.Post(new OnOutput(
+                                    outputOffset,
                                     output,
                                     outputTextSpanList,
                                     ResourceUri,
                                     _textEditorService,
                                     terminalCommandBoundary,
                                     TextEditorViewModelKey));
+
+                                outputOffset += output.Length;
                             }
 
                             DispatchNewStateKey();

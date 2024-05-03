@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using System.Collections.Generic;
 
 namespace Luthetus.Ide.RazorLib.Events.Models;
 
@@ -24,6 +25,7 @@ public class OnOutput : ITextEditorTask
     private readonly TerminalCommandBoundary _terminalCommandBoundary;
 
     public OnOutput(
+        int outputOffset,
         string output,
         List<TextEditorTextSpan> outputTextSpanList,
         ResourceUri resourceUri,
@@ -31,6 +33,7 @@ public class OnOutput : ITextEditorTask
         TerminalCommandBoundary terminalCommandBoundary,
         Key<TextEditorViewModel> viewModelKey)
     {
+        OutputOffset = outputOffset;
         Output = output;
         _outputTextSpanList = outputTextSpanList;
         ResourceUri = resourceUri;
@@ -45,6 +48,7 @@ public class OnOutput : ITextEditorTask
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnOutput);
     public Task? WorkProgress { get; }
+    public int OutputOffset { get; }
     public string Output { get; }
     public ResourceUri ResourceUri { get; }
     public ITextEditorService TextEditorService { get; }
@@ -101,25 +105,33 @@ public class OnOutput : ITextEditorTask
     {
         if (oldEvent is OnOutput oldEventOnOutput)
         {
-            var outputList = new List<string>
+            var localOutputList = new List<string>
             {
                 oldEventOnOutput.Output,
                 Output
             };
 
+            var localOutputTextSpanAndOffsetTupleList = new List<(int OutputOffset, List<TextEditorTextSpan> OutputTextSpan)>
+            {
+                (oldEventOnOutput.OutputOffset, oldEventOnOutput._outputTextSpanList),
+                (OutputOffset, _outputTextSpanList)
+            };
+
             return new OnOutputBatch(
-                outputList,
-                _outputTextSpanList,
+                oldEventOnOutput.OutputOffset,
+                localOutputList,
+                localOutputTextSpanAndOffsetTupleList,
                 ResourceUri,
                 TextEditorService,
                 _terminalCommandBoundary,
                 ViewModelKey);
         }
 
-        if (oldEvent is OnOutputBatch oldEventOnWheelBatch)
+        if (oldEvent is OnOutputBatch oldOnOutputBatch)
         {
-            oldEventOnWheelBatch.OutputList.Add(Output);
-            return oldEventOnWheelBatch;
+            oldOnOutputBatch.OutputList.Add(Output);
+            oldOnOutputBatch.OutputTextSpanAndOffsetTupleList.Add((OutputOffset, _outputTextSpanList));
+            return oldOnOutputBatch;
         }
 
         return null;

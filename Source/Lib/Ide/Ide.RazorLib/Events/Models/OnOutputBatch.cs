@@ -5,6 +5,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using System;
 
 namespace Luthetus.Ide.RazorLib.Events.Models;
 
@@ -19,28 +20,31 @@ public class OnOutputBatch : ITextEditorTask
     private readonly TerminalCommandBoundary _terminalCommandBoundary;
 
     public OnOutputBatch(
+        int batchOutputOffset,
         List<string> outputList,
-        List<TextEditorTextSpan> outputTextSpanList,
+        List<(int OutputOffset, List<TextEditorTextSpan> OutputTextSpan)> outputTextSpanAndOffsetTupleList,
         ResourceUri resourceUri,
         ITextEditorService textEditorService,
         TerminalCommandBoundary terminalCommandBoundary,
         Key<TextEditorViewModel> viewModelKey)
     {
+        BatchOutputOffset = batchOutputOffset;
         OutputList = outputList;
-        _outputTextSpanList = outputTextSpanList;
+        OutputTextSpanAndOffsetTupleList = outputTextSpanAndOffsetTupleList;
         ResourceUri = resourceUri;
         TextEditorService = textEditorService;
         _terminalCommandBoundary = terminalCommandBoundary;
         ViewModelKey = viewModelKey;
     }
 
-    private List<TextEditorTextSpan> _outputTextSpanList;
 
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnOutput);
     public Task? WorkProgress { get; }
+    public int BatchOutputOffset { get; }
     public List<string> OutputList { get; }
+    public List<(int OutputOffset, List<TextEditorTextSpan> OutputTextSpanList)> OutputTextSpanAndOffsetTupleList { get; }
     public ResourceUri ResourceUri { get; }
     public ITextEditorService TextEditorService { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
@@ -49,9 +53,21 @@ public class OnOutputBatch : ITextEditorTask
 
     public Task InvokeWithEditContext(IEditContext editContext)
     {
+        // Flatten 'OutputTextSpanAndOffsetTupleList'
+        var outputTextSpanList = new List<TextEditorTextSpan>();
+        foreach (var tuple in OutputTextSpanAndOffsetTupleList)
+        {
+            outputTextSpanList.AddRange(tuple.OutputTextSpanList.Select(x => x with
+            {
+                StartingIndexInclusive = x.StartingIndexInclusive + tuple.OutputOffset - BatchOutputOffset,
+                EndingIndexExclusive = x.EndingIndexExclusive + tuple.OutputOffset - BatchOutputOffset,
+            }));
+        }
+
         var onOutput = new OnOutput(
+            BatchOutputOffset,
             string.Join(string.Empty, OutputList),
-            _outputTextSpanList,
+            outputTextSpanList,
             ResourceUri,
             TextEditorService,
             _terminalCommandBoundary,
