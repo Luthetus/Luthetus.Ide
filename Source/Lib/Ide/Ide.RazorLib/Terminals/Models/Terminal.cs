@@ -19,6 +19,7 @@ using Fluxor;
 using System.Collections.Immutable;
 using System.Reactive.Linq;
 using Microsoft.AspNetCore.Components.Web;
+using Luthetus.Ide.RazorLib.Events.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
@@ -140,25 +141,7 @@ public class Terminal
                     DispatchNewStateKey();
 
                     if (_textEditorService.ModelApi.GetOrDefault(new ResourceUri("terminalCommand" + '_' + terminalCommandKey)) is not null)
-                    {
-                        _textEditorService.PostIndependent(
-                            "clear-content_" + terminalCommandKey.Guid,
-                            editContext =>
-                            {
-                                var commandOutputResourceUri = new ResourceUri("terminalCommand" + '_' + terminalCommandKey);
-                                var modelModifier = editContext.GetModelModifier(commandOutputResourceUri);
-
-                                if (modelModifier is null)
-                                    return Task.CompletedTask;
-
-                                var textSpan = TextEditorTextSpan.FabricateTextSpan($"> {terminalCommand.FormattedCommand.Value}\n");
-
-                                _terminalCommandTextSpanMap[terminalCommandKey] = textSpan;
-
-                                modelModifier.SetContent(textSpan.GetText());
-                                return Task.CompletedTask;
-                            });
-                    }
+                        ClearOutputView(terminalCommand);
 
                     if (terminalCommand.BeginWith is not null)
                         await terminalCommand.BeginWith.Invoke();
@@ -173,10 +156,12 @@ public class Terminal
                             switch (cmdEvent)
                             {
                                 case StartedCommandEvent started:
-                                    output = $"{terminalCommand.FormattedCommand.Value}\n"; // +
-                                             // $"> PID:{started.ProcessId} PWD:{WorkingDirectoryAbsolutePathString}\n";
-                                    
-                                    // output = null;
+                                    // TODO: If the source of the terminal command is a user having...
+                                    //       ...typed themselves, then hitting enter, do not write this out.
+                                    //       |
+                                    //       This is here for when the command was started programmatically
+                                    //       without a user typing into the terminal.
+                                    output = $"{terminalCommand.FormattedCommand.Value}\n";
 									break;
                                 case StandardOutputCommandEvent stdOut:
                                     output = $"{stdOut.Text}\n";
@@ -196,7 +181,13 @@ public class Terminal
                                 if (terminalCommand.OutputParser is not null)
                                     outputTextSpanList = terminalCommand.OutputParser.ParseLine(output);
 
-                                AddOutput(output, terminalCommand, terminalCommandBoundary, outputTextSpanList);
+                                _textEditorService.Post(new OnOutput(
+                                    output,
+                                    outputTextSpanList,
+                                    ResourceUri,
+                                    _textEditorService,
+                                    terminalCommandBoundary,
+                                    TextEditorViewModelKey));
                             }
 
                             DispatchNewStateKey();
@@ -532,60 +523,6 @@ public class Terminal
             });
     }
 
-    public void AddOutput(
-        string output,
-        TerminalCommand terminalCommand,
-        TerminalCommandBoundary terminalCommandBoundary,
-        List<TextEditorTextSpan> outputTextSpanList)
-    {
-        _textEditorService.PostIndependent(
-            nameof(EnqueueCommandAsync),
-            async editContext =>
-            {
-                var modelModifier = editContext.GetModelModifier(ResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                    return;
-
-                var entryPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
-                terminalCommandBoundary.StartPositionIndexInclusive ??= entryPositionIndex;
-
-                await _textEditorService.ModelApi.InsertTextFactory(
-                        ResourceUri,
-                        TextEditorViewModelKey,
-                        output,
-                        CancellationToken.None)
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
-
-                var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
-                if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
-                    return;
-
-                outputTextSpanList = outputTextSpanList.Select(x => x with
-                {
-                    StartingIndexInclusive = entryPositionIndex + x.StartingIndexInclusive,
-                    EndingIndexExclusive = entryPositionIndex + x.EndingIndexExclusive,
-                    ResourceUri = ResourceUri,
-                    SourceText = modelModifier.GetAllText(),
-                }).ToList();
-
-                terminalResource.ManualDecorationTextSpanList.AddRange(outputTextSpanList);
-                terminalResource.ManualSymbolList.AddRange(outputTextSpanList.Select(x => new SourceFileSymbol(x)));
-
-                await editContext.TextEditorService.ModelApi.ApplyDecorationRangeFactory(
-                        modelModifier.ResourceUri,
-                        terminalResource.GetTokenTextSpans())
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
-
-                terminalCommandBoundary.EndPositionIndexExclusive = modelModifier.GetPositionIndex(primaryCursorModifier);
-            });
-    }
-    
     public void ClearTerminal()
     {
         _textEditorService.PostIndependent(
@@ -621,6 +558,32 @@ public class Terminal
 
                 terminalResource.ManualDecorationTextSpanList.Clear();
                 terminalResource.SyntaxTokenList.Clear();
+            });
+    }
+
+    /// <summary>
+    /// This method refers to a substring of the terminal output.
+    /// For example, the unit test explorer, will show terminal output,
+    /// which is the result of taking a substring from the entire terminal output.
+    /// </summary>
+    private void ClearOutputView(TerminalCommand terminalCommand)
+    {
+        _textEditorService.PostIndependent(
+            "clear-content_" + terminalCommand.TerminalCommandKey.Guid,
+            editContext =>
+            {
+                var commandOutputResourceUri = new ResourceUri("terminalCommand" + '_' + terminalCommand.TerminalCommandKey);
+                var modelModifier = editContext.GetModelModifier(commandOutputResourceUri);
+
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                var textSpan = TextEditorTextSpan.FabricateTextSpan($"> {terminalCommand.FormattedCommand.Value}\n");
+
+                _terminalCommandTextSpanMap[terminalCommand.TerminalCommandKey] = textSpan;
+
+                modelModifier.SetContent(textSpan.GetText());
+                return Task.CompletedTask;
             });
     }
 }

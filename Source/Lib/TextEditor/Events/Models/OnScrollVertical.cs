@@ -1,31 +1,30 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
-using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Events;
+namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public class OnWheel : ITextEditorTask
+public class OnScrollVertical : ITextEditorTask
 {
     private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
 
-    public OnWheel(
-        WheelEventArgs wheelEventArgs,
+    public OnScrollVertical(
+        double scrollTop,
         TextEditorViewModelDisplay.TextEditorEvents events,
         Key<TextEditorViewModel> viewModelKey)
     {
         _events = events;
 
-        WheelEventArgs = wheelEventArgs;
+        ScrollTop = scrollTop;
         ViewModelKey = viewModelKey;
     }
 
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public string Name { get; } = nameof(OnWheel);
+    public string Name { get; } = nameof(OnScrollVertical);
     public Task? WorkProgress { get; }
-    public WheelEventArgs WheelEventArgs { get; }
+    public double ScrollTop { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
     public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
@@ -37,41 +36,14 @@ public class OnWheel : ITextEditorTask
         if (viewModelModifier is null)
             return;
 
-        if (WheelEventArgs.ShiftKey)
-        {
-            await viewModelModifier.ViewModel.MutateScrollHorizontalPositionByPixelsFactory(WheelEventArgs.DeltaY)
-                .Invoke(editContext)
-                .ConfigureAwait(false);
-        }
-        else
-        {
-            await viewModelModifier.ViewModel.MutateScrollVerticalPositionByPixelsFactory(WheelEventArgs.DeltaY)
-                .Invoke(editContext)
-                .ConfigureAwait(false);
-        }
+        await viewModelModifier.ViewModel!.SetScrollPositionFactory(null, ScrollTop)
+            .Invoke(editContext)
+            .ConfigureAwait(false);
     }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
-        if (oldEvent is OnWheel oldEventOnWheel)
-        {
-            return new OnWheelBatch(
-                new List<WheelEventArgs>()
-                {
-                    oldEventOnWheel.WheelEventArgs,
-                    WheelEventArgs
-                },
-                _events,
-                ViewModelKey);
-        }
-
-        if (oldEvent is OnWheelBatch oldEventOnWheelBatch)
-        {
-            oldEventOnWheelBatch.WheelEventArgsList.Add(WheelEventArgs);
-            return oldEventOnWheelBatch;
-        }
-
-        return null;
+        return this;
     }
 
     public Task HandleEvent(CancellationToken cancellationToken)

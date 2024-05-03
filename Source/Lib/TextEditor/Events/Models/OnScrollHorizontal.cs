@@ -3,28 +3,28 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Events;
+namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public class OnScrollVertical : ITextEditorTask
+public class OnScrollHorizontal : ITextEditorTask
 {
     private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
 
-    public OnScrollVertical(
-        double scrollTop,
+    public OnScrollHorizontal(
+        double scrollLeft,
         TextEditorViewModelDisplay.TextEditorEvents events,
         Key<TextEditorViewModel> viewModelKey)
     {
         _events = events;
 
-        ScrollTop = scrollTop;
+        ScrollLeft = scrollLeft;
         ViewModelKey = viewModelKey;
     }
 
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public string Name { get; } = nameof(OnScrollVertical);
+    public string Name { get; } = nameof(OnScrollHorizontal);
     public Task? WorkProgress { get; }
-    public double ScrollTop { get; }
+    public double ScrollLeft { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
     public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
@@ -36,7 +36,7 @@ public class OnScrollVertical : ITextEditorTask
         if (viewModelModifier is null)
             return;
 
-        await viewModelModifier.ViewModel!.SetScrollPositionFactory(null, ScrollTop)
+        await viewModelModifier.ViewModel!.SetScrollPositionFactory(ScrollLeft, null)
             .Invoke(editContext)
             .ConfigureAwait(false);
     }

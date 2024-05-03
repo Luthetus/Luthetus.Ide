@@ -9,7 +9,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Microsoft.AspNetCore.Components.Web;
 using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
 
-namespace Luthetus.TextEditor.RazorLib.Events;
+namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
 public static class EventUtils
 {

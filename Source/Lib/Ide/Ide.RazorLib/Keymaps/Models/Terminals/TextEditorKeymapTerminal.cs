@@ -22,7 +22,7 @@ using Fluxor;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.Events;
+using Luthetus.TextEditor.RazorLib.Events.Models;
 
 namespace Luthetus.Ide.RazorLib.Keymaps.Models.Terminals;
 

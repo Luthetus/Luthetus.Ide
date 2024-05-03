@@ -1,63 +1,77 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Events;
+namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public class OnMouseMove : ITextEditorTask
+public class OnWheel : ITextEditorTask
 {
     private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
 
-    public OnMouseMove(
-        MouseEventArgs mouseEventArgs,
+    public OnWheel(
+        WheelEventArgs wheelEventArgs,
         TextEditorViewModelDisplay.TextEditorEvents events,
-        ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
         _events = events;
 
-        MouseEventArgs = mouseEventArgs;
-        ResourceUri = resourceUri;
+        WheelEventArgs = wheelEventArgs;
         ViewModelKey = viewModelKey;
     }
 
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public string Name { get; } = nameof(OnMouseMove);
+    public string Name { get; } = nameof(OnWheel);
     public Task? WorkProgress { get; }
-    public MouseEventArgs MouseEventArgs { get; }
-    public ResourceUri ResourceUri { get; }
+    public WheelEventArgs WheelEventArgs { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
     public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
 
     public async Task InvokeWithEditContext(IEditContext editContext)
     {
-        var modelModifier = editContext.GetModelModifier(ResourceUri, true);
         var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
-        var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-        var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-        if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+        if (viewModelModifier is null)
             return;
 
-        var rowAndColumnIndex = await _events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
-
-        primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
-        primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
-        primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
-
-        _events.CursorPauseBlinkAnimationAction.Invoke();
-
-        primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+        if (WheelEventArgs.ShiftKey)
+        {
+            await viewModelModifier.ViewModel.MutateScrollHorizontalPositionByPixelsFactory(WheelEventArgs.DeltaY)
+                .Invoke(editContext)
+                .ConfigureAwait(false);
+        }
+        else
+        {
+            await viewModelModifier.ViewModel.MutateScrollVerticalPositionByPixelsFactory(WheelEventArgs.DeltaY)
+                .Invoke(editContext)
+                .ConfigureAwait(false);
+        }
     }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
-        return this;
+        if (oldEvent is OnWheel oldEventOnWheel)
+        {
+            return new OnWheelBatch(
+                new List<WheelEventArgs>()
+                {
+                    oldEventOnWheel.WheelEventArgs,
+                    WheelEventArgs
+                },
+                _events,
+                ViewModelKey);
+        }
+
+        if (oldEvent is OnWheelBatch oldEventOnWheelBatch)
+        {
+            oldEventOnWheelBatch.WheelEventArgsList.Add(WheelEventArgs);
+            return oldEventOnWheelBatch;
+        }
+
+        return null;
     }
 
     public Task HandleEvent(CancellationToken cancellationToken)

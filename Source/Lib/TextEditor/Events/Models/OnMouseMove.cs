@@ -1,44 +1,58 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
+using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Events;
+namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public class OnScrollHorizontal : ITextEditorTask
+public class OnMouseMove : ITextEditorTask
 {
     private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
 
-    public OnScrollHorizontal(
-        double scrollLeft,
+    public OnMouseMove(
+        MouseEventArgs mouseEventArgs,
         TextEditorViewModelDisplay.TextEditorEvents events,
+        ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
         _events = events;
 
-        ScrollLeft = scrollLeft;
+        MouseEventArgs = mouseEventArgs;
+        ResourceUri = resourceUri;
         ViewModelKey = viewModelKey;
     }
 
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public string Name { get; } = nameof(OnScrollHorizontal);
+    public string Name { get; } = nameof(OnMouseMove);
     public Task? WorkProgress { get; }
-    public double ScrollLeft { get; }
+    public MouseEventArgs MouseEventArgs { get; }
+    public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
     public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
 
     public async Task InvokeWithEditContext(IEditContext editContext)
     {
+        var modelModifier = editContext.GetModelModifier(ResourceUri, true);
         var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
+        var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+        var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-        if (viewModelModifier is null)
+        if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
             return;
 
-        await viewModelModifier.ViewModel!.SetScrollPositionFactory(ScrollLeft, null)
-            .Invoke(editContext)
-            .ConfigureAwait(false);
+        var rowAndColumnIndex = await _events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
+
+        primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
+        primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
+        primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
+
+        _events.CursorPauseBlinkAnimationAction.Invoke();
+
+        primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
     }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
