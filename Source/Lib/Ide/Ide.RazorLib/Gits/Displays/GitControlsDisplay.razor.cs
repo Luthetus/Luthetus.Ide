@@ -1,4 +1,7 @@
 using Fluxor;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
@@ -132,9 +135,23 @@ public partial class GitControlsDisplay : ComponentBase
         var gitCommitCommand = new TerminalCommand(
             GitCommitTerminalCommandKey,
             formattedCommand,
-            parentDirectory.Value);
+            parentDirectory.Value,
+            ContinueWith: ExecuteGitStatusTerminalCommandOnClick);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
         await generalTerminal.EnqueueCommandAsync(gitCommitCommand);
+    }
+
+    private void ShowGitOriginDialogOnClick()
+    {
+        var dialogViewModel = new DialogViewModel(
+            Key<IDynamicViewModel>.NewKey(),
+            $"Git Origin",
+            typeof(GitOriginDisplay),
+            null,
+            null,
+            true);
+
+        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogViewModel));
     }
 }

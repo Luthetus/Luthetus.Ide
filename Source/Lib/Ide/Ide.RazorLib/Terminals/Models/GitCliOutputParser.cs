@@ -20,12 +20,14 @@ public class GitCliOutputParser : IOutputParser
         IDispatcher dispatcher,
         GitState gitState,
         IAbsolutePath workingDirectory,
-        IEnvironmentProvider environmentProvider)
+        IEnvironmentProvider environmentProvider,
+        StageKind stageKind = StageKind.None)
     {
         _dispatcher = dispatcher;
         _gitState = gitState;
         _workingDirectoryAbsolutePath = workingDirectory;
         _environmentProvider = environmentProvider;
+        _stageKind = stageKind;
     }
 
     private StageKind _stageKind = StageKind.None;
@@ -36,6 +38,9 @@ public class GitCliOutputParser : IOutputParser
     {
         if (_gitState.GitFolderAbsolutePath is null)
             return new();
+
+        if (_stageKind == StageKind.GetOrigin)
+            return ParseOriginLine(output);
 
         var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
         var textSpanList = new List<TextEditorTextSpan>();
@@ -151,6 +156,19 @@ public class GitCliOutputParser : IOutputParser
         return textSpanList;
     }
 
+    private List<TextEditorTextSpan> ParseOriginLine(string output)
+    {
+        var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
+        var textSpanList = new List<TextEditorTextSpan>();
+
+        while (!stringWalker.IsEof)
+        {
+            _ = stringWalker.ReadCharacter();
+        }
+
+        return textSpanList;
+    }
+
     public void Dispose()
     {
         if (_gitState.GitFolderAbsolutePath is null)
@@ -161,9 +179,10 @@ public class GitCliOutputParser : IOutputParser
             GitFileList.ToImmutableList()));
     }
 
-    private enum StageKind
+    public enum StageKind
     {
         None,
         IsReadingUntrackedFiles,
+        GetOrigin,
     }
 }

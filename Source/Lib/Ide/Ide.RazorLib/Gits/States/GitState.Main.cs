@@ -12,12 +12,13 @@ public partial record GitState(
     IAbsolutePath? GitFolderAbsolutePath,
     ImmutableList<GitFile> GitFileList,
     ImmutableDictionary<string, GitFile> StagedGitFileMap,
-    ImmutableList<GitTask> ActiveGitTasks)
+    ImmutableList<GitTask> ActiveGitTasks,
+    string? Origin)
 {
     public static readonly Key<TreeViewContainer> TreeViewGitChangesKey = Key<TreeViewContainer>.NewKey();
 
     public GitState()
-        : this(null, ImmutableList<GitFile>.Empty, ImmutableDictionary<string, GitFile>.Empty, ImmutableList<GitTask>.Empty)
+        : this(null, ImmutableList<GitFile>.Empty, ImmutableDictionary<string, GitFile>.Empty, ImmutableList<GitTask>.Empty, null)
     {
 
     }
