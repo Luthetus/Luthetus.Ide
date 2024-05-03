@@ -32,8 +32,8 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
     public GitState GitState { get; set; } = null!;
 
     private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
-    private TreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
-    private TreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
+    private GitTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
+    private GitTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
         AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
@@ -46,9 +46,11 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
             GitStateWrap,
             Dispatcher);
 
-        _treeViewMouseEventHandler = new TreeViewMouseEventHandler(
+        _treeViewMouseEventHandler = new GitTreeViewMouseEventHandler(
             TreeViewService,
-            BackgroundTaskService);
+            BackgroundTaskService,
+            GitStateWrap,
+            Dispatcher);
 
         base.OnInitialized();
     }

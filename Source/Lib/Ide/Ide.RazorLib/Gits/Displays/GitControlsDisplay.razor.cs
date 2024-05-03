@@ -6,7 +6,6 @@ using Luthetus.Ide.RazorLib.Gits.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Immutable;
 using System.Text;
 
 namespace Luthetus.Ide.RazorLib.Gits.Displays;
@@ -25,7 +24,8 @@ public partial class GitControlsDisplay : ComponentBase
 
     private string _summary = string.Empty;
 
-    public Key<TerminalCommand> NewDotNetSolutionTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+    public Key<TerminalCommand> GitStatusTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+    public Key<TerminalCommand> GitCommitTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
 
     private async Task ExecuteGitStatusTerminalCommandOnClick()
     {
@@ -46,18 +46,14 @@ public partial class GitControlsDisplay : ComponentBase
 
         var gitCliOutputParser = new GitCliOutputParser(
             Dispatcher,
-            GitState,
+            localGitState,
             EnvironmentProvider.AbsolutePathFactory(parentDirectory.Value, true),
             EnvironmentProvider);
 
         var gitStatusCommand = new TerminalCommand(
-            NewDotNetSolutionTerminalCommandKey,
+            GitStatusTerminalCommandKey,
             formattedCommand,
             parentDirectory.Value,
-            ContinueWith: () =>
-            {
-                return Task.CompletedTask;
-            },
             OutputParser: gitCliOutputParser);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
@@ -66,7 +62,8 @@ public partial class GitControlsDisplay : ComponentBase
 
     private async Task SubmitOnClick(GitState localGitState)
     {
-        if (string.IsNullOrWhiteSpace(_summary))
+        var localSummary = _summary;
+        if (string.IsNullOrWhiteSpace(localSummary))
             return;
 
         if (localGitState.GitFolderAbsolutePath?.ParentDirectory is null)
@@ -108,11 +105,36 @@ public partial class GitControlsDisplay : ComponentBase
         };
         
         var gitAddCommand = new TerminalCommand(
-            NewDotNetSolutionTerminalCommandKey,
+            GitStatusTerminalCommandKey,
+            formattedCommand,
+            parentDirectory.Value,
+            ContinueWith: () => CommitChanges(localGitState, localSummary));
+
+        var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
+        await generalTerminal.EnqueueCommandAsync(gitAddCommand);
+    }
+
+    private async Task CommitChanges(GitState localGitState, string localSummary)
+    {
+        if (localGitState.GitFolderAbsolutePath?.ParentDirectory is null)
+            return;
+
+        var parentDirectory = localGitState.GitFolderAbsolutePath.ParentDirectory;
+        var argumentsString = $"commit -m \"{localSummary}\"";
+
+        var formattedCommand = new FormattedCommand(
+            GitCliFacts.TARGET_FILE_NAME,
+            new string[] { argumentsString })
+        {
+            HACK_ArgumentsString = argumentsString
+        };
+
+        var gitCommitCommand = new TerminalCommand(
+            GitCommitTerminalCommandKey,
             formattedCommand,
             parentDirectory.Value);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-        await generalTerminal.EnqueueCommandAsync(gitAddCommand);
+        await generalTerminal.EnqueueCommandAsync(gitCommitCommand);
     }
 }
