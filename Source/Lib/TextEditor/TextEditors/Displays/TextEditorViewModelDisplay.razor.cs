@@ -303,12 +303,18 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     {
         _events.ThinksLeftMouseButtonIsDown = true;
 
+
         var modelResourceUri = GetModel()?.ResourceUri;
+        var viewModel = GetViewModel();
+
         var viewModelKey = GetViewModel()?.ViewModelKey;
 
         if (modelResourceUri is null || viewModelKey is null)
             return;
 		
+        if (viewModel is not null)
+            viewModel.UnsafeState.ShouldRevealCursor = false;
+
 		var onMouseDown = new OnMouseDown(
             mouseEventArgs,
             _events,

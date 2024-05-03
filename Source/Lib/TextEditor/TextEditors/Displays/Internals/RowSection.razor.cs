@@ -38,7 +38,7 @@ public partial class RowSection : ComponentBase
 
     public CursorDisplay? CursorDisplayComponent { get; private set; }
 
-    private IThrottle _throttleVirtualizationDisplayItemsProviderFunc = new Throttle(TimeSpan.FromMilliseconds(60));
+    private IThrottle _throttleVirtualizationDisplayItemsProviderFunc = new Throttle(TimeSpan.Zero);//new Throttle(TimeSpan.FromMilliseconds(60));
 
     private string GetRowStyleCss(int index, double? virtualizedRowLeftInPixels)
     {
@@ -108,16 +108,17 @@ public partial class RowSection : ComponentBase
         if (model is null || viewModel is null)
             return;
 
-        _throttleVirtualizationDisplayItemsProviderFunc.PushEvent(_ => 
-        {
-            TextEditorService.PostIndependent(
-                nameof(VirtualizationDisplayItemsProviderFunc),
-                TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-                    model.ResourceUri,
-                    viewModel.ViewModelKey,
-                    virtualizationRequest.CancellationToken));
+        TextEditorService.PostRedundant(
+            nameof(VirtualizationDisplayItemsProviderFunc),
+            $"{nameof(VirtualizationDisplayItemsProviderFunc)}_{viewModel.ViewModelKey}",
+            TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+                model.ResourceUri,
+                viewModel.ViewModelKey,
+                virtualizationRequest.CancellationToken));
+        //_throttleVirtualizationDisplayItemsProviderFunc.PushEvent(_ => 
+        //{
 
-            return Task.CompletedTask;
-        });
+        //    return Task.CompletedTask;
+        //});
     }
 }

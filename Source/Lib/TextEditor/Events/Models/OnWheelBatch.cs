@@ -57,17 +57,21 @@ public class OnWheelBatch : ITextEditorTask
         if (horizontalMutateScrollPositionByPixels is not null)
         {
             _events.TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
-                viewModelModifier.ViewModel.BodyElementId,
-                viewModelModifier.ViewModel.GutterElementId,
-                horizontalMutateScrollPositionByPixels.Value);
+                    viewModelModifier.ViewModel.BodyElementId,
+                    viewModelModifier.ViewModel.GutterElementId,
+                    horizontalMutateScrollPositionByPixels.Value)
+                .Invoke(editContext)
+                .ConfigureAwait(false);
         }
 
         if (verticalMutateScrollPositionByPixels is not null)
         {
             _events.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
-                viewModelModifier.ViewModel.BodyElementId,
-                viewModelModifier.ViewModel.GutterElementId,
-                verticalMutateScrollPositionByPixels.Value);
+                    viewModelModifier.ViewModel.BodyElementId,
+                    viewModelModifier.ViewModel.GutterElementId,
+                    verticalMutateScrollPositionByPixels.Value)
+                .Invoke(editContext)
+                .ConfigureAwait(false);
         }
 
         return Task.CompletedTask;

@@ -53,22 +53,69 @@ public class OnWheel : ITextEditorTask
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
+        // If the two individuals, or a batch and an individual are both positive,
+        // then batch them, etc... for negative and 0
+
         if (oldEvent is OnWheel oldEventOnWheel)
         {
-            return new OnWheelBatch(
-                new List<WheelEventArgs>()
-                {
-                    oldEventOnWheel.WheelEventArgs,
-                    WheelEventArgs
-                },
-                _events,
-                ViewModelKey);
+            if (oldEventOnWheel.WheelEventArgs.DeltaY > 0 &&
+                WheelEventArgs.DeltaY > 0)
+            {
+                return new OnWheelBatch(
+                    new List<WheelEventArgs>()
+                    {
+                        oldEventOnWheel.WheelEventArgs,
+                        WheelEventArgs
+                    },
+                    _events,
+                    ViewModelKey);
+            }
+            else if (oldEventOnWheel.WheelEventArgs.DeltaY < 0 &&
+                     WheelEventArgs.DeltaY < 0)
+            {
+                return new OnWheelBatch(
+                    new List<WheelEventArgs>()
+                    {
+                        oldEventOnWheel.WheelEventArgs,
+                        WheelEventArgs
+                    },
+                    _events,
+                    ViewModelKey);
+            }
+            else if (oldEventOnWheel.WheelEventArgs.DeltaY == 0 &&
+                     WheelEventArgs.DeltaY == 0)
+            {
+                return new OnWheelBatch(
+                    new List<WheelEventArgs>()
+                    {
+                        oldEventOnWheel.WheelEventArgs,
+                        WheelEventArgs
+                    },
+                    _events,
+                    ViewModelKey);
+            }
         }
 
         if (oldEvent is OnWheelBatch oldEventOnWheelBatch)
         {
-            oldEventOnWheelBatch.WheelEventArgsList.Add(WheelEventArgs);
-            return oldEventOnWheelBatch;
+            if (oldEventOnWheelBatch.WheelEventArgsList.Last().DeltaY > 0 &&
+                WheelEventArgs.DeltaY > 0)
+            {
+                oldEventOnWheelBatch.WheelEventArgsList.Add(WheelEventArgs);
+                return oldEventOnWheelBatch;
+            }
+            else if (oldEventOnWheelBatch.WheelEventArgsList.Last().DeltaY < 0 &&
+                     WheelEventArgs.DeltaY < 0)
+            {
+                oldEventOnWheelBatch.WheelEventArgsList.Add(WheelEventArgs);
+                return oldEventOnWheelBatch;
+            }
+            else if (oldEventOnWheelBatch.WheelEventArgsList.Last().DeltaY == 0 &&
+                     WheelEventArgs.DeltaY == 0)
+            {
+                oldEventOnWheelBatch.WheelEventArgsList.Add(WheelEventArgs);
+                return oldEventOnWheelBatch;
+            }
         }
 
         return null;
