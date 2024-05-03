@@ -35,9 +35,13 @@ public partial class GitControlsDisplay : ComponentBase
 
         var parentDirectory = localGitState.GitFolderAbsolutePath.ParentDirectory;
 
+        var gitStatusDashUCommand = $"{GitCliFacts.STATUS_COMMAND} -u";
         var formattedCommand = new FormattedCommand(
             GitCliFacts.TARGET_FILE_NAME,
-            new string[] { GitCliFacts.STATUS_COMMAND });
+            new string[] { gitStatusDashUCommand })
+        {
+            HACK_ArgumentsString = gitStatusDashUCommand
+        };
 
         var gitCliOutputParser = new GitCliOutputParser(
             Dispatcher,
