@@ -25,6 +25,24 @@ public partial record GitState
                 GitFileList = setGitFileListAction.GitFileList
             };
         }
+
+        [ReducerMethod]
+        public static GitState ReduceSetGitOriginAction(
+            GitState inState,
+            SetGitOriginAction setGitOriginAction)
+        {
+            if (inState.GitFolderAbsolutePath != setGitOriginAction.ExpectedGitFolderAbsolutePath)
+            {
+                // Git folder was changed while the text was being parsed,
+                // throw away the result since it is thereby invalid.
+                return inState;
+            }
+
+            return inState with
+            {
+                Origin = setGitOriginAction.Origin
+            };
+        }
         
         [ReducerMethod]
         public static GitState ReduceSetGitFolderAction(

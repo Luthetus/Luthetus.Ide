@@ -32,6 +32,10 @@ public class GitCliOutputParser : IOutputParser
 
     private StageKind _stageKind = StageKind.None;
 
+    private string? _origin;
+
+    private int _count;
+
     public List<GitFile> GitFileList { get; } = new();
 
     public List<TextEditorTextSpan> ParseLine(string output)
@@ -158,6 +162,10 @@ public class GitCliOutputParser : IOutputParser
 
     private List<TextEditorTextSpan> ParseOriginLine(string output)
     {
+        // TODO: Parsing origin line is super hacky, and should be re-written.
+        if (_count++ == 1)
+            _origin ??= output;
+
         var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
         var textSpanList = new List<TextEditorTextSpan>();
 
@@ -174,9 +182,18 @@ public class GitCliOutputParser : IOutputParser
         if (_gitState.GitFolderAbsolutePath is null)
             return;
 
-        _dispatcher.Dispatch(new GitState.SetGitFileListAction(
-            _gitState.GitFolderAbsolutePath,
-            GitFileList.ToImmutableList()));
+        if (_stageKind == StageKind.GetOrigin && _origin is not null)
+        {
+            _dispatcher.Dispatch(new GitState.SetGitOriginAction(
+                _gitState.GitFolderAbsolutePath,
+                _origin));
+        }
+        else
+        {
+            _dispatcher.Dispatch(new GitState.SetGitFileListAction(
+                _gitState.GitFolderAbsolutePath,
+                GitFileList.ToImmutableList()));
+        }
     }
 
     public enum StageKind
