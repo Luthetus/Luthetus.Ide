@@ -6,6 +6,7 @@ using Luthetus.Ide.RazorLib.Gits.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Microsoft.AspNetCore.Components;
+using System.Collections.Immutable;
 using System.Text;
 
 namespace Luthetus.Ide.RazorLib.Gits.Displays;
@@ -53,7 +54,11 @@ public partial class GitControlsDisplay : ComponentBase
             NewDotNetSolutionTerminalCommandKey,
             formattedCommand,
             parentDirectory.Value,
-            ParseFunc: gitCliOutputParser.Parse);
+            ContinueWith: () =>
+            {
+                return Task.CompletedTask;
+            },
+            OutputParser: gitCliOutputParser);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
         await generalTerminal.EnqueueCommandAsync(gitStatusCommand);

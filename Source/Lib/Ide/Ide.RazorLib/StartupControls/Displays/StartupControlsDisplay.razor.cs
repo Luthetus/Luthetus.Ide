@@ -41,7 +41,7 @@ public partial class StartupControlsDisplay : FluxorComponent
             formattedCommand,
             ancestorDirectory.Value,
             _newDotNetSolutionCancellationTokenSource.Token,
-            ParseFunc: DotNetRunOutputParser.Parse);
+            OutputParser: new DotNetRunOutputParser());
     }
 
     private async Task StartProgramWithoutDebuggingOnClick()

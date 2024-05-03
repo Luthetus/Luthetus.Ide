@@ -30,8 +30,11 @@ public class TreeViewGitFileTests : IdeTestBase
         var fileSystemProvider = serviceProvider.GetRequiredService<IFileSystemProvider>();
         var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
 
+        var path = "/unitTesting.txt";
+
         var gitFile = new GitFile(
-            environmentProvider.AbsolutePathFactory("/unitTesting.txt", false),
+            environmentProvider.AbsolutePathFactory(path, false),
+            path,
             GitDirtyReason.Untracked);
 
         var isExpandable = true;

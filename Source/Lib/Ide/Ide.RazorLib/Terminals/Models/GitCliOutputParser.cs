@@ -9,14 +9,13 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
-public class GitCliOutputParser
+public class GitCliOutputParser : IOutputParser
 {
     private readonly IDispatcher _dispatcher;
     private readonly GitState _gitState;
-    private readonly IAbsolutePath _workingDirectory;
+    private readonly IAbsolutePath _workingDirectoryAbsolutePath;
     private readonly IEnvironmentProvider _environmentProvider;
-    private readonly List<GitFile> _gitFileList = new();
-
+    
     public GitCliOutputParser(
         IDispatcher dispatcher,
         GitState gitState,
@@ -25,13 +24,15 @@ public class GitCliOutputParser
     {
         _dispatcher = dispatcher;
         _gitState = gitState;
-        _workingDirectory = workingDirectory;
+        _workingDirectoryAbsolutePath = workingDirectory;
         _environmentProvider = environmentProvider;
     }
 
     private StageKind _stageKind = StageKind.None;
 
-    public List<TextEditorTextSpan> Parse(string output)
+    public List<GitFile> GitFileList { get; } = new();
+
+    public List<TextEditorTextSpan> ParseLine(string output)
     {
         if (_gitState.GitFolderAbsolutePath is null)
             return new();
@@ -119,19 +120,22 @@ public class GitCliOutputParser
                                 (byte)TerminalDecorationKind.Warning);
                             textSpanList.Add(textSpan);
 
-                            var text = textSpan.GetText();
+                            var relativePathString = textSpan.GetText();
 
                             var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
-                                _workingDirectory,
-                                text,
+                                _workingDirectoryAbsolutePath,
+                                relativePathString,
                                 _environmentProvider);
 
-                            var isDirectory = text.EndsWith(_environmentProvider.DirectorySeparatorChar) ||
-                                text.EndsWith(_environmentProvider.AltDirectorySeparatorChar);
+                            var isDirectory = relativePathString.EndsWith(_environmentProvider.DirectorySeparatorChar) ||
+                                relativePathString.EndsWith(_environmentProvider.AltDirectorySeparatorChar);
 
                             var absolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, isDirectory);
 
-                            _gitFileList.Add(new GitFile(absolutePath, GitDirtyReason.Untracked));
+                            GitFileList.Add(new GitFile(
+                                absolutePath,
+                                relativePathString,
+                                GitDirtyReason.Untracked));
                         }
 
                         break;
@@ -144,11 +148,17 @@ public class GitCliOutputParser
             _ = stringWalker.ReadCharacter();
         }
 
+        return textSpanList;
+    }
+
+    public void Dispose()
+    {
+        if (_gitState.GitFolderAbsolutePath is null)
+            return;
+
         _dispatcher.Dispatch(new GitState.SetGitFileListAction(
             _gitState.GitFolderAbsolutePath,
-            _gitFileList.ToImmutableList()));
-
-        return textSpanList;
+            GitFileList.ToImmutableList()));
     }
 
     private enum StageKind

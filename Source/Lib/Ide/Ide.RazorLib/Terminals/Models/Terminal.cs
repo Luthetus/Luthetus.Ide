@@ -190,7 +190,14 @@ public class Terminal
                             }
 
 							if (output is not null)
-                                AddOutput(output, terminalCommand, terminalCommandBoundary);
+                            {
+                                var outputTextSpanList = new List<TextEditorTextSpan>();
+
+                                if (terminalCommand.OutputParser is not null)
+                                    outputTextSpanList = terminalCommand.OutputParser.ParseLine(output);
+
+                                AddOutput(output, terminalCommand, terminalCommandBoundary, outputTextSpanList);
+                            }
 
                             DispatchNewStateKey();
                         });
@@ -244,6 +251,8 @@ public class Terminal
 
                     if (terminalCommand.ContinueWith is not null)
                         await terminalCommand.ContinueWith.Invoke();
+
+                    terminalCommand.OutputParser?.Dispose();
                 }
             });
 
@@ -523,7 +532,11 @@ public class Terminal
             });
     }
 
-    public void AddOutput(string output, TerminalCommand terminalCommand, TerminalCommandBoundary terminalCommandBoundary)
+    public void AddOutput(
+        string output,
+        TerminalCommand terminalCommand,
+        TerminalCommandBoundary terminalCommandBoundary,
+        List<TextEditorTextSpan> outputTextSpanList)
     {
         _textEditorService.PostIndependent(
             nameof(EnqueueCommandAsync),
@@ -539,11 +552,6 @@ public class Terminal
 
                 var entryPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
                 terminalCommandBoundary.StartPositionIndexInclusive ??= entryPositionIndex;
-
-                var outputTextSpanList = new List<TextEditorTextSpan>();
-
-                if (terminalCommand.ParseFunc is not null)
-                    outputTextSpanList = terminalCommand.ParseFunc.Invoke(output);
 
                 await _textEditorService.ModelApi.InsertTextFactory(
                         ResourceUri,
