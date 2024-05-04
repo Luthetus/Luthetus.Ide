@@ -43,7 +43,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     public RenderFragment AutoCompleteMenuRenderFragment { get; set; } = null!;
 
     private readonly Guid _intersectionObserverMapKey = Guid.NewGuid();
-    private readonly IThrottle _throttleShouldRevealCursor = new Throttle(TimeSpan.FromMilliseconds(1_000));
+    private readonly IThrottle _throttleShouldRevealCursor = new Throttle(TimeSpan.FromMilliseconds(333));
 
     private ElementReference? _cursorDisplayElementReference;
     private MenuKind _menuKind;
