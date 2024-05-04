@@ -26,7 +26,7 @@ public partial record GitState
             _treeViewService = treeViewService;
         }
 
-        [EffectMethod(typeof(SetGitFileListAction))]
+        [EffectMethod(typeof(SetFileListAction))]
 		public Task HandleSetGitStateWithAction(IDispatcher dispatcher)
 		{
             // Suppress unused variable warning
@@ -36,7 +36,7 @@ public partial record GitState
             {
                 var gitState = _gitStateWrap.Value;
 
-                var treeViewList = gitState.GitFileList.Select(x => new TreeViewGitFile(
+                var treeViewList = gitState.FileList.Select(x => new TreeViewGitFile(
                         x,
                         _ideComponentRenderers,
                         false,

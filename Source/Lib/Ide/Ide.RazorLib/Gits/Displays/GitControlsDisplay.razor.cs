@@ -34,10 +34,8 @@ public partial class GitControlsDisplay : ComponentBase
     {
         var localGitState = GitState;
 
-        if (localGitState.GitFolderAbsolutePath?.ParentDirectory is null)
+        if (localGitState.Repo is null)
             return;
-
-        var parentDirectory = localGitState.GitFolderAbsolutePath.ParentDirectory;
 
         var gitStatusDashUCommand = $"{GitCliFacts.STATUS_COMMAND} -u";
         var formattedCommand = new FormattedCommand(
@@ -50,13 +48,12 @@ public partial class GitControlsDisplay : ComponentBase
         var gitCliOutputParser = new GitCliOutputParser(
             Dispatcher,
             localGitState,
-            EnvironmentProvider.AbsolutePathFactory(parentDirectory.Value, true),
             EnvironmentProvider);
 
         var gitStatusCommand = new TerminalCommand(
             GitStatusTerminalCommandKey,
             formattedCommand,
-            parentDirectory.Value,
+            localGitState.Repo.RepoFolderAbsolutePath.Value,
             OutputParser: gitCliOutputParser);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
@@ -69,17 +66,15 @@ public partial class GitControlsDisplay : ComponentBase
         if (string.IsNullOrWhiteSpace(localSummary))
             return;
 
-        if (localGitState.GitFolderAbsolutePath?.ParentDirectory is null)
+        if (localGitState.Repo is null)
             return;
-
-        var parentDirectory = localGitState.GitFolderAbsolutePath.ParentDirectory;
 
         var filesBuilder =  new StringBuilder();
 
-        foreach (var fileAbsolutePath in localGitState.StagedGitFileMap.Values)
+        foreach (var fileAbsolutePath in localGitState.StagedFileMap.Values)
         {
             var relativePathString = PathHelper.GetRelativeFromTwoAbsolutes(
-                EnvironmentProvider.AbsolutePathFactory(parentDirectory.Value, true),
+                localGitState.Repo.RepoFolderAbsolutePath,
                 fileAbsolutePath.AbsolutePath,
                 EnvironmentProvider);
 
@@ -110,7 +105,7 @@ public partial class GitControlsDisplay : ComponentBase
         var gitAddCommand = new TerminalCommand(
             GitStatusTerminalCommandKey,
             formattedCommand,
-            parentDirectory.Value,
+            localGitState.Repo.RepoFolderAbsolutePath.Value,
             ContinueWith: () => CommitChanges(localGitState, localSummary));
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
@@ -119,10 +114,9 @@ public partial class GitControlsDisplay : ComponentBase
 
     private async Task CommitChanges(GitState localGitState, string localSummary)
     {
-        if (localGitState.GitFolderAbsolutePath?.ParentDirectory is null)
+        if (localGitState.Repo is null)
             return;
 
-        var parentDirectory = localGitState.GitFolderAbsolutePath.ParentDirectory;
         var argumentsString = $"commit -m \"{localSummary}\"";
 
         var formattedCommand = new FormattedCommand(
@@ -135,7 +129,7 @@ public partial class GitControlsDisplay : ComponentBase
         var gitCommitCommand = new TerminalCommand(
             GitCommitTerminalCommandKey,
             formattedCommand,
-            parentDirectory.Value,
+            localGitState.Repo.RepoFolderAbsolutePath.Value,
             ContinueWith: ExecuteGitStatusTerminalCommandOnClick);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];

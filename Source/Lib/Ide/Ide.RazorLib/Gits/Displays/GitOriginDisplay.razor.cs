@@ -30,10 +30,8 @@ public partial class GitOriginDisplay : ComponentBase
     {
         var localGitState = GitStateWrap.Value;
 
-        if (localGitState.GitFolderAbsolutePath?.ParentDirectory is null)
+        if (localGitState.Repo is null)
             return;
-
-        var parentDirectory = localGitState.GitFolderAbsolutePath.ParentDirectory;
 
         var localCommandArgs = "config --get remote.origin.url";
         var formattedCommand = new FormattedCommand(
@@ -46,14 +44,13 @@ public partial class GitOriginDisplay : ComponentBase
         var gitCliOutputParser = new GitCliOutputParser(
             Dispatcher,
             localGitState,
-            EnvironmentProvider.AbsolutePathFactory(parentDirectory.Value, true),
             EnvironmentProvider,
             stageKind: GitCliOutputParser.StageKind.GetOrigin);
 
         var gitStatusCommand = new TerminalCommand(
             GitSetOriginTerminalCommandKey,
             formattedCommand,
-            parentDirectory.Value,
+            localGitState.Repo.RepoFolderAbsolutePath.Value,
             OutputParser: gitCliOutputParser);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
@@ -64,10 +61,8 @@ public partial class GitOriginDisplay : ComponentBase
     {
         var localGitState = GitStateWrap.Value;
 
-        if (localGitState.GitFolderAbsolutePath?.ParentDirectory is null)
+        if (localGitState.Repo is null)
             return;
-
-        var parentDirectory = localGitState.GitFolderAbsolutePath.ParentDirectory;
 
         var formattedCommand = new FormattedCommand(
             GitCliFacts.TARGET_FILE_NAME,
@@ -79,13 +74,12 @@ public partial class GitOriginDisplay : ComponentBase
         var gitCliOutputParser = new GitCliOutputParser(
             Dispatcher,
             localGitState,
-            EnvironmentProvider.AbsolutePathFactory(parentDirectory.Value, true),
             EnvironmentProvider);
 
         var gitStatusCommand = new TerminalCommand(
             GitSetOriginTerminalCommandKey,
             formattedCommand,
-            parentDirectory.Value,
+            localGitState.Repo.RepoFolderAbsolutePath.Value,
             OutputParser: gitCliOutputParser);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];

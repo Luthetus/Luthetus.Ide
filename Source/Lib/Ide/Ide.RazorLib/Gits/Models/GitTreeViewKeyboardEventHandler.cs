@@ -35,15 +35,15 @@ public class GitTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
         {
             var localGitState = _gitStateWrap.Value;
 
-            _dispatcher.Dispatch(new GitState.SetGitStateWithAction(inState =>
+            _dispatcher.Dispatch(new GitState.WithAction(inState =>
             {
-                if (inState.GitFolderAbsolutePath != localGitState.GitFolderAbsolutePath)
+                if (inState.Repo != localGitState.Repo)
                 {
                     // Git folder was changed, throw away the result since it is thereby invalid.
                     return inState;
                 }
 
-                var outStagedGitFileMap = new Dictionary<string, GitFile>(inState.StagedGitFileMap);
+                var outStagedFileMap = new Dictionary<string, GitFile>(inState.StagedFileMap);
 
                 foreach (var selectedNode in commandArgs.TreeViewContainer.SelectedNodeList)
                 {
@@ -51,15 +51,15 @@ public class GitTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
                     {
                         var key = treeViewGitFile.Item.AbsolutePath.Value;
 
-                        var wasRemoved = outStagedGitFileMap.Remove(key);
+                        var wasRemoved = outStagedFileMap.Remove(key);
                         if (!wasRemoved)
-                            outStagedGitFileMap.Add(key, treeViewGitFile.Item);
+                            outStagedFileMap.Add(key, treeViewGitFile.Item);
                     }
                 }
 
                 return inState with
                 {
-                    StagedGitFileMap = outStagedGitFileMap.ToImmutableDictionary()
+                    StagedFileMap = outStagedFileMap.ToImmutableDictionary()
                 };
             }));
         }

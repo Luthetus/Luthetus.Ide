@@ -1,5 +1,4 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.Gits.Models;
@@ -9,10 +8,10 @@ namespace Luthetus.Ide.RazorLib.Gits.States;
 
 [FeatureState]
 public partial record GitState(
-    IAbsolutePath? GitFolderAbsolutePath,
-    ImmutableList<GitFile> GitFileList,
-    ImmutableDictionary<string, GitFile> StagedGitFileMap,
-    ImmutableList<GitTask> ActiveGitTasks,
+    GitRepo? Repo,
+    ImmutableList<GitFile> FileList,
+    ImmutableDictionary<string, GitFile> StagedFileMap,
+    ImmutableList<GitTask> ActiveTasks,
     string? Origin)
 {
     public static readonly Key<TreeViewContainer> TreeViewGitChangesKey = Key<TreeViewContainer>.NewKey();

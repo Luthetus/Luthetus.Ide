@@ -21,30 +21,30 @@ public partial class TreeViewGitFileDisplay : ComponentBase, ITreeViewGitFileRen
 
     private bool IsChecked
     {
-        get => GitState.StagedGitFileMap.ContainsKey(TreeViewGitFile.Item.AbsolutePath.Value);
+        get => GitState.StagedFileMap.ContainsKey(TreeViewGitFile.Item.AbsolutePath.Value);
         set
         {
             var localGitState = GitState;
 
-            Dispatcher.Dispatch(new GitState.SetGitStateWithAction(inState =>
+            Dispatcher.Dispatch(new GitState.WithAction(inState =>
             {
-                if (inState.GitFolderAbsolutePath != localGitState.GitFolderAbsolutePath)
+                if (inState.Repo != localGitState.Repo)
                 {
                     // Git folder was changed, throw away the result since it is thereby invalid.
                     return inState;
                 }
 
                 var key = TreeViewGitFile.Item.AbsolutePath.Value;
-                ImmutableDictionary<string, GitFile> outStagedGitFileMap;
+                ImmutableDictionary<string, GitFile> outStagedFileMap;
 
-                if (inState.StagedGitFileMap.ContainsKey(key))
-                    outStagedGitFileMap = inState.StagedGitFileMap.Remove(key);
+                if (inState.StagedFileMap.ContainsKey(key))
+                    outStagedFileMap = inState.StagedFileMap.Remove(key);
                 else
-                    outStagedGitFileMap = inState.StagedGitFileMap.Add(key, TreeViewGitFile.Item);
+                    outStagedFileMap = inState.StagedFileMap.Add(key, TreeViewGitFile.Item);
 
                 return inState with
                 {
-                    StagedGitFileMap = outStagedGitFileMap
+                    StagedFileMap = outStagedFileMap
                 };
             }));
         }

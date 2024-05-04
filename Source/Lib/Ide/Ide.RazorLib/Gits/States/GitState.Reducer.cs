@@ -11,9 +11,9 @@ public partial record GitState
         [ReducerMethod]
         public static GitState ReduceSetGitFileListAction(
             GitState inState,
-            SetGitFileListAction setGitFileListAction)
+            SetFileListAction setGitFileListAction)
         {
-            if (inState.GitFolderAbsolutePath != setGitFileListAction.ExpectedGitFolderAbsolutePath)
+            if (inState.Repo != setGitFileListAction.Repo)
             {
                 // Git folder was changed while the text was being parsed,
                 // throw away the result since it is thereby invalid.
@@ -22,16 +22,16 @@ public partial record GitState
 
             return inState with
             {
-                GitFileList = setGitFileListAction.GitFileList
+                FileList = setGitFileListAction.FileList
             };
         }
 
         [ReducerMethod]
         public static GitState ReduceSetGitOriginAction(
             GitState inState,
-            SetGitOriginAction setGitOriginAction)
+            SetOriginAction setOriginAction)
         {
-            if (inState.GitFolderAbsolutePath != setGitOriginAction.ExpectedGitFolderAbsolutePath)
+            if (inState.Repo != setOriginAction.Repo)
             {
                 // Git folder was changed while the text was being parsed,
                 // throw away the result since it is thereby invalid.
@@ -40,30 +40,30 @@ public partial record GitState
 
             return inState with
             {
-                Origin = setGitOriginAction.Origin
+                Origin = setOriginAction.Origin
             };
         }
         
         [ReducerMethod]
         public static GitState ReduceSetGitFolderAction(
             GitState inState,
-            SetGitFolderAction setGitFolderAction)
+            SetRepoAction setRepoAction)
         {
             return inState with
             {
-                GitFolderAbsolutePath = setGitFolderAction.GitFolderAbsolutePath,
-                GitFileList = ImmutableList<GitFile>.Empty,
-                StagedGitFileMap = ImmutableDictionary<string, GitFile>.Empty,
-                ActiveGitTasks = ImmutableList<GitTask>.Empty,
+                Repo = setRepoAction.Repo,
+                FileList = ImmutableList<GitFile>.Empty,
+                StagedFileMap = ImmutableDictionary<string, GitFile>.Empty,
+                ActiveTasks = ImmutableList<GitTask>.Empty,
             };
         }
 
         [ReducerMethod]
         public static GitState ReduceSetGitStateWithAction(
             GitState inState,
-            SetGitStateWithAction setGitStateWithAction)
+            WithAction withAction)
         {
-            return setGitStateWithAction.GitStateWithFunc.Invoke(inState);
+            return withAction.WithFunc.Invoke(inState);
         }
     }
 }

@@ -31,10 +31,8 @@ public partial class GitDiffDisplay : ComponentBase
         var localGitState = GitStateWrap.Value;
         var localGitFile = GitFile;
 
-        if (localGitState.GitFolderAbsolutePath?.ParentDirectory is null)
+        if (localGitState.Repo is null)
             return;
-
-        var parentDirectory = localGitState.GitFolderAbsolutePath.ParentDirectory;
 
         var gitLogArgs = $"log -p {localGitFile.RelativePathString}";
         var formattedCommand = new FormattedCommand(
@@ -47,7 +45,7 @@ public partial class GitDiffDisplay : ComponentBase
         var gitStatusCommand = new TerminalCommand(
             GitLogTerminalCommandKey,
             formattedCommand,
-            parentDirectory.Value);
+            localGitState.Repo.RepoFolderAbsolutePath.Value);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
         await generalTerminal.EnqueueCommandAsync(gitStatusCommand);

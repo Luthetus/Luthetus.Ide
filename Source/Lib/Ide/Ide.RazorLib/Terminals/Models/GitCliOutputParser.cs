@@ -13,19 +13,16 @@ public class GitCliOutputParser : IOutputParser
 {
     private readonly IDispatcher _dispatcher;
     private readonly GitState _gitState;
-    private readonly IAbsolutePath _workingDirectoryAbsolutePath;
     private readonly IEnvironmentProvider _environmentProvider;
     
     public GitCliOutputParser(
         IDispatcher dispatcher,
         GitState gitState,
-        IAbsolutePath workingDirectory,
         IEnvironmentProvider environmentProvider,
         StageKind stageKind = StageKind.None)
     {
         _dispatcher = dispatcher;
         _gitState = gitState;
-        _workingDirectoryAbsolutePath = workingDirectory;
         _environmentProvider = environmentProvider;
         _stageKind = stageKind;
     }
@@ -40,7 +37,7 @@ public class GitCliOutputParser : IOutputParser
 
     public List<TextEditorTextSpan> ParseLine(string output)
     {
-        if (_gitState.GitFolderAbsolutePath is null)
+        if (_gitState.Repo is null)
             return new();
 
         if (_stageKind == StageKind.GetOrigin)
@@ -132,7 +129,7 @@ public class GitCliOutputParser : IOutputParser
                             var relativePathString = textSpan.GetText();
 
                             var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
-                                _workingDirectoryAbsolutePath,
+                                _gitState.Repo.RepoFolderAbsolutePath,
                                 relativePathString,
                                 _environmentProvider);
 
@@ -179,19 +176,19 @@ public class GitCliOutputParser : IOutputParser
 
     public void Dispose()
     {
-        if (_gitState.GitFolderAbsolutePath is null)
+        if (_gitState.Repo is null)
             return;
 
         if (_stageKind == StageKind.GetOrigin && _origin is not null)
         {
-            _dispatcher.Dispatch(new GitState.SetGitOriginAction(
-                _gitState.GitFolderAbsolutePath,
+            _dispatcher.Dispatch(new GitState.SetOriginAction(
+                _gitState.Repo,
                 _origin));
         }
         else
         {
-            _dispatcher.Dispatch(new GitState.SetGitFileListAction(
-                _gitState.GitFolderAbsolutePath,
+            _dispatcher.Dispatch(new GitState.SetFileListAction(
+                _gitState.Repo,
                 GitFileList.ToImmutableList()));
         }
     }

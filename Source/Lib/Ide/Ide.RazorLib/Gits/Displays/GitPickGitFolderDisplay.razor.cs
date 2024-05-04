@@ -1,5 +1,6 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.Gits.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.InputFiles.States;
@@ -49,7 +50,14 @@ public partial class GitPickGitFolderDisplay : ComponentBase
 
     private void ConfirmGitFolderOnClick()
     {
-        Dispatcher.Dispatch(new GitState.SetGitFolderAction(
-            EnvironmentProvider.AbsolutePathFactory(_gitFolderAbsolutePath, true)));
+        var gitFolder = EnvironmentProvider.AbsolutePathFactory(_gitFolderAbsolutePath, true);
+
+        if (gitFolder.ParentDirectory is null)
+            return;
+        
+        var workingDirectory = EnvironmentProvider.AbsolutePathFactory(gitFolder.ParentDirectory.Value, true);
+
+        Dispatcher.Dispatch(new GitState.SetRepoAction(
+            new GitRepo(workingDirectory, gitFolder)));
     }
 }
