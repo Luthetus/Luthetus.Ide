@@ -53,7 +53,7 @@ public partial class GitControlsDisplay : ComponentBase
         var gitStatusCommand = new TerminalCommand(
             GitStatusTerminalCommandKey,
             formattedCommand,
-            localGitState.Repo.RepoFolderAbsolutePath.Value,
+            localGitState.Repo.AbsolutePath.Value,
             OutputParser: gitCliOutputParser);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
@@ -74,7 +74,7 @@ public partial class GitControlsDisplay : ComponentBase
         foreach (var fileAbsolutePath in localGitState.StagedFileMap.Values)
         {
             var relativePathString = PathHelper.GetRelativeFromTwoAbsolutes(
-                localGitState.Repo.RepoFolderAbsolutePath,
+                localGitState.Repo.AbsolutePath,
                 fileAbsolutePath.AbsolutePath,
                 EnvironmentProvider);
 
@@ -105,7 +105,7 @@ public partial class GitControlsDisplay : ComponentBase
         var gitAddCommand = new TerminalCommand(
             GitStatusTerminalCommandKey,
             formattedCommand,
-            localGitState.Repo.RepoFolderAbsolutePath.Value,
+            localGitState.Repo.AbsolutePath.Value,
             ContinueWith: () => CommitChanges(localGitState, localSummary));
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
@@ -129,7 +129,7 @@ public partial class GitControlsDisplay : ComponentBase
         var gitCommitCommand = new TerminalCommand(
             GitCommitTerminalCommandKey,
             formattedCommand,
-            localGitState.Repo.RepoFolderAbsolutePath.Value,
+            localGitState.Repo.AbsolutePath.Value,
             ContinueWith: ExecuteGitStatusTerminalCommandOnClick);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];

@@ -50,7 +50,7 @@ public partial class GitOriginDisplay : ComponentBase
         var gitStatusCommand = new TerminalCommand(
             GitSetOriginTerminalCommandKey,
             formattedCommand,
-            localGitState.Repo.RepoFolderAbsolutePath.Value,
+            localGitState.Repo.AbsolutePath.Value,
             OutputParser: gitCliOutputParser);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
@@ -79,7 +79,7 @@ public partial class GitOriginDisplay : ComponentBase
         var gitStatusCommand = new TerminalCommand(
             GitSetOriginTerminalCommandKey,
             formattedCommand,
-            localGitState.Repo.RepoFolderAbsolutePath.Value,
+            localGitState.Repo.AbsolutePath.Value,
             OutputParser: gitCliOutputParser);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];

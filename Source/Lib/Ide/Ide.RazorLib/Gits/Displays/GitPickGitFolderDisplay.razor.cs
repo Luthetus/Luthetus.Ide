@@ -1,10 +1,15 @@
 using Fluxor;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Gits.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.InputFiles.States;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Gits.Displays;
@@ -12,52 +17,18 @@ namespace Luthetus.Ide.RazorLib.Gits.Displays;
 public partial class GitPickGitFolderDisplay : ComponentBase
 {
     [Inject]
-    private InputFileSync InputFileSync { get; set; } = null!;
-    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-
-    private string _gitFolderAbsolutePath = string.Empty;
-
-    private void RequestInputFileForGitFolder()
+    
+    private void ShowAddRepoDialogOnClick()
     {
-        InputFileSync.RequestInputFileStateForm("Git Folder",
-            async absolutePath =>
-            {
-                if (absolutePath is null)
-                    return;
+        var dialogViewModel = new DialogViewModel(
+            Key<IDynamicViewModel>.NewKey(),
+            $"Git Origin",
+            typeof(GitAddRepoDisplay),
+            null,
+            null,
+            true);
 
-                _gitFolderAbsolutePath = absolutePath.Value;
-                await InvokeAsync(StateHasChanged);
-            },
-            absolutePath =>
-            {
-                if (absolutePath is null ||
-                    !absolutePath.IsDirectory ||
-                    absolutePath.NameNoExtension != ".git")
-                {
-                    return Task.FromResult(false);
-                }
-
-                return Task.FromResult(true);
-            },
-            new[]
-            {
-                new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
-            }.ToImmutableArray());
-    }
-
-    private void ConfirmGitFolderOnClick()
-    {
-        var gitFolder = EnvironmentProvider.AbsolutePathFactory(_gitFolderAbsolutePath, true);
-
-        if (gitFolder.ParentDirectory is null)
-            return;
-        
-        var workingDirectory = EnvironmentProvider.AbsolutePathFactory(gitFolder.ParentDirectory.Value, true);
-
-        Dispatcher.Dispatch(new GitState.SetRepoAction(
-            new GitRepo(workingDirectory, gitFolder)));
+        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogViewModel));
     }
 }

@@ -1,0 +1,25 @@
+﻿<div class="luth_ide_form-group">
+    <div class="luth_ide_form-label">
+        Repo Folder (absolute path):
+    </div>
+
+    <div class="luth_ide_form-value"
+         style="display: flex;">
+
+        <input class="luth_ide_input luth_ide_input-text"
+               style="height: 2em;"
+               placeholder="Git Folder (absolute path)"
+               @bind="_repoAbsolutePathString"
+               @bind:event="oninput" />
+
+        <button class="luth_button"
+                @onclick="RequestInputFileForGitFolder">
+            <IconFolder />
+        </button>
+    </div>
+</div>
+
+<button class="luth_button"
+        @onclick="ConfirmGitFolderOnClick">
+    Confirm
+</button>

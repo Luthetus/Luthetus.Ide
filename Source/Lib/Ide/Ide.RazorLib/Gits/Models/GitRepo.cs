@@ -2,4 +2,7 @@
 
 namespace Luthetus.Ide.RazorLib.Gits.Models;
 
-public record GitRepo(IAbsolutePath RepoFolderAbsolutePath, IAbsolutePath GitFolderAbsolutePath);
+/// <summary>
+/// TODO: Why am I parsing the CLI output? Can I just look at the '.git' folder itself? (2024-05-04)
+/// </summary>
+public record GitRepo(IAbsolutePath AbsolutePath);

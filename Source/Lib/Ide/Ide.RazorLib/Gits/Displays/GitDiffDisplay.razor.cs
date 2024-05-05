@@ -45,7 +45,7 @@ public partial class GitDiffDisplay : ComponentBase
         var gitStatusCommand = new TerminalCommand(
             GitLogTerminalCommandKey,
             formattedCommand,
-            localGitState.Repo.RepoFolderAbsolutePath.Value);
+            localGitState.Repo.AbsolutePath.Value);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
         await generalTerminal.EnqueueCommandAsync(gitStatusCommand);

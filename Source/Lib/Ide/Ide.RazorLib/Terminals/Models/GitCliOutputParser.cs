@@ -129,7 +129,7 @@ public class GitCliOutputParser : IOutputParser
                             var relativePathString = textSpan.GetText();
 
                             var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
-                                _gitState.Repo.RepoFolderAbsolutePath,
+                                _gitState.Repo.AbsolutePath,
                                 relativePathString,
                                 _environmentProvider);
 
