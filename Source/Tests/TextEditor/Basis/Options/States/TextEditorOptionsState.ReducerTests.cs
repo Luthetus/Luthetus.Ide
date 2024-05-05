@@ -5,6 +5,11 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Misc;
+using Luthetus.TextEditor.RazorLib;
+using Microsoft.JSInterop;
 
 namespace Luthetus.TextEditor.Tests.Basis.Options.States;
 
@@ -19,14 +24,11 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetFontFamilyAction()
 	{
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
             out var serviceProvider);
-
-		var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
-		var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
 
         var fontFamily = "monospace";
         var setFontFamilyAction = new TextEditorOptionsState.SetFontFamilyAction(fontFamily);
@@ -48,14 +50,11 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetFontSizeAction()
 	{
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
             out var serviceProvider);
-
-        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
-        var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
 
         var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS + 1;
         var setFontSizeAction = new TextEditorOptionsState.SetFontSizeAction(fontSizeInPixels);
@@ -77,14 +76,11 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetRenderStateKeyAction()
 	{
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
             out var serviceProvider);
-
-        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
-        var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
 
         var renderStateKey = Key<RenderState>.NewKey();
         var setRenderStateKeyAction = new TextEditorOptionsState.SetRenderStateKeyAction(renderStateKey);
@@ -106,14 +102,11 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetCursorWidthAction()
 	{
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
             out var serviceProvider);
-
-        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
-        var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
 
         var cursorWidthInPixels = TextEditorOptionsState.DEFAULT_CURSOR_WIDTH_IN_PIXELS + 1;
         var setCursorWidthAction = new TextEditorOptionsState.SetCursorWidthAction(cursorWidthInPixels);
@@ -135,14 +128,11 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetHeightAction()
 	{
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
             out var serviceProvider);
-
-        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
-        var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
 
         // non-null value
         {
@@ -183,14 +173,11 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetThemeAction()
 	{
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
             out var serviceProvider);
-
-        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
-        var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
 
         var theme = LuthetusTextEditorCustomThemeFacts.LightTheme;
         var setThemeAction = new TextEditorOptionsState.SetThemeAction(theme);
@@ -212,14 +199,11 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetKeymapAction()
 	{
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
             out var serviceProvider);
-
-        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
-        var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
 
         var keymap = TextEditorKeymapFacts.VimKeymap;
         var setKeymapAction = new TextEditorOptionsState.SetKeymapAction(keymap);
@@ -241,14 +225,11 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetShowWhitespaceAction()
 	{
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
             out var serviceProvider);
-
-        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
-        var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
 
         // true
         {
@@ -289,14 +270,11 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetShowNewlinesAction()
 	{
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
             out var serviceProvider);
-
-        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
-        var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
 
         // true
         {
@@ -337,14 +315,11 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetUseMonospaceOptimizationsAction()
 	{
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        InitializeOptionsApiTests(
             out var textEditorService,
-            out var inModel,
-            out var inViewModel,
+            out var textEditorOptionsStateWrap,
+            out var dispatcher,
             out var serviceProvider);
-
-        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
-        var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
 
         // false # The default value for UseMonospaceOptimizations is true so one must do the 'false' case first.
         {
@@ -377,5 +352,30 @@ public partial class TextEditorOptionsStateReducerTests
                 useMonospaceOptimizations,
                 textEditorOptionsStateWrap.Value.Options.UseMonospaceOptimizations);
         }
+    }
+
+    private void InitializeOptionsApiTests(
+        out ITextEditorService textEditorService,
+        out IState<TextEditorOptionsState> textEditorOptionsState,
+        out IDispatcher dispatcher,
+        out ServiceProvider serviceProvider)
+    {
+        var backgroundTaskService = new BackgroundTaskServiceSynchronous();
+
+        var serviceCollection = new ServiceCollection()
+            .AddScoped<IJSRuntime, DoNothingJsRuntime>()
+            .AddLuthetusTextEditor(new LuthetusHostingInformation(LuthetusHostingKind.UnitTesting, backgroundTaskService))
+            .AddFluxor(options => options.ScanAssemblies(
+                typeof(LuthetusCommonConfig).Assembly,
+                typeof(LuthetusTextEditorConfig).Assembly));
+
+        serviceProvider = serviceCollection.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+        textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
+        textEditorOptionsState = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
     }
 }

@@ -11,7 +11,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 public partial class TextSelectionGroup : ComponentBase
 {
     [CascadingParameter]
-    public RenderBatch RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TextEditorCursor PrimaryCursor { get; set; } = null!;
@@ -21,10 +21,10 @@ public partial class TextSelectionGroup : ComponentBase
         int upperPositionIndexExclusive,
         int rowIndex)
     {
-        if (rowIndex >= RenderBatch.Model!.LineEndList.Count)
+        if (rowIndex >= RenderBatch.Model.LineEndList.Count)
             return string.Empty;
 
-        var line = RenderBatch.Model!.GetLineInformation(rowIndex);
+        var line = RenderBatch.Model.GetLineInformation(rowIndex);
 
         var selectionStartingColumnIndex = 0;
         var selectionEndingColumnIndex = line.EndPositionIndexExclusive - 1;
@@ -43,7 +43,7 @@ public partial class TextSelectionGroup : ComponentBase
             fullWidthOfRowIsSelected = false;
         }
 
-        var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements;
+        var charMeasurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
 
         var topInPixelsInvariantCulture = (rowIndex * charMeasurements.LineHeight).ToCssValue();
         var top = $"top: {topInPixelsInvariantCulture}px;";
@@ -120,7 +120,7 @@ public partial class TextSelectionGroup : ComponentBase
         try
         {
             return TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
-                RenderBatch.Model!,
+                RenderBatch.Model,
                 selectionBoundsInPositionIndexUnits);
         }
         catch (LuthetusTextEditorException)

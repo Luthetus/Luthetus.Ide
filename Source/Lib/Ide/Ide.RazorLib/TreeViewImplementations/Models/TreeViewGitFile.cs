@@ -7,11 +7,11 @@ namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 public class TreeViewGitFile : TreeViewWithType<GitFile>
 {
     public TreeViewGitFile(
-            GitFile gitFile,
+            GitFile item,
             ILuthetusIdeComponentRenderers ideComponentRenderers,
             bool isExpandable,
             bool isExpanded)
-        : base(gitFile, isExpandable, isExpanded)
+        : base(item, isExpandable, isExpanded)
     {
         IdeComponentRenderers = ideComponentRenderers;
     }
@@ -23,7 +23,8 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
         if (obj is not TreeViewGitFile treeViewGitFile)
             return false;
 
-        return treeViewGitFile.Item.AbsolutePath.Value == Item.AbsolutePath.Value;
+        return treeViewGitFile.Item.AbsolutePath.Value ==
+               Item.AbsolutePath.Value;
     }
 
     public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
@@ -44,10 +45,5 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
     public override Task LoadChildListAsync()
     {
         return Task.CompletedTask;
-    }
-
-    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
-    {
-        // This method is meant to do nothing in this case.
     }
 }

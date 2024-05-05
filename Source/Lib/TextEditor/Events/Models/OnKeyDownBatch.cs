@@ -8,7 +8,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
-namespace Luthetus.TextEditor.RazorLib.Events;
+namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
 public class OnKeyDownBatch : ITextEditorTask
 {

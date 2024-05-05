@@ -21,7 +21,7 @@ public partial class AutocompleteMenu : ComponentBase
     private IAutocompleteService AutocompleteService { get; set; } = null!;
 
     [CascadingParameter]
-    public RenderBatch RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
     [CascadingParameter(Name = "SetShouldDisplayMenuAsync")]
     public Func<MenuKind, bool, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
     [CascadingParameter(Name = "TextEditorMenuShouldTakeFocusFunc")]
@@ -61,13 +61,13 @@ public partial class AutocompleteMenu : ComponentBase
     {
         try
         {
-            var cursorList = new TextEditorCursor[] { RenderBatch.ViewModel!.PrimaryCursor }.ToImmutableArray();
+            var cursorList = new TextEditorCursor[] { RenderBatch.ViewModel.PrimaryCursor }.ToImmutableArray();
 
             var primaryCursor = cursorList.First(x => x.IsPrimaryCursor);
 
             if (primaryCursor.ColumnIndex > 0)
             {
-                var word = RenderBatch.Model!.ReadPreviousWordOrDefault(
+                var word = RenderBatch.Model.ReadPreviousWordOrDefault(
                     primaryCursor.LineIndex,
                     primaryCursor.ColumnIndex);
 
@@ -93,7 +93,7 @@ public partial class AutocompleteMenu : ComponentBase
                             // TODO: RenderBatch.Model.GetAllText() probably isn't needed here. Maybe a useful optimization is to remove it somehow?
                             RenderBatch.Model.GetAllText());
 
-                        var compilerServiceAutocompleteEntryList = RenderBatch.Model!.CompilerService.GetAutocompleteEntries(
+                        var compilerServiceAutocompleteEntryList = RenderBatch.Model.CompilerService.GetAutocompleteEntries(
                             word,
                             textSpan);
 
@@ -110,7 +110,7 @@ public partial class AutocompleteMenu : ComponentBase
                         MenuOptionKind.Other,
                         () => SelectMenuOption(() =>
                         {
-                            InsertAutocompleteMenuOption(word, entry, RenderBatch.ViewModel!);
+                            InsertAutocompleteMenuOption(word, entry, RenderBatch.ViewModel);
                             entry.SideEffectAction?.Invoke();
                             return Task.CompletedTask;
                         }),

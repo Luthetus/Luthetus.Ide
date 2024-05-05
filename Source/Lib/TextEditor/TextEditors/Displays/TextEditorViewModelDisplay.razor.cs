@@ -24,9 +24,9 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
-using Luthetus.TextEditor.RazorLib.Events;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
+using Luthetus.TextEditor.RazorLib.Events.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -74,8 +74,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private BodySection? _bodySectionComponent;
     private MeasureCharacterWidthAndRowHeight? _measureCharacterWidthAndRowHeightComponent;
     private bool _userMouseIsInside;
-    private RenderBatch _storedRenderBatch = null!;
-    private RenderBatch? _previousRenderBatch;
+    private TextEditorRenderBatchUnsafe _storedRenderBatch = null!;
+    private TextEditorRenderBatchUnsafe? _previousRenderBatch;
     private TextEditorViewModel? _linkedViewModel;
 
     private CursorDisplay? CursorDisplay => _bodySectionComponent?.CursorDisplayComponent;
@@ -94,7 +94,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     {
         ConstructRenderBatch();
 
-        _events = new(this, _storedRenderBatch);
+        _events = new(this, _storedRenderBatch.Options);
 
         TextEditorViewModelsStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
         TextEditorOptionsStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
@@ -170,11 +170,11 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     private void ConstructRenderBatch()
     {
-        var renderBatch = new RenderBatch(
+        var renderBatch = new TextEditorRenderBatchUnsafe(
             GetModel(),
             GetViewModel(),
             GetOptions(),
-            RenderBatch.DEFAULT_FONT_FAMILY,
+            ITextEditorRenderBatch.DEFAULT_FONT_FAMILY,
             TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS,
             ViewModelDisplayOptions,
             _events);
@@ -302,12 +302,18 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     {
         _events.ThinksLeftMouseButtonIsDown = true;
 
+
         var modelResourceUri = GetModel()?.ResourceUri;
+        var viewModel = GetViewModel();
+
         var viewModelKey = GetViewModel()?.ViewModelKey;
 
         if (modelResourceUri is null || viewModelKey is null)
             return;
 		
+        if (viewModel is not null)
+            viewModel.UnsafeState.ShouldRevealCursor = false;
+
 		var onMouseDown = new OnMouseDown(
             mouseEventArgs,
             _events,
@@ -501,7 +507,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     }
 
     private void QueueRemeasureBackgroundTask(
-        RenderBatch localRefCurrentRenderBatch,
+        ITextEditorRenderBatch localRefCurrentRenderBatch,
         string localMeasureCharacterWidthAndRowHeightElementId,
         int countOfTestCharacters,
         CancellationToken cancellationToken)
@@ -523,7 +529,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     }
 
     private void QueueCalculateVirtualizationResultBackgroundTask(
-        RenderBatch localCurrentRenderBatch)
+		ITextEditorRenderBatch localCurrentRenderBatch)
     {
         var modelResourceUri = GetModel()?.ResourceUri;
         var viewModelKey = GetViewModel()?.ViewModelKey;
@@ -584,10 +590,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         private readonly TextEditorViewModelDisplay _viewModelDisplay;
         private readonly IThrottle _throttleApplySyntaxHighlighting = new Throttle(TimeSpan.FromMilliseconds(500));
 
-        public TextEditorEvents(TextEditorViewModelDisplay viewModelDisplay, RenderBatch renderBatch)
+        public TextEditorEvents(TextEditorViewModelDisplay viewModelDisplay, TextEditorOptions? options)
         {
             _viewModelDisplay = viewModelDisplay;
-			Options = renderBatch.Options ?? TextEditorService.OptionsStateWrap.Value.Options;
+			Options = options ?? TextEditorService.OptionsStateWrap.Value.Options;
 		}
 
         /// <summary>

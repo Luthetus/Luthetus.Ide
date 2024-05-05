@@ -9,18 +9,18 @@ public static class PanelFacts
     public static readonly Key<PanelGroup> RightPanelGroupKey = Key<PanelGroup>.NewKey();
     public static readonly Key<PanelGroup> BottomPanelGroupKey = Key<PanelGroup>.NewKey();
 
-    public static PanelGroup GetTopLeftPanelGroup(PanelsState panelsState)
+    public static PanelGroup GetTopLeftPanelGroup(PanelState panelState)
     {
-        return panelsState.PanelGroupList.First(x => x.Key == LeftPanelGroupKey);
+        return panelState.PanelGroupList.First(x => x.Key == LeftPanelGroupKey);
     }
 
-    public static PanelGroup GetTopRightPanelGroup(PanelsState panelsState)
+    public static PanelGroup GetTopRightPanelGroup(PanelState panelState)
     {
-        return panelsState.PanelGroupList.First(x => x.Key == RightPanelGroupKey);
+        return panelState.PanelGroupList.First(x => x.Key == RightPanelGroupKey);
     }
 
-    public static PanelGroup GetBottomPanelGroup(PanelsState panelsState)
+    public static PanelGroup GetBottomPanelGroup(PanelState panelState)
     {
-        return panelsState.PanelGroupList.First(x => x.Key == BottomPanelGroupKey);
+        return panelState.PanelGroupList.First(x => x.Key == BottomPanelGroupKey);
     }
 }

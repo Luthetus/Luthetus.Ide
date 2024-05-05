@@ -4,13 +4,16 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Immutable;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 
 namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 
 /// <summary>
 /// <see cref="TreeViewSolution"/>
 /// </summary>
-public class TreeViewSolutionTests
+public class TreeViewSolutionTests : IdeTestBase
 {
     /// <summary>
     /// <see cref="TreeViewSolution(DotNetSolutionModel, ILuthetusIdeComponentRenderers, ILuthetusCommonComponentRenderers, IFileSystemProvider, IEnvironmentProvider, bool, bool)"/>
@@ -23,7 +26,42 @@ public class TreeViewSolutionTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        Test_RegisterServices(out var serviceProvider);
+        Test_CreateFileSystem(serviceProvider);
+
+        var ideComponentRenderers = serviceProvider.GetRequiredService<ILuthetusIdeComponentRenderers>();
+        var commonComponentRenderers = serviceProvider.GetRequiredService<ILuthetusCommonComponentRenderers>();
+        var fileSystemProvider = serviceProvider.GetRequiredService<IFileSystemProvider>();
+        var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
+
+        var dotNetSolutionModel = new DotNetSolutionModel(
+            environmentProvider.AbsolutePathFactory("/unitTesting.sln", false),
+            new DotNetSolutionHeader(),
+            ImmutableArray<IDotNetProject>.Empty,
+            ImmutableArray<SolutionFolder>.Empty,
+            ImmutableArray<NestedProjectEntry>.Empty,
+            new DotNetSolutionGlobal(),
+            string.Empty);
+
+        var isExpandable = true;
+        var isExpanded = true;
+
+        var treeView = new TreeViewSolution(
+            dotNetSolutionModel,
+            ideComponentRenderers,
+            commonComponentRenderers,
+            fileSystemProvider,
+            environmentProvider,
+            isExpandable,
+            isExpanded);
+
+        Assert.Equal(treeView.Item, dotNetSolutionModel);
+        Assert.Equal(treeView.IdeComponentRenderers, ideComponentRenderers);
+        Assert.Equal(treeView.CommonComponentRenderers, commonComponentRenderers);
+        Assert.Equal(treeView.FileSystemProvider, fileSystemProvider);
+        Assert.Equal(treeView.EnvironmentProvider, environmentProvider);
+        Assert.Equal(treeView.IsExpandable, isExpandable);
+        Assert.Equal(treeView.IsExpanded, isExpanded);
     }
 
     /// <summary>

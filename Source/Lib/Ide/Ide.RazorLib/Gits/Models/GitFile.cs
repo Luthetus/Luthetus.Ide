@@ -1,10 +1,9 @@
-﻿using Luthetus.Common.RazorLib.Exceptions;
-using Luthetus.Common.RazorLib.FileSystems.Models;
+﻿using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.Exceptions;
 
 namespace Luthetus.Ide.RazorLib.Gits.Models;
 
-public record GitFile(IAbsolutePath AbsolutePath, GitDirtyReason GitDirtyReason)
+public record GitFile(IAbsolutePath AbsolutePath, string RelativePathString, GitDirtyReason GitDirtyReason)
 {
     public bool IsDirty => GitDirtyReason switch
     {

@@ -9,11 +9,11 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 public partial class GutterSection : ComponentBase
 {
     [CascadingParameter]
-    public RenderBatch RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
 
     private string GetGutterStyleCss(int index)
     {
-        var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements;
+        var measurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
 
         var topInPixelsInvariantCulture = (index * measurements.LineHeight).ToCssValue();
         var top = $"top: {topInPixelsInvariantCulture}px;";
@@ -43,17 +43,17 @@ public partial class GutterSection : ComponentBase
 
     private IVirtualizationResultWithoutTypeMask GetVirtualizationResult()
     {
-        var topBoundaryNarrow = RenderBatch.ViewModel!.VirtualizationResult.TopVirtualizationBoundary with
+        var topBoundaryNarrow = RenderBatch.ViewModel.VirtualizationResult.TopVirtualizationBoundary with
         {
             WidthInPixels = RenderBatch.GutterWidthInPixels
         };
 
-        var bottomBoundaryNarrow = RenderBatch.ViewModel!.VirtualizationResult.BottomVirtualizationBoundary with
+        var bottomBoundaryNarrow = RenderBatch.ViewModel.VirtualizationResult.BottomVirtualizationBoundary with
         {
             WidthInPixels = RenderBatch.GutterWidthInPixels
         };
 
-        return RenderBatch.ViewModel!.VirtualizationResult with
+        return RenderBatch.ViewModel.VirtualizationResult with
         {
             TopVirtualizationBoundary = topBoundaryNarrow,
             BottomVirtualizationBoundary = bottomBoundaryNarrow

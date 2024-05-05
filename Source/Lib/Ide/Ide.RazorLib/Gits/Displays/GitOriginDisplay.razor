@@ -1,0 +1,41 @@
+﻿<div class="luth_ide_git-origin">
+
+    @{ var localGitState = GitStateWrap.Value; }
+
+    <button class="luth_button"
+            @onclick="GetOriginOnClick">
+        GetOriginOnClick
+    </button>
+
+    <hr/>
+
+    Origin: 
+
+    @if (string.IsNullOrWhiteSpace(localGitState.Origin))
+    {
+        @: string.IsNullOrWhiteSpace(localGitState.Origin)
+    }
+    else
+    {
+        <text>@localGitState.Origin</text>
+    }
+
+    <div>
+        <input class="luth_ide_input luth_ide_input-text"
+               style="height: 2em;"
+               placeholder="Git Origin"
+               @bind="_gitOrigin"
+               @bind:event="oninput" />
+    </div>
+
+    <div>
+        @{ var localCommandArgs = CommandArgs; }
+        
+        <em class="luth_em">@localCommandArgs</em>
+    </div>
+
+    <button class="luth_button"
+            @onclick="() => SetGitOriginOnClick(localCommandArgs)">
+        Execute
+    </button>
+</div>

@@ -169,6 +169,9 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
         });
     }
 
+    /// <summary>
+    /// TODO: This code should be moved to an Effect, of which is throttled. (2024-05-03)
+    /// </summary>
     private async Task SetInputFileContentTreeViewRootFunc(IAbsolutePath absolutePath)
     {
         var pseudoRootNode = new TreeViewAbsolutePath(

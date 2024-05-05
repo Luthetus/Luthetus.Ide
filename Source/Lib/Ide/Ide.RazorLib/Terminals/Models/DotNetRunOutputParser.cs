@@ -4,9 +4,9 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
-public static class DotNetRunOutputParser
+public class DotNetRunOutputParser : IOutputParser
 {
-    public static List<TextEditorTextSpan> Parse(string output)
+    public List<TextEditorTextSpan> ParseLine(string output)
     {
         var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/DotNetRunOutputParser.txt"), output);
 
@@ -185,5 +185,10 @@ public static class DotNetRunOutputParser
         }
 
         return textSpanList;
+    }
+
+    public void Dispose()
+    {
+        return;
     }
 }

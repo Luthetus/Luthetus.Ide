@@ -19,6 +19,49 @@
             Recent Changes:
 			<div>
                 <div>
+                    <div>v <em class="luth_em">0.8.3.0 </em> (2024-05-05)</div>
+
+                    <ul>
+                        <li>
+                            Fix Linux solution explorer paths. (issue was relating to '\' vs '/' directory separator).
+                        </li>
+                        <li>
+                            Fix Linux copy and paste.
+                        </li>
+                        <li>
+                            Fix get local storage.
+                        </li>
+                        <li>
+                            Fix unit test output. (still isn't perfect)
+                        </li>
+                        <li>
+                            Fix insertion of text when text-editor-cursor has a selection
+                        </li>
+                        <li>
+                            Fix text editor mouse wheel scrolling
+                        </li>
+                        <li>
+                            Fix text editor bring cursor into view.
+                        </li>
+                        <li>
+                            Batch terminal output. (this is a massive performance improvement,
+                            instead of writing line by line, if many lines of output need to be written,
+                            they all are written in one operation.)
+                        </li>
+                        <li>
+                            Parse the output of the terminal on a 'by-command-basis'.
+                            One can run 'dotnet run' with a .net cli output parser,
+                            then run 'git status' with a git cli output parser, as an example.
+                        </li>
+                        <li>
+                            Git integration progress. For example, a button that runs "git status",
+                            parses the terminal output, and creates a tree view of all the changed files.
+                            The git integration is still in progress though. (more usage of the '.git'
+                            folder instead of just parsing the terminal so much is likely a path to take).
+                        </li>
+                    </ul>
+                </div>
+                <div>
                     <div>v <em class="luth_em">0.8.2.0 </em> (2024-04-27)</div>
 
                     <ul>

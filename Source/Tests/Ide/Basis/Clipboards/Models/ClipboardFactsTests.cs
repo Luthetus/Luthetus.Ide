@@ -14,6 +14,7 @@ public class ClipboardFactsTests
     [Fact]
     public void Tag()
     {
+        var aaa = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         Assert.Equal("`'\";luth_clipboard", ClipboardFacts.Tag);
     }
 

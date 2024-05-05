@@ -10,7 +10,7 @@ public partial class BodySection : ComponentBase
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     [CascadingParameter]
-    public RenderBatch RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
 
     /// <summary>TabIndex is used for the html attribute named: 'tabindex'</summary>
     [Parameter, EditorRequired]

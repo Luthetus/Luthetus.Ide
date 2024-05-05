@@ -3,13 +3,15 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Ide.RazorLib.Nugets.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 
 /// <summary>
 /// <see cref="TreeViewCSharpProjectNugetPackageReference"/>
 /// </summary>
-public class TreeViewCSharpProjectNugetPackageReferenceTests
+public class TreeViewCSharpProjectNugetPackageReferenceTests : IdeTestBase
 {
     /// <summary>
     /// <see cref="TreeViewCSharpProjectNugetPackageReference(CSharpProjectNugetPackageReference, ILuthetusIdeComponentRenderers, IFileSystemProvider, IEnvironmentProvider, bool, bool)"/>
@@ -21,7 +23,35 @@ public class TreeViewCSharpProjectNugetPackageReferenceTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        Test_RegisterServices(out var serviceProvider);
+        Test_CreateFileSystem(serviceProvider);
+
+        var ideComponentRenderers = serviceProvider.GetRequiredService<ILuthetusIdeComponentRenderers>();
+        var commonComponentRenderers = serviceProvider.GetRequiredService<ILuthetusCommonComponentRenderers>();
+        var fileSystemProvider = serviceProvider.GetRequiredService<IFileSystemProvider>();
+        var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
+
+        var cSharpProjectNugetPackageReference = new CSharpProjectNugetPackageReference(
+            "/ProjectOne/ProjectOne.csproj",
+            new LightWeightNugetPackageRecord(string.Empty, string.Empty, string.Empty));
+
+        var isExpandable = true;
+        var isExpanded = true;
+
+        var treeView = new TreeViewCSharpProjectNugetPackageReference(
+            cSharpProjectNugetPackageReference,
+            ideComponentRenderers,
+            fileSystemProvider,
+            environmentProvider,
+            isExpandable,
+            isExpanded);
+
+        Assert.Equal(treeView.Item, cSharpProjectNugetPackageReference);
+        Assert.Equal(treeView.IdeComponentRenderers, ideComponentRenderers);
+        Assert.Equal(treeView.FileSystemProvider, fileSystemProvider);
+        Assert.Equal(treeView.EnvironmentProvider, environmentProvider);
+        Assert.Equal(treeView.IsExpandable, isExpandable);
+        Assert.Equal(treeView.IsExpanded, isExpanded);
     }
 
     /// <summary>

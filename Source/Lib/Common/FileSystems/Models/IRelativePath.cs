@@ -15,4 +15,21 @@ public interface IRelativePath : IPath
     /// Given "../../../Homework/math.txt". The count is 3.
     /// </summary>
     public int UpDirDirectiveCount { get; }
+
+    /// <summary>
+    /// One might prefer <see cref="IEnvironmentProvider.RelativePathFactory(string, bool)"/> instead
+    /// of this method.<br/><br/>
+    /// 
+    /// This version adds an extra function invocation for no reason. To use
+    /// <see cref="IEnvironmentProvider.RelativePathFactory(string, bool)"/> may be a negligible
+    /// optimization however.<br/><br/>
+    /// 
+    /// Keep this method here, it provides more clear documentation on how to create an instance
+    /// of <see cref="IRelativePath"/>. Having to invoke a method on the <see cref="IEnvironmentProvider"/>
+    /// is a bit hard to find.
+    /// </summary>
+    public static IRelativePath Factory(string path, bool isDirectory, IEnvironmentProvider environmentProvider)
+    {
+        return environmentProvider.RelativePathFactory(path, isDirectory);
+    }
 }

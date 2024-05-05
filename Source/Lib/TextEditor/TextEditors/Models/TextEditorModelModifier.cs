@@ -68,7 +68,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     public Key<RenderState> RenderStateKey => _renderStateKey ?? _textEditorModel.RenderStateKey;
 
     public int LineCount => LineEndList.Count;
-    public int DocumentLength => _richCharacterList.Count;
+    public int CharCount => _richCharacterList.Count;
 
     /// <summary>
     /// TODO: Awkward naming convention is being used here. This is an expression bound property,...
@@ -117,6 +117,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     private Key<RenderState>? _renderStateKey = Key<RenderState>.NewKey();
     private Keymap? _textEditorKeymap;
     private TextEditorOptions? _textEditorOptions;
+    private string? _allText;
 
     /// <summary>
     /// This property optimizes the dirty state tracking. If _wasDirty != _isDirty then track the state change.
@@ -127,13 +128,12 @@ public partial class TextEditorModelModifier : ITextEditorModel
     private int PartitionSize { get; }
     public bool WasModified { get; internal set; }
 
-    private string AllText => new string(RichCharacterList.Select(x => x.Value).ToArray());
-
-    string ITextEditorModel.AllText => AllText;
+    public string AllText => _allText ??= new string(RichCharacterList.Select(x => x.Value).ToArray());
 
     public TextEditorModel ToModel()
     {
         return new TextEditorModel(
+            AllText,
             _richCharacterList is null ? _textEditorModel.RichCharacterList : _richCharacterList,
             PartitionSize,
             _partitionList is null ? _textEditorModel.PartitionList : _partitionList,
@@ -193,7 +193,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
         _onlyLineEndKindWasModified = true;
     }
 
-    public void SetUsingLineEndKind(LineEndKind rowEndingKind)
+    public void SetLineEndKindPreference(LineEndKind rowEndingKind)
     {
         _usingLineEndKind = rowEndingKind;
     }
@@ -331,7 +331,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     {
         ClearContent();
         ClearOnlyRowEndingKind();
-        SetUsingLineEndKind(LineEndKind.Unset);
+        SetLineEndKindPreference(LineEndKind.Unset);
     }
 
     public void HandleKeyboardEvent(
@@ -395,8 +395,6 @@ public partial class TextEditorModelModifier : ITextEditorModel
         bool useLineEndKindPreference = true,
         CancellationToken cancellationToken = default)
     {
-        SetIsDirtyTrue();
-
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _lineEndList ??= _textEditorModel.LineEndList.ToList();
@@ -412,21 +410,12 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
             if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
             {
-                var (lowerPositionIndexInclusive, upperPositionIndexExclusive) = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
-
-                var lowerRowData = this.GetLineInformationFromPositionIndex(lowerPositionIndexInclusive);
-                var lowerColumnIndex = lowerPositionIndexInclusive - lowerRowData.StartPositionIndexInclusive;
-
                 Delete(
                     cursorModifierBag,
                     1,
                     false,
                     DeleteKind.Delete,
                     CancellationToken.None);
-
-                // Move cursor to lower bound of text selection
-                cursorModifier.LineIndex = lowerRowData.Index;
-                cursorModifier.SetColumnIndexAndPreferred(lowerColumnIndex);
             }
 
             {
@@ -457,6 +446,8 @@ public partial class TextEditorModelModifier : ITextEditorModel
             // So, use the 'cursorPositionIndex' variable that was calculated prior to the metadata step.
             InsertValue(value, initialCursorPositionIndex, useLineEndKindPreference, cancellationToken);
         }
+
+        SetIsDirtyTrue();
     }
 
     private string InsertMetadata(
@@ -725,8 +716,6 @@ public partial class TextEditorModelModifier : ITextEditorModel
         if (columnCount < 0)
             throw new LuthetusTextEditorException($"{nameof(columnCount)} < 0");
 
-        SetIsDirtyTrue();
-
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _lineEndList ??= _textEditorModel.LineEndList.ToList();
@@ -743,11 +732,16 @@ public partial class TextEditorModelModifier : ITextEditorModel
             var tuple = DeleteMetadata(columnCount, cursorModifier, expandWord, deleteKind, cancellationToken);
 
             if (tuple is null)
+            {
+                SetIsDirtyTrue();
                 return;
+            }
 
             var (positionIndex, charCount) = tuple.Value;
             DeleteValue(positionIndex, charCount, cancellationToken);
         }
+
+        SetIsDirtyTrue();
     }
 
     /// <summary>
@@ -783,12 +777,19 @@ public partial class TextEditorModelModifier : ITextEditorModel
             // If user's cursor has a selection, then set the variables so the positionIndex is the
             // selection.AnchorPositionIndex and the count is selection.EndPositionIndex - selection.AnchorPositionIndex
             // and that the 'DeleteKind.Delete' logic runs.
-            var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(cursorModifier.SelectionAnchorPositionIndex.Value);
-            cursorModifier.LineIndex = lineIndex;
+            var (lowerPositionIndexInclusive, upperPositionIndexExclusive) = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
+
+            var lowerLineData = this.GetLineInformationFromPositionIndex(lowerPositionIndexInclusive);
+            var lowerColumnIndex = lowerPositionIndexInclusive - lowerLineData.StartPositionIndexInclusive;
+
+            cursorModifier.LineIndex = lowerLineData.Index;
             initialLineIndex = cursorModifier.LineIndex;
-            cursorModifier.SetColumnIndexAndPreferred(columnIndex);
-            positionIndex = cursorModifier.SelectionAnchorPositionIndex.Value;
-            columnCount = cursorModifier.SelectionEndingPositionIndex - cursorModifier.SelectionAnchorPositionIndex.Value;
+            cursorModifier.SetColumnIndexAndPreferred(lowerColumnIndex);
+            positionIndex = lowerPositionIndexInclusive;
+
+            // The deletion of a selection logic does not check for multibyte characters.
+            // Therefore, later in this method, if a multibyte character is found, the columnCount must be reduced. (2024-05-01)
+            columnCount = upperPositionIndexExclusive - lowerPositionIndexInclusive;
             deleteKind = DeleteKind.Delete;
 
             cursorModifier.SelectionAnchorPositionIndex = null;
@@ -828,7 +829,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
             for (int i = 0; i < columnCount; i++)
             {
                 var toDeletePositionIndex = positionIndex + charCount;
-                if (toDeletePositionIndex < 0 || toDeletePositionIndex >= DocumentLength)
+                if (toDeletePositionIndex < 0 || toDeletePositionIndex >= CharCount)
                     break;
 
                 var richCharacterToDelete = _richCharacterList[toDeletePositionIndex];
@@ -850,6 +851,13 @@ public partial class TextEditorModelModifier : ITextEditorModel
                     charCount += lengthOfLineEnd;
 
                     MutateLineEndKindCount(lineEnd.LineEndKind, -1);
+
+                    if (lineEnd.LineEndKind == LineEndKind.CarriageReturnLineFeed && initiallyHadSelection)
+                    {
+                        // The deletion of a selection logic does not check for multibyte characters.
+                        // Therefore, if a multibyte character is found, the columnCount must be reduced. (2024-05-01)
+                        columnCount--;
+                    }
                 }
                 else
                 {
@@ -891,7 +899,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
             {
                 // Minus 1 here because 'Backspace' deletes the previous character.
                 var toDeletePositionIndex = positionIndex - charCount - 1;
-                if (toDeletePositionIndex < 0 || toDeletePositionIndex >= DocumentLength)
+                if (toDeletePositionIndex < 0 || toDeletePositionIndex >= CharCount)
                     break;
 
                 var richCharacterToDelete = _richCharacterList[toDeletePositionIndex];
@@ -1165,6 +1173,8 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
     public void SetIsDirtyTrue()
     {
+        // Setting _allText to null will clear the 'cache' for the all 'AllText' property.
+        _allText = null;
         _isDirty = true;
     }
 
@@ -1468,7 +1478,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
     public void __RemoveAt(int globalPositionIndex)
     {
-        if (globalPositionIndex >= DocumentLength)
+        if (globalPositionIndex >= CharCount)
             return;
 
         int indexOfPartitionWithContent = -1;
@@ -1631,7 +1641,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
         while (true)
         {
-            if (globalPositionIndex >= DocumentLength)
+            if (globalPositionIndex >= CharCount)
                 return;
 
             for (; i < _partitionList.Count; i++)
@@ -1700,7 +1710,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
     public void __Add(RichCharacter richCharacter)
     {
-        __Insert(DocumentLength, richCharacter);
+        __Insert(CharCount, richCharacter);
     }
 
     public enum DeleteKind

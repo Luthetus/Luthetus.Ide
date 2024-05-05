@@ -327,7 +327,7 @@ public class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTab, IDia
                 TabGroup = null;
             }
 
-            Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+            Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(
                 panelDropzone.PanelGroupKey,
                 new Panel(
                     Title,

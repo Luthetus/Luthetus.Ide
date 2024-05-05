@@ -1,0 +1,26 @@
+<div class="luth_ide_git-controls">
+    
+    @{ var localGitState = GitState; }
+
+    <button class="luth_button"
+            @onclick="ExecuteGitStatusTerminalCommandOnClick">
+        Status
+    </button>
+
+    <button class="luth_button"
+            @onclick="ShowGitOriginDialogOnClick">
+        Origin
+    </button>
+
+	<GitChangesTreeViewDisplay/>
+
+    <input class="luth_ide_input luth_ide_input-text"
+        placeholder="Summary"
+        @bind="_summary"
+        @bind:event="oninput" />
+
+    <button class="luth_button"
+            @onclick="() => SubmitOnClick(localGitState)">
+        Commit
+    </button>
+</div>

@@ -62,12 +62,6 @@
 
                         @terminal.DisplayName
 
-                        <button class="luth_button"
-                                @onclick="() => terminal.ClearStandardOut()"
-                                @onclick:stopPropagation="true">
-                            Clear
-                        </button>
-
                         @{ var isKillProcessDisabled = !terminal.HasExecutingProcess; }
 
                         <button class="luth_button"

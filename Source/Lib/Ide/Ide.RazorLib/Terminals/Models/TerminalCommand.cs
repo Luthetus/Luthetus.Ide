@@ -9,4 +9,5 @@ public record TerminalCommand(
     string? ChangeWorkingDirectoryTo = null,
     CancellationToken CancellationToken = default,
     Func<Task>? ContinueWith = null,
-	Func<Task>? BeginWith = null);
+	Func<Task>? BeginWith = null,
+    IOutputParser? OutputParser = null);

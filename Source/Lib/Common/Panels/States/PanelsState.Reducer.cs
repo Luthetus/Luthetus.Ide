@@ -2,13 +2,13 @@ using Fluxor;
 
 namespace Luthetus.Common.RazorLib.Panels.States;
 
-public partial record PanelsState
+public partial record PanelState
 {
     public class Reducer
     {
         [ReducerMethod]
-        public static PanelsState ReduceRegisterPanelAction(
-            PanelsState inState,
+        public static PanelState ReduceRegisterPanelAction(
+            PanelState inState,
             RegisterPanelAction registerPanelAction)
         {
             if (inState.PanelList.Any(x => x.Key == registerPanelAction.Panel.Key))
@@ -20,8 +20,8 @@ public partial record PanelsState
         }
 
         [ReducerMethod]
-        public static PanelsState ReduceDisposePanelAction(
-            PanelsState inState,
+        public static PanelState ReduceDisposePanelAction(
+            PanelState inState,
             DisposePanelAction disposePanelAction)
         {
             var inPanel = inState.PanelList.FirstOrDefault(
@@ -36,8 +36,8 @@ public partial record PanelsState
         }
 		
 		[ReducerMethod]
-        public static PanelsState ReduceRegisterPanelGroupAction(
-            PanelsState inState,
+        public static PanelState ReduceRegisterPanelGroupAction(
+            PanelState inState,
             RegisterPanelGroupAction registerPanelGroupAction)
         {
             if (inState.PanelGroupList.Any(x => x.Key == registerPanelGroupAction.PanelGroup.Key))
@@ -49,8 +49,8 @@ public partial record PanelsState
         }
 
         [ReducerMethod]
-        public static PanelsState ReduceDisposePanelGroupAction(
-            PanelsState inState,
+        public static PanelState ReduceDisposePanelGroupAction(
+            PanelState inState,
             DisposePanelGroupAction disposePanelGroupAction)
         {
             var inPanelGroup = inState.PanelGroupList.FirstOrDefault(
@@ -65,8 +65,8 @@ public partial record PanelsState
         }
 
         [ReducerMethod]
-        public static PanelsState ReduceRegisterPanelTabAction(
-            PanelsState inState,
+        public static PanelState ReduceRegisterPanelTabAction(
+            PanelState inState,
             RegisterPanelTabAction registerPanelTabAction)
         {
             var inPanelGroup = inState.PanelGroupList.FirstOrDefault(
@@ -95,8 +95,8 @@ public partial record PanelsState
         }
 
         [ReducerMethod]
-        public static PanelsState ReduceDisposePanelTabAction(
-            PanelsState inState,
+        public static PanelState ReduceDisposePanelTabAction(
+            PanelState inState,
             DisposePanelTabAction disposePanelTabAction)
         {
             var inPanelGroup = inState.PanelGroupList.FirstOrDefault(
@@ -122,8 +122,8 @@ public partial record PanelsState
         }
 
         [ReducerMethod]
-        public static PanelsState ReduceSetActivePanelTabAction(
-            PanelsState inState,
+        public static PanelState ReduceSetActivePanelTabAction(
+            PanelState inState,
             SetActivePanelTabAction setActivePanelTabAction)
         {
             var inPanelGroup = inState.PanelGroupList.FirstOrDefault(
@@ -141,8 +141,8 @@ public partial record PanelsState
         }
 
         [ReducerMethod]
-        public static PanelsState ReduceSetPanelTabAsActiveByContextRecordKeyAction(
-            PanelsState inState,
+        public static PanelState ReduceSetPanelTabAsActiveByContextRecordKeyAction(
+            PanelState inState,
             SetPanelTabAsActiveByContextRecordKeyAction setPanelTabAsActiveByContextRecordKeyAction)
         {
             var inPanelGroup = inState.PanelGroupList.FirstOrDefault(x => x.TabList
@@ -163,8 +163,8 @@ public partial record PanelsState
         }
 
         [ReducerMethod]
-        public static PanelsState ReduceSetDragEventArgsAction(
-            PanelsState inState,
+        public static PanelState ReduceSetDragEventArgsAction(
+            PanelState inState,
             SetDragEventArgsAction setDragEventArgsAction)
         {
             return inState with

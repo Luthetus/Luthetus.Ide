@@ -6,5 +6,5 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 public partial class ScrollbarSection : ComponentBase
 {
     [CascadingParameter]
-    public RenderBatch RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
 }

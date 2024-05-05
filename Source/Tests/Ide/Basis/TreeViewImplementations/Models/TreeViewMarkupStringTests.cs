@@ -3,13 +3,15 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 
 /// <summary>
 /// <see cref="TreeViewMarkupString"/>
 /// </summary>
-public class TreeViewMarkupStringTests
+public class TreeViewMarkupStringTests : IdeTestBase
 {
     /// <summary>
     /// <see cref="TreeViewMarkupString(MarkupString, ILuthetusIdeComponentRenderers, IFileSystemProvider, IEnvironmentProvider, bool, bool)"/>
@@ -21,7 +23,33 @@ public class TreeViewMarkupStringTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        Test_RegisterServices(out var serviceProvider);
+        Test_CreateFileSystem(serviceProvider);
+
+        var ideComponentRenderers = serviceProvider.GetRequiredService<ILuthetusIdeComponentRenderers>();
+        var commonComponentRenderers = serviceProvider.GetRequiredService<ILuthetusCommonComponentRenderers>();
+        var fileSystemProvider = serviceProvider.GetRequiredService<IFileSystemProvider>();
+        var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
+
+        var markupString = new MarkupString("<div>Abc123</div>");
+
+        var isExpandable = true;
+        var isExpanded = true;
+
+        var treeView = new TreeViewMarkupString(
+            markupString,
+            ideComponentRenderers,
+            fileSystemProvider,
+            environmentProvider,
+            isExpandable,
+            isExpanded);
+
+        Assert.Equal(treeView.Item, markupString);
+        Assert.Equal(treeView.IdeComponentRenderers, ideComponentRenderers);
+        Assert.Equal(treeView.FileSystemProvider, fileSystemProvider);
+        Assert.Equal(treeView.EnvironmentProvider, environmentProvider);
+        Assert.Equal(treeView.IsExpandable, isExpandable);
+        Assert.Equal(treeView.IsExpanded, isExpanded);
     }
 
     /// <summary>

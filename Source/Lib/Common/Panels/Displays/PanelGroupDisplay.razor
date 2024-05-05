@@ -4,9 +4,9 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @{
-    var panelsState = PanelsStateWrap.Value;
+    var panelState = PanelStateWrap.Value;
 
-    var panelGroup = panelsState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
+    var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
     IPanelTab? activePanelTab = null;
 
@@ -48,7 +48,7 @@
             }
         </div>
 
-        @if (PanelsStateWrap.Value.DragEventArgs is not null)
+        @if (PanelStateWrap.Value.DragEventArgs is not null)
         {
             <div class="luth_ide_panel-tab-dropzone luth_ide_panel-tab-dropzone-top"
                  @onmouseup:stopPropagation="true"

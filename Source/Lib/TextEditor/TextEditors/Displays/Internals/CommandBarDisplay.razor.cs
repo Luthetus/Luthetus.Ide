@@ -12,7 +12,7 @@ public partial class CommandBarDisplay : FluxorComponent
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     [CascadingParameter]
-    public RenderBatch RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Func<Task> RestoreFocusToTextEditor { get; set; } = null!;
@@ -50,7 +50,7 @@ public partial class CommandBarDisplay : FluxorComponent
                 nameof(HandleOnKeyDown),
                 nameof(HandleOnKeyDown),
                 TextEditorService.ViewModelApi.WithValueFactory(
-                    RenderBatch.ViewModel!.ViewModelKey,
+                    RenderBatch.ViewModel.ViewModelKey,
                     previousViewModel => previousViewModel with
                     {
                         CommandBarValue = string.Empty,

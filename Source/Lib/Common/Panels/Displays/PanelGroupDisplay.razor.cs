@@ -16,7 +16,7 @@ namespace Luthetus.Common.RazorLib.Panels.Displays;
 public partial class PanelGroupDisplay : FluxorComponent
 {
     [Inject]
-    private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
+    private IState<PanelState> PanelStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -84,9 +84,9 @@ public partial class PanelGroupDisplay : FluxorComponent
 
     private async Task PassAlongSizeIfHiddenAsync()
     {
-        var panelsState = PanelsStateWrap.Value;
+        var panelState = PanelStateWrap.Value;
 
-        var panelGroup = panelsState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
+        var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
         if (panelGroup is not null)
         {
@@ -141,27 +141,27 @@ public partial class PanelGroupDisplay : FluxorComponent
 
     private Task TopDropzoneOnMouseUp(MouseEventArgs mouseEventArgs)
     {
-        var panelsState = PanelsStateWrap.Value;
+        var panelState = PanelStateWrap.Value;
 
-        var panelGroup = panelsState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
+        var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
         if (panelGroup is null)
             return Task.CompletedTask;
 
-        var panelDragEventArgs = panelsState.DragEventArgs;
+        var panelDragEventArgs = panelState.DragEventArgs;
 
         if (panelDragEventArgs is not null)
         {
-            Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
+            Dispatcher.Dispatch(new PanelState.DisposePanelTabAction(
                 panelDragEventArgs.Value.PanelGroup.Key,
                 panelDragEventArgs.Value.PanelTab.Key));
 
-            Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+            Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(
                 panelGroup.Key,
                 panelDragEventArgs.Value.PanelTab,
                 true));
 
-            Dispatcher.Dispatch(new PanelsState.SetDragEventArgsAction(null));
+            Dispatcher.Dispatch(new PanelState.SetDragEventArgsAction(null));
 
             Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
             {
@@ -175,27 +175,27 @@ public partial class PanelGroupDisplay : FluxorComponent
 
     private Task BottomDropzoneOnMouseUp(MouseEventArgs mouseEventArgs)
     {
-        var panelsState = PanelsStateWrap.Value;
+        var panelState = PanelStateWrap.Value;
 
-        var panelGroup = panelsState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
+        var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
         if (panelGroup is null)
             return Task.CompletedTask;
 
-        var panelDragEventArgs = panelsState.DragEventArgs;
+        var panelDragEventArgs = panelState.DragEventArgs;
 
         if (panelDragEventArgs is not null)
         {
-            Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
+            Dispatcher.Dispatch(new PanelState.DisposePanelTabAction(
                 panelDragEventArgs.Value.PanelGroup.Key,
                 panelDragEventArgs.Value.PanelTab.Key));
 
-            Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+            Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(
                 panelGroup.Key,
                 panelDragEventArgs.Value.PanelTab,
                 false));
 
-            Dispatcher.Dispatch(new PanelsState.SetDragEventArgsAction(null));
+            Dispatcher.Dispatch(new PanelState.SetDragEventArgsAction(null));
 
             Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
             {

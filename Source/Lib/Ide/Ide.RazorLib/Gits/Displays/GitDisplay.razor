@@ -1,0 +1,31 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Luthetus.Common.RazorLib.Contexts.Displays
+@using Luthetus.Common.RazorLib.Contexts.Models
+
+<ContextBoundary ContextRecord="ContextFacts.SolutionExplorerContext"
+                 ClassCssString="luth_ide_solution-explorer-display"
+                 StyleCssString="height: 100%">
+
+    @{ var localGitState = GitStateWrap.Value; }
+
+    <div class="luth_ide_section-title">
+        Git
+    </div>
+
+    <div class="luth_ide_section-body">
+        <CascadingValue Value="localGitState">
+            
+            <GitPickGitFolderDisplay/>
+            
+            @if (localGitState.Repo is not null)
+            {
+                <div>
+                    @localGitState.Repo.AbsolutePath.NameNoExtension
+                </div>
+
+                <GitControlsDisplay />
+            }
+        </CascadingValue>
+    </div>
+</ContextBoundary>

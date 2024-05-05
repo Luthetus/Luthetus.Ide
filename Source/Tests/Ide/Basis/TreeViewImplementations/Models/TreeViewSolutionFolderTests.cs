@@ -4,13 +4,16 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 
 /// <summary>
 /// <see cref="TreeViewSolutionFolder"/>
 /// </summary>
-public class TreeViewSolutionFolderTests
+public class TreeViewSolutionFolderTests : IdeTestBase
 {
     /// <summary>
     /// <see cref="TreeViewSolutionFolder(SolutionFolder, ILuthetusIdeComponentRenderers, ILuthetusCommonComponentRenderers, IFileSystemProvider, IEnvironmentProvider, bool, bool)"/>
@@ -23,7 +26,42 @@ public class TreeViewSolutionFolderTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        Test_RegisterServices(out var serviceProvider);
+        Test_CreateFileSystem(serviceProvider);
+
+        var ideComponentRenderers = serviceProvider.GetRequiredService<ILuthetusIdeComponentRenderers>();
+        var commonComponentRenderers = serviceProvider.GetRequiredService<ILuthetusCommonComponentRenderers>();
+        var fileSystemProvider = serviceProvider.GetRequiredService<IFileSystemProvider>();
+        var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
+
+        var dotNetSolutionFolder = new SolutionFolder(
+            "Tests",
+            Guid.NewGuid(),
+            string.Empty,
+            Guid.NewGuid(),
+            new OpenAssociatedGroupToken(TextEditorTextSpan.FabricateTextSpan(string.Empty)),
+            new CloseAssociatedGroupToken(TextEditorTextSpan.FabricateTextSpan(string.Empty)),
+            environmentProvider.AbsolutePathFactory(string.Empty, false));
+
+        var isExpandable = true;
+        var isExpanded = true;
+
+        var treeView = new TreeViewSolutionFolder(
+            dotNetSolutionFolder,
+            ideComponentRenderers,
+            commonComponentRenderers,
+            fileSystemProvider,
+            environmentProvider,
+            isExpandable,
+            isExpanded);
+
+        Assert.Equal(treeView.Item, dotNetSolutionFolder);
+        Assert.Equal(treeView.IdeComponentRenderers, ideComponentRenderers);
+        Assert.Equal(treeView.CommonComponentRenderers, commonComponentRenderers);
+        Assert.Equal(treeView.FileSystemProvider, fileSystemProvider);
+        Assert.Equal(treeView.EnvironmentProvider, environmentProvider);
+        Assert.Equal(treeView.IsExpandable, isExpandable);
+        Assert.Equal(treeView.IsExpanded, isExpanded);
     }
 
     /// <summary>

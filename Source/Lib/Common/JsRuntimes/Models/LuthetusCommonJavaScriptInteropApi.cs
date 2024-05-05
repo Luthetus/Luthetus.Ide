@@ -41,9 +41,9 @@ public class LuthetusCommonJavaScriptInteropApi
             value);
     }
 
-    public ValueTask<object?> LocalStorageGetItem(string key)
+    public ValueTask<string?> LocalStorageGetItem(string key)
     {
-        return _jsRuntime.InvokeAsync<object?>(
+        return _jsRuntime.InvokeAsync<string?>(
             "luthetusCommon.localStorageGetItem",
             key);
     }

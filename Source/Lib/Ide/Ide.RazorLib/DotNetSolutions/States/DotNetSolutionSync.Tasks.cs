@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Runtime.InteropServices;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -113,6 +114,20 @@ public partial class DotNetSolutionSync
         foreach (var project in parser.DotNetProjectList)
         {
             var relativePathFromSolutionFileString = project.RelativePathFromSolutionFileString;
+
+			// Debugging Linux-Ubuntu (2024-04-28)
+            // -----------------------------------
+            // It is believed, that Linux-Ubuntu is not fully working correctly,
+            // due to the directory separator character at the os level being '/',
+            // meanwhile the .NET solution has as its directory separator character '\'.
+            //
+            // Will perform a string.Replace("\\", "/") here. And if it solves the issue,
+            // then some standard way of doing this needs to be made available in the IEnvironmentProvider.
+            //
+            // Okay, this single replacement fixes 99% of the solution explorer issue.
+            // And I say 99% instead of 100% just because I haven't tested every single part of it yet.
+			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				relativePathFromSolutionFileString = relativePathFromSolutionFileString.Replace("\\", "/");
             
             // Solution Folders do not exist on the filesystem. Therefore their absolute path is not guaranteed to be unique
             // One can use the ProjectIdGuid however, when working with a SolutionFolder to make the absolute path unique.
@@ -180,7 +195,7 @@ public partial class DotNetSolutionSync
 
                 var changeDirectoryCommand = new TerminalCommand(
                     Key<TerminalCommand>.NewKey(),
-                    new FormattedCommand(string.Empty, new string[] { }),
+                    new FormattedCommand("cd", new string[] { }),
                     parentDirectory.Value,
                     CancellationToken.None);
 
@@ -193,7 +208,7 @@ public partial class DotNetSolutionSync
 
                 var changeDirectoryCommand = new TerminalCommand(
                     Key<TerminalCommand>.NewKey(),
-                    new FormattedCommand(string.Empty, new string[] { }),
+                    new FormattedCommand("cd", new string[] { }),
                     parentDirectory.Value,
                     CancellationToken.None);
 

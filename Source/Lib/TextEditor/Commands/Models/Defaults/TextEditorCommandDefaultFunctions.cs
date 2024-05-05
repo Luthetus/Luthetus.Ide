@@ -5,8 +5,6 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
-using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
-using Microsoft.JSInterop;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -132,7 +130,7 @@ public class TextEditorCommandDefaultFunctions
                 return Task.CompletedTask;
 
             primaryCursorModifier.SelectionAnchorPositionIndex = 0;
-            primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.DocumentLength;
+            primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.CharCount;
             return Task.CompletedTask;
         };
     }
@@ -657,7 +655,7 @@ public class TextEditorCommandDefaultFunctions
                 if (unmatchedCharacters == 0)
                     break;
 
-                if (positionIndex <= 0 || positionIndex >= modelModifier.DocumentLength)
+                if (positionIndex <= 0 || positionIndex >= modelModifier.CharCount)
                     break;
             }
 

@@ -14,7 +14,7 @@ namespace Luthetus.Ide.Tests.Basis.Commands;
 public class CommandFactoryTests
 {
     /// <summary>
-    /// <see cref="CommandFactory(ITextEditorService, ITreeViewService, IEnvironmentProvider, IState{PanelsState}, IDispatcher, IJSRuntime)"/>
+    /// <see cref="CommandFactory(ITextEditorService, ITreeViewService, IEnvironmentProvider, IState{PanelState}, IDispatcher, IJSRuntime)"/>
     /// <br/>----<br/>
     /// <see cref="CommandFactory.CodeSearchDialog"/>
     /// </summary>

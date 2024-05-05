@@ -7,7 +7,6 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
-using Luthetus.Common.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.CompilerServices.Lang.Css.Css.SyntaxActors;

@@ -9,6 +9,8 @@ public record TextEditorTextSpan(
     ResourceUri ResourceUri,
     string SourceText)
 {
+    private string? _text;
+
     /// <summary>
     /// This constructor is used for text spans where their
     /// <see cref="EndingIndexExclusive"/> is the current position
@@ -28,20 +30,18 @@ public record TextEditorTextSpan(
 
     }
 
+    public int Length => EndingIndexExclusive - StartingIndexInclusive;
+
+    public string GetText()
+    {
+        return _text ??= SourceText.Substring(StartingIndexInclusive, Length);
+    }
+
 #if DEBUG
     /// <summary>This expression bound property is useful because it will evaluate <see cref="GetText"/> immediately upon inspecting the object instance in the debugger.</summary>
     [Obsolete("This property is only meant for when running in 'DEBUG' mode and viewing the debugger. One should invoke the method: GetText() instead.")]
     public string Text => GetText();
 #endif
-
-    public int Length => EndingIndexExclusive - StartingIndexInclusive;
-
-    public string GetText()
-    {
-        return SourceText.Substring(
-            StartingIndexInclusive,
-            Length);
-    }
 
     /// <summary>
     /// Preferably one would never use <see cref="FabricateTextSpan"/>.

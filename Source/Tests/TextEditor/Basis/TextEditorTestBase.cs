@@ -85,7 +85,7 @@ public class TextEditorTestBase
             //
             // This makes it more clear if the source text changes (accidentally or intentionally).
             // If one day this assertion fails, then someone touched the source text.
-            Assert.Equal(0, modelModifier.DocumentLength);
+            Assert.Equal(0, modelModifier.CharCount);
 
             // The file extension should NOT change as a result of inserting content.
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
@@ -224,7 +224,7 @@ public class TextEditorTestBase
             //
             // This makes it more clear if the source text changes (accidentally or intentionally).
             // If one day this assertion fails, then someone touched the source text.
-            Assert.Equal(12, modelModifier.DocumentLength);
+            Assert.Equal(12, modelModifier.CharCount);
 
             // The file extension should NOT change as a result of inserting content.
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);

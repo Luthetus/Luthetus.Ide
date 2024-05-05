@@ -16,7 +16,7 @@ public partial class TextSelectionRow : ComponentBase
     private IJSRuntime JsRuntime { get; set; } = null!;
 
     [CascadingParameter]
-    public RenderBatch RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
     [CascadingParameter(Name = "ProportionalFontMeasurementsContainerElementId")]
     public string ProportionalFontMeasurementsContainerElementId { get; set; } = null!;
 
@@ -35,7 +35,7 @@ public partial class TextSelectionRow : ComponentBase
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!RenderBatch.Options!.UseMonospaceOptimizations)
+        if (!RenderBatch.Options.UseMonospaceOptimizations)
             await GetTextSelectionStyleCssAsync();
 
         await base.OnAfterRenderAsync(firstRender);
@@ -49,12 +49,12 @@ public partial class TextSelectionRow : ComponentBase
             int upperPositionIndexExclusive = UpperPositionIndexExclusive;
             int rowIndex = RowIndex;
 
-            if (rowIndex >= RenderBatch.Model!.LineEndList.Count)
+            if (rowIndex >= RenderBatch.Model.LineEndList.Count)
                 return;
 
             bool stateHasChanged = false;
 
-            var line = RenderBatch.Model!.GetLineInformation(rowIndex);
+            var line = RenderBatch.Model.GetLineInformation(rowIndex);
 
             var selectionStartingColumnIndex = 0;
             var selectionEndingColumnIndex = line.EndPositionIndexExclusive - 1;
@@ -73,7 +73,7 @@ public partial class TextSelectionRow : ComponentBase
                 fullWidthOfRowIsSelected = false;
             }
 
-            var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements;
+            var charMeasurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
 
             var topInPixelsInvariantCulture = (rowIndex * charMeasurements.LineHeight).ToCssValue();
             var top = $"top: {topInPixelsInvariantCulture}px;";
@@ -88,7 +88,7 @@ public partial class TextSelectionRow : ComponentBase
                     selectionStartingColumnIndex,
                     true);
 
-                var textOffsettingCursor = RenderBatch.Model!
+                var textOffsettingCursor = RenderBatch.Model
                     .GetTextOffsettingCursor(selectionStartingCursor)
                     .EscapeHtml();
 
@@ -97,8 +97,8 @@ public partial class TextSelectionRow : ComponentBase
                 var nextSelectionStartingLeftRelativeToParentInPixels = await JsRuntime.GetLuthetusTextEditorApi()
                     .CalculateProportionalLeftOffset(
                         ProportionalFontMeasurementsContainerElementId,
-                        $"luth_te_proportional-font-measurement-parent_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
-                        $"luth_te_proportional-font-measurement-cursor_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
+                        $"luth_te_proportional-font-measurement-parent_{RenderBatch.ViewModel.ViewModelKey.Guid}_selection_{guid}",
+                        $"luth_te_proportional-font-measurement-cursor_{RenderBatch.ViewModel.ViewModelKey.Guid}_selection_{guid}",
                         textOffsettingCursor,
                         true);
 
@@ -123,7 +123,7 @@ public partial class TextSelectionRow : ComponentBase
                     selectionEndingColumnIndex,
                     true);
 
-                var textOffsettingCursor = RenderBatch.Model!
+                var textOffsettingCursor = RenderBatch.Model
                     .GetTextOffsettingCursor(selectionEndingCursor)
                     .EscapeHtml();
 
@@ -132,8 +132,8 @@ public partial class TextSelectionRow : ComponentBase
                 var selectionEndingLeftRelativeToParentInPixels = await JsRuntime.GetLuthetusTextEditorApi()
                     .CalculateProportionalLeftOffset(
                         ProportionalFontMeasurementsContainerElementId,
-                        $"luth_te_proportional-font-measurement-parent_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
-                        $"luth_te_proportional-font-measurement-cursor_{RenderBatch.ViewModel!.ViewModelKey.Guid}_selection_{guid}",
+                        $"luth_te_proportional-font-measurement-parent_{RenderBatch.ViewModel.ViewModelKey.Guid}_selection_{guid}",
+                        $"luth_te_proportional-font-measurement-cursor_{RenderBatch.ViewModel.ViewModelKey.Guid}_selection_{guid}",
                         textOffsettingCursor,
                         true);
 
@@ -150,7 +150,7 @@ public partial class TextSelectionRow : ComponentBase
 
             var widthCssStyleString = "width: ";
 
-            var elementMeasurements = RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements;
+            var elementMeasurements = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements;
 
             var fullWidthValue = elementMeasurements.ScrollWidth;
 

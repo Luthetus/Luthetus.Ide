@@ -19,5 +19,5 @@ public partial class TextEditorModel : ITextEditorModel
 	IList<int> ITextEditorModel.TabKeyPositionList => TabKeyPositionList;
 
     int ITextEditorModel.LineCount => LineCount;
-    int ITextEditorModel.DocumentLength => DocumentLength;
+    int ITextEditorModel.CharCount => DocumentLength;
 }

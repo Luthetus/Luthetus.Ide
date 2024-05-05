@@ -11,7 +11,7 @@ using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewMod
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
-namespace Luthetus.TextEditor.RazorLib.Events;
+namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
 public class OnKeyDown : ITextEditorTask
 {
@@ -50,7 +50,7 @@ public class OnKeyDown : ITextEditorTask
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnKeyDown);
     public Task? WorkProgress { get; }
-    public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
+    public TimeSpan ThrottleTimeSpan => TextEditorEvents.ThrottleDelayDefault;
     public KeyboardEventArgs KeyboardEventArgs { get; }
     public CommandNoType? Command { get; }
 

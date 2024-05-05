@@ -192,13 +192,7 @@ public partial class TestExplorerContextMenu : ComponentBase
             directoryNameForTestDiscovery,
             CancellationToken.None,
             () => Task.CompletedTask,
-			() =>
-			{
-				executionTerminal.ClearStandardOut(
-					treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey);
-
-                return Task.CompletedTask;
-			});
+			() => Task.CompletedTask);
 
         await executionTerminal.EnqueueCommandAsync(dotNetTestByFullyQualifiedNameTerminalCommand);
 	}

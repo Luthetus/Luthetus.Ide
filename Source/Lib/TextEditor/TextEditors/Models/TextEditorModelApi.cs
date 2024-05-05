@@ -117,7 +117,7 @@ public class TextEditorModelApi : ITextEditorModelApi
             if (modelModifier is null)
                 return Task.CompletedTask;
 
-            modelModifier.SetUsingLineEndKind(lineEndKind);
+            modelModifier.SetLineEndKindPreference(lineEndKind);
             return Task.CompletedTask;
         };
     }

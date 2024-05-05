@@ -22,7 +22,7 @@ using Fluxor;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.Events;
+using Luthetus.TextEditor.RazorLib.Events.Models;
 
 namespace Luthetus.Ide.RazorLib.Keymaps.Models.Terminals;
 
@@ -142,7 +142,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 
 										var input = new TextEditorTextSpan(
 											mostRecentWorkingDirectoryText.EndingIndexExclusive,
-											modelModifier.DocumentLength,
+											modelModifier.CharCount,
 											0,
 											modelModifier.ResourceUri,
 											modelModifier.GetAllText());
@@ -164,12 +164,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 
                                         var terminalCommand = new TerminalCommand(
                                             Key<TerminalCommand>.NewKey(),
-                                            formattedCommand,
-											ContinueWith: () =>
-											{
-												terminalResource.Terminal.WriteWorkingDirectory();
-												return Task.CompletedTask;
-											});
+                                            formattedCommand);
 
 										terminalResource.ManualDecorationTextSpanList.Add(terminalResource.TargetFilePathTextSpan);
 

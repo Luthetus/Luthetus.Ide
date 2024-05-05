@@ -27,7 +27,7 @@ public partial class ContextMenu : ComponentBase
     private IServiceProvider ServiceProvider { get; set; } = null!;
 
     [CascadingParameter]
-    public RenderBatch RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
     [CascadingParameter(Name = "SetShouldDisplayMenuAsync")]
     public Func<MenuKind, bool, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
 
@@ -58,16 +58,16 @@ public partial class ContextMenu : ComponentBase
 
     private TextEditorCommandArgs ConstructCommandArgs()
     {
-        var cursorSnapshotsList = new TextEditorCursor[] { RenderBatch.ViewModel!.PrimaryCursor }.ToImmutableArray();
+        var cursorSnapshotsList = new TextEditorCursor[] { RenderBatch.ViewModel.PrimaryCursor }.ToImmutableArray();
         var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsList.First(x => x.IsPrimaryCursor).Selection);
 
         return new TextEditorCommandArgs(
-            RenderBatch.Model!.ResourceUri,
+            RenderBatch.Model.ResourceUri,
             RenderBatch.ViewModel.ViewModelKey,
             hasSelection,
             ClipboardService,
             TextEditorService,
-            RenderBatch.Options!,
+            RenderBatch.Options,
             RenderBatch.Events,
             null,
             null,

@@ -4,7 +4,6 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Microsoft.AspNetCore.Components;
-using System.Reflection;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -14,7 +13,7 @@ public partial class Footer : ComponentBase
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     [CascadingParameter]
-    public RenderBatch RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
 
     private int _previousPositionNumber;
 

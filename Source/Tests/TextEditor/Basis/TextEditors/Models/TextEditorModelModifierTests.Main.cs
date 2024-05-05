@@ -360,7 +360,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
             //
             // This makes it more clear if the source text changes (accidentally or intentionally).
             // If one day this assertion fails, then someone touched the source text.
-            Assert.Equal(9, modelModifier.DocumentLength);
+            Assert.Equal(9, modelModifier.CharCount);
 
             // The file extension should NOT change as a result of clearing the content.
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
@@ -436,7 +436,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
         // Post-assertions
         {
             // Clearing the content of a 'TextEditorModel' should result in a 'DocumentLength' of 0.
-            Assert.Equal(0, modelModifier.DocumentLength);
+            Assert.Equal(0, modelModifier.CharCount);
 
             // The file extension should NOT change as a result of clearing the content.
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
@@ -503,7 +503,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.SetUsingLineEndKind(LineEndKind)"/>
+    /// <see cref="TextEditorModelModifier.SetLineEndKindPreference(LineEndKind)"/>
     /// </summary>
     [Fact]
     public void ModifyUsingRowEndingKind()
@@ -511,7 +511,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
         TestsHelper.ConstructTestTextEditorModel(out var inModel);
         var modelModifier = new TextEditorModelModifier(inModel);
 
-        modelModifier.SetUsingLineEndKind(LineEndKind.CarriageReturn);
+        modelModifier.SetLineEndKindPreference(LineEndKind.CarriageReturn);
 
         var outModel = modelModifier.ToModel();
         Assert.NotEqual(inModel.LineEndKindPreference, outModel.LineEndKindPreference);
@@ -629,7 +629,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
         // Post-assertions
         {
             // The 'SetContent' parameter has a string length of '0'. Therefore, the DocumentLength becomes '0'.
-            Assert.Equal(0, modelModifier.DocumentLength);
+            Assert.Equal(0, modelModifier.CharCount);
 
             // The file extension should NOT change as a result of setting the content.
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
@@ -759,7 +759,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
         {
             // The 'SetContent' parameter has a string of equal length as the initialContent.
             // Therefore, the DocumentLength stays '12'.
-            Assert.Equal(12, modelModifier.DocumentLength);
+            Assert.Equal(12, modelModifier.CharCount);
 
             // The file extension should NOT change as a result of setting the content.
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);
@@ -921,7 +921,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
             //     '\n'   // NewLine is tracked because LineEnd(s) are tracked
             //     '\r\n' // CarriageReturnNewLine is tracked because LineEnd(s) are tracked
             // Therefore, the DocumentLength is '18'.
-            Assert.Equal(18, modelModifier.DocumentLength);
+            Assert.Equal(18, modelModifier.CharCount);
 
             // The file extension should NOT change as a result of setting the content.
             Assert.Equal(ExtensionNoPeriodFacts.TXT, modelModifier.FileExtension);

@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Events;
+namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
 public class OnWheelBatch : ITextEditorTask
 {
@@ -57,17 +57,21 @@ public class OnWheelBatch : ITextEditorTask
         if (horizontalMutateScrollPositionByPixels is not null)
         {
             _events.TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
-                viewModelModifier.ViewModel.BodyElementId,
-                viewModelModifier.ViewModel.GutterElementId,
-                horizontalMutateScrollPositionByPixels.Value);
+                    viewModelModifier.ViewModel.BodyElementId,
+                    viewModelModifier.ViewModel.GutterElementId,
+                    horizontalMutateScrollPositionByPixels.Value)
+                .Invoke(editContext)
+                .ConfigureAwait(false);
         }
 
         if (verticalMutateScrollPositionByPixels is not null)
         {
             _events.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
-                viewModelModifier.ViewModel.BodyElementId,
-                viewModelModifier.ViewModel.GutterElementId,
-                verticalMutateScrollPositionByPixels.Value);
+                    viewModelModifier.ViewModel.BodyElementId,
+                    viewModelModifier.ViewModel.GutterElementId,
+                    verticalMutateScrollPositionByPixels.Value)
+                .Invoke(editContext)
+                .ConfigureAwait(false);
         }
 
         return Task.CompletedTask;

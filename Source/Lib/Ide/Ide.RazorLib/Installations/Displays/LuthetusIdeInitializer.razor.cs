@@ -24,13 +24,14 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Microsoft.JSInterop;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.Ide.RazorLib.Gits.Displays;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
 
 public partial class LuthetusIdeInitializer : ComponentBase
 {
     [Inject]
-    private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
+    private IState<PanelState> PanelStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -115,7 +116,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
     private void InitializeLeftPanelTabs()
     {
-        var leftPanel = PanelFacts.GetTopLeftPanelGroup(PanelsStateWrap.Value);
+        var leftPanel = PanelFacts.GetTopLeftPanelGroup(PanelStateWrap.Value);
         leftPanel.Dispatcher = Dispatcher;
 
         // solutionExplorerPanel
@@ -129,8 +130,22 @@ public partial class LuthetusIdeInitializer : ComponentBase
             Dispatcher,
             DialogService,
             JsRuntime);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(solutionExplorerPanel));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(leftPanel.Key, solutionExplorerPanel, false));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(solutionExplorerPanel));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(leftPanel.Key, solutionExplorerPanel, false));
+
+        // gitPanel
+        var gitPanel = new Panel(
+            "Git Changes",
+            Key<Panel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
+            ContextFacts.GitContext.ContextKey,
+            typeof(GitDisplay),
+            null,
+            Dispatcher,
+            DialogService,
+            JsRuntime);
+        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(gitPanel));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(leftPanel.Key, gitPanel, false));
 
         // folderExplorerPanel
         var folderExplorerPanel = new Panel(
@@ -143,16 +158,16 @@ public partial class LuthetusIdeInitializer : ComponentBase
             Dispatcher,
             DialogService,
             JsRuntime);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(folderExplorerPanel));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(leftPanel.Key, folderExplorerPanel, false));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(folderExplorerPanel));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(leftPanel.Key, folderExplorerPanel, false));
 
         // SetActivePanelTabAction
-        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(leftPanel.Key, solutionExplorerPanel.Key));
+        Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(leftPanel.Key, solutionExplorerPanel.Key));
     }
 
     private void InitializeRightPanelTabs()
     {
-        var rightPanel = PanelFacts.GetTopRightPanelGroup(PanelsStateWrap.Value);
+        var rightPanel = PanelFacts.GetTopRightPanelGroup(PanelStateWrap.Value);
         rightPanel.Dispatcher = Dispatcher;
 
         // compilerServiceExplorerPanel
@@ -166,8 +181,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
             Dispatcher,
             DialogService,
             JsRuntime);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(compilerServiceExplorerPanel));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, compilerServiceExplorerPanel, false));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(compilerServiceExplorerPanel));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(rightPanel.Key, compilerServiceExplorerPanel, false));
 
         // compilerServiceEditorPanel
         var compilerServiceEditorPanel = new Panel(
@@ -180,8 +195,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
             Dispatcher,
             DialogService,
             JsRuntime);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(compilerServiceEditorPanel));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, compilerServiceEditorPanel, false));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(compilerServiceEditorPanel));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(rightPanel.Key, compilerServiceEditorPanel, false));
 
         // TODO: The ITextEditorDiffApi.Calculate method is being commented out as of (2024-02-23). It needs to be re-written...
         // ...so that it uses the text editor's edit context by using ITextEditorService.Post()
@@ -195,13 +210,13 @@ public partial class LuthetusIdeInitializer : ComponentBase
         // {
         //     ContextRecordKey = ContextFacts.GitContext.ContextKey
         // };
-        // Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(gitChangesPanel));
-        // Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, gitChangesPanel, false));
+        // Dispatcher.Dispatch(new PanelState.RegisterPanelAction(gitChangesPanel));
+        // Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(rightPanel.Key, gitChangesPanel, false));
     }
 
     private void InitializeBottomPanelTabs()
     {
-        var bottomPanel = PanelFacts.GetBottomPanelGroup(PanelsStateWrap.Value);
+        var bottomPanel = PanelFacts.GetBottomPanelGroup(PanelStateWrap.Value);
         bottomPanel.Dispatcher = Dispatcher;
 
         // terminalGroupPanel
@@ -215,8 +230,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
             Dispatcher,
             DialogService,
             JsRuntime);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(terminalGroupPanel));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, terminalGroupPanel, false));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(terminalGroupPanel));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, terminalGroupPanel, false));
 
         // nuGetPanel
         var nuGetPanel = new Panel(
@@ -229,8 +244,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
             Dispatcher,
             DialogService,
             JsRuntime);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(nuGetPanel));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, nuGetPanel, false));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(nuGetPanel));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, nuGetPanel, false));
 
         // activeContextsPanel
         var activeContextsPanel = new Panel(
@@ -243,8 +258,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
             Dispatcher,
             DialogService,
             JsRuntime);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(activeContextsPanel));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, activeContextsPanel, false));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(activeContextsPanel));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, activeContextsPanel, false));
 
         // testExplorerPanel
         var testExplorerPanel = new Panel(
@@ -257,10 +272,10 @@ public partial class LuthetusIdeInitializer : ComponentBase
             Dispatcher,
             DialogService,
             JsRuntime);
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelAction(testExplorerPanel));
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, testExplorerPanel, false));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(testExplorerPanel));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, testExplorerPanel, false));
 
         // SetActivePanelTabAction
-        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(bottomPanel.Key, terminalGroupPanel.Key));
+        Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(bottomPanel.Key, terminalGroupPanel.Key));
     }
 }

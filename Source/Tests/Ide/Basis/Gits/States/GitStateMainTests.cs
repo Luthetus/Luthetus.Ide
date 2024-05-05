@@ -14,7 +14,7 @@ public class GitStateMainTests
     /// <see cref="GitState(IAbsolutePath?, ImmutableList{GitFile}, ImmutableList{GitTask})"/>
     /// <br/>----<br/>
     /// <see cref="GitState.GitFolderAbsolutePath"/>
-    /// <see cref="GitState.GitFilesList"/>
+    /// <see cref="GitState.GitFileList"/>
     /// <see cref="GitState.ActiveGitTasks"/>
     /// </summary>
     [Fact]

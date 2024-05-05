@@ -9,6 +9,7 @@
 
         var selectionBoundsInRowIndexUnits = GetSelectionBoundsInRowIndexUnits(selectionBoundsInPositionIndexUnits);
 
+        @* TODO: Unhandled exception. System.InvalidOperationException: Sequence contains no elements (2024-04-28) *@
         var virtualLowerBoundInclusiveRowIndex = RenderBatch.ViewModel!.VirtualizationResult.EntryList.First().Index;
         var virtualUpperBoundExclusiveRowIndex = 1 + RenderBatch.ViewModel.VirtualizationResult.EntryList.Last().Index;
 

@@ -35,9 +35,9 @@ public record PanelGroup(
 			return Task.CompletedTask;
 
 		if (GetIsActive(tab))
-			Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(Key, Key<Panel>.Empty));
+			Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(Key, Key<Panel>.Empty));
 		else
-			Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(Key, panelTab.Key));
+			Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(Key, panelTab.Key));
 		
 		return Task.CompletedTask;
 	}
@@ -52,7 +52,7 @@ public record PanelGroup(
 		if (tab is not IPanelTab panelTab)
 			return Task.CompletedTask;
 
-		Dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(Key, panelTab.Key));
+		Dispatcher.Dispatch(new PanelState.DisposePanelTabAction(Key, panelTab.Key));
 		return Task.CompletedTask;
 	}
 

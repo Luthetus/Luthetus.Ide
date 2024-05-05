@@ -58,7 +58,11 @@ public partial class TestExplorerSync
 					{
 						try
 						{
-							var output = executionTerminal.ReadStandardOut(treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey);
+                            var success = executionTerminal.TryGetTerminalCommandTextSpan(
+								treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey,
+								out var terminalCommandTextSpan);
+
+                            var output = terminalCommandTextSpan?.GetText();
 							if (output is null)
 								return;
 
@@ -100,9 +104,12 @@ public partial class TestExplorerSync
 							throw;
 						}
 					},
-                    () => {
-                        executionTerminal.ClearStandardOut(
-							treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey);
+                    () =>
+					{
+                        // Should the 'ClearStandardOut(...)' logic still be here? (2024-04-28)
+                        //
+                        //executionTerminal.ClearStandardOut(
+                        //    treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey);
 
                         return Task.CompletedTask;
                     });

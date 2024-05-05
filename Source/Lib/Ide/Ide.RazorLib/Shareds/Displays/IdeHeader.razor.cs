@@ -31,7 +31,7 @@ namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 public partial class IdeHeader : ComponentBase
 {
     [Inject]
-    private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
+    private IState<PanelState> PanelStateWrap { get; set; } = null!;
 	[Inject]
     private IState<DialogState> DialogStateWrap { get; set; } = null!;
 	[Inject]
@@ -254,10 +254,10 @@ public partial class IdeHeader : ComponentBase
 	private void InitializeMenuView()
     {
         var menuOptionsList = new List<MenuOptionRecord>();
-		var panelsState = PanelsStateWrap.Value;
+		var panelState = PanelStateWrap.Value;
 		var dialogState = DialogStateWrap.Value;
 
-		foreach (var panel in panelsState.PanelList)
+		foreach (var panel in panelState.PanelList)
 		{
             var menuOptionPanel = new MenuOptionRecord(
 				panel.Title,
@@ -268,7 +268,7 @@ public partial class IdeHeader : ComponentBase
 
 					if (panelGroup is not null)
 					{
-						Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(panelGroup.Key, panel.Key));
+						Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(panelGroup.Key, panel.Key));
 					}
 					else
 					{
@@ -278,8 +278,8 @@ public partial class IdeHeader : ComponentBase
 						//}
 						//else
 						{
-							Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, panel, true));
-							Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, panel.Key));
+							Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, panel, true));
+							Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, panel.Key));
 						}
 					}
 

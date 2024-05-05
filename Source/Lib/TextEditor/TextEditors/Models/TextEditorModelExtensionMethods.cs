@@ -89,6 +89,9 @@ public static class TextEditorModelExtensionMethods
         return tabs.Count();
     }
 
+    /// <summary>
+    /// Implementations of this method are expected to have caching.
+    /// </summary>
     public static string GetAllText(this ITextEditorModel model)
     {
         return model.AllText;
@@ -131,7 +134,7 @@ public static class TextEditorModelExtensionMethods
     {
         model.AssertPositionIndex(positionIndex);
 
-        if (positionIndex == model.DocumentLength)
+        if (positionIndex == model.CharCount)
             return ParserFacts.END_OF_FILE;
 
         return model.RichCharacterList[positionIndex].Value;
@@ -162,7 +165,7 @@ public static class TextEditorModelExtensionMethods
 
         if (lastLineIndexExclusive > model.LineCount - 1)
         {
-            endPositionIndexExclusive = model.DocumentLength;
+            endPositionIndexExclusive = model.CharCount;
         }
         else
         {
@@ -443,7 +446,7 @@ public static class TextEditorModelExtensionMethods
     {
         model.AssertPositionIndex(positionIndex);
 
-        if (positionIndex == model.DocumentLength)
+        if (positionIndex == model.CharCount)
             return CharacterKind.Bad;
 
         return CharacterKindHelper.CharToCharacterKind(model.RichCharacterList[positionIndex].Value);
@@ -568,8 +571,8 @@ public static class TextEditorModelExtensionMethods
             throw new LuthetusTextEditorException($"'{nameof(positionIndex)}={positionIndex}' < 0");
         
         // NOTE: model.DocumentLength is a valid position for the cursor to be at.
-        if (positionIndex > model.DocumentLength)
-            throw new LuthetusTextEditorException($"'{nameof(positionIndex)}={positionIndex}' > {nameof(model)}.{nameof(model.DocumentLength)}");
+        if (positionIndex > model.CharCount)
+            throw new LuthetusTextEditorException($"'{nameof(positionIndex)}={positionIndex}' > {nameof(model)}.{nameof(model.CharCount)}");
     }
     
     public static void AssertCount(this ITextEditorModel model, int count)

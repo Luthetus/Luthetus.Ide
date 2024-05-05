@@ -3,10 +3,18 @@
 @using Luthetus.TextEditor.RazorLib.Options.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 @{
     var renderBatch = _storedRenderBatch;
+    
+    // Do not use <CascadingValue Value="renderBatchValidated">...</CascadingValue>
+    // at the top level in order to D.R.Y the code.
+    //
+    // If at any point the renderBatchValidated is null, checking after the fact is not sufficient.
+    // The cascading parameter could change out from under a child component, and cause some confusing exceptions.
+    var renderBatchValidated = renderBatch.IsValid ? new TextEditorRenderBatchValidated(renderBatch) : null;
 
     var contextBoundaryStyle = $"{renderBatch.FontSizeInPixelsCssStyle} {renderBatch.FontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
     var contextBoundaryClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
@@ -16,50 +24,49 @@
                  ClassCssString="@contextBoundaryClass"
                  StyleCssString="@contextBoundaryStyle">
 
-    @if (renderBatch.IsValid && !renderBatch.Options!.UseMonospaceOptimizations)
+    @if (renderBatchValidated is not null && !renderBatch.Options!.UseMonospaceOptimizations)
     {
         // TODO: Move this inside MeasureCharacterWidthAndRowHeight.razor
-
         <div style="display: flex; position: absolute; visibility: hidden;"
              id="@ProportionalFontMeasurementsContainerElementId">
         </div>
     }
 
-    <CascadingValue Value="renderBatch">
-        <CascadingValue Name="ProportionalFontMeasurementsContainerElementId" Value="ProportionalFontMeasurementsContainerElementId">
-
-            @if (renderBatch.IsValid && ViewModelDisplayOptions.IncludeHeaderHelperComponent)
-            {
+    <CascadingValue Name="ProportionalFontMeasurementsContainerElementId" Value="ProportionalFontMeasurementsContainerElementId">
+        @if (renderBatchValidated is not null && ViewModelDisplayOptions.IncludeHeaderHelperComponent)
+        {
+            <CascadingValue Value="renderBatchValidated">
                 <Header HeaderButtonKinds="ViewModelDisplayOptions.HeaderButtonKinds" />
-            }
+            </CascadingValue>
+        }
 
-            <div @onclick="FocusTextEditorAsync"
-                 @onkeydown="ReceiveOnKeyDown"
-                 @onkeydown:preventDefault="true"
-                 @oncontextmenu="ReceiveOnContextMenuAsync"
-                 @oncontextmenu:preventDefault="true"
-                 @onmousedown="ReceiveContentOnMouseDown"
-                 @onmousemove="ReceiveContentOnMouseMove"
-                 @onmouseout="ReceiveContentOnMouseOut"
-                 @ondblclick="ReceiveOnDoubleClick"
-                 @onwheel="ReceiveOnWheel"
-                 @ontouchstart="ReceiveOnTouchStartAsync"
-                 @ontouchmove="ReceiveOnTouchMoveAsync"
-                 @ontouchend="ClearTouch"
-                 @ontouchcancel="ClearTouch"
-                 @ontouchleave="ClearTouch"
-                 id="@ContentElementId"
-                 style="@(renderBatch.HeightCssStyle) @ViewModelDisplayOptions.TextEditorStyleCssString"
-                 class="luth_te_text-editor luth_unselectable @ViewModelDisplayOptions.TextEditorClassCssString"
-                 tabindex="-1">
+        <div @onclick="FocusTextEditorAsync"
+             @onkeydown="ReceiveOnKeyDown"
+             @onkeydown:preventDefault="true"
+             @oncontextmenu="ReceiveOnContextMenuAsync"
+             @oncontextmenu:preventDefault="true"
+             @onmousedown="ReceiveContentOnMouseDown"
+             @onmousemove="ReceiveContentOnMouseMove"
+             @onmouseout="ReceiveContentOnMouseOut"
+             @ondblclick="ReceiveOnDoubleClick"
+             @onwheel="ReceiveOnWheel"
+             @ontouchstart="ReceiveOnTouchStartAsync"
+             @ontouchmove="ReceiveOnTouchMoveAsync"
+             @ontouchend="ClearTouch"
+             @ontouchcancel="ClearTouch"
+             @ontouchleave="ClearTouch"
+             id="@ContentElementId"
+             style="@(renderBatch.HeightCssStyle) @ViewModelDisplayOptions.TextEditorStyleCssString"
+             class="luth_te_text-editor luth_unselectable @ViewModelDisplayOptions.TextEditorClassCssString"
+             tabindex="-1">
 
-                <MeasureCharacterWidthAndRowHeight @ref="_measureCharacterWidthAndRowHeightComponent"
-                                                   HtmlElementId="@MeasureCharacterWidthAndRowHeightElementId" />
+            <MeasureCharacterWidthAndRowHeight @ref="_measureCharacterWidthAndRowHeightComponent"
+                                               HtmlElementId="@MeasureCharacterWidthAndRowHeightElementId" />
 
-                @if (renderBatch.IsValid)
-                {
+            @if (renderBatchValidated is not null)
+            {
+                <CascadingValue Value="renderBatchValidated">
                     <CascadingValue Value="_events.TooltipViewModel">
-
                         @if (ViewModelDisplayOptions.IncludeGutterComponent)
                         {
                             <GutterSection />
@@ -71,34 +78,35 @@
                                      IncludeContextMenuHelperComponent="ViewModelDisplayOptions.IncludeContextMenuHelperComponent"
                                      AutoCompleteMenuRenderFragmentOverride="ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride" />
 
-                        @if (renderBatch.ViewModel!.ShowCommandBar)
+                        @if (renderBatchValidated.ViewModel.ShowCommandBar)
                         {
                             <CommandBarDisplay RestoreFocusToTextEditor="FocusTextEditorAsync" />
                         }
                     </CascadingValue>
-                }
-                else
-                {
-                    if (renderBatch.Model is null)
-                    {
-                        <div>The @nameof(TextEditorModel) was null</div>
-                    }
-                    else if (renderBatch.ViewModel is null)
-                    {
-                        <div>The @nameof(TextEditorViewModel) was null</div>
-                    }
-                    else if (renderBatch.Options is null)
-                    {
-                        <div>The @nameof(TextEditorOptions) was null</div>
-                    }
-                }
-            </div>
-
-            @if (renderBatch.IsValid && ViewModelDisplayOptions.IncludeFooterHelperComponent)
-            {
-                <Footer/>
+                </CascadingValue>
             }
+            else
+            {
+                if (renderBatch.Model is null)
+                {
+                    <div>The @nameof(TextEditorModel) was null</div>
+                }
+                else if (renderBatch.ViewModel is null)
+                {
+                    <div>The @nameof(TextEditorViewModel) was null</div>
+                }
+                else if (renderBatch.Options is null)
+                {
+                    <div>The @nameof(TextEditorOptions) was null</div>
+                }
+            }
+        </div>
 
-        </CascadingValue>
+        @if (renderBatchValidated is not null && ViewModelDisplayOptions.IncludeFooterHelperComponent)
+        {
+            <CascadingValue Value="renderBatchValidated">
+                <Footer />
+            </CascadingValue>
+        }
     </CascadingValue>
 </ContextBoundary>
