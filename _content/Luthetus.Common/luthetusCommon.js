@@ -78,7 +78,25 @@
                 }
             });
         } catch (e) {
-            return "";
+            // Debugging Linux-Ubuntu (2024-04-28)
+            // -----------------------------------
+            // Reading clipboard is not working.
+            //
+            // Fixed with the following inner-try/catch block.
+            //
+            // This fix upsets me. Seemingly the permission
+            // "clipboard-read" doesn't exist for some user-agents
+            // But so long as you don't check for permission it lets you read
+            // the clipboard?
+            try {
+                return navigator.clipboard
+                    .readText()
+                    .then((clipText) => {
+                        return clipText;
+                    });
+            } catch (innerException) {
+                return "";
+            }
         }
     },
     setClipboard: function (value) {

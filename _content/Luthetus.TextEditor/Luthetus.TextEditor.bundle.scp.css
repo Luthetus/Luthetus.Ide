@@ -60,6 +60,10 @@
     cursor: default;
     background-color: var(--luth_te_scrollbar-background-color);
 }
+/* _content/Luthetus.TextEditor/TextEditors/Displays/Internals/ReadOnlyTextEditorViewModelDisplay.razor.rz.scp.css */
+.luth_te_readonly-text-editor[b-kwjhevxhpq] {
+    height: 100%;
+}
 /* _content/Luthetus.TextEditor/TextEditors/Displays/Internals/SymbolDisplay.razor.rz.scp.css */
 /* _content/Luthetus.TextEditor/TextEditors/Displays/Internals/WidgetInlineLayerDisplay.razor.rz.scp.css */
 .luth_te_widget-layer[b-39ig7it9nj] {
