@@ -16,7 +16,6 @@ using Luthetus.Ide.RazorLib.CodeSearches.States;
 using static Luthetus.Ide.RazorLib.DotNetSolutions.States.DotNetSolutionState;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Common.RazorLib.Notifications.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 

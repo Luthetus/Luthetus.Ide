@@ -1,6 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Events;
-
-namespace Luthetus.TextEditor.Tests.Basis.Events;
+﻿namespace Luthetus.TextEditor.Tests.Basis.Events;
 
 /// <summary>
 /// <see cref="BatchScrollEvents"/>

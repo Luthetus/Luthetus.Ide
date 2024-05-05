@@ -9,7 +9,6 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.Gits.Displays;
 using Luthetus.Ide.RazorLib.Gits.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
-using System.Reactive;
 
 namespace Luthetus.Ide.RazorLib.Gits.Models;
 

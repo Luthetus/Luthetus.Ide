@@ -7,11 +7,7 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
-using Luthetus.Ide.RazorLib.CommandLines.Models;
-using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using System.Text;
 using Luthetus.Ide.RazorLib.Gits.States;
 
 namespace Luthetus.Ide.RazorLib.Gits.Displays;

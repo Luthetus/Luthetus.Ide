@@ -6,7 +6,6 @@ using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 

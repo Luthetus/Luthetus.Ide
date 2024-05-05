@@ -4,7 +4,6 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.TestExplorers.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;

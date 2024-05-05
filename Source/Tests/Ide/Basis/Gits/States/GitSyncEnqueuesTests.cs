@@ -1,7 +1,4 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Ide.RazorLib.Gits.States;
-
-namespace Luthetus.Ide.Tests.Basis.Gits.States;
+﻿namespace Luthetus.Ide.Tests.Basis.Gits.States;
 
 /// <summary>
 /// <see cref="GitSync"/>

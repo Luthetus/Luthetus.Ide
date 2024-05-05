@@ -6,7 +6,6 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using System.Collections.Generic;
 
 namespace Luthetus.Ide.RazorLib.Events.Models;
 
