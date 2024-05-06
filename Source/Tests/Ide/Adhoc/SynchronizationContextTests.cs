@@ -362,7 +362,7 @@ public class SynchronizationContextTests
     }
 
     /// <summary>
-    /// 
+    /// Test that this PR doesn't run a github action
     /// </summary>
     [Fact]
     public void Parallel_Async()
