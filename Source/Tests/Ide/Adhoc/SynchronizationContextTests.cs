@@ -20,6 +20,7 @@ namespace Luthetus.Ide.Tests.Adhoc;
 ///     -.NET SynchronizationContext
 ///     -.NET HostedService
 ///     -.NET BackgroundService
+///     -ConfigureAwait(false)
 ///
 /// But, I think the reality is that I don't have clue what I'm doing.
 /// 
@@ -262,16 +263,109 @@ public class SynchronizationContextTests
     ///          -Furthermore, what is a processor, is this the correct word?
     /// </summary>
     [Fact]
-    public async Task Concurrency()
+    public async Task Concurrency_WhenAll()
     {
-        
+        var delayOne = Task.Delay(1_500);
+        var delayTwo = Task.Delay(1_500);
+
+        // The idea here is to await two 'Task.Delay'(s)
+        // and see that the duration of this test was less than
+        // the sum of delayOne and delayTwo.
+        await Task.WhenAll(new[] { delayOne, delayTwo });
+
+        // But, is this even concurrency?
+        // This unit test seems runnable as either concurrently,
+        // or in parallel, and that both are equivalent
+        // from the perspective of a user.
+        //
+        // How do I know if this test gets ran concurrently or in parallel?
     }
-    
+
+    [Fact]
+    public async Task Concurrency_OneAtATime()
+    {
+        // The idea here is to await two 'Task.Delay'(s)
+        // and see that the duration of this test is greater than or equal to
+        // the sum of delayOne and delayTwo.
+        await Task.Delay(1_500);
+        await Task.Delay(1_500);
+
+        // I'm getting 2 seconds for both of these tests?
+        // Presumably because the 'var delayOne = Task.Delay(...)'
+        // starts the delay,
+        // I need to instead move the await to the same line
+        // where the variables are.
+        //
+        // After moving the await to be done immediately,
+        // I'm getting 1.5sec vs 3sec when using a 1,500ms delay
+        // with both invocations.
+    }
+
+    // https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.parallel
+    class Test
+    {
+        static int N = 1000;
+
+        static void TestMethod()
+        {
+            // Using a named method.
+            Parallel.For(0, N, Method2);
+
+            // Using an anonymous method.
+            Parallel.For(0, N, delegate (int i)
+            {
+                // Do Work.
+            });
+
+            // Using a lambda expression.
+            Parallel.For(0, N, i =>
+            {
+                // Do Work.
+            });
+        }
+
+        static void Method2(int i)
+        {
+            // Do work.
+        }
+    }
+
     /// <summary>
     /// 
     /// </summary>
     [Fact]
-    public void Parallel()
+    public void Parallel_Sync()
+    {
+        var lockSecondsWaited = new object();
+        var expectedSecondsWaited = 10;
+        var actualSecondsWaited = 0;
+
+        var parallelLoopResult = Parallel.For(0, expectedSecondsWaited, iteration =>
+        {
+            // I tried 100 seconds, the actualSecondsWaited was 88,
+            // but I suspect that some 'thread safe' logic is needed
+            // when incrementing the 'actualSecondsWaited'.
+            //
+            // After adding 'thread safety' to the incrementation, the actualSecondsWaited was 100,
+            // and the total time was 16.9 sec. I will lower the expectedSecondsWaited, because at 100 it takes a while.
+            Task.Delay(1_000)
+                .ContinueWith(x =>
+                { 
+                    lock (lockSecondsWaited)
+                    {
+                        actualSecondsWaited++;
+                    }
+                }).Wait();
+        });
+
+        Assert.Equal(expectedSecondsWaited, actualSecondsWaited);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [Fact]
+    public void Parallel_Async()
     {
 
     }
