@@ -22,20 +22,20 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
     private readonly ITextEditorService _textEditorService;
     private readonly LuthetusTextEditorConfig _textEditorConfig;
     private readonly IStorageService _storageService;
-    private readonly LuthetusCommonBackgroundTaskServiceApi _commonBackgroundTaskServiceApi;
+    private readonly LuthetusCommonBackgroundTaskApi _commonBackgroundTaskApi;
     private readonly IDispatcher _dispatcher;
 
     public TextEditorOptionsApi(
         ITextEditorService textEditorService,
         LuthetusTextEditorConfig textEditorConfig,
         IStorageService storageService,
-        LuthetusCommonBackgroundTaskServiceApi commonBackgroundTaskServiceApi,
+        LuthetusCommonBackgroundTaskApi commonBackgroundTaskApi,
         IDispatcher dispatcher)
     {
         _textEditorService = textEditorService;
         _textEditorConfig = textEditorConfig;
         _storageService = storageService;
-        _commonBackgroundTaskServiceApi = commonBackgroundTaskServiceApi;
+        _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _dispatcher = dispatcher;
     }
 
@@ -178,7 +178,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
     public Task WriteToStorage()
     {
-        return _commonBackgroundTaskServiceApi.WriteToLocalStorage(
+        return _commonBackgroundTaskApi.Storage.WriteToLocalStorage(
             _storageService,
             _textEditorService.StorageKey,
             new TextEditorOptionsJsonDto(_textEditorService.OptionsStateWrap.Value.Options));

@@ -16,6 +16,7 @@ using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 
@@ -34,7 +35,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
-    private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
+    private LuthetusIdeBackgroundTaskApi LuthetusIdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private InputFileSync InputFileSync { get; set; } = null!;
 
@@ -128,7 +129,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         solutionAbsolutePathString,
                         false);
 
-                    await DotNetSolutionSync.SetDotNetSolution(solutionAbsolutePath);
+                    await LuthetusIdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
                 });
 
             var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
@@ -170,7 +171,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             solutionAbsolutePathString,
             false);
 
-        await DotNetSolutionSync.SetDotNetSolution(solutionAbsolutePath);
+        await LuthetusIdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
     }
 
     public const string HackForWebsite_NEW_SOLUTION_TEMPLATE = @"

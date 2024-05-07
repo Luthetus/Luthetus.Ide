@@ -30,6 +30,7 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 
@@ -48,7 +49,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
+    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private InputFileSync InputFileSync { get; set; } = null!;
     [Inject]
@@ -301,7 +302,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 Dispatcher,
                 async () =>
                 {
-                    await DotNetSolutionSync.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
+                    await IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
                 }),
             new MenuOptionRecord(
                 "Set as Startup Project",
@@ -318,7 +319,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 Dispatcher,
                 async () =>
                 {
-                    await DotNetSolutionSync.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
+                    await IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
                 }),
         };
     }
@@ -443,7 +444,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     CancellationToken.None,
                     async () =>
                     {
-                        await DotNetSolutionSync.SetDotNetSolution(dotNetSolutionModel.NamespacePath.AbsolutePath);
+                        await IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(dotNetSolutionModel.NamespacePath.AbsolutePath);
                     });
 
                 var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];

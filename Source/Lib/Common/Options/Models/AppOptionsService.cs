@@ -14,22 +14,23 @@ public class AppOptionsService : IAppOptionsService
 {
     private readonly IDispatcher _dispatcher;
     private readonly IStorageService _storageService;
+    private readonly LuthetusCommonBackgroundTaskApi _commonBackgroundTaskApi;
     private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly LuthetusCommonBackgroundTaskServiceApi _commonBackgroundTaskServiceApi;
 
     public AppOptionsService(
         IState<AppOptionsState> appOptionsStateWrap,
         IState<ThemeState> themeStateWrap,
         IDispatcher dispatcher,
         IStorageService storageService,
+        LuthetusCommonBackgroundTaskApi commonBackgroundTaskApi,
         IBackgroundTaskService backgroundTaskService)
     {
         AppOptionsStateWrap = appOptionsStateWrap;
         ThemeStateWrap = themeStateWrap;
         _dispatcher = dispatcher;
         _storageService = storageService;
+        _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _backgroundTaskService = backgroundTaskService;
-        _commonBackgroundTaskServiceApi = _backgroundTaskService.GetCommonApi();
     }
 
     public IState<AppOptionsState> AppOptionsStateWrap { get; }
@@ -181,7 +182,7 @@ public class AppOptionsService : IAppOptionsService
 
     public Task WriteToStorage()
     {
-        return _commonBackgroundTaskServiceApi.WriteToLocalStorage(
+        return _commonBackgroundTaskApi.Storage.WriteToLocalStorage(
             _storageService,
             StorageKey,
             new CommonOptionsJsonDto(AppOptionsStateWrap.Value.Options));

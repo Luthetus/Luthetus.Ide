@@ -51,7 +51,8 @@ public static class ServiceCollectionExtensions
             .AddSingleton(hostingInformation)
             .AddSingleton(hostingInformation.BackgroundTaskService)
             .AddSingleton<ILuthetusCommonComponentRenderers>(_ => _commonRendererTypes)
-            .AddCommonFactories(hostingInformation, commonConfig);
+            .AddCommonFactories(hostingInformation, commonConfig)
+            .AddScoped<LuthetusCommonBackgroundTaskApi>();
 
         return services;
     }

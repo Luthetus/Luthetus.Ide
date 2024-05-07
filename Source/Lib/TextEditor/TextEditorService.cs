@@ -40,7 +40,7 @@ public partial class TextEditorService : ITextEditorService
     private readonly IStorageService _storageService;
     // TODO: Perhaps do not reference IJSRuntime but instead wrap it in a 'IUiProvider' or something like that. The 'IUiProvider' would then expose methods that allow the TextEditorViewModel to adjust the scrollbars. 
     private readonly IJSRuntime _jsRuntime;
-    private readonly LuthetusCommonBackgroundTaskServiceApi _commonBackgroundTaskServiceApi;
+    private readonly LuthetusCommonBackgroundTaskApi _commonBackgroundTaskApi;
 
     public TextEditorService(
         IState<TextEditorModelState> modelStateWrap,
@@ -55,7 +55,7 @@ public partial class TextEditorService : ITextEditorService
         ITextEditorRegistryWrap textEditorRegistryWrap,
         IStorageService storageService,
         IJSRuntime jsRuntime,
-        LuthetusCommonBackgroundTaskServiceApi commonBackgroundTaskServiceApi,
+        LuthetusCommonBackgroundTaskApi commonBackgroundTaskApi,
         IDispatcher dispatcher,
         IDialogService dialogService)
     {
@@ -72,7 +72,7 @@ public partial class TextEditorService : ITextEditorService
         _textEditorRegistryWrap = textEditorRegistryWrap;
         _storageService = storageService;
         _jsRuntime = jsRuntime;
-        _commonBackgroundTaskServiceApi = commonBackgroundTaskServiceApi;
+        _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _dispatcher = dispatcher;
         _dialogService = dialogService;
 
@@ -80,7 +80,7 @@ public partial class TextEditorService : ITextEditorService
         ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, ViewModelStateWrap, ModelStateWrap, _jsRuntime, _dispatcher, _dialogService);
         GroupApi = new TextEditorGroupApi(this, _dispatcher, _dialogService, _jsRuntime);
         DiffApi = new TextEditorDiffApi(this, _dispatcher);
-        OptionsApi = new TextEditorOptionsApi(this, _textEditorOptions, _storageService, commonBackgroundTaskServiceApi, _dispatcher);
+        OptionsApi = new TextEditorOptionsApi(this, _textEditorOptions, _storageService, _commonBackgroundTaskApi, _dispatcher);
     }
 
     public IState<TextEditorModelState> ModelStateWrap { get; }

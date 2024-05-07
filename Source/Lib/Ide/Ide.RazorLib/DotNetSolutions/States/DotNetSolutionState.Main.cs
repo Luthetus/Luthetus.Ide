@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
@@ -34,9 +35,9 @@ public partial record DotNetSolutionState(
     public DotNetSolutionModel? DotNetSolutionModel => DotNetSolutionsList.FirstOrDefault(x =>
         x.Key == DotNetSolutionModelKey);
 
-    public static async Task ShowInputFile(DotNetSolutionSync sync)
+    public static async Task ShowInputFile(LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi)
     {
-        await sync.InputFileSync.RequestInputFileStateForm("Solution Explorer",
+        await ideBackgroundTaskApi.InputFile_aaa.RequestInputFileStateForm("Solution Explorer",
             async absolutePath =>
             {
                 if (absolutePath is not null)
