@@ -78,9 +78,9 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private string GetIsActiveCssClassString(CSharpProjectFormPanelKind panelKind) =>
         _viewModel.ActivePanelKind == panelKind ? "luth_active" : string.Empty;
 
-    private void RequestInputFileForParentDirectory(string message)
+    private async Task RequestInputFileForParentDirectory(string message)
     {
-        InputFileSync.RequestInputFileStateForm(message,
+        await InputFileSync.RequestInputFileStateForm(message,
             async absolutePath =>
             {
                 if (absolutePath is null)
@@ -245,11 +245,10 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                         immutableView.FormattedAddExistingProjectToSolutionCommand,
                         immutableView.ParentDirectoryNameValue,
                         immutableView.NewCSharpProjectCancellationTokenSource.Token,
-                        () =>
+                        async () =>
                         {
                             Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
-                            DotNetSolutionSync.SetDotNetSolution(immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath);
-                            return Task.CompletedTask;
+                            await DotNetSolutionSync.SetDotNetSolution(immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath);
                         });
 
                     await generalTerminal.EnqueueCommandAsync(addExistingProjectToSolutionCommand);

@@ -173,7 +173,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                         async () =>
                         {
                             await commandArgs.RestoreFocusToTreeView.Invoke();
-                            BackgroundTaskService.Enqueue(
+                            await BackgroundTaskService.EnqueueAsync(
                                 Key<BackgroundTask>.NewKey(),
                                 ContinuousBackgroundTaskWorker.GetQueueKey(),
                                 "SolutionExplorer_TreeView_MultiSelect_DeleteFiles",
@@ -299,10 +299,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 treeViewModel,
                 TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
                 Dispatcher,
-                () =>
+                async () =>
                 {
-                    DotNetSolutionSync.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
-                    return Task.CompletedTask;
+                    await DotNetSolutionSync.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
                 }),
             new MenuOptionRecord(
                 "Set as Startup Project",
@@ -317,10 +316,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 treeViewModel,
                 TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
                 Dispatcher,
-                () =>
+                async () =>
                 {
-                    DotNetSolutionSync.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
-                    return Task.CompletedTask;
+                    await DotNetSolutionSync.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
                 }),
         };
     }
@@ -428,7 +426,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
     private Task AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
     {
-        InputFileSync.RequestInputFileStateForm("Existing C# Project to add to solution",
+        return InputFileSync.RequestInputFileStateForm("Existing C# Project to add to solution",
             async absolutePath =>
             {
                 if (absolutePath is null)
@@ -443,10 +441,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     localFormattedAddExistingProjectToSolutionCommand,
                     null,
                     CancellationToken.None,
-                    () =>
+                    async () =>
                     {
-                        DotNetSolutionSync.SetDotNetSolution(dotNetSolutionModel.NamespacePath.AbsolutePath);
-                        return Task.CompletedTask;
+                        await DotNetSolutionSync.SetDotNetSolution(dotNetSolutionModel.NamespacePath.AbsolutePath);
                     });
 
                 var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
@@ -465,8 +462,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     "C# Project",
                     absolutePath => absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
             }.ToImmutableArray());
-
-        return Task.CompletedTask;
     }
 
     private Task OpenSolutionEditorDialog(DotNetSolutionModel dotNetSolutionModel)

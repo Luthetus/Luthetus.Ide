@@ -5,9 +5,9 @@ namespace Luthetus.Ide.RazorLib.LocalStorages.Models;
 
 public partial class LocalStorageSync
 {
-    public void LocalStorageSetItem(string key, string value)
+    public Task LocalStorageSetItem(string key, string value)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "LocalStorage SetItem",
             async () => await LocalStorageSetItemAsync(key, value));
     }

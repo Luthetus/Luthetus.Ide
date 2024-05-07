@@ -5,9 +5,9 @@ namespace Luthetus.Ide.RazorLib.TestExplorers.States;
 
 public partial class TestExplorerSync
 {
-    public void DotNetSolutionStateWrap_StateChanged()
+    public Task DotNetSolutionStateWrap_StateChanged()
     {
-        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Refresh TestExplorer",
             async () => await DotNetSolutionStateWrap_StateChangedAsync());
     }

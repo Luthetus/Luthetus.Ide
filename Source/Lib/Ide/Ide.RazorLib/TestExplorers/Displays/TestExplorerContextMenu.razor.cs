@@ -75,19 +75,17 @@ public partial class TestExplorerContextMenu : ComponentBase
 				var menuOptionRecord = new MenuOptionRecord(
 					$"Run: {treeViewStringFragment.Item.Value}",
 					MenuOptionKind.Other,
-					OnClickFunc: () => 
+					OnClickFunc: async () => 
 					{
 						if (treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory is not null)
 						{
-                            BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), BlockingBackgroundTaskWorker.GetQueueKey(),
+                            await BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), BlockingBackgroundTaskWorker.GetQueueKey(),
 								"RunTestByFullyQualifiedName",
 								async () => await RunTestByFullyQualifiedName(
 									treeViewStringFragment,
 									fullyQualifiedName,
 									treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory.Value));
                         }
-
-						return Task.CompletedTask;
 					});
 	
 				menuRecordsList.Add(menuOptionRecord);

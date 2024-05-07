@@ -6,13 +6,13 @@ namespace Luthetus.Ide.RazorLib.FileSystems.States;
 
 public partial class FileSystemSync
 {
-    public void SaveFile(
+    public Task SaveFile(
         IAbsolutePath absolutePath,
         string content,
         Action<DateTime?> onAfterSaveCompletedWrittenDateTimeAction,
         CancellationToken cancellationToken = default)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Save File",
             async () => await SaveFileAsync(
                 absolutePath,

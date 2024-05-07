@@ -57,9 +57,9 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 
     private FormattedCommand FormattedCommand => DotNetCliCommandFormatter.FormatDotnetNewSln(_solutionName);
 
-    private void RequestInputFileForParentDirectory()
+    private async Task RequestInputFileForParentDirectory()
     {
-        InputFileSync.RequestInputFileStateForm("Directory for new .NET Solution",
+        await InputFileSync.RequestInputFileStateForm("Directory for new .NET Solution",
             async absolutePath =>
             {
                 if (absolutePath is null)
@@ -106,7 +106,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 localFormattedCommand,
                 _parentDirectoryName,
                 NewDotNetSolutionCancellationTokenSource.Token,
-                () =>
+                async () =>
                 {
                     // Close Dialog
                     Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
@@ -128,8 +128,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         solutionAbsolutePathString,
                         false);
 
-                    DotNetSolutionSync.SetDotNetSolution(solutionAbsolutePath);
-                    return Task.CompletedTask;
+                    await DotNetSolutionSync.SetDotNetSolution(solutionAbsolutePath);
                 });
 
             var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
@@ -171,7 +170,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             solutionAbsolutePathString,
             false);
 
-        DotNetSolutionSync.SetDotNetSolution(solutionAbsolutePath);
+        await DotNetSolutionSync.SetDotNetSolution(solutionAbsolutePath);
     }
 
     public const string HackForWebsite_NEW_SOLUTION_TEMPLATE = @"

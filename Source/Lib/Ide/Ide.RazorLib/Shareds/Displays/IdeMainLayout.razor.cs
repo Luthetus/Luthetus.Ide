@@ -155,7 +155,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 slnPersonalPath,
                 false);
 
-            DotNetSolutionSync.SetDotNetSolution(slnAbsolutePath);
+            await DotNetSolutionSync.SetDotNetSolution(slnAbsolutePath);
 
             var parentDirectory = slnAbsolutePath.ParentDirectory;
             if (parentDirectory is not null)

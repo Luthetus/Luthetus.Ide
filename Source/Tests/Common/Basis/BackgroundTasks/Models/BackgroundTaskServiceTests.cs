@@ -13,9 +13,9 @@ namespace Luthetus.Common.Tests.Basis.BackgroundTasks.Models;
 public class BackgroundTaskServiceTests
 {
     /// <summary>
-    /// <see cref="BackgroundTaskService.Enqueue(IBackgroundTask)"/>
+    /// <see cref="BackgroundTaskService.EnqueueAsync(IBackgroundTask)"/>
     /// <br/>----<br/>
-    /// <see cref="BackgroundTaskService.Enqueue(Key{BackgroundTask}, Key{BackgroundTaskQueue}, string, Func{Task})"/>
+    /// <see cref="BackgroundTaskService.EnqueueAsync(Key{BackgroundTask}, Key{BackgroundTaskQueue}, string, Func{Task})"/>
     /// <see cref="BackgroundTaskService.RegisterQueue(BackgroundTaskQueue)"/>
     /// <see cref="BackgroundTaskService.DequeueAsync(Key{BackgroundTaskQueue}, CancellationToken)"/>
     /// <see cref="BackgroundTaskService.SetExecutingBackgroundTask(Key{BackgroundTaskQueue}, IBackgroundTask?)"/>
@@ -66,14 +66,14 @@ public class BackgroundTaskServiceTests
                     number++;
                 });
 
-            backgroundTaskService.Enqueue(firstBackgroundTask);
+            backgroundTaskService.EnqueueAsync(firstBackgroundTask);
         }
 
         // 2nd backgroundTask
         {
             var secondBackgroundTaskKey = Key<BackgroundTask>.NewKey();
             
-            backgroundTaskService.Enqueue(
+            backgroundTaskService.EnqueueAsync(
                 secondBackgroundTaskKey,
                 queue.Key,
                 "Zyx",

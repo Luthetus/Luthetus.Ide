@@ -73,7 +73,7 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
                             .StartAsync(CancellationToken.None));
             }
 
-            BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+            await BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
                 "Initialize Website",
                 async () =>
                 {
@@ -134,14 +134,14 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
             InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
             false);
 
-        DotNetSolutionSync.SetDotNetSolution(solutionAbsolutePath);
+        await DotNetSolutionSync.SetDotNetSolution(solutionAbsolutePath);
 
         // Display a file from the get-go so the user is less confused on what the website is.
         var absolutePath = EnvironmentProvider.AbsolutePathFactory(
             InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_PROGRAM_CS_ABSOLUTE_FILE_PATH,
             false);
 
-        EditorSync.OpenInEditor(absolutePath, false);
+        await EditorSync.OpenInEditor(absolutePath, false);
     }
 
     private async Task ParseSolutionAsync()

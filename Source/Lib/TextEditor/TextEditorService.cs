@@ -146,7 +146,7 @@ public partial class TextEditorService : ITextEditorService
                 editContext,
                 _dispatcher);
 
-            _backgroundTaskService.Enqueue(textEditorServiceTask);
+            _backgroundTaskService.EnqueueAsync(textEditorServiceTask);
         }
         catch (LuthetusTextEditorException e)
         {

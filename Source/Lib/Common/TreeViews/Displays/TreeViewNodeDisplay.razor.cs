@@ -90,7 +90,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
         }
     }
 
-    private void HandleExpansionChevronOnMouseDown(TreeViewNoType localTreeViewNoType)
+    private async Task HandleExpansionChevronOnMouseDown(TreeViewNoType localTreeViewNoType)
     {
         if (!localTreeViewNoType.IsExpandable)
             return;
@@ -99,7 +99,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
 
         if (localTreeViewNoType.IsExpanded)
         {
-			BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+            await BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             	"TreeView.HandleExpansionChevronOnMouseDown",
 				async () => 
 				{
@@ -113,7 +113,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
         }
     }
 
-    private void ManuallyPropagateOnContextMenu(
+    private async Task ManuallyPropagateOnContextMenu(
         MouseEventArgs mouseEventArgs,
         TreeViewContainer treeViewContainer,
         TreeViewNoType treeViewNoType)
@@ -127,9 +127,9 @@ public partial class TreeViewNodeDisplay : ComponentBase
             mouseEventArgs,
             null);
 
-        TreeViewMouseEventHandler.OnMouseDown(treeViewCommandArgs);
-	
-		BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        await TreeViewMouseEventHandler.OnMouseDownAsync(treeViewCommandArgs);
+
+        await BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
         	"TreeView.ManuallyPropagateOnContextMenu",
 			async () => await HandleTreeViewOnContextMenu.Invoke(
                 mouseEventArgs,
@@ -137,7 +137,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
                 treeViewNoType));
     }
 
-    private void HandleOnClick(MouseEventArgs? mouseEventArgs)
+    private async Task HandleOnClick(MouseEventArgs? mouseEventArgs)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
             TreeViewService,
@@ -148,10 +148,10 @@ public partial class TreeViewNodeDisplay : ComponentBase
             mouseEventArgs,
             null);
 
-        TreeViewMouseEventHandler.OnClick(treeViewCommandArgs);
+        await TreeViewMouseEventHandler.OnClickAsync(treeViewCommandArgs);
     }
 
-    private void HandleOnDoubleClick(MouseEventArgs? mouseEventArgs)
+    private async Task HandleOnDoubleClick(MouseEventArgs? mouseEventArgs)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
             TreeViewService,
@@ -162,10 +162,10 @@ public partial class TreeViewNodeDisplay : ComponentBase
             mouseEventArgs,
             null);
 
-        TreeViewMouseEventHandler.OnDoubleClick(treeViewCommandArgs);
+        await TreeViewMouseEventHandler.OnDoubleClickAsync(treeViewCommandArgs);
     }
 
-    private void HandleOnMouseDown(MouseEventArgs? mouseEventArgs)
+    private async Task HandleOnMouseDown(MouseEventArgs? mouseEventArgs)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
             TreeViewService,
@@ -176,15 +176,15 @@ public partial class TreeViewNodeDisplay : ComponentBase
             mouseEventArgs,
             null);
 
-        TreeViewMouseEventHandler.OnMouseDown(treeViewCommandArgs);
+        await TreeViewMouseEventHandler.OnMouseDownAsync(treeViewCommandArgs);
     }
 
-    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (keyboardEventArgs.Key == "ContextMenu")
         {
             var mouseEventArgs = new MouseEventArgs { Button = -1 };
-            ManuallyPropagateOnContextMenu(mouseEventArgs, TreeViewContainer, TreeViewNoType);
+            await ManuallyPropagateOnContextMenu(mouseEventArgs, TreeViewContainer, TreeViewNoType);
         }
     }
 

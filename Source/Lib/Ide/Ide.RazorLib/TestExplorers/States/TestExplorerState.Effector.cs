@@ -19,8 +19,7 @@ public partial record TestExplorerState
 		{
 			_ = dispatcher; // Suppress unused parameter
 
-            _testExplorerSync.DotNetSolutionStateWrap_StateChanged();
-			return Task.CompletedTask;
+            return _testExplorerSync.DotNetSolutionStateWrap_StateChanged();
 		}
 	}
 }

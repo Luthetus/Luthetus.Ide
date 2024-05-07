@@ -10,9 +10,9 @@ namespace Luthetus.Ide.RazorLib.CompilerServices.States;
 
 public partial class CompilerServiceExplorerSync
 {
-    public void SetCompilerServiceExplorerTreeView()
+    public Task SetCompilerServiceExplorerTreeView()
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Set CompilerServiceExplorer TreeView",
             async () => 
             {

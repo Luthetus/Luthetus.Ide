@@ -19,14 +19,13 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
         _editorSync = editorSync;
     }
 
-    public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
+    public override async Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
     {
-        base.OnDoubleClickAsync(commandArgs);
+        await base.OnDoubleClickAsync(commandArgs);
 
         if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewAbsolutePath treeViewAbsolutePath)
-            return Task.CompletedTask;
+            return;
 
-        _editorSync.OpenInEditor(treeViewAbsolutePath.Item, true);
-        return Task.CompletedTask;
+        await _editorSync.OpenInEditor(treeViewAbsolutePath.Item, true);
     }
 }

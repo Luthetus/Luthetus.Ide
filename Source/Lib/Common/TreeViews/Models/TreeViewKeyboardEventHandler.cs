@@ -1,7 +1,6 @@
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.TreeViews.Models;
 
@@ -22,8 +21,29 @@ public class TreeViewKeyboardEventHandler
 		BackgroundTaskService = backgroundTaskService;
     }
 
-    /// <summary>Used for handling "onkeydownwithpreventscroll" events within the user interface</summary>
-    public virtual void OnKeyDown(TreeViewCommandArgs commandArgs)
+    /// <summary>
+    /// Invoked, and awaited, as part of the async UI event handler for 'onkeydownwithpreventscroll' events.<br/><br/>
+    /// 
+    /// The synchronous version: '<see cref="OnKeyDown(TreeViewCommandArgs)"/>' will be invoked
+    /// immediately from within this method, to allow the synchronous code to block the UI purposefully.
+    /// 
+    /// Any overrides of this method are intended to have 'base.MethodBeingOverridden()' prior to their code.<br/><br/>
+    /// </summary>
+    public virtual Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
+    {
+        // Run the synchronous code first
+        OnKeyDown(commandArgs);
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Invoked, and awaited, as part of the synchronous UI event handler for 'onkeydownwithpreventscroll' events.<br/><br/>
+    /// 
+    /// This method is invoked by the async version: '<see cref="OnKeyDownAsync(TreeViewCommandArgs)"/>'.<br/><br/>
+    /// 
+    /// Any overrides of this method are intended to have 'base.MethodBeingOverridden()' prior to their code.<br/><br/>
+    /// </summary>
+    protected virtual void OnKeyDown(TreeViewCommandArgs commandArgs)
     {
         if (commandArgs.KeyboardEventArgs is null)
             return;
@@ -69,15 +89,5 @@ public class TreeViewKeyboardEventHandler
             default:
                 break;
         }
-
-		BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-        	"TreeView.OnKeyDown",
-			async () => await OnKeyDownAsync(commandArgs).ConfigureAwait(false));
-    }
-
-    /// <summary>Used for handling "onkeydownwithpreventscroll" events within the user interface</summary>
-    public virtual Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
-    {
-        return Task.CompletedTask;
     }
 }

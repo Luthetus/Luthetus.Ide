@@ -94,9 +94,9 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
             CompilerServiceExplorerTreeViewContextMenu.ContextMenuEventDropdownKey));
     }
 
-    private void ReloadOnClick()
+    private async Task ReloadOnClick()
     {
-        CompilerServiceExplorerSync.SetCompilerServiceExplorerTreeView();
+        await CompilerServiceExplorerSync.SetCompilerServiceExplorerTreeView();
     }
 
     public void Dispose()

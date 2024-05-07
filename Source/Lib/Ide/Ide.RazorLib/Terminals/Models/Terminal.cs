@@ -88,7 +88,7 @@ public class Terminal
     {
         var queueKey = BlockingBackgroundTaskWorker.GetQueueKey();
 
-        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), queueKey,
+        return _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), queueKey,
             "Enqueue Command",
             async () =>
             {
@@ -250,8 +250,6 @@ public class Terminal
                     terminalCommand.OutputParser?.Dispose();
                 }
             });
-
-        return Task.CompletedTask;
     }
 
     /// <summary>

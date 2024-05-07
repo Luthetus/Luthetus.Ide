@@ -9,12 +9,12 @@ namespace Luthetus.Ide.RazorLib.Editors.States;
 
 public partial class EditorSync
 {
-    public void OpenInEditor(
+    public Task OpenInEditor(
         IAbsolutePath? absolutePath,
         bool shouldSetFocusToEditor,
         Key<TextEditorGroup>? editorTextEditorGroupKey = null)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "OpenInEditor",
             async () => await OpenInEditorAsync(
                 absolutePath,
@@ -24,11 +24,10 @@ public partial class EditorSync
 
     public Task ShowInputFile()
     {
-        _inputFileSync.RequestInputFileStateForm("TextEditor",
+        return _inputFileSync.RequestInputFileStateForm("TextEditor",
             absolutePath =>
             {
-                OpenInEditor(absolutePath, true);
-                return Task.CompletedTask;
+                return OpenInEditor(absolutePath, true);
             },
             absolutePath =>
             {
@@ -41,7 +40,5 @@ public partial class EditorSync
             {
                     new InputFilePattern("File", absolutePath => !absolutePath.IsDirectory)
             }.ToImmutableArray());
-
-        return Task.CompletedTask;
     }
 }

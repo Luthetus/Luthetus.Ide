@@ -46,7 +46,7 @@ public class WebsiteDotNetCliHelper
             cSharpProjectAbsolutePathString,
             false);
 
-        dotNetSolutionSync.Website_AddExistingProjectToSolution(
+        await dotNetSolutionSync.Website_AddExistingProjectToSolution(
             immutableView.DotNetSolutionModel.Key,
             immutableView.ProjectTemplateShortNameValue,
             immutableView.CSharpProjectNameValue,

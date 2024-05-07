@@ -79,9 +79,9 @@ public partial class EditorSync
                         },
                         {
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptFunc),
-                            new Func<Task>(() =>
+                            new Func<Task>(async () =>
                             {
-								BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+                                await BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
                                     "Check If Contexts Were Modified",
                                     async () =>
                                     {
@@ -108,8 +108,6 @@ public partial class EditorSync
                                                     .ConfigureAwait(false);
                                             });
                                     });
-
-                                return Task.CompletedTask;
                             })
                         },
                         {

@@ -110,10 +110,10 @@ public partial class TabDisplay : ComponentBase, IDisposable
 		if (mouseEventArgs.Button == 1)
             await CloseTabOnClickAsync();
 		else if (mouseEventArgs.Button == 2)
-			ManuallyPropagateOnContextMenu(mouseEventArgs, Tab);
+			await ManuallyPropagateOnContextMenu(mouseEventArgs, Tab);
 	}
 
-    private void ManuallyPropagateOnContextMenu(
+    private async Task ManuallyPropagateOnContextMenu(
         MouseEventArgs mouseEventArgs,
         ITab tab)
     {
@@ -122,7 +122,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 		if (localHandleTabButtonOnContextMenu is null)
 			return;
 
-		BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        await BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Tab.ManuallyPropagateOnContextMenu",
             async () => await localHandleTabButtonOnContextMenu.Invoke(
 				new TabContextMenuEventArgs(mouseEventArgs, tab, FocusAsync)));

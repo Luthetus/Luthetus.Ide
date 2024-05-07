@@ -19,7 +19,7 @@ public partial class LuthetusCommonInitializer : ComponentBase
     {
         if (firstRender)
         {
-            BackgroundTaskService.Enqueue(
+            await BackgroundTaskService.EnqueueAsync(
                 Key<BackgroundTask>.NewKey(),
                 ContinuousBackgroundTaskWorker.GetQueueKey(),
                 nameof(LuthetusCommonInitializer),

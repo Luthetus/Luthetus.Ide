@@ -67,7 +67,7 @@ public class AppOptionsService : IAppOptionsService
         }
     }
 
-    public void SetActiveThemeRecordKey(Key<ThemeRecord> themeKey, bool updateStorage = true)
+    public Task SetActiveThemeRecordKey(Key<ThemeRecord> themeKey, bool updateStorage = true)
     {
         _dispatcher.Dispatch(new AppOptionsState.WithAction(inState => inState with
         {
@@ -78,10 +78,12 @@ public class AppOptionsService : IAppOptionsService
         }));
 
         if (updateStorage)
-            WriteToStorage();
+            return WriteToStorage();
+
+        return Task.CompletedTask;
     }
 
-    public void SetTheme(ThemeRecord theme, bool updateStorage = true)
+    public Task SetTheme(ThemeRecord theme, bool updateStorage = true)
     {
         _dispatcher.Dispatch(new AppOptionsState.WithAction(inState => inState with
         {
@@ -92,10 +94,12 @@ public class AppOptionsService : IAppOptionsService
         }));
 
         if (updateStorage)
-            WriteToStorage();
+            return WriteToStorage();
+
+        return Task.CompletedTask;
     }
 
-    public void SetFontFamily(string? fontFamily, bool updateStorage = true)
+    public Task SetFontFamily(string? fontFamily, bool updateStorage = true)
     {
         _dispatcher.Dispatch(new AppOptionsState.WithAction(inState => inState with
         {
@@ -106,10 +110,12 @@ public class AppOptionsService : IAppOptionsService
         }));
 
         if (updateStorage)
-            WriteToStorage();
+            return WriteToStorage();
+
+        return Task.CompletedTask;
     }
 
-    public void SetFontSize(int fontSizeInPixels, bool updateStorage = true)
+    public Task SetFontSize(int fontSizeInPixels, bool updateStorage = true)
     {
         _dispatcher.Dispatch(new AppOptionsState.WithAction(inState => inState with
         {
@@ -120,10 +126,12 @@ public class AppOptionsService : IAppOptionsService
         }));
 
         if (updateStorage)
-            WriteToStorage();
+            return WriteToStorage();
+
+        return Task.CompletedTask;
     }
 
-    public void SetIconSize(int iconSizeInPixels, bool updateStorage = true)
+    public Task SetIconSize(int iconSizeInPixels, bool updateStorage = true)
     {
         _dispatcher.Dispatch(new AppOptionsState.WithAction(inState => inState with
         {
@@ -134,7 +142,9 @@ public class AppOptionsService : IAppOptionsService
         }));
 
         if (updateStorage)
-            WriteToStorage();
+            return WriteToStorage();
+
+        return Task.CompletedTask;
     }
 
     public async Task SetFromLocalStorageAsync()
@@ -154,22 +164,22 @@ public class AppOptionsService : IAppOptionsService
             var matchedTheme = ThemeStateWrap.Value.ThemeList.FirstOrDefault(
                 x => x.Key == optionsJson.ThemeKey);
 
-            SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false);
+            await SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false);
         }
 
         if (optionsJson.FontFamily is not null)
-            SetFontFamily(optionsJson.FontFamily, false);
+            await SetFontFamily(optionsJson.FontFamily, false);
 
         if (optionsJson.FontSizeInPixels is not null)
-            SetFontSize(optionsJson.FontSizeInPixels.Value, false);
+            await SetFontSize(optionsJson.FontSizeInPixels.Value, false);
 
         if (optionsJson.IconSizeInPixels is not null)
-            SetIconSize(optionsJson.IconSizeInPixels.Value, false);
+            await SetIconSize(optionsJson.IconSizeInPixels.Value, false);
     }
 
-    public void WriteToStorage()
+    public Task WriteToStorage()
     {
-        _storageSync.WriteToLocalStorage(
+        return _storageSync.WriteToLocalStorage(
             StorageKey,
             new CommonOptionsJsonDto(AppOptionsStateWrap.Value.Options));
     }

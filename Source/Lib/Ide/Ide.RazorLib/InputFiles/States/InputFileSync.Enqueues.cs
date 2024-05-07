@@ -8,13 +8,13 @@ namespace Luthetus.Ide.RazorLib.InputFiles.States;
 
 public partial record InputFileSync
 {
-    public void RequestInputFileStateForm(
+    public Task RequestInputFileStateForm(
         string message,
         Func<IAbsolutePath?, Task> onAfterSubmitFunc,
         Func<IAbsolutePath?, Task<bool>> selectionIsValidFunc,
         ImmutableArray<InputFilePattern> inputFilePatterns)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Request InputFileState Form",
             async () => await HandleRequestInputFileStateFormActionAsync(
                 message,

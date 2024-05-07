@@ -9,23 +9,23 @@ namespace Luthetus.Ide.RazorLib.FolderExplorers.States;
 
 public partial class FolderExplorerSync
 {
-    public void SetFolderExplorerState(IAbsolutePath folderAbsolutePath)
+    public Task SetFolderExplorerState(IAbsolutePath folderAbsolutePath)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Set FolderExplorer State",
             async () => await SetFolderExplorerAsync(folderAbsolutePath));
     }
 
-    public void SetFolderExplorerTreeView(IAbsolutePath folderAbsolutePath)
+    public Task SetFolderExplorerTreeView(IAbsolutePath folderAbsolutePath)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Set FolderExplorer TreeView",
             async () => await SetFolderExplorerTreeViewAsync(folderAbsolutePath));
     }
 
-    public Task ShowInputFile()
+    public async Task ShowInputFile()
     {
-        InputFileSync.RequestInputFileStateForm("Folder Explorer",
+        await InputFileSync.RequestInputFileStateForm("Folder Explorer",
             async absolutePath =>
             {
                 if (absolutePath is not null)
@@ -42,7 +42,5 @@ public partial class FolderExplorerSync
             {
                 new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
             }.ToImmutableArray());
-
-        return Task.CompletedTask;
     }
 }

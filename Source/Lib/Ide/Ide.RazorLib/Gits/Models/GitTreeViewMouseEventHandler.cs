@@ -28,7 +28,7 @@ public class GitTreeViewMouseEventHandler : TreeViewMouseEventHandler
         _dispatcher = dispatcher;
     }
 
-    public override void OnDoubleClick(TreeViewCommandArgs commandArgs)
+    protected override void OnDoubleClick(TreeViewCommandArgs commandArgs)
     {
         base.OnDoubleClick(commandArgs);
 

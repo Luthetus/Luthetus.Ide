@@ -28,7 +28,7 @@ public class BackgroundTaskWorker : BackgroundService
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            var backgroundTask = await BackgroundTaskService.DequeueAsync(QueueKey, cancellationToken).ConfigureAwait(false);
+            var backgroundTask = await BackgroundTaskService.DequeueAsync(QueueKey, cancellationToken);
 
             if (backgroundTask is not null)
             {
@@ -38,15 +38,13 @@ public class BackgroundTaskWorker : BackgroundService
 
                     BackgroundTaskService.SetExecutingBackgroundTask(QueueKey, backgroundTask);
 
-					// TODO: Should '.ConfigureAwait(false)' be used here?
-					//
 					// TODO: Should Task.WhenAll be used here so the delay runs concurrently...
 					// ...with the 'HandleEvent'?
 					//
 					// TODO: Could it be that the reason for ThrottleController locking the UI thread...
 					// ...was because I was using Task.WhenAll, and once the tasks actually got awaited,
 					// they both finished synchronously somehow, therefore an await never occurred?
-                    await backgroundTask.HandleEvent(cancellationToken).ConfigureAwait(false);
+                    await backgroundTask.HandleEvent(cancellationToken);
 					await Task.Delay(backgroundTask.ThrottleTimeSpan);
                 }
                 catch (Exception ex)
@@ -73,7 +71,7 @@ public class BackgroundTaskWorker : BackgroundService
     {
         try
         {
-            await BackgroundTaskService.StopAsync(CancellationToken.None).ConfigureAwait(false);
+            await BackgroundTaskService.StopAsync(CancellationToken.None);
 
             // TODO: Polling solution for now, perhaps change to a more optimal solution? (2023-11-19)
             while (BackgroundTaskService.Queues.Any(x => x.ExecutingBackgroundTask is not null) ||
@@ -81,12 +79,12 @@ public class BackgroundTaskWorker : BackgroundService
                    // TODO: Here a check is done for if there are background tasks pending for a hacky-concurrency solution
                    BackgroundTaskService.Queues.SelectMany(x => x.BackgroundTasks).Any())
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken).ConfigureAwait(false);
+                await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken);
             }
         }
         finally
         {
-            await base.StopAsync(cancellationToken).ConfigureAwait(false);
+            await base.StopAsync(cancellationToken);
         }
     }
 }

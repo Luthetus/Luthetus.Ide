@@ -25,7 +25,7 @@ public class GitTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
         _dispatcher = dispatcher;
     }
 
-    public override void OnKeyDown(TreeViewCommandArgs commandArgs)
+    protected override void OnKeyDown(TreeViewCommandArgs commandArgs)
     {
         if (commandArgs.KeyboardEventArgs is null)
             return;

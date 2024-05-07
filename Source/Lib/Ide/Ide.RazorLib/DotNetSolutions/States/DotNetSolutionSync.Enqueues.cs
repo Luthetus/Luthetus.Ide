@@ -7,14 +7,14 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 public partial class DotNetSolutionSync
 {
-    public void Website_AddExistingProjectToSolution(
+    public Task Website_AddExistingProjectToSolution(
         Key<DotNetSolutionModel> dotNetSolutionModelKey,
         string projectTemplateShortName,
         string cSharpProjectName,
         IAbsolutePath cSharpProjectAbsolutePath,
         IEnvironmentProvider environmentProvider)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Add Existing-Project To Solution",
             async () => await Website_AddExistingProjectToSolutionAsync(
                 dotNetSolutionModelKey,
@@ -24,16 +24,16 @@ public partial class DotNetSolutionSync
                 environmentProvider));
     }
 
-    public void SetDotNetSolution(IAbsolutePath inSolutionAbsolutePath)
+    public Task SetDotNetSolution(IAbsolutePath inSolutionAbsolutePath)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Set .NET Solution",
             async () => await SetDotNetSolutionAsync(inSolutionAbsolutePath));
     }
 
-    public void SetDotNetSolutionTreeView(Key<DotNetSolutionModel> dotNetSolutionModelKey)
+    public Task SetDotNetSolutionTreeView(Key<DotNetSolutionModel> dotNetSolutionModelKey)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Set .NET Solution TreeView",
             async () => await SetDotNetSolutionTreeViewAsync(dotNetSolutionModelKey));
     }

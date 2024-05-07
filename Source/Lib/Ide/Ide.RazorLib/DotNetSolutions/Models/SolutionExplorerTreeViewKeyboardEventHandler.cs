@@ -198,15 +198,14 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         return cutFileOptionRecord.OnClickFunc.Invoke();
     }
 
-    private void InvokeOpenInEditor(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)
+    private async Task InvokeOpenInEditor(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)
     {
         var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
 
-        _editorSync.OpenInEditor(treeViewNamespacePath.Item.AbsolutePath, shouldSetFocusToEditor);
-        return;
+        await _editorSync.OpenInEditor(treeViewNamespacePath.Item.AbsolutePath, shouldSetFocusToEditor);
     }
 
     private async Task ReloadTreeViewModel(TreeViewNoType? treeViewModel)

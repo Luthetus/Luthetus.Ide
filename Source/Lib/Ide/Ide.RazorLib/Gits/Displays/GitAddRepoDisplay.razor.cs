@@ -39,9 +39,9 @@ public partial class GitAddRepoDisplay : ComponentBase
     /// If directory contains a '.git' folder, then begin using the CLI to get data about the repo.<br/>
     /// Else if directory does NOT contain a '.git' folder, then promp the user to run 'git init'.
     /// </summary>
-    private void RequestInputFileForGitFolder()
+    private async Task RequestInputFileForGitFolder()
     {
-        InputFileSync.RequestInputFileStateForm("Git Repo",
+        await InputFileSync.RequestInputFileStateForm("Git Repo",
             async absolutePath =>
             {
                 if (absolutePath is null)

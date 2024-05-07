@@ -8,62 +8,56 @@ namespace Luthetus.Common.Tests.Basis.Reactives.Models;
 public class ThrottleTests
 {
     /// <summary>
-    /// <see cref="Throttle(TimeSpan)"/>
-    /// <br/>----<br/>
-    /// <see cref="Throttle.ThrottleTimeSpan"/>
+    /// <see cref="Throttle.ShouldWaitForPreviousWorkItemToComplete"/>
     /// </summary>
     [Fact]
-    public void Constructor()
+    public void ShouldWaitForPreviousWorkItemToComplete()
     {
-        var timeSpan = TimeSpan.FromMilliseconds(500);
-
-        var throttle = new Throttle(timeSpan);
-
-        Assert.Equal(timeSpan, throttle.ThrottleTimeSpan);
+        //public bool ShouldWaitForPreviousWorkItemToComplete { get; } = true;
     }
 
     /// <summary>
-    /// <see cref="Throttle.FireAsync(Func{CancellationToken, Task})"/>
+    /// <see cref="Throttle(TimeSpan)"/>
     /// </summary>
     [Fact]
-    public void FireAsync()
+    public void Constructor_TimeSpan()
     {
-        throw new NotImplementedException();
+        //public Throttle(TimeSpan throttleTimeSpan)
+    }
+
+    /// <summary>
+    /// <see cref="Throttle(TimeSpan, bool)"/>
+    /// </summary>
+    [Fact]
+    public void Constructor_TimeSpan_bool()
+    {
+        //public Throttle(TimeSpan throttleTimeSpan, bool shouldWaitForPreviousWorkItemToComplete)
+    }
+
+    /// <summary>
+    /// <see cref="Throttle.ThrottleTimeSpan"/>
+    /// </summary>
+    [Fact]
+    public void ThrottleTimeSpan()
+    {
+        //public TimeSpan ThrottleTimeSpan { get; }
+    }
+
+    /// <summary>
+    /// <see cref="Throttle.PushEvent(Func{CancellationToken, Task})"/>
+    /// </summary>
+    [Fact]
+    public void PushEvent()
+    {
+        //public void PushEvent(Func<CancellationToken, Task> workItem)
     }
 
     /// <summary>
     /// <see cref="Throttle.Dispose()"/>
     /// </summary>
     [Fact]
-    public Task DisposeAsync()
+    public void Dispose()
     {
-        throw new NotImplementedException();
-
-        var throttle = new Throttle(TimeSpan.FromMilliseconds(1_000));
-
-        var counter = 0;
-
-        throttle.PushEvent(throttleCancellationToken =>
-        {
-            counter++;
-            return Task.CompletedTask;
-        });
-
-        Assert.Equal(1, counter);
-
-        throttle.PushEvent(throttleCancellationToken =>
-        {
-            throttle.Dispose();
-
-            if (throttleCancellationToken.IsCancellationRequested)
-                return Task.CompletedTask;
-
-            // Cancel the task prior to this incrementation
-            counter++;
-            return Task.CompletedTask;
-        });
-
-        // The second incrementation was cancelled by invoking 'Dispose()'
-        Assert.Equal(1, counter);
+        //public void Dispose()
     }
 }

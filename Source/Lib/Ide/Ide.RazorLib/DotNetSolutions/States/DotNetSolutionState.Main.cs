@@ -34,15 +34,13 @@ public partial record DotNetSolutionState(
     public DotNetSolutionModel? DotNetSolutionModel => DotNetSolutionsList.FirstOrDefault(x =>
         x.Key == DotNetSolutionModelKey);
 
-    public static Task ShowInputFile(DotNetSolutionSync sync)
+    public static async Task ShowInputFile(DotNetSolutionSync sync)
     {
-        sync.InputFileSync.RequestInputFileStateForm("Solution Explorer",
-            absolutePath =>
+        await sync.InputFileSync.RequestInputFileStateForm("Solution Explorer",
+            async absolutePath =>
             {
                 if (absolutePath is not null)
-                    sync.SetDotNetSolution(absolutePath);
-
-                return Task.CompletedTask;
+                    await sync.SetDotNetSolution(absolutePath);
             },
             absolutePath =>
             {
@@ -58,7 +56,5 @@ public partial record DotNetSolutionState(
                     ".NET Solution",
                     absolutePath => absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
             }.ToImmutableArray());
-
-        return Task.CompletedTask;
     }
 }

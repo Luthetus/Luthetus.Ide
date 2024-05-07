@@ -12,8 +12,8 @@ public partial class IdePromptOpenSolutionDisplay : ComponentBase
     [Parameter, EditorRequired]
     public IAbsolutePath AbsolutePath { get; set; } = null!;
 
-    private void OpenSolutionOnClick()
+    private async Task OpenSolutionOnClick()
     {
-        DotNetSolutionSync.SetDotNetSolution(AbsolutePath);
+        await DotNetSolutionSync.SetDotNetSolution(AbsolutePath);
     }
 }

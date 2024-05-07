@@ -48,10 +48,10 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         switch (commandArgs.KeyboardEventArgs.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
-                InvokeOpenInEditor(commandArgs, true);
+                InvokeOpenInEditorAsync(commandArgs, true);
                 return Task.CompletedTask;
             case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
-                InvokeOpenInEditor(commandArgs, false);
+                InvokeOpenInEditorAsync(commandArgs, false);
                 return Task.CompletedTask;
         }
 
@@ -203,15 +203,14 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         return cutFileOptionRecord.OnClickFunc.Invoke();
     }
 
-    private void InvokeOpenInEditor(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)
+    private async Task InvokeOpenInEditorAsync(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)
     {
         var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-        _editorSync.OpenInEditor(treeViewAbsolutePath.Item, shouldSetFocusToEditor);
-        return;
+        await _editorSync.OpenInEditor(treeViewAbsolutePath.Item, shouldSetFocusToEditor);
     }
 
     private async Task ReloadTreeViewModel(TreeViewNoType? treeViewModel)

@@ -134,7 +134,7 @@ public class BackgroundTaskQueueTests
                 return Task.CompletedTask;
             });
         
-        backgroundTaskService.Enqueue(backgroundTask);
+        backgroundTaskService.EnqueueAsync(backgroundTask);
 
         Assert.Equal(3, number);
         Assert.Null(queue.ExecutingBackgroundTask);

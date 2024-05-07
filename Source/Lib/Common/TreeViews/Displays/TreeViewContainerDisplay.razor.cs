@@ -66,7 +66,7 @@ public partial class TreeViewContainerDisplay : FluxorComponent
         return rootNode is TreeViewAdhoc ? -1 : 0;
     }
 
-    private void HandleTreeViewOnKeyDownWithPreventScroll(
+    private async Task HandleTreeViewOnKeyDownWithPreventScroll(
         KeyboardEventArgs keyboardEventArgs,
         TreeViewContainer? treeViewContainer)
     {
@@ -101,7 +101,7 @@ public partial class TreeViewContainerDisplay : FluxorComponent
             null,
             keyboardEventArgs);
 
-        TreeViewKeyboardEventHandler.OnKeyDown(treeViewCommandArgs);
+        await TreeViewKeyboardEventHandler.OnKeyDownAsync(treeViewCommandArgs);
     }
 
     private async Task HandleTreeViewOnContextMenu(
@@ -182,7 +182,7 @@ public partial class TreeViewContainerDisplay : FluxorComponent
 
         if (OnContextMenuFunc is not null)
 		{
-			BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+            await BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
 	        	"TreeView.HandleTreeViewOnContextMenu",
 				async () => await OnContextMenuFunc.Invoke(_treeViewContextMenuCommandArgs));
 		}

@@ -5,11 +5,11 @@ namespace Luthetus.Common.RazorLib.Storages.States;
 
 public partial class StorageSync
 {
-    public void WriteToLocalStorage(
+    public Task WriteToLocalStorage(
         string key,
         object value)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "WriteToStorage",
             async () => 
             {
