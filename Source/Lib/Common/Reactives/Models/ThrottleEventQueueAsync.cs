@@ -25,9 +25,6 @@ public class ThrottleEventQueueAsync
     /// </summary>
     private readonly SemaphoreSlim _modifyQueueSemaphoreSlim = new(1, 1);
 
-    private int _enqueueCounter;
-    private int _dequeueCounter;
-
     /// <summary>
     /// Returns the amount of <see cref="IBackgroundTask"/>(s) in the queue.
     /// </summary>
@@ -51,8 +48,6 @@ public class ThrottleEventQueueAsync
     /// </summary>
     public async Task EnqueueAsync(IBackgroundTask recentEvent)
     {
-        _enqueueCounter++;
-        Console.Write("e");
         try
         {
             await _modifyQueueSemaphoreSlim.WaitAsync();
@@ -93,8 +88,6 @@ public class ThrottleEventQueueAsync
     /// </summary>
     public async Task<IBackgroundTask> DequeueOrDefaultAsync()
     {
-        _dequeueCounter++;
-        Console.Write("d");
         await _dequeueSemaphoreSlim.WaitAsync();
 
         try
