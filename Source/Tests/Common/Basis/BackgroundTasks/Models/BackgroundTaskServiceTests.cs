@@ -66,14 +66,14 @@ public class BackgroundTaskServiceTests
                     number++;
                 });
 
-            backgroundTaskService.EnqueueAsync(firstBackgroundTask);
+            await backgroundTaskService.EnqueueAsync(firstBackgroundTask);
         }
 
         // 2nd backgroundTask
         {
             var secondBackgroundTaskKey = Key<BackgroundTask>.NewKey();
-            
-            backgroundTaskService.EnqueueAsync(
+
+            await backgroundTaskService.EnqueueAsync(
                 secondBackgroundTaskKey,
                 queue.Key,
                 "Zyx",

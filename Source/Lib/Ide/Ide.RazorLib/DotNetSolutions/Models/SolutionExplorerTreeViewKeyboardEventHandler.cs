@@ -48,11 +48,9 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         switch (commandArgs.KeyboardEventArgs.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
-                InvokeOpenInEditor(commandArgs, true);
-                return Task.CompletedTask;
+                return InvokeOpenInEditor(commandArgs, true);
             case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
-                InvokeOpenInEditor(commandArgs, false);
-                return Task.CompletedTask;
+                return InvokeOpenInEditor(commandArgs, false);
         }
 
         if (commandArgs.KeyboardEventArgs.CtrlKey)

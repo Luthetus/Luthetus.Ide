@@ -2,7 +2,6 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
-using Luthetus.Common.RazorLib.Storages.States;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Options.States;
@@ -140,7 +139,6 @@ public class AppOptionsServiceTests
         var services = new ServiceCollection()
             .AddScoped<IAppOptionsService, AppOptionsService>()
             .AddScoped<IStorageService, DoNothingStorageService>()
-            .AddScoped<StorageSync>()
             .AddScoped<IBackgroundTaskService>(_ => backgroundTaskService)
             .AddFluxor(options => options.ScanAssemblies(typeof(IAppOptionsService).Assembly));
 

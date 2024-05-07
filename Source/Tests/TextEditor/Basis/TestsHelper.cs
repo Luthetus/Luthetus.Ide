@@ -2,7 +2,6 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
-using Luthetus.Common.RazorLib.Storages.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,7 +32,6 @@ public class TestsHelper
             .AddSingleton<LuthetusTextEditorConfig>()
             .AddScoped<IStorageService, DoNothingStorageService>()
             .AddScoped<IJSRuntime, TextEditorTestingJsRuntime>()
-            .AddScoped<StorageSync>()
             .AddScoped<IBackgroundTaskService>(_ => new BackgroundTaskServiceSynchronous())
             .AddScoped<ITextEditorRegistryWrap, TextEditorRegistryWrap>()
             .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistryDefault>()

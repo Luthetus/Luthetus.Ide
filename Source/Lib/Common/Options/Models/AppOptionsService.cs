@@ -1,12 +1,12 @@
 using Fluxor;
 using System.Text.Json;
-using Luthetus.Common.RazorLib.Storages.States;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Options.Models;
 
@@ -14,20 +14,22 @@ public class AppOptionsService : IAppOptionsService
 {
     private readonly IDispatcher _dispatcher;
     private readonly IStorageService _storageService;
-    private readonly StorageSync _storageSync;
+    private readonly IBackgroundTaskService _backgroundTaskService;
+    private readonly LuthetusCommonBackgroundTaskServiceApi _commonBackgroundTaskServiceApi;
 
     public AppOptionsService(
         IState<AppOptionsState> appOptionsStateWrap,
         IState<ThemeState> themeStateWrap,
         IDispatcher dispatcher,
         IStorageService storageService,
-        StorageSync storageSync)
+        IBackgroundTaskService backgroundTaskService)
     {
         AppOptionsStateWrap = appOptionsStateWrap;
         ThemeStateWrap = themeStateWrap;
         _dispatcher = dispatcher;
         _storageService = storageService;
-        _storageSync = storageSync;
+        _backgroundTaskService = backgroundTaskService;
+        _commonBackgroundTaskServiceApi = _backgroundTaskService.GetCommonApi();
     }
 
     public IState<AppOptionsState> AppOptionsStateWrap { get; }
@@ -179,7 +181,8 @@ public class AppOptionsService : IAppOptionsService
 
     public Task WriteToStorage()
     {
-        return _storageSync.WriteToLocalStorage(
+        return _commonBackgroundTaskServiceApi.WriteToLocalStorage(
+            _storageService,
             StorageKey,
             new CommonOptionsJsonDto(AppOptionsStateWrap.Value.Options));
     }

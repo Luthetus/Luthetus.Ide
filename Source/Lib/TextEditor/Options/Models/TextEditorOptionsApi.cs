@@ -7,13 +7,13 @@ using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
-using Luthetus.Common.RazorLib.Storages.States;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using static Luthetus.Common.RazorLib.Contexts.States.ContextState;
 using System.Text.Json;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Options.Models;
 
@@ -22,20 +22,20 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
     private readonly ITextEditorService _textEditorService;
     private readonly LuthetusTextEditorConfig _textEditorConfig;
     private readonly IStorageService _storageService;
-    private readonly StorageSync _storageSync;
+    private readonly LuthetusCommonBackgroundTaskServiceApi _commonBackgroundTaskServiceApi;
     private readonly IDispatcher _dispatcher;
 
     public TextEditorOptionsApi(
         ITextEditorService textEditorService,
         LuthetusTextEditorConfig textEditorConfig,
         IStorageService storageService,
-        StorageSync storageSync,
+        LuthetusCommonBackgroundTaskServiceApi commonBackgroundTaskServiceApi,
         IDispatcher dispatcher)
     {
         _textEditorService = textEditorService;
         _textEditorConfig = textEditorConfig;
         _storageService = storageService;
-        _storageSync = storageSync;
+        _commonBackgroundTaskServiceApi = commonBackgroundTaskServiceApi;
         _dispatcher = dispatcher;
     }
 
@@ -178,7 +178,8 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
     public Task WriteToStorage()
     {
-        return _storageSync.WriteToLocalStorage(
+        return _commonBackgroundTaskServiceApi.WriteToLocalStorage(
+            _storageService,
             _textEditorService.StorageKey,
             new TextEditorOptionsJsonDto(_textEditorService.OptionsStateWrap.Value.Options));
     }

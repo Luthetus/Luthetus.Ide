@@ -2,7 +2,6 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
-using Luthetus.Common.RazorLib.Storages.States;
 using Luthetus.Common.RazorLib.WatchWindows.Displays;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -52,8 +51,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton(hostingInformation)
             .AddSingleton(hostingInformation.BackgroundTaskService)
             .AddSingleton<ILuthetusCommonComponentRenderers>(_ => _commonRendererTypes)
-            .AddCommonFactories(hostingInformation, commonConfig)
-            .AddScoped<StorageSync>();
+            .AddCommonFactories(hostingInformation, commonConfig);
 
         return services;
     }

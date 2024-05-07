@@ -85,9 +85,9 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
         }));
     }
 
-    public void SubscribeToDragEventWithMoveHandle()
+    public Task SubscribeToDragEventWithMoveHandle()
     {
-        SubscribeToDragEventAsync(DragEventHandlerMoveHandleAsync);
+        return SubscribeToDragEventAsync(DragEventHandlerMoveHandleAsync);
     }
 
     #region ResizeHandleStyleCss

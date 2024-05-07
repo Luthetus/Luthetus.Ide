@@ -11,7 +11,6 @@ using Luthetus.Common.RazorLib.Misc;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
-using Luthetus.Common.RazorLib.Storages.States;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -158,11 +157,6 @@ public class ServiceCollectionExtensionsTests
             
             Assert.NotNull(serviceProvider.GetRequiredService<IEnvironmentProvider>());
             Assert.NotNull(serviceProvider.GetRequiredService<IFileSystemProvider>());
-        }
-
-        // 12. StorageSync
-        {
-            Assert.NotNull(serviceProvider.GetRequiredService<StorageSync>());
         }
     }
 }

@@ -57,16 +57,16 @@ public partial class GitChangesContextMenu : ComponentBase
         return new MenuRecord(menuRecordsList.ToImmutableArray());
     }
 
-	private async Task<MenuRecord> GetMultiSelectionMenuRecord(TreeViewCommandArgs commandArgs)
+	private Task<MenuRecord> GetMultiSelectionMenuRecord(TreeViewCommandArgs commandArgs)
 	{
 		var menuOptionRecordList = new List<MenuOptionRecord>();
 		Func<Task> runAllOnClicksWithinSelection = () => Task.CompletedTask;
 		bool runAllOnClicksWithinSelectionHasEffect = false;
 
 		if (!menuOptionRecordList.Any())
-            return MenuRecord.Empty;
+            return Task.FromResult(MenuRecord.Empty);
 
-		return new MenuRecord(menuOptionRecordList.ToImmutableArray());
+		return Task.FromResult(new MenuRecord(menuOptionRecordList.ToImmutableArray()));
 	}
 
 

@@ -436,7 +436,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                                 if (successfullyPasted && clipboardPhrase.Command == ClipboardFacts.CutCommand)
                                 {
                                     // TODO: Rerender the parent of the deleted due to cut file
-                                    PerformDeleteFile(clipboardAbsolutePath, onAfterCompletion);
+                                    await PerformDeleteFile(clipboardAbsolutePath, onAfterCompletion);
                                 }
                                 else
                                 {

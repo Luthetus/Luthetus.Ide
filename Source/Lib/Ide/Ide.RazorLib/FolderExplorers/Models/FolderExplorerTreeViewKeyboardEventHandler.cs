@@ -48,11 +48,9 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         switch (commandArgs.KeyboardEventArgs.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
-                InvokeOpenInEditorAsync(commandArgs, true);
-                return Task.CompletedTask;
+                return InvokeOpenInEditorAsync(commandArgs, true);
             case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
-                InvokeOpenInEditorAsync(commandArgs, false);
-                return Task.CompletedTask;
+                return InvokeOpenInEditorAsync(commandArgs, false);
         }
 
         if (commandArgs.KeyboardEventArgs.CtrlKey)

@@ -2,7 +2,6 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
-using Luthetus.Common.RazorLib.Storages.States;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
@@ -163,7 +162,6 @@ public class TextEditorViewModelStateReducerTests
             .AddSingleton<LuthetusTextEditorConfig>()
             .AddScoped<IStorageService, DoNothingStorageService>()
             .AddScoped<IJSRuntime, TextEditorTestingJsRuntime>()
-            .AddScoped<StorageSync>()
             .AddScoped<IBackgroundTaskService>(_ => new BackgroundTaskServiceSynchronous())
             .AddScoped<ITextEditorRegistryWrap, TextEditorRegistryWrap>()
             .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistryDefault>()

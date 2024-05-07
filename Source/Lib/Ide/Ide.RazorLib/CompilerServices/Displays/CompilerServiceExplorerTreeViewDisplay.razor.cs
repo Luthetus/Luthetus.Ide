@@ -10,6 +10,10 @@ using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.Ide.RazorLib.CompilerServices.Displays;
 
@@ -28,11 +32,15 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private CompilerServiceExplorerSync CompilerServiceExplorerSync { get; set; } = null!;
+    private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
     [Inject]
     private EditorSync EditorSync { get; set; } = null!;
 	[Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    [Inject]
+    private ILuthetusIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
+    [Inject]
+    private ILuthetusCommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 
     private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
     private CompilerServiceExplorerTreeViewKeyboardEventHandler _compilerServiceExplorerTreeViewKeymap = null!;
@@ -62,18 +70,18 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
         base.OnInitialized();
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             if (!_hasInitialized)
             {
                 _hasInitialized = true;
-                ReloadOnClick();
+                await ReloadOnClick();
             }
         }
 
-        base.OnAfterRender(firstRender);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async void RerenderAfterEventWithArgs(object? sender, EventArgs e)
@@ -96,7 +104,13 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
     private async Task ReloadOnClick()
     {
-        await CompilerServiceExplorerSync.SetCompilerServiceExplorerTreeView();
+        await BackgroundTaskService.GetIdeApi().SetCompilerServiceExplorerTreeView(
+            CompilerServiceExplorerStateWrap,
+            (CompilerServiceRegistry)CompilerServiceRegistry,
+            IdeComponentRenderers,
+            CommonComponentRenderers,
+            TreeViewService,
+            Dispatcher);
     }
 
     public void Dispose()
