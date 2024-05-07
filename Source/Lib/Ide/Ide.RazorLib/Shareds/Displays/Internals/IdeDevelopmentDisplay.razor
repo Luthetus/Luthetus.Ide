@@ -5,4 +5,43 @@
 
     <h3>IdeDevelopmentDisplay</h3>
     <hr/>
+
+    @{
+        var projectKindList = Enum.GetValues<ProjectKind>();
+        var projectComponentTypeList = GetProjectComponentTypeList(_projectKind);
+    }
+
+    @foreach (var projectKind in projectKindList)
+    {
+        <button class="luth_ide_development-project-kind luth_button @GetIsActiveCssClass(projectKind)"
+                @onclick="() => SetProjectKindOnClick(projectKind)">
+            @projectKind
+        </button>
+    }
+
+    <hr/>
+
+    @foreach (var type in projectComponentTypeList)
+    {
+        var isActive = _projectComponentType == type;
+        var isActiveCssClass = isActive ? "luth_active" : string.Empty;
+
+        <ErrorBoundary>
+            <ChildContent>
+                <button class="luth_ide_development-project-component luth_button @isActiveCssClass"
+                        title="@type.FullName"
+                        @onclick="() => SetProjectComponentTypeOnClick(type)">
+                    @type.Name
+                </button>
+
+                @if (isActive)
+                {
+                    <DynamicComponent Type="type"/>
+                }
+            </ChildContent>
+            <ErrorContent>
+                <div>@type.Name errored</div>
+            </ErrorContent>
+        </ErrorBoundary>
+    }
 </div>

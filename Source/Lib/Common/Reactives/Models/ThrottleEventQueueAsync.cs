@@ -56,6 +56,8 @@ public class ThrottleEventQueueAsync
         try
         {
             await _modifyQueueSemaphoreSlim.WaitAsync();
+
+            var queueLengthIncreased = true;
         
             for (int i = _throttleEventList.Count - 1; i >= 0; i--)
             {
@@ -63,19 +65,22 @@ public class ThrottleEventQueueAsync
                 var batchEvent = recentEvent.BatchOrDefault(oldEvent);
 
                 if (batchEvent is null)
-                {
-                    // If the batchEvent is null,
-                    // then the existing event remains,
-                    // and a new event is added.
-                    _dequeueSemaphoreSlim.Release();
                     break;
-                }
+
+                // In this case, either the current event stays,
+                // or it is replaced with the new event.
+                //
+                // Therefore the que length does not change.
+                queueLengthIncreased = false;
 
                 _throttleEventList.RemoveAt(i);
                 recentEvent = batchEvent;
             }
         
             _throttleEventList.Add(recentEvent);
+
+            if (queueLengthIncreased)
+                _dequeueSemaphoreSlim.Release();
         }
         finally
         {

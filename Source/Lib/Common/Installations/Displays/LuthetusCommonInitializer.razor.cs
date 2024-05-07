@@ -25,7 +25,7 @@ public partial class LuthetusCommonInitializer : ComponentBase
                 nameof(LuthetusCommonInitializer),
                 async () =>
                 {
-                    AppOptionsService.SetActiveThemeRecordKey(CommonConfig.InitialThemeKey, false);
+                    await AppOptionsService.SetActiveThemeRecordKey(CommonConfig.InitialThemeKey, false);
                     await AppOptionsService.SetFromLocalStorageAsync();
                 });
         }

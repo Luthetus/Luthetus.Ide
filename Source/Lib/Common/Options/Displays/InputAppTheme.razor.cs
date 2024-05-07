@@ -30,7 +30,7 @@ public partial class InputAppTheme : IDisposable
         await InvokeAsync(StateHasChanged);
     }
 
-    private void OnThemeSelectChanged(ChangeEventArgs changeEventArgs)
+    private async Task OnThemeSelectChanged(ChangeEventArgs changeEventArgs)
     {
         if (changeEventArgs.Value is null)
             return;
@@ -47,7 +47,7 @@ public partial class InputAppTheme : IDisposable
             var existingThemeRecord = themesInScopeList.FirstOrDefault(btr => btr.Key.Guid == guidValue);
 
             if (existingThemeRecord is not null)
-                AppOptionsService.SetActiveThemeRecordKey(existingThemeRecord.Key);
+                await AppOptionsService.SetActiveThemeRecordKey(existingThemeRecord.Key);
         }
     }
 
