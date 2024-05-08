@@ -36,7 +36,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
     [Inject]
     private IState<TextEditorModelState> TextEditorModelStateWrap { get; set; } = null!;
 
-    private readonly IThrottle _throttleEventCausingReRender = new Throttle(TimeSpan.FromMilliseconds(75));
+    private readonly ThrottleAsync _throttleEventCausingReRender = new ThrottleAsync(TimeSpan.FromMilliseconds(75));
 
     private CompilerServiceRegistry _compilerServiceRegistry = null!;
     private CSharpCompilerService _cSharpCompilerService = null!;
@@ -153,13 +153,11 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 
     private Task ThrottledReRender()
     {
-        _throttleEventCausingReRender.PushEvent(async _ =>
+        return _throttleEventCausingReRender.PushEvent(async _ =>
         {
             _shouldRecalculateViewModel = true;
             await InvokeAsync(StateHasChanged);
         });
-
-        return Task.CompletedTask;
     }
 
     public void Dispose()

@@ -1,15 +1,14 @@
-using System.Runtime.CompilerServices;
-
 namespace Luthetus.Common.RazorLib.Reactives.Models;
 
 public class ThrottleAsync
 {
     private readonly SemaphoreSlim _workItemsStackSemaphoreSlim = new(1, 1);
     private readonly Stack<Func<CancellationToken, Task>> _workItemsStack = new();
+    private readonly SemaphoreSlim _previousSemaphoreSlim = new(1, 1);
 
     private CancellationTokenSource _throttleCancellationTokenSource = new();
-    private ConfiguredTaskAwaitable _throttleDelayTask = Task.CompletedTask.ConfigureAwait(false);
-    private ConfiguredTaskAwaitable _previousWorkItemTask = Task.CompletedTask.ConfigureAwait(false);
+    private Task _throttleDelayTask = Task.CompletedTask;
+    private Task _previousTask = Task.CompletedTask;
 
     public bool ShouldWaitForPreviousWorkItemToComplete { get; } = true;
 
@@ -31,20 +30,28 @@ public class ThrottleAsync
 
     public async Task PushEvent(Func<CancellationToken, Task> workItem)
     {
-        try
-        {
-            await _workItemsStackSemaphoreSlim.WaitAsync();
+        await _workItemsStackSemaphoreSlim.WaitAsync().ConfigureAwait(false);
 
-            _workItemsStack.Push(workItem);
+        _workItemsStack.Push(workItem);
+        if (_workItemsStack.Count > 1)
+            return;
 
-            if (_workItemsStack.Count > 1)
-                return;
-        }
-        catch (Exception)
+        await _previousSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+        if (ShouldWaitForPreviousWorkItemToComplete)
         {
-            _workItemsStackSemaphoreSlim.Release();
-            throw;
+            await _previousTask.ConfigureAwait(false);
+            _previousSemaphoreSlim.Release();
         }
+        await _throttleDelayTask.ConfigureAwait(false);
+
+        var mostRecentWorkItem = _workItemsStack.Pop();
+        _workItemsStack.Clear();
+
+        await _previousSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+        _workItemsStackSemaphoreSlim.Release();
+        _throttleDelayTask = Task.Delay(ThrottleTimeSpan);
+        _previousTask = mostRecentWorkItem.Invoke(CancellationToken.None);
+        _previousSemaphoreSlim.Release();
 
         /*
          Question is:
@@ -91,45 +98,7 @@ public class ThrottleAsync
                           can enter the _intentSemaphoreSlim semaphore, then await the _previousTask,
                           and afterwards release the _intentSemaphoreSlim semaphore.
                      -This feels like the answer.
-            
          */
-
-        // 
-        //     
-
-        lock (_lockWorkItemsStack)
-        {
-            _ = Task.Run(async () =>
-            {
-                await _throttleDelayTask;
-
-                if (ShouldWaitForPreviousWorkItemToComplete)
-                    await _previousWorkItemTask;
-
-                CancellationToken cancellationToken;
-                Func<CancellationToken, Task> mostRecentWorkItem;
-
-                lock (_lockWorkItemsStack)
-                {
-                    mostRecentWorkItem = _workItemsStack.Pop();
-                    _workItemsStack.Clear();
-
-                    _throttleCancellationTokenSource.Cancel();
-                    _throttleCancellationTokenSource = new();
-                    cancellationToken = _throttleCancellationTokenSource.Token;
-
-                    _throttleDelayTask = Task.Run(async () =>
-                    {
-                        await Task.Delay(ThrottleTimeSpan).ConfigureAwait(false);
-                    }).ConfigureAwait(false);
-
-                    _previousWorkItemTask = Task.Run(async () =>
-                    {
-                        await mostRecentWorkItem.Invoke(CancellationToken.None).ConfigureAwait(false);
-                    }).ConfigureAwait(false);
-                }
-            }).ConfigureAwait(false);
-        }
     }
 
     public void Dispose()

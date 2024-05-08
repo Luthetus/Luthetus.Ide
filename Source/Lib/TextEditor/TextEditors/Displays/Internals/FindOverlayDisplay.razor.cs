@@ -32,7 +32,7 @@ public partial class FindOverlayDisplay : ComponentBase
     private string _inputValue = string.Empty;
     private int? _activeIndexMatchedTextSpan = null;
 
-    private IThrottle _throttleInputValueChange = new Throttle(TimeSpan.FromMilliseconds(150));
+    private ThrottleAsync _throttleInputValueChange = new ThrottleAsync(TimeSpan.FromMilliseconds(150));
     private TextEditorTextSpan? _decorationByteChangedTargetTextSpan;
 
     private string InputValue
@@ -42,56 +42,59 @@ public partial class FindOverlayDisplay : ComponentBase
         {
             _inputValue = value;
 
-            _throttleInputValueChange.PushEvent(_ =>
+            _ = Task.Run(async () =>
             {
-				TextEditorService.PostIndependent(
-                    nameof(FindOverlayDisplay),
-                    async editContext =>
-                    {
-                        var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
-
-                        if (viewModelModifier is null)
-                            return;
-
-                        var localInputValue = _inputValue;
-
-                        viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                await _throttleInputValueChange.PushEvent(_ =>
+                {
+                    TextEditorService.PostIndependent(
+                        nameof(FindOverlayDisplay),
+                        async editContext =>
                         {
-                            FindOverlayValue = localInputValue,
-                        };
+                            var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
 
-                        var modelModifier = editContext.GetModelModifier(RenderBatch.Model.ResourceUri);
+                            if (viewModelModifier is null)
+                                return;
 
-                        if (modelModifier is null)
-                            return;
+                            var localInputValue = _inputValue;
 
-						ImmutableArray<TextEditorTextSpan> textSpanMatches = ImmutableArray<TextEditorTextSpan>.Empty;
+                            viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                            {
+                                FindOverlayValue = localInputValue,
+                            };
 
-						if (!string.IsNullOrWhiteSpace(localInputValue))
-	                        textSpanMatches = modelModifier.FindMatches(localInputValue);
+                            var modelModifier = editContext.GetModelModifier(RenderBatch.Model.ResourceUri);
 
-                        await TextEditorService.ModelApi.StartPendingCalculatePresentationModelFactory(
-	                            modelModifier.ResourceUri,
-	                            FindOverlayPresentationFacts.PresentationKey,
-                                FindOverlayPresentationFacts.EmptyPresentationModel)
-                            .Invoke(editContext);
+                            if (modelModifier is null)
+                                return;
 
-                        var presentationModel = modelModifier.PresentationModelList.First(
-                            x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
+                            ImmutableArray<TextEditorTextSpan> textSpanMatches = ImmutableArray<TextEditorTextSpan>.Empty;
 
-                        if (presentationModel.PendingCalculation is null)
-                            throw new LuthetusTextEditorException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
+                            if (!string.IsNullOrWhiteSpace(localInputValue))
+                                textSpanMatches = modelModifier.FindMatches(localInputValue);
 
-                        modelModifier.CompletePendingCalculatePresentationModel(
-                            FindOverlayPresentationFacts.PresentationKey,
-                            FindOverlayPresentationFacts.EmptyPresentationModel,
-                            textSpanMatches);
+                            await TextEditorService.ModelApi.StartPendingCalculatePresentationModelFactory(
+                                    modelModifier.ResourceUri,
+                                    FindOverlayPresentationFacts.PresentationKey,
+                                    FindOverlayPresentationFacts.EmptyPresentationModel)
+                                .Invoke(editContext);
 
-						_activeIndexMatchedTextSpan = null;
-						_decorationByteChangedTargetTextSpan = null;
-                    });
+                            var presentationModel = modelModifier.PresentationModelList.First(
+                                x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
-                return Task.CompletedTask;
+                            if (presentationModel.PendingCalculation is null)
+                                throw new LuthetusTextEditorException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
+
+                            modelModifier.CompletePendingCalculatePresentationModel(
+                                FindOverlayPresentationFacts.PresentationKey,
+                                FindOverlayPresentationFacts.EmptyPresentationModel,
+                                textSpanMatches);
+
+                            _activeIndexMatchedTextSpan = null;
+                            _decorationByteChangedTargetTextSpan = null;
+                        });
+
+                    return Task.CompletedTask;
+                });
             });
         }
     }

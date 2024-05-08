@@ -22,7 +22,7 @@ public partial class DragInitializer : FluxorComponent
     /// <summary>
     /// Preferably the throttling logic here would be moved out of the drag initializer itself so one can choose to add it themselves, or take the full stream.
     /// </summary>
-    private IThrottle _throttleDispatchSetDragStateActionOnMouseMove = new Throttle(IThrottle.DefaultThrottleTimeSpan);
+    private ThrottleAsync _throttleDispatchSetDragStateActionOnMouseMove = new ThrottleAsync(IThrottle.DefaultThrottleTimeSpan);
 
 	private IDropzone? _onMouseOverDropzone = null;
 
@@ -40,7 +40,7 @@ public partial class DragInitializer : FluxorComponent
 
     private Task DispatchSetDragStateActionOnMouseMoveAsync(MouseEventArgs mouseEventArgs)
     {
-        _throttleDispatchSetDragStateActionOnMouseMove.PushEvent(_ =>
+        return _throttleDispatchSetDragStateActionOnMouseMove.PushEvent(_ =>
         {
             if ((mouseEventArgs.Buttons & 1) != 1)
             {
@@ -57,8 +57,6 @@ public partial class DragInitializer : FluxorComponent
 
             return Task.CompletedTask;
         });
-
-        return Task.CompletedTask;
     }
 
     private Task DispatchSetDragStateActionOnMouseUp(MouseEventArgs mouseEventArgs)
@@ -66,7 +64,7 @@ public partial class DragInitializer : FluxorComponent
 		var dragState = DragStateWrap.Value;
 		var localOnMouseOverDropzone = _onMouseOverDropzone;
 
-        _throttleDispatchSetDragStateActionOnMouseMove.PushEvent(async _ =>
+        return _throttleDispatchSetDragStateActionOnMouseMove.PushEvent(async _ =>
         {
             Dispatcher.Dispatch(ConstructClearDragStateAction());
 
@@ -74,8 +72,6 @@ public partial class DragInitializer : FluxorComponent
 			if (draggableViewModel is not null)
 				await draggableViewModel.OnDragEndAsync(mouseEventArgs, localOnMouseOverDropzone);
         });
-
-		return Task.CompletedTask;
     }
 
 	private string GetIsActiveCssClass(IDropzone dropzone)

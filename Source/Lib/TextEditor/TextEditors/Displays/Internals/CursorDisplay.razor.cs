@@ -43,7 +43,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     public RenderFragment AutoCompleteMenuRenderFragment { get; set; } = null!;
 
     private readonly Guid _intersectionObserverMapKey = Guid.NewGuid();
-    private readonly IThrottle _throttleShouldRevealCursor = new Throttle(TimeSpan.FromMilliseconds(333));
+    private readonly ThrottleAsync _throttleShouldRevealCursor = new ThrottleAsync(TimeSpan.FromMilliseconds(333));
 
     private ElementReference? _cursorDisplayElementReference;
     private MenuKind _menuKind;
@@ -128,7 +128,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
             if (!RenderBatch.ViewModel.UnsafeState.CursorIsIntersecting)
             {
-                _throttleShouldRevealCursor.PushEvent(_ =>
+                await _throttleShouldRevealCursor.PushEvent(_ =>
                 {
                     var id = nameof(CursorDisplay) +
                         ", " +

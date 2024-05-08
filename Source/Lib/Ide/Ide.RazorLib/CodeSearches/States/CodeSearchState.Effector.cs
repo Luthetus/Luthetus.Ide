@@ -9,7 +9,7 @@ public partial record CodeSearchState
 {
     public class Effector : IDisposable
     {
-        private readonly IThrottle _throttle = new Throttle(TimeSpan.FromMilliseconds(300));
+        private readonly ThrottleAsync _throttle = new ThrottleAsync(TimeSpan.FromMilliseconds(300));
         private readonly IState<CodeSearchState> _codeSearchStateWrap;
         private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
         private readonly IFileSystemProvider _fileSystemProvider;
@@ -39,7 +39,7 @@ public partial record CodeSearchState
             SearchEffect searchEffect,
             IDispatcher dispatcher)
         {
-            _throttle.PushEvent(async _ =>
+            return _throttle.PushEvent(async _ =>
             {
                 dispatcher.Dispatch(new ClearResultListAction());
 
@@ -92,8 +92,6 @@ public partial record CodeSearchState
                     }
                 }
             });
-
-            return Task.CompletedTask;
         }
 
         public void Dispose()

@@ -588,7 +588,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     public class TextEditorEvents
     {
         private readonly TextEditorViewModelDisplay _viewModelDisplay;
-        private readonly IThrottle _throttleApplySyntaxHighlighting = new Throttle(TimeSpan.FromMilliseconds(500));
+        private readonly ThrottleAsync _throttleApplySyntaxHighlighting = new ThrottleAsync(TimeSpan.FromMilliseconds(500));
 
         public TextEditorEvents(TextEditorViewModelDisplay viewModelDisplay, TextEditorOptions? options)
         {
@@ -711,7 +711,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 }
                 else if (IsSyntaxHighlightingInvoker(keyboardEventArgs))
                 {
-                    ThrottleApplySyntaxHighlighting(modelModifier);
+                    await ThrottleApplySyntaxHighlighting(modelModifier);
                 }
             };
         }
@@ -782,7 +782,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 if (seenIsSyntaxHighlightingInvoker)
                 {
-                    ThrottleApplySyntaxHighlighting(modelModifier);
+                    await ThrottleApplySyntaxHighlighting(modelModifier);
                 }
             };
         }
@@ -1019,9 +1019,9 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             return (rowIndex, columnIndexInt);
         }
 
-        private void ThrottleApplySyntaxHighlighting(TextEditorModelModifier modelModifier)
+        private Task ThrottleApplySyntaxHighlighting(TextEditorModelModifier modelModifier)
         {
-            _throttleApplySyntaxHighlighting.PushEvent(_ =>
+            return _throttleApplySyntaxHighlighting.PushEvent(_ =>
             {
                 modelModifier.CompilerService.ResourceWasModified(modelModifier.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
                 return Task.CompletedTask;
