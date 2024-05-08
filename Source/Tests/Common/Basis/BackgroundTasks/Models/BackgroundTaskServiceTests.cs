@@ -20,6 +20,12 @@ public class BackgroundTaskServiceTests
     /// <see cref="BackgroundTaskService.DequeueAsync(Key{BackgroundTaskQueue}, CancellationToken)"/>
     /// <see cref="BackgroundTaskService.SetExecutingBackgroundTask(Key{BackgroundTaskQueue}, IBackgroundTask?)"/>
     /// </summary>
+    /// 
+    /// <remarks>
+    /// This test is currently an infinite loop (2024-05-08).
+    /// Therefore this remark is to let it be known that this test was useful,
+    /// because it previous worked.
+    /// </remarks>
     [Fact]
     public async void EnqueueA()
     {

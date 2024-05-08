@@ -69,22 +69,15 @@ public class BackgroundTaskWorker : BackgroundService
 
     public override async Task StopAsync(CancellationToken cancellationToken)
     {
-        try
-        {
-            await BackgroundTaskService.StopAsync(CancellationToken.None);
+        await BackgroundTaskService.StopAsync(CancellationToken.None);
 
-            // TODO: Polling solution for now, perhaps change to a more optimal solution? (2023-11-19)
-            while (BackgroundTaskService.Queues.Any(x => x.ExecutingBackgroundTask is not null) ||
-                   _hasActiveExecutionActive ||
-                   // TODO: Here a check is done for if there are background tasks pending for a hacky-concurrency solution
-                   BackgroundTaskService.Queues.SelectMany(x => x.BackgroundTasks).Any())
-            {
-                await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken);
-            }
-        }
-        finally
+        // TODO: Polling solution for now, perhaps change to a more optimal solution? (2023-11-19)
+        while (BackgroundTaskService.Queues.Any(x => x.ExecutingBackgroundTask is not null) ||
+                _hasActiveExecutionActive ||
+                // TODO: Here a check is done for if there are background tasks pending for a hacky-concurrency solution
+                BackgroundTaskService.Queues.SelectMany(x => x.BackgroundTasks).Any())
         {
-            await base.StopAsync(cancellationToken);
+            await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken);
         }
     }
 }
