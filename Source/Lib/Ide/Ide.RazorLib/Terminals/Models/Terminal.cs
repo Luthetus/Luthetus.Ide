@@ -210,8 +210,9 @@ public class Terminal
                     }
                     else
                     {
-                        _textEditorService.PostAsIs(
+                        _textEditorService.PostSimpleBatch(
                             "set-content_" + terminalCommandKey.Guid,
+                            string.Empty,
                             editContext =>
                             {
                                 var commandOutputResourceUri = new ResourceUri("terminalCommand" + '_' + terminalCommandKey);
@@ -295,9 +296,10 @@ public class Terminal
 
 		_textEditorService.ModelApi.RegisterCustom(model);
 
-		_textEditorService.PostAsIs(
+		_textEditorService.PostSimpleBatch(
 			nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
-			async editContext =>
+            string.Empty,
+            async editContext =>
 			{
 				await _textEditorService.ModelApi.AddPresentationModelFactory(
 						model.ResourceUri,
@@ -367,8 +369,9 @@ public class Terminal
 
         _textEditorService.ModelApi.RegisterCustom(model);
 
-        _textEditorService.PostAsIs(
+        _textEditorService.PostSimpleBatch(
             nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
+            string.Empty,
             async editContext =>
             {
                 await _textEditorService.ModelApi.AddPresentationModelFactory(
@@ -402,8 +405,9 @@ public class Terminal
             FindOverlayPresentationFacts.PresentationKey,
         }.ToImmutableArray();
 
-        _textEditorService.PostAsIs(
+        _textEditorService.PostSimpleBatch(
             nameof(Terminal),
+            string.Empty,
             _textEditorService.ViewModelApi.WithValueFactory(
                 TextEditorViewModelKey,
                 textEditorViewModel => textEditorViewModel with
@@ -411,8 +415,9 @@ public class Terminal
                         FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
                     }));
 
-        _textEditorService.PostAsIs(
+        _textEditorService.PostSimpleBatch(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
+            string.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -456,8 +461,9 @@ public class Terminal
 
     public void WriteWorkingDirectory()
     {
-        _textEditorService.PostAsIs(
+        _textEditorService.PostSimpleBatch(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
+            string.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -499,8 +505,9 @@ public class Terminal
     
     public void MoveCursorToEnd()
     {
-        _textEditorService.PostAsIs(
+        _textEditorService.PostSimpleBatch(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
+            string.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -527,8 +534,9 @@ public class Terminal
 
     public void ClearTerminal()
     {
-        _textEditorService.PostAsIs(
+        _textEditorService.PostSimpleBatch(
             nameof(ClearTerminal),
+            string.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -570,8 +578,9 @@ public class Terminal
     /// </summary>
     private void ClearOutputView(TerminalCommand terminalCommand)
     {
-        _textEditorService.PostAsIs(
+        _textEditorService.PostSimpleBatch(
             "clear-content_" + terminalCommand.TerminalCommandKey.Guid,
+            string.Empty,
             editContext =>
             {
                 var commandOutputResourceUri = new ResourceUri("terminalCommand" + '_' + terminalCommand.TerminalCommandKey);

@@ -238,8 +238,9 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.PostAsIs(
+                                commandArgs.TextEditorService.PostSimpleBatch(
                                     nameof(MoveCursorOneColumnLeftFactory),
+                                    string.Empty,
                                     MoveCursorOneColumnLeftFactory(
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
@@ -272,8 +273,9 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.PostAsIs(
+                                commandArgs.TextEditorService.PostSimpleBatch(
                                     nameof(MoveCursorOneRowDownFactory),
+                                    string.Empty,
                                     MoveCursorOneRowDownFactory(
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
@@ -306,8 +308,9 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.PostAsIs(
+                                commandArgs.TextEditorService.PostSimpleBatch(
                                     nameof(MoveCursorOneRowUpFactory),
+                                    string.Empty,
                                     MoveCursorOneRowUpFactory(
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
@@ -340,8 +343,9 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.PostAsIs(
+                                commandArgs.TextEditorService.PostSimpleBatch(
                                     nameof(MoveCursorOneColumnRightFactory),
+                                    string.Empty,
                                     MoveCursorOneColumnRightFactory(
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
@@ -380,8 +384,9 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.PostAsIs(
+                                commandArgs.TextEditorService.PostSimpleBatch(
                                     nameof(MoveCursorEndCurrentLineFactory),
+                                    string.Empty,
                                     MoveCursorEndCurrentLineFactory(
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
@@ -414,8 +419,9 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.PostAsIs(
+                                commandArgs.TextEditorService.PostSimpleBatch(
                                     nameof(MoveCursorStartCurrentLineFactory),
+                                    string.Empty,
                                     MoveCursorStartCurrentLineFactory(
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,

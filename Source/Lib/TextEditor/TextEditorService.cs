@@ -108,13 +108,27 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
 
-    public void PostAsIs(
+    // TODO: Should 'PostAsIs' be removed? (2024-05-08)
+    //
+    //public void PostAsIs(
+    //    string name,
+    //    TextEditorEdit textEditorEdit,
+    //    TimeSpan? throttleTimeSpan = null)
+    //{
+    //    Post(new IndependentTextEditorTask(
+    //        $"{name}_ai",
+    //        textEditorEdit,
+    //        throttleTimeSpan));
+    //}
+
+    public void PostSimpleBatch(
         string name,
+        string identifier,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
         Post(new IndependentTextEditorTask(
-            $"{name}_i",
+            $"{name}_sb",
             textEditorEdit,
             throttleTimeSpan));
     }
@@ -126,7 +140,7 @@ public partial class TextEditorService : ITextEditorService
         TimeSpan? throttleTimeSpan = null)
     {
         Post(new RedundantTextEditorTask(
-            $"{name}_r",
+            $"{name}_tmr",
             redundancyIdentifier,
             textEditorEdit,
             throttleTimeSpan));

@@ -409,8 +409,9 @@ public partial class AdhocTest
 
         refModel = textEditorService.ModelApi.GetOrDefault(refModel.ResourceUri) ?? throw new ArgumentNullException();
 
-        textEditorService.PostAsIs(
+        textEditorService.PostSimpleBatch(
             nameof(ContentList_Change),
+            string.Empty,
             textEditorService.ModelApi.ApplySyntaxHighlightingFactory(refModel.ResourceUri));
 
         // ContentList

@@ -35,13 +35,27 @@ public partial interface ITextEditorService
     public IState<TextEditorFindAllState> FindAllStateWrap { get; }
 
     /// <summary>
+    /// TODO: Should 'PostAsIs' be removed? (2024-05-08)
+    //
     /// This method will create an instance of <see cref="Events.IndependentTextEditorTask"/>,
     /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
     /// --- <see cref="Events.IndependentTextEditorTask"/>.cs inheritdoc:<br/><br/>
     /// <inheritdoc cref="Events.IndependentTextEditorTask"/>
     /// </summary>
-    public void PostAsIs(
+    //public void PostAsIs(
+    //    string name,
+    //    TextEditorEdit textEditorEdit,
+    //    TimeSpan? throttleTimeSpan = null);
+
+    /// <summary>
+    /// This method will create an instance of <see cref="Events.SimpleBatchTextEditorTask"/>,
+    /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
+    /// --- <see cref="Events.SimpleBatchTextEditorTask"/>.cs inheritdoc:<br/><br/>
+    /// <inheritdoc cref="Events.SimpleBatchTextEditorTask"/>
+    /// </summary>
+    public void PostSimpleBatch(
         string name,
+        string identifier,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null);
 

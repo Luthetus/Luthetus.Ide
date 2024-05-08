@@ -40,8 +40,9 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     InResourceUri,
                     new Category(nameof(GitChangesDisplay)));
 
-                TextEditorService.PostAsIs(
+                TextEditorService.PostSimpleBatch(
                     nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
+                    string.Empty,
                     async editContext =>
                     {
                         await TextEditorService.ModelApi.AddPresentationModelFactory(
@@ -85,8 +86,9 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     OutResourceUri,
                     new Category(nameof(GitChangesDisplay)));
 
-                TextEditorService.PostAsIs(
+                TextEditorService.PostSimpleBatch(
                     nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
+                    string.Empty,
                     async editContext =>
                     {
                         await TextEditorService.ModelApi.AddPresentationModelFactory(

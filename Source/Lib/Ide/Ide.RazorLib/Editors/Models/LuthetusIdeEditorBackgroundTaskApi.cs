@@ -120,8 +120,9 @@ public class LuthetusIdeEditorBackgroundTaskApi
 
             _textEditorService.ModelApi.RegisterCustom(model);
 
-            _textEditorService.PostAsIs(
+            _textEditorService.PostSimpleBatch(
                 nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
+                string.Empty,
                 async editContext =>
                 {
                     await _textEditorService.ModelApi.AddPresentationModelFactory(
@@ -186,8 +187,9 @@ public class LuthetusIdeEditorBackgroundTaskApi
             registerViewModelArgs.ResourceUri.Value,
             false);
 
-        _textEditorService.PostAsIs(
+        _textEditorService.PostSimpleBatch(
             nameof(TryRegisterViewModelFunc),
+            string.Empty,
             _textEditorService.ViewModelApi.WithValueFactory(
                 viewModelKey,
                 textEditorViewModel =>
@@ -217,8 +219,9 @@ public class LuthetusIdeEditorBackgroundTaskApi
                 {
                     if (writtenDateTime is not null)
                     {
-                        _textEditorService.PostAsIs(
+                        _textEditorService.PostSimpleBatch(
                             nameof(HandleOnSaveRequested),
+                            string.Empty,
                             _textEditorService.ModelApi.SetResourceDataFactory(
                                 innerTextEditor.ResourceUri,
                                 writtenDateTime.Value));
@@ -338,8 +341,9 @@ public class LuthetusIdeEditorBackgroundTaskApi
                                         var content = await _fileSystemProvider.File
                                             .ReadAllTextAsync(inputFileAbsolutePathString);
 
-                                        _textEditorService.PostAsIs(
+                                        _textEditorService.PostSimpleBatch(
                                             nameof(CheckIfContentsWereModifiedAsync),
+                                            string.Empty,
                                             async editContext =>
                                             {
                                                 await _textEditorService.ModelApi

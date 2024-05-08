@@ -46,8 +46,9 @@ public partial class FindOverlayDisplay : ComponentBase
             {
                 await _throttleInputValueChange.PushEvent(_ =>
                 {
-                    TextEditorService.PostAsIs(
+                    TextEditorService.PostSimpleBatch(
                         nameof(FindOverlayDisplay),
+                        string.Empty,
                         async editContext =>
                         {
                             var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
@@ -235,8 +236,9 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private void HandleActiveIndexMatchedTextSpanChanged()
     {
-        TextEditorService.PostAsIs(
+        TextEditorService.PostSimpleBatch(
             nameof(HandleActiveIndexMatchedTextSpanChanged),
+            string.Empty,
             async editContext =>
             {
                 var localActiveIndexMatchedTextSpan = _activeIndexMatchedTextSpan;

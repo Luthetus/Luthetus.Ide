@@ -45,8 +45,9 @@ public class USER_TYPES_OUT_CODE
 
         foreach (var character in content)
         {
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
                 nameof(USER_TYPES_OUT_CODE),
+                string.Empty,
                 async editContext =>
                 {
                     await textEditorService.ModelApi.InsertTextFactory(
@@ -97,8 +98,9 @@ public class USER_TYPES_OUT_CODE
 
         foreach (var character in content)
         {
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
                 nameof(USER_TYPES_OUT_CODE),
+                string.Empty,
                 async editContext =>
                 {
                     await textEditorService.ModelApi.InsertTextFactory(
@@ -154,8 +156,9 @@ await builder.Build().RunAsync();
             {
                 char character = content[i];
 
-                textEditorService.PostAsIs(
+                textEditorService.PostSimpleBatch(
                     nameof(USER_TYPES_OUT_CODE),
+                    string.Empty,
                     async editContext =>
                     {
                         await textEditorService.ModelApi.InsertTextFactory(

@@ -74,14 +74,15 @@ public class OnKeyDownBatch : ITextEditorTask
         if (KeyboardEventArgsKind == KeyboardEventArgsKind.Command)
         {
             shouldInvokeAfterOnKeyDownAsync = true;
-            var inspectThrottleEventOnKeyDown = ThrottleEventOnKeyDownList.First();
 
-            if (inspectThrottleEventOnKeyDown.Command is not null)
+            foreach (var throttleEventOnKeyDown in ThrottleEventOnKeyDownList)
             {
-                await inspectThrottleEventOnKeyDown.Command.CommandFunc.Invoke(new TextEditorCommandArgs(
+                if (throttleEventOnKeyDown.Command is not null)
+                {
+                    var commandArgs = new TextEditorCommandArgs(
                         modelModifier.ResourceUri,
                         viewModelModifier.ViewModel.ViewModelKey,
-                        hasSelection,
+                        TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier),
                         _events.ClipboardService,
                         _events.TextEditorService,
                         _events.Options,
@@ -90,8 +91,23 @@ public class OnKeyDownBatch : ITextEditorTask
                         _events.JsRuntime,
                         _events.Dispatcher,
                         _events.ServiceProvider,
-                        _events.TextEditorConfig))
-                    .ConfigureAwait(false);
+                        _events.TextEditorConfig);
+
+                    if (throttleEventOnKeyDown.Command is TextEditorCommand textEditorCommand &&
+                        textEditorCommand.TextEditorEditFactory is not null)
+                    {
+                        await textEditorCommand.TextEditorEditFactory
+                            .Invoke(commandArgs)
+                            .Invoke(editContext)
+                            .ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await throttleEventOnKeyDown.Command.CommandFunc
+                            .Invoke(commandArgs)
+                            .ConfigureAwait(false);
+                    }
+                }   
             }
         }
         else if (KeyboardEventArgsKind == KeyboardEventArgsKind.Movement)

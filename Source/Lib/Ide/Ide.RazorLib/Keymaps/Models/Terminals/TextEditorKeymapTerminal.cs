@@ -79,8 +79,9 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 			{
 				var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-				commandArgs.TextEditorService.PostAsIs(
+				commandArgs.TextEditorService.PostSimpleBatch(
 					nameof(commandDisplayName),
+                    string.Empty,
                     async editContext =>
 					{
 						var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);

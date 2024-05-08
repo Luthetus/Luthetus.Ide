@@ -160,8 +160,9 @@ public class LuthCompilerService : ILuthCompilerService
 
     protected virtual void QueueParseRequest(ResourceUri resourceUri)
     {
-        _textEditorService.PostAsIs(
+        _textEditorService.PostSimpleBatch(
             $"{nameof(QueueParseRequest)}_{resourceUri.Value}",
+            string.Empty,
             async editContext =>
             {
 				var modelModifier = editContext.GetModelModifier(resourceUri);

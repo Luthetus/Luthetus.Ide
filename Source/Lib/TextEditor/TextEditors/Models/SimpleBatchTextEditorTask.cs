@@ -39,7 +39,7 @@ public class SimpleBatchTextEditorTask : ITextEditorTask
         ThrottleTimeSpan = throttleTimeSpan ?? TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
     }
 
-    public string Name { get; }
+    public string Name { get; private set; }
     public string Identifier { get; }
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
@@ -62,6 +62,7 @@ public class SimpleBatchTextEditorTask : ITextEditorTask
             return null;
 
         oldSimpleBatchTextEditorTask._textEditorEditList.AddRange(_textEditorEditList);
+        oldSimpleBatchTextEditorTask.Name += '_' + Name;
         return oldSimpleBatchTextEditorTask;
     }
 

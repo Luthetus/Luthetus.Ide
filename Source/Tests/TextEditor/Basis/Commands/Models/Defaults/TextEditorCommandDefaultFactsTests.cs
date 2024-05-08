@@ -61,8 +61,9 @@ public class TextEditorCommandDefaultFactsTests
             var inClipboard = await clipboardService.ReadClipboard();
             Assert.Empty(inClipboard);
 
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
 				nameof(TextEditorCommandDefaultFactsTests),
+                string.Empty,
                 editContext =>
 				{
 					var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -131,8 +132,9 @@ public class TextEditorCommandDefaultFactsTests
             var inClipboard = await clipboardService.ReadClipboard();
             Assert.Empty(inClipboard);
 
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
                 nameof(TextEditorCommandDefaultFactsTests),
+                string.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -153,8 +155,9 @@ public class TextEditorCommandDefaultFactsTests
 
             await TextEditorCommandDefaultFacts.Cut.CommandFunc.Invoke(textEditorCommandArgs);
 
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
                 nameof(TextEditorCommandDefaultFactsTests),
+                string.Empty,
                 async editContext =>
                 {
                     var outClipboard = await clipboardService.ReadClipboard();
@@ -186,8 +189,9 @@ public class TextEditorCommandDefaultFactsTests
 
             var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
 
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
                 nameof(TextEditorCommandDefaultFactsTests),
+                string.Empty,
                 async editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -228,8 +232,9 @@ public class TextEditorCommandDefaultFactsTests
 
             var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
 
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
                 nameof(TextEditorCommandDefaultFactsTests),
+                string.Empty,
                 async editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -284,8 +289,9 @@ public class TextEditorCommandDefaultFactsTests
             var savedContent = (string?)null;
             Assert.Null(savedContent);
 
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
                 nameof(TextEditorCommandDefaultFactsTests),
+                string.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -306,8 +312,9 @@ public class TextEditorCommandDefaultFactsTests
 
             await TextEditorCommandDefaultFacts.Save.CommandFunc.Invoke(textEditorCommandArgs);
 
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
                 nameof(TextEditorCommandDefaultFactsTests),
+                string.Empty,
                 editContext =>
                 {
                     Assert.Equal(TestConstants.SOURCE_TEXT, savedContent);
@@ -326,8 +333,9 @@ public class TextEditorCommandDefaultFactsTests
                 Assert.Null(savedContent);
                 await TextEditorCommandDefaultFacts.Save.CommandFunc.Invoke(textEditorCommandArgs);
 
-                textEditorService.PostAsIs(
+                textEditorService.PostSimpleBatch(
                     nameof(TextEditorCommandDefaultFactsTests),
+                    string.Empty,
                     editContext =>
                     {
                         Assert.Null(savedContent);
@@ -369,8 +377,9 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
                 nameof(TextEditorCommandDefaultFactsTests),
+                string.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -425,8 +434,9 @@ public class TextEditorCommandDefaultFactsTests
                     Key<TextEditorViewModel>.Empty,
                     new List<TextEditorCursorModifier> { new TextEditorCursorModifier(cursor) });
 
-                textEditorService.PostAsIs(
+                textEditorService.PostSimpleBatch(
                     nameof(TextEditorCommandDefaultFactsTests),
+                    string.Empty,
                     textEditorService.ModelApi.InsertTextUnsafeFactory(
                         inModel.ResourceUri,
                         cursorModificationBag,
@@ -650,8 +660,9 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
                 nameof(TextEditorCommandDefaultFactsTests),
+                string.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -723,8 +734,9 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
                 nameof(TextEditorCommandDefaultFactsTests),
+                string.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -797,8 +809,9 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
                 nameof(TextEditorCommandDefaultFactsTests),
+                string.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -871,8 +884,9 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
                 nameof(TextEditorCommandDefaultFactsTests),
+                string.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -983,8 +997,9 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
                 nameof(TextEditorCommandDefaultFactsTests),
+                string.Empty,
                 async editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -1052,8 +1067,9 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
                 nameof(TextEditorCommandDefaultFactsTests),
+                string.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -1121,8 +1137,9 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
                 nameof(TextEditorCommandDefaultFactsTests),
+                string.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -1215,8 +1232,9 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
                 nameof(TextEditorCommandDefaultFactsTests),
+                string.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -1489,8 +1507,9 @@ public class Person
             var newRowIndex = 3;
             var newColumnIndex = 0;
 
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
                 nameof(TextEditorCommandDefaultFactsTests),
+                string.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -1559,8 +1578,9 @@ public class Person
             var newRowIndex = 3;
             var newColumnIndex = 0;
 
-            textEditorService.PostAsIs(
+            textEditorService.PostSimpleBatch(
                 nameof(TextEditorCommandDefaultFactsTests),
+                string.Empty,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
