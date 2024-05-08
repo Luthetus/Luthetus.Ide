@@ -27,11 +27,13 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using System.Collections.Immutable;
 using System.Runtime.InteropServices;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Models;
 
 public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 {
+    private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IStorageService _storageService;
     private readonly IState<CompilerServiceExplorerState> _compilerServiceExplorerStateWrap;
@@ -48,6 +50,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
     private readonly IState<TerminalState> _terminalStateWrap;
 
     public LuthetusIdeDotNetSolutionBackgroundTaskApi(
+        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
         IBackgroundTaskService backgroundTaskService,
         IStorageService storageService,
         IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
@@ -63,6 +66,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
         ICompilerServiceRegistry interfaceCompilerServiceRegistry,
         IState<TerminalState> terminalStateWrap)
     {
+        _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _backgroundTaskService = backgroundTaskService;
         _storageService = storageService;
         _compilerServiceExplorerStateWrap = compilerServiceExplorerStateWrap;

@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.States;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
@@ -13,6 +14,7 @@ namespace Luthetus.Ide.RazorLib.CompilerServices.Models;
 
 public class LuthetusIdeCompilerServiceBackgroundTaskApi
 {
+    private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IState<CompilerServiceExplorerState> _compilerServiceExplorerStateWrap;
     private readonly CompilerServiceRegistry _compilerServiceRegistry;
@@ -22,6 +24,7 @@ public class LuthetusIdeCompilerServiceBackgroundTaskApi
     private readonly IDispatcher _dispatcher;
 
     public LuthetusIdeCompilerServiceBackgroundTaskApi(
+        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
         IBackgroundTaskService backgroundTaskService,
         IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
         CompilerServiceRegistry compilerServiceRegistry,
@@ -30,6 +33,7 @@ public class LuthetusIdeCompilerServiceBackgroundTaskApi
         ITreeViewService treeViewService,
         IDispatcher dispatcher)
     {
+        _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _backgroundTaskService = backgroundTaskService;
         _compilerServiceExplorerStateWrap = compilerServiceExplorerStateWrap;
         _compilerServiceRegistry = compilerServiceRegistry;

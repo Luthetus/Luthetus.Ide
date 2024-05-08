@@ -2,31 +2,19 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
-using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
-using Luthetus.Ide.RazorLib.CodeSearches.States;
-using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.States;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
-using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.Editors.Models;
+using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
-using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.FindAlls.States;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using System.Collections.Immutable;
-using System.Runtime.InteropServices;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 namespace Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
@@ -46,6 +34,7 @@ public class LuthetusIdeBackgroundTaskApi
     private readonly ITextEditorService _textEditorService;
     private readonly ICompilerServiceRegistry _interfaceCompilerServiceRegistry;
     private readonly IState<TerminalState> _terminalStateWrap;
+    private readonly IDecorationMapperRegistry _decorationMapperRegistry;
 
     public LuthetusIdeBackgroundTaskApi(
         IBackgroundTaskService backgroundTaskService,
@@ -61,7 +50,9 @@ public class LuthetusIdeBackgroundTaskApi
         IFileSystemProvider fileSystemProvider,
         ITextEditorService textEditorService,
         ICompilerServiceRegistry interfaceCompilerServiceRegistry,
-        IState<TerminalState> terminalStateWrap)
+        IState<TerminalState> terminalStateWrap,
+        IDecorationMapperRegistry decorationMapperRegistry,
+        IServiceProvider serviceProvider)
     {
         _backgroundTaskService = backgroundTaskService;
         _storageService = storageService;
@@ -77,8 +68,10 @@ public class LuthetusIdeBackgroundTaskApi
         _textEditorService = textEditorService;
         _interfaceCompilerServiceRegistry = interfaceCompilerServiceRegistry;
         _terminalStateWrap = terminalStateWrap;
+        _decorationMapperRegistry = decorationMapperRegistry;
 
         CompilerService = new LuthetusIdeCompilerServiceBackgroundTaskApi(
+            this,
             _backgroundTaskService,
             _compilerServiceExplorerStateWrap,
             _compilerServiceRegistry,
@@ -88,6 +81,7 @@ public class LuthetusIdeBackgroundTaskApi
             _dispatcher);
 
         DotNetSolution = new LuthetusIdeDotNetSolutionBackgroundTaskApi(
+            this,
             _backgroundTaskService,
             _storageService,
             _compilerServiceExplorerStateWrap,
@@ -102,8 +96,28 @@ public class LuthetusIdeBackgroundTaskApi
             _textEditorService,
             _interfaceCompilerServiceRegistry,
             _terminalStateWrap);
+
+        Editor = new LuthetusIdeEditorBackgroundTaskApi(
+            this,
+            _backgroundTaskService,
+            _textEditorService,
+            _ideComponentRenderers,
+            _fileSystemProvider,
+            _environmentProvider,
+            _decorationMapperRegistry,
+            _compilerServiceRegistry,
+            _dispatcher,
+            serviceProvider);
+
+        FileSystem = new LuthetusIdeFileSystemBackgroundTaskApi(
+            _fileSystemProvider,
+            _commonComponentRenderers,
+            _backgroundTaskService,
+            _dispatcher);
     }
     
     public LuthetusIdeCompilerServiceBackgroundTaskApi CompilerService { get; }
     public LuthetusIdeDotNetSolutionBackgroundTaskApi DotNetSolution { get; }
+    public LuthetusIdeEditorBackgroundTaskApi Editor { get; }
+    public LuthetusIdeFileSystemBackgroundTaskApi FileSystem { get; }
 }
