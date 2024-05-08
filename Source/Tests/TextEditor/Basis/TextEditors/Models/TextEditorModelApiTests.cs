@@ -63,7 +63,7 @@ public class TextEditorModelApiTests
 
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
             textEditorService.ModelApi.InsertTextUnsafeFactory(
                 inModel.ResourceUri,
@@ -76,7 +76,7 @@ public class TextEditorModelApiTests
             insertedText + inModel.GetAllText(),
             outModel.GetAllText());
 
-        textEditorService.PostIndependent(nameof(textEditorService.ModelApi.UndoEditFactory),
+        textEditorService.PostAsIs(nameof(textEditorService.ModelApi.UndoEditFactory),
             textEditorService.ModelApi.UndoEditFactory(
                 inModel.ResourceUri));
 
@@ -105,7 +105,7 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(rowEndingKind, inModel.LineEndKindPreference);
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(textEditorService.ModelApi.SetUsingLineEndKindFactory),
             textEditorService.ModelApi.SetUsingLineEndKindFactory(
                 inModel.ResourceUri, rowEndingKind));
@@ -135,7 +135,7 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(newResourceLastWriteTime, inModel.ResourceLastWriteTime);
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(textEditorService.ModelApi.SetResourceDataFactory),
             textEditorService.ModelApi.SetResourceDataFactory(
                 inModel.ResourceUri, newResourceLastWriteTime));
@@ -165,7 +165,7 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(newContent, inModel.GetAllText());
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(textEditorService.ModelApi.ReloadFactory),
             textEditorService.ModelApi.ReloadFactory(
                 inModel.ResourceUri, newContent, DateTime.UtcNow));
@@ -275,7 +275,7 @@ public class TextEditorModelApiTests
 
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
             textEditorService.ModelApi.InsertTextUnsafeFactory(
                 inModel.ResourceUri,
@@ -286,7 +286,7 @@ public class TextEditorModelApiTests
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(textEditorService.ModelApi.UndoEditFactory),
             textEditorService.ModelApi.UndoEditFactory(
                 inModel.ResourceUri));
@@ -294,7 +294,7 @@ public class TextEditorModelApiTests
         outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(inModel.GetAllText(), outModel.GetAllText());
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(textEditorService.ModelApi.RedoEditFactory),
             textEditorService.ModelApi.RedoEditFactory(
                 inModel.ResourceUri));
@@ -324,7 +324,7 @@ public class TextEditorModelApiTests
 
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
             textEditorService.ModelApi.InsertTextUnsafeFactory(
                 inModel.ResourceUri,
@@ -362,7 +362,7 @@ public class TextEditorModelApiTests
 
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(textEditorService.ModelApi.HandleKeyboardEventUnsafeFactory),
             textEditorService.ModelApi.HandleKeyboardEventUnsafeFactory(
                 inModel.ResourceUri,
@@ -484,7 +484,7 @@ public class TextEditorModelApiTests
 
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(textEditorService.ModelApi.DeleteTextByRangeUnsafeFactory),
             textEditorService.ModelApi.DeleteTextByRangeUnsafeFactory(
                 inModel.ResourceUri,
@@ -519,7 +519,7 @@ public class TextEditorModelApiTests
 
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory),
             textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory(
                 inModel.ResourceUri,
@@ -545,7 +545,7 @@ public class TextEditorModelApiTests
 
         Assert.Empty(inModel!.PresentationModelList);
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(textEditorService.ModelApi.AddPresentationModelFactory),
             textEditorService.ModelApi.AddPresentationModelFactory(inModel.ResourceUri, DiffPresentationFacts.EmptyOutPresentationModel));
 

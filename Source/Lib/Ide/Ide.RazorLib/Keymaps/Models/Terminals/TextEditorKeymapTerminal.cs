@@ -79,7 +79,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 			{
 				var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-				commandArgs.TextEditorService.PostIndependent(
+				commandArgs.TextEditorService.PostAsIs(
 					nameof(commandDisplayName),
                     async editContext =>
 					{

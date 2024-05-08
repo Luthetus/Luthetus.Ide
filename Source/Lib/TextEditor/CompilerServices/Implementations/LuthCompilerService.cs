@@ -160,7 +160,7 @@ public class LuthCompilerService : ILuthCompilerService
 
     protected virtual void QueueParseRequest(ResourceUri resourceUri)
     {
-        _textEditorService.PostIndependent(
+        _textEditorService.PostAsIs(
             $"{nameof(QueueParseRequest)}_{resourceUri.Value}",
             async editContext =>
             {

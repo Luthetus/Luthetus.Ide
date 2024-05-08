@@ -137,7 +137,7 @@ public sealed class CSharpCompilerService : LuthCompilerService
                             return;
                         }
 
-                        _textEditorService.PostIndependent(
+                        _textEditorService.PostAsIs(
                             "Add using statement",
                             async editContext =>
                             {

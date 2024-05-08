@@ -210,7 +210,7 @@ public class Terminal
                     }
                     else
                     {
-                        _textEditorService.PostIndependent(
+                        _textEditorService.PostAsIs(
                             "set-content_" + terminalCommandKey.Guid,
                             editContext =>
                             {
@@ -295,7 +295,7 @@ public class Terminal
 
 		_textEditorService.ModelApi.RegisterCustom(model);
 
-		_textEditorService.PostIndependent(
+		_textEditorService.PostAsIs(
 			nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
 			async editContext =>
 			{
@@ -367,7 +367,7 @@ public class Terminal
 
         _textEditorService.ModelApi.RegisterCustom(model);
 
-        _textEditorService.PostIndependent(
+        _textEditorService.PostAsIs(
             nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
             async editContext =>
             {
@@ -402,7 +402,7 @@ public class Terminal
             FindOverlayPresentationFacts.PresentationKey,
         }.ToImmutableArray();
 
-        _textEditorService.PostIndependent(
+        _textEditorService.PostAsIs(
             nameof(Terminal),
             _textEditorService.ViewModelApi.WithValueFactory(
                 TextEditorViewModelKey,
@@ -411,7 +411,7 @@ public class Terminal
                         FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
                     }));
 
-        _textEditorService.PostIndependent(
+        _textEditorService.PostAsIs(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
             async editContext =>
             {
@@ -456,7 +456,7 @@ public class Terminal
 
     public void WriteWorkingDirectory()
     {
-        _textEditorService.PostIndependent(
+        _textEditorService.PostAsIs(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
             async editContext =>
             {
@@ -499,7 +499,7 @@ public class Terminal
     
     public void MoveCursorToEnd()
     {
-        _textEditorService.PostIndependent(
+        _textEditorService.PostAsIs(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
             async editContext =>
             {
@@ -527,7 +527,7 @@ public class Terminal
 
     public void ClearTerminal()
     {
-        _textEditorService.PostIndependent(
+        _textEditorService.PostAsIs(
             nameof(ClearTerminal),
             async editContext =>
             {
@@ -570,7 +570,7 @@ public class Terminal
     /// </summary>
     private void ClearOutputView(TerminalCommand terminalCommand)
     {
-        _textEditorService.PostIndependent(
+        _textEditorService.PostAsIs(
             "clear-content_" + terminalCommand.TerminalCommandKey.Guid,
             editContext =>
             {

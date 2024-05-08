@@ -111,7 +111,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostIndependent(
+                    commandArgs.TextEditorService.PostAsIs(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -139,7 +139,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostIndependent(
+                    commandArgs.TextEditorService.PostAsIs(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -189,7 +189,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostIndependent(
+                    commandArgs.TextEditorService.PostAsIs(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -244,7 +244,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostIndependent(
+                    commandArgs.TextEditorService.PostAsIs(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -285,7 +285,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostIndependent(
+                    commandArgs.TextEditorService.PostAsIs(
                         nameof(commandDisplayName),
                         async editContext =>
                         {
@@ -326,7 +326,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostIndependent(
+                    commandArgs.TextEditorService.PostAsIs(
                         nameof(commandDisplayName),
                         async editContext =>
                         {
@@ -368,7 +368,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostIndependent(
+                    commandArgs.TextEditorService.PostAsIs(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -395,7 +395,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostIndependent(
+                    commandArgs.TextEditorService.PostAsIs(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -422,7 +422,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostIndependent(
+                    commandArgs.TextEditorService.PostAsIs(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -450,7 +450,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostIndependent(
+                    commandArgs.TextEditorService.PostAsIs(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -723,7 +723,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostIndependent(
+                commandArgs.TextEditorService.PostAsIs(
                     nameof(commandDisplayName),
                     editContext =>
                     {
@@ -784,7 +784,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostIndependent(
+                    commandArgs.TextEditorService.PostAsIs(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -811,7 +811,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostIndependent(
+                    commandArgs.TextEditorService.PostAsIs(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -837,7 +837,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostIndependent(
+                commandArgs.TextEditorService.PostAsIs(
                     nameof(displayName),
                     editContext =>
                     {
@@ -863,7 +863,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostIndependent(
+                commandArgs.TextEditorService.PostAsIs(
                     nameof(commandDisplayName),
                     editContext =>
                     {

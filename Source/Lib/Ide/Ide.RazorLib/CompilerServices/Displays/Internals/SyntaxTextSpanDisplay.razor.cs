@@ -50,7 +50,7 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 
         var modelText = model.GetAllText();
 
-        TextEditorService.PostIndependent(
+        TextEditorService.PostAsIs(
             nameof(SyntaxTextSpanDisplay),
             async editContext =>
             {

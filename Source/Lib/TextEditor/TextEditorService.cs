@@ -108,7 +108,7 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
 
-    public void PostIndependent(
+    public void PostAsIs(
         string name,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
@@ -119,7 +119,7 @@ public partial class TextEditorService : ITextEditorService
             throttleTimeSpan));
     }
 
-    public void PostRedundant(
+    public void PostMostRecent(
         string name,
         string redundancyIdentifier,
         TextEditorEdit textEditorEdit,

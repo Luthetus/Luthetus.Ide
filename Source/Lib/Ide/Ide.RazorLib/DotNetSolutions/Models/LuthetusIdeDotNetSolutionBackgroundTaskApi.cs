@@ -145,7 +145,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 
         if (solutionTextEditorModel is not null)
         {
-            _textEditorService.PostIndependent(
+            _textEditorService.PostAsIs(
                 nameof(Website_AddExistingProjectToSolutionAsync),
                 _textEditorService.ModelApi.ReloadFactory(
                     solutionTextEditorModel.ResourceUri,

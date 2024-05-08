@@ -12,7 +12,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostIndependent(
+                commandArgs.TextEditorService.PostAsIs(
                     nameof(DeleteLineCommand),
                     DeleteLineFactory(commandArgs));
 
@@ -32,7 +32,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostIndependent(
+                commandArgs.TextEditorService.PostAsIs(
                     nameof(ChangeLineCommand),
                     ChangeLineFactory(commandArgs));
 
@@ -54,7 +54,7 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.InnerCommand = innerTextEditorCommand;
 
-                commandArgs.TextEditorService.PostIndependent(
+                commandArgs.TextEditorService.PostAsIs(
                     nameof(DeleteMotionCommandConstructor),
                     DeleteMotionFactory(commandArgs));
 
@@ -79,7 +79,7 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.InnerCommand = innerTextEditorCommand;
 
-                commandArgs.TextEditorService.PostIndependent(
+                commandArgs.TextEditorService.PostAsIs(
                     nameof(ChangeMotionCommandConstructor),
                     GetChangeMotionFactory(commandArgs));
 
@@ -102,7 +102,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostIndependent(
+                commandArgs.TextEditorService.PostAsIs(
                     nameof(ChangeSelectionCommand),
                     ChangeSelectionFactory(commandArgs));
 
@@ -122,7 +122,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostIndependent(
+                commandArgs.TextEditorService.PostAsIs(
                     nameof(YankCommand),
                     YankFactory(commandArgs));
 
@@ -142,7 +142,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostIndependent(
+                commandArgs.TextEditorService.PostAsIs(
                     nameof(NewLineBelowCommand),
                     NewLineBelowFactory(commandArgs));
 
@@ -162,7 +162,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostIndependent(
+                commandArgs.TextEditorService.PostAsIs(
                     nameof(NewLineAboveCommand),
                     NewLineAboveFactory(commandArgs));
 

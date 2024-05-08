@@ -168,7 +168,7 @@ public partial class AutocompleteMenu : ComponentBase
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)
     {
-        TextEditorService.PostIndependent(
+        TextEditorService.PostAsIs(
             nameof(InsertAutocompleteMenuOption),
             TextEditorService.ModelApi.InsertTextFactory(
                 viewModel.ResourceUri,

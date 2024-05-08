@@ -225,7 +225,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(MoveCursorFactory_SelectText),
             async editContext =>
             {
@@ -273,7 +273,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(MoveCursorFactory_SelectText),
             async editContext =>
             {
@@ -357,7 +357,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(MoveCursorFactory_SelectText),
             async editContext =>
             {
@@ -480,7 +480,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(MoveCursorFactory_SelectText),
             async editContext =>
             {
@@ -564,7 +564,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(MoveCursorFactory_SelectText),
             async editContext =>
             {
@@ -687,7 +687,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(MoveCursorFactory_SelectText),
             async editContext =>
             {
@@ -774,7 +774,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(MoveCursorFactory_SelectText),
             async editContext =>
             {
@@ -897,7 +897,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(MoveCursorFactory_SelectText),
             async editContext =>
             {
@@ -981,7 +981,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(MoveCursorFactory_SelectText),
             async editContext =>
             {
@@ -1248,7 +1248,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
             oppositeShouldSetFocusAfterNextRender,
             inViewModel.UnsafeState.ShouldSetFocusAfterNextRender);
 
-        textEditorService.PostIndependent(
+        textEditorService.PostAsIs(
             nameof(textEditorService.ViewModelApi.WithValueFactory),
             textEditorService.ViewModelApi.WithValueFactory(
                 inViewModel.ViewModelKey,

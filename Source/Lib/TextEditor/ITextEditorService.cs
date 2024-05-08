@@ -37,10 +37,10 @@ public partial interface ITextEditorService
     /// <summary>
     /// This method will create an instance of <see cref="Events.IndependentTextEditorTask"/>,
     /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
-    /// --- IndependentTextEditorTask.cs inheritdoc:<br/><br/>
+    /// --- <see cref="Events.IndependentTextEditorTask"/>.cs inheritdoc:<br/><br/>
     /// <inheritdoc cref="Events.IndependentTextEditorTask"/>
     /// </summary>
-    public void PostIndependent(
+    public void PostAsIs(
         string name,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null);
@@ -48,10 +48,10 @@ public partial interface ITextEditorService
     /// <summary>
     /// This method will create an instance of <see cref="Events.RedundantTextEditorTask"/>,
     /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
-    /// --- RedundantTextEditorTask.cs inheritdoc:<br/><br/>
+    /// --- <see cref="Events.RedundantTextEditorTask"/>.cs inheritdoc:<br/><br/>
     /// <inheritdoc cref="Events.RedundantTextEditorTask"/>
     /// </summary>
-    public void PostRedundant(
+    public void PostMostRecent(
         string name,
         string redundancyIdentifier,
         TextEditorEdit textEditorEdit,
