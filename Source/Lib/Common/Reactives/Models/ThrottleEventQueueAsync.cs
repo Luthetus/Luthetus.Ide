@@ -100,6 +100,15 @@ public class ThrottleEventQueueAsync
         }
         catch (ArgumentOutOfRangeException)
         {
+            /*
+             Got exception on (2024-05-08):
+             ===========================================================
+             System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection. (Parameter 'index')
+             at System.Collections.Generic.List`1.get_Item(Int32 index)
+             at Luthetus.Common.RazorLib.Reactives.Models.ThrottleEventQueueAsync.DequeueOrDefaultAsync() in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\Reactives\Models\ThrottleEventQueueAsync.cs:line 97
+             at Luthetus.Common.RazorLib.BackgroundTasks.Models.BackgroundTaskWorker.ExecuteAsync(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\BackgroundTasks\Models\BackgroundTaskWorker.cs:line 31
+             at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+             */
             throw;
         }
         finally
