@@ -179,7 +179,6 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
     public Task WriteToStorage()
     {
         return _commonBackgroundTaskApi.Storage.WriteToLocalStorage(
-            _storageService,
             _textEditorService.StorageKey,
             new TextEditorOptionsJsonDto(_textEditorService.OptionsStateWrap.Value.Options));
     }

@@ -1,22 +1,22 @@
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.CompilerServices.Models;
 
 public class CompilerServiceExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
-    private readonly EditorSync _editorSync;
+    private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
 
     public CompilerServiceExplorerTreeViewMouseEventHandler(
-        EditorSync editorSync,
+        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
         ITreeViewService treeViewService,
 		IBackgroundTaskService backgroundTaskService)
         : base(treeViewService, backgroundTaskService)
     {
-        _editorSync = editorSync;
+        _ideBackgroundTaskApi = ideBackgroundTaskApi;
     }
 
     public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
@@ -26,6 +26,6 @@ public class CompilerServiceExplorerTreeViewMouseEventHandler : TreeViewMouseEve
         if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewNamespacePath treeViewNamespacePath)
             return Task.CompletedTask;
 
-        return _editorSync.OpenInEditor(treeViewNamespacePath.Item.AbsolutePath, true);
+        return _ideBackgroundTaskApi.Editor.OpenInEditor(treeViewNamespacePath.Item.AbsolutePath, true);
     }
 }

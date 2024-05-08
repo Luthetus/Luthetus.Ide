@@ -10,8 +10,6 @@ using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
-using Luthetus.Ide.RazorLib.Editors.States;
-using Luthetus.Ide.RazorLib.FolderExplorers.States;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
@@ -25,6 +23,8 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.Editors.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -37,11 +37,7 @@ public partial class IdeHeader : ComponentBase
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
-    [Inject]
-    private EditorSync EditorSync { get; set; } = null!;
-    [Inject]
-    private FolderExplorerSync FolderExplorerSync { get; set; } = null!;
+    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
@@ -108,22 +104,22 @@ public partial class IdeHeader : ComponentBase
             var menuOptionOpenFile = new MenuOptionRecord(
                 "File",
                 MenuOptionKind.Other,
-                EditorSync.ShowInputFile);
+                IdeBackgroundTaskApi.Editor.ShowInputFile);
 
             var menuOptionOpenDirectory = new MenuOptionRecord(
                 "Directory",
                 MenuOptionKind.Other,
-                FolderExplorerSync.ShowInputFile);
+                IdeBackgroundTaskApi.FolderExplorer.ShowInputFile);
 
             var menuOptionOpenCSharpProject = new MenuOptionRecord(
                 "C# Project - TODO: Adhoc Sln",
                 MenuOptionKind.Other,
-                EditorSync.ShowInputFile);
+                IdeBackgroundTaskApi.Editor.ShowInputFile);
 
             var menuOptionOpenDotNetSolution = new MenuOptionRecord(
                 ".NET Solution",
                 MenuOptionKind.Other,
-                () => DotNetSolutionState.ShowInputFile(DotNetSolutionSync));
+                () => DotNetSolutionState.ShowInputFile(IdeBackgroundTaskApi));
 
             var menuOptionOpen = new MenuOptionRecord(
                 "Open",
@@ -199,7 +195,7 @@ public partial class IdeHeader : ComponentBase
                 MenuOptionKind.Delete,
                 () =>
 				{
-					var group = TextEditorService.GroupApi.GetOrDefault(EditorSync.EditorTextEditorGroupKey);
+					var group = TextEditorService.GroupApi.GetOrDefault(LuthetusIdeEditorBackgroundTaskApi.EditorTextEditorGroupKey);
 
                     if (group is null)
                         return Task.CompletedTask;

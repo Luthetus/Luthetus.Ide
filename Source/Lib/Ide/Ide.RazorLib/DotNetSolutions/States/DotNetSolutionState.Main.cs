@@ -37,11 +37,11 @@ public partial record DotNetSolutionState(
 
     public static async Task ShowInputFile(LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi)
     {
-        await ideBackgroundTaskApi.InputFile_aaa.RequestInputFileStateForm("Solution Explorer",
+        await ideBackgroundTaskApi.InputFile.RequestInputFileStateForm("Solution Explorer",
             async absolutePath =>
             {
                 if (absolutePath is not null)
-                    await sync.SetDotNetSolution(absolutePath);
+                    await ideBackgroundTaskApi.DotNetSolution.SetDotNetSolution(absolutePath);
             },
             absolutePath =>
             {

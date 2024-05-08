@@ -35,9 +35,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
-    private LuthetusIdeBackgroundTaskApi LuthetusIdeBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-    private InputFileSync InputFileSync { get; set; } = null!;
+    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 
     [CascadingParameter]
     public IDialog DialogRecord { get; set; } = null!;
@@ -60,7 +58,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 
     private async Task RequestInputFileForParentDirectory()
     {
-        await InputFileSync.RequestInputFileStateForm("Directory for new .NET Solution",
+        await IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm("Directory for new .NET Solution",
             async absolutePath =>
             {
                 if (absolutePath is null)
@@ -129,7 +127,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         solutionAbsolutePathString,
                         false);
 
-                    await LuthetusIdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
+                    await IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
                 });
 
             var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
@@ -171,7 +169,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             solutionAbsolutePathString,
             false);
 
-        await LuthetusIdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
+        await IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
     }
 
     public const string HackForWebsite_NEW_SOLUTION_TEMPLATE = @"

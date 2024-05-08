@@ -17,6 +17,7 @@ using Luthetus.Ide.RazorLib.Clipboards.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.Menus.Models;
 
@@ -191,7 +192,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         TreeViewNamespacePath projectReceivingReference,
         Terminal terminal,
         IDispatcher dispatcher,
-        InputFileSync inputFileSync,
+        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Add Project Reference", MenuOptionKind.Other,
@@ -199,7 +200,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 projectReceivingReference,
                 terminal,
                 dispatcher,
-                inputFileSync,
+                ideBackgroundTaskApi,
                 onAfterCompletion));
     }
 
@@ -528,10 +529,10 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         TreeViewNamespacePath projectReceivingReference,
         Terminal terminal,
         IDispatcher dispatcher,
-        InputFileSync inputFileSync,
+        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
         Func<Task> onAfterCompletion)
     {
-        return inputFileSync.RequestInputFileStateForm($"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
+        return ideBackgroundTaskApi.InputFile.RequestInputFileStateForm($"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
             async referencedProject =>
             {
                 if (referencedProject is null)

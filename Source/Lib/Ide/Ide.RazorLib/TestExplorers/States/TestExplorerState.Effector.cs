@@ -1,4 +1,5 @@
 using Fluxor;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers.States;
@@ -7,11 +8,11 @@ public partial record TestExplorerState
 {
 	public class Effector
 	{
-		private readonly TestExplorerSync _testExplorerSync;
+		private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
 
-		public Effector(TestExplorerSync testExplorerSync)
+		public Effector(LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi)
 		{
-			_testExplorerSync = testExplorerSync;
+            _ideBackgroundTaskApi = ideBackgroundTaskApi;
 		}
 
 		[EffectMethod(typeof(DotNetSolutionState.StateHasChanged))]
@@ -19,7 +20,7 @@ public partial record TestExplorerState
 		{
 			_ = dispatcher; // Suppress unused parameter
 
-            return _testExplorerSync.DotNetSolutionStateWrap_StateChanged();
+            return _ideBackgroundTaskApi.TestExplorer.DotNetSolutionStateWrap_StateChanged();
 		}
 	}
 }

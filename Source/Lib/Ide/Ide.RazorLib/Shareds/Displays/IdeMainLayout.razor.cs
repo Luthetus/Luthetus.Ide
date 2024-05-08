@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.Common.RazorLib.StateHasChangedBoundaries.Displays;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.InputFiles.Displays;
@@ -41,7 +42,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
-    private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
+    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private ILuthetusIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
@@ -155,7 +156,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 slnPersonalPath,
                 false);
 
-            await DotNetSolutionSync.SetDotNetSolution(slnAbsolutePath);
+            await IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(slnAbsolutePath);
 
             var parentDirectory = slnAbsolutePath.ParentDirectory;
             if (parentDirectory is not null)

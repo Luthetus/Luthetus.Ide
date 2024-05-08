@@ -43,7 +43,7 @@ public class LuthetusIdeBackgroundTaskApi
         IBackgroundTaskService backgroundTaskService,
         IStorageService storageService,
         IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
-        CompilerServiceRegistry compilerServiceRegistry,
+        ICompilerServiceRegistry compilerServiceRegistry,
         ILuthetusIdeComponentRenderers ideComponentRenderers,
         ILuthetusCommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
@@ -60,7 +60,7 @@ public class LuthetusIdeBackgroundTaskApi
         _backgroundTaskService = backgroundTaskService;
         _storageService = storageService;
         _compilerServiceExplorerStateWrap = compilerServiceExplorerStateWrap;
-        _compilerServiceRegistry = compilerServiceRegistry;
+        _compilerServiceRegistry = (CompilerServiceRegistry)compilerServiceRegistry;
         _ideComponentRenderers = ideComponentRenderers;
         _commonComponentRenderers = commonComponentRenderers;
         _treeViewService = treeViewService;

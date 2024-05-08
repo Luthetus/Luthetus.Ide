@@ -58,6 +58,7 @@ public record LuthetusCommonFactories
             serviceProvider.GetRequiredService<IState<ThemeState>>(),
             serviceProvider.GetRequiredService<IDispatcher>(),
             serviceProvider.GetRequiredService<IStorageService>(),
+            serviceProvider.GetRequiredService<LuthetusCommonBackgroundTaskApi>(),
             serviceProvider.GetRequiredService<IBackgroundTaskService>());
 
     public Func<IServiceProvider, IThemeService> ThemeServiceFactory { get; init; } =

@@ -5,7 +5,6 @@ using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.States;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
-using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Microsoft.AspNetCore.Components;
@@ -34,7 +33,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     [Inject]
     private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
     [Inject]
-    private EditorSync EditorSync { get; set; } = null!;
+    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
@@ -58,12 +57,12 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
         TextEditorGroupStateWrap.StateChanged += RerenderAfterEventWithArgs;
 
         _compilerServiceExplorerTreeViewKeymap = new CompilerServiceExplorerTreeViewKeyboardEventHandler(
-            EditorSync,
+            IdeBackgroundTaskApi,
             TreeViewService,
 			BackgroundTaskService);
 
         _compilerServiceExplorerTreeViewMouseEventHandler = new CompilerServiceExplorerTreeViewMouseEventHandler(
-            EditorSync,
+            IdeBackgroundTaskApi,
             TreeViewService,
 			BackgroundTaskService);
 
@@ -104,13 +103,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
     private async Task ReloadOnClick()
     {
-        await BackgroundTaskService.GetIdeApi().SetCompilerServiceExplorerTreeView(
-            CompilerServiceExplorerStateWrap,
-            (CompilerServiceRegistry)CompilerServiceRegistry,
-            IdeComponentRenderers,
-            CommonComponentRenderers,
-            TreeViewService,
-            Dispatcher);
+        await IdeBackgroundTaskApi.CompilerService.SetCompilerServiceExplorerTreeView();
     }
 
     public void Dispose()

@@ -1,7 +1,6 @@
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Ide.RazorLib.FolderExplorers.States;
-using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Dropdowns.States;
@@ -11,6 +10,7 @@ using Luthetus.Ide.RazorLib.FolderExplorers.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 
@@ -29,9 +29,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
-    private EditorSync EditorSync { get; set; } = null!;
-    [Inject]
-    private FolderExplorerSync FolderExplorerSync { get; set; } = null!;
+    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
@@ -50,17 +48,18 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         AppOptionsStateWrap.StateChanged += OnStateChanged;
 
         _treeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(
-            EditorSync,
+            IdeBackgroundTaskApi,
             TreeViewService,
 			BackgroundTaskService);
 
         _treeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(
-            EditorSync,
+            IdeBackgroundTaskApi,
             MenuOptionsFactory,
             LuthetusCommonComponentRenderers,
             TreeViewService,
 			BackgroundTaskService,
-            EnvironmentProvider);
+            EnvironmentProvider,
+            Dispatcher);
 
         base.OnInitialized();
     }

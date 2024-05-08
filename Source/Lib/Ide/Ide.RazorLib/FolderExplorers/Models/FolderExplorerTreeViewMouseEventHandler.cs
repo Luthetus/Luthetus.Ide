@@ -1,22 +1,22 @@
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorers.Models;
 
 public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
-    private readonly EditorSync _editorSync;
+    private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
 
     public FolderExplorerTreeViewMouseEventHandler(
-        EditorSync editorSync,
-        ITreeViewService treeViewService,
-		IBackgroundTaskService backgroundTaskService)
+            LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
+            ITreeViewService treeViewService,
+		    IBackgroundTaskService backgroundTaskService)
         : base(treeViewService, backgroundTaskService)
     {
-        _editorSync = editorSync;
+        _ideBackgroundTaskApi = ideBackgroundTaskApi;
     }
 
     public override async Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
@@ -26,6 +26,6 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
         if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-        await _editorSync.OpenInEditor(treeViewAbsolutePath.Item, true);
+        await _ideBackgroundTaskApi.Editor.OpenInEditor(treeViewAbsolutePath.Item, true);
     }
 }

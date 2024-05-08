@@ -1,7 +1,6 @@
 using Luthetus.Ide.Wasm.Facts;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
-using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -17,6 +16,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Website.RazorLib;
 
@@ -39,11 +39,9 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
     [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
-    private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
+    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
-    [Inject]
-    private EditorSync EditorSync { get; set; } = null!;
     [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
@@ -134,14 +132,14 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
             InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
             false);
 
-        await DotNetSolutionSync.SetDotNetSolution(solutionAbsolutePath);
+        await IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
 
         // Display a file from the get-go so the user is less confused on what the website is.
         var absolutePath = EnvironmentProvider.AbsolutePathFactory(
             InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_PROGRAM_CS_ABSOLUTE_FILE_PATH,
             false);
 
-        await EditorSync.OpenInEditor(absolutePath, false);
+        await IdeBackgroundTaskApi.Editor.OpenInEditor(absolutePath, false);
     }
 
     private async Task ParseSolutionAsync()

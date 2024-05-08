@@ -46,8 +46,6 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
     private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-    private InputFileSync InputFileSync { get; set; } = null!;
 
     [CascadingParameter]
     public IDialog DialogRecord { get; set; } = null!;
@@ -81,7 +79,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     private async Task RequestInputFileForParentDirectory(string message)
     {
-        await InputFileSync.RequestInputFileStateForm(message,
+        await IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm(message,
             async absolutePath =>
             {
                 if (absolutePath is null)

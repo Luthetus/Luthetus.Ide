@@ -4,10 +4,10 @@ using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Gits.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
-using Luthetus.Ide.RazorLib.InputFiles.States;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 
@@ -16,7 +16,7 @@ namespace Luthetus.Ide.RazorLib.Gits.Displays;
 public partial class GitAddRepoDisplay : ComponentBase
 {
     [Inject]
-    private InputFileSync InputFileSync { get; set; } = null!;
+    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -41,7 +41,7 @@ public partial class GitAddRepoDisplay : ComponentBase
     /// </summary>
     private async Task RequestInputFileForGitFolder()
     {
-        await InputFileSync.RequestInputFileStateForm("Git Repo",
+        await IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm("Git Repo",
             async absolutePath =>
             {
                 if (absolutePath is null)

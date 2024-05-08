@@ -11,13 +11,13 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Ide.RazorLib.Editors.Models;
 
 namespace Luthetus.Ide.RazorLib.Commands;
 
@@ -228,7 +228,7 @@ public class CommandFactory : ICommandFactory
                 "Focus: Text Editor", "focus-text-editor", false,
                 async commandArgs =>
                 {
-                    var group = _textEditorService.GroupApi.GetOrDefault(EditorSync.EditorTextEditorGroupKey);
+                    var group = _textEditorService.GroupApi.GetOrDefault(LuthetusIdeEditorBackgroundTaskApi.EditorTextEditorGroupKey);
 
                     if (group is null)
                         return;
@@ -342,7 +342,7 @@ public class CommandFactory : ICommandFactory
 	{
 		_nodeList.Clear();
 
-		var group = _textEditorService.GroupApi.GetOrDefault(EditorSync.EditorTextEditorGroupKey);
+		var group = _textEditorService.GroupApi.GetOrDefault(LuthetusIdeEditorBackgroundTaskApi.EditorTextEditorGroupKey);
 
 		if (group is not null)
 		{

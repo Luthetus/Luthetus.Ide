@@ -51,8 +51,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     [Inject]
     private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
-    private InputFileSync InputFileSync { get; set; } = null!;
-    [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
@@ -293,7 +291,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 treeViewModel,
                 TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
                 Dispatcher,
-                InputFileSync,
+                IdeBackgroundTaskApi,
                 () => Task.CompletedTask),
             MenuOptionsFactory.MoveProjectToSolutionFolder(
                 treeViewSolution,
@@ -427,7 +425,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
     private Task AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
     {
-        return InputFileSync.RequestInputFileStateForm("Existing C# Project to add to solution",
+        return IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm("Existing C# Project to add to solution",
             async absolutePath =>
             {
                 if (absolutePath is null)

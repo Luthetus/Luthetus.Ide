@@ -2,8 +2,6 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.FileSystems.States;
-using Luthetus.Ide.RazorLib.InputFiles.States;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib;
@@ -79,7 +77,7 @@ public class LuthetusIdeEditorBackgroundTaskApi
 
     public Task ShowInputFile()
     {
-        return _ideBackgroundTaskApi.InputFile_aaa.RequestInputFileStateForm("TextEditor",
+        return _ideBackgroundTaskApi.InputFile.RequestInputFileStateForm("TextEditor",
             absolutePath =>
             {
                 return OpenInEditor(absolutePath, true);
@@ -212,7 +210,7 @@ public class LuthetusIdeEditorBackgroundTaskApi
 
             var cancellationToken = model.TextEditorSaveFileHelper.GetCancellationToken();
 
-            _ideBackgroundTaskApi.FileSystem_aaa.SaveFile(
+            _ideBackgroundTaskApi.FileSystem.SaveFile(
                 absolutePath,
                 innerContent,
                 writtenDateTime =>

@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.States;
-using Luthetus.Ide.RazorLib.Editors.States;
+using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Exceptions;
@@ -76,7 +76,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
             var localTextEditorModelState = TextEditorModelStateWrap.Value;
 
             var editorTextEditorGroup = localTextEditorGroupState.GroupList.FirstOrDefault(
-                x => x.GroupKey == EditorSync.EditorTextEditorGroupKey);
+                x => x.GroupKey ==  LuthetusIdeEditorBackgroundTaskApi.EditorTextEditorGroupKey);
 
             var activeViewModelKey = editorTextEditorGroup?.ActiveViewModelKey ?? Key<TextEditorViewModel>.Empty;
 

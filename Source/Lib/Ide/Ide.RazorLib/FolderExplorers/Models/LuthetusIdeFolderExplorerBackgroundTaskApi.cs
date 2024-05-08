@@ -61,7 +61,7 @@ public class LuthetusIdeFolderExplorerBackgroundTaskApi
 
     public async Task ShowInputFile()
     {
-        await _ideBackgroundTaskApi.InputFile_aaa.RequestInputFileStateForm("Folder Explorer",
+        await _ideBackgroundTaskApi.InputFile.RequestInputFileStateForm("Folder Explorer",
             async absolutePath =>
             {
                 if (absolutePath is not null)
