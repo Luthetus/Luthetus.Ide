@@ -4,22 +4,26 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.FileSystems.Models;
 
 public class LuthetusIdeFileSystemBackgroundTaskApi
 {
+    private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
 
     public LuthetusIdeFileSystemBackgroundTaskApi(
+        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
         IFileSystemProvider fileSystemProvider,
         ILuthetusCommonComponentRenderers commonComponentRenderers,
         IBackgroundTaskService backgroundTaskService,
         IDispatcher dispatcher)
     {
+        _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _fileSystemProvider = fileSystemProvider;
         _commonComponentRenderers = commonComponentRenderers;
         _backgroundTaskService = backgroundTaskService;

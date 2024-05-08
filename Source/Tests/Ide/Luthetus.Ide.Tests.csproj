@@ -34,4 +34,8 @@
       <ProjectReference Include="..\..\Lib\Ide\Ide.RazorLib\Luthetus.Ide.RazorLib.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Basis\Editors\" />
+    </ItemGroup>
+
 </Project>

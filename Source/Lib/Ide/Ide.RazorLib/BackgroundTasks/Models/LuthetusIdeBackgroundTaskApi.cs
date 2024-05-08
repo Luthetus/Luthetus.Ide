@@ -11,7 +11,10 @@ using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.FolderExplorers.Models;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.TestExplorers.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
@@ -110,9 +113,35 @@ public class LuthetusIdeBackgroundTaskApi
             serviceProvider);
 
         FileSystem = new LuthetusIdeFileSystemBackgroundTaskApi(
+            this,
             _fileSystemProvider,
             _commonComponentRenderers,
             _backgroundTaskService,
+            _dispatcher);
+
+        FolderExplorer = new LuthetusIdeFolderExplorerBackgroundTaskApi(
+            this,
+            _fileSystemProvider,
+            _environmentProvider,
+            _ideComponentRenderers,
+            _commonComponentRenderers,
+            _treeViewService,
+            _backgroundTaskService,
+            _dispatcher);
+
+        InputFile = new LuthetusIdeInputFileBackgroundTaskApi(
+            this,
+            _ideComponentRenderers,
+            _backgroundTaskService,
+            _dispatcher);
+
+        TestExplorer = new LuthetusIdeTestExplorerBackgroundTaskApi(
+            this,
+            _commonComponentRenderers,
+            _treeViewService,
+            _backgroundTaskService,
+            _dotNetSolutionStateWrap,
+            _terminalStateWrap,
             _dispatcher);
     }
     
@@ -120,4 +149,7 @@ public class LuthetusIdeBackgroundTaskApi
     public LuthetusIdeDotNetSolutionBackgroundTaskApi DotNetSolution { get; }
     public LuthetusIdeEditorBackgroundTaskApi Editor { get; }
     public LuthetusIdeFileSystemBackgroundTaskApi FileSystem { get; }
+    public LuthetusIdeFolderExplorerBackgroundTaskApi FolderExplorer { get; }
+    public LuthetusIdeInputFileBackgroundTaskApi InputFile { get; }
+    public LuthetusIdeTestExplorerBackgroundTaskApi TestExplorer { get; }
 }
