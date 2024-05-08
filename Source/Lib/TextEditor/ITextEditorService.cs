@@ -51,7 +51,7 @@ public partial interface ITextEditorService
     /// --- <see cref="Events.RedundantTextEditorTask"/>.cs inheritdoc:<br/><br/>
     /// <inheritdoc cref="Events.RedundantTextEditorTask"/>
     /// </summary>
-    public void PostMostRecent(
+    public void PostTakeMostRecent(
         string name,
         string redundancyIdentifier,
         TextEditorEdit textEditorEdit,

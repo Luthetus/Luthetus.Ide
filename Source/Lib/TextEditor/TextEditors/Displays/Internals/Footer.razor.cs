@@ -29,7 +29,7 @@ public partial class Footer : ComponentBase
 
         if (Enum.TryParse<LineEndKind>(rowEndingKindString, out var rowEndingKind))
         {
-            TextEditorService.PostMostRecent(
+            TextEditorService.PostTakeMostRecent(
                 nameof(TextEditorService.ModelApi.SetUsingLineEndKindFactory),
                 nameof(TextEditorService.ModelApi.SetUsingLineEndKindFactory),
                 TextEditorService.ModelApi.SetUsingLineEndKindFactory(

@@ -108,7 +108,7 @@ public partial class RowSection : ComponentBase
         if (model is null || viewModel is null)
             return;
 
-        TextEditorService.PostMostRecent(
+        TextEditorService.PostTakeMostRecent(
             nameof(VirtualizationDisplayItemsProviderFunc),
             $"{nameof(VirtualizationDisplayItemsProviderFunc)}_{viewModel.ViewModelKey}",
             TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(

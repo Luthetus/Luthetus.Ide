@@ -119,7 +119,7 @@ public partial class TextEditorService : ITextEditorService
             throttleTimeSpan));
     }
 
-    public void PostMostRecent(
+    public void PostTakeMostRecent(
         string name,
         string redundancyIdentifier,
         TextEditorEdit textEditorEdit,

@@ -125,7 +125,7 @@ public partial class FindOverlayDisplay : ComponentBase
                 .FocusHtmlElementById(
                     RenderBatch.ViewModel.PrimaryCursorContentId);
 
-            TextEditorService.PostMostRecent(
+            TextEditorService.PostTakeMostRecent(
                 nameof(FindOverlayDisplay),
                 nameof(FindOverlayDisplay),
                 async editContext =>

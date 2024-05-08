@@ -144,7 +144,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                         RenderBatch.Model.ResourceUri,
                         RenderBatch.Model.GetAllText());
 
-                    TextEditorService.PostMostRecent(
+                    TextEditorService.PostTakeMostRecent(
                         id,
                         id,
                         TextEditorService.ViewModelApi.ScrollIntoViewFactory(
