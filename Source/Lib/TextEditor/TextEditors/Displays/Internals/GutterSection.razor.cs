@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Microsoft.AspNetCore.Components;
