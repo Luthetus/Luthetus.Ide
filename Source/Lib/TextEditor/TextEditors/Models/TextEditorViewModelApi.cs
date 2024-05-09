@@ -266,7 +266,10 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         return editContext =>
         {
-            throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+            // throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+            //
+            // Preferably I'd throw "throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");"
+            // here, but this is a middle piece of the puzzle to change, otherwise nothing will work.
 
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             if (modelModifier is null)
@@ -978,16 +981,31 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             var options = _textEditorService.OptionsApi.GetOptions();
 
             var characterWidthAndLineHeight = await _textEditorService.ViewModelApi.MeasureCharacterWidthAndLineHeightAsync(
-                    measureCharacterWidthAndLineHeightElementId,
-                    countOfTestCharacters)
-                .ConfigureAwait(false);
+                measureCharacterWidthAndLineHeightElementId,
+                countOfTestCharacters);
+
+            // throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+            //
+            // This line of code was not removed from 'CalculateVirtualizationResultFactory(...)'
+            // in order to keep the development website working and just make small incremental changes.
+            // Therefore, do not forget to th remove this line from 'CalculateVirtualizationResultFactory(...)'.
+            var textEditorMeasurements = await _textEditorService.ViewModelApi
+                .GetTextEditorMeasurementsAsync(viewModelModifier.ViewModel.BodyElementId);
 
             viewModelModifier.ViewModel = viewModelModifier.ViewModel with
             {
                 VirtualizationResult = viewModelModifier.ViewModel.VirtualizationResult with
                 {
                     CharAndLineMeasurements = characterWidthAndLineHeight
-                }
+                },
+                Dimensions = new TextEditorDimensions(
+                    textEditorMeasurements.ScrollLeft,
+                    textEditorMeasurements.ScrollTop,
+                    textEditorMeasurements.ScrollWidth,
+                    textEditorMeasurements.ScrollHeight,
+                    textEditorMeasurements.MarginScrollHeight,
+                    textEditorMeasurements.Width,
+                    textEditorMeasurements.Height)
             };
         };
     }

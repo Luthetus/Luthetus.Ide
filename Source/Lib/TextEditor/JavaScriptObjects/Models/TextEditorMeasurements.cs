@@ -49,6 +49,11 @@
 ///           the C# defined dimensions with the HTML element.<br/><br/>
 ///           
 /// TODO: Delete <see cref="TextEditorMeasurements"/> and use <see cref="TextEditors.Models.TextEditorDimensions"/>
+/// 
+/// =====================================================================================================================
+/// The comments for <see cref="TextEditorMeasurements"/> and <see cref="TextEditors.Models.TextEditorDimensions"/>
+/// are going to be out of sync at this point.
+/// =====================================================================================================================
 /// </summary>
 /// <param name="ScrollLeft">The unit of measurement is Pixels (px)</param>
 /// <param name="ScrollTop">The unit of measurement is Pixels (px)</param>

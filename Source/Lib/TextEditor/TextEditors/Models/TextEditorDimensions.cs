@@ -49,6 +49,14 @@
 ///           the C# defined dimensions with the HTML element.<br/><br/>
 ///           
 /// TODO: Delete <see cref="JavaScriptObjects.Models.TextEditorMeasurements"/> and use <see cref="TextEditorDimensions"/>
+/// 
+/// =====================================================================================================================
+/// The comments for <see cref="JavaScriptObjects.Models.TextEditorMeasurements"/> and <see cref="TextEditorDimensions"/>
+/// are going to be out of sync at this point.
+/// =====================================================================================================================
+/// 
+/// I am at the initial steps of rewriting, and am finding that the 'Width' and 'Height'
+/// are defined by the HTML, but that we can move the 'Scroll...' properties to be C# defined.<br/><br/>
 /// </summary>
 /// <param name="ScrollLeft">The unit of measurement is Pixels (px)</param>
 /// <param name="ScrollTop">The unit of measurement is Pixels (px)</param>

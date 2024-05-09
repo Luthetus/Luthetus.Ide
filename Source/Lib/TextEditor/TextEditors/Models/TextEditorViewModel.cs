@@ -98,6 +98,7 @@ public record TextEditorViewModel : IDisposable
     /// visible when rendered" is in this. There is some padding of offscreen content so that scrolling is smoother.
     /// </summary>
     public VirtualizationResult<List<RichCharacter>> VirtualizationResult { get; init; }
+    public TextEditorDimensions Dimensions { get; init; }
     /// <summary>
     /// The command bar is referring to the <see cref="Keymaps.Models.Vims.TextEditorKeymapVim"/>.
     /// </summary>
