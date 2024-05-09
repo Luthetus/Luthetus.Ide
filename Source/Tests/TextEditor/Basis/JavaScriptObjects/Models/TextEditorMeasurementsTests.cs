@@ -1,5 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.JavaScriptObjects.Models;
 
