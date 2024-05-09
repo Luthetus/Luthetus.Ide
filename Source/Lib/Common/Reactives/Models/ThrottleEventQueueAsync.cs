@@ -98,7 +98,7 @@ public class ThrottleEventQueueAsync
             _throttleEventList.RemoveAt(0);
             return firstEvent;
         }
-        catch (ArgumentOutOfRangeException)
+        catch (ArgumentOutOfRangeException e)
         {
             /*
              Got exception on (2024-05-08):
@@ -109,7 +109,21 @@ public class ThrottleEventQueueAsync
              at Luthetus.Common.RazorLib.BackgroundTasks.Models.BackgroundTaskWorker.ExecuteAsync(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\BackgroundTasks\Models\BackgroundTaskWorker.cs:line 31
              at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
              */
-            throw;
+
+            /*
+            I'm going to eat this exception for a moment.
+            I can't test scrolling logic cause this exception keeps happening (2024-05-09).
+            */
+            {
+                Console.WriteLine(e.ToString());
+                return new BackgroundTask(
+                    Keys.Models.Key<BackgroundTask>.NewKey(),
+                    ContinuousBackgroundTaskWorker.GetQueueKey(),
+                    "I'm going to eat this exception for a moment.",
+                    () => Task.CompletedTask);
+            }
+            
+            // throw;
         }
         finally
         {
