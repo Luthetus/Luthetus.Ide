@@ -10,7 +10,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 /// <inheritdoc cref="ITextEditorModel"/>
 public partial class TextEditorModel

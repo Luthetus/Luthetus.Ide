@@ -1,6 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
-
-namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
+﻿namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 /// <summary>
 /// An optional distinction between many <see cref="TextEditorViewModel"/>(s) which

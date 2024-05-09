@@ -35,7 +35,7 @@ public class TextEditorSelectionHelperTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorSelectionHelper.GetSelectedText(TextEditorSelection, RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel)"/>
+	/// <see cref="TextEditorSelectionHelper.GetSelectedText(TextEditorSelection, RazorLib.TextEditors.Models.TextEditorModel)"/>
 	/// </summary>
 	[Fact]
 	public void GetSelectedText_A()
@@ -44,7 +44,7 @@ public class TextEditorSelectionHelperTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorSelectionHelper.GetSelectedText(ImmutableTextEditorSelection, RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel)"/>
+	/// <see cref="TextEditorSelectionHelper.GetSelectedText(ImmutableTextEditorSelection, RazorLib.TextEditors.Models.TextEditorModel)"/>
 	/// </summary>
 	[Fact]
 	public void GetSelectedText_B()
@@ -53,7 +53,7 @@ public class TextEditorSelectionHelperTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorSelectionHelper.GetSelectedText(int?, int, RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel)"/>
+	/// <see cref="TextEditorSelectionHelper.GetSelectedText(int?, int, RazorLib.TextEditors.Models.TextEditorModel)"/>
 	/// </summary>
 	[Fact]
 	public void GetSelectedText_C()
@@ -62,7 +62,7 @@ public class TextEditorSelectionHelperTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorSelectionHelper.SelectLinesRange(RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel, int, int)"/>
+	/// <see cref="TextEditorSelectionHelper.SelectLinesRange(RazorLib.TextEditors.Models.TextEditorModel, int, int)"/>
 	/// </summary>
 	[Fact]
 	public void SelectLinesRange()
@@ -98,7 +98,7 @@ public class TextEditorSelectionHelperTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel, ValueTuple{int, int})"/>
+	/// <see cref="TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(RazorLib.TextEditors.Models.TextEditorModel, ValueTuple{int, int})"/>
 	/// </summary>
 	[Fact]
 	public void ConvertSelectionOfPositionIndexUnitsToRowIndexUnits()

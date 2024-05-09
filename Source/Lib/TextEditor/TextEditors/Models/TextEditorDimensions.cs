@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
+﻿namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 /// <summary>
 /// The unit of measurement is Pixels (px)<br/><br/>
@@ -46,9 +46,7 @@
 ///           |
 ///           This can be solved by adding an event handler to the intra-browser-resize-event.
 ///           Upon the intra-browser-resize-event firing, use a throttle to re-synchronize
-///           the C# defined dimensions with the HTML element.<br/><br/>
-///           
-/// TODO: Delete <see cref="TextEditorMeasurements"/> and use <see cref="TextEditors.Models.TextEditorDimensions"/>
+///           the C# defined dimensions with the HTML element.
 /// </summary>
 /// <param name="ScrollLeft">The unit of measurement is Pixels (px)</param>
 /// <param name="ScrollTop">The unit of measurement is Pixels (px)</param>
@@ -57,7 +55,7 @@
 /// <param name="MarginScrollHeight">The unit of measurement is Pixels (px)</param>
 /// <param name="Width">The unit of measurement is Pixels (px)</param>
 /// <param name="Height">The unit of measurement is Pixels (px)</param>
-public record TextEditorMeasurements(
+public record TextEditorDimensions(
     double ScrollLeft,
     double ScrollTop,
     double ScrollWidth,
