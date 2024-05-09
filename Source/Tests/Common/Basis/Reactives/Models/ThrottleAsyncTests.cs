@@ -3,15 +3,15 @@
 namespace Luthetus.Common.Tests.Basis.Reactives.Models;
 
 /// <summary>
-/// <see cref="Throttle"/>
+/// <see cref="ThrottleAsync"/>
 /// </summary>
-public class ThrottleTests
+public class ThrottleAsyncTests
 {
     /// <summary>
-    /// <see cref="Throttle(TimeSpan)"/>
+    /// <see cref="ThrottleAsync(TimeSpan)"/>
     /// <br/>----<br/>
-    /// <see cref="Throttle.ShouldWaitForPreviousWorkItemToComplete"/>
-    /// <see cref="Throttle.ThrottleTimeSpan"/>
+    /// <see cref="ThrottleAsync.ShouldWaitForPreviousWorkItemToComplete"/>
+    /// <see cref="ThrottleAsync.ThrottleTimeSpan"/>
     /// </summary>
     [Fact]
     public void Constructor_TimeSpan()
@@ -20,10 +20,10 @@ public class ThrottleTests
     }
 
     /// <summary>
-    /// <see cref="Throttle(TimeSpan, bool)"/>
+    /// <see cref="ThrottleAsync(TimeSpan, bool)"/>
     /// <br/>----<br/>
-    /// <see cref="Throttle.ShouldWaitForPreviousWorkItemToComplete"/>
-    /// <see cref="Throttle.ThrottleTimeSpan"/>
+    /// <see cref="ThrottleAsync.ShouldWaitForPreviousWorkItemToComplete"/>
+    /// <see cref="ThrottleAsync.ThrottleTimeSpan"/>
     /// </summary>
     [Fact]
     public void Constructor_TimeSpan_bool()
@@ -32,7 +32,7 @@ public class ThrottleTests
     }
 
     /// <summary>
-    /// <see cref="Throttle.PushEvent(Func{CancellationToken, Task})"/>
+    /// <see cref="ThrottleAsync.PushEvent(Func{CancellationToken, Task})"/>
     /// </summary>
     [Fact]
     public void PushEvent()
@@ -41,7 +41,7 @@ public class ThrottleTests
     }
 
     /// <summary>
-    /// <see cref="Throttle.Dispose()"/>
+    /// <see cref="ThrottleAsync.Dispose()"/>
     /// </summary>
     [Fact]
     public void Dispose()

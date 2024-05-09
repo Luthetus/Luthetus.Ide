@@ -1,5 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
@@ -16,26 +15,21 @@ namespace Luthetus.TextEditor.RazorLib.Events;
 /// that sees the last item in the queue to be of this type, and then batching or etc with it.
 /// One should NOT do this, but it is possible, and should be remarked about.
 /// </remarks>
-public class AsIsTextEditorTask : ITextEditorTask
+public sealed class AsIsTextEditorTask : AsIsBackgroundTask, ITextEditorTask
 {
     private readonly TextEditorEdit _textEditorEdit;
 
     public AsIsTextEditorTask(
-        string name,
-        TextEditorEdit textEditorEdit,
-        TimeSpan? throttleTimeSpan = null)
+            string name,
+            TextEditorEdit textEditorEdit,
+            TimeSpan? throttleTimeSpan = null)
+        : base(name, _ => Task.CompletedTask, throttleTimeSpan)
     {
         _textEditorEdit = textEditorEdit;
 
         Name = name;
         ThrottleTimeSpan = throttleTimeSpan ?? TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
     }
-
-    public string Name { get; }
-    public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public TimeSpan ThrottleTimeSpan { get; }
-    public Task? WorkProgress { get; }
 
     public async Task InvokeWithEditContext(IEditContext editContext)
     {
@@ -44,13 +38,13 @@ public class AsIsTextEditorTask : ITextEditorTask
             .ConfigureAwait(false);
     }
 
-    public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
+    public override IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
         // Keep both events
         return null;
     }
 
-    public Task HandleEvent(CancellationToken cancellationToken)
+    public override Task HandleEvent(CancellationToken cancellationToken)
     {
         throw new NotImplementedException($"{nameof(ITextEditorTask)} should not implement {nameof(HandleEvent)}" +
             "because they instead are contained within an 'IBackgroundTask' that came from the 'TextEditorService'");

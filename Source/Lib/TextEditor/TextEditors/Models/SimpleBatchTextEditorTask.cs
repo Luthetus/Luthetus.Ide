@@ -1,5 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
@@ -13,7 +12,7 @@ namespace Luthetus.TextEditor.RazorLib.Events;
 /// The result of this is that the UI will not be notified to re-render
 /// until after the batch has all done their edits.
 /// </summary>
-public class SimpleBatchTextEditorTask : ITextEditorTask
+public sealed class SimpleBatchTextEditorTask : SimpleBatchBackgroundTask, ITextEditorTask
 {
     private readonly List<TextEditorEdit> _textEditorEditList;
 
@@ -27,10 +26,11 @@ public class SimpleBatchTextEditorTask : ITextEditorTask
     }
 
     public SimpleBatchTextEditorTask(
-        string name,
-        string identifier,
-        List<TextEditorEdit> textEditorEditList,
-        TimeSpan? throttleTimeSpan = null)
+            string name,
+            string identifier,
+            List<TextEditorEdit> textEditorEditList,
+            TimeSpan? throttleTimeSpan = null)
+        : base(name, identifier, new List<Func<CancellationToken, Task>>(), throttleTimeSpan)
     {
         _textEditorEditList = textEditorEditList;
 
@@ -38,13 +38,6 @@ public class SimpleBatchTextEditorTask : ITextEditorTask
         Identifier = identifier;
         ThrottleTimeSpan = throttleTimeSpan ?? TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
     }
-
-    public string Name { get; private set; }
-    public string Identifier { get; }
-    public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public TimeSpan ThrottleTimeSpan { get; }
-    public Task? WorkProgress { get; }
 
     public async Task InvokeWithEditContext(IEditContext editContext)
     {
@@ -56,7 +49,7 @@ public class SimpleBatchTextEditorTask : ITextEditorTask
         }
     }
 
-    public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
+    public override IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
         if (oldEvent is not SimpleBatchTextEditorTask oldSimpleBatchTextEditorTask)
             return null;
@@ -66,7 +59,7 @@ public class SimpleBatchTextEditorTask : ITextEditorTask
         return oldSimpleBatchTextEditorTask;
     }
 
-    public Task HandleEvent(CancellationToken cancellationToken)
+    public override Task HandleEvent(CancellationToken cancellationToken)
     {
         throw new NotImplementedException($"{nameof(ITextEditorTask)} should not implement {nameof(HandleEvent)}" +
             "because they instead are contained within an 'IBackgroundTask' that came from the 'TextEditorService'");

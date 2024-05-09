@@ -1,5 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
@@ -12,29 +11,23 @@ namespace Luthetus.TextEditor.RazorLib.Events;
 /// with the same <see cref="Identifier"/>, then this instance will overwrite the last item in
 /// the queue, because the logic has no value if ran many times one after another, therefore, just take the most recent event.
 /// </summary>
-public class TakeMostRecentTextEditorTask : ITextEditorTask
+public sealed class TakeMostRecentTextEditorTask : TakeMostRecentBackgroundTask, ITextEditorTask
 {
     private readonly TextEditorEdit _textEditorEdit;
 
     public TakeMostRecentTextEditorTask(
-        string name,
-        string redundancyIdentifier,
-        TextEditorEdit textEditorEdit,
-        TimeSpan? throttleTimeSpan = null)
+            string name,
+            string identifier,
+            TextEditorEdit textEditorEdit,
+            TimeSpan? throttleTimeSpan = null)
+        : base(name, identifier, _ => Task.CompletedTask, throttleTimeSpan)
     {
         _textEditorEdit = textEditorEdit;
 
         Name = name;
-        Identifier = redundancyIdentifier;
+        Identifier = identifier;
         ThrottleTimeSpan = throttleTimeSpan ?? TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
     }
-
-    public string Name { get; }
-    public string Identifier { get; }
-    public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public TimeSpan ThrottleTimeSpan { get; }
-    public Task? WorkProgress { get; }
 
     public async Task InvokeWithEditContext(IEditContext editContext)
     {
@@ -43,7 +36,7 @@ public class TakeMostRecentTextEditorTask : ITextEditorTask
             .ConfigureAwait(false);
     }
 
-    public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
+    public override IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
         if (oldEvent is not TakeMostRecentTextEditorTask oldRedundantTextEditorTask)
         {
@@ -61,7 +54,7 @@ public class TakeMostRecentTextEditorTask : ITextEditorTask
         return null;
     }
 
-    public Task HandleEvent(CancellationToken cancellationToken)
+    public override Task HandleEvent(CancellationToken cancellationToken)
     {
         throw new NotImplementedException($"{nameof(ITextEditorTask)} should not implement {nameof(HandleEvent)}" +
             "because they instead are contained within an 'IBackgroundTask' that came from the 'TextEditorService'");
