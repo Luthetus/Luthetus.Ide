@@ -1,4 +1,5 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Exceptions;
 using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Reactives.Models;
@@ -25,6 +26,8 @@ public class ThrottleEventQueueAsync
     /// </summary>
     private readonly SemaphoreSlim _modifyQueueSemaphoreSlim = new(1, 1);
 
+    public bool IsStoppingFurtherEnqueues { get; private set; }
+
     /// <summary>
     /// Returns the amount of <see cref="IBackgroundTask"/>(s) in the queue.
     /// </summary>
@@ -48,6 +51,9 @@ public class ThrottleEventQueueAsync
     /// </summary>
     public async Task EnqueueAsync(IBackgroundTask recentEvent)
     {
+        if (IsStoppingFurtherEnqueues)
+            throw new LuthetusCommonException($"Cannot enqueue on a stopped {nameof(ThrottleEventQueueAsync)}");
+
         try
         {
             await _modifyQueueSemaphoreSlim.WaitAsync();
@@ -128,6 +134,42 @@ public class ThrottleEventQueueAsync
         finally
         {
             _modifyQueueSemaphoreSlim.Release();
+        }
+    }
+
+    public async Task StopFurtherEnqueuesAsync()
+    {
+        try
+        {
+            await _modifyQueueSemaphoreSlim.WaitAsync();
+            IsStoppingFurtherEnqueues = true;
+        }
+        finally
+        {
+            _modifyQueueSemaphoreSlim.Release();
+        }
+    }
+
+    /// <summary>
+    /// This method does NOT prevent enqueues while flushing.
+    /// To do so, invoke <see cref="StopFurtherEnqueuesAsync()"/>
+    /// prior to invoking this method.<br/><br/>
+    /// 
+    /// The implementation of this method is a polling solution
+    /// (as of this comment (2024-05-09)).
+    /// </summary>
+    public async Task UntilIsEmptyAsync(
+        TimeSpan? pollingTimeSpan = null,
+        CancellationToken cancellationToken = default)
+    {
+        pollingTimeSpan ??= TimeSpan.FromMilliseconds(333);
+
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            if (Count == 0)
+                break;
+
+            await Task.Delay(pollingTimeSpan.Value);
         }
     }
 }

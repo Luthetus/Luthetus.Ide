@@ -3,6 +3,9 @@
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 /// <summary>
+/// This class uses mutable state, and therefore a new instance must be made
+/// as opposed to re-using the same one.<br/><br/>
+/// 
 /// This class will take contiguous events of this same type, and combine them to
 /// all to run in a foreach loop, provided they share
 /// the same <see cref="Identifier"/>.
@@ -43,7 +46,7 @@ public class SimpleBatchBackgroundTask : IBackgroundTask
     public virtual Key<BackgroundTaskQueue> QueueKey { get; protected set; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public virtual TimeSpan ThrottleTimeSpan { get; protected set; }
     public virtual Task? WorkProgress { get; protected set; }
-
+    
     public virtual IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
         if (oldEvent is not SimpleBatchBackgroundTask oldSimpleBatchBackgroundTask)

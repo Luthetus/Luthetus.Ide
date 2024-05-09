@@ -92,10 +92,35 @@
 /// <param name="Width">The unit of measurement is Pixels (px)</param>
 /// <param name="Height">The unit of measurement is Pixels (px)</param>
 public record TextEditorDimensions(
-    int ScrollLeft,
-    int ScrollTop,
-    int ScrollWidth,
-    int ScrollHeight,
-    int MarginScrollHeight,
-    int Width,
-    int Height);
+    double ScrollLeft,
+    double ScrollTop,
+    double ScrollWidth,
+    double ScrollHeight,
+    double MarginScrollHeight,
+    double Width,
+    double Height)
+{
+    /// <summary>
+    /// This constructor is here in place of a primary constructor because
+    /// the JavaScript code throws an exception if it tries to give C# an int here.<br/><br/>
+    /// 
+    /// As for why this type wants an int, it helps with drawing to just Math.Ceiling or Math.Floor where appropriate.
+    /// ==============================<br/><br/>
+    /// Microsoft.JSInterop.JSException: An exception occurred executing JS interop: The JSON value could not be converted to Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorDimensions. Path: $.ScrollLeft | LineNumber: 0 | BytePositionInLine: 31.. See InnerException for more details.
+    ///---> System.Text.Json.JsonException: The JSON value could not be converted to Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorDimensions.Path: $.ScrollLeft | LineNumber: 0 | BytePositionInLine: 31.
+    ///---> System.FormatException: Either the JSON value is not in a supported format, or is out of bounds for an Int32.
+    ///  at System.Text.Json.Utf8JsonReader.GetInt32()
+    ///  at System.Text.Json.Serialization.Converters.Int32Converter.Read(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options)
+    /// </summary>
+    public TextEditorDimensions(TextEditorDimensionsJson dimensionsJson) : this(
+        (int)Math.Ceiling(dimensionsJson.ScrollLeft),
+        (int)Math.Ceiling(dimensionsJson.ScrollTop),
+        (int)Math.Ceiling(dimensionsJson.ScrollWidth),
+        (int)Math.Ceiling(dimensionsJson.ScrollHeight),
+        (int)Math.Ceiling(dimensionsJson.MarginScrollHeight),
+        (int)Math.Ceiling(dimensionsJson.Width),
+        (int)Math.Ceiling(dimensionsJson.Height))
+    {
+    }
+}
+

@@ -2,15 +2,16 @@ namespace Luthetus.Common.RazorLib.Reactives.Models;
 
 public class ThrottleAsync
 {
-    private readonly SemaphoreSlim _workItemsStackSemaphoreSlim = new(1, 1);
+    private readonly SemaphoreSlim _workItemsStackSemaphore = new(1, 1);
     private readonly Stack<Func<CancellationToken, Task>> _workItemsStack = new();
-    private readonly SemaphoreSlim _previousSemaphoreSlim = new(1, 1);
+    private readonly SemaphoreSlim _activeTasksSemaphore = new(1, 1);
 
     private CancellationTokenSource _throttleCancellationTokenSource = new();
-    private Task _throttleDelayTask = Task.CompletedTask;
-    private Task _previousTask = Task.CompletedTask;
+    private Task _activeThrottleDelayTask = Task.CompletedTask;
+    private Task _activeTask = Task.CompletedTask;
 
     public bool ShouldWaitForPreviousWorkItemToComplete { get; } = true;
+    public bool IsStoppingFurtherPushes { get; private set; }
 
     public ThrottleAsync(TimeSpan throttleTimeSpan)
     {
@@ -30,75 +31,102 @@ public class ThrottleAsync
 
     public async Task PushEvent(Func<CancellationToken, Task> workItem)
     {
-        await _workItemsStackSemaphoreSlim.WaitAsync().ConfigureAwait(false);
-
-        _workItemsStack.Push(workItem);
-        if (_workItemsStack.Count > 1)
-            return;
-
-        await _previousSemaphoreSlim.WaitAsync().ConfigureAwait(false);
-        if (ShouldWaitForPreviousWorkItemToComplete)
+        // Push workItem onto stack
+        try
         {
-            await _previousTask.ConfigureAwait(false);
-            _previousSemaphoreSlim.Release();
+            await _workItemsStackSemaphore.WaitAsync().ConfigureAwait(false);
+
+            _workItemsStack.Push(workItem);
+            if (_workItemsStack.Count > 1)
+                return;
         }
-        await _throttleDelayTask.ConfigureAwait(false);
+        finally
+        {
+            _workItemsStackSemaphore.Release();
+        }
 
-        var mostRecentWorkItem = _workItemsStack.Pop();
-        _workItemsStack.Clear();
+        try
+        {
+            await _activeTasksSemaphore.WaitAsync().ConfigureAwait(false);
 
-        await _previousSemaphoreSlim.WaitAsync().ConfigureAwait(false);
-        _workItemsStackSemaphoreSlim.Release();
-        _throttleDelayTask = Task.Delay(ThrottleTimeSpan);
-        _previousTask = mostRecentWorkItem.Invoke(CancellationToken.None);
-        _previousSemaphoreSlim.Release();
+            var localTask = _activeTask;
+            var localThrottleDelayTask = _activeThrottleDelayTask;
 
-        /*
-         Question is:
-            How do I set the task that was pop'd as a field,
-            without doing so from within the _workItemsStackSemaphoreSlim.
+            var taskWrapper = Task.Run(async () =>
+            {
+                try
+                {
+                    if (ShouldWaitForPreviousWorkItemToComplete)
+                        await localTask.ConfigureAwait(false);
 
-        Because, I need to:
-            -push 'scrollEvent'
-            -block any further pushes
-            -this lets me thread-safely pop
-            |
-            -NOTE: at this step it is where things get tricky
-            |
-            -I need to capture the reference to the Task which was pop'd
-                -While still preventing any pushes
-                -The result of this is "could the task start from within
-                 the semaphore slim"?
-                -I need to capture the reference to the started task,
-                -without letting the task have any chance to run until
-                     I've released the _workItemsStackSemaphoreSlim.
-                -The reason I need to capture the reference to the task prior
-                     to releasing the semaphore slim is: this throttle
-                     must wait for the previously pop'd event to complete
-                     prior to poping the next task.
-                -Idea: there needs to a second thread-safe concept that I can use
-                           to indicate that there is intent to set the pop'd task.
-                -This sounds like another semaphore slim, that wraps the current _workItemsStackSemaphoreSlim.
-                     -Because, I cannot enter the _workItemsStackSemaphoreSlim until the previously pop'd
-                          task has been captured as a field.
-                     -So, maybe I could have a _intentSemaphoreSlim (name subject to change),
-                          and immediately prior to releasing the _workItemsStackSemaphoreSlim,
-                          I enter the _intentSemaphoreSlim.
-                     -Furthermore, wrapping the _workItemsStackSemaphoreSlim would be an await to enter
-                          the _intentSemaphoreSlim.
-                     -This sounds close to the solution but seems wrong.
-                     -During the time where the task is pop'd, but not yet awaiting the _intentSemaphoreSlim,
-                          if an invocation to 'PushEvent(...)' is done, it could enter the
-                          _intentSemaphoreSlim.
-                     -Because the _intentSemaphoreSlim is await-entered prior to relasing the _workItemsStackSemaphoreSlim
-                          it should be safe to swap the order of the initial semaphore logic. _workItemsStackSemaphoreSlim
-                          needs to be entered prior to attempting to enter _intentSemaphoreSlim.
-                     -This insures a previous invocation of 'PushEvent(...)' has time to enter the '_intentSemaphoreSlim'.
-                     -At this point the field _previousTask can be set. And the new invocation to 'PushEvent(...)'
-                          can enter the _intentSemaphoreSlim semaphore, then await the _previousTask,
-                          and afterwards release the _intentSemaphoreSlim semaphore.
-                     -This feels like the answer.
-         */
+                    await localThrottleDelayTask.ConfigureAwait(false);
+
+                    await _workItemsStackSemaphore.WaitAsync().ConfigureAwait(false);
+
+                    var newWorkItem = _workItemsStack.Pop();
+                    _workItemsStack.Clear();
+
+                    _activeThrottleDelayTask = Task.Run(() => Task.Delay(ThrottleTimeSpan));
+
+                    _activeTask = newWorkItem.Invoke(CancellationToken.None);
+                    await _activeTask.ConfigureAwait(false);
+                }
+                finally
+                {
+                    _workItemsStackSemaphore.Release();
+                }
+            });
+
+            if (ShouldWaitForPreviousWorkItemToComplete && localTask.IsCompleted &&
+                localThrottleDelayTask.IsCompleted)
+            {
+                await taskWrapper.ConfigureAwait(false);
+            }
+        }
+        finally
+        {
+            _activeTasksSemaphore.Release();
+        }
+    }
+
+    public async Task StopFurtherPushes()
+    {
+        try
+        {
+            await _workItemsStackSemaphore.WaitAsync().ConfigureAwait(false);
+            IsStoppingFurtherPushes = true;
+        }
+        finally
+        {
+            _workItemsStackSemaphore.Release();
+        }
+    }
+
+    /// <summary>
+    /// This method awaits the last task prior to returning.<br/><br/>
+    /// 
+    /// This method does NOT prevent pushes while flushing.
+    /// To do so, invoke <see cref="StopFurtherPushes()"/>
+    /// prior to invoking this method.<br/><br/>
+    /// 
+    /// The implementation of this method is a polling solution
+    /// (as of this comment (2024-05-09)).
+    /// </summary>
+    public async Task UntilIsEmpty(
+        TimeSpan? pollingTimeSpan = null,
+        CancellationToken cancellationToken = default)
+    {
+        pollingTimeSpan ??= TimeSpan.FromMilliseconds(333);
+
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            if (_workItemsStack.Count == 0)
+                break;
+
+            await Task.Delay(pollingTimeSpan.Value);
+        }
+
+        await _activeTask;
     }
 
     public void Dispose()

@@ -14,6 +14,7 @@ public class ThrottleEventQueueTests
     /// <see cref="ThrottleEventQueue.Count"/>
     /// <see cref="ThrottleEventQueue.ThrottleEventList"/>
     /// </summary>
+    [Fact]
     public void Enqueue()
     {
         throw new NotImplementedException();
@@ -25,6 +26,7 @@ public class ThrottleEventQueueTests
     /// <see cref="ThrottleEventQueue.Count"/>
     /// <see cref="ThrottleEventQueue.ThrottleEventList"/>
     /// </summary>
+    [Fact]
     public void DequeueOrDefault()
     {
         throw new NotImplementedException();
