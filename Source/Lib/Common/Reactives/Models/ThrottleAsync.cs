@@ -52,36 +52,60 @@ public class ThrottleAsync
             var localTask = _activeTask;
             var localThrottleDelayTask = _activeThrottleDelayTask;
 
-            var taskWrapper = Task.Run(async () =>
+            try
             {
-                try
-                {
-                    if (ShouldWaitForPreviousWorkItemToComplete)
-                        await localTask.ConfigureAwait(false);
+                if (ShouldWaitForPreviousWorkItemToComplete)
+                    await localTask.ConfigureAwait(false);
 
-                    await localThrottleDelayTask.ConfigureAwait(false);
+                await localThrottleDelayTask.ConfigureAwait(false);
 
-                    await _workItemsStackSemaphore.WaitAsync().ConfigureAwait(false);
+                await _workItemsStackSemaphore.WaitAsync().ConfigureAwait(false);
 
-                    var newWorkItem = _workItemsStack.Pop();
-                    _workItemsStack.Clear();
+                var newWorkItem = _workItemsStack.Pop();
+                _workItemsStack.Clear();
 
-                    _activeThrottleDelayTask = Task.Run(() => Task.Delay(ThrottleTimeSpan));
+                _activeThrottleDelayTask = Task.Run(() => Task.Delay(ThrottleTimeSpan));
 
-                    _activeTask = newWorkItem.Invoke(CancellationToken.None);
-                    await _activeTask.ConfigureAwait(false);
-                }
-                finally
-                {
-                    _workItemsStackSemaphore.Release();
-                }
-            });
-
-            if (ShouldWaitForPreviousWorkItemToComplete && localTask.IsCompleted &&
-                localThrottleDelayTask.IsCompleted)
-            {
-                await taskWrapper.ConfigureAwait(false);
+                _activeTask = newWorkItem.Invoke(CancellationToken.None);
+                await _activeTask.ConfigureAwait(false);
             }
+            finally
+            {
+                _workItemsStackSemaphore.Release();
+            }
+
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            //var taskWrapper = Task.Run(async () =>
+            //{
+            //    try
+            //    {
+            //        if (ShouldWaitForPreviousWorkItemToComplete)
+            //            await localTask.ConfigureAwait(false);
+
+            //        await localThrottleDelayTask.ConfigureAwait(false);
+
+            //        await _workItemsStackSemaphore.WaitAsync().ConfigureAwait(false);
+
+            //        var newWorkItem = _workItemsStack.Pop();
+            //        _workItemsStack.Clear();
+
+            //        _activeThrottleDelayTask = Task.Run(() => Task.Delay(ThrottleTimeSpan));
+
+            //        _activeTask = newWorkItem.Invoke(CancellationToken.None);
+            //        await _activeTask.ConfigureAwait(false);
+            //    }
+            //    finally
+            //    {
+            //        _workItemsStackSemaphore.Release();
+            //    }
+            //});
+
+            //if (ShouldWaitForPreviousWorkItemToComplete && localTask.IsCompleted &&
+            //    localThrottleDelayTask.IsCompleted)
+            //{
+            //    await taskWrapper.ConfigureAwait(false);
+            //}
         }
         finally
         {

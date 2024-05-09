@@ -43,7 +43,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
     private readonly Guid _intersectionObserverMapKey = Guid.NewGuid();
 
-    private readonly ThrottleAsync _throttleShouldRevealCursor = new ThrottleAsync(TimeSpan.FromMilliseconds(333));
+    private readonly ThrottleAsync _throttleShouldRevealCursor = new(TimeSpan.FromMilliseconds(333));
 
     private ElementReference? _cursorDisplayElementReference;
     private MenuKind _menuKind;

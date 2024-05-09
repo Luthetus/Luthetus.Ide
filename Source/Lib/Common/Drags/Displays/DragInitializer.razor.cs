@@ -22,7 +22,7 @@ public partial class DragInitializer : FluxorComponent
     /// <summary>
     /// Preferably the throttling logic here would be moved out of the drag initializer itself so one can choose to add it themselves, or take the full stream.
     /// </summary>
-    private ThrottleAsync _throttleDispatchSetDragStateActionOnMouseMove = new ThrottleAsync(IThrottle.DefaultThrottleTimeSpan);
+    private ThrottleAsync _throttleDispatchSetDragStateActionOnMouseMove = new(TimeSpan.FromMilliseconds(17));
 
 	private IDropzone? _onMouseOverDropzone = null;
 
