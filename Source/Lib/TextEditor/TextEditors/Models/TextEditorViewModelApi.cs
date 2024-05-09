@@ -154,7 +154,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             : _textEditorService.ModelApi.GetAllText(textEditorModel.ResourceUri);
     }
 
-    public async Task<TextEditorMeasurements> GetTextEditorMeasurementsAsync(string elementId)
+    public async Task<TextEditorDimensions> GetTextEditorMeasurementsAsync(string elementId)
     {
         return await _jsRuntime.GetLuthetusTextEditorApi()
             .GetTextEditorMeasurementsInPixelsById(
@@ -214,8 +214,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     /// If a parameter is null the JavaScript will not modify that value
     /// </summary>
     public TextEditorEdit SetScrollPositionFactory(
-        string bodyElementId,
-        string gutterElementId,
+        Key<TextEditorViewModel> viewModelKey,
         double? scrollLeftInPixels,
         double? scrollTopInPixels)
     {
@@ -226,10 +225,30 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             // Preferably I'd throw "throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");"
             // here, but this is a middle piece of the puzzle to change, otherwise nothing will work.
 
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+            if (viewModelModifier is null)
+                return;
+
+            viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+            {
+                VirtualizationResult = viewModelModifier.ViewModel.VirtualizationResult with
+                {
+                    TextEditorMeasurements = viewModelModifier.ViewModel.VirtualizationResult.TextEditorMeasurements with
+                    {
+                        ScrollLeft = scrollLeftInPixels is not null
+                            ? (int)Math.Floor(scrollLeftInPixels.Value)
+                            : viewModelModifier.ViewModel.VirtualizationResult.TextEditorMeasurements.ScrollLeft,
+                        ScrollTop = scrollTopInPixels is not null
+                            ? (int)Math.Floor(scrollTopInPixels.Value)
+                            : viewModelModifier.ViewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop,
+                    }
+                }
+            };
+
             await _jsRuntime.GetLuthetusTextEditorApi()
                 .SetScrollPosition(
-                    bodyElementId,
-                    gutterElementId,
+                    viewModelModifier.ViewModel.BodyElementId,
+                    viewModelModifier.ViewModel.GutterElementId,
                     scrollLeftInPixels,
                     scrollTopInPixels)
                 .ConfigureAwait(false);
@@ -240,8 +259,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     /// If a parameter is null then its respective scroll direction will not be modified.
     /// </summary>
     public TextEditorEdit ScrollIntoViewFactory(
-        string bodyElementId,
-        string gutterElementId,
+        Key<TextEditorViewModel> viewModelKey,
         int? lineIndex = null,
         int? columnIndex = null)
     {
@@ -252,8 +270,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public TextEditorEdit ScrollIntoViewFactory(
-        string bodyElementId,
-        string gutterElementId,
+        Key<TextEditorViewModel> viewModelKey,
         int positionIndex)
     {
         throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
@@ -325,22 +342,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             if (scrollLeft is null && scrollTop is null)
                 return Task.CompletedTask;
 
-            viewModelModifier.ViewModel = viewModelModifier.ViewModel with 
-            {
-                Dimensions = viewModelModifier.ViewModel.Dimensions with
-                {
-                    ScrollLeft = scrollLeft is not null
-                        ? (int)Math.Floor(scrollLeft.Value)
-                        : viewModelModifier.ViewModel.Dimensions.ScrollLeft,
-                    ScrollTop = scrollTop is not null
-                        ? (int)Math.Floor(scrollTop.Value)
-                        : viewModelModifier.ViewModel.Dimensions.ScrollTop,
-                }
-            };
-
             return SetScrollPositionFactory(
-                    viewModelModifier.ViewModel.BodyElementId,
-                    viewModelModifier.ViewModel.GutterElementId,
+                    viewModelKey,
                     scrollLeft,
                     scrollTop)
                 .Invoke(editContext);
@@ -348,52 +351,62 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public TextEditorEdit SetGutterScrollTopFactory(
-        string gutterElementId,
+        Key<TextEditorViewModel> viewModelKey,
         double scrollTopInPixels)
     {
         return async editContext =>
         {
             throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
 
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+            if (viewModelModifier is null)
+                return;
+
             await _jsRuntime.GetLuthetusTextEditorApi()
                 .SetGutterScrollTop(
-                    gutterElementId,
+                    viewModelModifier.ViewModel.GutterElementId,
                     scrollTopInPixels)
                 .ConfigureAwait(false);
         };
     }
 
     public TextEditorEdit MutateScrollVerticalPositionFactory(
-        string bodyElementId,
-        string gutterElementId,
+        Key<TextEditorViewModel> viewModelKey,
         double pixels)
     {
         return async editContext =>
         {
             throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
 
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+            if (viewModelModifier is null)
+                return;
+
             await _jsRuntime.GetLuthetusTextEditorApi()
                 .MutateScrollVerticalPositionByPixels(
-                    bodyElementId,
-                    gutterElementId,
+                    viewModelModifier.ViewModel.BodyElementId,
+                    viewModelModifier.ViewModel.GutterElementId,
                     pixels)
                 .ConfigureAwait(false);
         };
     }
 
     public TextEditorEdit MutateScrollHorizontalPositionFactory(
-        string bodyElementId,
-        string gutterElementId,
+        Key<TextEditorViewModel> viewModelKey,
         double pixels)
     {
         return async editContext =>
         {
             throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
 
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+            if (viewModelModifier is null)
+                return;
+
             await _jsRuntime.GetLuthetusTextEditorApi()
                 .MutateScrollHorizontalPositionByPixels(
-                    bodyElementId,
-                    gutterElementId,
+                    viewModelModifier.ViewModel.BodyElementId,
+                    viewModelModifier.ViewModel.GutterElementId,
                     pixels)
                 .ConfigureAwait(false);
         };
@@ -765,11 +778,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                 TextEditorMeasurements = textEditorMeasurements
             };
 
-            textEditorMeasurements = textEditorMeasurements with
-            {
-                MeasurementsExpiredCancellationToken = cancellationToken
-            };
-
             var verticalStartingIndex = (int)Math.Floor(
                 textEditorMeasurements.ScrollTop /
                 virtualizationResult.CharAndLineMeasurements.LineHeight);
@@ -1035,16 +1043,9 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             {
                 VirtualizationResult = viewModelModifier.ViewModel.VirtualizationResult with
                 {
-                    CharAndLineMeasurements = characterWidthAndLineHeight
+                    CharAndLineMeasurements = characterWidthAndLineHeight,
+                    TextEditorMeasurements = textEditorMeasurements
                 },
-                Dimensions = new TextEditorDimensions(
-                    textEditorMeasurements.ScrollLeft,
-                    textEditorMeasurements.ScrollTop,
-                    textEditorMeasurements.ScrollWidth,
-                    textEditorMeasurements.ScrollHeight,
-                    textEditorMeasurements.MarginScrollHeight,
-                    textEditorMeasurements.Width,
-                    textEditorMeasurements.Height)
             };
         };
     }

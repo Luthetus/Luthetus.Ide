@@ -1,4 +1,5 @@
 ﻿using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.JavaScriptObjects.Models;
 
@@ -31,17 +32,15 @@ public class TextEditorMeasurementsTests
 		var marginScrollHeight = 20;
 		var width = 3000;
 		var height = 4000;
-		var measurementsExpiredCancellationToken = cancellationTokenSource.Token;
 
-        var textEditorMeasurements = new TextEditorMeasurements(
+        var textEditorMeasurements = new TextEditorDimensions(
             scrollLeft,
             scrollTop,
             scrollWidth,
             scrollHeight,
             marginScrollHeight,
             width,
-            height,
-            measurementsExpiredCancellationToken);
+            height);
 
 		Assert.Equal(scrollLeft, textEditorMeasurements.ScrollLeft);
 		Assert.Equal(scrollTop, textEditorMeasurements.ScrollTop);
@@ -50,6 +49,5 @@ public class TextEditorMeasurementsTests
 		Assert.Equal(marginScrollHeight, textEditorMeasurements.MarginScrollHeight);
 		Assert.Equal(width, textEditorMeasurements.Width);
 		Assert.Equal(height, textEditorMeasurements.Height);
-		Assert.Equal(measurementsExpiredCancellationToken, textEditorMeasurements.MeasurementsExpiredCancellationToken);
 	}
 }

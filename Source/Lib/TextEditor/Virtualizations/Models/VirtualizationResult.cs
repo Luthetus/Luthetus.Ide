@@ -1,5 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
@@ -12,7 +13,7 @@ public record VirtualizationResult<T> : IVirtualizationResultWithoutTypeMask
         VirtualizationBoundary rightVirtualizationBoundary,
         VirtualizationBoundary topVirtualizationBoundary,
         VirtualizationBoundary bottomVirtualizationBoundary,
-        TextEditorMeasurements textEditorMeasurements,
+        TextEditorDimensions textEditorMeasurements,
         CharAndLineMeasurements charAndRowMeasurements)
     {
         EntryList = entries;
@@ -30,7 +31,7 @@ public record VirtualizationResult<T> : IVirtualizationResultWithoutTypeMask
         new VirtualizationBoundary(0, 0, 0, 0),
         new VirtualizationBoundary(0, 0, 0, 0),
         new VirtualizationBoundary(0, 0, 0, 0),
-        new TextEditorMeasurements(0, 0, 0, 0, 0, 0, 0, CancellationToken.None),
+        new TextEditorDimensions(0, 0, 0, 0, 0, 0, 0),
         new CharAndLineMeasurements(0, 0));
 
     public ImmutableArray<VirtualizationEntry<T>> EntryList { get; init; }
@@ -38,6 +39,6 @@ public record VirtualizationResult<T> : IVirtualizationResultWithoutTypeMask
     public VirtualizationBoundary RightVirtualizationBoundary { get; init; }
     public VirtualizationBoundary TopVirtualizationBoundary { get; init; }
     public VirtualizationBoundary BottomVirtualizationBoundary { get; init; }
-    public TextEditorMeasurements TextEditorMeasurements { get; init; }
+    public TextEditorDimensions TextEditorMeasurements { get; init; }
     public CharAndLineMeasurements CharAndLineMeasurements { get; set; }
 }

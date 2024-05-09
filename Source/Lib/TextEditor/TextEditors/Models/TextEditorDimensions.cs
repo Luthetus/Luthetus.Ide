@@ -69,7 +69,20 @@
 /// As then, the width of a line cannot be calculated.
 /// |
 /// 'ScrollHeight' on the otherhand should be easier to calculate, since every line is of the same height,
-/// regardless of 'UseMonospaceOptimizations' being on or off.
+/// regardless of 'UseMonospaceOptimizations' being on or off.<br/><br/>
+/// 
+/// I want to at this point delete <see cref="JavaScriptObjects.Models.TextEditorMeasurements"/>.cs
+/// and replace all references with <see cref="TextEditorDimensions"/>.
+/// |
+/// A side note: it seems it would still be a massive optimization, to leave the calculation of virtualization result,
+///              to invoke JavaScript to measure the text editor.
+///              |
+///              This is because, we still gain the advantage of scrolling within an <see cref="IEditContext"/>,
+///              and not calling into JavaScript, until the final result.
+///              |
+///              Preferably the calculation of virtualization result wouldn't invoke JavaScript, as we'd keep the
+///              measurements accurate. But, in terms of a step by step plan, focusing on the <see cref="IEditContext"/>
+///              side of things is far more important.
 /// </summary>
 /// <param name="ScrollLeft">The unit of measurement is Pixels (px)</param>
 /// <param name="ScrollTop">The unit of measurement is Pixels (px)</param>

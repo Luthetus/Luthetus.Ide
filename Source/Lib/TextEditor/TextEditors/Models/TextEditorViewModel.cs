@@ -98,7 +98,6 @@ public record TextEditorViewModel : IDisposable
     /// visible when rendered" is in this. There is some padding of offscreen content so that scrolling is smoother.
     /// </summary>
     public VirtualizationResult<List<RichCharacter>> VirtualizationResult { get; init; }
-    public TextEditorDimensions Dimensions { get; init; }
     /// <summary>
     /// The command bar is referring to the <see cref="Keymaps.Models.Vims.TextEditorKeymapVim"/>.
     /// </summary>
@@ -162,8 +161,7 @@ public record TextEditorViewModel : IDisposable
         throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
 
         return TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
-            BodyElementId,
-            GutterElementId,
+            ViewModelKey,
             pixels);
     }
 
@@ -172,8 +170,7 @@ public record TextEditorViewModel : IDisposable
         throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
 
         return TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
-            BodyElementId,
-            GutterElementId,
+            ViewModelKey,
             pixels);
     }
 
@@ -199,8 +196,7 @@ public record TextEditorViewModel : IDisposable
         throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
 
         return TextEditorService.ViewModelApi.SetScrollPositionFactory(
-	        BodyElementId,
-	        GutterElementId,
+	        ViewModelKey,
 	        scrollLeft,
 	        scrollTop);
     }

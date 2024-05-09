@@ -25,7 +25,7 @@ public interface ITextEditorViewModelApi
     /// </summary>
     public ImmutableList<TextEditorViewModel> GetViewModels();
     public TextEditorModel? GetModelOrDefault(Key<TextEditorViewModel> viewModelKey);
-    public Task<TextEditorMeasurements> GetTextEditorMeasurementsAsync(string elementId);
+    public Task<TextEditorDimensions> GetTextEditorMeasurementsAsync(string elementId);
 
     public Task<CharAndLineMeasurements> MeasureCharacterWidthAndLineHeightAsync(
         string measureCharacterWidthAndLineHeightElementId,
@@ -50,8 +50,7 @@ public interface ITextEditorViewModelApi
     /// If a parameter is null the JavaScript will not modify that value
     /// </summary>
     public TextEditorEdit SetScrollPositionFactory(
-        string bodyElementId,
-        string gutterElementId,
+        Key<TextEditorViewModel> viewModelKey,
         double? scrollLeftInPixels,
         double? scrollTopInPixels);
 
@@ -59,14 +58,12 @@ public interface ITextEditorViewModelApi
     /// If a parameter is null then its respective scroll direction will not be modified.
     /// </summary>
     public TextEditorEdit ScrollIntoViewFactory(
-        string bodyElementId,
-        string gutterElementId,
+        Key<TextEditorViewModel> viewModelKey,
         int? lineIndex = null,
         int? columnIndex = null);
 
     public TextEditorEdit ScrollIntoViewFactory(
-        string bodyElementId,
-        string gutterElementId,
+        Key<TextEditorViewModel> viewModelKey,
         int positionIndex);
 
     public TextEditorEdit ScrollIntoViewFactory(
@@ -75,17 +72,15 @@ public interface ITextEditorViewModelApi
         TextEditorTextSpan textSpan);
 
     public TextEditorEdit SetGutterScrollTopFactory(
-        string gutterElementId,
+        Key<TextEditorViewModel> viewModelKey,
         double scrollTopInPixels);
 
     public TextEditorEdit MutateScrollVerticalPositionFactory(
-        string bodyElementId,
-        string gutterElementId,
+        Key<TextEditorViewModel> viewModelKey,
         double pixels);
 
     public TextEditorEdit MutateScrollHorizontalPositionFactory(
-        string bodyElementId,
-        string gutterElementId,
+        Key<TextEditorViewModel> viewModelKey,
         double pixels);
 
     public TextEditorEdit FocusPrimaryCursorFactory(string primaryCursorContentId);
