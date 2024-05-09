@@ -350,12 +350,12 @@ window.luthetusTextEditor = {
         }
 
         return {
-            ScrollLeft: elementReference.scrollLeft,
-            ScrollTop: elementReference.scrollTop,
-            ScrollWidth: elementReference.scrollWidth,
-            ScrollHeight: elementReference.scrollHeight,
-            Width: elementReference.offsetWidth,
-            Height: elementReference.offsetHeight,
+            ScrollLeft: Math.ceil(elementReference.scrollLeft),
+            ScrollTop: Math.ceil(elementReference.scrollTop),
+            ScrollWidth: Math.ceil(elementReference.scrollWidth),
+            ScrollHeight: Math.ceil(elementReference.scrollHeight),
+            Width: Math.ceil(elementReference.offsetWidth),
+            Height: Math.ceil(elementReference.offsetHeight),
         };
     },
     cursorIntersectionObserverMap: new Map(),

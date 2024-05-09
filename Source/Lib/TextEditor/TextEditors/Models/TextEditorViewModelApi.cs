@@ -221,7 +221,10 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         return async editContext =>
         {
-            throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+            // throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+            //
+            // Preferably I'd throw "throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");"
+            // here, but this is a middle piece of the puzzle to change, otherwise nothing will work.
 
             await _jsRuntime.GetLuthetusTextEditorApi()
                 .SetScrollPosition(
@@ -321,6 +324,19 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             // Return early if both values are 'null'
             if (scrollLeft is null && scrollTop is null)
                 return Task.CompletedTask;
+
+            viewModelModifier.ViewModel = viewModelModifier.ViewModel with 
+            {
+                Dimensions = viewModelModifier.ViewModel.Dimensions with
+                {
+                    ScrollLeft = scrollLeft is not null
+                        ? (int)Math.Floor(scrollLeft.Value)
+                        : viewModelModifier.ViewModel.Dimensions.ScrollLeft,
+                    ScrollTop = scrollTop is not null
+                        ? (int)Math.Floor(scrollTop.Value)
+                        : viewModelModifier.ViewModel.Dimensions.ScrollTop,
+                }
+            };
 
             return SetScrollPositionFactory(
                     viewModelModifier.ViewModel.BodyElementId,
@@ -880,18 +896,41 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                         topInPixels);
                 }).ToImmutableArray();
 
-            var totalWidth = modelModifier.MostCharactersOnASingleLineTuple.lineLength *
-                virtualizationResult.CharAndLineMeasurements.CharacterWidth;
+            var totalWidth = (int)Math.Ceiling(modelModifier.MostCharactersOnASingleLineTuple.lineLength *
+                virtualizationResult.CharAndLineMeasurements.CharacterWidth);
 
-            var totalHeight = modelModifier.LineEndList.Count *
-                virtualizationResult.CharAndLineMeasurements.LineHeight;
+            // Account for any tab characters on the 'MostCharactersOnASingleLineTuple'
+            //
+            // TODO: This code is not fully correct...
+            //       ...if the longest line is 50 non-tab characters,
+            //       and the second longest line is 49 tab characters,
+            //       this code will erroneously take the '50' non-tab characters
+            //       to be the longest line.
+            {
+                var lineIndex = modelModifier.MostCharactersOnASingleLineTuple.lineIndex;
+                var longestLineInformation = modelModifier.GetLineInformation(lineIndex);
+
+                var tabCountOnLongestLine = modelModifier.GetTabCountOnSameLineBeforeCursor(
+                    longestLineInformation.Index,
+                    longestLineInformation.LastValidColumnIndex);
+
+                // 1 of the character width is already accounted for
+                var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+
+                totalWidth += (int)Math.Ceiling(extraWidthPerTabKey *
+                    tabCountOnLongestLine *
+                    virtualizationResult.CharAndLineMeasurements.CharacterWidth);
+            }
+
+            var totalHeight = (int)Math.Ceiling(modelModifier.LineEndList.Count *
+                virtualizationResult.CharAndLineMeasurements.LineHeight);
 
             // Add vertical margin so the user can scroll beyond the final line of content
-            double marginScrollHeight;
+            int marginScrollHeight;
             {
                 var percentOfMarginScrollHeightByPageUnit = 0.4;
 
-                marginScrollHeight = textEditorMeasurements.Height * percentOfMarginScrollHeightByPageUnit;
+                marginScrollHeight = (int)Math.Ceiling(textEditorMeasurements.Height * percentOfMarginScrollHeightByPageUnit);
                 totalHeight += marginScrollHeight;
             }
 

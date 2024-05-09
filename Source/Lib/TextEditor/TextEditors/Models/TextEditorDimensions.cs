@@ -15,7 +15,7 @@
 ///              <see cref="TextEditors.Models.IEditContext"/>,
 ///              sensibly batch modifications to the scroll positions.
 ///              |
-///              If the C# defined the dimensions, then after an <see cref="TextEditors.Models.IEditContext"/>
+///              If the C# defined the dimensions, then after an <see cref="IEditContext"/>
 ///              is completed, in just one JavaScript invocation the scrollbar could be moved.
 ///              |
 ///              Furthermore, given the current way, everytime the <see cref="Virtualizations.Models.VirtualizationResult{T}"/>
@@ -57,6 +57,19 @@
 /// 
 /// I am at the initial steps of rewriting, and am finding that the 'Width' and 'Height'
 /// are defined by the HTML, but that we can move the 'Scroll...' properties to be C# defined.<br/><br/>
+/// 
+/// Regarding 'ScrollWidth' and 'ScrollHeight', are these similar to 'Width' and 'Height' where the
+/// HTML is defining them, and they must be measured?
+/// |
+/// Perferably C# can handle these values, as if text is inserted or deleted to the
+/// largest-width-line of text, then the 'ScrollWidth' would be effected.
+/// To immediately know this change in 'ScrollWidth' with C# could be helpful for optimizations.
+/// |
+/// One reason for not knowing this information, would be if 'UseMonospaceOptimizations' were turned off.
+/// As then, the width of a line cannot be calculated.
+/// |
+/// 'ScrollHeight' on the otherhand should be easier to calculate, since every line is of the same height,
+/// regardless of 'UseMonospaceOptimizations' being on or off.
 /// </summary>
 /// <param name="ScrollLeft">The unit of measurement is Pixels (px)</param>
 /// <param name="ScrollTop">The unit of measurement is Pixels (px)</param>
@@ -66,10 +79,10 @@
 /// <param name="Width">The unit of measurement is Pixels (px)</param>
 /// <param name="Height">The unit of measurement is Pixels (px)</param>
 public record TextEditorDimensions(
-    double ScrollLeft,
-    double ScrollTop,
-    double ScrollWidth,
-    double ScrollHeight,
-    double MarginScrollHeight,
-    double Width,
-    double Height);
+    int ScrollLeft,
+    int ScrollTop,
+    int ScrollWidth,
+    int ScrollHeight,
+    int MarginScrollHeight,
+    int Width,
+    int Height);
