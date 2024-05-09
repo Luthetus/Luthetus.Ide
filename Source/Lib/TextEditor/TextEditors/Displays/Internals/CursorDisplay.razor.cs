@@ -9,6 +9,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -41,6 +42,8 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     public RenderFragment AutoCompleteMenuRenderFragment { get; set; } = null!;
 
     private readonly Guid _intersectionObserverMapKey = Guid.NewGuid();
+
+    private readonly ThrottleAsync _throttleShouldRevealCursor = new ThrottleAsync(TimeSpan.FromMilliseconds(333));
 
     private ElementReference? _cursorDisplayElementReference;
     private MenuKind _menuKind;
@@ -125,32 +128,42 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
             if (!RenderBatch.ViewModel.UnsafeState.CursorIsIntersecting)
             {
+                var localRenderBatch = RenderBatch;
+
                 var id = nameof(CursorDisplay) +
                     ", " +
                     nameof(TextEditorService.ViewModelApi.ScrollIntoViewFactory) +
-                    RenderBatch.ViewModel.ViewModelKey.ToString();
+                    localRenderBatch.ViewModel.ViewModelKey.ToString();
 
-                // TODO: Need to add 'TextEditorService.PostTakeMostRecent' and simple batch combination.
-                TextEditorService.PostTakeMostRecent(
-                    id,
-                    id,
-                    editContext =>
-                    {
-                        var cursorPositionIndex = RenderBatch.Model.GetPositionIndex(Cursor);
+                await _throttleShouldRevealCursor.PushEvent(_ =>
+                {
+                    // TODO: Need to add 'TextEditorService.PostTakeMostRecent' and simple batch combination.
+                    //
+                    // I think after removing the throttle, that this is an infinite loop on WASM,
+                    // i.e. holding down ArrowRight
+                    TextEditorService.PostSimpleBatch(
+                        id,
+                        id,
+                        editContext =>
+                        {
+                            var cursorPositionIndex = localRenderBatch.Model.GetPositionIndex(Cursor);
 
-                        var cursorTextSpan = new TextEditorTextSpan(
-                            cursorPositionIndex,
-                            cursorPositionIndex + 1,
-                            0,
-                            RenderBatch.Model.ResourceUri,
-                            RenderBatch.Model.GetAllText());
+                            var cursorTextSpan = new TextEditorTextSpan(
+                                cursorPositionIndex,
+                                cursorPositionIndex + 1,
+                                0,
+                                localRenderBatch.Model.ResourceUri,
+                                localRenderBatch.Model.GetAllText());
 
-                        return TextEditorService.ViewModelApi.ScrollIntoViewFactory(
-                                RenderBatch.Model.ResourceUri,
-                                RenderBatch.ViewModel.ViewModelKey,
-                                cursorTextSpan)
-                            .Invoke(editContext);
-                    });
+                            return TextEditorService.ViewModelApi.ScrollIntoViewFactory(
+                                    localRenderBatch.Model.ResourceUri,
+                                    localRenderBatch.ViewModel.ViewModelKey,
+                                    cursorTextSpan)
+                                .Invoke(editContext);
+                        });
+
+                    return Task.CompletedTask;
+                });
             }
         }
 
