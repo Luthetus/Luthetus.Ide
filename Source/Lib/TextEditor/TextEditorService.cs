@@ -22,6 +22,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Microsoft.JSInterop;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Events;
+using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.TextEditor.RazorLib;
 
@@ -165,6 +166,23 @@ public partial class TextEditorService : ITextEditorService
         {
             Console.WriteLine(e.ToString());
         }
+    }
+
+    /// <summary>
+    /// I want to batch any scrolling done while within an <see cref="IEditContext"/>.
+    /// The <see cref="TextEditorServiceTask"/> needs the <see cref="IJSRuntime"/>,
+    /// in order to perform the scroll once the <see cref="IEditContext"/> is completed.
+    /// That being said, I didn't want to pass the <see cref="IJSRuntime"/> to the <see cref="TextEditorServiceTask"/>
+    /// so I'm doing this for the moment (2024-05-09).
+    /// </summary>
+    public async Task HACK_SetScrollPosition(TextEditorViewModel viewModel)
+    {
+        await _jsRuntime.GetLuthetusTextEditorApi()
+            .SetScrollPosition(
+                viewModel.BodyElementId,
+                viewModel.GutterElementId,
+                viewModel.VirtualizationResult.TextEditorMeasurements.ScrollLeft,
+                viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop);
     }
 
     private record TextEditorEditContext : IEditContext

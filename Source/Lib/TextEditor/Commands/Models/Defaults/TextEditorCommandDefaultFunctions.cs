@@ -159,7 +159,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit ScrollLineDownFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return async (IEditContext editContext) =>
+        return (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -167,16 +167,19 @@ public class TextEditorCommandDefaultFunctions
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return;
+                return Task.CompletedTask;
 
-            await viewModelModifier.ViewModel.MutateScrollVerticalPositionByLinesFactory(1).Invoke(editContext).ConfigureAwait(false);
+            return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
+                    viewModelKey,
+                    viewModelModifier.ViewModel.VirtualizationResult.CharAndLineMeasurements.LineHeight)
+                .Invoke(editContext);
         };
     }
 
     public static TextEditorEdit ScrollLineUpFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return async (IEditContext editContext) =>
+        return (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -184,16 +187,19 @@ public class TextEditorCommandDefaultFunctions
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return;
+                return Task.CompletedTask;
 
-            await viewModelModifier.ViewModel.MutateScrollVerticalPositionByLinesFactory(-1).Invoke(editContext).ConfigureAwait(false);
+            return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
+                    viewModelKey,
+                    -1 * viewModelModifier.ViewModel.VirtualizationResult.CharAndLineMeasurements.LineHeight)
+                .Invoke(editContext);
         };
     }
 
     public static TextEditorEdit ScrollPageDownFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return async (IEditContext editContext) =>
+        return (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -201,16 +207,19 @@ public class TextEditorCommandDefaultFunctions
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return;
+                return Task.CompletedTask;
 
-            await viewModelModifier.ViewModel.MutateScrollVerticalPositionByPagesFactory(1).Invoke(editContext).ConfigureAwait(false);
+            return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
+                    viewModelKey,
+                    viewModelModifier.ViewModel.VirtualizationResult.TextEditorMeasurements.Height)
+                .Invoke(editContext);
         };
     }
 
     public static TextEditorEdit ScrollPageUpFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return async (IEditContext editContext) =>
+        return (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -218,9 +227,12 @@ public class TextEditorCommandDefaultFunctions
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return;
+                return Task.CompletedTask;
 
-            await viewModelModifier.ViewModel.MutateScrollVerticalPositionByPagesFactory(-1).Invoke(editContext).ConfigureAwait(false);
+            return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
+                    viewModelKey,
+                    -1 * viewModelModifier.ViewModel.VirtualizationResult.TextEditorMeasurements.Height)
+                .Invoke(editContext);
         };
     }
 

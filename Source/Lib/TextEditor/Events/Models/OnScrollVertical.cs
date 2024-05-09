@@ -29,16 +29,15 @@ public class OnScrollVertical : ITextEditorTask
 
     public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
 
-    public async Task InvokeWithEditContext(IEditContext editContext)
+    public Task InvokeWithEditContext(IEditContext editContext)
     {
         var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
-
         if (viewModelModifier is null)
-            return;
+            return Task.CompletedTask;
 
-        await viewModelModifier.ViewModel!.SetScrollPositionFactory(null, ScrollTop)
-            .Invoke(editContext)
-            .ConfigureAwait(false);
+        return editContext.TextEditorService.ViewModelApi
+            .SetScrollPositionFactory(ViewModelKey, null, ScrollTop)
+            .Invoke(editContext);
     }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)

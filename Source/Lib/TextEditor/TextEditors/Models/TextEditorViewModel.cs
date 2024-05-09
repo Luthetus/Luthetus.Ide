@@ -156,51 +156,6 @@ public record TextEditorViewModel : IDisposable
     public string GutterElementId => $"luth_te_text-editor-gutter_{ViewModelKey.Guid}";
     public string FindOverlayId => $"luth_te_find-overlay_{ViewModelKey.Guid}";
 
-	public TextEditorEdit MutateScrollHorizontalPositionByPixelsFactory(double pixels)
-    {
-        throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
-
-        return TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
-            ViewModelKey,
-            pixels);
-    }
-
-    public TextEditorEdit MutateScrollVerticalPositionByPixelsFactory(double pixels)
-    {
-        throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
-
-        return TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
-            ViewModelKey,
-            pixels);
-    }
-
-    public TextEditorEdit MutateScrollVerticalPositionByPagesFactory(double pages)
-    {
-        throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
-
-        return MutateScrollVerticalPositionByPixelsFactory(
-            pages * VirtualizationResult.TextEditorMeasurements.Height);
-    }
-
-    public TextEditorEdit MutateScrollVerticalPositionByLinesFactory(double lines)
-    {
-        throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
-
-        return MutateScrollVerticalPositionByPixelsFactory(
-            lines * VirtualizationResult.CharAndLineMeasurements.LineHeight);
-    }
-
-    /// <summary>If a parameter is null the JavaScript will not modify that value</summary>
-    public TextEditorEdit SetScrollPositionFactory(double? scrollLeft, double? scrollTop)
-    {
-        throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
-
-        return TextEditorService.ViewModelApi.SetScrollPositionFactory(
-	        ViewModelKey,
-	        scrollLeft,
-	        scrollTop);
-    }
-
     public TextEditorEdit FocusFactory()
     {
         return TextEditorService.ViewModelApi.FocusPrimaryCursorFactory(PrimaryCursorContentId);

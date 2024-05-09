@@ -103,6 +103,12 @@ public class TextEditorServiceTask : ITextEditorTask
                 };
             }
 
+            if (viewModelModifier.ScrollWasModified)
+            {
+                await ((TextEditorService)_editContext.TextEditorService)
+                    .HACK_SetScrollPosition(viewModelModifier.ViewModel);
+            }
+
             await _editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
                     viewModelModifier.ViewModel.ResourceUri, viewModelModifier.ViewModel.ViewModelKey, CancellationToken.None)
                 .Invoke(_editContext)

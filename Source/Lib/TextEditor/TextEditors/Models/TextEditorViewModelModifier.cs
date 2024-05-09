@@ -9,4 +9,5 @@ public class TextEditorViewModelModifier
 
     public TextEditorViewModel ViewModel { get; set; }
     public bool WasModified { get; internal set; }
+    public bool ScrollWasModified { get; internal set; }
 }

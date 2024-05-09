@@ -218,16 +218,13 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         double? scrollLeftInPixels,
         double? scrollTopInPixels)
     {
-        return async editContext =>
+        return editContext =>
         {
-            // throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
-            //
-            // Preferably I'd throw "throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");"
-            // here, but this is a middle piece of the puzzle to change, otherwise nothing will work.
-
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
             if (viewModelModifier is null)
-                return;
+                return Task.CompletedTask;
+
+            viewModelModifier.ScrollWasModified = true;
 
             viewModelModifier.ViewModel = viewModelModifier.ViewModel with
             {
@@ -245,38 +242,64 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                 }
             };
 
-            await _jsRuntime.GetLuthetusTextEditorApi()
-                .SetScrollPosition(
-                    viewModelModifier.ViewModel.BodyElementId,
-                    viewModelModifier.ViewModel.GutterElementId,
-                    scrollLeftInPixels,
-                    scrollTopInPixels)
-                .ConfigureAwait(false);
+            return Task.CompletedTask;
         };
     }
 
-    /// <summary>
-    /// If a parameter is null then its respective scroll direction will not be modified.
-    /// </summary>
-    public TextEditorEdit ScrollIntoViewFactory(
+    public TextEditorEdit MutateScrollVerticalPositionFactory(
         Key<TextEditorViewModel> viewModelKey,
-        int? lineIndex = null,
-        int? columnIndex = null)
+        double pixels)
     {
-        throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+        return editContext =>
+        {
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+            if (viewModelModifier is null)
+                return Task.CompletedTask;
 
-        // This second exception as already here when working on "throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");"
-        throw new NotImplementedException();
+            viewModelModifier.ScrollWasModified = true;
+
+            viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+            {
+                VirtualizationResult = viewModelModifier.ViewModel.VirtualizationResult with
+                {
+                    TextEditorMeasurements = viewModelModifier.ViewModel.VirtualizationResult.TextEditorMeasurements with
+                    {
+                        ScrollTop = (int)Math.Ceiling(pixels) +
+                            viewModelModifier.ViewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop,
+                    }
+                }
+            };
+
+            return Task.CompletedTask;
+        };
     }
 
-    public TextEditorEdit ScrollIntoViewFactory(
+    public TextEditorEdit MutateScrollHorizontalPositionFactory(
         Key<TextEditorViewModel> viewModelKey,
-        int positionIndex)
+        double pixels)
     {
-        throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+        return editContext =>
+        {
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+            if (viewModelModifier is null)
+                return Task.CompletedTask;
 
-        // This second exception as already here when working on "throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");"
-        throw new NotImplementedException();
+            viewModelModifier.ScrollWasModified = true;
+
+            viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+            {
+                VirtualizationResult = viewModelModifier.ViewModel.VirtualizationResult with
+                {
+                    TextEditorMeasurements = viewModelModifier.ViewModel.VirtualizationResult.TextEditorMeasurements with
+                    {
+                        ScrollLeft = (int)Math.Ceiling(pixels) +
+                            viewModelModifier.ViewModel.VirtualizationResult.TextEditorMeasurements.ScrollLeft,
+                    }
+                }
+            };
+
+            return Task.CompletedTask;
+        };
     }
 
     public TextEditorEdit ScrollIntoViewFactory(
@@ -286,11 +309,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         return editContext =>
         {
-            // throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
-            //
-            // Preferably I'd throw "throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");"
-            // here, but this is a middle piece of the puzzle to change, otherwise nothing will work.
-
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             if (modelModifier is null)
                 return Task.CompletedTask;
@@ -347,68 +365,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                     scrollLeft,
                     scrollTop)
                 .Invoke(editContext);
-        };
-    }
-
-    public TextEditorEdit SetGutterScrollTopFactory(
-        Key<TextEditorViewModel> viewModelKey,
-        double scrollTopInPixels)
-    {
-        return async editContext =>
-        {
-            throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
-
-            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-            if (viewModelModifier is null)
-                return;
-
-            await _jsRuntime.GetLuthetusTextEditorApi()
-                .SetGutterScrollTop(
-                    viewModelModifier.ViewModel.GutterElementId,
-                    scrollTopInPixels)
-                .ConfigureAwait(false);
-        };
-    }
-
-    public TextEditorEdit MutateScrollVerticalPositionFactory(
-        Key<TextEditorViewModel> viewModelKey,
-        double pixels)
-    {
-        return async editContext =>
-        {
-            throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
-
-            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-            if (viewModelModifier is null)
-                return;
-
-            await _jsRuntime.GetLuthetusTextEditorApi()
-                .MutateScrollVerticalPositionByPixels(
-                    viewModelModifier.ViewModel.BodyElementId,
-                    viewModelModifier.ViewModel.GutterElementId,
-                    pixels)
-                .ConfigureAwait(false);
-        };
-    }
-
-    public TextEditorEdit MutateScrollHorizontalPositionFactory(
-        Key<TextEditorViewModel> viewModelKey,
-        double pixels)
-    {
-        return async editContext =>
-        {
-            throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
-
-            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-            if (viewModelModifier is null)
-                return;
-
-            await _jsRuntime.GetLuthetusTextEditorApi()
-                .MutateScrollHorizontalPositionByPixels(
-                    viewModelModifier.ViewModel.BodyElementId,
-                    viewModelModifier.ViewModel.GutterElementId,
-                    pixels)
-                .ConfigureAwait(false);
         };
     }
 

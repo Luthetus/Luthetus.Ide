@@ -54,26 +54,10 @@ public interface ITextEditorViewModelApi
         double? scrollLeftInPixels,
         double? scrollTopInPixels);
 
-    /// <summary>
-    /// If a parameter is null then its respective scroll direction will not be modified.
-    /// </summary>
-    public TextEditorEdit ScrollIntoViewFactory(
-        Key<TextEditorViewModel> viewModelKey,
-        int? lineIndex = null,
-        int? columnIndex = null);
-
-    public TextEditorEdit ScrollIntoViewFactory(
-        Key<TextEditorViewModel> viewModelKey,
-        int positionIndex);
-
     public TextEditorEdit ScrollIntoViewFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorTextSpan textSpan);
-
-    public TextEditorEdit SetGutterScrollTopFactory(
-        Key<TextEditorViewModel> viewModelKey,
-        double scrollTopInPixels);
 
     public TextEditorEdit MutateScrollVerticalPositionFactory(
         Key<TextEditorViewModel> viewModelKey,

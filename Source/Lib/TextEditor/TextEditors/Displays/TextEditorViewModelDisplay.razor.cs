@@ -451,13 +451,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             string.Empty,
             async editContext =>
 			{
-				await viewModel.MutateScrollHorizontalPositionByPixelsFactory(diffX)
-					.Invoke(editContext)
-					.ConfigureAwait(false);
+                await editContext.TextEditorService.ViewModelApi
+                    .MutateScrollHorizontalPositionFactory(viewModel.ViewModelKey, diffX)
+                    .Invoke(editContext);
 
-				await viewModel.MutateScrollVerticalPositionByPixelsFactory(diffY)
-					.Invoke(editContext)
-					.ConfigureAwait(false);
+                await editContext.TextEditorService.ViewModelApi
+                    .MutateScrollVerticalPositionFactory(viewModel.ViewModelKey, diffY)
+                    .Invoke(editContext);
 			});
 
         _previousTouchEventArgs = touchEventArgs;
