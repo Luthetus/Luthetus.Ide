@@ -37,10 +37,10 @@ public partial interface ITextEditorService
     /// <summary>
     /// TODO: Should 'PostAsIs' be removed? (2024-05-08)
     //
-    /// This method will create an instance of <see cref="Events.IndependentTextEditorTask"/>,
+    /// This method will create an instance of <see cref="Events.AsIsTextEditorTask"/>,
     /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
-    /// --- <see cref="Events.IndependentTextEditorTask"/>.cs inheritdoc:<br/><br/>
-    /// <inheritdoc cref="Events.IndependentTextEditorTask"/>
+    /// --- <see cref="Events.AsIsTextEditorTask"/>.cs inheritdoc:<br/><br/>
+    /// <inheritdoc cref="Events.AsIsTextEditorTask"/>
     /// </summary>
     //public void PostAsIs(
     //    string name,
@@ -60,10 +60,10 @@ public partial interface ITextEditorService
         TimeSpan? throttleTimeSpan = null);
 
     /// <summary>
-    /// This method will create an instance of <see cref="Events.RedundantTextEditorTask"/>,
+    /// This method will create an instance of <see cref="Events.TakeMostRecentTextEditorTask"/>,
     /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
-    /// --- <see cref="Events.RedundantTextEditorTask"/>.cs inheritdoc:<br/><br/>
-    /// <inheritdoc cref="Events.RedundantTextEditorTask"/>
+    /// --- <see cref="Events.TakeMostRecentTextEditorTask"/>.cs inheritdoc:<br/><br/>
+    /// <inheritdoc cref="Events.TakeMostRecentTextEditorTask"/>
     /// </summary>
     public void PostTakeMostRecent(
         string name,

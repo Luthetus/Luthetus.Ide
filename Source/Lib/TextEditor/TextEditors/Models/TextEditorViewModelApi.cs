@@ -221,6 +221,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         return async editContext =>
         {
+            throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+
             await _jsRuntime.GetLuthetusTextEditorApi()
                 .SetScrollPosition(
                     bodyElementId,
@@ -240,6 +242,9 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         int? lineIndex = null,
         int? columnIndex = null)
     {
+        throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+
+        // This second exception as already here when working on "throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");"
         throw new NotImplementedException();
     }
 
@@ -248,6 +253,9 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         string gutterElementId,
         int positionIndex)
     {
+        throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+
+        // This second exception as already here when working on "throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");"
         throw new NotImplementedException();
     }
 
@@ -258,6 +266,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         return editContext =>
         {
+            throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             if (modelModifier is null)
                 return Task.CompletedTask;
@@ -324,6 +334,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         return async editContext =>
         {
+            throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+
             await _jsRuntime.GetLuthetusTextEditorApi()
                 .SetGutterScrollTop(
                     gutterElementId,
@@ -339,6 +351,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         return async editContext =>
         {
+            throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+
             await _jsRuntime.GetLuthetusTextEditorApi()
                 .MutateScrollVerticalPositionByPixels(
                     bodyElementId,
@@ -355,6 +369,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         return async editContext =>
         {
+            throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+
             await _jsRuntime.GetLuthetusTextEditorApi()
                 .MutateScrollHorizontalPositionByPixels(
                     bodyElementId,
@@ -714,6 +730,10 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
+            // throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+            //
+            // Preferably I'd throw "throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");"
+            // here, but this is the final piece of the puzzle to change, otherwise nothing will work.
             var textEditorMeasurements = await _textEditorService.ViewModelApi
                 .GetTextEditorMeasurementsAsync(viewModelModifier.ViewModel.BodyElementId)
                 .ConfigureAwait(false);

@@ -158,6 +158,8 @@ public record TextEditorViewModel : IDisposable
 
 	public TextEditorEdit MutateScrollHorizontalPositionByPixelsFactory(double pixels)
     {
+        throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+
         return TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
             BodyElementId,
             GutterElementId,
@@ -166,6 +168,8 @@ public record TextEditorViewModel : IDisposable
 
     public TextEditorEdit MutateScrollVerticalPositionByPixelsFactory(double pixels)
     {
+        throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+
         return TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
             BodyElementId,
             GutterElementId,
@@ -174,12 +178,16 @@ public record TextEditorViewModel : IDisposable
 
     public TextEditorEdit MutateScrollVerticalPositionByPagesFactory(double pages)
     {
+        throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+
         return MutateScrollVerticalPositionByPixelsFactory(
             pages * VirtualizationResult.TextEditorMeasurements.Height);
     }
 
     public TextEditorEdit MutateScrollVerticalPositionByLinesFactory(double lines)
     {
+        throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+
         return MutateScrollVerticalPositionByPixelsFactory(
             lines * VirtualizationResult.CharAndLineMeasurements.LineHeight);
     }
@@ -187,6 +195,8 @@ public record TextEditorViewModel : IDisposable
     /// <summary>If a parameter is null the JavaScript will not modify that value</summary>
     public TextEditorEdit SetScrollPositionFactory(double? scrollLeft, double? scrollTop)
     {
+        throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
+
         return TextEditorService.ViewModelApi.SetScrollPositionFactory(
 	        BodyElementId,
 	        GutterElementId,

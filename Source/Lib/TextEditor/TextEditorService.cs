@@ -127,7 +127,7 @@ public partial class TextEditorService : ITextEditorService
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        Post(new IndependentTextEditorTask(
+        Post(new AsIsTextEditorTask(
             $"{name}_sb",
             textEditorEdit,
             throttleTimeSpan));
@@ -139,7 +139,7 @@ public partial class TextEditorService : ITextEditorService
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        Post(new RedundantTextEditorTask(
+        Post(new TakeMostRecentTextEditorTask(
             $"{name}_tmr",
             redundancyIdentifier,
             textEditorEdit,

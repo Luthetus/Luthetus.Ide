@@ -7,30 +7,31 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 namespace Luthetus.TextEditor.RazorLib.Events;
 
 /// <summary>
-/// This class allows for easy creation of a <see cref="ITextEditorTask"/>, that comes with "redundancy" checking in the queue.
-/// That is, if when enqueueing an instance of this type, the last item in the queue is already an instance of this type
-/// with the same <see cref="RedundancyIdentifier"/>, then this instance will overwrite the last item in
-/// the queue, because the logic has no value if ran many times one after another, therefore, just take the most recent event.
+/// This class allows for easy creation of a <see cref="ITextEditorTask"/>, that has NO "redundancy" checking in the queue.
+/// That is, if when enqueueing an instance of this type, there is a last item in the queue, then this type under no circumstances
+/// will batch, replace, or other, with that existing queue'd item.
 /// </summary>
-public class RedundantTextEditorTask : ITextEditorTask
+/// <remarks>
+/// There is nothing stopping someone from creating an implementation of <see cref="ITextEditorTask"/>
+/// that sees the last item in the queue to be of this type, and then batching or etc with it.
+/// One should NOT do this, but it is possible, and should be remarked about.
+/// </remarks>
+public class AsIsTextEditorTask : ITextEditorTask
 {
     private readonly TextEditorEdit _textEditorEdit;
 
-    public RedundantTextEditorTask(
+    public AsIsTextEditorTask(
         string name,
-        string redundancyIdentifier,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
         _textEditorEdit = textEditorEdit;
 
         Name = name;
-        RedundancyIdentifier = redundancyIdentifier;
         ThrottleTimeSpan = throttleTimeSpan ?? TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
     }
 
     public string Name { get; }
-    public string RedundancyIdentifier { get; }
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public TimeSpan ThrottleTimeSpan { get; }
@@ -45,18 +46,6 @@ public class RedundantTextEditorTask : ITextEditorTask
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
-        if (oldEvent is not RedundantTextEditorTask oldRedundantTextEditorTask)
-        {
-            // Keep both events
-            return null;
-        }
-
-        if (oldRedundantTextEditorTask.Name == Name)
-        {
-            // Keep this event (via replacement)
-            return this;
-        }
-
         // Keep both events
         return null;
     }

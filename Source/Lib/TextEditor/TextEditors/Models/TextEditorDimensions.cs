@@ -46,7 +46,9 @@
 ///           |
 ///           This can be solved by adding an event handler to the intra-browser-resize-event.
 ///           Upon the intra-browser-resize-event firing, use a throttle to re-synchronize
-///           the C# defined dimensions with the HTML element.
+///           the C# defined dimensions with the HTML element.<br/><br/>
+///           
+/// TODO: Delete <see cref="JavaScriptObjects.Models.TextEditorMeasurements"/> and use <see cref="TextEditorDimensions"/>
 /// </summary>
 /// <param name="ScrollLeft">The unit of measurement is Pixels (px)</param>
 /// <param name="ScrollTop">The unit of measurement is Pixels (px)</param>
@@ -62,5 +64,4 @@ public record TextEditorDimensions(
     double ScrollHeight,
     double MarginScrollHeight,
     double Width,
-    double Height,
-    CancellationToken MeasurementsExpiredCancellationToken);
+    double Height);
