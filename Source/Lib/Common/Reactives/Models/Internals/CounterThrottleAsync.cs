@@ -5,6 +5,7 @@ public class CounterThrottleAsync : ICounterThrottleAsync
     public readonly SemaphoreSlim _workItemSemaphore = new(1, 1);
     public readonly Stack<Func<Task>> _workItemStack = new();
     private readonly object _idLock = new();
+    private readonly object _workItemsExecutedLock = new();
 
     public CounterThrottleAsync(TimeSpan throttleTimeSpan)
     {
@@ -22,6 +23,8 @@ public class CounterThrottleAsync : ICounterThrottleAsync
     public Thread? PushEventEnd_Thread { get; private set; }
     public (int Id, DateTime DateTime) PushEventStart_DateTimeTuple { get; private set; } = (-1, DateTime.MinValue);
     public (int Id, DateTime DateTime) PushEventEnd_DateTimeTuple { get; private set; } = (-1, DateTime.MinValue);
+
+    public int WorkItemsExecutedCount { get; private set; }
 
     private int _getId;
 
@@ -42,7 +45,23 @@ public class CounterThrottleAsync : ICounterThrottleAsync
 
         var localExecutionKind = _executionKind;
 
-        await Push(workItem);
+        try
+        {
+            await _workItemSemaphore.WaitAsync();
+
+            _workItemStack.Push(workItem);
+            if (_workItemStack.Count > 1)
+                return;
+        }
+        finally
+        {
+            _workItemSemaphore.Release();
+        }
+
+        lock (_workItemsExecutedLock)
+        {
+            WorkItemsExecutedCount++;
+        }
 
         switch (localExecutionKind)
         {
@@ -62,29 +81,6 @@ public class CounterThrottleAsync : ICounterThrottleAsync
         PushEventEnd_Thread = Thread.CurrentThread;
         PushEventEnd_SynchronizationContext = SynchronizationContext.Current;
         PushEventEnd_DateTimeTuple = (id, DateTime.UtcNow);
-    }
-
-    /// <summary>
-    /// The goal of this class is to visualize various attempts of implementing
-    /// a throttle.<br/><br/>
-    /// 
-    /// Its presumed that all the versions will have this code be equivalent,
-    /// so moving it into its own method helps for readability.
-    /// </summary>
-    private async Task Push(Func<Task> workItem)
-    {
-        try
-        {
-            await _workItemSemaphore.WaitAsync();
-
-            _workItemStack.Push(workItem);
-            if (_workItemStack.Count > 1)
-                return;
-        }
-        finally
-        {
-            _workItemSemaphore.Release();
-        }
     }
 
     public async Task Execute_Await()

@@ -15,43 +15,50 @@
         <div class="luth_scope-border"></div>
         
         <div>
-            <div>GetApartmentState():&nbsp;@(Thread?.GetApartmentState().ToString() ?? "null")</div>
-            <div>
-                @*
-                If one uncomments the Thread.CurrentCulture, then this exception occurs:
-                =======================================================================
-                Unhandled exception rendering component: This operation must be performed on the same thread as that represented by the Thread instance.
-                System.InvalidOperationException: This operation must be performed on the same thread as that represented by the Thread instance.
-                at System.Threading.Thread.RequireCurrentThread()
-                at System.Threading.Thread.get_CurrentCulture()
-                at Luthetus.Common.RazorLib.Reactives.Displays.ThreadDisplay.BuildRenderTree(RenderTreeBuilder __builder) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\Reactives\Displays\ThreadDisplay.razor:line 20
-                at Microsoft.AspNetCore.Components.Rendering.ComponentState.RenderIntoBatch(RenderBatchBuilder batchBuilder, RenderFragment renderFragment, Exception& renderFragmentException)
-                *@
+            <ErrorBoundary Context="e">
+                <ChildContent>
+                    <div>GetApartmentState():&nbsp;@(Thread?.GetApartmentState().ToString() ?? "null")</div>
+                    <div>
+                        @*
+                        If one uncomments the Thread.CurrentCulture, then this exception occurs:
+                        =======================================================================
+                        Unhandled exception rendering component: This operation must be performed on the same thread as that represented by the Thread instance.
+                        System.InvalidOperationException: This operation must be performed on the same thread as that represented by the Thread instance.
+                        at System.Threading.Thread.RequireCurrentThread()
+                        at System.Threading.Thread.get_CurrentCulture()
+                        at Luthetus.Common.RazorLib.Reactives.Displays.ThreadDisplay.BuildRenderTree(RenderTreeBuilder __builder) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\Reactives\Displays\ThreadDisplay.razor:line 20
+                        at Microsoft.AspNetCore.Components.Rendering.ComponentState.RenderIntoBatch(RenderBatchBuilder batchBuilder, RenderFragment renderFragment, Exception& renderFragmentException)
+                        *@
 
-                @*CurrentCulture:&nbsp;@(Thread?.CurrentCulture.ToString() ?? "null")*@
-            </div>
-            <div>
-                @*
-                If one uncomments the Thread.CurrentCulture, then this exception occurs:
-                =======================================================================
-                Unhandled exception rendering component: This operation must be performed on the same thread as that represented by the Thread instance.
-                System.InvalidOperationException: This operation must be performed on the same thread as that represented by the Thread instance.
-                at System.Threading.Thread.RequireCurrentThread()
-                at System.Threading.Thread.get_CurrentUICulture()
-                at Luthetus.Common.RazorLib.Reactives.Displays.ThreadDisplay.BuildRenderTree(RenderTreeBuilder __builder) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\Reactives\Displays\ThreadDisplay.razor:line 34
-                at Microsoft.AspNetCore.Components.Rendering.ComponentState.RenderIntoBatch(RenderBatchBuilder batchBuilder, RenderFragment renderFragment, Exception& renderFragmentException)
-                *@
+                        @*CurrentCulture:&nbsp;@(Thread?.CurrentCulture.ToString() ?? "null")*@
+                    </div>
+                    <div>
+                        @*
+                        If one uncomments the Thread.CurrentCulture, then this exception occurs:
+                        =======================================================================
+                        Unhandled exception rendering component: This operation must be performed on the same thread as that represented by the Thread instance.
+                        System.InvalidOperationException: This operation must be performed on the same thread as that represented by the Thread instance.
+                        at System.Threading.Thread.RequireCurrentThread()
+                        at System.Threading.Thread.get_CurrentUICulture()
+                        at Luthetus.Common.RazorLib.Reactives.Displays.ThreadDisplay.BuildRenderTree(RenderTreeBuilder __builder) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\Reactives\Displays\ThreadDisplay.razor:line 34
+                        at Microsoft.AspNetCore.Components.Rendering.ComponentState.RenderIntoBatch(RenderBatchBuilder batchBuilder, RenderFragment renderFragment, Exception& renderFragmentException)
+                        *@
 
-                @*CurrentUICulture:&nbsp;@(Thread?.CurrentUICulture.ToString() ?? "null")*@
-            </div>
-            <div>ExecutionContext:&nbsp;@(Thread?.ExecutionContext?.ToString() ?? "null")</div>
-            <div>IsAlive:&nbsp;@(Thread?.IsAlive.ToString() ?? "null")</div>
-            <div>IsBackground:&nbsp;@(Thread?.IsBackground.ToString() ?? "null")</div>
-            <div>IsThreadPoolThread:&nbsp;@(Thread?.IsThreadPoolThread.ToString() ?? "null")</div>
-            <div>ManagedThreadId:&nbsp;@(Thread?.ManagedThreadId.ToString() ?? "null")</div>
-            <div>Name :&nbsp;@(Thread?.Name ?? "null")</div>
-            <div>Priority:&nbsp;@(Thread?.Priority.ToString() ?? "null")</div>
-            <div>ThreadState:&nbsp;@(Thread?.ThreadState.ToString() ?? "null")</div>
+                        @*CurrentUICulture:&nbsp;@(Thread?.CurrentUICulture.ToString() ?? "null")*@
+                    </div>
+                    <div>ExecutionContext:&nbsp;@(Thread?.ExecutionContext?.ToString() ?? "null")</div>
+                    <div>IsAlive:&nbsp;@(Thread?.IsAlive.ToString() ?? "null")</div>
+                    <div>IsBackground:&nbsp;@(Thread?.IsBackground.ToString() ?? "null")</div>
+                    <div>IsThreadPoolThread:&nbsp;@(Thread?.IsThreadPoolThread.ToString() ?? "null")</div>
+                    <div>ManagedThreadId:&nbsp;@(Thread?.ManagedThreadId.ToString() ?? "null")</div>
+                    <div>Name :&nbsp;@(Thread?.Name ?? "null")</div>
+                    <div>Priority:&nbsp;@(Thread?.Priority.ToString() ?? "null")</div>
+                    <div>ThreadState:&nbsp;@(Thread?.ThreadState.ToString() ?? "null")</div>
+                </ChildContent>
+                <ErrorContent>
+                    <div>@e.ToString()</div>
+                </ErrorContent>
+            </ErrorBoundary>
         </div>
     </div>
 </div>

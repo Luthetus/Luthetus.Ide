@@ -11,21 +11,24 @@
     </button>
     
     <div class="luth_counter-throttle-async-visualization">
-        <div>PushEventStart_SynchronizationContext:&nbsp;@(_counterThrottleAsync.PushEventStart_SynchronizationContext?.ToString() ?? "null")</div>
-        <div>PushEventEnd_SynchronizationContext:&nbsp;@(_counterThrottleAsync.PushEventEnd_SynchronizationContext?.ToString() ?? "null")</div>
+        
+        <div>WorkItemsExecutedCount:&nbsp;@(CounterThrottleAsync.WorkItemsExecutedCount)</div>
+
+        <div>PushEventStart_SynchronizationContext:&nbsp;@(CounterThrottleAsync.PushEventStart_SynchronizationContext?.ToString() ?? "null")</div>
+        <div>PushEventEnd_SynchronizationContext:&nbsp;@(CounterThrottleAsync.PushEventEnd_SynchronizationContext?.ToString() ?? "null")</div>
         
         <ThreadDisplay DisplayName="PushEventStart_Thread"
-                       Thread="_counterThrottleAsync.PushEventStart_Thread"
-                       DateTimeTuple="_counterThrottleAsync.PushEventStart_DateTimeTuple"
+                       Thread="CounterThrottleAsync.PushEventStart_Thread"
+                       DateTimeTuple="CounterThrottleAsync.PushEventStart_DateTimeTuple"
                        LoadingIconTask="Task.CompletedTask"/>
 
         <ThreadDisplay DisplayName="PushEventEnd_Thread"
-                       Thread="_counterThrottleAsync.PushEventEnd_Thread"
-                       DateTimeTuple="_counterThrottleAsync.PushEventEnd_DateTimeTuple"
-                       LoadingIconTask="_counterThrottleAsync._delayTask" />
+                       Thread="CounterThrottleAsync.PushEventEnd_Thread"
+                       DateTimeTuple="CounterThrottleAsync.PushEventEnd_DateTimeTuple"
+                       LoadingIconTask="CounterThrottleAsync._delayTask" />
 
         <select @onchange="OnExecutionKindChanged">
-            @{ var activeExecutionKind = _counterThrottleAsync._executionKind; }
+            @{ var activeExecutionKind = CounterThrottleAsync._executionKind; }
 
             @foreach (var executionKind in ExecutionKindList)
             {
@@ -34,10 +37,10 @@
                 </option>
             }
         </select>
-        <div>ThrottleTimeSpan:&nbsp;@_counterThrottleAsync.ThrottleTimeSpan</div>
-        <div>Semaphore.AvailableWaitHandle:&nbsp;@_counterThrottleAsync._workItemSemaphore.AvailableWaitHandle</div>
-        <div>Semaphore.CurrentCount:&nbsp;@_counterThrottleAsync._workItemSemaphore.CurrentCount</div>
-        <div>Stack.Count:&nbsp;@_counterThrottleAsync._workItemStack.Count</div>
+        <div>ThrottleTimeSpan:&nbsp;@CounterThrottleAsync.ThrottleTimeSpan</div>
+        <div>Semaphore.AvailableWaitHandle:&nbsp;@CounterThrottleAsync._workItemSemaphore.AvailableWaitHandle</div>
+        <div>Semaphore.CurrentCount:&nbsp;@CounterThrottleAsync._workItemSemaphore.CurrentCount</div>
+        <div>Stack.Count:&nbsp;@CounterThrottleAsync._workItemStack.Count</div>
     </div>
 
     <div>
@@ -45,7 +48,7 @@
 
         @if (success)
         {
-            foreach (var workItem in _counterThrottleAsync._workItemStack)
+            foreach (var workItem in CounterThrottleAsync._workItemStack)
             {
                 <div>A workItem</div>
             }

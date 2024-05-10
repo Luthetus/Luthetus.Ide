@@ -5,7 +5,8 @@ namespace Luthetus.Common.RazorLib.Reactives.Displays;
 
 public partial class CounterThrottleAsyncDisplay : ComponentBase
 {
-    private readonly CounterThrottleAsync _counterThrottleAsync = new(TimeSpan.FromMilliseconds(2_000));
+    [Parameter, EditorRequired]
+    public CounterThrottleAsync CounterThrottleAsync { get; set; } = new(TimeSpan.FromMilliseconds(2_000));
 
     private int _count;
     private List<Func<Task>>? _emptyWorkItemList;
@@ -16,7 +17,7 @@ public partial class CounterThrottleAsyncDisplay : ComponentBase
 
     private async Task FireThrottleOnClick()
     {
-        await _counterThrottleAsync.PushEvent(() =>
+        await CounterThrottleAsync.PushEvent(() =>
         {
             _count++;
             return Task.CompletedTask;
@@ -27,7 +28,7 @@ public partial class CounterThrottleAsyncDisplay : ComponentBase
     {
         try
         {
-            workItemList = _counterThrottleAsync._workItemStack.ToList();
+            workItemList = CounterThrottleAsync._workItemStack.ToList();
             return true;
         }
         catch (Exception)
@@ -45,6 +46,6 @@ public partial class CounterThrottleAsyncDisplay : ComponentBase
         var executionKindString = (string)changeEventArgs.Value;
 
         if (Enum.TryParse<CounterThrottleAsync.ExecutionKind>(executionKindString, out var selectedExecutionKind))
-            await _counterThrottleAsync.SetExecuteKind(selectedExecutionKind);
+            await CounterThrottleAsync.SetExecuteKind(selectedExecutionKind);
     }
 }

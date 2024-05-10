@@ -25,6 +25,9 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
+using Luthetus.Common.RazorLib.Reactives.Displays;
+using Luthetus.Common.RazorLib.Reactives.Models.Internals;
+using Luthetus.Common.RazorLib.Drags.Displays;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -56,6 +59,7 @@ public partial class IdeHeader : ComponentBase
 	private static readonly Key<IDynamicViewModel> _infoDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
+	private static readonly Key<IDynamicViewModel> _counterThrottleAsyncDialogKey = Key<IDynamicViewModel>.NewKey();
 
     private Key<DropdownRecord> _dropdownKeyFile = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
@@ -376,6 +380,26 @@ public partial class IdeHeader : ComponentBase
             "Permissions",
             typeof(PermissionsDisplay),
             null,
+            null,
+			true);
+
+        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+        return Task.CompletedTask;
+    }
+
+    private Task ShowCounterThrottleAsyncDialog()
+    {
+        var dialogRecord = new DialogViewModel(
+            _counterThrottleAsyncDialogKey,
+            "CounterThrottleAsync",
+            typeof(CounterThrottleAsyncDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(CounterThrottleAsyncDisplay.CounterThrottleAsync),
+                    DragInitializer._counterThrottleAsync
+                }
+            },
             null,
 			true);
 
