@@ -5,7 +5,7 @@ namespace Luthetus.Common.RazorLib.Reactives.Displays;
 
 public partial class CounterThrottleAsyncDisplay : ComponentBase
 {
-    private readonly CounterThrottleAsync _counterThrottleAsync = new CounterThrottleAsync();
+    private readonly CounterThrottleAsync _counterThrottleAsync = new(TimeSpan.FromMilliseconds(5_000));
 
     private int _count;
     private List<Func<Task>>? _emptyWorkItemList;

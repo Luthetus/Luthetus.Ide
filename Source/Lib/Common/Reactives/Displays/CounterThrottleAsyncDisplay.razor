@@ -11,11 +11,12 @@
     </button>
     
     <div class="luth_counter-throttle-async-visualization">
-        <div>ThrottleTimeSpan:&nbsp;@_counterThrottleAsync.ThrottleTimeSpan</div>
-        <div>Semaphore.AvailableWaitHandle:&nbsp;@_counterThrottleAsync._workItemSemaphore.AvailableWaitHandle</div>
-        <div>Semaphore.CurrentCount:&nbsp;@_counterThrottleAsync._workItemSemaphore.CurrentCount</div>
-        <div>Stack.Count:&nbsp;@_counterThrottleAsync._workItemStack.Count</div>
-
+        <div>PushEventStart_SynchronizationContext:&nbsp;@(_counterThrottleAsync.PushEventStart_SynchronizationContext?.ToString() ?? "null")</div>
+        <div>PushEventEnd_SynchronizationContext:&nbsp;@(_counterThrottleAsync.PushEventEnd_SynchronizationContext?.ToString() ?? "null")</div>
+        <div>PushEventStart_Thread:&nbsp;@(_counterThrottleAsync.PushEventStart_Thread?.ToString() ?? "null")</div>
+        <div>PushEventEnd_Thread:&nbsp;@(_counterThrottleAsync.PushEventEnd_Thread?.ToString() ?? "null")</div>
+        <div>PushEventStart_DateTimeTuple:&nbsp;@(_counterThrottleAsync.PushEventStart_DateTimeTuple.ToString() ?? "null")</div>
+        <div>PushEventEnd_DateTimeTuple:&nbsp;@(_counterThrottleAsync.PushEventEnd_DateTimeTuple.ToString() ?? "null")</div>
         <select @onchange="OnExecutionKindChanged">
             @{ var activeExecutionKind = _counterThrottleAsync._executionKind; }
 
@@ -26,6 +27,10 @@
                 </option>
             }
         </select>
+        <div>ThrottleTimeSpan:&nbsp;@_counterThrottleAsync.ThrottleTimeSpan</div>
+        <div>Semaphore.AvailableWaitHandle:&nbsp;@_counterThrottleAsync._workItemSemaphore.AvailableWaitHandle</div>
+        <div>Semaphore.CurrentCount:&nbsp;@_counterThrottleAsync._workItemSemaphore.CurrentCount</div>
+        <div>Stack.Count:&nbsp;@_counterThrottleAsync._workItemStack.Count</div>
     </div>
 
     <div>
