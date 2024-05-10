@@ -58,29 +58,57 @@ public class CounterThrottleAsync : ICounterThrottleAsync
             _workItemSemaphore.Release();
         }
 
-        lock (_workItemsExecutedLock)
-        {
-            WorkItemsExecutedCount++;
-        }
+        var localDelayTask = _delayTask;
 
-        switch (localExecutionKind)
+        _delayTask = Task.Run(async () =>
         {
-            case ExecutionKind.Await:
-                await Execute_Await();
-                break;
-            case ExecutionKind.TaskRun:
-                await Execute_TaskRun();
-                break;
-            case ExecutionKind.Mix:
-                await Execute_Mix();
-                break;
-            default:
-                throw new NotImplementedException($"The {nameof(ExecutionKind)}: '{localExecutionKind}' was not recognized.");
-        }
+            // Adding this line causes the UI to freeze up on WASM
+            await localDelayTask;
 
-        PushEventEnd_Thread = Thread.CurrentThread;
-        PushEventEnd_SynchronizationContext = SynchronizationContext.Current;
-        PushEventEnd_DateTimeTuple = (id, DateTime.UtcNow);
+            lock (_workItemsExecutedLock)
+            {
+                WorkItemsExecutedCount++;
+            }
+
+            Func<Task> popWorkItem;
+            try
+            {
+                await _workItemSemaphore.WaitAsync();
+
+                if (_workItemStack.Count == 0)
+                    return;
+
+                popWorkItem = _workItemStack.Pop();
+                _workItemStack.Clear();
+            }
+            finally
+            {
+                _workItemSemaphore.Release();
+            }
+
+            await popWorkItem.Invoke();
+            await Task.Delay(ThrottleTimeSpan);
+
+            //switch (localExecutionKind)
+            //{
+            //    case ExecutionKind.Await:
+            //        await Execute_Await();
+            //        break;
+            //    case ExecutionKind.TaskRun:
+            //        await Execute_TaskRun();
+            //        break;
+            //    case ExecutionKind.Mix:
+            //        await Execute_Mix();
+            //        break;
+            //    default:
+            //        throw new NotImplementedException($"The {nameof(ExecutionKind)}: '{localExecutionKind}' was not recognized.");
+            //}
+
+            PushEventEnd_Thread = Thread.CurrentThread;
+            PushEventEnd_SynchronizationContext = SynchronizationContext.Current;
+            PushEventEnd_DateTimeTuple = (id, DateTime.UtcNow);
+        });
+
     }
 
     public async Task Execute_Await()
