@@ -13,10 +13,17 @@
     <div class="luth_counter-throttle-async-visualization">
         <div>PushEventStart_SynchronizationContext:&nbsp;@(_counterThrottleAsync.PushEventStart_SynchronizationContext?.ToString() ?? "null")</div>
         <div>PushEventEnd_SynchronizationContext:&nbsp;@(_counterThrottleAsync.PushEventEnd_SynchronizationContext?.ToString() ?? "null")</div>
-        <div>PushEventStart_Thread:&nbsp;@(_counterThrottleAsync.PushEventStart_Thread?.ToString() ?? "null")</div>
-        <div>PushEventEnd_Thread:&nbsp;@(_counterThrottleAsync.PushEventEnd_Thread?.ToString() ?? "null")</div>
-        <div>PushEventStart_DateTimeTuple:&nbsp;@(_counterThrottleAsync.PushEventStart_DateTimeTuple.ToString() ?? "null")</div>
-        <div>PushEventEnd_DateTimeTuple:&nbsp;@(_counterThrottleAsync.PushEventEnd_DateTimeTuple.ToString() ?? "null")</div>
+        
+        <ThreadDisplay DisplayName="PushEventStart_Thread"
+                       Thread="_counterThrottleAsync.PushEventStart_Thread"
+                       DateTimeTuple="_counterThrottleAsync.PushEventStart_DateTimeTuple"
+                       LoadingIconTask="Task.CompletedTask"/>
+
+        <ThreadDisplay DisplayName="PushEventEnd_Thread"
+                       Thread="_counterThrottleAsync.PushEventEnd_Thread"
+                       DateTimeTuple="_counterThrottleAsync.PushEventEnd_DateTimeTuple"
+                       LoadingIconTask="_counterThrottleAsync._delayTask" />
+
         <select @onchange="OnExecutionKindChanged">
             @{ var activeExecutionKind = _counterThrottleAsync._executionKind; }
 
