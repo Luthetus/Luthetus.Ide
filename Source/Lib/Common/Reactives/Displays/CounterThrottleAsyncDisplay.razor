@@ -2,14 +2,41 @@
      style="background-color: var(--luth_te_secondary-background-color); color: var(--luth_te_secondary-foreground-color);">
     <button class="luth_button"
             @onclick="FireThrottleOnClick">
-        Async
+        @_count Async
+    </button>
+
+    <button class="luth_button"
+            @onclick="() => {}">
+        ReRender
     </button>
     
     <div class="luth_counter-throttle-async-visualization">
         <div>ThrottleTimeSpan:&nbsp;@_counterThrottleAsync.ThrottleTimeSpan</div>
-        <div>AvailableWaitHandle:&nbsp;@_counterThrottleAsync._workItemSemaphore.AvailableWaitHandle</div>
-        <div>SemaphoreCurrentCount:&nbsp;@_counterThrottleAsync._workItemSemaphore.CurrentCount</div>
-        <div>ThrottleTimeSpan:&nbsp;@_counterThrottleAsync._workItemStack.Count</div>
-        <div>ThrottleTimeSpan:&nbsp;@_counterThrottleAsync._workItemStack.Count</div>
+        <div>Semaphore.AvailableWaitHandle:&nbsp;@_counterThrottleAsync._workItemSemaphore.AvailableWaitHandle</div>
+        <div>Semaphore.CurrentCount:&nbsp;@_counterThrottleAsync._workItemSemaphore.CurrentCount</div>
+        <div>Stack.Count:&nbsp;@_counterThrottleAsync._workItemStack.Count</div>
+
+        <select @onchange="OnExecutionKindChanged">
+            @{ var activeExecutionKind = _counterThrottleAsync._executionKind; }
+
+            @foreach (var executionKind in ExecutionKindList)
+            {
+                <option selected="@(activeExecutionKind == executionKind)">
+                    @executionKind
+                </option>
+            }
+        </select>
+    </div>
+
+    <div>
+        @{ var success = TryGetWorkItemList(out var workItemList); }
+
+        @if (success)
+        {
+            foreach (var workItem in _counterThrottleAsync._workItemStack)
+            {
+                <div>A workItem</div>
+            }
+        }
     </div>
 </div>

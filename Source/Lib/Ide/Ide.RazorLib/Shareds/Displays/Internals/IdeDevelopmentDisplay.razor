@@ -26,7 +26,7 @@
         var isActive = _projectComponentType == type;
         var isActiveCssClass = isActive ? "luth_active" : string.Empty;
 
-        <ErrorBoundary>
+        <ErrorBoundary Context="e">
             <ChildContent>
                 <button class="luth_ide_development-project-component luth_button @isActiveCssClass"
                         title="@type.FullName"
@@ -41,6 +41,7 @@
             </ChildContent>
             <ErrorContent>
                 <div>@type.Name errored</div>
+                <div>@e.ToString()</div>
             </ErrorContent>
         </ErrorBoundary>
     }
