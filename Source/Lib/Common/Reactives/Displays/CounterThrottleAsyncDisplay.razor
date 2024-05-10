@@ -1,6 +1,15 @@
-﻿<div class="luth_counter-throttle-async">
+﻿<div class="luth_counter-throttle-async"
+     style="background-color: var(--luth_te_secondary-background-color); color: var(--luth_te_secondary-foreground-color);">
     <button class="luth_button"
             @onclick="FireThrottleOnClick">
         Async
     </button>
+    
+    <div class="luth_counter-throttle-async-visualization">
+        <div>ThrottleTimeSpan:&nbsp;@_counterThrottleAsync.ThrottleTimeSpan</div>
+        <div>AvailableWaitHandle:&nbsp;@_counterThrottleAsync._workItemSemaphore.AvailableWaitHandle</div>
+        <div>SemaphoreCurrentCount:&nbsp;@_counterThrottleAsync._workItemSemaphore.CurrentCount</div>
+        <div>ThrottleTimeSpan:&nbsp;@_counterThrottleAsync._workItemStack.Count</div>
+        <div>ThrottleTimeSpan:&nbsp;@_counterThrottleAsync._workItemStack.Count</div>
+    </div>
 </div>

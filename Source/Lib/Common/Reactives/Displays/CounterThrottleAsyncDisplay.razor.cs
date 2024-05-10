@@ -5,8 +5,7 @@ namespace Luthetus.Common.RazorLib.Reactives.Displays;
 
 public partial class CounterThrottleAsyncDisplay : ComponentBase
 {
-    [Parameter, EditorRequired]
-    public ICounterThrottleAsync CounterThrottleAsync { get; set; } = null!;
+    private readonly CounterThrottleAsync _counterThrottleAsync = new CounterThrottleAsync();
 
     private void FireThrottleOnClick()
     {

@@ -2,8 +2,8 @@
 
 public class CounterThrottleAsync : ICounterThrottleAsync
 {
-    private readonly SemaphoreSlim _workItemSemaphore = new(1, 1);
-    private readonly Stack<Func<Task>> _workItemStack = new();
+    public readonly SemaphoreSlim _workItemSemaphore = new(1, 1);
+    public readonly Stack<Func<Task>> _workItemStack = new();
 
     public TimeSpan ThrottleTimeSpan { get; }
 
