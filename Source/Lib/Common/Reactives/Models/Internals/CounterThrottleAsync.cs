@@ -5,7 +5,8 @@ public class CounterThrottleAsync : ICounterThrottleAsync
     public readonly SemaphoreSlim _workItemSemaphore = new(1, 1);
     public readonly Stack<Func<Task>> _workItemStack = new();
     private readonly object _idLock = new();
-    private readonly object _workItemsExecutedLock = new();
+    private readonly object _executedCountLock = new();
+    private readonly object _workItemLock = new();
 
     public CounterThrottleAsync(TimeSpan throttleTimeSpan)
     {
@@ -39,15 +40,11 @@ public class CounterThrottleAsync : ICounterThrottleAsync
             id = ++_getId;
         }
 
-        PushEventStart_SynchronizationContext = SynchronizationContext.Current;
-        PushEventStart_Thread = Thread.CurrentThread;
-        PushEventStart_DateTimeTuple = (id, DateTime.UtcNow);
-
         var localExecutionKind = _executionKind;
 
         try
         {
-            await _workItemSemaphore.WaitAsync();
+            await _workItemSemaphore.WaitAsync().ConfigureAwait(false);
 
             _workItemStack.Push(workItem);
             if (_workItemStack.Count > 1)
@@ -60,13 +57,19 @@ public class CounterThrottleAsync : ICounterThrottleAsync
 
         var localDelayTask = _delayTask;
 
-        _delayTask = Task.Run(async () =>
+        _ = Task.Run(async () =>
         {
+            PushEventStart_SynchronizationContext = SynchronizationContext.Current;
+            PushEventStart_Thread = Thread.CurrentThread;
+            PushEventStart_DateTimeTuple = (id, DateTime.UtcNow);
+
             // Adding this line causes the UI to freeze up on WASM
             // Adding this line causes the UI to freeze up on ServerSide
-            await localDelayTask.ConfigureAwait(false);
+            // await localDelayTask.ConfigureAwait(false);
+            await _delayTask.ConfigureAwait(false); 
+            _delayTask = Task.Delay(ThrottleTimeSpan);
 
-            lock (_workItemsExecutedLock)
+            lock (_executedCountLock)
             {
                 WorkItemsExecutedCount++;
             }
@@ -74,7 +77,7 @@ public class CounterThrottleAsync : ICounterThrottleAsync
             Func<Task> popWorkItem;
             try
             {
-                await _workItemSemaphore.WaitAsync();
+                await _workItemSemaphore.WaitAsync().ConfigureAwait(false);
 
                 if (_workItemStack.Count == 0)
                     return;
@@ -87,29 +90,76 @@ public class CounterThrottleAsync : ICounterThrottleAsync
                 _workItemSemaphore.Release();
             }
 
-            await popWorkItem.Invoke();
-            await Task.Delay(ThrottleTimeSpan);
+            await popWorkItem.Invoke().ConfigureAwait(false);
 
-            //switch (localExecutionKind)
-            //{
-            //    case ExecutionKind.Await:
-            //        await Execute_Await();
-            //        break;
-            //    case ExecutionKind.TaskRun:
-            //        await Execute_TaskRun();
-            //        break;
-            //    case ExecutionKind.Mix:
-            //        await Execute_Mix();
-            //        break;
-            //    default:
-            //        throw new NotImplementedException($"The {nameof(ExecutionKind)}: '{localExecutionKind}' was not recognized.");
-            //}
+            PushEventEnd_Thread = Thread.CurrentThread;
+            PushEventEnd_SynchronizationContext = SynchronizationContext.Current;
+            PushEventEnd_DateTimeTuple = (id, DateTime.UtcNow);
+        }).ConfigureAwait(false);
+    }
 
+    public Task PushEvent_Lock_Instead_Of_Semaphore(Func<Task> workItem)
+    {
+        int id;
+        lock (_idLock)
+        {
+            // TODO: I want the _id to be unique, but I also wonder...
+            //       ...if adding this 'lock' logic has any effect
+            //       on all the async/thread things I'm looking into.
+            id = ++_getId;
+        }
+
+        PushEventStart_SynchronizationContext = SynchronizationContext.Current;
+        PushEventStart_Thread = Thread.CurrentThread;
+        PushEventStart_DateTimeTuple = (id, DateTime.UtcNow);
+
+        var localExecutionKind = _executionKind;
+
+        lock (_workItemLock)
+        {
+            _workItemStack.Push(workItem);
+            if (_workItemStack.Count > 1)
+                return Task.CompletedTask;
+        }
+
+        var localDelayTask = _delayTask;
+
+        _ = Task.Run(async () =>
+        {
+            // Adding this line causes the UI to freeze up on WASM
+            // Adding this line causes the UI to freeze up on ServerSide
+            await localDelayTask.ConfigureAwait(false);
+
+            // I just removed the line above "await localDelayTask;"
+            // and yet nothing changed?
+            //
+            // I'm not even invoking this method... of course nothing changed.
+
+            lock (_executedCountLock)
+            {
+                WorkItemsExecutedCount++;
+            }
+
+            Func<Task> popWorkItem;
+            lock (_workItemLock)
+            {
+                if (_workItemStack.Count == 0)
+                    return;
+
+                popWorkItem = _workItemStack.Pop();
+                _workItemStack.Clear();
+            }
+
+            _delayTask = Task.Run(async () => await Task.Delay(ThrottleTimeSpan).ConfigureAwait(false));
+            _ = Task.Run(async () => await popWorkItem.Invoke().ConfigureAwait(false))
+                    .ConfigureAwait(false);
+            
             PushEventEnd_Thread = Thread.CurrentThread;
             PushEventEnd_SynchronizationContext = SynchronizationContext.Current;
             PushEventEnd_DateTimeTuple = (id, DateTime.UtcNow);
         });
 
+        return Task.CompletedTask;
     }
 
     public async Task Execute_Await()
