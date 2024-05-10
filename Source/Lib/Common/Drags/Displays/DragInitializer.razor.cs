@@ -259,7 +259,7 @@ public partial class DragInitializer : FluxorComponent
             }
 
             return Task.CompletedTask;
-        }).ConfigureAwait(false);
+        });
     }
 
     private async Task DispatchSetDragStateActionOnMouseUp(MouseEventArgs mouseEventArgs)
