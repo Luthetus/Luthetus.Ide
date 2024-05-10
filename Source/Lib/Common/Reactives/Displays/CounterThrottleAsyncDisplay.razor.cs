@@ -20,7 +20,7 @@ public partial class CounterThrottleAsyncDisplay : ComponentBase
         {
             _count++;
             return Task.CompletedTask;
-        }).ConfigureAwait(false);
+        });
     }
 
     private bool TryGetWorkItemList(out List<Func<Task>> workItemList)

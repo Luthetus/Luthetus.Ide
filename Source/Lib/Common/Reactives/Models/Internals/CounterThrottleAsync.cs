@@ -52,6 +52,9 @@ public class CounterThrottleAsync : ICounterThrottleAsync
             case ExecutionKind.TaskRun:
                 await Execute_TaskRun();
                 break;
+            case ExecutionKind.Mix:
+                await Execute_Mix();
+                break;
             default:
                 throw new NotImplementedException($"The {nameof(ExecutionKind)}: '{localExecutionKind}' was not recognized.");
         }
@@ -61,12 +64,40 @@ public class CounterThrottleAsync : ICounterThrottleAsync
         PushEventEnd_DateTimeTuple = (id, DateTime.UtcNow);
     }
 
+    /// <summary>
+    /// The goal of this class is to visualize various attempts of implementing
+    /// a throttle.<br/><br/>
+    /// 
+    /// Its presumed that all the versions will have this code be equivalent,
+    /// so moving it into its own method helps for readability.
+    /// </summary>
+    private async Task Push(Func<Task> workItem)
+    {
+        try
+        {
+            await _workItemSemaphore.WaitAsync();
+
+            _workItemStack.Push(workItem);
+            if (_workItemStack.Count > 1)
+                return;
+        }
+        finally
+        {
+            _workItemSemaphore.Release();
+        }
+    }
+
     public async Task Execute_Await()
     {
+        await _delayTask;
+
         Func<Task> popWorkItem;
         try
         {
             await _workItemSemaphore.WaitAsync();
+
+            if (_workItemStack.Count == 0)
+                return;
 
             popWorkItem = _workItemStack.Pop();
             _workItemStack.Clear();
@@ -101,27 +132,23 @@ public class CounterThrottleAsync : ICounterThrottleAsync
         _workItemTask = Task.Run(async () => await popWorkItem.Invoke());
     }
 
-    /// <summary>
-    /// The goal of this class is to visualize various attempts of implementing
-    /// a throttle.<br/><br/>
-    /// 
-    /// Its presumed that all the versions will have this code be equivalent,
-    /// so moving it into its own method helps for readability.
-    /// </summary>
-    private async Task Push(Func<Task> workItem)
+    public async Task Execute_Mix()
     {
+        Func<Task> popWorkItem;
         try
         {
             await _workItemSemaphore.WaitAsync();
 
-            _workItemStack.Push(workItem);
-            if (_workItemStack.Count > 1)
-                return;
+            popWorkItem = _workItemStack.Pop();
+            _workItemStack.Clear();
         }
         finally
         {
             _workItemSemaphore.Release();
         }
+
+        _delayTask = Task.Run(async () => await Task.Delay(ThrottleTimeSpan));
+        _workItemTask = Task.Run(async () => await popWorkItem.Invoke());
     }
 
     public async Task SetExecuteKind(ExecutionKind executionKind)
@@ -142,5 +169,6 @@ public class CounterThrottleAsync : ICounterThrottleAsync
     {
         Await,
         TaskRun,
+        Mix,
     }
 }
