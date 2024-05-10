@@ -63,7 +63,8 @@ public class CounterThrottleAsync : ICounterThrottleAsync
         _delayTask = Task.Run(async () =>
         {
             // Adding this line causes the UI to freeze up on WASM
-            await localDelayTask;
+            // Adding this line causes the UI to freeze up on ServerSide
+            await localDelayTask.ConfigureAwait(false);
 
             lock (_workItemsExecutedLock)
             {
