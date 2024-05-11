@@ -722,6 +722,21 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             //
             // Preferably I'd throw "throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");"
             // here, but this is the final piece of the puzzle to change, otherwise nothing will work.
+            // =======================================================================================
+            //
+            // (2024-05-11)
+            // I believe a few days ago I partially optimized the scrolling.
+            // I can now in the editContext modify the scrollbar's C# model, and wait until after
+            // the editContext is finished to actually invoke the JavaScript that moves the scrollbar UI.
+            //
+            // The next goal would be to continue those optimizations.
+            //
+            // For example: I don't believe this line that invokes 'GetTextEditorMeasurementsAsync(...)'
+            //              is necessary, provided that an accurrate measurement is initially taken,
+            //              then only re-measured when some corrupting event occurs.
+            //              |
+            //              For example, a user resizing the browser, or the user resizing 'intra-browser'
+            //              some grid layout.
             var textEditorMeasurements = await _textEditorService.ViewModelApi
                 .GetTextEditorMeasurementsAsync(viewModelModifier.ViewModel.BodyElementId)
                 .ConfigureAwait(false);
