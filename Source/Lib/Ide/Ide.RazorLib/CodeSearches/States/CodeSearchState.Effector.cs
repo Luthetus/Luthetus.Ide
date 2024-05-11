@@ -7,7 +7,7 @@ namespace Luthetus.Ide.RazorLib.CodeSearches.States;
 
 public partial record CodeSearchState
 {
-    public class Effector : IDisposable
+    public class Effector
     {
         private readonly ThrottleAsync _throttle = new ThrottleAsync(TimeSpan.FromMilliseconds(300));
         private readonly IState<CodeSearchState> _codeSearchStateWrap;
@@ -92,11 +92,6 @@ public partial record CodeSearchState
                     }
                 }
             });
-        }
-
-        public void Dispose()
-        {
-            _throttle.Dispose();
         }
     }
 }

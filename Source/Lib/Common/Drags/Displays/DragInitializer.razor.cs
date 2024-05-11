@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
-using Luthetus.Common.RazorLib.Reactives.Models.Internals.Async;
-using Luthetus.Common.RazorLib.Reactives.Models.Internals.Synchronous;
 using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.Common.RazorLib.Drags.Displays;
@@ -21,7 +19,7 @@ public partial class DragInitializer : FluxorComponent
         ? string.Empty
         : "display: none;";
 
-    public static ThrottleWip ThrottleWip = new(ThrottleWip.Sixty_Frames_Per_Second);
+    public static ThrottleAsync Throttle = new(ThrottleAsync.Sixty_Frames_Per_Second);
 
     private IDropzone? _onMouseOverDropzone = null;
 
@@ -39,7 +37,7 @@ public partial class DragInitializer : FluxorComponent
 
     private async Task DispatchSetDragStateActionOnMouseMoveAsync(MouseEventArgs mouseEventArgs)
     {
-        var workItem = new Func<Task>(() =>
+        await Throttle.PushEvent(_ =>
         {
             if ((mouseEventArgs.Buttons & 1) != 1)
             {
@@ -56,57 +54,6 @@ public partial class DragInitializer : FluxorComponent
 
             return Task.CompletedTask;
         });
-
-        if (ThrottleWip is ICounterThrottleAsync throttleAsync)
-        {
-            Func<double, Task>? progressFunc;
-
-            if (ThrottleWip.ThrottleTimeSpan.TotalMilliseconds >= 1_000)
-            {
-                progressFunc = async d =>
-                 {
-                     var HACK_ReRenderProgress = throttleAsync.HACK_ReRenderProgress;
-
-                     if (HACK_ReRenderProgress is not null)
-                         await HACK_ReRenderProgress.Invoke(d);
-                 };
-            }
-            else
-            {
-                progressFunc = null;
-            }
-
-            await throttleAsync.PushEvent(
-                workItem,
-                progressFunc);
-        }
-        else if (ThrottleWip is ICounterThrottleSynchronous throttleSynchronous)
-        {
-            Func<double, Task>? progressFunc;
-
-            if (ThrottleWip.ThrottleTimeSpan.TotalMilliseconds >= 1_000)
-            {
-                progressFunc = async d =>
-                {
-                    var HACK_ReRenderProgress = throttleSynchronous.HACK_ReRenderProgress;
-
-                    if (HACK_ReRenderProgress is not null)
-                        await HACK_ReRenderProgress.Invoke(d);
-                };
-            }
-            else
-            {
-                progressFunc = null;
-            }
-
-            throttleSynchronous.PushEvent(
-                workItem,
-                progressFunc);
-        }
-        else
-        {
-            throw new NotImplementedException();
-        }
     }
 
     private async Task DispatchSetDragStateActionOnMouseUp(MouseEventArgs mouseEventArgs)
@@ -114,7 +61,7 @@ public partial class DragInitializer : FluxorComponent
 		var dragState = DragStateWrap.Value;
 		var localOnMouseOverDropzone = _onMouseOverDropzone;
 
-        var workItem = new Func<Task>(async () =>
+        await Throttle.PushEvent(async _ =>
         {
             Dispatcher.Dispatch(ConstructClearDragStateAction());
 
@@ -122,57 +69,6 @@ public partial class DragInitializer : FluxorComponent
             if (draggableViewModel is not null)
                 await draggableViewModel.OnDragEndAsync(mouseEventArgs, localOnMouseOverDropzone);
         });
-
-        if (ThrottleWip is ICounterThrottleAsync throttleAsync)
-        {
-            Func<double, Task>? progressFunc;
-
-            if (ThrottleWip.ThrottleTimeSpan.TotalMilliseconds >= 1_000)
-            {
-                progressFunc = async d =>
-                {
-                    var HACK_ReRenderProgress = throttleAsync.HACK_ReRenderProgress;
-
-                    if (HACK_ReRenderProgress is not null)
-                        await HACK_ReRenderProgress.Invoke(d);
-                };
-            }
-            else
-            {
-                progressFunc = null;
-            }
-
-            await throttleAsync.PushEvent(
-                workItem,
-                progressFunc).ConfigureAwait(false);
-        }
-        else if (ThrottleWip is ICounterThrottleSynchronous throttleSynchronous)
-        {
-            Func<double, Task>? progressFunc;
-
-            if (ThrottleWip.ThrottleTimeSpan.TotalMilliseconds >= 1_000)
-            {
-                progressFunc = async d =>
-                {
-                    var HACK_ReRenderProgress = throttleSynchronous.HACK_ReRenderProgress;
-
-                    if (HACK_ReRenderProgress is not null)
-                        await HACK_ReRenderProgress.Invoke(d);
-                };
-            }
-            else
-            {
-                progressFunc = null;
-            }
-
-            throttleSynchronous.PushEvent(
-                workItem,
-                progressFunc);
-        }
-        else
-        {
-            throw new NotImplementedException();
-        }
     }
 
 	private string GetIsActiveCssClass(IDropzone dropzone)

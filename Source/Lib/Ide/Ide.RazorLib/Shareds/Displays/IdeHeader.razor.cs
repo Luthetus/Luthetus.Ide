@@ -60,7 +60,6 @@ public partial class IdeHeader : ComponentBase
 	private static readonly Key<IDynamicViewModel> _infoDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
-	private static readonly Key<IDynamicViewModel> _throttleDialogKey = Key<IDynamicViewModel>.NewKey();
 
     private Key<DropdownRecord> _dropdownKeyFile = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
@@ -74,10 +73,6 @@ public partial class IdeHeader : ComponentBase
     private MenuRecord _menuView = new(ImmutableArray<MenuOptionRecord>.Empty);
     private ElementReference? _buttonViewElementReference;
 
-    private Key<DropdownRecord> _dropdownKeyThrottle = Key<DropdownRecord>.NewKey();
-    private MenuRecord _menuThrottle = new(ImmutableArray<MenuOptionRecord>.Empty);
-    private ElementReference? _buttonThrottleElementReference;
-
     private ActiveBackgroundTaskDisplay? _activeBackgroundTaskDisplayComponent;
 
     protected override Task OnInitializedAsync()
@@ -85,7 +80,6 @@ public partial class IdeHeader : ComponentBase
         InitializeMenuFile();
 		InitializeMenuTools();
 		InitializeMenuView();
-        InitializeMenuThrottle();
 
         return base.OnInitializedAsync();
     }
@@ -301,65 +295,6 @@ public partial class IdeHeader : ComponentBase
 			_menuView = new MenuRecord(menuOptionsList.ToImmutableArray());
     }
 
-    private void InitializeMenuThrottle()
-    {
-        var menuOptionsList = new List<MenuOptionRecord>();
-        var throttleTimeSpan = ThrottleWip.Sixty_Frames_Per_Second;
-
-        menuOptionsList.Add(new MenuOptionRecord(
-            nameof(ThrottleWip),
-            MenuOptionKind.Delete,
-            () =>
-            {
-                ShowThrottleDialog(new ThrottleWip(throttleTimeSpan));
-                return Task.CompletedTask;
-            }));
-
-        // Menu Option CTA
-        // {
-            //menuOptionsList.Add(new MenuOptionRecord(
-            //    nameof(CTA_NoConfigureAwait),
-            //    MenuOptionKind.Delete,
-            //    () =>
-            //    {
-            //        ShowThrottleDialog(new CTA_NoConfigureAwait(throttleTimeSpan));
-            //        return Task.CompletedTask;
-            //    }));
-
-            //menuOptionsList.Add(new MenuOptionRecord(
-            //    nameof(CTA_WithConfigureAwait),
-            //    MenuOptionKind.Delete,
-            //    () =>
-            //    {
-            //        ShowThrottleDialog(new CTA_WithConfigureAwait(throttleTimeSpan));
-            //        return Task.CompletedTask;
-            //    }));
-        // }
-
-        // Menu Option CTSynchronous
-        // {
-            //menuOptionsList.Add(new MenuOptionRecord(
-            //    nameof(CTSynchronous_NoConfigureAwait),
-            //    MenuOptionKind.Delete,
-            //    () =>
-            //    {
-            //        ShowThrottleDialog(new CTSynchronous_NoConfigureAwait(throttleTimeSpan));
-            //        return Task.CompletedTask;
-            //    }));
-
-            //menuOptionsList.Add(new MenuOptionRecord(
-            //    nameof(CTSynchronous_WithConfigureAwait),
-            //    MenuOptionKind.Delete,
-            //    () =>
-            //    {
-            //        ShowThrottleDialog(new CTSynchronous_WithConfigureAwait(throttleTimeSpan));
-            //        return Task.CompletedTask;
-            //    }));
-        // }
-
-        _menuThrottle = new MenuRecord(menuOptionsList.ToImmutableArray());
-    }
-
     private void AddActiveDropdownKey(Key<DropdownRecord> dropdownKey)
     {
         Dispatcher.Dispatch(new DropdownState.AddActiveAction(dropdownKey));
@@ -410,20 +345,6 @@ public partial class IdeHeader : ComponentBase
         }
     }
     
-    private async Task RestoreFocusToButtonDisplayComponentThrottleAsync()
-    {
-        try
-        {
-            if (_buttonThrottleElementReference is not null)
-                await _buttonThrottleElementReference.Value.FocusAsync();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-
     private Task OpenNewDotNetSolutionDialog()
     {
         var dialogRecord = new DialogViewModel(
@@ -459,30 +380,6 @@ public partial class IdeHeader : ComponentBase
             "Permissions",
             typeof(PermissionsDisplay),
             null,
-            null,
-			true);
-
-        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
-        return Task.CompletedTask;
-    }
-
-    private Task ShowThrottleDialog(ThrottleWip throttleWip)
-    {
-        Dispatcher.Dispatch(new DialogState.DisposeAction(_throttleDialogKey));
-
-        DragInitializer.ThrottleWip = throttleWip;
-
-        var dialogRecord = new DialogViewModel(
-            _throttleDialogKey,
-            "Throttle",
-            typeof(CounterThrottleDataDisplay),
-            new Dictionary<string, object?>
-            {
-                {
-                    nameof(CounterThrottleDataDisplay.ThrottleData),
-                    DragInitializer.ThrottleWip
-                }
-            },
             null,
 			true);
 
