@@ -26,8 +26,9 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.Common.RazorLib.Reactives.Displays;
-using Luthetus.Common.RazorLib.Reactives.Models.Internals;
 using Luthetus.Common.RazorLib.Drags.Displays;
+using Luthetus.Common.RazorLib.Reactives.Models.Internals.Async;
+using Luthetus.Common.RazorLib.Reactives.Models.Internals;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -59,7 +60,7 @@ public partial class IdeHeader : ComponentBase
 	private static readonly Key<IDynamicViewModel> _infoDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
-	private static readonly Key<IDynamicViewModel> _counterThrottleAsyncDialogKey = Key<IDynamicViewModel>.NewKey();
+	private static readonly Key<IDynamicViewModel> _throttleDialogKey = Key<IDynamicViewModel>.NewKey();
 
     private Key<DropdownRecord> _dropdownKeyFile = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
@@ -73,13 +74,18 @@ public partial class IdeHeader : ComponentBase
     private MenuRecord _menuView = new(ImmutableArray<MenuOptionRecord>.Empty);
     private ElementReference? _buttonViewElementReference;
 
-	private ActiveBackgroundTaskDisplay? _activeBackgroundTaskDisplayComponent;
+    private Key<DropdownRecord> _dropdownKeyThrottle = Key<DropdownRecord>.NewKey();
+    private MenuRecord _menuThrottle = new(ImmutableArray<MenuOptionRecord>.Empty);
+    private ElementReference? _buttonThrottleElementReference;
+
+    private ActiveBackgroundTaskDisplay? _activeBackgroundTaskDisplayComponent;
 
     protected override Task OnInitializedAsync()
     {
         InitializeMenuFile();
 		InitializeMenuTools();
 		InitializeMenuView();
+        InitializeMenuThrottle();
 
         return base.OnInitializedAsync();
     }
@@ -295,6 +301,56 @@ public partial class IdeHeader : ComponentBase
 			_menuView = new MenuRecord(menuOptionsList.ToImmutableArray());
     }
 
+    private void InitializeMenuThrottle()
+    {
+        var menuOptionsList = new List<MenuOptionRecord>();
+        var throttleTimeSpan = TimeSpan.FromMilliseconds(2_000);
+
+        // Menu Option CTA
+        {
+            menuOptionsList.Add(new MenuOptionRecord(
+                nameof(CTA_NoConfigureAwait),
+                MenuOptionKind.Delete,
+                () =>
+                {
+                    ShowThrottleDialog(new CTA_NoConfigureAwait(throttleTimeSpan));
+                    return Task.CompletedTask;
+                }));
+            
+            menuOptionsList.Add(new MenuOptionRecord(
+                nameof(CTA_WithConfigureAwait),
+                MenuOptionKind.Delete,
+                () =>
+                {
+                    ShowThrottleDialog(new CTA_WithConfigureAwait(throttleTimeSpan));
+                    return Task.CompletedTask;
+                }));
+        }
+
+        // Menu Option CTSynchronous
+        {
+            menuOptionsList.Add(new MenuOptionRecord(
+                nameof(CTSynchronous_NoConfigureAwait),
+                MenuOptionKind.Delete,
+                () =>
+                {
+                    ShowThrottleDialog(new CTSynchronous_NoConfigureAwait(throttleTimeSpan));
+                    return Task.CompletedTask;
+                }));
+
+            menuOptionsList.Add(new MenuOptionRecord(
+                nameof(CTSynchronous_WithConfigureAwait),
+                MenuOptionKind.Delete,
+                () =>
+                {
+                    ShowThrottleDialog(new CTSynchronous_WithConfigureAwait(throttleTimeSpan));
+                    return Task.CompletedTask;
+                }));
+        }
+
+        _menuTools = new MenuRecord(menuOptionsList.ToImmutableArray());
+    }
+
     private void AddActiveDropdownKey(Key<DropdownRecord> dropdownKey)
     {
         Dispatcher.Dispatch(new DropdownState.AddActiveAction(dropdownKey));
@@ -337,6 +393,20 @@ public partial class IdeHeader : ComponentBase
         {
             if (_buttonViewElementReference is not null)
                 await _buttonViewElementReference.Value.FocusAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+    
+    private async Task RestoreFocusToButtonDisplayComponentThrottleAsync()
+    {
+        try
+        {
+            if (_buttonThrottleElementReference is not null)
+                await _buttonThrottleElementReference.Value.FocusAsync();
         }
         catch (Exception e)
         {
@@ -387,17 +457,19 @@ public partial class IdeHeader : ComponentBase
         return Task.CompletedTask;
     }
 
-    private Task ShowCounterThrottleAsyncDialog()
+    private Task ShowThrottleDialog(ICounterThrottleData counterThrottleData)
     {
+        Dispatcher.Dispatch(new DialogState.DisposeAction(_throttleDialogKey));
+
         var dialogRecord = new DialogViewModel(
-            _counterThrottleAsyncDialogKey,
-            "CounterThrottleAsync",
-            typeof(CounterThrottleAsyncDisplay),
+            _throttleDialogKey,
+            "Throttle",
+            typeof(CounterThrottleDataDisplay),
             new Dictionary<string, object?>
             {
                 {
-                    nameof(CounterThrottleAsyncDisplay.CounterThrottleAsync),
-                    DragInitializer._counterThrottleAsync
+                    nameof(CounterThrottleDataDisplay.ThrottleData),
+                    DragInitializer.ThrottleData
                 }
             },
             null,

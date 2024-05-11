@@ -1,10 +1,55 @@
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Reactives.Models.Internals;
+using Luthetus.Common.RazorLib.Reactives.Models.Internals.Async;
+using Luthetus.Common.RazorLib.Reactives.Models.Internals.Synchronous;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Common.RazorLib.Reactives.Displays;
 
-public partial class CounterThrottleDisplay : ComponentBase
+public partial class CounterThrottleDataDisplay : ComponentBase
 {
+    [Parameter, EditorRequired]
+    public ICounterThrottleData ThrottleData { get; set; } = null!;
+
+    private int _count;
+    private List<Func<Task>>? _emptyWorkItemList;
+
+    private List<Func<Task>> EmptyWorkItemList => _emptyWorkItemList ??= new();
+
+    private async Task FireThrottleOnClick()
+    {
+        if (ThrottleData is ICounterThrottleAsync throttleAsync)
+        {
+            await throttleAsync.PushEvent(() =>
+            {
+                _count++;
+                return Task.CompletedTask;
+            });
+        }
+        else if (ThrottleData is ICounterThrottleSynchronous throttleSynchronous)
+        {
+            throttleSynchronous.PushEvent(() =>
+            {
+                _count++;
+                return Task.CompletedTask;
+            });
+        }
+    }
+
+    private bool TryGetWorkItemList(out List<Func<Task>> workItemList)
+    {
+        try
+        {
+            workItemList = ThrottleData.WorkItemStack.ToList();
+            return true;
+        }
+        catch (Exception)
+        {
+            workItemList = EmptyWorkItemList;
+            return false;
+        }
+    }
+
     /*
      * This scenario is a perfect example of the issue I'm facing (2024-05-10)
      * Goal: When creating a throttle type: how does one provide a Func<Task>
@@ -117,12 +162,4 @@ public partial class CounterThrottleDisplay : ComponentBase
      * And if '.WaitAsync()' could throw  an exception after taking a counter from the semaphore,
      * then one would want a finally block because it should run '.Release()'.
      */
-
-    [Parameter, EditorRequired]
-    public ICounterThrottle CounterThrottle { get; set; } = null!;
-
-    private void FireThrottleOnClick()
-    {
-
-    }
 }

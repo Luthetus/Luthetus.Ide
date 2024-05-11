@@ -2,10 +2,11 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Reactives.Models.Internals.Async;
 using Luthetus.Common.RazorLib.Reactives.Models.Internals;
+using Luthetus.Common.RazorLib.Reactives.Models.Internals.Synchronous;
 
 namespace Luthetus.Common.RazorLib.Drags.Displays;
 
@@ -20,12 +21,7 @@ public partial class DragInitializer : FluxorComponent
         ? string.Empty
         : "display: none;";
 
-    public static readonly CTA_NoConfigureAwait _counterThrottleAsync = new(TimeSpan.FromMilliseconds(2_000));
-
-    /// <summary>
-    /// Preferably the throttling logic here would be moved out of the drag initializer itself so one can choose to add it themselves, or take the full stream.
-    /// </summary>
-    private ThrottleAsync _throttleDispatchSetDragStateActionOnMouseMove = new(TimeSpan.FromMilliseconds(2_000));
+    public ICounterThrottleData ThrottleData = new CTA_WithConfigureAwait(TimeSpan.FromMilliseconds(2_000));
 
     private IDropzone? _onMouseOverDropzone = null;
 
@@ -43,7 +39,68 @@ public partial class DragInitializer : FluxorComponent
 
     private async Task DispatchSetDragStateActionOnMouseMoveAsync(MouseEventArgs mouseEventArgs)
     {
-        /*
+        // NOTE: Does it make a difference if my Task runs synchronously or not?
+        //
+        // NOTE: The Dispatcher will cause re-renders, is this Dispatch causing me
+        //       to hijack the UI thread?
+        var workItem = new Func<Task>(() =>
+        {
+            if ((mouseEventArgs.Buttons & 1) != 1)
+            {
+                Dispatcher.Dispatch(ConstructClearDragStateAction());
+            }
+            else
+            {
+                Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
+                {
+                    ShouldDisplay = true,
+                    MouseEventArgs = mouseEventArgs,
+                }));
+            }
+
+            return Task.CompletedTask;
+        });
+
+        if (ThrottleData is ICounterThrottleAsync throttleAsync)
+            await throttleAsync.PushEvent(workItem);
+        else if (ThrottleData is ICounterThrottleSynchronous throttleSynchronous)
+            throttleSynchronous.PushEvent(workItem);
+        else
+            throw new NotImplementedException();
+    }
+
+    private async Task DispatchSetDragStateActionOnMouseUp(MouseEventArgs mouseEventArgs)
+    {
+		var dragState = DragStateWrap.Value;
+		var localOnMouseOverDropzone = _onMouseOverDropzone;
+
+        var workItem = new Func<Task>(async () =>
+        {
+            Dispatcher.Dispatch(ConstructClearDragStateAction());
+
+            var draggableViewModel = dragState.Drag;
+            if (draggableViewModel is not null)
+                await draggableViewModel.OnDragEndAsync(mouseEventArgs, localOnMouseOverDropzone);
+        });
+
+        if (ThrottleData is ICounterThrottleAsync throttleAsync)
+            await throttleAsync.PushEvent(workItem);
+        else if (ThrottleData is ICounterThrottleSynchronous throttleSynchronous)
+            throttleSynchronous.PushEvent(workItem);
+        else
+            throw new NotImplementedException();
+    }
+
+	private string GetIsActiveCssClass(IDropzone dropzone)
+	{
+		var onMouseOverDropzoneKey = _onMouseOverDropzone?.DropzoneKey ?? Key<IDropzone>.Empty;
+
+		return onMouseOverDropzoneKey == dropzone.DropzoneKey
+            ? "luth_active"
+			: string.Empty;
+	}
+
+    /*
          * This scenario is a perfect example of the issue I'm facing (2024-05-10)
          * Goal: When creating a throttle type: how does one provide a Func<Task>
          *       that will immediately be invoked if the throttle delay is completed.
@@ -246,99 +303,27 @@ public partial class DragInitializer : FluxorComponent
          * (further side note: is it single threaded runtime or single threaded application?)
          */
 
-        /*
-         * This scenario is a perfect example of the issue I'm facing (2024-05-10)
-         * Goal: When creating a throttle type: how does one provide a Func<Task>
-         *       that will immediately be invoked if the throttle delay is completed.
-         * ==========================================================================
-         * 
-         * The dialog misses the final mouse move event, BUT there is a reason for this.
-         * It is due to the onmouseup event overwritting the final mouse move event
-         * since the same throttle is used for both.
-         * ==========================================================================
-         * 
-         * To avoid confusion: try interacting with the input elements that
-         * are on the dialog, as opposed to the website behind the dialog.
-         * When the drag events are happening there is an invisible div
-         * that covers the screen with a lower z-index than the dialogs,
-         * so those will never be interactable with, and is unrelated.
-         * ==========================================================================
-         * 
-         * -Render the CounterThrottleAsyncDisplay in a dialog
-         * -Use the same CounterThrottleAsync instance that is being used in the CounterThrottleAsyncDisplay
-         *      but for the dialog drag events.
-         * -Cascade any state has changed events from the dialog to the CounterThrottleAsyncDisplay
-         */
-        await _counterThrottleAsync.PushEvent(() =>
-        {
-            if ((mouseEventArgs.Buttons & 1) != 1)
-            {
-                Dispatcher.Dispatch(ConstructClearDragStateAction());
-            }
-            else
-            {
-                _ = Task.Run(() =>
-                {
-                    Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
-                    {
-                        ShouldDisplay = true,
-                        MouseEventArgs = mouseEventArgs,
-                    }));
-                });
-            }
-
-            return Task.CompletedTask;
-        }).ConfigureAwait(false);
-
-        //return _throttleDispatchSetDragStateActionOnMouseMove.PushEvent(_ =>
-        //{
-        //    if ((mouseEventArgs.Buttons & 1) != 1)
-        //    {
-        //        Dispatcher.Dispatch(ConstructClearDragStateAction());
-        //    }
-        //    else
-        //    {
-        //        Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
-        //        {
-        //            ShouldDisplay = true,
-        //            MouseEventArgs = mouseEventArgs,
-        //        }));
-        //    }
-        //
-        //    return Task.CompletedTask;
-        //});
-    }
-
-    private async Task DispatchSetDragStateActionOnMouseUp(MouseEventArgs mouseEventArgs)
-    {
-		var dragState = DragStateWrap.Value;
-		var localOnMouseOverDropzone = _onMouseOverDropzone;
-
-        await _counterThrottleAsync.PushEvent(async () =>
-        {
-            Dispatcher.Dispatch(ConstructClearDragStateAction());
-
-			var draggableViewModel = dragState.Drag;
-			if (draggableViewModel is not null)
-				await draggableViewModel.OnDragEndAsync(mouseEventArgs, localOnMouseOverDropzone);
-        }).ConfigureAwait(false);
-        
-        // await _throttleDispatchSetDragStateActionOnMouseMove.PushEvent(async _ =>
-        // {
-        //     Dispatcher.Dispatch(ConstructClearDragStateAction());
-        // 
-		// 	var draggableViewModel = dragState.Drag;
-		// 	if (draggableViewModel is not null)
-		// 		await draggableViewModel.OnDragEndAsync(mouseEventArgs, localOnMouseOverDropzone);
-        // }).ConfigureAwait(false);
-    }
-
-	private string GetIsActiveCssClass(IDropzone dropzone)
-	{
-		var onMouseOverDropzoneKey = _onMouseOverDropzone?.DropzoneKey ?? Key<IDropzone>.Empty;
-
-		return onMouseOverDropzoneKey == dropzone.DropzoneKey
-            ? "luth_active"
-			: string.Empty;
-	}
+    /*
+     * This scenario is a perfect example of the issue I'm facing (2024-05-10)
+     * Goal: When creating a throttle type: how does one provide a Func<Task>
+     *       that will immediately be invoked if the throttle delay is completed.
+     * ==========================================================================
+     * 
+     * The dialog misses the final mouse move event, BUT there is a reason for this.
+     * It is due to the onmouseup event overwritting the final mouse move event
+     * since the same throttle is used for both.
+     * ==========================================================================
+     * 
+     * To avoid confusion: try interacting with the input elements that
+     * are on the dialog, as opposed to the website behind the dialog.
+     * When the drag events are happening there is an invisible div
+     * that covers the screen with a lower z-index than the dialogs,
+     * so those will never be interactable with, and is unrelated.
+     * ==========================================================================
+     * 
+     * -Render the CounterThrottleAsyncDisplay in a dialog
+     * -Use the same CounterThrottleAsync instance that is being used in the CounterThrottleAsyncDisplay
+     *      but for the dialog drag events.
+     * -Cascade any state has changed events from the dialog to the CounterThrottleAsyncDisplay
+     */
 }

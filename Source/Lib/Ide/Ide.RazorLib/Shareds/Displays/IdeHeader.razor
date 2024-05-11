@@ -79,8 +79,23 @@
 
         <button class="luth_button"
                 style="margin-left: 15px;"
-                @onclick="ShowCounterThrottleAsyncDialog">
-            CounterThrottleAsync
+                @onclick="ShowThrottleDialog">
+            Asd
+        </button>
+
+        <button @ref="_buttonThrottleElementReference"
+                @onclick="() => { AddActiveDropdownKey(_dropdownKeyThrottle); return Task.CompletedTask; }"
+                class="luth_button"
+                style="position: relative; margin-left: 15px;">
+            ThrottleDialog
+
+            <DropdownDisplay DropdownKey="_dropdownKeyThrottle"
+                             DropdownPositionKind="DropdownPositionKind.Vertical">
+
+                <CascadingValue Value="RestoreFocusToButtonDisplayComponentThrottleAsync" Name="ReturnFocusToParentFuncAsync">
+                    <MenuDisplay MenuRecord="_menuThrottle" />
+                </CascadingValue>
+            </DropdownDisplay>
         </button>
     </div>
 </ContextBoundary>
