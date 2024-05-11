@@ -57,6 +57,7 @@ public class ThrottleWip : CTA_Base
 
         WorkItemTask = Task.Run(async () =>
         {
+            // Await the previous work item task.
             await localWorkItemTask.ConfigureAwait(false);
 
             if (progressFunc is null)
