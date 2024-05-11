@@ -1,0 +1,13 @@
+.luth_progress {
+    position: relative;
+    min-width: 6ch;
+    height: 1.5em;
+}
+
+.luth_progress-filler {
+    position: absolute;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-color: var(--luth_active-with-focus-background-color);
+}

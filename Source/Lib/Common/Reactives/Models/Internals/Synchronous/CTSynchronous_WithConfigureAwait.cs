@@ -10,7 +10,7 @@ public class CTSynchronous_WithConfigureAwait : CTSynchronous_Base
         
     }
 
-    public override void PushEvent(Func<Task> workItem)
+    public override void PushEvent(Func<Task> workItem, Func<double, Task>? progressFunc = null)
     {
         int id;
         lock (IdLock)
@@ -36,7 +36,17 @@ public class CTSynchronous_WithConfigureAwait : CTSynchronous_Base
             PushEventStart_Thread = Thread.CurrentThread;
             PushEventStart_DateTimeTuple = (id, DateTime.UtcNow);
 
-            await localDelayTask.ConfigureAwait(false);
+            if (progressFunc is null)
+            {
+                await localDelayTask.ConfigureAwait(false);
+            }
+            else
+            {
+                await ThrottleProgressHelper
+                    .DelayWithProgress(ThrottleTimeSpan, progressFunc)
+                    .ConfigureAwait(false);
+            }
+
             DelayTask = Task.Delay(ThrottleTimeSpan);
 
             lock (ExecutedCountLock)

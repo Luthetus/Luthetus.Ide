@@ -7,7 +7,7 @@ public class CTA_NoConfigureAwait : CTA_Base
     {
     }
 
-    public override async Task PushEvent(Func<Task> workItem)
+    public override async Task PushEvent(Func<Task> workItem, Func<double, Task>? progressFunc = null)
     {
         int id;
         lock (IdLock)
@@ -39,7 +39,16 @@ public class CTA_NoConfigureAwait : CTA_Base
             PushEventStart_Thread = Thread.CurrentThread;
             PushEventStart_DateTimeTuple = (id, DateTime.UtcNow);
 
-            await localDelayTask;
+            if (progressFunc is null)
+            {
+                await localDelayTask;
+            }
+            else
+            {
+                await ThrottleProgressHelper
+                    .DelayWithProgress(ThrottleTimeSpan, progressFunc);
+            }
+
             DelayTask = Task.Delay(ThrottleTimeSpan);
 
             lock (ExecutedCountLock)

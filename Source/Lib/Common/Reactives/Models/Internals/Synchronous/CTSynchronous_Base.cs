@@ -22,6 +22,7 @@ public abstract class CTSynchronous_Base : ICounterThrottleSynchronous
     public (int Id, DateTime DateTime) PushEventEnd_DateTimeTuple { get; protected set; } = (-1, DateTime.MinValue);
     public int WorkItemsExecutedCount { get; protected set; }
     public int GetId { get; protected set; }
+    public Func<double, Task>? HACK_ReRenderProgress { get; set; }
 
-    public abstract void PushEvent(Func<Task> workItem);
+    public abstract void PushEvent(Func<Task> workItem, Func<double, Task>? progressFunc = null);
 }

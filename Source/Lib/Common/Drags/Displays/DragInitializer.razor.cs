@@ -45,28 +45,50 @@ public partial class DragInitializer : FluxorComponent
         //       to hijack the UI thread?
         var workItem = new Func<Task>(() =>
         {
-            //if ((mouseEventArgs.Buttons & 1) != 1)
-            //{
-            //    Dispatcher.Dispatch(ConstructClearDragStateAction());
-            //}
-            //else
-            //{
-            //    Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
-            //    {
-            //        ShouldDisplay = true,
-            //        MouseEventArgs = mouseEventArgs,
-            //    }));
-            //}
+            if ((mouseEventArgs.Buttons & 1) != 1)
+            {
+                Dispatcher.Dispatch(ConstructClearDragStateAction());
+            }
+            else
+            {
+                Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
+                {
+                    ShouldDisplay = true,
+                    MouseEventArgs = mouseEventArgs,
+                }));
+            }
 
             return Task.CompletedTask;
         });
 
         if (ThrottleData is ICounterThrottleAsync throttleAsync)
-            await throttleAsync.PushEvent(workItem);
+        {
+            await throttleAsync.PushEvent(workItem, async d =>
+            {
+                var HACK_ReRenderProgress = throttleAsync.HACK_ReRenderProgress;
+
+                if (HACK_ReRenderProgress is not null)
+                {
+                    await HACK_ReRenderProgress.Invoke(d);
+                }
+            });
+        }
         else if (ThrottleData is ICounterThrottleSynchronous throttleSynchronous)
-            throttleSynchronous.PushEvent(workItem);
+        {
+            throttleSynchronous.PushEvent(workItem, async d =>
+            {
+                var HACK_ReRenderProgress = throttleSynchronous.HACK_ReRenderProgress;
+
+                if (HACK_ReRenderProgress is not null)
+                {
+                    await HACK_ReRenderProgress.Invoke(d);
+                }
+            });
+        }
         else
+        {
             throw new NotImplementedException();
+        }
     }
 
     private async Task DispatchSetDragStateActionOnMouseUp(MouseEventArgs mouseEventArgs)
@@ -84,9 +106,29 @@ public partial class DragInitializer : FluxorComponent
         });
 
         if (ThrottleData is ICounterThrottleAsync throttleAsync)
-            await throttleAsync.PushEvent(workItem);
+        {
+            await throttleAsync.PushEvent(workItem, async d =>
+            {
+                var HACK_ReRenderProgress = throttleAsync.HACK_ReRenderProgress;
+
+                if (HACK_ReRenderProgress is not null)
+                {
+                    await HACK_ReRenderProgress.Invoke(d);
+                }
+            });
+        }
         else if (ThrottleData is ICounterThrottleSynchronous throttleSynchronous)
-            throttleSynchronous.PushEvent(workItem);
+        {
+            throttleSynchronous.PushEvent(workItem, async d =>
+            {
+                var HACK_ReRenderProgress = throttleSynchronous.HACK_ReRenderProgress;
+
+                if (HACK_ReRenderProgress is not null)
+                {
+                    await HACK_ReRenderProgress.Invoke(d);
+                }
+            });
+        }
         else
             throw new NotImplementedException();
     }
