@@ -53,9 +53,12 @@ public class ThrottleWip : CTA_Base
         }
 
         var localDelayTask = DelayTask;
+        var localWorkItemTask = WorkItemTask;
 
-        _ = Task.Run(async () =>
+        WorkItemTask = Task.Run(async () =>
         {
+            await localWorkItemTask.ConfigureAwait(false);
+
             if (progressFunc is null)
             {
                 await localDelayTask.ConfigureAwait(false);
@@ -105,6 +108,6 @@ public class ThrottleWip : CTA_Base
             PushEventEnd_Thread = Thread.CurrentThread;
             PushEventEnd_SynchronizationContext = SynchronizationContext.Current;
             PushEventEnd_DateTimeTuple = (id, DateTime.UtcNow);
-        }).ConfigureAwait(false);
+        });
     }
 }
