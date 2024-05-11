@@ -32,5 +32,5 @@
     <ItemGroup>
       <ProjectReference Include="..\..\..\External\Fluxor_fork\Source\Lib\Fluxor.Blazor.Web\Fluxor.Blazor.Web.csproj" />
     </ItemGroup>
-    
+
 </Project>

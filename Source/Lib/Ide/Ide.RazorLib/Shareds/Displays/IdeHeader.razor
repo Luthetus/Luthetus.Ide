@@ -77,12 +77,6 @@
 
         <ActiveBackgroundTaskDisplay @ref="_activeBackgroundTaskDisplayComponent"/>
 
-        <button class="luth_button"
-                style="margin-left: 15px;"
-                @onclick="ShowThrottleDialog">
-            Asd
-        </button>
-
         <button @ref="_buttonThrottleElementReference"
                 @onclick="() => { AddActiveDropdownKey(_dropdownKeyThrottle); return Task.CompletedTask; }"
                 class="luth_button"

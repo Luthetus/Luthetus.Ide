@@ -1,18 +1,25 @@
 ﻿@using Luthetus.Common.RazorLib.Reactives.Models.Internals.Async
 <div class="luth_counter-throttle-async"
      style="background-color: var(--luth_te_secondary-background-color); color: var(--luth_te_secondary-foreground-color);">
-    <button class="luth_button"
-            @onclick="FireThrottleOnClick">
-        @_count Async
-    </button>
 
-    <button class="luth_button"
-            @onclick="() => {}">
-        ReRender
-    </button>
+     <div style="display: flex;">
+        <button class="luth_button"
+                @onclick="FireThrottleOnClick">
+            @_count @(ThrottleData.GetType().Name)
+        </button>
+
+        <button class="luth_button"
+                @onclick="() => {}">
+            ReRender
+        </button>
+
+        <select><option>abc123</option><option>321cba</option></select>
+     </div>
     
     <div class="luth_counter-throttle-async-visualization">
         
+        <ProgressDisplay MyProperty="1"/>
+
         <div>WorkItemsExecutedCount:&nbsp;@(ThrottleData.WorkItemsExecutedCount)</div>
         
         <div class="luth_scope">

@@ -348,7 +348,7 @@ public partial class IdeHeader : ComponentBase
                 }));
         }
 
-        _menuTools = new MenuRecord(menuOptionsList.ToImmutableArray());
+        _menuThrottle = new MenuRecord(menuOptionsList.ToImmutableArray());
     }
 
     private void AddActiveDropdownKey(Key<DropdownRecord> dropdownKey)
@@ -457,9 +457,11 @@ public partial class IdeHeader : ComponentBase
         return Task.CompletedTask;
     }
 
-    private Task ShowThrottleDialog(ICounterThrottleData counterThrottleData)
+    private Task ShowThrottleDialog(ICounterThrottleData throttleData)
     {
         Dispatcher.Dispatch(new DialogState.DisposeAction(_throttleDialogKey));
+
+        DragInitializer.ThrottleData = throttleData;
 
         var dialogRecord = new DialogViewModel(
             _throttleDialogKey,

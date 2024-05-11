@@ -21,7 +21,7 @@ public partial class DragInitializer : FluxorComponent
         ? string.Empty
         : "display: none;";
 
-    public ICounterThrottleData ThrottleData = new CTA_WithConfigureAwait(TimeSpan.FromMilliseconds(2_000));
+    public static ICounterThrottleData ThrottleData = new CTA_WithConfigureAwait(TimeSpan.FromMilliseconds(2_000));
 
     private IDropzone? _onMouseOverDropzone = null;
 
@@ -45,18 +45,18 @@ public partial class DragInitializer : FluxorComponent
         //       to hijack the UI thread?
         var workItem = new Func<Task>(() =>
         {
-            if ((mouseEventArgs.Buttons & 1) != 1)
-            {
-                Dispatcher.Dispatch(ConstructClearDragStateAction());
-            }
-            else
-            {
-                Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
-                {
-                    ShouldDisplay = true,
-                    MouseEventArgs = mouseEventArgs,
-                }));
-            }
+            //if ((mouseEventArgs.Buttons & 1) != 1)
+            //{
+            //    Dispatcher.Dispatch(ConstructClearDragStateAction());
+            //}
+            //else
+            //{
+            //    Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
+            //    {
+            //        ShouldDisplay = true,
+            //        MouseEventArgs = mouseEventArgs,
+            //    }));
+            //}
 
             return Task.CompletedTask;
         });
