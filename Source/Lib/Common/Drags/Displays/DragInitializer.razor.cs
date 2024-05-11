@@ -7,6 +7,7 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Reactives.Models.Internals.Async;
 using Luthetus.Common.RazorLib.Reactives.Models.Internals;
 using Luthetus.Common.RazorLib.Reactives.Models.Internals.Synchronous;
+using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.Common.RazorLib.Drags.Displays;
 
@@ -21,7 +22,7 @@ public partial class DragInitializer : FluxorComponent
         ? string.Empty
         : "display: none;";
 
-    public static ICounterThrottleData ThrottleData = new CTA_WithConfigureAwait(TimeSpan.FromMilliseconds(100));
+    public static ThrottleWip ThrottleWip = new ThrottleWip(TimeSpan.FromMilliseconds(100));
 
     private IDropzone? _onMouseOverDropzone = null;
 
@@ -57,29 +58,51 @@ public partial class DragInitializer : FluxorComponent
             return Task.CompletedTask;
         });
 
-        if (ThrottleData is ICounterThrottleAsync throttleAsync)
+        if (ThrottleWip is ICounterThrottleAsync throttleAsync)
         {
+            Func<double, Task>? progressFunc;
+
+            if (ThrottleWip.ThrottleTimeSpan.TotalMilliseconds >= 1_000)
+            {
+                progressFunc = async d =>
+                 {
+                     var HACK_ReRenderProgress = throttleAsync.HACK_ReRenderProgress;
+
+                     if (HACK_ReRenderProgress is not null)
+                         await HACK_ReRenderProgress.Invoke(d);
+                 };
+            }
+            else
+            {
+                progressFunc = null;
+            }
+
             await throttleAsync.PushEvent(
                 workItem,
-                async d =>
-                {
-                    var HACK_ReRenderProgress = throttleAsync.HACK_ReRenderProgress;
-
-                    if (HACK_ReRenderProgress is not null)
-                        await HACK_ReRenderProgress.Invoke(d);
-                });
+                progressFunc);
         }
-        else if (ThrottleData is ICounterThrottleSynchronous throttleSynchronous)
+        else if (ThrottleWip is ICounterThrottleSynchronous throttleSynchronous)
         {
-            throttleSynchronous.PushEvent(
-                workItem,
-                async d =>
+            Func<double, Task>? progressFunc;
+
+            if (ThrottleWip.ThrottleTimeSpan.TotalMilliseconds >= 1_000)
+            {
+                progressFunc = async d =>
                 {
                     var HACK_ReRenderProgress = throttleSynchronous.HACK_ReRenderProgress;
 
                     if (HACK_ReRenderProgress is not null)
                         await HACK_ReRenderProgress.Invoke(d);
-                });
+                };
+            }
+            else
+            {
+                progressFunc = null;
+            }
+
+            throttleSynchronous.PushEvent(
+                workItem,
+                progressFunc);
         }
         else
         {
@@ -101,29 +124,51 @@ public partial class DragInitializer : FluxorComponent
                 await draggableViewModel.OnDragEndAsync(mouseEventArgs, localOnMouseOverDropzone);
         });
 
-        if (ThrottleData is ICounterThrottleAsync throttleAsync)
+        if (ThrottleWip is ICounterThrottleAsync throttleAsync)
         {
-            await throttleAsync.PushEvent(
-                workItem,
-                async d =>
+            Func<double, Task>? progressFunc;
+
+            if (ThrottleWip.ThrottleTimeSpan.TotalMilliseconds >= 1_000)
+            {
+                progressFunc = async d =>
                 {
                     var HACK_ReRenderProgress = throttleAsync.HACK_ReRenderProgress;
 
                     if (HACK_ReRenderProgress is not null)
                         await HACK_ReRenderProgress.Invoke(d);
-                }).ConfigureAwait(false);
-        }
-        else if (ThrottleData is ICounterThrottleSynchronous throttleSynchronous)
-        {
-            throttleSynchronous.PushEvent(
+                };
+            }
+            else
+            {
+                progressFunc = null;
+            }
+
+            await throttleAsync.PushEvent(
                 workItem,
-                async d =>
+                progressFunc).ConfigureAwait(false);
+        }
+        else if (ThrottleWip is ICounterThrottleSynchronous throttleSynchronous)
+        {
+            Func<double, Task>? progressFunc;
+
+            if (ThrottleWip.ThrottleTimeSpan.TotalMilliseconds >= 1_000)
+            {
+                progressFunc = async d =>
                 {
                     var HACK_ReRenderProgress = throttleSynchronous.HACK_ReRenderProgress;
 
                     if (HACK_ReRenderProgress is not null)
                         await HACK_ReRenderProgress.Invoke(d);
-                });
+                };
+            }
+            else
+            {
+                progressFunc = null;
+            }
+
+            throttleSynchronous.PushEvent(
+                workItem,
+                progressFunc);
         }
         else
         {

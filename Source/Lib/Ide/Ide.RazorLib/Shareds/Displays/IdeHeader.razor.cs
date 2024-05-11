@@ -27,8 +27,8 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.Common.RazorLib.Reactives.Displays;
 using Luthetus.Common.RazorLib.Drags.Displays;
-using Luthetus.Common.RazorLib.Reactives.Models.Internals.Async;
 using Luthetus.Common.RazorLib.Reactives.Models.Internals;
+using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -304,49 +304,58 @@ public partial class IdeHeader : ComponentBase
     private void InitializeMenuThrottle()
     {
         var menuOptionsList = new List<MenuOptionRecord>();
-        var throttleTimeSpan = TimeSpan.FromMilliseconds(1_000);
+        var throttleTimeSpan = ThrottleWip.Sixty_Frames_Per_Second;
+
+        menuOptionsList.Add(new MenuOptionRecord(
+            nameof(ThrottleWip),
+            MenuOptionKind.Delete,
+            () =>
+            {
+                ShowThrottleDialog(new ThrottleWip(throttleTimeSpan));
+                return Task.CompletedTask;
+            }));
 
         // Menu Option CTA
-        {
-            menuOptionsList.Add(new MenuOptionRecord(
-                nameof(CTA_NoConfigureAwait),
-                MenuOptionKind.Delete,
-                () =>
-                {
-                    ShowThrottleDialog(new CTA_NoConfigureAwait(throttleTimeSpan));
-                    return Task.CompletedTask;
-                }));
+        // {
+            //menuOptionsList.Add(new MenuOptionRecord(
+            //    nameof(CTA_NoConfigureAwait),
+            //    MenuOptionKind.Delete,
+            //    () =>
+            //    {
+            //        ShowThrottleDialog(new CTA_NoConfigureAwait(throttleTimeSpan));
+            //        return Task.CompletedTask;
+            //    }));
 
-            menuOptionsList.Add(new MenuOptionRecord(
-                nameof(CTA_WithConfigureAwait),
-                MenuOptionKind.Delete,
-                () =>
-                {
-                    ShowThrottleDialog(new CTA_WithConfigureAwait(throttleTimeSpan));
-                    return Task.CompletedTask;
-                }));
-        }
+            //menuOptionsList.Add(new MenuOptionRecord(
+            //    nameof(CTA_WithConfigureAwait),
+            //    MenuOptionKind.Delete,
+            //    () =>
+            //    {
+            //        ShowThrottleDialog(new CTA_WithConfigureAwait(throttleTimeSpan));
+            //        return Task.CompletedTask;
+            //    }));
+        // }
 
         // Menu Option CTSynchronous
-        {
-            menuOptionsList.Add(new MenuOptionRecord(
-                nameof(CTSynchronous_NoConfigureAwait),
-                MenuOptionKind.Delete,
-                () =>
-                {
-                    ShowThrottleDialog(new CTSynchronous_NoConfigureAwait(throttleTimeSpan));
-                    return Task.CompletedTask;
-                }));
+        // {
+            //menuOptionsList.Add(new MenuOptionRecord(
+            //    nameof(CTSynchronous_NoConfigureAwait),
+            //    MenuOptionKind.Delete,
+            //    () =>
+            //    {
+            //        ShowThrottleDialog(new CTSynchronous_NoConfigureAwait(throttleTimeSpan));
+            //        return Task.CompletedTask;
+            //    }));
 
-            menuOptionsList.Add(new MenuOptionRecord(
-                nameof(CTSynchronous_WithConfigureAwait),
-                MenuOptionKind.Delete,
-                () =>
-                {
-                    ShowThrottleDialog(new CTSynchronous_WithConfigureAwait(throttleTimeSpan));
-                    return Task.CompletedTask;
-                }));
-        }
+            //menuOptionsList.Add(new MenuOptionRecord(
+            //    nameof(CTSynchronous_WithConfigureAwait),
+            //    MenuOptionKind.Delete,
+            //    () =>
+            //    {
+            //        ShowThrottleDialog(new CTSynchronous_WithConfigureAwait(throttleTimeSpan));
+            //        return Task.CompletedTask;
+            //    }));
+        // }
 
         _menuThrottle = new MenuRecord(menuOptionsList.ToImmutableArray());
     }
@@ -457,11 +466,11 @@ public partial class IdeHeader : ComponentBase
         return Task.CompletedTask;
     }
 
-    private Task ShowThrottleDialog(ICounterThrottleData throttleData)
+    private Task ShowThrottleDialog(ThrottleWip throttleWip)
     {
         Dispatcher.Dispatch(new DialogState.DisposeAction(_throttleDialogKey));
 
-        DragInitializer.ThrottleData = throttleData;
+        DragInitializer.ThrottleWip = throttleWip;
 
         var dialogRecord = new DialogViewModel(
             _throttleDialogKey,
@@ -471,7 +480,7 @@ public partial class IdeHeader : ComponentBase
             {
                 {
                     nameof(CounterThrottleDataDisplay.ThrottleData),
-                    DragInitializer.ThrottleData
+                    DragInitializer.ThrottleWip
                 }
             },
             null,
