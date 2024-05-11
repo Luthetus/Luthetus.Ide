@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Reactives.Models.Internals.Async;
-using Luthetus.Common.RazorLib.Reactives.Models.Internals;
 using Luthetus.Common.RazorLib.Reactives.Models.Internals.Synchronous;
 using Luthetus.Common.RazorLib.Reactives.Models;
 
@@ -22,7 +21,7 @@ public partial class DragInitializer : FluxorComponent
         ? string.Empty
         : "display: none;";
 
-    public static ThrottleWip ThrottleWip = new ThrottleWip(TimeSpan.FromMilliseconds(100));
+    public static ThrottleWip ThrottleWip = new(ThrottleWip.Sixty_Frames_Per_Second);
 
     private IDropzone? _onMouseOverDropzone = null;
 
