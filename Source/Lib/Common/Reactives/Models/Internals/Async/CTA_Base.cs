@@ -44,5 +44,8 @@ public abstract class CTA_Base : ICounterThrottleAsync
     public int GetId { get; protected set; }
     public Func<double, Task>? HACK_ReRenderProgress { get; set; }
 
-    public abstract Task PushEvent(Func<Task> workItem, Func<double, Task>? progressFunc = null);
+    public abstract Task PushEvent(
+        Func<Task> workItem,
+        Func<double, Task>? progressFunc = null,
+        CancellationToken delayCancellationToken = default);
 }

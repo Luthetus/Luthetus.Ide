@@ -21,7 +21,7 @@ public partial class DragInitializer : FluxorComponent
         ? string.Empty
         : "display: none;";
 
-    public static ICounterThrottleData ThrottleData = new CTA_WithConfigureAwait(TimeSpan.FromMilliseconds(2_000));
+    public static ICounterThrottleData ThrottleData = new CTA_WithConfigureAwait(TimeSpan.FromMilliseconds(100));
 
     private IDropzone? _onMouseOverDropzone = null;
 
@@ -39,77 +39,47 @@ public partial class DragInitializer : FluxorComponent
 
     private async Task DispatchSetDragStateActionOnMouseMoveAsync(MouseEventArgs mouseEventArgs)
     {
-        // NOTE: Does it make a difference if my Task runs synchronously or not?
-        //
-        // NOTE: The Dispatcher will cause re-renders, is this Dispatch causing me
-        //       to hijack the UI thread?
-        //
-        // (2024-05-11) I figured out the problem...
-        //              I'm so tired, and feel so stupid;
-        //              I don't know whether if should cry or laugh...
-        //              The drag initializer renders an invisible div above everything else,
-        //              while a drag event is occurring, in order to capture the onmousemove
-        //              events.
-        //
-        //              I couldn't interact with the UI, not because the app was frozen,
-        //              but because it was covered by this component's invisible div.
-        //
-        //              Furthermore, by happenstance, the onmouseup event is what
-        //              makes the div no longer render.
-        //              Of which, this event is on the same throttle as the onmousemove.
-        //              Therefore, the div only went away after the final throttle event,
-        //              which took at least the time of the throttle delay (2 seconds).
-        //
-        //              aaaaaaaaaaaaaaaaaaaaaaaaaaaaaahhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
-        //
-        //              I added 'background-color: orange;' to the '.luth_drag-initializer'
-        //              css selector.
-        //             
-        //              The entire site is just one big orange div once I start dragging.
-        //
-        //              I've decided I'm going to go cry...
-        //
-        //              ...some other day because THIS IS THE MOMENT WE'VE ALL BEEN WATING FOR
-        //              LET'S GOooooOOOoOOOOOOooo.
-        //
-        //              And then everyone clapped.
         var workItem = new Func<Task>(() =>
         {
-            //if ((mouseEventArgs.Buttons & 1) != 1)
-            //{
-            //    Dispatcher.Dispatch(ConstructClearDragStateAction());
-            //}
-            //else
-            //{
-            //    Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
-            //    {
-            //        ShouldDisplay = true,
-            //        MouseEventArgs = mouseEventArgs,
-            //    }));
-            //}
+            if ((mouseEventArgs.Buttons & 1) != 1)
+            {
+                Dispatcher.Dispatch(ConstructClearDragStateAction());
+            }
+            else
+            {
+                Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
+                {
+                    ShouldDisplay = true,
+                    MouseEventArgs = mouseEventArgs,
+                }));
+            }
 
             return Task.CompletedTask;
         });
 
         if (ThrottleData is ICounterThrottleAsync throttleAsync)
         {
-            await throttleAsync.PushEvent(workItem, async d =>
-            {
-                var HACK_ReRenderProgress = throttleAsync.HACK_ReRenderProgress;
+            await throttleAsync.PushEvent(
+                workItem,
+                async d =>
+                {
+                    var HACK_ReRenderProgress = throttleAsync.HACK_ReRenderProgress;
 
-                if (HACK_ReRenderProgress is not null)
-                    await HACK_ReRenderProgress.Invoke(d);
-            });
+                    if (HACK_ReRenderProgress is not null)
+                        await HACK_ReRenderProgress.Invoke(d);
+                });
         }
         else if (ThrottleData is ICounterThrottleSynchronous throttleSynchronous)
         {
-            throttleSynchronous.PushEvent(workItem, async d =>
-            {
-                var HACK_ReRenderProgress = throttleSynchronous.HACK_ReRenderProgress;
+            throttleSynchronous.PushEvent(
+                workItem,
+                async d =>
+                {
+                    var HACK_ReRenderProgress = throttleSynchronous.HACK_ReRenderProgress;
 
-                if (HACK_ReRenderProgress is not null)
-                    await HACK_ReRenderProgress.Invoke(d);
-            });
+                    if (HACK_ReRenderProgress is not null)
+                        await HACK_ReRenderProgress.Invoke(d);
+                });
         }
         else
         {
@@ -133,23 +103,27 @@ public partial class DragInitializer : FluxorComponent
 
         if (ThrottleData is ICounterThrottleAsync throttleAsync)
         {
-            await throttleAsync.PushEvent(workItem, async d =>
-            {
-                var HACK_ReRenderProgress = throttleAsync.HACK_ReRenderProgress;
+            await throttleAsync.PushEvent(
+                workItem,
+                async d =>
+                {
+                    var HACK_ReRenderProgress = throttleAsync.HACK_ReRenderProgress;
 
-                if (HACK_ReRenderProgress is not null)
-                    await HACK_ReRenderProgress.Invoke(d);
-            }).ConfigureAwait(false);
+                    if (HACK_ReRenderProgress is not null)
+                        await HACK_ReRenderProgress.Invoke(d);
+                }).ConfigureAwait(false);
         }
         else if (ThrottleData is ICounterThrottleSynchronous throttleSynchronous)
         {
-            throttleSynchronous.PushEvent(workItem, async d =>
-            {
-                var HACK_ReRenderProgress = throttleSynchronous.HACK_ReRenderProgress;
+            throttleSynchronous.PushEvent(
+                workItem,
+                async d =>
+                {
+                    var HACK_ReRenderProgress = throttleSynchronous.HACK_ReRenderProgress;
 
-                if (HACK_ReRenderProgress is not null)
-                    await HACK_ReRenderProgress.Invoke(d);
-            });
+                    if (HACK_ReRenderProgress is not null)
+                        await HACK_ReRenderProgress.Invoke(d);
+                });
         }
         else
         {
@@ -392,4 +366,39 @@ public partial class DragInitializer : FluxorComponent
      *      but for the dialog drag events.
      * -Cascade any state has changed events from the dialog to the CounterThrottleAsyncDisplay
      */
+
+    // NOTE: Does it make a difference if my Task runs synchronously or not?
+    //
+    // NOTE: The Dispatcher will cause re-renders, is this Dispatch causing me
+    //       to hijack the UI thread?
+    //
+    // (2024-05-11) I figured out the problem...
+    //              I'm so tired, and feel so stupid;
+    //              I don't know whether if should cry or laugh...
+    //              The drag initializer renders an invisible div above everything else,
+    //              while a drag event is occurring, in order to capture the onmousemove
+    //              events.
+    //
+    //              I couldn't interact with the UI, not because the app was frozen,
+    //              but because it was covered by this component's invisible div.
+    //
+    //              Furthermore, by happenstance, the onmouseup event is what
+    //              makes the div no longer render.
+    //              Of which, this event is on the same throttle as the onmousemove.
+    //              Therefore, the div only went away after the final throttle event,
+    //              which took at least the time of the throttle delay (2 seconds).
+    //
+    //              aaaaaaaaaaaaaaaaaaaaaaaaaaaaaahhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+    //
+    //              I added 'background-color: orange;' to the '.luth_drag-initializer'
+    //              css selector.
+    //             
+    //              The entire site is just one big orange div once I start dragging.
+    //
+    //              I've decided I'm going to go cry...
+    //
+    //              ...some other day because THIS IS THE MOMENT WE'VE ALL BEEN WATING FOR
+    //              LET'S GOooooOOOoOOOOOOooo.
+    //
+    //              And then everyone clapped.
 }

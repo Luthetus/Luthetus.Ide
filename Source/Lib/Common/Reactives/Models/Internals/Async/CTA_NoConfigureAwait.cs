@@ -7,7 +7,10 @@ public class CTA_NoConfigureAwait : CTA_Base
     {
     }
 
-    public override async Task PushEvent(Func<Task> workItem, Func<double, Task>? progressFunc = null)
+    public override async Task PushEvent(
+        Func<Task> workItem,
+        Func<double, Task>? progressFunc = null,
+        CancellationToken delayCancellationToken = default)
     {
         int id;
         lock (IdLock)
@@ -49,7 +52,17 @@ public class CTA_NoConfigureAwait : CTA_Base
                     .DelayWithProgress(ThrottleTimeSpan, progressFunc);
             }
 
-            DelayTask = Task.Delay(ThrottleTimeSpan);
+            DelayTask = Task.Run(async () =>
+            {
+                try
+                {
+                    await Task.Delay(ThrottleTimeSpan, delayCancellationToken);
+                }
+                catch (TaskCanceledException)
+                {
+                    // Eat the task cancelled exception.
+                }
+            });
 
             lock (ExecutedCountLock)
             {

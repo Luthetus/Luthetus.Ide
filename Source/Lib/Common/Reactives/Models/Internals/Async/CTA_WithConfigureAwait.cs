@@ -7,37 +7,36 @@ public class CTA_WithConfigureAwait : CTA_Base
     {
     }
 
-    public override async Task PushEvent(Func<Task> workItem, Func<double, Task>? progressFunc = null)
+    public override async Task PushEvent(
+        Func<Task> workItem,
+        Func<double, Task>? progressFunc = null,
+        CancellationToken delayCancellationToken = default)
     {
-        int id = 0;
-        // int id;
-        // lock (IdLock)
-        // {
-        //     // TODO: I want the _id to be unique, but I also wonder...
-        //     //       ...if adding this 'lock' logic has any effect
-        //     //       on all the async/thread things I'm looking into.
-        //     id = ++GetId;
-        // }
+        int id;
+        lock (IdLock)
+        {
+            // TODO: I want the _id to be unique, but I also wonder...
+            //       ...if adding this 'lock' logic has any effect
+            //       on all the async/thread things I'm looking into.
+            id = ++GetId;
+        }
 
         PushEventStart_SynchronizationContext = SynchronizationContext.Current;
         PushEventStart_Thread = Thread.CurrentThread;
         PushEventStart_DateTimeTuple = (id, DateTime.UtcNow);
 
-        //try
-        //{
-        //    await WorkItemSemaphore.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            await WorkItemSemaphore.WaitAsync().ConfigureAwait(false);
 
-        //    WorkItemStack.Push(workItem);
-        //    if (WorkItemStack.Count > 1)
-        //        return;
-        //}
-        //finally
-        //{
-        //    WorkItemSemaphore.Release();
-        //}
-        WorkItemStack.Push(workItem);
-        if (WorkItemStack.Count > 1)
-            return;
+            WorkItemStack.Push(workItem);
+            if (WorkItemStack.Count > 1)
+                return;
+        }
+        finally
+        {
+            WorkItemSemaphore.Release();
+        }
 
         var localDelayTask = DelayTask;
 
@@ -54,35 +53,40 @@ public class CTA_WithConfigureAwait : CTA_Base
                     .ConfigureAwait(false);
             }
 
-            DelayTask = Task.Run(async () => await Task.Delay(ThrottleTimeSpan).ConfigureAwait(false));
+            DelayTask = Task.Run(async () => 
+            {
+                try
+                {
+                    await Task.Delay(ThrottleTimeSpan, delayCancellationToken).ConfigureAwait(false);
+                }
+                catch (TaskCanceledException)
+                {
+                    // Eat the task cancelled exception.
+                }
+            });
 
-            //lock (ExecutedCountLock)
-            //{
-            //    WorkItemsExecutedCount++;
-            //}
+            lock (ExecutedCountLock)
+            {
+                WorkItemsExecutedCount++;
+            }
 
             Func<Task> popWorkItem;
-            //try
-            //{
-            //    await WorkItemSemaphore.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                await WorkItemSemaphore.WaitAsync().ConfigureAwait(false);
 
-            //    if (WorkItemStack.Count == 0)
-            //        return;
+                if (WorkItemStack.Count == 0)
+                    return;
 
-            //    popWorkItem = WorkItemStack.Pop();
-            //    WorkItemStack.Clear();
-            //}
-            //finally
-            //{
-            //    WorkItemSemaphore.Release();
-            //}
-            if (WorkItemStack.Count == 0)
-                return;
+                popWorkItem = WorkItemStack.Pop();
+                WorkItemStack.Clear();
+            }
+            finally
+            {
+                WorkItemSemaphore.Release();
+            }
 
-            popWorkItem = WorkItemStack.Pop();
-            WorkItemStack.Clear();
-
-            _ = Task.Run(async () => await popWorkItem.Invoke().ConfigureAwait(false));
+            await popWorkItem.Invoke().ConfigureAwait(false);
 
             PushEventEnd_Thread = Thread.CurrentThread;
             PushEventEnd_SynchronizationContext = SynchronizationContext.Current;

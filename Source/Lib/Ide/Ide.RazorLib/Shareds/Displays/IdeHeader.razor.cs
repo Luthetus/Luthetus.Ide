@@ -304,7 +304,7 @@ public partial class IdeHeader : ComponentBase
     private void InitializeMenuThrottle()
     {
         var menuOptionsList = new List<MenuOptionRecord>();
-        var throttleTimeSpan = TimeSpan.FromMilliseconds(2_000);
+        var throttleTimeSpan = TimeSpan.FromMilliseconds(1_000);
 
         // Menu Option CTA
         {
@@ -316,7 +316,7 @@ public partial class IdeHeader : ComponentBase
                     ShowThrottleDialog(new CTA_NoConfigureAwait(throttleTimeSpan));
                     return Task.CompletedTask;
                 }));
-            
+
             menuOptionsList.Add(new MenuOptionRecord(
                 nameof(CTA_WithConfigureAwait),
                 MenuOptionKind.Delete,

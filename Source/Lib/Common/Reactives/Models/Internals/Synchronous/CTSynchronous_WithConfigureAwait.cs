@@ -10,7 +10,10 @@ public class CTSynchronous_WithConfigureAwait : CTSynchronous_Base
         
     }
 
-    public override void PushEvent(Func<Task> workItem, Func<double, Task>? progressFunc = null)
+    public override void PushEvent(
+        Func<Task> workItem,
+        Func<double, Task>? progressFunc = null,
+        CancellationToken delayCancellationToken = default)
     {
         int id;
         lock (IdLock)
@@ -47,7 +50,17 @@ public class CTSynchronous_WithConfigureAwait : CTSynchronous_Base
                     .ConfigureAwait(false);
             }
 
-            DelayTask = Task.Delay(ThrottleTimeSpan);
+            DelayTask = Task.Run(async () =>
+            {
+                try
+                {
+                    await Task.Delay(ThrottleTimeSpan, delayCancellationToken).ConfigureAwait(false);
+                }
+                catch (TaskCanceledException)
+                {
+                    // Eat the task cancelled exception.
+                }
+            });
 
             lock (ExecutedCountLock)
             {

@@ -24,5 +24,8 @@ public abstract class CTSynchronous_Base : ICounterThrottleSynchronous
     public int GetId { get; protected set; }
     public Func<double, Task>? HACK_ReRenderProgress { get; set; }
 
-    public abstract void PushEvent(Func<Task> workItem, Func<double, Task>? progressFunc = null);
+    public abstract void PushEvent(
+        Func<Task> workItem,
+        Func<double, Task>? progressFunc = null,
+        CancellationToken delayCancellationToken = default);
 }
