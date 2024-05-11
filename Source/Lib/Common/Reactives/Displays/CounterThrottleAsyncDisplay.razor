@@ -27,16 +27,6 @@
                        DateTimeTuple="CounterThrottleAsync.PushEventEnd_DateTimeTuple"
                        LoadingIconTask="CounterThrottleAsync._delayTask" />
 
-        <select @onchange="OnExecutionKindChanged">
-            @{ var activeExecutionKind = CounterThrottleAsync._executionKind; }
-
-            @foreach (var executionKind in ExecutionKindList)
-            {
-                <option selected="@(activeExecutionKind == executionKind)">
-                    @executionKind
-                </option>
-            }
-        </select>
         <div>ThrottleTimeSpan:&nbsp;@CounterThrottleAsync.ThrottleTimeSpan</div>
         <div>Semaphore.AvailableWaitHandle:&nbsp;@CounterThrottleAsync._workItemSemaphore.AvailableWaitHandle</div>
         <div>Semaphore.CurrentCount:&nbsp;@CounterThrottleAsync._workItemSemaphore.CurrentCount</div>

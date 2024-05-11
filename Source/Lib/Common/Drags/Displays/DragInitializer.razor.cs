@@ -20,7 +20,7 @@ public partial class DragInitializer : FluxorComponent
         ? string.Empty
         : "display: none;";
 
-    public static readonly CounterThrottleAsync _counterThrottleAsync = new(TimeSpan.FromMilliseconds(2_000));
+    public static readonly CTA_NoConfigureAwait _counterThrottleAsync = new(TimeSpan.FromMilliseconds(2_000));
 
     /// <summary>
     /// Preferably the throttling logic here would be moved out of the drag initializer itself so one can choose to add it themselves, or take the full stream.
@@ -277,11 +277,14 @@ public partial class DragInitializer : FluxorComponent
             }
             else
             {
-                Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
+                _ = Task.Run(() =>
                 {
-                    ShouldDisplay = true,
-                    MouseEventArgs = mouseEventArgs,
-                }));
+                    Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
+                    {
+                        ShouldDisplay = true,
+                        MouseEventArgs = mouseEventArgs,
+                    }));
+                });
             }
 
             return Task.CompletedTask;
