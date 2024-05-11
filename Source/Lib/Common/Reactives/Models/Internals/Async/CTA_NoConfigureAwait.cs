@@ -18,6 +18,10 @@ public class CTA_NoConfigureAwait : CTA_Base
             id = ++GetId;
         }
 
+        PushEventStart_SynchronizationContext = SynchronizationContext.Current;
+        PushEventStart_Thread = Thread.CurrentThread;
+        PushEventStart_DateTimeTuple = (id, DateTime.UtcNow);
+
         try
         {
             await WorkItemSemaphore.WaitAsync();
@@ -35,10 +39,6 @@ public class CTA_NoConfigureAwait : CTA_Base
 
         _ = Task.Run(async () =>
         {
-            PushEventStart_SynchronizationContext = SynchronizationContext.Current;
-            PushEventStart_Thread = Thread.CurrentThread;
-            PushEventStart_DateTimeTuple = (id, DateTime.UtcNow);
-
             if (progressFunc is null)
             {
                 await localDelayTask;

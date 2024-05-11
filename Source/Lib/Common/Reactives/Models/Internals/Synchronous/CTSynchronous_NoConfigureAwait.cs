@@ -21,6 +21,10 @@ public class CTSynchronous_NoConfigureAwait : CTSynchronous_Base
             id = ++GetId;
         }
 
+        PushEventStart_SynchronizationContext = SynchronizationContext.Current;
+        PushEventStart_Thread = Thread.CurrentThread;
+        PushEventStart_DateTimeTuple = (id, DateTime.UtcNow);
+
         lock (WorkItemLock)
         {
             WorkItemStack.Push(workItem);
@@ -32,10 +36,6 @@ public class CTSynchronous_NoConfigureAwait : CTSynchronous_Base
 
         _ = Task.Run(async () =>
         {
-            PushEventStart_SynchronizationContext = SynchronizationContext.Current;
-            PushEventStart_Thread = Thread.CurrentThread;
-            PushEventStart_DateTimeTuple = (id, DateTime.UtcNow);
-
             if (progressFunc is null)
             {
                 await localDelayTask;

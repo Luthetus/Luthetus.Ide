@@ -43,20 +43,50 @@ public partial class DragInitializer : FluxorComponent
         //
         // NOTE: The Dispatcher will cause re-renders, is this Dispatch causing me
         //       to hijack the UI thread?
+        //
+        // (2024-05-11) I figured out the problem...
+        //              I'm so tired, and feel so stupid;
+        //              I don't know whether if should cry or laugh...
+        //              The drag initializer renders an invisible div above everything else,
+        //              while a drag event is occurring, in order to capture the onmousemove
+        //              events.
+        //
+        //              I couldn't interact with the UI, not because the app was frozen,
+        //              but because it was covered by this component's invisible div.
+        //
+        //              Furthermore, by happenstance, the onmouseup event is what
+        //              makes the div no longer render.
+        //              Of which, this event is on the same throttle as the onmousemove.
+        //              Therefore, the div only went away after the final throttle event,
+        //              which took at least the time of the throttle delay (2 seconds).
+        //
+        //              aaaaaaaaaaaaaaaaaaaaaaaaaaaaaahhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+        //
+        //              I added 'background-color: orange;' to the '.luth_drag-initializer'
+        //              css selector.
+        //             
+        //              The entire site is just one big orange div once I start dragging.
+        //
+        //              I've decided I'm going to go cry...
+        //
+        //              ...some other day because THIS IS THE MOMENT WE'VE ALL BEEN WATING FOR
+        //              LET'S GOooooOOOoOOOOOOooo.
+        //
+        //              And then everyone clapped.
         var workItem = new Func<Task>(() =>
         {
-            if ((mouseEventArgs.Buttons & 1) != 1)
-            {
-                Dispatcher.Dispatch(ConstructClearDragStateAction());
-            }
-            else
-            {
-                Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
-                {
-                    ShouldDisplay = true,
-                    MouseEventArgs = mouseEventArgs,
-                }));
-            }
+            //if ((mouseEventArgs.Buttons & 1) != 1)
+            //{
+            //    Dispatcher.Dispatch(ConstructClearDragStateAction());
+            //}
+            //else
+            //{
+            //    Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
+            //    {
+            //        ShouldDisplay = true,
+            //        MouseEventArgs = mouseEventArgs,
+            //    }));
+            //}
 
             return Task.CompletedTask;
         });
@@ -68,9 +98,7 @@ public partial class DragInitializer : FluxorComponent
                 var HACK_ReRenderProgress = throttleAsync.HACK_ReRenderProgress;
 
                 if (HACK_ReRenderProgress is not null)
-                {
                     await HACK_ReRenderProgress.Invoke(d);
-                }
             });
         }
         else if (ThrottleData is ICounterThrottleSynchronous throttleSynchronous)
@@ -80,9 +108,7 @@ public partial class DragInitializer : FluxorComponent
                 var HACK_ReRenderProgress = throttleSynchronous.HACK_ReRenderProgress;
 
                 if (HACK_ReRenderProgress is not null)
-                {
                     await HACK_ReRenderProgress.Invoke(d);
-                }
             });
         }
         else
@@ -112,10 +138,8 @@ public partial class DragInitializer : FluxorComponent
                 var HACK_ReRenderProgress = throttleAsync.HACK_ReRenderProgress;
 
                 if (HACK_ReRenderProgress is not null)
-                {
                     await HACK_ReRenderProgress.Invoke(d);
-                }
-            });
+            }).ConfigureAwait(false);
         }
         else if (ThrottleData is ICounterThrottleSynchronous throttleSynchronous)
         {
@@ -124,13 +148,13 @@ public partial class DragInitializer : FluxorComponent
                 var HACK_ReRenderProgress = throttleSynchronous.HACK_ReRenderProgress;
 
                 if (HACK_ReRenderProgress is not null)
-                {
                     await HACK_ReRenderProgress.Invoke(d);
-                }
             });
         }
         else
+        {
             throw new NotImplementedException();
+        }
     }
 
 	private string GetIsActiveCssClass(IDropzone dropzone)

@@ -23,6 +23,13 @@ public partial class CounterThrottleDataDisplay : ComponentBase
             {
                 _count++;
                 return Task.CompletedTask;
+            },
+            async d =>
+            {
+                var HACK_ReRenderProgress = throttleAsync.HACK_ReRenderProgress;
+
+                if (HACK_ReRenderProgress is not null)
+                    await HACK_ReRenderProgress.Invoke(d);
             });
         }
         else if (ThrottleData is ICounterThrottleSynchronous throttleSynchronous)
@@ -31,6 +38,13 @@ public partial class CounterThrottleDataDisplay : ComponentBase
             {
                 _count++;
                 return Task.CompletedTask;
+            },
+            async d =>
+            {
+                var HACK_ReRenderProgress = throttleSynchronous.HACK_ReRenderProgress;
+
+                if (HACK_ReRenderProgress is not null)
+                    await HACK_ReRenderProgress.Invoke(d);
             });
         }
     }
