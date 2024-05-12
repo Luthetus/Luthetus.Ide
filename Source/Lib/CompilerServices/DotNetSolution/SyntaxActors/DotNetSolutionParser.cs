@@ -313,6 +313,7 @@ public class DotNetSolutionParser : ILuthParser
 
     CompilationUnit ILuthParser.Parse(ILuthBinder previousBinder, ResourceUri resourceUri)
     {
-        throw new NotImplementedException();
+        Parse();
+        return new CompilationUnit(null, Lexer, this, previousBinder);
     }
 }

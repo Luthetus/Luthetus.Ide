@@ -1,5 +1,4 @@
-﻿
-using Fluxor;
+﻿using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -221,8 +220,21 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
             string.Empty,
             solutionAbsolutePath);
 
+        var resourceUri = new ResourceUri(solutionAbsolutePath.Value);
+
+        if (_textEditorService.ModelApi.GetOrDefault(resourceUri) is null)
+        {
+            _textEditorService.ModelApi.RegisterTemplated(
+                ExtensionNoPeriodFacts.DOT_NET_SOLUTION,
+                resourceUri,
+                DateTime.UtcNow,
+                content);
+
+            _compilerServiceRegistry.DotNetSolutionCompilerService.RegisterResource(resourceUri);
+        }
+
         var lexer = new DotNetSolutionLexer(
-            new ResourceUri(solutionAbsolutePath.Value),
+            resourceUri,
             content);
 
         lexer.Lex();

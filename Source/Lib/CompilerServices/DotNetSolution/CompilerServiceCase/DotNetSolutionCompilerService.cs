@@ -13,7 +13,7 @@ public sealed class DotNetSolutionCompilerService : LuthCompilerService
         {
             RegisterResourceFunc = resourceUri => new DotNetSolutionResource(resourceUri, this),
             GetLexerFunc = (resource, sourceText) => new DotNetSolutionLexer(resource.ResourceUri, sourceText),
-            GetParserFunc = (resource, lexer) => new LuthParser(lexer),
+            GetParserFunc = (resource, lexer) => new DotNetSolutionParser((DotNetSolutionLexer)lexer),
             GetBinderFunc = (resource, parser) => Binder
         };
     }
