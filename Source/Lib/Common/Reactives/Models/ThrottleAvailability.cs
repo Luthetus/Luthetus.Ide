@@ -24,7 +24,7 @@ public class ThrottleAvailability
                 },
                 state: null,
                 dueTime: ThrottleTimeSpan,
-                period: TimeSpan.Zero);
+                period: Timeout.InfiniteTimeSpan);
 
             return true;
         }

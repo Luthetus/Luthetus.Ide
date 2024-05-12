@@ -65,7 +65,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private readonly Guid _textEditorHtmlElementId = Guid.NewGuid();
     /// <summary>Using this lock in order to avoid the Dispose implementation decrementing when it shouldn't</summary>
     private readonly object _linkedViewModelLock = new();
-    private readonly ThrottleAvailability _throttleAvailabilityShouldRender = new(TimeSpan.FromMilliseconds(1_000));
+    private readonly ThrottleAvailability _throttleAvailabilityShouldRender = new(TimeSpan.FromMilliseconds(200));
 
     private TextEditorEvents _events = null!;
     private bool _thinksTouchIsOccurring;
@@ -120,15 +120,20 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         var shouldRender = _throttleAvailabilityShouldRender.CheckAvailability(
             () =>
             {
-                //if (!cancellationToken.IsCancellationRequested)
+                var localCancellationTokenSourceShouldRender = _cancellationTokenSourceShouldRender;
+
+                if (!cancellationToken.IsCancellationRequested)
                 {
                     // Do not pass the cancellation token to the Task.Run invocation itself,
                     // its believed this could cancel an in-progress blazor lifecycle?
                     // ...but this belief is unfounded.
                     Task.Run(async () => 
                     {
-                        //if (!cancellationToken.IsCancellationRequested)
+                        if (!cancellationToken.IsCancellationRequested)
+                        {
+                            localCancellationTokenSourceShouldRender.Cancel();
                             await InvokeAsync(StateHasChanged);
+                        }
                     });
                 }
             });
@@ -157,6 +162,24 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         //       every second? I might not be cancelling the task correctly?
         //       maybe its cause the cursor is blinking? But did I really write the
         //       cursor blinking like that?-I don't think I did... (2024-05-12)
+        //       |
+        //       I can't believe this... I commented out the 'if (!cancellationToken.IsCancellationRequested)'
+        //       and never uncommented it.
+        //       |
+        //       Still not working :(
+        //       |
+        //       The most recent Timer's cancellation token isn't cancelled until another Timer starts.
+        //       Therefore, there always is a Timer ticking without a cancelled cancellation token.
+        //       |
+        //       The non-cancelled token isn't the main issue though. Its instead that
+        //       the Timer seemingly keeps running the callback over and over?
+        //       It seems like this is the intended design of the Timer,
+        //       but I didn't realize this until now. The 'period' parameter should fix this.
+        //       |
+        //       'period: Timeout.InfiniteTimeSpan' to the Timer's constructor isn't doing anything
+        //       differently. The cancellation token being cancelled is working,
+        //       but due to me not knowing how to stop the Timer, the callback is just getting invoked
+        //       over and over.
         _cancellationTokenSourceShouldRenderTimer.Cancel();
         _cancellationTokenSourceShouldRenderTimer = _cancellationTokenSourceShouldRender;
         _cancellationTokenSourceShouldRender = new();
