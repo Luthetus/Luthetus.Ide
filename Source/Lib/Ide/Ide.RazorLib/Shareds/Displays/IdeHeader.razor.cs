@@ -308,7 +308,11 @@ public partial class IdeHeader : ComponentBase
         try
         {
             if (_buttonFileElementReference is not null)
-                await _buttonFileElementReference.Value.FocusAsync();
+            {
+                await _buttonFileElementReference.Value
+                    .FocusAsync()
+                    .ConfigureAwait(false);
+            }
         }
         catch (Exception e)
         {
@@ -322,7 +326,11 @@ public partial class IdeHeader : ComponentBase
         try
         {
             if (_buttonToolsElementReference is not null)
-                await _buttonToolsElementReference.Value.FocusAsync();
+            {
+                await _buttonToolsElementReference.Value
+                    .FocusAsync()
+                    .ConfigureAwait(false);
+            }
         }
         catch (Exception e)
         {
@@ -336,7 +344,11 @@ public partial class IdeHeader : ComponentBase
         try
         {
             if (_buttonViewElementReference is not null)
-                await _buttonViewElementReference.Value.FocusAsync();
+            {
+                await _buttonViewElementReference.Value
+                    .FocusAsync()
+                    .ConfigureAwait(false);
+            }
         }
         catch (Exception e)
         {

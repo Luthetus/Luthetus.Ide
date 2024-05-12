@@ -44,7 +44,7 @@ public partial class ReflectiveDisplay : ComponentBase
             // Invoke 'Recover' directly, do not use 'WrapRecover' here.
             _errorBoundaryComponent.Recover();
 
-            await _selectElementReference.FocusAsync();
+            await _selectElementReference.FocusAsync().ConfigureAwait(false);
         }
 
         await base.OnAfterRenderAsync(firstRender);

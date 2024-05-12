@@ -100,7 +100,8 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                     $"luth_te_proportional-font-measurement-parent_{viewModel.ViewModelKey.Guid}_cursor_{guid}",
                     $"luth_te_proportional-font-measurement-cursor_{viewModel.ViewModelKey.Guid}_cursor_{guid}",
                     textOffsettingCursor,
-                    true);
+                    true)
+                .ConfigureAwait(false);
 
             var previousLeftRelativeToParentInPixels = _leftRelativeToParentInPixels;
 
@@ -117,7 +118,8 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                     _intersectionObserverMapKey.ToString(),
                     DotNetObjectReference.Create(this),
                     ScrollableContainerId,
-                    CursorDisplayId);
+                    CursorDisplayId)
+                .ConfigureAwait(false);
 
             _previouslyObservedCursorDisplayId = CursorDisplayId;
         }
@@ -163,7 +165,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                         });
 
                     return Task.CompletedTask;
-                });
+                }).ConfigureAwait(false);
             }
         }
 
@@ -332,7 +334,11 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         try
         {
             if (_cursorDisplayElementReference is not null)
-                await _cursorDisplayElementReference.Value.FocusAsync();
+            {
+                await _cursorDisplayElementReference.Value
+                    .FocusAsync()
+                    .ConfigureAwait(false);
+            }
         }
         catch (Exception)
         {
@@ -363,7 +369,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         await InvokeAsync(StateHasChanged);
 
         if (shouldFocusCursor && _menuKind == MenuKind.None)
-            await FocusAsync();
+            await FocusAsync().ConfigureAwait(false);
     }
 
     public async Task SetFocusToActiveMenuAsync()
@@ -404,7 +410,8 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                     await JsRuntime.GetLuthetusTextEditorApi()
                         .DisposeTextEditorCursorIntersectionObserver(
                             CancellationToken.None,
-                            _intersectionObserverMapKey.ToString());
+                            _intersectionObserverMapKey.ToString())
+                        .ConfigureAwait(false);
                 }
                 catch (Exception e)
                 {

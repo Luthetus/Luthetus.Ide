@@ -60,11 +60,12 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
                 if (_previousDragMouseEventArgs is not null && mouseEventArgs is not null)
                 {
                     await _dragEventHandler
-                        .Invoke((_previousDragMouseEventArgs, mouseEventArgs));
+                        .Invoke((_previousDragMouseEventArgs, mouseEventArgs))
+                        .ConfigureAwait(false);
                 }
 
                 _previousDragMouseEventArgs = mouseEventArgs;
-                await ReRenderFuncAsync.Invoke();
+                await ReRenderFuncAsync.Invoke().ConfigureAwait(false);
             }
         }
     }
@@ -75,7 +76,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
         _dragEventHandler = dragEventHandler;
 
         if (Drag is not null)
-            await Drag.OnDragStartAsync();
+            await Drag.OnDragStartAsync().ConfigureAwait(false);
 
         Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
         {

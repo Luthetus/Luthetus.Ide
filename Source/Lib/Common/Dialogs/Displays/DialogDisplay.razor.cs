@@ -64,8 +64,8 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         if (firstRender)
         {
             await JsRuntime.GetLuthetusCommonApi()
-                .FocusHtmlElementById(
-                    Dialog.DialogFocusPointHtmlElementId);
+                .FocusHtmlElementById(Dialog.DialogFocusPointHtmlElementId)
+                .ConfigureAwait(false);
         }
 
         await base.OnAfterRenderAsync(firstRender);

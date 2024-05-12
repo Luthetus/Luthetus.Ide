@@ -47,7 +47,11 @@ public partial class InputAppTheme : IDisposable
             var existingThemeRecord = themesInScopeList.FirstOrDefault(btr => btr.Key.Guid == guidValue);
 
             if (existingThemeRecord is not null)
-                await AppOptionsService.SetActiveThemeRecordKey(existingThemeRecord.Key);
+            {
+                await AppOptionsService
+                    .SetActiveThemeRecordKey(existingThemeRecord.Key)
+                    .ConfigureAwait(false);
+            }
         }
     }
 

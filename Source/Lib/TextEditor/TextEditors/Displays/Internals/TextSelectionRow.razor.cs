@@ -36,7 +36,7 @@ public partial class TextSelectionRow : ComponentBase
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!RenderBatch.Options.UseMonospaceOptimizations)
-            await GetTextSelectionStyleCssAsync();
+            await GetTextSelectionStyleCssAsync().ConfigureAwait(false);
 
         await base.OnAfterRenderAsync(firstRender);
     }
@@ -100,7 +100,8 @@ public partial class TextSelectionRow : ComponentBase
                         $"luth_te_proportional-font-measurement-parent_{RenderBatch.ViewModel.ViewModelKey.Guid}_selection_{guid}",
                         $"luth_te_proportional-font-measurement-cursor_{RenderBatch.ViewModel.ViewModelKey.Guid}_selection_{guid}",
                         textOffsettingCursor,
-                        true);
+                        true)
+                    .ConfigureAwait(false);
 
                 var previousSelectionStartingLeftRelativeToParentInPixels = _selectionStartingLeftRelativeToParentInPixels;
 
@@ -135,7 +136,8 @@ public partial class TextSelectionRow : ComponentBase
                         $"luth_te_proportional-font-measurement-parent_{RenderBatch.ViewModel.ViewModelKey.Guid}_selection_{guid}",
                         $"luth_te_proportional-font-measurement-cursor_{RenderBatch.ViewModel.ViewModelKey.Guid}_selection_{guid}",
                         textOffsettingCursor,
-                        true);
+                        true)
+                    .ConfigureAwait(false);
 
                 var nextSelectionWidthInPixels = selectionEndingLeftRelativeToParentInPixels -
                     _selectionStartingLeftRelativeToParentInPixels;

@@ -70,7 +70,9 @@ public partial class MenuOptionDisplay : ComponentBase
         {
             try
             {
-                await _topmostElementReference.Value.FocusAsync();
+                await _topmostElementReference.Value
+                    .FocusAsync()
+                    .ConfigureAwait(false);
             }
             catch (Exception)
             {
@@ -136,7 +138,11 @@ public partial class MenuOptionDisplay : ComponentBase
             try
             {
                 if (_topmostElementReference.HasValue)
-                    await _topmostElementReference.Value.FocusAsync();
+                {
+                    await _topmostElementReference.Value
+                        .FocusAsync()
+                        .ConfigureAwait(false);
+                }
             }
             catch (Exception)
             {

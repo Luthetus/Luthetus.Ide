@@ -81,7 +81,8 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
             .GetRelativePosition(
                 ScrollbarSliderElementId,
                 mouseEventArgs.ClientX,
-                mouseEventArgs.ClientY);
+                mouseEventArgs.ClientY)
+            .ConfigureAwait(false);
 
         SubscribeToDragEventForScrolling();
     }
@@ -101,7 +102,9 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
             {
                 if (_previousDragMouseEventArgs is not null && mouseEventArgs is not null)
                 {
-                    await _dragEventHandler.Invoke((_previousDragMouseEventArgs, mouseEventArgs));
+                    await _dragEventHandler
+                        .Invoke((_previousDragMouseEventArgs, mouseEventArgs))
+                        .ConfigureAwait(false);
                 }
 
                 _previousDragMouseEventArgs = mouseEventArgs;
@@ -136,7 +139,8 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
                 .GetRelativePosition(
                     ScrollbarElementId,
                     mouseEventArgsTuple.secondMouseEventArgs.ClientX,
-                    mouseEventArgsTuple.secondMouseEventArgs.ClientY);
+                    mouseEventArgsTuple.secondMouseEventArgs.ClientY)
+                .ConfigureAwait(false);
 
             var yPosition = relativeCoordinatesOfDragEvent.RelativeY - _relativeCoordinatesOnMouseDown.RelativeY;
             yPosition = Math.Max(0, yPosition);

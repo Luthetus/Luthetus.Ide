@@ -35,35 +35,36 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
 		if (firstRender)
 		{
             await BackgroundTaskService.EnqueueAsync(
-                Key<BackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
-                nameof(LuthetusCommonInitializer),
-                async () =>
-                {
-                    if (TextEditorConfig.CustomThemeRecordList is not null)
+                    Key<BackgroundTask>.NewKey(),
+                    ContinuousBackgroundTaskWorker.GetQueueKey(),
+                    nameof(LuthetusCommonInitializer),
+                    async () =>
                     {
-                        foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
+                        if (TextEditorConfig.CustomThemeRecordList is not null)
                         {
-                            Dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
+                            foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
+                            {
+                                Dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
+                            }
                         }
-                    }
 
-                    var initialThemeRecord = ThemeRecordsCollectionService.ThemeStateWrap.Value.ThemeList.FirstOrDefault(
-                        x => x.Key == TextEditorConfig.InitialThemeKey);
+                        var initialThemeRecord = ThemeRecordsCollectionService.ThemeStateWrap.Value.ThemeList.FirstOrDefault(
+                            x => x.Key == TextEditorConfig.InitialThemeKey);
 
-                    if (initialThemeRecord is not null)
-                        Dispatcher.Dispatch(new TextEditorOptionsState.SetThemeAction(initialThemeRecord));
+                        if (initialThemeRecord is not null)
+                            Dispatcher.Dispatch(new TextEditorOptionsState.SetThemeAction(initialThemeRecord));
 
-                    foreach (var searchEngine in TextEditorConfig.SearchEngineList)
-                    {
-                        Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(searchEngine));
-                    }
+                        foreach (var searchEngine in TextEditorConfig.SearchEngineList)
+                        {
+                            Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(searchEngine));
+                        }
 
-                    Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(
-                        new SearchEngineFileSystem(FileSystemProvider, TextEditorFindAllStateWrap)));
+                        Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(
+                            new SearchEngineFileSystem(FileSystemProvider, TextEditorFindAllStateWrap)));
 
-                    await TextEditorService.OptionsApi.SetFromLocalStorageAsync();
-                });
+                        await TextEditorService.OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
+                    })
+                .ConfigureAwait(false);
 		}
 	
 		await base.OnAfterRenderAsync(firstRender);

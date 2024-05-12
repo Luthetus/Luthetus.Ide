@@ -41,44 +41,46 @@ public partial class GitAddRepoDisplay : ComponentBase
     /// </summary>
     private async Task RequestInputFileForGitFolder()
     {
-        await IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm("Git Repo",
-            async absolutePath =>
-            {
-                if (absolutePath is null)
-                    return;
-
-                if (absolutePath.NameNoExtension == ".git")
+        await IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+                "Git Repo",
+                async absolutePath =>
                 {
-                    if (absolutePath.ParentDirectory is null)
-                    {
-                        NotificationHelper.DispatchError(
-                            $"ERROR: {nameof(RequestInputFileForGitFolder)}",
-                            "'.git' folder did not have a parent directory.",
-                            CommonComponentRenderers,
-                            Dispatcher,
-                            TimeSpan.FromSeconds(10));
+                    if (absolutePath is null)
                         return;
+
+                    if (absolutePath.NameNoExtension == ".git")
+                    {
+                        if (absolutePath.ParentDirectory is null)
+                        {
+                            NotificationHelper.DispatchError(
+                                $"ERROR: {nameof(RequestInputFileForGitFolder)}",
+                                "'.git' folder did not have a parent directory.",
+                                CommonComponentRenderers,
+                                Dispatcher,
+                                TimeSpan.FromSeconds(10));
+                            return;
+                        }
+
+                        absolutePath = EnvironmentProvider.AbsolutePathFactory(
+                            absolutePath.ParentDirectory.Value,
+                            true);
                     }
 
-                    absolutePath = EnvironmentProvider.AbsolutePathFactory(
-                        absolutePath.ParentDirectory.Value,
-                        true);
-                }
+                    _repoAbsolutePathString = absolutePath.Value;
+                    await InvokeAsync(StateHasChanged);
+                },
+                absolutePath =>
+                {
+                    if (absolutePath is null || !absolutePath.IsDirectory)
+                        return Task.FromResult(false);
 
-                _repoAbsolutePathString = absolutePath.Value;
-                await InvokeAsync(StateHasChanged);
-            },
-            absolutePath =>
-            {
-                if (absolutePath is null || !absolutePath.IsDirectory)
-                    return Task.FromResult(false);
-
-                return Task.FromResult(true);
-            },
-            new[]
-            {
-                new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
-            }.ToImmutableArray());
+                    return Task.FromResult(true);
+                },
+                new[]
+                {
+                    new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
+                }.ToImmutableArray())
+            .ConfigureAwait(false);
     }
 
     private void ConfirmGitFolderOnClick()

@@ -44,7 +44,9 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
                             if (treeViewCommandArgs.NodeThatReceivedMouseEvent is null)
                                 return;
 
-                            await treeViewCommandArgs.NodeThatReceivedMouseEvent.LoadChildListAsync();
+                            await treeViewCommandArgs.NodeThatReceivedMouseEvent
+                                .LoadChildListAsync()
+                                .ConfigureAwait(false);
 
                             TreeViewService.ReRenderNode(
                                 WatchWindowDisplay.TreeViewContainerKey,

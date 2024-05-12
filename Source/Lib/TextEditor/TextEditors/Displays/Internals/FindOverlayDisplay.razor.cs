@@ -77,7 +77,8 @@ public partial class FindOverlayDisplay : ComponentBase
                                     modelModifier.ResourceUri,
                                     FindOverlayPresentationFacts.PresentationKey,
                                     FindOverlayPresentationFacts.EmptyPresentationModel)
-                                .Invoke(editContext);
+                                .Invoke(editContext)
+                                .ConfigureAwait(false);
 
                             var presentationModel = modelModifier.PresentationModelList.First(
                                 x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
@@ -95,7 +96,7 @@ public partial class FindOverlayDisplay : ComponentBase
                         });
 
                     return Task.CompletedTask;
-                });
+                }).ConfigureAwait(false);
             });
         }
     }
@@ -110,8 +111,8 @@ public partial class FindOverlayDisplay : ComponentBase
             if (_lastSeenShowFindOverlayValue)
             {
                 await JsRuntime.GetLuthetusCommonApi()
-                    .FocusHtmlElementById(
-                        RenderBatch.ViewModel.FindOverlayId);
+                    .FocusHtmlElementById(RenderBatch.ViewModel.FindOverlayId)
+                    .ConfigureAwait(false);
             }
         }
 
@@ -123,8 +124,8 @@ public partial class FindOverlayDisplay : ComponentBase
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
             await JsRuntime.GetLuthetusCommonApi()
-                .FocusHtmlElementById(
-                    RenderBatch.ViewModel.PrimaryCursorContentId);
+                .FocusHtmlElementById(RenderBatch.ViewModel.PrimaryCursorContentId)
+                .ConfigureAwait(false);
 
             TextEditorService.PostTakeMostRecent(
                 nameof(FindOverlayDisplay),
@@ -150,7 +151,8 @@ public partial class FindOverlayDisplay : ComponentBase
                                 modelModifier.ResourceUri,
                                 FindOverlayPresentationFacts.PresentationKey,
                                 FindOverlayPresentationFacts.EmptyPresentationModel)
-                            .Invoke(editContext);
+                            .Invoke(editContext)
+                            .ConfigureAwait(false);
 
                     var presentationModel = modelModifier.PresentationModelList.First(
                         x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
@@ -293,7 +295,7 @@ public partial class FindOverlayDisplay : ComponentBase
 						RenderBatch.ViewModel.ViewModelKey,
 						_decorationByteChangedTargetTextSpan)
 	                .Invoke(editContext)
-	                ;
+                    .ConfigureAwait(false);
             });
     }
 }

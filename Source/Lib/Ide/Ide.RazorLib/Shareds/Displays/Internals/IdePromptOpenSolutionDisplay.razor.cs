@@ -14,6 +14,8 @@ public partial class IdePromptOpenSolutionDisplay : ComponentBase
 
     private async Task OpenSolutionOnClick()
     {
-        await IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(AbsolutePath);
+        await IdeBackgroundTaskApi.DotNetSolution
+            .SetDotNetSolution(AbsolutePath)
+            .ConfigureAwait(false);
     }
 }

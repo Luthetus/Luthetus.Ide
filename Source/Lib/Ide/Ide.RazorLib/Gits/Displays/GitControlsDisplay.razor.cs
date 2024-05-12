@@ -57,7 +57,9 @@ public partial class GitControlsDisplay : ComponentBase
             OutputParser: gitCliOutputParser);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-        await generalTerminal.EnqueueCommandAsync(gitStatusCommand);
+        await generalTerminal
+            .EnqueueCommandAsync(gitStatusCommand)
+            .ConfigureAwait(false);
     }
 
     private async Task SubmitOnClick(GitState localGitState)
@@ -109,7 +111,9 @@ public partial class GitControlsDisplay : ComponentBase
             ContinueWith: () => CommitChanges(localGitState, localSummary));
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-        await generalTerminal.EnqueueCommandAsync(gitAddCommand);
+        await generalTerminal
+            .EnqueueCommandAsync(gitAddCommand)
+            .ConfigureAwait(false);
     }
 
     private async Task CommitChanges(GitState localGitState, string localSummary)
@@ -133,7 +137,9 @@ public partial class GitControlsDisplay : ComponentBase
             ContinueWith: ExecuteGitStatusTerminalCommandOnClick);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-        await generalTerminal.EnqueueCommandAsync(gitCommitCommand);
+        await generalTerminal
+            .EnqueueCommandAsync(gitCommitCommand)
+            .ConfigureAwait(false);
     }
 
     private void ShowGitOriginDialogOnClick()

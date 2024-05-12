@@ -40,7 +40,8 @@ public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRende
             if (AbsolutePath.IsDirectory)
             {
                 var fileSystemEntryList = await FileSystemProvider.Directory
-                    .EnumerateFileSystemEntriesAsync(AbsolutePath.Value);
+                    .EnumerateFileSystemEntriesAsync(AbsolutePath.Value)
+                    .ConfigureAwait(false);
 
                 _countOfImmediateChildren = fileSystemEntryList.Count();
             }
@@ -58,7 +59,9 @@ public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRende
             {
                 try
                 {
-                    await _cancelButtonElementReference.Value.FocusAsync();
+                    await _cancelButtonElementReference.Value
+                        .FocusAsync()
+                        .ConfigureAwait(false);
                 }
                 catch (Exception)
                 {
@@ -78,7 +81,9 @@ public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRende
         if (MenuOptionCallbacks is not null &&
             keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
-            await MenuOptionCallbacks.HideWidgetAsync.Invoke();
+            await MenuOptionCallbacks.HideWidgetAsync
+                .Invoke()
+                .ConfigureAwait(false);
         }
     }
 
@@ -89,13 +94,18 @@ public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRende
         if (MenuOptionCallbacks is not null)
         {
             await MenuOptionCallbacks.CompleteWidgetAsync
-                .Invoke(() => OnAfterSubmitAction.Invoke(localAbsolutePath));
+                .Invoke(() => OnAfterSubmitAction.Invoke(localAbsolutePath))
+                .ConfigureAwait(false);
         }
     }
 
     private async Task CancelOnClick()
     {
         if (MenuOptionCallbacks is not null)
-            await MenuOptionCallbacks.HideWidgetAsync.Invoke();
+        {
+            await MenuOptionCallbacks.HideWidgetAsync
+                .Invoke()
+                .ConfigureAwait(false);
+        }
     }
 }

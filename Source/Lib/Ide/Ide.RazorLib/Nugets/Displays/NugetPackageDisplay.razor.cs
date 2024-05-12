@@ -106,6 +106,8 @@ public partial class NugetPackageDisplay : FluxorComponent
             });
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-        await generalTerminal.EnqueueCommandAsync(addNugetPackageReferenceCommand);
+        await generalTerminal
+            .EnqueueCommandAsync(addNugetPackageReferenceCommand)
+            .ConfigureAwait(false);
     }
 }

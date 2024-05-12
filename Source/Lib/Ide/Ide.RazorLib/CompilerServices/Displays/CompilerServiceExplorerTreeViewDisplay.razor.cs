@@ -76,7 +76,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
             if (!_hasInitialized)
             {
                 _hasInitialized = true;
-                await ReloadOnClick();
+                await ReloadOnClick().ConfigureAwait(false);
             }
         }
 
@@ -103,7 +103,9 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
     private async Task ReloadOnClick()
     {
-        await IdeBackgroundTaskApi.CompilerService.SetCompilerServiceExplorerTreeView();
+        await IdeBackgroundTaskApi.CompilerService
+            .SetCompilerServiceExplorerTreeView()
+            .ConfigureAwait(false);
     }
 
     public void Dispose()

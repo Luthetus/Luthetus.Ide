@@ -53,7 +53,7 @@ public partial class DragInitializer : FluxorComponent
             }
 
             return Task.CompletedTask;
-        });
+        }).ConfigureAwait(false);
     }
 
     private async Task DispatchSetDragStateActionOnMouseUp(MouseEventArgs mouseEventArgs)
@@ -67,8 +67,12 @@ public partial class DragInitializer : FluxorComponent
 
             var draggableViewModel = dragState.Drag;
             if (draggableViewModel is not null)
-                await draggableViewModel.OnDragEndAsync(mouseEventArgs, localOnMouseOverDropzone);
-        });
+            {
+                await draggableViewModel
+                    .OnDragEndAsync(mouseEventArgs, localOnMouseOverDropzone)
+                    .ConfigureAwait(false);
+            }
+        }).ConfigureAwait(false);
     }
 
 	private string GetIsActiveCssClass(IDropzone dropzone)

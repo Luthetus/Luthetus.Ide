@@ -71,18 +71,19 @@ public partial class CodeSearchDisplay : FluxorComponent
         if (TextEditorConfig.RegisterModelFunc is null)
             return;
 
-        await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
-                resourceUri,
-                ServiceProvider));
+        await TextEditorConfig.RegisterModelFunc.Invoke(
+                new RegisterModelArgs(resourceUri, ServiceProvider))
+            .ConfigureAwait(false);
 
         if (TextEditorConfig.TryRegisterViewModelFunc is not null)
         {
             var viewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
-                outPreviewViewModelKey,
-                resourceUri,
-                new Category(nameof(CodeSearchDisplay)),
-                false,
-                ServiceProvider));
+                    outPreviewViewModelKey,
+                    resourceUri,
+                    new Category(nameof(CodeSearchDisplay)),
+                    false,
+                    ServiceProvider))
+                .ConfigureAwait(false);
 
             if (viewModelKey != Key<TextEditorViewModel>.Empty &&
                 TextEditorConfig.TryShowViewModelFunc is not null)
@@ -111,24 +112,27 @@ public partial class CodeSearchDisplay : FluxorComponent
 
         await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
                 resourceUri,
-                ServiceProvider));
+                ServiceProvider))
+            .ConfigureAwait(false);
 
         if (TextEditorConfig.TryRegisterViewModelFunc is not null)
         {
             var viewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
-                Key<TextEditorViewModel>.NewKey(),
-                resourceUri,
-                new Category("main"),
-                false,
-                ServiceProvider));
+                    Key<TextEditorViewModel>.NewKey(),
+                    resourceUri,
+                    new Category("main"),
+                    false,
+                    ServiceProvider))
+                .ConfigureAwait(false);
 
             if (viewModelKey != Key<TextEditorViewModel>.Empty &&
                 TextEditorConfig.TryShowViewModelFunc is not null)
             {
                 await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
-                    viewModelKey,
-                    Key<TextEditorGroup>.Empty,
-                    ServiceProvider));
+                        viewModelKey,
+                        Key<TextEditorGroup>.Empty,
+                        ServiceProvider))
+                    .ConfigureAwait(false);
             }
         }
     }

@@ -87,19 +87,23 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
                 await InvokeAsync(StateHasChanged);
             }
 
-            await BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-                "Submit NuGet Query",
-                async () =>
-                {
-                    var localNugetResult = await NugetPackageManagerProvider
-                        .QueryForNugetPackagesAsync(query);
+            await BackgroundTaskService.EnqueueAsync(
+                    Key<BackgroundTask>.NewKey(),
+                    ContinuousBackgroundTaskWorker.GetQueueKey(),
+                    "Submit NuGet Query",
+                    async () =>
+                    {
+                        var localNugetResult = await NugetPackageManagerProvider
+                            .QueryForNugetPackagesAsync(query)
+                            .ConfigureAwait(false);
 
-                    var setMostRecentQueryResultAction =
-                        new NuGetPackageManagerState.SetMostRecentQueryResultAction(
-                            localNugetResult);
+                        var setMostRecentQueryResultAction =
+                            new NuGetPackageManagerState.SetMostRecentQueryResultAction(
+                                localNugetResult);
 
-                    Dispatcher.Dispatch(setMostRecentQueryResultAction);
-                });
+                        Dispatcher.Dispatch(setMostRecentQueryResultAction);
+                    })
+                .ConfigureAwait(false);
         }
         catch (Exception e)
         {
