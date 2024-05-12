@@ -10,21 +10,16 @@ public class ThrottleAvailability
     }
 
     public TimeSpan ThrottleTimeSpan { get; }
+    public Task DelayTask { get; private set; } = Task.CompletedTask;
 
-    public bool CheckAvailability(Action onBecameAvailableCallback)
+    public bool CheckAvailability(Func<Task> onBecameAvailableCallback)
     {
-        if (_throttleTimer is null)
+        if (DelayTask.IsCompleted)
         {
-            _throttleTimer = new Timer(
-                callback: _ => 
-                {
-                    _throttleTimer?.Dispose();
-                    _throttleTimer = null;
-                    onBecameAvailableCallback.Invoke();
-                },
-                state: null,
-                dueTime: ThrottleTimeSpan,
-                period: Timeout.InfiniteTimeSpan);
+            DelayTask = Task.Run(async () =>
+            {
+                await onBecameAvailableCallback.Invoke();
+            });
 
             return true;
         }
@@ -33,6 +28,29 @@ public class ThrottleAvailability
             return false;
         }
     }
+
+    //public bool CheckAvailability(Action onBecameAvailableCallback)
+    //{
+    //    if (_throttleTimer is null)
+    //    {
+    //        _throttleTimer = new Timer(
+    //            callback: _ => 
+    //            {
+    //                _throttleTimer?.Dispose();
+    //                _throttleTimer = null;
+    //                onBecameAvailableCallback.Invoke();
+    //            },
+    //            state: null,
+    //            dueTime: ThrottleTimeSpan,
+    //            period: Timeout.InfiniteTimeSpan);
+    //
+    //        return true;
+    //    }
+    //    else
+    //    {
+    //        return false;
+    //    }
+    //}
 
     /// <summary>
     /// This <see cref="TimeSpan"/> represents '1000ms / 60 = 16.6ms', whether this is equivalent to 60fps is unknown.

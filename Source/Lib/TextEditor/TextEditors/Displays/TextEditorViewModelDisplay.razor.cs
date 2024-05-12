@@ -65,7 +65,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private readonly Guid _textEditorHtmlElementId = Guid.NewGuid();
     /// <summary>Using this lock in order to avoid the Dispose implementation decrementing when it shouldn't</summary>
     private readonly object _linkedViewModelLock = new();
-    private readonly ThrottleAvailability _throttleAvailabilityShouldRender = new(TimeSpan.FromMilliseconds(200));
+    private readonly ThrottleAvailability _throttleAvailabilityShouldRender = new(TimeSpan.FromMilliseconds(20));
 
     private TextEditorEvents _events = null!;
     private bool _thinksTouchIsOccurring;
@@ -118,23 +118,26 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         var cancellationToken = _cancellationTokenSourceShouldRender.Token;
 
         var shouldRender = _throttleAvailabilityShouldRender.CheckAvailability(
-            () =>
+            async () =>
             {
-                var localCancellationTokenSourceShouldRender = _cancellationTokenSourceShouldRender;
+                // Console.Write("a");
+                // var localCancellationTokenSourceShouldRender = _cancellationTokenSourceShouldRender;
 
                 if (!cancellationToken.IsCancellationRequested)
                 {
+                    await InvokeAsync(StateHasChanged);
+
                     // Do not pass the cancellation token to the Task.Run invocation itself,
                     // its believed this could cancel an in-progress blazor lifecycle?
                     // ...but this belief is unfounded.
-                    Task.Run(async () => 
-                    {
-                        if (!cancellationToken.IsCancellationRequested)
-                        {
-                            localCancellationTokenSourceShouldRender.Cancel();
-                            await InvokeAsync(StateHasChanged);
-                        }
-                    });
+                    // Task.Run(async () => 
+                    // {
+                    //     // if (!cancellationToken.IsCancellationRequested)
+                    //     {
+                    //         // localCancellationTokenSourceShouldRender.Cancel();
+                    //         await InvokeAsync(StateHasChanged);
+                    //     }
+                    // });
                 }
             });
 
