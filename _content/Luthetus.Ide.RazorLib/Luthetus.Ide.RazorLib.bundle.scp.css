@@ -134,6 +134,10 @@
     padding: 7px 5px;
     margin-bottom: 7px;
 }
+/* _content/Luthetus.Ide.RazorLib/Shareds/Displays/Internals/IdeDevelopmentDisplay.razor.rz.scp.css */
+button[b-29blt3z1e9] {
+    margin-top: 7px;
+}
 /* _content/Luthetus.Ide.RazorLib/StartupControls/Displays/StartupControlsDisplay.razor.rz.scp.css */
 .luth_ide_startup-controls-display[b-oq9tgx2dwy] {
     display: flex;
