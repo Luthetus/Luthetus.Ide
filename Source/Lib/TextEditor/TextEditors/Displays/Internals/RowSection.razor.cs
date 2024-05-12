@@ -38,8 +38,6 @@ public partial class RowSection : ComponentBase
 
     public CursorDisplay? CursorDisplayComponent { get; private set; }
 
-    private IThrottle _throttleVirtualizationDisplayItemsProviderFunc = new Throttle(TimeSpan.Zero);//new Throttle(TimeSpan.FromMilliseconds(60));
-
     private string GetRowStyleCss(int index, double? virtualizedRowLeftInPixels)
     {
         var charMeasurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;

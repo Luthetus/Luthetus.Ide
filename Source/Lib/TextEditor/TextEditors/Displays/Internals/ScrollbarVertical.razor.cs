@@ -27,7 +27,6 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
     public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
 
     private readonly Guid _scrollbarGuid = Guid.NewGuid();
-    private readonly IThrottle _throttleScroll = new Throttle(TimeSpan.FromMilliseconds(100));
 
     private bool _thinksLeftMouseButtonIsDown;
     private RelativeCoordinates _relativeCoordinatesOnMouseDown = new(0, 0, 0, 0);
