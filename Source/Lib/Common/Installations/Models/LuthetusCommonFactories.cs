@@ -10,7 +10,6 @@ using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.TreeViews.States;
-using Luthetus.Common.RazorLib.Storages.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
@@ -59,7 +58,8 @@ public record LuthetusCommonFactories
             serviceProvider.GetRequiredService<IState<ThemeState>>(),
             serviceProvider.GetRequiredService<IDispatcher>(),
             serviceProvider.GetRequiredService<IStorageService>(),
-            serviceProvider.GetRequiredService<StorageSync>());
+            serviceProvider.GetRequiredService<LuthetusCommonBackgroundTaskApi>(),
+            serviceProvider.GetRequiredService<IBackgroundTaskService>());
 
     public Func<IServiceProvider, IThemeService> ThemeServiceFactory { get; init; } =
         serviceProvider => new ThemeService(

@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 namespace Luthetus.Common.RazorLib.Reactives.Models;
 
 /// <summary>
-/// This type is not thread safe by design.<br/><br/>
+/// This type is NOT thread safe by design.<br/><br/>
 /// The class instance is instead accessed from within a 'lock() { }' by external code.
 /// </summary>
 public class ThrottleEventQueue

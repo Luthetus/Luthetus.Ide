@@ -1,6 +1,4 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.States;
@@ -110,12 +108,7 @@ public partial record InputFileState
                     false,
                     true);
 
-                openParentDirectoryAction.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-                    "Open Parent Directory",
-                    async () =>
-                    {
-                        await parentDirectoryTreeViewModel.LoadChildListAsync();
-                    });
+                openParentDirectoryAction.ParentDirectoryTreeViewModel = parentDirectoryTreeViewModel;
             }
 
             if (parentDirectoryTreeViewModel is not null)
@@ -137,16 +130,7 @@ public partial record InputFileState
             InputFileState inState,
             RefreshCurrentSelectionAction refreshCurrentSelectionAction)
         {
-            var currentSelection = inState.OpenedTreeViewModelHistoryList[inState.IndexInHistory];
-            currentSelection.ChildList.Clear();
-
-            refreshCurrentSelectionAction.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-                "Refresh Current Selection",
-                async () =>
-                {
-                    await currentSelection.LoadChildListAsync();
-                });
-
+            refreshCurrentSelectionAction.CurrentSelection = inState.OpenedTreeViewModelHistoryList[inState.IndexInHistory];
             return inState;
         }
 

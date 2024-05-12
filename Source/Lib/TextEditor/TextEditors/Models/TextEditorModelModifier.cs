@@ -13,7 +13,6 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using System.Text;
@@ -404,9 +403,9 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
         EnsureUndoPoint(TextEditKind.Insertion);
 
-        for (var i = cursorModifierBag.List.Count - 1; i >= 0; i--)
+        for (var cursorIndex = cursorModifierBag.List.Count - 1; cursorIndex >= 0; cursorIndex--)
         {
-            var cursorModifier = cursorModifierBag.List[i];
+            var cursorModifier = cursorModifierBag.List[cursorIndex];
 
             if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
             {
@@ -445,6 +444,28 @@ public partial class TextEditorModelModifier : ITextEditorModel
             // The cursorModifier is invalid, because the metadata step moved its position.
             // So, use the 'cursorPositionIndex' variable that was calculated prior to the metadata step.
             InsertValue(value, initialCursorPositionIndex, useLineEndKindPreference, cancellationToken);
+
+            // NOTE: One cannot obtain the 'MostCharactersOnASingleLineTuple' from within the 'InsertMetadata(...)'
+            //       method because this specific metadata is being calculated by counting the characters, which
+            //       in the case of 'InsertMetadata(...)' wouldn't have been inserted yet.
+            //
+            // TODO: Fix tracking the MostCharactersOnASingleRowTuple this way is possibly inefficient - should instead only check the rows that changed
+            {
+                (int rowIndex, int rowLength) localMostCharactersOnASingleRowTuple = (0, 0);
+
+                for (var i = 0; i < LineEndList.Count; i++)
+                {
+                    var lengthOfRow = this.GetLineLength(i);
+
+                    if (lengthOfRow > localMostCharactersOnASingleRowTuple.rowLength)
+                        localMostCharactersOnASingleRowTuple = (i, lengthOfRow);
+                }
+
+                localMostCharactersOnASingleRowTuple = (localMostCharactersOnASingleRowTuple.rowIndex,
+                    localMostCharactersOnASingleRowTuple.rowLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+
+                _mostCharactersOnASingleLineTuple = localMostCharactersOnASingleRowTuple;
+            }
         }
 
         SetIsDirtyTrue();
@@ -620,24 +641,6 @@ public partial class TextEditorModelModifier : ITextEditorModel
             }
         }
 
-        // TODO: Fix tracking the MostCharactersOnASingleRowTuple this way is possibly inefficient - should instead only check the rows that changed
-        {
-            (int rowIndex, int rowLength) localMostCharactersOnASingleRowTuple = (0, 0);
-
-            for (var i = 0; i < LineEndList.Count; i++)
-            {
-                var lengthOfRow = this.GetLineLength(i);
-
-                if (lengthOfRow > localMostCharactersOnASingleRowTuple.rowLength)
-                    localMostCharactersOnASingleRowTuple = (i, lengthOfRow);
-            }
-
-            localMostCharactersOnASingleRowTuple = (localMostCharactersOnASingleRowTuple.rowIndex,
-                localMostCharactersOnASingleRowTuple.rowLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
-
-            _mostCharactersOnASingleLineTuple = localMostCharactersOnASingleRowTuple;
-        }
-
         // Add in any new metadata
         {
             if (lineEndPositionLazyInsertRange.index is not null)
@@ -739,6 +742,31 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
             var (positionIndex, charCount) = tuple.Value;
             DeleteValue(positionIndex, charCount, cancellationToken);
+
+            // NOTE: One cannot obtain the 'MostCharactersOnASingleLineTuple' from within the 'DeleteMetadata(...)'
+            //       method because this specific metadata is being calculated by counting the characters, which
+            //       in the case of 'DeleteMetadata(...)' wouldn't have been deleted yet.
+            //
+            // TODO: Fix tracking the MostCharactersOnASingleLineTuple this way is possibly inefficient - should instead only check the rows that changed
+            {
+                (int lineIndex, int lineLength) localMostCharactersOnASingleLineTuple = (0, 0);
+
+                for (var i = 0; i < LineEndList.Count; i++)
+                {
+                    var lengthOfLine = this.GetLineLength(i);
+
+                    if (lengthOfLine > localMostCharactersOnASingleLineTuple.lineLength)
+                    {
+                        localMostCharactersOnASingleLineTuple = (i, lengthOfLine);
+                    }
+                }
+
+                localMostCharactersOnASingleLineTuple = (
+                    localMostCharactersOnASingleLineTuple.lineIndex,
+                    localMostCharactersOnASingleLineTuple.lineLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+
+                _mostCharactersOnASingleLineTuple = localMostCharactersOnASingleLineTuple;
+            }
         }
 
         SetIsDirtyTrue();
@@ -985,27 +1013,6 @@ public partial class TextEditorModelModifier : ITextEditorModel
                 presentationModel.CompletedCalculation?.TextModificationsSinceRequestList.Add(textModification);
                 presentationModel.PendingCalculation?.TextModificationsSinceRequestList.Add(textModification);
             }
-        }
-
-        // TODO: Fix tracking the MostCharactersOnASingleLineTuple this way is possibly inefficient - should instead only check the rows that changed
-        {
-            (int lineIndex, int lineLength) localMostCharactersOnASingleLineTuple = (0, 0);
-
-            for (var i = 0; i < LineEndList.Count; i++)
-            {
-                var lengthOfLine = this.GetLineLength(i);
-
-                if (lengthOfLine > localMostCharactersOnASingleLineTuple.lineLength)
-                {
-                    localMostCharactersOnASingleLineTuple = (i, lengthOfLine);
-                }
-            }
-
-            localMostCharactersOnASingleLineTuple = (
-                localMostCharactersOnASingleLineTuple.lineIndex,
-                localMostCharactersOnASingleLineTuple.lineLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
-
-            _mostCharactersOnASingleLineTuple = localMostCharactersOnASingleLineTuple;
         }
 
         // Delete metadata

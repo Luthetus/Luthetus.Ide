@@ -2,7 +2,6 @@
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
@@ -29,7 +28,7 @@ public partial class Footer : ComponentBase
 
         if (Enum.TryParse<LineEndKind>(rowEndingKindString, out var rowEndingKind))
         {
-            TextEditorService.PostRedundant(
+            TextEditorService.PostTakeMostRecent(
                 nameof(TextEditorService.ModelApi.SetUsingLineEndKindFactory),
                 nameof(TextEditorService.ModelApi.SetUsingLineEndKindFactory),
                 TextEditorService.ModelApi.SetUsingLineEndKindFactory(

@@ -13,7 +13,12 @@ public partial record InputFileState
     public record SetSelectedTreeViewModelAction(TreeViewAbsolutePath? SelectedTreeViewModel);
     public record SetSelectedInputFilePatternAction(InputFilePattern InputFilePattern);
     public record SetSearchQueryAction(string SearchQuery);
-    public record RefreshCurrentSelectionAction(IBackgroundTaskService BackgroundTaskService);
+    
+    public record RefreshCurrentSelectionAction(IBackgroundTaskService BackgroundTaskService)
+    {
+        public TreeViewAbsolutePath? CurrentSelection { get; set; }
+    }
+
     public record MoveBackwardsInHistoryAction;
     public record MoveForwardsInHistoryAction;
 
@@ -29,7 +34,10 @@ public partial record InputFileState
         ILuthetusCommonComponentRenderers CommonComponentRenderers,
         IFileSystemProvider FileSystemProvider,
         IEnvironmentProvider EnvironmentProvider,
-        IBackgroundTaskService BackgroundTaskService);
+        IBackgroundTaskService BackgroundTaskService)
+    {
+        public TreeViewAbsolutePath? ParentDirectoryTreeViewModel { get; set; }
+    }
 
     public record StartInputFileStateFormAction(
         string Message,

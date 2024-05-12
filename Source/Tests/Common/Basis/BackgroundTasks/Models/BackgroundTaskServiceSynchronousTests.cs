@@ -14,7 +14,7 @@ public class BackgroundTaskServiceSynchronousTests
     /// <see cref="BackgroundTaskServiceSynchronous.ExecutingBackgroundTask"/>
     /// <br/>----<br/>
     /// <see cref="BackgroundTaskServiceSynchronous.ExecutingBackgroundTaskChanged"/>
-    /// <see cref="BackgroundTaskServiceSynchronous.Enqueue(IBackgroundTask)"/>
+    /// <see cref="BackgroundTaskServiceSynchronous.EnqueueAsync(IBackgroundTask)"/>
     /// <see cref="BackgroundTaskServiceSynchronous.SetExecutingBackgroundTask(Key{BackgroundTaskQueue}, IBackgroundTask?)"/>
     /// <see cref="BackgroundTaskServiceSynchronous.RegisterQueue(BackgroundTaskQueue)"/>
     /// <see cref="BackgroundTaskServiceSynchronous.DequeueAsync(Key{BackgroundTaskQueue}, CancellationToken)"/>
@@ -58,7 +58,7 @@ public class BackgroundTaskServiceSynchronousTests
                 return Task.CompletedTask;
             });
 
-        backgroundTaskService.Enqueue(backgroundTask);
+        backgroundTaskService.EnqueueAsync(backgroundTask);
 
         Assert.Equal(3, number);
         Assert.Null(queue.ExecutingBackgroundTask);
@@ -73,7 +73,7 @@ public class BackgroundTaskServiceSynchronousTests
     }
 
     /// <summary>
-    /// <see cref="BackgroundTaskServiceSynchronous.Enqueue(Key{BackgroundTask}, Key{BackgroundTaskQueue}, string, Func{Task})"/>
+    /// <see cref="BackgroundTaskServiceSynchronous.EnqueueAsync(Key{BackgroundTask}, Key{BackgroundTaskQueue}, string, Func{Task})"/>
     /// </summary>
     [Fact]
     public void EnqueueB()
@@ -99,7 +99,7 @@ public class BackgroundTaskServiceSynchronousTests
 
         queue.ExecutingBackgroundTaskChanged += OnExecutingBackgroundTaskChanged;
 
-        backgroundTaskService.Enqueue(
+        backgroundTaskService.EnqueueAsync(
             backgroundTaskKey,
             queue.Key,
             "Abc",
@@ -112,7 +112,7 @@ public class BackgroundTaskServiceSynchronousTests
                 number++;
 
                 return Task.CompletedTask;
-            });
+            }).Wait();
 
         Assert.Equal(3, number);
         Assert.Null(queue.ExecutingBackgroundTask);

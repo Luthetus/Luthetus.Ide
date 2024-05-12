@@ -11,13 +11,13 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Ide.RazorLib.Editors.Models;
 
 namespace Luthetus.Ide.RazorLib.Commands;
 
@@ -162,7 +162,7 @@ public class CommandFactory : ICommandFactory
 	                "Focus: SolutionExplorer (with text editor view model)", "focus-solution-explorer_with-text-editor-view-model", false,
 	                async commandArgs =>
 	                {
-	                    await PerformGetFlattenedTree();
+	                    await PerformGetFlattenedTree().ConfigureAwait(false);
 
 						var localNodeOfViewModel = _nodeOfViewModel;
 
@@ -176,9 +176,10 @@ public class CommandFactory : ICommandFactory
 							false);
 
 						var elementId = _treeViewService.GetNodeElementId(localNodeOfViewModel);
-						
 
-						await focusSolutionExplorerCommand.CommandFunc.Invoke(commandArgs);
+						await focusSolutionExplorerCommand.CommandFunc
+                            .Invoke(commandArgs)
+                            .ConfigureAwait(false);
 	                });
 	
 	            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
@@ -228,7 +229,7 @@ public class CommandFactory : ICommandFactory
                 "Focus: Text Editor", "focus-text-editor", false,
                 async commandArgs =>
                 {
-                    var group = _textEditorService.GroupApi.GetOrDefault(EditorSync.EditorTextEditorGroupKey);
+                    var group = _textEditorService.GroupApi.GetOrDefault(LuthetusIdeEditorBackgroundTaskApi.EditorTextEditorGroupKey);
 
                     if (group is null)
                         return;
@@ -319,22 +320,22 @@ public class CommandFactory : ICommandFactory
             displayName, internalIdentifier, false,
             async commandArgs =>
             {
-                var success = await TrySetFocus();
+                var success = await TrySetFocus().ConfigureAwait(false);
 
                 if (!success)
                 {
                     _dispatcher.Dispatch(new PanelState.SetPanelTabAsActiveByContextRecordKeyAction(
                         contextRecord.ContextKey));
 
-                    _ = await TrySetFocus();
+                    _ = await TrySetFocus().ConfigureAwait(false);
                 }
             });
 
         async Task<bool> TrySetFocus()
         {
             return await _jsRuntime.GetLuthetusCommonApi()
-                .TryFocusHtmlElementById(
-                    contextRecord.ContextElementId);
+                .TryFocusHtmlElementById(contextRecord.ContextElementId)
+                .ConfigureAwait(false);
         }
     }
 
@@ -342,7 +343,7 @@ public class CommandFactory : ICommandFactory
 	{
 		_nodeList.Clear();
 
-		var group = _textEditorService.GroupApi.GetOrDefault(EditorSync.EditorTextEditorGroupKey);
+		var group = _textEditorService.GroupApi.GetOrDefault(LuthetusIdeEditorBackgroundTaskApi.EditorTextEditorGroupKey);
 
 		if (group is not null)
 		{
@@ -355,7 +356,7 @@ public class CommandFactory : ICommandFactory
 						out var treeViewContainer) &&
                     treeViewContainer is not null)
 				{
-					await RecursiveGetFlattenedTree(treeViewContainer.RootNode, textEditorViewModel);
+					await RecursiveGetFlattenedTree(treeViewContainer.RootNode, textEditorViewModel).ConfigureAwait(false);
 				}
 			}
 		}
@@ -385,16 +386,16 @@ public class CommandFactory : ICommandFactory
 			switch (treeViewNamespacePath.Item.AbsolutePath.ExtensionNoPeriod)
             {
                 case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                    await treeViewNamespacePath.LoadChildListAsync();
+                    await treeViewNamespacePath.LoadChildListAsync().ConfigureAwait(false);
                     break;
             }
 		}
 
-		// await treeViewNoType.LoadChildListAsync();
+        // await treeViewNoType.LoadChildListAsync().ConfigureAwait(false);
 
-		foreach (var node in treeViewNoType.ChildList)
+        foreach (var node in treeViewNoType.ChildList)
 		{
-			await RecursiveGetFlattenedTree(node, textEditorViewModel);
+			await RecursiveGetFlattenedTree(node, textEditorViewModel).ConfigureAwait(false);
 		}
 	}
 }

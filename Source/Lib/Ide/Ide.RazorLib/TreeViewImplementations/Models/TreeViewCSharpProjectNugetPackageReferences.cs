@@ -50,7 +50,8 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
         var previousChildren = new List<TreeViewNoType>(ChildList);
 
         var content = await FileSystemProvider.File.ReadAllTextAsync(
-            Item.CSharpProjectNamespacePath.AbsolutePath.Value);
+                Item.CSharpProjectNamespacePath.AbsolutePath.Value)
+            .ConfigureAwait(false);
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
             new(Item.CSharpProjectNamespacePath.AbsolutePath.Value),

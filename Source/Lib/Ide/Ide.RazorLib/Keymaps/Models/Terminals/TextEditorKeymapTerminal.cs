@@ -3,7 +3,6 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
@@ -79,8 +78,9 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 			{
 				var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-				commandArgs.TextEditorService.PostIndependent(
+				commandArgs.TextEditorService.PostSimpleBatch(
 					nameof(commandDisplayName),
+                    string.Empty,
                     async editContext =>
 					{
 						var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
@@ -176,7 +176,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 											.Invoke(editContext)
 											.ConfigureAwait(false);
 
-                                        await generalTerminal.EnqueueCommandAsync(terminalCommand);
+                                        await generalTerminal.EnqueueCommandAsync(terminalCommand).ConfigureAwait(false);
                                     }
                                     else if (keyboardEventArgs.Code == "Backspace" && primaryCursorModifier.ColumnIndex == 0)
                                     {
@@ -217,7 +217,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
                                         }
 										else
 										{
-                                            await onKeyDown.InvokeWithEditContext(editContext);
+                                            await onKeyDown.InvokeWithEditContext(editContext).ConfigureAwait(false);
 											terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
                                         }
                                     }
@@ -237,7 +237,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageTop.InternalIdentifier ||
 								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ShowFindOverlay.InternalIdentifier)
                             {
-                                await onKeyDown.InvokeWithEditContext(editContext);
+                                await onKeyDown.InvokeWithEditContext(editContext).ConfigureAwait(false);
                             }
 							else
 							{
@@ -246,7 +246,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 						}
 						else
 						{
-							await onKeyDown.InvokeWithEditContext(editContext);
+							await onKeyDown.InvokeWithEditContext(editContext).ConfigureAwait(false);
 
                             var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
 

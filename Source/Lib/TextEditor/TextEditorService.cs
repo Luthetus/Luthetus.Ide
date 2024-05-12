@@ -14,7 +14,6 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
-using Luthetus.Common.RazorLib.Storages.States;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
@@ -23,6 +22,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Microsoft.JSInterop;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Events;
+using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.TextEditor.RazorLib;
 
@@ -41,7 +41,7 @@ public partial class TextEditorService : ITextEditorService
     private readonly IStorageService _storageService;
     // TODO: Perhaps do not reference IJSRuntime but instead wrap it in a 'IUiProvider' or something like that. The 'IUiProvider' would then expose methods that allow the TextEditorViewModel to adjust the scrollbars. 
     private readonly IJSRuntime _jsRuntime;
-    private readonly StorageSync _storageSync;
+    private readonly LuthetusCommonBackgroundTaskApi _commonBackgroundTaskApi;
 
     public TextEditorService(
         IState<TextEditorModelState> modelStateWrap,
@@ -56,7 +56,7 @@ public partial class TextEditorService : ITextEditorService
         ITextEditorRegistryWrap textEditorRegistryWrap,
         IStorageService storageService,
         IJSRuntime jsRuntime,
-        StorageSync storageSync,
+        LuthetusCommonBackgroundTaskApi commonBackgroundTaskApi,
         IDispatcher dispatcher,
         IDialogService dialogService)
     {
@@ -73,7 +73,7 @@ public partial class TextEditorService : ITextEditorService
         _textEditorRegistryWrap = textEditorRegistryWrap;
         _storageService = storageService;
         _jsRuntime = jsRuntime;
-        _storageSync = storageSync;
+        _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _dispatcher = dispatcher;
         _dialogService = dialogService;
 
@@ -81,7 +81,7 @@ public partial class TextEditorService : ITextEditorService
         ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, ViewModelStateWrap, ModelStateWrap, _jsRuntime, _dispatcher, _dialogService);
         GroupApi = new TextEditorGroupApi(this, _dispatcher, _dialogService, _jsRuntime);
         DiffApi = new TextEditorDiffApi(this, _dispatcher);
-        OptionsApi = new TextEditorOptionsApi(this, _textEditorOptions, _storageService, _storageSync, _dispatcher);
+        OptionsApi = new TextEditorOptionsApi(this, _textEditorOptions, _storageService, _commonBackgroundTaskApi, _dispatcher);
     }
 
     public IState<TextEditorModelState> ModelStateWrap { get; }
@@ -109,25 +109,39 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
 
-    public void PostIndependent(
+    // TODO: Should 'PostAsIs' be removed? (2024-05-08)
+    //
+    //public void PostAsIs(
+    //    string name,
+    //    TextEditorEdit textEditorEdit,
+    //    TimeSpan? throttleTimeSpan = null)
+    //{
+    //    Post(new IndependentTextEditorTask(
+    //        $"{name}_ai",
+    //        textEditorEdit,
+    //        throttleTimeSpan));
+    //}
+
+    public void PostSimpleBatch(
         string name,
+        string identifier,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        Post(new IndependentTextEditorTask(
-            $"{name}_i",
+        Post(new AsIsTextEditorTask(
+            $"{name}_sb",
             textEditorEdit,
             throttleTimeSpan));
     }
 
-    public void PostRedundant(
+    public void PostTakeMostRecent(
         string name,
         string redundancyIdentifier,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        Post(new RedundantTextEditorTask(
-            $"{name}_r",
+        Post(new TakeMostRecentTextEditorTask(
+            $"{name}_tmr",
             redundancyIdentifier,
             textEditorEdit,
             throttleTimeSpan));
@@ -146,12 +160,30 @@ public partial class TextEditorService : ITextEditorService
                 editContext,
                 _dispatcher);
 
-            _backgroundTaskService.Enqueue(textEditorServiceTask);
+            _backgroundTaskService.EnqueueAsync(textEditorServiceTask);
         }
         catch (LuthetusTextEditorException e)
         {
             Console.WriteLine(e.ToString());
         }
+    }
+
+    /// <summary>
+    /// I want to batch any scrolling done while within an <see cref="IEditContext"/>.
+    /// The <see cref="TextEditorServiceTask"/> needs the <see cref="IJSRuntime"/>,
+    /// in order to perform the scroll once the <see cref="IEditContext"/> is completed.
+    /// That being said, I didn't want to pass the <see cref="IJSRuntime"/> to the <see cref="TextEditorServiceTask"/>
+    /// so I'm doing this for the moment (2024-05-09).
+    /// </summary>
+    public async Task HACK_SetScrollPosition(TextEditorViewModel viewModel)
+    {
+        await _jsRuntime.GetLuthetusTextEditorApi()
+            .SetScrollPosition(
+                viewModel.BodyElementId,
+                viewModel.GutterElementId,
+                viewModel.VirtualizationResult.TextEditorMeasurements.ScrollLeft,
+                viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop)
+            .ConfigureAwait(false);
     }
 
     private record TextEditorEditContext : IEditContext

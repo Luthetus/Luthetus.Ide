@@ -83,7 +83,8 @@ public partial class TabDisplay : ComponentBase, IDisposable
                 if (_previousDragMouseEventArgs is not null && mouseEventArgs is not null)
                 {
                     await _dragEventHandler
-                        .Invoke((_previousDragMouseEventArgs, mouseEventArgs));
+                        .Invoke((_previousDragMouseEventArgs, mouseEventArgs))
+                        .ConfigureAwait(false);
                 }
 
                 _previousDragMouseEventArgs = mouseEventArgs;
@@ -97,7 +98,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 		if (IsBeingDragged)
 			return;
 
-        await Tab.TabGroup.CloseAsync(Tab);
+        await Tab.TabGroup.CloseAsync(Tab).ConfigureAwait(false);
 	}
 
 	private async Task HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)
@@ -108,12 +109,12 @@ public partial class TabDisplay : ComponentBase, IDisposable
 		if (mouseEventArgs.Button == 0)
 	        _thinksLeftMouseButtonIsDown = true;
 		if (mouseEventArgs.Button == 1)
-            await CloseTabOnClickAsync();
+            await CloseTabOnClickAsync().ConfigureAwait(false);
 		else if (mouseEventArgs.Button == 2)
-			ManuallyPropagateOnContextMenu(mouseEventArgs, Tab);
+			await ManuallyPropagateOnContextMenu(mouseEventArgs, Tab).ConfigureAwait(false);
 	}
 
-    private void ManuallyPropagateOnContextMenu(
+    private async Task ManuallyPropagateOnContextMenu(
         MouseEventArgs mouseEventArgs,
         ITab tab)
     {
@@ -122,10 +123,14 @@ public partial class TabDisplay : ComponentBase, IDisposable
 		if (localHandleTabButtonOnContextMenu is null)
 			return;
 
-		BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-            "Tab.ManuallyPropagateOnContextMenu",
-            async () => await localHandleTabButtonOnContextMenu.Invoke(
-				new TabContextMenuEventArgs(mouseEventArgs, tab, FocusAsync)));
+        await BackgroundTaskService.EnqueueAsync(
+				Key<BackgroundTask>.NewKey(),
+				ContinuousBackgroundTaskWorker.GetQueueKey(),
+				"Tab.ManuallyPropagateOnContextMenu",
+				async () => await localHandleTabButtonOnContextMenu
+					.Invoke(new TabContextMenuEventArgs(mouseEventArgs, tab, FocusAsync))
+                    .ConfigureAwait(false))
+            .ConfigureAwait(false);
     }
 
 	private async Task FocusAsync()
@@ -135,7 +140,11 @@ public partial class TabDisplay : ComponentBase, IDisposable
 			var localTabButtonElementReference = _tabButtonElementReference;
 
 			if (localTabButtonElementReference is not null)
-				await localTabButtonElementReference.Value.FocusAsync();
+			{
+				await localTabButtonElementReference.Value
+					.FocusAsync()
+					.ConfigureAwait(false);
+			}
 		}
 		catch (Exception)
 		{
@@ -162,10 +171,10 @@ public partial class TabDisplay : ComponentBase, IDisposable
         if (_thinksLeftMouseButtonIsDown && Tab is IDrag draggable)
         {
 			var measuredHtmlElementDimensions = await JsRuntime.GetLuthetusCommonApi()
-                .MeasureElementById(
-                    HtmlId);
+                .MeasureElementById(HtmlId)
+                .ConfigureAwait(false);
 
-			await draggable.OnDragStartAsync();
+			await draggable.OnDragStartAsync().ConfigureAwait(false);
 
 			// Width
 			{

@@ -7,7 +7,6 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Microsoft.JSInterop;
 using Fluxor;
@@ -156,44 +155,6 @@ public record TextEditorViewModel : IDisposable
     public string PrimaryCursorContentId => $"luth_te_text-editor-content_{ViewModelKey.Guid}_primary-cursor";
     public string GutterElementId => $"luth_te_text-editor-gutter_{ViewModelKey.Guid}";
     public string FindOverlayId => $"luth_te_find-overlay_{ViewModelKey.Guid}";
-
-	public TextEditorEdit MutateScrollHorizontalPositionByPixelsFactory(double pixels)
-    {
-        return TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
-            BodyElementId,
-            GutterElementId,
-            pixels);
-    }
-
-    public TextEditorEdit MutateScrollVerticalPositionByPixelsFactory(double pixels)
-    {
-        return TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
-            BodyElementId,
-            GutterElementId,
-            pixels);
-    }
-
-    public TextEditorEdit MutateScrollVerticalPositionByPagesFactory(double pages)
-    {
-        return MutateScrollVerticalPositionByPixelsFactory(
-            pages * VirtualizationResult.TextEditorMeasurements.Height);
-    }
-
-    public TextEditorEdit MutateScrollVerticalPositionByLinesFactory(double lines)
-    {
-        return MutateScrollVerticalPositionByPixelsFactory(
-            lines * VirtualizationResult.CharAndLineMeasurements.LineHeight);
-    }
-
-    /// <summary>If a parameter is null the JavaScript will not modify that value</summary>
-    public TextEditorEdit SetScrollPositionFactory(double? scrollLeft, double? scrollTop)
-    {
-        return TextEditorService.ViewModelApi.SetScrollPositionFactory(
-	        BodyElementId,
-	        GutterElementId,
-	        scrollLeft,
-	        scrollTop);
-    }
 
     public TextEditorEdit FocusFactory()
     {

@@ -24,7 +24,7 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
     }
 
-    public override void OnClick(TreeViewCommandArgs commandArgs)
+    protected override void OnClick(TreeViewCommandArgs commandArgs)
     {
         base.OnClick(commandArgs);
 

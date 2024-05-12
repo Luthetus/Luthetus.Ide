@@ -12,8 +12,9 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostIndependent(
+                commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(Word),
+                    string.Empty,
                     WordFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -32,8 +33,9 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostIndependent(
+                commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(End),
+                    string.Empty,
                     EndFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -52,8 +54,9 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostIndependent(
+                commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(Back),
+                    string.Empty,
                     BackFactory(commandArgs));
 
                 return Task.CompletedTask;
@@ -77,8 +80,9 @@ public static partial class TextEditorCommandVimFacts
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                     commandArgs.InnerCommand = innerCommand;
 
-                    commandArgs.TextEditorService.PostIndependent(
+                    commandArgs.TextEditorService.PostSimpleBatch(
                         nameof(GetVisualFactory),
+                        string.Empty,
                         VisualFactory(commandArgs));
 
                     return Task.CompletedTask;
@@ -105,8 +109,9 @@ public static partial class TextEditorCommandVimFacts
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                     commandArgs.InnerCommand = innerCommand;
 
-                    commandArgs.TextEditorService.PostIndependent(
+                    commandArgs.TextEditorService.PostSimpleBatch(
                         nameof(GetVisualLineFactory),
+                        string.Empty,
                         VisualLineFactory(commandArgs));
 
                     return Task.CompletedTask;

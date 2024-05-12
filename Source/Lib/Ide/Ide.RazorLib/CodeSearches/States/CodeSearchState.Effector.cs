@@ -7,9 +7,9 @@ namespace Luthetus.Ide.RazorLib.CodeSearches.States;
 
 public partial record CodeSearchState
 {
-    public class Effector : IDisposable
+    public class Effector
     {
-        private readonly IThrottle _throttle = new Throttle(TimeSpan.FromMilliseconds(300));
+        private readonly ThrottleAsync _throttle = new ThrottleAsync(TimeSpan.FromMilliseconds(300));
         private readonly IState<CodeSearchState> _codeSearchStateWrap;
         private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
         private readonly IFileSystemProvider _fileSystemProvider;
@@ -39,7 +39,7 @@ public partial record CodeSearchState
             SearchEffect searchEffect,
             IDispatcher dispatcher)
         {
-            _throttle.PushEvent(async _ =>
+            return _throttle.PushEvent(async _ =>
             {
                 dispatcher.Dispatch(new ClearResultListAction());
 
@@ -62,17 +62,19 @@ public partial record CodeSearchState
                     StartingAbsolutePathForSearch = startingAbsolutePathForSearch
                 }));
 
-                await RecursiveHandleSearchEffect(startingAbsolutePathForSearch);
+                await RecursiveHandleSearchEffect(startingAbsolutePathForSearch).ConfigureAwait(false);
 
                 async Task RecursiveHandleSearchEffect(string directoryPathParent)
                 {
                     var directoryPathChildList = await _fileSystemProvider.Directory.GetDirectoriesAsync(
-                        directoryPathParent,
-                        searchEffect.CancellationToken);
+                            directoryPathParent,
+                            searchEffect.CancellationToken)
+                        .ConfigureAwait(false);
 
                     var filePathChildList = await _fileSystemProvider.Directory.GetFilesAsync(
-                        directoryPathParent,
-                        searchEffect.CancellationToken);
+                            directoryPathParent,
+                            searchEffect.CancellationToken)
+                        .ConfigureAwait(false);
 
                     foreach (var filePathChild in filePathChildList)
                     {
@@ -88,17 +90,10 @@ public partial record CodeSearchState
                         if (directoryPathChild.Contains(".git") || directoryPathChild.Contains("bin") || directoryPathChild.Contains("obj"))
                             continue;
 
-                        await RecursiveHandleSearchEffect(directoryPathChild);
+                        await RecursiveHandleSearchEffect(directoryPathChild).ConfigureAwait(false);
                     }
                 }
             });
-
-            return Task.CompletedTask;
-        }
-
-        public void Dispose()
-        {
-            _throttle.Dispose();
         }
     }
 }

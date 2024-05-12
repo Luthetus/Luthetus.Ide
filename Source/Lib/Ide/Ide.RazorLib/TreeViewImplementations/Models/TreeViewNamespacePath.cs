@@ -66,7 +66,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
 
             if (Item.AbsolutePath.IsDirectory)
             {
-                newChildList = await this.DirectoryLoadChildrenAsync();
+                newChildList = await this.DirectoryLoadChildrenAsync().ConfigureAwait(false);
             }
             else
             {
@@ -75,10 +75,10 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                     case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
                         return;
                     case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                        newChildList = await this.CSharpProjectLoadChildrenAsync();
+                        newChildList = await this.CSharpProjectLoadChildrenAsync().ConfigureAwait(false);
                         break;
                     case ExtensionNoPeriodFacts.RAZOR_MARKUP:
-                        newChildList = await this.RazorMarkupLoadChildrenAsync();
+                        newChildList = await this.RazorMarkupLoadChildrenAsync().ConfigureAwait(false);
                         break;
                 }
             }

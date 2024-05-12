@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Autocompletes.Models;

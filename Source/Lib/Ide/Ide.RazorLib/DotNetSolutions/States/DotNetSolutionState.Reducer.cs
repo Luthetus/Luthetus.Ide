@@ -1,5 +1,5 @@
 ﻿using Fluxor;
-using static Luthetus.Ide.RazorLib.DotNetSolutions.States.DotNetSolutionSync;
+using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
@@ -48,9 +48,9 @@ public partial record DotNetSolutionState
         [ReducerMethod]
         public static DotNetSolutionState ReduceWithAction(
             DotNetSolutionState inState,
-            IWithAction withActionInterface)
+            LuthetusIdeDotNetSolutionBackgroundTaskApi.IWithAction withActionInterface)
         {
-            var withAction = (WithAction)withActionInterface;
+            var withAction = (LuthetusIdeDotNetSolutionBackgroundTaskApi.WithAction)withActionInterface;
             return withAction.WithFunc.Invoke(inState);
         }
     }

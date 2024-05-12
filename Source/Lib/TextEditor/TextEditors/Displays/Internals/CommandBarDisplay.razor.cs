@@ -26,7 +26,11 @@ public partial class CommandBarDisplay : FluxorComponent
             try
             {
                 if (_commandBarDisplayElementReference is not null)
-                    await _commandBarDisplayElementReference.Value.FocusAsync();
+                {
+                    await _commandBarDisplayElementReference.Value
+                        .FocusAsync()
+                        .ConfigureAwait(false);
+                }
             }
             catch (Exception)
             {
@@ -44,9 +48,9 @@ public partial class CommandBarDisplay : FluxorComponent
     {
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
-            await RestoreFocusToTextEditor.Invoke();
+            await RestoreFocusToTextEditor.Invoke().ConfigureAwait(false);
 
-            TextEditorService.PostRedundant(
+            TextEditorService.PostTakeMostRecent(
                 nameof(HandleOnKeyDown),
                 nameof(HandleOnKeyDown),
                 TextEditorService.ViewModelApi.WithValueFactory(

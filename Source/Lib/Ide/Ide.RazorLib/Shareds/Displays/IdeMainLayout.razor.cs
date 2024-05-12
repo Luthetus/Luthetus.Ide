@@ -9,8 +9,8 @@ using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.Common.RazorLib.StateHasChangedBoundaries.Displays;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.InputFiles.Displays;
 using Luthetus.Ide.RazorLib.InputFiles.States;
 using Luthetus.Ide.RazorLib.ProgramExecutions.States;
@@ -41,7 +41,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
-    private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
+    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private ILuthetusIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
@@ -92,10 +92,15 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         if (firstRender)
         {
-            await TextEditorService.OptionsApi.SetFromLocalStorageAsync();
-            await AppOptionsService.SetFromLocalStorageAsync();
+            await TextEditorService.OptionsApi
+                .SetFromLocalStorageAsync()
+                .ConfigureAwait(false);
 
-            await HACK_PersonalSettings();
+            await AppOptionsService
+                .SetFromLocalStorageAsync()
+                .ConfigureAwait(false);
+
+            await HACK_PersonalSettings().ConfigureAwait(false);
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -149,13 +154,15 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         }
 #endif
         if (!string.IsNullOrWhiteSpace(slnPersonalPath) &&
-            await FileSystemProvider.File.ExistsAsync(slnPersonalPath))
+            await FileSystemProvider.File.ExistsAsync(slnPersonalPath).ConfigureAwait(false))
         {
             var slnAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
                 slnPersonalPath,
                 false);
 
-            DotNetSolutionSync.SetDotNetSolution(slnAbsolutePath);
+            await IdeBackgroundTaskApi.DotNetSolution
+                .SetDotNetSolution(slnAbsolutePath)
+                .ConfigureAwait(false);
 
             var parentDirectory = slnAbsolutePath.ParentDirectory;
             if (parentDirectory is not null)
@@ -173,7 +180,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     true,
                     false);
 
-                await pseudoRootNode.LoadChildListAsync();
+                await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
 
                 var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(pseudoRootNode.ChildList.ToArray());
 
@@ -204,7 +211,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                         false);
                 }
 
-                await pseudoRootNode.LoadChildListAsync();
+                await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
 
                 var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
                     pseudoRootNode,
@@ -217,7 +224,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             }
 
             if (!string.IsNullOrWhiteSpace(projectPersonalPath) &&
-                await FileSystemProvider.File.ExistsAsync(projectPersonalPath))
+                await FileSystemProvider.File.ExistsAsync(projectPersonalPath).ConfigureAwait(false))
             {
                 var projectAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
                     projectPersonalPath,

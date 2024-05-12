@@ -1,0 +1,73 @@
+﻿@using Luthetus.Common.RazorLib.Reactives.Models.Internals.Async
+<div class="luth_counter-throttle-async"
+     style="background-color: var(--luth_te_secondary-background-color); color: var(--luth_te_secondary-foreground-color);">
+
+     <div style="display: flex;">
+        <button class="luth_button"
+                @onclick="FireThrottleOnClick">
+            @_count @(ThrottleData.GetType().Name)
+        </button>
+
+        <button class="luth_button"
+                @onclick="() => {}">
+            ReRender
+        </button>
+
+        <select><option>abc123</option><option>321cba</option></select>
+     </div>
+    
+    <div class="luth_counter-throttle-async-visualization"
+         style="margin-top: 8px;">
+        
+        <ProgressDisplay ThrottleData="ThrottleData"/>
+
+        <div>WorkItemsExecutedCount:&nbsp;@(ThrottleData.WorkItemsExecutedCount)</div>
+        
+        <div class="luth_scope">
+            <div class="luth_scope-title">
+                SynchronizationContext
+            </div>
+
+            <div class="luth_scope-body luth_indent-child-content">
+                
+                <div class="luth_scope-border"></div>
+
+                <div>
+                    <div>PushEventStart_SynchronizationContext:&nbsp;@(ThrottleData.PushEventStart_SynchronizationContext?.ToString() ?? "null")</div>
+                    <div>PushEventEnd_SynchronizationContext:&nbsp;@(ThrottleData.PushEventEnd_SynchronizationContext?.ToString() ?? "null")</div>
+                </div>
+            </div>
+        </div>
+        
+        <ThreadDisplay DisplayName="PushEventStart_Thread"
+                       Thread="ThrottleData.PushEventStart_Thread"
+                       DateTimeTuple="ThrottleData.PushEventStart_DateTimeTuple"
+                       LoadingIconTask="Task.CompletedTask"/>
+
+        <ThreadDisplay DisplayName="PushEventEnd_Thread"
+                       Thread="ThrottleData.PushEventEnd_Thread"
+                       DateTimeTuple="ThrottleData.PushEventEnd_DateTimeTuple"
+                       LoadingIconTask="ThrottleData.DelayTask" />
+
+        <div>ThrottleTimeSpan:&nbsp;@ThrottleData.ThrottleTimeSpan</div>
+        <div>Stack.Count:&nbsp;@ThrottleData.WorkItemStack.Count</div>
+    </div>
+
+    <div>
+        @{ var success = TryGetWorkItemList(out var workItemList); }
+
+        @if (success)
+        {
+            foreach (var workItem in ThrottleData.WorkItemStack)
+            {
+                <div>A workItem</div>
+            }
+        }
+    </div>
+
+    @if (ThrottleData is ICounterThrottleAsync throttleAsync)
+    {
+        <div>Semaphore.AvailableWaitHandle:&nbsp;@throttleAsync.WorkItemSemaphore.AvailableWaitHandle</div>
+        <div>Semaphore.CurrentCount:&nbsp;@throttleAsync.WorkItemSemaphore.CurrentCount</div>
+    }
+</div>

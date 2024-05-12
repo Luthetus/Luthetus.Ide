@@ -4,6 +4,7 @@ using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Microsoft.AspNetCore.Components;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Displays;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 
@@ -161,23 +162,23 @@ public class LuthetusTextEditorJavaScriptInteropApi
             scrollTopInPixels);
     }
 
-    public ValueTask<TextEditorMeasurements> GetTextEditorMeasurementsInPixelsById(
+    public async ValueTask<TextEditorDimensions> GetTextEditorMeasurementsInPixelsById(
         string elementId)
     {
-        return _jsRuntime.InvokeAsync<TextEditorMeasurements>(
+        return new TextEditorDimensions(await _jsRuntime.InvokeAsync<TextEditorDimensionsJson>(
             "luthetusTextEditor.getTextEditorMeasurementsInPixelsById",
-            elementId);
+            elementId));
     }
 
     /// <summary>
     /// TODO: This javascript function is only invoked by other javascript functions.
     /// </summary>
-    public ValueTask<TextEditorMeasurements> GetElementMeasurementsInPixelsByElementReference(ElementReference elementReference)
+    public async ValueTask<TextEditorDimensions> GetElementMeasurementsInPixelsByElementReference(ElementReference elementReference)
     {
         // TODO: Not sure if one can pass a C# 'ElementReference' like this to JS interop
-        return _jsRuntime.InvokeAsync<TextEditorMeasurements>(
+        return new TextEditorDimensions(await _jsRuntime.InvokeAsync<TextEditorDimensionsJson>(
             "luthetusTextEditor.getElementMeasurementsInPixelsByElementReference",
-            elementReference);
+            elementReference));
     }
 
     /// <summary>

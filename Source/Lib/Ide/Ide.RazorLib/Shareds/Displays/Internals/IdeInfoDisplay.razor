@@ -19,6 +19,35 @@
             Recent Changes:
 			<div>
                 <div>
+                    <div>v <em class="luth_em">0.8.4.0 </em> (2024-05-12)</div>
+
+                    <ul>
+                        <li>
+                            Optimization: scrolling can be done to a C# model with IEditContext. This is a massive optimization,
+                            instead of every change to the text editor scrollbar invoking JavaScript interop to set
+                            the scrollbar, the IEditContext will gather many events that ask to modify the scrollbar,
+                            and batch them into a single JavaScript interop call to set the scrollbar.
+                        </li>
+                        <li>
+                            Change: Re-write <a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/Common/Reactives/Models/ThrottleAsync.cs"
+                                                target="_blank">
+                                ThrottleAsync.cs
+                            </a>
+                        </li>
+                        <li>
+                            Change: A lot of synchronous UI code was re-written to be async. The goal is that all UI code should be async
+                            from top to bottom (generally speaking).
+                        </li>
+                        <li>
+                            Fix: MostCharactersOnASingleLineTuple
+                        </li>
+                        <li>
+                            Fix: .NET Solution text editor syntax highlighting (right click the .NET Solution in the treeview
+                            and pick the menu option to open it in the text editor)
+                        </li>
+                    </ul>
+                </div>
+                <div>
                     <div>v <em class="luth_em">0.8.3.0 </em> (2024-05-05)</div>
 
                     <ul>

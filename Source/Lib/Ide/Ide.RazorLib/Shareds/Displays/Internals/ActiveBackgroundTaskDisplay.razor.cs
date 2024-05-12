@@ -17,7 +17,7 @@ public partial class ActiveBackgroundTaskDisplay : IDisposable
 
 	private static readonly Key<IDynamicViewModel> _backgroundTaskDialogKey = Key<IDynamicViewModel>.NewKey();
 
-    private readonly IThrottle _executingBackgroundTaskChangedThrottle = new Throttle(TimeSpan.FromMilliseconds(1000));
+    private readonly ThrottleAsync _executingBackgroundTaskChangedThrottle = new ThrottleAsync(TimeSpan.FromMilliseconds(1000));
     private readonly List<IBackgroundTask> _seenBackgroundTasks = new List<IBackgroundTask>();
 
     private BackgroundTaskQueue _continuousBackgroundTaskWorker = null!;
@@ -68,7 +68,7 @@ public partial class ActiveBackgroundTaskDisplay : IDisposable
             _seenBackgroundTasks.Add(executingBackgroundTask);
         }
 
-        _executingBackgroundTaskChangedThrottle.PushEvent(async _ =>
+        await _executingBackgroundTaskChangedThrottle.PushEvent(async _ =>
         {
             await InvokeAsync(StateHasChanged);
         });

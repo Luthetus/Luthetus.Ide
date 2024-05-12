@@ -50,7 +50,9 @@ public partial class MenuDisplay : ComponentBase
             {
                 try
                 {
-                    await _menuDisplayElementReference.Value.FocusAsync();
+                    await _menuDisplayElementReference.Value
+                        .FocusAsync()
+                        .ConfigureAwait(false);
                 }
                 catch (Exception)
                 {
@@ -83,7 +85,11 @@ public partial class MenuDisplay : ComponentBase
             try
             {
                 if (_menuDisplayElementReference is not null)
-                    await _menuDisplayElementReference.Value.FocusAsync();
+                {
+                    await _menuDisplayElementReference.Value
+                        .FocusAsync()
+                        .ConfigureAwait(false);
+                }
             }
             catch (Exception)
             {
@@ -112,7 +118,7 @@ public partial class MenuDisplay : ComponentBase
                 if (DropdownKey != Key<DropdownRecord>.Empty && ReturnFocusToParentFuncAsync is not null)
                 {
                     Dispatcher.Dispatch(new DropdownState.RemoveActiveAction(DropdownKey));
-                    await ReturnFocusToParentFuncAsync.Invoke();
+                    await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);
                 }
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
@@ -140,7 +146,7 @@ public partial class MenuDisplay : ComponentBase
                     Dispatcher.Dispatch(new DropdownState.RemoveActiveAction(DropdownKey));
 
                 if (ReturnFocusToParentFuncAsync is not null)
-                    await ReturnFocusToParentFuncAsync.Invoke();
+                    await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);
 
                 break;
         }

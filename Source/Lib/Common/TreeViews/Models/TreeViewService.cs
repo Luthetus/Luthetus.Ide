@@ -163,7 +163,7 @@ public class TreeViewService : ITreeViewService
                         }
                     });
 
-                _backgroundTaskService.Enqueue(backgroundTask);
+                _backgroundTaskService.EnqueueAsync(backgroundTask);
             });
 
         _dispatcher.Dispatch(moveRightAction);

@@ -5,37 +5,41 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
-using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.FolderExplorers.States;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Fluxor;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorers.Models;
 
 public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
-    private readonly EditorSync _editorSync;
+    private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IMenuOptionsFactory _menuOptionsFactory;
     private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
     private readonly IEnvironmentProvider _environmentProvider;
+    private readonly IDispatcher _dispatcher;
 
     public FolderExplorerTreeViewKeyboardEventHandler(
-            EditorSync editorSync,
+            LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
             IMenuOptionsFactory menuOptionsFactory,
             ILuthetusCommonComponentRenderers commonComponentRenderers,
             ITreeViewService treeViewService,
 		    IBackgroundTaskService backgroundTaskService,
-            IEnvironmentProvider environmentProvider)
+            IEnvironmentProvider environmentProvider,
+            IDispatcher dispatcher)
         : base(treeViewService, backgroundTaskService)
     {
-        _editorSync = editorSync;
+        _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _menuOptionsFactory = menuOptionsFactory;
         _commonComponentRenderers = commonComponentRenderers;
         _treeViewService = treeViewService;
         _environmentProvider = environmentProvider;
+        _dispatcher = dispatcher;
     }
 
     public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
@@ -48,11 +52,9 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         switch (commandArgs.KeyboardEventArgs.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
-                InvokeOpenInEditor(commandArgs, true);
-                return Task.CompletedTask;
+                return InvokeOpenInEditorAsync(commandArgs, true);
             case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
-                InvokeOpenInEditor(commandArgs, false);
-                return Task.CompletedTask;
+                return InvokeOpenInEditorAsync(commandArgs, false);
         }
 
         if (commandArgs.KeyboardEventArgs.CtrlKey)
@@ -117,7 +119,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             treeViewAbsolutePath.Item,
             () =>
             {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewAbsolutePath.Item.NameWithExtension}", _commonComponentRenderers, _editorSync.Dispatcher, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewAbsolutePath.Item.NameWithExtension}", _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
@@ -146,9 +148,9 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                     SolutionExplorerContextMenu.ParentOfCutFile = null;
 
                     if (localParentOfCutFile is not null)
-                        await ReloadTreeViewModel(localParentOfCutFile);
+                        await ReloadTreeViewModel(localParentOfCutFile).ConfigureAwait(false);
 
-                    await ReloadTreeViewModel(treeViewAbsolutePath);
+                    await ReloadTreeViewModel(treeViewAbsolutePath).ConfigureAwait(false);
                 });
         }
         else
@@ -167,9 +169,9 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                     SolutionExplorerContextMenu.ParentOfCutFile = null;
 
                     if (localParentOfCutFile is not null)
-                        await ReloadTreeViewModel(localParentOfCutFile);
+                        await ReloadTreeViewModel(localParentOfCutFile).ConfigureAwait(false);
 
-                    await ReloadTreeViewModel(treeViewAbsolutePath);
+                    await ReloadTreeViewModel(treeViewAbsolutePath).ConfigureAwait(false);
                 });
         }
 
@@ -193,7 +195,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             () =>
             {
                 SolutionExplorerContextMenu.ParentOfCutFile = parent;
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.NameWithExtension}", _commonComponentRenderers, _editorSync.Dispatcher, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.NameWithExtension}", _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
@@ -203,15 +205,16 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         return cutFileOptionRecord.OnClickFunc.Invoke();
     }
 
-    private void InvokeOpenInEditor(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)
+    private async Task InvokeOpenInEditorAsync(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)
     {
         var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-        _editorSync.OpenInEditor(treeViewAbsolutePath.Item, shouldSetFocusToEditor);
-        return;
+        await _ideBackgroundTaskApi.Editor
+            .OpenInEditor(treeViewAbsolutePath.Item, shouldSetFocusToEditor)
+            .ConfigureAwait(false);
     }
 
     private async Task ReloadTreeViewModel(TreeViewNoType? treeViewModel)
@@ -219,7 +222,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (treeViewModel is null)
             return;
 
-        await treeViewModel.LoadChildListAsync();
+        await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
         _treeViewService.ReRenderNode(
             FolderExplorerState.TreeViewContentStateKey,

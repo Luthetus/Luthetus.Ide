@@ -3,12 +3,10 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
-using Luthetus.Common.RazorLib.Storages.States;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
@@ -46,8 +44,9 @@ public class USER_TYPES_OUT_CODE
 
         foreach (var character in content)
         {
-            textEditorService.PostIndependent(
+            textEditorService.PostSimpleBatch(
                 nameof(USER_TYPES_OUT_CODE),
+                string.Empty,
                 async editContext =>
                 {
                     await textEditorService.ModelApi.InsertTextFactory(
@@ -55,7 +54,8 @@ public class USER_TYPES_OUT_CODE
                             textEditorViewModel.ViewModelKey,
                             character.ToString(),
                             CancellationToken.None)
-                        .Invoke(editContext);
+                        .Invoke(editContext)
+                        .ConfigureAwait(false);
                 });
 
             cSharpCompilerService.ResourceWasModified(
@@ -98,8 +98,9 @@ public class USER_TYPES_OUT_CODE
 
         foreach (var character in content)
         {
-            textEditorService.PostIndependent(
+            textEditorService.PostSimpleBatch(
                 nameof(USER_TYPES_OUT_CODE),
+                string.Empty,
                 async editContext =>
                 {
                     await textEditorService.ModelApi.InsertTextFactory(
@@ -107,7 +108,8 @@ public class USER_TYPES_OUT_CODE
                             textEditorViewModel.ViewModelKey,
                             character.ToString(),
                             CancellationToken.None)
-                        .Invoke(editContext);
+                        .Invoke(editContext)
+                        .ConfigureAwait(false);
                 });
 
             cSharpCompilerService.ResourceWasModified(
@@ -155,8 +157,9 @@ await builder.Build().RunAsync();
             {
                 char character = content[i];
 
-                textEditorService.PostIndependent(
+                textEditorService.PostSimpleBatch(
                     nameof(USER_TYPES_OUT_CODE),
+                    string.Empty,
                     async editContext =>
                     {
                         await textEditorService.ModelApi.InsertTextFactory(
@@ -164,7 +167,8 @@ await builder.Build().RunAsync();
                                 textEditorViewModel.ViewModelKey,
                                 character.ToString(),
                                 CancellationToken.None)
-                            .Invoke(editContext);
+                            .Invoke(editContext)
+                            .ConfigureAwait(false);
                     });
 
                 if (char.IsLetterOrDigit(character))
@@ -328,7 +332,6 @@ await builder.Build().RunAsync();
             .AddSingleton<LuthetusTextEditorConfig>()
             .AddScoped<IStorageService, DoNothingStorageService>()
             .AddScoped<IJSRuntime, DoNothingJsRuntime>()
-            .AddScoped<StorageSync>()
             .AddScoped<IBackgroundTaskService>(_ => new BackgroundTaskServiceSynchronous())
             .AddScoped<ITextEditorRegistryWrap, TextEditorRegistryWrap>()
             .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistryDefault>()

@@ -50,8 +50,9 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 
         var modelText = model.GetAllText();
 
-        TextEditorService.PostIndependent(
+        TextEditorService.PostSimpleBatch(
             nameof(SyntaxTextSpanDisplay),
+            string.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(
@@ -87,7 +88,8 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
                         cursorModifierBag,
                         localInputValue,
                         CancellationToken.None)
-                    .Invoke(editContext);
+                    .Invoke(editContext)
+                    .ConfigureAwait(false);
 
                 modelModifier.CompilerService.ResourceWasModified(
                     _textSpanTuple.TextEditorTextSpan.ResourceUri,

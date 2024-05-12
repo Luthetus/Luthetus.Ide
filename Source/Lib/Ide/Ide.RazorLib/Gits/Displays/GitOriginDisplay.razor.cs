@@ -54,7 +54,9 @@ public partial class GitOriginDisplay : ComponentBase
             OutputParser: gitCliOutputParser);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-        await generalTerminal.EnqueueCommandAsync(gitStatusCommand);
+        await generalTerminal
+            .EnqueueCommandAsync(gitStatusCommand)
+            .ConfigureAwait(false);
     }
 
     private async Task SetGitOriginOnClick(string localCommandArgs)
@@ -83,6 +85,8 @@ public partial class GitOriginDisplay : ComponentBase
             OutputParser: gitCliOutputParser);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-        await generalTerminal.EnqueueCommandAsync(gitStatusCommand);
+        await generalTerminal
+            .EnqueueCommandAsync(gitStatusCommand)
+            .ConfigureAwait(false);
     }
 }

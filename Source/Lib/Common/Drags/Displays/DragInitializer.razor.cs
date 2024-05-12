@@ -2,9 +2,9 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.Common.RazorLib.Drags.Displays;
 
@@ -19,12 +19,9 @@ public partial class DragInitializer : FluxorComponent
         ? string.Empty
         : "display: none;";
 
-    /// <summary>
-    /// Preferably the throttling logic here would be moved out of the drag initializer itself so one can choose to add it themselves, or take the full stream.
-    /// </summary>
-    private IThrottle _throttleDispatchSetDragStateActionOnMouseMove = new Throttle(IThrottle.DefaultThrottleTimeSpan);
+    public static ThrottleAsync Throttle = new(ThrottleAsync.Sixty_Frames_Per_Second);
 
-	private IDropzone? _onMouseOverDropzone = null;
+    private IDropzone? _onMouseOverDropzone = null;
 
     private DragState.WithAction ConstructClearDragStateAction()
     {
@@ -38,9 +35,9 @@ public partial class DragInitializer : FluxorComponent
         });
     }
 
-    private Task DispatchSetDragStateActionOnMouseMoveAsync(MouseEventArgs mouseEventArgs)
+    private async Task DispatchSetDragStateActionOnMouseMoveAsync(MouseEventArgs mouseEventArgs)
     {
-        _throttleDispatchSetDragStateActionOnMouseMove.PushEvent(_ =>
+        await Throttle.PushEvent(_ =>
         {
             if ((mouseEventArgs.Buttons & 1) != 1)
             {
@@ -56,26 +53,26 @@ public partial class DragInitializer : FluxorComponent
             }
 
             return Task.CompletedTask;
-        });
-
-        return Task.CompletedTask;
+        }).ConfigureAwait(false);
     }
 
-    private Task DispatchSetDragStateActionOnMouseUp(MouseEventArgs mouseEventArgs)
+    private async Task DispatchSetDragStateActionOnMouseUp(MouseEventArgs mouseEventArgs)
     {
 		var dragState = DragStateWrap.Value;
 		var localOnMouseOverDropzone = _onMouseOverDropzone;
 
-        _throttleDispatchSetDragStateActionOnMouseMove.PushEvent(async _ =>
+        await Throttle.PushEvent(async _ =>
         {
             Dispatcher.Dispatch(ConstructClearDragStateAction());
 
-			var draggableViewModel = dragState.Drag;
-			if (draggableViewModel is not null)
-				await draggableViewModel.OnDragEndAsync(mouseEventArgs, localOnMouseOverDropzone);
-        });
-
-		return Task.CompletedTask;
+            var draggableViewModel = dragState.Drag;
+            if (draggableViewModel is not null)
+            {
+                await draggableViewModel
+                    .OnDragEndAsync(mouseEventArgs, localOnMouseOverDropzone)
+                    .ConfigureAwait(false);
+            }
+        }).ConfigureAwait(false);
     }
 
 	private string GetIsActiveCssClass(IDropzone dropzone)

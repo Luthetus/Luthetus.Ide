@@ -51,6 +51,8 @@ public partial class StartupControlsDisplay : FluxorComponent
             return;
 
         var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
-        await executionTerminal.EnqueueCommandAsync(startProgramTerminalCommand);
+        await executionTerminal
+            .EnqueueCommandAsync(startProgramTerminalCommand)
+            .ConfigureAwait(false);
     }
 }

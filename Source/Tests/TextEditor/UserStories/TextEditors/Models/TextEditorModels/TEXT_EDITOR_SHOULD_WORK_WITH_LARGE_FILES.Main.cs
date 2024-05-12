@@ -1,8 +1,7 @@
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-namespace Luthetus.TextEditor.Tests.UserStories.TextEditors.Models.TextEditorModels;
+namespace Luthetus.TextEditor.Tests.UserStories.TextEditors.Models;
 
 public partial class TEXT_EDITOR_SHOULD_WORK_WITH_LARGE_FILES
 {

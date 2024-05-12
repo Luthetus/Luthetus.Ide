@@ -1,6 +1,5 @@
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.TreeViews.Models;
 
@@ -21,29 +20,85 @@ public class TreeViewMouseEventHandler
 		BackgroundTaskService = backgroundTaskService;
     }
 
-    /// <summary>Used for handing "onclick" events within the user interface</summary>
-    public virtual void OnClick(TreeViewCommandArgs commandArgs)
+    /// <summary>
+    /// Invoked, and awaited, as part of the async UI event handler for 'onclick' events.<br/><br/>
+    /// 
+    /// The synchronous version: '<see cref="OnClick(TreeViewCommandArgs)"/>' will be invoked
+    /// immediately from within this method, to allow the synchronous code to block the UI purposefully.
+    /// 
+    /// Any overrides of this method are intended to have 'base.MethodBeingOverridden()' prior to their code.<br/><br/>
+    /// </summary>
+    public virtual Task OnClickAsync(TreeViewCommandArgs commandArgs)
     {
-        return;
-    }
-
-    /// <summary>Used for handing "ondblclick" events within the user interface</summary>
-    public virtual void OnDoubleClick(TreeViewCommandArgs commandArgs)
-    {
-		BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-        	"TreeView.OnKeyDown",
-			async () => await OnDoubleClickAsync(commandArgs).ConfigureAwait(false));
-        return;
-    }
-
-    /// <summary>Used for handing "ondblclick" events within the user interface</summary>
-    public virtual Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
-    {
+        // Run the synchronous code first to maintain the UI's synchronization context
+        OnClick(commandArgs);
         return Task.CompletedTask;
     }
 
-    /// <summary>Used for handing "onmousedown" events within the user interface</summary>
-    public virtual void OnMouseDown(TreeViewCommandArgs commandArgs)
+    /// <summary>
+    /// Invoked, and awaited, as part of the async UI event handler for 'ondblclick' events.<br/><br/>
+    /// 
+    /// The synchronous version: '<see cref="OnDoubleClick(TreeViewCommandArgs)"/>' will be invoked
+    /// immediately from within this method, to allow the synchronous code to block the UI purposefully.
+    /// 
+    /// Any overrides of this method are intended to have 'base.MethodBeingOverridden()' prior to their code.<br/><br/>
+    /// </summary>
+    public virtual Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
+    {
+        // Run the synchronous code first
+        OnDoubleClick(commandArgs);
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Invoked, and awaited, as part of the async UI event handler for 'onmousedown' events.<br/><br/>
+    /// 
+    /// The synchronous version: '<see cref="OnMouseDown(TreeViewCommandArgs)"/>' will be invoked
+    /// immediately from within this method, to allow the synchronous code to block the UI purposefully.<br/><br/>
+    /// 
+    /// Any overrides of this method are intended to have 'base.MethodBeingOverridden()' prior to their code.<br/><br/>
+    /// </summary>
+    public virtual Task OnMouseDownAsync(TreeViewCommandArgs commandArgs)
+    {
+        // Run the synchronous code first
+        OnMouseDown(commandArgs);
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Invoked, and awaited, as part of the synchronous UI event handler for 'onclick' events.<br/><br/>
+    /// 
+    /// This method is invoked by the async version: '<see cref="OnMouseDownAsync(TreeViewCommandArgs)"/>'.<br/><br/>
+    /// 
+    /// Any overrides of this method are intended to have 'base.MethodBeingOverridden()' prior to their code,
+    /// but for this method it makes no difference if one puts it after their code.<br/><br/>
+    /// </summary>
+    protected virtual void OnClick(TreeViewCommandArgs commandArgs)
+    {
+        return;
+    }
+
+    /// <summary>
+    /// Invoked, and awaited, as part of the synchronous UI event handler for 'ondblclick' events.<br/><br/>
+    ///
+    /// This method is invoked by the async version: '<see cref="OnDoubleClickAsync(TreeViewCommandArgs)"/>'.<br/><br/>
+    /// 
+    /// Any overrides of this method are intended to have 'base.MethodBeingOverridden()' prior to their code,
+    /// but for this method it makes no difference if one puts it after their code.<br/><br/>
+    /// </summary>
+    protected virtual void OnDoubleClick(TreeViewCommandArgs commandArgs)
+    {
+        return;
+    }
+
+    /// <summary>
+    /// Invoked, and awaited, as part of the synchronous UI event handler for 'onmousedown' events.<br/><br/>
+    /// 
+    /// This method is invoked by the async version: '<see cref="OnMouseDownAsync(TreeViewCommandArgs)"/>'.<br/><br/>
+    /// 
+    /// Any overrides of this method are intended to have 'base.MethodBeingOverridden()' prior to their code.<br/><br/>
+    /// </summary>
+    protected virtual void OnMouseDown(TreeViewCommandArgs commandArgs)
     {
         if (commandArgs.NodeThatReceivedMouseEvent is null || commandArgs.MouseEventArgs is null)
             return;

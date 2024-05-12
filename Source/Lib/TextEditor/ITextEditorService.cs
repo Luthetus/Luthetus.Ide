@@ -35,23 +35,37 @@ public partial interface ITextEditorService
     public IState<TextEditorFindAllState> FindAllStateWrap { get; }
 
     /// <summary>
-    /// This method will create an instance of <see cref="Events.IndependentTextEditorTask"/>,
+    /// TODO: Should 'PostAsIs' be removed? (2024-05-08)
+    //
+    /// This method will create an instance of <see cref="Events.AsIsTextEditorTask"/>,
     /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
-    /// --- IndependentTextEditorTask.cs inheritdoc:<br/><br/>
-    /// <inheritdoc cref="Events.IndependentTextEditorTask"/>
+    /// --- <see cref="Events.AsIsTextEditorTask"/>.cs inheritdoc:<br/><br/>
+    /// <inheritdoc cref="Events.AsIsTextEditorTask"/>
     /// </summary>
-    public void PostIndependent(
+    //public void PostAsIs(
+    //    string name,
+    //    TextEditorEdit textEditorEdit,
+    //    TimeSpan? throttleTimeSpan = null);
+
+    /// <summary>
+    /// This method will create an instance of <see cref="Events.SimpleBatchTextEditorTask"/>,
+    /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
+    /// --- <see cref="Events.SimpleBatchTextEditorTask"/>.cs inheritdoc:<br/><br/>
+    /// <inheritdoc cref="Events.SimpleBatchTextEditorTask"/>
+    /// </summary>
+    public void PostSimpleBatch(
         string name,
+        string identifier,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null);
 
     /// <summary>
-    /// This method will create an instance of <see cref="Events.RedundantTextEditorTask"/>,
+    /// This method will create an instance of <see cref="Events.TakeMostRecentTextEditorTask"/>,
     /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
-    /// --- RedundantTextEditorTask.cs inheritdoc:<br/><br/>
-    /// <inheritdoc cref="Events.RedundantTextEditorTask"/>
+    /// --- <see cref="Events.TakeMostRecentTextEditorTask"/>.cs inheritdoc:<br/><br/>
+    /// <inheritdoc cref="Events.TakeMostRecentTextEditorTask"/>
     /// </summary>
-    public void PostRedundant(
+    public void PostTakeMostRecent(
         string name,
         string redundancyIdentifier,
         TextEditorEdit textEditorEdit,

@@ -43,6 +43,8 @@ public partial class TreeViewDebugInfo : FluxorComponent
 
 		_nodeList.Clear();
 
-		await RecursiveGetFlattenedTreeFunc.Invoke(_nodeList, TreeViewStateSelection.Value.RootNode);
+		await RecursiveGetFlattenedTreeFunc
+			.Invoke(_nodeList, TreeViewStateSelection.Value.RootNode)
+            .ConfigureAwait(false);
 	}
 }

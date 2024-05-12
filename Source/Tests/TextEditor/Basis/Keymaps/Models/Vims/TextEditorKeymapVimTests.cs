@@ -1,7 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.Tests.Basis.Keymaps.Models.Vims;
 

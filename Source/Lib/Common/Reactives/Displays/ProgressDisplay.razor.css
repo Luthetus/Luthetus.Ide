@@ -1,0 +1,19 @@
+.luth_progress {
+    position: relative;
+    height: 1.5em;
+    text-align: center;
+    background-color: var(--luth_active-no-focus-background-color);
+}
+
+.luth_progress-text {
+    z-index: 1;
+    position: absolute;
+}
+
+.luth_progress-filler {
+    position: absolute;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-color: var(--luth_active-with-focus-background-color);
+}

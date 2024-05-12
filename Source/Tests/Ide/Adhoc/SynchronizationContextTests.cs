@@ -88,13 +88,17 @@ public class SynchronizationContextTests
     ///               that the task somehow finishes.
     /// </summary>
     [Fact]
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
     public async Task AsynchronousNoAwait()
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
     {
         var initialValue = 2;
         var expectedValue = 2;
 
         var x = initialValue;
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         Task.Run(() => { x++; });
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
         Assert.Equal(expectedValue, x);
     }
@@ -105,13 +109,17 @@ public class SynchronizationContextTests
     /// What if I have the for loop go up to a smaller upper limit.
     /// </summary>
     [Fact]
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
     public async Task AsynchronousNoAwait_TryToGetTheNotAwaitedTaskToComplete_ByExecutingSynchronousCodeBetweenItAndTheIncrementation_LargeForLoopUpperBound()
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
     {
         var initialValue = 2;
         var expectedValue = 3;
 
         var x = initialValue;
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         Task.Run(() => { x++; });
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
         for (var i = 0; i < 1_000_000; i++)
         {
@@ -162,13 +170,17 @@ public class SynchronizationContextTests
     /// and it will be solely inexplainable.<br/><br/>
     /// </summary>
     [Fact]
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
     public async Task AsynchronousNoAwait_TryToGetTheNotAwaitedTaskToComplete_ByExecutingSynchronousCodeBetweenItAndTheIncrementation_SmallForLoopUpperBound()
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
     {
         var initialValue = 2;
         var expectedValue = 2;
 
         var x = initialValue;
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         Task.Run(() => { x++; });
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
         for (var i = 0; i < 10; i++)
         {
@@ -189,7 +201,9 @@ public class SynchronizationContextTests
         var expectedValue = 3;
 
         var x = initialValue;
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         Task.Run(() => { x++; });
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
         await Task.Delay(100);
 
@@ -206,7 +220,9 @@ public class SynchronizationContextTests
         var expectedValue = 2;
 
         var x = initialValue;
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         Task.Run(() => { x++; });
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
         await Task.Delay(0);
 
@@ -233,7 +249,9 @@ public class SynchronizationContextTests
         var expectedValue = 3;
 
         var x = initialValue;
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         Task.Run(() => { x++; });
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
         await Task.Delay(1);
 
@@ -367,6 +385,6 @@ public class SynchronizationContextTests
     [Fact]
     public void Parallel_Async()
     {
-
+        // TODO: This and more, I have an idea about the application and want to look into that before continuing these.
     }
 }

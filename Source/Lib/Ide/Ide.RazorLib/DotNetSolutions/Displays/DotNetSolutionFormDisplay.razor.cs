@@ -2,9 +2,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.Ide.RazorLib.InputFiles.States;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
@@ -16,6 +14,7 @@ using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 
@@ -34,9 +33,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
-    private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
-    [Inject]
-    private InputFileSync InputFileSync { get; set; } = null!;
+    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 
     [CascadingParameter]
     public IDialog DialogRecord { get; set; } = null!;
@@ -57,28 +54,30 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 
     private FormattedCommand FormattedCommand => DotNetCliCommandFormatter.FormatDotnetNewSln(_solutionName);
 
-    private void RequestInputFileForParentDirectory()
+    private async Task RequestInputFileForParentDirectory()
     {
-        InputFileSync.RequestInputFileStateForm("Directory for new .NET Solution",
-            async absolutePath =>
-            {
-                if (absolutePath is null)
-                    return;
+        await IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+                "Directory for new .NET Solution",
+                async absolutePath =>
+                {
+                    if (absolutePath is null)
+                        return;
 
-                _parentDirectoryName = absolutePath.Value;
-                await InvokeAsync(StateHasChanged);
-            },
-            absolutePath =>
-            {
-                if (absolutePath is null || !absolutePath.IsDirectory)
-                    return Task.FromResult(false);
+                    _parentDirectoryName = absolutePath.Value;
+                    await InvokeAsync(StateHasChanged);
+                },
+                absolutePath =>
+                {
+                    if (absolutePath is null || !absolutePath.IsDirectory)
+                        return Task.FromResult(false);
 
-                return Task.FromResult(true);
-            },
-            new[]
-            {
-                new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
-            }.ToImmutableArray());
+                    return Task.FromResult(true);
+                },
+                new[]
+                {
+                    new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
+                }.ToImmutableArray())
+            .ConfigureAwait(false);
     }
 
     private async Task StartNewDotNetSolutionCommandOnClick()
@@ -96,8 +95,9 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
         if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.Photino)
         {
             await HackForWebsite_StartNewDotNetSolutionCommandOnClick(
-                localSolutionName,
-                localParentDirectoryName);
+                    localSolutionName,
+                    localParentDirectoryName)
+                .ConfigureAwait(false);
         }
         else
         {
@@ -106,7 +106,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 localFormattedCommand,
                 _parentDirectoryName,
                 NewDotNetSolutionCancellationTokenSource.Token,
-                () =>
+                async () =>
                 {
                     // Close Dialog
                     Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
@@ -128,13 +128,14 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         solutionAbsolutePathString,
                         false);
 
-                    DotNetSolutionSync.SetDotNetSolution(solutionAbsolutePath);
-                    return Task.CompletedTask;
+                    await IdeBackgroundTaskApi.DotNetSolution
+                        .SetDotNetSolution(solutionAbsolutePath)
+                        .ConfigureAwait(false);
                 });
 
             var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
 
-            await generalTerminal.EnqueueCommandAsync(newDotNetSolutionCommand);
+            await generalTerminal.EnqueueCommandAsync(newDotNetSolutionCommand).ConfigureAwait(false);
         }
     }
 
@@ -147,7 +148,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             EnvironmentProvider.DirectorySeparatorChar;
 
         await FileSystemProvider.Directory
-            .CreateDirectoryAsync(directoryContainingSolution);
+            .CreateDirectoryAsync(directoryContainingSolution)
+            .ConfigureAwait(false);
 
         var localSolutionFilenameWithExtension =
             localSolutionName +
@@ -159,8 +161,9 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             localSolutionFilenameWithExtension);
 
         await FileSystemProvider.File.WriteAllTextAsync(
-            solutionAbsolutePathString,
-            HackForWebsite_NEW_SOLUTION_TEMPLATE);
+                solutionAbsolutePathString,
+                HackForWebsite_NEW_SOLUTION_TEMPLATE)
+            .ConfigureAwait(false);
 
         // Close Dialog
         Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
@@ -171,7 +174,9 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             solutionAbsolutePathString,
             false);
 
-        DotNetSolutionSync.SetDotNetSolution(solutionAbsolutePath);
+        await IdeBackgroundTaskApi.DotNetSolution
+            .SetDotNetSolution(solutionAbsolutePath)
+            .ConfigureAwait(false);
     }
 
     public const string HackForWebsite_NEW_SOLUTION_TEMPLATE = @"

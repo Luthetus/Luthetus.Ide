@@ -13,7 +13,8 @@ public partial class TreeViewHelper
         var directoryAbsolutePathString = directoryTreeView.Item.AbsolutePath.Value;
 
         var directoryPathStringsList = await directoryTreeView.FileSystemProvider.Directory
-            .GetDirectoriesAsync(directoryAbsolutePathString);
+            .GetDirectoriesAsync(directoryAbsolutePathString)
+            .ConfigureAwait(false);
 
         var childDirectoryTreeViewModels = directoryPathStringsList
             .OrderBy(pathString => pathString)
@@ -39,7 +40,8 @@ public partial class TreeViewHelper
             });
 
         var filePathStringsList = await directoryTreeView.FileSystemProvider.Directory
-            .GetFilesAsync(directoryAbsolutePathString);
+            .GetFilesAsync(directoryAbsolutePathString)
+            .ConfigureAwait(false);
 
         var childFileTreeViewModels = filePathStringsList
             .OrderBy(pathString => pathString)
@@ -82,7 +84,8 @@ public partial class TreeViewHelper
         var directoryAbsolutePathString = directoryTreeView.Item.Value;
 
         var directoryPathStringsList = await directoryTreeView.FileSystemProvider.Directory
-            .GetDirectoriesAsync(directoryAbsolutePathString);
+            .GetDirectoriesAsync(directoryAbsolutePathString)
+            .ConfigureAwait(false);
 
         var childDirectoryTreeViewModels = directoryPathStringsList
             .OrderBy(pathString => pathString)
@@ -102,7 +105,8 @@ public partial class TreeViewHelper
             });
 
         var filePathStringsList = await directoryTreeView.FileSystemProvider.Directory
-            .GetFilesAsync(directoryAbsolutePathString);
+            .GetFilesAsync(directoryAbsolutePathString)
+            .ConfigureAwait(false);
 
         var childFileTreeViewModels = filePathStringsList
             .OrderBy(pathString => pathString)

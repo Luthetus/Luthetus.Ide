@@ -19,15 +19,20 @@ public partial class LuthetusCommonInitializer : ComponentBase
     {
         if (firstRender)
         {
-            BackgroundTaskService.Enqueue(
+            await BackgroundTaskService.EnqueueAsync(
                 Key<BackgroundTask>.NewKey(),
                 ContinuousBackgroundTaskWorker.GetQueueKey(),
                 nameof(LuthetusCommonInitializer),
                 async () =>
                 {
-                    AppOptionsService.SetActiveThemeRecordKey(CommonConfig.InitialThemeKey, false);
-                    await AppOptionsService.SetFromLocalStorageAsync();
-                });
+                    await AppOptionsService
+                        .SetActiveThemeRecordKey(CommonConfig.InitialThemeKey, false)
+                        .ConfigureAwait(false);
+
+                    await AppOptionsService
+                        .SetFromLocalStorageAsync()
+                        .ConfigureAwait(false);
+                }).ConfigureAwait(false);
         }
 
         await base.OnAfterRenderAsync(firstRender);

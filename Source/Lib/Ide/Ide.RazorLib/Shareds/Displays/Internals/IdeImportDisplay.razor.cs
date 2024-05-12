@@ -91,11 +91,11 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
             // request.Headers.Add("Authorization", 222"Bearer <YOUR-TOKEN>");
             request.Headers.Add("X-GitHub-Api-Version", "2022-11-28");
 
-            var response = await HttpClient.SendAsync(request);
+            var response = await HttpClient.SendAsync(request).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
             {
-                using var responseStream = await response.Content.ReadAsStreamAsync();
+                using var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 var zipArchive = new ZipArchive(responseStream);
 
                 // UI progress indicator
@@ -112,7 +112,7 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
 
                     var stream = entry.Open();
                     var streamReader = new StreamReader(stream);
-                    var contents = await streamReader.ReadToEndAsync();
+                    var contents = await streamReader.ReadToEndAsync().ConfigureAwait(false);
 
                     // Add the file to the in-memory filesystem.
                     // (all the code in this file is for the demo website)
@@ -122,10 +122,12 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
 
                         var absoluteFilePathString = $"/{localRepo}/{entry.FullName}";
 
-                        await FileSystemProvider.File.WriteAllTextAsync(
+                        await FileSystemProvider.File
+                            .WriteAllTextAsync(
                                 absoluteFilePathString,
                                 contents,
-                                _activeCancellationToken.Value);
+                                _activeCancellationToken.Value)
+                            .ConfigureAwait(false);
 
                         if (entry.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION))
                             PromptUserOpenSolution(absoluteFilePathString);

@@ -313,6 +313,52 @@ public class DotNetSolutionParser : ILuthParser
 
     CompilationUnit ILuthParser.Parse(ILuthBinder previousBinder, ResourceUri resourceUri)
     {
-        throw new NotImplementedException();
+        Parse();
+
+        return new CompilationUnit(null, Lexer, this, previousBinder);
+
+        /*
+         solutionParser.DotNetSolutionHeader.FormatVersionPair?.AssociatedNameToken.TextSpan
+solutionParser.DotNetSolutionHeader.FormatVersionPair?.AssociatedValueToken.TextSpan
+solutionParser.DotNetSolutionHeader.HashtagVisualStudioVersionPair?.AssociatedNameToken.TextSpan
+solutionParser.DotNetSolutionHeader.HashtagVisualStudioVersionPair?.AssociatedValueToken.TextSpan
+solutionParser.DotNetSolutionHeader.ExactVisualStudioVersionPair?.AssociatedNameToken.TextSpan
+solutionParser.DotNetSolutionHeader.ExactVisualStudioVersionPair?.AssociatedValueToken.TextSpan
+solutionParser.DotNetSolutionHeader.MinimumVisualStudioVersionPair?.AssociatedNameToken.TextSpan
+solutionParser.DotNetSolutionHeader.MinimumVisualStudioVersionPair?.AssociatedValueToken.TextSpan
+
+@foreach (var project in solutionParser.DotNetProjectList)
+{
+Luthetus.CompilerServices.Lang.DotNetSolution.Facts.LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN
+@project.ProjectTypeGuid
+@project.DisplayName
+@project.RelativePathFromSolutionFileString
+@project.ProjectIdGuid
+@project.ProjectTypeGuid
+@project.DisplayName
+@project.RelativePathFromSolutionFileString
+@project.ProjectIdGuid
+Luthetus.CompilerServices.Lang.DotNetSolution.Facts.LexSolutionFacts.Project.PROJECT_DEFINITION_END_TOKEN
+}
+
+@Luthetus.CompilerServices.Lang.DotNetSolution.Facts.LexSolutionFacts.Global.START_TOKEN
+@foreach (var globalSection in solutionParser.DotNetSolutionGlobal.DotNetSolutionGlobalSectionList)
+{
+@Luthetus.CompilerServices.Lang.DotNetSolution.Facts.LexSolutionFacts.GlobalSection.START_TOKEN
+@globalSection.GlobalSectionArgument?.TextSpan.GetText()
+@globalSection.GlobalSectionOrder?.TextSpan.GetText()
+@foreach (var associatedEntry in globalSection.AssociatedEntryGroup.AssociatedEntryList)
+{
+@associatedPair.AssociatedNameToken.TextSpan.GetText()
+@associatedPair.AssociatedValueToken.TextSpan.GetText()
+}
+@Luthetus.CompilerServices.Lang.DotNetSolution.Facts.LexSolutionFacts.GlobalSection.END_TOKEN
+}
+@Luthetus.CompilerServices.Lang.DotNetSolution.Facts.LexSolutionFacts.Global.END_TOKEN
+         */
+
+
+
+
     }
 }

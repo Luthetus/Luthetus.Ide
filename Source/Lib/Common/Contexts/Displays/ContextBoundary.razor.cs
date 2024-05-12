@@ -55,7 +55,7 @@ public partial class ContextBoundary : ComponentBase
             return;
         }
 
-        await HandleKeymapArgumentAsync(keyboardEventArgs.ToKeymapArgument());
+        await HandleKeymapArgumentAsync(keyboardEventArgs.ToKeymapArgument()).ConfigureAwait(false);
     }
 
     public async Task HandleKeymapArgumentAsync(KeymapArgument keymapArgument)
@@ -63,9 +63,9 @@ public partial class ContextBoundary : ComponentBase
         var success = ContextRecord.Keymap.Map.TryGetValue(keymapArgument, out var command);
 
         if (success && command is not null)
-            await command.CommandFunc(new CommonCommandArgs());
+            await command.CommandFunc(new CommonCommandArgs()).ConfigureAwait(false);
         else if (ParentContextBoundary is not null)
-            await ParentContextBoundary.HandleKeymapArgumentAsync(keymapArgument);
+            await ParentContextBoundary.HandleKeymapArgumentAsync(keymapArgument).ConfigureAwait(false);
     }
 
     public ImmutableArray<Key<ContextRecord>> GetContextBoundaryHeirarchy(List<Key<ContextRecord>> contextRecordKeyList)

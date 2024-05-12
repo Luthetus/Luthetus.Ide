@@ -9,7 +9,7 @@ using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 public partial class TextEditorModel
 {

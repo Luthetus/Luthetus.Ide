@@ -45,7 +45,10 @@ public partial class PanelGroupDisplay : FluxorComponent
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender)
-            await PassAlongSizeIfHiddenAsync();
+        {
+            await PassAlongSizeIfHiddenAsync()
+                .ConfigureAwait(false);
+        }
 
         await base.OnAfterRenderAsync(firstRender);
     }
@@ -115,13 +118,17 @@ public partial class PanelGroupDisplay : FluxorComponent
                     Purpose = DimensionAttributeModificationPurpose
                 });
 
-                await ReRenderSelfAndAdjacentElementDimensionsFunc.Invoke();
+                await ReRenderSelfAndAdjacentElementDimensionsFunc
+                    .Invoke()
+                    .ConfigureAwait(false);
             }
             else if (activePanelTab is not null && indexOfPreviousPassAlong != -1)
             {
                 adjacentElementSizeDimensionAttribute.DimensionUnitList.RemoveAt(indexOfPreviousPassAlong);
 
-                await ReRenderSelfAndAdjacentElementDimensionsFunc.Invoke();
+                await ReRenderSelfAndAdjacentElementDimensionsFunc
+                    .Invoke()
+                    .ConfigureAwait(false);
             }
         }
     }

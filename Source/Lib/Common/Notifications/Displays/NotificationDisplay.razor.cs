@@ -71,8 +71,9 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
                     try
                     {
                         await Task.Delay(
-                            localNotification.NotificationOverlayLifespan.Value,
-                            _notificationOverlayCancellationTokenSource.Token);
+                                localNotification.NotificationOverlayLifespan.Value,
+                                _notificationOverlayCancellationTokenSource.Token)
+                            .ConfigureAwait(false);
 
                         HandleShouldNoLongerRender();
                     }

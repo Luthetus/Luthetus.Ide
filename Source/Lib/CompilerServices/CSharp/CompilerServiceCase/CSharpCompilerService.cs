@@ -137,8 +137,9 @@ public sealed class CSharpCompilerService : LuthCompilerService
                             return;
                         }
 
-                        _textEditorService.PostIndependent(
+                        _textEditorService.PostSimpleBatch(
                             "Add using statement",
+                            string.Empty,
                             async editContext =>
                             {
                                 var modelModifier = editContext.GetModelModifier(textSpan.ResourceUri);

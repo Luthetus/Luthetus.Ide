@@ -2,7 +2,7 @@
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
-using Luthetus.Ide.RazorLib.InputFiles.States;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 
@@ -37,7 +37,7 @@ public interface IMenuOptionsFactory
         TreeViewNamespacePath projectReceivingReference,
         Terminal terminal,
         IDispatcher dispatcher,
-        InputFileSync inputFileSync,
+        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord RemoveProjectToProjectReference(

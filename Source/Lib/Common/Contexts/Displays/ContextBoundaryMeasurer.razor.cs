@@ -47,7 +47,8 @@ public partial class ContextBoundaryMeasurer : FluxorComponent
             if (contextState.IsSelectingInspectionTarget)
             {
                 var measuredHtmlElementDimensions = await JsRuntime.GetLuthetusCommonApi()
-                    .MeasureElementById(ContextRecord.ContextElementId);
+                    .MeasureElementById(ContextRecord.ContextElementId)
+                    .ConfigureAwait(false);
                 
                 var contextBoundaryHeirarchy = GetContextBoundaryHeirarchy.Invoke();
 

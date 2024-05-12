@@ -65,11 +65,12 @@ public record TextEditorGroup(
         foreach (var viewModelKey in localViewModelKeyList)
         {
             await CloseAsync(new DynamicViewModelAdapterTextEditor(
-                viewModelKey,
-                TextEditorService,
-                Dispatcher,
-                DialogService,
-                JsRuntime));
+                    viewModelKey,
+                    TextEditorService,
+                    Dispatcher,
+                    DialogService,
+                    JsRuntime))
+                .ConfigureAwait(false);
         }
     }
 }

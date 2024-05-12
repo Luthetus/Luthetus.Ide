@@ -109,8 +109,8 @@ public record Panel : IPanelTab, IDialog, IDrag
 		foreach (var panelGroupHtmlIdTuple in panelGroupHtmlIdTupleList)
 		{
 			var measuredHtmlElementDimensions = await JsRuntime.GetLuthetusCommonApi()
-                .MeasureElementById(
-                    panelGroupHtmlIdTuple.HtmlElementId);
+                .MeasureElementById(panelGroupHtmlIdTuple.HtmlElementId)
+                .ConfigureAwait(false);
 
 			measuredHtmlElementDimensions = measuredHtmlElementDimensions with
 			{

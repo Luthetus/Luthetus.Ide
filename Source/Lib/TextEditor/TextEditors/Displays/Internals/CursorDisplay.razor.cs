@@ -5,12 +5,11 @@ using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Htmls.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
-using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -43,7 +42,8 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     public RenderFragment AutoCompleteMenuRenderFragment { get; set; } = null!;
 
     private readonly Guid _intersectionObserverMapKey = Guid.NewGuid();
-    private readonly IThrottle _throttleShouldRevealCursor = new Throttle(TimeSpan.FromMilliseconds(333));
+
+    private readonly ThrottleAsync _throttleShouldRevealCursor = new(TimeSpan.FromMilliseconds(333));
 
     private ElementReference? _cursorDisplayElementReference;
     private MenuKind _menuKind;
@@ -100,7 +100,8 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                     $"luth_te_proportional-font-measurement-parent_{viewModel.ViewModelKey.Guid}_cursor_{guid}",
                     $"luth_te_proportional-font-measurement-cursor_{viewModel.ViewModelKey.Guid}_cursor_{guid}",
                     textOffsettingCursor,
-                    true);
+                    true)
+                .ConfigureAwait(false);
 
             var previousLeftRelativeToParentInPixels = _leftRelativeToParentInPixels;
 
@@ -117,7 +118,8 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                     _intersectionObserverMapKey.ToString(),
                     DotNetObjectReference.Create(this),
                     ScrollableContainerId,
-                    CursorDisplayId);
+                    CursorDisplayId)
+                .ConfigureAwait(false);
 
             _previouslyObservedCursorDisplayId = CursorDisplayId;
         }
@@ -128,32 +130,42 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
             if (!RenderBatch.ViewModel.UnsafeState.CursorIsIntersecting)
             {
-                _throttleShouldRevealCursor.PushEvent(_ =>
+                var localRenderBatch = RenderBatch;
+
+                var id = nameof(CursorDisplay) +
+                    ", " +
+                    nameof(TextEditorService.ViewModelApi.ScrollIntoViewFactory) +
+                    localRenderBatch.ViewModel.ViewModelKey.ToString();
+
+                await _throttleShouldRevealCursor.PushEvent(_ =>
                 {
-                    var id = nameof(CursorDisplay) +
-                        ", " +
-                        nameof(TextEditorService.ViewModelApi.ScrollIntoViewFactory) +
-                        RenderBatch.ViewModel.ViewModelKey.ToString();
-
-                    var cursorPositionIndex = RenderBatch.Model.GetPositionIndex(Cursor);
-
-                    var cursorTextSpan = new TextEditorTextSpan(
-                        cursorPositionIndex,
-                        cursorPositionIndex + 1,
-                        0,
-                        RenderBatch.Model.ResourceUri,
-                        RenderBatch.Model.GetAllText());
-
-                    TextEditorService.PostRedundant(
+                    // TODO: Need to add 'TextEditorService.PostTakeMostRecent' and simple batch combination.
+                    //
+                    // I think after removing the throttle, that this is an infinite loop on WASM,
+                    // i.e. holding down ArrowRight
+                    TextEditorService.PostSimpleBatch(
                         id,
                         id,
-                        TextEditorService.ViewModelApi.ScrollIntoViewFactory(
-                            RenderBatch.Model.ResourceUri,
-                            RenderBatch.ViewModel.ViewModelKey,
-                            cursorTextSpan));
+                        editContext =>
+                        {
+                            var cursorPositionIndex = localRenderBatch.Model.GetPositionIndex(Cursor);
+
+                            var cursorTextSpan = new TextEditorTextSpan(
+                                cursorPositionIndex,
+                                cursorPositionIndex + 1,
+                                0,
+                                localRenderBatch.Model.ResourceUri,
+                                localRenderBatch.Model.GetAllText());
+
+                            return TextEditorService.ViewModelApi.ScrollIntoViewFactory(
+                                    localRenderBatch.Model.ResourceUri,
+                                    localRenderBatch.ViewModel.ViewModelKey,
+                                    cursorTextSpan)
+                                .Invoke(editContext);
+                        });
 
                     return Task.CompletedTask;
-                });
+                }).ConfigureAwait(false);
             }
         }
 
@@ -322,7 +334,11 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         try
         {
             if (_cursorDisplayElementReference is not null)
-                await _cursorDisplayElementReference.Value.FocusAsync();
+            {
+                await _cursorDisplayElementReference.Value
+                    .FocusAsync()
+                    .ConfigureAwait(false);
+            }
         }
         catch (Exception)
         {
@@ -353,7 +369,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         await InvokeAsync(StateHasChanged);
 
         if (shouldFocusCursor && _menuKind == MenuKind.None)
-            await FocusAsync();
+            await FocusAsync().ConfigureAwait(false);
     }
 
     public async Task SetFocusToActiveMenuAsync()
@@ -394,7 +410,8 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                     await JsRuntime.GetLuthetusTextEditorApi()
                         .DisposeTextEditorCursorIntersectionObserver(
                             CancellationToken.None,
-                            _intersectionObserverMapKey.ToString());
+                            _intersectionObserverMapKey.ToString())
+                        .ConfigureAwait(false);
                 }
                 catch (Exception e)
                 {

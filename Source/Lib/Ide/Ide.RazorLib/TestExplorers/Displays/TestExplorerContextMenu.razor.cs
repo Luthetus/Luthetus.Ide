@@ -38,7 +38,7 @@ public partial class TestExplorerContextMenu : ComponentBase
     {
         // Usage of 'OnInitializedAsync' lifecycle method ensure the context menu is only rendered once.
 		// Otherwise, one might have the context menu's options change out from under them.
-        _menuRecord = await GetMenuRecord(TreeViewCommandArgs);
+        _menuRecord = await GetMenuRecord(TreeViewCommandArgs).ConfigureAwait(false);
 		await InvokeAsync(StateHasChanged);
 
         await base.OnInitializedAsync();
@@ -48,7 +48,7 @@ public partial class TestExplorerContextMenu : ComponentBase
     {
 		if (!isRecursiveCall && commandArgs.TreeViewContainer.SelectedNodeList.Count > 1)
 		{
-			return await GetMultiSelectionMenuRecord(commandArgs);
+			return await GetMultiSelectionMenuRecord(commandArgs).ConfigureAwait(false);
 		}
 
         if (commandArgs.NodeThatReceivedMouseEvent is null)
@@ -75,19 +75,21 @@ public partial class TestExplorerContextMenu : ComponentBase
 				var menuOptionRecord = new MenuOptionRecord(
 					$"Run: {treeViewStringFragment.Item.Value}",
 					MenuOptionKind.Other,
-					OnClickFunc: () => 
+					OnClickFunc: async () => 
 					{
 						if (treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory is not null)
 						{
-                            BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), BlockingBackgroundTaskWorker.GetQueueKey(),
-								"RunTestByFullyQualifiedName",
-								async () => await RunTestByFullyQualifiedName(
-									treeViewStringFragment,
-									fullyQualifiedName,
-									treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory.Value));
+                            await BackgroundTaskService.EnqueueAsync(
+									Key<BackgroundTask>.NewKey(),
+									BlockingBackgroundTaskWorker.GetQueueKey(),
+									"RunTestByFullyQualifiedName",
+									async () => await RunTestByFullyQualifiedName(
+											treeViewStringFragment,
+											fullyQualifiedName,
+											treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory.Value)
+										.ConfigureAwait(false))
+								.ConfigureAwait(false);
                         }
-
-						return Task.CompletedTask;
 					});
 	
 				menuRecordsList.Add(menuOptionRecord);
@@ -132,16 +134,21 @@ public partial class TestExplorerContextMenu : ComponentBase
 				menuOption = new(
 					treeViewStringFragment.Item.Value,
 				    MenuOptionKind.Other,
-				    SubMenu: await GetMenuRecord(innerTreeViewCommandArgs, true));
+				    SubMenu: await GetMenuRecord(innerTreeViewCommandArgs, true).ConfigureAwait(false));
 
 				var copyRunAllOnClicksWithinSelection = runAllOnClicksWithinSelection;
 
 				runAllOnClicksWithinSelection = async () =>
 				{
-					await copyRunAllOnClicksWithinSelection.Invoke();
+					await copyRunAllOnClicksWithinSelection.Invoke().ConfigureAwait(false);
 
 					if (menuOption.SubMenu?.MenuOptionList.Single().OnClickFunc is not null)
-						await menuOption.SubMenu.MenuOptionList.Single().OnClickFunc!.Invoke();
+					{
+						await menuOption.SubMenu.MenuOptionList
+							.Single().OnClickFunc!
+							.Invoke()
+							.ConfigureAwait(false);
+					}
 				};
 
 				runAllOnClicksWithinSelectionHasEffect = true;
@@ -194,7 +201,9 @@ public partial class TestExplorerContextMenu : ComponentBase
             () => Task.CompletedTask,
 			() => Task.CompletedTask);
 
-        await executionTerminal.EnqueueCommandAsync(dotNetTestByFullyQualifiedNameTerminalCommand);
+        await executionTerminal
+			.EnqueueCommandAsync(dotNetTestByFullyQualifiedNameTerminalCommand)
+            .ConfigureAwait(false);
 	}
 
     public static string GetContextMenuCssStyleString(TreeViewCommandArgs? commandArgs)

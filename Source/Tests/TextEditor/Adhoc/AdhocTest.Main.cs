@@ -1,5 +1,4 @@
 ﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Fluxor;
@@ -409,8 +408,9 @@ public partial class AdhocTest
 
         refModel = textEditorService.ModelApi.GetOrDefault(refModel.ResourceUri) ?? throw new ArgumentNullException();
 
-        textEditorService.PostIndependent(
+        textEditorService.PostSimpleBatch(
             nameof(ContentList_Change),
+            string.Empty,
             textEditorService.ModelApi.ApplySyntaxHighlightingFactory(refModel.ResourceUri));
 
         // ContentList

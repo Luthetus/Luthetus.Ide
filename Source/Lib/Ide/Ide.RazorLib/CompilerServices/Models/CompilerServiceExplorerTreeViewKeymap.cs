@@ -1,23 +1,23 @@
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.CompilerServices.Models;
 
 public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
-    private readonly EditorSync _editorSync;
+    private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
 
     public CompilerServiceExplorerTreeViewKeyboardEventHandler(
-        EditorSync editorSync,
+        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
         ITreeViewService treeViewService,
 		IBackgroundTaskService backgroundTaskService)
         : base(treeViewService, backgroundTaskService)
     {
-        _editorSync = editorSync;
+        _ideBackgroundTaskApi = ideBackgroundTaskApi;
     }
 
     public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
@@ -30,11 +30,9 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
         switch (commandArgs.KeyboardEventArgs.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
-                InvokeOpenInEditor(commandArgs, true);
-                return Task.CompletedTask;
+                return InvokeOpenInEditor(commandArgs, true);
             case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
-                InvokeOpenInEditor(commandArgs, false);
-                return Task.CompletedTask;
+                return InvokeOpenInEditor(commandArgs, false);
         }
 
         if (commandArgs.KeyboardEventArgs.CtrlKey)
@@ -79,14 +77,15 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
         return;
     }
 
-    private void InvokeOpenInEditor(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)
+    private async Task InvokeOpenInEditor(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)
     {
         var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
 
-        _editorSync.OpenInEditor(treeViewNamespacePath.Item.AbsolutePath, shouldSetFocusToEditor);
-        return;
+        await _ideBackgroundTaskApi.Editor
+            .OpenInEditor(treeViewNamespacePath.Item.AbsolutePath, shouldSetFocusToEditor)
+            .ConfigureAwait(false);
     }
 }

@@ -59,7 +59,7 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
             var newChildList = new List<TreeViewNoType>();
 
             if (Item.IsDirectory)
-                newChildList = await TreeViewHelper.LoadChildrenForDirectoryAsync(this);
+                newChildList = await TreeViewHelper.LoadChildrenForDirectoryAsync(this).ConfigureAwait(false);
 
             ChildList = newChildList;
             LinkChildren(previousChildren, ChildList);

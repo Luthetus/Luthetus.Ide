@@ -61,7 +61,11 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 		var localTabListDisplay = _tabListDisplay;
 
 		if (localTabListDisplay is not null)
-			await localTabListDisplay.NotifyStateChangedAsync();
+        {
+			await localTabListDisplay
+                .NotifyStateChangedAsync()
+                .ConfigureAwait(false);
+        }
 	}
 
 	private ImmutableArray<ITab> GetTabList(TextEditorGroup textEditorGroup)

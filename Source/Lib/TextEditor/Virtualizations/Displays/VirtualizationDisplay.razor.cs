@@ -76,7 +76,8 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
                         _virtualizationDisplayGuid.ToString(),
                         DotNetObjectReference.Create(this),
                         _scrollableParentFinder,
-                        boundaryIdList);
+                        boundaryIdList)
+                    .ConfigureAwait(false);
             }
         }
 
@@ -108,8 +109,9 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
                 await JsRuntime.GetLuthetusTextEditorApi()
                     .DisposeVirtualizationIntersectionObserver(
                         CancellationToken.None,
-                        _virtualizationDisplayGuid.ToString());
-            }, CancellationToken.None);
+                        _virtualizationDisplayGuid.ToString())
+                    .ConfigureAwait(false);
+            }, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

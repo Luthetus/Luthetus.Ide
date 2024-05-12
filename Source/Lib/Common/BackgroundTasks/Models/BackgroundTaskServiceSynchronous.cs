@@ -11,17 +11,18 @@ public class BackgroundTaskServiceSynchronous : IBackgroundTaskService
 
     public ImmutableArray<BackgroundTaskQueue> Queues => _queueMap.Values.ToImmutableArray();
 
-    public void Enqueue(IBackgroundTask backgroundTask)
+    public Task EnqueueAsync(IBackgroundTask backgroundTask)
     {
         // TODO: Could there be concurrency issues regarding '_enqueuesAreDisabled'? (2023-11-19)
         if (_enqueuesAreDisabled)
-            return;
+            return Task.CompletedTask;
 
         var queue = _queueMap[backgroundTask.QueueKey];
 
 		// TODO: Why enqueue when no dequeue happens? Also StopAsync seems nonsensical
 		// for the same reason. This is the synchronous version.
-        queue.Enqueue(backgroundTask);
+        queue.Queue.EnqueueAsync(backgroundTask)
+            .Wait();
 
         SetExecutingBackgroundTask(backgroundTask.QueueKey, backgroundTask);
 
@@ -33,22 +34,22 @@ public class BackgroundTaskServiceSynchronous : IBackgroundTaskService
 		// this BackgroundTaskServiceSynchronous implementation.
 
         SetExecutingBackgroundTask(backgroundTask.QueueKey, null);
+
+        return Task.CompletedTask;
     }
 
-    public void Enqueue(
-        Key<BackgroundTask> taskKey,
-        Key<BackgroundTaskQueue> queueKey,
-        string name,
-        Func<Task> runFunc)
+    public Task EnqueueAsync(Key<BackgroundTask> taskKey, Key<BackgroundTaskQueue> queueKey, string name, Func<Task> runFunc)
     {
-        Enqueue(new BackgroundTask(taskKey, queueKey, name, runFunc));
+        return EnqueueAsync(new BackgroundTask(taskKey, queueKey, name, runFunc));
     }
 
-    public Task<IBackgroundTask?> DequeueAsync(
+    public Task<IBackgroundTask> DequeueAsync(
         Key<BackgroundTaskQueue> queueKey,
         CancellationToken cancellationToken)
     {
-        return Task.FromResult(default(IBackgroundTask?));
+        throw new NotImplementedException($"The {nameof(DequeueAsync)}(...) method should not be invoked when using " +
+            $"a {nameof(BackgroundTaskServiceSynchronous)}. This type is designed such that {nameof(EnqueueAsync)}(...) " +
+            $"will invoke {nameof(Task.Wait)}() on the background task, as opposed to enqueueing.");
     }
 
     public void RegisterQueue(BackgroundTaskQueue queue)

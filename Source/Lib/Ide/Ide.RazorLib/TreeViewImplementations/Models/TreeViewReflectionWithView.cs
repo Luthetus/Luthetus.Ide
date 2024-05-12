@@ -28,7 +28,7 @@ public class TreeViewReflectionWithView : TreeViewReflection
 
         ChildList.Clear();
 
-        await base.LoadChildListAsync();
+        await base.LoadChildListAsync().ConfigureAwait(false);
 
         try
         {

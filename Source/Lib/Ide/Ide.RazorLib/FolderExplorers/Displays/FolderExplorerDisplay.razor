@@ -21,7 +21,7 @@
         @if (folderExplorerState.AbsolutePath is null)
         {
             <button class="luth_button"
-                    @onclick="() => FolderExplorerSync.ShowInputFile()">
+                    @onclick="() => IdeBackgroundTaskApi.FolderExplorer.ShowInputFile()">
                 Open Folder
             </button>
         }

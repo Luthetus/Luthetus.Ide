@@ -30,24 +30,23 @@ public class OnWheel : ITextEditorTask
 
     public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
 
-    public async Task InvokeWithEditContext(IEditContext editContext)
+    public Task InvokeWithEditContext(IEditContext editContext)
     {
         var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
-
         if (viewModelModifier is null)
-            return;
+            return Task.CompletedTask;
 
         if (WheelEventArgs.ShiftKey)
         {
-            await viewModelModifier.ViewModel.MutateScrollHorizontalPositionByPixelsFactory(WheelEventArgs.DeltaY)
-                .Invoke(editContext)
-                .ConfigureAwait(false);
+            return editContext.TextEditorService.ViewModelApi
+                .MutateScrollHorizontalPositionFactory(ViewModelKey, WheelEventArgs.DeltaY)
+                .Invoke(editContext);
         }
         else
         {
-            await viewModelModifier.ViewModel.MutateScrollVerticalPositionByPixelsFactory(WheelEventArgs.DeltaY)
-                .Invoke(editContext)
-                .ConfigureAwait(false);
+            return editContext.TextEditorService.ViewModelApi
+                .MutateScrollVerticalPositionFactory(ViewModelKey, WheelEventArgs.DeltaY)
+                .Invoke(editContext);
         }
     }
 

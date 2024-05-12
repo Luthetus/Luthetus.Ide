@@ -41,7 +41,9 @@ public partial class ContextMenu : ComponentBase
             {
                 try
                 {
-                    await _textEditorContextMenuElementReference.Value.FocusAsync();
+                    await _textEditorContextMenuElementReference.Value
+                        .FocusAsync()
+                        .ConfigureAwait(false);
                 }
                 catch (Exception)
                 {
@@ -79,14 +81,20 @@ public partial class ContextMenu : ComponentBase
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
-            await SetShouldDisplayMenuAsync.Invoke(MenuKind.None, true);
+        {
+            await SetShouldDisplayMenuAsync
+                .Invoke(MenuKind.None, true)
+                .ConfigureAwait(false);
+        }
     }
 
     private async Task ReturnFocusToThisAsync()
     {
         try
         {
-            await SetShouldDisplayMenuAsync.Invoke(MenuKind.None, true);
+            await SetShouldDisplayMenuAsync
+                .Invoke(MenuKind.None, true)
+                .ConfigureAwait(false);
         }
         catch (Exception e)
         {
@@ -120,8 +128,11 @@ public partial class ContextMenu : ComponentBase
         {
             try
             {
-                await SetShouldDisplayMenuAsync.Invoke(MenuKind.None, true);
-                await menuOptionAction.Invoke();
+                await SetShouldDisplayMenuAsync
+                    .Invoke(MenuKind.None, true)
+                    .ConfigureAwait(false);
+
+                await menuOptionAction.Invoke().ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -136,18 +147,24 @@ public partial class ContextMenu : ComponentBase
     private async Task CutMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.Cut.CommandFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.Cut.CommandFunc
+            .Invoke(commandArgs)
+            .ConfigureAwait(false);
     }
 
     private async Task CopyMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.Copy.CommandFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.Copy.CommandFunc
+            .Invoke(commandArgs)
+            .ConfigureAwait(false);
     }
 
     private async Task PasteMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.PasteCommand.CommandFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.PasteCommand.CommandFunc
+            .Invoke(commandArgs)
+            .ConfigureAwait(false);
     }
 }

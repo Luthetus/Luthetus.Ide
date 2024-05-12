@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
@@ -34,31 +35,33 @@ public partial record DotNetSolutionState(
     public DotNetSolutionModel? DotNetSolutionModel => DotNetSolutionsList.FirstOrDefault(x =>
         x.Key == DotNetSolutionModelKey);
 
-    public static Task ShowInputFile(DotNetSolutionSync sync)
+    public static async Task ShowInputFile(LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi)
     {
-        sync.InputFileSync.RequestInputFileStateForm("Solution Explorer",
-            absolutePath =>
-            {
-                if (absolutePath is not null)
-                    sync.SetDotNetSolution(absolutePath);
+        await ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+                "Solution Explorer",
+                async absolutePath =>
+                {
+                    if (absolutePath is not null)
+                    {
+                        await ideBackgroundTaskApi.DotNetSolution
+                            .SetDotNetSolution(absolutePath)
+                            .ConfigureAwait(false);
+                    }
+                },
+                absolutePath =>
+                {
+                    if (absolutePath is null || absolutePath.IsDirectory)
+                        return Task.FromResult(false);
 
-                return Task.CompletedTask;
-            },
-            absolutePath =>
-            {
-                if (absolutePath is null || absolutePath.IsDirectory)
-                    return Task.FromResult(false);
-
-                return Task.FromResult(
-                    absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
-            },
-            new[]
-            {
-                new InputFilePattern(
-                    ".NET Solution",
-                    absolutePath => absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
-            }.ToImmutableArray());
-
-        return Task.CompletedTask;
+                    return Task.FromResult(
+                        absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
+                },
+                new[]
+                {
+                    new InputFilePattern(
+                        ".NET Solution",
+                        absolutePath => absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
+                }.ToImmutableArray())
+            .ConfigureAwait(false);
     }
 }

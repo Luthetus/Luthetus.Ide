@@ -4,14 +4,13 @@ using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.States;
-using Luthetus.Ide.RazorLib.Editors.States;
+using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Microsoft.AspNetCore.Components;
 
@@ -36,7 +35,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
     [Inject]
     private IState<TextEditorModelState> TextEditorModelStateWrap { get; set; } = null!;
 
-    private readonly IThrottle _throttleEventCausingReRender = new Throttle(TimeSpan.FromMilliseconds(75));
+    private readonly ThrottleAsync _throttleEventCausingReRender = new ThrottleAsync(TimeSpan.FromMilliseconds(75));
 
     private CompilerServiceRegistry _compilerServiceRegistry = null!;
     private CSharpCompilerService _cSharpCompilerService = null!;
@@ -76,7 +75,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
             var localTextEditorModelState = TextEditorModelStateWrap.Value;
 
             var editorTextEditorGroup = localTextEditorGroupState.GroupList.FirstOrDefault(
-                x => x.GroupKey == EditorSync.EditorTextEditorGroupKey);
+                x => x.GroupKey ==  LuthetusIdeEditorBackgroundTaskApi.EditorTextEditorGroupKey);
 
             var activeViewModelKey = editorTextEditorGroup?.ActiveViewModelKey ?? Key<TextEditorViewModel>.Empty;
 
@@ -153,13 +152,11 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 
     private Task ThrottledReRender()
     {
-        _throttleEventCausingReRender.PushEvent(async _ =>
+        return _throttleEventCausingReRender.PushEvent(async _ =>
         {
             _shouldRecalculateViewModel = true;
             await InvokeAsync(StateHasChanged);
         });
-
-        return Task.CompletedTask;
     }
 
     public void Dispose()

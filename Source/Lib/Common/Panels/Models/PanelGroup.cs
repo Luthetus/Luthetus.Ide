@@ -62,7 +62,7 @@ public record PanelGroup(
 
 		foreach (var tab in localTabList)
 		{
-			await CloseAsync(tab);
+			await CloseAsync(tab).ConfigureAwait(false);
 		}
 	}
 }

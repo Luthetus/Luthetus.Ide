@@ -10,7 +10,6 @@ using Luthetus.Common.RazorLib.Misc;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
-using Luthetus.Common.RazorLib.Storages.States;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -53,7 +52,6 @@ public record LuthetusCommonFactoriesTests
             .AddScoped(sp => commonConfig.CommonFactories.TreeViewServiceFactory.Invoke(sp))
             .AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime())
             .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonConfig).Assembly))
-            .AddScoped<StorageSync>()
             .AddScoped<IBackgroundTaskService>(sp => new BackgroundTaskServiceSynchronous());
 
         var serviceProvider = services.BuildServiceProvider();

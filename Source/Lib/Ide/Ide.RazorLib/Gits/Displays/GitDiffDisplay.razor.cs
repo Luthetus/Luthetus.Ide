@@ -48,6 +48,8 @@ public partial class GitDiffDisplay : ComponentBase
             localGitState.Repo.AbsolutePath.Value);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-        await generalTerminal.EnqueueCommandAsync(gitStatusCommand);
+        await generalTerminal
+            .EnqueueCommandAsync(gitStatusCommand)
+            .ConfigureAwait(false);
     }
 }

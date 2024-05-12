@@ -33,7 +33,7 @@ public partial class GitChangesContextMenu : ComponentBase
     {
         // Usage of 'OnInitializedAsync' lifecycle method ensure the context menu is only rendered once.
 		// Otherwise, one might have the context menu's options change out from under them.
-        _menuRecord = await GetMenuRecord(TreeViewCommandArgs);
+        _menuRecord = await GetMenuRecord(TreeViewCommandArgs).ConfigureAwait(false);
 		await InvokeAsync(StateHasChanged);
 
         await base.OnInitializedAsync();
@@ -43,7 +43,7 @@ public partial class GitChangesContextMenu : ComponentBase
     {
 		if (!isRecursiveCall && commandArgs.TreeViewContainer.SelectedNodeList.Count > 1)
 		{
-			return await GetMultiSelectionMenuRecord(commandArgs);
+			return await GetMultiSelectionMenuRecord(commandArgs).ConfigureAwait(false);
 		}
 
         if (commandArgs.NodeThatReceivedMouseEvent is null)
@@ -57,16 +57,16 @@ public partial class GitChangesContextMenu : ComponentBase
         return new MenuRecord(menuRecordsList.ToImmutableArray());
     }
 
-	private async Task<MenuRecord> GetMultiSelectionMenuRecord(TreeViewCommandArgs commandArgs)
+	private Task<MenuRecord> GetMultiSelectionMenuRecord(TreeViewCommandArgs commandArgs)
 	{
 		var menuOptionRecordList = new List<MenuOptionRecord>();
 		Func<Task> runAllOnClicksWithinSelection = () => Task.CompletedTask;
 		bool runAllOnClicksWithinSelectionHasEffect = false;
 
 		if (!menuOptionRecordList.Any())
-            return MenuRecord.Empty;
+            return Task.FromResult(MenuRecord.Empty);
 
-		return new MenuRecord(menuOptionRecordList.ToImmutableArray());
+		return Task.FromResult(new MenuRecord(menuOptionRecordList.ToImmutableArray()));
 	}
 
 

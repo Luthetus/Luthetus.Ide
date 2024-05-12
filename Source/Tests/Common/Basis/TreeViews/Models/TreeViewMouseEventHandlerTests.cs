@@ -97,7 +97,7 @@ public class TreeViewMouseEventHandlerTests
 
         Assert.Equal(websiteServerTreeView, websiteServerTreeViewContainer.ActiveNode);
 
-        mouseEventHandler.OnMouseDown(new TreeViewCommandArgs(
+        await mouseEventHandler.OnMouseDownAsync(new TreeViewCommandArgs(
                 treeViewService,
                 websiteServerTreeViewContainer,
                 websiteServerTreeView.ChildList.First(),

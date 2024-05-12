@@ -27,25 +27,28 @@ public partial class SymbolDisplay : ComponentBase, ITextEditorSymbolRenderer
             return;
 
         await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
-            resourceUri,
-            ServiceProvider));
+                resourceUri,
+                ServiceProvider))
+            .ConfigureAwait(false);
 
         if (TextEditorConfig.TryRegisterViewModelFunc is not null)
         {
             var viewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
-                Key<TextEditorViewModel>.NewKey(),
-                resourceUri,
-                new Category("main"),
-                false,
-                ServiceProvider));
+                    Key<TextEditorViewModel>.NewKey(),
+                    resourceUri,
+                    new Category("main"),
+                    false,
+                    ServiceProvider))
+                .ConfigureAwait(false);
 
             if (viewModelKey != Key<TextEditorViewModel>.Empty &&
                 TextEditorConfig.TryShowViewModelFunc is not null)
             {
                 await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
-                    viewModelKey,
-                    Key<TextEditorGroup>.Empty,
-                    ServiceProvider));
+                        viewModelKey,
+                        Key<TextEditorGroup>.Empty,
+                        ServiceProvider))
+                    .ConfigureAwait(false);
             }
         }
     }

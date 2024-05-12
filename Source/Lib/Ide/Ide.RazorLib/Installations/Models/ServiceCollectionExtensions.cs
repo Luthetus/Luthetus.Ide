@@ -1,12 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Fluxor;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
-using Luthetus.Ide.RazorLib.CompilerServices.States;
-using Luthetus.Ide.RazorLib.Editors.States;
-using Luthetus.Ide.RazorLib.FileSystems.States;
-using Luthetus.Ide.RazorLib.FolderExplorers.States;
-using Luthetus.Ide.RazorLib.InputFiles.States;
-using Luthetus.Ide.RazorLib.LocalStorages.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
@@ -25,10 +18,10 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.Ide.RazorLib.Decorations;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.Commands;
-using Luthetus.Ide.RazorLib.TestExplorers.States;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.Installations.Models;
 
@@ -71,8 +64,8 @@ public static class ServiceCollectionExtensions
                         RemoveDriveFromResourceUri(registerModelArgs.ResourceUri, registerModelArgs.ServiceProvider),
                         registerModelArgs.ServiceProvider);
 
-                    var editorSync = registerModelArgs.ServiceProvider.GetRequiredService<EditorSync>();
-                    await editorSync.RegisterModelFunc(registerModelArgs).ConfigureAwait(false);
+                    var ideBackgroundTaskApi = registerModelArgs.ServiceProvider.GetRequiredService<LuthetusIdeBackgroundTaskApi>();
+                    await ideBackgroundTaskApi.Editor.RegisterModelFunc(registerModelArgs).ConfigureAwait(false);
                 },
                 TryRegisterViewModelFunc = async (tryRegisterViewModelArgs) =>
                 {
@@ -83,13 +76,13 @@ public static class ServiceCollectionExtensions
                         tryRegisterViewModelArgs.ShouldSetFocusToEditor,
                         tryRegisterViewModelArgs.ServiceProvider);
 
-                    var editorSync = tryRegisterViewModelArgs.ServiceProvider.GetRequiredService<EditorSync>();
-                    return await editorSync.TryRegisterViewModelFunc(tryRegisterViewModelArgs).ConfigureAwait(false);
+                    var ideBackgroundTaskApi = tryRegisterViewModelArgs.ServiceProvider.GetRequiredService<LuthetusIdeBackgroundTaskApi>();
+                    return await ideBackgroundTaskApi.Editor.TryRegisterViewModelFunc(tryRegisterViewModelArgs).ConfigureAwait(false);
                 },
                 TryShowViewModelFunc = async (tryShowViewModelArgs) =>
                 {
-                    var editorSync = tryShowViewModelArgs.ServiceProvider.GetRequiredService<EditorSync>();
-                    return await editorSync.TryShowViewModelFunc(tryShowViewModelArgs);
+                    var ideBackgroundTaskApi = tryShowViewModelArgs.ServiceProvider.GetRequiredService<LuthetusIdeBackgroundTaskApi>();
+                    return await ideBackgroundTaskApi.Editor.TryShowViewModelFunc(tryShowViewModelArgs).ConfigureAwait(false);
                 },
             });
         }
@@ -97,14 +90,7 @@ public static class ServiceCollectionExtensions
         services
             .AddSingleton(ideConfig)
             .AddSingleton<ILuthetusIdeComponentRenderers>(_ideComponentRenderers)
-            .AddScoped<DotNetSolutionSync>()
-            .AddScoped<CompilerServiceExplorerSync>()
-            .AddScoped<EditorSync>()
-            .AddScoped<FileSystemSync>()
-            .AddScoped<FolderExplorerSync>()
-            .AddScoped<InputFileSync>()
-            .AddScoped<LocalStorageSync>()
-            .AddScoped<TestExplorerSync>()
+            .AddScoped<LuthetusIdeBackgroundTaskApi>()
             .AddScoped<ICommandFactory, CommandFactory>()
             .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistry>()
             .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistry>()
