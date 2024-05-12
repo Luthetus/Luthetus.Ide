@@ -76,6 +76,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private TextEditorRenderBatchUnsafe _storedRenderBatch = null!;
     private TextEditorRenderBatchUnsafe? _previousRenderBatch;
     private TextEditorViewModel? _linkedViewModel;
+    private int _countOnParametersSetAsync;
+    private int _countOnInitialized;
+    private int _countShouldRender;
+    private int _countOnAfterRenderAsync;
 
     private CursorDisplay? CursorDisplay => _bodySectionComponent?.CursorDisplayComponent;
     private string MeasureCharacterWidthAndRowHeightElementId => $"luth_te_measure-character-width-and-row-height_{_textEditorHtmlElementId}";
@@ -84,6 +88,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override async Task OnParametersSetAsync()
     {
+        _countOnParametersSetAsync++;
+
         HandleTextEditorViewModelKeyChange();
 
         await base.OnParametersSetAsync();
@@ -91,6 +97,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
+        _countOnInitialized++;
+
         ConstructRenderBatch();
 
         _events = new(this, _storedRenderBatch.Options);
@@ -103,6 +111,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override bool ShouldRender()
     {
+        _countShouldRender++;
+
         var shouldRender = base.ShouldRender();
 
         if (_linkedViewModel is null)
@@ -136,6 +146,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        _countOnAfterRenderAsync++;
+
         if (firstRender)
         {
             await JsRuntime.GetLuthetusTextEditorApi()
