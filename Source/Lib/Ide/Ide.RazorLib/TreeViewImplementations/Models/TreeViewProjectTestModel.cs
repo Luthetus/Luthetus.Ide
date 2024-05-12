@@ -83,7 +83,7 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 					for (var i = 0; i < newChildList.Length; i++)
 					{
 						var node = (TreeViewStringFragment)newChildList[i];
-						await node.LoadChildListAsync();
+						await node.LoadChildListAsync().ConfigureAwait(false);
 					}
 		
 		            ChildList = newChildList.ToList();
@@ -116,7 +116,7 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 	
 	        TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
 			Item.ReRenderNodeAction.Invoke(this);
-		});
+		}).ConfigureAwait(false);
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

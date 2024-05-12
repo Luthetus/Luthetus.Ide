@@ -200,7 +200,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
             var matchedTheme = _textEditorService.ThemeStateWrap.Value.ThemeList.FirstOrDefault(
                 x => x.Key == optionsJson.CommonOptionsJsonDto.ThemeKey);
 
-            await SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone);
+            await SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false).ConfigureAwait(false);
         }
 
         if (optionsJson.Keymap is not null)
@@ -208,7 +208,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
             var matchedKeymap = TextEditorKeymapFacts.AllKeymapsList.FirstOrDefault(
                 x => x.Key == optionsJson.Keymap.Key);
 
-            await SetKeymap(matchedKeymap ?? TextEditorKeymapFacts.DefaultKeymap);
+            await SetKeymap(matchedKeymap ?? TextEditorKeymapFacts.DefaultKeymap, false).ConfigureAwait(false);
 
             var activeKeymap = _textEditorService.OptionsStateWrap.Value.Options.Keymap;
 
@@ -221,16 +221,16 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
         }
 
         if (optionsJson.CommonOptionsJsonDto?.FontSizeInPixels is not null)
-            await SetFontSize(optionsJson.CommonOptionsJsonDto.FontSizeInPixels.Value);
+            await SetFontSize(optionsJson.CommonOptionsJsonDto.FontSizeInPixels.Value, false).ConfigureAwait(false);
 
         if (optionsJson.CursorWidthInPixels is not null)
-            await SetCursorWidth(optionsJson.CursorWidthInPixels.Value);
+            await SetCursorWidth(optionsJson.CursorWidthInPixels.Value, false).ConfigureAwait(false);
 
         if (optionsJson.TextEditorHeightInPixels is not null)
-            await SetHeight(optionsJson.TextEditorHeightInPixels.Value);
+            await SetHeight(optionsJson.TextEditorHeightInPixels.Value, false).ConfigureAwait(false);
 
         if (optionsJson.ShowNewlines is not null)
-            await SetShowNewlines(optionsJson.ShowNewlines.Value);
+            await SetShowNewlines(optionsJson.ShowNewlines.Value, false).ConfigureAwait(false);
 
         // TODO: OptionsSetUseMonospaceOptimizations will always get set to false (default for bool)
         // for a first time user. This leads to a bad user experience since the proportional
@@ -240,6 +240,6 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
         // OptionsSetUseMonospaceOptimizations(options.UseMonospaceOptimizations);
 
         if (optionsJson.ShowWhitespace is not null)
-            await SetShowWhitespace(optionsJson.ShowWhitespace.Value);
+            await SetShowWhitespace(optionsJson.ShowWhitespace.Value, false).ConfigureAwait(false);
     }
 }

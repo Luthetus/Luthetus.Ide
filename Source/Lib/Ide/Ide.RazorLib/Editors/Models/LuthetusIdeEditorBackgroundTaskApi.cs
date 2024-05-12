@@ -101,8 +101,14 @@ public class LuthetusIdeEditorBackgroundTaskApi
         if (model is null)
         {
             var resourceUri = registerModelArgs.ResourceUri;
-            var fileLastWriteTime = await _fileSystemProvider.File.GetLastWriteTimeAsync(resourceUri.Value);
-            var content = await _fileSystemProvider.File.ReadAllTextAsync(resourceUri.Value);
+
+            var fileLastWriteTime = await _fileSystemProvider.File
+                .GetLastWriteTimeAsync(resourceUri.Value)
+                .ConfigureAwait(false);
+
+            var content = await _fileSystemProvider.File
+                .ReadAllTextAsync(resourceUri.Value)
+                .ConfigureAwait(false);
 
             var absolutePath = _environmentProvider.AbsolutePathFactory(resourceUri.Value, false);
 
@@ -127,7 +133,8 @@ public class LuthetusIdeEditorBackgroundTaskApi
                     await _textEditorService.ModelApi.AddPresentationModelFactory(
                             model.ResourceUri,
                             CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel)
-                        .Invoke(editContext);
+                        .Invoke(editContext)
+                        .ConfigureAwait(false);
 
                     await _textEditorService.ModelApi.AddPresentationModelFactory(
                             model.ResourceUri,
@@ -138,21 +145,24 @@ public class LuthetusIdeEditorBackgroundTaskApi
                     await _textEditorService.ModelApi.AddPresentationModelFactory(
                             model.ResourceUri,
                             DiffPresentationFacts.EmptyInPresentationModel)
-                        .Invoke(editContext);
+                        .Invoke(editContext)
+                        .ConfigureAwait(false);
 
                     await _textEditorService.ModelApi.AddPresentationModelFactory(
                             model.ResourceUri,
                             DiffPresentationFacts.EmptyOutPresentationModel)
-                        .Invoke(editContext);
+                        .Invoke(editContext)
+                        .ConfigureAwait(false);
 
                     model.CompilerService.RegisterResource(model.ResourceUri);
                 });
         }
 
         await CheckIfContentsWereModifiedAsync(
-            _dispatcher,
-            registerModelArgs.ResourceUri.Value,
-            model);
+                _dispatcher,
+                registerModelArgs.ResourceUri.Value,
+                model)
+            .ConfigureAwait(false);
     }
 
     public Task<Key<TextEditorViewModel>> TryRegisterViewModelFunc(TryRegisterViewModelArgs registerViewModelArgs)
@@ -280,15 +290,17 @@ public class LuthetusIdeEditorBackgroundTaskApi
         var resourceUri = new ResourceUri(absolutePath.Value);
 
         await RegisterModelFunc(new RegisterModelArgs(
-            resourceUri,
-            _serviceProvider));
+                resourceUri,
+                _serviceProvider))
+            .ConfigureAwait(false);
 
         var viewModelKey = await TryRegisterViewModelFunc(new TryRegisterViewModelArgs(
-            Key<TextEditorViewModel>.NewKey(),
-            resourceUri,
-            new Category("main"),
-            shouldSetFocusToEditor,
-            _serviceProvider));
+                Key<TextEditorViewModel>.NewKey(),
+                resourceUri,
+                new Category("main"),
+                shouldSetFocusToEditor,
+                _serviceProvider))
+            .ConfigureAwait(false);
 
         _textEditorService.GroupApi.AddViewModel(
             editorTextEditorGroupKey.Value,
@@ -304,8 +316,9 @@ public class LuthetusIdeEditorBackgroundTaskApi
         string inputFileAbsolutePathString,
         TextEditorModel textEditorModel)
     {
-        var fileLastWriteTime = await _fileSystemProvider.File.GetLastWriteTimeAsync(
-            inputFileAbsolutePathString);
+        var fileLastWriteTime = await _fileSystemProvider.File
+            .GetLastWriteTimeAsync(inputFileAbsolutePathString)
+            .ConfigureAwait(false);
 
         if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime &&
             _ideComponentRenderers.BooleanPromptOrCancelRendererType is not null)
@@ -330,34 +343,39 @@ public class LuthetusIdeEditorBackgroundTaskApi
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptFunc),
                             new Func<Task>(async () =>
                             {
-                                await _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-                                    "Check If Contexts Were Modified",
-                                    async () =>
-                                    {
-                                        dispatcher.Dispatch(new NotificationState.DisposeAction(
-                                            notificationInformativeKey));
+                                await _backgroundTaskService.EnqueueAsync(
+                                        Key<BackgroundTask>.NewKey(),
+                                        ContinuousBackgroundTaskWorker.GetQueueKey(),
+                                        "Check If Contexts Were Modified",
+                                        async () =>
+                                        {
+                                            dispatcher.Dispatch(new NotificationState.DisposeAction(
+                                                notificationInformativeKey));
 
-                                        var content = await _fileSystemProvider.File
-                                            .ReadAllTextAsync(inputFileAbsolutePathString);
+                                            var content = await _fileSystemProvider.File
+                                                .ReadAllTextAsync(inputFileAbsolutePathString)
+                                                .ConfigureAwait(false);
 
-                                        _textEditorService.PostSimpleBatch(
-                                            nameof(CheckIfContentsWereModifiedAsync),
-                                            string.Empty,
-                                            async editContext =>
-                                            {
-                                                await _textEditorService.ModelApi
-                                                    .ReloadFactory(
-                                                        textEditorModel.ResourceUri,
-                                                        content,
-                                                        fileLastWriteTime)
-                                                    .Invoke(editContext);
+                                            _textEditorService.PostSimpleBatch(
+                                                nameof(CheckIfContentsWereModifiedAsync),
+                                                string.Empty,
+                                                async editContext =>
+                                                {
+                                                    await _textEditorService.ModelApi
+                                                        .ReloadFactory(
+                                                            textEditorModel.ResourceUri,
+                                                            content,
+                                                            fileLastWriteTime)
+                                                        .Invoke(editContext)
+                                                        .ConfigureAwait(false);
 
-                                                await editContext.TextEditorService.ModelApi.ApplySyntaxHighlightingFactory(
-                                                        textEditorModel.ResourceUri)
-                                                    .Invoke(editContext)
-                                                    .ConfigureAwait(false);
-                                            });
-                                    });
+                                                    await editContext.TextEditorService.ModelApi.ApplySyntaxHighlightingFactory(
+                                                            textEditorModel.ResourceUri)
+                                                        .Invoke(editContext)
+                                                        .ConfigureAwait(false);
+                                                });
+                                        })
+                                    .ConfigureAwait(false);
                             })
                         },
                         {

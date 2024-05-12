@@ -105,10 +105,10 @@ public class ThrottleAsync
             if (WorkItemStack.Count == 0)
                 break;
 
-            await Task.Delay(pollingTimeSpan.Value);
+            await Task.Delay(pollingTimeSpan.Value).ConfigureAwait(false);
         }
 
-        await WorkItemTask;
+        await WorkItemTask.ConfigureAwait(false);
     }
 
     /// <summary>

@@ -26,7 +26,9 @@ public class WebsiteDotNetCliHelper
             .JoinPaths(immutableView.ParentDirectoryNameValue, immutableView.CSharpProjectNameValue) +
             environmentProvider.DirectorySeparatorChar;
 
-        await fileSystemProvider.Directory.CreateDirectoryAsync(directoryContainingProject);
+        await fileSystemProvider.Directory
+            .CreateDirectoryAsync(directoryContainingProject)
+            .ConfigureAwait(false);
 
         var localCSharpProjectNameWithExtension = immutableView.CSharpProjectNameValue +
             '.' +
@@ -37,20 +39,22 @@ public class WebsiteDotNetCliHelper
             localCSharpProjectNameWithExtension);
 
         await WebsiteProjectTemplateFacts.HandleNewCSharpProjectAsync(
-            immutableView.ProjectTemplateShortNameValue,
-            cSharpProjectAbsolutePathString,
-            fileSystemProvider,
-            environmentProvider);
+                immutableView.ProjectTemplateShortNameValue,
+                cSharpProjectAbsolutePathString,
+                fileSystemProvider,
+                environmentProvider)
+            .ConfigureAwait(false);
 
         var cSharpAbsolutePath = environmentProvider.AbsolutePathFactory(
             cSharpProjectAbsolutePathString,
             false);
 
         await ideBackgroundTaskApi.DotNetSolution.Website_AddExistingProjectToSolution(
-            immutableView.DotNetSolutionModel.Key,
-            immutableView.ProjectTemplateShortNameValue,
-            immutableView.CSharpProjectNameValue,
-            cSharpAbsolutePath);
+                immutableView.DotNetSolutionModel.Key,
+                immutableView.ProjectTemplateShortNameValue,
+                immutableView.CSharpProjectNameValue,
+                cSharpAbsolutePath)
+            .ConfigureAwait(false);
 
         // Close Dialog
         dispatcher.Dispatch(new DialogState.DisposeAction(dialogRecord.DynamicViewModelKey));

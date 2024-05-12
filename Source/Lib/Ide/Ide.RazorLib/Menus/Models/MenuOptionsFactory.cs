@@ -280,9 +280,10 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         false);
 
                     await _fileSystemProvider.File.WriteAllTextAsync(
-                        emptyFileAbsolutePath.Value,
-                        string.Empty,
-                        CancellationToken.None);
+                            emptyFileAbsolutePath.Value,
+                            string.Empty,
+                            CancellationToken.None)
+                        .ConfigureAwait(false);
                 }
                 else
                 {
@@ -296,13 +297,14 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                             new FileTemplateParameter(fileName, namespacePath, _environmentProvider));
 
                         await _fileSystemProvider.File.WriteAllTextAsync(
-                            templateResult.FileNamespacePath.AbsolutePath.Value,
-                            templateResult.Contents,
-                            CancellationToken.None);
+                                templateResult.FileNamespacePath.AbsolutePath.Value,
+                                templateResult.Contents,
+                                CancellationToken.None)
+                            .ConfigureAwait(false);
                     }
                 }
 
-                await onAfterCompletion.Invoke();
+                await onAfterCompletion.Invoke().ConfigureAwait(false);
             });
     }
 
@@ -316,10 +318,11 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             async () =>
             {
                 await _fileSystemProvider.Directory.CreateDirectoryAsync(
-                    directoryAbsolutePath.Value,
-                    CancellationToken.None);
+                        directoryAbsolutePath.Value,
+                        CancellationToken.None)
+                    .ConfigureAwait(false);
 
-                await onAfterCompletion.Invoke();
+                await onAfterCompletion.Invoke().ConfigureAwait(false);
             });
     }
 
@@ -330,11 +333,19 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             async () =>
             {
                 if (absolutePath.IsDirectory)
-                    await _fileSystemProvider.Directory.DeleteAsync(absolutePath.Value, true, CancellationToken.None);
+                {
+                    await _fileSystemProvider.Directory
+                        .DeleteAsync(absolutePath.Value, true, CancellationToken.None)
+                        .ConfigureAwait(false);
+                }
                 else
-                    await _fileSystemProvider.File.DeleteAsync(absolutePath.Value);
+                {
+                    await _fileSystemProvider.File
+                        .DeleteAsync(absolutePath.Value)
+                        .ConfigureAwait(false);
+                }
 
-                await onAfterCompletion.Invoke();
+                await onAfterCompletion.Invoke().ConfigureAwait(false);
             });
     }
 
@@ -345,11 +356,12 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             async () =>
             {
                 await _clipboardService.SetClipboard(ClipboardFacts.FormatPhrase(
-                    ClipboardFacts.CopyCommand,
-                    ClipboardFacts.AbsolutePathDataType,
-                    absolutePath.Value));
+                        ClipboardFacts.CopyCommand,
+                        ClipboardFacts.AbsolutePathDataType,
+                        absolutePath.Value))
+                    .ConfigureAwait(false);
 
-                await onAfterCompletion.Invoke();
+                await onAfterCompletion.Invoke().ConfigureAwait(false);
             });
     }
 
@@ -362,11 +374,12 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             async () =>
             {
                 await _clipboardService.SetClipboard(ClipboardFacts.FormatPhrase(
-                    ClipboardFacts.CutCommand,
-                    ClipboardFacts.AbsolutePathDataType,
-                    absolutePath.Value));
+                        ClipboardFacts.CutCommand,
+                        ClipboardFacts.AbsolutePathDataType,
+                        absolutePath.Value))
+                    .ConfigureAwait(false);
 
-                await onAfterCompletion.Invoke();
+                await onAfterCompletion.Invoke().ConfigureAwait(false);
             });
     }
 
@@ -376,7 +389,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             "Paste File Action",
             async () =>
             {
-                var clipboardContents = await _clipboardService.ReadClipboard();
+                var clipboardContents = await _clipboardService.ReadClipboard().ConfigureAwait(false);
 
                 if (ClipboardFacts.TryParseString(clipboardContents, out var clipboardPhrase))
                 {
@@ -390,13 +403,13 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
                             // Should the if and else if be kept as inline awaits?
                             // If kept as inline awaits then the else if won't execute if the first one succeeds.
-                            if (await _fileSystemProvider.Directory.ExistsAsync(clipboardPhrase.Value))
+                            if (await _fileSystemProvider.Directory.ExistsAsync(clipboardPhrase.Value).ConfigureAwait(false))
                             {
                                 clipboardAbsolutePath = _environmentProvider.AbsolutePathFactory(
                                     clipboardPhrase.Value,
                                     true);
                             }
-                            else if (await _fileSystemProvider.File.ExistsAsync(clipboardPhrase.Value))
+                            else if (await _fileSystemProvider.File.ExistsAsync(clipboardPhrase.Value).ConfigureAwait(false))
                             {
                                 clipboardAbsolutePath = _environmentProvider.AbsolutePathFactory(
                                     clipboardPhrase.Value,
@@ -424,8 +437,9 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                                         var sourceAbsolutePathString = clipboardAbsolutePath.Value;
 
                                         await _fileSystemProvider.File.CopyAsync(
-                                            sourceAbsolutePathString,
-                                            destinationAbsolutePathString);
+                                                sourceAbsolutePathString,
+                                                destinationAbsolutePathString)
+                                            .ConfigureAwait(false);
                                     }
                                 }
                                 catch (Exception)
@@ -436,11 +450,11 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                                 if (successfullyPasted && clipboardPhrase.Command == ClipboardFacts.CutCommand)
                                 {
                                     // TODO: Rerender the parent of the deleted due to cut file
-                                    await PerformDeleteFile(clipboardAbsolutePath, onAfterCompletion);
+                                    await PerformDeleteFile(clipboardAbsolutePath, onAfterCompletion).ConfigureAwait(false);
                                 }
                                 else
                                 {
-                                    await onAfterCompletion.Invoke();
+                                    await onAfterCompletion.Invoke().ConfigureAwait(false);
                                 }
                             }
                         }
@@ -518,9 +532,9 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     formattedCommand,
                     workingDirectory.Value,
                     CancellationToken.None,
-                    async () => await onAfterCompletion.Invoke());
+                    async () => await onAfterCompletion.Invoke().ConfigureAwait(false));
 
-                await terminal.EnqueueCommandAsync(terminalCommand);
+                await terminal.EnqueueCommandAsync(terminalCommand).ConfigureAwait(false);
             });
     }
 
@@ -549,10 +563,10 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     async () =>
                     {
                         NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", _commonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
-                        await onAfterCompletion.Invoke();
+                        await onAfterCompletion.Invoke().ConfigureAwait(false);
                     });
 
-                await terminal.EnqueueCommandAsync(terminalCommand);
+                await terminal.EnqueueCommandAsync(terminalCommand).ConfigureAwait(false);
             },
             absolutePath =>
             {
@@ -592,10 +606,10 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     async () =>
                     {
                         NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.NameWithExtension}", _commonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
-                        await onAfterCompletion.Invoke();
+                        await onAfterCompletion.Invoke().ConfigureAwait(false);
                     });
 
-                await terminal.EnqueueCommandAsync(removeProjectToProjectReferenceTerminalCommand);
+                await terminal.EnqueueCommandAsync(removeProjectToProjectReferenceTerminalCommand).ConfigureAwait(false);
             });
     }
 
@@ -624,7 +638,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     async () =>
                     {
                         NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.AbsolutePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}", _commonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
-                        await onAfterCompletion.Invoke();
+                        await onAfterCompletion.Invoke().ConfigureAwait(false);
                     });
 
                 PerformRemoveCSharpProjectReferenceFromSolution(
@@ -632,7 +646,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     treeViewProjectToMove,
                     terminal,
                     dispatcher,
-                    async () => await terminal.EnqueueCommandAsync(moveProjectToSolutionFolderTerminalCommand));
+                    async () => await terminal.EnqueueCommandAsync(moveProjectToSolutionFolderTerminalCommand).ConfigureAwait(false));
 
                 return Task.CompletedTask;
             });
@@ -661,10 +675,10 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     async () =>
                     {
                         NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectNamespacePath.AbsolutePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", _commonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
-                        await onAfterCompletion.Invoke();
+                        await onAfterCompletion.Invoke().ConfigureAwait(false);
                     });
 
-                await terminal.EnqueueCommandAsync(removeNugetPackageReferenceFromProjectTerminalCommand);
+                await terminal.EnqueueCommandAsync(removeNugetPackageReferenceFromProjectTerminalCommand).ConfigureAwait(false);
             });
     }
 

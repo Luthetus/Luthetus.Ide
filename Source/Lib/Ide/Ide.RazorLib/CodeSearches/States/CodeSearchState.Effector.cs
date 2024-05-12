@@ -62,17 +62,19 @@ public partial record CodeSearchState
                     StartingAbsolutePathForSearch = startingAbsolutePathForSearch
                 }));
 
-                await RecursiveHandleSearchEffect(startingAbsolutePathForSearch);
+                await RecursiveHandleSearchEffect(startingAbsolutePathForSearch).ConfigureAwait(false);
 
                 async Task RecursiveHandleSearchEffect(string directoryPathParent)
                 {
                     var directoryPathChildList = await _fileSystemProvider.Directory.GetDirectoriesAsync(
-                        directoryPathParent,
-                        searchEffect.CancellationToken);
+                            directoryPathParent,
+                            searchEffect.CancellationToken)
+                        .ConfigureAwait(false);
 
                     var filePathChildList = await _fileSystemProvider.Directory.GetFilesAsync(
-                        directoryPathParent,
-                        searchEffect.CancellationToken);
+                            directoryPathParent,
+                            searchEffect.CancellationToken)
+                        .ConfigureAwait(false);
 
                     foreach (var filePathChild in filePathChildList)
                     {
@@ -88,7 +90,7 @@ public partial record CodeSearchState
                         if (directoryPathChild.Contains(".git") || directoryPathChild.Contains("bin") || directoryPathChild.Contains("obj"))
                             continue;
 
-                        await RecursiveHandleSearchEffect(directoryPathChild);
+                        await RecursiveHandleSearchEffect(directoryPathChild).ConfigureAwait(false);
                     }
                 }
             });

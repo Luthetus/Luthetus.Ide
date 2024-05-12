@@ -142,7 +142,7 @@ public class Terminal
                         ClearOutputView(terminalCommand);
 
                     if (terminalCommand.BeginWith is not null)
-                        await terminalCommand.BeginWith.Invoke();
+                        await terminalCommand.BeginWith.Invoke().ConfigureAwait(false);
 
                     var terminalCommandBoundary = new TerminalCommandBoundary();
 
@@ -194,7 +194,7 @@ public class Terminal
                             }
 
                             DispatchNewStateKey();
-                        });
+                        }).ConfigureAwait(false);
 
                     if (!_terminalCommandTextSpanMap.ContainsKey(terminalCommandKey))
                     {
@@ -245,7 +245,7 @@ public class Terminal
                     DispatchNewStateKey();
 
                     if (terminalCommand.ContinueWith is not null)
-                        await terminalCommand.ContinueWith.Invoke();
+                        await terminalCommand.ContinueWith.Invoke().ConfigureAwait(false);
 
                     terminalCommand.OutputParser?.Dispose();
                 }
@@ -303,17 +303,20 @@ public class Terminal
 				await _textEditorService.ModelApi.AddPresentationModelFactory(
 						model.ResourceUri,
 						TerminalPresentationFacts.EmptyPresentationModel)
-					.Invoke(editContext);
+					.Invoke(editContext)
+                    .ConfigureAwait(false);
 
 				await _textEditorService.ModelApi.AddPresentationModelFactory(
 						model.ResourceUri,
 						CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel)
-					.Invoke(editContext);
+					.Invoke(editContext)
+                    .ConfigureAwait(false);
 
 				await _textEditorService.ModelApi.AddPresentationModelFactory(
 						model.ResourceUri,
 						FindOverlayPresentationFacts.EmptyPresentationModel)
-					.Invoke(editContext);
+					.Invoke(editContext)
+                    .ConfigureAwait(false);
 
 				model.CompilerService.RegisterResource(model.ResourceUri);
 
@@ -376,12 +379,14 @@ public class Terminal
                 await _textEditorService.ModelApi.AddPresentationModelFactory(
                         model.ResourceUri,
                         TerminalPresentationFacts.EmptyPresentationModel)
-                    .Invoke(editContext);
+                    .Invoke(editContext)
+                    .ConfigureAwait(false);
 
                 await _textEditorService.ModelApi.AddPresentationModelFactory(
                         model.ResourceUri,
                         CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel)
-                    .Invoke(editContext);
+                    .Invoke(editContext)
+                    .ConfigureAwait(false);
 
                 await _textEditorService.ModelApi.AddPresentationModelFactory(
                         model.ResourceUri,

@@ -182,7 +182,8 @@ public partial class TextEditorService : ITextEditorService
                 viewModel.BodyElementId,
                 viewModel.GutterElementId,
                 viewModel.VirtualizationResult.TextEditorMeasurements.ScrollLeft,
-                viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop);
+                viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop)
+            .ConfigureAwait(false);
     }
 
     private record TextEditorEditContext : IEditContext

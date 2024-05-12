@@ -152,11 +152,12 @@ public class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTab, IDia
 
         var dropzoneList = new List<IDropzone>();
         AddFallbackDropzone(dropzoneList);
-        await AddPanelDropzonesAsync(dropzoneList);
+        await AddPanelDropzonesAsync(dropzoneList).ConfigureAwait(false);
 
         var measuredHtmlElementDimensions = await JsRuntime.GetLuthetusCommonApi()
             .MeasureElementById(
-                $"luth_te_group_{TextEditorService.GroupStateWrap.Value.GroupList.Single().GroupKey.Guid}");
+                $"luth_te_group_{TextEditorService.GroupStateWrap.Value.GroupList.Single().GroupKey.Guid}")
+            .ConfigureAwait(false);
 
         measuredHtmlElementDimensions = measuredHtmlElementDimensions with
         {
@@ -434,8 +435,8 @@ public class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTab, IDia
         foreach (var panelGroupHtmlIdTuple in panelGroupHtmlIdTupleList)
         {
             var measuredHtmlElementDimensions = await JsRuntime.GetLuthetusCommonApi()
-                .MeasureElementById(
-                    panelGroupHtmlIdTuple.HtmlElementId);
+                .MeasureElementById(panelGroupHtmlIdTuple.HtmlElementId)
+                .ConfigureAwait(false);
 
             measuredHtmlElementDimensions = measuredHtmlElementDimensions with
             {

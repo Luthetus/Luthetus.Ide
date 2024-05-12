@@ -21,11 +21,13 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 
     public override async Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
     {
-        await base.OnDoubleClickAsync(commandArgs);
+        await base.OnDoubleClickAsync(commandArgs).ConfigureAwait(false);
 
         if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-        await _ideBackgroundTaskApi.Editor.OpenInEditor(treeViewAbsolutePath.Item, true);
+        await _ideBackgroundTaskApi.Editor
+            .OpenInEditor(treeViewAbsolutePath.Item, true)
+            .ConfigureAwait(false);
     }
 }

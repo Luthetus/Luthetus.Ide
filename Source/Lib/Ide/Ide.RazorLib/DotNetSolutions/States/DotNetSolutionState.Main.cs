@@ -37,25 +37,31 @@ public partial record DotNetSolutionState(
 
     public static async Task ShowInputFile(LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi)
     {
-        await ideBackgroundTaskApi.InputFile.RequestInputFileStateForm("Solution Explorer",
-            async absolutePath =>
-            {
-                if (absolutePath is not null)
-                    await ideBackgroundTaskApi.DotNetSolution.SetDotNetSolution(absolutePath);
-            },
-            absolutePath =>
-            {
-                if (absolutePath is null || absolutePath.IsDirectory)
-                    return Task.FromResult(false);
+        await ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+                "Solution Explorer",
+                async absolutePath =>
+                {
+                    if (absolutePath is not null)
+                    {
+                        await ideBackgroundTaskApi.DotNetSolution
+                            .SetDotNetSolution(absolutePath)
+                            .ConfigureAwait(false);
+                    }
+                },
+                absolutePath =>
+                {
+                    if (absolutePath is null || absolutePath.IsDirectory)
+                        return Task.FromResult(false);
 
-                return Task.FromResult(
-                    absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
-            },
-            new[]
-            {
-                new InputFilePattern(
-                    ".NET Solution",
-                    absolutePath => absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
-            }.ToImmutableArray());
+                    return Task.FromResult(
+                        absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
+                },
+                new[]
+                {
+                    new InputFilePattern(
+                        ".NET Solution",
+                        absolutePath => absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
+                }.ToImmutableArray())
+            .ConfigureAwait(false);
     }
 }

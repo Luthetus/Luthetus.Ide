@@ -61,7 +61,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
         {
             var previousChildren = new List<TreeViewNoType>(ChildList);
 
-            var newChildList = await this.DotNetSolutionLoadChildrenAsync();
+            var newChildList = await this.DotNetSolutionLoadChildrenAsync().ConfigureAwait(false);
 
             ChildList = newChildList;
             LinkChildren(previousChildren, ChildList);

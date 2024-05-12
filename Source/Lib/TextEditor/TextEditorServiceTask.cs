@@ -55,7 +55,7 @@ public class TextEditorServiceTask : ITextEditorTask
 
     public async Task HandleEvent(CancellationToken cancellationToken)
     {
-        await _innerTask.InvokeWithEditContext(_editContext);
+        await _innerTask.InvokeWithEditContext(_editContext).ConfigureAwait(false);
 
         foreach (var modelModifier in _editContext.ModelCache.Values)
         {
@@ -106,7 +106,8 @@ public class TextEditorServiceTask : ITextEditorTask
             if (viewModelModifier.ScrollWasModified)
             {
                 await ((TextEditorService)_editContext.TextEditorService)
-                    .HACK_SetScrollPosition(viewModelModifier.ViewModel);
+                    .HACK_SetScrollPosition(viewModelModifier.ViewModel)
+                    .ConfigureAwait(false);
             }
 
             await _editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(

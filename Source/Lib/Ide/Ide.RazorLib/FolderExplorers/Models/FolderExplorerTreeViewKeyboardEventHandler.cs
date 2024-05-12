@@ -148,9 +148,9 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                     SolutionExplorerContextMenu.ParentOfCutFile = null;
 
                     if (localParentOfCutFile is not null)
-                        await ReloadTreeViewModel(localParentOfCutFile);
+                        await ReloadTreeViewModel(localParentOfCutFile).ConfigureAwait(false);
 
-                    await ReloadTreeViewModel(treeViewAbsolutePath);
+                    await ReloadTreeViewModel(treeViewAbsolutePath).ConfigureAwait(false);
                 });
         }
         else
@@ -169,9 +169,9 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                     SolutionExplorerContextMenu.ParentOfCutFile = null;
 
                     if (localParentOfCutFile is not null)
-                        await ReloadTreeViewModel(localParentOfCutFile);
+                        await ReloadTreeViewModel(localParentOfCutFile).ConfigureAwait(false);
 
-                    await ReloadTreeViewModel(treeViewAbsolutePath);
+                    await ReloadTreeViewModel(treeViewAbsolutePath).ConfigureAwait(false);
                 });
         }
 
@@ -212,7 +212,9 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-        await _ideBackgroundTaskApi.Editor.OpenInEditor(treeViewAbsolutePath.Item, shouldSetFocusToEditor);
+        await _ideBackgroundTaskApi.Editor
+            .OpenInEditor(treeViewAbsolutePath.Item, shouldSetFocusToEditor)
+            .ConfigureAwait(false);
     }
 
     private async Task ReloadTreeViewModel(TreeViewNoType? treeViewModel)
@@ -220,7 +222,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (treeViewModel is null)
             return;
 
-        await treeViewModel.LoadChildListAsync();
+        await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
         _treeViewService.ReRenderNode(
             FolderExplorerState.TreeViewContentStateKey,

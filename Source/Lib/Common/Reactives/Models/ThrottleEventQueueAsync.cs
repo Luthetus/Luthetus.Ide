@@ -56,7 +56,7 @@ public class ThrottleEventQueueAsync
 
         try
         {
-            await _modifyQueueSemaphoreSlim.WaitAsync();
+            await _modifyQueueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
 
             var queueLengthIncreased = true;
         
@@ -94,11 +94,11 @@ public class ThrottleEventQueueAsync
     /// </summary>
     public async Task<IBackgroundTask> DequeueOrDefaultAsync()
     {
-        await _dequeueSemaphoreSlim.WaitAsync();
+        await _dequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
 
         try
         {
-            await _modifyQueueSemaphoreSlim.WaitAsync();
+            await _modifyQueueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
 		    
             var firstEvent = _throttleEventList[0];
             _throttleEventList.RemoveAt(0);
@@ -141,7 +141,7 @@ public class ThrottleEventQueueAsync
     {
         try
         {
-            await _modifyQueueSemaphoreSlim.WaitAsync();
+            await _modifyQueueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
             IsStoppingFurtherEnqueues = true;
         }
         finally
@@ -169,7 +169,7 @@ public class ThrottleEventQueueAsync
             if (Count == 0)
                 break;
 
-            await Task.Delay(pollingTimeSpan.Value);
+            await Task.Delay(pollingTimeSpan.Value).ConfigureAwait(false);
         }
     }
 }

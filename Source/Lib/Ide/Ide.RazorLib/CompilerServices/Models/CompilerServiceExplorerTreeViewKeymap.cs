@@ -84,6 +84,8 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
 
-        await _ideBackgroundTaskApi.Editor.OpenInEditor(treeViewNamespacePath.Item.AbsolutePath, shouldSetFocusToEditor);
+        await _ideBackgroundTaskApi.Editor
+            .OpenInEditor(treeViewNamespacePath.Item.AbsolutePath, shouldSetFocusToEditor)
+            .ConfigureAwait(false);
     }
 }

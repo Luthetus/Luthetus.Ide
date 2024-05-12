@@ -146,9 +146,9 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
                     SolutionExplorerContextMenu.ParentOfCutFile = null;
 
                     if (localParentOfCutFile is not null)
-                        await ReloadTreeViewModel(localParentOfCutFile);
+                        await ReloadTreeViewModel(localParentOfCutFile).ConfigureAwait(false);
 
-                    await ReloadTreeViewModel(treeViewNamespacePath);
+                    await ReloadTreeViewModel(treeViewNamespacePath).ConfigureAwait(false);
                 });
         }
         else
@@ -164,9 +164,9 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
                     SolutionExplorerContextMenu.ParentOfCutFile = null;
 
                     if (localParentOfCutFile is not null)
-                        await ReloadTreeViewModel(localParentOfCutFile);
+                        await ReloadTreeViewModel(localParentOfCutFile).ConfigureAwait(false);
 
-                    await ReloadTreeViewModel(treeViewNamespacePath);
+                    await ReloadTreeViewModel(treeViewNamespacePath).ConfigureAwait(false);
                 });
         }
 
@@ -207,7 +207,9 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
 
-        await _ideBackgroundTaskApi.Editor.OpenInEditor(treeViewNamespacePath.Item.AbsolutePath, shouldSetFocusToEditor);
+        await _ideBackgroundTaskApi.Editor
+            .OpenInEditor(treeViewNamespacePath.Item.AbsolutePath, shouldSetFocusToEditor)
+            .ConfigureAwait(false);
     }
 
     private async Task ReloadTreeViewModel(TreeViewNoType? treeViewModel)
@@ -215,7 +217,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         if (treeViewModel is null)
             return;
 
-        await treeViewModel.LoadChildListAsync();
+        await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
         _treeViewService.ReRenderNode(
             DotNetSolutionState.TreeViewSolutionExplorerStateKey,

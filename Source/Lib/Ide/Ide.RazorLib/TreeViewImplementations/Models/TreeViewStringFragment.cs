@@ -59,7 +59,7 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
 			for (var i = 0; i < newChildList.Count; i++)
 			{
 				var child = (TreeViewStringFragment)newChildList[i];
-				await child.LoadChildListAsync();
+				await child.LoadChildListAsync().ConfigureAwait(false);
 
 				if (child.ChildList.Count == 0)
 				{

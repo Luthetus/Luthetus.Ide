@@ -82,7 +82,7 @@ public static class ServiceCollectionExtensions
                 TryShowViewModelFunc = async (tryShowViewModelArgs) =>
                 {
                     var ideBackgroundTaskApi = tryShowViewModelArgs.ServiceProvider.GetRequiredService<LuthetusIdeBackgroundTaskApi>();
-                    return await ideBackgroundTaskApi.Editor.TryShowViewModelFunc(tryShowViewModelArgs);
+                    return await ideBackgroundTaskApi.Editor.TryShowViewModelFunc(tryShowViewModelArgs).ConfigureAwait(false);
                 },
             });
         }

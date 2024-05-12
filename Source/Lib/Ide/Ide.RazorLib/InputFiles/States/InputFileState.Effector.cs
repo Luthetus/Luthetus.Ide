@@ -23,7 +23,7 @@ public partial record InputFileState
                     "Open Parent Directory",
                     async () =>
                     {
-                        await parentDirectoryTreeViewModel.LoadChildListAsync();
+                        await parentDirectoryTreeViewModel.LoadChildListAsync().ConfigureAwait(false);
                     });
             }
 
@@ -47,7 +47,7 @@ public partial record InputFileState
                     "Refresh Current Selection",
                     async () =>
                     {
-                        await currentSelection.LoadChildListAsync();
+                        await currentSelection.LoadChildListAsync().ConfigureAwait(false);
                         // TODO: This still needs to re-render.
                     });
             }

@@ -40,10 +40,11 @@ public class LuthetusIdeInputFileBackgroundTaskApi
         return _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Request InputFileState Form",
             async () => await HandleRequestInputFileStateFormActionAsync(
-                message,
-                onAfterSubmitFunc,
-                selectionIsValidFunc,
-                inputFilePatterns));
+                    message,
+                    onAfterSubmitFunc,
+                    selectionIsValidFunc,
+                    inputFilePatterns)
+                .ConfigureAwait(false));
     }
 
     private Task HandleRequestInputFileStateFormActionAsync(

@@ -89,7 +89,9 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
         string cSharpProjectName,
         IAbsolutePath cSharpProjectAbsolutePath)
     {
-        return _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return _backgroundTaskService.EnqueueAsync(
+            Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Add Existing-Project To Solution",
             async () => await Website_AddExistingProjectToSolutionAsync(
                 dotNetSolutionModelKey,
@@ -137,8 +139,9 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
         var outDotNetSolutionModel = dotNetSolutionModelBuilder.Build();
 
         await _fileSystemProvider.File.WriteAllTextAsync(
-            outDotNetSolutionModel.NamespacePath.AbsolutePath.Value,
-            outDotNetSolutionModel.SolutionFileContents);
+                outDotNetSolutionModel.NamespacePath.AbsolutePath.Value,
+                outDotNetSolutionModel.SolutionFileContents)
+            .ConfigureAwait(false);
 
         var solutionTextEditorModel = _textEditorService.ModelApi.GetOrDefault(
             new ResourceUri(inDotNetSolutionModel.NamespacePath.AbsolutePath.Value));
@@ -159,7 +162,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
             outDotNetSolutionModel.Key,
             outDotNetSolutionModel));
 
-        await SetDotNetSolutionTreeViewAsync(outDotNetSolutionModel.Key);
+        await SetDotNetSolutionTreeViewAsync(outDotNetSolutionModel.Key).ConfigureAwait(false);
     }
 
     /// <summary>Don't have the implementation <see cref="WithAction"/> as public scope.</summary>
@@ -198,7 +201,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
     {
         return _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Set .NET Solution",
-            async () => await SetDotNetSolutionAsync(inSolutionAbsolutePath));
+            async () => await SetDotNetSolutionAsync(inSolutionAbsolutePath).ConfigureAwait(false));
     }
 
     private async Task SetDotNetSolutionAsync(IAbsolutePath inSolutionAbsolutePath)
@@ -206,8 +209,9 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
         var dotNetSolutionAbsolutePathString = inSolutionAbsolutePath.Value;
 
         var content = await _fileSystemProvider.File.ReadAllTextAsync(
-            dotNetSolutionAbsolutePathString,
-            CancellationToken.None);
+                dotNetSolutionAbsolutePathString,
+                CancellationToken.None)
+            .ConfigureAwait(false);
 
         var solutionAbsolutePath = _environmentProvider.AbsolutePathFactory(
             dotNetSolutionAbsolutePathString,
@@ -315,7 +319,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
                     parentDirectory.Value,
                     CancellationToken.None);
 
-                await generalTerminal.EnqueueCommandAsync(changeDirectoryCommand);
+                await generalTerminal.EnqueueCommandAsync(changeDirectoryCommand).ConfigureAwait(false);
             }
 
             // Set 'executionTerminal' working directory
@@ -328,18 +332,20 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
                     parentDirectory.Value,
                     CancellationToken.None);
 
-                await executionTerminal.EnqueueCommandAsync(changeDirectoryCommand);
+                await executionTerminal.EnqueueCommandAsync(changeDirectoryCommand).ConfigureAwait(false);
             }
         }
 
-        await SetDotNetSolutionTreeViewAsync(dotNetSolutionModel.Key);
+        await SetDotNetSolutionTreeViewAsync(dotNetSolutionModel.Key).ConfigureAwait(false);
     }
 
     public Task SetDotNetSolutionTreeView(Key<DotNetSolutionModel> dotNetSolutionModelKey)
     {
-        return _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return _backgroundTaskService.EnqueueAsync(
+            Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Set .NET Solution TreeView",
-            async () => await SetDotNetSolutionTreeViewAsync(dotNetSolutionModelKey));
+            async () => await SetDotNetSolutionTreeViewAsync(dotNetSolutionModelKey).ConfigureAwait(false));
     }
 
     private async Task SetDotNetSolutionTreeViewAsync(Key<DotNetSolutionModel> dotNetSolutionModelKey)
@@ -361,7 +367,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
             true,
             true);
 
-        await rootNode.LoadChildListAsync();
+        await rootNode.LoadChildListAsync().ConfigureAwait(false);
 
         if (!_treeViewService.TryGetTreeViewContainer(DotNetSolutionState.TreeViewSolutionExplorerStateKey, out _))
         {

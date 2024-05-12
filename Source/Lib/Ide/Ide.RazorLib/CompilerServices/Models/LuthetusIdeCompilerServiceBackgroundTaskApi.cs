@@ -97,7 +97,7 @@ public class LuthetusIdeCompilerServiceBackgroundTaskApi
                     new TreeViewReflectionWithView(jsonCompilerServiceWatchWindowObject, true, false, _ideComponentRenderers, _commonComponentRenderers),
                     new TreeViewReflectionWithView(terminalCompilerServiceWatchWindowObject, true, false, _ideComponentRenderers, _commonComponentRenderers));
 
-                await rootNode.LoadChildListAsync();
+                await rootNode.LoadChildListAsync().ConfigureAwait(false);
 
                 if (!_treeViewService.TryGetTreeViewContainer(
                         CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,

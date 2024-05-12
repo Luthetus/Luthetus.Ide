@@ -162,7 +162,7 @@ public class CommandFactory : ICommandFactory
 	                "Focus: SolutionExplorer (with text editor view model)", "focus-solution-explorer_with-text-editor-view-model", false,
 	                async commandArgs =>
 	                {
-	                    await PerformGetFlattenedTree();
+	                    await PerformGetFlattenedTree().ConfigureAwait(false);
 
 						var localNodeOfViewModel = _nodeOfViewModel;
 
@@ -176,9 +176,10 @@ public class CommandFactory : ICommandFactory
 							false);
 
 						var elementId = _treeViewService.GetNodeElementId(localNodeOfViewModel);
-						
 
-						await focusSolutionExplorerCommand.CommandFunc.Invoke(commandArgs);
+						await focusSolutionExplorerCommand.CommandFunc
+                            .Invoke(commandArgs)
+                            .ConfigureAwait(false);
 	                });
 	
 	            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
@@ -319,22 +320,22 @@ public class CommandFactory : ICommandFactory
             displayName, internalIdentifier, false,
             async commandArgs =>
             {
-                var success = await TrySetFocus();
+                var success = await TrySetFocus().ConfigureAwait(false);
 
                 if (!success)
                 {
                     _dispatcher.Dispatch(new PanelState.SetPanelTabAsActiveByContextRecordKeyAction(
                         contextRecord.ContextKey));
 
-                    _ = await TrySetFocus();
+                    _ = await TrySetFocus().ConfigureAwait(false);
                 }
             });
 
         async Task<bool> TrySetFocus()
         {
             return await _jsRuntime.GetLuthetusCommonApi()
-                .TryFocusHtmlElementById(
-                    contextRecord.ContextElementId);
+                .TryFocusHtmlElementById(contextRecord.ContextElementId)
+                .ConfigureAwait(false);
         }
     }
 
@@ -355,7 +356,7 @@ public class CommandFactory : ICommandFactory
 						out var treeViewContainer) &&
                     treeViewContainer is not null)
 				{
-					await RecursiveGetFlattenedTree(treeViewContainer.RootNode, textEditorViewModel);
+					await RecursiveGetFlattenedTree(treeViewContainer.RootNode, textEditorViewModel).ConfigureAwait(false);
 				}
 			}
 		}
@@ -385,16 +386,16 @@ public class CommandFactory : ICommandFactory
 			switch (treeViewNamespacePath.Item.AbsolutePath.ExtensionNoPeriod)
             {
                 case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                    await treeViewNamespacePath.LoadChildListAsync();
+                    await treeViewNamespacePath.LoadChildListAsync().ConfigureAwait(false);
                     break;
             }
 		}
 
-		// await treeViewNoType.LoadChildListAsync();
+        // await treeViewNoType.LoadChildListAsync().ConfigureAwait(false);
 
-		foreach (var node in treeViewNoType.ChildList)
+        foreach (var node in treeViewNoType.ChildList)
 		{
-			await RecursiveGetFlattenedTree(node, textEditorViewModel);
+			await RecursiveGetFlattenedTree(node, textEditorViewModel).ConfigureAwait(false);
 		}
 	}
 }

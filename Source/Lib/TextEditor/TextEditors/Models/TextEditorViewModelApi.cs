@@ -157,8 +157,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     public async Task<TextEditorDimensions> GetTextEditorMeasurementsAsync(string elementId)
     {
         return await _jsRuntime.GetLuthetusTextEditorApi()
-            .GetTextEditorMeasurementsInPixelsById(
-                elementId)
+            .GetTextEditorMeasurementsInPixelsById(elementId)
             .ConfigureAwait(false);
     }
 
@@ -373,8 +372,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         return async editContext =>
         {
             await _jsRuntime.GetLuthetusCommonApi()
-                .FocusHtmlElementById(
-                    primaryCursorContentId)
+                .FocusHtmlElementById(primaryCursorContentId)
                 .ConfigureAwait(false);
         };
     }
@@ -395,7 +393,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                 return;
 
             await MoveCursorUnsafeFactory(keyboardEventArgs, modelResourceUri, viewModelKey, primaryCursorModifier)
-                .Invoke(editContext);
+                .Invoke(editContext)
+                .ConfigureAwait(false);
 
             viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
         };
@@ -999,8 +998,9 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             var options = _textEditorService.OptionsApi.GetOptions();
 
             var characterWidthAndLineHeight = await _textEditorService.ViewModelApi.MeasureCharacterWidthAndLineHeightAsync(
-                measureCharacterWidthAndLineHeightElementId,
-                countOfTestCharacters);
+                    measureCharacterWidthAndLineHeightElementId,
+                    countOfTestCharacters)
+                .ConfigureAwait(false);
 
             // throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
             //
@@ -1008,7 +1008,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             // in order to keep the development website working and just make small incremental changes.
             // Therefore, do not forget to th remove this line from 'CalculateVirtualizationResultFactory(...)'.
             var textEditorMeasurements = await _textEditorService.ViewModelApi
-                .GetTextEditorMeasurementsAsync(viewModelModifier.ViewModel.BodyElementId);
+                .GetTextEditorMeasurementsAsync(viewModelModifier.ViewModel.BodyElementId)
+                .ConfigureAwait(false);
 
             viewModelModifier.ViewModel = viewModelModifier.ViewModel with
             {

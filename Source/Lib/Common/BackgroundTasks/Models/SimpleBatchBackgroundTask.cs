@@ -61,7 +61,7 @@ public class SimpleBatchBackgroundTask : IBackgroundTask
     {
         foreach (var workItem in _workItemList)
         {
-            await workItem.Invoke(cancellationToken);
+            await workItem.Invoke(cancellationToken).ConfigureAwait(false);
         }
     }
 }

@@ -70,17 +70,23 @@ public static class WebsiteProjectTemplateFacts
         IEnvironmentProvider environmentProvider)
     {
         if (projectTemplateShortName == BlazorWasmEmptyProjectTemplate.ShortName)
-            await HandleBlazorWasmEmptyProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider);
+            await HandleBlazorWasmEmptyProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider)
+                .ConfigureAwait(false);
         else if (projectTemplateShortName == BlazorServerSideEmptyProjectTemplate.ShortName)
-            await HandleBlazorServerSideEmptyProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider);
+            await HandleBlazorServerSideEmptyProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider)
+                .ConfigureAwait(false);
         else if (projectTemplateShortName == ClassLibProjectTemplate.ShortName)
-            await HandleClassLibProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider);
+            await HandleClassLibProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider)
+                .ConfigureAwait(false);
         else if (projectTemplateShortName == RazorClassLibProjectTemplate.ShortName)
-            await HandleRazorLibProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider);
+            await HandleRazorLibProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider)
+                .ConfigureAwait(false);
         else if (projectTemplateShortName == ConsoleAppProjectTemplate.ShortName)
-            await HandleConsoleAppProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider);
+            await HandleConsoleAppProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider)
+                .ConfigureAwait(false);
         else if (projectTemplateShortName == XUnitProjectTemplate.ShortName)
-            await HandleXUnitProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider);
+            await HandleXUnitProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider)
+                .ConfigureAwait(false);
         else
             throw new NotImplementedException($"The {nameof(ProjectTemplate.ShortName)}: '{projectTemplateShortName}' was not recognized.");
     }
@@ -105,15 +111,17 @@ public static class WebsiteProjectTemplateFacts
                 BlazorWasmEmptyFacts.APP_CSS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                BlazorWasmEmptyFacts.GetAppCssContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    BlazorWasmEmptyFacts.GetAppCssContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // Csproj
         {
             await fileSystemProvider.File.WriteAllTextAsync(
-                cSharpProjectAbsolutePathString,
-                BlazorWasmEmptyFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    cSharpProjectAbsolutePathString,
+                    BlazorWasmEmptyFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // ImportsRazor
@@ -123,8 +131,9 @@ public static class WebsiteProjectTemplateFacts
                 BlazorWasmEmptyFacts.IMPORTS_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                BlazorWasmEmptyFacts.GetImportsRazorContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    BlazorWasmEmptyFacts.GetImportsRazorContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // IndexHtml
@@ -134,8 +143,9 @@ public static class WebsiteProjectTemplateFacts
                 BlazorWasmEmptyFacts.INDEX_HTML_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                BlazorWasmEmptyFacts.GetIndexHtmlContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    BlazorWasmEmptyFacts.GetIndexHtmlContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // IndexRazor
@@ -145,8 +155,9 @@ public static class WebsiteProjectTemplateFacts
                 BlazorWasmEmptyFacts.INDEX_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                BlazorWasmEmptyFacts.GetIndexRazorContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    BlazorWasmEmptyFacts.GetIndexRazorContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // LaunchSettingsJson
@@ -156,8 +167,9 @@ public static class WebsiteProjectTemplateFacts
                 BlazorWasmEmptyFacts.LAUNCH_SETTINGS_JSON_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                BlazorWasmEmptyFacts.GetLaunchSettingsJsonContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    BlazorWasmEmptyFacts.GetLaunchSettingsJsonContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // MainLayoutRazor
@@ -167,8 +179,9 @@ public static class WebsiteProjectTemplateFacts
                 BlazorWasmEmptyFacts.MAIN_LAYOUT_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                BlazorWasmEmptyFacts.GetMainLayoutRazorContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    BlazorWasmEmptyFacts.GetMainLayoutRazorContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // ProgramCs
@@ -178,8 +191,9 @@ public static class WebsiteProjectTemplateFacts
                 BlazorWasmEmptyFacts.PROGRAM_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                BlazorWasmEmptyFacts.GetProgramCsContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    BlazorWasmEmptyFacts.GetProgramCsContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
     }
 
@@ -203,8 +217,9 @@ public static class WebsiteProjectTemplateFacts
                 BlazorServerEmptyFacts.APP_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                BlazorServerEmptyFacts.GetAppRazorContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    BlazorServerEmptyFacts.GetAppRazorContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // AppSettingsDevelopmentJson
@@ -214,8 +229,9 @@ public static class WebsiteProjectTemplateFacts
                 BlazorServerEmptyFacts.APP_SETTINGS_DEVELOPMENT_JSON_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                BlazorServerEmptyFacts.GetAppSettingsDevelopmentJsonContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    BlazorServerEmptyFacts.GetAppSettingsDevelopmentJsonContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // AppSettingsJson
@@ -225,15 +241,17 @@ public static class WebsiteProjectTemplateFacts
                 BlazorServerEmptyFacts.APP_SETTINGS_JSON_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                BlazorServerEmptyFacts.GetAppSettingsJsonContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    BlazorServerEmptyFacts.GetAppSettingsJsonContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // Csproj
         {
             await fileSystemProvider.File.WriteAllTextAsync(
-                cSharpProjectAbsolutePathString,
-                BlazorServerEmptyFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    cSharpProjectAbsolutePathString,
+                    BlazorServerEmptyFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // HostCshtml
@@ -243,8 +261,9 @@ public static class WebsiteProjectTemplateFacts
                 BlazorServerEmptyFacts.HOST_CSHTML_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                BlazorServerEmptyFacts.GetHostCshtmlContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    BlazorServerEmptyFacts.GetHostCshtmlContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // ImportsRazor
@@ -254,8 +273,9 @@ public static class WebsiteProjectTemplateFacts
                 BlazorServerEmptyFacts.IMPORTS_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                BlazorServerEmptyFacts.GetImportsRazorContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    BlazorServerEmptyFacts.GetImportsRazorContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // IndexRazor
@@ -265,8 +285,9 @@ public static class WebsiteProjectTemplateFacts
                 BlazorServerEmptyFacts.INDEX_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                BlazorServerEmptyFacts.GetIndexRazorContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    BlazorServerEmptyFacts.GetIndexRazorContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // LaunchSettingsJson
@@ -276,8 +297,9 @@ public static class WebsiteProjectTemplateFacts
                 BlazorServerEmptyFacts.LAUNCH_SETTINGS_JSON_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                BlazorServerEmptyFacts.GetLaunchSettingsJsonContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    BlazorServerEmptyFacts.GetLaunchSettingsJsonContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // MainLayoutRazor
@@ -287,8 +309,9 @@ public static class WebsiteProjectTemplateFacts
                 BlazorServerEmptyFacts.MAIN_LAYOUT_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                BlazorServerEmptyFacts.GetMainLayoutRazorContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    BlazorServerEmptyFacts.GetMainLayoutRazorContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // ProgramCs
@@ -298,8 +321,9 @@ public static class WebsiteProjectTemplateFacts
                 BlazorServerEmptyFacts.PROGRAM_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                BlazorServerEmptyFacts.GetProgramCsContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    BlazorServerEmptyFacts.GetProgramCsContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // SiteCss
@@ -309,8 +333,9 @@ public static class WebsiteProjectTemplateFacts
                 BlazorServerEmptyFacts.SITE_CSS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                BlazorServerEmptyFacts.GetSiteCssContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    BlazorServerEmptyFacts.GetSiteCssContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
     }
 
@@ -334,15 +359,17 @@ public static class WebsiteProjectTemplateFacts
                 ClassLibFacts.CLASS_1_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                ClassLibFacts.GetClass1CsContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    ClassLibFacts.GetClass1CsContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // Csproj
         {
             await fileSystemProvider.File.WriteAllTextAsync(
-                cSharpProjectAbsolutePathString,
-                ClassLibFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    cSharpProjectAbsolutePathString,
+                    ClassLibFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
     }
 
@@ -366,8 +393,9 @@ public static class WebsiteProjectTemplateFacts
                 RazorClassLibFacts.COMPONENT_1_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                RazorClassLibFacts.GetComponent1RazorContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    RazorClassLibFacts.GetComponent1RazorContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // Component1RazorCss
@@ -377,15 +405,17 @@ public static class WebsiteProjectTemplateFacts
                 RazorClassLibFacts.COMPONENT_1_RAZOR_CSS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                RazorClassLibFacts.GetComponent1RazorCssContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    RazorClassLibFacts.GetComponent1RazorCssContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // Csproj
         {
             await fileSystemProvider.File.WriteAllTextAsync(
-                cSharpProjectAbsolutePathString,
-                RazorClassLibFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    cSharpProjectAbsolutePathString,
+                    RazorClassLibFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // ExampleJsInteropCs
@@ -395,8 +425,9 @@ public static class WebsiteProjectTemplateFacts
                 RazorClassLibFacts.EXAMPLE_JS_INTEROP_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                RazorClassLibFacts.GetExampleJsInteropCsContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    RazorClassLibFacts.GetExampleJsInteropCsContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // ExampleJsInteropJs
@@ -406,8 +437,9 @@ public static class WebsiteProjectTemplateFacts
                 RazorClassLibFacts.EXAMPLE_JS_INTEROP_JS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                RazorClassLibFacts.GetExampleJsInteropJsContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    RazorClassLibFacts.GetExampleJsInteropJsContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // ImportsRazor
@@ -417,8 +449,9 @@ public static class WebsiteProjectTemplateFacts
                 RazorClassLibFacts.IMPORTS_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                RazorClassLibFacts.GetImportsRazorContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    RazorClassLibFacts.GetImportsRazorContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
     }
 
@@ -442,15 +475,17 @@ public static class WebsiteProjectTemplateFacts
                 ConsoleAppFacts.PROGRAM_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                ConsoleAppFacts.GetProgramCsContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    ConsoleAppFacts.GetProgramCsContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // Csproj
         {
             await fileSystemProvider.File.WriteAllTextAsync(
-                cSharpProjectAbsolutePathString,
-                ConsoleAppFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    cSharpProjectAbsolutePathString,
+                    ConsoleAppFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
     }
 
@@ -470,8 +505,9 @@ public static class WebsiteProjectTemplateFacts
         // Csproj
         {
             await fileSystemProvider.File.WriteAllTextAsync(
-                cSharpProjectAbsolutePathString,
-                XUnitFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    cSharpProjectAbsolutePathString,
+                    XUnitFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // UnitTest1Cs
@@ -481,8 +517,9 @@ public static class WebsiteProjectTemplateFacts
                 XUnitFacts.UNIT_TEST_1_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                XUnitFacts.GetUnitTest1CsContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    XUnitFacts.GetUnitTest1CsContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
 
         // UsingsCs
@@ -492,8 +529,9 @@ public static class WebsiteProjectTemplateFacts
                 XUnitFacts.USINGS_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absolutePath,
-                XUnitFacts.GetUsingsCsContents(cSharpProjectAbsolutePath.NameNoExtension));
+                    absolutePath,
+                    XUnitFacts.GetUsingsCsContents(cSharpProjectAbsolutePath.NameNoExtension))
+                .ConfigureAwait(false);
         }
     }
 

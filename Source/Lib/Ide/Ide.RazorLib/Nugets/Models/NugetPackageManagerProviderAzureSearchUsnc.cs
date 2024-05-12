@@ -22,8 +22,9 @@ public class NugetPackageManagerProviderAzureSearchUsnc : INugetPackageManagerPr
         CancellationToken cancellationToken = default)
     {
         return await QueryForNugetPackagesAsync(
-            BuildQuery(queryValue, includePrerelease),
-            cancellationToken);
+                BuildQuery(queryValue, includePrerelease),
+                cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public async Task<ImmutableArray<NugetPackageRecord>> QueryForNugetPackagesAsync(
@@ -35,7 +36,8 @@ public class NugetPackageManagerProviderAzureSearchUsnc : INugetPackageManagerPr
         var nugetPackages = await _httpClient
             .GetFromJsonAsync<NugetResponse>(
                 query,
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
 
         if (nugetPackages is not null)
             return nugetPackages.Data.ToImmutableArray();

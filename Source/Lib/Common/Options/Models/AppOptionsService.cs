@@ -167,17 +167,17 @@ public class AppOptionsService : IAppOptionsService
             var matchedTheme = ThemeStateWrap.Value.ThemeList.FirstOrDefault(
                 x => x.Key == optionsJson.ThemeKey);
 
-            await SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false);
+            await SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false).ConfigureAwait(false);
         }
 
         if (optionsJson.FontFamily is not null)
-            await SetFontFamily(optionsJson.FontFamily, false);
+            await SetFontFamily(optionsJson.FontFamily, false).ConfigureAwait(false);
 
         if (optionsJson.FontSizeInPixels is not null)
-            await SetFontSize(optionsJson.FontSizeInPixels.Value, false);
+            await SetFontSize(optionsJson.FontSizeInPixels.Value, false).ConfigureAwait(false);
 
         if (optionsJson.IconSizeInPixels is not null)
-            await SetIconSize(optionsJson.IconSizeInPixels.Value, false);
+            await SetIconSize(optionsJson.IconSizeInPixels.Value, false).ConfigureAwait(false);
     }
 
     public Task WriteToStorage()

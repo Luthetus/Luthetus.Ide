@@ -39,10 +39,11 @@ public class LuthetusIdeFileSystemBackgroundTaskApi
         return _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Save File",
             async () => await SaveFileAsync(
-                absolutePath,
-                content,
-                onAfterSaveCompletedWrittenDateTimeAction,
-                cancellationToken));
+                    absolutePath,
+                    content,
+                    onAfterSaveCompletedWrittenDateTimeAction,
+                    cancellationToken)
+                .ConfigureAwait(false));
     }
 
     private async Task SaveFileAsync(
@@ -57,9 +58,9 @@ public class LuthetusIdeFileSystemBackgroundTaskApi
         var absolutePathString = absolutePath.Value;
 
         if (absolutePathString is not null &&
-            await _fileSystemProvider.File.ExistsAsync(absolutePathString))
+            await _fileSystemProvider.File.ExistsAsync(absolutePathString).ConfigureAwait(false))
         {
-            await _fileSystemProvider.File.WriteAllTextAsync(absolutePathString, content);
+            await _fileSystemProvider.File.WriteAllTextAsync(absolutePathString, content).ConfigureAwait(false);
         }
         else
         {
@@ -72,8 +73,9 @@ public class LuthetusIdeFileSystemBackgroundTaskApi
         if (absolutePathString is not null)
         {
             fileLastWriteTime = await _fileSystemProvider.File.GetLastWriteTimeAsync(
-                absolutePathString,
-                CancellationToken.None);
+                    absolutePathString,
+                    CancellationToken.None)
+                .ConfigureAwait(false);
         }
 
         onAfterSaveCompletedWrittenDateTimeAction?.Invoke(fileLastWriteTime);

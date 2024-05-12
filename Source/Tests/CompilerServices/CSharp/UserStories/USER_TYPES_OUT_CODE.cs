@@ -54,7 +54,8 @@ public class USER_TYPES_OUT_CODE
                             textEditorViewModel.ViewModelKey,
                             character.ToString(),
                             CancellationToken.None)
-                        .Invoke(editContext);
+                        .Invoke(editContext)
+                        .ConfigureAwait(false);
                 });
 
             cSharpCompilerService.ResourceWasModified(
@@ -107,7 +108,8 @@ public class USER_TYPES_OUT_CODE
                             textEditorViewModel.ViewModelKey,
                             character.ToString(),
                             CancellationToken.None)
-                        .Invoke(editContext);
+                        .Invoke(editContext)
+                        .ConfigureAwait(false);
                 });
 
             cSharpCompilerService.ResourceWasModified(
@@ -165,7 +167,8 @@ await builder.Build().RunAsync();
                                 textEditorViewModel.ViewModelKey,
                                 character.ToString(),
                                 CancellationToken.None)
-                            .Invoke(editContext);
+                            .Invoke(editContext)
+                            .ConfigureAwait(false);
                     });
 
                 if (char.IsLetterOrDigit(character))

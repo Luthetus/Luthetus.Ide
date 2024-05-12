@@ -15,24 +15,24 @@ public static class ThrottleProgressHelper
         var divisions = timeSpan.TotalMilliseconds / updateFrequencyMilliseconds;
         divisions = Math.Floor(divisions);
 
-        await progressFunc.Invoke(0);
+        await progressFunc.Invoke(0).ConfigureAwait(false);
 
         if (divisions > 0)
         {
             for (int i = 0; i < divisions; i++)
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(updateFrequencyMilliseconds));
-                await progressFunc.Invoke(i / divisions);
+                await Task.Delay(TimeSpan.FromMilliseconds(updateFrequencyMilliseconds)).ConfigureAwait(false);
+                await progressFunc.Invoke(i / divisions).ConfigureAwait(false);
             }
 
             // Await the remaining time
-            await Task.Delay(TimeSpan.FromMilliseconds(timeSpan.TotalMilliseconds % divisions));
+            await Task.Delay(TimeSpan.FromMilliseconds(timeSpan.TotalMilliseconds % divisions)).ConfigureAwait(false);
         }
         else
         {
-            await Task.Delay(timeSpan);
+            await Task.Delay(timeSpan).ConfigureAwait(false);
         }
 
-        await progressFunc.Invoke(1);
+        await progressFunc.Invoke(1).ConfigureAwait(false);
     }
 }

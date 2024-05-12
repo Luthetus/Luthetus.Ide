@@ -46,37 +46,43 @@ public class LuthetusIdeFolderExplorerBackgroundTaskApi
 
     public Task SetFolderExplorerState(IAbsolutePath folderAbsolutePath)
     {
-        return _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return _backgroundTaskService.EnqueueAsync(
+            Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Set FolderExplorer State",
-            async () => await SetFolderExplorerAsync(folderAbsolutePath));
+            async () => await SetFolderExplorerAsync(folderAbsolutePath).ConfigureAwait(false));
     }
 
     public Task SetFolderExplorerTreeView(IAbsolutePath folderAbsolutePath)
     {
-        return _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return _backgroundTaskService.EnqueueAsync(
+            Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Set FolderExplorer TreeView",
-            async () => await SetFolderExplorerTreeViewAsync(folderAbsolutePath));
+            async () => await SetFolderExplorerTreeViewAsync(folderAbsolutePath).ConfigureAwait(false));
     }
 
     public async Task ShowInputFile()
     {
-        await _ideBackgroundTaskApi.InputFile.RequestInputFileStateForm("Folder Explorer",
-            async absolutePath =>
-            {
-                if (absolutePath is not null)
-                    await SetFolderExplorerAsync(absolutePath);
-            },
-            absolutePath =>
-            {
-                if (absolutePath is null || !absolutePath.IsDirectory)
-                    return Task.FromResult(false);
+        await _ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+                "Folder Explorer",
+                async absolutePath =>
+                {
+                    if (absolutePath is not null)
+                        await SetFolderExplorerAsync(absolutePath).ConfigureAwait(false);
+                },
+                absolutePath =>
+                {
+                    if (absolutePath is null || !absolutePath.IsDirectory)
+                        return Task.FromResult(false);
 
-                return Task.FromResult(true);
-            },
-            new[]
-            {
-                new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
-            }.ToImmutableArray());
+                    return Task.FromResult(true);
+                },
+                new[]
+                {
+                    new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
+                }.ToImmutableArray())
+            .ConfigureAwait(false);
     }
 
     private async Task SetFolderExplorerAsync(IAbsolutePath folderAbsolutePath)
@@ -87,7 +93,7 @@ public class LuthetusIdeFolderExplorerBackgroundTaskApi
                 AbsolutePath = folderAbsolutePath
             }));
 
-        await SetFolderExplorerTreeViewAsync(folderAbsolutePath);
+        await SetFolderExplorerTreeViewAsync(folderAbsolutePath).ConfigureAwait(false);
     }
 
     private async Task SetFolderExplorerTreeViewAsync(IAbsolutePath folderAbsolutePath)
@@ -106,7 +112,7 @@ public class LuthetusIdeFolderExplorerBackgroundTaskApi
             true,
             true);
 
-        await rootNode.LoadChildListAsync();
+        await rootNode.LoadChildListAsync().ConfigureAwait(false);
 
         if (!_treeViewService.TryGetTreeViewContainer(
                 FolderExplorerState.TreeViewContentStateKey,

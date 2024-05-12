@@ -47,7 +47,7 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
     {
         return _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Refresh TestExplorer",
-            async () => await DotNetSolutionStateWrap_StateChangedAsync());
+            async () => await DotNetSolutionStateWrap_StateChangedAsync().ConfigureAwait(false));
     }
 
     private Task DotNetSolutionStateWrap_StateChangedAsync()
@@ -134,12 +134,12 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
                                 }
 
                                 treeViewProjectTestModel.Item.RootStringFragmentMap = rootMap;
-                                await callback.Invoke(rootMap);
+                                await callback.Invoke(rootMap).ConfigureAwait(false);
                             }
                         }
                         catch (Exception)
                         {
-                            await callback.Invoke(new());
+                            await callback.Invoke(new()).ConfigureAwait(false);
                             throw;
                         }
                     },
@@ -153,7 +153,7 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
                         return Task.CompletedTask;
                     });
 
-                await executionTerminal.EnqueueCommandAsync(dotNetTestListTestsCommand);
+                await executionTerminal.EnqueueCommandAsync(dotNetTestListTestsCommand).ConfigureAwait(false);
             };
         }
 
