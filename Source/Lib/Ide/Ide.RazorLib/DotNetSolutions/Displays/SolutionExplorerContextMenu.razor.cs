@@ -30,6 +30,9 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 
@@ -55,6 +58,10 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    [Inject]
+    private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
+    [Inject]
+    private IServiceProvider ServiceProvider { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
@@ -245,15 +252,15 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 addExistingCSharpProject,
             }.ToImmutableArray()));
 
-        var openSolutionEditor = new MenuOptionRecord(
-            "Open Solution Editor",
+        var openInTextEditor = new MenuOptionRecord(
+            "Open in text editor",
             MenuOptionKind.Update,
-            () => OpenSolutionEditorDialog(treeViewSolution.Item));
+            () => OpenSolutionInTextEditor(treeViewSolution.Item));
 
         return new[]
         {
             createOptions,
-            openSolutionEditor,
+            openInTextEditor,
         };
     }
 
@@ -507,28 +514,38 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             }.ToImmutableArray());
     }
 
-    private Task OpenSolutionEditorDialog(DotNetSolutionModel dotNetSolutionModel)
+    private async Task OpenSolutionInTextEditor(DotNetSolutionModel dotNetSolutionModel)
     {
-        var dialogRecord = new DialogViewModel(
-            _solutionEditorDialogKey,
-            "Solution Editor",
-            typeof(SolutionEditorDisplay),
-            new Dictionary<string, object?>
-            {
-                {
-                    nameof(SolutionEditorDisplay.DotNetSolutionModelKey),
-                    dotNetSolutionModel.Key
-                },
-                {
-                    nameof(SolutionEditorDisplay.DotNetSolutionResourceUri),
-                    new ResourceUri(dotNetSolutionModel.NamespacePath.AbsolutePath.Value)
-                },
-            },
-            null,
-			true);
+        var resourceUri = new ResourceUri(dotNetSolutionModel.AbsolutePath.Value);
 
-        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
-        return Task.CompletedTask;
+        if (TextEditorConfig.RegisterModelFunc is null)
+            return;
+
+        await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
+                resourceUri,
+                ServiceProvider))
+            .ConfigureAwait(false);
+
+        if (TextEditorConfig.TryRegisterViewModelFunc is not null)
+        {
+            var viewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
+                    Key<TextEditorViewModel>.NewKey(),
+                    resourceUri,
+                    new Category("main"),
+                    false,
+                    ServiceProvider))
+                .ConfigureAwait(false);
+
+            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
+                TextEditorConfig.TryShowViewModelFunc is not null)
+            {
+                await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
+                        viewModelKey,
+                        Key<TextEditorGroup>.Empty,
+                        ServiceProvider))
+                    .ConfigureAwait(false);
+            }
+        }
     }
 
     /// <summary>
