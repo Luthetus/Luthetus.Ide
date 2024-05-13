@@ -74,11 +74,11 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 
 		command = new TextEditorCommand(
 			commandDisplayName, "terminal_intercept-default-keymap", false, true, TextEditKind.None, null,
-			interfaceCommandArgs =>
+			async interfaceCommandArgs =>
 			{
 				var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-				commandArgs.TextEditorService.PostSimpleBatch(
+                await commandArgs.TextEditorService.PostSimpleBatch(
 					nameof(commandDisplayName),
                     string.Empty,
                     async editContext =>
@@ -218,7 +218,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 										else
 										{
                                             await onKeyDown.InvokeWithEditContext(editContext).ConfigureAwait(false);
-											terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
+                                            await terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
                                         }
                                     }
                                 }
@@ -254,11 +254,9 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
                             if (terminalResource is null)
                                 return;
 
-                            terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
+                            await terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
                         }
 					});
-
-				return Task.CompletedTask;
 			});
 
 		return true;

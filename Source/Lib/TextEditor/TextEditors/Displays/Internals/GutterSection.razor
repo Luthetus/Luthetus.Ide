@@ -14,7 +14,7 @@
     <VirtualizationDisplay VirtualizationResultWithoutTypeMask="GetVirtualizationResult()"
                            UseHorizontalVirtualization="false"
                            UseIntersectionObserver="false"
-                           ItemsProviderFunc="_ => {}"/>
+                           ItemsProviderFunc="_ => Task.CompletedTask"/>
     
     @foreach (var virtualizedRow in RenderBatch.ViewModel!.VirtualizationResult.EntryList)
     {

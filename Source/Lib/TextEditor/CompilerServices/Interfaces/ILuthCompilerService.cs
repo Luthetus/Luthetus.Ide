@@ -18,7 +18,7 @@ public interface ILuthCompilerService
     public void RegisterResource(ResourceUri resourceUri);
 
     /// <summary>Expected to be an <see cref="Microsoft.Extensions.Hosting.IHostedService"/> (or anything which performs background task work)</summary>
-    public void ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpansList);
+    public Task ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpansList);
 
     public ILuthCompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri);
 

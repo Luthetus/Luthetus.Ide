@@ -1,8 +1,18 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Misc;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis;
 
@@ -25,6 +35,37 @@ namespace Luthetus.TextEditor.Tests.Basis;
 /// </summary>
 public class TextEditorTestBase
 {
+    protected (
+        BackgroundTaskService backgroundTaskService,
+        ContinuousBackgroundTaskWorker backgroundTaskWorker,
+        IDispatcher dispatcher,
+        ITextEditorService textEditorService) InitializeBackgroundTasks()
+    {
+        var backgroundTaskService = new BackgroundTaskService();
+        var hostingInformation = new LuthetusHostingInformation(LuthetusHostingKind.UnitTesting, backgroundTaskService);
+
+        var services = new ServiceCollection()
+            .AddScoped<ILoggerFactory, NullLoggerFactory>()
+            .AddScoped<IJSRuntime, DoNothingJsRuntime>()
+            .AddLuthetusTextEditor(hostingInformation)
+            .AddFluxor(options => options.ScanAssemblies(
+                typeof(LuthetusCommonConfig).Assembly,
+                typeof(LuthetusTextEditorConfig).Assembly));
+
+        var serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        var backgroundTaskWorker = serviceProvider.GetRequiredService<ContinuousBackgroundTaskWorker>();
+
+        return (
+            backgroundTaskService,
+            backgroundTaskWorker,
+            serviceProvider.GetRequiredService<IDispatcher>(),
+            serviceProvider.GetRequiredService<ITextEditorService>());
+    }
+
     protected (TextEditorModel inModel, TextEditorModelModifier modelModifier) EmptyEditor_TestData_And_PerformPreAssertions(
         ResourceUri resourceUri,
         DateTime resourceLastWriteTime,

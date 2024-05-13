@@ -111,7 +111,7 @@ public partial class AutocompleteMenu : ComponentBase
                         () => SelectMenuOption(() =>
                         {
                             InsertAutocompleteMenuOption(word, entry, RenderBatch.ViewModel);
-                            entry.SideEffectAction?.Invoke();
+                            entry.SideEffectFunc?.Invoke();
                             return Task.CompletedTask;
                         }),
                         WidgetParameterMap: new Dictionary<string, object?>
@@ -168,7 +168,7 @@ public partial class AutocompleteMenu : ComponentBase
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)
     {
-        TextEditorService.PostSimpleBatch(
+        return TextEditorService.PostSimpleBatch(
             nameof(InsertAutocompleteMenuOption),
             string.Empty,
             TextEditorService.ModelApi.InsertTextFactory(
@@ -176,7 +176,5 @@ public partial class AutocompleteMenu : ComponentBase
                 viewModel.ViewModelKey,
                 autocompleteEntry.DisplayName.Substring(word.Length),
                 CancellationToken.None));
-
-        return Task.CompletedTask;
     }
 }

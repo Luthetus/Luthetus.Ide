@@ -54,7 +54,7 @@ public partial interface ITextEditorService
     /// --- <see cref="BackgroundTasks.Models.SimpleBatchTextEditorTask"/>.cs inheritdoc:<br/><br/>
     /// <inheritdoc cref="BackgroundTasks.Models.SimpleBatchTextEditorTask"/>
     /// </summary>
-    public void PostSimpleBatch(
+    public Task PostSimpleBatch(
         string name,
         string identifier,
         TextEditorEdit textEditorEdit,
@@ -66,7 +66,7 @@ public partial interface ITextEditorService
     /// --- <see cref="BackgroundTasks.Models.TakeMostRecentTextEditorTask"/>.cs inheritdoc:<br/><br/>
     /// <inheritdoc cref="BackgroundTasks.Models.TakeMostRecentTextEditorTask"/>
     /// </summary>
-    public void PostTakeMostRecent(
+    public Task PostTakeMostRecent(
         string name,
         string redundancyIdentifier,
         TextEditorEdit textEditorEdit,
@@ -80,5 +80,5 @@ public partial interface ITextEditorService
     /// When the innerTask is finished, the encapsulating <see cref="TextEditorServiceTask"/>
     /// will update any state that was modified, and trigger re-renders for the UI.
     /// </summary>
-    public void Post(ITextEditorTask textEditorTask);
+    public Task Post(ITextEditorTask textEditorTask);
 }

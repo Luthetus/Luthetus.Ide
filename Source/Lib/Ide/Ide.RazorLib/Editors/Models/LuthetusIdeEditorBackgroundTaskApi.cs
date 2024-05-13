@@ -125,7 +125,7 @@ public class LuthetusIdeEditorBackgroundTaskApi
 
             _textEditorService.ModelApi.RegisterCustom(model);
 
-            _textEditorService.PostSimpleBatch(
+            await _textEditorService.PostSimpleBatch(
                 nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
                 string.Empty,
                 async editContext =>
@@ -165,19 +165,19 @@ public class LuthetusIdeEditorBackgroundTaskApi
             .ConfigureAwait(false);
     }
 
-    public Task<Key<TextEditorViewModel>> TryRegisterViewModelFunc(TryRegisterViewModelArgs registerViewModelArgs)
+    public async Task<Key<TextEditorViewModel>> TryRegisterViewModelFunc(TryRegisterViewModelArgs registerViewModelArgs)
     {
         var model = _textEditorService.ModelApi.GetOrDefault(registerViewModelArgs.ResourceUri);
 
         if (model is null)
-            return Task.FromResult(Key<TextEditorViewModel>.Empty);
+            return Key<TextEditorViewModel>.Empty;
 
         var viewModel = _textEditorService.ModelApi
             .GetViewModelsOrEmpty(registerViewModelArgs.ResourceUri)
             .FirstOrDefault(x => x.Category == registerViewModelArgs.Category);
 
         if (viewModel is not null)
-            return Task.FromResult(viewModel.ViewModelKey);
+            return viewModel.ViewModelKey;
 
         var viewModelKey = Key<TextEditorViewModel>.NewKey();
 
@@ -196,7 +196,7 @@ public class LuthetusIdeEditorBackgroundTaskApi
             registerViewModelArgs.ResourceUri.Value,
             false);
 
-        _textEditorService.PostSimpleBatch(
+        await _textEditorService.PostSimpleBatch(
             nameof(TryRegisterViewModelFunc),
             string.Empty,
             _textEditorService.ViewModelApi.WithValueFactory(
@@ -213,7 +213,7 @@ public class LuthetusIdeEditorBackgroundTaskApi
                     };
                 }));
 
-        return Task.FromResult(viewModelKey);
+        return viewModelKey;
 
         void HandleOnSaveRequested(ITextEditorModel innerTextEditor)
         {
@@ -224,11 +224,11 @@ public class LuthetusIdeEditorBackgroundTaskApi
             _ideBackgroundTaskApi.FileSystem.SaveFile(
                 absolutePath,
                 innerContent,
-                writtenDateTime =>
+                async writtenDateTime =>
                 {
                     if (writtenDateTime is not null)
                     {
-                        _textEditorService.PostSimpleBatch(
+                        await _textEditorService.PostSimpleBatch(
                             nameof(HandleOnSaveRequested),
                             string.Empty,
                             _textEditorService.ModelApi.SetResourceDataFactory(
@@ -356,7 +356,7 @@ public class LuthetusIdeEditorBackgroundTaskApi
                                                 .ReadAllTextAsync(inputFileAbsolutePathString)
                                                 .ConfigureAwait(false);
 
-                                            _textEditorService.PostSimpleBatch(
+                                            await _textEditorService.PostSimpleBatch(
                                                 nameof(CheckIfContentsWereModifiedAsync),
                                                 string.Empty,
                                                 async editContext =>

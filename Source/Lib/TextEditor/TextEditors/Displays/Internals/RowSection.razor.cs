@@ -98,7 +98,7 @@ public partial class RowSection : ComponentBase
         }
     }
 
-    private void VirtualizationDisplayItemsProviderFunc(VirtualizationRequest virtualizationRequest)
+    private async Task VirtualizationDisplayItemsProviderFunc(VirtualizationRequest virtualizationRequest)
     {
         var model = RenderBatch.Model;
         var viewModel = RenderBatch.ViewModel;
@@ -106,17 +106,13 @@ public partial class RowSection : ComponentBase
         if (model is null || viewModel is null)
             return;
 
-        TextEditorService.PostTakeMostRecent(
-            nameof(VirtualizationDisplayItemsProviderFunc),
-            $"{nameof(VirtualizationDisplayItemsProviderFunc)}_{viewModel.ViewModelKey}",
-            TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-                model.ResourceUri,
-                viewModel.ViewModelKey,
-                virtualizationRequest.CancellationToken));
-        //_throttleVirtualizationDisplayItemsProviderFunc.PushEvent(_ => 
-        //{
-
-        //    return Task.CompletedTask;
-        //});
+        await TextEditorService.PostTakeMostRecent(
+                nameof(VirtualizationDisplayItemsProviderFunc),
+                $"{nameof(VirtualizationDisplayItemsProviderFunc)}_{viewModel.ViewModelKey}",
+                TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+                    model.ResourceUri,
+                    viewModel.ViewModelKey,
+                    virtualizationRequest.CancellationToken))
+            .ConfigureAwait(false);
     }
 }

@@ -147,7 +147,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 
         if (solutionTextEditorModel is not null)
         {
-            _textEditorService.PostSimpleBatch(
+            await _textEditorService.PostSimpleBatch(
                 nameof(Website_AddExistingProjectToSolutionAsync),
                 string.Empty,
                 _textEditorService.ModelApi.ReloadFactory(
@@ -303,7 +303,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 
         var dotNetSolutionCompilerService = _interfaceCompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
 
-        dotNetSolutionCompilerService.ResourceWasModified(
+        await dotNetSolutionCompilerService.ResourceWasModified(
             new ResourceUri(solutionAbsolutePath.Value),
             ImmutableArray<TextEditorTextSpan>.Empty);
 

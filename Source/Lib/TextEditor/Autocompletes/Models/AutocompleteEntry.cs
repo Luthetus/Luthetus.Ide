@@ -5,14 +5,14 @@ public class AutocompleteEntry
     public AutocompleteEntry(
         string displayName,
         AutocompleteEntryKind autocompleteEntryKind,
-        Action? sideEffectAction)
+        Func<Task>? sideEffectFunc)
     {
         DisplayName = displayName;
         AutocompleteEntryKind = autocompleteEntryKind;
-        SideEffectAction = sideEffectAction;
+        SideEffectFunc = sideEffectFunc;
     }
 
     public string DisplayName { get; }
     public AutocompleteEntryKind AutocompleteEntryKind { get; }
-    public Action? SideEffectAction { get; }
+    public Func<Task>? SideEffectFunc { get; }
 }

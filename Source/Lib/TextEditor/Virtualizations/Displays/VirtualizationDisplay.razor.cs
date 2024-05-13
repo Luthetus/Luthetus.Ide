@@ -13,7 +13,7 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public IVirtualizationResultWithoutTypeMask VirtualizationResultWithoutTypeMask { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Action<VirtualizationRequest>? ItemsProviderFunc { get; set; }
+    public Func<VirtualizationRequest, Task>? ItemsProviderFunc { get; set; }
 
     [Parameter]
     public bool UseHorizontalVirtualization { get; set; } = true;
@@ -85,7 +85,7 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
     }
 
     [JSInvokable]
-    public Task OnScrollEventAsync(VirtualizationScrollPosition scrollPosition)
+    public async Task OnScrollEventAsync(VirtualizationScrollPosition scrollPosition)
     {
         _scrollEventCancellationTokenSource.Cancel();
         _scrollEventCancellationTokenSource = new CancellationTokenSource();
@@ -93,9 +93,7 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
         _request = new VirtualizationRequest(scrollPosition, _scrollEventCancellationTokenSource.Token);
 
         if (ItemsProviderFunc is not null)
-            ItemsProviderFunc.Invoke(_request);
-
-        return Task.CompletedTask;
+            await ItemsProviderFunc.Invoke(_request).ConfigureAwait(false);
     }
 
     public void Dispose()

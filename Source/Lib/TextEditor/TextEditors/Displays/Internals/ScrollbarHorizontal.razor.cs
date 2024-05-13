@@ -174,7 +174,7 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
 				RenderBatch.Events,
 				RenderBatch.ViewModel.ViewModelKey);
 
-			TextEditorService.Post(throttleEventOnScrollHorizontal);
+            await TextEditorService.Post(throttleEventOnScrollHorizontal);
         }
         else
         {

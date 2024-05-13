@@ -33,7 +33,7 @@ public class LuthetusIdeFileSystemBackgroundTaskApi
     public Task SaveFile(
         IAbsolutePath absolutePath,
         string content,
-        Action<DateTime?> onAfterSaveCompletedWrittenDateTimeAction,
+        Func<DateTime?, Task> onAfterSaveCompletedWrittenDateTimeFunc,
         CancellationToken cancellationToken = default)
     {
         return _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
@@ -41,7 +41,7 @@ public class LuthetusIdeFileSystemBackgroundTaskApi
             async () => await SaveFileAsync(
                     absolutePath,
                     content,
-                    onAfterSaveCompletedWrittenDateTimeAction,
+                    onAfterSaveCompletedWrittenDateTimeFunc,
                     cancellationToken)
                 .ConfigureAwait(false));
     }
@@ -49,7 +49,7 @@ public class LuthetusIdeFileSystemBackgroundTaskApi
     private async Task SaveFileAsync(
         IAbsolutePath absolutePath,
         string content,
-        Action<DateTime?> onAfterSaveCompletedWrittenDateTimeAction,
+        Func<DateTime?, Task> onAfterSaveCompletedWrittenDateTimeFunc,
         CancellationToken cancellationToken = default)
     {
         if (cancellationToken.IsCancellationRequested)
@@ -78,6 +78,7 @@ public class LuthetusIdeFileSystemBackgroundTaskApi
                 .ConfigureAwait(false);
         }
 
-        onAfterSaveCompletedWrittenDateTimeAction?.Invoke(fileLastWriteTime);
+        if (onAfterSaveCompletedWrittenDateTimeFunc is not null)
+            await onAfterSaveCompletedWrittenDateTimeFunc.Invoke(fileLastWriteTime);
     }
 }

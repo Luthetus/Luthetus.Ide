@@ -2,16 +2,13 @@
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Luthetus.TextEditor.Tests.Basis.BackgroundTasks.Models;
 
 /// <summary>
 /// <see cref="TakeMostRecentTextEditorTask"/>
 /// </summary>
-public class TakeMostRecentTextEditorTaskTests
+public class TakeMostRecentTextEditorTaskTests : TextEditorTestBase
 {
     /// <summary>
     /// <see cref="TakeMostRecentTextEditorTask(string, string, TextEditorEdit, TimeSpan?)"/>
@@ -76,22 +73,30 @@ public class TakeMostRecentTextEditorTaskTests
     {
         var currentThread = Thread.CurrentThread;
 
-        var (backgroundTaskService, backgroundTaskWorker) = InitializeTakeMostRecentTextEditorTaskTests();
+        var (backgroundTaskService, backgroundTaskWorker, dispatcher, textEditorService) = InitializeBackgroundTasks();
 
         var cts = new CancellationTokenSource();
         var cancellationToken = cts.Token;
 
-        var thread = new Thread(async () =>
+        var backgroundTaskThread = new Thread(async () =>
         {
             await backgroundTaskWorker.StartAsync(cancellationToken);
         });
 
-        thread.Start();
+        await textEditorService.PostTakeMostRecent(
+            "Name_Test",
+            "Identifier_Test",
+            editContext =>
+            {
+                return Task.CompletedTask;
+            });
 
-        await Task.Yield();
+        backgroundTaskThread.Start();
+
+        // await Task.Yield();
 
         await backgroundTaskWorker.StopAsync(CancellationToken.None);
-        thread.Join();
+        backgroundTaskThread.Join();
     }
 
     /// <summary>
@@ -111,25 +116,5 @@ public class TakeMostRecentTextEditorTaskTests
     public void HandleEvent()
     {
 
-    }
-
-    private (BackgroundTaskService backgroundTaskService, ContinuousBackgroundTaskWorker backgroundTaskWorker) InitializeTakeMostRecentTextEditorTaskTests()
-    {
-        var services = new ServiceCollection()
-            .AddScoped<ILoggerFactory, NullLoggerFactory>();
-
-        var serviceProvider = services.BuildServiceProvider();
-
-        var backgroundTaskService = new BackgroundTaskService();
-        
-        var backgroundTaskWorker = new ContinuousBackgroundTaskWorker(
-            backgroundTaskService,
-            serviceProvider.GetRequiredService<ILoggerFactory>());
-
-        backgroundTaskService.RegisterQueue(new BackgroundTaskQueue(
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
-            ContinuousBackgroundTaskWorker.QUEUE_DISPLAY_NAME));
-
-        return (backgroundTaskService, backgroundTaskWorker);
     }
 }

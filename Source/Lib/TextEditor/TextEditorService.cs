@@ -21,9 +21,7 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Microsoft.JSInterop;
 using Luthetus.TextEditor.RazorLib.Exceptions;
-using Luthetus.TextEditor.RazorLib.Events;
 using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
-using Luthetus.TextEditor.RazorLib.BackgroundTasks;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib;
@@ -124,32 +122,32 @@ public partial class TextEditorService : ITextEditorService
     //        throttleTimeSpan));
     //}
 
-    public void PostSimpleBatch(
+    public Task PostSimpleBatch(
         string name,
         string identifier,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        Post(new AsIsTextEditorTask(
+        return Post(new AsIsTextEditorTask(
             $"{name}_sb",
             textEditorEdit,
             throttleTimeSpan));
     }
 
-    public void PostTakeMostRecent(
+    public Task PostTakeMostRecent(
         string name,
         string redundancyIdentifier,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        Post(new TakeMostRecentTextEditorTask(
+        return Post(new TakeMostRecentTextEditorTask(
             $"{name}_tmr",
             redundancyIdentifier,
             textEditorEdit,
             throttleTimeSpan));
     }
 
-    public void Post(ITextEditorTask innerTask)
+    public async Task Post(ITextEditorTask innerTask)
     {
         try
         {
@@ -162,7 +160,7 @@ public partial class TextEditorService : ITextEditorService
                 editContext,
                 _dispatcher);
 
-            _backgroundTaskService.EnqueueAsync(textEditorServiceTask);
+            await _backgroundTaskService.EnqueueAsync(textEditorServiceTask).ConfigureAwait(false);
         }
         catch (LuthetusTextEditorException e)
         {

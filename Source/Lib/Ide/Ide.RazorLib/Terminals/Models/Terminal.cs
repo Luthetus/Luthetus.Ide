@@ -149,7 +149,7 @@ public class Terminal
                     var outputOffset = 0;
 
                     await command.Observe(_commandCancellationTokenSource.Token)
-                        .ForEachAsync(cmdEvent =>
+                        .ForEachAsync(async cmdEvent =>
                         {
 							var output = (string?)null;
 
@@ -181,7 +181,7 @@ public class Terminal
                                 if (terminalCommand.OutputParser is not null)
                                     outputTextSpanList = terminalCommand.OutputParser.ParseLine(output);
 
-                                _textEditorService.Post(new OnOutput(
+                                await _textEditorService.Post(new OnOutput(
                                     outputOffset,
                                     output,
                                     outputTextSpanList,
@@ -209,7 +209,7 @@ public class Terminal
                     }
                     else
                     {
-                        _textEditorService.PostSimpleBatch(
+                        await _textEditorService.PostSimpleBatch(
                             "set-content_" + terminalCommandKey.Guid,
                             string.Empty,
                             editContext =>
@@ -276,7 +276,7 @@ public class Terminal
         DispatchNewStateKey();
     }
 
-	public void CreateTextEditorForCommandOutput(Key<TerminalCommand> terminalCommandKey, Key<TextEditorViewModel> commandOutputViewModelKey)
+	public async Task CreateTextEditorForCommandOutput(Key<TerminalCommand> terminalCommandKey, Key<TextEditorViewModel> commandOutputViewModelKey)
 	{
         var success = TryGetTerminalCommandTextSpan(terminalCommandKey, out var textSpan);
 
@@ -295,7 +295,7 @@ public class Terminal
 
 		_textEditorService.ModelApi.RegisterCustom(model);
 
-		_textEditorService.PostSimpleBatch(
+        await _textEditorService.PostSimpleBatch(
 			nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
             string.Empty,
             async editContext =>
@@ -351,7 +351,7 @@ public class Terminal
         _dispatcher.Dispatch(new TerminalState.NotifyStateChangedAction(Key));
     }
 
-    private void CreateTextEditor()
+    private async Task CreateTextEditor()
     {
         var line1 = "Integrated-Terminal";
         var line2 = "Try: cmd /c \"dir\"";
@@ -371,7 +371,7 @@ public class Terminal
 
         _textEditorService.ModelApi.RegisterCustom(model);
 
-        _textEditorService.PostSimpleBatch(
+        await _textEditorService.PostSimpleBatch(
             nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
             string.Empty,
             async editContext =>
@@ -409,7 +409,7 @@ public class Terminal
             FindOverlayPresentationFacts.PresentationKey,
         }.ToImmutableArray();
 
-        _textEditorService.PostSimpleBatch(
+        await _textEditorService.PostSimpleBatch(
             nameof(Terminal),
             string.Empty,
             _textEditorService.ViewModelApi.WithValueFactory(
@@ -419,7 +419,7 @@ public class Terminal
                         FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
                     }));
 
-        _textEditorService.PostSimpleBatch(
+        await _textEditorService.PostSimpleBatch(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
             string.Empty,
             async editContext =>
@@ -463,9 +463,9 @@ public class Terminal
             });
     }
 
-    public void WriteWorkingDirectory()
+    public async Task WriteWorkingDirectory()
     {
-        _textEditorService.PostSimpleBatch(
+        await _textEditorService.PostSimpleBatch(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
             string.Empty,
             async editContext =>
@@ -507,9 +507,9 @@ public class Terminal
             });
     }
     
-    public void MoveCursorToEnd()
+    public async Task MoveCursorToEnd()
     {
-        _textEditorService.PostSimpleBatch(
+        await _textEditorService.PostSimpleBatch(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
             string.Empty,
             async editContext =>
@@ -536,9 +536,9 @@ public class Terminal
             });
     }
 
-    public void ClearTerminal()
+    public async Task ClearTerminal()
     {
-        _textEditorService.PostSimpleBatch(
+        await _textEditorService.PostSimpleBatch(
             nameof(ClearTerminal),
             string.Empty,
             async editContext =>
@@ -580,9 +580,9 @@ public class Terminal
     /// For example, the unit test explorer, will show terminal output,
     /// which is the result of taking a substring from the entire terminal output.
     /// </summary>
-    private void ClearOutputView(TerminalCommand terminalCommand)
+    private async Task ClearOutputView(TerminalCommand terminalCommand)
     {
-        _textEditorService.PostSimpleBatch(
+        await _textEditorService.PostSimpleBatch(
             "clear-content_" + terminalCommand.TerminalCommandKey.Guid,
             string.Empty,
             editContext =>

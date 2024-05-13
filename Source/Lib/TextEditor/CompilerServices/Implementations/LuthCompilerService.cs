@@ -108,9 +108,9 @@ public class LuthCompilerService : ILuthCompilerService
         }
     }
 
-    public virtual void ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpansList)
+    public virtual Task ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpansList)
     {
-        QueueParseRequest(resourceUri);
+        return QueueParseRequest(resourceUri);
     }
 
     public virtual void CursorWasModified(ResourceUri resourceUri, TextEditorCursor cursor)
@@ -158,9 +158,9 @@ public class LuthCompilerService : ILuthCompilerService
         ResourceDisposed?.Invoke();
     }
 
-    protected virtual void QueueParseRequest(ResourceUri resourceUri)
+    protected virtual Task QueueParseRequest(ResourceUri resourceUri)
     {
-        _textEditorService.PostSimpleBatch(
+        return _textEditorService.PostSimpleBatch(
             $"{nameof(QueueParseRequest)}_{resourceUri.Value}",
             string.Empty,
             async editContext =>
