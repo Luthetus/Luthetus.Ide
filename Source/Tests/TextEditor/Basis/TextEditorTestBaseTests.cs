@@ -1,19 +1,4 @@
-﻿using Fluxor;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.Installations.Models;
-using Luthetus.Common.RazorLib.Misc;
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.Decorations.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.Rows.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Logging;
-using Microsoft.JSInterop;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Microsoft.AspNetCore.Components;
+﻿using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis;
 
@@ -26,7 +11,7 @@ public class TextEditorTestBaseTests : TextEditorTestBase
     /// <see cref="TextEditorTestBase.InitializeBackgroundTasks()"/>
     /// </summary>
     [Fact]
-    public async Task InitializeBackgroundTasks_Test()
+    public async Task InitializeBackgroundTasks_Test_A()
     {
         var currentThread = Thread.CurrentThread;
 
@@ -40,14 +25,19 @@ public class TextEditorTestBaseTests : TextEditorTestBase
             await backgroundTaskWorker.StartAsync(cancellationToken);
         });
 
-        //await backgroundTaskService.EnqueueAsync();
-        await textEditorService.PostTakeMostRecent(
-            "Name_Test",
-            "Identifier_Test",
-            editContext =>
-            {
-                return Task.CompletedTask;
-            });
+        var number = 0;
+
+        for (var i = 0; i < 3; i++)
+        {
+            await textEditorService.PostTakeMostRecent(
+                "Name_Test",
+                "Identifier_Test",
+                editContext =>
+                {
+                    number++;
+                    return Task.CompletedTask;
+                });
+        }
 
         backgroundTaskThread.Start();
 
@@ -55,5 +45,90 @@ public class TextEditorTestBaseTests : TextEditorTestBase
 
         await backgroundTaskWorker.StopAsync(CancellationToken.None);
         backgroundTaskThread.Join();
+
+        Assert.Equal(1, number);
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorTestBase.InitializeBackgroundTasks()"/>
+    /// </summary>
+    [Fact]
+    public async Task InitializeBackgroundTasks_Test_B()
+    {
+        var currentThread = Thread.CurrentThread;
+
+        var (backgroundTaskService, backgroundTaskWorker, dispatcher, textEditorService) = InitializeBackgroundTasks();
+
+        var cts = new CancellationTokenSource();
+        var cancellationToken = cts.Token;
+
+        var backgroundTaskThread = new Thread(async () =>
+        {
+            await backgroundTaskWorker.StartAsync(cancellationToken);
+        });
+
+        var number = 0;
+
+        for (var i = 0; i < 3; i++)
+        {
+            await textEditorService.PostSimpleBatch(
+                "Name_Test",
+                "Identifier_Test",
+                editContext =>
+                {
+                    number++;
+                    return Task.CompletedTask;
+                });
+        }
+
+        backgroundTaskThread.Start();
+
+        // await Task.Yield();
+
+        await backgroundTaskWorker.StopAsync(CancellationToken.None);
+        backgroundTaskThread.Join();
+
+        Assert.Equal(3, number);
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorTestBase.InitializeBackgroundTasks()"/>
+    /// </summary>
+    [Fact]
+    public async Task InitializeBackgroundTasks_Test_C()
+    {
+        var currentThread = Thread.CurrentThread;
+
+        var (backgroundTaskService, backgroundTaskWorker, dispatcher, textEditorService) = InitializeBackgroundTasks();
+
+        var cts = new CancellationTokenSource();
+        var cancellationToken = cts.Token;
+
+        var backgroundTaskThread = new Thread(async () =>
+        {
+            await backgroundTaskWorker.StartAsync(cancellationToken);
+        });
+
+        var number = 0;
+
+        for (var i = 0; i < 3; i++)
+        {
+            await textEditorService.Post(new AsIsTextEditorTask(
+                "Name_Test",
+                editContext =>
+                {
+                    number++;
+                    return Task.CompletedTask;
+                }));
+        }
+
+        backgroundTaskThread.Start();
+
+        // await Task.Yield();
+
+        await backgroundTaskWorker.StopAsync(CancellationToken.None);
+        backgroundTaskThread.Join();
+
+        Assert.Equal(3, number);
     }
 }
