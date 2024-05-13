@@ -82,8 +82,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private int _countShouldRenderTrue;
     private int _countShouldRenderFalse;
     private int _countOnAfterRenderAsync;
-    private CancellationTokenSource _cancellationTokenSourceShouldRender = new();
-    private CancellationTokenSource _cancellationTokenSourceShouldRenderTimer = new();
 
     private CursorDisplay? CursorDisplay => _bodySectionComponent?.CursorDisplayComponent;
     private string MeasureCharacterWidthAndRowHeightElementId => $"luth_te_measure-character-width-and-row-height_{_textEditorHtmlElementId}";
@@ -115,77 +113,14 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override bool ShouldRender()
     {
-        var cancellationToken = _cancellationTokenSourceShouldRender.Token;
-
-        var shouldRender = _throttleAvailabilityShouldRender.CheckAvailability(
-            async () =>
-            {
-                // Console.Write("a");
-                // var localCancellationTokenSourceShouldRender = _cancellationTokenSourceShouldRender;
-
-                if (!cancellationToken.IsCancellationRequested)
-                {
-                    await InvokeAsync(StateHasChanged);
-
-                    // Do not pass the cancellation token to the Task.Run invocation itself,
-                    // its believed this could cancel an in-progress blazor lifecycle?
-                    // ...but this belief is unfounded.
-                    // Task.Run(async () => 
-                    // {
-                    //     // if (!cancellationToken.IsCancellationRequested)
-                    //     {
-                    //         // localCancellationTokenSourceShouldRender.Cancel();
-                    //         await InvokeAsync(StateHasChanged);
-                    //     }
-                    // });
-                }
-            });
+        var shouldRender = _throttleAvailabilityShouldRender.CheckAvailability();
 
         if (!shouldRender)
         {
             _countShouldRenderFalse++;
+            TextEditorService.ViewModelApi.ForceRenderFactory(TextEditorViewModelKey, CancellationToken.None);
             return false;
         }
-
-        // If the timer says enough time has passed to
-        // allow for another render, then it is important
-        // to cancel the previous cancellationTokens.
-        //
-        // This is because, the CheckAvailability callback
-        // is solely used as a failsafe to "ensure" a
-        // render within some span of time is not forgotten.
-        //
-        // By cancelling this we are saying, ShouldRender may have been
-        // naturally invoked, and found itself available by the timer,
-        // therefore we don't have to re-force a ShouldRender invocation.
-        //
-        // (the callback could be the reason we get here too)
-        //
-        // NOTE: I'm super tired and extremely confused why the text editor is re-rendering
-        //       every second? I might not be cancelling the task correctly?
-        //       maybe its cause the cursor is blinking? But did I really write the
-        //       cursor blinking like that?-I don't think I did... (2024-05-12)
-        //       |
-        //       I can't believe this... I commented out the 'if (!cancellationToken.IsCancellationRequested)'
-        //       and never uncommented it.
-        //       |
-        //       Still not working :(
-        //       |
-        //       The most recent Timer's cancellation token isn't cancelled until another Timer starts.
-        //       Therefore, there always is a Timer ticking without a cancelled cancellation token.
-        //       |
-        //       The non-cancelled token isn't the main issue though. Its instead that
-        //       the Timer seemingly keeps running the callback over and over?
-        //       It seems like this is the intended design of the Timer,
-        //       but I didn't realize this until now. The 'period' parameter should fix this.
-        //       |
-        //       'period: Timeout.InfiniteTimeSpan' to the Timer's constructor isn't doing anything
-        //       differently. The cancellation token being cancelled is working,
-        //       but due to me not knowing how to stop the Timer, the callback is just getting invoked
-        //       over and over.
-        _cancellationTokenSourceShouldRenderTimer.Cancel();
-        _cancellationTokenSourceShouldRenderTimer = _cancellationTokenSourceShouldRender;
-        _cancellationTokenSourceShouldRender = new();
 
         _countShouldRenderTrue++;
 

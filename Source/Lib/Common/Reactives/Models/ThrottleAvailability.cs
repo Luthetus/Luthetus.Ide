@@ -2,25 +2,21 @@ namespace Luthetus.Common.RazorLib.Reactives.Models;
 
 public class ThrottleAvailability
 {
-    private Timer? _throttleTimer;
-
     public ThrottleAvailability(TimeSpan throttleTimeSpan)
     {
         ThrottleTimeSpan = throttleTimeSpan;
     }
 
     public TimeSpan ThrottleTimeSpan { get; }
-    public Task DelayTask { get; private set; } = Task.CompletedTask;
+    public DateTime TrueDateTime { get; set; } = DateTime.MinValue;
 
-    public bool CheckAvailability(Func<Task> onBecameAvailableCallback)
+    public bool CheckAvailability()
     {
-        if (DelayTask.IsCompleted)
-        {
-            DelayTask = Task.Run(async () =>
-            {
-                await onBecameAvailableCallback.Invoke();
-            });
+        var currentDateTime = DateTime.UtcNow;
 
+        if (currentDateTime > TrueDateTime && currentDateTime - TrueDateTime >= ThrottleTimeSpan)
+        {
+            TrueDateTime = currentDateTime;
             return true;
         }
         else
@@ -28,29 +24,6 @@ public class ThrottleAvailability
             return false;
         }
     }
-
-    //public bool CheckAvailability(Action onBecameAvailableCallback)
-    //{
-    //    if (_throttleTimer is null)
-    //    {
-    //        _throttleTimer = new Timer(
-    //            callback: _ => 
-    //            {
-    //                _throttleTimer?.Dispose();
-    //                _throttleTimer = null;
-    //                onBecameAvailableCallback.Invoke();
-    //            },
-    //            state: null,
-    //            dueTime: ThrottleTimeSpan,
-    //            period: Timeout.InfiniteTimeSpan);
-    //
-    //        return true;
-    //    }
-    //    else
-    //    {
-    //        return false;
-    //    }
-    //}
 
     /// <summary>
     /// This <see cref="TimeSpan"/> represents '1000ms / 60 = 16.6ms', whether this is equivalent to 60fps is unknown.
