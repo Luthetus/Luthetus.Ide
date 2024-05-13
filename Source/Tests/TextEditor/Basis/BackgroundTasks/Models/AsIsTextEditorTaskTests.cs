@@ -1,5 +1,4 @@
 ﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
@@ -17,6 +16,53 @@ public class AsIsTextEditorTaskTests
     [Fact]
     public void Constructor()
     {
+        var name = "Name_Test";
+        var identifier = "Identifier_Test";
+        TextEditorEdit edit = editContext => Task.CompletedTask;
+
+        // Test without passing the optional constructor argument:
+        // 'TimeSpan? throttleTimeSpan = null'
+        {
+            var simpleBatchTextEditorTask = new SimpleBatchTextEditorTask(
+                name,
+                identifier,
+                edit);
+
+            Assert.Equal(name, simpleBatchTextEditorTask.Name);
+            Assert.Equal(identifier, simpleBatchTextEditorTask.Identifier);
+        }
+
+        // Test two timespan values to ensure a default value isn't overwriting the constructor argument.
+        {
+            {
+                var timeSpan = TimeSpan.FromMilliseconds(1_000);
+
+                var simpleBatchTextEditorTask = new SimpleBatchTextEditorTask(
+                    name,
+                    identifier,
+                    edit,
+                    timeSpan);
+
+                Assert.Equal(timeSpan, simpleBatchTextEditorTask.ThrottleTimeSpan);
+
+                Assert.Equal(name, simpleBatchTextEditorTask.Name);
+                Assert.Equal(identifier, simpleBatchTextEditorTask.Identifier);
+            }
+            {
+                var timeSpan = TimeSpan.FromMilliseconds(512);
+
+                var simpleBatchTextEditorTask = new SimpleBatchTextEditorTask(
+                    name,
+                    identifier,
+                    edit,
+                    timeSpan);
+
+                Assert.Equal(timeSpan, simpleBatchTextEditorTask.ThrottleTimeSpan);
+
+                Assert.Equal(name, simpleBatchTextEditorTask.Name);
+                Assert.Equal(identifier, simpleBatchTextEditorTask.Identifier);
+            }
+        }
     }
 
     /// <summary>
