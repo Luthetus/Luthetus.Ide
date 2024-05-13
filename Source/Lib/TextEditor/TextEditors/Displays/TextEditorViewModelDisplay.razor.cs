@@ -65,7 +65,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private readonly Guid _textEditorHtmlElementId = Guid.NewGuid();
     /// <summary>Using this lock in order to avoid the Dispose implementation decrementing when it shouldn't</summary>
     private readonly object _linkedViewModelLock = new();
-    private readonly ThrottleAvailability _throttleAvailabilityShouldRender = new(TimeSpan.FromMilliseconds(20));
+    private readonly ThrottleAvailability _throttleAvailabilityShouldRender = new(TimeSpan.FromMilliseconds(30));
 
     private TextEditorEvents _events = null!;
     private bool _thinksTouchIsOccurring;
