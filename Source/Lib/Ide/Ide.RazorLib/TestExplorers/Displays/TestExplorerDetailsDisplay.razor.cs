@@ -22,30 +22,47 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 	[Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;
 
-	private Key<TextEditorViewModel> GetTextEditorViewModelKey(TreeViewNoType? activeNode)
+	private Key<TextEditorViewModel> _textEditorViewModelKey = Key<TextEditorViewModel>.Empty;
+
+	private TreeViewNoType? _activeNode;
+	private Key<TerminalCommand> _terminalCommandKey = Key<TerminalCommand>.Empty;
+	private Key<TerminalCommand> _previousTerminalCommandKey = Key<TerminalCommand>.Empty;
+
+	protected override void OnParametersSet()
 	{
-		var terminalCommandKey = Key<TerminalCommand>.Empty;
+		_activeNode = RenderBatch.TreeViewContainer.ActiveNode;
 
-		if (activeNode is TreeViewStringFragment treeViewStringFragment)
-			terminalCommandKey = treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey;
-		else if (activeNode is TreeViewProjectTestModel treeViewProjectTestModel)
-			terminalCommandKey = treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey;
+		_previousTerminalCommandKey = _terminalCommandKey;
+		_terminalCommandKey = Key<TerminalCommand>.Empty;
 
-		var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
+		if (_activeNode is TreeViewStringFragment treeViewStringFragment)
+			_terminalCommandKey = treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey;
+		else if (_activeNode is TreeViewProjectTestModel treeViewProjectTestModel)
+			_terminalCommandKey = treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey;
 
-		var success = executionTerminal.TryGetTerminalCommandViewModelKey(
-			terminalCommandKey,
-			out var viewModelKey);
+		base.OnParametersSet();
+	}
 
-		if (!success || viewModelKey == Key<TextEditorViewModel>.Empty)
+	protected override async Task OnParametersSetAsync()
+	{
+		if (_terminalCommandKey != _previousTerminalCommandKey)
 		{
-			viewModelKey = Key<TextEditorViewModel>.NewKey();
+			var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
 
-			executionTerminal.CreateTextEditorForCommandOutput(
-				terminalCommandKey,
-				viewModelKey);
+			var success = executionTerminal.TryGetTerminalCommandViewModelKey(
+				_terminalCommandKey,
+				out _textEditorViewModelKey);
+	
+			if (!success || _textEditorViewModelKey == Key<TextEditorViewModel>.Empty)
+			{
+				_textEditorViewModelKey = Key<TextEditorViewModel>.NewKey();
+	
+				await executionTerminal.CreateTextEditorForCommandOutput(
+					_terminalCommandKey,
+					_textEditorViewModelKey);
+			}
 		}
 
-		return viewModelKey;
+		await base.OnParametersSetAsync();
 	}
 }

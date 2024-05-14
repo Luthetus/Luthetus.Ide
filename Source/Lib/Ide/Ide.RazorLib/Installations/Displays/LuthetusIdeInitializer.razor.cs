@@ -59,7 +59,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
                     Key<BackgroundTask>.NewKey(),
                     ContinuousBackgroundTaskWorker.GetQueueKey(),
                     nameof(LuthetusIdeInitializer),
-                    () =>
+                    async () =>
                     {
                         if (TextEditorConfig.CustomThemeRecordList is not null)
                         {
@@ -83,24 +83,21 @@ public partial class LuthetusIdeInitializer : ComponentBase
                             else if (terminalKey == TerminalFacts.GENERAL_TERMINAL_KEY)
                                 displayName = "General";
 
-                            var terminal = new Terminal(
+                            var terminal = await Terminal.Factory(
                                 displayName,
                                 null,
                                 Dispatcher,
                                 BackgroundTaskService,
                                 TextEditorService,
                                 LuthetusCommonComponentRenderers,
-                                CompilerServiceRegistry)
-                            {
-                                Key = terminalKey
-                            };
+                                CompilerServiceRegistry,
+								terminalKey);
 
                             Dispatcher.Dispatch(new TerminalState.RegisterAction(terminal));
                         }
 
                         InitializePanelTabs();
                         CommandFactory.Initialize();
-                        return Task.CompletedTask;
                     })
                 .ConfigureAwait(false);
         }

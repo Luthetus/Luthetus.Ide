@@ -32,7 +32,34 @@ public class Terminal
     private readonly Dictionary<Key<TerminalCommand>, TextEditorTextSpan> _terminalCommandTextSpanMap = new();
     private readonly Dictionary<Key<TerminalCommand>, Key<TextEditorViewModel>> _terminalCommandViewModelKeyMap = new();
 
-    public Terminal(
+	public static async Task<Terminal> Factory(
+        string displayName,
+        string? workingDirectoryAbsolutePathString,
+        IDispatcher dispatcher,
+        IBackgroundTaskService backgroundTaskService,
+        ITextEditorService textEditorService,
+        ILuthetusCommonComponentRenderers commonComponentRenderers,
+        ICompilerServiceRegistry compilerServiceRegistry,
+		Key<Terminal> terminalKey)
+	{
+		var terminal = new Terminal(
+			displayName,
+	        workingDirectoryAbsolutePathString,
+	        dispatcher,
+	        backgroundTaskService,
+	        textEditorService,
+	        commonComponentRenderers,
+	        compilerServiceRegistry)
+			{
+				Key = terminalKey
+			};
+
+		await terminal.CreateTextEditor();
+		await terminal.SetWorkingDirectoryAbsolutePathString(workingDirectoryAbsolutePathString);
+		return terminal;
+	}
+
+    private Terminal(
         string displayName,
         string? workingDirectoryAbsolutePathString,
         IDispatcher dispatcher,
@@ -48,10 +75,7 @@ public class Terminal
         _compilerServiceRegistry = compilerServiceRegistry;
 
         DisplayName = displayName;
-        WorkingDirectoryAbsolutePathString = workingDirectoryAbsolutePathString;
         ResourceUri = new(ResourceUriFacts.Terminal_ReservedResourceUri_Prefix + Key.Guid.ToString());
-
-        CreateTextEditor();
     }
 
 	private CancellationTokenSource _commandCancellationTokenSource = new();
@@ -66,22 +90,18 @@ public class Terminal
     public bool HasExecutingProcess { get; private set; }
     public string DisplayName { get; }
 
-    public string? WorkingDirectoryAbsolutePathString
-    {
-        get => _workingDirectoryAbsolutePathString;
-        private set
-        {
-            _previousWorkingDirectoryAbsolutePathString = _workingDirectoryAbsolutePathString;
-            _workingDirectoryAbsolutePathString = value;
-
-            if (_previousWorkingDirectoryAbsolutePathString != _workingDirectoryAbsolutePathString)
-            {
-                WriteWorkingDirectory();
-            }
-        }
-    }
+    public string? WorkingDirectoryAbsolutePathString => _workingDirectoryAbsolutePathString;
 
     public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
+
+	public async Task SetWorkingDirectoryAbsolutePathString(string? value)
+	{
+		_previousWorkingDirectoryAbsolutePathString = _workingDirectoryAbsolutePathString;
+        _workingDirectoryAbsolutePathString = value;
+
+        if (_previousWorkingDirectoryAbsolutePathString != _workingDirectoryAbsolutePathString)
+            await WriteWorkingDirectory(true);
+	}
 
     public Task EnqueueCommandAsync(TerminalCommand terminalCommand)
     {
@@ -91,26 +111,26 @@ public class Terminal
             "Enqueue Command",
             async () =>
             {
-                MoveCursorToEnd();
+                await MoveCursorToEnd();
 
                 if (terminalCommand.ChangeWorkingDirectoryTo is not null)
-                    WorkingDirectoryAbsolutePathString = terminalCommand.ChangeWorkingDirectoryTo;
+                    await SetWorkingDirectoryAbsolutePathString(terminalCommand.ChangeWorkingDirectoryTo);
 
                 if (terminalCommand.FormattedCommand.TargetFileName == "cd")
                 {
                     // TODO: Don't keep this logic as it is hacky. I'm trying to set myself up to be able to run "gcc" to compile ".c" files. Then I can work on adding symbol related logic like "go to definition" or etc.
                     if (terminalCommand.FormattedCommand.HACK_ArgumentsString is not null)
-                        WorkingDirectoryAbsolutePathString = terminalCommand.FormattedCommand.HACK_ArgumentsString;
+                        await SetWorkingDirectoryAbsolutePathString(terminalCommand.FormattedCommand.HACK_ArgumentsString);
                     else if (terminalCommand.FormattedCommand.ArgumentsList.Any())
-                        WorkingDirectoryAbsolutePathString = terminalCommand.FormattedCommand.ArgumentsList.ElementAt(0);
+                        await SetWorkingDirectoryAbsolutePathString(terminalCommand.FormattedCommand.ArgumentsList.ElementAt(0));
 
                     return;
                 }
                 
                 if (terminalCommand.FormattedCommand.TargetFileName == "clear")
                 {
-                    ClearTerminal();
-                    WriteWorkingDirectory();
+                    await ClearTerminal();
+                    await WriteWorkingDirectory();
                     return;
                 }
 
@@ -139,7 +159,7 @@ public class Terminal
                     DispatchNewStateKey();
 
                     if (_textEditorService.ModelApi.GetOrDefault(new ResourceUri("terminalCommand" + '_' + terminalCommandKey)) is not null)
-                        ClearOutputView(terminalCommand);
+                        await ClearOutputView(terminalCommand);
 
                     if (terminalCommand.BeginWith is not null)
                         await terminalCommand.BeginWith.Invoke().ConfigureAwait(false);
@@ -198,41 +218,47 @@ public class Terminal
 
                     if (!_terminalCommandTextSpanMap.ContainsKey(terminalCommandKey))
                     {
-                        _terminalCommandTextSpanMap.Add(
-                            terminalCommandKey,
-                            new TextEditorTextSpan(
-                                terminalCommandBoundary.StartPositionIndexInclusive ?? 0,
-                                terminalCommandBoundary.EndPositionIndexExclusive ?? 0,
-                                0,
-                                ResourceUri,
-                                _textEditorService.ModelApi.GetAllText(ResourceUri) ?? string.Empty));
+						await _textEditorService.PostSimpleBatch(
+	                        "_terminalCommandTextSpanMap.Add(...)",
+							"_terminalCommandTextSpanMap.Add(...)",
+	                        editContext =>
+							{
+								_terminalCommandTextSpanMap.Add(
+		                            terminalCommandKey,
+		                            new TextEditorTextSpan(
+		                                terminalCommandBoundary.StartPositionIndexInclusive ?? 0,
+		                                terminalCommandBoundary.EndPositionIndexExclusive ?? 0,
+		                                0,
+		                                ResourceUri,
+		                                _textEditorService.ModelApi.GetAllText(ResourceUri) ?? string.Empty));
+
+								return Task.CompletedTask;
+							});                       
                     }
-                    else
-                    {
-                        await _textEditorService.PostSimpleBatch(
-                            "set-content_" + terminalCommandKey.Guid,
-                            string.Empty,
-                            editContext =>
-                            {
-                                var commandOutputResourceUri = new ResourceUri("terminalCommand" + '_' + terminalCommandKey);
-                                var modelModifier = editContext.GetModelModifier(commandOutputResourceUri);
-
-                                if (modelModifier is null)
-                                    return Task.CompletedTask;
-
-                                var textSpan = new TextEditorTextSpan(
-                                    terminalCommandBoundary.StartPositionIndexInclusive ?? 0,
-                                    terminalCommandBoundary.EndPositionIndexExclusive ?? 0,
-                                    0,
-                                    ResourceUri,
-                                    _textEditorService.ModelApi.GetAllText(ResourceUri) ?? string.Empty);
-
-                                _terminalCommandTextSpanMap[terminalCommandKey] = textSpan;
-
-                                modelModifier.SetContent(textSpan.GetText());
-                                return Task.CompletedTask;
-                            });
-                    }
+                    
+					await _textEditorService.PostSimpleBatch(
+	                    "set-content_" + terminalCommandKey.Guid,
+	                    string.Empty,
+	                    editContext =>
+	                    {
+	                        var commandOutputResourceUri = new ResourceUri("terminalCommand" + '_' + terminalCommandKey);
+	                        var modelModifier = editContext.GetModelModifier(commandOutputResourceUri);
+	
+	                        if (modelModifier is null)
+	                            return Task.CompletedTask;
+	
+	                        var textSpan = new TextEditorTextSpan(
+	                            terminalCommandBoundary.StartPositionIndexInclusive ?? 0,
+	                            terminalCommandBoundary.EndPositionIndexExclusive ?? 0,
+	                            0,
+	                            ResourceUri,
+	                            _textEditorService.ModelApi.GetAllText(ResourceUri) ?? string.Empty);
+	
+	                        _terminalCommandTextSpanMap[terminalCommandKey] = textSpan;
+	
+	                        modelModifier.SetContent(textSpan.GetText());
+	                        return Task.CompletedTask;
+	                    });
                 }
                 catch (Exception e)
                 {
@@ -241,7 +267,7 @@ public class Terminal
                 finally
                 {
                     HasExecutingProcess = false;
-                    WriteWorkingDirectory();
+                    await WriteWorkingDirectory();
                     DispatchNewStateKey();
 
                     if (terminalCommand.ContinueWith is not null)
@@ -463,7 +489,7 @@ public class Terminal
             });
     }
 
-    public async Task WriteWorkingDirectory()
+    public async Task WriteWorkingDirectory(bool prependNewLine = false)
     {
         await _textEditorService.PostSimpleBatch(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
@@ -480,10 +506,14 @@ public class Terminal
 
                 var startingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 
+				var content = (WorkingDirectoryAbsolutePathString ?? "null") + '>';
+				if (prependNewLine)
+					content = '\n' + content;
+
                 await _textEditorService.ModelApi.InsertTextFactory(
                         ResourceUri,
                         TextEditorViewModelKey,
-                        (WorkingDirectoryAbsolutePathString ?? "null") + '>',
+                        content,
                         CancellationToken.None)
                     .Invoke(editContext)
                     .ConfigureAwait(false);

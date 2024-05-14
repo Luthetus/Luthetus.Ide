@@ -8,24 +8,19 @@
 <div class="luth_ide_test-explorer-details"
 	 style="@ElementDimensions.StyleString">
 
-	@{
-		var activeNode = RenderBatch.TreeViewContainer.ActiveNode;
-		var viewModelKey = GetTextEditorViewModelKey(activeNode);
-	}
-
 	<div style="height: 100%;">
-		@if (activeNode is TreeViewStringFragment treeViewStringFragment ||
-			 activeNode is TreeViewProjectTestModel treeViewProjectTestModel)
+		@if (_activeNode is TreeViewStringFragment treeViewStringFragment ||
+			 _activeNode is TreeViewProjectTestModel treeViewProjectTestModel)
 		{
-			<ReadOnlyTextEditorViewModelDisplay TextEditorViewModelKey="viewModelKey" />
+			<ReadOnlyTextEditorViewModelDisplay TextEditorViewModelKey="_textEditorViewModelKey" />
 		}
-		else if (activeNode is not null)
+		else if (_activeNode is not null)
 		{
-			<text>@(activeNode.GetType().Name)</text>
+			<text>@(_activeNode.GetType().Name)</text>
 		}
 		else
 		{
-			<text>activeNode is null</text>
+			<text>_activeNode is null</text>
 		}
 	</div>
 </div>

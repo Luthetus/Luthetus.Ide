@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
@@ -116,7 +116,7 @@ public partial class TextEditorService : ITextEditorService
     //    TextEditorEdit textEditorEdit,
     //    TimeSpan? throttleTimeSpan = null)
     //{
-    //    Post(new IndependentTextEditorTask(
+    //    Post(new AsIsTextEditorTask(
     //        $"{name}_ai",
     //        textEditorEdit,
     //        throttleTimeSpan));
@@ -128,8 +128,9 @@ public partial class TextEditorService : ITextEditorService
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        return Post(new AsIsTextEditorTask(
+        return Post(new SimpleBatchTextEditorTask(
             $"{name}_sb",
+			identifier,
             textEditorEdit,
             throttleTimeSpan));
     }

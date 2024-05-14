@@ -137,17 +137,20 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             var previousOptionsRenderStateKey = _previousRenderBatch?.Options?.RenderStateKey ?? Key<RenderState>.Empty;
             var currentOptionsRenderStateKey = _storedRenderBatch.Options.RenderStateKey;
 
-            if (previousOptionsRenderStateKey != currentOptionsRenderStateKey || isFirstDisplay)
-            {
-                QueueRemeasureBackgroundTask(
-                    _storedRenderBatch,
-                    MeasureCharacterWidthAndRowHeightElementId,
-                    _measureCharacterWidthAndRowHeightComponent?.CountOfTestCharacters ?? 0,
-                    CancellationToken.None);
-            }
-
-            if (isFirstDisplay)
-                QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatch);
+			_ = Task.Run(async () =>
+			{
+				if (previousOptionsRenderStateKey != currentOptionsRenderStateKey || isFirstDisplay)
+	            {
+	                await QueueRemeasureBackgroundTask(
+	                    _storedRenderBatch,
+	                    MeasureCharacterWidthAndRowHeightElementId,
+	                    _measureCharacterWidthAndRowHeightComponent?.CountOfTestCharacters ?? 0,
+	                    CancellationToken.None);
+	            }
+	
+	            if (isFirstDisplay)
+					await QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatch);
+			});
         }
 
         return shouldRender;
@@ -163,13 +166,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 .PreventDefaultOnWheelEvents(ContentElementId)
                 .ConfigureAwait(false);
 
-            QueueRemeasureBackgroundTask(
+            await QueueRemeasureBackgroundTask(
                 _storedRenderBatch,
                 MeasureCharacterWidthAndRowHeightElementId,
                 _measureCharacterWidthAndRowHeightComponent?.CountOfTestCharacters ?? 0,
                 CancellationToken.None);
 
-            QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatch);
+            await QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatch);
         }
 
         if (_storedRenderBatch?.ViewModel is not null && _storedRenderBatch.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender)
@@ -497,7 +500,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         return $"height: {heightInPixelsInvariantCulture}px;";
     }
 
-    private void ClearTouch(TouchEventArgs touchEventArgs)
+    private async Task ClearTouch(TouchEventArgs touchEventArgs)
     {
         var rememberStartTouchEventArgs = _previousTouchEventArgs;
 
@@ -517,7 +520,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             if (startTouchPoint is null)
                 return;
 
-            ReceiveContentOnMouseDown(new MouseEventArgs
+            await ReceiveContentOnMouseDown(new MouseEventArgs
             {
                 Buttons = 1,
                 ClientX = startTouchPoint.ClientX,
