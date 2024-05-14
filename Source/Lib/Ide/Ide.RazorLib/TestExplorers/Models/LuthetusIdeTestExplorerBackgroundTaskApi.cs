@@ -1,8 +1,9 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
@@ -20,6 +21,7 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
     private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
+    private readonly ITextEditorService _textEditorService;
     private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
     private readonly IState<TerminalState> _terminalStateWrap;
     private readonly IBackgroundTaskService _backgroundTaskService;
@@ -29,6 +31,7 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
         LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
         ILuthetusCommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
+        ITextEditorService textEditorService,
         IBackgroundTaskService backgroundTaskService,
         IState<DotNetSolutionState> dotNetSolutionStateWrap,
         IState<TerminalState> terminalStateWrap,
@@ -37,6 +40,7 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _commonComponentRenderers = commonComponentRenderers;
         _treeViewService = treeViewService;
+		_textEditorService = textEditorService;
         _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
         _terminalStateWrap = terminalStateWrap;
         _backgroundTaskService = backgroundTaskService;
@@ -95,53 +99,59 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
                     CancellationToken.None,
                     async () =>
                     {
-                        try
-                        {
-                            var success = executionTerminal.TryGetTerminalCommandTextSpan(
-                                treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey,
-                                out var terminalCommandTextSpan);
-
-                            var output = terminalCommandTextSpan?.GetText();
-                            if (output is null)
-                                return;
-
-                            treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput =
-                                DotNetCliOutputParser.ParseDotNetTestListTestsTerminalOutput(output);
-
-                            // THINKING_ABOUT_TREE_VIEW();
-                            {
-                                var splitOutputList = treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput
-                                    .Select(x => x.Split('.'));
-
-                                var rootMap = new Dictionary<string, StringFragment>();
-
-                                foreach (var splitOutput in splitOutputList)
-                                {
-                                    var targetMap = rootMap;
-                                    var lastSeenStringFragment = (StringFragment?)null;
-
-                                    foreach (var fragment in splitOutput)
-                                    {
-                                        if (!targetMap.ContainsKey(fragment))
-                                            targetMap.Add(fragment, new(fragment));
-
-                                        lastSeenStringFragment = targetMap[fragment];
-                                        targetMap = lastSeenStringFragment.Map;
-                                    }
-
-                                    if (lastSeenStringFragment is not null)
-                                        lastSeenStringFragment.IsEndpoint = true;
-                                }
-
-                                treeViewProjectTestModel.Item.RootStringFragmentMap = rootMap;
-                                await callback.Invoke(rootMap).ConfigureAwait(false);
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            await callback.Invoke(new()).ConfigureAwait(false);
-                            throw;
-                        }
+						await _textEditorService.PostSimpleBatch(
+	                        "LoadTestExplorer",
+							"LoadTestExplorer",
+	                        async editContext =>
+							{
+								try
+		                        {
+		                            var success = executionTerminal.TryGetTerminalCommandTextSpan(
+		                                treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey,
+		                                out var terminalCommandTextSpan);
+		
+		                            var output = terminalCommandTextSpan?.GetText();
+		                            if (output is null)
+		                                return;
+		
+		                            treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput =
+		                                DotNetCliOutputParser.ParseDotNetTestListTestsTerminalOutput(output);
+		
+		                            // THINKING_ABOUT_TREE_VIEW();
+		                            {
+		                                var splitOutputList = treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput
+		                                    .Select(x => x.Split('.'));
+		
+		                                var rootMap = new Dictionary<string, StringFragment>();
+		
+		                                foreach (var splitOutput in splitOutputList)
+		                                {
+		                                    var targetMap = rootMap;
+		                                    var lastSeenStringFragment = (StringFragment?)null;
+		
+		                                    foreach (var fragment in splitOutput)
+		                                    {
+		                                        if (!targetMap.ContainsKey(fragment))
+		                                            targetMap.Add(fragment, new(fragment));
+		
+		                                        lastSeenStringFragment = targetMap[fragment];
+		                                        targetMap = lastSeenStringFragment.Map;
+		                                    }
+		
+		                                    if (lastSeenStringFragment is not null)
+		                                        lastSeenStringFragment.IsEndpoint = true;
+		                                }
+		
+		                                treeViewProjectTestModel.Item.RootStringFragmentMap = rootMap;
+		                                await callback.Invoke(rootMap).ConfigureAwait(false);
+		                            }
+		                        }
+								catch (Exception)
+		                        {
+		                            await callback.Invoke(new()).ConfigureAwait(false);
+		                            throw;
+		                        }
+							});
                     },
                     () =>
                     {

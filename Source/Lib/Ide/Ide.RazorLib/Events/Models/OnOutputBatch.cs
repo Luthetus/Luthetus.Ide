@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -40,7 +40,7 @@ public class OnOutputBatch : ITextEditorTask
 
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public string Name { get; } = nameof(OnOutput);
+    public string Name { get; set; } = nameof(OnOutput);
     public Task? WorkProgress { get; }
     public int BatchOutputOffset { get; }
     public List<string> OutputList { get; }
@@ -53,6 +53,8 @@ public class OnOutputBatch : ITextEditorTask
 
     public Task InvokeWithEditContext(IEditContext editContext)
     {
+		Name = Name + $"_{OutputList.Count}";
+
         // Flatten 'OutputTextSpanAndOffsetTupleList'
         var outputTextSpanList = new List<TextEditorTextSpan>();
         foreach (var tuple in OutputTextSpanAndOffsetTupleList)

@@ -233,7 +233,7 @@ public class Terminal
 		                                _textEditorService.ModelApi.GetAllText(ResourceUri) ?? string.Empty));
 
 								return Task.CompletedTask;
-							});                       
+							});
                     }
                     
 					await _textEditorService.PostSimpleBatch(
