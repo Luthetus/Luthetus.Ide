@@ -111,6 +111,7 @@ public class TextEditorServiceTask : ITextEditorTask
                     .ConfigureAwait(false);
             }
 
+            // TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
             await _editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
                     viewModelModifier.ViewModel.ResourceUri, viewModelModifier.ViewModel.ViewModelKey, CancellationToken.None)
                 .Invoke(_editContext)
