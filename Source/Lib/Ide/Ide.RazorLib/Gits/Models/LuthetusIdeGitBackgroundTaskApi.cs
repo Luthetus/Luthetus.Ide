@@ -48,42 +48,88 @@ public class LuthetusIdeGitBackgroundTaskApi
 
     public async Task GitStatusExecute()
     {
-		await _backgroundTaskService.EnqueueAsync(
-			Key<BackgroundTask>.NewKey(),
-			ContinuousBackgroundTaskWorker.GetQueueKey(),
+        await _backgroundTaskService.EnqueueAsync(
+            Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git status",
             async () =>
-			{
-				var localGitState = _gitStateWrap.Value;
+            {
+                var localGitState = _gitStateWrap.Value;
 
-		        if (localGitState.Repo is null)
-		            return;
-		
-		        var gitStatusDashUCommand = $"{GitCliFacts.STATUS_COMMAND} -u";
-		        var formattedCommand = new FormattedCommand(
-		            GitCliFacts.TARGET_FILE_NAME,
-		            new string[] { gitStatusDashUCommand })
-		        {
-		            HACK_ArgumentsString = gitStatusDashUCommand
-		        };
+                if (localGitState.Repo is null)
+                    return;
 
-		        var gitCliOutputParser = new GitCliOutputParser(
-		            _dispatcher,
-		            localGitState,
-		            _environmentProvider,
-					GitCliOutputParser.GitCommandKind.Status);
-		
-		        var gitStatusCommand = new TerminalCommand(
-		            GitStatusTerminalCommandKey,
-		            formattedCommand,
-		            localGitState.Repo.AbsolutePath.Value,
-		            OutputParser: gitCliOutputParser);
-		
-		        var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-		        await generalTerminal
-		            .EnqueueCommandAsync(gitStatusCommand)
-		            .ConfigureAwait(false);
-			});
+                var gitStatusDashUCommand = $"{GitCliFacts.STATUS_COMMAND} -u";
+                var formattedCommand = new FormattedCommand(
+                    GitCliFacts.TARGET_FILE_NAME,
+                    new string[] { gitStatusDashUCommand })
+                {
+                    HACK_ArgumentsString = gitStatusDashUCommand
+                };
+
+                var gitCliOutputParser = new GitCliOutputParser(
+                    _dispatcher,
+                    localGitState,
+                    _environmentProvider,
+                    GitCliOutputParser.GitCommandKind.Status);
+
+                var gitStatusCommand = new TerminalCommand(
+                    GitStatusTerminalCommandKey,
+                    formattedCommand,
+                    localGitState.Repo.AbsolutePath.Value,
+                    OutputParser: gitCliOutputParser);
+
+                var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
+                await generalTerminal
+                    .EnqueueCommandAsync(gitStatusCommand)
+                    .ConfigureAwait(false);
+            });
+    }
+
+    public async Task GitRefreshExecute(GitRepo repoAtTimeOfRequest)
+    {
+		await GitStatusExecute();
+        await GitGetActiveBranchNameExecute(repoAtTimeOfRequest);
+    }
+
+    public async Task GitGetActiveBranchNameExecute(GitRepo repoAtTimeOfRequest)
+    {
+        await _backgroundTaskService.EnqueueAsync(
+            Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            "git get active branch name",
+            async () =>
+            {
+                var localGitState = _gitStateWrap.Value;
+
+                if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
+                    return;
+
+                var showBranchNameArgs = $"branch --show-current";
+                var formattedCommand = new FormattedCommand(
+                    GitCliFacts.TARGET_FILE_NAME,
+                    new string[] { showBranchNameArgs })
+                {
+                    HACK_ArgumentsString = showBranchNameArgs
+                };
+
+                var gitCliOutputParser = new GitCliOutputParser(
+                    _dispatcher,
+                    localGitState,
+                    _environmentProvider,
+                    GitCliOutputParser.GitCommandKind.GetBranch);
+
+                var terminalCommand = new TerminalCommand(
+                    GitStatusTerminalCommandKey,
+                    formattedCommand,
+                    localGitState.Repo.AbsolutePath.Value,
+                    OutputParser: gitCliOutputParser);
+
+                var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
+                await generalTerminal
+                    .EnqueueCommandAsync(terminalCommand)
+                    .ConfigureAwait(false);
+            });
     }
 
 	public async Task GitAddExecute(GitRepo repoAtTimeOfRequest)

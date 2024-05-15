@@ -32,6 +32,7 @@ public class GitCliOutputParser : IOutputParser
 
     private StageKind _stageKind = StageKind.None;
     private string? _origin;
+    private string? _branch;
     private int _count;
 
     public List<GitFile> UntrackedGitFileList { get; } = new();
@@ -47,6 +48,7 @@ public class GitCliOutputParser : IOutputParser
         {
             GitCommandKind.Status => StatusParseLine(output),
             GitCommandKind.GetOrigin => GetOriginParseLine(output),
+            GitCommandKind.GetBranch => GetBranchParseLine(output),
             _ => new(),
         };
     }
@@ -417,25 +419,48 @@ public class GitCliOutputParser : IOutputParser
 
         return textSpanList;
     }
+    
+    public List<TextEditorTextSpan> GetBranchParseLine(string output)
+    {
+        // TODO: Parsing branch line is super hacky, and should be re-written.
+        if (_count++ == 1)
+            _branch ??= output;
+
+        var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
+        var textSpanList = new List<TextEditorTextSpan>();
+
+        while (!stringWalker.IsEof)
+        {
+            _ = stringWalker.ReadCharacter();
+        }
+
+        return textSpanList;
+    }
 
     public void Dispose()
     {
         if (_gitState.Repo is null)
             return;
 
-        if (_gitCommandKind == GitCommandKind.GetOrigin && _origin is not null)
+        switch (_gitCommandKind)
         {
-            _dispatcher.Dispatch(new GitState.SetOriginAction(
-                _gitState.Repo,
-                _origin));
-        }
-        else if (_gitCommandKind == GitCommandKind.Status)
-        {
-            _dispatcher.Dispatch(new GitState.SetFileListAction(
-                _gitState.Repo,
-                UntrackedGitFileList.ToImmutableList(),
-                StagedGitFileList.ToImmutableList(),
-                UnstagedGitFileList.ToImmutableList()));
+            case GitCommandKind.GetOrigin when _origin is not null:
+                _dispatcher.Dispatch(new GitState.SetOriginAction(
+                            _gitState.Repo,
+                            _origin));
+                break;
+            case GitCommandKind.GetBranch when _branch is not null:
+                _dispatcher.Dispatch(new GitState.SetBranchAction(
+                        _gitState.Repo,
+                        _branch));
+                break;
+            case GitCommandKind.Status:
+                _dispatcher.Dispatch(new GitState.SetFileListAction(
+                        _gitState.Repo,
+                        UntrackedGitFileList.ToImmutableList(),
+                        StagedGitFileList.ToImmutableList(),
+                        UnstagedGitFileList.ToImmutableList()));
+                break;
         }
     }
 
@@ -447,6 +472,7 @@ public class GitCliOutputParser : IOutputParser
         None,
         Status,
         GetOrigin,
+        GetBranch,
     }
 
     /// <summary>

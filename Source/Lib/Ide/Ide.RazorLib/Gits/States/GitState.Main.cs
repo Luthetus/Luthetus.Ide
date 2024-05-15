@@ -14,7 +14,8 @@ public partial record GitState(
     ImmutableList<GitFile> UnstagedFileList,
     ImmutableList<GitFile> SelectedFileList,
     ImmutableList<GitTask> ActiveTasks,
-    string? Origin)
+    string? Origin,
+    string? Branch)
 {
     public static readonly Key<TreeViewContainer> TreeViewGitChangesKey = Key<TreeViewContainer>.NewKey();
 
@@ -26,6 +27,7 @@ public partial record GitState(
               ImmutableList<GitFile>.Empty,
               ImmutableList<GitFile>.Empty,
               ImmutableList<GitTask>.Empty,
+              null,
               null)
     {
 

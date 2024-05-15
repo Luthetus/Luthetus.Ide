@@ -5,6 +5,8 @@ namespace Luthetus.Ide.RazorLib.Gits.States;
 
 public partial record GitState
 {
+    public record SetRepoAction(GitRepo? Repo);
+
     /// <summary>
     /// If the expected path is not the actual path, then the git file list will NOT be changed.
     /// </summary>
@@ -15,7 +17,7 @@ public partial record GitState
         ImmutableList<GitFile> UnstagedFileList);
 
     public record SetOriginAction(GitRepo Repo, string Origin);
-    public record SetRepoAction(GitRepo? Repo);
+    public record SetBranchAction(GitRepo Repo, string Branch);
 
     public record SetSelectedFileListAction(
         Func<ImmutableDictionary<string, GitFile>,

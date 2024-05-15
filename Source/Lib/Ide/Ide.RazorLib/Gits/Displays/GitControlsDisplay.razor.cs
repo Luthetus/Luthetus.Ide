@@ -55,6 +55,17 @@ public partial class GitControlsDisplay : ComponentBase
 
         _summary = string.Empty;
     }
+    
+    private async Task GetGitBranchOnClick(GitState localGitState)
+    {
+        if (localGitState.Repo is null)
+            return;
+
+        await IdeBackgroundTaskApi.Git.GitGetActiveBranchNameExecute(localGitState.Repo)
+            .ConfigureAwait(false);
+
+        _summary = string.Empty;
+    }
 
     private void ShowGitOriginDialogOnClick()
     {
