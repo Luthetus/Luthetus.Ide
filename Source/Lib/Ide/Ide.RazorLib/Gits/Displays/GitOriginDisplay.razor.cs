@@ -2,6 +2,7 @@ using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
+using Luthetus.Ide.RazorLib.Gits.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
@@ -45,7 +46,7 @@ public partial class GitOriginDisplay : ComponentBase
             Dispatcher,
             localGitState,
             EnvironmentProvider,
-            stageKind: GitCliOutputParser.StageKind.GetOrigin);
+            GitCliOutputParser.GitCommandKind.GetOrigin);
 
         var gitStatusCommand = new TerminalCommand(
             GitSetOriginTerminalCommandKey,
@@ -76,7 +77,8 @@ public partial class GitOriginDisplay : ComponentBase
         var gitCliOutputParser = new GitCliOutputParser(
             Dispatcher,
             localGitState,
-            EnvironmentProvider);
+            EnvironmentProvider,
+            GitCliOutputParser.GitCommandKind.None);
 
         var gitStatusCommand = new TerminalCommand(
             GitSetOriginTerminalCommandKey,

@@ -1,36 +1,37 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Ide.RazorLib.Gits.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.RazorLib.Terminals.Models;
+namespace Luthetus.Ide.RazorLib.Gits.Models;
 
 public class GitCliOutputParser : IOutputParser
 {
     private readonly IDispatcher _dispatcher;
     private readonly GitState _gitState;
     private readonly IEnvironmentProvider _environmentProvider;
-    
+    private readonly GitCommandKind _gitCommandKind;
+
     public GitCliOutputParser(
         IDispatcher dispatcher,
         GitState gitState,
         IEnvironmentProvider environmentProvider,
+		GitCommandKind gitCommandKind,
         StageKind stageKind = StageKind.None)
     {
         _dispatcher = dispatcher;
         _gitState = gitState;
         _environmentProvider = environmentProvider;
+        _gitCommandKind = gitCommandKind;
         _stageKind = stageKind;
     }
 
     private StageKind _stageKind = StageKind.None;
-
     private string? _origin;
-
     private int _count;
 
     public List<GitFile> GitFileList { get; } = new();
@@ -40,9 +41,16 @@ public class GitCliOutputParser : IOutputParser
         if (_gitState.Repo is null)
             return new();
 
-        if (_stageKind == StageKind.GetOrigin)
-            return ParseOriginLine(output);
+        return _gitCommandKind switch
+        {
+            GitCommandKind.Status => StatusParseLine(output),
+            GitCommandKind.GetOrigin => GetOriginParseLine(output),
+            _ => new(),
+        };
+    }
 
+    public List<TextEditorTextSpan> StatusParseLine(string output)
+    {
         var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
         var textSpanList = new List<TextEditorTextSpan>();
 
@@ -77,7 +85,7 @@ public class GitCliOutputParser : IOutputParser
             {
                 while (!stringWalker.IsEof)
                 {
-                    
+
                     if (stringWalker.CurrentCharacter == ' ' && stringWalker.NextCharacter == ' ')
                     {
                         // Read comments line by line
@@ -157,7 +165,7 @@ public class GitCliOutputParser : IOutputParser
         return textSpanList;
     }
 
-    private List<TextEditorTextSpan> ParseOriginLine(string output)
+    public List<TextEditorTextSpan> GetOriginParseLine(string output)
     {
         // TODO: Parsing origin line is super hacky, and should be re-written.
         if (_count++ == 1)
@@ -179,13 +187,13 @@ public class GitCliOutputParser : IOutputParser
         if (_gitState.Repo is null)
             return;
 
-        if (_stageKind == StageKind.GetOrigin && _origin is not null)
+        if (_gitCommandKind == GitCommandKind.GetOrigin && _origin is not null)
         {
             _dispatcher.Dispatch(new GitState.SetOriginAction(
                 _gitState.Repo,
                 _origin));
         }
-        else
+        else if (_gitCommandKind == GitCommandKind.Status)
         {
             _dispatcher.Dispatch(new GitState.SetFileListAction(
                 _gitState.Repo,
@@ -193,10 +201,22 @@ public class GitCliOutputParser : IOutputParser
         }
     }
 
+    /// <summary>
+    /// Macro-filter
+    /// </summary>
+	public enum GitCommandKind
+    {
+        None,
+        Status,
+        GetOrigin,
+    }
+
+    /// <summary>
+    /// Micro-filter
+    /// </summary>
     public enum StageKind
     {
         None,
         IsReadingUntrackedFiles,
-        GetOrigin,
     }
 }

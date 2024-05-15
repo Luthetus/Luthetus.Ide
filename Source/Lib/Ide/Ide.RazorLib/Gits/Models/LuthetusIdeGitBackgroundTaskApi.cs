@@ -63,7 +63,8 @@ public class LuthetusIdeGitBackgroundTaskApi
 		        var gitCliOutputParser = new GitCliOutputParser(
 		            _dispatcher,
 		            localGitState,
-		            _environmentProvider);
+		            _environmentProvider,
+					GitCliOutputParser.GitCommandKind.Status);
 		
 		        var gitStatusCommand = new TerminalCommand(
 		            GitStatusTerminalCommandKey,
