@@ -2,7 +2,9 @@ using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Ide.RazorLib.Gits.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using System.Collections.Immutable;
 
@@ -16,23 +18,25 @@ public partial record GitState
         private readonly ILuthetusIdeComponentRenderers _ideComponentRenderers;
         private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
         private readonly ITreeViewService _treeViewService;
+        private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
         private readonly ThrottleAsync _throttle = new ThrottleAsync(TimeSpan.FromMilliseconds(300));
-		private readonly SemaphoreSlim _effectHubSemaphore = new(1, 1);
 
         public Effector(
             IState<GitState> gitStateWrap,
             ILuthetusIdeComponentRenderers ideComponentRenderers,
             ILuthetusCommonComponentRenderers commonComponentRenderers,
-            ITreeViewService treeViewService)
+            ITreeViewService treeViewService,
+            LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi)
         {
             _gitStateWrap = gitStateWrap;
             _ideComponentRenderers = ideComponentRenderers;
             _commonComponentRenderers = commonComponentRenderers;
             _treeViewService = treeViewService;
+            _ideBackgroundTaskApi = ideBackgroundTaskApi;
         }
 
         [EffectMethod(typeof(SetFileListAction))]
-		public Task HandleSetGitStateWithAction(IDispatcher dispatcher)
+		public Task HandleSetFileListAction(IDispatcher dispatcher)
 		{
             // Suppress unused variable warning
             _ = dispatcher;
@@ -42,13 +46,6 @@ public partial record GitState
                 var gitState = _gitStateWrap.Value;
 
                 var untrackedTreeViewList = gitState.UntrackedFileList.Select(x => new TreeViewGitFile(
-                        x,
-                        _ideComponentRenderers,
-                        false,
-                        false))
-                    .ToArray();
-                
-                var stagedTreeViewList = gitState.StagedFileList.Select(x => new TreeViewGitFile(
                         x,
                         _ideComponentRenderers,
                         false,
@@ -64,6 +61,13 @@ public partial record GitState
 
                 untrackedFileGroupTreeView.SetChildList(untrackedTreeViewList);
 
+                var stagedTreeViewList = gitState.StagedFileList.Select(x => new TreeViewGitFile(
+                        x,
+                        _ideComponentRenderers,
+                        false,
+                        false))
+                    .ToArray();
+
                 var stagedFileGroupTreeView = new TreeViewGitFileGroup(
                     "Staged",
                     _ideComponentRenderers,
@@ -72,8 +76,28 @@ public partial record GitState
                     true);
 
                 stagedFileGroupTreeView.SetChildList(stagedTreeViewList);
+                
+                var unstagedTreeViewList = gitState.UnstagedFileList.Select(x => new TreeViewGitFile(
+                        x,
+                        _ideComponentRenderers,
+                        false,
+                        false))
+                    .ToArray();
 
-                var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(stagedFileGroupTreeView, untrackedFileGroupTreeView);
+                var unstagedFileGroupTreeView = new TreeViewGitFileGroup(
+                    "Not-staged",
+                    _ideComponentRenderers,
+                    _commonComponentRenderers,
+                    true,
+                    true);
+
+                unstagedFileGroupTreeView.SetChildList(unstagedTreeViewList);
+
+                var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(
+                    stagedFileGroupTreeView,
+                    unstagedFileGroupTreeView,
+                    untrackedFileGroupTreeView);
+
                 var firstNode = untrackedTreeViewList.FirstOrDefault();
 
                 var activeNodes = firstNode is null
@@ -100,6 +124,15 @@ public partial record GitState
 
                 return Task.CompletedTask;
             });
+        }
+        
+        [EffectMethod(typeof(SetRepoAction))]
+		public Task HandleSetRepoAction(IDispatcher dispatcher)
+		{
+            // Suppress unused variable warning
+            _ = dispatcher;
+
+            return _ideBackgroundTaskApi.Git.GitStatusExecute();
         }
     }
 }

@@ -11,6 +11,7 @@ public partial record GitState(
     GitRepo? Repo,
     ImmutableList<GitFile> UntrackedFileList,
     ImmutableList<GitFile> StagedFileList,
+    ImmutableList<GitFile> UnstagedFileList,
     ImmutableList<GitFile> SelectedFileList,
     ImmutableList<GitTask> ActiveTasks,
     string? Origin)
@@ -20,6 +21,7 @@ public partial record GitState(
     public GitState()
         : this(
               null,
+              ImmutableList<GitFile>.Empty,
               ImmutableList<GitFile>.Empty,
               ImmutableList<GitFile>.Empty,
               ImmutableList<GitFile>.Empty,

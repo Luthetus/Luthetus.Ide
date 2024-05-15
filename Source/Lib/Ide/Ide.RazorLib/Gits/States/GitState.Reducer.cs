@@ -24,6 +24,7 @@ public partial record GitState
             {
                 UntrackedFileList = setGitFileListAction.UntrackedFileList,
                 StagedFileList = setGitFileListAction.StagedFileList,
+                UnstagedFileList = setGitFileListAction.UnstagedFileList,
             };
         }
 
@@ -55,6 +56,7 @@ public partial record GitState
                 Repo = setRepoAction.Repo,
                 UntrackedFileList = ImmutableList<GitFile>.Empty,
                 StagedFileList = ImmutableList<GitFile>.Empty,
+                UnstagedFileList = ImmutableList<GitFile>.Empty,
                 SelectedFileList = ImmutableList<GitFile>.Empty,
                 ActiveTasks = ImmutableList<GitTask>.Empty,
             };

@@ -36,6 +36,7 @@ public class GitCliOutputParser : IOutputParser
 
     public List<GitFile> UntrackedGitFileList { get; } = new();
     public List<GitFile> StagedGitFileList { get; } = new();
+    public List<GitFile> UnstagedGitFileList { get; } = new();
 
     public List<TextEditorTextSpan> ParseLine(string output)
     {
@@ -97,6 +98,28 @@ public class GitCliOutputParser : IOutputParser
                             (byte)TerminalDecorationKind.StringLiteral));
 
                         _stageKind = StageKind.IsReadingStagedFiles;
+                        break;
+                    }
+                }
+            }
+            else if (stringWalker.CurrentCharacter == 'C' && stringWalker.PeekForSubstring("Changes not staged for commit:"))
+            {
+                // Found: "Changes not staged for commit:"
+                var startPositionInclusive = stringWalker.PositionIndex;
+
+                // Read: "Changes not staged for commit:" (literally)
+                while (!stringWalker.IsEof)
+                {
+                    var character = stringWalker.ReadCharacter();
+
+                    if (character == ':')
+                    {
+                        textSpanList.Add(new TextEditorTextSpan(
+                            startPositionInclusive,
+                            stringWalker,
+                            (byte)TerminalDecorationKind.StringLiteral));
+
+                        _stageKind = StageKind.IsReadingUnstagedFiles;
                         break;
                     }
                 }
@@ -275,6 +298,102 @@ public class GitCliOutputParser : IOutputParser
                     _ = stringWalker.ReadCharacter();
                 }
             }
+            else if (_stageKind == StageKind.IsReadingUnstagedFiles)
+            {
+                while (!stringWalker.IsEof)
+                {
+                    if (stringWalker.CurrentCharacter == ' ' && stringWalker.NextCharacter == ' ')
+                    {
+                        // Read comments line by line
+                        while (!stringWalker.IsEof)
+                        {
+                            if (stringWalker.CurrentCharacter != ' ' || stringWalker.NextCharacter != ' ')
+                                break;
+
+                            // Discard the leading whitespace on the line (two spaces)
+                            _ = stringWalker.ReadRange(2);
+
+                            var startPositionInclusive = stringWalker.PositionIndex;
+
+                            while (!stringWalker.IsEof && !WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
+                            {
+                                _ = stringWalker.ReadCharacter();
+                            }
+
+                            textSpanList.Add(new TextEditorTextSpan(
+                                startPositionInclusive,
+                                stringWalker,
+                                (byte)TerminalDecorationKind.Comment));
+                        }
+                    }
+                    else if (stringWalker.CurrentCharacter == WhitespaceFacts.TAB)
+                    {
+                        // Read untracked files line by line
+                        while (!stringWalker.IsEof)
+                        {
+                            if (stringWalker.CurrentCharacter != WhitespaceFacts.TAB)
+                                break;
+
+                            // Discard the leading whitespace on the line (one tab)
+                            _ = stringWalker.ReadCharacter();
+
+                            // Skip the git description
+                            //
+                            // Example: "new file:   BlazorApp4NetCoreDbg/Persons/Abc.cs"
+                            //           ^^^^^^^^^^^^
+                            while (!stringWalker.IsEof)
+                            {
+                                if (stringWalker.CurrentCharacter == ':')
+                                {
+                                    // Read the ':'
+                                    _ = stringWalker.ReadCharacter();
+
+                                    // Read the 3 ' ' characters (space characters)
+                                    _ = stringWalker.ReadRange(3);
+
+                                    break;
+                                }
+
+                                _ = stringWalker.ReadCharacter();
+                            }
+
+                            var startPositionInclusive = stringWalker.PositionIndex;
+
+                            while (!stringWalker.IsEof && !WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
+                            {
+                                _ = stringWalker.ReadCharacter();
+                            }
+
+                            var textSpan = new TextEditorTextSpan(
+                                startPositionInclusive,
+                                stringWalker,
+                                (byte)TerminalDecorationKind.Warning);
+                            textSpanList.Add(textSpan);
+
+                            var relativePathString = textSpan.GetText();
+
+                            var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
+                                _gitState.Repo.AbsolutePath,
+                                relativePathString,
+                                _environmentProvider);
+
+                            var isDirectory = relativePathString.EndsWith(_environmentProvider.DirectorySeparatorChar) ||
+                                relativePathString.EndsWith(_environmentProvider.AltDirectorySeparatorChar);
+
+                            var absolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, isDirectory);
+
+                            UnstagedGitFileList.Add(new GitFile(
+                                absolutePath,
+                                relativePathString,
+                                GitDirtyReason.Added));
+                        }
+
+                        break;
+                    }
+
+                    _ = stringWalker.ReadCharacter();
+                }
+            }
 
             _ = stringWalker.ReadCharacter();
         }
@@ -315,7 +434,8 @@ public class GitCliOutputParser : IOutputParser
             _dispatcher.Dispatch(new GitState.SetFileListAction(
                 _gitState.Repo,
                 UntrackedGitFileList.ToImmutableList(),
-                StagedGitFileList.ToImmutableList()));
+                StagedGitFileList.ToImmutableList(),
+                UnstagedGitFileList.ToImmutableList()));
         }
     }
 
@@ -336,6 +456,7 @@ public class GitCliOutputParser : IOutputParser
     {
         None,
         IsReadingUntrackedFiles,
+        IsReadingUnstagedFiles,
         IsReadingStagedFiles,
     }
 }
