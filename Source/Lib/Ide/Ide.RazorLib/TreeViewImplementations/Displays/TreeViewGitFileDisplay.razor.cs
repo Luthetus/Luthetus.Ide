@@ -21,7 +21,7 @@ public partial class TreeViewGitFileDisplay : ComponentBase, ITreeViewGitFileRen
 
     private bool IsChecked
     {
-        get => GitState.StagedFileList.Any(x => x.AbsolutePath.Value == TreeViewGitFile.Item.AbsolutePath.Value);
+        get => GitState.SelectedFileList.Any(x => x.AbsolutePath.Value == TreeViewGitFile.Item.AbsolutePath.Value);
         set
         {
             var localGitState = GitState;
@@ -35,19 +35,19 @@ public partial class TreeViewGitFileDisplay : ComponentBase, ITreeViewGitFileRen
                 }
 
                 var key = TreeViewGitFile.Item.AbsolutePath.Value;
-                ImmutableList<GitFile> outStagedFileList;
+                ImmutableList<GitFile> outSelectedFileList;
 
-                var indexOf = inState.StagedFileList.FindIndex(x => x.AbsolutePath.Value == key);
+                var indexOf = inState.SelectedFileList.FindIndex(x => x.AbsolutePath.Value == key);
 
                 // Toggle
                 if (indexOf != -1)
-                    outStagedFileList = inState.StagedFileList.RemoveAt(indexOf);
+                    outSelectedFileList = inState.SelectedFileList.RemoveAt(indexOf);
                 else
-                    outStagedFileList = inState.StagedFileList.Add(TreeViewGitFile.Item);
+                    outSelectedFileList = inState.SelectedFileList.Add(TreeViewGitFile.Item);
 
                 return inState with
                 {
-                    StagedFileList = outStagedFileList
+                    SelectedFileList = outSelectedFileList
                 };
             }));
         }

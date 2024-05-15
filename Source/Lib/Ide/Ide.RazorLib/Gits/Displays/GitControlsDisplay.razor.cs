@@ -44,6 +44,12 @@ public partial class GitControlsDisplay : ComponentBase
 			.ConfigureAwait(false);
     }
 
+    private async Task UnstageOnClick(GitState localGitState)
+    {
+        await IdeBackgroundTaskApi.Git.GitUnstageExecute()
+            .ConfigureAwait(false);
+    }
+
     private async Task CommitChangesOnClick(GitState localGitState, string localSummary)
     {
         if (localGitState.Repo is null)

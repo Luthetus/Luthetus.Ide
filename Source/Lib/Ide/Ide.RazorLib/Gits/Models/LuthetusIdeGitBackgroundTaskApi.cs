@@ -94,7 +94,65 @@ public class LuthetusIdeGitBackgroundTaskApi
 		
 		        var filesBuilder =  new StringBuilder();
 		
-		        foreach (var fileAbsolutePath in localGitState.StagedFileList)
+		        foreach (var fileAbsolutePath in localGitState.SelectedFileList)
+		        {
+		            var relativePathString = PathHelper.GetRelativeFromTwoAbsolutes(
+		                localGitState.Repo.AbsolutePath,
+		                fileAbsolutePath.AbsolutePath,
+		                _environmentProvider);
+		
+		            if (_environmentProvider.DirectorySeparatorChar == '\\')
+		            {
+		                // The following fails:
+		                //     git add ".\MyApp\"
+		                //
+		                // Whereas the following succeeds
+		                //     git add "./MyApp/"
+		                relativePathString = relativePathString.Replace(
+		                    _environmentProvider.DirectorySeparatorChar,
+		                    _environmentProvider.AltDirectorySeparatorChar);
+		            }
+		
+		            filesBuilder.Append($"\"{relativePathString}\" ");
+		        }
+		
+		        var argumentsString = "add " + filesBuilder.ToString();
+		
+		        var formattedCommand = new FormattedCommand(
+		            GitCliFacts.TARGET_FILE_NAME,
+		            new string[] { argumentsString })
+		        {
+		            HACK_ArgumentsString = argumentsString
+		        };
+		        
+		        var gitAddCommand = new TerminalCommand(
+		            GitAddTerminalCommandKey,
+		            formattedCommand,
+		            localGitState.Repo.AbsolutePath.Value);
+		
+		        var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
+		        await generalTerminal
+		            .EnqueueCommandAsync(gitAddCommand)
+		            .ConfigureAwait(false);
+			});
+    }
+	
+	public async Task GitUnstageExecute()
+    {
+		await _backgroundTaskService.EnqueueAsync(
+			Key<BackgroundTask>.NewKey(),
+			ContinuousBackgroundTaskWorker.GetQueueKey(),
+            "git unstage",
+            async () =>
+			{
+				var localGitState = _gitStateWrap.Value;
+
+		        if (localGitState.Repo is null)
+		            return;
+		
+		        var filesBuilder =  new StringBuilder();
+		
+		        foreach (var fileAbsolutePath in localGitState.SelectedFileList)
 		        {
 		            var relativePathString = PathHelper.GetRelativeFromTwoAbsolutes(
 		                localGitState.Repo.AbsolutePath,

@@ -55,6 +55,7 @@ public partial record GitState
                 Repo = setRepoAction.Repo,
                 UntrackedFileList = ImmutableList<GitFile>.Empty,
                 StagedFileList = ImmutableList<GitFile>.Empty,
+                SelectedFileList = ImmutableList<GitFile>.Empty,
                 ActiveTasks = ImmutableList<GitTask>.Empty,
             };
         }

@@ -11,13 +11,20 @@ public partial record GitState(
     GitRepo? Repo,
     ImmutableList<GitFile> UntrackedFileList,
     ImmutableList<GitFile> StagedFileList,
+    ImmutableList<GitFile> SelectedFileList,
     ImmutableList<GitTask> ActiveTasks,
     string? Origin)
 {
     public static readonly Key<TreeViewContainer> TreeViewGitChangesKey = Key<TreeViewContainer>.NewKey();
 
     public GitState()
-        : this(null, ImmutableList<GitFile>.Empty, ImmutableList<GitFile>.Empty, ImmutableList<GitTask>.Empty, null)
+        : this(
+              null,
+              ImmutableList<GitFile>.Empty,
+              ImmutableList<GitFile>.Empty,
+              ImmutableList<GitFile>.Empty,
+              ImmutableList<GitTask>.Empty,
+              null)
     {
 
     }
