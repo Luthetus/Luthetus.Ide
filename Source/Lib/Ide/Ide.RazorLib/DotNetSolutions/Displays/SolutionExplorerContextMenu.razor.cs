@@ -32,7 +32,6 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 

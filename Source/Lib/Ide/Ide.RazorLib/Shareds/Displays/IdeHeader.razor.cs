@@ -25,10 +25,6 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
-using Luthetus.Common.RazorLib.Reactives.Displays;
-using Luthetus.Common.RazorLib.Drags.Displays;
-using Luthetus.Common.RazorLib.Reactives.Models.Internals;
-using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
