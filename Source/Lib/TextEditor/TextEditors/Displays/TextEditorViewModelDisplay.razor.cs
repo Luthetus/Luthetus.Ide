@@ -65,7 +65,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private readonly Guid _textEditorHtmlElementId = Guid.NewGuid();
     /// <summary>Using this lock in order to avoid the Dispose implementation decrementing when it shouldn't</summary>
     private readonly object _linkedViewModelLock = new();
-    private readonly ThrottleAvailability _throttleAvailabilityShouldRender = new(TimeSpan.FromMilliseconds(30));
+    // private readonly ThrottleAvailability _throttleAvailabilityShouldRender = new(TimeSpan.FromMilliseconds(30));
 
     private TextEditorEvents _events = null!;
     private bool _thinksTouchIsOccurring;
@@ -82,6 +82,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private int _countShouldRenderTrue;
     private int _countShouldRenderFalse;
     private int _countOnAfterRenderAsync;
+	private Task _shouldRenderSkipTask = Task.CompletedTask;
 
     private CursorDisplay? CursorDisplay => _bodySectionComponent?.CursorDisplayComponent;
     private string MeasureCharacterWidthAndRowHeightElementId => $"luth_te_measure-character-width-and-row-height_{_textEditorHtmlElementId}";
@@ -113,14 +114,24 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override bool ShouldRender()
     {
-        var shouldRender = _throttleAvailabilityShouldRender.CheckAvailability();
+        //var shouldRender = _throttleAvailabilityShouldRender.CheckAvailability();
 
-        if (!shouldRender)
-        {
-            _countShouldRenderFalse++;
-            TextEditorService.ViewModelApi.ForceRenderFactory(TextEditorViewModelKey, CancellationToken.None);
-            return false;
-        }
+   //     if (!shouldRender)
+   //     {
+   //         _countShouldRenderFalse++;
+
+			//if (_shouldRenderSkipTask.IsCompleted)
+			//{
+			//	_shouldRenderSkipTask = Task.Run(async () =>
+			//	{
+			//		await InvokeAsync(StateHasChanged);
+			//	});
+			//}
+            
+   //         return false;
+   //     }
+
+        var shouldRender = true;
 
         _countShouldRenderTrue++;
 

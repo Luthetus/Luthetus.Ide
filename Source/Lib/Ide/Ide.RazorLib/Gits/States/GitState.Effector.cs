@@ -15,6 +15,7 @@ public partial record GitState
         private readonly ILuthetusIdeComponentRenderers _ideComponentRenderers;
         private readonly ITreeViewService _treeViewService;
         private readonly ThrottleAsync _throttle = new ThrottleAsync(TimeSpan.FromMilliseconds(300));
+		private readonly SemaphoreSlim _effectHubSemaphore = new(1, 1);
 
         public Effector(
             IState<GitState> gitStateWrap,
@@ -32,7 +33,7 @@ public partial record GitState
             // Suppress unused variable warning
             _ = dispatcher;
 
-            return _throttle.PushEvent(_ =>
+			return _throttle.PushEvent(_ =>
             {
                 var gitState = _gitStateWrap.Value;
 

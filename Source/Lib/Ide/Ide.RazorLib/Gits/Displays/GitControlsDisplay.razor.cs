@@ -8,6 +8,7 @@ using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Microsoft.AspNetCore.Components;
 using System.Text;
 
@@ -21,45 +22,20 @@ public partial class GitControlsDisplay : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+	[Inject]
+    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 
     [CascadingParameter]
     public GitState GitState { get; set; } = null!;
 
     private string _summary = string.Empty;
 
-    public Key<TerminalCommand> GitStatusTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
     public Key<TerminalCommand> GitCommitTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
 
     private async Task ExecuteGitStatusTerminalCommandOnClick()
     {
-        var localGitState = GitState;
-
-        if (localGitState.Repo is null)
-            return;
-
-        var gitStatusDashUCommand = $"{GitCliFacts.STATUS_COMMAND} -u";
-        var formattedCommand = new FormattedCommand(
-            GitCliFacts.TARGET_FILE_NAME,
-            new string[] { gitStatusDashUCommand })
-        {
-            HACK_ArgumentsString = gitStatusDashUCommand
-        };
-
-        var gitCliOutputParser = new GitCliOutputParser(
-            Dispatcher,
-            localGitState,
-            EnvironmentProvider);
-
-        var gitStatusCommand = new TerminalCommand(
-            GitStatusTerminalCommandKey,
-            formattedCommand,
-            localGitState.Repo.AbsolutePath.Value,
-            OutputParser: gitCliOutputParser);
-
-        var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-        await generalTerminal
-            .EnqueueCommandAsync(gitStatusCommand)
-            .ConfigureAwait(false);
+		await IdeBackgroundTaskApi.Git.ExecuteGitStatusTerminalCommandOnClick()
+			.ConfigureAwait(false);
     }
 
     private async Task SubmitOnClick(GitState localGitState)
@@ -105,7 +81,7 @@ public partial class GitControlsDisplay : ComponentBase
         };
         
         var gitAddCommand = new TerminalCommand(
-            GitStatusTerminalCommandKey,
+            GitCommitTerminalCommandKey,
             formattedCommand,
             localGitState.Repo.AbsolutePath.Value,
             ContinueWith: () => CommitChanges(localGitState, localSummary));

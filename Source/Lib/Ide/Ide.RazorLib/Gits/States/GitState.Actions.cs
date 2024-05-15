@@ -1,4 +1,4 @@
-﻿using Luthetus.Ide.RazorLib.Gits.Models;
+using Luthetus.Ide.RazorLib.Gits.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Gits.States;
@@ -12,5 +12,6 @@ public partial record GitState
     public record SetOriginAction(GitRepo Repo, string Origin);
     public record SetRepoAction(GitRepo? Repo);
     public record SetSelectedFileListAction(Func<ImmutableDictionary<string, GitFile>, ImmutableDictionary<string, GitFile>> SetSelectedFileListFunc);
+    public record RefreshAction;
     public record WithAction(Func<GitState, GitState> WithFunc);
 }
