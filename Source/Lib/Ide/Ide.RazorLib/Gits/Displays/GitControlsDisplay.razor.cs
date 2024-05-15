@@ -34,65 +34,17 @@ public partial class GitControlsDisplay : ComponentBase
 
     private async Task ExecuteGitStatusTerminalCommandOnClick()
     {
-		await IdeBackgroundTaskApi.Git.ExecuteGitStatusTerminalCommandOnClick()
+		await IdeBackgroundTaskApi.Git.GitStatusExecute()
 			.ConfigureAwait(false);
     }
 
-    private async Task SubmitOnClick(GitState localGitState)
+    private async Task StageOnClick(GitState localGitState)
     {
-        var localSummary = _summary;
-        if (string.IsNullOrWhiteSpace(localSummary))
-            return;
-
-        if (localGitState.Repo is null)
-            return;
-
-        var filesBuilder =  new StringBuilder();
-
-        foreach (var fileAbsolutePath in localGitState.StagedFileMap.Values)
-        {
-            var relativePathString = PathHelper.GetRelativeFromTwoAbsolutes(
-                localGitState.Repo.AbsolutePath,
-                fileAbsolutePath.AbsolutePath,
-                EnvironmentProvider);
-
-            if (EnvironmentProvider.DirectorySeparatorChar == '\\')
-            {
-                // The following fails:
-                //     git add ".\MyApp\"
-                //
-                // Whereas the following succeeds
-                //     git add "./MyApp/"
-                relativePathString = relativePathString.Replace(
-                    EnvironmentProvider.DirectorySeparatorChar,
-                    EnvironmentProvider.AltDirectorySeparatorChar);
-            }
-
-            filesBuilder.Append($"\"{relativePathString}\" ");
-        }
-
-        var argumentsString = "add " + filesBuilder.ToString();
-
-        var formattedCommand = new FormattedCommand(
-            GitCliFacts.TARGET_FILE_NAME,
-            new string[] { argumentsString })
-        {
-            HACK_ArgumentsString = argumentsString
-        };
-        
-        var gitAddCommand = new TerminalCommand(
-            GitCommitTerminalCommandKey,
-            formattedCommand,
-            localGitState.Repo.AbsolutePath.Value,
-            ContinueWith: () => CommitChanges(localGitState, localSummary));
-
-        var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-        await generalTerminal
-            .EnqueueCommandAsync(gitAddCommand)
-            .ConfigureAwait(false);
+        await IdeBackgroundTaskApi.Git.GitAddExecute()
+			.ConfigureAwait(false);
     }
 
-    private async Task CommitChanges(GitState localGitState, string localSummary)
+    private async Task CommitChangesOnClick(GitState localGitState, string localSummary)
     {
         if (localGitState.Repo is null)
             return;

@@ -12,6 +12,11 @@
         Origin
     </button>
 
+	<button class="luth_button"
+            @onclick="() => StageOnClick(localGitState)">
+        Stage
+    </button>
+
 	<GitChangesTreeViewDisplay/>
 
     <input class="luth_ide_input luth_ide_input-text"
@@ -20,7 +25,7 @@
         @bind:event="oninput" />
 
     <button class="luth_button"
-            @onclick="() => SubmitOnClick(localGitState)">
+            @onclick="() => CommitChangesOnClick(localGitState, _summary)">
         Commit
     </button>
 </div>

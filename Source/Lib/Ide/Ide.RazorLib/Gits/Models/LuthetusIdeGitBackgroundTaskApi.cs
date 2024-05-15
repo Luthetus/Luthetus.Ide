@@ -1,4 +1,5 @@
 using Fluxor;
+using System.Text;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -36,13 +37,14 @@ public class LuthetusIdeGitBackgroundTaskApi
     }
 
 	public static Key<TerminalCommand> GitStatusTerminalCommandKey { get; } = new(Guid.Parse("fde9dba4-0219-4a77-9c8d-0ff2b4f9109e"));
+    public Key<TerminalCommand> GitAddTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
 
-	public async Task ExecuteGitStatusTerminalCommandOnClick()
+	public async Task GitStatusExecute()
     {
 		await _backgroundTaskService.EnqueueAsync(
 			Key<BackgroundTask>.NewKey(),
 			ContinuousBackgroundTaskWorker.GetQueueKey(),
-            "ExecuteGitStatusTerminalCommandOnClick",
+            "git status",
             async () =>
 			{
 				var localGitState = _gitStateWrap.Value;
@@ -72,6 +74,64 @@ public class LuthetusIdeGitBackgroundTaskApi
 		        var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
 		        await generalTerminal
 		            .EnqueueCommandAsync(gitStatusCommand)
+		            .ConfigureAwait(false);
+			});
+    }
+
+	public async Task GitAddExecute()
+    {
+		await _backgroundTaskService.EnqueueAsync(
+			Key<BackgroundTask>.NewKey(),
+			ContinuousBackgroundTaskWorker.GetQueueKey(),
+            "git add",
+            async () =>
+			{
+				var localGitState = _gitStateWrap.Value;
+
+		        if (localGitState.Repo is null)
+		            return;
+		
+		        var filesBuilder =  new StringBuilder();
+		
+		        foreach (var fileAbsolutePath in localGitState.StagedFileMap.Values)
+		        {
+		            var relativePathString = PathHelper.GetRelativeFromTwoAbsolutes(
+		                localGitState.Repo.AbsolutePath,
+		                fileAbsolutePath.AbsolutePath,
+		                _environmentProvider);
+		
+		            if (_environmentProvider.DirectorySeparatorChar == '\\')
+		            {
+		                // The following fails:
+		                //     git add ".\MyApp\"
+		                //
+		                // Whereas the following succeeds
+		                //     git add "./MyApp/"
+		                relativePathString = relativePathString.Replace(
+		                    _environmentProvider.DirectorySeparatorChar,
+		                    _environmentProvider.AltDirectorySeparatorChar);
+		            }
+		
+		            filesBuilder.Append($"\"{relativePathString}\" ");
+		        }
+		
+		        var argumentsString = "add " + filesBuilder.ToString();
+		
+		        var formattedCommand = new FormattedCommand(
+		            GitCliFacts.TARGET_FILE_NAME,
+		            new string[] { argumentsString })
+		        {
+		            HACK_ArgumentsString = argumentsString
+		        };
+		        
+		        var gitAddCommand = new TerminalCommand(
+		            GitAddTerminalCommandKey,
+		            formattedCommand,
+		            localGitState.Repo.AbsolutePath.Value);
+		
+		        var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
+		        await generalTerminal
+		            .EnqueueCommandAsync(gitAddCommand)
 		            .ConfigureAwait(false);
 			});
     }
