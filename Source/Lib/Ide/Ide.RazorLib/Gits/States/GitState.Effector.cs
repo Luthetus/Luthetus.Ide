@@ -1,4 +1,5 @@
 using Fluxor;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
@@ -13,6 +14,7 @@ public partial record GitState
 	{
         private readonly IState<GitState> _gitStateWrap;
         private readonly ILuthetusIdeComponentRenderers _ideComponentRenderers;
+        private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
         private readonly ITreeViewService _treeViewService;
         private readonly ThrottleAsync _throttle = new ThrottleAsync(TimeSpan.FromMilliseconds(300));
 		private readonly SemaphoreSlim _effectHubSemaphore = new(1, 1);
@@ -20,10 +22,12 @@ public partial record GitState
         public Effector(
             IState<GitState> gitStateWrap,
             ILuthetusIdeComponentRenderers ideComponentRenderers,
+            ILuthetusCommonComponentRenderers commonComponentRenderers,
             ITreeViewService treeViewService)
         {
             _gitStateWrap = gitStateWrap;
             _ideComponentRenderers = ideComponentRenderers;
+            _commonComponentRenderers = commonComponentRenderers;
             _treeViewService = treeViewService;
         }
 
@@ -37,15 +41,40 @@ public partial record GitState
             {
                 var gitState = _gitStateWrap.Value;
 
-                var treeViewList = gitState.FileList.Select(x => new TreeViewGitFile(
+                var untrackedTreeViewList = gitState.UntrackedFileList.Select(x => new TreeViewGitFile(
+                        x,
+                        _ideComponentRenderers,
+                        false,
+                        false))
+                    .ToArray();
+                
+                var stagedTreeViewList = gitState.StagedFileList.Select(x => new TreeViewGitFile(
                         x,
                         _ideComponentRenderers,
                         false,
                         false))
                     .ToArray();
 
-                var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(treeViewList);
-                var firstNode = treeViewList.FirstOrDefault();
+                var untrackedFileGroupTreeView = new TreeViewGitFileGroup(
+                    "Untracked",
+                    _ideComponentRenderers,
+                    _commonComponentRenderers,
+                    true,
+                    true);
+
+                untrackedFileGroupTreeView.SetChildList(untrackedTreeViewList);
+
+                var stagedFileGroupTreeView = new TreeViewGitFileGroup(
+                    "Staged",
+                    _ideComponentRenderers,
+                    _commonComponentRenderers,
+                    true,
+                    true);
+
+                stagedFileGroupTreeView.SetChildList(stagedTreeViewList);
+
+                var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(stagedFileGroupTreeView, untrackedFileGroupTreeView);
+                var firstNode = untrackedTreeViewList.FirstOrDefault();
 
                 var activeNodes = firstNode is null
                     ? Array.Empty<TreeViewNoType>()

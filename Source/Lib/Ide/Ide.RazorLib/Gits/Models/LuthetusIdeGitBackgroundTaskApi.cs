@@ -94,7 +94,7 @@ public class LuthetusIdeGitBackgroundTaskApi
 		
 		        var filesBuilder =  new StringBuilder();
 		
-		        foreach (var fileAbsolutePath in localGitState.StagedFileMap.Values)
+		        foreach (var fileAbsolutePath in localGitState.StagedFileList)
 		        {
 		            var relativePathString = PathHelper.GetRelativeFromTwoAbsolutes(
 		                localGitState.Repo.AbsolutePath,

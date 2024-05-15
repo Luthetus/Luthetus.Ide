@@ -34,7 +34,8 @@ public class GitCliOutputParser : IOutputParser
     private string? _origin;
     private int _count;
 
-    public List<GitFile> GitFileList { get; } = new();
+    public List<GitFile> UntrackedGitFileList { get; } = new();
+    public List<GitFile> StagedGitFileList { get; } = new();
 
     public List<TextEditorTextSpan> ParseLine(string output)
     {
@@ -166,7 +167,7 @@ public class GitCliOutputParser : IOutputParser
 
                             var absolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, isDirectory);
 
-                            GitFileList.Add(new GitFile(
+                            UntrackedGitFileList.Add(new GitFile(
                                 absolutePath,
                                 relativePathString,
                                 GitDirtyReason.Untracked));
@@ -217,6 +218,26 @@ public class GitCliOutputParser : IOutputParser
                             // Discard the leading whitespace on the line (one tab)
                             _ = stringWalker.ReadCharacter();
 
+                            // Skip the git description
+                            //
+                            // Example: "new file:   BlazorApp4NetCoreDbg/Persons/Abc.cs"
+                            //           ^^^^^^^^^^^^
+                            while (!stringWalker.IsEof)
+                            {
+                                if (stringWalker.CurrentCharacter == ':')
+                                {
+                                    // Read the ':'
+                                    _ = stringWalker.ReadCharacter();
+
+                                    // Read the 3 ' ' characters (space characters)
+                                    _ = stringWalker.ReadRange(3);
+
+                                    break;
+                                }
+
+                                _ = stringWalker.ReadCharacter();
+                            }
+
                             var startPositionInclusive = stringWalker.PositionIndex;
 
                             while (!stringWalker.IsEof && !WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
@@ -242,10 +263,10 @@ public class GitCliOutputParser : IOutputParser
 
                             var absolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, isDirectory);
 
-                            GitFileList.Add(new GitFile(
+                            StagedGitFileList.Add(new GitFile(
                                 absolutePath,
                                 relativePathString,
-                                GitDirtyReason.Untracked));
+                                GitDirtyReason.Added));
                         }
 
                         break;
@@ -293,7 +314,8 @@ public class GitCliOutputParser : IOutputParser
         {
             _dispatcher.Dispatch(new GitState.SetFileListAction(
                 _gitState.Repo,
-                GitFileList.ToImmutableList()));
+                UntrackedGitFileList.ToImmutableList(),
+                StagedGitFileList.ToImmutableList()));
         }
     }
 

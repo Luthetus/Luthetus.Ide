@@ -22,7 +22,8 @@ public partial record GitState
 
             return inState with
             {
-                FileList = setGitFileListAction.FileList
+                UntrackedFileList = setGitFileListAction.UntrackedFileList,
+                StagedFileList = setGitFileListAction.StagedFileList,
             };
         }
 
@@ -52,8 +53,8 @@ public partial record GitState
             return inState with
             {
                 Repo = setRepoAction.Repo,
-                FileList = ImmutableList<GitFile>.Empty,
-                StagedFileMap = ImmutableDictionary<string, GitFile>.Empty,
+                UntrackedFileList = ImmutableList<GitFile>.Empty,
+                StagedFileList = ImmutableList<GitFile>.Empty,
                 ActiveTasks = ImmutableList<GitTask>.Empty,
             };
         }

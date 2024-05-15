@@ -43,7 +43,7 @@ public class GitTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
                     return inState;
                 }
 
-                var outStagedFileMap = new Dictionary<string, GitFile>(inState.StagedFileMap);
+                var outStagedFileList = new List<GitFile>(inState.StagedFileList);
 
                 foreach (var selectedNode in commandArgs.TreeViewContainer.SelectedNodeList)
                 {
@@ -51,15 +51,19 @@ public class GitTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
                     {
                         var key = treeViewGitFile.Item.AbsolutePath.Value;
 
-                        var wasRemoved = outStagedFileMap.Remove(key);
-                        if (!wasRemoved)
-                            outStagedFileMap.Add(key, treeViewGitFile.Item);
+                        var indexOf = outStagedFileList.FindIndex(x => x.AbsolutePath.Value == key);
+
+                        // Toggle
+                        if (indexOf != -1)
+                            outStagedFileList.RemoveAt(indexOf);
+                        else
+                            outStagedFileList.Add(treeViewGitFile.Item);
                     }
                 }
 
                 return inState with
                 {
-                    StagedFileMap = outStagedFileMap.ToImmutableDictionary()
+                    StagedFileList = outStagedFileList.ToImmutableList()
                 };
             }));
         }
