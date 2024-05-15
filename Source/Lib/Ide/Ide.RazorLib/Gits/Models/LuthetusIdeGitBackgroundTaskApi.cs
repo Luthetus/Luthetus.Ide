@@ -38,6 +38,7 @@ public class LuthetusIdeGitBackgroundTaskApi
 
 	public static Key<TerminalCommand> GitStatusTerminalCommandKey { get; } = new(Guid.Parse("fde9dba4-0219-4a77-9c8d-0ff2b4f9109e"));
     public Key<TerminalCommand> GitAddTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+    public Key<TerminalCommand> GitUnstageTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
 
 	public async Task GitStatusExecute()
     {
@@ -103,12 +104,12 @@ public class LuthetusIdeGitBackgroundTaskApi
 		
 		            if (_environmentProvider.DirectorySeparatorChar == '\\')
 		            {
-		                // The following fails:
-		                //     git add ".\MyApp\"
-		                //
-		                // Whereas the following succeeds
-		                //     git add "./MyApp/"
-		                relativePathString = relativePathString.Replace(
+                        // The following fails (directory separator character):
+                        //     git add ".\MyApp\"
+                        //
+                        // Whereas the following succeeds
+                        //     git add "./MyApp/"
+                        relativePathString = relativePathString.Replace(
 		                    _environmentProvider.DirectorySeparatorChar,
 		                    _environmentProvider.AltDirectorySeparatorChar);
 		            }
@@ -161,12 +162,12 @@ public class LuthetusIdeGitBackgroundTaskApi
 		
 		            if (_environmentProvider.DirectorySeparatorChar == '\\')
 		            {
-		                // The following fails:
-		                //     git add ".\MyApp\"
-		                //
-		                // Whereas the following succeeds
-		                //     git add "./MyApp/"
-		                relativePathString = relativePathString.Replace(
+                        // The following fails (directory separator character):
+                        //     git restore --staged ".\MyApp\"
+                        //
+                        // Whereas the following succeeds
+                        //     git restore --staged "./MyApp/"
+                        relativePathString = relativePathString.Replace(
 		                    _environmentProvider.DirectorySeparatorChar,
 		                    _environmentProvider.AltDirectorySeparatorChar);
 		            }
@@ -174,7 +175,7 @@ public class LuthetusIdeGitBackgroundTaskApi
 		            filesBuilder.Append($"\"{relativePathString}\" ");
 		        }
 		
-		        var argumentsString = "add " + filesBuilder.ToString();
+		        var argumentsString = "restore --staged " + filesBuilder.ToString();
 		
 		        var formattedCommand = new FormattedCommand(
 		            GitCliFacts.TARGET_FILE_NAME,
@@ -183,14 +184,14 @@ public class LuthetusIdeGitBackgroundTaskApi
 		            HACK_ArgumentsString = argumentsString
 		        };
 		        
-		        var gitAddCommand = new TerminalCommand(
-		            GitAddTerminalCommandKey,
+		        var gitUnstageCommand = new TerminalCommand(
+                    GitUnstageTerminalCommandKey,
 		            formattedCommand,
 		            localGitState.Repo.AbsolutePath.Value);
 		
 		        var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
 		        await generalTerminal
-		            .EnqueueCommandAsync(gitAddCommand)
+		            .EnqueueCommandAsync(gitUnstageCommand)
 		            .ConfigureAwait(false);
 			});
     }
