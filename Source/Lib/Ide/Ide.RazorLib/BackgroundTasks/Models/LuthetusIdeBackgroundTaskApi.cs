@@ -156,6 +156,7 @@ public class LuthetusIdeBackgroundTaskApi
 			_gitStateWrap,
 			_environmentProvider,
 			_backgroundTaskService,
+            _commonComponentRenderers,
 			_dispatcher);
     }
     
