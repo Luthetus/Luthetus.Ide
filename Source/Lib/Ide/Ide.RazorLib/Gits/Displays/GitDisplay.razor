@@ -37,6 +37,19 @@
                     }
                 </div>
 
+                <div style="text-wrap: nowrap;">
+                    Origin:
+                    
+                    @if (string.IsNullOrWhiteSpace(localGitState.Origin))
+                    {
+                        @: null
+                    }
+                    else
+                    {
+                        @localGitState.Origin
+                    }
+                </div>
+
                 <GitControlsDisplay />
             }
         </CascadingValue>
