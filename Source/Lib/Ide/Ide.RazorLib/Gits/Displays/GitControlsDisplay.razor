@@ -2,30 +2,27 @@
     
     @{ var localGitState = GitState; }
 
-    <button class="luth_button"
-            @onclick="ExecuteGitStatusTerminalCommandOnClick">
-        Status
-    </button>
+    <div style="display: flex; justify-content: space-evenly; margin-top: 10px; margin-bottom: 10px;">
+        <button class="luth_button"
+                @onclick="ShowGitOriginDialogOnClick">
+            Origin
+        </button>
+        <button class="luth_button"
+                @onclick="() => ExecuteGitRefreshOnClick(localGitState)">
+            <IconRefresh /> Refresh
+        </button>
+    </div>
 
-    <button class="luth_button"
-            @onclick="ShowGitOriginDialogOnClick">
-        Origin
-    </button>
-
-    <button class="luth_button"
-            @onclick="() => GetGitBranchOnClick(localGitState)">
-        Branch
-    </button>
-
-	<button class="luth_button"
-            @onclick="() => StageOnClick(localGitState)">
-        Stage
-    </button>
-
-    <button class="luth_button"
-            @onclick="() => UnstageOnClick(localGitState)">
-        Unstage
-    </button>
+    <div style="display: flex; justify-content: space-evenly; margin-bottom: 10px;">
+        <button class="luth_button"
+                @onclick="() => StageOnClick(localGitState)">
+            Stage
+        </button>
+        <button class="luth_button"
+                @onclick="() => UnstageOnClick(localGitState)">
+            Unstage
+        </button>
+    </div>
 
 	<GitChangesTreeViewDisplay/>
 

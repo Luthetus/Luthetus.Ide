@@ -20,12 +20,21 @@
             
             @if (localGitState.Repo is not null)
             {
-                <div>
-                    @localGitState.Repo.AbsolutePath.NameNoExtension
+                <div title="@localGitState.Repo.AbsolutePath.Value">
+                    Repo: @localGitState.Repo.AbsolutePath.NameNoExtension
                 </div>
 
                 <div>
-                    @localGitState.Branch
+                    Branch:
+                    
+                    @if (string.IsNullOrWhiteSpace(localGitState.Branch))
+                    {
+                        @: null
+                    }
+                    else
+                    {
+                        @localGitState.Branch
+                    }
                 </div>
 
                 <GitControlsDisplay />

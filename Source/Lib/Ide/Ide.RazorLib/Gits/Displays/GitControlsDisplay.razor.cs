@@ -21,10 +21,13 @@ public partial class GitControlsDisplay : ComponentBase
 
     private string _summary = string.Empty;
 
-    private async Task ExecuteGitStatusTerminalCommandOnClick()
+    private async Task ExecuteGitRefreshOnClick(GitState localGitState)
     {
-		await IdeBackgroundTaskApi.Git.GitStatusExecute()
-			.ConfigureAwait(false);
+        if (localGitState.Repo is null)
+            return;
+
+        await IdeBackgroundTaskApi.Git.GitRefreshExecute(localGitState.Repo)
+            .ConfigureAwait(false);
     }
 
     private async Task StageOnClick(GitState localGitState)
@@ -51,17 +54,6 @@ public partial class GitControlsDisplay : ComponentBase
             return;
 
         await IdeBackgroundTaskApi.Git.GitCommitExecute(localGitState.Repo, localSummary)
-            .ConfigureAwait(false);
-
-        _summary = string.Empty;
-    }
-    
-    private async Task GetGitBranchOnClick(GitState localGitState)
-    {
-        if (localGitState.Repo is null)
-            return;
-
-        await IdeBackgroundTaskApi.Git.GitGetActiveBranchNameExecute(localGitState.Repo)
             .ConfigureAwait(false);
 
         _summary = string.Empty;

@@ -126,13 +126,18 @@ public partial record GitState
             });
         }
         
-        [EffectMethod(typeof(SetRepoAction))]
-		public Task HandleSetRepoAction(IDispatcher dispatcher)
+        [EffectMethod]
+		public Task HandleSetRepoAction(
+            SetRepoAction setRepoAction,
+            IDispatcher dispatcher)
 		{
             // Suppress unused variable warning
             _ = dispatcher;
 
-            return _ideBackgroundTaskApi.Git.GitStatusExecute();
+            if (setRepoAction.Repo is not null)
+                return _ideBackgroundTaskApi.Git.GitRefreshExecute(setRepoAction.Repo);
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -1,14 +1,17 @@
 <div class="luth_ide_git-pick-git-folder">
 
+    @{ var localGitState = GitState; }
+
     <button class="luth_button"
             @onclick="ShowAddRepoDialogOnClick">
-        Add Repo
-    </button>
 
-    <select>
-        <option>Pick Repo</option>
-        <option>A</option>
-        <option>B</option>
-        <option>C</option>
-    </select>
+        @if (localGitState.Repo is null)
+        {
+            @: Choose Repo
+        }
+        else
+        {
+            @: Change Repo
+        }
+    </button>
 </div>
