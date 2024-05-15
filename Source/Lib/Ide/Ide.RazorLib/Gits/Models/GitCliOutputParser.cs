@@ -56,36 +56,132 @@ public class GitCliOutputParser : IOutputParser
 
         while (!stringWalker.IsEof)
         {
-            if (_stageKind == StageKind.None)
+            if (stringWalker.CurrentCharacter == 'U' && stringWalker.PeekForSubstring("Untracked files:"))
             {
-                // Find: "Untracked files:"
-                if (stringWalker.CurrentCharacter == 'U' && stringWalker.PeekForSubstring("Untracked files:"))
+                // Found: "Untracked files:"
+                var startPositionInclusive = stringWalker.PositionIndex;
+
+                // Read: "Untracked files:" (literally)
+                while (!stringWalker.IsEof)
                 {
-                    var startPositionInclusive = stringWalker.PositionIndex;
+                    var character = stringWalker.ReadCharacter();
 
-                    // Read: "Untracked files:" (literally)
-                    while (!stringWalker.IsEof)
+                    if (character == ':')
                     {
-                        var character = stringWalker.ReadCharacter();
+                        textSpanList.Add(new TextEditorTextSpan(
+                            startPositionInclusive,
+                            stringWalker,
+                            (byte)TerminalDecorationKind.StringLiteral));
 
-                        if (character == ':')
-                        {
-                            textSpanList.Add(new TextEditorTextSpan(
-                                startPositionInclusive,
-                                stringWalker,
-                                (byte)TerminalDecorationKind.Warning));
-
-                            _stageKind = StageKind.IsReadingUntrackedFiles;
-                            break;
-                        }
+                        _stageKind = StageKind.IsReadingUntrackedFiles;
+                        break;
                     }
                 }
             }
-            else if (_stageKind == StageKind.IsReadingUntrackedFiles)
+            else if (stringWalker.CurrentCharacter == 'C' && stringWalker.PeekForSubstring("Changes to be committed:"))
+            {
+                // Found: "Changes to be committed:"
+                var startPositionInclusive = stringWalker.PositionIndex;
+
+                // Read: "Changes to be committed:" (literally)
+                while (!stringWalker.IsEof)
+                {
+                    var character = stringWalker.ReadCharacter();
+
+                    if (character == ':')
+                    {
+                        textSpanList.Add(new TextEditorTextSpan(
+                            startPositionInclusive,
+                            stringWalker,
+                            (byte)TerminalDecorationKind.StringLiteral));
+
+                        _stageKind = StageKind.IsReadingStagedFiles;
+                        break;
+                    }
+                }
+            }
+
+            if (_stageKind == StageKind.IsReadingUntrackedFiles)
             {
                 while (!stringWalker.IsEof)
                 {
 
+                    if (stringWalker.CurrentCharacter == ' ' && stringWalker.NextCharacter == ' ')
+                    {
+                        // Read comments line by line
+                        while (!stringWalker.IsEof)
+                        {
+                            if (stringWalker.CurrentCharacter != ' ' || stringWalker.NextCharacter != ' ')
+                                break;
+
+                            // Discard the leading whitespace on the line (two spaces)
+                            _ = stringWalker.ReadRange(2);
+
+                            var startPositionInclusive = stringWalker.PositionIndex;
+
+                            while (!stringWalker.IsEof && !WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
+                            {
+                                _ = stringWalker.ReadCharacter();
+                            }
+
+                            textSpanList.Add(new TextEditorTextSpan(
+                                startPositionInclusive,
+                                stringWalker,
+                                (byte)TerminalDecorationKind.Comment));
+                        }
+                    }
+                    else if (stringWalker.CurrentCharacter == WhitespaceFacts.TAB)
+                    {
+                        // Read untracked files line by line
+                        while (!stringWalker.IsEof)
+                        {
+                            if (stringWalker.CurrentCharacter != WhitespaceFacts.TAB)
+                                break;
+
+                            // Discard the leading whitespace on the line (one tab)
+                            _ = stringWalker.ReadCharacter();
+
+                            var startPositionInclusive = stringWalker.PositionIndex;
+
+                            while (!stringWalker.IsEof && !WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
+                            {
+                                _ = stringWalker.ReadCharacter();
+                            }
+
+                            var textSpan = new TextEditorTextSpan(
+                                startPositionInclusive,
+                                stringWalker,
+                                (byte)TerminalDecorationKind.Warning);
+                            textSpanList.Add(textSpan);
+
+                            var relativePathString = textSpan.GetText();
+
+                            var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
+                                _gitState.Repo.AbsolutePath,
+                                relativePathString,
+                                _environmentProvider);
+
+                            var isDirectory = relativePathString.EndsWith(_environmentProvider.DirectorySeparatorChar) ||
+                                relativePathString.EndsWith(_environmentProvider.AltDirectorySeparatorChar);
+
+                            var absolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, isDirectory);
+
+                            GitFileList.Add(new GitFile(
+                                absolutePath,
+                                relativePathString,
+                                GitDirtyReason.Untracked));
+                        }
+
+                        break;
+                    }
+
+                    _ = stringWalker.ReadCharacter();
+                }
+            }
+            else if (_stageKind == StageKind.IsReadingStagedFiles)
+            {
+                while (!stringWalker.IsEof)
+                {
                     if (stringWalker.CurrentCharacter == ' ' && stringWalker.NextCharacter == ' ')
                     {
                         // Read comments line by line
@@ -218,5 +314,6 @@ public class GitCliOutputParser : IOutputParser
     {
         None,
         IsReadingUntrackedFiles,
+        IsReadingStagedFiles,
     }
 }
