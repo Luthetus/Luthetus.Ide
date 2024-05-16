@@ -85,9 +85,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.Ide.ServerSide", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.Ide.Wasm", "Source\Lib\Ide\Host.BlazorWebAssembly\Luthetus.Ide.Wasm.csproj", "{ED9C3705-8848-4416-9BFB-ABA37884AFBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Photino.Blazor", "External\photino.Blazor-2.6.0_fork\Photino.Blazor\Photino.Blazor.csproj", "{49900515-9358-41F5-85E6-5FEAD1891C31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Photino.Blazor", "External\photino.Blazor-2.6.0_fork\Photino.Blazor\Photino.Blazor.csproj", "{49900515-9358-41F5-85E6-5FEAD1891C31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Photino.NET", "External\photino.NET-v.2.4.0_fork\Photino.NET\Photino.NET.csproj", "{18F50C9D-2230-43FE-B6E8-A16D285A222F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Photino.NET", "External\photino.NET-v.2.4.0_fork\Photino.NET\Photino.NET.csproj", "{18F50C9D-2230-43FE-B6E8-A16D285A222F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

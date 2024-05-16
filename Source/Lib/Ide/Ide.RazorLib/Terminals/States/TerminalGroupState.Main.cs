@@ -20,7 +20,7 @@ public partial record TerminalGroupState(Key<Terminal> ActiveTerminalKey)
             {
                 new DimensionUnit
                 {
-                    Value = 70,
+                    Value = 80,
                     DimensionUnitKind = DimensionUnitKind.Percentage,
                 },
                 new DimensionUnit
@@ -41,7 +41,7 @@ public partial record TerminalGroupState(Key<Terminal> ActiveTerminalKey)
             {
                 new DimensionUnit
                 {
-                    Value = 30,
+                    Value = 20,
                     DimensionUnitKind = DimensionUnitKind.Percentage,
                 },
                 new DimensionUnit

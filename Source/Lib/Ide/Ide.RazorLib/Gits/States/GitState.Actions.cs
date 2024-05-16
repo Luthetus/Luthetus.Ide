@@ -18,6 +18,7 @@ public partial record GitState
 
     public record SetOriginAction(GitRepo Repo, string Origin);
     public record SetBranchAction(GitRepo Repo, string Branch);
+    public record SetBranchListAction(GitRepo Repo, List<string> BranchList);
 
     public record SetSelectedFileListAction(
         Func<ImmutableDictionary<string, GitFile>,

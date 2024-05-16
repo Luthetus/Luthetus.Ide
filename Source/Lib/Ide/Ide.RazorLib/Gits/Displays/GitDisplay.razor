@@ -18,7 +18,7 @@
 
     <div class="luth_ide_section-body">
         <CascadingValue Value="localGitState">
-            
+
             <button @ref="_menuButtonElementReference"
                     @onclick="() => { ShowMenuDropdown(_menuDropdownKey); return Task.CompletedTask; }"
                     class="luth_button luth_ide_git-justify-end"
@@ -34,8 +34,7 @@
                 </DropdownDisplay>
             </button>
 
-            <div class="luth_ide_git-justify-start"
-                 style="margin-top: 10px;">
+            <div style="margin-top: 10px;">
                 @if (localGitState.Repo is null)
                 {
                     <button class="luth_button"
@@ -47,6 +46,11 @@
             
             @if (localGitState.Repo is not null)
             {
+                <button class="luth_button"
+                        @onclick="() => GetBranchesOnClick(localGitState)">
+                    Get branches
+                </button>
+
                 <div title="@localGitState.Repo.AbsolutePath.Value">
                     Repo: @localGitState.Repo.AbsolutePath.NameNoExtension
                 </div>

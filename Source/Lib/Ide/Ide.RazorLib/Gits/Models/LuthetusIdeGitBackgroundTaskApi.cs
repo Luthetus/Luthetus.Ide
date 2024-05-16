@@ -338,8 +338,11 @@ public class LuthetusIdeGitBackgroundTaskApi
             });
     }
 
-    public async Task GitNewBranchExecute(GitRepo repoAtTimeOfRequest, string branchName)
+    public async Task GitBranchNewExecute(GitRepo repoAtTimeOfRequest, string branchName)
     {
+        if (string.IsNullOrWhiteSpace(branchName))
+            NotificationHelper.DispatchError(nameof(GitBranchNewExecute), "branchName was null or whitespace", _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(6));
+
         await _backgroundTaskService.EnqueueAsync(
             Key<BackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
@@ -365,6 +368,47 @@ public class LuthetusIdeGitBackgroundTaskApi
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
                     ContinueWith: () => GitRefreshExecute(repoAtTimeOfRequest));
+
+                var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
+                await generalTerminal
+                    .EnqueueCommandAsync(terminalCommand)
+                    .ConfigureAwait(false);
+            });
+    }
+
+    public async Task GitBranchGetAllExecute(GitRepo repoAtTimeOfRequest)
+    {
+        await _backgroundTaskService.EnqueueAsync(
+            Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            "git branch -a",
+            async () =>
+            {
+                var localGitState = _gitStateWrap.Value;
+
+                if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
+                    return;
+
+                var argumentsString = "branch -a";
+
+                var formattedCommand = new FormattedCommand(
+                    GitCliFacts.TARGET_FILE_NAME,
+                    new string[] { argumentsString })
+                {
+                    HACK_ArgumentsString = argumentsString
+                };
+
+                var gitCliOutputParser = new GitCliOutputParser(
+                    _dispatcher,
+                    localGitState,
+                    _environmentProvider,
+                    GitCliOutputParser.GitCommandKind.GetBranchList);
+
+                var terminalCommand = new TerminalCommand(
+                    GitNewBranchTerminalCommandKey,
+                    formattedCommand,
+                    localGitState.Repo.AbsolutePath.Value,
+                    OutputParser: gitCliOutputParser);
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 await generalTerminal

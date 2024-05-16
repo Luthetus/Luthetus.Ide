@@ -33,6 +33,7 @@ public class GitCliOutputParser : IOutputParser
     private StageKind _stageKind = StageKind.None;
     private string? _origin;
     private string? _branch;
+    private List<string> _branchList = new();
     private int _count;
 
     public List<GitFile> UntrackedGitFileList { get; } = new();
@@ -49,6 +50,7 @@ public class GitCliOutputParser : IOutputParser
             GitCommandKind.Status => StatusParseLine(output),
             GitCommandKind.GetOrigin => GetOriginParseLine(output),
             GitCommandKind.GetBranch => GetBranchParseLine(output),
+            GitCommandKind.GetBranchList => GetBranchListLine(output),
             _ => new(),
         };
     }
@@ -436,6 +438,49 @@ public class GitCliOutputParser : IOutputParser
 
         return textSpanList;
     }
+    
+    public List<TextEditorTextSpan> GetBranchListLine(string output)
+    {
+        var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
+        var textSpanList = new List<TextEditorTextSpan>();
+
+        // "* Abc"    <-- Line 1 with quotes added to show where it starts and ends
+        // "  master" <-- Line 2 with quotes added to show where it starts and ends
+        //
+        // Every branch seems to start with 2 characters, where the first is whether it's the active branch,
+        // and the second is just a whitespace to separate whether its the active branch from its name.
+        //
+        // Therefore, naively skip 2 characters then readline.
+        var isValid = false;
+
+        if (stringWalker.CurrentCharacter == '*' || stringWalker.CurrentCharacter == ' ')
+        {
+            if (stringWalker.NextCharacter == ' ')
+                isValid = true;
+        }
+
+        if (!isValid)
+            return textSpanList;
+
+        _ = stringWalker.ReadRange(2);
+
+        var startPositionInclusive = stringWalker.PositionIndex;
+
+        while (!stringWalker.IsEof)
+        {
+            _ = stringWalker.ReadCharacter();
+        }
+
+        var textSpan = new TextEditorTextSpan(
+            startPositionInclusive,
+            stringWalker,
+            (byte)TerminalDecorationKind.StringLiteral);
+
+        textSpanList.Add(textSpan);
+        _branchList.Add(textSpan.GetText());
+
+        return textSpanList;
+    }
 
     public void Dispose()
     {
@@ -453,6 +498,11 @@ public class GitCliOutputParser : IOutputParser
                 _dispatcher.Dispatch(new GitState.SetBranchAction(
                         _gitState.Repo,
                         _branch));
+                break;
+            case GitCommandKind.GetBranchList:
+                _dispatcher.Dispatch(new GitState.SetBranchListAction(
+                        _gitState.Repo,
+                        _branchList));
                 break;
             case GitCommandKind.Status:
                 _dispatcher.Dispatch(new GitState.SetFileListAction(
@@ -473,6 +523,7 @@ public class GitCliOutputParser : IOutputParser
         Status,
         GetOrigin,
         GetBranch,
+        GetBranchList,
     }
 
     /// <summary>

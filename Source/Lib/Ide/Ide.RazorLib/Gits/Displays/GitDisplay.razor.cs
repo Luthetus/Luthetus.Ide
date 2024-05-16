@@ -74,12 +74,17 @@ public partial class GitDisplay : FluxorComponent
         // Branch
         if (localGitState.Repo is not null)
         {
-            var menuOption = GetBranchNewMenuOptionRecord(localGitState);
+            var branchNewMenuOption = GetBranchNewMenuOptionRecord(localGitState);
+            var branchCheckoutMenuOption = GetBranchCheckoutOptionRecord(localGitState);
 
             var menuOptionNew = new MenuOptionRecord(
                 "Branch",
                 MenuOptionKind.Other,
-                SubMenu: new MenuRecord(new[] { menuOption }.ToImmutableArray()));
+                SubMenu: new MenuRecord(new[]
+                { 
+                    branchNewMenuOption,
+                    branchCheckoutMenuOption,
+                }.ToImmutableArray()));
 
             menuOptionsList.Add(menuOptionNew);
         }
@@ -145,7 +150,28 @@ public partial class GitDisplay : FluxorComponent
         async Task PerformNewFile(GitState localGitState, string fileName)
         {
             if (localGitState.Repo is not null)
-                await IdeBackgroundTaskApi.Git.GitNewBranchExecute(localGitState.Repo, fileName);
+                await IdeBackgroundTaskApi.Git.GitBranchNewExecute(localGitState.Repo, fileName);
         }
+    }
+    
+    private MenuOptionRecord GetBranchCheckoutOptionRecord(GitState localGitState)
+    {
+        return new MenuOptionRecord(
+            "Checkout",
+            MenuOptionKind.Other,
+            WidgetRendererType: typeof(GitBranchCheckoutDisplay),
+            WidgetParameterMap: new Dictionary<string, object?>
+            {
+                { nameof(GitBranchCheckoutDisplay.GitState), localGitState },
+            });
+    }
+
+    private async Task GetBranchesOnClick(GitState localGitState)
+    {
+        if (localGitState.Repo is null)
+            return;
+
+        await IdeBackgroundTaskApi.Git.GitBranchGetAllExecute(localGitState.Repo)
+            .ConfigureAwait(false);
     }
 }

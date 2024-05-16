@@ -65,6 +65,24 @@ public partial record GitState
         }
         
         [ReducerMethod]
+        public static GitState ReduceSetBranchListAction(
+            GitState inState,
+            SetBranchListAction setBranchListAction)
+        {
+            if (inState.Repo != setBranchListAction.Repo)
+            {
+                // Git folder was changed while the text was being parsed,
+                // throw away the result since it is thereby invalid.
+                return inState;
+            }
+
+            return inState with
+            {
+                BranchList = setBranchListAction.BranchList.ToImmutableList()
+            };
+        }
+        
+        [ReducerMethod]
         public static GitState ReduceSetGitFolderAction(
             GitState inState,
             SetRepoAction setRepoAction)

@@ -1,0 +1,16 @@
+﻿<div class="luth_git-branch-checkout">
+    
+    @{ var localGitState = GitState; }
+
+    @if (localGitState.BranchList.Count == 0)
+    {
+        @: localGitState.BranchList.Count == 0
+    }
+    else
+    {
+        foreach (var branch in localGitState.BranchList)
+        {
+            <button>@branch</button>
+        }
+    }
+</div>
