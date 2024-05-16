@@ -77,6 +77,8 @@ public partial record GitState
                 UnstagedFileList = ImmutableList<GitFile>.Empty,
                 SelectedFileList = ImmutableList<GitFile>.Empty,
                 ActiveTasks = ImmutableList<GitTask>.Empty,
+                Branch = null,
+                Origin = null,
             };
         }
 
