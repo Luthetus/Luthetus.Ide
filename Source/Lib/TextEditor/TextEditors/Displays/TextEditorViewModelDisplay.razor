@@ -19,18 +19,6 @@
     var contextBoundaryClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
 }
 
-@if (renderBatchValidated is not null && renderBatchValidated.Model.ResourceUri.Value.EndsWith("Program.cs"))
-{
-    <div style="position: fixed; left: 0; top: 0; background-color: orange; color: black;">
-        <div>ResourceUri: @renderBatchValidated.Model.ResourceUri.Value</div>
-        <div>_countOnParametersSetAsync: @_countOnParametersSetAsync</div>
-        <div>_countOnInitialized @_countOnInitialized</div>
-        <div>_countShouldRenderTrue @_countShouldRenderTrue</div>
-        <div>_countShouldRenderFalse @_countShouldRenderFalse</div>
-        <div>_countOnAfterRenderAsync @_countOnAfterRenderAsync</div>
-    </div>
-}
-
 <ContextBoundary ContextRecord="renderBatch.ViewModelDisplayOptions.ContextRecord"
                  ClassCssString="@contextBoundaryClass"
                  StyleCssString="@contextBoundaryStyle">

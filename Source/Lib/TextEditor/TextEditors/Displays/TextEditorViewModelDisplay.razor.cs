@@ -77,11 +77,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private TextEditorRenderBatchUnsafe _storedRenderBatch = null!;
     private TextEditorRenderBatchUnsafe? _previousRenderBatch;
     private TextEditorViewModel? _linkedViewModel;
-    private int _countOnParametersSetAsync;
-    private int _countOnInitialized;
-    private int _countShouldRenderTrue;
-    private int _countShouldRenderFalse;
-    private int _countOnAfterRenderAsync;
 	private Task _shouldRenderSkipTask = Task.CompletedTask;
 
     private CursorDisplay? CursorDisplay => _bodySectionComponent?.CursorDisplayComponent;
@@ -91,8 +86,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override async Task OnParametersSetAsync()
     {
-        _countOnParametersSetAsync++;
-
         HandleTextEditorViewModelKeyChange();
 
         await base.OnParametersSetAsync();
@@ -100,8 +93,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        _countOnInitialized++;
-
         ConstructRenderBatch();
 
         _events = new(this, _storedRenderBatch.Options);
@@ -132,8 +123,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
    //     }
 
         var shouldRender = true;
-
-        _countShouldRenderTrue++;
 
         if (_linkedViewModel is null)
             HandleTextEditorViewModelKeyChange();
@@ -169,8 +158,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _countOnAfterRenderAsync++;
-
         if (firstRender)
         {
             await JsRuntime.GetLuthetusTextEditorApi()
