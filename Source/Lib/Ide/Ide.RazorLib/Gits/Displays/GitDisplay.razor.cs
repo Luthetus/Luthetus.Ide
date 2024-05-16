@@ -1,5 +1,6 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
@@ -7,7 +8,9 @@ using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
@@ -24,6 +27,12 @@ public partial class GitDisplay : FluxorComponent
     private IState<GitState> GitStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private ILuthetusIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
+    [Inject]
+    private ILuthetusCommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    [Inject]
+    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 
     private Key<DropdownRecord> _menuDropdownKey = Key<DropdownRecord>.NewKey();
     private MenuRecord _menu = new(ImmutableArray<MenuOptionRecord>.Empty);
@@ -37,12 +46,14 @@ public partial class GitDisplay : FluxorComponent
 
     private void ConstructMenu()
     {
+        var localGitState = GitStateWrap.Value;
+
         var menuOptionsList = new List<MenuOptionRecord>();
 
         // Repo
         {
             string menuOptionDisplayName;
-            if (GitStateWrap.Value.Repo is null)
+            if (localGitState.Repo is null)
                 menuOptionDisplayName = "Pick Repo";
             else
                 menuOptionDisplayName = "Change Repo";
@@ -54,6 +65,19 @@ public partial class GitDisplay : FluxorComponent
 
             var menuOptionNew = new MenuOptionRecord(
                 "Repo",
+                MenuOptionKind.Other,
+                SubMenu: new MenuRecord(new[] { menuOption }.ToImmutableArray()));
+
+            menuOptionsList.Add(menuOptionNew);
+        }
+        
+        // Branch
+        if (localGitState.Repo is not null)
+        {
+            var menuOption = GetBranchNewMenuOptionRecord(localGitState);
+
+            var menuOptionNew = new MenuOptionRecord(
+                "Branch",
                 MenuOptionKind.Other,
                 SubMenu: new MenuRecord(new[] { menuOption }.ToImmutableArray()));
 
@@ -98,5 +122,30 @@ public partial class GitDisplay : FluxorComponent
             true);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogViewModel));
+    }
+
+    private MenuOptionRecord GetBranchNewMenuOptionRecord(GitState localGitState)
+    {
+        return new MenuOptionRecord(
+            "New",
+            MenuOptionKind.Create,
+            WidgetRendererType: IdeComponentRenderers.FileFormRendererType,
+            WidgetParameterMap: new Dictionary<string, object?>
+            {
+                { nameof(IFileFormRendererType.FileName), string.Empty },
+                { nameof(IFileFormRendererType.CheckForTemplates), false },
+                {
+                    nameof(IFileFormRendererType.OnAfterSubmitFunc),
+                    new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>(
+                        async (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
+                            await PerformNewFile(localGitState, fileName))
+                },
+            });
+
+        async Task PerformNewFile(GitState localGitState, string fileName)
+        {
+            if (localGitState.Repo is not null)
+                await IdeBackgroundTaskApi.Git.GitNewBranchExecute(localGitState.Repo, fileName);
+        }
     }
 }

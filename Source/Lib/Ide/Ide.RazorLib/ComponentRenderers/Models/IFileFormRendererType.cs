@@ -8,5 +8,5 @@ public interface IFileFormRendererType
     public string FileName { get; set; }
     public bool IsDirectory { get; set; }
     public bool CheckForTemplates { get; set; }
-    public Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>> OnAfterSubmitAction { get; set; }
+    public Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task> OnAfterSubmitFunc { get; set; }
 }

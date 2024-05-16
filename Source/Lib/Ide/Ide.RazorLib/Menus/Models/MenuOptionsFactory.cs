@@ -54,10 +54,10 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 { nameof(IFileFormRendererType.FileName), string.Empty },
                 { nameof(IFileFormRendererType.CheckForTemplates), false },
                 {
-                    nameof(IFileFormRendererType.OnAfterSubmitAction),
-                    new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
-                        (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
-                            PerformNewFile(
+                    nameof(IFileFormRendererType.OnAfterSubmitFunc),
+                    new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>(
+                        async (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
+                            await PerformNewFile(
                                 fileName,
                                 exactMatchFileTemplate,
                                 relatedMatchFileTemplates,
@@ -76,10 +76,10 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 { nameof(IFileFormRendererType.FileName), string.Empty },
                 { nameof(IFileFormRendererType.CheckForTemplates), true },
                 {
-                    nameof(IFileFormRendererType.OnAfterSubmitAction),
-                    new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
-                        (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
-                            PerformNewFile(
+                    nameof(IFileFormRendererType.OnAfterSubmitFunc),
+                    new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>(
+                        async (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
+                            await PerformNewFile(
                                 fileName,
                                 exactMatchFileTemplate,
                                 relatedMatchFileTemplates,
@@ -98,10 +98,10 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 { nameof(IFileFormRendererType.FileName), string.Empty },
                 { nameof(IFileFormRendererType.IsDirectory), true },
                 {
-                    nameof(IFileFormRendererType.OnAfterSubmitAction),
-                    new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
-                        (directoryName, _, _) =>
-                            PerformNewDirectory(directoryName, parentDirectory, onAfterCompletion))
+                    nameof(IFileFormRendererType.OnAfterSubmitFunc),
+                    new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>(
+                        async (directoryName, _, _) =>
+                            await PerformNewDirectory(directoryName, parentDirectory, onAfterCompletion))
                 },
             });
     }
@@ -115,8 +115,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 { nameof(IDeleteFileFormRendererType.AbsolutePath), absolutePath },
                 { nameof(IDeleteFileFormRendererType.IsDirectory), true },
                 {
-                    nameof(IDeleteFileFormRendererType.OnAfterSubmitAction),
-                    new Action<IAbsolutePath>(x => PerformDeleteFile(x, onAfterCompletion))
+                    nameof(IDeleteFileFormRendererType.OnAfterSubmitFunc),
+                    new Func<IAbsolutePath, Task>(async x => await PerformDeleteFile(x, onAfterCompletion))
                 },
             });
     }
@@ -135,9 +135,12 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 },
                 { nameof(IFileFormRendererType.IsDirectory), sourceAbsolutePath.IsDirectory },
                 {
-                    nameof(IFileFormRendererType.OnAfterSubmitAction),
-                    new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>((nextName, _, _) =>
-                        PerformRename(sourceAbsolutePath, nextName, dispatcher, onAfterCompletion))
+                    nameof(IFileFormRendererType.OnAfterSubmitFunc),
+                    new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>((nextName, _, _) =>
+                    {
+                        PerformRename(sourceAbsolutePath, nextName, dispatcher, onAfterCompletion);
+                        return Task.CompletedTask;
+                    })
                 },
             });
     }
@@ -176,8 +179,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     projectNode.Item.AbsolutePath
                 },
                 {
-                    nameof(IDeleteFileFormRendererType.OnAfterSubmitAction),
-                    new Action<IAbsolutePath>(_ => PerformRemoveCSharpProjectReferenceFromSolution(
+                    nameof(IDeleteFileFormRendererType.OnAfterSubmitFunc),
+                    new Func<IAbsolutePath, Task>(async _ => await PerformRemoveCSharpProjectReferenceFromSolution(
                         treeViewSolution,
                         projectNode,
                         terminal,
@@ -231,9 +234,9 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 { nameof(IFileFormRendererType.FileName), string.Empty },
                 { nameof(IFileFormRendererType.IsDirectory), false },
                 {
-                    nameof(IFileFormRendererType.OnAfterSubmitAction),
-                    new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>((nextName, _, _) =>
-                        PerformMoveProjectToSolutionFolder(
+                    nameof(IFileFormRendererType.OnAfterSubmitFunc),
+                    new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>(async (nextName, _, _) =>
+                        await PerformMoveProjectToSolutionFolder(
                             treeViewSolution,
                             treeViewProjectToMove,
                             nextName,
