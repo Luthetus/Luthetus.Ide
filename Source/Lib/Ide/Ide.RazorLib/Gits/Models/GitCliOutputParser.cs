@@ -426,7 +426,7 @@ public class GitCliOutputParser : IOutputParser
     {
         // TODO: Parsing branch line is super hacky, and should be re-written.
         if (_count++ == 1)
-            _branch ??= output;
+            _branch ??= output.Trim();
 
         var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
         var textSpanList = new List<TextEditorTextSpan>();

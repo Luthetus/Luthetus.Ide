@@ -459,4 +459,48 @@ public class LuthetusIdeGitBackgroundTaskApi
                     .ConfigureAwait(false);
             });
     }
+    
+    public async Task GitPushToOriginWithTrackingExecute(GitRepo repoAtTimeOfRequest)
+    {
+        await _backgroundTaskService.EnqueueAsync(
+            Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            "git push -u origin {branchName will go here}",
+            async () =>
+            {
+                var localGitState = _gitStateWrap.Value;
+
+                if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
+                    return;
+
+                // This command will push to origin, and then set the upstream variable
+                // (unsure if this is the correct description)
+                var argumentsString = $"push -u origin {localGitState.Branch}";
+
+                var formattedCommand = new FormattedCommand(
+                    GitCliFacts.TARGET_FILE_NAME,
+                    new string[] { argumentsString })
+                {
+                    HACK_ArgumentsString = argumentsString
+                };
+
+                var gitCliOutputParser = new GitCliOutputParser(
+                    _dispatcher,
+                    localGitState,
+                    _environmentProvider,
+                    GitCliOutputParser.GitCommandKind.GetBranchList);
+
+                var terminalCommand = new TerminalCommand(
+                    GitNewBranchTerminalCommandKey,
+                    formattedCommand,
+                    localGitState.Repo.AbsolutePath.Value,
+                    OutputParser: gitCliOutputParser,
+                    ContinueWith: () => GitRefreshExecute(repoAtTimeOfRequest));
+
+                var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
+                await generalTerminal
+                    .EnqueueCommandAsync(terminalCommand)
+                    .ConfigureAwait(false);
+            });
+    }
 }

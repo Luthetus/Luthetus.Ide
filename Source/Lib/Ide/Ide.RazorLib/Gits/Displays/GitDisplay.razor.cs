@@ -89,6 +89,22 @@ public partial class GitDisplay : FluxorComponent
             menuOptionsList.Add(menuOptionNew);
         }
 
+        // Actions
+        if (localGitState.Repo is not null)
+        {
+            var actionPushMenuOption = GetActionPushToOriginWithTrackingMenuOption(localGitState);
+
+            var menuOptionNew = new MenuOptionRecord(
+                "Actions",
+                MenuOptionKind.Other,
+                SubMenu: new MenuRecord(new[]
+                {
+                    actionPushMenuOption,
+                }.ToImmutableArray()));
+
+            menuOptionsList.Add(menuOptionNew);
+        }
+
         _menu = new MenuRecord(menuOptionsList.ToImmutableArray());
     }
 
@@ -173,5 +189,22 @@ public partial class GitDisplay : FluxorComponent
 
         await IdeBackgroundTaskApi.Git.GitBranchGetAllExecute(localGitState.Repo)
             .ConfigureAwait(false);
+    }
+
+    private MenuOptionRecord GetActionPushToOriginWithTrackingMenuOption(GitState localGitState)
+    {
+        return new MenuOptionRecord(
+            $"push -u origin {localGitState.Branch}",
+            MenuOptionKind.Other,
+            DoAction);
+
+        async Task DoAction()
+        {
+            if (localGitState.Repo is null)
+                return;
+            await IdeBackgroundTaskApi.Git.GitPushToOriginWithTrackingExecute(localGitState.Repo)
+                .ConfigureAwait(false);
+        }
+
     }
 }
