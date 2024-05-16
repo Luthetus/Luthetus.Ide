@@ -4,13 +4,17 @@
 
     @if (localGitState.BranchList.Count == 0)
     {
-        @: localGitState.BranchList.Count == 0
+        @: No branches found
     }
     else
     {
         foreach (var branch in localGitState.BranchList)
         {
-            <button>@branch</button>
+            <button class="luth_button"
+                    style="margin-top: 10px;"
+                    @onclick="() => SetActiveBranchOnClick(localGitState, branch)">
+                @branch
+            </button>
         }
     }
 </div>

@@ -466,7 +466,7 @@ public class GitCliOutputParser : IOutputParser
 
         var startPositionInclusive = stringWalker.PositionIndex;
 
-        while (!stringWalker.IsEof)
+        while (!stringWalker.IsEof && !WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
         {
             _ = stringWalker.ReadCharacter();
         }
