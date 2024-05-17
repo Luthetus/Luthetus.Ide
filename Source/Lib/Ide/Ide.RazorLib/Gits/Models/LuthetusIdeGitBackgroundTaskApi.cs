@@ -86,6 +86,7 @@ public class LuthetusIdeGitBackgroundTaskApi
     public async Task RefreshEnqueue(GitRepo repoAtTimeOfRequest)
     {
 		await StatusEnqueue();
+        await BranchGetAllEnqueue(repoAtTimeOfRequest);
         await GetActiveBranchNameEnqueue(repoAtTimeOfRequest);
         await GetOriginNameEnqueue(repoAtTimeOfRequest);
     }

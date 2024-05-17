@@ -46,31 +46,13 @@
             
             @if (localGitState.Repo is not null)
             {
-                <button class="luth_button"
-                        @onclick="() => GetBranchesOnClick(localGitState)">
-                    Get branches
-                </button>
-
                 <div title="@localGitState.Repo.AbsolutePath.Value">
                     Repo: @localGitState.Repo.AbsolutePath.NameNoExtension
                 </div>
 
-                <div>
-                    Branch:
-                    
-                    @if (string.IsNullOrWhiteSpace(localGitState.Branch))
-                    {
-                        @: null
-                    }
-                    else
-                    {
-                        @localGitState.Branch
-                    }
-                </div>
-
                 <div style="text-wrap: nowrap;">
                     Origin:
-                    
+
                     @if (string.IsNullOrWhiteSpace(localGitState.Origin))
                     {
                         @: null
@@ -81,31 +63,7 @@
                     }
                 </div>
 
-                <div style="text-wrap: nowrap;">
-                    BehindByCommitCount:
-
-                    @if (localGitState.BehindByCommitCount is null)
-                    {
-                        @: null
-                    }
-                    else
-                    {
-                        @localGitState.BehindByCommitCount
-                    }
-                </div>
-                
-                <div style="text-wrap: nowrap;">
-                    AheadByCommitCount:
-
-                    @if (localGitState.AheadByCommitCount is null)
-                    {
-                        @: null
-                    }
-                    else
-                    {
-                        @localGitState.AheadByCommitCount
-                    }
-                </div>
+                <GitInteractiveIconDisplay/>
 
                 <GitControlsDisplay />
             }

@@ -186,15 +186,6 @@ public partial class GitDisplay : FluxorComponent
             });
     }
 
-    private async Task GetBranchesOnClick(GitState localGitState)
-    {
-        if (localGitState.Repo is null)
-            return;
-
-        await IdeBackgroundTaskApi.Git.BranchGetAllEnqueue(localGitState.Repo)
-            .ConfigureAwait(false);
-    }
-
     private MenuOptionRecord GetActionPushToOriginWithTrackingMenuOption(GitState localGitState)
     {
         return new MenuOptionRecord(

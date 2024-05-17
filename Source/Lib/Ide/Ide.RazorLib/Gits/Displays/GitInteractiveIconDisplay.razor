@@ -4,6 +4,7 @@
 
 <button class="luth_button luth_git-interactive-icon @CssClassString"
         style="@CssStyleString"
+        title="@localGitState.AheadByCommitCount outgoing / @localGitState.BehindByCommitCount incoming commits"
         @onclick="() => HandleOnClick(localGitState)">
 
     @if (localGitState.Repo is null)
@@ -15,7 +16,14 @@
     else
     {
         <text>
-            @localGitState.Branch
+            @if (string.IsNullOrWhiteSpace(localGitState.Branch))
+            {
+                @: null_branch
+            }
+            else
+            {
+                @localGitState.Branch
+            }
             &nbsp;
 
             <IconArrowUp/>

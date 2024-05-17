@@ -99,6 +99,10 @@ public partial record GitState
                 ActiveTasks = ImmutableList<GitTask>.Empty,
                 Branch = null,
                 Origin = null,
+                AheadByCommitCount = null,
+                BehindByCommitCount = null,
+                BranchList = ImmutableList<string>.Empty,
+                Upstream = null,
             };
         }
 

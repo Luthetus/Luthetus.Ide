@@ -5,12 +5,10 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Ide.RazorLib.Gits.States;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Gits.Displays;
 
@@ -22,8 +20,6 @@ public partial class GitInteractiveIconDisplay : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IState<PanelState> PanelStateWrap { get; set; } = null!;
-    [Inject]
-    private IState<DialogState> DialogStateWrap { get; set; } = null!;
 
     [Parameter]
     public string CssClassString { get; set; } = string.Empty;
