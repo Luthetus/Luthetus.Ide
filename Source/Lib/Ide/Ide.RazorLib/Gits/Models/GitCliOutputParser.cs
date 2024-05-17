@@ -1,6 +1,5 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.Ide.RazorLib.Gits.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
@@ -56,6 +55,7 @@ public class GitCliOutputParser : IOutputParser
             GitCommandKind.GetOrigin => GetOriginParseLine(output),
             GitCommandKind.GetBranch => GetBranchParseLine(output),
             GitCommandKind.GetBranchList => GetBranchListLine(output),
+            GitCommandKind.LogFile => LogFileParseLine(output),
             _ => new(),
         };
     }
@@ -496,6 +496,55 @@ public class GitCliOutputParser : IOutputParser
         return textSpanList;
     }
 
+    public List<TextEditorTextSpan> LogFileParseLine(string output)
+    {
+        /*
+         git log ...redacted
+         commit ...redacted
+         Author: ...redacted
+         Date:   ...redacted
+         
+             Abc123 3
+         
+         diff --git a/BlazorApp4NetCoreDbg/Shared/NavMenu.razor b/BlazorApp4NetCoreDbg/Shared/NavMenu.razor
+         new file mode ...redacted
+         index ...redacted
+         --- /dev/null
+         +++ ...redacted
+         @@ -0,0 +1,39 @@
+         +﻿<div class="top-row ps-3 navbar navbar-dark">
+         +    <div class="container-fluid">
+...For brevity much of the file's contents
+...have been left out of this C# comment. 
+         +        collapseNavMenu = !collapseNavMenu;
+         +    }
+         +}
+         Process exited; Code: 0
+         */
+
+        // The output has every line from the file to start with a single '+' character.
+        //
+        // For brevity much of the file's contents were left out.
+        //
+        // But, the pattern can be seen that the file is written out as contiguous
+        // lines, where each starts with a '+' character.
+
+        var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
+        var textSpanList = new List<TextEditorTextSpan>();
+
+        if (stringWalker.CurrentCharacter == '+' && stringWalker.NextCharacter != '+')
+        {
+            textSpanList.Add(new TextEditorTextSpan(
+                0,
+                output.Length,
+                (byte)TerminalDecorationKind.StringLiteral,
+                new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"),
+                output));
+        }
+
+        return textSpanList;
+    }
+    
     public List<TextEditorTextSpan> GetOriginParseLine(string output)
     {
         // TODO: Parsing origin line is super hacky, and should be re-written.
@@ -619,6 +668,8 @@ public class GitCliOutputParser : IOutputParser
         GetBranchList,
         PushToOriginWithTracking,
         Pull,
+        Fetch,
+        LogFile,
     }
 
     /// <summary>

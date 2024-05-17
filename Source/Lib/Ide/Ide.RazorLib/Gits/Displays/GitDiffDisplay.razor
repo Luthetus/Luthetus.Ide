@@ -1,7 +1,13 @@
 ﻿<div class="luth_ide_git-diff">
+
+    @{ 
+        var localGitState = GitStateWrap.Value;
+        var localGitFile = GitFile;
+    }
+
     GitDiffDisplay
 
-    <button class="luth_button" @onclick="ShowOriginalFromGitOnClick">
+    <button class="luth_button" @onclick="() => ShowOriginalFromGitOnClick(localGitState, localGitFile)">
         ShowOriginalFromGitOnClick
     </button>
 </div>

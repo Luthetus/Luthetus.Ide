@@ -567,7 +567,7 @@ public class LuthetusIdeGitBackgroundTaskApi
                     _dispatcher,
                     localGitState,
                     _environmentProvider,
-                    GitCliOutputParser.GitCommandKind.Pull);
+                    GitCliOutputParser.GitCommandKind.Fetch);
 
                 var terminalCommand = new TerminalCommand(
                     GitTerminalCommandKey,
@@ -575,6 +575,46 @@ public class LuthetusIdeGitBackgroundTaskApi
                     localGitState.Repo.AbsolutePath.Value,
                     OutputParser: gitCliOutputParser,
                     ContinueWith: () => RefreshEnqueue(repoAtTimeOfRequest));
+
+                var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
+                await generalTerminal
+                    .EnqueueCommandAsync(terminalCommand)
+                    .ConfigureAwait(false);
+            });
+    }
+    
+    public async Task LogFileEnqueue(GitRepo repoAtTimeOfRequest, string relativePathToFile)
+    {
+        await _backgroundTaskService.EnqueueAsync(
+            Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            "git log file",
+            async () =>
+            {
+                var localGitState = _gitStateWrap.Value;
+
+                if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
+                    return;
+
+                var terminalCommandArgs = $"log -p {relativePathToFile}";
+                var formattedCommand = new FormattedCommand(
+                    GitCliFacts.TARGET_FILE_NAME,
+                    new string[] { terminalCommandArgs })
+                {
+                    HACK_ArgumentsString = terminalCommandArgs
+                };
+
+                var gitCliOutputParser = new GitCliOutputParser(
+                    _dispatcher,
+                    localGitState,
+                    _environmentProvider,
+                    GitCliOutputParser.GitCommandKind.LogFile);
+
+                var terminalCommand = new TerminalCommand(
+                    GitTerminalCommandKey,
+                    formattedCommand,
+                    localGitState.Repo.AbsolutePath.Value,
+                    OutputParser: gitCliOutputParser);
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 await generalTerminal
