@@ -26,6 +26,7 @@ public partial record GitState
                 StagedFileList = setStatusAction.StagedFileList,
                 UnstagedFileList = setStatusAction.UnstagedFileList,
                 BehindByCommitCount = setStatusAction.BehindByCommitCount,
+                AheadByCommitCount = setStatusAction.AheadByCommitCount,
             };
         }
 

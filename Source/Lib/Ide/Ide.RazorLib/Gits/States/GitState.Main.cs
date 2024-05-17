@@ -18,7 +18,8 @@ public partial record GitState(
     string? Branch,
     string? Upstream,
     ImmutableList<string> BranchList,
-    int? BehindByCommitCount)
+    int? BehindByCommitCount,
+    int? AheadByCommitCount)
 {
     public static readonly Key<TreeViewContainer> TreeViewGitChangesKey = Key<TreeViewContainer>.NewKey();
 
@@ -34,6 +35,7 @@ public partial record GitState(
               null,
               null,
               ImmutableList<string>.Empty,
+              null,
               null)
     {
 

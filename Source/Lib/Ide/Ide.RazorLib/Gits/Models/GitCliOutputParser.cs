@@ -39,6 +39,7 @@ public class GitCliOutputParser : IOutputParser
     private List<string> _branchList = new();
     private int _count;
     private int? _behindByCommitCount;
+    private int? _aheadByCommitCount;
 
     public List<GitFile> UntrackedGitFileList { get; } = new();
     public List<GitFile> StagedGitFileList { get; } = new();
@@ -135,8 +136,7 @@ public class GitCliOutputParser : IOutputParser
             else if (stringWalker.CurrentCharacter == 'Y' && stringWalker.PeekForSubstring("Your branch is behind "))
             {
                 // Found: "Your branch is behind 'origin/master' by 1 commit, and can be fast-forwarded."
-                var startPositionInclusive = stringWalker.PositionIndex;
-
+                //
                 // Read: "Your branch is behind " (literally)
                 _ = stringWalker.ReadRange("Your branch is behind ".Length);
 
@@ -168,6 +168,49 @@ public class GitCliOutputParser : IOutputParser
                     _behindByCommitCount = localBehindByCommitCount;
                 else
                     _behindByCommitCount = null;
+
+                textSpanList.Add(numberTextSpan with
+                {
+                    DecorationByte = (byte)TerminalDecorationKind.StringLiteral,
+                });
+
+                return textSpanList;
+            }
+            else if (stringWalker.CurrentCharacter == 'Y' && stringWalker.PeekForSubstring("Your branch is ahead of "))
+            {
+                // Found: "Your branch is ahead of 'origin/master' by 1 commit."
+                //
+                // Read: "Your branch is ahead of " (literally)
+                _ = stringWalker.ReadRange("Your branch is ahead of ".Length);
+
+                if (stringWalker.CurrentCharacter != '\'')
+                    return textSpanList;
+
+                // Skip opening single-quote
+                _ = stringWalker.ReadCharacter();
+
+                // Skip until and including the closing single-quote
+                while (!stringWalker.IsEof)
+                {
+                    var character = stringWalker.ReadCharacter();
+
+                    if (character == '\'')
+                        break;
+                }
+
+                // Read: " by "
+                _ = stringWalker.ReadRange(" by ".Length);
+
+                // Read the unsigned-integer
+                var syntaxTokenList = new List<ISyntaxToken>();
+                LuthLexerUtils.LexNumericLiteralToken(stringWalker, syntaxTokenList);
+                var numberTextSpan = syntaxTokenList.Single().TextSpan;
+                var numberString = numberTextSpan.GetText();
+
+                if (int.TryParse(numberString, out var localBehindByCommitCount))
+                    _aheadByCommitCount = localBehindByCommitCount;
+                else
+                    _aheadByCommitCount = null;
 
                 textSpanList.Add(numberTextSpan with
                 {
@@ -558,7 +601,8 @@ public class GitCliOutputParser : IOutputParser
                     UntrackedGitFileList.ToImmutableList(),
                     StagedGitFileList.ToImmutableList(),
                     UnstagedGitFileList.ToImmutableList(),
-                    _behindByCommitCount ?? 0));
+                    _behindByCommitCount ?? 0,
+                    _aheadByCommitCount ?? 0));
                 break;
         }
     }

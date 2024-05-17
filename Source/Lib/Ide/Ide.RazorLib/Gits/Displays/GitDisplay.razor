@@ -93,6 +93,19 @@
                         @localGitState.BehindByCommitCount
                     }
                 </div>
+                
+                <div style="text-wrap: nowrap;">
+                    AheadByCommitCount:
+
+                    @if (localGitState.AheadByCommitCount is null)
+                    {
+                        @: null
+                    }
+                    else
+                    {
+                        @localGitState.AheadByCommitCount
+                    }
+                </div>
 
                 <GitControlsDisplay />
             }

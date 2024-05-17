@@ -15,7 +15,8 @@ public partial record GitState
         ImmutableList<GitFile> UntrackedFileList,
         ImmutableList<GitFile> StagedFileList,
         ImmutableList<GitFile> UnstagedFileList,
-        int? BehindByCommitCount);
+        int? BehindByCommitCount,
+        int? AheadByCommitCount);
 
     public record SetOriginAction(GitRepo Repo, string Origin);
     public record SetBranchAction(GitRepo Repo, string Branch);
