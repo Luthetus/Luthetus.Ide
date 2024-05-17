@@ -9,11 +9,11 @@ public partial record GitState
     public class Reducer
     {
         [ReducerMethod]
-        public static GitState ReduceSetGitFileListAction(
+        public static GitState ReduceSetStatusAction(
             GitState inState,
-            SetFileListAction setGitFileListAction)
+            SetStatusAction setStatusAction)
         {
-            if (inState.Repo != setGitFileListAction.Repo)
+            if (inState.Repo != setStatusAction.Repo)
             {
                 // Git folder was changed while the text was being parsed,
                 // throw away the result since it is thereby invalid.
@@ -22,9 +22,10 @@ public partial record GitState
 
             return inState with
             {
-                UntrackedFileList = setGitFileListAction.UntrackedFileList,
-                StagedFileList = setGitFileListAction.StagedFileList,
-                UnstagedFileList = setGitFileListAction.UnstagedFileList,
+                UntrackedFileList = setStatusAction.UntrackedFileList,
+                StagedFileList = setStatusAction.StagedFileList,
+                UnstagedFileList = setStatusAction.UnstagedFileList,
+                BehindByCommitCount = setStatusAction.BehindByCommitCount,
             };
         }
 

@@ -26,7 +26,7 @@ public partial class GitControlsDisplay : ComponentBase
         if (localGitState.Repo is null)
             return;
 
-        await IdeBackgroundTaskApi.Git.GitRefreshExecute(localGitState.Repo)
+        await IdeBackgroundTaskApi.Git.RefreshEnqueue(localGitState.Repo)
             .ConfigureAwait(false);
     }
 
@@ -35,7 +35,7 @@ public partial class GitControlsDisplay : ComponentBase
         if (localGitState.Repo is null)
             return;
 
-        await IdeBackgroundTaskApi.Git.GitAddExecute(localGitState.Repo)
+        await IdeBackgroundTaskApi.Git.AddEnqueue(localGitState.Repo)
 			.ConfigureAwait(false);
     }
 
@@ -44,7 +44,7 @@ public partial class GitControlsDisplay : ComponentBase
         if (localGitState.Repo is null)
             return;
 
-        await IdeBackgroundTaskApi.Git.GitUnstageExecute(localGitState.Repo)
+        await IdeBackgroundTaskApi.Git.UnstageEnqueue(localGitState.Repo)
             .ConfigureAwait(false);
     }
 
@@ -53,7 +53,7 @@ public partial class GitControlsDisplay : ComponentBase
         if (localGitState.Repo is null)
             return;
 
-        await IdeBackgroundTaskApi.Git.GitCommitExecute(localGitState.Repo, localSummary)
+        await IdeBackgroundTaskApi.Git.CommitEnqueue(localGitState.Repo, localSummary)
             .ConfigureAwait(false);
 
         _summary = string.Empty;

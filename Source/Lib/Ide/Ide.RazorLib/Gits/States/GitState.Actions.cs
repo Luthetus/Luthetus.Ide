@@ -10,11 +10,12 @@ public partial record GitState
     /// <summary>
     /// If the expected path is not the actual path, then the git file list will NOT be changed.
     /// </summary>
-    public record SetFileListAction(
+    public record SetStatusAction(
         GitRepo Repo,
         ImmutableList<GitFile> UntrackedFileList,
         ImmutableList<GitFile> StagedFileList,
-        ImmutableList<GitFile> UnstagedFileList);
+        ImmutableList<GitFile> UnstagedFileList,
+        int? BehindByCommitCount);
 
     public record SetOriginAction(GitRepo Repo, string Origin);
     public record SetBranchAction(GitRepo Repo, string Branch);

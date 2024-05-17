@@ -37,7 +37,7 @@ public partial class GitOriginDisplay : ComponentBase
         if (localGitState.Repo is null)
             return;
         
-        await IdeBackgroundTaskApi.Git.GitGetOriginNameExecute(localGitState.Repo)
+        await IdeBackgroundTaskApi.Git.GetOriginNameEnqueue(localGitState.Repo)
             .ConfigureAwait(false);
     }
 

@@ -1,8 +1,11 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.Ide.RazorLib.Gits.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
@@ -35,6 +38,7 @@ public class GitCliOutputParser : IOutputParser
     private string? _branch;
     private List<string> _branchList = new();
     private int _count;
+    private int? _behindByCommitCount;
 
     public List<GitFile> UntrackedGitFileList { get; } = new();
     public List<GitFile> StagedGitFileList { get; } = new();
@@ -127,6 +131,50 @@ public class GitCliOutputParser : IOutputParser
                         break;
                     }
                 }
+            }
+            else if (stringWalker.CurrentCharacter == 'Y' && stringWalker.PeekForSubstring("Your branch is behind "))
+            {
+                // Found: "Your branch is behind 'origin/master' by 1 commit, and can be fast-forwarded."
+                var startPositionInclusive = stringWalker.PositionIndex;
+
+                // Read: "Your branch is behind " (literally)
+                _ = stringWalker.ReadRange("Your branch is behind ".Length);
+
+                if (stringWalker.CurrentCharacter != '\'')
+                    return textSpanList;
+
+                // Skip opening single-quote
+                _ = stringWalker.ReadCharacter();
+
+                // Skip until and including the closing single-quote
+                while (!stringWalker.IsEof)
+                {
+                    var character = stringWalker.ReadCharacter();
+
+                    if (character == '\'')
+                        break;
+                }
+
+                // Read: " by "
+                _ = stringWalker.ReadRange(" by ".Length);
+
+                // Read the unsigned-integer
+                var syntaxTokenList = new List<ISyntaxToken>();
+                LuthLexerUtils.LexNumericLiteralToken(stringWalker, syntaxTokenList);
+                var numberTextSpan = syntaxTokenList.Single().TextSpan;
+                var numberString = numberTextSpan.GetText();
+
+                if (int.TryParse(numberString, out var localBehindByCommitCount))
+                    _behindByCommitCount = localBehindByCommitCount;
+                else
+                    _behindByCommitCount = null;
+
+                textSpanList.Add(numberTextSpan with
+                {
+                    DecorationByte = (byte)TerminalDecorationKind.StringLiteral,
+                });
+
+                return textSpanList;
             }
 
             if (_stageKind == StageKind.IsReadingUntrackedFiles)
@@ -491,25 +539,26 @@ public class GitCliOutputParser : IOutputParser
         {
             case GitCommandKind.GetOrigin when _origin is not null:
                 _dispatcher.Dispatch(new GitState.SetOriginAction(
-                            _gitState.Repo,
-                            _origin));
+                    _gitState.Repo,
+                    _origin));
                 break;
             case GitCommandKind.GetBranch when _branch is not null:
                 _dispatcher.Dispatch(new GitState.SetBranchAction(
-                        _gitState.Repo,
-                        _branch));
+                    _gitState.Repo,
+                    _branch));
                 break;
             case GitCommandKind.GetBranchList:
                 _dispatcher.Dispatch(new GitState.SetBranchListAction(
-                        _gitState.Repo,
-                        _branchList));
+                    _gitState.Repo,
+                    _branchList));
                 break;
             case GitCommandKind.Status:
-                _dispatcher.Dispatch(new GitState.SetFileListAction(
-                        _gitState.Repo,
-                        UntrackedGitFileList.ToImmutableList(),
-                        StagedGitFileList.ToImmutableList(),
-                        UnstagedGitFileList.ToImmutableList()));
+                _dispatcher.Dispatch(new GitState.SetStatusAction(
+                    _gitState.Repo,
+                    UntrackedGitFileList.ToImmutableList(),
+                    StagedGitFileList.ToImmutableList(),
+                    UnstagedGitFileList.ToImmutableList(),
+                    _behindByCommitCount ?? 0));
                 break;
         }
     }
@@ -524,6 +573,8 @@ public class GitCliOutputParser : IOutputParser
         GetOrigin,
         GetBranch,
         GetBranchList,
+        PushToOriginWithTracking,
+        Pull,
     }
 
     /// <summary>

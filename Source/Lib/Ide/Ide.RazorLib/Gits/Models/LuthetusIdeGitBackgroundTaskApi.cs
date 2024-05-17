@@ -41,20 +41,14 @@ public class LuthetusIdeGitBackgroundTaskApi
         _dispatcher = dispatcher;
     }
 
-	public static Key<TerminalCommand> GitStatusTerminalCommandKey { get; } = new(Guid.Parse("fde9dba4-0219-4a77-9c8d-0ff2b4f9109e"));
-    public Key<TerminalCommand> GitAddTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
-    public Key<TerminalCommand> GitUnstageTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
-    public Key<TerminalCommand> GitCommitTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
-    public Key<TerminalCommand> GitGetOriginTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
-    public Key<TerminalCommand> GitNewBranchTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
-    public Key<TerminalCommand> GitGetBranchListTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+    public Key<TerminalCommand> GitTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
 
-    public async Task GitStatusExecute()
+    public async Task StatusEnqueue()
     {
         await _backgroundTaskService.EnqueueAsync(
             Key<BackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
-            "git status",
+            "git status -u",
             async () =>
             {
                 var localGitState = _gitStateWrap.Value;
@@ -76,27 +70,27 @@ public class LuthetusIdeGitBackgroundTaskApi
                     _environmentProvider,
                     GitCliOutputParser.GitCommandKind.Status);
 
-                var gitStatusCommand = new TerminalCommand(
-                    GitStatusTerminalCommandKey,
+                var terminalCommand = new TerminalCommand(
+                    GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
                     OutputParser: gitCliOutputParser);
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 await generalTerminal
-                    .EnqueueCommandAsync(gitStatusCommand)
+                    .EnqueueCommandAsync(terminalCommand)
                     .ConfigureAwait(false);
             });
     }
 
-    public async Task GitRefreshExecute(GitRepo repoAtTimeOfRequest)
+    public async Task RefreshEnqueue(GitRepo repoAtTimeOfRequest)
     {
-		await GitStatusExecute();
-        await GitGetActiveBranchNameExecute(repoAtTimeOfRequest);
-        await GitGetOriginNameExecute(repoAtTimeOfRequest);
+		await StatusEnqueue();
+        await GetActiveBranchNameEnqueue(repoAtTimeOfRequest);
+        await GetOriginNameEnqueue(repoAtTimeOfRequest);
     }
 
-    public async Task GitGetActiveBranchNameExecute(GitRepo repoAtTimeOfRequest)
+    public async Task GetActiveBranchNameEnqueue(GitRepo repoAtTimeOfRequest)
     {
         await _backgroundTaskService.EnqueueAsync(
             Key<BackgroundTask>.NewKey(),
@@ -109,12 +103,12 @@ public class LuthetusIdeGitBackgroundTaskApi
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
                     return;
 
-                var showBranchNameArgs = $"branch --show-current";
+                var terminalCommandArgs = $"branch --show-current";
                 var formattedCommand = new FormattedCommand(
                     GitCliFacts.TARGET_FILE_NAME,
-                    new string[] { showBranchNameArgs })
+                    new string[] { terminalCommandArgs })
                 {
-                    HACK_ArgumentsString = showBranchNameArgs
+                    HACK_ArgumentsString = terminalCommandArgs
                 };
 
                 var gitCliOutputParser = new GitCliOutputParser(
@@ -124,7 +118,7 @@ public class LuthetusIdeGitBackgroundTaskApi
                     GitCliOutputParser.GitCommandKind.GetBranch);
 
                 var terminalCommand = new TerminalCommand(
-                    GitStatusTerminalCommandKey,
+                    GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
                     OutputParser: gitCliOutputParser);
@@ -136,7 +130,7 @@ public class LuthetusIdeGitBackgroundTaskApi
             });
     }
 
-    public async Task GitGetOriginNameExecute(GitRepo repoAtTimeOfRequest)
+    public async Task GetOriginNameEnqueue(GitRepo repoAtTimeOfRequest)
     {
         await _backgroundTaskService.EnqueueAsync(
             Key<BackgroundTask>.NewKey(),
@@ -164,7 +158,7 @@ public class LuthetusIdeGitBackgroundTaskApi
                     GitCliOutputParser.GitCommandKind.GetOrigin);
 
                 var terminalCommand = new TerminalCommand(
-                    GitGetOriginTerminalCommandKey,
+                    GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
                     OutputParser: gitCliOutputParser);
@@ -176,7 +170,7 @@ public class LuthetusIdeGitBackgroundTaskApi
             });
     }
 
-    public async Task GitAddExecute(GitRepo repoAtTimeOfRequest)
+    public async Task AddEnqueue(GitRepo repoAtTimeOfRequest)
     {
 		await _backgroundTaskService.EnqueueAsync(
 			Key<BackgroundTask>.NewKey(),
@@ -213,29 +207,29 @@ public class LuthetusIdeGitBackgroundTaskApi
 		            filesBuilder.Append($"\"{relativePathString}\" ");
 		        }
 		
-		        var argumentsString = "add " + filesBuilder.ToString();
+		        var terminalCommandArgs = "add " + filesBuilder.ToString();
 		
 		        var formattedCommand = new FormattedCommand(
 		            GitCliFacts.TARGET_FILE_NAME,
-		            new string[] { argumentsString })
+		            new string[] { terminalCommandArgs })
 		        {
-		            HACK_ArgumentsString = argumentsString
+		            HACK_ArgumentsString = terminalCommandArgs
 		        };
 		        
-		        var gitAddCommand = new TerminalCommand(
-		            GitAddTerminalCommandKey,
+		        var terminalCommand = new TerminalCommand(
+                    GitTerminalCommandKey,
 		            formattedCommand,
 		            localGitState.Repo.AbsolutePath.Value,
-                    ContinueWith: GitStatusExecute);
+                    ContinueWith: StatusEnqueue);
 		
 		        var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
 		        await generalTerminal
-		            .EnqueueCommandAsync(gitAddCommand)
+		            .EnqueueCommandAsync(terminalCommand)
 		            .ConfigureAwait(false);
 			});
     }
 	
-	public async Task GitUnstageExecute(GitRepo repoAtTimeOfRequest)
+	public async Task UnstageEnqueue(GitRepo repoAtTimeOfRequest)
     {
 		await _backgroundTaskService.EnqueueAsync(
 			Key<BackgroundTask>.NewKey(),
@@ -272,29 +266,29 @@ public class LuthetusIdeGitBackgroundTaskApi
 		            filesBuilder.Append($"\"{relativePathString}\" ");
 		        }
 		
-		        var argumentsString = "restore --staged " + filesBuilder.ToString();
+		        var terminalCommandArgs = "restore --staged " + filesBuilder.ToString();
 		
 		        var formattedCommand = new FormattedCommand(
 		            GitCliFacts.TARGET_FILE_NAME,
-		            new string[] { argumentsString })
+		            new string[] { terminalCommandArgs })
 		        {
-		            HACK_ArgumentsString = argumentsString
+		            HACK_ArgumentsString = terminalCommandArgs
 		        };
 		        
-		        var gitUnstageCommand = new TerminalCommand(
-                    GitUnstageTerminalCommandKey,
+		        var terminalCommand = new TerminalCommand(
+                    GitTerminalCommandKey,
 		            formattedCommand,
 		            localGitState.Repo.AbsolutePath.Value,
-                    ContinueWith: GitStatusExecute);
+                    ContinueWith: StatusEnqueue);
 		
 		        var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
 		        await generalTerminal
-		            .EnqueueCommandAsync(gitUnstageCommand)
+		            .EnqueueCommandAsync(terminalCommand)
 		            .ConfigureAwait(false);
 			});
     }
 	
-	public async Task GitCommitExecute(GitRepo repoAtTimeOfRequest, string commitSummary)
+	public async Task CommitEnqueue(GitRepo repoAtTimeOfRequest, string commitSummary)
     {
 		await _backgroundTaskService.EnqueueAsync(
 			Key<BackgroundTask>.NewKey(),
@@ -317,12 +311,12 @@ public class LuthetusIdeGitBackgroundTaskApi
                 };
 
                 var gitCommitCommand = new TerminalCommand(
-                    GitCommitTerminalCommandKey,
+                    GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
                     ContinueWith: async () =>
 					{
-						await GitStatusExecute();
+						await StatusEnqueue();
 
 						NotificationHelper.DispatchInformative(
 							"Git: committed",
@@ -339,10 +333,10 @@ public class LuthetusIdeGitBackgroundTaskApi
             });
     }
 
-    public async Task GitBranchNewExecute(GitRepo repoAtTimeOfRequest, string branchName)
+    public async Task BranchNewEnqueue(GitRepo repoAtTimeOfRequest, string branchName)
     {
         if (string.IsNullOrWhiteSpace(branchName))
-            NotificationHelper.DispatchError(nameof(GitBranchNewExecute), "branchName was null or whitespace", _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(6));
+            NotificationHelper.DispatchError(nameof(BranchNewEnqueue), "branchName was null or whitespace", _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(6));
 
         await _backgroundTaskService.EnqueueAsync(
             Key<BackgroundTask>.NewKey(),
@@ -365,10 +359,10 @@ public class LuthetusIdeGitBackgroundTaskApi
                 };
 
                 var terminalCommand = new TerminalCommand(
-                    GitNewBranchTerminalCommandKey,
+                    GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
-                    ContinueWith: () => GitRefreshExecute(repoAtTimeOfRequest));
+                    ContinueWith: () => RefreshEnqueue(repoAtTimeOfRequest));
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 await generalTerminal
@@ -377,7 +371,7 @@ public class LuthetusIdeGitBackgroundTaskApi
             });
     }
 
-    public async Task GitBranchGetAllExecute(GitRepo repoAtTimeOfRequest)
+    public async Task BranchGetAllEnqueue(GitRepo repoAtTimeOfRequest)
     {
         await _backgroundTaskService.EnqueueAsync(
             Key<BackgroundTask>.NewKey(),
@@ -406,7 +400,7 @@ public class LuthetusIdeGitBackgroundTaskApi
                     GitCliOutputParser.GitCommandKind.GetBranchList);
 
                 var terminalCommand = new TerminalCommand(
-                    GitGetBranchListTerminalCommandKey,
+                    GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
                     OutputParser: gitCliOutputParser);
@@ -418,7 +412,7 @@ public class LuthetusIdeGitBackgroundTaskApi
             });
     }
     
-    public async Task GitBranchSetExecute(GitRepo repoAtTimeOfRequest, string branchName)
+    public async Task BranchSetEnqueue(GitRepo repoAtTimeOfRequest, string branchName)
     {
         await _backgroundTaskService.EnqueueAsync(
             Key<BackgroundTask>.NewKey(),
@@ -447,11 +441,11 @@ public class LuthetusIdeGitBackgroundTaskApi
                     GitCliOutputParser.GitCommandKind.GetBranchList);
 
                 var terminalCommand = new TerminalCommand(
-                    GitNewBranchTerminalCommandKey,
+                    GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
                     OutputParser: gitCliOutputParser,
-                    ContinueWith: () => GitRefreshExecute(repoAtTimeOfRequest));
+                    ContinueWith: () => RefreshEnqueue(repoAtTimeOfRequest));
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 await generalTerminal
@@ -460,7 +454,7 @@ public class LuthetusIdeGitBackgroundTaskApi
             });
     }
     
-    public async Task GitPushToOriginWithTrackingExecute(GitRepo repoAtTimeOfRequest)
+    public async Task PushToOriginWithTrackingEnqueue(GitRepo repoAtTimeOfRequest)
     {
         await _backgroundTaskService.EnqueueAsync(
             Key<BackgroundTask>.NewKey(),
@@ -488,14 +482,98 @@ public class LuthetusIdeGitBackgroundTaskApi
                     _dispatcher,
                     localGitState,
                     _environmentProvider,
-                    GitCliOutputParser.GitCommandKind.GetBranchList);
+                    GitCliOutputParser.GitCommandKind.PushToOriginWithTracking);
 
                 var terminalCommand = new TerminalCommand(
-                    GitNewBranchTerminalCommandKey,
+                    GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
                     OutputParser: gitCliOutputParser,
-                    ContinueWith: () => GitRefreshExecute(repoAtTimeOfRequest));
+                    ContinueWith: () => RefreshEnqueue(repoAtTimeOfRequest));
+
+                var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
+                await generalTerminal
+                    .EnqueueCommandAsync(terminalCommand)
+                    .ConfigureAwait(false);
+            });
+    }
+
+    public async Task PullEnqueue(GitRepo repoAtTimeOfRequest)
+    {
+        await _backgroundTaskService.EnqueueAsync(
+            Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            "git pull",
+            async () =>
+            {
+                var localGitState = _gitStateWrap.Value;
+
+                if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
+                    return;
+
+                var argumentsString = $"pull";
+
+                var formattedCommand = new FormattedCommand(
+                    GitCliFacts.TARGET_FILE_NAME,
+                    new string[] { argumentsString })
+                {
+                    HACK_ArgumentsString = argumentsString
+                };
+
+                var gitCliOutputParser = new GitCliOutputParser(
+                    _dispatcher,
+                    localGitState,
+                    _environmentProvider,
+                    GitCliOutputParser.GitCommandKind.Pull);
+
+                var terminalCommand = new TerminalCommand(
+                    GitTerminalCommandKey,
+                    formattedCommand,
+                    localGitState.Repo.AbsolutePath.Value,
+                    OutputParser: gitCliOutputParser,
+                    ContinueWith: () => RefreshEnqueue(repoAtTimeOfRequest));
+
+                var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
+                await generalTerminal
+                    .EnqueueCommandAsync(terminalCommand)
+                    .ConfigureAwait(false);
+            });
+    }
+    
+    public async Task FetchEnqueue(GitRepo repoAtTimeOfRequest)
+    {
+        await _backgroundTaskService.EnqueueAsync(
+            Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            "git fetch",
+            async () =>
+            {
+                var localGitState = _gitStateWrap.Value;
+
+                if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
+                    return;
+
+                var argumentsString = $"fetch";
+
+                var formattedCommand = new FormattedCommand(
+                    GitCliFacts.TARGET_FILE_NAME,
+                    new string[] { argumentsString })
+                {
+                    HACK_ArgumentsString = argumentsString
+                };
+
+                var gitCliOutputParser = new GitCliOutputParser(
+                    _dispatcher,
+                    localGitState,
+                    _environmentProvider,
+                    GitCliOutputParser.GitCommandKind.Pull);
+
+                var terminalCommand = new TerminalCommand(
+                    GitTerminalCommandKey,
+                    formattedCommand,
+                    localGitState.Repo.AbsolutePath.Value,
+                    OutputParser: gitCliOutputParser,
+                    ContinueWith: () => RefreshEnqueue(repoAtTimeOfRequest));
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 await generalTerminal

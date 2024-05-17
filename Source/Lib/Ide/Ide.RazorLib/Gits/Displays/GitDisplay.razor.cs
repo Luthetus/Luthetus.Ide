@@ -92,14 +92,18 @@ public partial class GitDisplay : FluxorComponent
         // Actions
         if (localGitState.Repo is not null)
         {
-            var actionPushMenuOption = GetActionPushToOriginWithTrackingMenuOption(localGitState);
+            var pushMenuOption = GetActionPushToOriginWithTrackingMenuOption(localGitState);
+            var pullMenuOption = GetActionPullMenuOption(localGitState);
+            var fetchMenuOption = GetActionFetchMenuOption(localGitState);
 
             var menuOptionNew = new MenuOptionRecord(
                 "Actions",
                 MenuOptionKind.Other,
                 SubMenu: new MenuRecord(new[]
                 {
-                    actionPushMenuOption,
+                    pushMenuOption,
+                    pullMenuOption,
+                    fetchMenuOption,
                 }.ToImmutableArray()));
 
             menuOptionsList.Add(menuOptionNew);
@@ -166,7 +170,7 @@ public partial class GitDisplay : FluxorComponent
         async Task PerformNewFile(GitState localGitState, string fileName)
         {
             if (localGitState.Repo is not null)
-                await IdeBackgroundTaskApi.Git.GitBranchNewExecute(localGitState.Repo, fileName);
+                await IdeBackgroundTaskApi.Git.BranchNewEnqueue(localGitState.Repo, fileName);
         }
     }
     
@@ -187,7 +191,7 @@ public partial class GitDisplay : FluxorComponent
         if (localGitState.Repo is null)
             return;
 
-        await IdeBackgroundTaskApi.Git.GitBranchGetAllExecute(localGitState.Repo)
+        await IdeBackgroundTaskApi.Git.BranchGetAllEnqueue(localGitState.Repo)
             .ConfigureAwait(false);
     }
 
@@ -202,9 +206,43 @@ public partial class GitDisplay : FluxorComponent
         {
             if (localGitState.Repo is null)
                 return;
-            await IdeBackgroundTaskApi.Git.GitPushToOriginWithTrackingExecute(localGitState.Repo)
+
+            await IdeBackgroundTaskApi.Git.PushToOriginWithTrackingEnqueue(localGitState.Repo)
                 .ConfigureAwait(false);
         }
+    }
+    
+    private MenuOptionRecord GetActionPullMenuOption(GitState localGitState)
+    {
+        return new MenuOptionRecord(
+            "pull",
+            MenuOptionKind.Other,
+            DoAction);
 
+        async Task DoAction()
+        {
+            if (localGitState.Repo is null)
+                return;
+
+            await IdeBackgroundTaskApi.Git.PullEnqueue(localGitState.Repo)
+                .ConfigureAwait(false);
+        }
+    }
+    
+    private MenuOptionRecord GetActionFetchMenuOption(GitState localGitState)
+    {
+        return new MenuOptionRecord(
+            "fetch",
+            MenuOptionKind.Other,
+            DoAction);
+
+        async Task DoAction()
+        {
+            if (localGitState.Repo is null)
+                return;
+
+            await IdeBackgroundTaskApi.Git.FetchEnqueue(localGitState.Repo)
+                .ConfigureAwait(false);
+        }
     }
 }

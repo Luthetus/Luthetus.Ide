@@ -81,6 +81,19 @@
                     }
                 </div>
 
+                <div style="text-wrap: nowrap;">
+                    BehindByCommitCount:
+
+                    @if (localGitState.BehindByCommitCount is null)
+                    {
+                        @: null
+                    }
+                    else
+                    {
+                        @localGitState.BehindByCommitCount
+                    }
+                </div>
+
                 <GitControlsDisplay />
             }
         </CascadingValue>

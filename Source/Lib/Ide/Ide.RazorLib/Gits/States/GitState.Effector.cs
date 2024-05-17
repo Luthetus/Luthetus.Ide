@@ -35,7 +35,7 @@ public partial record GitState
             _ideBackgroundTaskApi = ideBackgroundTaskApi;
         }
 
-        [EffectMethod(typeof(SetFileListAction))]
+        [EffectMethod(typeof(SetStatusAction))]
 		public Task HandleSetFileListAction(IDispatcher dispatcher)
 		{
             // Suppress unused variable warning
@@ -135,7 +135,7 @@ public partial record GitState
             _ = dispatcher;
 
             if (setRepoAction.Repo is not null)
-                return _ideBackgroundTaskApi.Git.GitRefreshExecute(setRepoAction.Repo);
+                return _ideBackgroundTaskApi.Git.RefreshEnqueue(setRepoAction.Repo);
 
             return Task.CompletedTask;
         }
