@@ -1,0 +1,18 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<button class="luth_button @CssClassString"
+        style="@CssStyleString"
+        @onclick="ShowGitPanelOnClick">
+    @{ var localGitState = GitStateWrap.Value; }
+
+    @localGitState.Branch
+    &nbsp;
+
+    <IconArrowUp/>
+    @localGitState.AheadByCommitCount
+    &nbsp;
+
+    <IconArrowDown/>
+    @localGitState.BehindByCommitCount
+    &nbsp;
+</button>
