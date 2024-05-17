@@ -583,7 +583,10 @@ public class LuthetusIdeGitBackgroundTaskApi
             });
     }
     
-    public async Task LogFileEnqueue(GitRepo repoAtTimeOfRequest, string relativePathToFile)
+    public async Task LogFileEnqueue(
+        GitRepo repoAtTimeOfRequest,
+        string relativePathToFile,
+        Func<GitCliOutputParser, Task> callback)
     {
         await _backgroundTaskService.EnqueueAsync(
             Key<BackgroundTask>.NewKey(),
@@ -614,7 +617,12 @@ public class LuthetusIdeGitBackgroundTaskApi
                     GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: gitCliOutputParser);
+                    OutputParser: gitCliOutputParser,
+                    ContinueWith: () =>
+                    {
+                        gitCliOutputParser.Dispose();
+                        return callback.Invoke(gitCliOutputParser);
+                    });
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 await generalTerminal

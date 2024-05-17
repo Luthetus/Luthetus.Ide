@@ -13,6 +13,8 @@ namespace Luthetus.Ide.RazorLib.Gits.Displays;
 
 public partial class GitDiffDisplay : ComponentBase
 {
+    private string? _logFileContent;
+
     [Inject]
     private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
     [Inject]
@@ -30,7 +32,14 @@ public partial class GitDiffDisplay : ComponentBase
         if (localGitState.Repo is null)
             return;
 
-        await IdeBackgroundTaskApi.Git.LogFileEnqueue(localGitState.Repo, localGitFile.RelativePathString)
+        await IdeBackgroundTaskApi.Git.LogFileEnqueue(
+                localGitState.Repo,
+                localGitFile.RelativePathString,
+                async gitCliOutputParser =>
+                {
+                    _logFileContent = gitCliOutputParser.LogFileContent;
+                    await InvokeAsync(StateHasChanged);
+                })
             .ConfigureAwait(false);
     }
 }

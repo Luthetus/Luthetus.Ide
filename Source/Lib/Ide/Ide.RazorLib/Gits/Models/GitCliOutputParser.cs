@@ -8,6 +8,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
+using System.Text;
 
 namespace Luthetus.Ide.RazorLib.Gits.Models;
 
@@ -39,10 +40,12 @@ public class GitCliOutputParser : IOutputParser
     private int _count;
     private int? _behindByCommitCount;
     private int? _aheadByCommitCount;
+    private StringBuilder? _logFileContentBuilder;
 
     public List<GitFile> UntrackedGitFileList { get; } = new();
     public List<GitFile> StagedGitFileList { get; } = new();
     public List<GitFile> UnstagedGitFileList { get; } = new();
+    public string? LogFileContent { get; private set; }
 
     public List<TextEditorTextSpan> ParseLine(string output)
     {
@@ -531,15 +534,22 @@ public class GitCliOutputParser : IOutputParser
 
         var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
         var textSpanList = new List<TextEditorTextSpan>();
+        _logFileContentBuilder ??= new();
 
         if (stringWalker.CurrentCharacter == '+' && stringWalker.NextCharacter != '+')
         {
-            textSpanList.Add(new TextEditorTextSpan(
-                0,
+            // Do not include the '+' as part of the logged file's content.
+            _ = stringWalker.ReadCharacter();
+
+            var loggedLineTextSpan = new TextEditorTextSpan(
+                stringWalker.PositionIndex,
                 output.Length,
                 (byte)TerminalDecorationKind.StringLiteral,
                 new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"),
-                output));
+                output);
+
+            _logFileContentBuilder.Append(loggedLineTextSpan.GetText());
+            textSpanList.Add(loggedLineTextSpan);
         }
 
         return textSpanList;
@@ -652,6 +662,10 @@ public class GitCliOutputParser : IOutputParser
                     UnstagedGitFileList.ToImmutableList(),
                     _behindByCommitCount ?? 0,
                     _aheadByCommitCount ?? 0));
+                break;
+            case GitCommandKind.LogFile:
+                if (_logFileContentBuilder is not null)
+                    LogFileContent = _logFileContentBuilder.ToString();
                 break;
         }
     }
