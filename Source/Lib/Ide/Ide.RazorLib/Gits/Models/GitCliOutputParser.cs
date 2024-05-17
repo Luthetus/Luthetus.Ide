@@ -536,10 +536,17 @@ public class GitCliOutputParser : IOutputParser
         var textSpanList = new List<TextEditorTextSpan>();
         _logFileContentBuilder ??= new();
 
+        // TODO: This code is incorrect. For example, the line "++1"...
+        //       ...The first '+' is from the git CLI. But, then the file's text is "+1".
+        //       This second '+' is erroneously taken to mean the line isn't the logged file's content.
         if (stringWalker.CurrentCharacter == '+' && stringWalker.NextCharacter != '+')
         {
             // Do not include the '+' as part of the logged file's content.
             _ = stringWalker.ReadCharacter();
+
+            // Skip the 'UTF-8 with BOM'
+            if (stringWalker.CurrentCharacter == '�' && stringWalker.PeekForSubstring("﻿"))
+                _ = stringWalker.ReadRange("﻿".Length);
 
             var loggedLineTextSpan = new TextEditorTextSpan(
                 stringWalker.PositionIndex,
