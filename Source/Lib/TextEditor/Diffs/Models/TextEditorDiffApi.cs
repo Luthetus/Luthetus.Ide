@@ -1,13 +1,9 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
-using Luthetus.TextEditor.RazorLib.Exceptions;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using System.Collections.Immutable;
-using System.Threading;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
 
@@ -23,24 +19,25 @@ public class TextEditorDiffApi : ITextEditorDiffApi
     }
 
     public void Register(
-        Key<TextEditorDiffModel> diffKey,
+        Key<TextEditorDiffModel> diffModelKey,
         Key<TextEditorViewModel> inViewModelKey,
         Key<TextEditorViewModel> outViewModelKey)
     {
         _dispatcher.Dispatch(new TextEditorDiffState.RegisterAction(
-            diffKey,
+            diffModelKey,
             inViewModelKey,
             outViewModelKey));
     }
 
-    public TextEditorDiffModel? GetOrDefault(Key<TextEditorDiffModel> diffKey)
+    public TextEditorDiffModel? GetOrDefault(Key<TextEditorDiffModel> diffModelKey)
     {
-        return _textEditorService.DiffStateWrap.Value.DiffModelList.FirstOrDefault(x => x.DiffKey == diffKey);
+        return _textEditorService.DiffStateWrap.Value.DiffModelList
+            .FirstOrDefault(x => x.DiffKey == diffModelKey);
     }
 
-    public void Dispose(Key<TextEditorDiffModel> diffKey)
+    public void Dispose(Key<TextEditorDiffModel> diffModelKey)
     {
-        _dispatcher.Dispatch(new TextEditorDiffState.DisposeAction(diffKey));
+        _dispatcher.Dispatch(new TextEditorDiffState.DisposeAction(diffModelKey));
     }
 
     public TextEditorEdit CalculateFactory(
@@ -113,7 +110,7 @@ public class TextEditorDiffApi : ITextEditorDiffApi
         };
     }
 
-    public ImmutableList<TextEditorDiffModel> GetDiffs()
+    public ImmutableList<TextEditorDiffModel> GetDiffModels()
     {
         return _textEditorService.DiffStateWrap.Value.DiffModelList;
     }

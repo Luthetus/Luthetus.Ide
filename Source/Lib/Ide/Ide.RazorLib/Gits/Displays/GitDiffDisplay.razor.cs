@@ -191,11 +191,39 @@ public partial class GitDiffDisplay : ComponentBase
         }
     }
 
-    private async Task CreateDiffModel(Key<TextEditorViewModel> inViewModelKey, Key<TextEditorViewModel> outViewModelKey)
+    private Task CreateDiffModel(Key<TextEditorViewModel> inViewModelKey, Key<TextEditorViewModel> outViewModelKey)
     {
+        TextEditorService.PostSimpleBatch(
+            nameof(GitDiffDisplay),
+            nameof(GitDiffDisplay),
+            editContext =>
+            {
+                var inViewModelModifier = editContext.GetViewModelModifier(inViewModelKey);
+                var outViewModelModifier = editContext.GetViewModelModifier(outViewModelKey);
+
+                if (inViewModelModifier is null || outViewModelModifier is null)
+                    return Task.CompletedTask;
+
+                inViewModelModifier.ViewModel = inViewModelModifier.ViewModel with
+                {
+                    FirstPresentationLayerKeysList = inViewModelModifier.ViewModel.FirstPresentationLayerKeysList
+                        .Add(DiffPresentationFacts.InPresentationKey),
+                };
+                
+                outViewModelModifier.ViewModel = outViewModelModifier.ViewModel with
+                {
+                    FirstPresentationLayerKeysList = outViewModelModifier.ViewModel.FirstPresentationLayerKeysList
+                        .Add(DiffPresentationFacts.OutPresentationKey),
+                };
+
+                return Task.CompletedTask;
+            });
+
         TextEditorService.DiffApi.Register(
             _textEditorDiffModelKey,
             inViewModelKey,
             outViewModelKey);
+
+        return Task.CompletedTask;
     }
 }
