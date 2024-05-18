@@ -87,7 +87,7 @@ public class TextEditorDiffApi : ITextEditorDiffApi
                 .Invoke(editContext)
                 .ConfigureAwait(false);
             var outPresentationModel = outModelModifier.PresentationModelList.First(
-                x => x.TextEditorPresentationKey == DiffPresentationFacts.InPresentationKey);
+                x => x.TextEditorPresentationKey == DiffPresentationFacts.OutPresentationKey);
             if (outPresentationModel.PendingCalculation is null)
                 return;
             var outText = outPresentationModel.PendingCalculation.ContentAtRequest;
