@@ -82,7 +82,7 @@ public partial class GitDiffDisplay : ComponentBase
         {
             NotificationHelper.DispatchError(
                 "TODO: Model not found",
-                "message",
+                $"{nameof(originalResourceUri)}:{originalResourceUri.Value}",
                 CommonComponentRenderers,
                 Dispatcher,
                 TimeSpan.FromSeconds(6));

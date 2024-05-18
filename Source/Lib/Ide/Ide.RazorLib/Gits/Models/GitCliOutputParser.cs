@@ -223,7 +223,9 @@ public class GitCliOutputParser : IOutputParser
                 return textSpanList;
             }
 
-            if (_stageKind == StageKind.IsReadingUntrackedFiles)
+            if (_stageKind == StageKind.IsReadingUntrackedFiles ||
+                _stageKind == StageKind.IsReadingStagedFiles ||
+                _stageKind == StageKind.IsReadingUnstagedFiles)
             {
                 while (!stringWalker.IsEof)
                 {
@@ -263,100 +265,28 @@ public class GitCliOutputParser : IOutputParser
                             // Discard the leading whitespace on the line (one tab)
                             _ = stringWalker.ReadCharacter();
 
-                            var startPositionInclusive = stringWalker.PositionIndex;
-
-                            while (!stringWalker.IsEof && !WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
+                            if (_stageKind == StageKind.IsReadingStagedFiles ||
+                                _stageKind == StageKind.IsReadingUnstagedFiles)
                             {
-                                _ = stringWalker.ReadCharacter();
-                            }
-
-                            var textSpan = new TextEditorTextSpan(
-                                startPositionInclusive,
-                                stringWalker,
-                                (byte)TerminalDecorationKind.Warning);
-                            textSpanList.Add(textSpan);
-
-                            var relativePathString = textSpan.GetText();
-
-                            var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
-                                _gitState.Repo.AbsolutePath,
-                                relativePathString,
-                                _environmentProvider);
-
-                            var isDirectory = relativePathString.EndsWith(_environmentProvider.DirectorySeparatorChar) ||
-                                relativePathString.EndsWith(_environmentProvider.AltDirectorySeparatorChar);
-
-                            var absolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, isDirectory);
-
-                            UntrackedGitFileList.Add(new GitFile(
-                                absolutePath,
-                                relativePathString,
-                                GitDirtyReason.Untracked));
-                        }
-
-                        break;
-                    }
-
-                    _ = stringWalker.ReadCharacter();
-                }
-            }
-            else if (_stageKind == StageKind.IsReadingStagedFiles)
-            {
-                while (!stringWalker.IsEof)
-                {
-                    if (stringWalker.CurrentCharacter == ' ' && stringWalker.NextCharacter == ' ')
-                    {
-                        // Read comments line by line
-                        while (!stringWalker.IsEof)
-                        {
-                            if (stringWalker.CurrentCharacter != ' ' || stringWalker.NextCharacter != ' ')
-                                break;
-
-                            // Discard the leading whitespace on the line (two spaces)
-                            _ = stringWalker.ReadRange(2);
-
-                            var startPositionInclusive = stringWalker.PositionIndex;
-
-                            while (!stringWalker.IsEof && !WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
-                            {
-                                _ = stringWalker.ReadCharacter();
-                            }
-
-                            textSpanList.Add(new TextEditorTextSpan(
-                                startPositionInclusive,
-                                stringWalker,
-                                (byte)TerminalDecorationKind.Comment));
-                        }
-                    }
-                    else if (stringWalker.CurrentCharacter == WhitespaceFacts.TAB)
-                    {
-                        // Read untracked files line by line
-                        while (!stringWalker.IsEof)
-                        {
-                            if (stringWalker.CurrentCharacter != WhitespaceFacts.TAB)
-                                break;
-
-                            // Discard the leading whitespace on the line (one tab)
-                            _ = stringWalker.ReadCharacter();
-
-                            // Skip the git description
-                            //
-                            // Example: "new file:   BlazorApp4NetCoreDbg/Persons/Abc.cs"
-                            //           ^^^^^^^^^^^^
-                            while (!stringWalker.IsEof)
-                            {
-                                if (stringWalker.CurrentCharacter == ':')
+                                // Skip the git description
+                                //
+                                // Example: "new file:   BlazorApp4NetCoreDbg/Persons/Abc.cs"
+                                //           ^^^^^^^^^^^^
+                                while (!stringWalker.IsEof)
                                 {
-                                    // Read the ':'
+                                    if (stringWalker.CurrentCharacter == ':')
+                                    {
+                                        // Read the ':'
+                                        _ = stringWalker.ReadCharacter();
+
+                                        // Read the 3 ' ' characters (space characters)
+                                        _ = stringWalker.ReadRange(3);
+
+                                        break;
+                                    }
+
                                     _ = stringWalker.ReadCharacter();
-
-                                    // Read the 3 ' ' characters (space characters)
-                                    _ = stringWalker.ReadRange(3);
-
-                                    break;
                                 }
-
-                                _ = stringWalker.ReadCharacter();
                             }
 
                             var startPositionInclusive = stringWalker.PositionIndex;
@@ -384,106 +314,23 @@ public class GitCliOutputParser : IOutputParser
 
                             var absolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, isDirectory);
 
-                            StagedGitFileList.Add(new GitFile(
+                            var gitDirtyReason =
+                                _stageKind == StageKind.IsReadingUntrackedFiles ? GitDirtyReason.Untracked :
+                                _stageKind == StageKind.IsReadingStagedFiles ? GitDirtyReason.Added :
+                                _stageKind == StageKind.IsReadingUnstagedFiles ? GitDirtyReason.Added :
+                                GitDirtyReason.None;
+
+                            var gitFile = new GitFile(
                                 absolutePath,
                                 relativePathString,
-                                GitDirtyReason.Added));
-                        }
+                                gitDirtyReason);
 
-                        break;
-                    }
-
-                    _ = stringWalker.ReadCharacter();
-                }
-            }
-            else if (_stageKind == StageKind.IsReadingUnstagedFiles)
-            {
-                while (!stringWalker.IsEof)
-                {
-                    if (stringWalker.CurrentCharacter == ' ' && stringWalker.NextCharacter == ' ')
-                    {
-                        // Read comments line by line
-                        while (!stringWalker.IsEof)
-                        {
-                            if (stringWalker.CurrentCharacter != ' ' || stringWalker.NextCharacter != ' ')
-                                break;
-
-                            // Discard the leading whitespace on the line (two spaces)
-                            _ = stringWalker.ReadRange(2);
-
-                            var startPositionInclusive = stringWalker.PositionIndex;
-
-                            while (!stringWalker.IsEof && !WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
-                            {
-                                _ = stringWalker.ReadCharacter();
-                            }
-
-                            textSpanList.Add(new TextEditorTextSpan(
-                                startPositionInclusive,
-                                stringWalker,
-                                (byte)TerminalDecorationKind.Comment));
-                        }
-                    }
-                    else if (stringWalker.CurrentCharacter == WhitespaceFacts.TAB)
-                    {
-                        // Read untracked files line by line
-                        while (!stringWalker.IsEof)
-                        {
-                            if (stringWalker.CurrentCharacter != WhitespaceFacts.TAB)
-                                break;
-
-                            // Discard the leading whitespace on the line (one tab)
-                            _ = stringWalker.ReadCharacter();
-
-                            // Skip the git description
-                            //
-                            // Example: "new file:   BlazorApp4NetCoreDbg/Persons/Abc.cs"
-                            //           ^^^^^^^^^^^^
-                            while (!stringWalker.IsEof)
-                            {
-                                if (stringWalker.CurrentCharacter == ':')
-                                {
-                                    // Read the ':'
-                                    _ = stringWalker.ReadCharacter();
-
-                                    // Read the 3 ' ' characters (space characters)
-                                    _ = stringWalker.ReadRange(3);
-
-                                    break;
-                                }
-
-                                _ = stringWalker.ReadCharacter();
-                            }
-
-                            var startPositionInclusive = stringWalker.PositionIndex;
-
-                            while (!stringWalker.IsEof && !WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
-                            {
-                                _ = stringWalker.ReadCharacter();
-                            }
-
-                            var textSpan = new TextEditorTextSpan(
-                                startPositionInclusive,
-                                stringWalker,
-                                (byte)TerminalDecorationKind.Warning);
-                            textSpanList.Add(textSpan);
-
-                            var relativePathString = textSpan.GetText();
-
-                            var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
-                                _gitState.Repo.AbsolutePath,
-                                relativePathString,
-                                _environmentProvider);
-
-                            var isDirectory = relativePathString.EndsWith(_environmentProvider.DirectorySeparatorChar) ||
-                                relativePathString.EndsWith(_environmentProvider.AltDirectorySeparatorChar);
-
-                            var absolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, isDirectory);
-
-                            UnstagedGitFileList.Add(new GitFile(
-                                absolutePath,
-                                relativePathString,
-                                GitDirtyReason.Added));
+                            if (_stageKind == StageKind.IsReadingUntrackedFiles)
+                                UntrackedGitFileList.Add(gitFile);
+                            else if (_stageKind == StageKind.IsReadingStagedFiles)
+                                StagedGitFileList.Add(gitFile);
+                            else if (_stageKind == StageKind.IsReadingUnstagedFiles)
+                                UnstagedGitFileList.Add(gitFile);
                         }
 
                         break;
