@@ -101,6 +101,44 @@ public class PathHelperTests
 
             Assert.Equal(expectedOutputPathString, outputAbsolutePathString);
         }
+
+        // BUG: (2024-05-18)
+        // =================
+        // This occurred while working with the git CLI but is expected to be a common case.
+        //
+        // Input AbsolutePath: "\Users\hunte\Repos\Demos\BlazorApp4NetCoreDbg\"
+        // Input RelativePath: "BlazorApp4NetCoreDbg/Shared/NavMenu.razor"
+        // --------------------------------------------------------------------
+        //
+        // Expected result: "\Users\hunte\Repos\Demos\BlazorApp4NetCoreDbg\BlazorApp4NetCoreDbg\Shared\NavMenu.razor"
+        // Actual result: "\Users\hunte\Repos\Demos\BlazorApp4NetCoreDbg\Shared\NavMenu.razor"
+        // --------------------------------------------------------------------
+        //
+        // This this "unit test" doesn't pass either, but for a different reason related to directory separator characters.
+        // So, the original issue seems to be specific to the 'LocalEnvironmentProvider'.
+        //{
+        //    var startPathString = "\\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\";
+        //    var relativePathString = "BlazorApp4NetCoreDbg/Shared/NavMenu.razor";
+        //    var expectedOutputPathString = "\\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg\\Shared\\NavMenu.razor";
+        //
+        //    var startAbsolutePath = environmentProvider.AbsolutePathFactory(startPathString, false);
+        //
+        //    var outputAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
+        //        startAbsolutePath,
+        //        relativePathString,
+        //        environmentProvider);
+        //
+        //    // TODO: Delete this code block. I want to normalize the directory separator character
+        //    //       to help with debugging this.
+        //    {
+        //        var outputAbsolutePath = environmentProvider.AbsolutePathFactory(outputAbsolutePathString, false);
+        //
+        //        // "/Users/hunte/Repos/Demos/BlazorApp4NetCoreDbg/BlazorApp4NetCoreDbg/Shared/NavMenu.razor"
+        //        var normalizedOutputPathString = outputAbsolutePath.Value;
+        //    }
+        //
+        //    Assert.Equal(expectedOutputPathString, outputAbsolutePathString);
+        //}
     }
 
     /// <summary>
