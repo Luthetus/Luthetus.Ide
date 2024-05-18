@@ -1,6 +1,8 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
@@ -50,69 +52,64 @@ public class TextEditorDiffApi : ITextEditorDiffApi
             if (cancellationToken.IsCancellationRequested)
                 return;
 
-            var textEditorDiffModifier = editContext.GetViewModelModifier GetOrDefault(textEditorDiffKey);
+            var diffModelModifier = editContext.GetDiffModelModifier(diffModelKey);
 
-            if (textEditorDiffModifier is null)
-                return null;
+            if (diffModelModifier is null)
+                return;
 
-            var inViewModel = _textEditorService.ViewModelApi.GetOrDefault(textEditorDiffModifier.InViewModelKey);
-            var outViewModel = _textEditorService.ViewModelApi.GetOrDefault(textEditorDiffModifier.OutViewModelKey);
+            var inViewModelModifier = editContext.GetViewModelModifier(diffModelModifier.DiffModel.InViewModelKey);
+            var outViewModelModifier = editContext.GetViewModelModifier(diffModelModifier.DiffModel.OutViewModelKey);
 
-            if (inViewModel is null || outViewModel is null)
-                return null;
+            if (inViewModelModifier is null || outViewModelModifier is null)
+                return;
 
-            var inModel = _textEditorService.ModelApi.GetOrDefault(inViewModel.ResourceUri);
-            var outModel = _textEditorService.ModelApi.GetOrDefault(outViewModel.ResourceUri);
+            var inModelModifier = editContext.GetModelModifier(inViewModelModifier.ViewModel.ResourceUri);
+            var outModelModifier = editContext.GetModelModifier(outViewModelModifier.ViewModel.ResourceUri);
 
-            if (inModel is null || outModel is null)
-                return null;
+            if (inModelModifier is null || outModelModifier is null)
+                return;
 
-            var inText = inModel.GetAllText();
-            var outText = outModel.GetAllText();
+            // In
+            await editContext.TextEditorService.ModelApi.StartPendingCalculatePresentationModelFactory(
+                    inModelModifier.ResourceUri,
+                    DiffPresentationFacts.InPresentationKey,
+                    DiffPresentationFacts.EmptyInPresentationModel)
+                .Invoke(editContext)
+                .ConfigureAwait(false);
+            var inPresentationModel = inModelModifier.PresentationModelList.First(
+                x => x.TextEditorPresentationKey == DiffPresentationFacts.InPresentationKey);
+            if (inPresentationModel.PendingCalculation is null)
+                return;
+            var inText = inPresentationModel.PendingCalculation.ContentAtRequest;
+            
+            // Out
+            await editContext.TextEditorService.ModelApi.StartPendingCalculatePresentationModelFactory(
+                    outModelModifier.ResourceUri,
+                    DiffPresentationFacts.OutPresentationKey,
+                    DiffPresentationFacts.EmptyOutPresentationModel)
+                .Invoke(editContext)
+                .ConfigureAwait(false);
+            var outPresentationModel = outModelModifier.PresentationModelList.First(
+                x => x.TextEditorPresentationKey == DiffPresentationFacts.InPresentationKey);
+            if (outPresentationModel.PendingCalculation is null)
+                return;
+            var outText = outPresentationModel.PendingCalculation.ContentAtRequest;
 
             var diffResult = TextEditorDiffResult.Calculate(
-                inModel.ResourceUri,
+                inModelModifier.ResourceUri,
                 inText,
-                outModel.ResourceUri,
+                outModelModifier.ResourceUri,
                 outText);
 
-            // inModel Diff Presentation Model
-            {
-                var presentationModel = inModel.PresentationModelsList.FirstOrDefault(x =>
-                    x.TextEditorPresentationKey == DiffPresentationFacts.InPresentationKey);
-
-                if (presentationModel is not null)
-                {
-                    if (presentationModel.PendingCalculation is null)
-                        presentationModel.PendingCalculation = new(inModel.GetAllText());
-
-                    presentationModel.PendingCalculation.TextSpanList =
-                        diffResult.InResultTextSpanList.ToImmutableArray();
-
-                    (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
-                        (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
-                }
-            }
-
-            // outModel Diff Presentation Model
-            {
-                var presentationModel = outModel.PresentationModelsList.FirstOrDefault(x =>
-                    x.TextEditorPresentationKey == DiffPresentationFacts.OutPresentationKey);
-
-                if (presentationModel is not null)
-                {
-                    if (presentationModel.PendingCalculation is null)
-                        presentationModel.PendingCalculation = new(outModel.GetAllText());
-
-                    presentationModel.PendingCalculation.TextSpanList =
-                        diffResult.OutResultTextSpanList.ToImmutableArray();
-
-                    (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
-                        (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
-                }
-            }
-
-            return diffResult;
+            inModelModifier.CompletePendingCalculatePresentationModel(
+                DiffPresentationFacts.InPresentationKey,
+                DiffPresentationFacts.EmptyInPresentationModel,
+                diffResult.InResultTextSpanList.ToImmutableArray());
+            
+            outModelModifier.CompletePendingCalculatePresentationModel(
+                DiffPresentationFacts.OutPresentationKey,
+                DiffPresentationFacts.EmptyOutPresentationModel,
+                diffResult.OutResultTextSpanList.ToImmutableArray());
         };
     }
 
