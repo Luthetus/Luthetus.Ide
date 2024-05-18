@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Displays;
 
@@ -54,6 +55,8 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     private CancellationTokenSource _calculateDiffCancellationTokenSource = new();
     private TextEditorDiffResult? _mostRecentDiffResult;
 
+    private ThrottleAsync _throttleDiffCalculation = new(TimeSpan.FromMilliseconds(1_000));
+
     protected override void OnInitialized()
     {
         TextEditorDiffStateWrap.StateChanged += TextEditorDiffWrapOnStateChanged;
@@ -78,19 +81,13 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 
     private async void TextEditorModelsCollectionWrapOnStateChanged(object? sender, EventArgs e)
     {
-        _calculateDiffCancellationTokenSource.Cancel();
-        _calculateDiffCancellationTokenSource = new();
-
-        var token = _calculateDiffCancellationTokenSource.Token;
-
-        // TODO: This method is being commented out as of (2024-02-23). It needs to be re-written...
-        // ...so that it uses the text editor's edit context by using ITextEditorService.Post()
-        // 
-        //_mostRecentDiffResult = TextEditorService.DiffApi.Calculate(
-        //    TextEditorDiffKey,
-        //    token);
-
-        await InvokeAsync(StateHasChanged);
+        await _throttleDiffCalculation.PushEvent(_ =>
+        {
+            return TextEditorService.PostSimpleBatch(
+                nameof(TextEditorDiffDisplay),
+                nameof(TextEditorDiffDisplay),
+                TextEditorService.DiffApi.CalculateFactory(TextEditorDiffKey, CancellationToken.None));
+        });
     }
 
     private async void TextEditorOptionsStateWrapOnStateChanged(object? sender, EventArgs e) =>

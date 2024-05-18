@@ -1,5 +1,6 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 
@@ -41,5 +42,8 @@ public interface IEditContext
     /// <inheritdoc cref="IEditContext"/>
     /// </summary>
     public TextEditorCursorModifier? GetPrimaryCursorModifier(CursorModifierBagTextEditor? cursorModifierBag);
+
+    /// <inheritdoc cref="IEditContext"/>
+    public TextEditorDiffModelModifier? GetDiffModelModifier(Key<TextEditorDiffModel> diffModelKey, bool isReadonly = false);
 }
 

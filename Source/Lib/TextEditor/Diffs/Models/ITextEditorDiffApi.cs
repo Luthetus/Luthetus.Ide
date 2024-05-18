@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
@@ -13,11 +14,7 @@ public interface ITextEditorDiffApi
 
     public void Dispose(Key<TextEditorDiffModel> diffKey);
 
-    /// <summary>
-    /// TODO: This method is being commented out as of (2024-02-23). It needs to be re-written...
-    /// ...so that it uses the text editor's edit context by using ITextEditorService.Post()
-    /// </summary>
-    //public TextEditorDiffResult? Calculate(Key<TextEditorDiffModel> diffKey, CancellationToken cancellationToken);
+    public TextEditorEdit CalculateFactory(Key<TextEditorDiffModel> diffKey, CancellationToken cancellationToken);
 
     public TextEditorDiffModel? GetOrDefault(Key<TextEditorDiffModel> diffKey);
 
