@@ -7,6 +7,7 @@ namespace Luthetus.Ide.RazorLib.TestExplorers.Models;
 
 public class ProjectTestModel
 {
+	// I want to focus on the relevant details.
 	public ProjectTestModel(
 		Guid projectIdGuid,
 		IAbsolutePath absolutePath,
@@ -25,6 +26,13 @@ public class ProjectTestModel
 
 	public Guid ProjectIdGuid { get; }
 	public IAbsolutePath AbsolutePath { get; }
+
+	// Perfect, this is exactly what we want 'Key<TerminalCommand>'.
+//
+// We can use this to lookup what output in the terminal was due to the specified command.
+//
+// The alternative to this might be getting the entirety of the output that was wrriten to the terminal,
+// since the beginning of time.
 	public Key<TerminalCommand> DotNetTestListTestsTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
 	public Action<TreeViewNoType> ReRenderNodeAction { get; }
 	

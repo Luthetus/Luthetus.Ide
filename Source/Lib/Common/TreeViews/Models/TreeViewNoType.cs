@@ -8,6 +8,14 @@ namespace Luthetus.Common.RazorLib.TreeViews.Models;
 /// </summary>
 public abstract class TreeViewNoType
 {
+	// One cannot write List<TreeViewNode<int>> when they wish to have the tree view consist of
+	// types beyond just int.
+	//
+	// As such, in general it becomes necessary to make a typeless version of a generic type,
+	// as to allow for holding all the typed versions in a list, but refering to the untyped version.
+	//
+	// You'd just cast the untyped version by way of determining what you're looking at.
+
     public abstract object UntypedItem { get; }
     public abstract Type ItemType { get; }
 

@@ -25,12 +25,6 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 	[Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;
 
-	private Key<TextEditorViewModel> _textEditorViewModelKey = Key<TextEditorViewModel>.Empty;
-
-	private TreeViewNoType? _activeNode;
-	private Key<TerminalCommand> _terminalCommandKey = Key<TerminalCommand>.Empty;
-	private Key<TerminalCommand> _previousTerminalCommandKey = Key<TerminalCommand>.Empty;
-
 	protected override void OnInitialized()
 	{
 		TextEditorService.ViewModelStateWrap.StateChanged += TextEditorService_ViewModelStateWrap_StateChanged;
@@ -38,51 +32,19 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 		base.OnInitialized();
 	}
 
-	protected override void OnParametersSet()
+	private Key<TerminalCommand>? GetTerminalCommandKey(TreeViewNoType singularNode)
 	{
-		_activeNode = RenderBatch.TreeViewContainer.ActiveNode;
+		if (singularNode is TreeViewProjectTestModel treeViewProjectTestModel)
+			return treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey;
+		else if (singularNode is TreeViewStringFragment treeViewStringFragment)
+			return treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey;
 
-		_previousTerminalCommandKey = _terminalCommandKey;
-		_terminalCommandKey = Key<TerminalCommand>.Empty;
-
-		if (_activeNode is TreeViewStringFragment treeViewStringFragment)
-			_terminalCommandKey = treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey;
-		else if (_activeNode is TreeViewProjectTestModel treeViewProjectTestModel)
-			_terminalCommandKey = treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey;
-
-		if (_terminalCommandKey != _previousTerminalCommandKey)
-			_textEditorViewModelKey = Key<TextEditorViewModel>.NewKey();
-
-		base.OnParametersSet();
-	}
-
-	protected override async Task OnParametersSetAsync()
-	{
-		if (_terminalCommandKey != _previousTerminalCommandKey)
-			await GetTextEditorViewModelKey();
-
-		await base.OnParametersSetAsync();
-	}
-
-	private async Task GetTextEditorViewModelKey()
-	{
-		var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
-
-		var success = executionTerminal.TryGetTerminalCommandViewModelKey(
-			_terminalCommandKey,
-			out _textEditorViewModelKey);
-
-		if (!success || _textEditorViewModelKey == Key<TextEditorViewModel>.Empty)
-		{
-			await executionTerminal.CreateTextEditorForCommandOutput(
-				_terminalCommandKey,
-				_textEditorViewModelKey);
-		}
+		// TODO: Don't have this nullable. Use Key<TerminalCommand>.Empty
+		return null;
 	}
 
 	private async void TextEditorService_ViewModelStateWrap_StateChanged(object? sender, EventArgs e)
 	{
-		await GetTextEditorViewModelKey();
 		await InvokeAsync(StateHasChanged);
 	}
 

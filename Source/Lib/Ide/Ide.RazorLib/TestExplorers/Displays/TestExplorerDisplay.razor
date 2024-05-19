@@ -7,6 +7,7 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @{
+	// Here the state is grabbed.
 	var testExplorerState = TestExplorerStateWrap.Value;
 	var appOptionsState = AppOptionsStateWrap.Value;
 
@@ -17,6 +18,7 @@
 		treeViewContainer = null;
 	}
 
+	// All the state is combined into a single object.
 	var renderBatch = new TestExplorerRenderBatch(
 		testExplorerState,
 		appOptionsState,
@@ -42,14 +44,18 @@
 		{
 			var renderBatchValidated = new TestExplorerRenderBatchValidated(renderBatch);
 
+			<!-- Here is the 'CascadingParameter' to the child components. -->
 			<CascadingValue Value="renderBatchValidated">
 
+				<!-- TreeView -->
 				<TestExplorerTreeViewDisplay ElementDimensions="_treeViewElementDimensions"/>
-	
+
+				<!-- Resize -->	
 				<ResizableColumn LeftElementDimensions="_treeViewElementDimensions"
 				                 RightElementDimensions="_detailsElementDimensions"
 								 ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged).ConfigureAwait(false)" />
-		
+
+				<!-- Output of the test -->
 				<TestExplorerDetailsDisplay ElementDimensions="_detailsElementDimensions"/>
 			</CascadingValue>
 		}

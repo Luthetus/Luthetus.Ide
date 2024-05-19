@@ -76,5 +76,3 @@ public partial class TestExplorerDisplay : FluxorComponent
         base.OnInitialized();
     }
 }
- 
-    
