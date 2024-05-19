@@ -81,13 +81,17 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 
     private async void TextEditorModelsCollectionWrapOnStateChanged(object? sender, EventArgs e)
     {
-        await _throttleDiffCalculation.PushEvent(_ =>
-        {
-            return TextEditorService.PostSimpleBatch(
-                nameof(TextEditorDiffDisplay),
-                nameof(TextEditorDiffDisplay),
-                TextEditorService.DiffApi.CalculateFactory(TextEditorDiffKey, CancellationToken.None));
-        });
+        // Commenting this out for a moment because 'TextEditorService.DiffApi.CalculateFactory'
+        // needs to be written. It currently freezes the application. (2024-05-19)
+        // =====================================================================================
+        //
+        //await _throttleDiffCalculation.PushEvent(_ =>
+        //{
+        //    return TextEditorService.PostSimpleBatch(
+        //        nameof(TextEditorDiffDisplay),
+        //        nameof(TextEditorDiffDisplay),
+        //        TextEditorService.DiffApi.CalculateFactory(TextEditorDiffKey, CancellationToken.None));
+        //});
     }
 
     private async void TextEditorOptionsStateWrapOnStateChanged(object? sender, EventArgs e) =>
