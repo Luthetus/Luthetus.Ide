@@ -1,16 +1,13 @@
 ﻿using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.TreeViewUtils.Displays;
+using Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.TreeViewUtils.Models;
+namespace Luthetus.Common.RazorLib.TreeViews.Models.Utils;
 
 public class TreeViewMarkupString : TreeViewWithType<MarkupString>
 {
     public TreeViewMarkupString(
             MarkupString markupString,
-            ILuthetusIdeComponentRenderers ideComponentRenderers,
             IFileSystemProvider fileSystemProvider,
             IEnvironmentProvider environmentProvider,
             bool isExpandable,
@@ -20,12 +17,10 @@ public class TreeViewMarkupString : TreeViewWithType<MarkupString>
             isExpandable,
             isExpanded)
     {
-        IdeComponentRenderers = ideComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
-    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 

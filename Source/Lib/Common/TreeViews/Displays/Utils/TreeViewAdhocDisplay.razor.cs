@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.TreeViews.Models;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Common.RazorLib.TreeViews.Displays;
+namespace Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 
 public partial class TreeViewAdhocDisplay : ComponentBase
 {

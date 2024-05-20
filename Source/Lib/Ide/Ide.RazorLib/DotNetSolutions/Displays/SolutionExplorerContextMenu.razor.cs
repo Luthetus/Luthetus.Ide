@@ -33,7 +33,7 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
 using Luthetus.Ide.RazorLib.CSharpProjects.Models;
 using Luthetus.Ide.RazorLib.CSharpProjects.Displays;
-using Luthetus.Ide.RazorLib.TreeViewUtils.Models;
+using Luthetus.Ide.RazorLib.Namespaces.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 

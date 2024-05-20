@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.TestExplorers.Displays;
-using Luthetus.Ide.RazorLib.TreeViewUtils.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models.Utils;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers.Models;
 

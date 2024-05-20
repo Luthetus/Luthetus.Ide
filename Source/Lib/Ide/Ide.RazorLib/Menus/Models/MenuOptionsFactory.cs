@@ -18,7 +18,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
 using Luthetus.Ide.RazorLib.CSharpProjects.Models;
-using Luthetus.Ide.RazorLib.TreeViewUtils.Models;
+using Luthetus.Ide.RazorLib.Namespaces.Models;
 
 namespace Luthetus.Ide.RazorLib.Menus.Models;
 

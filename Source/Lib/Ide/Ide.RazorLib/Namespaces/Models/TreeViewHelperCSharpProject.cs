@@ -4,9 +4,9 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
-using Luthetus.Ide.RazorLib.TreeViewUtils.Models;
+using Luthetus.Ide.RazorLib.CSharpProjects.Models;
 
-namespace Luthetus.Ide.RazorLib.CSharpProjects.Models;
+namespace Luthetus.Ide.RazorLib.Namespaces.Models;
 
 public class TreeViewHelperCSharpProject
 {
@@ -28,7 +28,7 @@ public class TreeViewHelperCSharpProject
                 var absolutePath = cSharpProjectTreeView.EnvironmentProvider.AbsolutePathFactory(x, true);
 
                 var namespaceString = cSharpProjectTreeView.Item.Namespace +
-                    TreeViewHelper.NAMESPACE_DELIMITER +
+                    TreeViewNamespaceHelper.NAMESPACE_DELIMITER +
                     absolutePath.NameNoExtension;
 
                 return new TreeViewNamespacePath(new NamespacePath(namespaceString, absolutePath),

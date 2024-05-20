@@ -2,7 +2,7 @@
 using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.TreeViewUtils.Displays;
+namespace Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 
 public partial class TreeViewExceptionDisplay : ComponentBase, ITreeViewExceptionRendererType
 {

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
-using Luthetus.Ide.RazorLib.TreeViewUtils.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models.Utils;
 
-namespace Luthetus.Ide.RazorLib.TreeViewUtils.Displays;
+namespace Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 
 public partial class TreeViewSpinnerDisplay : ComponentBase
 {

@@ -5,7 +5,7 @@ using Luthetus.Common.RazorLib.TreeViews.States;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
-namespace Luthetus.Common.RazorLib.TreeViews.Displays;
+namespace Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 
 /// <summary>
 /// The purpose of this component is to 'dump' all of the data which resides

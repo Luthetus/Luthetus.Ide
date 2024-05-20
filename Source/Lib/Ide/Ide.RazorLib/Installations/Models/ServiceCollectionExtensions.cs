@@ -22,7 +22,8 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.Displays;
-using Luthetus.Ide.RazorLib.TreeViewUtils.Displays;
+using Luthetus.Ide.RazorLib.Namespaces.Displays;
+using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 
 namespace Luthetus.Ide.RazorLib.Installations.Models;
 

@@ -2,7 +2,7 @@
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.TreeViewUtils.Displays;
+namespace Luthetus.Ide.RazorLib.Namespaces.Displays;
 
 public partial class TreeViewNamespacePathDisplay : ComponentBase, ITreeViewNamespacePathRendererType
 {

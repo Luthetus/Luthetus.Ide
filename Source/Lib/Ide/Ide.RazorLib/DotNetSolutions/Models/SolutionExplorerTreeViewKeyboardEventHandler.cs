@@ -11,7 +11,7 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Fluxor;
-using Luthetus.Ide.RazorLib.TreeViewUtils.Models;
+using Luthetus.Ide.RazorLib.Namespaces.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Models;
 

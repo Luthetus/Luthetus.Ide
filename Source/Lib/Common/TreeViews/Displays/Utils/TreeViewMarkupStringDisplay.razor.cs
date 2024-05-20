@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.TreeViewUtils.Displays;
+namespace Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 
 public partial class TreeViewMarkupStringDisplay : ComponentBase
 {

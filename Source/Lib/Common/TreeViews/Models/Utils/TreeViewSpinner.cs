@@ -1,22 +1,21 @@
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Ide.RazorLib.TreeViewUtils.Displays;
+using Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 
-namespace Luthetus.Ide.RazorLib.TreeViewUtils.Models;
+namespace Luthetus.Common.RazorLib.TreeViews.Models.Utils;
 
 public class TreeViewSpinner : TreeViewWithType<Guid>
 {
-	public TreeViewSpinner(
+    public TreeViewSpinner(
             Guid guid,
-			ILuthetusCommonComponentRenderers commonComponentRenderers,
+            ILuthetusCommonComponentRenderers commonComponentRenderers,
             bool isExpandable,
             bool isExpanded)
         : base(guid, isExpandable, isExpanded)
     {
-		CommonComponentRenderers = commonComponentRenderers;
+        CommonComponentRenderers = commonComponentRenderers;
     }
 
-	public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
+    public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
 
     public override bool Equals(object? obj)
     {

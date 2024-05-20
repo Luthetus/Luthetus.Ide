@@ -6,10 +6,8 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.Ide.RazorLib.CSharpProjects.Models;
-using Luthetus.Ide.RazorLib.FileSystems.Models;
 
-namespace Luthetus.Ide.RazorLib.TreeViewUtils.Models;
+namespace Luthetus.Ide.RazorLib.Namespaces.Models;
 
 public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
 {

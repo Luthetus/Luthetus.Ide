@@ -17,7 +17,7 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
-using Luthetus.Ide.RazorLib.TreeViewUtils.Models;
+using Luthetus.Ide.RazorLib.Namespaces.Models;
 
 namespace Luthetus.Ide.RazorLib.Commands;
 

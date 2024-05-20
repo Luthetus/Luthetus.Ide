@@ -1,9 +1,8 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Ide.RazorLib.TreeViewUtils.Models;
 
-namespace Luthetus.Ide.RazorLib.FileSystems.Models;
+namespace Luthetus.Ide.RazorLib.Namespaces.Models;
 
 public class TreeViewHelperNamespacePathDirectory
 {
@@ -23,7 +22,7 @@ public class TreeViewHelperNamespacePathDirectory
                 var absolutePath = directoryTreeView.EnvironmentProvider.AbsolutePathFactory(x, true);
 
                 var namespaceString = directoryTreeView.Item.Namespace +
-                    TreeViewHelper.NAMESPACE_DELIMITER +
+                    TreeViewNamespaceHelper.NAMESPACE_DELIMITER +
                     absolutePath.NameNoExtension;
 
                 return (TreeViewNoType)new TreeViewNamespacePath(
