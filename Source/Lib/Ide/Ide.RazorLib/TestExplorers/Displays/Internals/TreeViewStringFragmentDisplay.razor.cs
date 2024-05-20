@@ -40,13 +40,6 @@ public partial class TreeViewStringFragmentDisplay : FluxorComponent
 
     private string? GetTerminalCommandOutput(Terminal terminal)
     {
-		var success = terminal.TryGetTerminalCommandTextSpan(
-		    TreeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey,
-		    out var terminalCommandTextSpan);
-
-        if (!success || terminalCommandTextSpan is null)
-            return null;
-        else
-            return terminalCommandTextSpan.GetText();
+        return TreeViewStringFragment.Item.TerminalCommand?.TextSpan?.GetText() ?? null;
 	}
 }

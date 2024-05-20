@@ -2,15 +2,30 @@ using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.TestExplorers.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers.Displays.Internals;
 
-public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
+/// <summary>
+/// (2024-05-20)
+/// Currently this component is writen such that there is a TextEditorViewModel per
+/// unit test, in order to display the output of that test.<br/><br/>
+/// 
+/// But, would it be better to have 1 TextEditorViewModel that is dedicated
+/// to this component.<br/><br/>
+/// 
+/// Then everytime the active treeview selections change, the output of the
+/// nodes are joined together and then this component's TextEditorModel
+/// gets 'SetContent(joinedStrings)'.<br/><br/>
+/// 
+/// This then won't create such an absurd amount of TextEditorModels/ViewModels.
+/// </summary>
+public partial class TestExplorerDetailsDisplay : ComponentBase
 {
 	[Inject]
 	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
@@ -23,31 +38,75 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 	[Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;
 
-	protected override void OnInitialized()
+	public static readonly Key<TextEditorViewModel> DetailsTextEditorViewModelKey = Key<TextEditorViewModel>.NewKey();
+
+	private string? _previousContent = string.Empty;
+
+	protected override Task OnParametersSetAsync()
 	{
-		TextEditorService.ViewModelStateWrap.StateChanged += TextEditorService_ViewModelStateWrap_StateChanged;
+		var newContent = string.Empty;
 
-		base.OnInitialized();
-	}
+		if (RenderBatch.TreeViewContainer.SelectedNodeList.Count > 1)
+		{
+			newContent = "> 1 node is selected";
+		}
+		else
+		{
+			var singularNode = RenderBatch.TreeViewContainer.SelectedNodeList.Single();
 
-	private Key<TerminalCommand>? GetTerminalCommandKey(TreeViewNoType singularNode)
-	{
-		if (singularNode is TreeViewProjectTestModel treeViewProjectTestModel)
-			return treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey;
-		else if (singularNode is TreeViewStringFragment treeViewStringFragment)
-			return treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey;
+			if (singularNode is TreeViewStringFragment treeViewStringFragment)
+			{
+				var terminalCommand = treeViewStringFragment.Item.TerminalCommand;
 
-		// TODO: Don't have this nullable. Use Key<TerminalCommand>.Empty
-		return null;
-	}
+				if (terminalCommand is not null)
+					newContent = terminalCommand.TextSpan?.GetText();
+				else
+					newContent = "terminalCommand was null";
+			}
+			else if (singularNode is TreeViewProjectTestModel treeViewProjectTestModel)
+			{
+				var terminalCommand = treeViewProjectTestModel.Item.TerminalCommand;
 
-	private async void TextEditorService_ViewModelStateWrap_StateChanged(object? sender, EventArgs e)
-	{
-		await InvokeAsync(StateHasChanged);
-	}
+				if (terminalCommand is not null)
+					newContent = terminalCommand.TextSpan?.GetText();
+				else
+					newContent = "terminalCommand was null";
+			}
+			else if (singularNode is not null)
+			{
+				newContent = singularNode.GetType().Name;
+			}
+			else
+			{
+				newContent = "singularNode was null";
+			}
 
-	public void Dispose()
-	{
-		TextEditorService.ViewModelStateWrap.StateChanged -= TextEditorService_ViewModelStateWrap_StateChanged;
+			if (newContent != _previousContent)
+			{
+				_previousContent = newContent;
+
+				TextEditorService.PostSimpleBatch(
+					nameof(TestExplorerDetailsDisplay),
+					nameof(TestExplorerDetailsDisplay),
+					editContext =>
+					{
+						var modelModifier = editContext.GetModelModifier(ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
+						var viewModelModifier = editContext.GetViewModelModifier(DetailsTextEditorViewModelKey);
+						var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+						var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+						if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+							return Task.CompletedTask;
+
+						modelModifier.SetContent(newContent ?? string.Empty);
+						primaryCursorModifier.LineIndex = 0;
+						primaryCursorModifier.SetColumnIndexAndPreferred(0);
+						return Task.CompletedTask;
+					});
+			}
+		}
+
+
+		return base.OnParametersSetAsync();
 	}
 }

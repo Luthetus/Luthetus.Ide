@@ -1,4 +1,5 @@
 @using Luthetus.Common.RazorLib.Keys.Models
+@using Luthetus.Common.RazorLib.ShouldRenderBoundaries.Displays
 @using Luthetus.Ide.RazorLib.Terminals.Models;
 @using Luthetus.Ide.RazorLib.Terminals.Displays;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
@@ -8,34 +9,8 @@
 	 style="@ElementDimensions.StyleString">
 
 	<div style="height: 100%;">
-
-		@if (RenderBatch.TreeViewContainer.SelectedNodeList.Count > 1)
-		{
-			@: > 1 node is selected
-		}
-		else
-		{
-			var singularNode = RenderBatch.TreeViewContainer.SelectedNodeList.Single();
-			
-			var terminalCommandKey = GetTerminalCommandKey(singularNode);
-
-			if (terminalCommandKey is not null)
-			{
-				var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
-
-				var textEditorViewModelKey = executionTerminal
-					.GetTerminalCommandViewModelKey(terminalCommandKey.Value);
-
-				<ReadOnlyTextEditorViewModelDisplay TextEditorViewModelKey="textEditorViewModelKey" />
-			}
-			else if (singularNode is not null)
-			{
-				<text>@(singularNode.GetType().Name)</text>
-			}
-			else
-			{
-				<text>singularNode is null</text>
-			}
-		}
+		<ShouldRenderBoundary>
+			<ReadOnlyTextEditorViewModelDisplay TextEditorViewModelKey="DetailsTextEditorViewModelKey" />
+		</ShouldRenderBoundary>
 	</div>
 </div>

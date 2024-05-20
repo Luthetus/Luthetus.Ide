@@ -157,12 +157,10 @@ public partial class Terminal
 			HasExecutingProcess = true;
 			DispatchNewStateKey();
 
-			if (_textEditorService.ModelApi.GetOrDefault(new ResourceUri("terminalCommand" + '_' + terminalCommandKey)) is not null)
-				await ClearOutputView(terminalCommand);
+			terminalCommand.TextSpan = null;
 
 			if (terminalCommand.BeginWith is not null)
 				await terminalCommand.BeginWith.Invoke().ConfigureAwait(false);
-
 
 			// It is important to invoke 'OnAfterCommandStarted' after 'terminalCommand.BeginWith'
 			if (terminalCommand.OutputParser is not null)
@@ -225,14 +223,12 @@ public partial class Terminal
 					DispatchNewStateKey();
 				}).ConfigureAwait(false);
 
-			if (!_terminalCommandTextSpanMap.ContainsKey(terminalCommandKey))
-			{
-				await AddTerminalCommandTextSpanMap(terminalCommandKey, terminalCommandBoundary)
-					.ConfigureAwait(false);
-			}
-
-			await SetTerminalCommandContent(terminalCommandKey, terminalCommandBoundary)
-				.ConfigureAwait(false);
+			terminalCommand.TextSpan = new TextEditorTextSpan(
+				terminalCommandBoundary.StartPositionIndexInclusive ?? 0,
+				terminalCommandBoundary.EndPositionIndexExclusive ?? 0,
+				0,
+				ResourceUri,
+				_textEditorService.ModelApi.GetAllText(ResourceUri) ?? string.Empty);
 		}
 		catch (Exception e)
 		{

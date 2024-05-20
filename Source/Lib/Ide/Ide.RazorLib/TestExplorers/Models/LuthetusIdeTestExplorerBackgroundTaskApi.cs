@@ -110,14 +110,6 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
 							{
 								try
 		                        {
-		                            var success = executionTerminal.TryGetTerminalCommandTextSpan(
-		                                treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey,
-		                                out var terminalCommandTextSpan);
-		
-		                            var output = terminalCommandTextSpan?.GetText();
-		                            if (output is null)
-		                                return;
-		
 		                            treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput =
 		                                _dotNetCliOutputParser.TheFollowingTestsAreAvailableList ?? new();
 		

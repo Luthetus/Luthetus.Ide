@@ -135,20 +135,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 _viewModel.NewCSharpProjectCancellationTokenSource.Token,
                 async () =>
                 {
-					var success = generalTerminal.TryGetTerminalCommandTextSpan(
-						_viewModel.LoadProjectTemplatesTerminalCommandKey,
-						out var terminalCommandTextSpan);
-					
-                    var output = terminalCommandTextSpan?.GetText();
-                    if (output is not null)
-                    {
-                        _viewModel.ProjectTemplateList = DotNetCliOutputParser.ProjectTemplateList ?? new();
-                        await InvokeAsync(StateHasChanged);
-                    }
-                    else
-                    {
-                        await EnqueueDotnetNewListDeprecatedAsync().ConfigureAwait(false);
-                    }
+					_viewModel.ProjectTemplateList = DotNetCliOutputParser.ProjectTemplateList ?? new();
+					await InvokeAsync(StateHasChanged);
                 });
 
             await generalTerminal.EnqueueCommandAsync(newCSharpProjectCommand).ConfigureAwait(false);
@@ -180,21 +168,9 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 _viewModel.NewCSharpProjectCancellationTokenSource.Token,
                 async () =>
                 {
-					var success = generalTerminal.TryGetTerminalCommandTextSpan(
-						_viewModel.LoadProjectTemplatesTerminalCommandKey,
-						out var terminalCommandTextSpan);
-
-					var output = terminalCommandTextSpan?.GetText();
-                    if (output is not null)
-                    {
-                        _viewModel.ProjectTemplateList = DotNetCliOutputParser.ProjectTemplateList ?? new();
-                        await InvokeAsync(StateHasChanged);
-                    }
-                    else
-                    {
-                        throw new NotImplementedException("Use manual template text input html elements?");
-                    }
-                });
+					_viewModel.ProjectTemplateList = DotNetCliOutputParser.ProjectTemplateList ?? new();
+					await InvokeAsync(StateHasChanged);
+				});
 
             await generalTerminal.EnqueueCommandAsync(newCSharpProjectCommand).ConfigureAwait(false);
         }
