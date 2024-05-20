@@ -5,10 +5,9 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 
-public partial class TreeViewHelper
+public class TreeViewHelperRazorMarkup
 {
-    public static async Task<List<TreeViewNoType>> RazorMarkupLoadChildrenAsync(
-        this TreeViewNamespacePath razorMarkupTreeView)
+    public static async Task<List<TreeViewNoType>> LoadChildrenAsync(TreeViewNamespacePath razorMarkupTreeView)
     {
         if (razorMarkupTreeView.Item is null)
             return new();
@@ -39,11 +38,11 @@ public partial class TreeViewHelper
                 };
             }).ToList();
 
-        RazorMarkupFindRelatedFiles(razorMarkupTreeView, childFileTreeViewModels);
+        FindRelatedFiles(razorMarkupTreeView, childFileTreeViewModels);
         return razorMarkupTreeView.ChildList;
     }
 
-    public static void RazorMarkupFindRelatedFiles(
+    public static void FindRelatedFiles(
         TreeViewNamespacePath razorMarkupTreeView,
         List<TreeViewNoType> siblingsAndSelfTreeViews)
     {

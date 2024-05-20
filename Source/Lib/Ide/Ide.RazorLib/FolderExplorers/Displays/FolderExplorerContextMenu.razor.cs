@@ -11,7 +11,7 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
+using Luthetus.Ide.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 

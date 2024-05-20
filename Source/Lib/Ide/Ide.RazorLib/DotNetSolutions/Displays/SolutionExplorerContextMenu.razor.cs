@@ -21,7 +21,6 @@ using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.ProgramExecutions.States;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
-using Luthetus.Ide.RazorLib.CSharpProjectForms.Displays;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
@@ -32,6 +31,9 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
+using Luthetus.Ide.RazorLib.CSharpProjects.Models;
+using Luthetus.Ide.RazorLib.CSharpProjects.Displays;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 

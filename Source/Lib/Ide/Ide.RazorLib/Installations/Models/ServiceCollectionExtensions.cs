@@ -13,7 +13,7 @@ using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Displays;
 using Luthetus.Ide.RazorLib.FileSystems.Displays;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
-using Luthetus.Ide.RazorLib.CSharpProjectForms.Displays;
+using Luthetus.Ide.RazorLib.CSharpProjects.Displays;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.Ide.RazorLib.Decorations;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
@@ -22,6 +22,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.CompilerServices.Displays;
 
 namespace Luthetus.Ide.RazorLib.Installations.Models;
 

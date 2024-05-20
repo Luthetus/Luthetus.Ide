@@ -5,6 +5,7 @@ using Luthetus.Ide.RazorLib.Nugets.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Luthetus.Ide.RazorLib.CSharpProjects.Models;
 
 namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 

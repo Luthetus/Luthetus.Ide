@@ -6,6 +6,8 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Ide.RazorLib.CSharpProjects.Models;
+using Luthetus.Ide.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 
@@ -66,7 +68,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
 
             if (Item.AbsolutePath.IsDirectory)
             {
-                newChildList = await this.DirectoryLoadChildrenAsync().ConfigureAwait(false);
+                newChildList = await TreeViewHelperNamespacePathDirectory.LoadChildrenAsync(this).ConfigureAwait(false);
             }
             else
             {
@@ -75,10 +77,10 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                     case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
                         return;
                     case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                        newChildList = await this.CSharpProjectLoadChildrenAsync().ConfigureAwait(false);
+                        newChildList = await TreeViewHelperCSharpProject.LoadChildrenAsync(this).ConfigureAwait(false);
                         break;
                     case ExtensionNoPeriodFacts.RAZOR_MARKUP:
-                        newChildList = await this.RazorMarkupLoadChildrenAsync().ConfigureAwait(false);
+                        newChildList = await TreeViewHelperRazorMarkup.LoadChildrenAsync(this).ConfigureAwait(false);
                         break;
                 }
             }
@@ -108,6 +110,6 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
         if (Item.AbsolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
-            TreeViewHelper.RazorMarkupFindRelatedFiles(this, siblingsAndSelfTreeViews);
+            TreeViewHelperRazorMarkup.FindRelatedFiles(this, siblingsAndSelfTreeViews);
     }
 }
