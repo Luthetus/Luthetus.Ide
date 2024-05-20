@@ -1,12 +1,18 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+﻿using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
-namespace Luthetus.Ide.RazorLib.Terminals.Models;
+namespace Luthetus.Ide.RazorLib.CommandLines.Models;
 
 public class DotNetRunOutputParser : IOutputParser
 {
-    public List<TextEditorTextSpan> ParseLine(string output)
+	public Task OnAfterCommandStarted(TerminalCommand terminalCommand)
+	{
+        return Task.CompletedTask;
+	}
+
+	public List<TextEditorTextSpan> OnAfterOutputLine(TerminalCommand terminalCommand, string output)
     {
         var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/DotNetRunOutputParser.txt"), output);
 
@@ -187,8 +193,8 @@ public class DotNetRunOutputParser : IOutputParser
         return textSpanList;
     }
 
-    public void Dispose()
-    {
-        return;
-    }
+	public Task OnAfterCommandFinished(TerminalCommand terminalCommand)
+	{
+		return Task.CompletedTask;
+	}
 }

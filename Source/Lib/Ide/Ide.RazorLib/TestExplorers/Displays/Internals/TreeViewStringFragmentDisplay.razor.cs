@@ -26,8 +26,8 @@ public partial class TreeViewStringFragmentDisplay : FluxorComponent
         TerminalStateSelection.Select(x =>
         {
             if (x.TerminalMap.TryGetValue(
-                TerminalFacts.EXECUTION_TERMINAL_KEY,
-                out var terminal))
+                    TerminalFacts.EXECUTION_TERMINAL_KEY,
+                    out var terminal))
 			{
 				return terminal;
 			}
@@ -37,4 +37,16 @@ public partial class TreeViewStringFragmentDisplay : FluxorComponent
 
         base.OnInitialized();
     }
+
+    private string? GetTerminalCommandOutput(Terminal terminal)
+    {
+		var success = terminal.TryGetTerminalCommandTextSpan(
+		    TreeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey,
+		    out var terminalCommandTextSpan);
+
+        if (!success || terminalCommandTextSpan is null)
+            return null;
+        else
+            return terminalCommandTextSpan.GetText();
+	}
 }

@@ -1,293 +1,34 @@
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.Ide.RazorLib.Terminals.States;
-using CliWrap;
-using CliWrap.EventStream;
-using Fluxor;
 using System.Collections.Immutable;
 using System.Reactive.Linq;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Ide.RazorLib.Events.Models;
+using Luthetus.TextEditor.RazorLib;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
-public class Terminal
+public partial class Terminal
 {
-    private readonly IDispatcher _dispatcher;
-    private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly ITextEditorService _textEditorService;
-    private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
-    private readonly ICompilerServiceRegistry _compilerServiceRegistry;
-    private readonly List<TerminalCommand> _terminalCommandsHistory = new();
-
-    private readonly Dictionary<Key<TerminalCommand>, TextEditorTextSpan> _terminalCommandTextSpanMap = new();
-    private readonly Dictionary<Key<TerminalCommand>, Key<TextEditorViewModel>> _terminalCommandViewModelKeyMap = new();
+	private readonly ITextEditorService _textEditorService;
+	private readonly Dictionary<Key<TerminalCommand>, TextEditorTextSpan> _terminalCommandTextSpanMap = new();
+	private readonly Dictionary<Key<TerminalCommand>, Key<TextEditorViewModel>> _terminalCommandViewModelKeyMap = new();
 	private readonly object _terminalCommandMapLock = new();
 
-	public static async Task<Terminal> Factory(
-        string displayName,
-        string? workingDirectoryAbsolutePathString,
-        IDispatcher dispatcher,
-        IBackgroundTaskService backgroundTaskService,
-        ITextEditorService textEditorService,
-        ILuthetusCommonComponentRenderers commonComponentRenderers,
-        ICompilerServiceRegistry compilerServiceRegistry,
-		Key<Terminal> terminalKey)
-	{
-		var terminal = new Terminal(
-			displayName,
-	        workingDirectoryAbsolutePathString,
-	        dispatcher,
-	        backgroundTaskService,
-	        textEditorService,
-	        commonComponentRenderers,
-	        compilerServiceRegistry)
-			{
-				Key = terminalKey
-			};
+	public ResourceUri ResourceUri { get; init; }
+	public Key<TextEditorViewModel> TextEditorViewModelKey { get; init; } = Key<TextEditorViewModel>.NewKey();
 
-		await terminal.CreateTextEditor();
-		await terminal.SetWorkingDirectoryAbsolutePathString(workingDirectoryAbsolutePathString);
-		return terminal;
-	}
-
-    private Terminal(
-        string displayName,
-        string? workingDirectoryAbsolutePathString,
-        IDispatcher dispatcher,
-        IBackgroundTaskService backgroundTaskService,
-        ITextEditorService textEditorService,
-        ILuthetusCommonComponentRenderers commonComponentRenderers,
-        ICompilerServiceRegistry compilerServiceRegistry)
-    {
-        _dispatcher = dispatcher;
-        _backgroundTaskService = backgroundTaskService;
-        _textEditorService = textEditorService;
-        _commonComponentRenderers = commonComponentRenderers;
-        _compilerServiceRegistry = compilerServiceRegistry;
-
-        DisplayName = displayName;
-        ResourceUri = new(ResourceUriFacts.Terminal_ReservedResourceUri_Prefix + Key.Guid.ToString());
-    }
-
-	private CancellationTokenSource _commandCancellationTokenSource = new();
-    private string? _previousWorkingDirectoryAbsolutePathString;
-    private string? _workingDirectoryAbsolutePathString;
-
-    public Key<Terminal> Key { get; init; } = Key<Terminal>.NewKey();
-    public ResourceUri ResourceUri { get; init; }
-    public Key<TextEditorViewModel> TextEditorViewModelKey { get; init; } = Key<TextEditorViewModel>.NewKey();
-    public TerminalCommand? ActiveTerminalCommand { get; private set; }
-	/// <summary>NOTE: the following did not work => _process?.HasExited ?? false;</summary>
-    public bool HasExecutingProcess { get; private set; }
-    public string DisplayName { get; }
-
-    public string? WorkingDirectoryAbsolutePathString => _workingDirectoryAbsolutePathString;
-
-    public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
-
-	public async Task SetWorkingDirectoryAbsolutePathString(string? value)
-	{
-		_previousWorkingDirectoryAbsolutePathString = _workingDirectoryAbsolutePathString;
-        _workingDirectoryAbsolutePathString = value;
-
-        if (_previousWorkingDirectoryAbsolutePathString != _workingDirectoryAbsolutePathString)
-            await WriteWorkingDirectory(true);
-	}
-
-    public Task EnqueueCommandAsync(TerminalCommand terminalCommand)
-    {
-        var queueKey = BlockingBackgroundTaskWorker.GetQueueKey();
-
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
-            queueKey,
-            "Enqueue Command",
-            async () =>
-            {
-                await MoveCursorToEnd();
-
-                if (terminalCommand.ChangeWorkingDirectoryTo is not null)
-                    await SetWorkingDirectoryAbsolutePathString(terminalCommand.ChangeWorkingDirectoryTo);
-
-                if (terminalCommand.FormattedCommand.TargetFileName == "cd")
-                {
-                    // TODO: Don't keep this logic as it is hacky. I'm trying to set myself up to be able to run "gcc" to compile ".c" files. Then I can work on adding symbol related logic like "go to definition" or etc.
-                    if (terminalCommand.FormattedCommand.HACK_ArgumentsString is not null)
-                        await SetWorkingDirectoryAbsolutePathString(terminalCommand.FormattedCommand.HACK_ArgumentsString);
-                    else if (terminalCommand.FormattedCommand.ArgumentsList.Any())
-                        await SetWorkingDirectoryAbsolutePathString(terminalCommand.FormattedCommand.ArgumentsList.ElementAt(0));
-
-                    return;
-                }
-                
-                if (terminalCommand.FormattedCommand.TargetFileName == "clear")
-                {
-                    await ClearTerminal();
-                    await WriteWorkingDirectory();
-                    return;
-                }
-
-                _terminalCommandsHistory.Add(terminalCommand);
-                ActiveTerminalCommand = terminalCommand;
-
-                var command = Cli.Wrap(terminalCommand.FormattedCommand.TargetFileName);
-
-                if (terminalCommand.FormattedCommand.ArgumentsList.Any())
-                {
-                    if (terminalCommand.FormattedCommand.HACK_ArgumentsString is null)
-                        command = command.WithArguments(terminalCommand.FormattedCommand.ArgumentsList);
-                    else
-                        command = command.WithArguments(terminalCommand.FormattedCommand.HACK_ArgumentsString);
-                }
-
-                if (terminalCommand.ChangeWorkingDirectoryTo is not null)
-                    command = command.WithWorkingDirectory(terminalCommand.ChangeWorkingDirectoryTo);
-                else if (WorkingDirectoryAbsolutePathString is not null)
-                    command = command.WithWorkingDirectory(WorkingDirectoryAbsolutePathString);
-
-                try
-                {
-                    var terminalCommandKey = terminalCommand.TerminalCommandKey;
-                    HasExecutingProcess = true;
-                    DispatchNewStateKey();
-
-                    if (_textEditorService.ModelApi.GetOrDefault(new ResourceUri("terminalCommand" + '_' + terminalCommandKey)) is not null)
-                        await ClearOutputView(terminalCommand);
-
-                    if (terminalCommand.BeginWith is not null)
-                        await terminalCommand.BeginWith.Invoke().ConfigureAwait(false);
-
-                    var terminalCommandBoundary = new TerminalCommandBoundary();
-
-                    var outputOffset = 0;
-
-                    await command.Observe(_commandCancellationTokenSource.Token)
-                        .ForEachAsync(async cmdEvent =>
-                        {
-							var output = (string?)null;
-
-                            switch (cmdEvent)
-                            {
-                                case StartedCommandEvent started:
-                                    // TODO: If the source of the terminal command is a user having...
-                                    //       ...typed themselves, then hitting enter, do not write this out.
-                                    //       |
-                                    //       This is here for when the command was started programmatically
-                                    //       without a user typing into the terminal.
-                                    output = $"{terminalCommand.FormattedCommand.Value}\n";
-									break;
-                                case StandardOutputCommandEvent stdOut:
-                                    output = $"{stdOut.Text}\n";
-                                    break;
-                                case StandardErrorCommandEvent stdErr:
-                                    output = $"{stdErr.Text}\n";
-                                    break;
-                                case ExitedCommandEvent exited:
-                                    output = $"Process exited; Code: {exited.ExitCode}\n";
-                                    break;
-                            }
-
-							if (output is not null)
-                            {
-                                var outputTextSpanList = new List<TextEditorTextSpan>();
-
-                                if (terminalCommand.OutputParser is not null)
-                                    outputTextSpanList = terminalCommand.OutputParser.ParseLine(output);
-
-                                await _textEditorService.Post(new OnOutput(
-                                    outputOffset,
-                                    output,
-                                    outputTextSpanList,
-                                    ResourceUri,
-                                    _textEditorService,
-                                    terminalCommandBoundary,
-                                    TextEditorViewModelKey));
-
-                                outputOffset += output.Length;
-                            }
-
-                            DispatchNewStateKey();
-                        }).ConfigureAwait(false);
-
-                    if (!_terminalCommandTextSpanMap.ContainsKey(terminalCommandKey))
-                    {
-						await _textEditorService.PostSimpleBatch(
-	                        "_terminalCommandTextSpanMap.Add(...)",
-							"_terminalCommandTextSpanMap.Add(...)",
-	                        editContext =>
-							{
-								_terminalCommandTextSpanMap.Add(
-		                            terminalCommandKey,
-		                            new TextEditorTextSpan(
-		                                terminalCommandBoundary.StartPositionIndexInclusive ?? 0,
-		                                terminalCommandBoundary.EndPositionIndexExclusive ?? 0,
-		                                0,
-		                                ResourceUri,
-		                                _textEditorService.ModelApi.GetAllText(ResourceUri) ?? string.Empty));
-
-								return Task.CompletedTask;
-							});
-                    }
-                    
-					await _textEditorService.PostSimpleBatch(
-	                    "set-content_" + terminalCommandKey.Guid,
-	                    string.Empty,
-	                    editContext =>
-	                    {
-	                        var commandOutputResourceUri = new ResourceUri("terminalCommand" + '_' + terminalCommandKey);
-	                        var modelModifier = editContext.GetModelModifier(commandOutputResourceUri);
-	
-	                        if (modelModifier is null)
-	                            return Task.CompletedTask;
-	
-	                        var textSpan = new TextEditorTextSpan(
-	                            terminalCommandBoundary.StartPositionIndexInclusive ?? 0,
-	                            terminalCommandBoundary.EndPositionIndexExclusive ?? 0,
-	                            0,
-	                            ResourceUri,
-	                            _textEditorService.ModelApi.GetAllText(ResourceUri) ?? string.Empty);
-	
-	                        _terminalCommandTextSpanMap[terminalCommandKey] = textSpan;
-	
-	                        modelModifier.SetContent(textSpan.GetText());
-	                        return Task.CompletedTask;
-	                    });
-                }
-                catch (Exception e)
-                {
-                    NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(14));
-                }
-                finally
-                {
-                    HasExecutingProcess = false;
-                    await WriteWorkingDirectory();
-                    DispatchNewStateKey();
-
-                    if (terminalCommand.ContinueWith is not null)
-                        await terminalCommand.ContinueWith.Invoke().ConfigureAwait(false);
-
-                    terminalCommand.OutputParser?.Dispose();
-                }
-            });
-    }
-
-    /// <summary>
-    /// When using the <see cref="Terminal"/>, one can run many <see cref="TerminalCommand"/>.
-    /// Therefore, a way to filter the <see cref="Terminal"/>, such that only the output of a single
-    /// <see cref="TerminalCommand"/> is returned, is needed.
-    /// </summary>
-    public bool TryGetTerminalCommandTextSpan(Key<TerminalCommand> terminalCommandKey, out TextEditorTextSpan? textSpan)
+	/// <summary>
+	/// When using the <see cref="Terminal"/>, one can run many <see cref="TerminalCommand"/>.
+	/// Therefore, a way to filter the <see cref="Terminal"/>, such that only the output of a single
+	/// <see cref="TerminalCommand"/> is returned, is needed.
+	/// </summary>
+	public bool TryGetTerminalCommandTextSpan(Key<TerminalCommand> terminalCommandKey, out TextEditorTextSpan? textSpan)
     {
 		lock (_terminalCommandMapLock)
 		{
@@ -325,13 +66,6 @@ public class Terminal
 
 		return textEditorViewModelKey;
 	}
-
-	public void KillProcess()
-    {
-        _commandCancellationTokenSource.Cancel();
-        _commandCancellationTokenSource = new();
-        DispatchNewStateKey();
-    }
 
 	public async Task CreateTextEditorForCommandOutput(
 		Key<TerminalCommand> terminalCommandKey,
@@ -406,11 +140,6 @@ public class Terminal
 				};
 			});
 	}
-
-	private void DispatchNewStateKey()
-    {
-        _dispatcher.Dispatch(new TerminalState.NotifyStateChangedAction(Key));
-    }
 
     private async Task CreateTextEditor()
     {
@@ -666,4 +395,71 @@ public class Terminal
                 return Task.CompletedTask;
             });
     }
+
+    private Task AddTerminalCommandTextSpanMap(
+        Key<TerminalCommand> terminalCommandKey,
+        TerminalCommandBoundary terminalCommandBoundary)
+    {
+		return _textEditorService.PostSimpleBatch(
+	        "_terminalCommandTextSpanMap.Add(...)",
+	        "_terminalCommandTextSpanMap.Add(...)",
+	        editContext =>
+	        {
+		        _terminalCommandTextSpanMap.Add(
+			        terminalCommandKey,
+			        new TextEditorTextSpan(
+				        terminalCommandBoundary.StartPositionIndexInclusive ?? 0,
+				        terminalCommandBoundary.EndPositionIndexExclusive ?? 0,
+				        0,
+				        ResourceUri,
+				        _textEditorService.ModelApi.GetAllText(ResourceUri) ?? string.Empty));
+
+		        return Task.CompletedTask;
+	        });
+	}
+
+    private Task SetTerminalCommandContent(
+        Key<TerminalCommand> terminalCommandKey,
+        TerminalCommandBoundary terminalCommandBoundary)
+    {
+		return _textEditorService.PostSimpleBatch(
+	        "set-content_" + terminalCommandKey.Guid,
+	        string.Empty,
+	        editContext =>
+	        {
+		        var commandOutputResourceUri = new ResourceUri("terminalCommand" + '_' + terminalCommandKey);
+		        var modelModifier = editContext.GetModelModifier(commandOutputResourceUri);
+
+		        if (modelModifier is null)
+			        return Task.CompletedTask;
+
+		        var textSpan = new TextEditorTextSpan(
+			        terminalCommandBoundary.StartPositionIndexInclusive ?? 0,
+			        terminalCommandBoundary.EndPositionIndexExclusive ?? 0,
+			        0,
+			        ResourceUri,
+			        _textEditorService.ModelApi.GetAllText(ResourceUri) ?? string.Empty);
+
+		        _terminalCommandTextSpanMap[terminalCommandKey] = textSpan;
+
+		        modelModifier.SetContent(textSpan.GetText());
+		        return Task.CompletedTask;
+	        });
+	}
+    
+    private Task TerminalOnOutput(
+		int outputOffset,
+		string output,
+		List<TextEditorTextSpan> outputTextSpanList,
+		TerminalCommandBoundary terminalCommandBoundary)
+    {
+		return _textEditorService.Post(new OnOutput(
+		    outputOffset,
+		    output,
+		    outputTextSpanList,
+		    ResourceUri,
+		    _textEditorService,
+		    terminalCommandBoundary,
+		    TextEditorViewModelKey));
+	}
 }

@@ -47,7 +47,12 @@ public class GitCliOutputParser : IOutputParser
     public List<GitFile> UnstagedGitFileList { get; } = new();
     public string? LogFileContent { get; private set; }
 
-    public List<TextEditorTextSpan> ParseLine(string output)
+	public Task OnAfterCommandStarted(TerminalCommand terminalCommand)
+	{
+		return Task.CompletedTask;
+	}
+
+	public List<TextEditorTextSpan> OnAfterOutputLine(TerminalCommand terminalCommand, string output)
     {
         if (_gitState.Repo is null)
             return new();
@@ -63,7 +68,47 @@ public class GitCliOutputParser : IOutputParser
         };
     }
 
-    public List<TextEditorTextSpan> StatusParseLine(string output)
+	public Task OnAfterCommandFinished(TerminalCommand terminalCommand)
+	{
+		if (_gitState.Repo is null)
+			return Task.CompletedTask;
+
+		switch (_gitCommandKind)
+		{
+			case GitCommandKind.GetOrigin when _origin is not null:
+				_dispatcher.Dispatch(new GitState.SetOriginAction(
+					_gitState.Repo,
+					_origin));
+				break;
+			case GitCommandKind.GetBranch when _branch is not null:
+				_dispatcher.Dispatch(new GitState.SetBranchAction(
+					_gitState.Repo,
+					_branch));
+				break;
+			case GitCommandKind.GetBranchList:
+				_dispatcher.Dispatch(new GitState.SetBranchListAction(
+					_gitState.Repo,
+					_branchList));
+				break;
+			case GitCommandKind.Status:
+				_dispatcher.Dispatch(new GitState.SetStatusAction(
+					_gitState.Repo,
+					UntrackedGitFileList.ToImmutableList(),
+					StagedGitFileList.ToImmutableList(),
+					UnstagedGitFileList.ToImmutableList(),
+					_behindByCommitCount ?? 0,
+					_aheadByCommitCount ?? 0));
+				break;
+			case GitCommandKind.LogFile:
+				if (_logFileContentBuilder is not null)
+					LogFileContent = _logFileContentBuilder.ToString();
+				break;
+		}
+
+		return Task.CompletedTask;
+	}
+
+	public List<TextEditorTextSpan> StatusParseLine(string output)
     {
         var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
         var textSpanList = new List<TextEditorTextSpan>();
@@ -484,44 +529,6 @@ public class GitCliOutputParser : IOutputParser
         _branchList.Add(textSpan.GetText());
 
         return textSpanList;
-    }
-
-    public void Dispose()
-    {
-        if (_gitState.Repo is null)
-            return;
-
-        switch (_gitCommandKind)
-        {
-            case GitCommandKind.GetOrigin when _origin is not null:
-                _dispatcher.Dispatch(new GitState.SetOriginAction(
-                    _gitState.Repo,
-                    _origin));
-                break;
-            case GitCommandKind.GetBranch when _branch is not null:
-                _dispatcher.Dispatch(new GitState.SetBranchAction(
-                    _gitState.Repo,
-                    _branch));
-                break;
-            case GitCommandKind.GetBranchList:
-                _dispatcher.Dispatch(new GitState.SetBranchListAction(
-                    _gitState.Repo,
-                    _branchList));
-                break;
-            case GitCommandKind.Status:
-                _dispatcher.Dispatch(new GitState.SetStatusAction(
-                    _gitState.Repo,
-                    UntrackedGitFileList.ToImmutableList(),
-                    StagedGitFileList.ToImmutableList(),
-                    UnstagedGitFileList.ToImmutableList(),
-                    _behindByCommitCount ?? 0,
-                    _aheadByCommitCount ?? 0));
-                break;
-            case GitCommandKind.LogFile:
-                if (_logFileContentBuilder is not null)
-                    LogFileContent = _logFileContentBuilder.ToString();
-                break;
-        }
     }
 
     /// <summary>

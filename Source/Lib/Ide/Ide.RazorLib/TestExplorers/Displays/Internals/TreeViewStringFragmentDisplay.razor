@@ -8,11 +8,7 @@
 }
 else
 {
-	var success = terminal.TryGetTerminalCommandTextSpan(
-		TreeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey,
-		out var terminalCommandTextSpan);
-
-	var output = terminalCommandTextSpan?.GetText();
+	var output = GetTerminalCommandOutput(terminal);
 
 	RenderFragment renderFragment = @<text>?</text>;
 
