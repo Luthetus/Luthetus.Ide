@@ -200,7 +200,9 @@ public partial class TestExplorerContextMenu : ComponentBase
             dotNetTestByFullyQualifiedNameFormattedCommand,
             directoryNameForTestDiscovery);
 
-        await executionTerminal
+		treeViewStringFragment.Item.TerminalCommand = dotNetTestByFullyQualifiedNameTerminalCommand;
+
+		await executionTerminal
 			.EnqueueCommandAsync(dotNetTestByFullyQualifiedNameTerminalCommand)
             .ConfigureAwait(false);
 	}

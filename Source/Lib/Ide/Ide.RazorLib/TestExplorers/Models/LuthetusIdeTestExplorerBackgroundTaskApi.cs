@@ -159,7 +159,11 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
                         return Task.CompletedTask;
                     });
 
-                await executionTerminal.EnqueueCommandAsync(dotNetTestListTestsCommand).ConfigureAwait(false);
+                treeViewProjectTestModel.Item.TerminalCommand = dotNetTestListTestsCommand;
+
+				await executionTerminal
+                    .EnqueueCommandAsync(dotNetTestListTestsCommand)
+                    .ConfigureAwait(false);
             };
         }
 
