@@ -4,7 +4,6 @@ using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Gits.Models;

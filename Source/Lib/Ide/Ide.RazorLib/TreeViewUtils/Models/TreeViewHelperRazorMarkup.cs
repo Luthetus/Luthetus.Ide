@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
+namespace Luthetus.Ide.RazorLib.TreeViewUtils.Models;
 
 public class TreeViewHelperRazorMarkup
 {

@@ -1,7 +1,4 @@
-﻿using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
-
-namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
+﻿namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 
 /// <summary>
 /// <see cref="TreeViewHelper"/>

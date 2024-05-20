@@ -5,7 +5,6 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Gits.Models;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Gits.States;

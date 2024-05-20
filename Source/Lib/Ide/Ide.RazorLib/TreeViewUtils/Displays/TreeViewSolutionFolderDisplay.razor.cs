@@ -2,7 +2,7 @@
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Displays;
+namespace Luthetus.Ide.RazorLib.TreeViewUtils.Displays;
 
 public partial class TreeViewSolutionFolderDisplay : ComponentBase, ITreeViewSolutionFolderRendererType
 {

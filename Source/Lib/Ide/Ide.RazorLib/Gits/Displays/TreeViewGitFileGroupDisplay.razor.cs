@@ -1,7 +1,6 @@
 using Fluxor;
 using Luthetus.Ide.RazorLib.Gits.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Gits.Displays;

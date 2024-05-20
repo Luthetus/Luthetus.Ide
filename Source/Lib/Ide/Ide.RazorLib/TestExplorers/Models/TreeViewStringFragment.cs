@@ -2,10 +2,9 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Displays;
-using Luthetus.Ide.RazorLib.TestExplorers.Models;
+using Luthetus.Ide.RazorLib.TreeViewUtils.Displays;
 
-namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
+namespace Luthetus.Ide.RazorLib.TestExplorers.Models;
 
 public class TreeViewStringFragment : TreeViewWithType<StringFragment>
 {

@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
-namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
+namespace Luthetus.Ide.RazorLib.TreeViewUtils.Models;
 
 public class TreeViewReflectionWithView : TreeViewReflection
 {

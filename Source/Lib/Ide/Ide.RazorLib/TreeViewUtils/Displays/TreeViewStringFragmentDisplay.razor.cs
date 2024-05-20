@@ -3,9 +3,9 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
+using Luthetus.Ide.RazorLib.TestExplorers.Models;
 
-namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Displays;
+namespace Luthetus.Ide.RazorLib.TreeViewUtils.Displays;
 
 public partial class TreeViewStringFragmentDisplay : FluxorComponent
 {

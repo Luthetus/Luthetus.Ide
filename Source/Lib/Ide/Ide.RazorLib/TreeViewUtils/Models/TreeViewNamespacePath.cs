@@ -9,7 +9,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.CSharpProjects.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 
-namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
+namespace Luthetus.Ide.RazorLib.TreeViewUtils.Models;
 
 public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
 {

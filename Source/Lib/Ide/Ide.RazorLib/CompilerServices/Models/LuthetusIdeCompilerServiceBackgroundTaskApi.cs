@@ -7,7 +7,7 @@ using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.States;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
+using Luthetus.Ide.RazorLib.TreeViewUtils.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.CompilerServices.Models;

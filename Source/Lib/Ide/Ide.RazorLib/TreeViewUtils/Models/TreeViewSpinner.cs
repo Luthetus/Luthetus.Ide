@@ -1,8 +1,8 @@
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Displays;
+using Luthetus.Ide.RazorLib.TreeViewUtils.Displays;
 
-namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
+namespace Luthetus.Ide.RazorLib.TreeViewUtils.Models;
 
 public class TreeViewSpinner : TreeViewWithType<Guid>
 {

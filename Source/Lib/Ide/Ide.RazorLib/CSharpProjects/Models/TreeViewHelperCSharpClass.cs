@@ -1,5 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
+using Luthetus.Ide.RazorLib.TreeViewUtils.Models;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjects.Models;
 

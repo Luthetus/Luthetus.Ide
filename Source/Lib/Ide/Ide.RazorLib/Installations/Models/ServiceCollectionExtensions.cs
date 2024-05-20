@@ -3,7 +3,6 @@ using Fluxor;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Displays;
 using Luthetus.Ide.RazorLib.Nugets.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Nugets.Displays;
@@ -23,6 +22,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.Displays;
+using Luthetus.Ide.RazorLib.TreeViewUtils.Displays;
 
 namespace Luthetus.Ide.RazorLib.Installations.Models;
 
