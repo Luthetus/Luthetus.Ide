@@ -48,6 +48,30 @@ public class GitCliOutputParser : IOutputParser
         _stageKind = StageKind.None;
 		_repo = _gitStateWrap.Value.Repo;
 
+        // Reset data
+        switch (terminalCommand.FormattedCommand.Tag)
+        {
+			case TagConstants.StatusEnqueue:
+				UntrackedGitFileList.Clear();
+				StagedGitFileList.Clear();
+				UnstagedGitFileList.Clear();
+				_behindByCommitCount = null;
+				_aheadByCommitCount = null;
+				break;
+			case TagConstants.GetActiveBranchNameEnqueue:
+                _branch = null;
+                break;
+			case TagConstants.GetOriginNameEnqueue:
+                _origin = null;
+                break;
+			case TagConstants.BranchGetAllEnqueue:
+                _branchList = new();
+                break;
+            case TagConstants.LogFileEnqueue:
+                _logFileContentBuilder = null;
+				break;
+		}
+
 		return Task.CompletedTask;
 	}
 

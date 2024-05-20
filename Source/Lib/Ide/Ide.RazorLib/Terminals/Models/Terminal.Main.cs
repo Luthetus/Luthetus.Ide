@@ -163,6 +163,15 @@ public partial class Terminal
 			if (terminalCommand.BeginWith is not null)
 				await terminalCommand.BeginWith.Invoke().ConfigureAwait(false);
 
+
+			// It is important to invoke 'OnAfterCommandStarted' after 'terminalCommand.BeginWith'
+			if (terminalCommand.OutputParser is not null)
+			{
+				await terminalCommand.OutputParser
+					.OnAfterCommandStarted(terminalCommand)
+					.ConfigureAwait(false);
+			}
+
 			var terminalCommandBoundary = new TerminalCommandBoundary();
 			var outputOffset = 0;
 
