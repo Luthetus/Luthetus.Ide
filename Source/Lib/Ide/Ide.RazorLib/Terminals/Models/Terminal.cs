@@ -18,8 +18,7 @@ using System.Collections.Immutable;
 using System.Reactive.Linq;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Ide.RazorLib.Events.Models;
-// This file has 28,000 characters in it. Optimization of the text editor is still in progress
-// so this will type out slower.
+
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public class Terminal
@@ -31,15 +30,8 @@ public class Terminal
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
 
-	// Okay, the dictionary that maps a terminal command key to output is here.
     private readonly Dictionary<Key<TerminalCommand>, TextEditorTextSpan> _terminalCommandTextSpanMap = new();
-
-	// And, to get the text editor view model key, one uses this.
     private readonly Dictionary<Key<TerminalCommand>, Key<TextEditorViewModel>> _terminalCommandViewModelKeyMap = new();
-
-	// I'm going to use a 'lock' in order to help with the thread safety.
-	// I say this because on windows the text editor renders, yet on this ubuntu machine
-	// the editor isn't rendering. This seems like some thread trickery is afoot.
 	private readonly object _terminalCommandMapLock = new();
 
 	public static async Task<Terminal> Factory(
@@ -310,7 +302,6 @@ public class Terminal
 
 		lock (_terminalCommandMapLock)
 		{
-			// Where is this being .Add()'d
 			var success = _terminalCommandViewModelKeyMap.TryGetValue(
 				terminalCommandKey,
 				out textEditorViewModelKey);
@@ -323,17 +314,6 @@ public class Terminal
 			}
 		}
 
-		// I'm anxious about invoking fire and forget tasks from within a lock.
-		// I don't know if doing so is safe. Hence the boolean.
-		//
-		// I removed the 'async' keyword since I don't mind just returning the task.
-		// Doing this will lose stack trace information, but will be a small optimization,
-		// because the async state machine doesn't need to be created here.
-		// (uhhh I think this to be true I don't know for certain.)
-		// This line of code is faulty because if this task fails,
-		// then never will there be a text editor for the output, it only has one opportunity.
-		//
-		// I never even used the boolean I made earlier????
 		if (needsToInitializeTheTextEditor)
 		{
 			_ = Task.Run(() => CreateTextEditorForCommandOutput(
@@ -364,8 +344,6 @@ public class Terminal
 		if (!success)
 			textSpan = TextEditorTextSpan.FabricateTextSpan(string.Empty);
 
-		// Seemingly the partition is having its line ending meta data get corrupted
-		// when I do a text-editor-action that adds or removes more than 1 character
         var commandOutputResourceUri = new ResourceUri("terminalCommand" + '_' + terminalCommandKey);
 
 		var model = new TextEditorModel(

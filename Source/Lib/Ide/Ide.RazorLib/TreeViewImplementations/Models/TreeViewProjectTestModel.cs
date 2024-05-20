@@ -9,17 +9,6 @@ namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 
 public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 {
-	// This type contains a
-	// -C# project 'ProjectTestModel',
-	// -A list of Blazor components,
-	// -isExpandable,
-	// -isExpanded,
-
-// Im such a fool this is the TreeView wrapper for the 'ProjectTestModel'.
-// Therefore, 'this.Item.GetType() == typeof(ProjectTestModel)'
-//
-// Okay so what is on a 'ProjectTestModel'?
-	//
     public TreeViewProjectTestModel(
             ProjectTestModel projectTestModel,
 			ILuthetusCommonComponentRenderers commonComponentRenderers,

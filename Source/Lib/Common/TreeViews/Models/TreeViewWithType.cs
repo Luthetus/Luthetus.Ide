@@ -7,14 +7,6 @@ namespace Luthetus.Common.RazorLib.TreeViews.Models;
 /// </summary>
 public abstract class TreeViewWithType<T> : TreeViewNoType where T : notnull
 {
-	/*
-		Okay, here is TreeViewWithType<T>, which inherits the untyped version.
-		As I said, we can look at the 'Item' on this node.
-		
-		See the constructor below, it accepts 'T item' and then sets the property
-		'T Item'.
-	*/
-
     public TreeViewWithType(T item, bool isExpandable, bool isExpanded)
     {
         Item = item;

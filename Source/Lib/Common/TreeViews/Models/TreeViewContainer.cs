@@ -18,18 +18,7 @@ public record TreeViewContainer
         TreeViewNoType? rootNode,
         ImmutableList<TreeViewNoType> selectedNodeList)
     {
-		/*
-			Here in the constructor we can see that there is a list that contains all the selected nodes.
-			
-			If there is more than 1 selected nodes, perhaps we'd combine the outputs, but for now
-			    we can just render the text '> 1 nodes are selected'.
-
-			If there is just 1 node, we can look at the Item on the treeview node.
-			I say this with prior knowledge of what the treeview node class looks like,
-			so I should bring up that class.
-		*/
-
-        rootNode ??= TreeViewAdhoc.ConstructTreeViewAdhoc();
+		rootNode ??= TreeViewAdhoc.ConstructTreeViewAdhoc();
 
         Key = key;
         RootNode = rootNode;
