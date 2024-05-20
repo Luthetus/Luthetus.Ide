@@ -13,7 +13,7 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.TestExplorers.Models;
 using System.Text;
 
-namespace Luthetus.Ide.RazorLib.TestExplorers.Displays;
+namespace Luthetus.Ide.RazorLib.TestExplorers.Displays.Internals;
 
 public partial class TestExplorerContextMenu : ComponentBase
 {

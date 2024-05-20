@@ -8,7 +8,7 @@ using Luthetus.Ide.RazorLib.TestExplorers.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 
-namespace Luthetus.Ide.RazorLib.TestExplorers.Displays;
+namespace Luthetus.Ide.RazorLib.TestExplorers.Displays.Internals;
 
 public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 {

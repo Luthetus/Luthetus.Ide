@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Ide.RazorLib.TestExplorers.Models;
 
-namespace Luthetus.Ide.RazorLib.TestExplorers.Displays;
+namespace Luthetus.Ide.RazorLib.TestExplorers.Displays.Internals;
 
 public partial class TreeViewProjectTestModelDisplay : ComponentBase
 {

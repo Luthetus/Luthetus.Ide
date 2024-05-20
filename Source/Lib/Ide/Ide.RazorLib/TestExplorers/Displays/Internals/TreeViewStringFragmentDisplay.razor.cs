@@ -5,7 +5,7 @@ using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.TestExplorers.Models;
 
-namespace Luthetus.Ide.RazorLib.TestExplorers.Displays;
+namespace Luthetus.Ide.RazorLib.TestExplorers.Displays.Internals;
 
 public partial class TreeViewStringFragmentDisplay : FluxorComponent
 {

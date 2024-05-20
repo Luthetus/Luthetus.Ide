@@ -7,7 +7,7 @@ using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Ide.RazorLib.TestExplorers.Models;
 
-namespace Luthetus.Ide.RazorLib.TestExplorers.Displays;
+namespace Luthetus.Ide.RazorLib.TestExplorers.Displays.Internals;
 
 public partial class TestExplorerTreeViewDisplay : ComponentBase
 {
