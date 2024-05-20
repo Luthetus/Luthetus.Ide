@@ -12,7 +12,6 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.TestExplorers.Models;
 using System.Text;
-using Luthetus.Common.RazorLib.TreeViews.Models;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers.Displays.Internals;
 
@@ -24,6 +23,8 @@ public partial class TestExplorerContextMenu : ComponentBase
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+	[Inject]
+    private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
 
 	[CascadingParameter]
     public TestExplorerRenderBatchValidated RenderBatch { get; set; } = null!;
@@ -198,7 +199,8 @@ public partial class TestExplorerContextMenu : ComponentBase
         var dotNetTestByFullyQualifiedNameTerminalCommand = new TerminalCommand(
             treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey,
             dotNetTestByFullyQualifiedNameFormattedCommand,
-            directoryNameForTestDiscovery);
+            directoryNameForTestDiscovery,
+			OutputParser: DotNetCliOutputParser);
 
 		treeViewStringFragment.Item.TerminalCommand = dotNetTestByFullyQualifiedNameTerminalCommand;
 

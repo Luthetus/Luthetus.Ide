@@ -101,63 +101,49 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
                     localFormattedCommand,
                     treeViewProjectTestModel.Item.DirectoryNameForTestDiscovery,
                     CancellationToken.None,
-                    async () =>
+                    OutputParser: _dotNetCliOutputParser,
+					ContinueWith: async () =>
                     {
-						await _textEditorService.PostSimpleBatch(
-	                        "LoadTestExplorer",
-							"LoadTestExplorer",
-	                        async editContext =>
-							{
-								try
-		                        {
-		                            treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput =
-		                                _dotNetCliOutputParser.TheFollowingTestsAreAvailableList ?? new();
-		
-		                            // THINKING_ABOUT_TREE_VIEW();
-		                            {
-		                                var splitOutputList = treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput
-		                                    .Select(x => x.Split('.'));
-		
-		                                var rootMap = new Dictionary<string, StringFragment>();
-		
-		                                foreach (var splitOutput in splitOutputList)
-		                                {
-		                                    var targetMap = rootMap;
-		                                    var lastSeenStringFragment = (StringFragment?)null;
-		
-		                                    foreach (var fragment in splitOutput)
-		                                    {
-		                                        if (!targetMap.ContainsKey(fragment))
-		                                            targetMap.Add(fragment, new(fragment));
-		
-		                                        lastSeenStringFragment = targetMap[fragment];
-		                                        targetMap = lastSeenStringFragment.Map;
-		                                    }
-		
-		                                    if (lastSeenStringFragment is not null)
-		                                        lastSeenStringFragment.IsEndpoint = true;
-		                                }
-		
-		                                treeViewProjectTestModel.Item.RootStringFragmentMap = rootMap;
-		                                await callback.Invoke(rootMap).ConfigureAwait(false);
-		                            }
-		                        }
-								catch (Exception)
-		                        {
-		                            await callback.Invoke(new()).ConfigureAwait(false);
-		                            throw;
-		                        }
-							});
-                    },
-                    () =>
-                    {
-                        // Should the 'ClearStandardOut(...)' logic still be here? (2024-04-28)
-                        //
-                        //executionTerminal.ClearStandardOut(
-                        //    treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey);
+						try
+						{
+							treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput =
+								_dotNetCliOutputParser.TheFollowingTestsAreAvailableList ?? new();
 
-                        return Task.CompletedTask;
-                    });
+							// THINKING_ABOUT_TREE_VIEW();
+							{
+								var splitOutputList = treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput
+									.Select(x => x.Split('.'));
+
+								var rootMap = new Dictionary<string, StringFragment>();
+
+								foreach (var splitOutput in splitOutputList)
+								{
+									var targetMap = rootMap;
+									var lastSeenStringFragment = (StringFragment?)null;
+
+									foreach (var fragment in splitOutput)
+									{
+										if (!targetMap.ContainsKey(fragment))
+											targetMap.Add(fragment, new(fragment));
+
+										lastSeenStringFragment = targetMap[fragment];
+										targetMap = lastSeenStringFragment.Map;
+									}
+
+									if (lastSeenStringFragment is not null)
+										lastSeenStringFragment.IsEndpoint = true;
+								}
+
+								treeViewProjectTestModel.Item.RootStringFragmentMap = rootMap;
+								await callback.Invoke(rootMap).ConfigureAwait(false);
+							}
+						}
+						catch (Exception)
+						{
+							await callback.Invoke(new()).ConfigureAwait(false);
+							throw;
+						}
+					});
 
                 treeViewProjectTestModel.Item.TerminalCommand = dotNetTestListTestsCommand;
 
