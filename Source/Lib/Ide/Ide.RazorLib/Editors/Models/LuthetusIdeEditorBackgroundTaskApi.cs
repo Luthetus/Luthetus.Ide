@@ -66,7 +66,9 @@ public class LuthetusIdeEditorBackgroundTaskApi
         bool shouldSetFocusToEditor,
         Key<TextEditorGroup>? editorTextEditorGroupKey = null)
     {
-        return _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return _backgroundTaskService.EnqueueAsync(
+            Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
             "OpenInEditor",
             async () => await OpenInEditorAsync(
                 absolutePath,
@@ -76,7 +78,8 @@ public class LuthetusIdeEditorBackgroundTaskApi
 
     public Task ShowInputFile()
     {
-        return _ideBackgroundTaskApi.InputFile.RequestInputFileStateForm("TextEditor",
+        return _ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+            "TextEditor",
             absolutePath =>
             {
                 return OpenInEditor(absolutePath, true);

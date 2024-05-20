@@ -78,7 +78,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     private async Task RequestInputFileForParentDirectory(string message)
     {
-        await IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm(message,
+        await IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+                message,
                 async absolutePath =>
                 {
                     if (absolutePath is null)

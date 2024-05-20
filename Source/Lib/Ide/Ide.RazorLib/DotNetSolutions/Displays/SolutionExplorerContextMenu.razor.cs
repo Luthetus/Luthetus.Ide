@@ -473,7 +473,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
     private Task AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
     {
-        return IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm("Existing C# Project to add to solution",
+        return IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+            "Existing C# Project to add to solution",
             async absolutePath =>
             {
                 if (absolutePath is null)

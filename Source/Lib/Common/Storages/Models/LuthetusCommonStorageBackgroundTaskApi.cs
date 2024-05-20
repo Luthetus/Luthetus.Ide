@@ -18,7 +18,9 @@ public class LuthetusCommonStorageBackgroundTaskApi
 
     public Task WriteToLocalStorage(string key, object value)
     {
-        return _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return _backgroundTaskService.EnqueueAsync(
+            Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
             "WriteToStorage",
             async () =>
             {

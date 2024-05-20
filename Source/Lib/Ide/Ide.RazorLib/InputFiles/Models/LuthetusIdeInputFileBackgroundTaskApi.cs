@@ -37,7 +37,9 @@ public class LuthetusIdeInputFileBackgroundTaskApi
         Func<IAbsolutePath?, Task<bool>> selectionIsValidFunc,
         ImmutableArray<InputFilePattern> inputFilePatterns)
     {
-        return _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return _backgroundTaskService.EnqueueAsync(
+            Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Request InputFileState Form",
             async () => await HandleRequestInputFileStateFormActionAsync(
                     message,

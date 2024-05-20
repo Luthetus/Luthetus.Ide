@@ -109,7 +109,9 @@ public class Terminal
     {
         var queueKey = BlockingBackgroundTaskWorker.GetQueueKey();
 
-        return _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), queueKey,
+        return _backgroundTaskService.EnqueueAsync(
+            Key<BackgroundTask>.NewKey(),
+            queueKey,
             "Enqueue Command",
             async () =>
             {

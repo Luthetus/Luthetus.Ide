@@ -48,7 +48,9 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
 
     public Task DotNetSolutionStateWrap_StateChanged()
     {
-        return _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return _backgroundTaskService.EnqueueAsync(
+            Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Refresh TestExplorer",
             async () => await DotNetSolutionStateWrap_StateChangedAsync().ConfigureAwait(false));
     }

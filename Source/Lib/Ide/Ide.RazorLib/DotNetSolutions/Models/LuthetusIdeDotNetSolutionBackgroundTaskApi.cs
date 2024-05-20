@@ -197,7 +197,9 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 
     public Task SetDotNetSolution(IAbsolutePath inSolutionAbsolutePath)
     {
-        return _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return _backgroundTaskService.EnqueueAsync(
+            Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Set .NET Solution",
             async () => await SetDotNetSolutionAsync(inSolutionAbsolutePath).ConfigureAwait(false));
     }
