@@ -16,7 +16,7 @@ public partial class StartupControlsDisplay : FluxorComponent
     [Inject]
     private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
     [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
+    private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
 
     private readonly Key<TerminalCommand> _newDotNetSolutionTerminalCommandKey = Key<TerminalCommand>.NewKey();
     private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
@@ -41,7 +41,7 @@ public partial class StartupControlsDisplay : FluxorComponent
             formattedCommand,
             ancestorDirectory.Value,
             _newDotNetSolutionCancellationTokenSource.Token,
-            OutputParser: new DotNetRunOutputParser());
+            OutputParser: DotNetCliOutputParser);
     }
 
     private async Task StartProgramWithoutDebuggingOnClick()

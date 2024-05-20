@@ -15,91 +15,92 @@ namespace Luthetus.Ide.RazorLib.Gits.Models;
 public class GitCliOutputParser : IOutputParser
 {
     private readonly IDispatcher _dispatcher;
-    private readonly GitState _gitState;
     private readonly IEnvironmentProvider _environmentProvider;
-    private readonly GitCommandKind _gitCommandKind;
+    private readonly IState<GitState> _gitStateWrap;
 
     public GitCliOutputParser(
         IDispatcher dispatcher,
-        GitState gitState,
-        IEnvironmentProvider environmentProvider,
-		GitCommandKind gitCommandKind,
-        StageKind stageKind = StageKind.None)
+        IState<GitState> gitStateWrap,
+        IEnvironmentProvider environmentProvider)
     {
         _dispatcher = dispatcher;
-        _gitState = gitState;
+		_gitStateWrap = gitStateWrap;
         _environmentProvider = environmentProvider;
-        _gitCommandKind = gitCommandKind;
-        _stageKind = stageKind;
     }
 
     private StageKind _stageKind = StageKind.None;
-    private string? _origin;
+	private string? _origin;
     private string? _branch;
     private List<string> _branchList = new();
     private int _count;
     private int? _behindByCommitCount;
     private int? _aheadByCommitCount;
     private StringBuilder? _logFileContentBuilder;
+	private GitRepo? _repo;
 
-    public List<GitFile> UntrackedGitFileList { get; } = new();
+	public List<GitFile> UntrackedGitFileList { get; } = new();
     public List<GitFile> StagedGitFileList { get; } = new();
     public List<GitFile> UnstagedGitFileList { get; } = new();
     public string? LogFileContent { get; private set; }
 
 	public Task OnAfterCommandStarted(TerminalCommand terminalCommand)
 	{
+        _stageKind = StageKind.None;
+		_repo = _gitStateWrap.Value.Repo;
+
 		return Task.CompletedTask;
 	}
 
-	public List<TextEditorTextSpan> OnAfterOutputLine(TerminalCommand terminalCommand, string output)
+	public List<TextEditorTextSpan> OnAfterOutputLine(TerminalCommand terminalCommand, string outputLine)
     {
-        if (_gitState.Repo is null)
+        var localRepo = _repo;
+		if (localRepo is null)
             return new();
 
-        return _gitCommandKind switch
+        return terminalCommand.FormattedCommand.Tag switch
         {
-            GitCommandKind.Status => StatusParseLine(output),
-            GitCommandKind.GetOrigin => GetOriginParseLine(output),
-            GitCommandKind.GetBranch => GetBranchParseLine(output),
-            GitCommandKind.GetBranchList => GetBranchListLine(output),
-            GitCommandKind.LogFile => LogFileParseLine(output),
+			TagConstants.StatusEnqueue => StatusParseLine(outputLine),
+			TagConstants.GetActiveBranchNameEnqueue => GetBranchParseLine(outputLine),
+			TagConstants.GetOriginNameEnqueue => GetOriginParseLine(outputLine),
+			TagConstants.BranchGetAllEnqueue => GetBranchListLine(outputLine),
+			TagConstants.LogFileEnqueue => LogFileParseLine(outputLine),
             _ => new(),
         };
     }
 
 	public Task OnAfterCommandFinished(TerminalCommand terminalCommand)
 	{
-		if (_gitState.Repo is null)
+		var localRepo = _repo;
+		if (localRepo is null)
 			return Task.CompletedTask;
 
-		switch (_gitCommandKind)
+		switch (terminalCommand.FormattedCommand.Tag)
 		{
-			case GitCommandKind.GetOrigin when _origin is not null:
+			case TagConstants.GetOriginNameEnqueue when _origin is not null:
 				_dispatcher.Dispatch(new GitState.SetOriginAction(
-					_gitState.Repo,
+					localRepo,
 					_origin));
 				break;
-			case GitCommandKind.GetBranch when _branch is not null:
+			case TagConstants.GetActiveBranchNameEnqueue when _branch is not null:
 				_dispatcher.Dispatch(new GitState.SetBranchAction(
-					_gitState.Repo,
+					localRepo,
 					_branch));
 				break;
-			case GitCommandKind.GetBranchList:
+			case TagConstants.BranchGetAllEnqueue:
 				_dispatcher.Dispatch(new GitState.SetBranchListAction(
-					_gitState.Repo,
+					localRepo,
 					_branchList));
 				break;
-			case GitCommandKind.Status:
+			case TagConstants.StatusEnqueue:
 				_dispatcher.Dispatch(new GitState.SetStatusAction(
-					_gitState.Repo,
+					localRepo,
 					UntrackedGitFileList.ToImmutableList(),
 					StagedGitFileList.ToImmutableList(),
 					UnstagedGitFileList.ToImmutableList(),
 					_behindByCommitCount ?? 0,
 					_aheadByCommitCount ?? 0));
 				break;
-			case GitCommandKind.LogFile:
+			case TagConstants.LogFileEnqueue:
 				if (_logFileContentBuilder is not null)
 					LogFileContent = _logFileContentBuilder.ToString();
 				break;
@@ -110,7 +111,11 @@ public class GitCliOutputParser : IOutputParser
 
 	public List<TextEditorTextSpan> StatusParseLine(string output)
     {
-        var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
+		var localRepo = _repo;
+        if (localRepo is null)
+            return new();
+
+		var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
         var textSpanList = new List<TextEditorTextSpan>();
 
         while (!stringWalker.IsEof)
@@ -350,7 +355,7 @@ public class GitCliOutputParser : IOutputParser
                             var relativePathString = textSpan.GetText();
 
                             var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
-                                _gitState.Repo.AbsolutePath,
+								localRepo.AbsolutePath,
                                 relativePathString,
                                 _environmentProvider);
 
@@ -393,7 +398,7 @@ public class GitCliOutputParser : IOutputParser
 
     public List<TextEditorTextSpan> LogFileParseLine(string output)
     {
-        /*
+		/*
          git log ...redacted
          commit ...redacted
          Author: ...redacted
@@ -417,14 +422,18 @@ public class GitCliOutputParser : IOutputParser
          Process exited; Code: 0
          */
 
-        // The output has every line from the file to start with a single '+' character.
-        //
-        // For brevity much of the file's contents were left out.
-        //
-        // But, the pattern can be seen that the file is written out as contiguous
-        // lines, where each starts with a '+' character.
+		// The output has every line from the file to start with a single '+' character.
+		//
+		// For brevity much of the file's contents were left out.
+		//
+		// But, the pattern can be seen that the file is written out as contiguous
+		// lines, where each starts with a '+' character.
 
-        var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
+		var localRepo = _repo;
+        if (localRepo is null)
+            return new();
+
+		var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
         var textSpanList = new List<TextEditorTextSpan>();
         _logFileContentBuilder ??= new();
 
@@ -456,8 +465,12 @@ public class GitCliOutputParser : IOutputParser
     
     public List<TextEditorTextSpan> GetOriginParseLine(string output)
     {
-        // TODO: Parsing origin line is super hacky, and should be re-written.
-        if (_count++ == 1)
+		var localRepo = _repo;
+        if (localRepo is null)
+            return new();
+
+		// TODO: Parsing origin line is super hacky, and should be re-written.
+		if (_count++ == 1)
             _origin ??= output;
 
         var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
@@ -473,8 +486,12 @@ public class GitCliOutputParser : IOutputParser
     
     public List<TextEditorTextSpan> GetBranchParseLine(string output)
     {
-        // TODO: Parsing branch line is super hacky, and should be re-written.
-        if (_count++ == 1)
+		var localRepo = _repo;
+		if (localRepo is null)
+			return new();
+
+		// TODO: Parsing branch line is super hacky, and should be re-written.
+		if (_count++ == 1)
             _branch ??= output.Trim();
 
         var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
@@ -489,8 +506,12 @@ public class GitCliOutputParser : IOutputParser
     }
     
     public List<TextEditorTextSpan> GetBranchListLine(string output)
-    {
-        var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
+	{
+		var localRepo = _repo;
+		if (localRepo is null)
+			return new();
+
+		var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
         var textSpanList = new List<TextEditorTextSpan>();
 
         // "* Abc"    <-- Line 1 with quotes added to show where it starts and ends
@@ -532,22 +553,6 @@ public class GitCliOutputParser : IOutputParser
     }
 
     /// <summary>
-    /// Macro-filter
-    /// </summary>
-	public enum GitCommandKind
-    {
-        None,
-        Status,
-        GetOrigin,
-        GetBranch,
-        GetBranchList,
-        PushToOriginWithTracking,
-        Pull,
-        Fetch,
-        LogFile,
-    }
-
-    /// <summary>
     /// Micro-filter
     /// </summary>
     public enum StageKind
@@ -557,4 +562,18 @@ public class GitCliOutputParser : IOutputParser
         IsReadingUnstagedFiles,
         IsReadingStagedFiles,
     }
+
+	public static class TagConstants
+	{
+		public const string SetGitOrigin = "SetGitOrigin";
+		public const string StatusEnqueue = "StatusEnqueue";
+		public const string GetActiveBranchNameEnqueue = "GetActiveBranchNameEnqueue";
+		public const string GetOriginNameEnqueue = "GetOriginNameEnqueue";
+		public const string BranchGetAllEnqueue = "BranchGetAllEnqueue";
+		public const string BranchSetEnqueue = "BranchSetEnqueue";
+		public const string PushToOriginWithTrackingEnqueue = "PushToOriginWithTrackingEnqueue";
+		public const string PullEnqueue = "PullEnqueue";
+		public const string FetchEnqueue = "FetchEnqueue";
+		public const string LogFileEnqueue = "LogFileEnqueue";
+	}
 }

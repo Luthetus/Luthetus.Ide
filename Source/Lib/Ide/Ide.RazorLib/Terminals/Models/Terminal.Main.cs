@@ -197,13 +197,18 @@ public partial class Terminal
 						var outputTextSpanList = new List<TextEditorTextSpan>();
 
 						if (terminalCommand.OutputParser is not null)
-							outputTextSpanList = terminalCommand.OutputParser.OnAfterOutputLine(output);
+						{
+							outputTextSpanList = terminalCommand.OutputParser.OnAfterOutputLine(
+								terminalCommand,
+								output);
+						}
 
 						await TerminalOnOutput(
-							outputOffset,
-							output,
-							outputTextSpanList,
-							terminalCommandBoundary);
+								outputOffset,
+								output,
+								outputTextSpanList,
+								terminalCommandBoundary)
+							.ConfigureAwait(false);
 
 						outputOffset += output.Length;
 					}
@@ -212,9 +217,13 @@ public partial class Terminal
 				}).ConfigureAwait(false);
 
 			if (!_terminalCommandTextSpanMap.ContainsKey(terminalCommandKey))
-				await AddTerminalCommandTextSpanMap(terminalCommandKey, terminalCommandBoundary);
+			{
+				await AddTerminalCommandTextSpanMap(terminalCommandKey, terminalCommandBoundary)
+					.ConfigureAwait(false);
+			}
 
-			await SetTerminalCommandContent(terminalCommandKey, terminalCommandBoundary);
+			await SetTerminalCommandContent(terminalCommandKey, terminalCommandBoundary)
+				.ConfigureAwait(false);
 		}
 		catch (Exception e)
 		{
@@ -223,15 +232,23 @@ public partial class Terminal
 		finally
 		{
 			HasExecutingProcess = false;
-			await WriteWorkingDirectory();
+			await WriteWorkingDirectory().ConfigureAwait(false);
 			DispatchNewStateKey();
 
 			// It is important to invoke 'OnAfterCommandFinished' prior to 'terminalCommand.ContinueWith'
 			if (terminalCommand.OutputParser is not null)
-				await terminalCommand.OutputParser.OnAfterCommandFinished();
+			{
+				await terminalCommand.OutputParser
+					.OnAfterCommandFinished(terminalCommand)
+					.ConfigureAwait(false);
+			}
 
 			if (terminalCommand.ContinueWith is not null)
-				await terminalCommand.ContinueWith.Invoke().ConfigureAwait(false);
+			{
+				await terminalCommand.ContinueWith
+					.Invoke()
+					.ConfigureAwait(false);
+			}
 		}
 	}
 

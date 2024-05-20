@@ -18,7 +18,8 @@ public class LuthetusIdeGitBackgroundTaskApi
     private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IState<TerminalState> _terminalStateWrap;
     private readonly IState<GitState> _gitStateWrap;
-    private readonly IEnvironmentProvider _environmentProvider;
+	private readonly GitCliOutputParser _gitCliOutputParser;
+	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
     private readonly IDispatcher _dispatcher;
@@ -27,7 +28,8 @@ public class LuthetusIdeGitBackgroundTaskApi
 		LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
         IState<TerminalState> terminalStateWrap,
         IState<GitState> gitStateWrap,
-        IEnvironmentProvider environmentProvider,
+		GitCliOutputParser gitCliOutputParser,
+		IEnvironmentProvider environmentProvider,
 		IBackgroundTaskService backgroundTaskService,
         ILuthetusCommonComponentRenderers commonComponentRenderers,
         IDispatcher dispatcher)
@@ -35,6 +37,7 @@ public class LuthetusIdeGitBackgroundTaskApi
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
         _terminalStateWrap = terminalStateWrap;
 		_gitStateWrap = gitStateWrap;
+		_gitCliOutputParser = gitCliOutputParser;
 		_environmentProvider = environmentProvider;
 		_backgroundTaskService = backgroundTaskService;
         _commonComponentRenderers = commonComponentRenderers;
@@ -61,20 +64,15 @@ public class LuthetusIdeGitBackgroundTaskApi
                     GitCliFacts.TARGET_FILE_NAME,
                     new string[] { gitStatusDashUCommand })
                 {
-                    HACK_ArgumentsString = gitStatusDashUCommand
-                };
-
-                var gitCliOutputParser = new GitCliOutputParser(
-                    _dispatcher,
-                    localGitState,
-                    _environmentProvider,
-                    GitCliOutputParser.GitCommandKind.Status);
+                    HACK_ArgumentsString = gitStatusDashUCommand,
+                    Tag = GitCliOutputParser.TagConstants.StatusEnqueue,
+				};
 
                 var terminalCommand = new TerminalCommand(
                     GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: gitCliOutputParser);
+                    OutputParser: _gitCliOutputParser);
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 await generalTerminal
@@ -109,20 +107,15 @@ public class LuthetusIdeGitBackgroundTaskApi
                     GitCliFacts.TARGET_FILE_NAME,
                     new string[] { terminalCommandArgs })
                 {
-                    HACK_ArgumentsString = terminalCommandArgs
-                };
-
-                var gitCliOutputParser = new GitCliOutputParser(
-                    _dispatcher,
-                    localGitState,
-                    _environmentProvider,
-                    GitCliOutputParser.GitCommandKind.GetBranch);
+                    HACK_ArgumentsString = terminalCommandArgs,
+                    Tag = GitCliOutputParser.TagConstants.GetActiveBranchNameEnqueue
+				};
 
                 var terminalCommand = new TerminalCommand(
                     GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: gitCliOutputParser);
+                    OutputParser: _gitCliOutputParser);
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 await generalTerminal
@@ -149,20 +142,15 @@ public class LuthetusIdeGitBackgroundTaskApi
                     GitCliFacts.TARGET_FILE_NAME,
                     new string[] { terminalCommandArgs })
                 {
-                    HACK_ArgumentsString = terminalCommandArgs
-                };
-
-                var gitCliOutputParser = new GitCliOutputParser(
-                    _dispatcher,
-                    localGitState,
-                    _environmentProvider,
-                    GitCliOutputParser.GitCommandKind.GetOrigin);
+                    HACK_ArgumentsString = terminalCommandArgs,
+                    Tag = GitCliOutputParser.TagConstants.GetOriginNameEnqueue,
+				};
 
                 var terminalCommand = new TerminalCommand(
                     GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: gitCliOutputParser);
+                    OutputParser: _gitCliOutputParser);
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 await generalTerminal
@@ -391,20 +379,15 @@ public class LuthetusIdeGitBackgroundTaskApi
                     GitCliFacts.TARGET_FILE_NAME,
                     new string[] { argumentsString })
                 {
-                    HACK_ArgumentsString = argumentsString
-                };
-
-                var gitCliOutputParser = new GitCliOutputParser(
-                    _dispatcher,
-                    localGitState,
-                    _environmentProvider,
-                    GitCliOutputParser.GitCommandKind.GetBranchList);
+                    HACK_ArgumentsString = argumentsString,
+                    Tag = GitCliOutputParser.TagConstants.BranchGetAllEnqueue,
+				};
 
                 var terminalCommand = new TerminalCommand(
                     GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: gitCliOutputParser);
+                    OutputParser: _gitCliOutputParser);
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 await generalTerminal
@@ -432,20 +415,15 @@ public class LuthetusIdeGitBackgroundTaskApi
                     GitCliFacts.TARGET_FILE_NAME,
                     new string[] { argumentsString })
                 {
-                    HACK_ArgumentsString = argumentsString
-                };
-
-                var gitCliOutputParser = new GitCliOutputParser(
-                    _dispatcher,
-                    localGitState,
-                    _environmentProvider,
-                    GitCliOutputParser.GitCommandKind.GetBranchList);
+                    HACK_ArgumentsString = argumentsString,
+                    Tag = GitCliOutputParser.TagConstants.BranchSetEnqueue,
+				};
 
                 var terminalCommand = new TerminalCommand(
                     GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: gitCliOutputParser,
+                    OutputParser: _gitCliOutputParser,
                     ContinueWith: () => RefreshEnqueue(repoAtTimeOfRequest));
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
@@ -476,20 +454,15 @@ public class LuthetusIdeGitBackgroundTaskApi
                     GitCliFacts.TARGET_FILE_NAME,
                     new string[] { argumentsString })
                 {
-                    HACK_ArgumentsString = argumentsString
-                };
-
-                var gitCliOutputParser = new GitCliOutputParser(
-                    _dispatcher,
-                    localGitState,
-                    _environmentProvider,
-                    GitCliOutputParser.GitCommandKind.PushToOriginWithTracking);
+                    HACK_ArgumentsString = argumentsString,
+                    Tag = GitCliOutputParser.TagConstants.PushToOriginWithTrackingEnqueue
+				};
 
                 var terminalCommand = new TerminalCommand(
                     GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: gitCliOutputParser,
+                    OutputParser: _gitCliOutputParser,
                     ContinueWith: () => RefreshEnqueue(repoAtTimeOfRequest));
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
@@ -518,20 +491,15 @@ public class LuthetusIdeGitBackgroundTaskApi
                     GitCliFacts.TARGET_FILE_NAME,
                     new string[] { argumentsString })
                 {
-                    HACK_ArgumentsString = argumentsString
-                };
-
-                var gitCliOutputParser = new GitCliOutputParser(
-                    _dispatcher,
-                    localGitState,
-                    _environmentProvider,
-                    GitCliOutputParser.GitCommandKind.Pull);
+                    HACK_ArgumentsString = argumentsString,
+                    Tag = GitCliOutputParser.TagConstants.PullEnqueue
+				};
 
                 var terminalCommand = new TerminalCommand(
                     GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: gitCliOutputParser,
+                    OutputParser: _gitCliOutputParser,
                     ContinueWith: () => RefreshEnqueue(repoAtTimeOfRequest));
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
@@ -560,20 +528,15 @@ public class LuthetusIdeGitBackgroundTaskApi
                     GitCliFacts.TARGET_FILE_NAME,
                     new string[] { argumentsString })
                 {
-                    HACK_ArgumentsString = argumentsString
-                };
-
-                var gitCliOutputParser = new GitCliOutputParser(
-                    _dispatcher,
-                    localGitState,
-                    _environmentProvider,
-                    GitCliOutputParser.GitCommandKind.Fetch);
+                    HACK_ArgumentsString = argumentsString,
+                    Tag = GitCliOutputParser.TagConstants.FetchEnqueue
+				};
 
                 var terminalCommand = new TerminalCommand(
                     GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: gitCliOutputParser,
+                    OutputParser: _gitCliOutputParser,
                     ContinueWith: () => RefreshEnqueue(repoAtTimeOfRequest));
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
@@ -604,24 +567,18 @@ public class LuthetusIdeGitBackgroundTaskApi
                     GitCliFacts.TARGET_FILE_NAME,
                     new string[] { terminalCommandArgs })
                 {
-                    HACK_ArgumentsString = terminalCommandArgs
-                };
-
-                var gitCliOutputParser = new GitCliOutputParser(
-                    _dispatcher,
-                    localGitState,
-                    _environmentProvider,
-                    GitCliOutputParser.GitCommandKind.LogFile);
+                    HACK_ArgumentsString = terminalCommandArgs,
+                    Tag = GitCliOutputParser.TagConstants.LogFileEnqueue
+				};
 
                 var terminalCommand = new TerminalCommand(
                     GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: gitCliOutputParser,
+                    OutputParser: _gitCliOutputParser,
                     ContinueWith: () =>
                     {
-                        gitCliOutputParser.Dispose();
-                        return callback.Invoke(gitCliOutputParser);
+                        return callback.Invoke(_gitCliOutputParser);
                     });
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];

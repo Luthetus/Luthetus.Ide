@@ -17,7 +17,7 @@ public interface IOutputParser
     /// At this point, one could then as a batch operation apply the syntax highlighting to all lines of the
     /// commands output.
     /// </summary>
-    public List<TextEditorTextSpan> OnAfterOutputLine(TerminalCommand terminalCommand, string output);
+    public List<TextEditorTextSpan> OnAfterOutputLine(TerminalCommand terminalCommand, string outputLine);
 
 	/// <summary>
 	/// This method will block the terminal from executing further commands until this method finishes.

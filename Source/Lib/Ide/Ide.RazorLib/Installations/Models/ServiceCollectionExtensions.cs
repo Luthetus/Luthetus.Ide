@@ -24,6 +24,8 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.Displays;
 using Luthetus.Ide.RazorLib.Namespaces.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
+using Luthetus.Ide.RazorLib.CommandLines.Models;
+using Luthetus.Ide.RazorLib.Gits.Models;
 
 namespace Luthetus.Ide.RazorLib.Installations.Models;
 
@@ -98,7 +100,9 @@ public static class ServiceCollectionExtensions
             .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistry>()
             .AddScoped<IMenuOptionsFactory, MenuOptionsFactory>()
             .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
-            .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>();
+            .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
+            .AddScoped<DotNetCliOutputParser>()
+			.AddScoped<GitCliOutputParser>();
 
         services.AddFluxor(options => options.ScanAssemblies(
             typeof(ServiceCollectionExtensions).Assembly,

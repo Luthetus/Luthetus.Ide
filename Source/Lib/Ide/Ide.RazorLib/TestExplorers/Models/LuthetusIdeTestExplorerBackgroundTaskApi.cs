@@ -22,7 +22,8 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
     private readonly ITreeViewService _treeViewService;
     private readonly ITextEditorService _textEditorService;
     private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
-    private readonly IState<TerminalState> _terminalStateWrap;
+	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
+	private readonly IState<TerminalState> _terminalStateWrap;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
 
@@ -33,6 +34,7 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
         ITextEditorService textEditorService,
         IBackgroundTaskService backgroundTaskService,
         IState<DotNetSolutionState> dotNetSolutionStateWrap,
+		DotNetCliOutputParser dotNetCliOutputParser,
         IState<TerminalState> terminalStateWrap,
         IDispatcher dispatcher)
     {
@@ -41,7 +43,8 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
         _treeViewService = treeViewService;
 		_textEditorService = textEditorService;
         _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
-        _terminalStateWrap = terminalStateWrap;
+		_dotNetCliOutputParser = dotNetCliOutputParser;
+		_terminalStateWrap = terminalStateWrap;
         _backgroundTaskService = backgroundTaskService;
         _dispatcher = dispatcher;
     }
@@ -116,7 +119,7 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
 		                                return;
 		
 		                            treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput =
-		                                DotNetCliOutputParser.ParseDotNetTestListTestsTerminalOutput(output);
+		                                _dotNetCliOutputParser.TheFollowingTestsAreAvailableList ?? new();
 		
 		                            // THINKING_ABOUT_TREE_VIEW();
 		                            {

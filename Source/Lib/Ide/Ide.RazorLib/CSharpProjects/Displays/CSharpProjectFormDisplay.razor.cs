@@ -45,6 +45,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
     private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    [Inject]
+    private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
 
     [CascadingParameter]
     public IDialog DialogRecord { get; set; } = null!;
@@ -140,7 +142,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                     var output = terminalCommandTextSpan?.GetText();
                     if (output is not null)
                     {
-                        _viewModel.ProjectTemplateList = DotNetCliOutputParser.ParseDotNetNewListTerminalOutput(output);
+                        _viewModel.ProjectTemplateList = DotNetCliOutputParser.ProjectTemplateList ?? new();
                         await InvokeAsync(StateHasChanged);
                     }
                     else
@@ -185,7 +187,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 					var output = terminalCommandTextSpan?.GetText();
                     if (output is not null)
                     {
-                        _viewModel.ProjectTemplateList = DotNetCliOutputParser.ParseDotNetNewListTerminalOutput(output);
+                        _viewModel.ProjectTemplateList = DotNetCliOutputParser.ProjectTemplateList ?? new();
                         await InvokeAsync(StateHasChanged);
                     }
                     else

@@ -23,6 +23,8 @@ public partial class GitOriginDisplay : ComponentBase
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
     private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    [Inject]
+    private GitCliOutputParser GitCliOutputParser { get; set; } = null!;
 
     private string _gitOrigin = string.Empty;
     
@@ -52,20 +54,15 @@ public partial class GitOriginDisplay : ComponentBase
             GitCliFacts.TARGET_FILE_NAME,
             new string[] { localCommandArgs })
         {
-            HACK_ArgumentsString = localCommandArgs
+            HACK_ArgumentsString = localCommandArgs,
+            Tag = GitCliOutputParser.TagConstants.SetGitOrigin,
         };
-
-        var gitCliOutputParser = new GitCliOutputParser(
-            Dispatcher,
-            localGitState,
-            EnvironmentProvider,
-            GitCliOutputParser.GitCommandKind.None);
 
         var gitStatusCommand = new TerminalCommand(
             GitSetOriginTerminalCommandKey,
             formattedCommand,
             localGitState.Repo.AbsolutePath.Value,
-            OutputParser: gitCliOutputParser);
+            OutputParser: GitCliOutputParser);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
         await generalTerminal
