@@ -8,23 +8,11 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
+using System.Text;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers.Displays.Internals;
 
-/// <summary>
-/// (2024-05-20)
-/// Currently this component is writen such that there is a TextEditorViewModel per
-/// unit test, in order to display the output of that test.<br/><br/>
-/// 
-/// But, would it be better to have 1 TextEditorViewModel that is dedicated
-/// to this component.<br/><br/>
-/// 
-/// Then everytime the active treeview selections change, the output of the
-/// nodes are joined together and then this component's TextEditorModel
-/// gets 'SetContent(joinedStrings)'.<br/><br/>
-/// 
-/// This then won't create such an absurd amount of TextEditorModels/ViewModels.
-/// </summary>
 public partial class TestExplorerDetailsDisplay : ComponentBase
 {
 	[Inject]
@@ -42,71 +30,98 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 
 	private string? _previousContent = string.Empty;
 
-	protected override Task OnParametersSetAsync()
+	protected override async Task OnParametersSetAsync()
 	{
 		var newContent = string.Empty;
 
 		if (RenderBatch.TreeViewContainer.SelectedNodeList.Count > 1)
 		{
-			newContent = "> 1 node is selected";
+			var newContentBuilder = new StringBuilder();
+
+			for (var i = 0; i < RenderBatch.TreeViewContainer.SelectedNodeList.Count; i++)
+			{
+				var node = RenderBatch.TreeViewContainer.SelectedNodeList[i];
+				newContentBuilder.Append(await GetNodeContent(node));
+
+				if (i != RenderBatch.TreeViewContainer.SelectedNodeList.Count - 1)
+				{
+					newContentBuilder.Append("\n\n");
+					newContentBuilder.Append("=========================");
+					newContentBuilder.Append("=========================");
+					newContentBuilder.Append("\n\n");
+				}
+			}
+
+			newContent = newContentBuilder.ToString();
 		}
 		else
 		{
-			var singularNode = RenderBatch.TreeViewContainer.SelectedNodeList.Single();
-
-			if (singularNode is TreeViewStringFragment treeViewStringFragment)
-			{
-				var terminalCommand = treeViewStringFragment.Item.TerminalCommand;
-
-				if (terminalCommand is not null)
-					newContent = terminalCommand.TextSpan?.GetText();
-				else
-					newContent = "terminalCommand was null";
-			}
-			else if (singularNode is TreeViewProjectTestModel treeViewProjectTestModel)
-			{
-				var terminalCommand = treeViewProjectTestModel.Item.TerminalCommand;
-
-				if (terminalCommand is not null)
-					newContent = terminalCommand.TextSpan?.GetText();
-				else
-					newContent = "terminalCommand was null";
-			}
-			else if (singularNode is not null)
-			{
-				newContent = singularNode.GetType().Name;
-			}
-			else
-			{
-				newContent = "singularNode was null";
-			}
-
-			if (newContent != _previousContent)
-			{
-				_previousContent = newContent;
-
-				TextEditorService.PostSimpleBatch(
-					nameof(TestExplorerDetailsDisplay),
-					nameof(TestExplorerDetailsDisplay),
-					editContext =>
-					{
-						var modelModifier = editContext.GetModelModifier(ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
-						var viewModelModifier = editContext.GetViewModelModifier(DetailsTextEditorViewModelKey);
-						var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-						var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-						if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-							return Task.CompletedTask;
-
-						modelModifier.SetContent(newContent ?? string.Empty);
-						primaryCursorModifier.LineIndex = 0;
-						primaryCursorModifier.SetColumnIndexAndPreferred(0);
-						return Task.CompletedTask;
-					});
-			}
+			newContent = await GetNodeContent(
+				RenderBatch.TreeViewContainer.SelectedNodeList.Single());
 		}
 
+		if (newContent != _previousContent)
+		{
+			_previousContent = newContent;
 
-		return base.OnParametersSetAsync();
+			await TextEditorService.PostSimpleBatch(
+				nameof(TestExplorerDetailsDisplay),
+				nameof(TestExplorerDetailsDisplay),
+				editContext =>
+				{
+					var modelModifier = editContext.GetModelModifier(ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
+					var viewModelModifier = editContext.GetViewModelModifier(DetailsTextEditorViewModelKey);
+					var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+					var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+					if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+						return Task.CompletedTask;
+
+					modelModifier.SetContent(newContent ?? string.Empty);
+					primaryCursorModifier.LineIndex = 0;
+					primaryCursorModifier.SetColumnIndexAndPreferred(0);
+					return Task.CompletedTask;
+				});
+		}
+
+		await base.OnParametersSetAsync();
+	}
+
+	private Task<string> GetNodeContent(TreeViewNoType node)
+	{
+		var newContent = string.Empty;
+
+		if (node is TreeViewStringFragment treeViewStringFragment)
+		{
+			var terminalCommand = treeViewStringFragment.Item.TerminalCommand;
+
+			newContent = $"{treeViewStringFragment.Item.Value}:\n";
+
+			if (terminalCommand is not null)
+				newContent += (terminalCommand.TextSpan?.GetText() ?? "TextSpan was null");
+			else
+				newContent += "TerminalCommand was null";
+		}
+		else if (node is TreeViewProjectTestModel treeViewProjectTestModel)
+		{
+			var terminalCommand = treeViewProjectTestModel.Item.TerminalCommand;
+
+			newContent = $"{treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension}:\n";
+
+			if (terminalCommand is not null)
+				newContent += terminalCommand.TextSpan?.GetText() ?? "TextSpan was null";
+			else
+				newContent += "terminalCommand was null";
+		}
+		else if (node is not null)
+		{
+			newContent = node.GetType().Name;
+		}
+		else
+		{
+			newContent = "singularNode was null";
+		}
+
+		return Task.FromResult(newContent ?? string.Empty);
 	}
 }
