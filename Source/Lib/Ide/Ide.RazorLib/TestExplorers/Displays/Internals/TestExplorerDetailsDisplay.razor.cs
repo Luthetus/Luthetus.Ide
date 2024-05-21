@@ -157,10 +157,10 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 
 			if (terminalCommand is not null)
 			{
-				terminalCommand.StateChangedCallbackFunc = async () => 
+				terminalCommand.StateChangedCallbackFunc = () => 
 				{
-					await InvokeAsync(StateHasChanged);
 					TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
+					return Task.CompletedTask;
 				};
 			}
 
@@ -195,10 +195,10 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 
 			if (terminalCommand is not null)
 			{
-				terminalCommand.StateChangedCallbackFunc = async () =>
+				terminalCommand.StateChangedCallbackFunc = () =>
 				{
-					await InvokeAsync(StateHasChanged);
 					TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
+					return Task.CompletedTask;
 				};
 			}
 
