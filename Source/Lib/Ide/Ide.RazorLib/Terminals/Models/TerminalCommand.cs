@@ -26,4 +26,5 @@ public record TerminalCommand(
 	public TextEditorTextSpan? TextSpan { get; set; }
     public bool WasWrittenTo { get; set; }
     public bool IsCompleted { get; set; }
+	public Func<Task> StateChangedCallbackFunc { get; internal set; }
 }

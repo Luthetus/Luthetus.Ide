@@ -10,7 +10,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using System.Text;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Microsoft.Extensions.Primitives;
+using System.Xml.Linq;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers.Displays.Internals;
 
@@ -152,6 +152,9 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 		{
 			var terminalCommand = treeViewStringFragment.Item.TerminalCommand;
 
+			if (terminalCommand is not null)
+				terminalCommand.StateChangedCallbackFunc = () => InvokeAsync(StateHasChanged);
+
 			// Decoration text span
 			{
 				var startPositionInclusive = textOffset;
@@ -180,6 +183,9 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 		else if (node is TreeViewProjectTestModel treeViewProjectTestModel)
 		{
 			var terminalCommand = treeViewProjectTestModel.Item.TerminalCommand;
+
+			if (terminalCommand is not null)
+				terminalCommand.StateChangedCallbackFunc = () => InvokeAsync(StateHasChanged);
 
 			// Decoration text span
 			{
