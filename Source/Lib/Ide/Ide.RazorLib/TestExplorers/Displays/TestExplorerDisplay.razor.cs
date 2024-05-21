@@ -14,6 +14,11 @@ using Luthetus.Ide.RazorLib.TestExplorers.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using System.Collections.Immutable;
+using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.Ide.RazorLib.Decorations;
+using Luthetus.Ide.RazorLib.CompilerServices.Models;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers.Displays;
 
@@ -29,6 +34,10 @@ public partial class TestExplorerDisplay : FluxorComponent
     private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
+	[Inject]
+	private IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
+	[Inject]
+	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 
 	private readonly ElementDimensions _treeViewElementDimensions = new();
 	private readonly ElementDimensions _detailsElementDimensions = new();
@@ -93,13 +102,16 @@ public partial class TestExplorerDisplay : FluxorComponent
 
 			if (model is null)
 			{
+				var decorationMapperRegistry = (DecorationMapperRegistry)DecorationMapperRegistry;
+				var compilerServiceRegistry = (CompilerServiceRegistry)CompilerServiceRegistry;
+
 				model = new TextEditorModel(
 					ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
 					DateTime.UtcNow,
 					ExtensionNoPeriodFacts.TERMINAL,
 					"initialContent:TestExplorerDetailsTextEditorResourceUri",
-					null,
-					null);
+					decorationMapperRegistry.TerminalDecorationMapper,
+					compilerServiceRegistry.TerminalCompilerService);
 
 				TextEditorService.ModelApi.RegisterCustom(model);
 
