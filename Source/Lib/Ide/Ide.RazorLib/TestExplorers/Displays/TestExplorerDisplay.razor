@@ -32,8 +32,7 @@
         Test Explorer
     </div>
 
-    <div class="luth_ide_section-body"
-         style="width: 100%; display: flex;">
+    <div class="luth_ide_section-body">
 
 		@if (renderBatch.TreeViewContainer is null)
 		{
@@ -42,16 +41,24 @@
 		else
 		{
 			var renderBatchValidated = new TestExplorerRenderBatchValidated(renderBatch);
-
 			<CascadingValue Value="renderBatchValidated">
 
-				<TestExplorerTreeViewDisplay ElementDimensions="_treeViewElementDimensions"/>
+				<div class="luth_ide_test-explorer-top"
+				     style="height: 1.8em;">
+					Total: 0; Passed: 0; Failed: 0;
+				</div>
 
-				<ResizableColumn LeftElementDimensions="_treeViewElementDimensions"
-				                 RightElementDimensions="_detailsElementDimensions"
-								 ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged).ConfigureAwait(false)" />
+				<div class="luth_ide_test-explorer-bottom"
+					 style="display: flex; height: calc(100% - 1.8em);">
 
-				<TestExplorerDetailsDisplay ElementDimensions="_detailsElementDimensions"/>
+					<TestExplorerTreeViewDisplay ElementDimensions="_treeViewElementDimensions"/>
+
+					<ResizableColumn LeftElementDimensions="_treeViewElementDimensions"
+									 RightElementDimensions="_detailsElementDimensions"
+									 ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged).ConfigureAwait(false)" />
+
+					<TestExplorerDetailsDisplay ElementDimensions="_detailsElementDimensions"/>
+				</div>
 			</CascadingValue>
 		}
     </div>
