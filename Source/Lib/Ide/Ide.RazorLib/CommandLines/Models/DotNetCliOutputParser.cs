@@ -371,6 +371,10 @@ public class DotNetCliOutputParser : IOutputParser
 
 		var textIndicatorForTheList = "The following Tests are available:";
 		var indicatorIndex = totalOutput.IndexOf(textIndicatorForTheList);
+
+		if (indicatorIndex == -1)
+			return;
+
 		var remainingText = totalOutput[indicatorIndex..];
 
 		var lineList = new List<string>();

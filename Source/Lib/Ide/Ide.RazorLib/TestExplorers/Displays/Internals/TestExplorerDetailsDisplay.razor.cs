@@ -11,6 +11,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using System.Text;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using System.Xml.Linq;
+using Luthetus.Ide.RazorLib.TestExplorers.States;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers.Displays.Internals;
 
@@ -20,6 +21,8 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
+	[Inject]
+	private ITreeViewService TreeViewService { get; set; } = null!;
 
 	[CascadingParameter]
     public TestExplorerRenderBatchValidated RenderBatch { get; set; } = null!;
@@ -153,7 +156,13 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 			var terminalCommand = treeViewStringFragment.Item.TerminalCommand;
 
 			if (terminalCommand is not null)
-				terminalCommand.StateChangedCallbackFunc = () => InvokeAsync(StateHasChanged);
+			{
+				terminalCommand.StateChangedCallbackFunc = async () => 
+				{
+					await InvokeAsync(StateHasChanged);
+					TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
+				};
+			}
 
 			// Decoration text span
 			{
@@ -185,7 +194,13 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 			var terminalCommand = treeViewProjectTestModel.Item.TerminalCommand;
 
 			if (terminalCommand is not null)
-				terminalCommand.StateChangedCallbackFunc = () => InvokeAsync(StateHasChanged);
+			{
+				terminalCommand.StateChangedCallbackFunc = async () =>
+				{
+					await InvokeAsync(StateHasChanged);
+					TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
+				};
+			}
 
 			// Decoration text span
 			{

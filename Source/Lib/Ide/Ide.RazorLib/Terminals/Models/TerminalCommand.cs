@@ -25,6 +25,17 @@ public record TerminalCommand(
 	/// </summary>
 	public TextEditorTextSpan? TextSpan { get; set; }
     public bool WasWrittenTo { get; set; }
+    public bool WasStarted { get; set; }
     public bool IsCompleted { get; set; }
 	public Func<Task> StateChangedCallbackFunc { get; internal set; }
+
+	public Task InvokeStateChangedCallbackFunc()
+	{
+		var terminalCommandStateChangedCallbackFunc = StateChangedCallbackFunc;
+
+		if (terminalCommandStateChangedCallbackFunc is not null)
+			return terminalCommandStateChangedCallbackFunc.Invoke();
+
+		return Task.CompletedTask;
+	}
 }

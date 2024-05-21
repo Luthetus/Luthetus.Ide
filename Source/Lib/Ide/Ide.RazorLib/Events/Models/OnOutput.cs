@@ -110,10 +110,7 @@ public class OnOutput : ITextEditorTask
 		    ResourceUri,
 			modelModifier.GetAllText() ?? string.Empty);
 
-        var terminalCommandStateChangedCallbackFunc = TerminalCommand.StateChangedCallbackFunc;
-
-        if (terminalCommandStateChangedCallbackFunc is not null)
-            await terminalCommandStateChangedCallbackFunc.Invoke().ConfigureAwait(false);
+        await TerminalCommand.InvokeStateChangedCallbackFunc();
 	}
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)

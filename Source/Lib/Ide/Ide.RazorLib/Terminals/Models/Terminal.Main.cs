@@ -153,10 +153,12 @@ public partial class Terminal
 		try
 		{
 			var terminalCommandKey = terminalCommand.TerminalCommandKey;
+			terminalCommand.TextSpan = null;
+			terminalCommand.WasStarted = true;
+			await terminalCommand.InvokeStateChangedCallbackFunc();
+
 			HasExecutingProcess = true;
 			DispatchNewStateKey();
-
-			terminalCommand.TextSpan = null;
 
 			if (terminalCommand.BeginWith is not null)
 				await terminalCommand.BeginWith.Invoke().ConfigureAwait(false);
@@ -229,6 +231,8 @@ public partial class Terminal
 		}
 		finally
 		{
+			terminalCommand.IsCompleted = true;
+			await terminalCommand.InvokeStateChangedCallbackFunc();
 			HasExecutingProcess = false;
 			await WriteWorkingDirectory().ConfigureAwait(false);
 			DispatchNewStateKey();
@@ -236,6 +240,10 @@ public partial class Terminal
 			// It is important to invoke 'OnAfterCommandFinished' prior to 'terminalCommand.ContinueWith'
 			if (terminalCommand.OutputParser is not null)
 			{
+				// TODO: If one's 'OutputParser' throws an exception here, then the 'ContinueWith'...
+				//       ...will not run.
+				//       |
+				//       So, what is the desired behavior? Should a try block be used here?
 				await terminalCommand.OutputParser
 					.OnAfterCommandFinished(terminalCommand)
 					.ConfigureAwait(false);
