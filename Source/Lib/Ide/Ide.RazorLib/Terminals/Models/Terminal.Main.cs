@@ -3,7 +3,6 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.Terminals.States;
@@ -214,6 +213,7 @@ public partial class Terminal
 								outputOffset,
 								output,
 								outputTextSpanList,
+								terminalCommand,
 								terminalCommandBoundary)
 							.ConfigureAwait(false);
 
@@ -222,13 +222,6 @@ public partial class Terminal
 
 					DispatchNewStateKey();
 				}).ConfigureAwait(false);
-
-			terminalCommand.TextSpan = new TextEditorTextSpan(
-				terminalCommandBoundary.StartPositionIndexInclusive ?? 0,
-				terminalCommandBoundary.EndPositionIndexExclusive ?? 0,
-				0,
-				ResourceUri,
-				_textEditorService.ModelApi.GetAllText(ResourceUri) ?? string.Empty);
 		}
 		catch (Exception e)
 		{

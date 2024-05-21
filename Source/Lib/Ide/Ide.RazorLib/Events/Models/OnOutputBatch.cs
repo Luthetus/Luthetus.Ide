@@ -25,6 +25,7 @@ public class OnOutputBatch : ITextEditorTask
         List<(int OutputOffset, List<TextEditorTextSpan> OutputTextSpan)> outputTextSpanAndOffsetTupleList,
         ResourceUri resourceUri,
         ITextEditorService textEditorService,
+        TerminalCommand terminalCommand,
         TerminalCommandBoundary terminalCommandBoundary,
         Key<TextEditorViewModel> viewModelKey)
     {
@@ -33,7 +34,8 @@ public class OnOutputBatch : ITextEditorTask
         OutputTextSpanAndOffsetTupleList = outputTextSpanAndOffsetTupleList;
         ResourceUri = resourceUri;
         TextEditorService = textEditorService;
-        _terminalCommandBoundary = terminalCommandBoundary;
+		TerminalCommand = terminalCommand;
+		_terminalCommandBoundary = terminalCommandBoundary;
         ViewModelKey = viewModelKey;
     }
 
@@ -47,7 +49,8 @@ public class OnOutputBatch : ITextEditorTask
     public List<(int OutputOffset, List<TextEditorTextSpan> OutputTextSpanList)> OutputTextSpanAndOffsetTupleList { get; }
     public ResourceUri ResourceUri { get; }
     public ITextEditorService TextEditorService { get; }
-    public Key<TextEditorViewModel> ViewModelKey { get; }
+	public TerminalCommand TerminalCommand { get; }
+	public Key<TextEditorViewModel> ViewModelKey { get; }
 
     public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
 
@@ -72,7 +75,8 @@ public class OnOutputBatch : ITextEditorTask
             outputTextSpanList,
             ResourceUri,
             TextEditorService,
-            _terminalCommandBoundary,
+			TerminalCommand,
+			_terminalCommandBoundary,
             ViewModelKey);
 
         return onOutput.InvokeWithEditContext(editContext);

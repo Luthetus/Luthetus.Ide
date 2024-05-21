@@ -255,6 +255,7 @@ public partial class Terminal
 		int outputOffset,
 		string output,
 		List<TextEditorTextSpan> outputTextSpanList,
+        TerminalCommand terminalCommand,
 		TerminalCommandBoundary terminalCommandBoundary)
     {
 		return _textEditorService.Post(new OnOutput(
@@ -263,7 +264,8 @@ public partial class Terminal
 		    outputTextSpanList,
 		    ResourceUri,
 		    _textEditorService,
-		    terminalCommandBoundary,
+			terminalCommand,
+			terminalCommandBoundary,
 		    TextEditorViewModelKey));
 	}
 }
