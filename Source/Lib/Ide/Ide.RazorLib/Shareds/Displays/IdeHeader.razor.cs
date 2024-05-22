@@ -8,23 +8,26 @@ using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Panels.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Ide.RazorLib.Commands;
+using Luthetus.Ide.RazorLib.CommandLines.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.Editors.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.Terminals.States;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Collections.Immutable;
 using Fluxor;
-using Luthetus.Common.RazorLib.Dynamics.Models;
-using Luthetus.Common.RazorLib.Clipboards.Models;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.Ide.RazorLib.Editors.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -34,6 +37,10 @@ public partial class IdeHeader : ComponentBase
     private IState<PanelState> PanelStateWrap { get; set; } = null!;
 	[Inject]
     private IState<DialogState> DialogStateWrap { get; set; } = null!;
+	[Inject]
+	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
+	[Inject]
+	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -69,6 +76,10 @@ public partial class IdeHeader : ComponentBase
     private MenuRecord _menuView = new(ImmutableArray<MenuOptionRecord>.Empty);
     private ElementReference? _buttonViewElementReference;
 
+	private Key<DropdownRecord> _dropdownKeyRun = Key<DropdownRecord>.NewKey();
+    private MenuRecord _menuRun = new(ImmutableArray<MenuOptionRecord>.Empty);
+    private ElementReference? _buttonRunElementReference;
+
     private ActiveBackgroundTaskDisplay? _activeBackgroundTaskDisplayComponent;
 
     protected override Task OnInitializedAsync()
@@ -76,6 +87,7 @@ public partial class IdeHeader : ComponentBase
         InitializeMenuFile();
 		InitializeMenuTools();
 		InitializeMenuView();
+		InitializeMenuRun();
 
         return base.OnInitializedAsync();
     }
@@ -291,6 +303,63 @@ public partial class IdeHeader : ComponentBase
 			_menuView = new MenuRecord(menuOptionsList.ToImmutableArray());
     }
 
+	private void InitializeMenuRun()
+	{
+		var menuOptionsList = new List<MenuOptionRecord>();
+
+		var dotNetSolutionState = DotNetSolutionStateWrap.Value;
+
+        // Menu Option Build
+        {
+            var menuOption = new MenuOptionRecord(
+				"Build",
+                MenuOptionKind.Create,
+                () => BuildOnClick(dotNetSolutionState.DotNetSolutionModel.AbsolutePath.Value));
+
+            menuOptionsList.Add(menuOption);
+        }
+
+		// Menu Option Clean
+        {
+            var menuOption = new MenuOptionRecord(
+				"Clean",
+                MenuOptionKind.Delete,
+                () => CleanOnClick(dotNetSolutionState.DotNetSolutionModel.AbsolutePath.Value));
+
+            menuOptionsList.Add(menuOption);
+        }
+
+        _menuRun = new MenuRecord(menuOptionsList.ToImmutableArray());
+	}
+
+	private Task BuildOnClick(string solutionAbsolutePathString)
+	{
+		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuild(solutionAbsolutePathString);
+        var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
+
+        var terminalCommand = new TerminalCommand(
+            Key<TerminalCommand>.NewKey(),
+            formattedCommand,
+            null,
+            CancellationToken.None);
+
+        return generalTerminal.EnqueueCommandAsync(terminalCommand);
+	}
+
+	private Task CleanOnClick(string solutionAbsolutePathString)
+	{
+		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetClean(solutionAbsolutePathString);
+        var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
+
+        var terminalCommand = new TerminalCommand(
+            Key<TerminalCommand>.NewKey(),
+            formattedCommand,
+            null,
+            CancellationToken.None);
+
+        return generalTerminal.EnqueueCommandAsync(terminalCommand);
+	}
+
     private void AddActiveDropdownKey(Key<DropdownRecord> dropdownKey)
     {
         Dispatcher.Dispatch(new DropdownState.AddActiveAction(dropdownKey));
@@ -342,6 +411,24 @@ public partial class IdeHeader : ComponentBase
             if (_buttonViewElementReference is not null)
             {
                 await _buttonViewElementReference.Value
+                    .FocusAsync()
+                    .ConfigureAwait(false);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+	private async Task RestoreFocusToButtonDisplayComponentRunAsync()
+    {
+        try
+        {
+            if (_buttonRunElementReference is not null)
+            {
+                await _buttonRunElementReference.Value
                     .FocusAsync()
                     .ConfigureAwait(false);
             }

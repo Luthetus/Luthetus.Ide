@@ -189,4 +189,18 @@ public static class DotNetCliCommandFormatter
             "--filter",
             $"FullyQualifiedName={fullyQualifiedName}",
         });
+
+	public static FormattedCommand FormatDotnetBuild(string solutionAbsolutePathString) =>
+        new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
+        {
+            "build",
+            solutionAbsolutePathString,
+        });
+
+	public static FormattedCommand FormatDotnetClean(string solutionAbsolutePathString) =>
+        new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
+        {
+            "clean",
+            solutionAbsolutePathString,
+        });
 }
