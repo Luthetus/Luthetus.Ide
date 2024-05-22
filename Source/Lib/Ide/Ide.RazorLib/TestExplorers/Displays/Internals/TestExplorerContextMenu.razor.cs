@@ -90,7 +90,8 @@ public partial class TestExplorerContextMenu : ComponentBase
 			{
 				menuRecordsList.AddRange(await GetNamespaceMenuOption(
 					treeViewStringFragment,
-					commandArgs));
+					commandArgs,
+					isRecursiveCall));
 			}
 		}
 
@@ -130,25 +131,30 @@ public partial class TestExplorerContextMenu : ComponentBase
 
 	private async Task<List<MenuOptionRecord>> GetNamespaceMenuOption(
 		TreeViewStringFragment treeViewStringFragment,
-		TreeViewCommandArgs commandArgs)
+		TreeViewCommandArgs commandArgs,
+		bool isRecursiveCall = false)
 	{
-		var nodeNameBuilder = new StringBuilder();
-
-		var fabricateSelectedNodeList = new List<TreeViewNoType>();
-
-		foreach (var childNode in treeViewStringFragment.ChildList)
+		void RecursiveStep(TreeViewStringFragment treeViewStringFragmentNamespace, List<TreeViewNoType> fabricateSelectedNodeList)
 		{
-			if (childNode is TreeViewStringFragment childTreeViewStringFragment &&
-                childTreeViewStringFragment.Item.IsEndpoint)
+			foreach (var childNode in treeViewStringFragmentNamespace.ChildList)
 			{
-				nodeNameBuilder.Append(childTreeViewStringFragment.Item.Value);
-				fabricateSelectedNodeList.Add(childTreeViewStringFragment);
+				if (childNode is TreeViewStringFragment childTreeViewStringFragment)
+				{
+					if (childTreeViewStringFragment.Item.IsEndpoint)
+					{
+						fabricateSelectedNodeList.Add(childTreeViewStringFragment);
+					}
+					else
+					{
+						RecursiveStep(childTreeViewStringFragment, fabricateSelectedNodeList);
+					}
+				}
 			}
 		}
+		
+		var fabricateSelectedNodeList = new List<TreeViewNoType>();
 
-		var childNodeMenuOptionRecord = new MenuOptionRecord(
-			nodeNameBuilder.ToString(),
-			MenuOptionKind.Other);
+		RecursiveStep(treeViewStringFragment, fabricateSelectedNodeList);
 
 		var fabricateTreeViewContainer = commandArgs.TreeViewContainer with
 		{
@@ -167,11 +173,11 @@ public partial class TestExplorerContextMenu : ComponentBase
 		var multiSelectionMenuRecord = await GetMultiSelectionMenuRecord(fabricateCommandArgs);
 
 		var menuOptionRecord = new MenuOptionRecord(
-			$"Namespace: {treeViewStringFragment.Item.Value}",
+			$"Namespace: {treeViewStringFragment.Item.Value} | {fabricateSelectedNodeList.Count}",
 			MenuOptionKind.Other,
 			SubMenu: multiSelectionMenuRecord);
 
-		return new() { menuOptionRecord, childNodeMenuOptionRecord };
+		return new() { menuOptionRecord };
 	}
 
 	private async Task<MenuRecord> GetMultiSelectionMenuRecord(TreeViewCommandArgs commandArgs)

@@ -12,7 +12,7 @@ public class DotNetCliOutputParser : IOutputParser
 	public List<ProjectTemplate>? ProjectTemplateList { get; private set; }
 
 	public List<string>? TheFollowingTestsAreAvailableList { get; private set; }
-	private bool _hasSeenTextIndicatorForTheList { get; set; }
+	private bool _hasSeenTextIndicatorForTheList;
 
 	public NewListModel NewListModelSession { get; private set; }
 
@@ -26,6 +26,7 @@ public class DotNetCliOutputParser : IOutputParser
 		else if (terminalCommand.FormattedCommand.Tag == TagConstants.Test)
 		{
 			TheFollowingTestsAreAvailableList = new();
+			_hasSeenTextIndicatorForTheList = false;
 		}
 
         return Task.CompletedTask;
