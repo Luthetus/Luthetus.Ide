@@ -24,6 +24,8 @@ public class OnScrollVertical : ITextEditorTask
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnScrollVertical);
+	public string? Redundancy { get; } = null;
+	public TextEditorEdit Edit { get; }
     public Task? WorkProgress { get; }
     public double ScrollTop { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }

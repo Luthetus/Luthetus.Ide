@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Edits.Models;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
 
@@ -15,6 +15,7 @@ public static partial class TextEditorCommandVimFacts
                 return commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(DeleteLineCommand),
                     string.Empty,
+					null,
                     DeleteLineFactory(commandArgs));
             })
         {
@@ -34,6 +35,7 @@ public static partial class TextEditorCommandVimFacts
                 return commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(ChangeLineCommand),
                     string.Empty,
+					null,
                     ChangeLineFactory(commandArgs));
             })
         {
@@ -55,6 +57,7 @@ public static partial class TextEditorCommandVimFacts
                 return commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(DeleteMotionCommandConstructor),
                     string.Empty,
+					null,
                     DeleteMotionFactory(commandArgs));
             })
         {
@@ -79,6 +82,7 @@ public static partial class TextEditorCommandVimFacts
                 return commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(ChangeMotionCommandConstructor),
                     string.Empty,
+					null,
                     GetChangeMotionFactory(commandArgs));
             })
         {
@@ -101,6 +105,7 @@ public static partial class TextEditorCommandVimFacts
                 return commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(ChangeSelectionCommand),
                     string.Empty,
+					null,
                     ChangeSelectionFactory(commandArgs));
             })
         {
@@ -120,6 +125,7 @@ public static partial class TextEditorCommandVimFacts
                 return commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(YankCommand),
                     string.Empty,
+					null,
                     YankFactory(commandArgs));
             })
         {
@@ -139,6 +145,7 @@ public static partial class TextEditorCommandVimFacts
                 return commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(NewLineBelowCommand),
                     string.Empty,
+					null,
                     NewLineBelowFactory(commandArgs));
             })
         {
@@ -158,6 +165,7 @@ public static partial class TextEditorCommandVimFacts
                 return commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(NewLineAboveCommand),
                     string.Empty,
+					null,
                     NewLineAboveFactory(commandArgs));
             })
         {

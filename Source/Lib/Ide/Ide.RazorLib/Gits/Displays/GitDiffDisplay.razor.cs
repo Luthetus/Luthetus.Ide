@@ -196,6 +196,7 @@ public partial class GitDiffDisplay : ComponentBase
         TextEditorService.PostSimpleBatch(
             nameof(GitDiffDisplay),
             nameof(GitDiffDisplay),
+			null,
             editContext =>
             {
                 var inViewModelModifier = editContext.GetViewModelModifier(inViewModelKey);

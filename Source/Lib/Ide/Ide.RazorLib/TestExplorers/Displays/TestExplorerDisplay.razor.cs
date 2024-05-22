@@ -134,6 +134,7 @@ public partial class TestExplorerDisplay : FluxorComponent
 		await TextEditorService.PostSimpleBatch(
 			nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
 			string.Empty,
+			null,
 			async editContext =>
 			{
 				await TextEditorService.ModelApi.AddPresentationModelFactory(

@@ -50,6 +50,8 @@ public class OnKeyDown : ITextEditorTask
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnKeyDown);
+	public string? Redundancy { get; } = null;
+	public TextEditorEdit Edit { get; }
     public Task? WorkProgress { get; }
     public TimeSpan ThrottleTimeSpan => TextEditorEvents.ThrottleDelayDefault;
     public KeyboardEventArgs KeyboardEventArgs { get; }

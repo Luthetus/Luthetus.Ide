@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
+using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
@@ -163,6 +163,7 @@ public class LuthCompilerService : ILuthCompilerService
         return _textEditorService.PostSimpleBatch(
             $"{nameof(QueueParseRequest)}_{resourceUri.Value}",
             string.Empty,
+			null,
             async editContext =>
             {
 				var modelModifier = editContext.GetModelModifier(resourceUri);

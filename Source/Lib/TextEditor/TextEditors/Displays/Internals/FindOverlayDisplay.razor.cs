@@ -49,6 +49,7 @@ public partial class FindOverlayDisplay : ComponentBase
                     await TextEditorService.PostSimpleBatch(
                         nameof(FindOverlayDisplay),
                         string.Empty,
+						null,
                         async editContext =>
                         {
                             var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
@@ -125,9 +126,10 @@ public partial class FindOverlayDisplay : ComponentBase
                 .FocusHtmlElementById(RenderBatch.ViewModel.PrimaryCursorContentId)
                 .ConfigureAwait(false);
 
-            await TextEditorService.PostTakeMostRecent(
+            await TextEditorService.PostSimpleBatch(
                 nameof(FindOverlayDisplay),
                 nameof(FindOverlayDisplay),
+				null,
                 async editContext =>
                 {
                     var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
@@ -239,6 +241,7 @@ public partial class FindOverlayDisplay : ComponentBase
         await TextEditorService.PostSimpleBatch(
             nameof(HandleActiveIndexMatchedTextSpanChanged),
             string.Empty,
+			null,
             async editContext =>
             {
                 var localActiveIndexMatchedTextSpan = _activeIndexMatchedTextSpan;

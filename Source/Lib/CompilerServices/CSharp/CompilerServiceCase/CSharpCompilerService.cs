@@ -140,6 +140,7 @@ public sealed class CSharpCompilerService : LuthCompilerService
                         await _textEditorService.PostSimpleBatch(
                             "Add using statement",
                             string.Empty,
+							null,
                             async editContext =>
                             {
                                 var modelModifier = editContext.GetModelModifier(textSpan.ResourceUri);

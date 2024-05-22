@@ -29,6 +29,8 @@ public class TextEditorServiceTask : ITextEditorTask
     public Key<BackgroundTask> BackgroundTaskKey => _innerTask.BackgroundTaskKey;
     public Key<BackgroundTaskQueue> QueueKey => _innerTask.QueueKey;
     public string Name => _innerTask.Name;
+    public string? Redundancy { get; } = null;
+	public TextEditorEdit Edit => _innerTask.Edit;
     public Task? WorkProgress => _innerTask.WorkProgress;
 
     public TimeSpan ThrottleTimeSpan => _innerTask.ThrottleTimeSpan;

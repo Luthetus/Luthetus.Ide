@@ -43,6 +43,8 @@ public class OnOutputBatch : ITextEditorTask
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; set; } = nameof(OnOutput);
+    public string? Redundancy { get; }
+    public TextEditorEdit Edit { get; }
     public Task? WorkProgress { get; }
     public int BatchOutputOffset { get; }
     public List<string> OutputList { get; }

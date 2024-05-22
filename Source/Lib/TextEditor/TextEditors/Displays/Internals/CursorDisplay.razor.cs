@@ -146,6 +146,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                     await TextEditorService.PostSimpleBatch(
                         id,
                         id,
+						null,
                         editContext =>
                         {
                             var cursorPositionIndex = localRenderBatch.Model.GetPositionIndex(Cursor);

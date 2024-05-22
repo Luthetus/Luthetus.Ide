@@ -21,7 +21,6 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
@@ -470,6 +469,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         await TextEditorService.PostSimpleBatch(
             nameof(QueueRemeasureBackgroundTask),
             string.Empty,
+			null,
             async editContext =>
 			{
                 await editContext.TextEditorService.ViewModelApi
@@ -542,6 +542,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         await TextEditorService.PostSimpleBatch(
                 nameof(QueueRemeasureBackgroundTask),
                 string.Empty,
+				null,
                 TextEditorService.ViewModelApi.RemeasureFactory(
                     modelResourceUri,
                     viewModelKey.Value,
@@ -563,6 +564,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         await TextEditorService.PostSimpleBatch(
                 nameof(QueueCalculateVirtualizationResultBackgroundTask),
                 string.Empty,
+				null,
                 TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
                     modelResourceUri,
                     viewModelKey.Value,

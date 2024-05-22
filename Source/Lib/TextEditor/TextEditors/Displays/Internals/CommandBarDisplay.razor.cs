@@ -1,4 +1,4 @@
-﻿using Fluxor.Blazor.Web.Components;
+using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Microsoft.AspNetCore.Components;
@@ -50,9 +50,10 @@ public partial class CommandBarDisplay : FluxorComponent
         {
             await RestoreFocusToTextEditor.Invoke().ConfigureAwait(false);
 
-            await TextEditorService.PostTakeMostRecent(
+            await TextEditorService.PostSimpleBatch(
                 nameof(HandleOnKeyDown),
                 nameof(HandleOnKeyDown),
+				null,
                 TextEditorService.ViewModelApi.WithValueFactory(
                     RenderBatch.ViewModel.ViewModelKey,
                     previousViewModel => previousViewModel with

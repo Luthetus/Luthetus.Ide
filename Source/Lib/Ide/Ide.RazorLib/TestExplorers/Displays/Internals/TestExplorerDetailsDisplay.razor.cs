@@ -106,6 +106,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 			await TextEditorService.PostSimpleBatch(
 				nameof(TestExplorerDetailsDisplay),
 				nameof(TestExplorerDetailsDisplay),
+				null,
 				editContext =>
 				{
 					var modelModifier = editContext.GetModelModifier(ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);

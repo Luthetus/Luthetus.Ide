@@ -7,7 +7,6 @@ using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -109,41 +108,17 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
 
-    // TODO: Should 'PostAsIs' be removed? (2024-05-08)
-    //
-    //public void PostAsIs(
-    //    string name,
-    //    TextEditorEdit textEditorEdit,
-    //    TimeSpan? throttleTimeSpan = null)
-    //{
-    //    Post(new AsIsTextEditorTask(
-    //        $"{name}_ai",
-    //        textEditorEdit,
-    //        throttleTimeSpan));
-    //}
-
     public Task PostSimpleBatch(
         string name,
         string identifier,
+        string? redundancy,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
         return Post(new SimpleBatchTextEditorTask(
             $"{name}_sb",
 			identifier,
-            textEditorEdit,
-            throttleTimeSpan));
-    }
-
-    public Task PostTakeMostRecent(
-        string name,
-        string redundancyIdentifier,
-        TextEditorEdit textEditorEdit,
-        TimeSpan? throttleTimeSpan = null)
-    {
-        return Post(new TakeMostRecentTextEditorTask(
-            $"{name}_tmr",
-            redundancyIdentifier,
+			redundancy,
             textEditorEdit,
             throttleTimeSpan));
     }

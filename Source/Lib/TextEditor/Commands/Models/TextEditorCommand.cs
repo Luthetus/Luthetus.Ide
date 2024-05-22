@@ -1,7 +1,7 @@
-﻿using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models;
 

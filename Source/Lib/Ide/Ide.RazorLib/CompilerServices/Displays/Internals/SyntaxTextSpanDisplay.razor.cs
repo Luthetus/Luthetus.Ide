@@ -53,6 +53,7 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
         await TextEditorService.PostSimpleBatch(
             nameof(SyntaxTextSpanDisplay),
             string.Empty,
+			null,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(

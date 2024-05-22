@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -28,9 +28,10 @@ public partial class Footer : ComponentBase
 
         if (Enum.TryParse<LineEndKind>(rowEndingKindString, out var rowEndingKind))
         {
-            await TextEditorService.PostTakeMostRecent(
+            await TextEditorService.PostSimpleBatch(
                     nameof(TextEditorService.ModelApi.SetUsingLineEndKindFactory),
                     nameof(TextEditorService.ModelApi.SetUsingLineEndKindFactory),
+					null,
                     TextEditorService.ModelApi.SetUsingLineEndKindFactory(
                         viewModel.ResourceUri,
                         rowEndingKind))

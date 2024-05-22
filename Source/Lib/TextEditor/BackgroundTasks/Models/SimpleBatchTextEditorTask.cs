@@ -1,7 +1,7 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
@@ -12,54 +12,76 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// The result of this is that the UI will not be notified to re-render
 /// until after the batch has all done their edits.
 /// </summary>
-public sealed class SimpleBatchTextEditorTask : SimpleBatchBackgroundTask, ITextEditorTask
+public class SimpleBatchTextEditorTask : ITextEditorTask
 {
-    private readonly List<TextEditorEdit> _textEditorEditList;
+    protected readonly List<ITextEditorTask> _textEditorTaskList = new();
 
     public SimpleBatchTextEditorTask(
             string name,
             string identifier,
+            string? redundancy,
             TextEditorEdit textEditorEdit,
             TimeSpan? throttleTimeSpan = null)
-        : this(name, identifier, new List<TextEditorEdit>() { textEditorEdit }, throttleTimeSpan)
     {
-    }
-
-    public SimpleBatchTextEditorTask(
-            string name,
-            string identifier,
-            List<TextEditorEdit> textEditorEditList,
-            TimeSpan? throttleTimeSpan = null)
-        : base(name, identifier, new List<Func<CancellationToken, Task>>(), throttleTimeSpan)
-    {
-        _textEditorEditList = textEditorEditList;
-
-        Name = name;
+		Name = name;
         Identifier = identifier;
+        Redundancy = redundancy;
+		Edit = textEditorEdit;
         ThrottleTimeSpan = throttleTimeSpan ?? TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
     }
 
+	public virtual string Name { get; protected set; }
+    public virtual string Identifier { get; protected set; }
+    public virtual string? Redundancy { get; protected set; }
+	public TextEditorEdit Edit { get; }
+    public virtual Key<BackgroundTask> BackgroundTaskKey { get; protected set; } = Key<BackgroundTask>.NewKey();
+    public virtual Key<BackgroundTaskQueue> QueueKey { get; protected set; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public virtual TimeSpan ThrottleTimeSpan { get; protected set; }
+    public virtual Task? WorkProgress { get; protected set; }
+
     public async Task InvokeWithEditContext(IEditContext editContext)
     {
-        foreach (var edit in _textEditorEditList)
+		// First, await self
+		await Edit.Invoke(editContext).ConfigureAwait(false);
+
+		// Then await others
+        foreach (var textEditorTask in _textEditorTaskList)
         {
-            await edit
+            await textEditorTask.Edit
                 .Invoke(editContext)
                 .ConfigureAwait(false);
         }
     }
 
-    public override IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
+    public virtual IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
-        if (oldEvent is not SimpleBatchTextEditorTask oldSimpleBatchTextEditorTask)
-            return null;
+        if (oldEvent is SimpleBatchTextEditorTask oldSimpleBatchTextEditorTask)
+		{
+			if (Redundancy is not null)
+			{
+				if (oldSimpleBatchTextEditorTask._textEditorTaskList.Count == 0 &&
+					Redundancy == oldSimpleBatchTextEditorTask.Redundancy)
+				{
+					return this;
+				}
+				else if (Redundancy == oldSimpleBatchTextEditorTask._textEditorTaskList.Last().Redundancy)
+				{
+					oldSimpleBatchTextEditorTask._textEditorTaskList[^1] = this;
+					return oldSimpleBatchTextEditorTask;
+				}
+			}
+			else
+			{
+				oldSimpleBatchTextEditorTask._textEditorTaskList.AddRange(_textEditorTaskList);
+		        oldSimpleBatchTextEditorTask.Name += '_' + Name;
+		        return oldSimpleBatchTextEditorTask;
+			}
+		}
 
-        oldSimpleBatchTextEditorTask._textEditorEditList.AddRange(_textEditorEditList);
-        oldSimpleBatchTextEditorTask.Name += '_' + Name;
-        return oldSimpleBatchTextEditorTask;
+        return null;
     }
 
-    public override Task HandleEvent(CancellationToken cancellationToken)
+    public virtual Task HandleEvent(CancellationToken cancellationToken)
     {
         throw new NotImplementedException($"{nameof(ITextEditorTask)} should not implement {nameof(HandleEvent)}" +
             "because they instead are contained within an 'IBackgroundTask' that came from the 'TextEditorService'");

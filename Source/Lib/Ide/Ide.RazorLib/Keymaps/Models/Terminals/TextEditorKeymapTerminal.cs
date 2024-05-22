@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
@@ -81,6 +81,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
                 await commandArgs.TextEditorService.PostSimpleBatch(
 					nameof(commandDisplayName),
                     string.Empty,
+					null,
                     async editContext =>
 					{
 						var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);

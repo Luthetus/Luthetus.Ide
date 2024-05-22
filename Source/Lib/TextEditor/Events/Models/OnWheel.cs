@@ -25,6 +25,8 @@ public class OnWheel : ITextEditorTask
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnWheel);
+	public string? Redundancy { get; } = null;
+	public TextEditorEdit Edit { get; }
     public Task? WorkProgress { get; }
     public WheelEventArgs WheelEventArgs { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }

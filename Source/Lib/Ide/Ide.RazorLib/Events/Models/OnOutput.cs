@@ -49,6 +49,8 @@ public class OnOutput : ITextEditorTask
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnOutput);
+    public string? Redundancy { get; }
+    public TextEditorEdit Edit { get; }
     public Task? WorkProgress { get; }
     public int OutputOffset { get; }
     public string Output { get; }

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
@@ -171,6 +171,7 @@ public partial class AutocompleteMenu : ComponentBase
         return TextEditorService.PostSimpleBatch(
             nameof(InsertAutocompleteMenuOption),
             string.Empty,
+			null,
             TextEditorService.ModelApi.InsertTextFactory(
                 viewModel.ResourceUri,
                 viewModel.ViewModelKey,

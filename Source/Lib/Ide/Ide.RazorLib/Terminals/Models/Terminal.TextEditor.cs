@@ -46,6 +46,7 @@ public partial class Terminal
         await _textEditorService.PostSimpleBatch(
             nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
             string.Empty,
+			null,
             async editContext =>
             {
                 await _textEditorService.ModelApi.AddPresentationModelFactory(
@@ -84,6 +85,7 @@ public partial class Terminal
         await _textEditorService.PostSimpleBatch(
             nameof(Terminal),
             string.Empty,
+			null,
             _textEditorService.ViewModelApi.WithValueFactory(
                 TextEditorViewModelKey,
                 textEditorViewModel => textEditorViewModel with
@@ -94,6 +96,7 @@ public partial class Terminal
         await _textEditorService.PostSimpleBatch(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
             string.Empty,
+			null,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -140,6 +143,7 @@ public partial class Terminal
         await _textEditorService.PostSimpleBatch(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
             string.Empty,
+			null,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -188,6 +192,7 @@ public partial class Terminal
         await _textEditorService.PostSimpleBatch(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
             string.Empty,
+			null,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -217,6 +222,7 @@ public partial class Terminal
         await _textEditorService.PostSimpleBatch(
             nameof(ClearTerminal),
             string.Empty,
+			null,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);

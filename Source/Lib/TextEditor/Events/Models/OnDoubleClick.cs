@@ -29,6 +29,8 @@ public class OnDoubleClick : ITextEditorTask
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnDoubleClick);
+	public string? Redundancy { get; } = null;
+	public TextEditorEdit Edit { get; }
     public Task? WorkProgress { get; }
     public MouseEventArgs MouseEventArgs { get; }
     public ResourceUri ResourceUri { get; }
