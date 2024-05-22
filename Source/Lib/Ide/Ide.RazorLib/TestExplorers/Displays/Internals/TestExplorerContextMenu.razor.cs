@@ -79,35 +79,18 @@ public partial class TestExplorerContextMenu : ComponentBase
 			{
 				var fullyQualifiedName = fullyQualifiedNameBuilder.ToString();
 
-				var menuOptionRecord = new MenuOptionRecord(
-					$"Run: {treeViewStringFragment.Item.Value}",
-					MenuOptionKind.Other,
-					OnClickFunc: async () => 
-					{
-						if (treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory is not null)
-						{
-                            await BackgroundTaskService.EnqueueAsync(
-									Key<BackgroundTask>.NewKey(),
-									BlockingBackgroundTaskWorker.GetQueueKey(),
-									"RunTestByFullyQualifiedName",
-									async () => await RunTestByFullyQualifiedName(
-											treeViewStringFragment,
-											fullyQualifiedName,
-											treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory.Value)
-										.ConfigureAwait(false))
-								.ConfigureAwait(false);
-                        }
-					});
-	
+				var menuOptionRecord = GetEndPointMenuOption(
+					treeViewStringFragment,
+					treeViewProjectTestModel,
+					fullyQualifiedName);
+
 				menuRecordsList.Add(menuOptionRecord);
 			}
 			else
 			{
-				var menuOptionRecord = new MenuOptionRecord(
-					$"Namespace: {treeViewStringFragment.Item.Value}",
-					MenuOptionKind.Other);
-
-				menuRecordsList.Add(menuOptionRecord);
+				menuRecordsList.AddRange(await GetNamespaceMenuOption(
+					treeViewStringFragment,
+					commandArgs));
 			}
 		}
 
@@ -116,6 +99,80 @@ public partial class TestExplorerContextMenu : ComponentBase
 
         return new MenuRecord(menuRecordsList.ToImmutableArray());
     }
+
+	private MenuOptionRecord GetEndPointMenuOption(
+		TreeViewStringFragment treeViewStringFragment,
+		TreeViewProjectTestModel treeViewProjectTestModel,
+		string fullyQualifiedName)
+	{
+		var menuOptionRecord = new MenuOptionRecord(
+			$"Run: {treeViewStringFragment.Item.Value}",
+			MenuOptionKind.Other,
+			OnClickFunc: async () =>
+			{
+				if (treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory is not null)
+				{
+					await BackgroundTaskService.EnqueueAsync(
+							Key<BackgroundTask>.NewKey(),
+							BlockingBackgroundTaskWorker.GetQueueKey(),
+							"RunTestByFullyQualifiedName",
+							async () => await RunTestByFullyQualifiedName(
+									treeViewStringFragment,
+									fullyQualifiedName,
+									treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory.Value)
+								.ConfigureAwait(false))
+						.ConfigureAwait(false);
+				}
+			});
+
+		return menuOptionRecord;
+	}
+
+	private async Task<List<MenuOptionRecord>> GetNamespaceMenuOption(
+		TreeViewStringFragment treeViewStringFragment,
+		TreeViewCommandArgs commandArgs)
+	{
+		var nodeNameBuilder = new StringBuilder();
+
+		var fabricateSelectedNodeList = new List<TreeViewNoType>();
+
+		foreach (var childNode in treeViewStringFragment.ChildList)
+		{
+			if (childNode is TreeViewStringFragment childTreeViewStringFragment &&
+                childTreeViewStringFragment.Item.IsEndpoint)
+			{
+				nodeNameBuilder.Append(childTreeViewStringFragment.Item.Value);
+				fabricateSelectedNodeList.Add(childTreeViewStringFragment);
+			}
+		}
+
+		var childNodeMenuOptionRecord = new MenuOptionRecord(
+			nodeNameBuilder.ToString(),
+			MenuOptionKind.Other);
+
+		var fabricateTreeViewContainer = commandArgs.TreeViewContainer with
+		{
+			SelectedNodeList = fabricateSelectedNodeList.ToImmutableList()
+		};
+
+		var fabricateCommandArgs = new TreeViewCommandArgs(
+			commandArgs.TreeViewService,
+			fabricateTreeViewContainer,
+			commandArgs.NodeThatReceivedMouseEvent,
+			commandArgs.RestoreFocusToTreeView,
+			commandArgs.ContextMenuFixedPosition,
+			commandArgs.MouseEventArgs,
+			commandArgs.KeyboardEventArgs);
+
+		var multiSelectionMenuRecord = await GetMultiSelectionMenuRecord(fabricateCommandArgs);
+
+		var menuOptionRecord = new MenuOptionRecord(
+			$"Namespace: {treeViewStringFragment.Item.Value}",
+			MenuOptionKind.Other,
+			SubMenu: multiSelectionMenuRecord);
+
+		return new() { menuOptionRecord, childNodeMenuOptionRecord };
+	}
 
 	private async Task<MenuRecord> GetMultiSelectionMenuRecord(TreeViewCommandArgs commandArgs)
 	{
