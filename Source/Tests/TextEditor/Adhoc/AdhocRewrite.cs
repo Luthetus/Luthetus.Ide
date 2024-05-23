@@ -49,26 +49,10 @@ public class AdhocRewrite
 		var backgroundTask = (TextEditorBackgroundTask)queue.BackgroundTasks.Single();
 		Assert.Equal(1, backgroundTask._workList.Count);
 
-		var cts = new CancellationTokenSource();
-        var token = cts.Token;
+		await ConsumeQueue_AdhocRewriteTest(backgroundTaskWorker);
 
-        var consumerThread = new Thread(async () =>
-		{
-			await backgroundTaskWorker.StartAsync(token);
-		});
-
-		consumerThread.Start();
-
-		await Task.Yield();
-		await Task.Yield();
-
-        await backgroundTaskWorker.StopAsync(token);
-        consumerThread.Join();
-        cts.Cancel();
-
-		var textEditorModelStateWrap = textEditorService.ModelStateWrap;
-
-		var outModel = textEditorModelStateWrap.Value.ModelList.First(x => x.ResourceUri == resourceUri);
+		var outModel = textEditorService.ModelStateWrap.Value.ModelList.First(
+			x => x.ResourceUri == resourceUri);
 
 		var text = string.IsNullOrWhiteSpace(outModel.AllText)
 			? "outModel.AllText IsNullOrWhiteSpace"
@@ -111,6 +95,20 @@ public class AdhocRewrite
 		var backgroundTask = (TextEditorBackgroundTask)queue.BackgroundTasks.Single();
 		Assert.Equal(1, backgroundTask._workList.Count);
 
+		await ConsumeQueue_AdhocRewriteTest(backgroundTaskWorker);
+
+		var outModel = textEditorService.ModelStateWrap.Value.ModelList.First(
+			x => x.ResourceUri == resourceUri);
+
+		var text = string.IsNullOrWhiteSpace(outModel.AllText)
+			? "outModel.AllText IsNullOrWhiteSpace"
+			: outModel.AllText;
+
+		Assert.Equal("abc123", text);
+	}
+
+	private async Task ConsumeQueue_AdhocRewriteTest(ContinuousBackgroundTaskWorker backgroundTaskWorker)
+	{
 		var cts = new CancellationTokenSource();
         var token = cts.Token;
 
@@ -127,16 +125,6 @@ public class AdhocRewrite
         await backgroundTaskWorker.StopAsync(token);
         consumerThread.Join();
         cts.Cancel();
-
-		var textEditorModelStateWrap = textEditorService.ModelStateWrap;
-
-		var outModel = textEditorModelStateWrap.Value.ModelList.First(x => x.ResourceUri == resourceUri);
-
-		var text = string.IsNullOrWhiteSpace(outModel.AllText)
-			? "outModel.AllText IsNullOrWhiteSpace"
-			: outModel.AllText;
-
-		Assert.Equal("abc123", text);
 	}
 
 	private void Initialize_AdhocRewriteTest(
