@@ -1,0 +1,15 @@
+public class ITextEditorEditContext
+{
+	Dictionary ModelCache { get; }
+    Dictionary ViewModelToModelResourceUriCache { get; }
+    Dictionary ViewModelCache { get; }
+    Dictionary CursorModifierBagCache { get; }
+    Dictionary DiffModelCache { get; }
+
+	TextEditorModelModifier? GetModelModifier(...);
+	TextEditorModelModifier? GetModelModifierByViewModelKey(...);
+	TextEditorViewModelModifier? GetViewModelModifier(...);
+	CursorModifierBagTextEditor? GetCursorModifierBag(...);
+	TextEditorCursorModifier? GetPrimaryCursorModifier(...);
+	TextEditorDiffModelModifier? GetDiffModelModifier(...);
+}

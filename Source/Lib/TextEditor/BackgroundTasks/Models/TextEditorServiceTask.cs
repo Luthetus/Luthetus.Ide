@@ -7,7 +7,7 @@ using Luthetus.TextEditor.RazorLib.Edits.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
-namespace Luthetus.TextEditor.RazorLib;
+namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 public class TextEditorServiceTask : ITextEditorTask
 {

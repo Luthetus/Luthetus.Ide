@@ -1,0 +1,10 @@
+public class TextEditorService
+{
+	public ITextEditorEditContext OpenEditContext()
+	{
+	}
+
+	public ITextEditorEditContext CloseEditContext()
+	{
+	}
+}

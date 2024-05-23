@@ -1,5 +1,6 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
@@ -12,10 +13,17 @@ using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
-namespace Luthetus.TextEditor.RazorLib;
+namespace Luthetus.TextEditor.Tests.Adhoc.Rewrite;
 
-public partial interface ITextEditorService
+public class TestTextEditorService : ITextEditorService
 {
+	private readonly IBackgroundTaskService _backgroundTaskService;
+
+	public TestTextEditorService(IBackgroundTaskService backgroundTaskService)
+	{
+		_backgroundTaskService = backgroundTaskService;
+	}
+
     /// <summary>This is used when interacting with the <see cref="IStorageService"/> to set and get data.</summary>
     public string StorageKey { get; }
     public string ThemeCssClassString { get; }
@@ -34,28 +42,23 @@ public partial interface ITextEditorService
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
     public IState<TextEditorFindAllState> FindAllStateWrap { get; }
 
-	public Task Post(ITextEditorWork textEditorWork);
+	public Task Post(ITextEditorWork work);
+	{
+		var backgroundTask = new TextEditorBackgroundTask(work);
+	}
 
-    /// <summary>
-    /// This method will create an instance of <see cref="BackgroundTasks.Models.SimpleBatchTextEditorTask"/>,
-    /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
-    /// --- <see cref="BackgroundTasks.Models.SimpleBatchTextEditorTask"/>.cs inheritdoc:<br/><br/>
-    /// <inheritdoc cref="BackgroundTasks.Models.SimpleBatchTextEditorTask"/>
-    /// </summary>
+	public Task Post(ITextEditorTask textEditorTask);
+	{
+		throw new NotImplementedException();
+	}
+
     public Task PostSimpleBatch(
         string name,
         string identifier,
 		string? redundancy,
         TextEditorEdit textEditorEdit,
-        TimeSpan? throttleTimeSpan = null);
-
-    /// <summary>
-    /// This method creates a <see cref="TextEditorServiceTask"/>
-    /// that will encapsulate the provided innerTask.
-    /// When the queue invokes the encapsulating <see cref="TextEditorServiceTask"/>,
-    /// then the provided innerTask's <see cref="ITextEditorTask.InvokeWithEditContext(IEditContext)"/> will be invoked in turn.
-    /// When the innerTask is finished, the encapsulating <see cref="TextEditorServiceTask"/>
-    /// will update any state that was modified, and trigger re-renders for the UI.
-    /// </summary>
-    public Task Post(ITextEditorTask textEditorTask);
+        TimeSpan? throttleTimeSpan = null)
+	{
+		throw new NotImplementedException();
+	}
 }
