@@ -20,16 +20,34 @@ public class TextEditorWorkInsertion
 	/// <summary>
 	/// Track where the content should be inserted.
 	/// </summary>
-	Key<TextEditorCursor> CursorKey;
+	public Key<TextEditorCursor> CursorKey { get; }
+
+	/// <summary>
+	/// If the cursor is not already registered within the ITextEditorEditContext,
+	/// then invoke this Func, and then register a CursorModifier in the
+	/// ITextEditorEditContext.
+	/// </summary>
+	public Func<Key<TextEditorCursor>, TextEditorCursor> GetCursorFunc { get; }
 	
 	/// <summary>
 	/// The content to insert.
+	///
+	/// If a struct contains a reference type does that invalidate the
+	/// optimization I'm trying to achieve with using a struct?
+	///
+	/// Does this even compile?
 	/// </summary>
-	StringBuilder Content;
+	public StringBuilder Content { get; }
 
 	public Task Invoke(ITextEditorEditContext editContext)
 	{
 		var modelModifier = editContext.GetModelModifier(ResourceUri);
+
+		var cursorModifier = editContext.GetCursorModifier(
+			CursorKey,
+			GetCursorFunc);
+
+		modelModifier.Insert();
 
 /*
 Case: a user hits { Ctrl + . } to bring up a quick actions menu.
@@ -78,7 +96,7 @@ not done in reference to a user's UI cursor.
 Well, I cannot get the cursor by using the ViewModelKey because
 that'd give me the user's UI cursor.
 
-Perhaps I can provide in addition to the Key, an Func<Key, TextEditorCursor>.
+Perhaps I can provide in addition to the Key, a Func<Key, TextEditorCursor>.
 This would allow one to check the editContext using their Key for the cursor.
 If they do not find said cursor, then they invoke the Func, using their key.
 This Func then returns the active, immutable version of the cursor.

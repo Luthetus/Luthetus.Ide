@@ -168,6 +168,7 @@ public partial class TextEditorService : ITextEditorService
         public Dictionary<Key<TextEditorViewModel>, ResourceUri?> ViewModelToModelResourceUriCache { get; } = new();
         public Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?> ViewModelCache { get; } = new();
         public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor?> CursorModifierBagCache { get; } = new();
+        public Dictionary<Key<TextEditorCursor>, TextEditorCursorModifier?> CursorModifierCache { get; } = new();
         public Dictionary<Key<TextEditorDiffModel>, TextEditorDiffModelModifier?> DiffModelCache { get; } = new();
 
         public TextEditorEditContext(
@@ -275,6 +276,24 @@ public partial class TextEditorService : ITextEditorService
 
             return primaryCursor;
         }
+
+		public TextEditorCursorModifier? GetCursorModifier(
+			Key<TextEditorCursor> cursorKey,
+			Func<Key<TextEditorCursor>, TextEditorCursor> getCursorFunc)
+		{
+			if (cursorKey != Key<TextEditorCursor>.Empty)
+			{
+				if (!CursorModifierCache.TryGetValue(cursorKey, out var cursorModifier))
+				{
+					cursorModifier = getCursorFunc.Invoke(cursorKey);
+					CursorModifierCache.Add(cursorKey, cursorModifier);
+				}
+
+				return cursorModifier;
+			}
+
+			return null;
+		}
 
         public TextEditorDiffModelModifier? GetDiffModelModifier(
             Key<TextEditorDiffModel> diffModelKey,
