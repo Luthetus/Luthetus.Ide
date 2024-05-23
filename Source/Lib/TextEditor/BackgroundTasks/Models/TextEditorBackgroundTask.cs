@@ -11,7 +11,7 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 public class TextEditorBackgroundTask : IBackgroundTask
 {
-	private readonly List<ITextEditorWork> _workList = new();
+	public readonly List<ITextEditorWork> _workList = new();
 
 	public TextEditorBackgroundTask(ITextEditorService textEditorService, ITextEditorWork work)
 	{
@@ -47,6 +47,27 @@ public class TextEditorBackgroundTask : IBackgroundTask
 		// 2 UI renders down to only 1.
 		if (oldEvent is TextEditorBackgroundTask oldTextEditorBackgroundTask)
 		{
+			var lastWork = oldTextEditorBackgroundTask._workList.Last();
+			var newWork = _workList.First();
+
+			if (lastWork.TextEditorWorkKind == newWork.TextEditorWorkKind)
+			{
+				if (lastWork.ResourceUri == newWork.ResourceUri &&
+					lastWork.CursorKey == newWork.CursorKey)
+				{
+					switch (lastWork.TextEditorWorkKind)
+					{
+						case TextEditorWorkKind.Insertion:
+							var insertionLastWork = (TextEditorWorkInsertion)lastWork;
+							var insertionNewWork = (TextEditorWorkInsertion)newWork;
+	
+							insertionLastWork.Content.Append(insertionNewWork.Content);
+							_workList.RemoveAt(0);
+							break;
+					}
+				}
+			}
+
 			oldTextEditorBackgroundTask._workList.AddRange(_workList);
 			return oldTextEditorBackgroundTask;
 		}

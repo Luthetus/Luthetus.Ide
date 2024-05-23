@@ -25,15 +25,18 @@ public class TextEditorWorkDeletion : ITextEditorWork
 	public Key<TextEditorViewModel> ViewModelKey { get; }
 
 	/// <summary>
-	/// Track where the deletion should start.
+	/// This property is optional, and can be Key<TextEditorCursor>.Empty,
+	/// if one does not make use of it.
+	///
+	/// Track where the content should be inserted.
 	/// </summary>
-	Key<TextEditorCursor> CursorKey;
+	public Key<TextEditorCursor> CursorKey { get; }
 
 	/// <summary>
 	/// How many user-characters should be deleted from the starting position.
 	/// For example: "\r\n" is 1 user-character, yet 2 chars.
 	/// </summary>
-	int Count;
+	public int Count { get; }
 
 	public Task Invoke(IEditContext editContext)
 	{

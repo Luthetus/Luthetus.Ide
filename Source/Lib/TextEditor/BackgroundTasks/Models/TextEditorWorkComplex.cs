@@ -24,6 +24,14 @@ public class TextEditorWorkComplex : ITextEditorWork
 	/// </summary>
 	public Key<TextEditorViewModel> ViewModelKey { get; }
 
+	/// <summary>
+	/// This property is optional, and can be Key<TextEditorCursor>.Empty,
+	/// if one does not make use of it.
+	///
+	/// Track where the content should be inserted.
+	/// </summary>
+	public Key<TextEditorCursor> CursorKey { get; }
+
 	public Task Invoke(IEditContext editContext)
 	{
 		return Task.CompletedTask;

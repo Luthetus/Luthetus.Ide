@@ -32,6 +32,7 @@ public class AdhocRewrite
 			out var resourceUri,
 			out var cursor,
 			out var textEditorService,
+			out var backgroundTaskService,
 			out var backgroundTaskWorker);
 
 		var content = new StringBuilder("abc123");
@@ -41,6 +42,12 @@ public class AdhocRewrite
 			cursor.Key,
 			cursorKey => cursor,
 			content));
+
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+		Assert.Equal(1, queue.CountOfBackgroundTasks);
+
+		var backgroundTask = (TextEditorBackgroundTask)queue.BackgroundTasks.Single();
+		Assert.Equal(1, backgroundTask._workList.Count);
 
 		var cts = new CancellationTokenSource();
         var token = cts.Token;
@@ -83,6 +90,7 @@ public class AdhocRewrite
 			out var resourceUri,
 			out var cursor,
 			out var textEditorService,
+			out var backgroundTaskService,
 			out var backgroundTaskWorker);
 
 		await textEditorService.Post(new TextEditorWorkInsertion(
@@ -96,6 +104,12 @@ public class AdhocRewrite
 			cursor.Key,
 			cursorKey => cursor,
 			new StringBuilder("123")));
+
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+		Assert.Equal(1, queue.CountOfBackgroundTasks);
+
+		var backgroundTask = (TextEditorBackgroundTask)queue.BackgroundTasks.Single();
+		Assert.Equal(1, backgroundTask._workList.Count);
 
 		var cts = new CancellationTokenSource();
         var token = cts.Token;
@@ -129,9 +143,11 @@ public class AdhocRewrite
 		out ResourceUri resourceUri,
 		out TextEditorCursor cursor,
 		out ITextEditorService textEditorService,
+		out IBackgroundTaskService backgroundTaskService,
 		out ContinuousBackgroundTaskWorker backgroundTaskWorker)
 	{
-		var backgroundTaskService = new BackgroundTaskService();
+		var hackyBackgroundTaskService = new BackgroundTaskService();
+		backgroundTaskService = hackyBackgroundTaskService;
 
 		var queueKey = ContinuousBackgroundTaskWorker.GetQueueKey();
 
@@ -146,7 +162,7 @@ public class AdhocRewrite
 				sp.GetRequiredService<IBackgroundTaskService>(),
 				sp.GetRequiredService<ILoggerFactory>()))
 			.AddScoped<ILoggerFactory, NullLoggerFactory>()
-			.AddScoped<IBackgroundTaskService>(_ => backgroundTaskService)
+			.AddScoped<IBackgroundTaskService>(_ => hackyBackgroundTaskService)
 			.AddScoped<ITextEditorService, TestTextEditorService>()
 			.AddFluxor(options => options.ScanAssemblies(
 				typeof(LuthetusCommonConfig).Assembly,
