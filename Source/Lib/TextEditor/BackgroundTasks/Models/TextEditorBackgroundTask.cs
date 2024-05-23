@@ -1,5 +1,6 @@
 using System.Text;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -22,7 +23,7 @@ public class TextEditorBackgroundTask : IBackgroundTask
 	/// The group of properties which are implemented from 'IBackgroundTask'
 	/// </summary>
 	public Key<BackgroundTask> BackgroundTaskKey { get; }
-    public Key<BackgroundTaskQueue> QueueKey { get; }
+    public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; }
     public Task? WorkProgress { get; }
 	public TimeSpan ThrottleTimeSpan { get; }

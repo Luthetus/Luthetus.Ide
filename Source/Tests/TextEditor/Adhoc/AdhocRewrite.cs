@@ -21,9 +21,16 @@ public class AdhocRewrite
 	/// Rewriting logic related to the text editor background tasks.
     /// </summary>
 	[Fact]
-	public void Aaa()
+	public async Task Aaa()
 	{
 		var backgroundTaskService = new BackgroundTaskService();
+
+		var continuousQueue = new BackgroundTaskQueue(
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            ContinuousBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
+
+        backgroundTaskService.RegisterQueue(continuousQueue);
+
 		var textEditorService = new TestTextEditorService(backgroundTaskService);
 
 		var services = new ServiceCollection()
@@ -57,7 +64,7 @@ public class AdhocRewrite
             TextEditorService.AuthenticatedActionKey,
             model));
 		
-		textEditorService.Post(new TextEditorWorkInsertion(
+		await textEditorService.Post(new TextEditorWorkInsertion(
 			resourceUri,
 			cursor.Key,
 			cursorKey => cursor,
