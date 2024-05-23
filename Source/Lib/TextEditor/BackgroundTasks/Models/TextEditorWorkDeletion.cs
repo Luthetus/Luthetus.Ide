@@ -7,7 +7,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
-public class TextEditorWorkDeletion
+public class TextEditorWorkDeletion : ITextEditorWork
 {
 	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Deletion;
 

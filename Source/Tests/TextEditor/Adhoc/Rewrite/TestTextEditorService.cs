@@ -56,6 +56,7 @@ public class TestTextEditorService : ITextEditorService
 	public Task Post(ITextEditorWork work)
 	{
 		var backgroundTask = new TextEditorBackgroundTask(work);
+		throw new NotImplementedException();
 		return Task.CompletedTask;
 	}
 

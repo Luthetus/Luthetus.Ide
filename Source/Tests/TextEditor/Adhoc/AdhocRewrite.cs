@@ -1,5 +1,6 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.Tests.Adhoc.Rewrite;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
@@ -13,6 +14,9 @@ public class AdhocRewrite
 	public void Aaa()
 	{
 		var backgroundTaskService = new BackgroundTaskService();
+		var textEditorService = new TestTextEditorService(backgroundTaskService);
+
+		textEditorService.Post(new TextEditorWorkInsertion());
 	}
 
 	/// <summary>

@@ -7,7 +7,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
-public class TextEditorWorkInsertion
+public class TextEditorWorkInsertion : ITextEditorWork
 {
 	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Insertion;
 
