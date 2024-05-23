@@ -1,4 +1,4 @@
-namespace Luthetus.TextEditor.Tests.Adhoc.Rewrite;
+namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 public enum TextEditorWorkKind
 {

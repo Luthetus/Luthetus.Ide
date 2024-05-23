@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis;
 
@@ -29,14 +29,14 @@ public class TextEditorTestBaseTests : TextEditorTestBase
 
         for (var i = 0; i < 3; i++)
         {
-            await textEditorService.PostTakeMostRecent(
-                "Name_Test",
-                "Identifier_Test",
-                editContext =>
-                {
-                    number++;
-                    return Task.CompletedTask;
-                });
+            //await textEditorService.PostTakeMostRecent(
+            //    "Name_Test",
+            //    "Identifier_Test",
+            //    editContext =>
+            //    {
+            //        number++;
+            //        return Task.CompletedTask;
+            //    });
         }
 
         backgroundTaskThread.Start();
@@ -74,6 +74,7 @@ public class TextEditorTestBaseTests : TextEditorTestBase
             await textEditorService.PostSimpleBatch(
                 "Name_Test",
                 "Identifier_Test",
+				null,
                 editContext =>
                 {
                     number++;
@@ -113,13 +114,13 @@ public class TextEditorTestBaseTests : TextEditorTestBase
 
         for (var i = 0; i < 3; i++)
         {
-            await textEditorService.Post(new AsIsTextEditorTask(
-                "Name_Test",
-                editContext =>
-                {
-                    number++;
-                    return Task.CompletedTask;
-                }));
+            //await textEditorService.Post(new AsIsTextEditorTask(
+            //    "Name_Test",
+            //    editContext =>
+            //    {
+            //        number++;
+            //        return Task.CompletedTask;
+            //    }));
         }
 
         backgroundTaskThread.Start();

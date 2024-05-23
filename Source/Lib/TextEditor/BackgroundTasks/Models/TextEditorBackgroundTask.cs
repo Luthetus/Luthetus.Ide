@@ -1,6 +1,13 @@
+using System.Text;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
-namespace Luthetus.TextEditor.Tests.Adhoc.Rewrite;
+namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 public class TextEditorBackgroundTask : IBackgroundTask
 {
@@ -25,7 +32,7 @@ public class TextEditorBackgroundTask : IBackgroundTask
 	/// the <see cref="_workList"/> performs work.
 	/// </summary>
 	public ITextEditorService TextEditorService { get; }	
-	public ITextEditorEditContext? EditContext { get; }
+	public IEditContext? EditContext { get; set; }
 
 	public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
 	{
@@ -40,18 +47,23 @@ public class TextEditorBackgroundTask : IBackgroundTask
 		if (oldEvent is TextEditorBackgroundTask oldTextEditorBackgroundTask)
 		{
 			oldTextEditorBackgroundTask._workList.AddRange(_workList);
+			return oldTextEditorBackgroundTask;
+		}
+		else
+		{
+			return null;
 		}
 	}
 	
-	public Task HandleEvent(CancellationToken cancellationToken)
+	public async Task HandleEvent(CancellationToken cancellationToken)
 	{
 		EditContext ??= TextEditorService.OpenEditContext();
 
 		foreach (var work in _workList)
 		{
-			work.Invoke(EditContext).ConfigureAwait(false);
+			await work.Invoke(EditContext).ConfigureAwait(false);
 		}
 
-		TextEditorService.CloseEditContext();
+		await TextEditorService.CloseEditContext(EditContext);
 	}
 }

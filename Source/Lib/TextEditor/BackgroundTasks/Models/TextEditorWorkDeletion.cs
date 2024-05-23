@@ -1,4 +1,11 @@
-namespace Luthetus.TextEditor.Tests.Adhoc.Rewrite;
+using System.Text;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+
+namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 public class TextEditorWorkDeletion
 {
@@ -28,7 +35,7 @@ public class TextEditorWorkDeletion
 	/// </summary>
 	int Count;
 
-	public Task Invoke(ITextEditorEditContext editContext)
+	public Task Invoke(IEditContext editContext)
 	{
 		return Task.CompletedTask;
 	}

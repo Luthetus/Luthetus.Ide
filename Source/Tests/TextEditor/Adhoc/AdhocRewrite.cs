@@ -1,4 +1,5 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.Tests.Adhoc.Rewrite;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
@@ -18,7 +19,7 @@ public class AdhocRewrite
 	/// Rewriting logic related to the text editor background tasks.
     /// </summary>
 	[Fact]
-	public void Bbb()
+	public async Task Bbb()
 	{
 		var queue = new ThrottleEventQueueAsync();
 

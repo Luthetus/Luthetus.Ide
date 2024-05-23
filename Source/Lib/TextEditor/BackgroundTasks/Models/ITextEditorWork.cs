@@ -1,6 +1,13 @@
-namespace Luthetus.TextEditor.Tests.Adhoc.Rewrite;
+using System.Text;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
-public class ITextEditorWork
+namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
+
+public interface ITextEditorWork
 {
 	public TextEditorWorkKind TextEditorWorkKind { get; }
 
@@ -17,5 +24,5 @@ public class ITextEditorWork
 	/// </summary>
 	public Key<TextEditorViewModel> ViewModelKey { get; }
 
-	public Task Invoke(ITextEditorEditContext editContext);
+	public Task Invoke(IEditContext editContext);
 }

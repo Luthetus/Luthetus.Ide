@@ -1,5 +1,6 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
@@ -42,12 +43,23 @@ public class TestTextEditorService : ITextEditorService
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
     public IState<TextEditorFindAllState> FindAllStateWrap { get; }
 
-	public Task Post(ITextEditorWork work);
+	public IEditContext OpenEditContext()
 	{
-		var backgroundTask = new TextEditorBackgroundTask(work);
+		throw new NotImplementedException();
 	}
 
-	public Task Post(ITextEditorTask textEditorTask);
+	public Task CloseEditContext(IEditContext editContext)
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task Post(ITextEditorWork work)
+	{
+		var backgroundTask = new TextEditorBackgroundTask(work);
+		return Task.CompletedTask;
+	}
+
+	public Task Post(ITextEditorTask textEditorTask)
 	{
 		throw new NotImplementedException();
 	}

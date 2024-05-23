@@ -108,6 +108,21 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
 
+	public IEditContext OpenEditContext()
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task CloseEditContext(IEditContext editContext)
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task Post(ITextEditorWork textEditorWork)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task PostSimpleBatch(
         string name,
         string identifier,
@@ -285,7 +300,7 @@ public partial class TextEditorService : ITextEditorService
 			{
 				if (!CursorModifierCache.TryGetValue(cursorKey, out var cursorModifier))
 				{
-					cursorModifier = getCursorFunc.Invoke(cursorKey);
+					cursorModifier = new TextEditorCursorModifier(getCursorFunc.Invoke(cursorKey));
 					CursorModifierCache.Add(cursorKey, cursorModifier);
 				}
 

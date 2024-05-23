@@ -37,6 +37,11 @@ public interface IEditContext
     /// <inheritdoc cref="IEditContext"/>
     public CursorModifierBagTextEditor? GetCursorModifierBag(TextEditorViewModel? viewModel);
 
+    /// <inheritdoc cref="IEditContext"/>
+	public TextEditorCursorModifier? GetCursorModifier(
+		Key<TextEditorCursor> cursorKey,
+		Func<Key<TextEditorCursor>, TextEditorCursor> getCursorFunc);
+
     /// <summary>
     /// TODO: Caching for this method?<br/>
     /// <inheritdoc cref="IEditContext"/>

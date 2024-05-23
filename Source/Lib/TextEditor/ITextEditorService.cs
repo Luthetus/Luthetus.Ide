@@ -34,6 +34,9 @@ public partial interface ITextEditorService
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
     public IState<TextEditorFindAllState> FindAllStateWrap { get; }
 
+	public IEditContext OpenEditContext();
+	public Task CloseEditContext(IEditContext editContext);
+
 	public Task Post(ITextEditorWork textEditorWork);
 
     /// <summary>
