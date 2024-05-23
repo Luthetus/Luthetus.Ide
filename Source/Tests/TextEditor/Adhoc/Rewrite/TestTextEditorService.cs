@@ -45,11 +45,13 @@ public class TestTextEditorService : ITextEditorService
 
 	public IEditContext OpenEditContext()
 	{
+		Console.WriteLine(nameof(OpenEditContext));
 		throw new NotImplementedException();
 	}
 
 	public Task CloseEditContext(IEditContext editContext)
 	{
+		Console.WriteLine(nameof(CloseEditContext));
 		throw new NotImplementedException();
 	}
 

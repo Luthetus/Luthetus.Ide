@@ -1,6 +1,8 @@
-using Fluxor;
-using Microsoft.Extensions.DependencyInjection;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Logging;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
@@ -19,21 +21,30 @@ public class AdhocRewrite
 {
 	/// <summary>
 	/// Rewriting logic related to the text editor background tasks.
+	///
+	/// Durations are wrong:
+	/// https://github.com/xunit/visualstudio.xunit/issues/401
     /// </summary>
 	[Fact]
 	public async Task Aaa()
 	{
 		var backgroundTaskService = new BackgroundTaskService();
 
-		var continuousQueue = new BackgroundTaskQueue(
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+		var queueKey = ContinuousBackgroundTaskWorker.GetQueueKey();
+
+		var queue = new BackgroundTaskQueue(
+            queueKey,
             ContinuousBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
 
-        backgroundTaskService.RegisterQueue(continuousQueue);
+        backgroundTaskService.RegisterQueue(queue);
 
 		var textEditorService = new TestTextEditorService(backgroundTaskService);
 
 		var services = new ServiceCollection()
+			.AddScoped<ContinuousBackgroundTaskWorker>(sp => new ContinuousBackgroundTaskWorker(
+				sp.GetRequiredService<IBackgroundTaskService>(),
+				sp.GetRequiredService<ILoggerFactory>()))
+			.AddScoped<ILoggerFactory, NullLoggerFactory>()
 			.AddScoped<IBackgroundTaskService>(_ => backgroundTaskService)
 			.AddScoped<ITextEditorService>(_ => textEditorService)
 			.AddFluxor(options => options.ScanAssemblies(
@@ -51,7 +62,7 @@ public class AdhocRewrite
 		var cursor = new TextEditorCursor(true);
 		var content = new StringBuilder("abc123");
 
-		var model = new TextEditorModel(
+		var inModel = new TextEditorModel(
 	        resourceUri,
 	        DateTime.UtcNow,
 	        "txt",
@@ -62,13 +73,47 @@ public class AdhocRewrite
 
 		dispatcher.Dispatch(new TextEditorModelState.RegisterAction(
             TextEditorService.AuthenticatedActionKey,
-            model));
+            inModel));
 		
 		await textEditorService.Post(new TextEditorWorkInsertion(
 			resourceUri,
 			cursor.Key,
 			cursorKey => cursor,
 			content));
+
+		var cts = new CancellationTokenSource();
+        var token = cts.Token;
+
+		var backgroundTaskWorker = serviceProvider
+			.GetRequiredService<ContinuousBackgroundTaskWorker>();
+
+		Console.WriteLine("Hello???");
+
+        var consumerThread = new Thread(async () =>
+		{
+			Console.WriteLine("went-inside-consumerThread");
+			await backgroundTaskWorker.StartAsync(token);
+			Console.WriteLine("going-outside-consumerThread");
+		});
+
+		consumerThread.Start();
+        await backgroundTaskWorker.StopAsync(token);
+        consumerThread.Join();
+        cts.Cancel();
+
+		var textEditorModelStateWrap = serviceProvider
+			.GetRequiredService<IState<TextEditorModelState>>();
+
+		var outModel = textEditorModelStateWrap.Value.ModelList.First(
+			x => x.ResourceUri == resourceUri);
+
+		var text = string.IsNullOrWhiteSpace(outModel.AllText)
+			? "outModel.AllText IsNullOrWhiteSpace"
+			: outModel.AllText;
+
+		Console.WriteLine(text);
+
+		Console.WriteLine("Goodbye???");
 	}
 
 	/// <summary>
