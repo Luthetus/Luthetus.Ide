@@ -110,7 +110,7 @@ public class AdhocRewrite
 	}
 
 	[Fact]
-	public async Task Single_TextEditorWorkDeletion()
+	public async Task Single_TextEditorWorkDeletion_DeleteKindDelete()
 	{
 		var initialContent = "abc123";
 
@@ -126,7 +126,8 @@ public class AdhocRewrite
 			resourceUri,
 			cursor.Key,
 			cursorKey => cursor,
-			initialContent.Length));
+			initialContent.Length,
+			TextEditorModelModifier.DeleteKind.Delete));
 
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
 		Assert.Equal(1, queue.CountOfBackgroundTasks);
@@ -145,7 +146,7 @@ public class AdhocRewrite
 	}
 
 	[Fact]
-	public async Task Double_TextEditorWorkDeletion()
+	public async Task Double_TextEditorWorkDeletion_DeleteKindDelete()
 	{
 		var initialContent = "abc123";
 
@@ -161,13 +162,98 @@ public class AdhocRewrite
 			resourceUri,
 			cursor.Key,
 			cursorKey => cursor,
-			initialContent.Length / 2));
+			initialContent.Length / 2,
+			TextEditorModelModifier.DeleteKind.Delete));
 
 		await textEditorService.Post(new TextEditorWorkDeletion(
 			resourceUri,
 			cursor.Key,
 			cursorKey => cursor,
-			initialContent.Length / 2));
+			initialContent.Length / 2,
+			TextEditorModelModifier.DeleteKind.Delete));
+
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+		Assert.Equal(1, queue.CountOfBackgroundTasks);
+
+		var backgroundTask = (TextEditorBackgroundTask)queue.BackgroundTasks.Single();
+		Assert.Equal(1, backgroundTask._workList.Count);
+
+		await ConsumeQueue_AdhocRewriteTest(backgroundTaskWorker);
+
+		var outModel = textEditorService.ModelStateWrap.Value.ModelList.First(
+			x => x.ResourceUri == resourceUri);
+
+		var text = outModel.AllText;
+
+		Assert.Equal(string.Empty, text);
+	}
+
+	[Fact]
+	public async Task Single_TextEditorWorkDeletion_DeleteKindBackspace()
+	{
+		var initialContent = "abc123";
+
+		Initialize_AdhocRewriteTest(
+			initialContent,
+			out var resourceUri,
+			out var cursor,
+			out var textEditorService,
+			out var backgroundTaskService,
+			out var backgroundTaskWorker);
+
+		cursor = new TextEditorCursor(0, initialContent.Length, true);
+
+		await textEditorService.Post(new TextEditorWorkDeletion(
+			resourceUri,
+			cursor.Key,
+			cursorKey => cursor,
+			initialContent.Length,
+			TextEditorModelModifier.DeleteKind.Backspace));
+
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+		Assert.Equal(1, queue.CountOfBackgroundTasks);
+
+		var backgroundTask = (TextEditorBackgroundTask)queue.BackgroundTasks.Single();
+		Assert.Equal(1, backgroundTask._workList.Count);
+
+		await ConsumeQueue_AdhocRewriteTest(backgroundTaskWorker);
+
+		var outModel = textEditorService.ModelStateWrap.Value.ModelList.First(
+			x => x.ResourceUri == resourceUri);
+
+		var text = outModel.AllText;
+
+		Assert.Equal(string.Empty, text);
+	}
+
+	[Fact]
+	public async Task Double_TextEditorWorkDeletion_DeleteKindBackspace()
+	{
+		var initialContent = "abc123";
+
+		Initialize_AdhocRewriteTest(
+			initialContent,
+			out var resourceUri,
+			out var cursor,
+			out var textEditorService,
+			out var backgroundTaskService,
+			out var backgroundTaskWorker);
+
+		cursor = new TextEditorCursor(0, initialContent.Length, true);
+
+		await textEditorService.Post(new TextEditorWorkDeletion(
+			resourceUri,
+			cursor.Key,
+			cursorKey => cursor,
+			initialContent.Length / 2,
+			TextEditorModelModifier.DeleteKind.Backspace));
+
+		await textEditorService.Post(new TextEditorWorkDeletion(
+			resourceUri,
+			cursor.Key,
+			cursorKey => cursor,
+			initialContent.Length / 2,
+			TextEditorModelModifier.DeleteKind.Backspace));
 
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
 		Assert.Equal(1, queue.CountOfBackgroundTasks);

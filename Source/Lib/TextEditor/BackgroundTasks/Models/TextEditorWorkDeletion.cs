@@ -13,12 +13,14 @@ public class TextEditorWorkDeletion : ITextEditorWork
 		ResourceUri resourceUri,
 		Key<TextEditorCursor> cursorKey,
 		Func<Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
-		int columnCount)
+		int columnCount,
+		TextEditorModelModifier.DeleteKind deleteKind)
 	{
 		ResourceUri = resourceUri;
 		CursorKey = cursorKey;
 		GetCursorFunc = getCursorFunc;
 		ColumnCount = columnCount;
+		DeleteKind = deleteKind;
 	}
 
 	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Deletion;
@@ -57,6 +59,8 @@ public class TextEditorWorkDeletion : ITextEditorWork
 	/// </summary>
 	public int ColumnCount { get; set; }
 
+	public TextEditorModelModifier.DeleteKind DeleteKind { get; }
+
 	public Task Invoke(IEditContext editContext)
 	{
 		var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -73,7 +77,7 @@ public class TextEditorWorkDeletion : ITextEditorWork
 	        cursorModifierBag,
 	        ColumnCount,
 	        false,
-	        TextEditorModelModifier.DeleteKind.Delete,
+	        DeleteKind,
 	        cancellationToken: default);
 
 		return Task.CompletedTask;
