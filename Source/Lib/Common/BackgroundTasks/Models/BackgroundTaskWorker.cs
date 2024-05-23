@@ -26,6 +26,7 @@ public class BackgroundTaskWorker : BackgroundService
     {
         var currentThread = Thread.CurrentThread;
 
+		Console.WriteLine("worker-ExecuteAsync");
         _logger.LogInformation("Queued Hosted Service is starting.");
 
         while (!cancellationToken.IsCancellationRequested)
@@ -59,6 +60,7 @@ public class BackgroundTaskWorker : BackgroundService
                         ? "Task was cancelled {0}." // {0} => WorkItemName
                         : "Error occurred executing {0}."; // {0} => WorkItemName
 
+					Console.WriteLine(backgroundTask.Name + "_" + ex.ToString());
                     _logger.LogError(ex, message, backgroundTask.Name);
                 }
                 finally
@@ -70,11 +72,13 @@ public class BackgroundTaskWorker : BackgroundService
             }
         }
 
+		Console.WriteLine("leaving-worker-ExecuteAsync");
         _logger.LogInformation("Queued Hosted Service is stopping.");
     }
 
     public override async Task StopAsync(CancellationToken cancellationToken)
     {
+		Console.WriteLine("entering-worker-StopAsync");
         await BackgroundTaskService.StopAsync(CancellationToken.None).ConfigureAwait(false);
 
         // TODO: Polling solution for now, perhaps change to a more optimal solution? (2023-11-19)
@@ -85,5 +89,7 @@ public class BackgroundTaskWorker : BackgroundService
         {
             await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken).ConfigureAwait(false);
         }
+
+		Console.WriteLine("leaving-worker-StopAsync");
     }
 }

@@ -5,7 +5,6 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
@@ -14,8 +13,9 @@ public class TextEditorBackgroundTask : IBackgroundTask
 {
 	private readonly List<ITextEditorWork> _workList = new();
 
-	public TextEditorBackgroundTask(ITextEditorWork work)
+	public TextEditorBackgroundTask(ITextEditorService textEditorService, ITextEditorWork work)
 	{
+		TextEditorService = textEditorService;
 		_workList.Add(work);
 	}
 
@@ -58,7 +58,16 @@ public class TextEditorBackgroundTask : IBackgroundTask
 	
 	public async Task HandleEvent(CancellationToken cancellationToken)
 	{
+		Console.WriteLine("backgroundTask-HandleEvent");
+
+		if (TextEditorService is null)
+		{
+			Console.WriteLine("backgroundTask-TextEditorService-wasNull");
+		}
+
 		EditContext ??= TextEditorService.OpenEditContext();
+
+		Console.WriteLine("backgroundTask-AfterOpenEditContext");
 
 		foreach (var work in _workList)
 		{

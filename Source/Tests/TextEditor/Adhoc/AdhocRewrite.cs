@@ -97,6 +97,10 @@ public class AdhocRewrite
 		});
 
 		consumerThread.Start();
+
+		await Task.Yield();
+		await Task.Yield();
+
         await backgroundTaskWorker.StopAsync(token);
         consumerThread.Join();
         cts.Cancel();

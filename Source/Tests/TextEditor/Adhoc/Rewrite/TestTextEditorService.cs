@@ -57,7 +57,7 @@ public class TestTextEditorService : ITextEditorService
 
 	public Task Post(ITextEditorWork work)
 	{
-		var backgroundTask = new TextEditorBackgroundTask(work);
+		var backgroundTask = new TextEditorBackgroundTask(this, work);
 		return _backgroundTaskService.EnqueueAsync(backgroundTask);
 	}
 
