@@ -23,7 +23,85 @@ public class TextEditorServiceTask : ITextEditorTask
         _editContext = editContext;
         _dispatcher = dispatcher;
     }
+	
+	/*
 
+Map events and commands into 'DocumentEditArgs',
+
+public class DocumentKeyboardEvent
+{
+	ToDocumentEditArgs() => new List<DocumentEditArgs>
+	{
+		DocumentEditArgs
+	};
+}
+
+public class DocumentEditArgs
+{
+}
+
+What are the "primitive edits" one can perform to a document?
+-Insert
+-Deletion
+-
+
+
+Define "primitive edit":
+A given primitive edit must not be describable in terms
+of a separately distinct primitive edit. Nor,
+the combination of any primitive edits.
+
+Selecting then typing "Hello World!" is made of the primitive edits:
+-Deletion  (the selection)
+-Insertion (the text inserted)
+
+If we use "primitive edits" we can easily batch operations.
+
+I'm going to add to the previous example,
+Selecting then typing "Hello World!", then furthermore paste the clipboard contents.
+-Deletion  (the selection)
+-Insertion (the text inserted)
+
+The example is equivalent in regards to the primitive edits.
+The "complex edit" of selecting text then typing over it,
+is just Deletion, then Insertion.
+
+If we look at a queue that is paused, then it will just contain
+[
+	Deletion,
+	Insertion,
+]
+
+Therefore when the "complex edit" of pasting the clipboard's contents
+is performed. Since this "complex edit" is "Insertion" and we ended
+the previous edit with an "Insertion" these can be batched.
+		
+Furthermore, by describing things in terms of "primitive edits",
+the undo/redo logic is drastically more optimized.
+
+Storing the entirety of the text in stages was done because
+of the confusion about how one would undo a "complex edit".
+
+But, so long as we can undo a "primitive edit" and we describe "complex edits"
+with one or many "primitive edits" then there should be no reason
+to store copies of the text, but instead just perform the edit / un-perform.
+
+I don't like "TextEditorServiceTask". It results in an extra object
+created, everytime I enqueue something.
+
+That being said, "TextEditorServiceTask" does provide a single path to edit
+a document. There's no way to edit without the TextEditorEditContext
+and its all done through the "TextEditorServiceTask".
+
+If prior to enqueueing from ITextEditorService to IBackgroundService
+I could block the IBackgroundService.Queue and look at the last entry,
+I could see if there already were a "TextEditorServiceTask" ahead of me
+in the queue, then I don't need to create a "TextEditorServiceTask" for no reason.
+
+I'm also considering the importance of using a struct?
+If these UI events are occurring at a fast enough rate,
+perhaps the cost of garbage collection would be noticable?
+	*/
     private ITextEditorTask _innerTask;
 
     public Key<BackgroundTask> BackgroundTaskKey => _innerTask.BackgroundTaskKey;
