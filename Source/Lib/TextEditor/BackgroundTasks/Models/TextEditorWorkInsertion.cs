@@ -63,16 +63,6 @@ public class TextEditorWorkInsertion : ITextEditorWork
 
 	public Task Invoke(IEditContext editContext)
 	{
-		if (editContext is null)
-			Console.WriteLine("editContext was null");
-		else
-			Console.WriteLine("editContext was NOT null");
-
-		if (ResourceUri is null)
-			Console.WriteLine("ResourceUri was null");
-		else
-			Console.WriteLine("ResourceUri was NOT null");
-
 		var modelModifier = editContext.GetModelModifier(ResourceUri);
 
 		var cursorModifier = editContext.GetCursorModifier(

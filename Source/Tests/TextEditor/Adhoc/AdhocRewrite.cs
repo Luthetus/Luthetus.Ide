@@ -29,6 +29,7 @@ public class AdhocRewrite
 	public async Task Single_TextEditorWorkInsertion()
 	{
 		Initialize_AdhocRewriteTest(
+			string.Empty,
 			out var resourceUri,
 			out var cursor,
 			out var textEditorService,
@@ -71,6 +72,7 @@ public class AdhocRewrite
 	public async Task Double_TextEditorWorkInsertion()
 	{
 		Initialize_AdhocRewriteTest(
+			string.Empty,
 			out var resourceUri,
 			out var cursor,
 			out var textEditorService,
@@ -107,6 +109,82 @@ public class AdhocRewrite
 		Assert.Equal("abc123", text);
 	}
 
+	[Fact]
+	public async Task Single_TextEditorWorkDeletion()
+	{
+		var initialContent = "abc123";
+
+		Initialize_AdhocRewriteTest(
+			initialContent,
+			out var resourceUri,
+			out var cursor,
+			out var textEditorService,
+			out var backgroundTaskService,
+			out var backgroundTaskWorker);
+
+		await textEditorService.Post(new TextEditorWorkDeletion(
+			resourceUri,
+			cursor.Key,
+			cursorKey => cursor,
+			initialContent.Length));
+
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+		Assert.Equal(1, queue.CountOfBackgroundTasks);
+
+		var backgroundTask = (TextEditorBackgroundTask)queue.BackgroundTasks.Single();
+		Assert.Equal(1, backgroundTask._workList.Count);
+
+		await ConsumeQueue_AdhocRewriteTest(backgroundTaskWorker);
+
+		var outModel = textEditorService.ModelStateWrap.Value.ModelList.First(
+			x => x.ResourceUri == resourceUri);
+
+		var text = outModel.AllText;
+
+		Assert.Equal(string.Empty, text);
+	}
+
+	[Fact]
+	public async Task Double_TextEditorWorkDeletion()
+	{
+		var initialContent = "abc123";
+
+		Initialize_AdhocRewriteTest(
+			initialContent,
+			out var resourceUri,
+			out var cursor,
+			out var textEditorService,
+			out var backgroundTaskService,
+			out var backgroundTaskWorker);
+
+		await textEditorService.Post(new TextEditorWorkDeletion(
+			resourceUri,
+			cursor.Key,
+			cursorKey => cursor,
+			initialContent.Length / 2));
+
+		await textEditorService.Post(new TextEditorWorkDeletion(
+			resourceUri,
+			cursor.Key,
+			cursorKey => cursor,
+			initialContent.Length / 2));
+
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+		Assert.Equal(1, queue.CountOfBackgroundTasks);
+
+		var backgroundTask = (TextEditorBackgroundTask)queue.BackgroundTasks.Single();
+		Assert.Equal(1, backgroundTask._workList.Count);
+
+		await ConsumeQueue_AdhocRewriteTest(backgroundTaskWorker);
+
+		var outModel = textEditorService.ModelStateWrap.Value.ModelList.First(
+			x => x.ResourceUri == resourceUri);
+
+		var text = outModel.AllText;
+
+		Assert.Equal(string.Empty, text);
+	}
+
 	private async Task ConsumeQueue_AdhocRewriteTest(ContinuousBackgroundTaskWorker backgroundTaskWorker)
 	{
 		var cts = new CancellationTokenSource();
@@ -128,6 +206,7 @@ public class AdhocRewrite
 	}
 
 	private void Initialize_AdhocRewriteTest(
+		string initialContent,
 		out ResourceUri resourceUri,
 		out TextEditorCursor cursor,
 		out ITextEditorService textEditorService,
@@ -173,7 +252,7 @@ public class AdhocRewrite
 	        resourceUri,
 	        DateTime.UtcNow,
 	        "txt",
-	        string.Empty,
+	        initialContent,
 	        null,
 	        null,
 			4_096);

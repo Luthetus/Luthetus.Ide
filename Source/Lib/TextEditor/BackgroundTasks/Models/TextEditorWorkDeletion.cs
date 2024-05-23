@@ -9,6 +9,18 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 public class TextEditorWorkDeletion : ITextEditorWork
 {
+	public TextEditorWorkDeletion(
+		ResourceUri resourceUri,
+		Key<TextEditorCursor> cursorKey,
+		Func<Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
+		int columnCount)
+	{
+		ResourceUri = resourceUri;
+		CursorKey = cursorKey;
+		GetCursorFunc = getCursorFunc;
+		ColumnCount = columnCount;
+	}
+
 	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Deletion;
 
 	/// <summary>
@@ -33,13 +45,37 @@ public class TextEditorWorkDeletion : ITextEditorWork
 	public Key<TextEditorCursor> CursorKey { get; }
 
 	/// <summary>
+	/// If the cursor is not already registered within the ITextEditorEditContext,
+	/// then invoke this Func, and then register a CursorModifier in the
+	/// ITextEditorEditContext.
+	/// </summary>
+	public Func<Key<TextEditorCursor>, TextEditorCursor> GetCursorFunc { get; }
+
+	/// <summary>
 	/// How many user-characters should be deleted from the starting position.
 	/// For example: "\r\n" is 1 user-character, yet 2 chars.
 	/// </summary>
-	public int Count { get; }
+	public int ColumnCount { get; set; }
 
 	public Task Invoke(IEditContext editContext)
 	{
+		var modelModifier = editContext.GetModelModifier(ResourceUri);
+
+		var cursorModifier = editContext.GetCursorModifier(
+			CursorKey,
+			GetCursorFunc);
+
+		var cursorModifierBag = new CursorModifierBagTextEditor(
+			Key<TextEditorViewModel>.Empty,
+			new List<TextEditorCursorModifier> { cursorModifier });
+
+		modelModifier.Delete(
+	        cursorModifierBag,
+	        ColumnCount,
+	        false,
+	        TextEditorModelModifier.DeleteKind.Delete,
+	        cancellationToken: default);
+
 		return Task.CompletedTask;
 	}
 }

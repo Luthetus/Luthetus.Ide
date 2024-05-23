@@ -64,6 +64,13 @@ public class TextEditorBackgroundTask : IBackgroundTask
 							insertionLastWork.Content.Append(insertionNewWork.Content);
 							_workList.RemoveAt(0);
 							break;
+						case TextEditorWorkKind.Deletion:
+							var deletionLastWork = (TextEditorWorkDeletion)lastWork;
+							var deletionNewWork = (TextEditorWorkDeletion)newWork;
+	
+							deletionLastWork.ColumnCount += deletionNewWork.ColumnCount;
+							_workList.RemoveAt(0);
+							break;
 					}
 				}
 			}
