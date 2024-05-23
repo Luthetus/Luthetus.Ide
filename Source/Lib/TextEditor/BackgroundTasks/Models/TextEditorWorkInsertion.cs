@@ -9,6 +9,18 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 public class TextEditorWorkInsertion : ITextEditorWork
 {
+	public TextEditorWorkInsertion(
+		ResourceUri resourceUri,
+		Key<TextEditorCursor> cursorKey,
+		Func<Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
+		StringBuilder content)
+	{
+		ResourceUri = resourceUri;
+		CursorKey = cursorKey;
+		GetCursorFunc = getCursorFunc;
+		Content = content;
+	}
+
 	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Insertion;
 
 	/// <summary>

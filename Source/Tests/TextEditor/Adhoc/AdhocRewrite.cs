@@ -1,6 +1,16 @@
+using Fluxor;
+using Microsoft.Extensions.DependencyInjection;
+using System.Text;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.Tests.Adhoc.Rewrite;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
@@ -16,7 +26,42 @@ public class AdhocRewrite
 		var backgroundTaskService = new BackgroundTaskService();
 		var textEditorService = new TestTextEditorService(backgroundTaskService);
 
-		textEditorService.Post(new TextEditorWorkInsertion());
+		var services = new ServiceCollection()
+			.AddScoped<IBackgroundTaskService>(_ => backgroundTaskService)
+			.AddScoped<ITextEditorService>(_ => textEditorService)
+			.AddFluxor(options => options.ScanAssemblies(
+				typeof(LuthetusCommonConfig).Assembly,
+				typeof(LuthetusTextEditorConfig).Assembly));
+
+		var serviceProvider = services.BuildServiceProvider();
+
+		var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+		var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+
+		var resourceUri = new ResourceUri("/unitTesting.txt");
+		var cursor = new TextEditorCursor(true);
+		var content = new StringBuilder("abc123");
+
+		var model = new TextEditorModel(
+	        resourceUri,
+	        DateTime.UtcNow,
+	        "txt",
+	        string.Empty,
+	        null,
+	        null,
+			4_096);
+
+		dispatcher.Dispatch(new TextEditorModelState.RegisterAction(
+            TextEditorService.AuthenticatedActionKey,
+            model));
+		
+		textEditorService.Post(new TextEditorWorkInsertion(
+			resourceUri,
+			cursor.Key,
+			cursorKey => cursor,
+			content));
 	}
 
 	/// <summary>
