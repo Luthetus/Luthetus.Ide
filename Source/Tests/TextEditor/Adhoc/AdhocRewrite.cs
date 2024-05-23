@@ -26,7 +26,110 @@ public class AdhocRewrite
 	/// https://github.com/xunit/visualstudio.xunit/issues/401
     /// </summary>
 	[Fact]
-	public async Task Aaa()
+	public async Task Single_TextEditorWorkInsertion()
+	{
+		Initialize_AdhocRewriteTest(
+			out var resourceUri,
+			out var cursor,
+			out var textEditorService,
+			out var backgroundTaskWorker);
+
+		var content = new StringBuilder("abc123");
+
+		await textEditorService.Post(new TextEditorWorkInsertion(
+			resourceUri,
+			cursor.Key,
+			cursorKey => cursor,
+			content));
+
+		var cts = new CancellationTokenSource();
+        var token = cts.Token;
+
+        var consumerThread = new Thread(async () =>
+		{
+			await backgroundTaskWorker.StartAsync(token);
+		});
+
+		consumerThread.Start();
+
+		await Task.Yield();
+		await Task.Yield();
+
+        await backgroundTaskWorker.StopAsync(token);
+        consumerThread.Join();
+        cts.Cancel();
+
+		var textEditorModelStateWrap = textEditorService.ModelStateWrap;
+
+		var outModel = textEditorModelStateWrap.Value.ModelList.First(x => x.ResourceUri == resourceUri);
+
+		var text = string.IsNullOrWhiteSpace(outModel.AllText)
+			? "outModel.AllText IsNullOrWhiteSpace"
+			: outModel.AllText;
+
+		Assert.Equal("abc123", text);
+	}
+
+	/// <summary>
+	/// Rewriting logic related to the text editor background tasks.
+	///
+	/// Durations are wrong:
+	/// https://github.com/xunit/visualstudio.xunit/issues/401
+    /// </summary>
+	[Fact]
+	public async Task Double_TextEditorWorkInsertion()
+	{
+		Initialize_AdhocRewriteTest(
+			out var resourceUri,
+			out var cursor,
+			out var textEditorService,
+			out var backgroundTaskWorker);
+
+		await textEditorService.Post(new TextEditorWorkInsertion(
+			resourceUri,
+			cursor.Key,
+			cursorKey => cursor,
+			new StringBuilder("abc")));
+
+		await textEditorService.Post(new TextEditorWorkInsertion(
+			resourceUri,
+			cursor.Key,
+			cursorKey => cursor,
+			new StringBuilder("123")));
+
+		var cts = new CancellationTokenSource();
+        var token = cts.Token;
+
+        var consumerThread = new Thread(async () =>
+		{
+			await backgroundTaskWorker.StartAsync(token);
+		});
+
+		consumerThread.Start();
+
+		await Task.Yield();
+		await Task.Yield();
+
+        await backgroundTaskWorker.StopAsync(token);
+        consumerThread.Join();
+        cts.Cancel();
+
+		var textEditorModelStateWrap = textEditorService.ModelStateWrap;
+
+		var outModel = textEditorModelStateWrap.Value.ModelList.First(x => x.ResourceUri == resourceUri);
+
+		var text = string.IsNullOrWhiteSpace(outModel.AllText)
+			? "outModel.AllText IsNullOrWhiteSpace"
+			: outModel.AllText;
+
+		Assert.Equal("abc123", text);
+	}
+
+	private void Initialize_AdhocRewriteTest(
+		out ResourceUri resourceUri,
+		out TextEditorCursor cursor,
+		out ITextEditorService textEditorService,
+		out ContinuousBackgroundTaskWorker backgroundTaskWorker)
 	{
 		var backgroundTaskService = new BackgroundTaskService();
 
@@ -38,15 +141,13 @@ public class AdhocRewrite
 
         backgroundTaskService.RegisterQueue(queue);
 
-		var textEditorService = new TestTextEditorService(backgroundTaskService);
-
 		var services = new ServiceCollection()
 			.AddScoped<ContinuousBackgroundTaskWorker>(sp => new ContinuousBackgroundTaskWorker(
 				sp.GetRequiredService<IBackgroundTaskService>(),
 				sp.GetRequiredService<ILoggerFactory>()))
 			.AddScoped<ILoggerFactory, NullLoggerFactory>()
 			.AddScoped<IBackgroundTaskService>(_ => backgroundTaskService)
-			.AddScoped<ITextEditorService>(_ => textEditorService)
+			.AddScoped<ITextEditorService, TestTextEditorService>()
 			.AddFluxor(options => options.ScanAssemblies(
 				typeof(LuthetusCommonConfig).Assembly,
 				typeof(LuthetusTextEditorConfig).Assembly));
@@ -58,9 +159,11 @@ public class AdhocRewrite
 
 		var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
 
-		var resourceUri = new ResourceUri("/unitTesting.txt");
-		var cursor = new TextEditorCursor(true);
-		var content = new StringBuilder("abc123");
+		textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
+		backgroundTaskWorker = serviceProvider.GetRequiredService<ContinuousBackgroundTaskWorker>();
+
+		resourceUri = new ResourceUri("/unitTesting.txt");
+		cursor = new TextEditorCursor(true);
 
 		var inModel = new TextEditorModel(
 	        resourceUri,
@@ -74,95 +177,5 @@ public class AdhocRewrite
 		dispatcher.Dispatch(new TextEditorModelState.RegisterAction(
             TextEditorService.AuthenticatedActionKey,
             inModel));
-		
-		await textEditorService.Post(new TextEditorWorkInsertion(
-			resourceUri,
-			cursor.Key,
-			cursorKey => cursor,
-			content));
-
-		var cts = new CancellationTokenSource();
-        var token = cts.Token;
-
-		var backgroundTaskWorker = serviceProvider
-			.GetRequiredService<ContinuousBackgroundTaskWorker>();
-
-		Console.WriteLine("Hello???");
-
-        var consumerThread = new Thread(async () =>
-		{
-			Console.WriteLine("went-inside-consumerThread");
-			await backgroundTaskWorker.StartAsync(token);
-			Console.WriteLine("going-outside-consumerThread");
-		});
-
-		consumerThread.Start();
-
-		await Task.Yield();
-		await Task.Yield();
-
-        await backgroundTaskWorker.StopAsync(token);
-        consumerThread.Join();
-        cts.Cancel();
-
-		var textEditorModelStateWrap = serviceProvider
-			.GetRequiredService<IState<TextEditorModelState>>();
-
-		var outModel = textEditorModelStateWrap.Value.ModelList.First(
-			x => x.ResourceUri == resourceUri);
-
-		var text = string.IsNullOrWhiteSpace(outModel.AllText)
-			? "outModel.AllText IsNullOrWhiteSpace"
-			: outModel.AllText;
-
-		Console.WriteLine(text);
-
-		Console.WriteLine("Goodbye???");
-	}
-
-	/// <summary>
-	/// Rewriting logic related to the text editor background tasks.
-    /// </summary>
-	[Fact]
-	public async Task Bbb()
-	{
-		var queue = new ThrottleEventQueueAsync();
-
-		var cts = new CancellationTokenSource();
-        var token = cts.Token;
-
-        var consumerThread = new Thread(async () =>
-        {
-            while (!token.IsCancellationRequested)
-            {
-                var task = await queue.DequeueOrDefaultAsync();
-                await task.HandleEvent(CancellationToken.None);
-            }
-        });
-
-        int i = 0;
-
-        var name = "Increment";
-        var identifier = "Increment";
-        var workItem = new Func<CancellationToken, Task>(_ =>
-        {
-            i++;
-            return Task.CompletedTask;
-        });
-
-        await queue.EnqueueAsync(new SimpleBatchBackgroundTask(name, identifier, workItem));
-
-        // The thread which dequeues has not yet been started
-        Assert.Equal(0, i);
-        Assert.Equal(1, queue.Count);
-
-        consumerThread.Start();
-        await queue.StopFurtherEnqueuesAsync();
-
-        await queue.UntilIsEmptyAsync();
-        consumerThread.Join();
-        Assert.Equal(1, i);
-
-        cts.Cancel();
 	}
 }

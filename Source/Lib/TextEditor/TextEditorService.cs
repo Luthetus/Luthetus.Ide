@@ -177,7 +177,7 @@ public partial class TextEditorService : ITextEditorService
             .ConfigureAwait(false);
     }
 
-    private record TextEditorEditContext : IEditContext
+    public record TextEditorEditContext : IEditContext
     {
         public Dictionary<ResourceUri, TextEditorModelModifier?> ModelCache { get; } = new();
         public Dictionary<Key<TextEditorViewModel>, ResourceUri?> ViewModelToModelResourceUriCache { get; } = new();
@@ -205,7 +205,9 @@ public partial class TextEditorService : ITextEditorService
             {
                 if (!ModelCache.TryGetValue(modelResourceUri, out var modelModifier))
                 {
-                    var model = TextEditorService.ModelApi.GetOrDefault(modelResourceUri);
+					var model = TextEditorService.ModelStateWrap.Value.ModelList.FirstOrDefault(
+						x => x.ResourceUri == modelResourceUri);
+
                     modelModifier = model is null ? null : new(model);
 
                     ModelCache.Add(modelResourceUri, modelModifier);
