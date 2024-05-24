@@ -123,6 +123,11 @@ public class OnWheel : ITextEditorTask
         return null;
     }
 
+	public IBackgroundTask? DequeueBatchOrDefault(IBackgroundTask oldEvent)
+	{
+		return null;
+	}
+
     public Task HandleEvent(CancellationToken cancellationToken)
     {
         throw new NotImplementedException($"{nameof(ITextEditorTask)} should not implement {nameof(HandleEvent)}" +

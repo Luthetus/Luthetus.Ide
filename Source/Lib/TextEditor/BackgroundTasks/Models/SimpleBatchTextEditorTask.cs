@@ -81,6 +81,11 @@ public class SimpleBatchTextEditorTask : ITextEditorTask
         return null;
     }
 
+	public IBackgroundTask? DequeueBatchOrDefault(IBackgroundTask oldEvent)
+	{
+		return null;
+	}
+
     public virtual Task HandleEvent(CancellationToken cancellationToken)
     {
         throw new NotImplementedException($"{nameof(ITextEditorTask)} should not implement {nameof(HandleEvent)}" +

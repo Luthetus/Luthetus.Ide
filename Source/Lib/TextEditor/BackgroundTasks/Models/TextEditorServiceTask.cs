@@ -134,6 +134,11 @@ perhaps the cost of garbage collection would be noticable?
         return null;
     }
 
+	public IBackgroundTask? DequeueBatchOrDefault(IBackgroundTask oldEvent)
+	{
+		return null;
+	}
+
     public async Task HandleEvent(CancellationToken cancellationToken)
     {
         await _innerTask.InvokeWithEditContext(_editContext).ConfigureAwait(false);

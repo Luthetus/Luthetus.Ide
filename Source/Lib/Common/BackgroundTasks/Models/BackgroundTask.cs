@@ -31,6 +31,11 @@ public class BackgroundTask : IBackgroundTask
 		return null;
 	}
 
+	public IBackgroundTask? DequeueBatchOrDefault(IBackgroundTask oldEvent)
+	{
+		return null;
+	}
+
     public Task HandleEvent(CancellationToken cancellationToken)
     {
         lock (_syncRoot)

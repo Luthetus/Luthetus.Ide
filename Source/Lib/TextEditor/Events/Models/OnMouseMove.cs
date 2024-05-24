@@ -63,6 +63,11 @@ public class OnMouseMove : ITextEditorTask
         return this;
     }
 
+	public IBackgroundTask? DequeueBatchOrDefault(IBackgroundTask oldEvent)
+	{
+		return null;
+	}
+
     public Task HandleEvent(CancellationToken cancellationToken)
     {
         throw new NotImplementedException($"{nameof(ITextEditorTask)} should not implement {nameof(HandleEvent)}" +

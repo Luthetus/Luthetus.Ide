@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
@@ -56,6 +56,11 @@ public class SimpleBatchBackgroundTask : IBackgroundTask
         oldSimpleBatchBackgroundTask.Name += '_' + Name;
         return oldSimpleBatchBackgroundTask;
     }
+
+	public IBackgroundTask? DequeueBatchOrDefault(IBackgroundTask oldEvent)
+	{
+		return null;
+	}
 
     public virtual async Task HandleEvent(CancellationToken cancellationToken)
     {

@@ -55,4 +55,43 @@ public partial class AdhocRewrite
 
 		Assert.Equal("a", text);
 	}
+
+	[Fact]
+	public async Task Double_TextEditorWorkKeyDown_CanBatch()
+	{
+		Initialize_AdhocRewriteTest(
+			string.Empty,
+			out var resourceUri,
+			out var cursor,
+			out var textEditorService,
+			out var backgroundTaskService,
+			out var backgroundTaskWorker);
+
+		await textEditorService.Post(new TextEditorWorkKeyDown(
+			resourceUri,
+			cursor.Key,
+			cursorKey => cursor,
+			new KeyboardEventArgs { Key = "a", Code = "KeyA" }));
+
+		await textEditorService.Post(new TextEditorWorkKeyDown(
+			resourceUri,
+			cursor.Key,
+			cursorKey => cursor,
+			new KeyboardEventArgs { Key = "b", Code = "KeyB" }));
+
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+		Assert.Equal(1, queue.CountOfBackgroundTasks);
+
+		var backgroundTask = (TextEditorBackgroundTask)queue.BackgroundTasks.Single();
+		Assert.Equal(2, backgroundTask._workList.Count);
+
+		await ConsumeQueue_AdhocRewriteTest(backgroundTaskWorker);
+
+		var outModel = textEditorService.ModelStateWrap.Value.ModelList.First(
+			x => x.ResourceUri == resourceUri);
+
+		var text = outModel.AllText;
+
+		Assert.Equal("ab", text);
+	}
 }

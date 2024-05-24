@@ -80,7 +80,7 @@ public class ThrottleEventQueueAsync
 	                // In this case, either the current event stays,
 	                // or it is replaced with the new event.
 	                //
-	                // Therefore the que length does not change.
+	                // Therefore the queue length does not change.
 	                queueLengthIncreased = false;
 	
 	                _throttleEventList.RemoveAt(i);
@@ -109,10 +109,45 @@ public class ThrottleEventQueueAsync
         try
         {
             await _modifyQueueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+
+			if (_throttleEventList.Count >= 1)
+			{
+				var firstEvent = _throttleEventList[0];
+	            _throttleEventList.RemoveAt(0);
+
+				if (_throttleEventList.Count == 0)
+				{
+					return firstEvent;
+				}
+				else	
+				{
+					var limit = _throttleEventList.Count;
+
+					for (int i = 0; i < limit; i++)
+		            {
+		                IBackgroundTask? behindInLineEvent = _throttleEventList[0];
+		                var batchEvent = behindInLineEvent.DequeueBatchOrDefault(firstEvent);
+		
+		                if (batchEvent is null)
+		                    break;
+		
+		                // In this case, either the current event stays,
+		                // or it is replaced with the new event.
+		
+		                _throttleEventList.RemoveAt(0);
+		                firstEvent = batchEvent;
+
+						if (_throttleEventList.Count == 0)
+						{
+							return firstEvent;
+						}
+		            }
+
+					return firstEvent;
+				}
+			}
 		    
-            var firstEvent = _throttleEventList[0];
-            _throttleEventList.RemoveAt(0);
-            return firstEvent;
+			throw new ArgumentOutOfRangeException();
         }
         catch (ArgumentOutOfRangeException e)
         {

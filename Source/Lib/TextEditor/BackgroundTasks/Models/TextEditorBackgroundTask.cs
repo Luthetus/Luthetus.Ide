@@ -82,8 +82,6 @@ public class TextEditorBackgroundTask : IBackgroundTask
 			}
 		}
 
-		Console.WriteLine($"wasAdded: {wasAdded}");
-		Console.WriteLine($"_workList.Count: {_workList.Count}");
 		return wasAdded;
 	}
 
@@ -102,9 +100,6 @@ public class TextEditorBackgroundTask : IBackgroundTask
 			// 2 UI renders down to only 1.
 			if (oldEvent is TextEditorBackgroundTask oldTextEditorBackgroundTask)
 			{
-				Console.WriteLine($"oldTextEditorBackgroundTask._workList.Count: {oldTextEditorBackgroundTask._workList.Count}");
-				Console.WriteLine($"_workList.Count: {_workList.Count}");
-
 				var lastWork = oldTextEditorBackgroundTask._workList.Last();
 				var newWork = _workList.First();
 	
@@ -135,8 +130,6 @@ public class TextEditorBackgroundTask : IBackgroundTask
 	
 				oldTextEditorBackgroundTask._workList.AddRange(_workList);
 
-				Console.WriteLine($"2oldTextEditorBackgroundTask._workList.Count: {oldTextEditorBackgroundTask._workList.Count}");
-				Console.WriteLine($"2_workList.Count: {_workList.Count}");
 				return oldTextEditorBackgroundTask;
 			}
 			else
@@ -146,9 +139,19 @@ public class TextEditorBackgroundTask : IBackgroundTask
 			}
 		}
 	}
+
+	public IBackgroundTask? DequeueBatchOrDefault(IBackgroundTask oldEvent)
+	{
+		Console.WriteLine($"DequeueBatchOrDefault_workList.Count: {_workList.Count}");
+		return null;
+	}
 	
 	public async Task HandleEvent(CancellationToken cancellationToken)
 	{
+		Console.WriteLine($"HandleEvent_workList.Count: {_workList.Count}");
+
+		
+
 		Console.WriteLine("backgroundTask-HandleEvent");
 
 		if (TextEditorService is null)
@@ -157,6 +160,19 @@ public class TextEditorBackgroundTask : IBackgroundTask
 		}
 
 		EditContext ??= TextEditorService.OpenEditContext();
+
+		if (_workList.Count == 2)
+		{
+			var oldWork = _workList[0];
+			var newWork = _workList[1];
+
+			if (oldWork is TextEditorWorkKeyDown oldWorkKeyDown &&
+                newWork is TextEditorWorkKeyDown newWorkKeyDown)
+			{
+				Console.WriteLine("oldWork is TextEditorWorkKeyDown oldWorkKeyDown && newWork is TextEditorWorkKeyDown newWorkKeyDown");
+				
+			}
+		}
 
 		Console.WriteLine("backgroundTask-AfterOpenEditContext");
 
