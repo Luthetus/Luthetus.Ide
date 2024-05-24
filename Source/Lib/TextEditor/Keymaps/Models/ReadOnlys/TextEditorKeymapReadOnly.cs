@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
@@ -249,7 +249,7 @@ public class TextEditorKeymapReadOnly : Keymap, ITextEditorKeymap
         }, TextEditorCommandDefaultFacts.ScrollPageUp);
     }
 
-	public bool TryMap(KeyboardEventArgs keyboardEventArgs, KeymapArgument keymapArgument, TextEditorEvents events, out CommandNoType? command)
+	public bool TryMap(KeyboardEventArgs keyboardEventArgs, KeymapArgument keymapArgument, TextEditorOptions options, out CommandNoType? command)
 	{
         return Map.TryGetValue(keymapArgument, out command);
 	}

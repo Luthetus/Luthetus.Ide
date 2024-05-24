@@ -285,7 +285,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 			return;
 
 		var onKeyDown = new OnKeyDown(
-            _events,
+            TextEditorService.OptionsStateWrap.Value.Options,
             keyboardEventArgs,
             resourceUri,
             viewModelKey.Value);

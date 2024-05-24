@@ -2,17 +2,21 @@ using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Microsoft.AspNetCore.Components.Web;
 using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
 
-namespace Luthetus.TextEditor.RazorLib.Events.Models;
+namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
-public static class EventUtils
+/// <summary>
+/// TODO: This class was copy and pasted from <see cref="Luthetus.TextEditor.RazorLib.Events.Models.EventUtils"/>
+///       with the plan to delete 'EventUtils' once all the code was moved over.
+/// </summary>
+public static class TextEditorWorkUtils
 {
     public static KeyboardEventArgsKind GetKeyboardEventArgsKind(
         TextEditorOptions options,

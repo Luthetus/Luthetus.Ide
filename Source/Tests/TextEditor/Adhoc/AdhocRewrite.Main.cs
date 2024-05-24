@@ -45,7 +45,8 @@ public partial class AdhocRewrite
 		out TextEditorCursor cursor,
 		out ITextEditorService textEditorService,
 		out IBackgroundTaskService backgroundTaskService,
-		out ContinuousBackgroundTaskWorker backgroundTaskWorker)
+		out ContinuousBackgroundTaskWorker backgroundTaskWorker,
+		out IServiceProvider serviceProvider)
 	{
 		var hackyBackgroundTaskService = new BackgroundTaskService();
 		backgroundTaskService = hackyBackgroundTaskService;
@@ -69,7 +70,7 @@ public partial class AdhocRewrite
 				typeof(LuthetusCommonConfig).Assembly,
 				typeof(LuthetusTextEditorConfig).Assembly));
 
-		var serviceProvider = services.BuildServiceProvider();
+		serviceProvider = services.BuildServiceProvider();
 
 		var store = serviceProvider.GetRequiredService<IStore>();
         store.InitializeAsync().Wait();

@@ -66,7 +66,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 	public bool TryMap(
 		KeyboardEventArgs keyboardEventArgs,
 		KeymapArgument keymapArgument,
-		TextEditorEvents events,
+		TextEditorOptions options,
 		out CommandNoType? command)
 	{
 		var terminalKey = _getTerminalKeyFunc.Invoke();
@@ -93,7 +93,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 							return;
 
 						var onKeyDown = new OnKeyDown(
-							new TextEditorEvents(events, new TextEditorKeymapDefault()),
+							options,
 							keyboardEventArgs,
 							commandArgs.ModelResourceUri,
 							commandArgs.ViewModelKey);

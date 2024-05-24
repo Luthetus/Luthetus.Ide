@@ -3,6 +3,7 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
@@ -16,35 +17,33 @@ namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
 public class OnKeyDown : ITextEditorTask, ITextEditorWork
 {
-    private readonly TextEditorEvents _events;
+	private TextEditorOptions _options;
 
     public OnKeyDown(
-        TextEditorEvents events,
+        TextEditorOptions options,
         KeyboardEventArgs keyboardEventArgs,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
-        _events = events;
+        //KeyboardEventArgs = keyboardEventArgs;
+        //ResourceUri = resourceUri;
+        //ViewModelKey = viewModelKey;
 
-        KeyboardEventArgs = keyboardEventArgs;
-        ResourceUri = resourceUri;
-        ViewModelKey = viewModelKey;
+        //var badViewModel = _events.TextEditorService.ViewModelApi.GetOrDefault(ViewModelKey);
 
-        var badViewModel = _events.TextEditorService.ViewModelApi.GetOrDefault(ViewModelKey);
+        //if (badViewModel is not null)
+        //{
+        //    TentativeHasSelection = TextEditorSelectionHelper.HasSelectedText(badViewModel.PrimaryCursor.Selection);
 
-        if (badViewModel is not null)
-        {
-            TentativeHasSelection = TextEditorSelectionHelper.HasSelectedText(badViewModel.PrimaryCursor.Selection);
+        //    TentativeKeyboardEventArgsKind = EventUtils.GetKeyboardEventArgsKind(
+        //        _options,
+        //        KeyboardEventArgs,
+        //        TentativeHasSelection,
+        //        null,//_events.TextEditorService,
+        //        out var localCommand);
 
-            TentativeKeyboardEventArgsKind = EventUtils.GetKeyboardEventArgsKind(
-                _events,
-                KeyboardEventArgs,
-                TentativeHasSelection,
-                _events.TextEditorService,
-                out var localCommand);
-
-            Command = localCommand;
-        }
+        //    Command = localCommand;
+        //}
     }
 
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
@@ -121,7 +120,7 @@ public class OnKeyDown : ITextEditorTask, ITextEditorWork
         var definiteHasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
 
         var definiteKeyboardEventArgsKind = EventUtils.GetKeyboardEventArgsKind(
-            _events, KeyboardEventArgs, definiteHasSelection, _events.TextEditorService, out var command);
+            _options, KeyboardEventArgs, definiteHasSelection, null, out var command);
 
         var shouldInvokeAfterOnKeyDownAsync = false;
 
@@ -134,65 +133,66 @@ public class OnKeyDown : ITextEditorTask, ITextEditorWork
                         modelModifier.ResourceUri,
                         viewModelModifier.ViewModel.ViewModelKey,
                         definiteHasSelection,
-                        _events.ClipboardService,
-                        _events.TextEditorService,
-                        _events.Options,
-                        _events,
-                        _events.HandleMouseStoppedMovingEventAsync,
-                        _events.JsRuntime,
-                        _events.Dispatcher,
-                        _events.ServiceProvider,
-                        _events.TextEditorConfig))
+                        null,
+                        null,
+                        _options,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null))
                     .ConfigureAwait(false);
                 break;
             case KeyboardEventArgsKind.Movement:
-                if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == KeyboardEventArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == KeyboardEventArgs.Key) &&
-                     _events.CursorDisplay is not null && _events.CursorDisplay.MenuKind == MenuKind.AutoCompleteMenu)
+				if (false)
+                //if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == KeyboardEventArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == KeyboardEventArgs.Key) &&
+                //     null is not null && null == MenuKind.AutoCompleteMenu)
                 {
-                    await _events.CursorDisplay.SetFocusToActiveMenuAsync().ConfigureAwait(false);
+                    // await _events.CursorDisplay.SetFocusToActiveMenuAsync().ConfigureAwait(false);
                 }
                 else
                 {
-                    await _events.TextEditorService.ViewModelApi.MoveCursorFactory(
-                            KeyboardEventArgs,
-                            modelModifier.ResourceUri,
-                            viewModelModifier.ViewModel.ViewModelKey)
-                        .Invoke(editContext)
-                        .ConfigureAwait(false);
+                    //await _events.TextEditorService.ViewModelApi.MoveCursorFactory(
+                    //        KeyboardEventArgs,
+                    //        modelModifier.ResourceUri,
+                    //        viewModelModifier.ViewModel.ViewModelKey)
+                    //    .Invoke(editContext)
+                    //    .ConfigureAwait(false);
 
-                    await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.None) ?? Task.CompletedTask)
-                        .ConfigureAwait(false);
+                    //await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.None) ?? Task.CompletedTask)
+                    //    .ConfigureAwait(false);
                 }
                 break;
             case KeyboardEventArgsKind.ContextMenu:
-                await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.ContextMenu) ?? Task.CompletedTask)
-                    .ConfigureAwait(false);
+                //await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.ContextMenu) ?? Task.CompletedTask)
+                //    .ConfigureAwait(false);
                 break;
             case KeyboardEventArgsKind.Text:
             case KeyboardEventArgsKind.Other:
                 shouldInvokeAfterOnKeyDownAsync = true;
 
-                if (!_events.IsAutocompleteMenuInvoker(KeyboardEventArgs))
-                {
-                    if (KeyboardKeyFacts.MetaKeys.ESCAPE == KeyboardEventArgs.Key ||
-                        KeyboardKeyFacts.MetaKeys.BACKSPACE == KeyboardEventArgs.Key ||
-                        KeyboardKeyFacts.MetaKeys.DELETE == KeyboardEventArgs.Key ||
-                        !KeyboardKeyFacts.IsMetaKey(KeyboardEventArgs))
-                    {
-                        await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.None) ?? Task.CompletedTask)
-                            .ConfigureAwait(false);
-                    }
-                }
+                //if (!_events.IsAutocompleteMenuInvoker(KeyboardEventArgs))
+                //{
+                //    if (KeyboardKeyFacts.MetaKeys.ESCAPE == KeyboardEventArgs.Key ||
+                //        KeyboardKeyFacts.MetaKeys.BACKSPACE == KeyboardEventArgs.Key ||
+                //        KeyboardKeyFacts.MetaKeys.DELETE == KeyboardEventArgs.Key ||
+                //        !KeyboardKeyFacts.IsMetaKey(KeyboardEventArgs))
+                //    {
+                //        await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.None) ?? Task.CompletedTask)
+                //            .ConfigureAwait(false);
+                //    }
+                //}
 
-                _events.TooltipViewModel = null;
+                //_events.TooltipViewModel = null;
 
-                await _events.TextEditorService.ModelApi.HandleKeyboardEventFactory(
-                        ResourceUri,
-                        ViewModelKey,
-                        KeyboardEventArgs,
-                        CancellationToken.None)
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
+                //await _events.TextEditorService.ModelApi.HandleKeyboardEventFactory(
+                //        ResourceUri,
+                //        ViewModelKey,
+                //        KeyboardEventArgs,
+                //        CancellationToken.None)
+                //    .Invoke(editContext)
+                //    .ConfigureAwait(false);
                 break;
         }
 
@@ -204,185 +204,187 @@ public class OnKeyDown : ITextEditorTask, ITextEditorWork
                 viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
             }
 
-            var cursorDisplay = _events.CursorDisplay;
+            //var cursorDisplay = _events.CursorDisplay;
 
-            if (cursorDisplay is not null)
-            {
-                await _events.HandleAfterOnKeyDownAsyncFactory(
-                        modelModifier.ResourceUri,
-                        viewModelModifier.ViewModel.ViewModelKey,
-                        KeyboardEventArgs,
-                        cursorDisplay.SetShouldDisplayMenuAsync)
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
-            }
+            //if (cursorDisplay is not null)
+            //{
+                //await _events.HandleAfterOnKeyDownAsyncFactory(
+                //        modelModifier.ResourceUri,
+                //        viewModelModifier.ViewModel.ViewModelKey,
+                //        KeyboardEventArgs,
+                //        cursorDisplay.SetShouldDisplayMenuAsync)
+                //    .Invoke(editContext)
+                //    .ConfigureAwait(false);
+            //}
         }
     }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
-        if (oldEvent is OnKeyDown oldEventOnKeyDown)
-        {
-            switch (TentativeKeyboardEventArgsKind)
-            {
-                case KeyboardEventArgsKind.Text:
-                    if (oldEventOnKeyDown.TentativeKeyboardEventArgsKind == TentativeKeyboardEventArgsKind)
-                    {
-                        return new OnKeyDownBatch(
-                            _events,
-                            new List<OnKeyDown>()
-                            {
-                                oldEventOnKeyDown,
-                                this
-                            },
-                            TentativeKeyboardEventArgsKind,
-                            ResourceUri,
-                            ViewModelKey);
-                    }
-                    break;
-                case KeyboardEventArgsKind.Movement:
-                    if (oldEventOnKeyDown.TentativeKeyboardEventArgsKind == TentativeKeyboardEventArgsKind &&
-                        KeyAndModifiersAreEqual(KeyboardEventArgs, oldEventOnKeyDown.KeyboardEventArgs))
-                    {
-                        return new OnKeyDownBatch(
-                            _events,
-                            new List<OnKeyDown>()
-                            {
-                                oldEventOnKeyDown,
-                                this
-                            },
-                            TentativeKeyboardEventArgsKind,
-                            ResourceUri,
-                            ViewModelKey);
-                    }
-                    break;
-                case KeyboardEventArgsKind.Other:
-                    if (KeyboardKeyFacts.IsMetaKey(KeyboardEventArgs))
-                    {
-                        if (KeyboardKeyFacts.MetaKeys.BACKSPACE == KeyboardEventArgs.Key ||
-                            KeyboardKeyFacts.MetaKeys.DELETE == KeyboardEventArgs.Key)
-                        {
-                            if (TentativeKeyboardEventArgsKind == oldEventOnKeyDown.TentativeKeyboardEventArgsKind &&
-                                KeyAndModifiersAreEqual(KeyboardEventArgs, oldEventOnKeyDown.KeyboardEventArgs))
-                            {
-                                return new OnKeyDownBatch(
-                                    _events,
-                                    new List<OnKeyDown>()
-                                    {
-                                        oldEventOnKeyDown,
-                                        this,
-                                    },
-                                    TentativeKeyboardEventArgsKind,
-                                    ResourceUri,
-                                    ViewModelKey);
-                            }
-                        }
-                    }
-                    else if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == KeyboardEventArgs.Code ||
-                             KeyboardKeyFacts.WhitespaceCodes.TAB_CODE == KeyboardEventArgs.Code)
-                    {
-                        if (TentativeKeyboardEventArgsKind == oldEventOnKeyDown.TentativeKeyboardEventArgsKind &&
-                            KeyAndModifiersAreEqual(KeyboardEventArgs, oldEventOnKeyDown.KeyboardEventArgs))
-                        {
-                            return new OnKeyDownBatch(
-                                _events,
-                                new List<OnKeyDown>()
-                                {
-                                        oldEventOnKeyDown,
-                                        this,
-                                },
-                                TentativeKeyboardEventArgsKind,
-                                ResourceUri,
-                                ViewModelKey);
-                        }
-                    }
-                    break;
-                case KeyboardEventArgsKind.ContextMenu:
-                    break;
-                case KeyboardEventArgsKind.Command:
-                    if (TentativeKeyboardEventArgsKind == oldEventOnKeyDown.TentativeKeyboardEventArgsKind &&
-                        KeyAndModifiersAreEqual(KeyboardEventArgs, oldEventOnKeyDown.KeyboardEventArgs) &&
-                        Command is not null &&
-                        oldEventOnKeyDown.Command is not null &&
-                        Command.InternalIdentifier == oldEventOnKeyDown.Command.InternalIdentifier)
-                    {
-                        return new OnKeyDownBatch(
-                            _events,
-                            new List<OnKeyDown>()
-                            {
-                                oldEventOnKeyDown,
-                                this
-                            },
-                            TentativeKeyboardEventArgsKind,
-                            ResourceUri,
-                            ViewModelKey);
-                    }
-                    break;
-            }
-        }
+		return null;
 
-        if (oldEvent is OnKeyDownBatch oldEventOnKeyDownBatch)
-        {
-            var inspectThrottleEventOnKeyDown = oldEventOnKeyDownBatch.ThrottleEventOnKeyDownList.First();
-            switch (TentativeKeyboardEventArgsKind)
-            {
-                case KeyboardEventArgsKind.Text:
-                    if (TentativeKeyboardEventArgsKind == oldEventOnKeyDownBatch.KeyboardEventArgsKind)
-                    {
-                        oldEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
-                        return oldEventOnKeyDownBatch;
-                    }
-                    break;
-                case KeyboardEventArgsKind.Movement:
-                    if (TentativeKeyboardEventArgsKind == oldEventOnKeyDownBatch.KeyboardEventArgsKind &&
-                        KeyAndModifiersAreEqual(KeyboardEventArgs, inspectThrottleEventOnKeyDown.KeyboardEventArgs))
-                    {
-                        oldEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
-                        return oldEventOnKeyDownBatch;
-                    }
-                    break;
-                case KeyboardEventArgsKind.Other:
-                    if (KeyboardKeyFacts.IsMetaKey(KeyboardEventArgs))
-                    {
-                        if (KeyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.BACKSPACE ||
-                            KeyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.DELETE)
-                        {
-                            if (TentativeKeyboardEventArgsKind == oldEventOnKeyDownBatch.KeyboardEventArgsKind &&
-                                KeyAndModifiersAreEqual(KeyboardEventArgs, inspectThrottleEventOnKeyDown.KeyboardEventArgs))
-                            {
-                                oldEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
-                                return oldEventOnKeyDownBatch;
-                            }
-                        }
-                    }
-                    else if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == KeyboardEventArgs.Code ||
-                             KeyboardKeyFacts.WhitespaceCodes.TAB_CODE == KeyboardEventArgs.Code)
-                    {
-                        if (TentativeKeyboardEventArgsKind == oldEventOnKeyDownBatch.KeyboardEventArgsKind &&
-                            KeyAndModifiersAreEqual(KeyboardEventArgs, inspectThrottleEventOnKeyDown.KeyboardEventArgs))
-                        {
-                            oldEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
-                            return oldEventOnKeyDownBatch;
-                        }
-                    }
-                    break;
-                case KeyboardEventArgsKind.ContextMenu:
-                    break;
-                case KeyboardEventArgsKind.Command:
-                    if (TentativeKeyboardEventArgsKind == oldEventOnKeyDownBatch.KeyboardEventArgsKind &&
-                        KeyAndModifiersAreEqual(KeyboardEventArgs, inspectThrottleEventOnKeyDown.KeyboardEventArgs) &&
-                        Command is not null &&
-                        inspectThrottleEventOnKeyDown.Command is not null &&
-                        Command.InternalIdentifier == inspectThrottleEventOnKeyDown.Command.InternalIdentifier)
-                    {
-                        oldEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
-                        return oldEventOnKeyDownBatch;
-                    }
-                    break;
-            }
-        }
+        //if (oldEvent is OnKeyDown oldEventOnKeyDown)
+        //{
+        //    switch (TentativeKeyboardEventArgsKind)
+        //    {
+        //        case KeyboardEventArgsKind.Text:
+        //            if (oldEventOnKeyDown.TentativeKeyboardEventArgsKind == TentativeKeyboardEventArgsKind)
+        //            {
+        //                return new OnKeyDownBatch(
+        //                    _events,
+        //                    new List<OnKeyDown>()
+        //                    {
+        //                        oldEventOnKeyDown,
+        //                        this
+        //                    },
+        //                    TentativeKeyboardEventArgsKind,
+        //                    ResourceUri,
+        //                    ViewModelKey);
+        //            }
+        //            break;
+        //        case KeyboardEventArgsKind.Movement:
+        //            if (oldEventOnKeyDown.TentativeKeyboardEventArgsKind == TentativeKeyboardEventArgsKind &&
+        //                KeyAndModifiersAreEqual(KeyboardEventArgs, oldEventOnKeyDown.KeyboardEventArgs))
+        //            {
+        //                return new OnKeyDownBatch(
+        //                    _events,
+        //                    new List<OnKeyDown>()
+        //                    {
+        //                        oldEventOnKeyDown,
+        //                        this
+        //                    },
+        //                    TentativeKeyboardEventArgsKind,
+        //                    ResourceUri,
+        //                    ViewModelKey);
+        //            }
+        //            break;
+        //        case KeyboardEventArgsKind.Other:
+        //            if (KeyboardKeyFacts.IsMetaKey(KeyboardEventArgs))
+        //            {
+        //                if (KeyboardKeyFacts.MetaKeys.BACKSPACE == KeyboardEventArgs.Key ||
+        //                    KeyboardKeyFacts.MetaKeys.DELETE == KeyboardEventArgs.Key)
+        //                {
+        //                    if (TentativeKeyboardEventArgsKind == oldEventOnKeyDown.TentativeKeyboardEventArgsKind &&
+        //                        KeyAndModifiersAreEqual(KeyboardEventArgs, oldEventOnKeyDown.KeyboardEventArgs))
+        //                    {
+        //                        return new OnKeyDownBatch(
+        //                            _events,
+        //                            new List<OnKeyDown>()
+        //                            {
+        //                                oldEventOnKeyDown,
+        //                                this,
+        //                            },
+        //                            TentativeKeyboardEventArgsKind,
+        //                            ResourceUri,
+        //                            ViewModelKey);
+        //                    }
+        //                }
+        //            }
+        //            else if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == KeyboardEventArgs.Code ||
+        //                     KeyboardKeyFacts.WhitespaceCodes.TAB_CODE == KeyboardEventArgs.Code)
+        //            {
+        //                if (TentativeKeyboardEventArgsKind == oldEventOnKeyDown.TentativeKeyboardEventArgsKind &&
+        //                    KeyAndModifiersAreEqual(KeyboardEventArgs, oldEventOnKeyDown.KeyboardEventArgs))
+        //                {
+        //                    return new OnKeyDownBatch(
+        //                        _events,
+        //                        new List<OnKeyDown>()
+        //                        {
+        //                                oldEventOnKeyDown,
+        //                                this,
+        //                        },
+        //                        TentativeKeyboardEventArgsKind,
+        //                        ResourceUri,
+        //                        ViewModelKey);
+        //                }
+        //            }
+        //            break;
+        //        case KeyboardEventArgsKind.ContextMenu:
+        //            break;
+        //        case KeyboardEventArgsKind.Command:
+        //            if (TentativeKeyboardEventArgsKind == oldEventOnKeyDown.TentativeKeyboardEventArgsKind &&
+        //                KeyAndModifiersAreEqual(KeyboardEventArgs, oldEventOnKeyDown.KeyboardEventArgs) &&
+        //                Command is not null &&
+        //                oldEventOnKeyDown.Command is not null &&
+        //                Command.InternalIdentifier == oldEventOnKeyDown.Command.InternalIdentifier)
+        //            {
+        //                return new OnKeyDownBatch(
+        //                    _events,
+        //                    new List<OnKeyDown>()
+        //                    {
+        //                        oldEventOnKeyDown,
+        //                        this
+        //                    },
+        //                    TentativeKeyboardEventArgsKind,
+        //                    ResourceUri,
+        //                    ViewModelKey);
+        //            }
+        //            break;
+        //    }
+        //}
 
-        return null;
+        //if (oldEvent is OnKeyDownBatch oldEventOnKeyDownBatch)
+        //{
+        //    var inspectThrottleEventOnKeyDown = oldEventOnKeyDownBatch.ThrottleEventOnKeyDownList.First();
+        //    switch (TentativeKeyboardEventArgsKind)
+        //    {
+        //        case KeyboardEventArgsKind.Text:
+        //            if (TentativeKeyboardEventArgsKind == oldEventOnKeyDownBatch.KeyboardEventArgsKind)
+        //            {
+        //                oldEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
+        //                return oldEventOnKeyDownBatch;
+        //            }
+        //            break;
+        //        case KeyboardEventArgsKind.Movement:
+        //            if (TentativeKeyboardEventArgsKind == oldEventOnKeyDownBatch.KeyboardEventArgsKind &&
+        //                KeyAndModifiersAreEqual(KeyboardEventArgs, inspectThrottleEventOnKeyDown.KeyboardEventArgs))
+        //            {
+        //                oldEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
+        //                return oldEventOnKeyDownBatch;
+        //            }
+        //            break;
+        //        case KeyboardEventArgsKind.Other:
+        //            if (KeyboardKeyFacts.IsMetaKey(KeyboardEventArgs))
+        //            {
+        //                if (KeyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.BACKSPACE ||
+        //                    KeyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.DELETE)
+        //                {
+        //                    if (TentativeKeyboardEventArgsKind == oldEventOnKeyDownBatch.KeyboardEventArgsKind &&
+        //                        KeyAndModifiersAreEqual(KeyboardEventArgs, inspectThrottleEventOnKeyDown.KeyboardEventArgs))
+        //                    {
+        //                        oldEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
+        //                        return oldEventOnKeyDownBatch;
+        //                    }
+        //                }
+        //            }
+        //            else if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == KeyboardEventArgs.Code ||
+        //                     KeyboardKeyFacts.WhitespaceCodes.TAB_CODE == KeyboardEventArgs.Code)
+        //            {
+        //                if (TentativeKeyboardEventArgsKind == oldEventOnKeyDownBatch.KeyboardEventArgsKind &&
+        //                    KeyAndModifiersAreEqual(KeyboardEventArgs, inspectThrottleEventOnKeyDown.KeyboardEventArgs))
+        //                {
+        //                    oldEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
+        //                    return oldEventOnKeyDownBatch;
+        //                }
+        //            }
+        //            break;
+        //        case KeyboardEventArgsKind.ContextMenu:
+        //            break;
+        //        case KeyboardEventArgsKind.Command:
+        //            if (TentativeKeyboardEventArgsKind == oldEventOnKeyDownBatch.KeyboardEventArgsKind &&
+        //                KeyAndModifiersAreEqual(KeyboardEventArgs, inspectThrottleEventOnKeyDown.KeyboardEventArgs) &&
+        //                Command is not null &&
+        //                inspectThrottleEventOnKeyDown.Command is not null &&
+        //                Command.InternalIdentifier == inspectThrottleEventOnKeyDown.Command.InternalIdentifier)
+        //            {
+        //                oldEventOnKeyDownBatch.ThrottleEventOnKeyDownList.Add(this);
+        //                return oldEventOnKeyDownBatch;
+        //            }
+        //            break;
+        //    }
+        //}
+		//
+        //return null;
     }
 
 	public IBackgroundTask? DequeueBatchOrDefault(IBackgroundTask oldEvent)

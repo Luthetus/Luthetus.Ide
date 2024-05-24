@@ -1,10 +1,13 @@
 using System.Text;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
@@ -121,12 +124,14 @@ Goals (2024-05-24)
 		ResourceUri resourceUri,
 		Key<TextEditorCursor> cursorKey,
 		Func<Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
-		KeyboardEventArgs keyboardEventArgs)
+		KeyboardEventArgs keyboardEventArgs,
+		TextEditorOptions options)
 	{
 		ResourceUri = resourceUri;
 		CursorKey = cursorKey;
 		GetCursorFunc = getCursorFunc;
 		KeyboardEventArgs = keyboardEventArgs;
+		Options = options;
 	}
 
 	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Complex;
@@ -161,22 +166,48 @@ Goals (2024-05-24)
 	
 	public KeyboardEventArgs KeyboardEventArgs { get; }
 
-	public TextEditorWorkKeyDown? BatchOrDefault(TextEditorWorkKeyDown oldWorkKeyDown)
+	public KeyboardEventArgsKind KeyboardEventArgsKind { get; private set; }
+
+	public CommandNoType? Command { get; private set; }
+
+	public TextEditorOptions Options { get; }
+
+	public TextEditorWorkKeyDown? BatchOrDefault(
+		IEditContext editContext,
+		TextEditorWorkKeyDown oldWorkKeyDown)
 	{
+		var cursorModifier = editContext.GetCursorModifier(
+			CursorKey,
+			GetCursorFunc);
+
+        if (cursorModifier is null)
+            return null;
+
 		// Step 1:
 		// ------
 		// Determine whether 'this' is simplifiable to 'TextEditorWorkInsertion'
-		var thisIsTextInsertion;
+		var thisIsTextInsertion = false;
 		{
-			thisIsTextInsertion = false;
+            var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
+
+            KeyboardEventArgsKind = TextEditorWorkUtils.GetKeyboardEventArgsKind(
+                Options,
+                KeyboardEventArgs,
+                hasSelection,
+                editContext.TextEditorService,
+                out var localCommand);
+
+            Command = localCommand;
+
+			thisIsTextInsertion = true;
 		}
 
 		// Step 2:
 		// ------
 		// Determine whether 'oldWorkKeyDown' is simplifiable to 'TextEditorWorkInsertion'
-		var oldWorkKeyDownIsTextInsertion;
+		var oldWorkKeyDownIsTextInsertion = false;
 		{
-			oldWorkKeyDownIsTextInsertion = false;
+			oldWorkKeyDownIsTextInsertion = true;
 		}
 
 		// Step 3:
@@ -186,6 +217,7 @@ Goals (2024-05-24)
 		// which will insert both keyboard event keys that were pressed.
 		if (thisIsTextInsertion && oldWorkKeyDownIsTextInsertion)
 		{
+			return null;
 		}
 		else
 		{

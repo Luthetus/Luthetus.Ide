@@ -28,7 +28,8 @@ public partial class AdhocRewrite
 			out var cursor,
 			out var textEditorService,
 			out var backgroundTaskService,
-			out var backgroundTaskWorker);
+			out var backgroundTaskWorker,
+			out var serviceProvider);
 
 		var content = new StringBuilder("abc123");
 
@@ -73,7 +74,8 @@ public partial class AdhocRewrite
 			out var cursor,
 			out var textEditorService,
 			out var backgroundTaskService,
-			out var backgroundTaskWorker);
+			out var backgroundTaskWorker,
+			out var serviceProvider);
 
 		var content = new StringBuilder("abc123");
 
@@ -118,7 +120,8 @@ public partial class AdhocRewrite
 			out var cursor,
 			out var textEditorService,
 			out var backgroundTaskService,
-			out var backgroundTaskWorker);
+			out var backgroundTaskWorker,
+			out var serviceProvider);
 
 		var content = new StringBuilder("abc123");
 
@@ -163,7 +166,8 @@ public partial class AdhocRewrite
 			out var cursor,
 			out var textEditorService,
 			out var backgroundTaskService,
-			out var backgroundTaskWorker);
+			out var backgroundTaskWorker,
+			out var serviceProvider);
 
 		var content = new StringBuilder("abc123");
 

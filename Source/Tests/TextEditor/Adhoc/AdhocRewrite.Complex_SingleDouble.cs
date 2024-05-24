@@ -15,6 +15,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Events.Models;
+using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.Tests.Adhoc.Rewrite;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
@@ -30,7 +31,11 @@ public partial class AdhocRewrite
 			out var cursor,
 			out var textEditorService,
 			out var backgroundTaskService,
-			out var backgroundTaskWorker);
+			out var backgroundTaskWorker,
+			out var serviceProvider);
+
+		var optionsState = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
+		var options = optionsState.Value.Options;
 
 		var keyboardEventArgs = new KeyboardEventArgs { Key = "a", Code = "KeyA" };
 
@@ -38,7 +43,8 @@ public partial class AdhocRewrite
 			resourceUri,
 			cursor.Key,
 			cursorKey => cursor,
-			keyboardEventArgs));
+			keyboardEventArgs,
+			options));
 
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
 		Assert.Equal(1, queue.CountOfBackgroundTasks);
@@ -65,19 +71,25 @@ public partial class AdhocRewrite
 			out var cursor,
 			out var textEditorService,
 			out var backgroundTaskService,
-			out var backgroundTaskWorker);
+			out var backgroundTaskWorker,
+			out var serviceProvider);
+
+		var optionsState = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
+		var options = optionsState.Value.Options;
 
 		await textEditorService.Post(new TextEditorWorkKeyDown(
 			resourceUri,
 			cursor.Key,
 			cursorKey => cursor,
-			new KeyboardEventArgs { Key = "a", Code = "KeyA" }));
+			new KeyboardEventArgs { Key = "a", Code = "KeyA" },
+			options));
 
 		await textEditorService.Post(new TextEditorWorkKeyDown(
 			resourceUri,
 			cursor.Key,
 			cursorKey => cursor,
-			new KeyboardEventArgs { Key = "b", Code = "KeyB" }));
+			new KeyboardEventArgs { Key = "b", Code = "KeyB" },
+			options));
 
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
 		Assert.Equal(1, queue.CountOfBackgroundTasks);

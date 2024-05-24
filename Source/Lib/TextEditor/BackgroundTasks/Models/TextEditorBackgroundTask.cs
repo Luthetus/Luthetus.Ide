@@ -171,7 +171,7 @@ public class TextEditorBackgroundTask : IBackgroundTask
 			{
 				Console.WriteLine("oldWork is TextEditorWorkKeyDown oldWorkKeyDown && newWork is TextEditorWorkKeyDown newWorkKeyDown");
 				
-				var batchResult = newWork.BatchOrDefault(oldWork);
+				var batchResult = newWorkKeyDown.BatchOrDefault(EditContext, oldWorkKeyDown);
 
 				if (batchResult is not null)
 				{

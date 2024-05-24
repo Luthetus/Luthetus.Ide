@@ -34,7 +34,8 @@ public partial class AdhocRewrite
 			out var cursor,
 			out var textEditorService,
 			out var backgroundTaskService,
-			out var backgroundTaskWorker);
+			out var backgroundTaskWorker,
+			out var serviceProvider);
 
 		var content = new StringBuilder("abc123");
 
@@ -77,7 +78,8 @@ public partial class AdhocRewrite
 			out var cursor,
 			out var textEditorService,
 			out var backgroundTaskService,
-			out var backgroundTaskWorker);
+			out var backgroundTaskWorker,
+			out var serviceProvider);
 
 		await textEditorService.Post(new TextEditorWorkInsertion(
 			resourceUri,
@@ -120,7 +122,8 @@ public partial class AdhocRewrite
 			out var cursor,
 			out var textEditorService,
 			out var backgroundTaskService,
-			out var backgroundTaskWorker);
+			out var backgroundTaskWorker,
+			out var serviceProvider);
 
 		await textEditorService.Post(new TextEditorWorkDeletion(
 			resourceUri,
@@ -156,7 +159,8 @@ public partial class AdhocRewrite
 			out var cursor,
 			out var textEditorService,
 			out var backgroundTaskService,
-			out var backgroundTaskWorker);
+			out var backgroundTaskWorker,
+			out var serviceProvider);
 
 		await textEditorService.Post(new TextEditorWorkDeletion(
 			resourceUri,
@@ -199,7 +203,8 @@ public partial class AdhocRewrite
 			out var cursor,
 			out var textEditorService,
 			out var backgroundTaskService,
-			out var backgroundTaskWorker);
+			out var backgroundTaskWorker,
+			out var serviceProvider);
 
 		cursor = new TextEditorCursor(0, initialContent.Length, true);
 
@@ -237,7 +242,8 @@ public partial class AdhocRewrite
 			out var cursor,
 			out var textEditorService,
 			out var backgroundTaskService,
-			out var backgroundTaskWorker);
+			out var backgroundTaskWorker,
+			out var serviceProvider);
 
 		cursor = new TextEditorCursor(0, initialContent.Length, true);
 

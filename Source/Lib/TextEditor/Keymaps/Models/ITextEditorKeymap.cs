@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -44,5 +44,5 @@ public interface ITextEditorKeymap
 	///         -bool TryMap(KeyboardEventArgs args, out Command command)
 	///		  Could be made, such that 'TryMap' would have a reference to the 'KeyboardEventArgs'
 	/// </summary>
-	public bool TryMap(KeyboardEventArgs keyboardEventArgs, KeymapArgument keymapArgument, TextEditorEvents events, out CommandNoType? command);
+	public bool TryMap(KeyboardEventArgs keyboardEventArgs, KeymapArgument keymapArgument, TextEditorOptions options, out CommandNoType? command);
 }
