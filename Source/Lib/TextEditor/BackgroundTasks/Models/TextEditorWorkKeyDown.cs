@@ -8,6 +8,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
 
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
@@ -172,7 +173,7 @@ Goals (2024-05-24)
 
 	public TextEditorOptions Options { get; }
 
-	public TextEditorWorkKeyDown? BatchOrDefault(
+	public ITextEditorWork? BatchOrDefault(
 		IEditContext editContext,
 		TextEditorWorkKeyDown oldWorkKeyDown)
 	{
@@ -186,7 +187,6 @@ Goals (2024-05-24)
 		// Step 1:
 		// ------
 		// Determine whether 'this' is simplifiable to 'TextEditorWorkInsertion'
-		var thisIsTextInsertion = false;
 		{
             var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
 
@@ -197,17 +197,25 @@ Goals (2024-05-24)
                 editContext.TextEditorService,
                 out var localCommand);
 
+			Console.WriteLine($"KeyboardEventArgsKind: {KeyboardEventArgsKind}");
             Command = localCommand;
-
-			thisIsTextInsertion = true;
 		}
 
 		// Step 2:
 		// ------
 		// Determine whether 'oldWorkKeyDown' is simplifiable to 'TextEditorWorkInsertion'
-		var oldWorkKeyDownIsTextInsertion = false;
 		{
-			oldWorkKeyDownIsTextInsertion = true;
+			var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
+
+            oldWorkKeyDown.KeyboardEventArgsKind = TextEditorWorkUtils.GetKeyboardEventArgsKind(
+                oldWorkKeyDown.Options,
+                oldWorkKeyDown.KeyboardEventArgs,
+                hasSelection,
+                editContext.TextEditorService,
+                out var localCommand);
+
+			Console.WriteLine($"KeyboardEventArgsKind: {KeyboardEventArgsKind}");
+            Command = localCommand;
 		}
 
 		// Step 3:
@@ -215,19 +223,27 @@ Goals (2024-05-24)
 		// If they both simplify to 'TextEditorWorkInsertion',
 		// then return a single instance of 'TextEditorWorkInsertion'
 		// which will insert both keyboard event keys that were pressed.
-		if (thisIsTextInsertion && oldWorkKeyDownIsTextInsertion)
+		if (KeyboardEventArgsKind == oldWorkKeyDown.KeyboardEventArgsKind)
 		{
-			return null;
+			switch (KeyboardEventArgsKind)
+			{
+				case KeyboardEventArgsKind.Text:
+					Console.WriteLine("Both are text");
+
+					return new TextEditorWorkInsertion(
+						ResourceUri,
+						CursorKey,
+						GetCursorFunc,
+						new StringBuilder(oldWorkKeyDown.KeyboardEventArgs.Key + KeyboardEventArgs.Key));
+			}
 		}
-		else
-		{
-			// Return null because they could not be batched.
-			// This tells the caller to leave the two items as is.
-			return null;
-		}
+		
+		// Return null because they could not be batched.
+		// This tells the caller to leave the two items as is.
+		return null;
 	}
 
-	public Task Invoke(IEditContext editContext)
+	public async Task Invoke(IEditContext editContext)
 	{
 		var modelModifier = editContext.GetModelModifier(ResourceUri);
 
@@ -239,12 +255,47 @@ Goals (2024-05-24)
 			Key<TextEditorViewModel>.Empty,
 			new List<TextEditorCursorModifier> { cursorModifier });
 
-		modelModifier.Insert(
-	        KeyboardEventArgs.Key,
-			cursorModifierBag,
-	        useLineEndKindPreference: false,
-	        cancellationToken: default);
-
-		return Task.CompletedTask;
+		switch (KeyboardEventArgsKind)
+		{
+			case KeyboardEventArgsKind.None:
+				break;
+			case KeyboardEventArgsKind.Movement:
+				await editContext.TextEditorService.ViewModelApi.MoveCursorFactory(
+                            KeyboardEventArgs,
+                            modelModifier.ResourceUri,
+                            ViewModelKey)
+                        .Invoke(editContext)
+                    .ConfigureAwait(false);
+				break;
+			case KeyboardEventArgsKind.ContextMenu:
+				break;
+			case KeyboardEventArgsKind.Command:
+				await Command.CommandFunc.Invoke(new TextEditorCommandArgs(
+                        modelModifier.ResourceUri,
+                        ViewModelKey,
+                        TextEditorSelectionHelper.HasSelectedText(cursorModifier),
+                        null,
+                        null,
+                        Options,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null))
+                    .ConfigureAwait(false);
+				break;
+			case KeyboardEventArgsKind.Text:
+				modelModifier.Insert(
+			        KeyboardEventArgs.Key,
+					cursorModifierBag,
+			        useLineEndKindPreference: false,
+			        cancellationToken: default);
+				break;
+			case KeyboardEventArgsKind.Other:
+				break;
+			default:
+				break;
+		}
 	}
 }
