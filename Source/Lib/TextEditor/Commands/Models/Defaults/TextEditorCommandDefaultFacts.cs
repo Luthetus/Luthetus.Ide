@@ -15,6 +15,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
+if (commandArgs is null)
+	Console.WriteLine("commandArgs was null");
+else if (commandArgs.TextEditorService is null)
+	Console.WriteLine("commandArgs.TextEditorService was null");
+
             return commandArgs.TextEditorService.PostSimpleBatch(
                 $"{nameof(Copy)}_{commandArgs.ViewModelKey.Guid}",
                 $"{nameof(Copy)}_{commandArgs.ViewModelKey.Guid}",

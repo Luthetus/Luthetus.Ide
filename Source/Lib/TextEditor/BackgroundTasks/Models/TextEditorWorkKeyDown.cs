@@ -301,7 +301,7 @@ Goals (2024-05-24)
                         ViewModelKey,
                         TextEditorSelectionHelper.HasSelectedText(cursorModifier),
                         null,
-                        null,
+                        editContext.TextEditorService,
                         Options,
                         null,
                         null,

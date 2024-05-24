@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Logging;
 using Fluxor;
+using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
@@ -66,6 +67,7 @@ public partial class AdhocRewrite
 			.AddScoped<ILoggerFactory, NullLoggerFactory>()
 			.AddScoped<IBackgroundTaskService>(_ => hackyBackgroundTaskService)
 			.AddScoped<ITextEditorService, TestTextEditorService>()
+			.AddScoped<IClipboardService, InMemoryClipboardService>()
 			.AddFluxor(options => options.ScanAssemblies(
 				typeof(LuthetusCommonConfig).Assembly,
 				typeof(LuthetusTextEditorConfig).Assembly));

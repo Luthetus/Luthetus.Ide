@@ -34,6 +34,24 @@ public interface ITextEditorWork
 
 	public Task Invoke(IEditContext editContext);
 
+	/// <summary>
+	/// There is a mismatch in how I interact with the text editor from:
+	///     -A unit test
+	///     -The UI
+	///
+	/// When writing a unit test, I prefer avoiding the TextEditorViewModel altogether.
+	///
+	/// Whereas, with the UI, I want my cursor to be synced with the TextEditorViewModel.
+	///
+	/// As of this comment, I've put arguments in the constructors of various <see cref="ITextEditorTask"/>
+	/// implementations, to support either interaction. With the expectation that one somehow
+	/// knows that you choose some parameters, or another group of parameters, but to not fill out both.
+	///
+	/// This results in very confusing API.
+	///
+	/// TODO: Decide how to handle the mismatch between wanting to use the "TextEditorViewModel's cursors"...
+	///       ...versus using a personal cursor, (perhaps constructed as a one off use).
+	/// </summary>
 	public static (TextEditorCursorModifier cursorModifier, CursorModifierBagTextEditor cursorModifierBag) GetCursorModifierAndBagTuple(
 		IEditContext editContext,
 		Key<TextEditorViewModel> viewModelKey,
