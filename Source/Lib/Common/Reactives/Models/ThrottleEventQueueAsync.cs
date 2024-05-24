@@ -60,23 +60,33 @@ public class ThrottleEventQueueAsync
 
             var queueLengthIncreased = true;
         
-            for (int i = _throttleEventList.Count - 1; i >= 0; i--)
-            {
-                IBackgroundTask? oldEvent = _throttleEventList[i];
-                var batchEvent = recentEvent.BatchOrDefault(oldEvent);
-
-                if (batchEvent is null)
-                    break;
-
-                // In this case, either the current event stays,
-                // or it is replaced with the new event.
-                //
-                // Therefore the que length does not change.
-                queueLengthIncreased = false;
-
-                _throttleEventList.RemoveAt(i);
-                recentEvent = batchEvent;
-            }
+			if (_throttleEventList.Count == 0)
+			{
+				// I'm working through the details (2024-05-24)
+				// but the issue relates to enqueueing when
+				// nothing is there.
+				recentEvent.BatchOrDefault(null);
+			}
+			else
+			{
+				for (int i = _throttleEventList.Count - 1; i >= 0; i--)
+	            {
+	                IBackgroundTask? oldEvent = _throttleEventList[i];
+	                var batchEvent = recentEvent.BatchOrDefault(oldEvent);
+	
+	                if (batchEvent is null)
+	                    break;
+	
+	                // In this case, either the current event stays,
+	                // or it is replaced with the new event.
+	                //
+	                // Therefore the que length does not change.
+	                queueLengthIncreased = false;
+	
+	                _throttleEventList.RemoveAt(i);
+	                recentEvent = batchEvent;
+	            }
+			}
         
             _throttleEventList.Add(recentEvent);
 

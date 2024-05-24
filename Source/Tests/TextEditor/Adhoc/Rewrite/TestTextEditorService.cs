@@ -22,6 +22,7 @@ public class TestTextEditorService : ITextEditorService
 {
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly IDispatcher _dispatcher;
+	private readonly object _lockBackgroundTaskTryReusingSameInstance = new();
 
 	public TestTextEditorService(
 		IBackgroundTaskService backgroundTaskService,
@@ -34,6 +35,8 @@ public class TestTextEditorService : ITextEditorService
 		ViewModelStateWrap = viewModelStateWrap;
 		_dispatcher = dispatcher;
 	}
+
+	private TextEditorBackgroundTask? _backgroundTask;
 
     /// <summary>This is used when interacting with the <see cref="IStorageService"/> to set and get data.</summary>
     public string StorageKey { get; }
@@ -135,8 +138,13 @@ public class TestTextEditorService : ITextEditorService
 
 	public Task Post(ITextEditorWork work)
 	{
-		var backgroundTask = new TextEditorBackgroundTask(this, work);
-		return _backgroundTaskService.EnqueueAsync(backgroundTask);
+		lock (_lockBackgroundTaskTryReusingSameInstance)
+		{
+			if (_backgroundTask is null || !_backgroundTask.TryReusingSameInstance(work))
+				_backgroundTask = new(this, work);
+		}
+
+		return _backgroundTaskService.EnqueueAsync(_backgroundTask);
 	}
 
 	public Task Post(ITextEditorTask textEditorTask)

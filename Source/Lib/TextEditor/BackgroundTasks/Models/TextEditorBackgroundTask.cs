@@ -11,6 +11,8 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 public class TextEditorBackgroundTask : IBackgroundTask
 {
+	private readonly object _lockWork = new();
+
 	public readonly List<ITextEditorWork> _workList = new();
 
 	public TextEditorBackgroundTask(ITextEditorService textEditorService, ITextEditorWork work)
@@ -27,60 +29,121 @@ public class TextEditorBackgroundTask : IBackgroundTask
     public string Name { get; }
     public Task? WorkProgress { get; }
 	public TimeSpan ThrottleTimeSpan { get; }
+	public bool WasEnqueued { get; private set; }
 
 	/// <summary>
 	/// The group of properties which provide data on which
 	/// the <see cref="_workList"/> performs work.
 	/// </summary>
-	public ITextEditorService TextEditorService { get; }	
+	public ITextEditorService TextEditorService { get; }
 	public IEditContext? EditContext { get; set; }
+
+	public bool TryReusingSameInstance(ITextEditorWork work)
+	{
+		var wasAdded = false;
+
+		lock (_lockWork)
+		{
+			if (!WasEnqueued)
+			{
+				var lastWork = _workList.Last();
+				var newWork = work;
+	
+				if (lastWork.TextEditorWorkKind == newWork.TextEditorWorkKind)
+				{
+					if (lastWork.ResourceUri == newWork.ResourceUri &&
+						lastWork.CursorKey == newWork.CursorKey)
+					{
+						switch (lastWork.TextEditorWorkKind)
+						{
+							case TextEditorWorkKind.Insertion:
+								var insertionLastWork = (TextEditorWorkInsertion)lastWork;
+								var insertionNewWork = (TextEditorWorkInsertion)newWork;
+		
+								insertionLastWork.Content.Append(insertionNewWork.Content);
+								wasAdded = true;
+								break;
+							case TextEditorWorkKind.Deletion:
+								var deletionLastWork = (TextEditorWorkDeletion)lastWork;
+								var deletionNewWork = (TextEditorWorkDeletion)newWork;
+		
+								deletionLastWork.ColumnCount += deletionNewWork.ColumnCount;
+								wasAdded = true;
+								break;
+						}
+					}
+				}
+
+				if (!wasAdded)
+				{
+					_workList.Add(work);
+					wasAdded = true;
+				}
+			}
+		}
+
+		Console.WriteLine($"wasAdded: {wasAdded}");
+		Console.WriteLine($"_workList.Count: {_workList.Count}");
+		return wasAdded;
+	}
 
 	public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
 	{
-		// This method is invoked from within a semaphore,
-		// of which blocks the queue from being processed.
-		//
-		// So, if we see that the last enqueued item
-		// is of this same 'Type', we can share the 'ITextEditorEditContext'
-		//
-		// By sharing the 'EditContext' amongst two tasks, we reduce
-		// 2 UI renders down to only 1.
-		if (oldEvent is TextEditorBackgroundTask oldTextEditorBackgroundTask)
+		lock (_lockWork)
 		{
-			var lastWork = oldTextEditorBackgroundTask._workList.Last();
-			var newWork = _workList.First();
-
-			if (lastWork.TextEditorWorkKind == newWork.TextEditorWorkKind)
+			Console.WriteLine($"BatchOrDefault");
+			// This method is invoked from within a semaphore,
+			// of which blocks the queue from being processed.
+			//
+			// So, if we see that the last enqueued item
+			// is of this same 'Type', we can share the 'ITextEditorEditContext'
+			//
+			// By sharing the 'EditContext' amongst two tasks, we reduce
+			// 2 UI renders down to only 1.
+			if (oldEvent is TextEditorBackgroundTask oldTextEditorBackgroundTask)
 			{
-				if (lastWork.ResourceUri == newWork.ResourceUri &&
-					lastWork.CursorKey == newWork.CursorKey)
+				Console.WriteLine($"oldTextEditorBackgroundTask._workList.Count: {oldTextEditorBackgroundTask._workList.Count}");
+				Console.WriteLine($"_workList.Count: {_workList.Count}");
+
+				var lastWork = oldTextEditorBackgroundTask._workList.Last();
+				var newWork = _workList.First();
+	
+				if (lastWork.TextEditorWorkKind == newWork.TextEditorWorkKind)
 				{
-					switch (lastWork.TextEditorWorkKind)
+					if (lastWork.ResourceUri == newWork.ResourceUri &&
+						lastWork.CursorKey == newWork.CursorKey)
 					{
-						case TextEditorWorkKind.Insertion:
-							var insertionLastWork = (TextEditorWorkInsertion)lastWork;
-							var insertionNewWork = (TextEditorWorkInsertion)newWork;
-	
-							insertionLastWork.Content.Append(insertionNewWork.Content);
-							_workList.RemoveAt(0);
-							break;
-						case TextEditorWorkKind.Deletion:
-							var deletionLastWork = (TextEditorWorkDeletion)lastWork;
-							var deletionNewWork = (TextEditorWorkDeletion)newWork;
-	
-							deletionLastWork.ColumnCount += deletionNewWork.ColumnCount;
-							_workList.RemoveAt(0);
-							break;
+						switch (lastWork.TextEditorWorkKind)
+						{
+							case TextEditorWorkKind.Insertion:
+								var insertionLastWork = (TextEditorWorkInsertion)lastWork;
+								var insertionNewWork = (TextEditorWorkInsertion)newWork;
+		
+								insertionLastWork.Content.Append(insertionNewWork.Content);
+								_workList.RemoveAt(0);
+								break;
+							case TextEditorWorkKind.Deletion:
+								var deletionLastWork = (TextEditorWorkDeletion)lastWork;
+								var deletionNewWork = (TextEditorWorkDeletion)newWork;
+		
+								deletionLastWork.ColumnCount += deletionNewWork.ColumnCount;
+								_workList.RemoveAt(0);
+								break;
+						}
 					}
 				}
-			}
+	
+				oldTextEditorBackgroundTask._workList.AddRange(_workList);
 
-			oldTextEditorBackgroundTask._workList.AddRange(_workList);
-			return oldTextEditorBackgroundTask;
-		}
-		else
-		{
-			return null;
+				Console.WriteLine($"2oldTextEditorBackgroundTask._workList.Count: {oldTextEditorBackgroundTask._workList.Count}");
+				Console.WriteLine($"2_workList.Count: {_workList.Count}");
+				return oldTextEditorBackgroundTask;
+			}
+			else
+			{
+				WasEnqueued = true;
+				return null;
+			}
 		}
 	}
 	
