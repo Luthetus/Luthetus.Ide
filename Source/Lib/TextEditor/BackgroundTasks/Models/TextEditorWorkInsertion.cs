@@ -12,7 +12,7 @@ public class TextEditorWorkInsertion : ITextEditorWork
 	public TextEditorWorkInsertion(
 		ResourceUri resourceUri,
 		Key<TextEditorCursor> cursorKey,
-		Func<Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
+		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
 		StringBuilder content)
 	{
 		ResourceUri = resourceUri;
@@ -49,7 +49,7 @@ public class TextEditorWorkInsertion : ITextEditorWork
 	/// then invoke this Func, and then register a CursorModifier in the
 	/// ITextEditorEditContext.
 	/// </summary>
-	public Func<Key<TextEditorCursor>, TextEditorCursor> GetCursorFunc { get; }
+	public Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> GetCursorFunc { get; }
 	
 	/// <summary>
 	/// The content to insert.

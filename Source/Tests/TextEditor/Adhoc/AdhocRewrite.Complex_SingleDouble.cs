@@ -42,7 +42,7 @@ public partial class AdhocRewrite
 		await textEditorService.Post(new TextEditorWorkKeyDown(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			keyboardEventArgs,
 			options));
 
@@ -80,14 +80,14 @@ public partial class AdhocRewrite
 		await textEditorService.Post(new TextEditorWorkKeyDown(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			new KeyboardEventArgs { Key = "a", Code = "KeyA" },
 			options));
 
 		await textEditorService.Post(new TextEditorWorkKeyDown(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			new KeyboardEventArgs { Key = "b", Code = "KeyB" },
 			options));
 

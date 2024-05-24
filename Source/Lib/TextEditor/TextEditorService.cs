@@ -377,13 +377,13 @@ public partial class TextEditorService : ITextEditorService
 
 		public TextEditorCursorModifier? GetCursorModifier(
 			Key<TextEditorCursor> cursorKey,
-			Func<Key<TextEditorCursor>, TextEditorCursor> getCursorFunc)
+			Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc)
 		{
 			if (cursorKey != Key<TextEditorCursor>.Empty)
 			{
 				if (!CursorModifierCache.TryGetValue(cursorKey, out var cursorModifier))
 				{
-					cursorModifier = new TextEditorCursorModifier(getCursorFunc.Invoke(cursorKey));
+					cursorModifier = new TextEditorCursorModifier(getCursorFunc.Invoke(this, cursorKey));
 					CursorModifierCache.Add(cursorKey, cursorModifier);
 				}
 

@@ -42,7 +42,7 @@ public partial class AdhocRewrite
 		await textEditorService.Post(new TextEditorWorkInsertion(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			content));
 
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
@@ -84,13 +84,13 @@ public partial class AdhocRewrite
 		await textEditorService.Post(new TextEditorWorkInsertion(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			new StringBuilder("abc")));
 
 		await textEditorService.Post(new TextEditorWorkInsertion(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			new StringBuilder("123")));
 
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
@@ -128,7 +128,7 @@ public partial class AdhocRewrite
 		await textEditorService.Post(new TextEditorWorkDeletion(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			initialContent.Length,
 			TextEditorModelModifier.DeleteKind.Delete));
 
@@ -165,14 +165,14 @@ public partial class AdhocRewrite
 		await textEditorService.Post(new TextEditorWorkDeletion(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			initialContent.Length / 2,
 			TextEditorModelModifier.DeleteKind.Delete));
 
 		await textEditorService.Post(new TextEditorWorkDeletion(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			initialContent.Length / 2,
 			TextEditorModelModifier.DeleteKind.Delete));
 
@@ -211,7 +211,7 @@ public partial class AdhocRewrite
 		await textEditorService.Post(new TextEditorWorkDeletion(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			initialContent.Length,
 			TextEditorModelModifier.DeleteKind.Backspace));
 
@@ -250,14 +250,14 @@ public partial class AdhocRewrite
 		await textEditorService.Post(new TextEditorWorkDeletion(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			initialContent.Length / 2,
 			TextEditorModelModifier.DeleteKind.Backspace));
 
 		await textEditorService.Post(new TextEditorWorkDeletion(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			initialContent.Length / 2,
 			TextEditorModelModifier.DeleteKind.Backspace));
 

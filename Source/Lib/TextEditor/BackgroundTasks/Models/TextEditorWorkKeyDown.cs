@@ -124,7 +124,7 @@ Goals (2024-05-24)
 	public TextEditorWorkKeyDown(
 		ResourceUri resourceUri,
 		Key<TextEditorCursor> cursorKey,
-		Func<Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
+		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
 		KeyboardEventArgs keyboardEventArgs,
 		TextEditorOptions options)
 	{
@@ -163,7 +163,7 @@ Goals (2024-05-24)
 	/// then invoke this Func, and then register a CursorModifier in the
 	/// ITextEditorEditContext.
 	/// </summary>
-	public Func<Key<TextEditorCursor>, TextEditorCursor> GetCursorFunc { get; }
+	public Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> GetCursorFunc { get; }
 	
 	public KeyboardEventArgs KeyboardEventArgs { get; }
 

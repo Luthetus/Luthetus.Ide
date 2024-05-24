@@ -40,7 +40,7 @@ public interface IEditContext
     /// <inheritdoc cref="IEditContext"/>
 	public TextEditorCursorModifier? GetCursorModifier(
 		Key<TextEditorCursor> cursorKey,
-		Func<Key<TextEditorCursor>, TextEditorCursor> getCursorFunc);
+		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc);
 
     /// <summary>
     /// TODO: Caching for this method?<br/>

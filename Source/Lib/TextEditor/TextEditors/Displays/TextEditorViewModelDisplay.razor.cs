@@ -284,13 +284,21 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (resourceUri is null || viewModelKey is null)
 			return;
 
-		var onKeyDown = new OnKeyDown(
-            TextEditorService.OptionsStateWrap.Value.Options,
-            keyboardEventArgs,
-            resourceUri,
-            viewModelKey.Value);
+		var workKeyDown = new TextEditorWorkKeyDown(
+			resourceUri,
+			Key<TextEditorCursor>.Empty,
+			(editContext, cursorKey) => 
+			{
+				var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
+				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-        await TextEditorService.Post((ITextEditorWork)onKeyDown).ConfigureAwait(false);
+				return primaryCursorModifier.ToCursor();
+			},
+			keyboardEventArgs,
+			TextEditorService.OptionsStateWrap.Value.Options);
+
+        await TextEditorService.Post(workKeyDown).ConfigureAwait(false);
 	}
 
     private async Task ReceiveOnContextMenuAsync()

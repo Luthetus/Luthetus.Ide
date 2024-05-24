@@ -12,7 +12,7 @@ public class TextEditorWorkDeletion : ITextEditorWork
 	public TextEditorWorkDeletion(
 		ResourceUri resourceUri,
 		Key<TextEditorCursor> cursorKey,
-		Func<Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
+		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
 		int columnCount,
 		TextEditorModelModifier.DeleteKind deleteKind)
 	{
@@ -51,7 +51,7 @@ public class TextEditorWorkDeletion : ITextEditorWork
 	/// then invoke this Func, and then register a CursorModifier in the
 	/// ITextEditorEditContext.
 	/// </summary>
-	public Func<Key<TextEditorCursor>, TextEditorCursor> GetCursorFunc { get; }
+	public Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> GetCursorFunc { get; }
 
 	/// <summary>
 	/// How many user-characters should be deleted from the starting position.

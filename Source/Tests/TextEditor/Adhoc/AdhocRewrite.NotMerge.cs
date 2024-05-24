@@ -36,13 +36,13 @@ public partial class AdhocRewrite
 		await textEditorService.Post(new TextEditorWorkInsertion(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			content));
 
 		await textEditorService.Post(new TextEditorWorkDeletion(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			"abc123".Length,
 			TextEditorModelModifier.DeleteKind.Delete));
 
@@ -82,13 +82,13 @@ public partial class AdhocRewrite
 		await textEditorService.Post(new TextEditorWorkInsertion(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			content));
 
 		await textEditorService.Post(new TextEditorWorkDeletion(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			"abc123".Length,
 			TextEditorModelModifier.DeleteKind.Backspace));
 
@@ -128,14 +128,14 @@ public partial class AdhocRewrite
 		await textEditorService.Post(new TextEditorWorkDeletion(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			"abc123".Length,
 			TextEditorModelModifier.DeleteKind.Delete));
 
 		await textEditorService.Post(new TextEditorWorkInsertion(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			content));
 
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
@@ -174,14 +174,14 @@ public partial class AdhocRewrite
 		await textEditorService.Post(new TextEditorWorkDeletion(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			"abc123".Length,
 			TextEditorModelModifier.DeleteKind.Backspace));
 
 		await textEditorService.Post(new TextEditorWorkInsertion(
 			resourceUri,
 			cursor.Key,
-			cursorKey => cursor,
+			(editContext, cursorKey) => cursor,
 			content));
 
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
