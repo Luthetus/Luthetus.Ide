@@ -171,6 +171,13 @@ public class TextEditorBackgroundTask : IBackgroundTask
 			{
 				Console.WriteLine("oldWork is TextEditorWorkKeyDown oldWorkKeyDown && newWork is TextEditorWorkKeyDown newWorkKeyDown");
 				
+				var batchResult = newWork.BatchOrDefault(oldWork);
+
+				if (batchResult is not null)
+				{
+					_workList[0] = batchResult;
+					_workList.RemoveAt(1);
+				}
 			}
 		}
 

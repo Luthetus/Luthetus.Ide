@@ -161,6 +161,40 @@ Goals (2024-05-24)
 	
 	public KeyboardEventArgs KeyboardEventArgs { get; }
 
+	public TextEditorWorkKeyDown? BatchOrDefault(TextEditorWorkKeyDown oldWorkKeyDown)
+	{
+		// Step 1:
+		// ------
+		// Determine whether 'this' is simplifiable to 'TextEditorWorkInsertion'
+		var thisIsTextInsertion;
+		{
+			thisIsTextInsertion = false;
+		}
+
+		// Step 2:
+		// ------
+		// Determine whether 'oldWorkKeyDown' is simplifiable to 'TextEditorWorkInsertion'
+		var oldWorkKeyDownIsTextInsertion;
+		{
+			oldWorkKeyDownIsTextInsertion = false;
+		}
+
+		// Step 3:
+		// ------
+		// If they both simplify to 'TextEditorWorkInsertion',
+		// then return a single instance of 'TextEditorWorkInsertion'
+		// which will insert both keyboard event keys that were pressed.
+		if (thisIsTextInsertion && oldWorkKeyDownIsTextInsertion)
+		{
+		}
+		else
+		{
+			// Return null because they could not be batched.
+			// This tells the caller to leave the two items as is.
+			return null;
+		}
+	}
+
 	public Task Invoke(IEditContext editContext)
 	{
 		var modelModifier = editContext.GetModelModifier(ResourceUri);
