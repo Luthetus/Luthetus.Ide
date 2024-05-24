@@ -32,6 +32,8 @@ public partial class TextEditorService : ITextEditorService
     /// </summary>
     public static readonly Key<TextEditorAuthenticatedAction> AuthenticatedActionKey = new(Guid.Parse("13831968-9b10-46d1-8d47-842b78238d6a"));
 
+	private readonly object _lockBackgroundTaskTryReusingSameInstance = new();
+
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
     private readonly IDialogService _dialogService;
@@ -83,6 +85,8 @@ public partial class TextEditorService : ITextEditorService
         OptionsApi = new TextEditorOptionsApi(this, _textEditorOptions, _storageService, _commonBackgroundTaskApi, _dispatcher);
     }
 
+	private TextEditorBackgroundTask? _backgroundTask;
+
     public IState<TextEditorModelState> ModelStateWrap { get; }
     public IState<TextEditorViewModelState> ViewModelStateWrap { get; }
     public IState<TextEditorGroupState> GroupStateWrap { get; }
@@ -110,12 +114,81 @@ public partial class TextEditorService : ITextEditorService
 
 	public IEditContext OpenEditContext()
 	{
-		throw new NotImplementedException();
+		return new TextEditorEditContext(this, AuthenticatedActionKey);
 	}
 
 	public Task CloseEditContext(IEditContext editContext)
 	{
-		throw new NotImplementedException();
+		foreach (var modelModifier in editContext.ModelCache.Values)
+		{
+			if (modelModifier is null || !modelModifier.WasModified)
+				continue;
+
+			_dispatcher.Dispatch(new TextEditorModelState.SetAction(
+				editContext.AuthenticatedActionKey,
+				editContext,
+				modelModifier));
+
+			var viewModelBag = ViewModelStateWrap.Value.ViewModelList.Where(
+				x => x.ResourceUri == modelModifier.ResourceUri);
+
+			foreach (var viewModel in viewModelBag)
+			{
+				// Invoking 'GetViewModelModifier' marks the view model to be updated.
+				editContext.GetViewModelModifier(viewModel.ViewModelKey);
+			}
+
+			if (modelModifier.WasDirty != modelModifier.IsDirty)
+			{
+				if (modelModifier.IsDirty)
+					_dispatcher.Dispatch(new DirtyResourceUriState.AddDirtyResourceUriAction(
+						modelModifier.ResourceUri));
+				else
+					_dispatcher.Dispatch(new DirtyResourceUriState.RemoveDirtyResourceUriAction(
+						modelModifier.ResourceUri));
+			}
+		}
+
+		foreach (var viewModelModifier in editContext.ViewModelCache.Values)
+		{
+			if (viewModelModifier is null || !viewModelModifier.WasModified)
+				return;
+
+			var successCursorModifierBag = editContext.CursorModifierBagCache.TryGetValue(
+				viewModelModifier.ViewModel.ViewModelKey,
+				out var cursorModifierBag);
+
+			if (successCursorModifierBag && cursorModifierBag is not null)
+			{
+				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+				{
+					CursorList = cursorModifierBag.List
+						.Select(x => x.ToCursor())
+						.ToImmutableArray();
+				};
+			}
+
+			if (viewModelModifier.ScrollWasModified)
+			{
+				await ((TextEditorService)editContext.TextEditorService)
+					.HACK_SetScrollPosition(viewModelModifier.ViewModel)
+					.ConfigureAwait(false);
+			}
+
+			// TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
+			await editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+					viewModelModifier.ViewModel.ResourceUri,
+					viewModelModifier.ViewModel.ViewModelKey,
+					CancellationToken.None)
+				.Invoke(editContext)
+				.ConfigureAwait(false);
+
+			_dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+				editContext.AuthenticatedActionKey,
+				editContext,
+				viewModelModifier.ViewModel.ViewModelKey,
+				inState => viewModelModifier.ViewModel));
+		}
 	}
 
 	public Task Post(ITextEditorWork textEditorWork)
