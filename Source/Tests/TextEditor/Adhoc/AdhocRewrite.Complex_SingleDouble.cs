@@ -14,6 +14,7 @@ using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.Events.Models;
 using Luthetus.TextEditor.Tests.Adhoc.Rewrite;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;

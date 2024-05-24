@@ -14,7 +14,7 @@ using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public class OnKeyDown : ITextEditorTask
+public class OnKeyDown : ITextEditorTask, ITextEditorWork
 {
     private readonly TextEditorEvents _events;
 
@@ -57,6 +57,10 @@ public class OnKeyDown : ITextEditorTask
     public KeyboardEventArgs KeyboardEventArgs { get; }
     public CommandNoType? Command { get; }
 
+	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Complex;
+	public Key<TextEditorCursor> CursorKey { get; }
+	public Func<Key<TextEditorCursor>, TextEditorCursor> GetCursorFunc { get; }
+
     /// <summary>
     /// The initial enqueueing of this throttle event might result in an incorrect <see cref="TentativeKeyboardEventArgsKind"/>
     /// This is due to the selection being checked, prior to the previous UI events that came before this have been handled.<br/><br/>
@@ -77,6 +81,11 @@ public class OnKeyDown : ITextEditorTask
 
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
+
+	public Task Invoke(IEditContext editContext)
+	{
+		return InvokeWithEditContext(editContext);
+	}
 
     public async Task InvokeWithEditContext(IEditContext editContext)
     {

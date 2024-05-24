@@ -15,6 +15,7 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
@@ -289,7 +290,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             resourceUri,
             viewModelKey.Value);
 
-        await TextEditorService.Post(onKeyDown).ConfigureAwait(false);
+        await TextEditorService.Post((ITextEditorWork)onKeyDown).ConfigureAwait(false);
 	}
 
     private async Task ReceiveOnContextMenuAsync()
