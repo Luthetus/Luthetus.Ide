@@ -89,7 +89,6 @@ public class TextEditorBackgroundTask : IBackgroundTask
 	{
 		lock (_lockWork)
 		{
-			Console.WriteLine($"BatchOrDefault");
 			// This method is invoked from within a semaphore,
 			// of which blocks the queue from being processed.
 			//
@@ -148,17 +147,6 @@ public class TextEditorBackgroundTask : IBackgroundTask
 	
 	public async Task HandleEvent(CancellationToken cancellationToken)
 	{
-		Console.WriteLine($"HandleEvent_workList.Count: {_workList.Count}");
-
-		
-
-		Console.WriteLine("backgroundTask-HandleEvent");
-
-		if (TextEditorService is null)
-		{
-			Console.WriteLine("backgroundTask-TextEditorService-wasNull");
-		}
-
 		EditContext ??= TextEditorService.OpenEditContext();
 
 		if (_workList.Count == 2)

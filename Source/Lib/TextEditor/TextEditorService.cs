@@ -379,6 +379,7 @@ public partial class TextEditorService : ITextEditorService
 			Key<TextEditorCursor> cursorKey,
 			Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc)
 		{
+			Console.WriteLine(cursorKey);
 			if (cursorKey != Key<TextEditorCursor>.Empty)
 			{
 				if (!CursorModifierCache.TryGetValue(cursorKey, out var cursorModifier))

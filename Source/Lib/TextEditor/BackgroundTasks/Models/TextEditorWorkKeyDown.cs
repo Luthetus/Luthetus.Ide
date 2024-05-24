@@ -167,7 +167,7 @@ Goals (2024-05-24)
 	
 	public KeyboardEventArgs KeyboardEventArgs { get; }
 
-	public KeyboardEventArgsKind KeyboardEventArgsKind { get; private set; }
+	public KeyboardEventArgsKind KeyboardEventArgsKind { get; private set; } = KeyboardEventArgsKind.None;
 
 	public CommandNoType? Command { get; private set; }
 
@@ -197,7 +197,6 @@ Goals (2024-05-24)
                 editContext.TextEditorService,
                 out var localCommand);
 
-			Console.WriteLine($"KeyboardEventArgsKind: {KeyboardEventArgsKind}");
             Command = localCommand;
 		}
 
@@ -214,7 +213,6 @@ Goals (2024-05-24)
                 editContext.TextEditorService,
                 out var localCommand);
 
-			Console.WriteLine($"KeyboardEventArgsKind: {KeyboardEventArgsKind}");
             Command = localCommand;
 		}
 
@@ -255,11 +253,32 @@ Goals (2024-05-24)
 			Key<TextEditorViewModel>.Empty,
 			new List<TextEditorCursorModifier> { cursorModifier });
 
+		if (KeyboardEventArgsKind == KeyboardEventArgsKind.None)
+		{
+			Console.WriteLine("if (KeyboardEventArgsKind == KeyboardEventArgsKind.None)");
+
+			var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
+			Console.WriteLine("var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);");
+
+			KeyboardEventArgsKind = TextEditorWorkUtils.GetKeyboardEventArgsKind(
+                Options,
+                KeyboardEventArgs,
+                hasSelection,
+                editContext.TextEditorService,
+                out var localCommand);
+			Console.WriteLine("TextEditorWorkUtils.GetKeyboardEventArgsKind(");
+
+			Command = localCommand;
+			Console.WriteLine("Command = localCommand;");
+		}
+
 		switch (KeyboardEventArgsKind)
 		{
 			case KeyboardEventArgsKind.None:
+				Console.WriteLine("KeyboardEventArgsKind.None");
 				break;
 			case KeyboardEventArgsKind.Movement:
+				Console.WriteLine("KeyboardEventArgsKind.Movement");
 				await editContext.TextEditorService.ViewModelApi.MoveCursorFactory(
                             KeyboardEventArgs,
                             modelModifier.ResourceUri,
@@ -268,8 +287,10 @@ Goals (2024-05-24)
                     .ConfigureAwait(false);
 				break;
 			case KeyboardEventArgsKind.ContextMenu:
+				Console.WriteLine("KeyboardEventArgsKind.ContextMenu");
 				break;
 			case KeyboardEventArgsKind.Command:
+				Console.WriteLine("KeyboardEventArgsKind.Command");
 				await Command.CommandFunc.Invoke(new TextEditorCommandArgs(
                         modelModifier.ResourceUri,
                         ViewModelKey,
@@ -286,6 +307,7 @@ Goals (2024-05-24)
                     .ConfigureAwait(false);
 				break;
 			case KeyboardEventArgsKind.Text:
+				Console.WriteLine("KeyboardEventArgsKind.Text");
 				modelModifier.Insert(
 			        KeyboardEventArgs.Key,
 					cursorModifierBag,
@@ -293,8 +315,10 @@ Goals (2024-05-24)
 			        cancellationToken: default);
 				break;
 			case KeyboardEventArgsKind.Other:
+				Console.WriteLine("KeyboardEventArgsKind.Other");
 				break;
 			default:
+				Console.WriteLine("KeyboardEventArgsKind switch hit default");
 				break;
 		}
 	}

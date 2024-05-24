@@ -279,19 +279,25 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             return;
 
         var resourceUri = GetModel()?.ResourceUri;
-        var viewModelKey = GetViewModel()?.ViewModelKey;
+        
+		var viewModel = GetViewModel();
+		var viewModelKey = viewModel?.ViewModelKey;
 
         if (resourceUri is null || viewModelKey is null)
 			return;
 
 		var workKeyDown = new TextEditorWorkKeyDown(
 			resourceUri,
-			Key<TextEditorCursor>.Empty,
+			viewModel.PrimaryCursor.Key,
 			(editContext, cursorKey) => 
 			{
+				Console.WriteLine("GetCursorFunc");
 				var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
 				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+				if (primaryCursorModifier is null)
+					Console.WriteLine("primaryCursorModifier was null");
 
 				return primaryCursorModifier.ToCursor();
 			},
