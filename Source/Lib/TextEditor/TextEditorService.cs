@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
@@ -9,6 +10,7 @@ using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
+using Luthetus.TextEditor.RazorLib.Edits.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -117,7 +119,7 @@ public partial class TextEditorService : ITextEditorService
 		return new TextEditorEditContext(this, AuthenticatedActionKey);
 	}
 
-	public Task CloseEditContext(IEditContext editContext)
+	public async Task CloseEditContext(IEditContext editContext)
 	{
 		foreach (var modelModifier in editContext.ModelCache.Values)
 		{
@@ -164,7 +166,7 @@ public partial class TextEditorService : ITextEditorService
 				{
 					CursorList = cursorModifierBag.List
 						.Select(x => x.ToCursor())
-						.ToImmutableArray();
+						.ToImmutableArray()
 				};
 			}
 
