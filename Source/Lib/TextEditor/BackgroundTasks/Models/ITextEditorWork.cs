@@ -33,4 +33,38 @@ public interface ITextEditorWork
 	public Key<TextEditorCursor> CursorKey { get; }
 
 	public Task Invoke(IEditContext editContext);
+
+	public static (TextEditorCursorModifier cursorModifier, CursorModifierBagTextEditor cursorModifierBag) GetCursorModifierAndBagTuple(
+		IEditContext editContext,
+		Key<TextEditorViewModel> viewModelKey,
+		Key<TextEditorCursor> cursorKey,
+		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc)
+	{
+		TextEditorCursorModifier cursorModifier;
+		CursorModifierBagTextEditor cursorModifierBag;
+
+		if (getCursorFunc is not null && cursorKey != Key<TextEditorCursor>.Empty)
+		{
+			cursorModifier = editContext.GetCursorModifier(
+				cursorKey,
+				getCursorFunc);
+
+			cursorModifierBag = new CursorModifierBagTextEditor(
+				Key<TextEditorViewModel>.Empty,
+				new List<TextEditorCursorModifier> { cursorModifier });
+		}
+		else
+		{
+			var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+			cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+			var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+			if (primaryCursorModifier is null)
+				Console.WriteLine("primaryCursorModifier was null");
+
+			cursorModifier = primaryCursorModifier;
+		}
+
+		return (cursorModifier, cursorModifierBag);
+	}
 }

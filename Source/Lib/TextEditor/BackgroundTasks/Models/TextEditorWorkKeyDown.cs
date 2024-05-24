@@ -126,13 +126,15 @@ Goals (2024-05-24)
 		Key<TextEditorCursor> cursorKey,
 		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
 		KeyboardEventArgs keyboardEventArgs,
-		TextEditorOptions options)
+		TextEditorOptions options,
+		Key<TextEditorViewModel> viewModelKey)
 	{
 		ResourceUri = resourceUri;
 		CursorKey = cursorKey;
 		GetCursorFunc = getCursorFunc;
 		KeyboardEventArgs = keyboardEventArgs;
 		Options = options;
+		ViewModelKey = viewModelKey;
 	}
 
 	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Complex;
@@ -177,9 +179,13 @@ Goals (2024-05-24)
 		IEditContext editContext,
 		TextEditorWorkKeyDown oldWorkKeyDown)
 	{
-		var cursorModifier = editContext.GetCursorModifier(
+		Console.WriteLine("PRIOR: var (cursorModifier, cursorModifierBag) = ITextEditorWork.GetCursorModifierAndBagTuple(");
+		var (cursorModifier, cursorModifierBag) = ITextEditorWork.GetCursorModifierAndBagTuple(
+			editContext,
+			ViewModelKey,
 			CursorKey,
 			GetCursorFunc);
+		Console.WriteLine("AFTER: var (cursorModifier, cursorModifierBag) = ITextEditorWork.GetCursorModifierAndBagTuple(");
 
         if (cursorModifier is null)
             return null;
@@ -232,7 +238,8 @@ Goals (2024-05-24)
 						ResourceUri,
 						CursorKey,
 						GetCursorFunc,
-						new StringBuilder(oldWorkKeyDown.KeyboardEventArgs.Key + KeyboardEventArgs.Key));
+						new StringBuilder(oldWorkKeyDown.KeyboardEventArgs.Key + KeyboardEventArgs.Key),
+						ViewModelKey);
 			}
 		}
 		
@@ -244,14 +251,12 @@ Goals (2024-05-24)
 	public async Task Invoke(IEditContext editContext)
 	{
 		var modelModifier = editContext.GetModelModifier(ResourceUri);
-
-		var cursorModifier = editContext.GetCursorModifier(
+		
+		var (cursorModifier, cursorModifierBag) = ITextEditorWork.GetCursorModifierAndBagTuple(
+			editContext,
+			ViewModelKey,
 			CursorKey,
 			GetCursorFunc);
-
-		var cursorModifierBag = new CursorModifierBagTextEditor(
-			Key<TextEditorViewModel>.Empty,
-			new List<TextEditorCursorModifier> { cursorModifier });
 
 		if (KeyboardEventArgsKind == KeyboardEventArgsKind.None)
 		{

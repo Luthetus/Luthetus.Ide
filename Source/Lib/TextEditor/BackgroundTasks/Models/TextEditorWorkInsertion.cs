@@ -13,12 +13,14 @@ public class TextEditorWorkInsertion : ITextEditorWork
 		ResourceUri resourceUri,
 		Key<TextEditorCursor> cursorKey,
 		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
-		StringBuilder content)
+		StringBuilder content,
+		Key<TextEditorViewModel> viewModelKey)
 	{
 		ResourceUri = resourceUri;
 		CursorKey = cursorKey;
 		GetCursorFunc = getCursorFunc;
 		Content = content;
+		ViewModelKey = viewModelKey;
 	}
 
 	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Insertion;
@@ -65,13 +67,11 @@ public class TextEditorWorkInsertion : ITextEditorWork
 	{
 		var modelModifier = editContext.GetModelModifier(ResourceUri);
 
-		var cursorModifier = editContext.GetCursorModifier(
+		var (cursorModifier, cursorModifierBag) = ITextEditorWork.GetCursorModifierAndBagTuple(
+			editContext,
+			ViewModelKey,
 			CursorKey,
 			GetCursorFunc);
-
-		var cursorModifierBag = new CursorModifierBagTextEditor(
-			Key<TextEditorViewModel>.Empty,
-			new List<TextEditorCursorModifier> { cursorModifier });
 
 		modelModifier.Insert(
 	        Content.ToString(),
