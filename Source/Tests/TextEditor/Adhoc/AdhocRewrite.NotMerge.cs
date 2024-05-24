@@ -6,6 +6,7 @@ using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
@@ -37,7 +38,8 @@ public partial class AdhocRewrite
 			resourceUri,
 			cursor.Key,
 			(editContext, cursorKey) => cursor,
-			content));
+			content,
+			Key<TextEditorViewModel>.Empty));
 
 		await textEditorService.Post(new TextEditorWorkDeletion(
 			resourceUri,
@@ -83,7 +85,8 @@ public partial class AdhocRewrite
 			resourceUri,
 			cursor.Key,
 			(editContext, cursorKey) => cursor,
-			content));
+			content,
+			Key<TextEditorViewModel>.Empty));
 
 		await textEditorService.Post(new TextEditorWorkDeletion(
 			resourceUri,
@@ -136,7 +139,8 @@ public partial class AdhocRewrite
 			resourceUri,
 			cursor.Key,
 			(editContext, cursorKey) => cursor,
-			content));
+			content,
+			Key<TextEditorViewModel>.Empty));
 
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
 		Assert.Equal(1, queue.CountOfBackgroundTasks);
@@ -182,7 +186,8 @@ public partial class AdhocRewrite
 			resourceUri,
 			cursor.Key,
 			(editContext, cursorKey) => cursor,
-			content));
+			content,
+			Key<TextEditorViewModel>.Empty));
 
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
 		Assert.Equal(1, queue.CountOfBackgroundTasks);
