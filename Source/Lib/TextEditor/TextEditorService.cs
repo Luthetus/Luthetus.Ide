@@ -191,9 +191,15 @@ public partial class TextEditorService : ITextEditorService
 		}
 	}
 
-	public Task Post(ITextEditorWork textEditorWork)
+	public Task Post(ITextEditorWork work)
     {
-        throw new NotImplementedException();
+        lock (_lockBackgroundTaskTryReusingSameInstance)
+		{
+			if (_backgroundTask is null || !_backgroundTask.TryReusingSameInstance(work))
+				_backgroundTask = new(this, work);
+		}
+
+		return _backgroundTaskService.EnqueueAsync(_backgroundTask);
     }
 
     public Task PostSimpleBatch(
