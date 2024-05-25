@@ -11,6 +11,8 @@ public interface ITextEditorWork
 {
 	public TextEditorWorkKind TextEditorWorkKind { get; }
 
+	public string Name { get; }
+
 	/// <summary>
 	/// The resource uri of the model which is to be worked upon.
 	/// </summary>
@@ -35,11 +37,11 @@ public interface ITextEditorWork
 	public Task Invoke(IEditContext editContext);
 
 	public ITextEditorWork? BatchEnqueue(
-		ITextEditorWork precedentWork);
+		ITextEditorWork upstreamWork);
 
 	public ITextEditorWork? BatchDequeue(
 		IEditContext editContext,
-		ITextEditorWork precedentWork);
+		ITextEditorWork upstreamWork);
 
 	/// <summary>
 	/// There is a mismatch in how I interact with the text editor from:

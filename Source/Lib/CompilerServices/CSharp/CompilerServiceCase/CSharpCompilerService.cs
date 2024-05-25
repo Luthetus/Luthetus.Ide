@@ -138,6 +138,7 @@ public sealed class CSharpCompilerService : LuthCompilerService
                         }
 
                         await _textEditorService.Post(
+							nameof(AutocompleteEntry),
                             textSpan.ResourceUri,
 							Key<TextEditorViewModel>.Empty,
                             async editContext =>

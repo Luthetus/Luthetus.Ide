@@ -25,6 +25,8 @@ public class TextEditorWorkDeletion : ITextEditorWork
 
 	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Deletion;
 
+	public string Name => "Deletion";
+
 	/// <summary>
 	/// The resource uri of the model which is to be worked upon.
 	/// </summary>
@@ -62,14 +64,14 @@ public class TextEditorWorkDeletion : ITextEditorWork
 	public TextEditorModelModifier.DeleteKind DeleteKind { get; }
 
 	public ITextEditorWork? BatchEnqueue(
-		ITextEditorWork precedentWork)
+		ITextEditorWork upstreamWork)
 	{
-		if (precedentWork.TextEditorWorkKind == TextEditorWorkKind.Deletion &&
-			precedentWork.CursorKey == CursorKey &&
-			precedentWork.ViewModelKey == ViewModelKey)
+		if (upstreamWork.TextEditorWorkKind == TextEditorWorkKind.Deletion &&
+			upstreamWork.CursorKey == CursorKey &&
+			upstreamWork.ViewModelKey == ViewModelKey)
 		{
-			((TextEditorWorkDeletion)precedentWork).ColumnCount += ColumnCount;
-			return precedentWork;
+			((TextEditorWorkDeletion)upstreamWork).ColumnCount += ColumnCount;
+			return upstreamWork;
 		}
 		
 		return null;
@@ -77,14 +79,14 @@ public class TextEditorWorkDeletion : ITextEditorWork
 	
 	public ITextEditorWork? BatchDequeue(
 		IEditContext editContext,
-		ITextEditorWork precedentWork)
+		ITextEditorWork upstreamWork)
 	{
-		if (precedentWork.TextEditorWorkKind == TextEditorWorkKind.Deletion &&
-			precedentWork.CursorKey == CursorKey &&
-			precedentWork.ViewModelKey == ViewModelKey)
+		if (upstreamWork.TextEditorWorkKind == TextEditorWorkKind.Deletion &&
+			upstreamWork.CursorKey == CursorKey &&
+			upstreamWork.ViewModelKey == ViewModelKey)
 		{
-			((TextEditorWorkDeletion)precedentWork).ColumnCount += ColumnCount;
-			return precedentWork;
+			((TextEditorWorkDeletion)upstreamWork).ColumnCount += ColumnCount;
+			return upstreamWork;
 		}
 		
 		return null;

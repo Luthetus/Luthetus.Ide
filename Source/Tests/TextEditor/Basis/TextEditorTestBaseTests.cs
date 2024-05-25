@@ -74,6 +74,7 @@ public class TextEditorTestBaseTests : TextEditorTestBase
         for (var i = 0; i < 3; i++)
         {
             await textEditorService.Post(
+				nameof(TextEditorTestBaseTests),
                 null,
                 Key<TextEditorViewModel>.Empty,
                 editContext =>

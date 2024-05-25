@@ -129,6 +129,7 @@ public class LuthetusIdeEditorBackgroundTaskApi
             _textEditorService.ModelApi.RegisterCustom(model);
 
             await _textEditorService.Post(
+				nameof(RegisterModelFunc),
                 model.ResourceUri,
                 Key<TextEditorViewModel>.Empty,
                 async editContext =>
@@ -200,6 +201,7 @@ public class LuthetusIdeEditorBackgroundTaskApi
             false);
 
         await _textEditorService.Post(
+			nameof(TryRegisterViewModelFunc),
             registerViewModelArgs.ResourceUri,
             viewModelKey,
             _textEditorService.ViewModelApi.WithValueFactory(
@@ -232,6 +234,7 @@ public class LuthetusIdeEditorBackgroundTaskApi
                     if (writtenDateTime is not null)
                     {
                         await _textEditorService.Post(
+							nameof(HandleOnSaveRequested),
                             innerTextEditor.ResourceUri,
                             Key<TextEditorViewModel>.Empty,
                             _textEditorService.ModelApi.SetResourceDataFactory(
@@ -360,6 +363,7 @@ public class LuthetusIdeEditorBackgroundTaskApi
                                                 .ConfigureAwait(false);
 
                                             await _textEditorService.Post(
+												nameof(CheckIfContentsWereModifiedAsync),
                                                 textEditorModel.ResourceUri,
                                                 Key<TextEditorViewModel>.Empty,
                                                 async editContext =>

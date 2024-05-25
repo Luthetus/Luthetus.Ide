@@ -38,6 +38,8 @@ public class TextEditorWorkWheel : ITextEditorWork
 	/// </summary>
 	public ResourceUri ResourceUri { get; }
 
+	public string Name => "Wheel";
+
 	/// <summary>
 	/// This property is optional, and can be Key<TextEditorViewModel>.Empty,
 	/// if one does not make use of it.
@@ -68,14 +70,14 @@ public class TextEditorWorkWheel : ITextEditorWork
 	public TextEditorEvents Events { get; }
 
 	public ITextEditorWork? BatchEnqueue(
-		ITextEditorWork precedentWork)
+		ITextEditorWork upstreamWork)
 	{
 		return null;
 	}
 
 	public ITextEditorWork? BatchDequeue(
 		IEditContext editContext,
-		ITextEditorWork precedentWork)
+		ITextEditorWork upstreamWork)
 	{
 		return null;
 	}

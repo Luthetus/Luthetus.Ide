@@ -142,24 +142,33 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                     // I think after removing the throttle, that this is an infinite loop on WASM,
                     // i.e. holding down ArrowRight
                     await TextEditorService.Post(
+						nameof(viewModel.UnsafeState.ShouldRevealCursor),
                         localRenderBatch.ViewModel.ResourceUri,
                         localRenderBatch.ViewModel.ViewModelKey,
                         editContext =>
                         {
-                            var cursorPositionIndex = localRenderBatch.Model.GetPositionIndex(Cursor);
+							try
+							{
+                            	var cursorPositionIndex = localRenderBatch.Model.GetPositionIndex(Cursor);
 
-                            var cursorTextSpan = new TextEditorTextSpan(
-                                cursorPositionIndex,
-                                cursorPositionIndex + 1,
-                                0,
-                                localRenderBatch.Model.ResourceUri,
-                                localRenderBatch.Model.GetAllText());
+                            	var cursorTextSpan = new TextEditorTextSpan(
+                            	    cursorPositionIndex,
+                            	    cursorPositionIndex + 1,
+                            	    0,
+                            	    localRenderBatch.Model.ResourceUri,
+                            	    localRenderBatch.Model.GetAllText());
 
-                            return TextEditorService.ViewModelApi.ScrollIntoViewFactory(
-                                    localRenderBatch.Model.ResourceUri,
-                                    localRenderBatch.ViewModel.ViewModelKey,
-                                    cursorTextSpan)
-                                .Invoke(editContext);
+                            	return TextEditorService.ViewModelApi.ScrollIntoViewFactory(
+                            	        localRenderBatch.Model.ResourceUri,
+                            	        localRenderBatch.ViewModel.ViewModelKey,
+                            	        cursorTextSpan)
+                            	    .Invoke(editContext);
+							}
+							catch (LuthetusTextEditorException e)
+							{
+								Console.WriteLine(e);
+								return Task.CompletedTask;
+							}
                         });
                 }).ConfigureAwait(false);
             }

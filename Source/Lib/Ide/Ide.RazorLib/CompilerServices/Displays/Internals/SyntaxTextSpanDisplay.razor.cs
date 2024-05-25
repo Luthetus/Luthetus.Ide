@@ -51,6 +51,7 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
         var modelText = model.GetAllText();
 
         await TextEditorService.Post(
+			nameof(SyntaxTextSpanDisplay),
             localTextSpanTuple.TextEditorTextSpan.ResourceUri,
             Key<TextEditorViewModel>.Empty,
             async editContext =>

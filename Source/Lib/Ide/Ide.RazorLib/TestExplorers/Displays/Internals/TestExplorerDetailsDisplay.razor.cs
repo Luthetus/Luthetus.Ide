@@ -105,6 +105,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 			}	
 
 			await TextEditorService.Post(
+				nameof(TestExplorerDetailsDisplay),
 				ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
 				DetailsTextEditorViewModelKey,
 				editContext =>

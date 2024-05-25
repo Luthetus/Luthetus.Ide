@@ -238,6 +238,7 @@ public static class SyntaxTextObjectVim
                                 commandArgs.ShiftKey = shiftKey;
 
                                 return commandArgs.TextEditorService.Post(
+									nameof(MoveCursorOneColumnLeftFactory),
                                     commandArgs.ModelResourceUri,
                 					commandArgs.ViewModelKey,
                                     MoveCursorOneColumnLeftFactory(
@@ -271,6 +272,7 @@ public static class SyntaxTextObjectVim
                                 commandArgs.ShiftKey = shiftKey;
 
                                 return commandArgs.TextEditorService.Post(
+									nameof(MoveCursorOneRowDownFactory),
                                     commandArgs.ModelResourceUri,
                 					commandArgs.ViewModelKey,
                                     MoveCursorOneRowDownFactory(
@@ -304,6 +306,7 @@ public static class SyntaxTextObjectVim
                                 commandArgs.ShiftKey = shiftKey;
 
                                 return commandArgs.TextEditorService.Post(
+									nameof(MoveCursorOneRowUpFactory),
                                     commandArgs.ModelResourceUri,
                 					commandArgs.ViewModelKey,
                                     MoveCursorOneRowUpFactory(
@@ -337,6 +340,7 @@ public static class SyntaxTextObjectVim
                                 commandArgs.ShiftKey = shiftKey;
 
                                 return commandArgs.TextEditorService.Post(
+									nameof(MoveCursorOneColumnRightFactory),
                                     commandArgs.ModelResourceUri,
                 					commandArgs.ViewModelKey,
                                     MoveCursorOneColumnRightFactory(
@@ -376,6 +380,7 @@ public static class SyntaxTextObjectVim
                                 commandArgs.ShiftKey = shiftKey;
 
                                 return commandArgs.TextEditorService.Post(
+									nameof(MoveCursorEndCurrentLineFactory),
                                     commandArgs.ModelResourceUri,
                 					commandArgs.ViewModelKey,
                                     MoveCursorEndCurrentLineFactory(
@@ -409,6 +414,7 @@ public static class SyntaxTextObjectVim
                                 commandArgs.ShiftKey = shiftKey;
 
                                 return commandArgs.TextEditorService.Post(
+									nameof(MoveCursorStartCurrentLineFactory),
                                     commandArgs.ModelResourceUri,
                 					commandArgs.ViewModelKey,
                                     MoveCursorStartCurrentLineFactory(

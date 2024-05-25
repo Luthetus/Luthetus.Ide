@@ -139,6 +139,8 @@ Goals (2024-05-24)
 
 	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Complex;
 
+	public string Name => "KeyDown";
+
 	/// <summary>
 	/// The resource uri of the model which is to be worked upon.
 	/// </summary>
@@ -176,18 +178,18 @@ Goals (2024-05-24)
 	public TextEditorEvents Events { get; }
 
 	public ITextEditorWork? BatchEnqueue(
-		ITextEditorWork precedentWork)
+		ITextEditorWork upstreamWork)
 	{
 		return null;
 	}
 
 	public ITextEditorWork? BatchDequeue(
 		IEditContext editContext,
-		ITextEditorWork precedentWork)
+		ITextEditorWork upstreamWork)
 	{
-		if (precedentWork.CursorKey == CursorKey &&
-			precedentWork.ViewModelKey == ViewModelKey &&
-			precedentWork is TextEditorWorkKeyDown precedentWorkKeyDown)
+		if (upstreamWork.CursorKey == CursorKey &&
+			upstreamWork.ViewModelKey == ViewModelKey &&
+			upstreamWork is TextEditorWorkKeyDown upstreamWorkKeyDown)
 		{
 			var (cursorModifier, cursorModifierBag) = ITextEditorWork.GetCursorModifierAndBagTuple(
 				editContext,
@@ -216,13 +218,13 @@ Goals (2024-05-24)
 	
 			// Step 2:
 			// ------
-			// Determine whether 'precedentWorkKeyDown' is simplifiable to 'TextEditorWorkInsertion'
+			// Determine whether 'upstreamWorkKeyDown' is simplifiable to 'TextEditorWorkInsertion'
 			{
 				var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
 	
-	            precedentWorkKeyDown.KeyboardEventArgsKind = TextEditorWorkUtils.GetKeyboardEventArgsKind(
-	                precedentWorkKeyDown.Events.Options,
-	                precedentWorkKeyDown.KeyboardEventArgs,
+	            upstreamWorkKeyDown.KeyboardEventArgsKind = TextEditorWorkUtils.GetKeyboardEventArgsKind(
+	                upstreamWorkKeyDown.Events.Options,
+	                upstreamWorkKeyDown.KeyboardEventArgs,
 	                hasSelection,
 	                editContext.TextEditorService,
 	                out var localCommand);
@@ -235,7 +237,7 @@ Goals (2024-05-24)
 			// If they both simplify to 'TextEditorWorkInsertion',
 			// then return a single instance of 'TextEditorWorkInsertion'
 			// which will insert both keyboard event keys that were pressed.
-			if (KeyboardEventArgsKind == precedentWorkKeyDown.KeyboardEventArgsKind)
+			if (KeyboardEventArgsKind == upstreamWorkKeyDown.KeyboardEventArgsKind)
 			{
 				switch (KeyboardEventArgsKind)
 				{
@@ -244,7 +246,7 @@ Goals (2024-05-24)
 							ResourceUri,
 							CursorKey,
 							GetCursorFunc,
-							precedentWorkKeyDown.KeyboardEventArgs.Key + KeyboardEventArgs.Key,
+							upstreamWorkKeyDown.KeyboardEventArgs.Key + KeyboardEventArgs.Key,
 							ViewModelKey);
 				}
 			}

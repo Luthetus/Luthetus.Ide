@@ -226,6 +226,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
         await textEditorService.Post(
+			nameof(TextEditorViewModelApiTests),
             resourceUri,
             viewModelKey,
             async editContext =>
@@ -275,6 +276,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
         await textEditorService.Post(
+			nameof(TextEditorViewModelApiTests),
             resourceUri,
             viewModelKey,
             async editContext =>
@@ -360,6 +362,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
         await textEditorService.Post(
+			nameof(TextEditorViewModelApiTests),
             resourceUri,
             viewModelKey,
             async editContext =>
@@ -484,6 +487,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
         await textEditorService.Post(
+			nameof(TextEditorViewModelApiTests),
             resourceUri,
             viewModelKey,
             async editContext =>
@@ -569,6 +573,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
         await textEditorService.Post(
+			nameof(TextEditorViewModelApiTests),
             resourceUri,
             viewModelKey,
             async editContext =>
@@ -693,6 +698,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
         await textEditorService.Post(
+			nameof(TextEditorViewModelApiTests),
             resourceUri,
             viewModelKey,
             async editContext =>
@@ -781,6 +787,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
         await textEditorService.Post(
+			nameof(TextEditorViewModelApiTests),
             resourceUri,
             viewModelKey,
             async editContext =>
@@ -905,6 +912,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
         await textEditorService.Post(
+			nameof(TextEditorViewModelApiTests),
             resourceUri,
             viewModelKey,
             async editContext =>
@@ -990,6 +998,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
         await textEditorService.Post(
+			nameof(TextEditorViewModelApiTests),
             resourceUri,
             viewModelKey,
             async editContext =>
@@ -1258,6 +1267,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
             inViewModel.UnsafeState.ShouldSetFocusAfterNextRender);
 
         await textEditorService.Post(
+			nameof(TextEditorViewModelApiTests),
             inViewModel.ResourceUri,
             inViewModel.ViewModelKey,
             textEditorService.ViewModelApi.WithValueFactory(

@@ -61,6 +61,7 @@ public class TextEditorCommandDefaultFactsTests
             Assert.Empty(inClipboard);
 
             await textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
 				inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 editContext =>
@@ -132,6 +133,7 @@ public class TextEditorCommandDefaultFactsTests
             Assert.Empty(inClipboard);
 
             await textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 editContext =>
@@ -155,6 +157,7 @@ public class TextEditorCommandDefaultFactsTests
             await TextEditorCommandDefaultFacts.Cut.CommandFunc.Invoke(textEditorCommandArgs);
 
             await textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 async editContext =>
@@ -189,6 +192,7 @@ public class TextEditorCommandDefaultFactsTests
             var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
 
             await textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 async editContext =>
@@ -232,6 +236,7 @@ public class TextEditorCommandDefaultFactsTests
             var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
 
             await textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 async editContext =>
@@ -289,6 +294,7 @@ public class TextEditorCommandDefaultFactsTests
             Assert.Null(savedContent);
 
             await textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 editContext =>
@@ -312,6 +318,7 @@ public class TextEditorCommandDefaultFactsTests
             await TextEditorCommandDefaultFacts.Save.CommandFunc.Invoke(textEditorCommandArgs);
 
             await textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 editContext =>
@@ -333,6 +340,7 @@ public class TextEditorCommandDefaultFactsTests
                 await TextEditorCommandDefaultFacts.Save.CommandFunc.Invoke(textEditorCommandArgs);
 
             await textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                     editContext =>
@@ -377,6 +385,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorCommandArgs, out var serviceProvider);
 
             await textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 editContext =>
@@ -434,6 +443,7 @@ public class TextEditorCommandDefaultFactsTests
                     new List<TextEditorCursorModifier> { new TextEditorCursorModifier(cursor) });
 
                 await textEditorService.Post(
+					nameof(TextEditorCommandDefaultFactsTests),
                 	inModel.ResourceUri,
                 	inViewModel.ViewModelKey,
                     textEditorService.ModelApi.InsertTextUnsafeFactory(
@@ -660,6 +670,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorCommandArgs, out var serviceProvider);
 
             await textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 editContext =>
@@ -734,6 +745,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorCommandArgs, out var serviceProvider);
 
             await textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 editContext =>
@@ -809,6 +821,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorCommandArgs, out var serviceProvider);
 
             await textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 editContext =>
@@ -884,6 +897,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorCommandArgs, out var serviceProvider);
 
             await textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 editContext =>
@@ -997,6 +1011,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorCommandArgs, out var serviceProvider);
 
             await textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 async editContext =>
@@ -1067,6 +1082,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorCommandArgs, out var serviceProvider);
 
             await textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 editContext =>
@@ -1137,6 +1153,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorCommandArgs, out var serviceProvider);
 
             await textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 editContext =>
@@ -1232,6 +1249,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorCommandArgs, out var serviceProvider);
 
             textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 editContext =>
@@ -1507,6 +1525,7 @@ public class Person
             var newColumnIndex = 0;
 
             await textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 editContext =>
@@ -1578,6 +1597,7 @@ public class Person
             var newColumnIndex = 0;
 
             await textEditorService.Post(
+				nameof(TextEditorCommandDefaultFactsTests),
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 editContext =>

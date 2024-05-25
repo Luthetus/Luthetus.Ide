@@ -111,6 +111,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                     return commandArgs.TextEditorService.Post(
+						commandDisplayName,
                         commandArgs.ModelResourceUri,
                         commandArgs.ViewModelKey,
                         editContext =>
@@ -138,6 +139,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                     return commandArgs.TextEditorService.Post(
+						commandDisplayName,
                         commandArgs.ModelResourceUri,
                         commandArgs.ViewModelKey,
                         editContext =>
@@ -188,6 +190,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                     return commandArgs.TextEditorService.Post(
+						commandDisplayName,
                         commandArgs.ModelResourceUri,
                         commandArgs.ViewModelKey,
                         editContext =>
@@ -242,6 +245,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                     return commandArgs.TextEditorService.Post(
+						commandDisplayName,
                         commandArgs.ModelResourceUri,
                         commandArgs.ViewModelKey,
                         editContext =>
@@ -283,6 +287,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                     return commandArgs.TextEditorService.Post(
+						commandDisplayName,
                         commandArgs.ModelResourceUri,
                         commandArgs.ViewModelKey,
                         async editContext =>
@@ -324,6 +329,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                     return commandArgs.TextEditorService.Post(
+						commandDisplayName,
                         commandArgs.ModelResourceUri,
                         commandArgs.ViewModelKey,
                         async editContext =>
@@ -366,6 +372,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                     return commandArgs.TextEditorService.Post(
+						commandDisplayName,
                         commandArgs.ModelResourceUri,
                         commandArgs.ViewModelKey,
                         editContext =>
@@ -392,6 +399,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                     return commandArgs.TextEditorService.Post(
+						commandDisplayName,
                         commandArgs.ModelResourceUri,
                         commandArgs.ViewModelKey,
                         editContext =>
@@ -419,6 +427,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                     return commandArgs.TextEditorService.Post(
+						commandDisplayName,
                         commandArgs.ModelResourceUri,
                         commandArgs.ViewModelKey,
                         editContext =>
@@ -446,6 +455,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                     return commandArgs.TextEditorService.Post(
+						commandDisplayName,
                         commandArgs.ModelResourceUri,
                         commandArgs.ViewModelKey,
                         editContext =>
@@ -718,6 +728,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                 return commandArgs.TextEditorService.Post(
+					commandDisplayName,
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     editContext =>
@@ -778,6 +789,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                     return commandArgs.TextEditorService.Post(
+						commandDisplayName,
                         commandArgs.ModelResourceUri,
                         commandArgs.ViewModelKey,
                         editContext =>
@@ -804,6 +816,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                     return commandArgs.TextEditorService.Post(
+						commandDisplayName,
                         commandArgs.ModelResourceUri,
                         commandArgs.ViewModelKey,
                         editContext =>
@@ -829,6 +842,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                 return commandArgs.TextEditorService.Post(
+					displayName,
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     editContext =>
@@ -854,6 +868,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                 return commandArgs.TextEditorService.Post(
+					commandDisplayName,
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     editContext =>

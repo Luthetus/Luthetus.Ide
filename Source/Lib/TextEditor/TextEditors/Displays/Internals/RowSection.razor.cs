@@ -106,6 +106,7 @@ public partial class RowSection : ComponentBase
             return;
 
         await TextEditorService.Post(
+				nameof(RowSection),
                 viewModel.ResourceUri,
                 viewModel.ViewModelKey,
                 TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(

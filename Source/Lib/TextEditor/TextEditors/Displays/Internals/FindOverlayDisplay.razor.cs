@@ -47,6 +47,7 @@ public partial class FindOverlayDisplay : ComponentBase
                 await _throttleInputValueChange.PushEvent(async _ =>
                 {
                     await TextEditorService.Post(
+						nameof(FindOverlayDisplay),
                         RenderBatch.ViewModel.ResourceUri,
 						RenderBatch.ViewModel.ViewModelKey,
                         async editContext =>
@@ -126,6 +127,7 @@ public partial class FindOverlayDisplay : ComponentBase
                 .ConfigureAwait(false);
 
             await TextEditorService.Post(
+				nameof(FindOverlayDisplay),
                 RenderBatch.ViewModel.ResourceUri,
                 RenderBatch.ViewModel.ViewModelKey,
                 async editContext =>
@@ -237,6 +239,7 @@ public partial class FindOverlayDisplay : ComponentBase
     private async Task HandleActiveIndexMatchedTextSpanChanged()
     {
         await TextEditorService.Post(
+			nameof(FindOverlayDisplay),
             RenderBatch.ViewModel.ResourceUri,
             RenderBatch.ViewModel.ViewModelKey,
             async editContext =>

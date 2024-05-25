@@ -33,6 +33,8 @@ public class TextEditorWorkMouseDown : ITextEditorWork
 
 	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Complex;
 
+	public string Name => "MouseDown";
+
 	/// <summary>
 	/// The resource uri of the model which is to be worked upon.
 	/// </summary>
@@ -68,13 +70,13 @@ public class TextEditorWorkMouseDown : ITextEditorWork
 	public TextEditorEvents Events { get; }
 
 	public ITextEditorWork? BatchEnqueue(
-		ITextEditorWork precedentWork)
+		ITextEditorWork upstreamWork)
 	{
-		if (precedentWork.CursorKey == CursorKey &&
-			precedentWork.ViewModelKey == ViewModelKey &&
-			precedentWork is TextEditorWorkMouseDown)
+		if (upstreamWork.CursorKey == CursorKey &&
+			upstreamWork.ViewModelKey == ViewModelKey &&
+			upstreamWork is TextEditorWorkMouseDown)
 		{
-			// Replace the precedentWork with the more recent event
+			// Replace the upstreamWork with the more recent event
 			// because the events are redundant when consecutive.
 			return this;
 		}
@@ -84,13 +86,13 @@ public class TextEditorWorkMouseDown : ITextEditorWork
 
 	public ITextEditorWork? BatchDequeue(
 		IEditContext editContext,
-		ITextEditorWork precedentWork)
+		ITextEditorWork upstreamWork)
 	{
-		if (precedentWork.CursorKey == CursorKey &&
-			precedentWork.ViewModelKey == ViewModelKey &&
-			precedentWork is TextEditorWorkMouseDown)
+		if (upstreamWork.CursorKey == CursorKey &&
+			upstreamWork.ViewModelKey == ViewModelKey &&
+			upstreamWork is TextEditorWorkMouseDown)
 		{
-			// Replace the precedentWork with the more recent event
+			// Replace the upstreamWork with the more recent event
 			// because the events are redundant when consecutive.
 			return this;
 		}
@@ -100,30 +102,41 @@ public class TextEditorWorkMouseDown : ITextEditorWork
 
 	public async Task Invoke(IEditContext editContext)
 	{
+		Console.WriteLine($"{nameof(TextEditorWorkMouseDown)} Invoke");
 		var modelModifier = editContext.GetModelModifier(ResourceUri, true);
         var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
 
         if (modelModifier is null || viewModelModifier is null)
-            return;
+		{
+			Console.WriteLine($"{nameof(TextEditorWorkMouseDown)} Invoke returned because modelModifier is null || viewModelModifier is null");
+			return;
+		}
 		
+		Console.WriteLine($"{nameof(TextEditorWorkMouseDown)} pre GetCursorModifierAndBagTuple");
 		var (primaryCursorModifier, cursorModifierBag) = ITextEditorWork.GetCursorModifierAndBagTuple(
 			editContext,
 			ViewModelKey,
 			CursorKey,
 			GetCursorFunc);
+		Console.WriteLine($"{nameof(TextEditorWorkMouseDown)} post GetCursorModifierAndBagTuple");
 
 		viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = false;
 
         var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
 
         if ((MouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
-            return; // Not pressing the left mouse button so assume ContextMenu is desired result.
+		{
+			Console.WriteLine($"{nameof(TextEditorWorkMouseDown)} Invoke returned because (MouseEventArgs.Buttons & 1) != 1 && hasSelectedText");
+			return; // Not pressing the left mouse button so assume ContextMenu is desired result.
+		}
 
 		// Hacky(Mild, Medium, [Hot]) (2024-05-25)
 		//
 		// await Events.CursorSetShouldDisplayMenuAsyncFunc.Invoke(MenuKind.None, false).ConfigureAwait(false);
 
         // Remember the current cursor position prior to doing anything
+		Console.WriteLine($"current ({primaryCursorModifier.LineIndex}, {primaryCursorModifier.ColumnIndex})");
+		Console.WriteLine($"current {primaryCursorModifier.Key}");
         var inRowIndex = primaryCursorModifier.LineIndex;
         var inColumnIndex = primaryCursorModifier.ColumnIndex;
 
@@ -132,6 +145,10 @@ public class TextEditorWorkMouseDown : ITextEditorWork
 		//
 		// Move the cursor position
         var rowAndColumnIndex = await Events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
+
+		Console.WriteLine("rowIndex: " + rowAndColumnIndex.rowIndex);
+		Console.WriteLine("columnIndex: " + rowAndColumnIndex.columnIndex);
+
         primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
         primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
         primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
@@ -162,5 +179,7 @@ public class TextEditorWorkMouseDown : ITextEditorWork
         }
 
         primaryCursorModifier.SelectionEndingPositionIndex = cursorPositionIndex;
+
+		Console.WriteLine($"{nameof(TextEditorWorkMouseDown)} invoke end");
 	}
 }

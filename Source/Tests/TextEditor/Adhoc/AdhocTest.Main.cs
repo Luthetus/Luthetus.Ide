@@ -409,6 +409,7 @@ public partial class AdhocTest
         refModel = textEditorService.ModelApi.GetOrDefault(refModel.ResourceUri) ?? throw new ArgumentNullException();
 
         await textEditorService.Post(
+			nameof(Why_Is_Command_Cut_Very_Slow),
             refModel.ResourceUri,
             Key<TextEditorViewModel>.Empty,
             textEditorService.ModelApi.ApplySyntaxHighlightingFactory(refModel.ResourceUri));

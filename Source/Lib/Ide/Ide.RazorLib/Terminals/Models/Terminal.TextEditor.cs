@@ -45,6 +45,7 @@ public partial class Terminal
         _textEditorService.ModelApi.RegisterCustom(model);
 
         await _textEditorService.Post(
+			nameof(CreateTextEditor),
             model.ResourceUri,
             TextEditorViewModelKey,
             async editContext =>
@@ -83,6 +84,7 @@ public partial class Terminal
         }.ToImmutableArray();
 
         await _textEditorService.Post(
+			nameof(CreateTextEditor),
             ResourceUri,
             TextEditorViewModelKey,
             _textEditorService.ViewModelApi.WithValueFactory(
@@ -93,6 +95,7 @@ public partial class Terminal
                     }));
 
         await _textEditorService.Post(
+			nameof(CreateTextEditor),
             ResourceUri,
             TextEditorViewModelKey,
             async editContext =>
@@ -139,6 +142,7 @@ public partial class Terminal
     public async Task WriteWorkingDirectory(bool prependNewLine = false)
     {
         await _textEditorService.Post(
+			nameof(WriteWorkingDirectory),
             ResourceUri,
             TextEditorViewModelKey,
             async editContext =>
@@ -187,6 +191,7 @@ public partial class Terminal
     public async Task MoveCursorToEnd()
     {
         await _textEditorService.Post(
+			nameof(MoveCursorToEnd),
             ResourceUri,
             TextEditorViewModelKey,
             async editContext =>
@@ -216,6 +221,7 @@ public partial class Terminal
     public async Task ClearTerminal()
     {
         await _textEditorService.Post(
+			nameof(ClearTerminal),
             ResourceUri,
             TextEditorViewModelKey,
             async editContext =>

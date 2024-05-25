@@ -33,6 +33,8 @@ public class TextEditorWorkDoubleClick : ITextEditorWork
 
 	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Complex;
 
+	public string Name => "DoubleClick";
+
 	/// <summary>
 	/// The resource uri of the model which is to be worked upon.
 	/// </summary>
@@ -68,13 +70,13 @@ public class TextEditorWorkDoubleClick : ITextEditorWork
 	public TextEditorEvents Events { get; }
 
 	public ITextEditorWork? BatchEnqueue(
-		ITextEditorWork precedentWork)
+		ITextEditorWork upstreamWork)
 	{
-		if (precedentWork.CursorKey == CursorKey &&
-			precedentWork.ViewModelKey == ViewModelKey &&
-			precedentWork is TextEditorWorkDoubleClick)
+		if (upstreamWork.CursorKey == CursorKey &&
+			upstreamWork.ViewModelKey == ViewModelKey &&
+			upstreamWork is TextEditorWorkDoubleClick)
 		{
-			// Replace the precedentWork with the more recent event
+			// Replace the upstreamWork with the more recent event
 			// because the events are redundant when consecutive.
 			return this;
 		}
@@ -84,13 +86,13 @@ public class TextEditorWorkDoubleClick : ITextEditorWork
 
 	public ITextEditorWork? BatchDequeue(
 		IEditContext editContext,
-		ITextEditorWork precedentWork)
+		ITextEditorWork upstreamWork)
 	{
-		if (precedentWork.CursorKey == CursorKey &&
-			precedentWork.ViewModelKey == ViewModelKey &&
-			precedentWork is TextEditorWorkDoubleClick)
+		if (upstreamWork.CursorKey == CursorKey &&
+			upstreamWork.ViewModelKey == ViewModelKey &&
+			upstreamWork is TextEditorWorkDoubleClick)
 		{
-			// Replace the precedentWork with the more recent event
+			// Replace the upstreamWork with the more recent event
 			// because the events are redundant when consecutive.
 			return this;
 		}

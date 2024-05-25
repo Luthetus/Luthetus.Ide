@@ -10,11 +10,13 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 public class TextEditorWorkComplex : ITextEditorWork
 {
 	public TextEditorWorkComplex(
+		string name,
 		ResourceUri resourceUri,
 		Key<TextEditorCursor> cursorKey,
 		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
 		TextEditorEdit textEditorEdit)
 	{
+		Name = name;
 		ResourceUri = resourceUri;
 		CursorKey = cursorKey;
 		GetCursorFunc = getCursorFunc;
@@ -22,16 +24,20 @@ public class TextEditorWorkComplex : ITextEditorWork
 	}
 
 	public TextEditorWorkComplex(
+		string name,
 		ResourceUri resourceUri,
 		Key<TextEditorViewModel> viewModelKey,
 		TextEditorEdit textEditorEdit)
 	{
+		Name = name;
 		ResourceUri = resourceUri;
 		ViewModelKey = viewModelKey;
 		TextEditorEdit = textEditorEdit;
 	}
 
 	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Complex;
+
+	public string Name { get; } = "Complex";
 
 	/// <summary>
 	/// The resource uri of the model which is to be worked upon.
@@ -64,14 +70,14 @@ public class TextEditorWorkComplex : ITextEditorWork
 	public TextEditorEdit TextEditorEdit { get; }
 
 	public ITextEditorWork? BatchEnqueue(
-		ITextEditorWork precedentWork)
+		ITextEditorWork upstreamWork)
 	{
 		return null;
 	}
 
 	public ITextEditorWork? BatchDequeue(
 		IEditContext editContext,
-		ITextEditorWork precedentWork)
+		ITextEditorWork upstreamWork)
 	{
 		return null;
 	}

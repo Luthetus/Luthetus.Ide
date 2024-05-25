@@ -38,6 +38,8 @@ public class TextEditorWorkOutput : ITextEditorWork
 
 	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Insertion;
 
+	public string Name => "TerminalOutput";
+
 	/// <summary>
 	/// The resource uri of the model which is to be worked upon.
 	/// </summary>

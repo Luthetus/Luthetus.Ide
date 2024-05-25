@@ -33,6 +33,8 @@ public class TextEditorWorkInsertion : ITextEditorWork
 
 	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Insertion;
 
+	public string Name => "Insertion";
+
 	/// <summary>
 	/// The resource uri of the model which is to be worked upon.
 	/// </summary>
@@ -69,14 +71,14 @@ public class TextEditorWorkInsertion : ITextEditorWork
 	public StringBuilder ContentBuilder => _contentBuilder ??= new(Content);
 
 	public ITextEditorWork? BatchEnqueue(
-		ITextEditorWork precedentWork)
+		ITextEditorWork upstreamWork)
 	{
-		if (precedentWork.TextEditorWorkKind == TextEditorWorkKind.Insertion &&
-			precedentWork.CursorKey == CursorKey &&
-			precedentWork.ViewModelKey == ViewModelKey)
+		if (upstreamWork.TextEditorWorkKind == TextEditorWorkKind.Insertion &&
+			upstreamWork.CursorKey == CursorKey &&
+			upstreamWork.ViewModelKey == ViewModelKey)
 		{
-			((TextEditorWorkInsertion)precedentWork).ContentBuilder.Append(Content);
-			return precedentWork;
+			((TextEditorWorkInsertion)upstreamWork).ContentBuilder.Append(Content);
+			return upstreamWork;
 		}
 		
 		return null;
@@ -84,14 +86,14 @@ public class TextEditorWorkInsertion : ITextEditorWork
 
 	public ITextEditorWork? BatchDequeue(
 		IEditContext editContext,
-		ITextEditorWork precedentWork)
+		ITextEditorWork upstreamWork)
 	{
-		if (precedentWork.TextEditorWorkKind == TextEditorWorkKind.Insertion &&
-			precedentWork.CursorKey == CursorKey &&
-			precedentWork.ViewModelKey == ViewModelKey)
+		if (upstreamWork.TextEditorWorkKind == TextEditorWorkKind.Insertion &&
+			upstreamWork.CursorKey == CursorKey &&
+			upstreamWork.ViewModelKey == ViewModelKey)
 		{
-			((TextEditorWorkInsertion)precedentWork).ContentBuilder.Append(Content);
-			return precedentWork;
+			((TextEditorWorkInsertion)upstreamWork).ContentBuilder.Append(Content);
+			return upstreamWork;
 		}
 		
 		return null;

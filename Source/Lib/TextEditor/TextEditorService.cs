@@ -34,8 +34,6 @@ public partial class TextEditorService : ITextEditorService
     /// </summary>
     public static readonly Key<TextEditorAuthenticatedAction> AuthenticatedActionKey = new(Guid.Parse("13831968-9b10-46d1-8d47-842b78238d6a"));
 
-	private readonly SemaphoreSlim _backgroundTaskTryReusingSameInstanceSemaphoreSlim = new(1, 1);
-
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
     private readonly IDialogService _dialogService;
@@ -87,7 +85,7 @@ public partial class TextEditorService : ITextEditorService
         OptionsApi = new TextEditorOptionsApi(this, _textEditorOptions, _storageService, _commonBackgroundTaskApi, _dispatcher);
     }
 
-	private TextEditorBackgroundTask? _backgroundTask;
+	private bool _thereIsExistingEditContext;
 
     public IState<TextEditorModelState> ModelStateWrap { get; }
     public IState<TextEditorViewModelState> ViewModelStateWrap { get; }
@@ -116,6 +114,10 @@ public partial class TextEditorService : ITextEditorService
 
 	public IEditContext OpenEditContext()
 	{
+		if (_thereIsExistingEditContext)
+			throw new NotImplementedException("Text editor is not synced");
+
+		_thereIsExistingEditContext = true;
 		return new TextEditorEditContext(this, AuthenticatedActionKey);
 	}
 
@@ -126,10 +128,10 @@ public partial class TextEditorService : ITextEditorService
 			if (modelModifier is null || !modelModifier.WasModified)
 				continue;
 
-			_dispatcher.Dispatch(new TextEditorModelState.SetAction(
-				editContext.AuthenticatedActionKey,
-				editContext,
-				modelModifier));
+            _dispatcher.Dispatch(new TextEditorModelState.SetAction(
+                editContext.AuthenticatedActionKey,
+                editContext,
+                modelModifier));
 
 			var viewModelBag = ViewModelStateWrap.Value.ViewModelList.Where(
 				x => x.ResourceUri == modelModifier.ResourceUri);
@@ -153,15 +155,23 @@ public partial class TextEditorService : ITextEditorService
 
 		foreach (var viewModelModifier in editContext.ViewModelCache.Values)
 		{
+			Console.Write("uvms  ");
+
 			if (viewModelModifier is null || !viewModelModifier.WasModified)
 				return;
+
+			Console.Write("a");
 
 			var successCursorModifierBag = editContext.CursorModifierBagCache.TryGetValue(
 				viewModelModifier.ViewModel.ViewModelKey,
 				out var cursorModifierBag);
 
+			Console.Write("b");
+
 			if (successCursorModifierBag && cursorModifierBag is not null)
 			{
+				Console.Write("c");
+
 				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 				{
 					CursorList = cursorModifierBag.List
@@ -170,12 +180,18 @@ public partial class TextEditorService : ITextEditorService
 				};
 			}
 
+			Console.Write("d");
+
 			if (viewModelModifier.ScrollWasModified)
 			{
+				Console.Write("e");
+
 				await ((TextEditorService)editContext.TextEditorService)
 					.HACK_SetScrollPosition(viewModelModifier.ViewModel)
 					.ConfigureAwait(false);
 			}
+
+			Console.Write("f");
 
 			// TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
 			await editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
@@ -185,39 +201,35 @@ public partial class TextEditorService : ITextEditorService
 				.Invoke(editContext)
 				.ConfigureAwait(false);
 
+			Console.Write("g");
+
 			_dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
 				editContext.AuthenticatedActionKey,
 				editContext,
 				viewModelModifier.ViewModel.ViewModelKey,
 				inState => viewModelModifier.ViewModel));
+
+			Console.WriteLine("h");
 		}
+
+		_thereIsExistingEditContext = false;
 	}
 
-	public async Task Post(ITextEditorWork work)
+	public Task Post(ITextEditorWork work)
 	{
-		try
-		{
-			await _backgroundTaskTryReusingSameInstanceSemaphoreSlim.WaitAsync();
-
-			if (_backgroundTask is null || !_backgroundTask.TryReusingSameInstance(work))
-			{
-				_backgroundTask = new(this, work);
-				await _backgroundTaskService.EnqueueAsync(_backgroundTask);
-			}
-		}
-		finally
-		{
-			_backgroundTaskTryReusingSameInstanceSemaphoreSlim.Release();
-		}
+		return _backgroundTaskService
+			.EnqueueAsync(new TextEditorBackgroundTask(this, work));
 	}
 
     public Task Post(
+		string name,
 		ResourceUri resourceUri,
 		Key<TextEditorCursor> cursorKey,
 		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
 		TextEditorEdit edit)
 	{
 		return Post(new TextEditorWorkComplex(
+			name,
 			resourceUri,
 			cursorKey,
 			getCursorFunc,
@@ -225,11 +237,13 @@ public partial class TextEditorService : ITextEditorService
 	}
 
 	public Task Post(
+		string name,
 		ResourceUri resourceUri,
 		Key<TextEditorViewModel> viewModelKey,
 		TextEditorEdit edit)
 	{
 		return Post(new TextEditorWorkComplex(
+			name,
 			resourceUri,
 			viewModelKey,
 			edit));

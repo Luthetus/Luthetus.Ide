@@ -69,6 +69,7 @@ public partial interface ITextEditorService
 	/// This overload takes 'cursorKey' and 'getCursorFunc' to allow for non-ui cursors.
 	/// </summary>
 	public Task Post(
+		string name,
 		ResourceUri resourceUri,
 		Key<TextEditorCursor> cursorKey,
 		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
@@ -81,6 +82,7 @@ public partial interface ITextEditorService
 	/// This overload takes 'viewModelKey' and will synchronize state with the UI cursors.
 	/// </summary>
 	public Task Post(
+		string name,
 		ResourceUri resourceUri,
 		Key<TextEditorViewModel> viewModelKey,
 		TextEditorEdit edit);

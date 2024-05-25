@@ -194,6 +194,7 @@ public partial class GitDiffDisplay : ComponentBase
     private Task CreateDiffModel(Key<TextEditorViewModel> inViewModelKey, Key<TextEditorViewModel> outViewModelKey)
     {
         TextEditorService.Post(
+			nameof(CreateDiffModel),
             null,
             Key<TextEditorViewModel>.Empty,
             editContext =>

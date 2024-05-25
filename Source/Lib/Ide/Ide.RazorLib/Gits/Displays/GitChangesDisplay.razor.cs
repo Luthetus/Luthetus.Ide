@@ -41,6 +41,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     new Category(nameof(GitChangesDisplay)));
 
                 await TextEditorService.Post(
+					nameof(GitChangesDisplay),
                     InResourceUri,
                     InViewModelKey,
                     async editContext =>
@@ -89,6 +90,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     new Category(nameof(GitChangesDisplay)));
 
                 await TextEditorService.Post(
+					nameof(GitChangesDisplay),
                     OutResourceUri,
                     OutViewModelKey,
                     async editContext =>

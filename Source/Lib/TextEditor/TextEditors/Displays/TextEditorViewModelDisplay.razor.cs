@@ -294,7 +294,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 			_events,
 			viewModelKey.Value);
 
-        await TextEditorService.Post(workKeyDown).ConfigureAwait(false);
+		await TextEditorService.Post(workKeyDown);
 	}
 
     private async Task ReceiveOnContextMenuAsync()
@@ -482,6 +482,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         var diffY = previousTouchPoint.ClientY - currentTouchPoint.ClientY;
 
         await TextEditorService.Post(
+			nameof(ReceiveOnTouchMoveAsync),
             viewModel.ResourceUri,
 			viewModel.ViewModelKey,
             async editContext =>
@@ -554,6 +555,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             return;
 
         await TextEditorService.Post(
+				nameof(QueueRemeasureBackgroundTask),
                 modelResourceUri,
                 viewModelKey.Value,
                 TextEditorService.ViewModelApi.RemeasureFactory(
@@ -575,6 +577,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             return;
 
         await TextEditorService.Post(
+				nameof(QueueCalculateVirtualizationResultBackgroundTask),
                 modelResourceUri,
 				viewModelKey.Value,
                 TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(

@@ -133,6 +133,7 @@ public partial class TestExplorerDisplay : FluxorComponent
 	private async Task RegisterDetailsTextEditor(TextEditorModel model)
 	{
 		await TextEditorService.Post(
+			nameof(RegisterDetailsTextEditor),
 			model.ResourceUri,
 			Key<TextEditorViewModel>.Empty,
 			async editContext =>

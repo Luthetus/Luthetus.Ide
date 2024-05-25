@@ -25,7 +25,6 @@ public class TestTextEditorService : ITextEditorService
 {
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly IDispatcher _dispatcher;
-	private readonly SemaphoreSlim _backgroundTaskTryReusingSameInstanceSemaphoreSlim = new(1, 1);
 
 	public TestTextEditorService(
 		IBackgroundTaskService backgroundTaskService,
@@ -38,8 +37,6 @@ public class TestTextEditorService : ITextEditorService
 		ViewModelStateWrap = viewModelStateWrap;
 		_dispatcher = dispatcher;
 	}
-
-	private TextEditorBackgroundTask? _backgroundTask;
 
     /// <summary>This is used when interacting with the <see cref="IStorageService"/> to set and get data.</summary>
     public string StorageKey { get; }
@@ -61,8 +58,6 @@ public class TestTextEditorService : ITextEditorService
 
 	public IEditContext OpenEditContext()
 	{
-		Console.WriteLine(nameof(OpenEditContext));
-
 		return new TextEditorService.TextEditorEditContext(
 			this,
 			TextEditorService.AuthenticatedActionKey);
@@ -70,8 +65,6 @@ public class TestTextEditorService : ITextEditorService
 
 	public async Task CloseEditContext(IEditContext editContext)
 	{
-		Console.WriteLine(nameof(CloseEditContext));
-		
 		foreach (var modelModifier in editContext.ModelCache.Values)
         {
             if (modelModifier is null || !modelModifier.WasModified)
@@ -139,31 +132,21 @@ public class TestTextEditorService : ITextEditorService
         }
 	}
 
-	public async Task Post(ITextEditorWork work)
+	public Task Post(ITextEditorWork work)
 	{
-		try
-		{
-			await _backgroundTaskTryReusingSameInstanceSemaphoreSlim.WaitAsync();
-
-			if (_backgroundTask is null || !_backgroundTask.TryReusingSameInstance(work))
-			{
-				_backgroundTask = new(this, work);
-				await _backgroundTaskService.EnqueueAsync(_backgroundTask);
-			}
-		}
-		finally
-		{
-			_backgroundTaskTryReusingSameInstanceSemaphoreSlim.Release();
-		}
+		return _backgroundTaskService
+			.EnqueueAsync(new TextEditorBackgroundTask(this, work));
 	}
 
 	public Task Post(
+		string name,
 		ResourceUri resourceUri,
 		Key<TextEditorCursor> cursorKey,
 		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
 		TextEditorEdit edit)
 	{
 		return Post(new TextEditorWorkComplex(
+			name,
 			resourceUri,
 			cursorKey,
 			getCursorFunc,
@@ -171,11 +154,13 @@ public class TestTextEditorService : ITextEditorService
 	}
 
 	public Task Post(
+		string name,
 		ResourceUri resourceUri,
 		Key<TextEditorViewModel> viewModelKey,
 		TextEditorEdit edit)
 	{
 		return Post(new TextEditorWorkComplex(
+			name,
 			resourceUri,
 			viewModelKey,
 			edit));

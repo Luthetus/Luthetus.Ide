@@ -38,6 +38,8 @@ public class TextEditorWorkScrollHorizontal : ITextEditorWork
 	/// </summary>
 	public ResourceUri ResourceUri { get; }
 
+	public string Name => "ScrollHorizontal";
+
 	/// <summary>
 	/// This property is optional, and can be Key<TextEditorViewModel>.Empty,
 	/// if one does not make use of it.
@@ -68,13 +70,13 @@ public class TextEditorWorkScrollHorizontal : ITextEditorWork
 	public TextEditorEvents Events { get; }
 
 	public ITextEditorWork? BatchEnqueue(
-		ITextEditorWork precedentWork)
+		ITextEditorWork upstreamWork)
 	{
-		if (precedentWork.CursorKey == CursorKey &&
-			precedentWork.ViewModelKey == ViewModelKey &&
-			precedentWork is TextEditorWorkScrollHorizontal)
+		if (upstreamWork.CursorKey == CursorKey &&
+			upstreamWork.ViewModelKey == ViewModelKey &&
+			upstreamWork is TextEditorWorkScrollHorizontal)
 		{
-			// Replace the precedentWork with the more recent event
+			// Replace the upstreamWork with the more recent event
 			// because the events are redundant when consecutive.
 			return this;
 		}
@@ -84,13 +86,13 @@ public class TextEditorWorkScrollHorizontal : ITextEditorWork
 
 	public ITextEditorWork? BatchDequeue(
 		IEditContext editContext,
-		ITextEditorWork precedentWork)
+		ITextEditorWork upstreamWork)
 	{
-		if (precedentWork.CursorKey == CursorKey &&
-			precedentWork.ViewModelKey == ViewModelKey &&
-			precedentWork is TextEditorWorkScrollHorizontal)
+		if (upstreamWork.CursorKey == CursorKey &&
+			upstreamWork.ViewModelKey == ViewModelKey &&
+			upstreamWork is TextEditorWorkScrollHorizontal)
 		{
-			// Replace the precedentWork with the more recent event
+			// Replace the upstreamWork with the more recent event
 			// because the events are redundant when consecutive.
 			return this;
 		}
