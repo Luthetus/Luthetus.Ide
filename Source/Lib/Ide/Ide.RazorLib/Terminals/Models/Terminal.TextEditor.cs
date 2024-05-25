@@ -1,5 +1,6 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
@@ -8,7 +9,7 @@ using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using System.Collections.Immutable;
 using System.Reactive.Linq;
 using Microsoft.AspNetCore.Components.Web;
-using Luthetus.Ide.RazorLib.Events.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
@@ -258,14 +259,16 @@ public partial class Terminal
         TerminalCommand terminalCommand,
 		TerminalCommandBoundary terminalCommandBoundary)
     {
-		return _textEditorService.Post(new OnOutput(
+		return _textEditorService.Post(new TextEditorWorkOutput(
+			ResourceUri,
+			Key<TextEditorCursor>.Empty,
+			null,
+			TextEditorViewModelKey,
 		    outputOffset,
 		    output,
 		    outputTextSpanList,
-		    ResourceUri,
-		    _textEditorService,
 			terminalCommand,
 			terminalCommandBoundary,
-		    TextEditorViewModelKey));
+			_textEditorService));
 	}
 }

@@ -1,3 +1,16 @@
+using System.Text;
+using Microsoft.AspNetCore.Components.Web;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
+
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 public class TextEditorWorkScrollVertical : ITextEditorWork
