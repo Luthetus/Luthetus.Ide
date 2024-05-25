@@ -291,7 +291,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 			viewModel.PrimaryCursor.Key,
 			null,
 			keyboardEventArgs,
-			TextEditorService.OptionsStateWrap.Value.Options,
+			_events,
 			viewModelKey.Value);
 
         await TextEditorService.Post(workKeyDown).ConfigureAwait(false);

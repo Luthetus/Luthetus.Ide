@@ -157,8 +157,6 @@ public class TextEditorBackgroundTask : IBackgroundTask
 			if (oldWork is TextEditorWorkKeyDown oldWorkKeyDown &&
                 newWork is TextEditorWorkKeyDown newWorkKeyDown)
 			{
-				Console.WriteLine("oldWork is TextEditorWorkKeyDown oldWorkKeyDown && newWork is TextEditorWorkKeyDown newWorkKeyDown");
-				
 				var batchResult = newWorkKeyDown.BatchOrDefault(EditContext, oldWorkKeyDown);
 
 				if (batchResult is not null)
@@ -168,8 +166,6 @@ public class TextEditorBackgroundTask : IBackgroundTask
 				}
 			}
 		}
-
-		Console.WriteLine("backgroundTask-AfterOpenEditContext");
 
 		foreach (var work in _workList)
 		{

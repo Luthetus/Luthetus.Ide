@@ -104,7 +104,10 @@ public class OnDoubleClick : ITextEditorTask
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
-        return this;
+		if (oldEvent is OnDoubleClick)
+			return this;
+        
+		return null;
     }
 
 	public IBackgroundTask? DequeueBatchOrDefault(IBackgroundTask oldEvent)

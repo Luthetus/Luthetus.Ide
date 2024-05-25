@@ -45,7 +45,10 @@ public class OnScrollHorizontal : ITextEditorTask
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
-        return this;
+		if (oldEvent is OnScrollHorizontal)
+			return this;
+        
+		return null;
     }
 
 	public IBackgroundTask? DequeueBatchOrDefault(IBackgroundTask oldEvent)

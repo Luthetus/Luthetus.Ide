@@ -126,14 +126,14 @@ Goals (2024-05-24)
 		Key<TextEditorCursor> cursorKey,
 		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
 		KeyboardEventArgs keyboardEventArgs,
-		TextEditorOptions options,
+		TextEditorEvents events,
 		Key<TextEditorViewModel> viewModelKey)
 	{
 		ResourceUri = resourceUri;
 		CursorKey = cursorKey;
 		GetCursorFunc = getCursorFunc;
 		KeyboardEventArgs = keyboardEventArgs;
-		Options = options;
+		Events = events;
 		ViewModelKey = viewModelKey;
 	}
 
@@ -173,19 +173,17 @@ Goals (2024-05-24)
 
 	public CommandNoType? Command { get; private set; }
 
-	public TextEditorOptions Options { get; }
+	public TextEditorEvents Events { get; }
 
 	public ITextEditorWork? BatchOrDefault(
 		IEditContext editContext,
 		TextEditorWorkKeyDown oldWorkKeyDown)
 	{
-		Console.WriteLine("PRIOR: var (cursorModifier, cursorModifierBag) = ITextEditorWork.GetCursorModifierAndBagTuple(");
 		var (cursorModifier, cursorModifierBag) = ITextEditorWork.GetCursorModifierAndBagTuple(
 			editContext,
 			ViewModelKey,
 			CursorKey,
 			GetCursorFunc);
-		Console.WriteLine("AFTER: var (cursorModifier, cursorModifierBag) = ITextEditorWork.GetCursorModifierAndBagTuple(");
 
         if (cursorModifier is null)
             return null;
@@ -197,7 +195,7 @@ Goals (2024-05-24)
             var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
 
             KeyboardEventArgsKind = TextEditorWorkUtils.GetKeyboardEventArgsKind(
-                Options,
+                Events.Options,
                 KeyboardEventArgs,
                 hasSelection,
                 editContext.TextEditorService,
@@ -213,7 +211,7 @@ Goals (2024-05-24)
 			var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
 
             oldWorkKeyDown.KeyboardEventArgsKind = TextEditorWorkUtils.GetKeyboardEventArgsKind(
-                oldWorkKeyDown.Options,
+                oldWorkKeyDown.Events.Options,
                 oldWorkKeyDown.KeyboardEventArgs,
                 hasSelection,
                 editContext.TextEditorService,
@@ -232,8 +230,6 @@ Goals (2024-05-24)
 			switch (KeyboardEventArgsKind)
 			{
 				case KeyboardEventArgsKind.Text:
-					Console.WriteLine("Both are text");
-
 					return new TextEditorWorkInsertion(
 						ResourceUri,
 						CursorKey,
@@ -260,21 +256,16 @@ Goals (2024-05-24)
 
 		if (KeyboardEventArgsKind == KeyboardEventArgsKind.None)
 		{
-			Console.WriteLine("if (KeyboardEventArgsKind == KeyboardEventArgsKind.None)");
-
 			var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
-			Console.WriteLine("var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);");
 
 			KeyboardEventArgsKind = TextEditorWorkUtils.GetKeyboardEventArgsKind(
-                Options,
+                Events.Options,
                 KeyboardEventArgs,
                 hasSelection,
                 editContext.TextEditorService,
                 out var localCommand);
-			Console.WriteLine("TextEditorWorkUtils.GetKeyboardEventArgsKind(");
 
 			Command = localCommand;
-			Console.WriteLine("Command = localCommand;");
 		}
 
 		switch (KeyboardEventArgsKind)
@@ -283,7 +274,6 @@ Goals (2024-05-24)
 				Console.WriteLine("KeyboardEventArgsKind.None");
 				break;
 			case KeyboardEventArgsKind.Movement:
-				Console.WriteLine("KeyboardEventArgsKind.Movement");
 				await editContext.TextEditorService.ViewModelApi.MoveCursorFactory(
                             KeyboardEventArgs,
                             modelModifier.ResourceUri,
@@ -295,24 +285,22 @@ Goals (2024-05-24)
 				Console.WriteLine("KeyboardEventArgsKind.ContextMenu");
 				break;
 			case KeyboardEventArgsKind.Command:
-				Console.WriteLine("KeyboardEventArgsKind.Command");
 				await Command.CommandFunc.Invoke(new TextEditorCommandArgs(
                         modelModifier.ResourceUri,
                         ViewModelKey,
                         TextEditorSelectionHelper.HasSelectedText(cursorModifier),
-                        null,
+                        Events.ClipboardService,
                         editContext.TextEditorService,
-                        Options,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null))
+                        Events.Options,
+                        Events,
+                        Events.HandleMouseStoppedMovingEventAsync,
+                        Events.JsRuntime,
+                        Events.Dispatcher,
+                        Events.ServiceProvider,
+                        Events.TextEditorConfig))
                     .ConfigureAwait(false);
 				break;
 			case KeyboardEventArgsKind.Text:
-				Console.WriteLine("KeyboardEventArgsKind.Text");
 				modelModifier.Insert(
 			        KeyboardEventArgs.Key,
 					cursorModifierBag,

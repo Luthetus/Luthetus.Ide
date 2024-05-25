@@ -96,7 +96,10 @@ public class OnMouseDown : ITextEditorTask
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
-        return this;
+		if (oldEvent is OnMouseDown)
+			return this;
+        
+		return null;
     }
 
 	public IBackgroundTask? DequeueBatchOrDefault(IBackgroundTask oldEvent)

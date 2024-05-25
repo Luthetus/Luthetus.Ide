@@ -46,7 +46,7 @@ public partial class AdhocRewrite
 			cursor.Key,
 			(editContext, cursorKey) => cursor,
 			keyboardEventArgs,
-			options,
+			new TextEditorEvents(null, options),
 			Key<TextEditorViewModel>.Empty));
 
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
@@ -85,7 +85,7 @@ public partial class AdhocRewrite
 			cursor.Key,
 			(editContext, cursorKey) => cursor,
 			new KeyboardEventArgs { Key = "a", Code = "KeyA" },
-			options,
+			new TextEditorEvents(null, options),
 			Key<TextEditorViewModel>.Empty));
 
 		await textEditorService.Post(new TextEditorWorkKeyDown(
@@ -93,7 +93,7 @@ public partial class AdhocRewrite
 			cursor.Key,
 			(editContext, cursorKey) => cursor,
 			new KeyboardEventArgs { Key = "b", Code = "KeyB" },
-			options,
+			new TextEditorEvents(null, options),
 			Key<TextEditorViewModel>.Empty));
 
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
@@ -156,7 +156,7 @@ public partial class AdhocRewrite
 			cursor.Key,
 			(editContext, cursorKey) => cursor,
 			new KeyboardEventArgs { Key = "c", Code = "KeyC", CtrlKey = true },
-			options,
+			new TextEditorEvents(null, options),
 			Key<TextEditorViewModel>.Empty));
 
 		// Cursor for pasting
@@ -173,7 +173,7 @@ public partial class AdhocRewrite
 			cursor.Key,
 			(editContext, cursorKey) => cursor,
 			new KeyboardEventArgs { Key = "p", Code = "KeyP", CtrlKey = true },
-			options,
+			new TextEditorEvents(null, options),
 			Key<TextEditorViewModel>.Empty));
 
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
