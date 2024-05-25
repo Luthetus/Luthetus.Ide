@@ -40,52 +40,56 @@ public class TextEditorBackgroundTask : IBackgroundTask
 
 	public bool TryReusingSameInstance(ITextEditorWork work)
 	{
+		var wasBatched = false;
 		var wasAdded = false;
 
 		lock (_lockWork)
 		{
 			if (!WasEnqueued)
 			{
-				var lastWork = _workList.Last();
-				var newWork = work;
+				var precedentWork = _workList.Last();
+				var downstreamWork = work;
 	
-				if (lastWork.TextEditorWorkKind == newWork.TextEditorWorkKind)
+				if (precedentWork.TextEditorWorkKind == downstreamWork.TextEditorWorkKind)
 				{
-					if (lastWork.ResourceUri == newWork.ResourceUri &&
-						lastWork.CursorKey == newWork.CursorKey)
+					var workBatched = workNext.BatchOrDefault(workCurrent);
+
+					if (precedentWork.ResourceUri == downstreamWork.ResourceUri &&
+						precedentWork.CursorKey == downstreamWork.CursorKey)
 					{
-						switch (lastWork.TextEditorWorkKind)
+						switch (precedentWork.TextEditorWorkKind)
 						{
 							case TextEditorWorkKind.Insertion:
-								var insertionLastWork = (TextEditorWorkInsertion)lastWork;
-								var insertionNewWork = (TextEditorWorkInsertion)newWork;
+								var insertionLastWork = (TextEditorWorkInsertion)precedentWork;
+								var insertionNewWork = (TextEditorWorkInsertion)downstreamWork;
 		
 								insertionLastWork.Content.Append(insertionNewWork.Content);
-								wasAdded = true;
+								wasBatched = true;
 								break;
 							case TextEditorWorkKind.Deletion:
-								var deletionLastWork = (TextEditorWorkDeletion)lastWork;
-								var deletionNewWork = (TextEditorWorkDeletion)newWork;
+								var deletionLastWork = (TextEditorWorkDeletion)precedentWork;
+								var deletionNewWork = (TextEditorWorkDeletion)downstreamWork;
 		
 								deletionLastWork.ColumnCount += deletionNewWork.ColumnCount;
-								wasAdded = true;
+								wasBatched = true;
 								break;
 						}
 					}
 				}
 
-				if (!wasAdded)
+				if (!wasBatched)
 				{
 					_workList.Add(work);
-					wasAdded = true;
+					wasBatched = true;
 				}
 			}
 		}
 
-		return wasAdded;
+		var success = wasBatched || wasAdded;
+		return success;
 	}
 
-	public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
+	public IBackgroundTask? BatchOrDefault(IBackgroundTask precedentTask)
 	{
 		lock (_lockWork)
 		{
@@ -97,39 +101,39 @@ public class TextEditorBackgroundTask : IBackgroundTask
 			//
 			// By sharing the 'EditContext' amongst two tasks, we reduce
 			// 2 UI renders down to only 1.
-			if (oldEvent is TextEditorBackgroundTask oldTextEditorBackgroundTask)
+			if (precedentTask is TextEditorBackgroundTask precedentTextEditorBackgroundTask)
 			{
-				var lastWork = oldTextEditorBackgroundTask._workList.Last();
-				var newWork = _workList.First();
+				var precedentWork = precedentTextEditorBackgroundTask._workList.Last();
+				var downstreamWork = _workList.First();
 	
-				if (lastWork.TextEditorWorkKind == newWork.TextEditorWorkKind)
+				if (precedentWork.TextEditorWorkKind == downstreamWork.TextEditorWorkKind)
 				{
-					if (lastWork.ResourceUri == newWork.ResourceUri &&
-						lastWork.CursorKey == newWork.CursorKey)
+					if (precedentWork.ResourceUri == downstreamWork.ResourceUri &&
+						precedentWork.CursorKey == downstreamWork.CursorKey)
 					{
-						switch (lastWork.TextEditorWorkKind)
+						switch (precedentWork.TextEditorWorkKind)
 						{
 							case TextEditorWorkKind.Insertion:
-								var insertionLastWork = (TextEditorWorkInsertion)lastWork;
-								var insertionNewWork = (TextEditorWorkInsertion)newWork;
+								var precedentInsertionWork = (TextEditorWorkInsertion)precedentWork;
+								var downstreamInsertionWork = (TextEditorWorkInsertion)downstreamWork;
 		
-								insertionLastWork.Content.Append(insertionNewWork.Content);
+								precedentInsertionWork.Content.Append(downstreamInsertionWork.Content);
 								_workList.RemoveAt(0);
 								break;
 							case TextEditorWorkKind.Deletion:
-								var deletionLastWork = (TextEditorWorkDeletion)lastWork;
-								var deletionNewWork = (TextEditorWorkDeletion)newWork;
+								var precedentDeletionWork = (TextEditorWorkDeletion)precedentWork;
+								var downstreamDeletionWork = (TextEditorWorkDeletion)downstreamWork;
 		
-								deletionLastWork.ColumnCount += deletionNewWork.ColumnCount;
+								precedentDeletionWork.ColumnCount += downstreamDeletionWork.ColumnCount;
 								_workList.RemoveAt(0);
 								break;
 						}
 					}
 				}
 	
-				oldTextEditorBackgroundTask._workList.AddRange(_workList);
+				precedentTextEditorBackgroundTask._workList.AddRange(_workList);
 
-				return oldTextEditorBackgroundTask;
+				return precedentTextEditorBackgroundTask;
 			}
 			else
 			{
@@ -139,7 +143,7 @@ public class TextEditorBackgroundTask : IBackgroundTask
 		}
 	}
 
-	public IBackgroundTask? DequeueBatchOrDefault(IBackgroundTask oldEvent)
+	public IBackgroundTask? DequeueBatchOrDefault(IBackgroundTask precedentTask)
 	{
 		Console.WriteLine($"DequeueBatchOrDefault_workList.Count: {_workList.Count}");
 		return null;
@@ -163,8 +167,8 @@ public class TextEditorBackgroundTask : IBackgroundTask
 					break;
 				}
 
-				var workNext = _workList[i + 1];
-				var workBatched = workNext.BatchOrDefault(workCurrent);
+				var workDownstream = _workList[i + 1];
+				var workBatched = workDownstream.BatchOrDefault(workCurrent);
 
 				if (workBatched is null)
 				{
