@@ -409,13 +409,15 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
-			var onMouseMove = new OnMouseMove(
-                mouseEventArgs,
+			var workMouseMove = new TextEditorWorkMouseMove(
+                resourceUri,
+				Key<TextEditorCursor>.Empty,
+				null,
+				mouseEventArgs,
                 _events,
-                modelResourceUri,
                 viewModelKey.Value);
 
-            await TextEditorService.Post(onMouseMove).ConfigureAwait(false);
+            await TextEditorService.Post(workMouseMove).ConfigureAwait(false);
         }
         else
         {

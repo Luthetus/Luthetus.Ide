@@ -13,9 +13,9 @@ using Luthetus.TextEditor.RazorLib.Commands.Models;
 
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
-public class TextEditorWorkDoubleClick : ITextEditorWork
+public class TextEditorWorkMouseMove : ITextEditorWork
 {
-	public TextEditorWorkDoubleClick(
+	public TextEditorWorkMouseMove(
 		ResourceUri resourceUri,
 		Key<TextEditorCursor> cursorKey,
 		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
@@ -69,11 +69,11 @@ public class TextEditorWorkDoubleClick : ITextEditorWork
 
 	public ITextEditorWork? BatchOrDefault(
 		IEditContext editContext,
-		TextEditorWorkDoubleClick oldWorkDoubleClick)
+		TextEditorWorkMouseMove oldWorkMouseMove)
 	{
-		// If this method changes from acceping a 'TextEditorWorkDoubleClick' to an 'ITextEditorWork'
+		// If this method changes from acceping a 'TextEditorWorkMouseMove' to an 'ITextEditorWork'
 		// Then it is vital that this pattern matching is performed.
-		if (oldWorkDoubleClick is TextEditorWorkDoubleClick)
+		if (oldWorkMouseMove is TextEditorWorkMouseMove)
 			return this;
 
 		return null;
@@ -93,57 +93,14 @@ public class TextEditorWorkDoubleClick : ITextEditorWork
 			CursorKey,
 			GetCursorFunc);
 
-		var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
+		var rowAndColumnIndex = await Events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
 
-        if ((MouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
-            return; // Not pressing the left mouse button so assume ContextMenu is desired result.
+        primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
+        primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
+        primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 
-        if (MouseEventArgs.ShiftKey)
-            return; // Do not expand selection if user is holding shift
+        Events.CursorPauseBlinkAnimationAction.Invoke();
 
-        var rowAndColumnIndex = await Events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
-
-        var lowerColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-            rowAndColumnIndex.rowIndex,
-            rowAndColumnIndex.columnIndex,
-            true);
-
-        lowerColumnIndexExpansion = lowerColumnIndexExpansion == -1
-            ? 0
-            : lowerColumnIndexExpansion;
-
-        var higherColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-            rowAndColumnIndex.rowIndex,
-            rowAndColumnIndex.columnIndex,
-            false);
-
-        higherColumnIndexExpansion = higherColumnIndexExpansion == -1
-            ? modelModifier.GetLineLength(rowAndColumnIndex.rowIndex)
-            : higherColumnIndexExpansion;
-
-        // Move user's cursor position to the higher expansion
-        {
-            primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
-            primaryCursorModifier.ColumnIndex = higherColumnIndexExpansion;
-            primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
-        }
-
-        // Set text selection ending to higher expansion
-        {
-            var cursorPositionOfHigherExpansion = modelModifier.GetPositionIndex(
-                rowAndColumnIndex.rowIndex,
-                higherColumnIndexExpansion);
-
-            primaryCursorModifier.SelectionEndingPositionIndex = cursorPositionOfHigherExpansion;
-        }
-
-        // Set text selection anchor to lower expansion
-        {
-            var cursorPositionOfLowerExpansion = modelModifier.GetPositionIndex(
-                rowAndColumnIndex.rowIndex,
-                lowerColumnIndexExpansion);
-
-            primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionOfLowerExpansion;
-        }
+        primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 	}
 }
