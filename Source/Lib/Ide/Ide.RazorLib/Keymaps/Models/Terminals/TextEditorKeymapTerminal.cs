@@ -69,196 +69,206 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 		TextEditorOptions options,
 		out CommandNoType? command)
 	{
-		var terminalKey = _getTerminalKeyFunc.Invoke();
-        var commandDisplayName = "Terminal::InterceptDefaultKeymap";
-
-		command = new TextEditorCommand(
-			commandDisplayName, "terminal_intercept-default-keymap", false, true, TextEditKind.None, null,
-			async interfaceCommandArgs =>
-			{
-				var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                await commandArgs.TextEditorService.Post(
-					commandArgs.ModelResourceUri,
-                    commandArgs.ViewModelKey,
-                    async editContext =>
-					{
-						var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
-						var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
-						var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-						var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-						if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-							return;
-
-						var onKeyDown = new OnKeyDown(
-							options,
-							keyboardEventArgs,
-							commandArgs.ModelResourceUri,
-							commandArgs.ViewModelKey);
-
-						var selectionContainsCurrentRow = false;
-						var selectionRowCount = 0;
-
-						if (onKeyDown.TentativeHasSelection)
-						{
-							var selectionBoundPositionIndices = TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier);
-
-                            var selectionBoundRowIndices = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
-								modelModifier,
-                                selectionBoundPositionIndices);
-
-							if (primaryCursorModifier.LineIndex >= selectionBoundRowIndices.lowerRowIndexInclusive &&
-                                primaryCursorModifier.LineIndex < selectionBoundRowIndices.upperRowIndexExclusive)
-							{
-								selectionContainsCurrentRow = true;
-                            }
-
-							selectionRowCount = selectionBoundRowIndices.upperRowIndexExclusive - selectionBoundRowIndices.lowerRowIndexInclusive;
-                        }
-
-						if (onKeyDown.TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Text ||
-							onKeyDown.TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Other)
-						{
-                            // Only the last line of the terminal is editable.
-                            if (primaryCursorModifier.LineIndex == modelModifier.LineCount - 1)
-							{
-                                // Furthermore, if a selection contains more than 1 row,
-                                // it would therefore edit a line other than the last.
-								if (selectionRowCount == 0 ||
-                                    selectionContainsCurrentRow && selectionRowCount == 1)
-								{
-                                    if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
-                                    {
-                                        // Notify the underlying terminal (tty) that the user wrote to standard out.
-                                        var generalTerminal = _terminalStateWrap.Value.TerminalMap[terminalKey];
-                                        var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
-
-                                        if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
-                                            return;
-
-                                        // The final entry of the decoration list is hackily being presumed to be a working directory.
-                                        var mostRecentWorkingDirectoryText = terminalResource.ManualDecorationTextSpanList.Last();
-
-										var input = new TextEditorTextSpan(
-											mostRecentWorkingDirectoryText.EndingIndexExclusive,
-											modelModifier.CharCount,
-											0,
-											modelModifier.ResourceUri,
-											modelModifier.GetAllText());
-										
-										TextEditorTextSpan targetFilePathTextSpan;
-										TextEditorTextSpan argumentsTextSpan;
-
-										lock (terminalResource.UnsafeStateLock)
-										{
-											targetFilePathTextSpan = terminalResource.TargetFilePathTextSpan;
-											argumentsTextSpan = terminalResource.ArgumentsTextSpan;
-                                        }
-
-                                        var formattedCommand = new FormattedCommand(
-											targetFilePathTextSpan.GetText(),
-                                            new string[] { argumentsTextSpan.GetText() });
-
-										formattedCommand.HACK_ArgumentsString = argumentsTextSpan.GetText();
-
-                                        var terminalCommand = new TerminalCommand(
-                                            Key<TerminalCommand>.NewKey(),
-                                            formattedCommand);
-
-										terminalResource.ManualDecorationTextSpanList.Add(terminalResource.TargetFilePathTextSpan);
-
-                                        await editContext.TextEditorService.ModelApi.InsertTextFactory(
-                                                modelModifier.ResourceUri,
-												viewModelModifier.ViewModel.ViewModelKey,
-												"\n",
-												CancellationToken.None)
-											.Invoke(editContext)
-											.ConfigureAwait(false);
-
-                                        await generalTerminal.EnqueueCommandAsync(terminalCommand).ConfigureAwait(false);
-                                    }
-                                    else if (keyboardEventArgs.Code == "Backspace" && primaryCursorModifier.ColumnIndex == 0)
-                                    {
-                                        // TODO: Console.Beep(); // ???
-                                    }
-                                    else
-                                    {
-										// TODO: This method is an "if, else" nightmare and needs to be cleaned up.
-										//
-										// The "working directory" is written on the last line of the terminal.
-										// Ensure that the user is not about to type over the "working directory"
-
-										var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
-
-                                        var terminalResource = terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) as TerminalResource;
-                                        if (terminalResource is null)
-                                            return;
-
-                                        // The final entry of the decoration list is hackily being presumed to be a working directory.
-                                        var mostRecentWorkingDirectoryText = terminalResource.ManualDecorationTextSpanList.Last();
-
-										var primaryCursorModifierPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
-
-                                        if (mostRecentWorkingDirectoryText.StartingIndexInclusive >= primaryCursorModifierPositionIndex ||
-                                            mostRecentWorkingDirectoryText.EndingIndexExclusive > primaryCursorModifierPositionIndex)
-										{
-											// Don't let them type
-                                        }
-										else if (mostRecentWorkingDirectoryText.EndingIndexExclusive == primaryCursorModifierPositionIndex &&
-                                                 keyboardEventArgs.Code == "Backspace")
-										{
-                                            // Don't let them type
-                                        }
-                                        else if (onKeyDown.TentativeHasSelection &&
-                                                 mostRecentWorkingDirectoryText.StartingIndexInclusive >= TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier).lowerPositionIndexInclusive)
-                                        {
-                                            // Don't let them type
-                                        }
-										else
-										{
-                                            await onKeyDown.InvokeWithEditContext(editContext).ConfigureAwait(false);
-                                            await terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
-                                        }
-                                    }
-                                }
-							}
-						}
-						else if (onKeyDown.Command is not null)
-						{
-							if (onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.Copy.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.PasteCommand.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.SelectAll.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollLineDown.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollLineUp.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollPageDown.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollPageUp.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageBottom.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageTop.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ShowFindOverlay.InternalIdentifier)
-                            {
-                                await onKeyDown.InvokeWithEditContext(editContext).ConfigureAwait(false);
-                            }
-							else
-							{
-								// Don't let them do the command
-							}
-						}
-						else
-						{
-							await onKeyDown.InvokeWithEditContext(editContext).ConfigureAwait(false);
-
-                            var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
-
-                            var terminalResource = terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) as TerminalResource;
-                            if (terminalResource is null)
-                                return;
-
-                            await terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
-                        }
-					});
-			});
-
-		return true;
+		command = null;
+		return false;
 	}
+
+	//public bool TryMap(
+	//	KeyboardEventArgs keyboardEventArgs,
+	//	KeymapArgument keymapArgument,
+	//	TextEditorOptions options,
+	//	out CommandNoType? command)
+	//{
+	//	var terminalKey = _getTerminalKeyFunc.Invoke();
+ //       var commandDisplayName = "Terminal::InterceptDefaultKeymap";
+//
+//		command = new TextEditorCommand(
+//			commandDisplayName, "terminal_intercept-default-keymap", false, true, TextEditKind.None, null,
+//			async interfaceCommandArgs =>
+//			{
+//				var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+//
+//                await commandArgs.TextEditorService.Post(
+//					commandArgs.ModelResourceUri,
+//                    commandArgs.ViewModelKey,
+//                    async editContext =>
+//					{
+//						var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+//						var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
+//						var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+//						var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+//
+//						if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+//							return;
+//
+//						var onKeyDown = new OnKeyDown(
+//							options,
+//							keyboardEventArgs,
+//							commandArgs.ModelResourceUri,
+//							commandArgs.ViewModelKey);
+//
+//						var selectionContainsCurrentRow = false;
+//						var selectionRowCount = 0;
+//
+//						if (onKeyDown.TentativeHasSelection)
+//						{
+//							var selectionBoundPositionIndices = TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier);
+//
+//                            var selectionBoundRowIndices = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
+//								modelModifier,
+//                                selectionBoundPositionIndices);
+//
+//							if (primaryCursorModifier.LineIndex >= selectionBoundRowIndices.lowerRowIndexInclusive &&
+//                                primaryCursorModifier.LineIndex < selectionBoundRowIndices.upperRowIndexExclusive)
+//							{
+//								selectionContainsCurrentRow = true;
+//                            }
+//
+//							selectionRowCount = selectionBoundRowIndices.upperRowIndexExclusive - selectionBoundRowIndices.lowerRowIndexInclusive;
+//                        }
+//
+//						if (onKeyDown.TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Text ||
+//							onKeyDown.TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Other)
+//						{
+//                            // Only the last line of the terminal is editable.
+//                            if (primaryCursorModifier.LineIndex == modelModifier.LineCount - 1)
+//							{
+//                                // Furthermore, if a selection contains more than 1 row,
+//                                // it would therefore edit a line other than the last.
+//								if (selectionRowCount == 0 ||
+//                                    selectionContainsCurrentRow && selectionRowCount == 1)
+//								{
+//                                    if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+//                                    {
+//                                        // Notify the underlying terminal (tty) that the user wrote to standard out.
+//                                        var generalTerminal = _terminalStateWrap.Value.TerminalMap[terminalKey];
+//                                        var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
+//
+//                                        if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
+//                                            return;
+//
+//                                        // The final entry of the decoration list is hackily being presumed to be a working directory.
+//                                        var mostRecentWorkingDirectoryText = terminalResource.ManualDecorationTextSpanList.Last();
+//
+//										var input = new TextEditorTextSpan(
+//											mostRecentWorkingDirectoryText.EndingIndexExclusive,
+//											modelModifier.CharCount,
+//											0,
+//											modelModifier.ResourceUri,
+//											modelModifier.GetAllText());
+//										
+//										TextEditorTextSpan targetFilePathTextSpan;
+//										TextEditorTextSpan argumentsTextSpan;
+//
+//										lock (terminalResource.UnsafeStateLock)
+//										{
+//											targetFilePathTextSpan = terminalResource.TargetFilePathTextSpan;
+//											argumentsTextSpan = terminalResource.ArgumentsTextSpan;
+//                                        }
+//
+//                                        var formattedCommand = new FormattedCommand(
+//											targetFilePathTextSpan.GetText(),
+//                                            new string[] { argumentsTextSpan.GetText() });
+//
+//										formattedCommand.HACK_ArgumentsString = argumentsTextSpan.GetText();
+//
+//                                        var terminalCommand = new TerminalCommand(
+//                                            Key<TerminalCommand>.NewKey(),
+//                                            formattedCommand);
+//
+//										terminalResource.ManualDecorationTextSpanList.Add(terminalResource.TargetFilePathTextSpan);
+//
+//                                        await editContext.TextEditorService.ModelApi.InsertTextFactory(
+//                                                modelModifier.ResourceUri,
+//												viewModelModifier.ViewModel.ViewModelKey,
+//												"\n",
+//												CancellationToken.None)
+//											.Invoke(editContext)
+//											.ConfigureAwait(false);
+//
+//                                        await generalTerminal.EnqueueCommandAsync(terminalCommand).ConfigureAwait(false);
+//                                    }
+//                                    else if (keyboardEventArgs.Code == "Backspace" && primaryCursorModifier.ColumnIndex == 0)
+//                                    {
+//                                        // TODO: Console.Beep(); // ???
+//                                    }
+//                                    else
+//                                    {
+//										// TODO: This method is an "if, else" nightmare and needs to be cleaned up.
+//										//
+//										// The "working directory" is written on the last line of the terminal.
+//										// Ensure that the user is not about to type over the "working directory"
+//
+//										var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
+//
+//                                        var terminalResource = terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) as TerminalResource;
+//                                        if (terminalResource is null)
+//                                            return;
+//
+//                                        // The final entry of the decoration list is hackily being presumed to be a working directory.
+//                                        var mostRecentWorkingDirectoryText = terminalResource.ManualDecorationTextSpanList.Last();
+//
+//										var primaryCursorModifierPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+//
+//                                        if (mostRecentWorkingDirectoryText.StartingIndexInclusive >= primaryCursorModifierPositionIndex ||
+//                                            mostRecentWorkingDirectoryText.EndingIndexExclusive > primaryCursorModifierPositionIndex)
+//										{
+//											// Don't let them type
+//                                        }
+//										else if (mostRecentWorkingDirectoryText.EndingIndexExclusive == primaryCursorModifierPositionIndex &&
+//                                                 keyboardEventArgs.Code == "Backspace")
+//										{
+//                                            // Don't let them type
+//                                        }
+//                                        else if (onKeyDown.TentativeHasSelection &&
+//                                                 mostRecentWorkingDirectoryText.StartingIndexInclusive >= TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier).lowerPositionIndexInclusive)
+//                                        {
+//                                            // Don't let them type
+//                                        }
+//										else
+//										{
+//                                            await onKeyDown.InvokeWithEditContext(editContext).ConfigureAwait(false);
+//                                            await terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
+//                                        }
+//                                    }
+//                                }
+//							}
+//						}
+//						else if (onKeyDown.Command is not null)
+//						{
+//							if (onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.Copy.InternalIdentifier ||
+//								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.PasteCommand.InternalIdentifier ||
+//								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.SelectAll.InternalIdentifier ||
+//								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollLineDown.InternalIdentifier ||
+//								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollLineUp.InternalIdentifier ||
+//								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollPageDown.InternalIdentifier ||
+//								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollPageUp.InternalIdentifier ||
+//								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageBottom.InternalIdentifier ||
+//								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageTop.InternalIdentifier ||
+//								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ShowFindOverlay.InternalIdentifier)
+//                            {
+//                                await onKeyDown.InvokeWithEditContext(editContext).ConfigureAwait(false);
+//                            }
+//							else
+//							{
+//								// Don't let them do the command
+//							}
+//						}
+//						else
+//						{
+//							await onKeyDown.InvokeWithEditContext(editContext).ConfigureAwait(false);
+//
+//                            var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
+//
+//                            var terminalResource = terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) as TerminalResource;
+//                            if (terminalResource is null)
+//                                return;
+//
+//                            await terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
+//                        }
+//					});
+//			});
+//
+//		return true;
+//	}
 }
