@@ -313,13 +313,15 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        var onDoubleClick = new OnDoubleClick(
-            mouseEventArgs,
-            _events,
+        var workDoubleClick = new TextEditorWorkDoubleClick(
             modelResourceUri,
+			Key<TextEditorCursor>.Empty,
+			null,
+			mouseEventArgs,
+            _events,
             viewModelKey.Value);
 
-        await TextEditorService.Post(onDoubleClick).ConfigureAwait(false);
+        await TextEditorService.Post(workDoubleClick).ConfigureAwait(false);
     }
 
     private async Task ReceiveContentOnMouseDown(MouseEventArgs mouseEventArgs)
