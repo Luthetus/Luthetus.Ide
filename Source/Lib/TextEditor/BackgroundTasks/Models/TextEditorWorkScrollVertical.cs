@@ -1,32 +1,19 @@
-using System.Text;
-using Microsoft.AspNetCore.Components.Web;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Commands.Models;
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.Options.Models;
-using Luthetus.TextEditor.RazorLib.Commands.Models;
-
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
-public class TextEditorWorkScrollHorizontal : ITextEditorWork
+public class TextEditorWorkScrollVertical : ITextEditorWork
 {
-	public TextEditorWorkScrollHorizontal(
+	public TextEditorWorkScrollVertical(
 		ResourceUri resourceUri,
 		Key<TextEditorCursor> cursorKey,
 		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
-		double scrollLeft,
+		double scrollTop,
 		TextEditorEvents events,
 		Key<TextEditorViewModel> viewModelKey)
 	{
 		ResourceUri = resourceUri;
 		CursorKey = cursorKey;
 		GetCursorFunc = getCursorFunc;
-		ScrollLeft = scrollLeft;
+		ScrollTop = scrollTop;
 		Events = events;
 		ViewModelKey = viewModelKey;
 	}
@@ -61,7 +48,7 @@ public class TextEditorWorkScrollHorizontal : ITextEditorWork
 	/// </summary>
 	public Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> GetCursorFunc { get; }
 	
-	public double ScrollLeft { get; }
+	public double ScrollTop { get; }
 
 	public CommandNoType? Command { get; private set; }
 
@@ -69,11 +56,11 @@ public class TextEditorWorkScrollHorizontal : ITextEditorWork
 
 	public ITextEditorWork? BatchOrDefault(
 		IEditContext editContext,
-		TextEditorWorkScrollHorizontal oldWorkScrollHorizontal)
+		TextEditorWorkScrollVertical oldWorkScrollVertical)
 	{
-		// If this method changes from acceping a 'TextEditorWorkScrollHorizontal' to an 'ITextEditorWork'
+		// If this method changes from acceping a 'TextEditorWorkScrollVertical' to an 'ITextEditorWork'
 		// Then it is vital that this pattern matching is performed.
-		if (oldWorkScrollHorizontal is TextEditorWorkScrollHorizontal)
+		if (oldWorkScrollVertical is TextEditorWorkScrollVertical)
 			return this;
 
 		return null;
@@ -94,7 +81,7 @@ public class TextEditorWorkScrollHorizontal : ITextEditorWork
 			GetCursorFunc);
 
 		return editContext.TextEditorService.ViewModelApi
-            .SetScrollPositionFactory(ViewModelKey, ScrollLeft, null)
+            .SetScrollPositionFactory(ViewModelKey, null, ScrollTop)
             .Invoke(editContext);
 	}
 }

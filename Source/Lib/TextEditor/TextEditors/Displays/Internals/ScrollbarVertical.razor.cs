@@ -157,7 +157,10 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
             if (scrollTop + elementMeasurements.Height > elementMeasurements.ScrollHeight)
                 scrollTop = elementMeasurements.ScrollHeight - elementMeasurements.Height;
 
-			var throttleEventOnScrollVertical = new OnScrollVertical(
+			var workScrollVertical = new TextEditorWorkScrollVertical(
+				RenderBatch.ViewModel.ResourceUri,
+				Key<TextEditorCursor>.Empty,
+				null,
 				scrollTop,
 				RenderBatch.Events,
 				RenderBatch.ViewModel.ViewModelKey);
