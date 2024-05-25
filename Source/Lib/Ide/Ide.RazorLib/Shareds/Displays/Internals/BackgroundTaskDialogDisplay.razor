@@ -1,4 +1,4 @@
-﻿@{
+@{
     var countShown = BackgroundTaskDialogModel.CountTracked;
     var seenBackgroundTasks = BackgroundTaskDialogModel.SeenBackgroundTasks.TakeLast(countShown).Reverse().ToArray();
 }
@@ -17,13 +17,13 @@
 
             if (backgroundTask.Name.StartsWith("te_"))
             {
-                <div class="luth_te_keyword" title="@backgroundTask.BackgroundTaskKey.Guid">
+                <div class="luth_te_keyword" style="padding-top: 8px; padding-bottom: 4px; border-bottom: 1px solid var(--luth_primary-border-color);" title="@backgroundTask.BackgroundTaskKey.Guid">
                     @backgroundTask.Name
                 </div>
             }
             else
             {
-                <div title="@backgroundTask.BackgroundTaskKey.Guid">
+                <div style="padding-top: 8px; padding-bottom: 4px; border-bottom: 1px solid var(--luth_primary-border-color);" title="@backgroundTask.BackgroundTaskKey.Guid">
                     @backgroundTask.Name
                 </div>
             }

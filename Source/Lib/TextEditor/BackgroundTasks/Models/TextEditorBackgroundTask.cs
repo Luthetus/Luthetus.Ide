@@ -24,7 +24,7 @@ public class TextEditorBackgroundTask : IBackgroundTask
 	/// </summary>
 	public Key<BackgroundTask> BackgroundTaskKey { get; }
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public string Name => nameof(TextEditorBackgroundTask) + ' ' + string.Join('_', _workList.Select(x => x.Name));
+    public string Name => nameof(TextEditorBackgroundTask) + ' ' + string.Join(' ', _workList.Select(x => x.Name));
     public Task? WorkProgress { get; }
 	public TimeSpan ThrottleTimeSpan { get; } = TimeSpan.Zero;
 
