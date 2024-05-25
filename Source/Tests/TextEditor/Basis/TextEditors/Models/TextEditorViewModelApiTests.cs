@@ -225,10 +225,9 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        await textEditorService.PostSimpleBatch(
-            nameof(MoveCursorFactory_SelectText),
-            string.Empty,
-			null,
+        await textEditorService.Post(
+            resourceUri,
+            viewModelKey,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -275,10 +274,9 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        await textEditorService.PostSimpleBatch(
-            nameof(MoveCursorFactory_SelectText),
-            string.Empty,
-			null,
+        await textEditorService.Post(
+            resourceUri,
+            viewModelKey,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -361,10 +359,9 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        await textEditorService.PostSimpleBatch(
-            nameof(MoveCursorFactory_SelectText),
-            string.Empty,
-			null,
+        await textEditorService.Post(
+            resourceUri,
+            viewModelKey,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -486,10 +483,9 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        await textEditorService.PostSimpleBatch(
-            nameof(MoveCursorFactory_SelectText),
-            string.Empty,
-			null,
+        await textEditorService.Post(
+            resourceUri,
+            viewModelKey,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -572,10 +568,9 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        await textEditorService.PostSimpleBatch(
-            nameof(MoveCursorFactory_SelectText),
-            string.Empty,
-			null,
+        await textEditorService.Post(
+            resourceUri,
+            viewModelKey,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -697,10 +692,9 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        await textEditorService.PostSimpleBatch(
-            nameof(MoveCursorFactory_SelectText),
-            string.Empty,
-			null,
+        await textEditorService.Post(
+            resourceUri,
+            viewModelKey,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -786,10 +780,9 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        await textEditorService.PostSimpleBatch(
-            nameof(MoveCursorFactory_SelectText),
-            string.Empty,
-			null,
+        await textEditorService.Post(
+            resourceUri,
+            viewModelKey,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -911,10 +904,9 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        await textEditorService.PostSimpleBatch(
-            nameof(MoveCursorFactory_SelectText),
-            string.Empty,
-			null,
+        await textEditorService.Post(
+            resourceUri,
+            viewModelKey,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -997,10 +989,9 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        await textEditorService.PostSimpleBatch(
-            nameof(MoveCursorFactory_SelectText),
-            string.Empty,
-			null,
+        await textEditorService.Post(
+            resourceUri,
+            viewModelKey,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -1266,10 +1257,9 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
             oppositeShouldSetFocusAfterNextRender,
             inViewModel.UnsafeState.ShouldSetFocusAfterNextRender);
 
-        await textEditorService.PostSimpleBatch(
-            nameof(textEditorService.ViewModelApi.WithValueFactory),
-            string.Empty,
-			null,
+        await textEditorService.Post(
+            inViewModel.ResourceUri,
+            inViewModel.ViewModelKey,
             textEditorService.ViewModelApi.WithValueFactory(
                 inViewModel.ViewModelKey,
                 inState =>

@@ -1,24 +1,24 @@
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+using System.Collections.Immutable;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Misc;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.JSInterop;
-using System.Collections.Immutable;
-using Luthetus.Ide.RazorLib.CompilerServices.Models;
-using Luthetus.Ide.RazorLib.Decorations;
-using Luthetus.Ide.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib.Rows.Models;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
+using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.Ide.RazorLib.CompilerServices.Models;
+using Luthetus.Ide.RazorLib.Decorations;
+using Luthetus.Ide.RazorLib.Installations.Models;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
 
@@ -408,10 +408,9 @@ public partial class AdhocTest
 
         refModel = textEditorService.ModelApi.GetOrDefault(refModel.ResourceUri) ?? throw new ArgumentNullException();
 
-        await textEditorService.PostSimpleBatch(
-            nameof(ContentList_Change),
-            string.Empty,
-			null,
+        await textEditorService.Post(
+            refModel.ResourceUri,
+            Key<TextEditorViewModel>.Empty,
             textEditorService.ModelApi.ApplySyntaxHighlightingFactory(refModel.ResourceUri));
 
         // ContentList
