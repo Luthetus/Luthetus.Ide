@@ -471,10 +471,9 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         var diffX = previousTouchPoint.ClientX - currentTouchPoint.ClientX;
         var diffY = previousTouchPoint.ClientY - currentTouchPoint.ClientY;
 
-        await TextEditorService.PostSimpleBatch(
-            nameof(QueueRemeasureBackgroundTask),
-            string.Empty,
-			null,
+        await TextEditorService.Post(
+            viewModel.ResourceUri,
+			viewModel.ViewModelKey,
             async editContext =>
 			{
                 await editContext.TextEditorService.ViewModelApi
@@ -544,10 +543,9 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        await TextEditorService.PostSimpleBatch(
-                nameof(QueueRemeasureBackgroundTask),
-                string.Empty,
-				null,
+        await TextEditorService.Post(
+                modelResourceUri,
+                viewModelKey.Value,
                 TextEditorService.ViewModelApi.RemeasureFactory(
                     modelResourceUri,
                     viewModelKey.Value,
@@ -566,10 +564,9 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        await TextEditorService.PostSimpleBatch(
-                nameof(QueueCalculateVirtualizationResultBackgroundTask),
-                string.Empty,
-				null,
+        await TextEditorService.Post(
+                modelResourceUri,
+				viewModelKey.Value,
                 TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
                     modelResourceUri,
                     viewModelKey.Value,

@@ -1,3 +1,5 @@
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis;
@@ -71,10 +73,9 @@ public class TextEditorTestBaseTests : TextEditorTestBase
 
         for (var i = 0; i < 3; i++)
         {
-            await textEditorService.PostSimpleBatch(
-                "Name_Test",
-                "Identifier_Test",
-				null,
+            await textEditorService.Post(
+                null,
+                Key<TextEditorViewModel>.Empty,
                 editContext =>
                 {
                     number++;

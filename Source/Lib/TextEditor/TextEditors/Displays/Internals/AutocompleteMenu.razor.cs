@@ -168,10 +168,9 @@ public partial class AutocompleteMenu : ComponentBase
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)
     {
-        return TextEditorService.PostSimpleBatch(
-            nameof(InsertAutocompleteMenuOption),
-            string.Empty,
-			null,
+        return TextEditorService.Post(
+            viewModel.ResourceUri,
+            viewModel.ViewModelKey,
             TextEditorService.ModelApi.InsertTextFactory(
                 viewModel.ResourceUri,
                 viewModel.ViewModelKey,

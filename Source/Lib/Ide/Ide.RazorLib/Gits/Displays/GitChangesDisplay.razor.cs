@@ -1,11 +1,11 @@
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Microsoft.AspNetCore.Components;
-using System.Collections.Immutable;
+using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.Ide.RazorLib.Gits.Displays;
 
@@ -40,10 +40,9 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     InResourceUri,
                     new Category(nameof(GitChangesDisplay)));
 
-                await TextEditorService.PostSimpleBatch(
-                    nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
-                    string.Empty,
-					null,
+                await TextEditorService.Post(
+                    InResourceUri,
+                    InViewModelKey,
                     async editContext =>
                     {
                         await TextEditorService.ModelApi.AddPresentationModelFactory(
@@ -89,10 +88,9 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     OutResourceUri,
                     new Category(nameof(GitChangesDisplay)));
 
-                await TextEditorService.PostSimpleBatch(
-                    nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
-                    string.Empty,
-					null,
+                await TextEditorService.Post(
+                    OutResourceUri,
+                    OutViewModelKey,
                     async editContext =>
                     {
                         await TextEditorService.ModelApi.AddPresentationModelFactory(

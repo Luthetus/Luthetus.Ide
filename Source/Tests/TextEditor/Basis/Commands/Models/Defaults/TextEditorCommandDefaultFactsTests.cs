@@ -60,10 +60,9 @@ public class TextEditorCommandDefaultFactsTests
             var inClipboard = await clipboardService.ReadClipboard();
             Assert.Empty(inClipboard);
 
-            await textEditorService.PostSimpleBatch(
-				nameof(TextEditorCommandDefaultFactsTests),
-                string.Empty,
-				null,
+            await textEditorService.Post(
+				inModel.ResourceUri,
+                inViewModel.ViewModelKey,
                 editContext =>
 				{
 					var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
@@ -132,10 +131,9 @@ public class TextEditorCommandDefaultFactsTests
             var inClipboard = await clipboardService.ReadClipboard();
             Assert.Empty(inClipboard);
 
-            await textEditorService.PostSimpleBatch(
-                nameof(TextEditorCommandDefaultFactsTests),
-                string.Empty,
-				null,
+            await textEditorService.Post(
+                inModel.ResourceUri,
+                inViewModel.ViewModelKey,
                 editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);

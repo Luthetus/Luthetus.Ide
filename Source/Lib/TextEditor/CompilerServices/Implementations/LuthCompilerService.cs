@@ -1,3 +1,4 @@
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -5,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
@@ -160,10 +162,9 @@ public class LuthCompilerService : ILuthCompilerService
 
     protected virtual Task QueueParseRequest(ResourceUri resourceUri)
     {
-        return _textEditorService.PostSimpleBatch(
-            $"{nameof(QueueParseRequest)}_{resourceUri.Value}",
-            string.Empty,
-			null,
+        return _textEditorService.Post(
+            resourceUri,
+            Key<TextEditorViewModel>.Empty,
             async editContext =>
             {
 				var modelModifier = editContext.GetModelModifier(resourceUri);

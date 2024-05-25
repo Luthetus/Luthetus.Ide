@@ -1,13 +1,15 @@
+using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
-using Microsoft.AspNetCore.Components.Web;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public class OnWheel : ITextEditorTask
+public class OnWheel : ITextEditorTask, ITextEditorWork
 {
     private readonly TextEditorEvents _events;
 
@@ -29,9 +31,18 @@ public class OnWheel : ITextEditorTask
 	public TextEditorEdit Edit { get; }
     public Task? WorkProgress { get; }
     public WheelEventArgs WheelEventArgs { get; }
+	public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
+	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Complex;
+	public Key<TextEditorCursor> CursorKey { get; }
+
     public TimeSpan ThrottleTimeSpan => TextEditorEvents.ThrottleDelayDefault;
+
+	public Task Invoke(IEditContext editContext)
+	{
+		return InvokeWithEditContext(editContext);
+	}
 
     public Task InvokeWithEditContext(IEditContext editContext)
     {

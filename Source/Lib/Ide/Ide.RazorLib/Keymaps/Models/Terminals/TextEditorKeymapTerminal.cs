@@ -1,27 +1,27 @@
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Components.Web;
+using Fluxor;
+using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using Luthetus.Common.RazorLib.Keymaps.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
-using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
-using Luthetus.Common.RazorLib.Commands.Models;
-using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
-using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
+using Luthetus.TextEditor.RazorLib.Events.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
 using Luthetus.Ide.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
-using Fluxor;
 using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.Events.Models;
 
 namespace Luthetus.Ide.RazorLib.Keymaps.Models.Terminals;
 
@@ -78,10 +78,9 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 			{
 				var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                await commandArgs.TextEditorService.PostSimpleBatch(
-					nameof(commandDisplayName),
-                    string.Empty,
-					null,
+                await commandArgs.TextEditorService.Post(
+					commandArgs.ModelResourceUri,
+                    commandArgs.ViewModelKey,
                     async editContext =>
 					{
 						var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);

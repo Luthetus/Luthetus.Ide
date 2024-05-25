@@ -1,12 +1,13 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.Ide.RazorLib.Events.Models;
 
@@ -20,7 +21,7 @@ namespace Luthetus.Ide.RazorLib.Events.Models;
 /// one could furthermore invoke this event to write to the text editor
 /// in a batched manner.
 /// </summary>
-public class OnOutput : ITextEditorTask
+public class OnOutput : ITextEditorTask, ITextEditorWork
 {
     private readonly TerminalCommandBoundary _terminalCommandBoundary;
 
@@ -59,7 +60,15 @@ public class OnOutput : ITextEditorTask
 	public TerminalCommand TerminalCommand { get; }
 	public Key<TextEditorViewModel> ViewModelKey { get; }
 
+	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Complex;
+	public Key<TextEditorCursor> CursorKey { get; }
+
     public TimeSpan ThrottleTimeSpan => TextEditorEvents.ThrottleDelayDefault;
+
+	public Task Invoke(IEditContext editContext)
+	{
+		return InvokeWithEditContext(editContext);
+	}
 
     public async Task InvokeWithEditContext(IEditContext editContext)
     {

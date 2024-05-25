@@ -139,14 +139,11 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
                 await _throttleShouldRevealCursor.PushEvent(async _ =>
                 {
-                    // TODO: Need to add 'TextEditorService.PostTakeMostRecent' and simple batch combination.
-                    //
                     // I think after removing the throttle, that this is an infinite loop on WASM,
                     // i.e. holding down ArrowRight
-                    await TextEditorService.PostSimpleBatch(
-                        id,
-                        id,
-						null,
+                    await TextEditorService.Post(
+                        localRenderBatch.ViewModel.ResourceUri,
+                        localRenderBatch.ViewModel.ViewModelKey,
                         editContext =>
                         {
                             var cursorPositionIndex = localRenderBatch.Model.GetPositionIndex(Cursor);

@@ -1,19 +1,19 @@
 using Fluxor;
+using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
-using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.Ide.RazorLib.Gits.Models;
-using Luthetus.Ide.RazorLib.Gits.States;
-using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Microsoft.AspNetCore.Components;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.Gits.Models;
+using Luthetus.Ide.RazorLib.Gits.States;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.Ide.RazorLib.Gits.Displays;
 
@@ -193,10 +193,9 @@ public partial class GitDiffDisplay : ComponentBase
 
     private Task CreateDiffModel(Key<TextEditorViewModel> inViewModelKey, Key<TextEditorViewModel> outViewModelKey)
     {
-        TextEditorService.PostSimpleBatch(
-            nameof(GitDiffDisplay),
-            nameof(GitDiffDisplay),
-			null,
+        TextEditorService.Post(
+            null,
+            Key<TextEditorViewModel>.Empty,
             editContext =>
             {
                 var inViewModelModifier = editContext.GetViewModelModifier(inViewModelKey);

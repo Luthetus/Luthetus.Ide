@@ -105,10 +105,9 @@ public partial class RowSection : ComponentBase
         if (model is null || viewModel is null)
             return;
 
-        await TextEditorService.PostSimpleBatch(
-                nameof(VirtualizationDisplayItemsProviderFunc),
-                $"{nameof(VirtualizationDisplayItemsProviderFunc)}_{viewModel.ViewModelKey}",
-				null,
+        await TextEditorService.Post(
+                viewModel.ResourceUri,
+                viewModel.ViewModelKey,
                 TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
                     model.ResourceUri,
                     viewModel.ViewModelKey,

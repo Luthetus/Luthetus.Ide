@@ -1,24 +1,24 @@
 using Fluxor;
+using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Notifications.States;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.Ide.RazorLib.InputFiles.Models;
-using Luthetus.Common.RazorLib.Dynamics.Models;
-using Luthetus.Common.RazorLib.Notifications.Models;
-using Luthetus.Common.RazorLib.Notifications.States;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Collections.Immutable;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.Ide.RazorLib.Editors.Models;
 
@@ -128,10 +128,9 @@ public class LuthetusIdeEditorBackgroundTaskApi
 
             _textEditorService.ModelApi.RegisterCustom(model);
 
-            await _textEditorService.PostSimpleBatch(
-                nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
-                string.Empty,
-				null,
+            await _textEditorService.Post(
+                model.ResourceUri,
+                Key<TextEditorViewModel>.Empty,
                 async editContext =>
                 {
                     await _textEditorService.ModelApi.AddPresentationModelFactory(
@@ -200,10 +199,9 @@ public class LuthetusIdeEditorBackgroundTaskApi
             registerViewModelArgs.ResourceUri.Value,
             false);
 
-        await _textEditorService.PostSimpleBatch(
-            nameof(TryRegisterViewModelFunc),
-            string.Empty,
-			null,
+        await _textEditorService.Post(
+            registerViewModelArgs.ResourceUri,
+            viewModelKey,
             _textEditorService.ViewModelApi.WithValueFactory(
                 viewModelKey,
                 textEditorViewModel =>
@@ -233,10 +231,9 @@ public class LuthetusIdeEditorBackgroundTaskApi
                 {
                     if (writtenDateTime is not null)
                     {
-                        await _textEditorService.PostSimpleBatch(
-                            nameof(HandleOnSaveRequested),
-                            string.Empty,
-							null,
+                        await _textEditorService.Post(
+                            innerTextEditor.ResourceUri,
+                            Key<TextEditorViewModel>.Empty,
                             _textEditorService.ModelApi.SetResourceDataFactory(
                                 innerTextEditor.ResourceUri,
                                 writtenDateTime.Value));
@@ -362,10 +359,9 @@ public class LuthetusIdeEditorBackgroundTaskApi
                                                 .ReadAllTextAsync(inputFileAbsolutePathString)
                                                 .ConfigureAwait(false);
 
-                                            await _textEditorService.PostSimpleBatch(
-                                                nameof(CheckIfContentsWereModifiedAsync),
-                                                string.Empty,
-												null,
+                                            await _textEditorService.Post(
+                                                textEditorModel.ResourceUri,
+                                                Key<TextEditorViewModel>.Empty,
                                                 async editContext =>
                                                 {
                                                     await _textEditorService.ModelApi

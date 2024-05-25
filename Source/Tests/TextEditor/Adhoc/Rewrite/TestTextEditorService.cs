@@ -3,7 +3,10 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
@@ -147,17 +150,19 @@ public class TestTextEditorService : ITextEditorService
 		return _backgroundTaskService.EnqueueAsync(_backgroundTask);
 	}
 
-	public Task Post(ITextEditorTask textEditorTask)
+	public Task Post(
+		ResourceUri resourceUri,
+		Key<TextEditorCursor> cursorKey,
+		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
+		TextEditorEdit edit)
 	{
 		throw new NotImplementedException();
 	}
 
-    public Task PostSimpleBatch(
-        string name,
-        string identifier,
-		string? redundancy,
-        TextEditorEdit textEditorEdit,
-        TimeSpan? throttleTimeSpan = null)
+	public Task Post(
+		ResourceUri resourceUri,
+		Key<TextEditorViewModel> viewModelKey,
+		TextEditorEdit edit)
 	{
 		throw new NotImplementedException();
 	}

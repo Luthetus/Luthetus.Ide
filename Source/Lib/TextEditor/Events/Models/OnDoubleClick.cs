@@ -9,7 +9,7 @@ using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public class OnDoubleClick : ITextEditorTask
+public class OnDoubleClick : ITextEditorTask, ITextEditorWork
 {
     private readonly TextEditorEvents _events;
 
@@ -36,7 +36,15 @@ public class OnDoubleClick : ITextEditorTask
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
-    public TimeSpan ThrottleTimeSpan => TextEditorEvents.ThrottleDelayDefault;
+	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Complex;
+	public Key<TextEditorCursor> CursorKey { get; }
+
+	public TimeSpan ThrottleTimeSpan => TextEditorEvents.ThrottleDelayDefault;
+
+	public Task Invoke(IEditContext editContext)
+	{
+		return InvokeWithEditContext(editContext);
+	}
 
     public async Task InvokeWithEditContext(IEditContext editContext)
     {

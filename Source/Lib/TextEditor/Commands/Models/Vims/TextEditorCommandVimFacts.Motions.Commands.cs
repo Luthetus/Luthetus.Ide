@@ -12,10 +12,9 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                return commandArgs.TextEditorService.PostSimpleBatch(
-                    nameof(Word),
-                    string.Empty,
-					null,
+                return commandArgs.TextEditorService.Post(
+                    commandArgs.ModelResourceUri,
+                    commandArgs.ViewModelKey,
                     WordFactory(commandArgs));
             })
         {
@@ -32,10 +31,9 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                return commandArgs.TextEditorService.PostSimpleBatch(
-                    nameof(End),
-                    string.Empty,
-					null,
+                return commandArgs.TextEditorService.Post(
+                    commandArgs.ModelResourceUri,
+                    commandArgs.ViewModelKey,
                     EndFactory(commandArgs));
             })
         {
@@ -52,10 +50,9 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                return commandArgs.TextEditorService.PostSimpleBatch(
-                    nameof(Back),
-                    string.Empty,
-					null,
+                return commandArgs.TextEditorService.Post(
+                    commandArgs.ModelResourceUri,
+                    commandArgs.ViewModelKey,
                     BackFactory(commandArgs));
             })
         {
@@ -77,10 +74,9 @@ public static partial class TextEditorCommandVimFacts
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                     commandArgs.InnerCommand = innerCommand;
 
-                    return commandArgs.TextEditorService.PostSimpleBatch(
-                        nameof(GetVisualFactory),
-                        string.Empty,
-						null,
+                    return commandArgs.TextEditorService.Post(
+                        commandArgs.ModelResourceUri,
+                    	commandArgs.ViewModelKey,
                         VisualFactory(commandArgs));
                 })
             {
@@ -105,10 +101,9 @@ public static partial class TextEditorCommandVimFacts
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                     commandArgs.InnerCommand = innerCommand;
 
-                    return commandArgs.TextEditorService.PostSimpleBatch(
-                        nameof(GetVisualLineFactory),
-                        string.Empty,
-						null,
+                    return commandArgs.TextEditorService.Post(
+                        commandArgs.ModelResourceUri,
+                    	commandArgs.ViewModelKey,
                         VisualLineFactory(commandArgs));
                 })
             {

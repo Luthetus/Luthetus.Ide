@@ -1,4 +1,6 @@
 using Fluxor;
+using System.Collections.Immutable;
+using System.Runtime.InteropServices;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -6,6 +8,11 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.FindAlls.States;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
@@ -18,13 +25,6 @@ using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.FindAlls.States;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using System.Collections.Immutable;
-using System.Runtime.InteropServices;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Models;
@@ -146,10 +146,9 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 
         if (solutionTextEditorModel is not null)
         {
-            await _textEditorService.PostSimpleBatch(
-                nameof(Website_AddExistingProjectToSolutionAsync),
-                string.Empty,
-				null,
+            await _textEditorService.Post(
+                solutionTextEditorModel.ResourceUri,
+                Key<TextEditorViewModel>.Empty,
                 _textEditorService.ModelApi.ReloadFactory(
                     solutionTextEditorModel.ResourceUri,
                     outDotNetSolutionModel.SolutionFileContents,

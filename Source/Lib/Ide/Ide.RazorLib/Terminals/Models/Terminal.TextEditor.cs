@@ -43,10 +43,9 @@ public partial class Terminal
 
         _textEditorService.ModelApi.RegisterCustom(model);
 
-        await _textEditorService.PostSimpleBatch(
-            nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
-            string.Empty,
-			null,
+        await _textEditorService.Post(
+            model.ResourceUri,
+            TextEditorViewModelKey,
             async editContext =>
             {
                 await _textEditorService.ModelApi.AddPresentationModelFactory(
@@ -82,10 +81,9 @@ public partial class Terminal
             FindOverlayPresentationFacts.PresentationKey,
         }.ToImmutableArray();
 
-        await _textEditorService.PostSimpleBatch(
-            nameof(Terminal),
-            string.Empty,
-			null,
+        await _textEditorService.Post(
+            ResourceUri,
+            TextEditorViewModelKey,
             _textEditorService.ViewModelApi.WithValueFactory(
                 TextEditorViewModelKey,
                 textEditorViewModel => textEditorViewModel with
@@ -93,10 +91,9 @@ public partial class Terminal
                         FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
                     }));
 
-        await _textEditorService.PostSimpleBatch(
-            nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
-            string.Empty,
-			null,
+        await _textEditorService.Post(
+            ResourceUri,
+            TextEditorViewModelKey,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -140,10 +137,9 @@ public partial class Terminal
 
     public async Task WriteWorkingDirectory(bool prependNewLine = false)
     {
-        await _textEditorService.PostSimpleBatch(
-            nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
-            string.Empty,
-			null,
+        await _textEditorService.Post(
+            ResourceUri,
+            TextEditorViewModelKey,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -189,10 +185,9 @@ public partial class Terminal
     
     public async Task MoveCursorToEnd()
     {
-        await _textEditorService.PostSimpleBatch(
-            nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
-            string.Empty,
-			null,
+        await _textEditorService.Post(
+            ResourceUri,
+            TextEditorViewModelKey,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -219,10 +214,9 @@ public partial class Terminal
 
     public async Task ClearTerminal()
     {
-        await _textEditorService.PostSimpleBatch(
-            nameof(ClearTerminal),
-            string.Empty,
-			null,
+        await _textEditorService.Post(
+            ResourceUri,
+            TextEditorViewModelKey,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);

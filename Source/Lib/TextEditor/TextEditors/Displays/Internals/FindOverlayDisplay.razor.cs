@@ -46,10 +46,9 @@ public partial class FindOverlayDisplay : ComponentBase
             {
                 await _throttleInputValueChange.PushEvent(async _ =>
                 {
-                    await TextEditorService.PostSimpleBatch(
-                        nameof(FindOverlayDisplay),
-                        string.Empty,
-						null,
+                    await TextEditorService.Post(
+                        RenderBatch.ViewModel.ResourceUri,
+						RenderBatch.ViewModel.ViewModelKey,
                         async editContext =>
                         {
                             var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
@@ -126,10 +125,9 @@ public partial class FindOverlayDisplay : ComponentBase
                 .FocusHtmlElementById(RenderBatch.ViewModel.PrimaryCursorContentId)
                 .ConfigureAwait(false);
 
-            await TextEditorService.PostSimpleBatch(
-                nameof(FindOverlayDisplay),
-                nameof(FindOverlayDisplay),
-				null,
+            await TextEditorService.Post(
+                RenderBatch.ViewModel.ResourceUri,
+                RenderBatch.ViewModel.ViewModelKey,
                 async editContext =>
                 {
                     var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
@@ -238,10 +236,9 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private async Task HandleActiveIndexMatchedTextSpanChanged()
     {
-        await TextEditorService.PostSimpleBatch(
-            nameof(HandleActiveIndexMatchedTextSpanChanged),
-            string.Empty,
-			null,
+        await TextEditorService.Post(
+            RenderBatch.ViewModel.ResourceUri,
+            RenderBatch.ViewModel.ViewModelKey,
             async editContext =>
             {
                 var localActiveIndexMatchedTextSpan = _activeIndexMatchedTextSpan;

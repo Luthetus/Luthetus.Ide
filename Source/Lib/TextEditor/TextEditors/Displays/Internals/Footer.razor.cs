@@ -28,10 +28,9 @@ public partial class Footer : ComponentBase
 
         if (Enum.TryParse<LineEndKind>(rowEndingKindString, out var rowEndingKind))
         {
-            await TextEditorService.PostSimpleBatch(
-                    nameof(TextEditorService.ModelApi.SetUsingLineEndKindFactory),
-                    nameof(TextEditorService.ModelApi.SetUsingLineEndKindFactory),
-					null,
+            await TextEditorService.Post(
+                    viewModel.ResourceUri,
+                    viewModel.ViewModelKey,
                     TextEditorService.ModelApi.SetUsingLineEndKindFactory(
                         viewModel.ResourceUri,
                         rowEndingKind))
