@@ -13,20 +13,20 @@ using Luthetus.TextEditor.RazorLib.Commands.Models;
 
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
-public class TextEditorWorkWheel : ITextEditorWork
+public class TextEditorWorkScrollHorizontal : ITextEditorWork
 {
-	public TextEditorWorkWheel(
+	public TextEditorWorkScrollHorizontal(
 		ResourceUri resourceUri,
 		Key<TextEditorCursor> cursorKey,
 		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
-		WheelEventArgs wheelEventArgs,
+		double scrollLeft,
 		TextEditorEvents events,
 		Key<TextEditorViewModel> viewModelKey)
 	{
 		ResourceUri = resourceUri;
 		CursorKey = cursorKey;
 		GetCursorFunc = getCursorFunc;
-		WheelEventArgs = wheelEventArgs;
+		ScrollLeft = scrollLeft;
 		Events = events;
 		ViewModelKey = viewModelKey;
 	}
@@ -61,7 +61,7 @@ public class TextEditorWorkWheel : ITextEditorWork
 	/// </summary>
 	public Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> GetCursorFunc { get; }
 	
-	public WheelEventArgs WheelEventArgs { get; }
+	public double ScrollLeft { get; }
 
 	public CommandNoType? Command { get; private set; }
 
@@ -69,11 +69,11 @@ public class TextEditorWorkWheel : ITextEditorWork
 
 	public ITextEditorWork? BatchOrDefault(
 		IEditContext editContext,
-		TextEditorWorkWheel oldWorkWheel)
+		TextEditorWorkScrollHorizontal oldWorkScrollHorizontal)
 	{
-		// If this method changes from acceping a 'TextEditorWorkWheel' to an 'ITextEditorWork'
+		// If this method changes from acceping a 'TextEditorWorkMouseMove' to an 'ITextEditorWork'
 		// Then it is vital that this pattern matching is performed.
-		if (oldWorkWheel is TextEditorWorkWheel)
+		if (oldWorkScrollHorizontal is TextEditorWorkScrollHorizontal)
 			return this;
 
 		return null;
@@ -93,17 +93,8 @@ public class TextEditorWorkWheel : ITextEditorWork
 			CursorKey,
 			GetCursorFunc);
 
-		if (WheelEventArgs.ShiftKey)
-        {
-            return editContext.TextEditorService.ViewModelApi
-                .MutateScrollHorizontalPositionFactory(ViewModelKey, WheelEventArgs.DeltaY)
-                .Invoke(editContext);
-        }
-        else
-        {
-            return editContext.TextEditorService.ViewModelApi
-                .MutateScrollVerticalPositionFactory(ViewModelKey, WheelEventArgs.DeltaY)
-                .Invoke(editContext);
-        }
+		return editContext.TextEditorService.ViewModelApi
+            .SetScrollPositionFactory(ViewModelKey, ScrollLeft, null)
+            .Invoke(editContext);
 	}
 }

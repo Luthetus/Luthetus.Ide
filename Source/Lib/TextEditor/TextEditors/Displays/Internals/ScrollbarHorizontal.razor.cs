@@ -169,7 +169,10 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
                     RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.Width;
             }
 
-			var throttleEventOnScrollHorizontal = new OnScrollHorizontal(
+			var workScrollHorizontal = new TextEditorWorkScrollHorizontal(
+				RenderBatch.ViewModel.ResourceUri,
+				Key<TextEditorCursor>.Empty,
+				null,
 				scrollLeft,
 				RenderBatch.Events,
 				RenderBatch.ViewModel.ViewModelKey);
