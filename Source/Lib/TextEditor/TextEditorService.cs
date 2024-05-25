@@ -210,7 +210,11 @@ public partial class TextEditorService : ITextEditorService
 		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
 		TextEditorEdit edit)
 	{
-		throw new NotImplementedException();
+		return Post(new TextEditorWorkComplex(
+			resourceUri,
+			cursorKey,
+			getCursorFunc,
+			edit));
 	}
 
 	public Task Post(
@@ -218,7 +222,10 @@ public partial class TextEditorService : ITextEditorService
 		Key<TextEditorViewModel> viewModelKey,
 		TextEditorEdit edit)
 	{
-		throw new NotImplementedException();
+		return Post(new TextEditorWorkComplex(
+			resourceUri,
+			viewModelKey,
+			edit));
 	}
 
     /// <summary>
