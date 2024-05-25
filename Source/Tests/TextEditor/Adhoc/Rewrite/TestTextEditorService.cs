@@ -25,7 +25,7 @@ public class TestTextEditorService : ITextEditorService
 {
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly IDispatcher _dispatcher;
-	private readonly object _lockBackgroundTaskTryReusingSameInstance = new();
+	private readonly SemaphoreSlim _backgroundTaskTryReusingSameInstanceSemaphoreSlim = new(1, 1);
 
 	public TestTextEditorService(
 		IBackgroundTaskService backgroundTaskService,
@@ -139,15 +139,22 @@ public class TestTextEditorService : ITextEditorService
         }
 	}
 
-	public Task Post(ITextEditorWork work)
+	public async Task Post(ITextEditorWork work)
 	{
-		lock (_lockBackgroundTaskTryReusingSameInstance)
+		try
 		{
-			if (_backgroundTask is null || !_backgroundTask.TryReusingSameInstance(work))
-				_backgroundTask = new(this, work);
-		}
+			await _backgroundTaskTryReusingSameInstanceSemaphoreSlim.WaitAsync();
 
-		return _backgroundTaskService.EnqueueAsync(_backgroundTask);
+			if (_backgroundTask is null || !_backgroundTask.TryReusingSameInstance(work))
+			{
+				_backgroundTask = new(this, work);
+				await _backgroundTaskService.EnqueueAsync(_backgroundTask);
+			}
+		}
+		finally
+		{
+			_backgroundTaskTryReusingSameInstanceSemaphoreSlim.Release();
+		}
 	}
 
 	public Task Post(
@@ -156,7 +163,11 @@ public class TestTextEditorService : ITextEditorService
 		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
 		TextEditorEdit edit)
 	{
-		throw new NotImplementedException();
+		return Post(new TextEditorWorkComplex(
+			resourceUri,
+			cursorKey,
+			getCursorFunc,
+			edit));
 	}
 
 	public Task Post(
@@ -164,6 +175,9 @@ public class TestTextEditorService : ITextEditorService
 		Key<TextEditorViewModel> viewModelKey,
 		TextEditorEdit edit)
 	{
-		throw new NotImplementedException();
+		return Post(new TextEditorWorkComplex(
+			resourceUri,
+			viewModelKey,
+			edit));
 	}
 }

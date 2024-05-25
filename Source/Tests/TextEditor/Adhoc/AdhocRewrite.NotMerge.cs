@@ -32,7 +32,7 @@ public partial class AdhocRewrite
 			out var backgroundTaskWorker,
 			out var serviceProvider);
 
-		var content = new StringBuilder("abc123");
+		var content = "abc123";
 
 		await textEditorService.Post(new TextEditorWorkInsertion(
 			resourceUri,
@@ -79,7 +79,7 @@ public partial class AdhocRewrite
 			out var backgroundTaskWorker,
 			out var serviceProvider);
 
-		var content = new StringBuilder("abc123");
+		var content = "abc123";
 
 		await textEditorService.Post(new TextEditorWorkInsertion(
 			resourceUri,
@@ -126,7 +126,7 @@ public partial class AdhocRewrite
 			out var backgroundTaskWorker,
 			out var serviceProvider);
 
-		var content = new StringBuilder("abc123");
+		var content = "abc123";
 
 		await textEditorService.Post(new TextEditorWorkDeletion(
 			resourceUri,
@@ -173,7 +173,7 @@ public partial class AdhocRewrite
 			out var backgroundTaskWorker,
 			out var serviceProvider);
 
-		var content = new StringBuilder("abc123");
+		var content = "abc123";
 
 		await textEditorService.Post(new TextEditorWorkDeletion(
 			resourceUri,

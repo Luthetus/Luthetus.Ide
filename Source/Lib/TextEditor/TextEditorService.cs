@@ -34,7 +34,7 @@ public partial class TextEditorService : ITextEditorService
     /// </summary>
     public static readonly Key<TextEditorAuthenticatedAction> AuthenticatedActionKey = new(Guid.Parse("13831968-9b10-46d1-8d47-842b78238d6a"));
 
-	private readonly object _lockBackgroundTaskTryReusingSameInstance = new();
+	private readonly SemaphoreSlim _backgroundTaskTryReusingSameInstanceSemaphoreSlim = new(1, 1);
 
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
@@ -193,16 +193,23 @@ public partial class TextEditorService : ITextEditorService
 		}
 	}
 
-	public Task Post(ITextEditorWork work)
-    {
-        lock (_lockBackgroundTaskTryReusingSameInstance)
+	public async Task Post(ITextEditorWork work)
+	{
+		try
 		{
-			if (_backgroundTask is null || !_backgroundTask.TryReusingSameInstance(work))
-				_backgroundTask = new(this, work);
-		}
+			await _backgroundTaskTryReusingSameInstanceSemaphoreSlim.WaitAsync();
 
-		return _backgroundTaskService.EnqueueAsync(_backgroundTask);
-    }
+			if (_backgroundTask is null || !_backgroundTask.TryReusingSameInstance(work))
+			{
+				_backgroundTask = new(this, work);
+				await _backgroundTaskService.EnqueueAsync(_backgroundTask);
+			}
+		}
+		finally
+		{
+			_backgroundTaskTryReusingSameInstanceSemaphoreSlim.Release();
+		}
+	}
 
     public Task Post(
 		ResourceUri resourceUri,

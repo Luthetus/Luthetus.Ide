@@ -38,7 +38,7 @@ public partial class AdhocRewrite
 			out var backgroundTaskWorker,
 			out var serviceProvider);
 
-		var content = new StringBuilder("abc123");
+		var content = "abc123";
 
 		await textEditorService.Post(new TextEditorWorkInsertion(
 			resourceUri,
@@ -87,14 +87,14 @@ public partial class AdhocRewrite
 			resourceUri,
 			cursor.Key,
 			(editContext, cursorKey) => cursor,
-			new StringBuilder("abc"),
+			"abc",
 			Key<TextEditorViewModel>.Empty));
 
 		await textEditorService.Post(new TextEditorWorkInsertion(
 			resourceUri,
 			cursor.Key,
 			(editContext, cursorKey) => cursor,
-			new StringBuilder("123"),
+			"123",
 			Key<TextEditorViewModel>.Empty));
 
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());

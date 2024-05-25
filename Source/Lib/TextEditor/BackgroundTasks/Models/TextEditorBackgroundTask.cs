@@ -26,10 +26,11 @@ public class TextEditorBackgroundTask : IBackgroundTask
 	/// </summary>
 	public Key<BackgroundTask> BackgroundTaskKey { get; }
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public string Name { get; }
+    public string Name => nameof(TextEditorBackgroundTask) + ' ' + _workList.Count;
     public Task? WorkProgress { get; }
 	public TimeSpan ThrottleTimeSpan { get; }
 	public bool WasEnqueued { get; private set; }
+	public bool IsCompleted { get; private set; }
 
 	/// <summary>
 	/// The group of properties which provide data on which
@@ -40,12 +41,15 @@ public class TextEditorBackgroundTask : IBackgroundTask
 
 	public bool TryReusingSameInstance(ITextEditorWork downstreamWork)
 	{
+		Console.WriteLine("TryReusingSameInstance");
+
 		var wasBatched = false;
 		var wasAdded = false;
 
 		lock (_lockWork)
 		{
-			if (!WasEnqueued)
+			Console.WriteLine($"if (!WasEnqueued): if ({!WasEnqueued})");
+			if (!WasEnqueued && !IsCompleted)
 			{
 				var precedentWork = _workList.Last();
 	
@@ -113,6 +117,11 @@ public class TextEditorBackgroundTask : IBackgroundTask
 	
 	public async Task HandleEvent(CancellationToken cancellationToken)
 	{
+		lock (_lockWork)
+		{
+			IsCompleted = true;
+		}
+
 		EditContext ??= TextEditorService.OpenEditContext();
 
 		for (var i = 0; i < _workList.Count; i++)
