@@ -410,7 +410,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
 			var workMouseMove = new TextEditorWorkMouseMove(
-                resourceUri,
+                modelResourceUri,
 				Key<TextEditorCursor>.Empty,
 				null,
 				mouseEventArgs,
@@ -432,17 +432,21 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     
     private async Task ReceiveOnWheel(WheelEventArgs wheelEventArgs)
     {
+		var modelResourceUri = GetModel()?.ResourceUri;
         var viewModelKey = GetViewModel()?.ViewModelKey;
 
-        if (viewModelKey is null)
+        if (modelResourceUri is null || viewModelKey is null)
             return;
 
-		var onWheel = new OnWheel(
-            wheelEventArgs,
+		var workWheel = new TextEditorWorkWheel(
+            modelResourceUri,
+			Key<TextEditorCursor>.Empty,
+			null,
+			wheelEventArgs,
             _events,
             viewModelKey.Value);
 
-        await TextEditorService.Post(onWheel).ConfigureAwait(false);
+        await TextEditorService.Post(workWheel).ConfigureAwait(false);
     }
 
     private Task ReceiveOnTouchStartAsync(TouchEventArgs touchEventArgs)
