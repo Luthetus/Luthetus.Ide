@@ -34,6 +34,10 @@ public interface ITextEditorWork
 
 	public Task Invoke(IEditContext editContext);
 
+	public ITextEditorWork? BatchOrDefault(
+		IEditContext editContext,
+		ITextEditorWork precedentWork);
+
 	/// <summary>
 	/// There is a mismatch in how I interact with the text editor from:
 	///     -A unit test

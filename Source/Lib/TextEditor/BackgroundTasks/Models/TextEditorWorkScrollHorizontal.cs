@@ -69,12 +69,16 @@ public class TextEditorWorkScrollHorizontal : ITextEditorWork
 
 	public ITextEditorWork? BatchOrDefault(
 		IEditContext editContext,
-		TextEditorWorkScrollHorizontal oldWorkScrollHorizontal)
+		ITextEditorWork precedentWork)
 	{
-		// If this method changes from acceping a 'TextEditorWorkScrollHorizontal' to an 'ITextEditorWork'
-		// Then it is vital that this pattern matching is performed.
-		if (oldWorkScrollHorizontal is TextEditorWorkScrollHorizontal)
+		if (precedentWork.CursorKey == CursorKey &&
+			precedentWork.ViewModelKey == ViewModelKey &&
+			precedentWork is TextEditorWorkScrollHorizontal)
+		{
+			// Replace the precedentWork with the more recent event
+			// because the events are redundant when consecutive.
 			return this;
+		}
 
 		return null;
 	}

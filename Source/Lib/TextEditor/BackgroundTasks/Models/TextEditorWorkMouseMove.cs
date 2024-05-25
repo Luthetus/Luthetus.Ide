@@ -69,12 +69,16 @@ public class TextEditorWorkMouseMove : ITextEditorWork
 
 	public ITextEditorWork? BatchOrDefault(
 		IEditContext editContext,
-		TextEditorWorkMouseMove oldWorkMouseMove)
+		ITextEditorWork precedentWork)
 	{
-		// If this method changes from acceping a 'TextEditorWorkMouseMove' to an 'ITextEditorWork'
-		// Then it is vital that this pattern matching is performed.
-		if (oldWorkMouseMove is TextEditorWorkMouseMove)
+		if (precedentWork.CursorKey == CursorKey &&
+			precedentWork.ViewModelKey == ViewModelKey &&
+			precedentWork is TextEditorWorkMouseMove)
+		{
+			// Replace the precedentWork with the more recent event
+			// because the events are redundant when consecutive.
 			return this;
+		}
 
 		return null;
 	}
@@ -93,13 +97,22 @@ public class TextEditorWorkMouseMove : ITextEditorWork
 			CursorKey,
 			GetCursorFunc);
 
+		// Hacky(Mild, Medium, [Hot]) (2024-05-25)
+		//
+		// # In other places this code is medium but for on mouse move it feels
+		// # more hacky considering the rate at which he event is firing.
 		var rowAndColumnIndex = await Events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
 
         primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
         primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
         primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 
-        Events.CursorPauseBlinkAnimationAction.Invoke();
+		// Hacky(Mild, Medium, [Hot]) (2024-05-25)
+		//
+		// # In other places this code is medium but for on mouse move it feels
+		// # more hacky considering the rate at which he event is firing.
+		//
+        // Events.CursorPauseBlinkAnimationAction.Invoke();
 
         primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 	}

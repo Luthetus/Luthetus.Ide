@@ -69,12 +69,16 @@ public class TextEditorWorkDoubleClick : ITextEditorWork
 
 	public ITextEditorWork? BatchOrDefault(
 		IEditContext editContext,
-		TextEditorWorkDoubleClick oldWorkDoubleClick)
+		ITextEditorWork precedentWork)
 	{
-		// If this method changes from acceping a 'TextEditorWorkDoubleClick' to an 'ITextEditorWork'
-		// Then it is vital that this pattern matching is performed.
-		if (oldWorkDoubleClick is TextEditorWorkDoubleClick)
+		if (precedentWork.CursorKey == CursorKey &&
+			precedentWork.ViewModelKey == ViewModelKey &&
+			precedentWork is TextEditorWorkDoubleClick)
+		{
+			// Replace the precedentWork with the more recent event
+			// because the events are redundant when consecutive.
 			return this;
+		}
 
 		return null;
 	}
@@ -101,6 +105,8 @@ public class TextEditorWorkDoubleClick : ITextEditorWork
         if (MouseEventArgs.ShiftKey)
             return; // Do not expand selection if user is holding shift
 
+		// Hacky(Mild, [Medium], Hot) (2024-05-25)
+		//
         var rowAndColumnIndex = await Events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
 
         var lowerColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(

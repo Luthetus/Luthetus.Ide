@@ -63,6 +63,13 @@ public class TextEditorWorkComplex : ITextEditorWork
 	
 	public TextEditorEdit TextEditorEdit { get; }
 
+	public ITextEditorWork? BatchOrDefault(
+		IEditContext editContext,
+		ITextEditorWork precedentWork)
+	{
+		return null;
+	}
+
 	public Task Invoke(IEditContext editContext)
 	{
 		return TextEditorEdit.Invoke(editContext);

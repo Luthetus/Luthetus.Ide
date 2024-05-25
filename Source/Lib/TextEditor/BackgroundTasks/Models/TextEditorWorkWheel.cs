@@ -69,13 +69,8 @@ public class TextEditorWorkWheel : ITextEditorWork
 
 	public ITextEditorWork? BatchOrDefault(
 		IEditContext editContext,
-		TextEditorWorkWheel oldWorkWheel)
+		ITextEditorWork precedentWork)
 	{
-		// If this method changes from acceping a 'TextEditorWorkWheel' to an 'ITextEditorWork'
-		// Then it is vital that this pattern matching is performed.
-		if (oldWorkWheel is TextEditorWorkWheel)
-			return this;
-
 		return null;
 	}
 

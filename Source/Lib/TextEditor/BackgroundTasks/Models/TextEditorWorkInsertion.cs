@@ -13,15 +13,23 @@ public class TextEditorWorkInsertion : ITextEditorWork
 		ResourceUri resourceUri,
 		Key<TextEditorCursor> cursorKey,
 		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
-		StringBuilder content,
+		string content,
 		Key<TextEditorViewModel> viewModelKey)
 	{
 		ResourceUri = resourceUri;
 		CursorKey = cursorKey;
 		GetCursorFunc = getCursorFunc;
-		Content = content;
+		_content = content;
 		ViewModelKey = viewModelKey;
 	}
+	
+	/// <summary>
+	/// The string that was provided to the constructor.
+	/// If no batching occurs, then this field is the Content, otherwise a StringBuilder
+	/// will be lazily constructed, and then used as the Content from then on.
+	/// </summary>
+	private string _content;
+	private StringBuilder? _contentBuilder;
 
 	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Insertion;
 
@@ -55,13 +63,25 @@ public class TextEditorWorkInsertion : ITextEditorWork
 	
 	/// <summary>
 	/// The content to insert.
-	///
-	/// If a struct contains a reference type does that invalidate the
-	/// optimization I'm trying to achieve with using a struct?
-	///
-	/// Does this even compile?
 	/// </summary>
-	public StringBuilder Content { get; }
+	public string Content => _contentBuilder.ToString() ??= _content;
+
+	public StringBuilder ContentBuilder => _contentBuilder ??= new(Content);
+
+	public ITextEditorWork? BatchOrDefault(
+		IEditContext editContext,
+		ITextEditorWork precedentWork)
+	{
+		if (precedentWork.TextEditorWorkKind == TextEditorWorkKind.Insertion &&
+			precedentWork.CursorKey == CursorKey &&
+			precedentWork.ViewModelKey == ViewModelKey)
+		{
+			((TextEditorWorkInsertion)precedentWork).ContentBuilder.Append(Content);
+			return precedentWork;
+		}
+		
+		return null;
+	}
 
 	public Task Invoke(IEditContext editContext)
 	{

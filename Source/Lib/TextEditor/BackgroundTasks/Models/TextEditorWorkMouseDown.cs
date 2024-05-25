@@ -69,12 +69,16 @@ public class TextEditorWorkMouseDown : ITextEditorWork
 
 	public ITextEditorWork? BatchOrDefault(
 		IEditContext editContext,
-		TextEditorWorkMouseDown oldWorkMouseDown)
+		ITextEditorWork precedentWork)
 	{
-		// If this method changes from acceping a 'TextEditorWorkMouseDown' to an 'ITextEditorWork'
-		// Then it is vital that this pattern matching is performed.
-		if (oldWorkMouseDown is TextEditorWorkMouseDown)
+		if (precedentWork.CursorKey == CursorKey &&
+			precedentWork.ViewModelKey == ViewModelKey &&
+			precedentWork is TextEditorWorkMouseDown)
+		{
+			// Replace the precedentWork with the more recent event
+			// because the events are redundant when consecutive.
 			return this;
+		}
 
 		return null;
 	}
@@ -100,19 +104,26 @@ public class TextEditorWorkMouseDown : ITextEditorWork
         if ((MouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
             return; // Not pressing the left mouse button so assume ContextMenu is desired result.
 
-        await Events.CursorSetShouldDisplayMenuAsyncFunc.Invoke(MenuKind.None, false).ConfigureAwait(false);
+		// Hacky(Mild, Medium, [Hot]) (2024-05-25)
+		//
+		// await Events.CursorSetShouldDisplayMenuAsyncFunc.Invoke(MenuKind.None, false).ConfigureAwait(false);
 
         // Remember the current cursor position prior to doing anything
         var inRowIndex = primaryCursorModifier.LineIndex;
         var inColumnIndex = primaryCursorModifier.ColumnIndex;
 
-        // Move the cursor position
+        
+		// Hacky(Mild, [Medium], Hot) (2024-05-25)
+		//
+		// Move the cursor position
         var rowAndColumnIndex = await Events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
         primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
         primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
         primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 
-        Events.CursorPauseBlinkAnimationAction.Invoke();
+		// Hacky(Mild, Medium, [Hot]) (2024-05-25)
+		//
+        // Events.CursorPauseBlinkAnimationAction.Invoke();
 
         var cursorPositionIndex = modelModifier.GetPositionIndex(new TextEditorCursor(
             rowAndColumnIndex.rowIndex,

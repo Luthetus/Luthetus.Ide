@@ -61,6 +61,21 @@ public class TextEditorWorkDeletion : ITextEditorWork
 
 	public TextEditorModelModifier.DeleteKind DeleteKind { get; }
 
+	public ITextEditorWork? BatchOrDefault(
+		IEditContext editContext,
+		ITextEditorWork precedentWork)
+	{
+		if (precedentWork.TextEditorWorkKind == TextEditorWorkKind.Deletion &&
+			precedentWork.CursorKey == CursorKey &&
+			precedentWork.ViewModelKey == ViewModelKey)
+		{
+			((TextEditorWorkDeletion)precedentWork).ColumnCount += ColumnCount;
+			return precedentWork;
+		}
+		
+		return null;
+	}
+
 	public Task Invoke(IEditContext editContext)
 	{
 		var modelModifier = editContext.GetModelModifier(ResourceUri);

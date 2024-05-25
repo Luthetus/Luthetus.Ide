@@ -177,70 +177,77 @@ Goals (2024-05-24)
 
 	public ITextEditorWork? BatchOrDefault(
 		IEditContext editContext,
-		TextEditorWorkKeyDown oldWorkKeyDown)
+		ITextEditorWork precedentWork)
 	{
-		var (cursorModifier, cursorModifierBag) = ITextEditorWork.GetCursorModifierAndBagTuple(
-			editContext,
-			ViewModelKey,
-			CursorKey,
-			GetCursorFunc);
-
-        if (cursorModifier is null)
-            return null;
-
-		// Step 1:
-		// ------
-		// Determine whether 'this' is simplifiable to 'TextEditorWorkInsertion'
+		if (precedentWork.CursorKey == CursorKey &&
+			precedentWork.ViewModelKey == ViewModelKey &&
+			precedentWork is TextEditorWorkKeyDown)
 		{
-            var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
+			var (cursorModifier, cursorModifierBag) = ITextEditorWork.GetCursorModifierAndBagTuple(
+				editContext,
+				ViewModelKey,
+				CursorKey,
+				GetCursorFunc);
 
-            KeyboardEventArgsKind = TextEditorWorkUtils.GetKeyboardEventArgsKind(
-                Events.Options,
-                KeyboardEventArgs,
-                hasSelection,
-                editContext.TextEditorService,
-                out var localCommand);
-
-            Command = localCommand;
-		}
-
-		// Step 2:
-		// ------
-		// Determine whether 'oldWorkKeyDown' is simplifiable to 'TextEditorWorkInsertion'
-		{
-			var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
-
-            oldWorkKeyDown.KeyboardEventArgsKind = TextEditorWorkUtils.GetKeyboardEventArgsKind(
-                oldWorkKeyDown.Events.Options,
-                oldWorkKeyDown.KeyboardEventArgs,
-                hasSelection,
-                editContext.TextEditorService,
-                out var localCommand);
-
-            Command = localCommand;
-		}
-
-		// Step 3:
-		// ------
-		// If they both simplify to 'TextEditorWorkInsertion',
-		// then return a single instance of 'TextEditorWorkInsertion'
-		// which will insert both keyboard event keys that were pressed.
-		if (KeyboardEventArgsKind == oldWorkKeyDown.KeyboardEventArgsKind)
-		{
-			switch (KeyboardEventArgsKind)
+	        if (cursorModifier is null)
+	            return null;
+	
+			// Step 1:
+			// ------
+			// Determine whether 'this' is simplifiable to 'TextEditorWorkInsertion'
 			{
-				case KeyboardEventArgsKind.Text:
-					return new TextEditorWorkInsertion(
-						ResourceUri,
-						CursorKey,
-						GetCursorFunc,
-						new StringBuilder(oldWorkKeyDown.KeyboardEventArgs.Key + KeyboardEventArgs.Key),
-						ViewModelKey);
+	            var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
+	
+	            KeyboardEventArgsKind = TextEditorWorkUtils.GetKeyboardEventArgsKind(
+	                Events.Options,
+	                KeyboardEventArgs,
+	                hasSelection,
+	                editContext.TextEditorService,
+	                out var localCommand);
+	
+	            Command = localCommand;
 			}
+	
+			// Step 2:
+			// ------
+			// Determine whether 'oldWorkKeyDown' is simplifiable to 'TextEditorWorkInsertion'
+			{
+				var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
+	
+	            oldWorkKeyDown.KeyboardEventArgsKind = TextEditorWorkUtils.GetKeyboardEventArgsKind(
+	                oldWorkKeyDown.Events.Options,
+	                oldWorkKeyDown.KeyboardEventArgs,
+	                hasSelection,
+	                editContext.TextEditorService,
+	                out var localCommand);
+	
+	            Command = localCommand;
+			}
+	
+			// Step 3:
+			// ------
+			// If they both simplify to 'TextEditorWorkInsertion',
+			// then return a single instance of 'TextEditorWorkInsertion'
+			// which will insert both keyboard event keys that were pressed.
+			if (KeyboardEventArgsKind == oldWorkKeyDown.KeyboardEventArgsKind)
+			{
+				switch (KeyboardEventArgsKind)
+				{
+					case KeyboardEventArgsKind.Text:
+						return new TextEditorWorkInsertion(
+							ResourceUri,
+							CursorKey,
+							GetCursorFunc,
+							new StringBuilder(oldWorkKeyDown.KeyboardEventArgs.Key + KeyboardEventArgs.Key),
+							ViewModelKey);
+				}
+			}
+			
+			// Return null because they could not be batched.
+			// This tells the caller to leave the two items as is.
+			return null;
 		}
-		
-		// Return null because they could not be batched.
-		// This tells the caller to leave the two items as is.
+
 		return null;
 	}
 
@@ -308,6 +315,13 @@ Goals (2024-05-24)
 			        cancellationToken: default);
 				break;
 			case KeyboardEventArgsKind.Other:
+				await Events.TextEditorService.ModelApi.HandleKeyboardEventFactory(
+                        ResourceUri,
+                        ViewModelKey,
+                        KeyboardEventArgs,
+                        CancellationToken.None)
+                    .Invoke(editContext)
+                    .ConfigureAwait(false);
 				Console.WriteLine("KeyboardEventArgsKind.Other");
 				break;
 			default:

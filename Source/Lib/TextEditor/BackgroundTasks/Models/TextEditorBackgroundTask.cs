@@ -149,27 +149,36 @@ public class TextEditorBackgroundTask : IBackgroundTask
 	{
 		EditContext ??= TextEditorService.OpenEditContext();
 
-		if (_workList.Count == 2)
+		for (var i = 0; i < _workList.Count; i++)
 		{
-			var oldWork = _workList[0];
-			var newWork = _workList[1];
+			var workCurrent = _workList[i];
 
-			if (oldWork is TextEditorWorkKeyDown oldWorkKeyDown &&
-                newWork is TextEditorWorkKeyDown newWorkKeyDown)
+			ITextEditorWork workDue;
+			
+			while (true)
 			{
-				var batchResult = newWorkKeyDown.BatchOrDefault(EditContext, oldWorkKeyDown);
-
-				if (batchResult is not null)
+				if (i == _workList.Count - 1)
 				{
-					_workList[0] = batchResult;
-					_workList.RemoveAt(1);
+					workDue = workCurrent;
+					break;
+				}
+
+				var workNext = _workList[i + 1];
+				var workBatched = workNext.BatchOrDefault(workCurrent);
+
+				if (workBatched is null)
+				{
+					workDue = workCurrent;
+					break;
+				}
+				else
+				{
+					workCurrent = workBatched;
+					i++;
 				}
 			}
-		}
-
-		foreach (var work in _workList)
-		{
-			await work.Invoke(EditContext).ConfigureAwait(false);
+			
+			workDue.Invoke(EditContext).ConfigureAwait(false);
 		}
 
 		await TextEditorService.CloseEditContext(EditContext);
