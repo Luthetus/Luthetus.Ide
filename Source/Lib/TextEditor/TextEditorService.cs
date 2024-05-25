@@ -204,41 +204,22 @@ public partial class TextEditorService : ITextEditorService
 		return _backgroundTaskService.EnqueueAsync(_backgroundTask);
     }
 
-    public Task PostSimpleBatch(
-        string name,
-        string identifier,
-        string? redundancy,
-        TextEditorEdit textEditorEdit,
-        TimeSpan? throttleTimeSpan = null)
-    {
-        return Post(new SimpleBatchTextEditorTask(
-            $"{name}_sb",
-			identifier,
-			redundancy,
-            textEditorEdit,
-            throttleTimeSpan));
-    }
+    public Task Post(
+		ResourceUri resourceUri,
+		Key<TextEditorCursor> cursorKey,
+		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
+		TextEditorEdit edit)
+	{
+		throw new NotImplementedException();
+	}
 
-    public async Task Post(ITextEditorTask innerTask)
-    {
-        try
-        {
-            var editContext = new TextEditorEditContext(
-                this,
-                AuthenticatedActionKey);
-
-            var textEditorServiceTask = new TextEditorServiceTask(
-                innerTask,
-                editContext,
-                _dispatcher);
-
-            await _backgroundTaskService.EnqueueAsync(textEditorServiceTask).ConfigureAwait(false);
-        }
-        catch (LuthetusTextEditorException e)
-        {
-            Console.WriteLine(e.ToString());
-        }
-    }
+	public Task Post(
+		ResourceUri resourceUri,
+		Key<TextEditorViewModel> viewModelKey,
+		TextEditorEdit edit)
+	{
+		throw new NotImplementedException();
+	}
 
     /// <summary>
     /// I want to batch any scrolling done while within an <see cref="IEditContext"/>.

@@ -9,6 +9,28 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 public class TextEditorWorkComplex : ITextEditorWork
 {
+	public TextEditorWorkComplex(
+		ResourceUri resourceUri,
+		Key<TextEditorCursor> cursorKey,
+		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
+		TextEditorEdit textEditorEdit)
+	{
+		ResourceUri = resourceUri;
+		CursorKey = cursorKey;
+		GetCursorFunc = getCursorFunc;
+		TextEditorEdit = textEditorEdit;
+	}
+
+	public TextEditorWorkComplex(
+		ResourceUri resourceUri,
+		Key<TextEditorViewModel> viewModelKey,
+		TextEditorEdit textEditorEdit)
+	{
+		ResourceUri = resourceUri;
+		ViewModelKey = viewModelKey;
+		TextEditorEdit = textEditorEdit;
+	}
+
 	public TextEditorWorkKind TextEditorWorkKind => TextEditorWorkKind.Complex;
 
 	/// <summary>
@@ -32,8 +54,17 @@ public class TextEditorWorkComplex : ITextEditorWork
 	/// </summary>
 	public Key<TextEditorCursor> CursorKey { get; }
 
+	/// <summary>
+	/// If the cursor is not already registered within the ITextEditorEditContext,
+	/// then invoke this Func, and then register a CursorModifier in the
+	/// ITextEditorEditContext.
+	/// </summary>
+	public Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> GetCursorFunc { get; }
+	
+	public TextEditorEdit TextEditorEdit { get; }
+
 	public Task Invoke(IEditContext editContext)
 	{
-		return Task.CompletedTask;
+		return TextEditorEdit.Invoke(editContext);
 	}
 }

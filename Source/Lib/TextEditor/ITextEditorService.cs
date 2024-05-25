@@ -37,28 +37,48 @@ public partial interface ITextEditorService
 	public IEditContext OpenEditContext();
 	public Task CloseEditContext(IEditContext editContext);
 
-	public Task Post(ITextEditorWork textEditorWork);
+	/// <summary>
+	/// This method wraps the provided work in an instance of
+	/// <see cref="Luthetus.TextEditor.RazorLib.BackgroundTasks.Models.TextEditorBackgroundTask"/>
+	/// and then enqueues the background task on the
+	/// <see cref="Luthetus.Common.RazorLib.BackgroundTasks.Models.IBackgroundTaskService"/>.
+	/// 
+	/// When it is turn for the 'work' to be invoked, a
+	/// <see cref="Luthetus.TextEditor.RazorLib.TextEditors.Models.IEditContext"/>
+	/// will be provided to the 'work'.
+	///
+	/// "Contiguous enqueues" to the
+    /// <see cref="Luthetus.Common.RazorLib.BackgroundTasks.Models.IBackgroundTaskService"/>
+	/// will be batched via a 'foreach' loop at minimum. This 'foreach' loop batching
+	/// is important, because every
+	/// <see cref="Luthetus.TextEditor.RazorLib.BackgroundTasks.Models.TextEditorBackgroundTask"/>
+	/// when finished, will trigger the text editor to re-render.
+	///
+	/// One can implement further batching logic, by creating an implementation of
+	/// <see cref="Luthetus.TextEditor.RazorLib.BackgroundTasks.Models.ITextEditorWork"/>
+	/// </summary>
+	public Task Post(ITextEditorWork work);
 
-    /// <summary>
-    /// This method will create an instance of <see cref="BackgroundTasks.Models.SimpleBatchTextEditorTask"/>,
-    /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
-    /// --- <see cref="BackgroundTasks.Models.SimpleBatchTextEditorTask"/>.cs inheritdoc:<br/><br/>
-    /// <inheritdoc cref="BackgroundTasks.Models.SimpleBatchTextEditorTask"/>
-    /// </summary>
-    public Task PostSimpleBatch(
-        string name,
-        string identifier,
-		string? redundancy,
-        TextEditorEdit textEditorEdit,
-        TimeSpan? throttleTimeSpan = null);
+	/// <summary>
+	/// This method creates an instance of
+	/// <see cref="Luthetus.TextEditor.RazorLib.BackgroundTasks.Models.TextEditorWorkComplex"/>
+	///
+	/// This overload takes 'cursorKey' and 'getCursorFunc' to allow for non-ui cursors.
+	/// </summary>
+	public Task Post(
+		ResourceUri resourceUri,
+		Key<TextEditorCursor> cursorKey,
+		Func<IEditContext, Key<TextEditorCursor>, TextEditorCursor> getCursorFunc,
+		TextEditorEdit edit);
 
-    /// <summary>
-    /// This method creates a <see cref="TextEditorServiceTask"/>
-    /// that will encapsulate the provided innerTask.
-    /// When the queue invokes the encapsulating <see cref="TextEditorServiceTask"/>,
-    /// then the provided innerTask's <see cref="ITextEditorTask.InvokeWithEditContext(IEditContext)"/> will be invoked in turn.
-    /// When the innerTask is finished, the encapsulating <see cref="TextEditorServiceTask"/>
-    /// will update any state that was modified, and trigger re-renders for the UI.
-    /// </summary>
-    public Task Post(ITextEditorTask textEditorTask);
+	/// <summary>
+	/// This method creates an instance of
+	/// <see cref="Luthetus.TextEditor.RazorLib.BackgroundTasks.Models.TextEditorWorkComplex"/>
+	///
+	/// This overload takes 'viewModelKey' and will synchronize state with the UI cursors.
+	/// </summary>
+	public Task Post(
+		ResourceUri resourceUri,
+		Key<TextEditorViewModel> viewModelKey,
+		TextEditorEdit edit);
 }
