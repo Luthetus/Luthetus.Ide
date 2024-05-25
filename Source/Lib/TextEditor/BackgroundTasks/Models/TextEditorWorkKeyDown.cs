@@ -175,13 +175,19 @@ Goals (2024-05-24)
 
 	public TextEditorEvents Events { get; }
 
-	public ITextEditorWork? BatchOrDefault(
+	public ITextEditorWork? BatchEnqueue(
+		ITextEditorWork precedentWork)
+	{
+		return null;
+	}
+
+	public ITextEditorWork? BatchDequeue(
 		IEditContext editContext,
 		ITextEditorWork precedentWork)
 	{
 		if (precedentWork.CursorKey == CursorKey &&
 			precedentWork.ViewModelKey == ViewModelKey &&
-			precedentWork is TextEditorWorkKeyDown)
+			precedentWork is TextEditorWorkKeyDown precedentWorkKeyDown)
 		{
 			var (cursorModifier, cursorModifierBag) = ITextEditorWork.GetCursorModifierAndBagTuple(
 				editContext,
@@ -210,13 +216,13 @@ Goals (2024-05-24)
 	
 			// Step 2:
 			// ------
-			// Determine whether 'oldWorkKeyDown' is simplifiable to 'TextEditorWorkInsertion'
+			// Determine whether 'precedentWorkKeyDown' is simplifiable to 'TextEditorWorkInsertion'
 			{
 				var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
 	
-	            oldWorkKeyDown.KeyboardEventArgsKind = TextEditorWorkUtils.GetKeyboardEventArgsKind(
-	                oldWorkKeyDown.Events.Options,
-	                oldWorkKeyDown.KeyboardEventArgs,
+	            precedentWorkKeyDown.KeyboardEventArgsKind = TextEditorWorkUtils.GetKeyboardEventArgsKind(
+	                precedentWorkKeyDown.Events.Options,
+	                precedentWorkKeyDown.KeyboardEventArgs,
 	                hasSelection,
 	                editContext.TextEditorService,
 	                out var localCommand);
@@ -229,7 +235,7 @@ Goals (2024-05-24)
 			// If they both simplify to 'TextEditorWorkInsertion',
 			// then return a single instance of 'TextEditorWorkInsertion'
 			// which will insert both keyboard event keys that were pressed.
-			if (KeyboardEventArgsKind == oldWorkKeyDown.KeyboardEventArgsKind)
+			if (KeyboardEventArgsKind == precedentWorkKeyDown.KeyboardEventArgsKind)
 			{
 				switch (KeyboardEventArgsKind)
 				{
@@ -238,7 +244,7 @@ Goals (2024-05-24)
 							ResourceUri,
 							CursorKey,
 							GetCursorFunc,
-							new StringBuilder(oldWorkKeyDown.KeyboardEventArgs.Key + KeyboardEventArgs.Key),
+							precedentWorkKeyDown.KeyboardEventArgs.Key + KeyboardEventArgs.Key,
 							ViewModelKey);
 				}
 			}

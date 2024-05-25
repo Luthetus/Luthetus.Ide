@@ -38,7 +38,7 @@ public class TextEditorBackgroundTask : IBackgroundTask
 	public ITextEditorService TextEditorService { get; }
 	public IEditContext? EditContext { get; set; }
 
-	public bool TryReusingSameInstance(ITextEditorWork work)
+	public bool TryReusingSameInstance(ITextEditorWork downstreamWork)
 	{
 		var wasBatched = false;
 		var wasAdded = false;
@@ -48,39 +48,22 @@ public class TextEditorBackgroundTask : IBackgroundTask
 			if (!WasEnqueued)
 			{
 				var precedentWork = _workList.Last();
-				var downstreamWork = work;
 	
 				if (precedentWork.TextEditorWorkKind == downstreamWork.TextEditorWorkKind)
 				{
-					var workBatched = workNext.BatchOrDefault(workCurrent);
+					var batchedWork = downstreamWork.BatchEnqueue(precedentWork);
 
-					if (precedentWork.ResourceUri == downstreamWork.ResourceUri &&
-						precedentWork.CursorKey == downstreamWork.CursorKey)
+					if (batchedWork is not null)
 					{
-						switch (precedentWork.TextEditorWorkKind)
-						{
-							case TextEditorWorkKind.Insertion:
-								var insertionLastWork = (TextEditorWorkInsertion)precedentWork;
-								var insertionNewWork = (TextEditorWorkInsertion)downstreamWork;
-		
-								insertionLastWork.Content.Append(insertionNewWork.Content);
-								wasBatched = true;
-								break;
-							case TextEditorWorkKind.Deletion:
-								var deletionLastWork = (TextEditorWorkDeletion)precedentWork;
-								var deletionNewWork = (TextEditorWorkDeletion)downstreamWork;
-		
-								deletionLastWork.ColumnCount += deletionNewWork.ColumnCount;
-								wasBatched = true;
-								break;
-						}
+						_workList[^1] = batchedWork;
+						wasBatched = true;
 					}
 				}
 
 				if (!wasBatched)
 				{
-					_workList.Add(work);
-					wasBatched = true;
+					_workList.Add(downstreamWork);
+					wasAdded = true;
 				}
 			}
 		}
@@ -93,14 +76,11 @@ public class TextEditorBackgroundTask : IBackgroundTask
 	{
 		lock (_lockWork)
 		{
-			// This method is invoked from within a semaphore,
-			// of which blocks the queue from being processed.
+			// This method is invoked from within a semaphore, of which blocks the queue from being
+			// processed. So, if we see that the last enqueued item is of this same 'Type',
+			// we can share the 'ITextEditorEditContext'
 			//
-			// So, if we see that the last enqueued item
-			// is of this same 'Type', we can share the 'ITextEditorEditContext'
-			//
-			// By sharing the 'EditContext' amongst two tasks, we reduce
-			// 2 UI renders down to only 1.
+			// By sharing the 'EditContext' amongst two tasks, we reduce 2 UI renders down to only 1.
 			if (precedentTask is TextEditorBackgroundTask precedentTextEditorBackgroundTask)
 			{
 				var precedentWork = precedentTextEditorBackgroundTask._workList.Last();
@@ -108,31 +88,13 @@ public class TextEditorBackgroundTask : IBackgroundTask
 	
 				if (precedentWork.TextEditorWorkKind == downstreamWork.TextEditorWorkKind)
 				{
-					if (precedentWork.ResourceUri == downstreamWork.ResourceUri &&
-						precedentWork.CursorKey == downstreamWork.CursorKey)
-					{
-						switch (precedentWork.TextEditorWorkKind)
-						{
-							case TextEditorWorkKind.Insertion:
-								var precedentInsertionWork = (TextEditorWorkInsertion)precedentWork;
-								var downstreamInsertionWork = (TextEditorWorkInsertion)downstreamWork;
-		
-								precedentInsertionWork.Content.Append(downstreamInsertionWork.Content);
-								_workList.RemoveAt(0);
-								break;
-							case TextEditorWorkKind.Deletion:
-								var precedentDeletionWork = (TextEditorWorkDeletion)precedentWork;
-								var downstreamDeletionWork = (TextEditorWorkDeletion)downstreamWork;
-		
-								precedentDeletionWork.ColumnCount += downstreamDeletionWork.ColumnCount;
-								_workList.RemoveAt(0);
-								break;
-						}
-					}
+					var batchedWork = downstreamWork.BatchEnqueue(precedentWork);
+
+					if (batchedWork is not null)
+						precedentTextEditorBackgroundTask._workList[^1] = batchedWork;
 				}
 	
 				precedentTextEditorBackgroundTask._workList.AddRange(_workList);
-
 				return precedentTextEditorBackgroundTask;
 			}
 			else
@@ -168,7 +130,7 @@ public class TextEditorBackgroundTask : IBackgroundTask
 				}
 
 				var workDownstream = _workList[i + 1];
-				var workBatched = workDownstream.BatchOrDefault(workCurrent);
+				var workBatched = workDownstream.BatchDequeue(EditContext, workCurrent);
 
 				if (workBatched is null)
 				{

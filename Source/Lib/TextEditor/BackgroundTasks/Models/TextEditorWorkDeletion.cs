@@ -61,7 +61,21 @@ public class TextEditorWorkDeletion : ITextEditorWork
 
 	public TextEditorModelModifier.DeleteKind DeleteKind { get; }
 
-	public ITextEditorWork? BatchOrDefault(
+	public ITextEditorWork? BatchEnqueue(
+		ITextEditorWork precedentWork)
+	{
+		if (precedentWork.TextEditorWorkKind == TextEditorWorkKind.Deletion &&
+			precedentWork.CursorKey == CursorKey &&
+			precedentWork.ViewModelKey == ViewModelKey)
+		{
+			((TextEditorWorkDeletion)precedentWork).ColumnCount += ColumnCount;
+			return precedentWork;
+		}
+		
+		return null;
+	}
+	
+	public ITextEditorWork? BatchDequeue(
 		IEditContext editContext,
 		ITextEditorWork precedentWork)
 	{

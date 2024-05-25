@@ -64,11 +64,25 @@ public class TextEditorWorkInsertion : ITextEditorWork
 	/// <summary>
 	/// The content to insert.
 	/// </summary>
-	public string Content => _contentBuilder.ToString() ??= _content;
+	public string Content => _contentBuilder?.ToString() ?? _content;
 
 	public StringBuilder ContentBuilder => _contentBuilder ??= new(Content);
 
-	public ITextEditorWork? BatchOrDefault(
+	public ITextEditorWork? BatchEnqueue(
+		ITextEditorWork precedentWork)
+	{
+		if (precedentWork.TextEditorWorkKind == TextEditorWorkKind.Insertion &&
+			precedentWork.CursorKey == CursorKey &&
+			precedentWork.ViewModelKey == ViewModelKey)
+		{
+			((TextEditorWorkInsertion)precedentWork).ContentBuilder.Append(Content);
+			return precedentWork;
+		}
+		
+		return null;
+	}
+
+	public ITextEditorWork? BatchDequeue(
 		IEditContext editContext,
 		ITextEditorWork precedentWork)
 	{

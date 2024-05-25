@@ -67,7 +67,22 @@ public class TextEditorWorkMouseDown : ITextEditorWork
 
 	public TextEditorEvents Events { get; }
 
-	public ITextEditorWork? BatchOrDefault(
+	public ITextEditorWork? BatchEnqueue(
+		ITextEditorWork precedentWork)
+	{
+		if (precedentWork.CursorKey == CursorKey &&
+			precedentWork.ViewModelKey == ViewModelKey &&
+			precedentWork is TextEditorWorkMouseDown)
+		{
+			// Replace the precedentWork with the more recent event
+			// because the events are redundant when consecutive.
+			return this;
+		}
+
+		return null;
+	}
+
+	public ITextEditorWork? BatchDequeue(
 		IEditContext editContext,
 		ITextEditorWork precedentWork)
 	{

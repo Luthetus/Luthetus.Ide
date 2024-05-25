@@ -73,6 +73,19 @@ public class TextEditorWorkOutput : ITextEditorWork
     public TerminalCommandBoundary TerminalCommandBoundary { get; }
 	public ITextEditorService TextEditorService { get; }
 
+	public ITextEditorWork? BatchEnqueue(
+		ITextEditorWork precedentWork)
+	{
+		return null;
+	}
+
+	public ITextEditorWork? BatchDequeue(
+		IEditContext editContext,
+		ITextEditorWork precedentWork)
+	{
+		return null;
+	}
+
 	public async Task Invoke(IEditContext editContext)
 	{
 		var modelModifier = editContext.GetModelModifier(ResourceUri);

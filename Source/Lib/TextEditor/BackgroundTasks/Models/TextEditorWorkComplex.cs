@@ -63,7 +63,13 @@ public class TextEditorWorkComplex : ITextEditorWork
 	
 	public TextEditorEdit TextEditorEdit { get; }
 
-	public ITextEditorWork? BatchOrDefault(
+	public ITextEditorWork? BatchEnqueue(
+		ITextEditorWork precedentWork)
+	{
+		return null;
+	}
+
+	public ITextEditorWork? BatchDequeue(
 		IEditContext editContext,
 		ITextEditorWork precedentWork)
 	{

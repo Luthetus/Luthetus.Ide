@@ -34,7 +34,10 @@ public interface ITextEditorWork
 
 	public Task Invoke(IEditContext editContext);
 
-	public ITextEditorWork? BatchOrDefault(
+	public ITextEditorWork? BatchEnqueue(
+		ITextEditorWork precedentWork);
+
+	public ITextEditorWork? BatchDequeue(
 		IEditContext editContext,
 		ITextEditorWork precedentWork);
 

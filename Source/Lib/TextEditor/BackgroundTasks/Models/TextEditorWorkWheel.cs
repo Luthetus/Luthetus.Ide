@@ -67,7 +67,13 @@ public class TextEditorWorkWheel : ITextEditorWork
 
 	public TextEditorEvents Events { get; }
 
-	public ITextEditorWork? BatchOrDefault(
+	public ITextEditorWork? BatchEnqueue(
+		ITextEditorWork precedentWork)
+	{
+		return null;
+	}
+
+	public ITextEditorWork? BatchDequeue(
 		IEditContext editContext,
 		ITextEditorWork precedentWork)
 	{
