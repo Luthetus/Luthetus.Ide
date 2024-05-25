@@ -13,10 +13,10 @@ namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
 public class OnKeyDownBatch : ITextEditorTask
 {
-    private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
+    private readonly TextEditorEvents _events;
 
     public OnKeyDownBatch(
-        TextEditorViewModelDisplay.TextEditorEvents events,
+        TextEditorEvents events,
         List<OnKeyDown> throttleEventOnKeyDownList,
         KeyboardEventArgsKind keyboardEventArgsKind,
         ResourceUri resourceUri,
@@ -36,7 +36,7 @@ public class OnKeyDownBatch : ITextEditorTask
 	public string? Redundancy { get; } = null;
 	public TextEditorEdit Edit { get; }
     public Task? WorkProgress { get; }
-    public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
+    public TimeSpan ThrottleTimeSpan => TextEditorEvents.ThrottleDelayDefault;
     public List<OnKeyDown> ThrottleEventOnKeyDownList { get; }
     public KeyboardEventArgsKind KeyboardEventArgsKind { get; }
     public ResourceUri ResourceUri { get; }

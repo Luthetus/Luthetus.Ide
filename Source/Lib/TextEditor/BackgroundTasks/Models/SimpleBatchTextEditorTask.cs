@@ -27,7 +27,7 @@ public class SimpleBatchTextEditorTask : ITextEditorTask
         Identifier = identifier;
         Redundancy = redundancy;
 		Edit = textEditorEdit;
-        ThrottleTimeSpan = throttleTimeSpan ?? TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
+        ThrottleTimeSpan = throttleTimeSpan ?? TextEditorEvents.ThrottleDelayDefault;
     }
 
 	public virtual string Name { get; protected set; }

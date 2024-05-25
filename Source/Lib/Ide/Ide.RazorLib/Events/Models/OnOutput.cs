@@ -59,7 +59,7 @@ public class OnOutput : ITextEditorTask
 	public TerminalCommand TerminalCommand { get; }
 	public Key<TextEditorViewModel> ViewModelKey { get; }
 
-    public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
+    public TimeSpan ThrottleTimeSpan => TextEditorEvents.ThrottleDelayDefault;
 
     public async Task InvokeWithEditContext(IEditContext editContext)
     {

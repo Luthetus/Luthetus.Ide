@@ -11,11 +11,11 @@ namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
 public class OnDoubleClick : ITextEditorTask
 {
-    private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
+    private readonly TextEditorEvents _events;
 
     public OnDoubleClick(
         MouseEventArgs mouseEventArgs,
-        TextEditorViewModelDisplay.TextEditorEvents events,
+        TextEditorEvents events,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
@@ -36,7 +36,7 @@ public class OnDoubleClick : ITextEditorTask
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
-    public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
+    public TimeSpan ThrottleTimeSpan => TextEditorEvents.ThrottleDelayDefault;
 
     public async Task InvokeWithEditContext(IEditContext editContext)
     {

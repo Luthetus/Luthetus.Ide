@@ -9,11 +9,11 @@ namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
 public class OnWheel : ITextEditorTask
 {
-    private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
+    private readonly TextEditorEvents _events;
 
     public OnWheel(
         WheelEventArgs wheelEventArgs,
-        TextEditorViewModelDisplay.TextEditorEvents events,
+        TextEditorEvents events,
         Key<TextEditorViewModel> viewModelKey)
     {
         _events = events;
@@ -31,7 +31,7 @@ public class OnWheel : ITextEditorTask
     public WheelEventArgs WheelEventArgs { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
-    public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
+    public TimeSpan ThrottleTimeSpan => TextEditorEvents.ThrottleDelayDefault;
 
     public Task InvokeWithEditContext(IEditContext editContext)
     {

@@ -8,11 +8,11 @@ namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
 public class OnScrollVertical : ITextEditorTask
 {
-    private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
+    private readonly TextEditorEvents _events;
 
     public OnScrollVertical(
         double scrollTop,
-        TextEditorViewModelDisplay.TextEditorEvents events,
+        TextEditorEvents events,
         Key<TextEditorViewModel> viewModelKey)
     {
         _events = events;
@@ -30,7 +30,7 @@ public class OnScrollVertical : ITextEditorTask
     public double ScrollTop { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
-    public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
+    public TimeSpan ThrottleTimeSpan => TextEditorEvents.ThrottleDelayDefault;
 
     public Task InvokeWithEditContext(IEditContext editContext)
     {

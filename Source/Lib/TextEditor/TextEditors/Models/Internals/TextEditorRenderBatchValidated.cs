@@ -27,7 +27,7 @@ public class TextEditorRenderBatchValidated : ITextEditorRenderBatch
 	public string FontFamily { get; }
 	public int FontSizeInPixels { get; }
 	public ViewModelDisplayOptions ViewModelDisplayOptions { get; }
-	public TextEditorViewModelDisplay.TextEditorEvents Events { get; }
+	public TextEditorEvents Events { get; }
 	public string FontFamilyCssStyle { get; }
 	public string FontSizeInPixelsCssStyle { get; }
 	public string HeightCssStyle { get; }

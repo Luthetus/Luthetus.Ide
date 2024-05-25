@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Microsoft.AspNetCore.Components.Web;
@@ -21,7 +21,7 @@ public class TextEditorCommandArgs : ICommandArgs
         IClipboardService clipboardService,
         ITextEditorService textEditorService,
         TextEditorOptions options,
-        TextEditorViewModelDisplay.TextEditorEvents events,
+        TextEditorEvents events,
         Func<MouseEventArgs, Task>? handleMouseStoppedMovingEventAsyncFunc,
         IJSRuntime? jsRuntime,
         IDispatcher dispatcher,
@@ -52,7 +52,7 @@ public class TextEditorCommandArgs : ICommandArgs
     /// of the event.
     /// </summary>
 	public TextEditorOptions Options { get; }
-    public TextEditorViewModelDisplay.TextEditorEvents Events { get; }
+    public TextEditorEvents Events { get; }
 
     /// <summary>
     /// This property is used so a keyboard event can trigger a tooltip at the cursor's position.
