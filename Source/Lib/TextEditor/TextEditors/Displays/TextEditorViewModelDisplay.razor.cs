@@ -338,13 +338,15 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (viewModel is not null)
             viewModel.UnsafeState.ShouldRevealCursor = false;
 
-		var onMouseDown = new OnMouseDown(
-            mouseEventArgs,
-            _events,
+		var workMouseDown = new TextEditorWorkMouseDown(
             modelResourceUri,
+			Key<TextEditorCursor>.Empty,
+			null,
+			mouseEventArgs,
+            _events,
             viewModelKey.Value);
 
-        await TextEditorService.Post(onMouseDown).ConfigureAwait(false);
+        await TextEditorService.Post(workMouseDown).ConfigureAwait(false);
     }
 
     /// <summary>OnMouseUp is un-necessary</summary>
