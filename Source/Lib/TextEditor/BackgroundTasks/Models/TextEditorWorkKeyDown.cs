@@ -281,6 +281,9 @@ Goals (2024-05-24)
                 out var localCommand);
 
 			Command = localCommand;
+
+			Console.WriteLine($"KeyboardEventArgsKind: {KeyboardEventArgsKind}");
+			Console.WriteLine($"Command.DisplayName: {Command.DisplayName}");
 		}
 
 		switch (KeyboardEventArgsKind)

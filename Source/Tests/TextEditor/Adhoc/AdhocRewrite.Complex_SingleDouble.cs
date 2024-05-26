@@ -165,14 +165,15 @@ public partial class AdhocRewrite
 			LineIndex = 0,
 			ColumnIndex = 6,
 			PreferredColumnIndex = 6,
-			Selection = TextEditorSelection.Empty
+			Selection = TextEditorSelection.Empty,
+			Key = Key<TextEditorCursor>.NewKey(),
 		};
 
 		await textEditorService.Post(new TextEditorWorkKeyDown(
 			resourceUri,
 			cursor.Key,
 			(editContext, cursorKey) => cursor,
-			new KeyboardEventArgs { Key = "p", Code = "KeyP", CtrlKey = true },
+			new KeyboardEventArgs { Key = "v", Code = "KeyV", CtrlKey = true },
 			new TextEditorEvents(null, options),
 			Key<TextEditorViewModel>.Empty));
 
