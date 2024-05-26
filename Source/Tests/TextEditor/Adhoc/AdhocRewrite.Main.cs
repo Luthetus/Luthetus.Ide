@@ -66,7 +66,7 @@ public partial class AdhocRewrite
 				sp.GetRequiredService<ILoggerFactory>()))
 			.AddScoped<ILoggerFactory, NullLoggerFactory>()
 			.AddScoped<IBackgroundTaskService>(_ => hackyBackgroundTaskService)
-			.AddScoped<ITextEditorService, TestTextEditorService>()
+			.AddScoped<ITextEditorService, TextEditorService>()
 			.AddScoped<IClipboardService, InMemoryClipboardService>()
 			.AddFluxor(options => options.ScanAssemblies(
 				typeof(LuthetusCommonConfig).Assembly,

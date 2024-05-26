@@ -89,6 +89,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Photino.Blazor", "External\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Photino.NET", "External\photino.NET-v.2.4.0_fork\Photino.NET\Photino.NET.csproj", "{18F50C9D-2230-43FE-B6E8-A16D285A222F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luthetus.EndToEnd.Tests", "Source\Tests\EndToEnd\Luthetus.EndToEnd.Tests\Luthetus.EndToEnd.Tests.csproj", "{CD267A5A-C58C-4C61-B3F0-847BA4E3F2AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -243,6 +245,10 @@ Global
 		{18F50C9D-2230-43FE-B6E8-A16D285A222F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18F50C9D-2230-43FE-B6E8-A16D285A222F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18F50C9D-2230-43FE-B6E8-A16D285A222F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD267A5A-C58C-4C61-B3F0-847BA4E3F2AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD267A5A-C58C-4C61-B3F0-847BA4E3F2AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD267A5A-C58C-4C61-B3F0-847BA4E3F2AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD267A5A-C58C-4C61-B3F0-847BA4E3F2AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -287,6 +293,7 @@ Global
 		{ED9C3705-8848-4416-9BFB-ABA37884AFBB} = {E8E468FF-8945-4F9D-A3EC-5EF79EA8585B}
 		{49900515-9358-41F5-85E6-5FEAD1891C31} = {343EBC7C-70AD-4B2D-AF6A-5A1079E55AB9}
 		{18F50C9D-2230-43FE-B6E8-A16D285A222F} = {343EBC7C-70AD-4B2D-AF6A-5A1079E55AB9}
+		{CD267A5A-C58C-4C61-B3F0-847BA4E3F2AF} = {10712494-6403-4614-ADAD-0A3FA4451F0F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6045BB8B-0C60-4077-93C3-16BA09C8FC27}

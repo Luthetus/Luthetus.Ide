@@ -1,13 +1,14 @@
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.Installations.Models;
-using Luthetus.Ide.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Microsoft.Extensions.DependencyInjection;
-using Photino.Blazor;
 using System;
-using Luthetus.Common.RazorLib.Reflectives.Models;
 using System.Threading;
 using System.Threading.Tasks;
+using Photino.Blazor;
+using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Reflectives.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.Ide.RazorLib.Installations.Models;
 
 namespace Luthetus.Ide.Photino;
 
@@ -26,10 +27,10 @@ class Program
 
         appBuilder.Services.AddLuthetusIdeRazorLibServices(hostingInformation);
 
-        appBuilder.Services.AddSingleton(new ReflectiveOptions(
-            typeof(LuthetusCommonConfig).Assembly,
-            typeof(LuthetusTextEditorConfig).Assembly,
-            typeof(LuthetusIdeConfig).Assembly));
+		appBuilder.Services.AddFluxor(options => options.ScanAssemblies(
+		    typeof(LuthetusCommonConfig).Assembly,
+		    typeof(LuthetusTextEditorConfig).Assembly,
+		    typeof(LuthetusIdeConfig).Assembly));
 
         appBuilder.RootComponents.Add<App>("app");
 
@@ -94,7 +95,7 @@ class Program
 
             continuousStopCts.Cancel();
             blockingStopCts.Cancel();
-        };  
+        };
 
         app.Run();
     }

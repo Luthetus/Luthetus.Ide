@@ -1,0 +1,87 @@
+@using Fluxor
+@using Luthetus.Ide.Photino
+@using Luthetus.Common.RazorLib.Installations.Models
+@using Luthetus.Common.RazorLib.BackgroundTasks.Models
+@using Luthetus.Common.RazorLib.Dialogs.Models
+@using Luthetus.Common.RazorLib.Dialogs.Displays
+@using Luthetus.Common.RazorLib.Dynamics.Models
+@using Luthetus.Common.RazorLib.Keys.Models
+@using Luthetus.TextEditor.RazorLib.Installations.Models
+@using Luthetus.Ide.RazorLib.Installations.Models
+
+@inherits TestContext
+@code
+{
+	[Fact]
+	public void DialogInitializerRendersCorrectly()
+	{
+		var hostingInformation = new LuthetusHostingInformation(
+			LuthetusHostingKind.Photino,
+			new BackgroundTaskService());
+		
+		Services.AddLuthetusIdeRazorLibServices(hostingInformation);
+		
+		Services.AddFluxor(options => options.ScanAssemblies(
+			typeof(LuthetusCommonConfig).Assembly,
+			typeof(LuthetusTextEditorConfig).Assembly,
+			typeof(LuthetusIdeConfig).Assembly));
+
+		var storeInitializer = Render(@<Fluxor.Blazor.Web.StoreInitializer/>);
+		
+		// Act
+		var cut = Render(@<DialogInitializer/>);
+
+		// Assert initially empty
+		cut.MarkupMatches(@<div class="luth_dialog-initializer"></div>);
+		var allDialogs = cut.FindAll(".luth_dialog-display");
+		Assert.Equal(0, allDialogs.Count);
+
+		var dialogService = Services.GetService<IDialogService>();
+
+		// Register a single dialog
+		{
+			var dialog = new DialogViewModel(
+		        Key<IDynamicViewModel>.NewKey(),
+		        "Unit Testing",
+		        typeof(HelloWorld),
+		        null,
+		        null,
+		        true);
+			
+			dialogService.RegisterDialogRecord(dialog);
+	
+			// Assert dialog rendered
+			allDialogs = cut.FindAll(".luth_dialog-display");
+			Assert.Equal(1, allDialogs.Count);
+			var dialogElement = allDialogs.Single();
+			// Assert that the most recently rendered dialog has the 'luth_active' class.
+			Assert.True(dialogElement.GetAttribute("class").Contains("luth_active"));
+		}
+
+		// Register a second dialog.
+		{
+			var dialog = new DialogViewModel(
+		        Key<IDynamicViewModel>.NewKey(),
+		        "Unit Testing Second",
+		        typeof(HelloWorld),
+		        null,
+		        null,
+		        true);
+			
+			dialogService.RegisterDialogRecord(dialog);
+	
+			// Assert dialog rendered
+			allDialogs = cut.FindAll(".luth_dialog-display");
+			Assert.Equal(2, allDialogs.Count);
+
+
+			var firstDialogElement = allDialogs[0];
+			// Assert that the first dialog lost the 'luth_active' class.
+			Assert.False(firstDialogElement.GetAttribute("class").Contains("luth_active"));
+
+			var secondDialogElement = allDialogs[1];
+			// Assert that the most recently rendered dialog has the 'luth_active' class.
+			Assert.True(secondDialogElement.GetAttribute("class").Contains("luth_active"));
+		}
+	}
+}

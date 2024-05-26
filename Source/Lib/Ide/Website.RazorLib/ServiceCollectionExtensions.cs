@@ -12,11 +12,6 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         LuthetusHostingInformation hostingInformation)
     {
-        services.AddLuthetusIdeRazorLibServices(hostingInformation);
-
-        return services.AddFluxor(options => options.ScanAssemblies(
-            typeof(LuthetusCommonConfig).Assembly,
-            typeof(LuthetusTextEditorConfig).Assembly,
-            typeof(Ide.RazorLib.Installations.Models.ServiceCollectionExtensions).Assembly));
+        return services;
     }
 }

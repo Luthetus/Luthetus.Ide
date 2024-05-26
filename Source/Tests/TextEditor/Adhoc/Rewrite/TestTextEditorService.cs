@@ -58,6 +58,8 @@ public class TestTextEditorService : ITextEditorService
 
 	public IEditContext OpenEditContext()
 	{
+		throw new NotImplementedException($"Delete {nameof(TestTextEditorService)}");
+
 		return new TextEditorService.TextEditorEditContext(
 			this,
 			TextEditorService.AuthenticatedActionKey);

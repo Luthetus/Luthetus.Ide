@@ -14,7 +14,12 @@ var hostingInformation = new LuthetusHostingInformation(
     LuthetusHostingKind.ServerSide,
     new BackgroundTaskService());
 
-builder.Services.AddLuthetusWebsiteServices(hostingInformation);
+services.AddLuthetusIdeRazorLibServices(hostingInformation);
+
+services.AddFluxor(options => options.ScanAssemblies(
+	typeof(LuthetusCommonConfig).Assembly,
+	typeof(LuthetusTextEditorConfig).Assembly,
+	typeof(LuthetusIdeConfig).Assembly));
 
 var app = builder.Build();
 
