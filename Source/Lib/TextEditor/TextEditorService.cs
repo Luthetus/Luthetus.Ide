@@ -109,19 +109,6 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
 
-    // TODO: Should 'PostAsIs' be removed? (2024-05-08)
-    //
-    //public void PostAsIs(
-    //    string name,
-    //    TextEditorEdit textEditorEdit,
-    //    TimeSpan? throttleTimeSpan = null)
-    //{
-    //    Post(new AsIsTextEditorTask(
-    //        $"{name}_ai",
-    //        textEditorEdit,
-    //        throttleTimeSpan));
-    //}
-
     public Task PostSimpleBatch(
         string name,
         string identifier,
