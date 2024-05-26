@@ -49,6 +49,20 @@ public class BackgroundTaskWorker : BackgroundService
 					// TODO: Could it be that the reason for ThrottleController locking the UI thread...
 					// ...was because I was using Task.WhenAll, and once the tasks actually got awaited,
 					// they both finished synchronously somehow, therefore an await never occurred?
+					//
+					// (2024-05-25) I think it just clicked to me what '.ConfigureAwait(false)' does.
+					// By using '.ConfigureAwait(false)' here, I am defeating the purpose of my BackgroundTaskWorker.
+					// |
+					// Because, '.ConfigureAwait(false)' is saying, "Anyone can pick back up from where I left off, once
+					// this Task is awaited."
+					// |
+					// It was confusing to me because, '.ConfigureAwait(false)' was not permitting the
+					// continued execution of the method, without having awaited. That is some sort of
+					// fire and forget related topic.
+					// |
+					// But in my head, I couldn't determine what it was doing, if not related to that.
+					// |
+					// Dog wants me
 
 					var handleEventTask = backgroundTask.HandleEvent(cancellationToken);
 					var throttleTimeSpanTask = Task.Delay(backgroundTask.ThrottleTimeSpan);
