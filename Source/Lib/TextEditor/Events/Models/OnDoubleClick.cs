@@ -102,7 +102,15 @@ public class OnDoubleClick : ITextEditorTask
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
-        return this;
+		if (oldEvent is OnDoubleClick)
+		{
+			// Replace the upstream event with this one,
+			// because unhandled-consecutive events of this type are redundant.
+			return this;
+		}
+        
+		// Keep both events, because they are not able to be batched.
+		return null;
     }
 
     public Task HandleEvent(CancellationToken cancellationToken)

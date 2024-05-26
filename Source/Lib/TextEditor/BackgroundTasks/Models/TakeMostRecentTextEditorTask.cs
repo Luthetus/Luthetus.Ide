@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
@@ -46,6 +46,8 @@ public sealed class TakeMostRecentTextEditorTask : TakeMostRecentBackgroundTask,
 
         if (oldRedundantTextEditorTask.Name == Name)
         {
+			// TODO: To use the 'Name' here is incorrect.
+			//
             // Keep this event (via replacement)
             return this;
         }
