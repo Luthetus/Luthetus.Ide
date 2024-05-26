@@ -37,6 +37,8 @@ public class TextEditorBackgroundTask : IBackgroundTask
 
 	public IBackgroundTask? BatchOrDefault(IBackgroundTask upstreamTask)
 	{
+		return null;
+
 		// This method is invoked from within a semaphore, of which blocks the queue from being
 		// processed. So, if we see that the last enqueued item is of this same 'Type',
 		// we can share the 'ITextEditorEditContext'

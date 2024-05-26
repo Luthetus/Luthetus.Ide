@@ -55,5 +55,6 @@
 		JSInterop.SetupVoid("luthetusTextEditor.preventDefaultOnWheelEvents", _ => true);
 
 		var cut = Render(@<TextEditorViewModelDisplay TextEditorViewModelKey="viewModelKey"/>);
+		Console.WriteLine(cut.Markup);
 	}
 }
