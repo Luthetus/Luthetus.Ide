@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Misc;
@@ -19,7 +19,7 @@ public class IdeTestBase
 
         var serviceCollection = new ServiceCollection()
             .AddScoped<IJSRuntime, DoNothingJsRuntime>()
-            .AddLuthetusIdeRazorLibServices(new LuthetusHostingInformation(LuthetusHostingKind.UnitTesting, backgroundTaskService))
+            .AddLuthetusIdeRazorLibServices(new LuthetusHostingInformation(LuthetusHostingKind.UnitTestingSynchronous, backgroundTaskService))
             .AddFluxor(options => options.ScanAssemblies(
                 typeof(LuthetusCommonConfig).Assembly,
                 typeof(LuthetusTextEditorConfig).Assembly,

@@ -16,15 +16,15 @@
 	public void HelloWorldComponentRendersCorrectly()
 	{
 		var hostingInformation = new LuthetusHostingInformation(
-		LuthetusHostingKind.Photino,
-		new BackgroundTaskService());
+			LuthetusHostingKind.UnitTestingAsync,
+			new BackgroundTaskService());
 		
 		Services.AddLuthetusIdeRazorLibServices(hostingInformation);
 		
 		Services.AddFluxor(options => options.ScanAssemblies(
-		typeof(LuthetusCommonConfig).Assembly,
-		typeof(LuthetusTextEditorConfig).Assembly,
-		typeof(LuthetusIdeConfig).Assembly));
+			typeof(LuthetusCommonConfig).Assembly,
+			typeof(LuthetusTextEditorConfig).Assembly,
+			typeof(LuthetusIdeConfig).Assembly));
 		
 		// Act
 		var cut = Render(@<HelloWorld/>);

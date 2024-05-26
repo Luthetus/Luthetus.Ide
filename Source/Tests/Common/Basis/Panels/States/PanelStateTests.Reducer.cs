@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -316,7 +316,7 @@ public class PanelStateReducerTests
 
         var serviceCollection = new ServiceCollection()
             .AddScoped<IJSRuntime, DoNothingJsRuntime>()
-            .AddLuthetusCommonServices(new LuthetusHostingInformation(LuthetusHostingKind.UnitTesting, backgroundTaskService))
+            .AddLuthetusCommonServices(new LuthetusHostingInformation(LuthetusHostingKind.UnitTestingSynchronous, backgroundTaskService))
             .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonConfig).Assembly));
 
         serviceProvider = serviceCollection.BuildServiceProvider();

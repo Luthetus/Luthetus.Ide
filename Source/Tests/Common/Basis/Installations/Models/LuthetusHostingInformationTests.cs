@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 
 namespace Luthetus.Common.Tests.Basis.Installations.Models;
@@ -20,7 +20,7 @@ public record LuthetusHostingInformationTests
         // Two tests are done to ensure the enum 'LuthetusHostingKind' does not just
         // get set to the default enum value within the constructor.
         {
-            var hostingKind = LuthetusHostingKind.UnitTesting;
+            var hostingKind = LuthetusHostingKind.UnitTestingSynchronous;
             var backgroundTaskServiceSynchronous = new BackgroundTaskServiceSynchronous();
 
             var hostingInformation = new LuthetusHostingInformation(

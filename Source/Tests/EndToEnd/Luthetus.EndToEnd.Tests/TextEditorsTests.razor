@@ -1,0 +1,59 @@
+@using Fluxor
+@using Luthetus.Ide.Photino
+@using Luthetus.Common.RazorLib.Installations.Models
+@using Luthetus.Common.RazorLib.BackgroundTasks.Models
+@using Luthetus.Common.RazorLib.Dialogs.Models
+@using Luthetus.Common.RazorLib.Dialogs.Displays
+@using Luthetus.Common.RazorLib.Dynamics.Models
+@using Luthetus.Common.RazorLib.Keys.Models
+@using Luthetus.TextEditor.RazorLib
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models
+@using Luthetus.TextEditor.RazorLib.Lexes.Models
+@using Luthetus.TextEditor.RazorLib.Installations.Models
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays
+@using Luthetus.Ide.RazorLib.Installations.Models
+
+@inherits TestContext
+@code
+{
+	[Fact]
+	public void TextEditorRendersCorrectly()
+	{
+		var hostingInformation = new LuthetusHostingInformation(
+			LuthetusHostingKind.UnitTestingAsync,
+			new BackgroundTaskService());
+		
+		Services.AddLuthetusIdeRazorLibServices(hostingInformation);
+		
+		Services.AddFluxor(options => options.ScanAssemblies(
+			typeof(LuthetusCommonConfig).Assembly,
+			typeof(LuthetusTextEditorConfig).Assembly,
+			typeof(LuthetusIdeConfig).Assembly));
+
+		var storeInitializer = Render(@<Fluxor.Blazor.Web.StoreInitializer/>);
+
+		var textEditorService = Services.GetService<ITextEditorService>();
+		
+		var resourceUri = new ResourceUri("/unitTesting.txt");
+		var viewModelKey = Key<TextEditorViewModel>.NewKey();
+
+		var inModel = new TextEditorModel(
+	        resourceUri,
+	        DateTime.UtcNow,
+	        "txt",
+	        string.Empty,
+	        null,
+	        null,
+			4_096);
+
+		textEditorService.ModelApi.RegisterCustom(inModel);
+		textEditorService.ViewModelApi.Register(viewModelKey, inModel.ResourceUri, new Category("UnitTests"));
+
+		JSInterop.SetupVoid("luthetusTextEditor.disposeTextEditorCursorIntersectionObserver", _ => true);
+		JSInterop.SetupVoid("luthetusTextEditor.initializeTextEditorCursorIntersectionObserver", _ => true);
+		JSInterop.SetupVoid("luthetusTextEditor.initializeVirtualizationIntersectionObserver", _ => true);
+		JSInterop.SetupVoid("luthetusTextEditor.preventDefaultOnWheelEvents", _ => true);
+
+		var cut = Render(@<TextEditorViewModelDisplay TextEditorViewModelKey="viewModelKey"/>);
+	}
+}

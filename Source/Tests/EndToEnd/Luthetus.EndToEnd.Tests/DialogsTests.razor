@@ -16,7 +16,7 @@
 	public void DialogInitializerRendersCorrectly()
 	{
 		var hostingInformation = new LuthetusHostingInformation(
-			LuthetusHostingKind.Photino,
+			LuthetusHostingKind.UnitTestingAsync,
 			new BackgroundTaskService());
 		
 		Services.AddLuthetusIdeRazorLibServices(hostingInformation);

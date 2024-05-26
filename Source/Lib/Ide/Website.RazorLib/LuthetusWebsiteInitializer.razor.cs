@@ -62,7 +62,8 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
         if (firstRender)
         {
             if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Wasm ||
-                LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.UnitTesting)
+                LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.UnitTestingSynchronous ||
+			    LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.UnitTestingAsync )
             {
                 _ = Task.Run(async () =>
                         await ContinuousBackgroundTaskWorker.StartAsync(CancellationToken.None).ConfigureAwait(false))

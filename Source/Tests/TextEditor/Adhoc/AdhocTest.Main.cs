@@ -790,7 +790,7 @@ public partial class AdhocTest
         var services = new ServiceCollection()
             .AddScoped<IJSRuntime, DoNothingJsRuntime>()
             .AddLuthetusIdeRazorLibServices(
-                new LuthetusHostingInformation(LuthetusHostingKind.UnitTesting, backgroundTaskService));
+                new LuthetusHostingInformation(LuthetusHostingKind.UnitTestingSynchronous, backgroundTaskService));
 
         var serviceProvider = services.BuildServiceProvider();
         var store = serviceProvider.GetRequiredService<IStore>();

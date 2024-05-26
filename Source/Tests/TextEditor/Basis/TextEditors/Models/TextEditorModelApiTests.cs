@@ -591,7 +591,7 @@ public class TextEditorModelApiTests
 
         var serviceCollection = new ServiceCollection()
             .AddScoped<IJSRuntime, DoNothingJsRuntime>()
-            .AddLuthetusTextEditor(new LuthetusHostingInformation(LuthetusHostingKind.UnitTesting, backgroundTaskService))
+            .AddLuthetusTextEditor(new LuthetusHostingInformation(LuthetusHostingKind.UnitTestingSynchronous, backgroundTaskService))
             .AddFluxor(options => options.ScanAssemblies(
                 typeof(LuthetusCommonConfig).Assembly,
                 typeof(LuthetusTextEditorConfig).Assembly));
