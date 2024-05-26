@@ -49,21 +49,21 @@
     padding: 7px;
     border-left: 1px solid var(--luth_primary-border-color);
 }
-/* _content/Luthetus.Ide.RazorLib/CSharpProjectForms/Displays/CSharpProjectFormDisplay.razor.rz.scp.css */
-.luth_ide_graphical-project-template-inputs[b-43xe15oydk] {
+/* _content/Luthetus.Ide.RazorLib/CSharpProjects/Displays/CSharpProjectFormDisplay.razor.rz.scp.css */
+.luth_ide_graphical-project-template-inputs[b-0wartoex90] {
     display: flex;
     flex-direction: column;
     align-items: end;
 }
 
-.luth_ide_c-sharp-project-form-graphical-panel .luth_ide_c-sharp-project-form-middle-inputs[b-43xe15oydk] {
+.luth_ide_c-sharp-project-form-graphical-panel .luth_ide_c-sharp-project-form-middle-inputs[b-0wartoex90] {
     height: 50%;
     min-height: 200px;
     overflow-y: auto;
     position: relative;
 }
 
-.luth_ide_c-sharp-project-form-sticky[b-43xe15oydk] {
+.luth_ide_c-sharp-project-form-sticky[b-0wartoex90] {
     position: sticky;
     top: 0;
     right: 0;
@@ -73,33 +73,39 @@
     color: var(--luth_secondary-foreground-color);
 }
 
-.luth_ide_graphical-project-template-container[b-43xe15oydk] {
+.luth_ide_graphical-project-template-container[b-0wartoex90] {
     width: 100%;
 }
 
-.luth_ide_disable-display-flex[b-43xe15oydk] {
+.luth_ide_disable-display-flex[b-0wartoex90] {
     display: unset;
 }
 
-/* _content/Luthetus.Ide.RazorLib/CSharpProjectForms/Displays/ProjectTemplateDisplay.razor.rz.scp.css */
-.luth_ide_project-template[b-sa3hiy8uy9] {
+/* _content/Luthetus.Ide.RazorLib/CSharpProjects/Displays/ProjectTemplateDisplay.razor.rz.scp.css */
+.luth_ide_project-template[b-061h6yhuj6] {
     margin-bottom: 12px;
     background-color: var(--luth_tertiary-background-color);
     color: var(--luth_tertiary-foreground-color);
 }
 
-.luth_ide_project-template-title[b-sa3hiy8uy9] {
+.luth_ide_project-template-title[b-061h6yhuj6] {
     background-color: var(--luth_ide_section-title-background-color);
     color: var(--luth_primary-foreground-color);
     cursor: pointer;
 }
-    .luth_ide_project-template-title:hover[b-sa3hiy8uy9] {
+    .luth_ide_project-template-title:hover[b-061h6yhuj6] {
         background-color: var(--luth_active-no-focus-background-color);
     }
 
-    .luth_ide_project-template-title.luth_active[b-sa3hiy8uy9] {
+    .luth_ide_project-template-title.luth_active[b-061h6yhuj6] {
         background-color: var(--luth_active-with-focus-background-color);
     }
+/* _content/Luthetus.Ide.RazorLib/Gits/Displays/GitBranchCheckoutDisplay.razor.rz.scp.css */
+.luth_git-branch-checkout[b-75a7j52e7k] {
+    background-color: var(--luth_tertiary-background-color);
+    color: var(--luth_tertiary-foreground-color);
+    padding: 5px;
+}
 /* _content/Luthetus.Ide.RazorLib/Notifications/Displays/NotificationsDisplay.razor.rz.scp.css */
 .luth_ide_folder-notifications[b-8sywka351y] {
     height: 100%;

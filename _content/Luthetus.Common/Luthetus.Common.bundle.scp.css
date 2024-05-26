@@ -255,52 +255,6 @@
     left: 0;
     top: 0;
 }
-/* _content/Luthetus.Common/Reactives/Displays/CounterThrottleDataDisplay.razor.rz.scp.css */
-[b-mkb16sp0yb] .luth_scope-border {
-    padding: 0 !important;
-    background-color: var(--luth_primary-border-color);
-    opacity: 0.7;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 2px;
-    height: 100%;
-    margin-left: 6px;
-}
-
-[b-mkb16sp0yb] .luth_scope-title {
-    color: var(--luth_primary-emphasis-foreground-color);
-}
-
-[b-mkb16sp0yb] .luth_scope-body {
-    position: relative;
-    padding-left: 12px;
-}
-
-    [b-mkb16sp0yb] .luth_scope-body > div {
-        padding: 7px 5px;
-        margin-bottom: 7px;
-    }
-/* _content/Luthetus.Common/Reactives/Displays/ProgressDisplay.razor.rz.scp.css */
-.luth_progress[b-inqc3t2v2n] {
-    position: relative;
-    height: 1.5em;
-    text-align: center;
-    background-color: var(--luth_active-no-focus-background-color);
-}
-
-.luth_progress-text[b-inqc3t2v2n] {
-    z-index: 1;
-    position: absolute;
-}
-
-.luth_progress-filler[b-inqc3t2v2n] {
-    position: absolute;
-    height: 100%;
-    left: 0;
-    top: 0;
-    background-color: var(--luth_active-with-focus-background-color);
-}
 /* _content/Luthetus.Common/Reflectives/Displays/ReflectiveConstructor.razor.rz.scp.css */
 .luth_reflective-constructor[b-gcn31l7m78] {
     display: flex;
