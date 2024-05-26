@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
@@ -32,7 +32,7 @@ public class ServiceCollectionExtensionsTests
     public void AddLuthetusCommonServices()
     {
         var hostingInformation = new LuthetusHostingInformation(
-            LuthetusHostingKind.UnitTesting,
+            LuthetusHostingKind.UnitTestingSynchronous,
             new BackgroundTaskServiceSynchronous());
 
         var services = new ServiceCollection()
@@ -60,7 +60,7 @@ public class ServiceCollectionExtensionsTests
                 serviceProvider.GetRequiredService<LuthetusCommonConfig>()));
 
             var innerHostingInformation = new LuthetusHostingInformation(
-                LuthetusHostingKind.UnitTesting,
+                LuthetusHostingKind.UnitTestingSynchronous,
                 new BackgroundTaskServiceSynchronous());
 
             var innerServiceCollection = new ServiceCollection()

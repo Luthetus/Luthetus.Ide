@@ -2,8 +2,10 @@
 
 @{ var dialogList = DialogStateWrap.Value.DialogList; }
 
-@foreach (var dialog in dialogList)
-{
-    <DialogDisplay @key="dialog.DynamicViewModelKey" 
-                   Dialog="dialog" />
-}
+<div class="luth_dialog-initializer">
+	@foreach (var dialog in dialogList)
+	{
+	    <DialogDisplay @key="dialog.DynamicViewModelKey" 
+	                   Dialog="dialog" />
+	}
+</div>

@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Fluxor;
@@ -29,7 +29,7 @@ public class TreeViewCommandArgsTests
         var services = new ServiceCollection();
 
         var hostingInformation = new LuthetusHostingInformation(
-            LuthetusHostingKind.UnitTesting,
+            LuthetusHostingKind.UnitTestingSynchronous,
             new BackgroundTaskServiceSynchronous());
 
         services.AddFluxor(options => options.ScanAssemblies(

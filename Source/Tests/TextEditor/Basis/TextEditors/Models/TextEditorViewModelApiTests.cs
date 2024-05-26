@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -1294,7 +1294,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
         var services = new ServiceCollection()
             .AddScoped<IJSRuntime, TextEditorTestingJsRuntime>()
-            .AddLuthetusTextEditor(new LuthetusHostingInformation(LuthetusHostingKind.UnitTesting, backgroundTaskService))
+            .AddLuthetusTextEditor(new LuthetusHostingInformation(LuthetusHostingKind.UnitTestingSynchronous, backgroundTaskService))
             .AddFluxor(options => options.ScanAssemblies(
                 typeof(LuthetusCommonConfig).Assembly,
                 typeof(LuthetusTextEditorConfig).Assembly));

@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -81,7 +81,7 @@ public record LuthetusCommonFactoriesTests
         var commonOptions = new LuthetusCommonConfig();
 
         var hostingInformation = new LuthetusHostingInformation(
-            LuthetusHostingKind.UnitTesting,
+            LuthetusHostingKind.UnitTestingSynchronous,
             new BackgroundTaskServiceSynchronous());
 
         var services = new ServiceCollection()

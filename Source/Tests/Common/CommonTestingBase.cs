@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.UnitTesting;
@@ -17,7 +17,7 @@ public class CommonTestingBase
         var services = new ServiceCollection();
 
         var hostingInformation = new LuthetusHostingInformation(
-            LuthetusHostingKind.UnitTesting,
+            LuthetusHostingKind.UnitTestingSynchronous,
             new BackgroundTaskServiceSynchronous());
 
         CommonUnitTestHelper.AddLuthetusCommonServicesUnitTesting(services, hostingInformation);
