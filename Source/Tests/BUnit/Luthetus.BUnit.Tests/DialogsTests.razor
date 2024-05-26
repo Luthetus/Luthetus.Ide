@@ -15,24 +15,12 @@
 	[Fact]
 	public void DialogInitializerRendersCorrectly()
 	{
-		var hostingInformation = new LuthetusHostingInformation(
-			LuthetusHostingKind.UnitTestingAsync,
-			new BackgroundTaskService());
+		SharedInitializationForTests.Initialize(this);
 		
-		Services.AddLuthetusIdeRazorLibServices(hostingInformation);
-		
-		Services.AddFluxor(options => options.ScanAssemblies(
-			typeof(LuthetusCommonConfig).Assembly,
-			typeof(LuthetusTextEditorConfig).Assembly,
-			typeof(LuthetusIdeConfig).Assembly));
-
-		var storeInitializer = Render(@<Fluxor.Blazor.Web.StoreInitializer/>);
-		
-		// Act
 		var cut = Render(@<DialogInitializer/>);
 
 		// Assert initially empty
-		cut.MarkupMatches(@<div class="luth_dialog-initializer"></div>);
+		cut.MarkupMatches(string.Empty);
 		var allDialogs = cut.FindAll(".luth_dialog-display");
 		Assert.Equal(0, allDialogs.Count);
 
@@ -42,7 +30,7 @@
 		{
 			var dialog = new DialogViewModel(
 		        Key<IDynamicViewModel>.NewKey(),
-		        "Unit Testing",
+		        "Unit Testing First",
 		        typeof(CommonInformativeNotificationDisplay),
 		        null,
 		        null,
