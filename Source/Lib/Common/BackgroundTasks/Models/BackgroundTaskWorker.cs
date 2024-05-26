@@ -1,4 +1,5 @@
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Exceptions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -24,16 +25,13 @@ public class BackgroundTaskWorker : BackgroundService
 
     protected async override Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        var currentThread = Thread.CurrentThread;
-
 		Console.WriteLine("worker-ExecuteAsync");
         _logger.LogInformation("Queued Hosted Service is starting.");
 
         while (!cancellationToken.IsCancellationRequested)
         {
             var backgroundTask = await BackgroundTaskService
-                .DequeueAsync(QueueKey, cancellationToken)
-                .ConfigureAwait(false);
+                .DequeueAsync(QueueKey, cancellationToken);
 
             if (backgroundTask is not null)
             {
@@ -43,13 +41,6 @@ public class BackgroundTaskWorker : BackgroundService
 
                     BackgroundTaskService.SetExecutingBackgroundTask(QueueKey, backgroundTask);
 
-					// TODO: Should Task.WhenAll be used here so the delay runs concurrently...
-					// ...with the 'HandleEvent'?
-					//
-					// TODO: Could it be that the reason for ThrottleController locking the UI thread...
-					// ...was because I was using Task.WhenAll, and once the tasks actually got awaited,
-					// they both finished synchronously somehow, therefore an await never occurred?
-					//
 					// (2024-05-25) I think it just clicked to me what '.ConfigureAwait(false)' does.
 					// By using '.ConfigureAwait(false)' here, I am defeating the purpose of my BackgroundTaskWorker.
 					// |
@@ -63,11 +54,20 @@ public class BackgroundTaskWorker : BackgroundService
 					// But in my head, I couldn't determine what it was doing, if not related to that.
 					// |
 					// Dog wants me
+					//
+					// I have an exception throwing if the text editor ends up creating
+					// two instances of 'IEditContext'.
+					//
+					// This exception is happening nearly everytime I press a key on my keyboard.
 
 					var handleEventTask = backgroundTask.HandleEvent(cancellationToken);
 					var throttleTimeSpanTask = Task.Delay(backgroundTask.ThrottleTimeSpan);
-					await Task.WhenAll(handleEventTask, throttleTimeSpanTask).ConfigureAwait(false);
+					await Task.WhenAll(handleEventTask, throttleTimeSpanTask);
                 }
+				catch (LuthetusFatalException ex)
+				{
+					throw;
+				}
                 catch (Exception ex)
                 {
                     var message = ex is OperationCanceledException
@@ -93,7 +93,7 @@ public class BackgroundTaskWorker : BackgroundService
     public override async Task StopAsync(CancellationToken cancellationToken)
     {
 		Console.WriteLine("entering-worker-StopAsync");
-        await BackgroundTaskService.StopAsync(CancellationToken.None).ConfigureAwait(false);
+        await BackgroundTaskService.StopAsync(CancellationToken.None);
 
         // TODO: Polling solution for now, perhaps change to a more optimal solution? (2023-11-19)
         while (BackgroundTaskService.Queues.Any(x => x.ExecutingBackgroundTask is not null) ||
@@ -101,7 +101,7 @@ public class BackgroundTaskWorker : BackgroundService
                 // TODO: Here a check is done for if there are background tasks pending for a hacky-concurrency solution
                 BackgroundTaskService.Queues.SelectMany(x => x.BackgroundTasks).Any())
         {
-            await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken).ConfigureAwait(false);
+            await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken);
         }
 
 		Console.WriteLine("leaving-worker-StopAsync");

@@ -124,7 +124,7 @@ public class TextEditorWorkDoubleClick : ITextEditorWork
 
 		// Hacky(Mild, [Medium], Hot) (2024-05-25)
 		//
-        var rowAndColumnIndex = await Events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
+        var rowAndColumnIndex = await Events.CalculateRowAndColumnIndex(MouseEventArgs);
 
         var lowerColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
             rowAndColumnIndex.rowIndex,

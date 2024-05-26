@@ -132,7 +132,7 @@ public class TextEditorWorkMouseDown : ITextEditorWork
 
 		// Hacky(Mild, Medium, [Hot]) (2024-05-25)
 		//
-		// await Events.CursorSetShouldDisplayMenuAsyncFunc.Invoke(MenuKind.None, false).ConfigureAwait(false);
+		// await Events.CursorSetShouldDisplayMenuAsyncFunc.Invoke(MenuKind.None, false);
 
         // Remember the current cursor position prior to doing anything
 		Console.WriteLine($"current ({primaryCursorModifier.LineIndex}, {primaryCursorModifier.ColumnIndex})");
@@ -144,7 +144,7 @@ public class TextEditorWorkMouseDown : ITextEditorWork
 		// Hacky(Mild, [Medium], Hot) (2024-05-25)
 		//
 		// Move the cursor position
-        var rowAndColumnIndex = await Events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
+        var rowAndColumnIndex = await Events.CalculateRowAndColumnIndex(MouseEventArgs);
 
 		Console.WriteLine("rowIndex: " + rowAndColumnIndex.rowIndex);
 		Console.WriteLine("columnIndex: " + rowAndColumnIndex.columnIndex);

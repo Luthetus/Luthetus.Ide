@@ -61,7 +61,7 @@ public class BackgroundTaskService : IBackgroundTaskService
         // TODO: Polling solution for now, perhaps change to a more optimal solution? (2023-11-19)
         while (_queueContainerMap.Values.SelectMany(x => x.BackgroundTasks).Any())
         {
-            await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken).ConfigureAwait(false);
+            await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken);
         }
     }
 }

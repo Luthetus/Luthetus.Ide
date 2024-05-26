@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Common.RazorLib.Exceptions;
+namespace Luthetus.Common.RazorLib.Exceptions;
 
 public class LuthetusCommonException : LuthetusException
 {

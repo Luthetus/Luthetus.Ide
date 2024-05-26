@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
+using Luthetus.Common.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
@@ -115,7 +116,7 @@ public partial class TextEditorService : ITextEditorService
 	public IEditContext OpenEditContext()
 	{
 		if (_thereIsExistingEditContext)
-			throw new NotImplementedException("Text editor is not synced");
+			throw new LuthetusFatalException("Text editor is not synced");
 
 		_thereIsExistingEditContext = true;
 		return new TextEditorEditContext(this, AuthenticatedActionKey);
@@ -187,8 +188,7 @@ public partial class TextEditorService : ITextEditorService
 				Console.Write("e");
 
 				await ((TextEditorService)editContext.TextEditorService)
-					.HACK_SetScrollPosition(viewModelModifier.ViewModel)
-					.ConfigureAwait(false);
+					.HACK_SetScrollPosition(viewModelModifier.ViewModel);
 			}
 
 			Console.Write("f");
@@ -198,8 +198,7 @@ public partial class TextEditorService : ITextEditorService
 					viewModelModifier.ViewModel.ResourceUri,
 					viewModelModifier.ViewModel.ViewModelKey,
 					CancellationToken.None)
-				.Invoke(editContext)
-				.ConfigureAwait(false);
+				.Invoke(editContext);
 
 			Console.Write("g");
 
@@ -263,8 +262,7 @@ public partial class TextEditorService : ITextEditorService
                 viewModel.BodyElementId,
                 viewModel.GutterElementId,
                 viewModel.VirtualizationResult.TextEditorMeasurements.ScrollLeft,
-                viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop)
-            .ConfigureAwait(false);
+                viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop);
     }
 
     public record TextEditorEditContext : IEditContext

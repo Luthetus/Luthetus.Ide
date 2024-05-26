@@ -104,9 +104,9 @@ public class TextEditorBackgroundTask : IBackgroundTask
 				}
 			}
 			
-			workDue.Invoke(EditContext).ConfigureAwait(false);
+			workDue.Invoke(EditContext);
 		}
 
-		await TextEditorService.CloseEditContext(EditContext).ConfigureAwait(false);
+		await TextEditorService.CloseEditContext(EditContext);
 	}
 }

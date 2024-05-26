@@ -118,7 +118,7 @@ public class TextEditorWorkMouseMove : ITextEditorWork
 		//
 		// # In other places this code is medium but for on mouse move it feels
 		// # more hacky considering the rate at which he event is firing.
-		var rowAndColumnIndex = await Events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
+		var rowAndColumnIndex = await Events.CalculateRowAndColumnIndex(MouseEventArgs);
 
         primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
         primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;

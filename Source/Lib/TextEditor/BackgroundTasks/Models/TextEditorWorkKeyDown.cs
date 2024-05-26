@@ -293,11 +293,10 @@ Goals (2024-05-24)
 				break;
 			case KeyboardEventArgsKind.Movement:
 				await editContext.TextEditorService.ViewModelApi.MoveCursorFactory(
-                            KeyboardEventArgs,
-                            modelModifier.ResourceUri,
-                            ViewModelKey)
-                        .Invoke(editContext)
-                    .ConfigureAwait(false);
+                        KeyboardEventArgs,
+                        modelModifier.ResourceUri,
+                        ViewModelKey)
+                    .Invoke(editContext);
 				break;
 			case KeyboardEventArgsKind.ContextMenu:
 				Console.WriteLine("KeyboardEventArgsKind.ContextMenu");
@@ -315,8 +314,7 @@ Goals (2024-05-24)
                         Events.JsRuntime,
                         Events.Dispatcher,
                         Events.ServiceProvider,
-                        Events.TextEditorConfig))
-                    .ConfigureAwait(false);
+                        Events.TextEditorConfig));
 				break;
 			case KeyboardEventArgsKind.Text:
 				modelModifier.Insert(
@@ -331,8 +329,7 @@ Goals (2024-05-24)
                         ViewModelKey,
                         KeyboardEventArgs,
                         CancellationToken.None)
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
+                    .Invoke(editContext);
 				Console.WriteLine("KeyboardEventArgsKind.Other");
 				break;
 			default:
